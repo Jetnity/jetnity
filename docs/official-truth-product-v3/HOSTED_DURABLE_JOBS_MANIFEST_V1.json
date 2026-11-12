@@ -1,6 +1,6 @@
 {
   "schema": "jetnity.hm04.source.v2",
-  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX1",
+  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX2",
   "author": {
     "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
     "session": "/root/hs1_hm04_fix",
@@ -43,12 +43,12 @@
     "permittedWork": "GitHub source/metadata reads; immutable source Git objects; pure in-memory text, UTF-8 hashing, inverse reconstruction and tree comparison only"
   },
   "baseline": {
-    "tree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
-    "commit": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "commit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
     "count": 9538,
     "serialization": "ASCII path sort; mode + SPACE + type + SPACE + Git object SHA + TAB + path + LF",
     "serializedBytes": 1154460,
-    "sha256": "8c5d8961b981f89f4db60ed36e54df7f9e371e5fc7c28d2753163df6223004c2",
+    "sha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d",
     "soleParentRequired": true,
     "candidateLeavesExpected": 9538,
     "changedExistingPaths": [
@@ -64,11 +64,10 @@
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
       "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
       "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
     ],
-    "changedLeavesExpected": 14,
-    "unchangedLeavesExpected": 9524,
+    "changedLeavesExpected": 13,
+    "unchangedLeavesExpected": 9525,
     "addedPaths": [],
     "removedPaths": [],
     "wrapperExact": {
@@ -79,27 +78,27 @@
     },
     "originalPreHm04LeavesExpected": 9479,
     "originalPreHm04LeavesRemainExact": true,
-    "proofRule": "Exactly fourteen modified existing leaves on the exact failed HDP parent; both wrappers and 9524 other leaves stay exact.",
+    "proofRule": "Exactly thirteen modified existing leaves on the exact CI4140 parent; both wrappers, HS1 Native, all original proof groups and 9525 complement leaves stay exact.",
     "externalFinalIdentity": true
   },
   "artifacts": [
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-      "blob": "a7abf68711a891b6934662990e23a6637aeede52",
-      "bytes": 52916,
-      "sha256": "0b66668395463bc705540675a128fe1fb10a42021e7ce247bf39d2c1914be261"
+      "blob": "a4b8ef43620933e5e293cbaed68d08138457125e",
+      "bytes": 53970,
+      "sha256": "8f7c672f7feca85cc5206f0c3cdd36d702b3acdb75d25ba902d83d0321369833"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c",
-      "bytes": 21560,
-      "sha256": "299dd8af0b705444b82103c6e7730ff3693ffcec6cdc3b7cc5a80841abfe4f24"
+      "blob": "80c403ec634117aae8d0d9e17ef33cf2f17b32db",
+      "bytes": 22614,
+      "sha256": "56c952f34a2435f57bc794a433f0e4ebae22855e48f6a5376ea04c85d5b7c83b"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-      "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28",
-      "bytes": 33375,
-      "sha256": "52abcd1328016552bb9481d7c45dd89a058110f9a2c67303b2955185b6466597"
+      "blob": "916ca3b18fc70fb220ec79e85fa62d3020d918c0",
+      "bytes": 34429,
+      "sha256": "17f95b2a9faca07dcaac83b23e9dd9cf3db19ed6f6aa5dff8609d39f408f2116"
     },
     {
       "path": "lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts",
@@ -109,21 +108,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
-      "bytes": 342630,
-      "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
+      "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
+      "bytes": 343198,
+      "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a",
+      "blob": "86c35585a450678026829964088b507368be2b15",
       "bytes": 233228,
-      "sha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611"
+      "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
+      "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
       "bytes": 119673,
-      "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
+      "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651"
     }
   ],
   "self": {
@@ -283,15 +282,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
-      "bytes": 123166,
-      "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
+      "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
+      "bytes": 123734,
+      "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-      "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
-      "bytes": 42121,
-      "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
+      "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
+      "bytes": 42689,
+      "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
@@ -559,9 +558,9 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     },
     {
-      "id": "HS1-FIX1",
+      "id": "HS1-FIX2",
       "key": "hs1",
-      "consumed": "Corrected current installer/recovery; exact current artifact blobs in this tree. Original pre-fix identity retained in historicalA2Identity.",
+      "consumed": "Current alias-corrected installer/recovery; current immutable artifact pins are explicit. FIX1 and earlier source identities remain historical.",
       "codePins": [
         {
           "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
@@ -572,9 +571,9 @@
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-          "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
-          "bytes": 123166,
-          "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
+          "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
+          "bytes": 123734,
+          "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
@@ -584,9 +583,9 @@
         },
         {
           "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-          "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
-          "bytes": 42121,
-          "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
+          "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
+          "bytes": 42689,
+          "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2"
         }
       ],
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration.",
@@ -634,8 +633,8 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "label": "hs1_function_pins",
-      "bytes": 5741,
-      "sha256": "cead3e453fdaf1f78aefc3244b241d20b19d82a9944aa5e769703a52cf37681a",
+      "bytes": 5775,
+      "sha256": "19fdf19370bdc73155784916f6cac6b51525b5a9a7eb025865177d179d4433b6",
       "sourceStart": 93309,
       "candidateStart": 36175,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
@@ -643,10 +642,10 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "label": "hs1_structure",
-      "bytes": 15466,
-      "sha256": "b3fdeac179dffaecd1f54cf0a0e24ca91bb1da56d48b49dea0d7b955d4788781",
-      "sourceStart": 99051,
-      "candidateStart": 41918,
+      "bytes": 16000,
+      "sha256": "40a6b674b8340f78e8ecb076422621254167ede2853ab9df1cc8ac64d77be240",
+      "sourceStart": 99085,
+      "candidateStart": 41952,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -654,8 +653,8 @@
       "label": "hs1_dependency_boundary",
       "bytes": 4514,
       "sha256": "1002664e821a48712d721a1ec535e2d3764fbcf2b721067bc569b27ff5046d9a",
-      "sourceStart": 114678,
-      "candidateStart": 57386,
+      "sourceStart": 115246,
+      "candidateStart": 57954,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -663,8 +662,8 @@
       "label": "hs1_effective_privileges",
       "bytes": 2177,
       "sha256": "77320fc284a5496fdd37b839a0187748bf0e2794266de049a59a292a425c12e7",
-      "sourceStart": 119193,
-      "candidateStart": 61902,
+      "sourceStart": 119761,
+      "candidateStart": 62470,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     }
   ],
@@ -691,169 +690,169 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "originalBytes": 160983,
-      "candidateBytes": 342630,
+      "candidateBytes": 343198,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5",
+      "candidateSha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6",
       "retained": [
         {
           "originalStart": 7915,
           "originalEnd": 70828,
-          "candidateStart": 71187,
-          "candidateEnd": 134100,
+          "candidateStart": 71755,
+          "candidateEnd": 134668,
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205"
         },
         {
           "originalStart": 70893,
           "originalEnd": 71098,
-          "candidateStart": 134100,
-          "candidateEnd": 134305,
+          "candidateStart": 134668,
+          "candidateEnd": 134873,
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec"
         },
         {
           "originalStart": 71109,
           "originalEnd": 71463,
-          "candidateStart": 134324,
-          "candidateEnd": 134678,
+          "candidateStart": 134892,
+          "candidateEnd": 135246,
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4"
         },
         {
           "originalStart": 71531,
           "originalEnd": 71745,
-          "candidateStart": 134678,
-          "candidateEnd": 134892,
+          "candidateStart": 135246,
+          "candidateEnd": 135460,
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4"
         },
         {
           "originalStart": 71756,
           "originalEnd": 72116,
-          "candidateStart": 134911,
-          "candidateEnd": 135271,
+          "candidateStart": 135479,
+          "candidateEnd": 135839,
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973"
         },
         {
           "originalStart": 72192,
           "originalEnd": 72430,
-          "candidateStart": 135271,
-          "candidateEnd": 135509,
+          "candidateStart": 135839,
+          "candidateEnd": 136077,
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23"
         },
         {
           "originalStart": 72441,
           "originalEnd": 72817,
-          "candidateStart": 135528,
-          "candidateEnd": 135904,
+          "candidateStart": 136096,
+          "candidateEnd": 136472,
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91"
         },
         {
           "originalStart": 72893,
           "originalEnd": 73131,
-          "candidateStart": 135904,
-          "candidateEnd": 136142,
+          "candidateStart": 136472,
+          "candidateEnd": 136710,
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc"
         },
         {
           "originalStart": 73142,
           "originalEnd": 73518,
-          "candidateStart": 136161,
-          "candidateEnd": 136537,
+          "candidateStart": 136729,
+          "candidateEnd": 137105,
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e"
         },
         {
           "originalStart": 73595,
           "originalEnd": 73836,
-          "candidateStart": 136537,
-          "candidateEnd": 136778,
+          "candidateStart": 137105,
+          "candidateEnd": 137346,
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94"
         },
         {
           "originalStart": 73847,
           "originalEnd": 74225,
-          "candidateStart": 136797,
-          "candidateEnd": 137175,
+          "candidateStart": 137365,
+          "candidateEnd": 137743,
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86"
         },
         {
           "originalStart": 74307,
           "originalEnd": 74563,
-          "candidateStart": 137175,
-          "candidateEnd": 137431,
+          "candidateStart": 137743,
+          "candidateEnd": 137999,
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c"
         },
         {
           "originalStart": 74574,
           "originalEnd": 74962,
-          "candidateStart": 137450,
-          "candidateEnd": 137838,
+          "candidateStart": 138018,
+          "candidateEnd": 138406,
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff"
         },
         {
           "originalStart": 75037,
           "originalEnd": 75272,
-          "candidateStart": 137838,
-          "candidateEnd": 138073,
+          "candidateStart": 138406,
+          "candidateEnd": 138641,
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5"
         },
         {
           "originalStart": 75283,
           "originalEnd": 75739,
-          "candidateStart": 138092,
-          "candidateEnd": 138548,
+          "candidateStart": 138660,
+          "candidateEnd": 139116,
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293"
         },
         {
           "originalStart": 75987,
           "originalEnd": 75988,
-          "candidateStart": 138548,
-          "candidateEnd": 138549,
+          "candidateStart": 139116,
+          "candidateEnd": 139117,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77198,
           "originalEnd": 77199,
-          "candidateStart": 138549,
-          "candidateEnd": 138550,
+          "candidateStart": 139117,
+          "candidateEnd": 139118,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77512,
           "originalEnd": 106302,
-          "candidateStart": 138550,
-          "candidateEnd": 167340,
+          "candidateStart": 139118,
+          "candidateEnd": 167908,
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d"
         },
         {
           "originalStart": 113882,
           "originalEnd": 136122,
-          "candidateStart": 200039,
-          "candidateEnd": 222279,
+          "candidateStart": 200607,
+          "candidateEnd": 222847,
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3"
         },
         {
           "originalStart": 136163,
           "originalEnd": 151653,
-          "candidateStart": 222322,
-          "candidateEnd": 237812,
+          "candidateStart": 222890,
+          "candidateEnd": 238380,
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db"
         },
         {
           "originalStart": 75739,
           "originalEnd": 75987,
-          "candidateStart": 242690,
-          "candidateEnd": 242938,
+          "candidateStart": 243258,
+          "candidateEnd": 243506,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         {
           "originalStart": 75988,
           "originalEnd": 77198,
-          "candidateStart": 243147,
-          "candidateEnd": 244357,
+          "candidateStart": 243715,
+          "candidateEnd": 244925,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         {
           "originalStart": 77199,
           "originalEnd": 77512,
-          "candidateStart": 237999,
-          "candidateEnd": 238312,
+          "candidateStart": 238567,
+          "candidateEnd": 238880,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         }
       ],
@@ -1172,284 +1171,284 @@
       "candidateInverse": [
         {
           "start": 0,
-          "end": 71187,
+          "end": 71755,
           "kind": "new",
-          "sha256": "499bfc3d6709a67e8acbc86363c62388b3a62a331a0d689f054957d5ee5428fb",
+          "sha256": "c410285af2ee52c743f4300b55e542db1f0c3dc5d476f585e483402999ca544c",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 71187,
-          "end": 134100,
+          "start": 71755,
+          "end": 134668,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
           "originalStart": 7915,
           "originalEnd": 70828
         },
         {
-          "start": 134100,
-          "end": 134305,
+          "start": 134668,
+          "end": 134873,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
           "originalStart": 70893,
           "originalEnd": 71098
         },
         {
-          "start": 134305,
-          "end": 134324,
+          "start": 134873,
+          "end": 134892,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 134324,
-          "end": 134678,
+          "start": 134892,
+          "end": 135246,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
           "originalStart": 71109,
           "originalEnd": 71463
         },
         {
-          "start": 134678,
-          "end": 134892,
+          "start": 135246,
+          "end": 135460,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
           "originalStart": 71531,
           "originalEnd": 71745
         },
         {
-          "start": 134892,
-          "end": 134911,
+          "start": 135460,
+          "end": 135479,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 134911,
-          "end": 135271,
+          "start": 135479,
+          "end": 135839,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
           "originalStart": 71756,
           "originalEnd": 72116
         },
         {
-          "start": 135271,
-          "end": 135509,
+          "start": 135839,
+          "end": 136077,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
           "originalStart": 72192,
           "originalEnd": 72430
         },
         {
-          "start": 135509,
-          "end": 135528,
+          "start": 136077,
+          "end": 136096,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 135528,
-          "end": 135904,
+          "start": 136096,
+          "end": 136472,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
           "originalStart": 72441,
           "originalEnd": 72817
         },
         {
-          "start": 135904,
-          "end": 136142,
+          "start": 136472,
+          "end": 136710,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
           "originalStart": 72893,
           "originalEnd": 73131
         },
         {
-          "start": 136142,
-          "end": 136161,
+          "start": 136710,
+          "end": 136729,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 136161,
-          "end": 136537,
+          "start": 136729,
+          "end": 137105,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
           "originalStart": 73142,
           "originalEnd": 73518
         },
         {
-          "start": 136537,
-          "end": 136778,
+          "start": 137105,
+          "end": 137346,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
           "originalStart": 73595,
           "originalEnd": 73836
         },
         {
-          "start": 136778,
-          "end": 136797,
+          "start": 137346,
+          "end": 137365,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 136797,
-          "end": 137175,
+          "start": 137365,
+          "end": 137743,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
           "originalStart": 73847,
           "originalEnd": 74225
         },
         {
-          "start": 137175,
-          "end": 137431,
+          "start": 137743,
+          "end": 137999,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
           "originalStart": 74307,
           "originalEnd": 74563
         },
         {
-          "start": 137431,
-          "end": 137450,
+          "start": 137999,
+          "end": 138018,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 137450,
-          "end": 137838,
+          "start": 138018,
+          "end": 138406,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
           "originalStart": 74574,
           "originalEnd": 74962
         },
         {
-          "start": 137838,
-          "end": 138073,
+          "start": 138406,
+          "end": 138641,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
           "originalStart": 75037,
           "originalEnd": 75272
         },
         {
-          "start": 138073,
-          "end": 138092,
+          "start": 138641,
+          "end": 138660,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 138092,
-          "end": 138548,
+          "start": 138660,
+          "end": 139116,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
           "originalStart": 75283,
           "originalEnd": 75739
         },
         {
-          "start": 138548,
-          "end": 138549,
+          "start": 139116,
+          "end": 139117,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 75987,
           "originalEnd": 75988
         },
         {
-          "start": 138549,
-          "end": 138550,
+          "start": 139117,
+          "end": 139118,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 77198,
           "originalEnd": 77199
         },
         {
-          "start": 138550,
-          "end": 167340,
+          "start": 139118,
+          "end": 167908,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
           "originalStart": 77512,
           "originalEnd": 106302
         },
         {
-          "start": 167340,
-          "end": 200039,
+          "start": 167908,
+          "end": 200607,
           "kind": "new",
-          "sha256": "6567806bca181baf12d21604de47ad291b55ae274e86154fba1f3a29c70caff4",
+          "sha256": "56d1b3acbbdf179c8b70dc794254707c9a7532db3f4fed3ba2c8504ce615d7b8",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 200039,
-          "end": 222279,
+          "start": 200607,
+          "end": 222847,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
           "originalStart": 113882,
           "originalEnd": 136122
         },
         {
-          "start": 222279,
-          "end": 222322,
+          "start": 222847,
+          "end": 222890,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 222322,
-          "end": 237812,
+          "start": 222890,
+          "end": 238380,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
           "originalStart": 136163,
           "originalEnd": 151653
         },
         {
-          "start": 237812,
-          "end": 237999,
+          "start": 238380,
+          "end": 238567,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 237999,
-          "end": 238312,
+          "start": 238567,
+          "end": 238880,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
           "originalStart": 77199,
           "originalEnd": 77512
         },
         {
-          "start": 238312,
-          "end": 242690,
+          "start": 238880,
+          "end": 243258,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 242690,
-          "end": 242938,
+          "start": 243258,
+          "end": 243506,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
           "originalStart": 75739,
           "originalEnd": 75987
         },
         {
-          "start": 242938,
-          "end": 243147,
+          "start": 243506,
+          "end": 243715,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         },
         {
-          "start": 243147,
-          "end": 244357,
+          "start": 243715,
+          "end": 244925,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
           "originalStart": 75988,
           "originalEnd": 77198
         },
         {
-          "start": 244357,
-          "end": 342630,
+          "start": 244925,
+          "end": 343198,
           "kind": "new",
-          "sha256": "006d32a3e5ea4bb2caa3216f4276d11186a250df121386dab46661de58010ad7",
+          "sha256": "0d30da25e4804afcfb06f4aaf9320d98e308accfb10a019f3b82c6c606429f6d",
           "sourceBlob": "7e6686da97cf42abaa340b81f07982ced48ecfcf"
         }
       ],
@@ -1473,7 +1472,7 @@
       "originalBytes": 6175,
       "candidateBytes": 119673,
       "originalSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
-      "candidateSha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707",
+      "candidateSha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651",
       "retained": [
         {
           "originalStart": 1470,
@@ -2405,7 +2404,7 @@
           "start": 0,
           "end": 113496,
           "kind": "new",
-          "sha256": "57da2f5cceccdc3605102bb85e6aba172dba44a4564b03eb8ecd84834af93003",
+          "sha256": "3cee5c4d1c5c6c99e715b3ac75575b5afb282ab0714e9d0e7a30d573c24038f0",
           "sourceBlob": "f212b46cc1cadbc192b77da53c6767cdf87b0749"
         },
         {
@@ -2945,7 +2944,7 @@
       "originalBytes": 199707,
       "candidateBytes": 233228,
       "originalSha256": "a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea",
-      "candidateSha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611",
+      "candidateSha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414",
       "retained": [
         {
           "originalStart": 91,
@@ -4046,7 +4045,7 @@
           "start": 21014,
           "end": 34160,
           "kind": "new",
-          "sha256": "2cc3495c589624564fe806ec0cbb82676b7bb709d3791185b5d937120adee57b",
+          "sha256": "e381a97ead381898d08c984b49b551972376058f8d5e45570122234647b3808e",
           "sourceBlob": "7cbb20039ebcfe004c1938575b103bcdfcc58ebc"
         },
         {
@@ -4421,8 +4420,8 @@
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
         "candidate": {
-          "start": 71187,
-          "end": 72197,
+          "start": 71755,
+          "end": 72765,
           "bytes": 1010,
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         }
@@ -4439,8 +4438,8 @@
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
         "candidate": {
-          "start": 72198,
-          "end": 73171,
+          "start": 72766,
+          "end": 73739,
           "bytes": 973,
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         }
@@ -4457,8 +4456,8 @@
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
         "candidate": {
-          "start": 73172,
-          "end": 74640,
+          "start": 73740,
+          "end": 75208,
           "bytes": 1468,
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         }
@@ -4475,8 +4474,8 @@
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
         "candidate": {
-          "start": 74641,
-          "end": 85837,
+          "start": 75209,
+          "end": 86405,
           "bytes": 11196,
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         }
@@ -4493,8 +4492,8 @@
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
         "candidate": {
-          "start": 85838,
-          "end": 86897,
+          "start": 86406,
+          "end": 87465,
           "bytes": 1059,
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         }
@@ -4511,8 +4510,8 @@
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
         "candidate": {
-          "start": 86898,
-          "end": 88037,
+          "start": 87466,
+          "end": 88605,
           "bytes": 1139,
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         }
@@ -4529,8 +4528,8 @@
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
         "candidate": {
-          "start": 88038,
-          "end": 88685,
+          "start": 88606,
+          "end": 89253,
           "bytes": 647,
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         }
@@ -4547,8 +4546,8 @@
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
         "candidate": {
-          "start": 88687,
-          "end": 93866,
+          "start": 89255,
+          "end": 94434,
           "bytes": 5179,
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         }
@@ -4565,8 +4564,8 @@
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
         "candidate": {
-          "start": 93867,
-          "end": 97430,
+          "start": 94435,
+          "end": 97998,
           "bytes": 3563,
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         }
@@ -4583,8 +4582,8 @@
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
         "candidate": {
-          "start": 97432,
-          "end": 104215,
+          "start": 98000,
+          "end": 104783,
           "bytes": 6783,
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         }
@@ -4601,8 +4600,8 @@
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
         "candidate": {
-          "start": 104216,
-          "end": 110281,
+          "start": 104784,
+          "end": 110849,
           "bytes": 6065,
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         }
@@ -4619,8 +4618,8 @@
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
         "candidate": {
-          "start": 110282,
-          "end": 116425,
+          "start": 110850,
+          "end": 116993,
           "bytes": 6143,
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         }
@@ -4637,8 +4636,8 @@
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
         "candidate": {
-          "start": 116426,
-          "end": 121004,
+          "start": 116994,
+          "end": 121572,
           "bytes": 4578,
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         }
@@ -4655,8 +4654,8 @@
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
         "candidate": {
-          "start": 121005,
-          "end": 122707,
+          "start": 121573,
+          "end": 123275,
           "bytes": 1702,
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         }
@@ -4673,8 +4672,8 @@
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
         "candidate": {
-          "start": 122708,
-          "end": 128953,
+          "start": 123276,
+          "end": 129521,
           "bytes": 6245,
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         }
@@ -4691,8 +4690,8 @@
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
         "candidate": {
-          "start": 133092,
-          "end": 134099,
+          "start": 133660,
+          "end": 134667,
           "bytes": 1007,
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         }
@@ -4709,8 +4708,8 @@
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         "candidate": {
-          "start": 242690,
-          "end": 242938,
+          "start": 243258,
+          "end": 243506,
           "bytes": 248,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         }
@@ -4727,8 +4726,8 @@
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         "candidate": {
-          "start": 243147,
-          "end": 244357,
+          "start": 243715,
+          "end": 244925,
           "bytes": 1210,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         }
@@ -4745,8 +4744,8 @@
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         "candidate": {
-          "start": 237999,
-          "end": 238312,
+          "start": 238567,
+          "end": 238880,
           "bytes": 313,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         }
@@ -4763,8 +4762,8 @@
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
         "candidate": {
-          "start": 138552,
-          "end": 149998,
+          "start": 139120,
+          "end": 150566,
           "bytes": 11446,
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         }
@@ -4781,8 +4780,8 @@
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
         "candidate": {
-          "start": 150000,
-          "end": 167338,
+          "start": 150568,
+          "end": 167906,
           "bytes": 17338,
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         }
@@ -4799,10 +4798,10 @@
           "sha256": "d66534a4b4493b8349cea92e7b7f1c388b63becbd401f23bfe171f785ae1e3e4"
         },
         "candidate": {
-          "start": 167340,
-          "end": 200039,
+          "start": 167908,
+          "end": 200607,
           "bytes": 32699,
-          "sha256": "6567806bca181baf12d21604de47ad291b55ae274e86154fba1f3a29c70caff4"
+          "sha256": "56d1b3acbbdf179c8b70dc794254707c9a7532db3f4fed3ba2c8504ce615d7b8"
         }
       },
       {
@@ -4817,8 +4816,8 @@
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
         "candidate": {
-          "start": 200211,
-          "end": 200871,
+          "start": 200779,
+          "end": 201439,
           "bytes": 660,
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         }
@@ -4835,8 +4834,8 @@
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
         "candidate": {
-          "start": 200872,
-          "end": 202029,
+          "start": 201440,
+          "end": 202597,
           "bytes": 1157,
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         }
@@ -4853,8 +4852,8 @@
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
         "candidate": {
-          "start": 202030,
-          "end": 205092,
+          "start": 202598,
+          "end": 205660,
           "bytes": 3062,
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         }
@@ -4871,8 +4870,8 @@
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
         "candidate": {
-          "start": 205093,
-          "end": 207751,
+          "start": 205661,
+          "end": 208319,
           "bytes": 2658,
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         }
@@ -4889,8 +4888,8 @@
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
         "candidate": {
-          "start": 207752,
-          "end": 213132,
+          "start": 208320,
+          "end": 213700,
           "bytes": 5380,
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         }
@@ -4907,8 +4906,8 @@
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
         "candidate": {
-          "start": 213133,
-          "end": 220843,
+          "start": 213701,
+          "end": 221411,
           "bytes": 7710,
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         }
@@ -4925,8 +4924,8 @@
           "sha256": "2eb370f96a4bc5b0ac28cc68adb4120b742613f8a10eb5ae5e502b7bbe3e902b"
         },
         "candidate": {
-          "start": 220845,
-          "end": 237812,
+          "start": 221413,
+          "end": 238380,
           "bytes": 16967,
           "sha256": "401c11c9349930123792180067813ce53f1cb54574a14d3265944b892b9de126"
         }
@@ -5480,7 +5479,7 @@
       "official_v3_jobs_private.s1_shape_v1"
     ],
     "unknownConsumerOrOwnerObjectRefused": true,
-    "originalHs1ArtifactChange": "Only selected CASE parentheses in hosted installation/recovery; original S1 remains byte exact and all hosted function declarations/bodies remain unchanged."
+    "originalHs1ArtifactChange": "Selected FIX1 CASE parentheses and FIX2 SQL-alias alpha-renaming in the hosted installation/recovery inventory; original S1 and all 14 hosted runtime function declarations/bodies remain byte exact."
   },
   "installSequence": [
     "Native/source composition prerequisite: real NOSUPER Creator creates designated restricted worker LOGIN and captures exact LOGIN/Creator/automatic membership OIDs before HM04 freeze; no real hosted provisioning executed here",
@@ -13669,5 +13668,1247 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     }
   },
-  "revisionPreservationScope": "Historical V1 to A2 mapping retained verbatim; current exact forward/inverse edits are reviewFix.changes."
+  "revisionPreservationScope": "Historical V1 to A2 mapping retained verbatim; current exact forward/inverse edits are reviewFix.changes.",
+  "reviewFix2": {
+    "id": "HS1/HM04-FIX2",
+    "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
+    "session": "/root/hs1_hm04_fix",
+    "replacementIdentity": "Continuation of the explicitly documented replacement for unreachable HS1 Generation1 and HM04 Generation4; no original-session or TL-PASS claim.",
+    "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+    "parentTree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "taskUrl": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449",
+    "historicalFailure": {
+      "ci": 4140,
+      "hostedJob": 131342004913,
+      "tests": 28,
+      "passed": 21,
+      "failed": 7,
+      "skipped": 0,
+      "cancelled": 0,
+      "observedSqlState": "42702",
+      "fullLogBytes": 174664,
+      "fullLogSha256": "97246a3d1b8558b4473bd9773d21947a93dcbb2faba6c0db8b7a8f365aec6f74",
+      "scope": "Parent failure only; candidate not executed."
+    },
+    "cause": "Declared PL/pgSQL records p/c/a collided with identically named SQL relation aliases in hs1_function_pins/hs1_structure. Only the SQL aliases and their qualified references are alpha-renamed, plus exact current HS1 source-digest rebinding.",
+    "aliasChangesPerCopy": {
+      "function_inventory": 2,
+      "class_inventory": 33,
+      "attribute_inventory": 4,
+      "queryAliasDeclarations": {
+        "p": 1,
+        "c": 11,
+        "a": 1
+      }
+    },
+    "changedPaths": [
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+    ],
+    "changedExistingLeaves": 13,
+    "unchangedLeaves": 9525,
+    "newLeaves": 0,
+    "deletedLeaves": 0,
+    "inventory": {
+      "base": {
+        "leaves": 9538,
+        "bytes": 1154460,
+        "sha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d"
+      },
+      "complement": {
+        "leaves": 9525,
+        "bytes": 1152894,
+        "sha256": "8bd46a1094463150dc176b653d814163af677a042817dcdffdcd161685b7718f"
+      }
+    },
+    "changes": [
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
+        "bytes": 123734,
+        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+        "old": {
+          "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+          "bytes": 123166,
+          "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
+        },
+        "inverse": [
+          {
+            "oldStart": 93596,
+            "oldEnd": 93597,
+            "newStart": 93596,
+            "newEnd": 93614,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 93638,
+            "oldEnd": 93639,
+            "newStart": 93655,
+            "newEnd": 93673,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 99863,
+            "oldEnd": 99864,
+            "newStart": 99897,
+            "newEnd": 99912,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99871,
+            "oldEnd": 99872,
+            "newStart": 99919,
+            "newEnd": 99934,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99943,
+            "oldEnd": 99944,
+            "newStart": 100005,
+            "newEnd": 100020,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99951,
+            "oldEnd": 99952,
+            "newStart": 100027,
+            "newEnd": 100042,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108740,
+            "oldEnd": 108741,
+            "newStart": 108830,
+            "newEnd": 108845,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108745,
+            "oldEnd": 108746,
+            "newStart": 108849,
+            "newEnd": 108864,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108771,
+            "oldEnd": 108772,
+            "newStart": 108889,
+            "newEnd": 108904,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108855,
+            "oldEnd": 108856,
+            "newStart": 108987,
+            "newEnd": 109006,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108882,
+            "oldEnd": 108883,
+            "newStart": 109032,
+            "newEnd": 109047,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108887,
+            "oldEnd": 108888,
+            "newStart": 109051,
+            "newEnd": 109066,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108893,
+            "oldEnd": 108894,
+            "newStart": 109071,
+            "newEnd": 109090,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108914,
+            "oldEnd": 108915,
+            "newStart": 109110,
+            "newEnd": 109125,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108957,
+            "oldEnd": 108958,
+            "newStart": 109167,
+            "newEnd": 109186,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108981,
+            "oldEnd": 108982,
+            "newStart": 109209,
+            "newEnd": 109228,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 109155,
+            "oldEnd": 109156,
+            "newStart": 109401,
+            "newEnd": 109416,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109237,
+            "oldEnd": 109238,
+            "newStart": 109497,
+            "newEnd": 109512,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109376,
+            "oldEnd": 109377,
+            "newStart": 109650,
+            "newEnd": 109665,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109381,
+            "oldEnd": 109382,
+            "newStart": 109669,
+            "newEnd": 109684,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109404,
+            "oldEnd": 109405,
+            "newStart": 109706,
+            "newEnd": 109721,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111536,
+            "oldEnd": 111537,
+            "newStart": 111852,
+            "newEnd": 111867,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111541,
+            "oldEnd": 111542,
+            "newStart": 111871,
+            "newEnd": 111886,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111568,
+            "oldEnd": 111569,
+            "newStart": 111912,
+            "newEnd": 111927,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112175,
+            "oldEnd": 112176,
+            "newStart": 112533,
+            "newEnd": 112548,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112180,
+            "oldEnd": 112181,
+            "newStart": 112552,
+            "newEnd": 112567,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112208,
+            "oldEnd": 112209,
+            "newStart": 112594,
+            "newEnd": 112609,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112339,
+            "oldEnd": 112340,
+            "newStart": 112739,
+            "newEnd": 112754,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112344,
+            "oldEnd": 112345,
+            "newStart": 112758,
+            "newEnd": 112773,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112372,
+            "oldEnd": 112373,
+            "newStart": 112800,
+            "newEnd": 112815,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112867,
+            "oldEnd": 112868,
+            "newStart": 113309,
+            "newEnd": 113324,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112872,
+            "oldEnd": 112873,
+            "newStart": 113328,
+            "newEnd": 113343,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112900,
+            "oldEnd": 112901,
+            "newStart": 113370,
+            "newEnd": 113385,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113028,
+            "oldEnd": 113029,
+            "newStart": 113512,
+            "newEnd": 113527,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113033,
+            "oldEnd": 113034,
+            "newStart": 113531,
+            "newEnd": 113546,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113233,
+            "oldEnd": 113234,
+            "newStart": 113745,
+            "newEnd": 113760,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114207,
+            "oldEnd": 114208,
+            "newStart": 114733,
+            "newEnd": 114748,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114212,
+            "oldEnd": 114213,
+            "newStart": 114752,
+            "newEnd": 114767,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114241,
+            "oldEnd": 114242,
+            "newStart": 114795,
+            "newEnd": 114810,
+            "before": "c",
+            "after": "class_inventory"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
+        "bytes": 42689,
+        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
+        "old": {
+          "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+          "bytes": 42121,
+          "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
+        },
+        "inverse": [
+          {
+            "oldStart": 8362,
+            "oldEnd": 8363,
+            "newStart": 8362,
+            "newEnd": 8380,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 8404,
+            "oldEnd": 8405,
+            "newStart": 8421,
+            "newEnd": 8439,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 14629,
+            "oldEnd": 14630,
+            "newStart": 14663,
+            "newEnd": 14678,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14637,
+            "oldEnd": 14638,
+            "newStart": 14685,
+            "newEnd": 14700,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14709,
+            "oldEnd": 14710,
+            "newStart": 14771,
+            "newEnd": 14786,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14717,
+            "oldEnd": 14718,
+            "newStart": 14793,
+            "newEnd": 14808,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23506,
+            "oldEnd": 23507,
+            "newStart": 23596,
+            "newEnd": 23611,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23511,
+            "oldEnd": 23512,
+            "newStart": 23615,
+            "newEnd": 23630,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23537,
+            "oldEnd": 23538,
+            "newStart": 23655,
+            "newEnd": 23670,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23621,
+            "oldEnd": 23622,
+            "newStart": 23753,
+            "newEnd": 23772,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23648,
+            "oldEnd": 23649,
+            "newStart": 23798,
+            "newEnd": 23813,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23653,
+            "oldEnd": 23654,
+            "newStart": 23817,
+            "newEnd": 23832,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23659,
+            "oldEnd": 23660,
+            "newStart": 23837,
+            "newEnd": 23856,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23680,
+            "oldEnd": 23681,
+            "newStart": 23876,
+            "newEnd": 23891,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23723,
+            "oldEnd": 23724,
+            "newStart": 23933,
+            "newEnd": 23952,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23747,
+            "oldEnd": 23748,
+            "newStart": 23975,
+            "newEnd": 23994,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23921,
+            "oldEnd": 23922,
+            "newStart": 24167,
+            "newEnd": 24182,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24003,
+            "oldEnd": 24004,
+            "newStart": 24263,
+            "newEnd": 24278,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24142,
+            "oldEnd": 24143,
+            "newStart": 24416,
+            "newEnd": 24431,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24147,
+            "oldEnd": 24148,
+            "newStart": 24435,
+            "newEnd": 24450,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24170,
+            "oldEnd": 24171,
+            "newStart": 24472,
+            "newEnd": 24487,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26302,
+            "oldEnd": 26303,
+            "newStart": 26618,
+            "newEnd": 26633,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26307,
+            "oldEnd": 26308,
+            "newStart": 26637,
+            "newEnd": 26652,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26334,
+            "oldEnd": 26335,
+            "newStart": 26678,
+            "newEnd": 26693,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26941,
+            "oldEnd": 26942,
+            "newStart": 27299,
+            "newEnd": 27314,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26946,
+            "oldEnd": 26947,
+            "newStart": 27318,
+            "newEnd": 27333,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26974,
+            "oldEnd": 26975,
+            "newStart": 27360,
+            "newEnd": 27375,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27105,
+            "oldEnd": 27106,
+            "newStart": 27505,
+            "newEnd": 27520,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27110,
+            "oldEnd": 27111,
+            "newStart": 27524,
+            "newEnd": 27539,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27138,
+            "oldEnd": 27139,
+            "newStart": 27566,
+            "newEnd": 27581,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27633,
+            "oldEnd": 27634,
+            "newStart": 28075,
+            "newEnd": 28090,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27638,
+            "oldEnd": 27639,
+            "newStart": 28094,
+            "newEnd": 28109,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27666,
+            "oldEnd": 27667,
+            "newStart": 28136,
+            "newEnd": 28151,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27794,
+            "oldEnd": 27795,
+            "newStart": 28278,
+            "newEnd": 28293,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27799,
+            "oldEnd": 27800,
+            "newStart": 28297,
+            "newEnd": 28312,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27999,
+            "oldEnd": 28000,
+            "newStart": 28511,
+            "newEnd": 28526,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 28973,
+            "oldEnd": 28974,
+            "newStart": 29499,
+            "newEnd": 29514,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 28978,
+            "oldEnd": 28979,
+            "newStart": 29518,
+            "newEnd": 29533,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 29007,
+            "oldEnd": 29008,
+            "newStart": 29561,
+            "newEnd": 29576,
+            "before": "c",
+            "after": "class_inventory"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
+        "bytes": 343198,
+        "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6",
+        "old": {
+          "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
+          "bytes": 342630,
+          "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
+        },
+        "inverse": [
+          {
+            "oldStart": 36462,
+            "oldEnd": 36463,
+            "newStart": 36462,
+            "newEnd": 36480,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 36504,
+            "oldEnd": 36505,
+            "newStart": 36521,
+            "newEnd": 36539,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 42730,
+            "oldEnd": 42731,
+            "newStart": 42764,
+            "newEnd": 42779,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42738,
+            "oldEnd": 42739,
+            "newStart": 42786,
+            "newEnd": 42801,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42810,
+            "oldEnd": 42811,
+            "newStart": 42872,
+            "newEnd": 42887,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42818,
+            "oldEnd": 42819,
+            "newStart": 42894,
+            "newEnd": 42909,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51607,
+            "oldEnd": 51608,
+            "newStart": 51697,
+            "newEnd": 51712,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51612,
+            "oldEnd": 51613,
+            "newStart": 51716,
+            "newEnd": 51731,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51638,
+            "oldEnd": 51639,
+            "newStart": 51756,
+            "newEnd": 51771,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51722,
+            "oldEnd": 51723,
+            "newStart": 51854,
+            "newEnd": 51873,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51749,
+            "oldEnd": 51750,
+            "newStart": 51899,
+            "newEnd": 51914,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51754,
+            "oldEnd": 51755,
+            "newStart": 51918,
+            "newEnd": 51933,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51760,
+            "oldEnd": 51761,
+            "newStart": 51938,
+            "newEnd": 51957,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51781,
+            "oldEnd": 51782,
+            "newStart": 51977,
+            "newEnd": 51992,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51824,
+            "oldEnd": 51825,
+            "newStart": 52034,
+            "newEnd": 52053,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51848,
+            "oldEnd": 51849,
+            "newStart": 52076,
+            "newEnd": 52095,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 52022,
+            "oldEnd": 52023,
+            "newStart": 52268,
+            "newEnd": 52283,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52104,
+            "oldEnd": 52105,
+            "newStart": 52364,
+            "newEnd": 52379,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52243,
+            "oldEnd": 52244,
+            "newStart": 52517,
+            "newEnd": 52532,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52248,
+            "oldEnd": 52249,
+            "newStart": 52536,
+            "newEnd": 52551,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52271,
+            "oldEnd": 52272,
+            "newStart": 52573,
+            "newEnd": 52588,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54403,
+            "oldEnd": 54404,
+            "newStart": 54719,
+            "newEnd": 54734,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54408,
+            "oldEnd": 54409,
+            "newStart": 54738,
+            "newEnd": 54753,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54435,
+            "oldEnd": 54436,
+            "newStart": 54779,
+            "newEnd": 54794,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55042,
+            "oldEnd": 55043,
+            "newStart": 55400,
+            "newEnd": 55415,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55047,
+            "oldEnd": 55048,
+            "newStart": 55419,
+            "newEnd": 55434,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55075,
+            "oldEnd": 55076,
+            "newStart": 55461,
+            "newEnd": 55476,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55206,
+            "oldEnd": 55207,
+            "newStart": 55606,
+            "newEnd": 55621,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55211,
+            "oldEnd": 55212,
+            "newStart": 55625,
+            "newEnd": 55640,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55239,
+            "oldEnd": 55240,
+            "newStart": 55667,
+            "newEnd": 55682,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55734,
+            "oldEnd": 55735,
+            "newStart": 56176,
+            "newEnd": 56191,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55739,
+            "oldEnd": 55740,
+            "newStart": 56195,
+            "newEnd": 56210,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55767,
+            "oldEnd": 55768,
+            "newStart": 56237,
+            "newEnd": 56252,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55895,
+            "oldEnd": 55896,
+            "newStart": 56379,
+            "newEnd": 56394,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55900,
+            "oldEnd": 55901,
+            "newStart": 56398,
+            "newEnd": 56413,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 56100,
+            "oldEnd": 56101,
+            "newStart": 56612,
+            "newEnd": 56627,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57074,
+            "oldEnd": 57075,
+            "newStart": 57600,
+            "newEnd": 57615,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57079,
+            "oldEnd": 57080,
+            "newStart": 57619,
+            "newEnd": 57634,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57108,
+            "oldEnd": 57109,
+            "newStart": 57662,
+            "newEnd": 57677,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 169130,
+            "oldEnd": 169194,
+            "newStart": 169698,
+            "newEnd": 169762,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 291394,
+            "oldEnd": 291458,
+            "newStart": 291962,
+            "newEnd": 292026,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 293266,
+            "oldEnd": 293330,
+            "newStart": 293834,
+            "newEnd": 293898,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
+        "bytes": 119673,
+        "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651",
+        "old": {
+          "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
+          "bytes": 119673,
+          "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
+        },
+        "inverse": [
+          {
+            "oldStart": 17517,
+            "oldEnd": 17581,
+            "newStart": 17517,
+            "newEnd": 17581,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 65969,
+            "oldEnd": 66033,
+            "newStart": 65969,
+            "newEnd": 66033,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+        "mode": "100644",
+        "blob": "86c35585a450678026829964088b507368be2b15",
+        "bytes": 233228,
+        "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414",
+        "old": {
+          "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a",
+          "bytes": 233228,
+          "sha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611"
+        },
+        "inverse": [
+          {
+            "oldStart": 23647,
+            "oldEnd": 23711,
+            "newStart": 23647,
+            "newEnd": 23711,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      }
+    ],
+    "documentation": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d",
+        "bytes": 23129,
+        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+        "old": {
+          "blob": "a96a5783544c8494f337552eab3fe66e50df4c47",
+          "bytes": 22075,
+          "sha256": "f595552b95f0e94dead0688d1d7663f72cf2e72f658b15f4f95e8860a93c004d"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "e031a550960c2a5b2a313586e1732eda8f584c88",
+        "bytes": 21219,
+        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+        "old": {
+          "blob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63",
+          "bytes": 20165,
+          "sha256": "1b97529d170323993608367b031c9e88d36d6f005c64a75aa2659a1e9b02a24d"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "34c82c92f2f056f9b08475481493d65926b5e24c",
+        "bytes": 13120,
+        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+        "old": {
+          "blob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f",
+          "bytes": 12066,
+          "sha256": "7c5d27060102251486610f4430a69a21ba2778894d0fc38a26af84e711f00668"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+        "mode": "100644",
+        "blob": "916ca3b18fc70fb220ec79e85fa62d3020d918c0",
+        "bytes": 34429,
+        "sha256": "17f95b2a9faca07dcaac83b23e9dd9cf3db19ed6f6aa5dff8609d39f408f2116",
+        "old": {
+          "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28",
+          "bytes": 33375,
+          "sha256": "52abcd1328016552bb9481d7c45dd89a058110f9a2c67303b2955185b6466597"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "a4b8ef43620933e5e293cbaed68d08138457125e",
+        "bytes": 53970,
+        "sha256": "8f7c672f7feca85cc5206f0c3cdd36d702b3acdb75d25ba902d83d0321369833",
+        "old": {
+          "blob": "a7abf68711a891b6934662990e23a6637aeede52",
+          "bytes": 52916,
+          "sha256": "0b66668395463bc705540675a128fe1fb10a42021e7ce247bf39d2c1914be261"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "80c403ec634117aae8d0d9e17ef33cf2f17b32db",
+        "bytes": 22614,
+        "sha256": "56c952f34a2435f57bc794a433f0e4ebae22855e48f6a5376ea04c85d5b7c83b",
+        "old": {
+          "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c",
+          "bytes": 21560,
+          "sha256": "299dd8af0b705444b82103c6e7730ff3693ffcec6cdc3b7cc5a80841abfe4f24"
+        },
+        "priorRawTextExactPrefix": true
+      }
+    ],
+    "preserved": {
+      "all14Hs1RuntimeFunctions": true,
+      "hs1NativeExact": true,
+      "hs1Groups": 18,
+      "hm04Groups": 31,
+      "predicatesAndExpectedValues": true,
+      "permissionsAndRecovery": true,
+      "allBudgetsQuotasAndCleanup": true,
+      "originalVariableConflictBehavior": true
+    },
+    "downstream": "Root must rebind current COMPOSED/HDP consumers and integrate the disjoint HMT FIX2 before complete new-head review/runtime/CI gates.",
+    "execution": {
+      "project": false,
+      "parser": false,
+      "compiler": false,
+      "SQL": false,
+      "native": false,
+      "tests": false,
+      "CI": false,
+      "hosted": false,
+      "sourceGET": false,
+      "refs": false,
+      "ready": false,
+      "merge": false
+    },
+    "stops": {
+      "denied917ActionRepeated": false,
+      "issue1131": "NOT_REQUIRED; untouched"
+    },
+    "historyRule": "Earlier reviewFix, sourceVersionHistory, historicalV1/A2 identities and document prefixes remain historical and unchanged; this field and current artifacts/mappings describe FIX2.",
+    "previousManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "ref": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "blob": "620a9a0e21179067870b248bdbeffe20eb230188",
+      "bytes": 600444,
+      "sha256": "304763aa6adf70e63f77e35e11fa061243cd0b3c211b17808169c389ebec387f"
+    }
+  }
 }

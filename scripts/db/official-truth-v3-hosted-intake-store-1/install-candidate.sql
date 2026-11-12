@@ -565,7 +565,7 @@ DECLARE x record; p pg_catalog.pg_proc%ROWTYPE;
   owner_id oid := 'ot_v3_intake_owner'::pg_catalog.regrole;
   caller_id oid := 'ot_v3_intake_caller'::pg_catalog.regrole; expected_types oid[]; actual_types oid[];
 BEGIN
-  IF (SELECT count(*) FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+  IF (SELECT count(*) FROM pg_catalog.pg_proc function_inventory JOIN pg_catalog.pg_namespace n ON n.oid=function_inventory.pronamespace
     WHERE n.nspname IN ('official_v3_intake_private','official_v3_intake_api'))<>14 THEN
     RAISE EXCEPTION 'hs1 function inventory mismatch' USING ERRCODE='P7312';
   END IF;
@@ -624,8 +624,8 @@ BEGIN
   IF (SELECT count(*) FROM pg_catalog.pg_namespace n WHERE n.oid IN (private_id,api_id) AND n.nspowner=owner_id)<>2
     OR EXISTS (SELECT 1 FROM pg_catalog.pg_default_acl d WHERE d.defaclrole IN (owner_id,caller_id) OR d.defaclnamespace IN (private_id,api_id))
     OR pg_catalog.has_database_privilege(owner_id,current_database(),'CREATE')
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_class c WHERE c.relnamespace=api_id)
-    OR (SELECT count(*) FROM pg_catalog.pg_class c WHERE c.relnamespace=private_id)<>6
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_class class_inventory WHERE class_inventory.relnamespace=api_id)
+    OR (SELECT count(*) FROM pg_catalog.pg_class class_inventory WHERE class_inventory.relnamespace=private_id)<>6
     OR (SELECT count(*) FROM pg_catalog.pg_type t WHERE t.typnamespace=private_id)<>6
     OR EXISTS (SELECT 1 FROM pg_catalog.pg_type t WHERE t.typnamespace=api_id) THEN
     RAISE EXCEPTION 'hs1 schema/class/type inventory mismatch' USING ERRCODE='P7312';
@@ -740,15 +740,15 @@ BEGIN
       RAISE EXCEPTION 'hs1 exact column mismatch' USING ERRCODE='P7312';
     END IF;
   END LOOP;
-  IF (SELECT count(*) FROM pg_catalog.pg_attrdef d JOIN pg_catalog.pg_class c ON c.oid=d.adrelid
-    WHERE c.relnamespace=private_id)<>2 OR EXISTS (
-    SELECT 1 FROM pg_catalog.pg_attribute a JOIN pg_catalog.pg_class c ON c.oid=a.attrelid
-    WHERE c.relnamespace IN (private_id,api_id) AND (a.attacl IS NOT NULL OR a.attisdropped)) THEN
+  IF (SELECT count(*) FROM pg_catalog.pg_attrdef d JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=d.adrelid
+    WHERE class_inventory.relnamespace=private_id)<>2 OR EXISTS (
+    SELECT 1 FROM pg_catalog.pg_attribute attribute_inventory JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=attribute_inventory.attrelid
+    WHERE class_inventory.relnamespace IN (private_id,api_id) AND (attribute_inventory.attacl IS NOT NULL OR attribute_inventory.attisdropped)) THEN
     RAISE EXCEPTION 'hs1 column/default inventory mismatch' USING ERRCODE='P7312';
   END IF;
-  SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(c.relname,k.contype,
-      pg_catalog.pg_get_constraintdef(k.oid,false)) ORDER BY c.relname,k.contype,pg_catalog.pg_get_constraintdef(k.oid,false)) INTO actual
-    FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid WHERE c.relnamespace=private_id;
+  SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(class_inventory.relname,k.contype,
+      pg_catalog.pg_get_constraintdef(k.oid,false)) ORDER BY class_inventory.relname,k.contype,pg_catalog.pg_get_constraintdef(k.oid,false)) INTO actual
+    FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid WHERE class_inventory.relnamespace=private_id;
   SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(v.table_name,v.kind,v.definition)
     ORDER BY v.table_name,v.kind,v.definition) INTO expected FROM (VALUES
     ('operations_v1','p','PRIMARY KEY (operation_id)'),
@@ -769,28 +769,28 @@ BEGIN
     ('completions_v1','f','FOREIGN KEY (operation_id, generation) REFERENCES official_v3_intake_private.reservations_v1(operation_id, generation)')
   ) v(table_name,kind,definition);
   IF actual IS DISTINCT FROM expected OR EXISTS (
-    SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid
-    WHERE c.relnamespace=private_id AND (k.connamespace<>private_id OR k.condeferrable OR k.condeferred
+    SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid
+    WHERE class_inventory.relnamespace=private_id AND (k.connamespace<>private_id OR k.condeferrable OR k.condeferred
       OR NOT k.convalidated OR NOT k.conislocal OR k.coninhcount<>0 OR k.conparentid<>0
       OR k.contype='c' AND k.connoinherit
       OR k.contype='f' AND (k.confupdtype<>'a' OR k.confdeltype<>'a' OR k.confmatchtype<>'s'))) THEN
     RAISE EXCEPTION 'hs1 exact constraint mismatch' USING ERRCODE='P7312';
   END IF;
   SELECT p.oid INTO immutable_id FROM pg_catalog.pg_proc p WHERE p.pronamespace=private_id AND p.proname='immutable_v1';
-  IF (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND NOT g.tgisinternal)<>3
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND NOT g.tgisinternal AND
+  IF (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND NOT g.tgisinternal)<>3
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND NOT g.tgisinternal AND
         (g.tgname<>'immutable_v1' OR g.tgfoid<>immutable_id OR g.tgtype<>27 OR g.tgenabled<>'O'
           OR g.tgconstraint<>0 OR g.tgdeferrable OR g.tginitdeferred OR g.tgnargs<>0
           OR g.tgargs<>''::bytea OR g.tgattr<>''::pg_catalog.int2vector OR g.tgqual IS NOT NULL
           OR g.tgoldtable IS NOT NULL OR g.tgnewtable IS NOT NULL OR g.tgparentid<>0))
-    OR (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND g.tgisinternal)<>12
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
+    OR (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND g.tgisinternal)<>12
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
       JOIN pg_catalog.pg_proc p ON p.oid=g.tgfoid JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
       LEFT JOIN pg_catalog.pg_constraint k ON k.oid=g.tgconstraint
-      WHERE c.relnamespace=private_id AND g.tgisinternal AND
+      WHERE class_inventory.relnamespace=private_id AND g.tgisinternal AND
         (n.nspname<>'pg_catalog' OR k.contype IS DISTINCT FROM 'f' OR k.connamespace<>private_id
           OR g.tgenabled<>'O' OR g.tgdeferrable OR g.tginitdeferred OR g.tgnargs<>0
           OR g.tgargs<>''::bytea OR g.tgattr<>''::pg_catalog.int2vector OR g.tgqual IS NOT NULL
@@ -799,8 +799,8 @@ BEGIN
             OR p.proname='RI_FKey_check_upd' AND g.tgtype=17 AND g.tgrelid=k.conrelid AND g.tgconstrrelid=k.confrelid
             OR p.proname='RI_FKey_noaction_del' AND g.tgtype=9 AND g.tgrelid=k.confrelid AND g.tgconstrrelid=k.conrelid
             OR p.proname='RI_FKey_noaction_upd' AND g.tgtype=17 AND g.tgrelid=k.confrelid AND g.tgconstrrelid=k.conrelid)))
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid
-      WHERE c.relnamespace=private_id AND k.contype='f' AND
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid
+      WHERE class_inventory.relnamespace=private_id AND k.contype='f' AND
         (SELECT count(DISTINCT g.tgfoid) FROM pg_catalog.pg_trigger g WHERE g.tgconstraint=k.oid AND g.tgisinternal)<>4) THEN
     RAISE EXCEPTION 'hs1 exact trigger mismatch' USING ERRCODE='P7312';
   END IF;

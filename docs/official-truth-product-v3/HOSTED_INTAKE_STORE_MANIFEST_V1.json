@@ -6,7 +6,7 @@
   "generation": "replacement after original Generation1",
   "sessionKind": "documented replacement",
   "mode": "NORMAL",
-  "soleParent": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+  "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
   "task": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826971069",
     "bodyUtf8Bytes": 2624,
@@ -50,16 +50,16 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "mode": "100644",
-      "bytes": 123166,
-      "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
-      "gitBlob": "f93c254231af405101492cde0a6947bf4d4d4b89"
+      "bytes": 123734,
+      "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+      "gitBlob": "290e0a725477113086c2170a90d74f3a7acd4be8"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
       "mode": "100644",
-      "bytes": 42121,
-      "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2",
-      "gitBlob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f"
+      "bytes": 42689,
+      "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
+      "gitBlob": "828ab2b2ded83acdeb45d71454049d655e9af184"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
@@ -78,23 +78,23 @@
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
       "mode": "100644",
-      "bytes": 22075,
-      "sha256": "f595552b95f0e94dead0688d1d7663f72cf2e72f658b15f4f95e8860a93c004d",
-      "gitBlob": "a96a5783544c8494f337552eab3fe66e50df4c47"
+      "bytes": 23129,
+      "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+      "gitBlob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "mode": "100644",
-      "bytes": 20165,
-      "sha256": "1b97529d170323993608367b031c9e88d36d6f005c64a75aa2659a1e9b02a24d",
-      "gitBlob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63"
+      "bytes": 21219,
+      "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+      "gitBlob": "e031a550960c2a5b2a313586e1732eda8f584c88"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "mode": "100644",
-      "bytes": 12066,
-      "sha256": "7c5d27060102251486610f4430a69a21ba2778894d0fc38a26af84e711f00668",
-      "gitBlob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f"
+      "bytes": 13120,
+      "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+      "gitBlob": "34c82c92f2f056f9b08475481493d65926b5e24c"
     }
   ],
   "self": {
@@ -103,8 +103,8 @@
     "identity": "Manifest UTF8 bytes/SHA256/Git blob are provided by immutable delivery receipt and enclosing Git tree. No circular self-digest is embedded."
   },
   "baseTreeProof": {
-    "parent": "a686e608f597ffa82d44fc9d3992b9b566b89688",
-    "tree": "b4f54fad7d9981f8b7676b42b271bf6740a17f48",
+    "parent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+    "tree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
     "recursiveReadTruncated": false,
     "leafCount": 9538,
     "modifiedPaths": [
@@ -120,16 +120,15 @@
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
       "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
       "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
       "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
     ],
-    "expectedModifiedLeaves": 14,
-    "expectedComplementLeaves": 9524,
+    "expectedModifiedLeaves": 13,
+    "expectedComplementLeaves": 9525,
     "expectedNewLeaves": 0,
     "expectedDeletedLeaves": 0,
     "expectedFinalLeafCount": 9538,
     "canonicalLeafFormat": "ASCII path sort; mode SPACE type SPACE Git object SHA TAB path LF",
-    "complementSha256": "b744aafe3929bdf6510a9f7140415c092da9f14cd3dedc769a6241989eaa1a1b",
+    "complementSha256": "8bd46a1094463150dc176b653d814163af677a042817dcdffdcd161685b7718f",
     "deliveryReadbackRequired": "Actual complete final tree and all raw changed files; final commit/tree and manifest self pin are external."
   },
   "preservation": {
@@ -862,9 +861,9 @@
       },
       {
         "start": 93057,
-        "end": 123166,
+        "end": 123734,
         "kind": "new",
-        "sha256": "4981b59c480e4860e65d6212e132c3a63a8625543686a4d1d73ccbca37256734"
+        "sha256": "be5d6e5122af66071b2917a0ef8d6ed7b3859011ff03323619fac4bcd292d80c"
       }
     ],
     "tables": [
@@ -1271,17 +1270,40 @@
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
         "mode": "100644",
-        "bytes": 123166,
-        "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
-        "gitBlob": "f93c254231af405101492cde0a6947bf4d4d4b89"
+        "bytes": 123734,
+        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+        "gitBlob": "290e0a725477113086c2170a90d74f3a7acd4be8"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
         "mode": "100644",
-        "bytes": 42121,
-        "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2",
-        "gitBlob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f"
+        "bytes": 42689,
+        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
+        "gitBlob": "828ab2b2ded83acdeb45d71454049d655e9af184"
       },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "bytes": 23129,
+        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+        "gitBlob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "bytes": 21219,
+        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+        "gitBlob": "e031a550960c2a5b2a313586e1732eda8f584c88"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "mode": "100644",
+        "bytes": 13120,
+        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+        "gitBlob": "34c82c92f2f056f9b08475481493d65926b5e24c"
+      }
+    ],
+    "unchangedArtifactPins": [
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
         "mode": "100644",
@@ -1289,29 +1311,6 @@
         "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21",
         "gitBlob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916"
       },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-        "mode": "100644",
-        "bytes": 22075,
-        "sha256": "f595552b95f0e94dead0688d1d7663f72cf2e72f658b15f4f95e8860a93c004d",
-        "gitBlob": "a96a5783544c8494f337552eab3fe66e50df4c47"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
-        "mode": "100644",
-        "bytes": 20165,
-        "sha256": "1b97529d170323993608367b031c9e88d36d6f005c64a75aa2659a1e9b02a24d",
-        "gitBlob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
-        "mode": "100644",
-        "bytes": 12066,
-        "sha256": "7c5d27060102251486610f4430a69a21ba2778894d0fc38a26af84e711f00668",
-        "gitBlob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f"
-      }
-    ],
-    "unchangedArtifactPins": [
       {
         "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
         "mode": "100644",
@@ -1416,7 +1415,7 @@
     "originalS1RollbackExecuted": false,
     "sharedWireDuplicateColumnRefusalUnchanged": true
   },
-  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX1",
+  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_REPLACEMENT_FIX2",
   "scopeContinuity": {
     "issue917": "human evidence scoped; denied action neither repeated nor rerouted",
     "issue1131": "NOT_REQUIRED and untouched",
@@ -1453,7 +1452,7 @@
       "immutable Git blobs/tree/commit and raw readback"
     ]
   },
-  "sourceRevision": "HS1/HM04-FIX1",
+  "sourceRevision": "HS1/HM04-FIX2",
   "originalInstallationTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822245339",
     "bodyUtf8Bytes": 11579,
@@ -1473,7 +1472,6 @@
     "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
     "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
     "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-    "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
     "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
   ],
   "label1": {
@@ -2057,5 +2055,1247 @@
       "meaning": "Changed raw source blobs read back exactly. Every unchanged leaf is required to match the complete parent-tree complement; final observed tree and manifest self pins are bound by the immutable delivery receipt. No parser/native/SQL/test execution."
     }
   },
-  "label1Scope": "Historical SOURCE-V1 to SOURCE-V2/LABEL1 mapping retained verbatim; current fix is reviewFix."
+  "label1Scope": "Historical SOURCE-V1 to SOURCE-V2/LABEL1 mapping retained verbatim; current fix is reviewFix.",
+  "reviewFix2": {
+    "id": "HS1/HM04-FIX2",
+    "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
+    "session": "/root/hs1_hm04_fix",
+    "replacementIdentity": "Continuation of the explicitly documented replacement for unreachable HS1 Generation1 and HM04 Generation4; no original-session or TL-PASS claim.",
+    "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+    "parentTree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+    "taskUrl": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449",
+    "historicalFailure": {
+      "ci": 4140,
+      "hostedJob": 131342004913,
+      "tests": 28,
+      "passed": 21,
+      "failed": 7,
+      "skipped": 0,
+      "cancelled": 0,
+      "observedSqlState": "42702",
+      "fullLogBytes": 174664,
+      "fullLogSha256": "97246a3d1b8558b4473bd9773d21947a93dcbb2faba6c0db8b7a8f365aec6f74",
+      "scope": "Parent failure only; candidate not executed."
+    },
+    "cause": "Declared PL/pgSQL records p/c/a collided with identically named SQL relation aliases in hs1_function_pins/hs1_structure. Only the SQL aliases and their qualified references are alpha-renamed, plus exact current HS1 source-digest rebinding.",
+    "aliasChangesPerCopy": {
+      "function_inventory": 2,
+      "class_inventory": 33,
+      "attribute_inventory": 4,
+      "queryAliasDeclarations": {
+        "p": 1,
+        "c": 11,
+        "a": 1
+      }
+    },
+    "changedPaths": [
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+    ],
+    "changedExistingLeaves": 13,
+    "unchangedLeaves": 9525,
+    "newLeaves": 0,
+    "deletedLeaves": 0,
+    "inventory": {
+      "base": {
+        "leaves": 9538,
+        "bytes": 1154460,
+        "sha256": "0a2d8a912721d29a478c94cd6f4e8823835aa44a2a4ab53f55d4e15eb4b0b35d"
+      },
+      "complement": {
+        "leaves": 9525,
+        "bytes": 1152894,
+        "sha256": "8bd46a1094463150dc176b653d814163af677a042817dcdffdcd161685b7718f"
+      }
+    },
+    "changes": [
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
+        "bytes": 123734,
+        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+        "old": {
+          "blob": "f93c254231af405101492cde0a6947bf4d4d4b89",
+          "bytes": 123166,
+          "sha256": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"
+        },
+        "inverse": [
+          {
+            "oldStart": 93596,
+            "oldEnd": 93597,
+            "newStart": 93596,
+            "newEnd": 93614,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 93638,
+            "oldEnd": 93639,
+            "newStart": 93655,
+            "newEnd": 93673,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 99863,
+            "oldEnd": 99864,
+            "newStart": 99897,
+            "newEnd": 99912,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99871,
+            "oldEnd": 99872,
+            "newStart": 99919,
+            "newEnd": 99934,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99943,
+            "oldEnd": 99944,
+            "newStart": 100005,
+            "newEnd": 100020,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 99951,
+            "oldEnd": 99952,
+            "newStart": 100027,
+            "newEnd": 100042,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108740,
+            "oldEnd": 108741,
+            "newStart": 108830,
+            "newEnd": 108845,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108745,
+            "oldEnd": 108746,
+            "newStart": 108849,
+            "newEnd": 108864,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108771,
+            "oldEnd": 108772,
+            "newStart": 108889,
+            "newEnd": 108904,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108855,
+            "oldEnd": 108856,
+            "newStart": 108987,
+            "newEnd": 109006,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108882,
+            "oldEnd": 108883,
+            "newStart": 109032,
+            "newEnd": 109047,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108887,
+            "oldEnd": 108888,
+            "newStart": 109051,
+            "newEnd": 109066,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108893,
+            "oldEnd": 108894,
+            "newStart": 109071,
+            "newEnd": 109090,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108914,
+            "oldEnd": 108915,
+            "newStart": 109110,
+            "newEnd": 109125,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 108957,
+            "oldEnd": 108958,
+            "newStart": 109167,
+            "newEnd": 109186,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 108981,
+            "oldEnd": 108982,
+            "newStart": 109209,
+            "newEnd": 109228,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 109155,
+            "oldEnd": 109156,
+            "newStart": 109401,
+            "newEnd": 109416,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109237,
+            "oldEnd": 109238,
+            "newStart": 109497,
+            "newEnd": 109512,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109376,
+            "oldEnd": 109377,
+            "newStart": 109650,
+            "newEnd": 109665,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109381,
+            "oldEnd": 109382,
+            "newStart": 109669,
+            "newEnd": 109684,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 109404,
+            "oldEnd": 109405,
+            "newStart": 109706,
+            "newEnd": 109721,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111536,
+            "oldEnd": 111537,
+            "newStart": 111852,
+            "newEnd": 111867,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111541,
+            "oldEnd": 111542,
+            "newStart": 111871,
+            "newEnd": 111886,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 111568,
+            "oldEnd": 111569,
+            "newStart": 111912,
+            "newEnd": 111927,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112175,
+            "oldEnd": 112176,
+            "newStart": 112533,
+            "newEnd": 112548,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112180,
+            "oldEnd": 112181,
+            "newStart": 112552,
+            "newEnd": 112567,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112208,
+            "oldEnd": 112209,
+            "newStart": 112594,
+            "newEnd": 112609,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112339,
+            "oldEnd": 112340,
+            "newStart": 112739,
+            "newEnd": 112754,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112344,
+            "oldEnd": 112345,
+            "newStart": 112758,
+            "newEnd": 112773,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112372,
+            "oldEnd": 112373,
+            "newStart": 112800,
+            "newEnd": 112815,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112867,
+            "oldEnd": 112868,
+            "newStart": 113309,
+            "newEnd": 113324,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112872,
+            "oldEnd": 112873,
+            "newStart": 113328,
+            "newEnd": 113343,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 112900,
+            "oldEnd": 112901,
+            "newStart": 113370,
+            "newEnd": 113385,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113028,
+            "oldEnd": 113029,
+            "newStart": 113512,
+            "newEnd": 113527,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113033,
+            "oldEnd": 113034,
+            "newStart": 113531,
+            "newEnd": 113546,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 113233,
+            "oldEnd": 113234,
+            "newStart": 113745,
+            "newEnd": 113760,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114207,
+            "oldEnd": 114208,
+            "newStart": 114733,
+            "newEnd": 114748,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114212,
+            "oldEnd": 114213,
+            "newStart": 114752,
+            "newEnd": 114767,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 114241,
+            "oldEnd": 114242,
+            "newStart": 114795,
+            "newEnd": 114810,
+            "before": "c",
+            "after": "class_inventory"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
+        "bytes": 42689,
+        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
+        "old": {
+          "blob": "e87024ebe82102e4756ee0a87ccb966c9de1b75f",
+          "bytes": 42121,
+          "sha256": "2447da3a3e269cf74e5c39e868399147560c6b1146b1bafb39a1cf1bcd7b7aa2"
+        },
+        "inverse": [
+          {
+            "oldStart": 8362,
+            "oldEnd": 8363,
+            "newStart": 8362,
+            "newEnd": 8380,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 8404,
+            "oldEnd": 8405,
+            "newStart": 8421,
+            "newEnd": 8439,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 14629,
+            "oldEnd": 14630,
+            "newStart": 14663,
+            "newEnd": 14678,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14637,
+            "oldEnd": 14638,
+            "newStart": 14685,
+            "newEnd": 14700,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14709,
+            "oldEnd": 14710,
+            "newStart": 14771,
+            "newEnd": 14786,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 14717,
+            "oldEnd": 14718,
+            "newStart": 14793,
+            "newEnd": 14808,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23506,
+            "oldEnd": 23507,
+            "newStart": 23596,
+            "newEnd": 23611,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23511,
+            "oldEnd": 23512,
+            "newStart": 23615,
+            "newEnd": 23630,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23537,
+            "oldEnd": 23538,
+            "newStart": 23655,
+            "newEnd": 23670,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23621,
+            "oldEnd": 23622,
+            "newStart": 23753,
+            "newEnd": 23772,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23648,
+            "oldEnd": 23649,
+            "newStart": 23798,
+            "newEnd": 23813,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23653,
+            "oldEnd": 23654,
+            "newStart": 23817,
+            "newEnd": 23832,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23659,
+            "oldEnd": 23660,
+            "newStart": 23837,
+            "newEnd": 23856,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23680,
+            "oldEnd": 23681,
+            "newStart": 23876,
+            "newEnd": 23891,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 23723,
+            "oldEnd": 23724,
+            "newStart": 23933,
+            "newEnd": 23952,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23747,
+            "oldEnd": 23748,
+            "newStart": 23975,
+            "newEnd": 23994,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 23921,
+            "oldEnd": 23922,
+            "newStart": 24167,
+            "newEnd": 24182,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24003,
+            "oldEnd": 24004,
+            "newStart": 24263,
+            "newEnd": 24278,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24142,
+            "oldEnd": 24143,
+            "newStart": 24416,
+            "newEnd": 24431,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24147,
+            "oldEnd": 24148,
+            "newStart": 24435,
+            "newEnd": 24450,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 24170,
+            "oldEnd": 24171,
+            "newStart": 24472,
+            "newEnd": 24487,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26302,
+            "oldEnd": 26303,
+            "newStart": 26618,
+            "newEnd": 26633,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26307,
+            "oldEnd": 26308,
+            "newStart": 26637,
+            "newEnd": 26652,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26334,
+            "oldEnd": 26335,
+            "newStart": 26678,
+            "newEnd": 26693,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26941,
+            "oldEnd": 26942,
+            "newStart": 27299,
+            "newEnd": 27314,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26946,
+            "oldEnd": 26947,
+            "newStart": 27318,
+            "newEnd": 27333,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 26974,
+            "oldEnd": 26975,
+            "newStart": 27360,
+            "newEnd": 27375,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27105,
+            "oldEnd": 27106,
+            "newStart": 27505,
+            "newEnd": 27520,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27110,
+            "oldEnd": 27111,
+            "newStart": 27524,
+            "newEnd": 27539,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27138,
+            "oldEnd": 27139,
+            "newStart": 27566,
+            "newEnd": 27581,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27633,
+            "oldEnd": 27634,
+            "newStart": 28075,
+            "newEnd": 28090,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27638,
+            "oldEnd": 27639,
+            "newStart": 28094,
+            "newEnd": 28109,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27666,
+            "oldEnd": 27667,
+            "newStart": 28136,
+            "newEnd": 28151,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27794,
+            "oldEnd": 27795,
+            "newStart": 28278,
+            "newEnd": 28293,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27799,
+            "oldEnd": 27800,
+            "newStart": 28297,
+            "newEnd": 28312,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 27999,
+            "oldEnd": 28000,
+            "newStart": 28511,
+            "newEnd": 28526,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 28973,
+            "oldEnd": 28974,
+            "newStart": 29499,
+            "newEnd": 29514,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 28978,
+            "oldEnd": 28979,
+            "newStart": 29518,
+            "newEnd": 29533,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 29007,
+            "oldEnd": 29008,
+            "newStart": 29561,
+            "newEnd": 29576,
+            "before": "c",
+            "after": "class_inventory"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "mode": "100644",
+        "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
+        "bytes": 343198,
+        "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6",
+        "old": {
+          "blob": "3b615dbdce93048bb56f589bcdb41de17252dda0",
+          "bytes": 342630,
+          "sha256": "8c58695d6c839620d1be3466d31a49814328bb7b05cacd92d0c446b53a769af5"
+        },
+        "inverse": [
+          {
+            "oldStart": 36462,
+            "oldEnd": 36463,
+            "newStart": 36462,
+            "newEnd": 36480,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 36504,
+            "oldEnd": 36505,
+            "newStart": 36521,
+            "newEnd": 36539,
+            "before": "p",
+            "after": "function_inventory"
+          },
+          {
+            "oldStart": 42730,
+            "oldEnd": 42731,
+            "newStart": 42764,
+            "newEnd": 42779,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42738,
+            "oldEnd": 42739,
+            "newStart": 42786,
+            "newEnd": 42801,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42810,
+            "oldEnd": 42811,
+            "newStart": 42872,
+            "newEnd": 42887,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 42818,
+            "oldEnd": 42819,
+            "newStart": 42894,
+            "newEnd": 42909,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51607,
+            "oldEnd": 51608,
+            "newStart": 51697,
+            "newEnd": 51712,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51612,
+            "oldEnd": 51613,
+            "newStart": 51716,
+            "newEnd": 51731,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51638,
+            "oldEnd": 51639,
+            "newStart": 51756,
+            "newEnd": 51771,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51722,
+            "oldEnd": 51723,
+            "newStart": 51854,
+            "newEnd": 51873,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51749,
+            "oldEnd": 51750,
+            "newStart": 51899,
+            "newEnd": 51914,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51754,
+            "oldEnd": 51755,
+            "newStart": 51918,
+            "newEnd": 51933,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51760,
+            "oldEnd": 51761,
+            "newStart": 51938,
+            "newEnd": 51957,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51781,
+            "oldEnd": 51782,
+            "newStart": 51977,
+            "newEnd": 51992,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 51824,
+            "oldEnd": 51825,
+            "newStart": 52034,
+            "newEnd": 52053,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 51848,
+            "oldEnd": 51849,
+            "newStart": 52076,
+            "newEnd": 52095,
+            "before": "a",
+            "after": "attribute_inventory"
+          },
+          {
+            "oldStart": 52022,
+            "oldEnd": 52023,
+            "newStart": 52268,
+            "newEnd": 52283,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52104,
+            "oldEnd": 52105,
+            "newStart": 52364,
+            "newEnd": 52379,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52243,
+            "oldEnd": 52244,
+            "newStart": 52517,
+            "newEnd": 52532,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52248,
+            "oldEnd": 52249,
+            "newStart": 52536,
+            "newEnd": 52551,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 52271,
+            "oldEnd": 52272,
+            "newStart": 52573,
+            "newEnd": 52588,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54403,
+            "oldEnd": 54404,
+            "newStart": 54719,
+            "newEnd": 54734,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54408,
+            "oldEnd": 54409,
+            "newStart": 54738,
+            "newEnd": 54753,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 54435,
+            "oldEnd": 54436,
+            "newStart": 54779,
+            "newEnd": 54794,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55042,
+            "oldEnd": 55043,
+            "newStart": 55400,
+            "newEnd": 55415,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55047,
+            "oldEnd": 55048,
+            "newStart": 55419,
+            "newEnd": 55434,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55075,
+            "oldEnd": 55076,
+            "newStart": 55461,
+            "newEnd": 55476,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55206,
+            "oldEnd": 55207,
+            "newStart": 55606,
+            "newEnd": 55621,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55211,
+            "oldEnd": 55212,
+            "newStart": 55625,
+            "newEnd": 55640,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55239,
+            "oldEnd": 55240,
+            "newStart": 55667,
+            "newEnd": 55682,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55734,
+            "oldEnd": 55735,
+            "newStart": 56176,
+            "newEnd": 56191,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55739,
+            "oldEnd": 55740,
+            "newStart": 56195,
+            "newEnd": 56210,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55767,
+            "oldEnd": 55768,
+            "newStart": 56237,
+            "newEnd": 56252,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55895,
+            "oldEnd": 55896,
+            "newStart": 56379,
+            "newEnd": 56394,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 55900,
+            "oldEnd": 55901,
+            "newStart": 56398,
+            "newEnd": 56413,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 56100,
+            "oldEnd": 56101,
+            "newStart": 56612,
+            "newEnd": 56627,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57074,
+            "oldEnd": 57075,
+            "newStart": 57600,
+            "newEnd": 57615,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57079,
+            "oldEnd": 57080,
+            "newStart": 57619,
+            "newEnd": 57634,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 57108,
+            "oldEnd": 57109,
+            "newStart": 57662,
+            "newEnd": 57677,
+            "before": "c",
+            "after": "class_inventory"
+          },
+          {
+            "oldStart": 169130,
+            "oldEnd": 169194,
+            "newStart": 169698,
+            "newEnd": 169762,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 291394,
+            "oldEnd": 291458,
+            "newStart": 291962,
+            "newEnd": 292026,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 293266,
+            "oldEnd": 293330,
+            "newStart": 293834,
+            "newEnd": 293898,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+        "mode": "100644",
+        "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
+        "bytes": 119673,
+        "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651",
+        "old": {
+          "blob": "795dfc4c72f829102aedf52b53cc5c4e2aacea99",
+          "bytes": 119673,
+          "sha256": "cba54c31f4c8daed45e5b5936cdbb8d311af66b9f93dc38a3b745babc38fb707"
+        },
+        "inverse": [
+          {
+            "oldStart": 17517,
+            "oldEnd": 17581,
+            "newStart": 17517,
+            "newEnd": 17581,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          },
+          {
+            "oldStart": 65969,
+            "oldEnd": 66033,
+            "newStart": 65969,
+            "newEnd": 66033,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+        "mode": "100644",
+        "blob": "86c35585a450678026829964088b507368be2b15",
+        "bytes": 233228,
+        "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414",
+        "old": {
+          "blob": "1dab19eb84e429cd47ff8305164e31ca89b7908a",
+          "bytes": 233228,
+          "sha256": "26d372a825c57e4bc1e090bf990e73c9ecab68df3977b6cb04a686b80b10a611"
+        },
+        "inverse": [
+          {
+            "oldStart": 23647,
+            "oldEnd": 23711,
+            "newStart": 23647,
+            "newEnd": 23711,
+            "before": "9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55",
+            "after": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+          }
+        ],
+        "inverseVerified": true
+      }
+    ],
+    "documentation": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "blob": "3daebdbc6f821b4ab0a07f9d8d37027db226fe8d",
+        "bytes": 23129,
+        "sha256": "0b1d29002964e218acff6211d4844f13e0eec836ac087dd26319a852c8697512",
+        "old": {
+          "blob": "a96a5783544c8494f337552eab3fe66e50df4c47",
+          "bytes": 22075,
+          "sha256": "f595552b95f0e94dead0688d1d7663f72cf2e72f658b15f4f95e8860a93c004d"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "e031a550960c2a5b2a313586e1732eda8f584c88",
+        "bytes": 21219,
+        "sha256": "c650247f052aca9c5a3dbfe60f3b95f23e887650226233a457235eabff9129d1",
+        "old": {
+          "blob": "4e50d9d157d70c04bc4528b573c4c0c07f9dbc63",
+          "bytes": 20165,
+          "sha256": "1b97529d170323993608367b031c9e88d36d6f005c64a75aa2659a1e9b02a24d"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "34c82c92f2f056f9b08475481493d65926b5e24c",
+        "bytes": 13120,
+        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
+        "old": {
+          "blob": "f3b35eb24b2a532dca70b7b87d15ec7343ef401f",
+          "bytes": 12066,
+          "sha256": "7c5d27060102251486610f4430a69a21ba2778894d0fc38a26af84e711f00668"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+        "mode": "100644",
+        "blob": "916ca3b18fc70fb220ec79e85fa62d3020d918c0",
+        "bytes": 34429,
+        "sha256": "17f95b2a9faca07dcaac83b23e9dd9cf3db19ed6f6aa5dff8609d39f408f2116",
+        "old": {
+          "blob": "2204cacf0cad50b49c4b4d026de7273a304cfc28",
+          "bytes": 33375,
+          "sha256": "52abcd1328016552bb9481d7c45dd89a058110f9a2c67303b2955185b6466597"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+        "mode": "100644",
+        "blob": "a4b8ef43620933e5e293cbaed68d08138457125e",
+        "bytes": 53970,
+        "sha256": "8f7c672f7feca85cc5206f0c3cdd36d702b3acdb75d25ba902d83d0321369833",
+        "old": {
+          "blob": "a7abf68711a891b6934662990e23a6637aeede52",
+          "bytes": 52916,
+          "sha256": "0b66668395463bc705540675a128fe1fb10a42021e7ce247bf39d2c1914be261"
+        },
+        "priorRawTextExactPrefix": true
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+        "mode": "100644",
+        "blob": "80c403ec634117aae8d0d9e17ef33cf2f17b32db",
+        "bytes": 22614,
+        "sha256": "56c952f34a2435f57bc794a433f0e4ebae22855e48f6a5376ea04c85d5b7c83b",
+        "old": {
+          "blob": "07d0805f00ad70570f7ca00bc61702ab2099218c",
+          "bytes": 21560,
+          "sha256": "299dd8af0b705444b82103c6e7730ff3693ffcec6cdc3b7cc5a80841abfe4f24"
+        },
+        "priorRawTextExactPrefix": true
+      }
+    ],
+    "preserved": {
+      "all14Hs1RuntimeFunctions": true,
+      "hs1NativeExact": true,
+      "hs1Groups": 18,
+      "hm04Groups": 31,
+      "predicatesAndExpectedValues": true,
+      "permissionsAndRecovery": true,
+      "allBudgetsQuotasAndCleanup": true,
+      "originalVariableConflictBehavior": true
+    },
+    "downstream": "Root must rebind current COMPOSED/HDP consumers and integrate the disjoint HMT FIX2 before complete new-head review/runtime/CI gates.",
+    "execution": {
+      "project": false,
+      "parser": false,
+      "compiler": false,
+      "SQL": false,
+      "native": false,
+      "tests": false,
+      "CI": false,
+      "hosted": false,
+      "sourceGET": false,
+      "refs": false,
+      "ready": false,
+      "merge": false
+    },
+    "stops": {
+      "denied917ActionRepeated": false,
+      "issue1131": "NOT_REQUIRED; untouched"
+    },
+    "historyRule": "Earlier reviewFix, sourceVersionHistory, historicalV1/A2 identities and document prefixes remain historical and unchanged; this field and current artifacts/mappings describe FIX2.",
+    "previousManifest": {
+      "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "ref": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "blob": "4dcfdf20fdcff236fa9b663b40562739c59cb3aa",
+      "bytes": 138536,
+      "sha256": "7d99657a689a233eaec3dc4f97969a8e96e176af5e75acaf3bb5a2c9b2beb3f1"
+    }
+  }
 }

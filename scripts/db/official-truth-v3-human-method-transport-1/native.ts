@@ -17,11 +17,11 @@ const CONNECTION_LIMIT = 128
 const SOURCE_PINS = Object.freeze([
   [
     "./install-candidate.sql",
-    "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e"
+    "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c"
   ],
   [
     "./recovery-candidate.sql",
-    "466aec15092184101cca179201612b5569e3af3a758c71d1f0ad47ee962959e7"
+    "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
   ],
   [
     "../official-truth-v3-hosted-method-authority-1/install-candidate.sql",
@@ -366,12 +366,12 @@ SELECT pg_catalog.jsonb_build_object(
     'commentBytes',pg_catalog.octet_length(pg_catalog.obj_description(f.oid,'pg_proc'))),
   'definition',pg_catalog.jsonb_build_object(
     'originalBytes',pg_catalog.octet_length(f.definition),
-    'normalizedBytes',pg_catalog.octet_length(pg_catalog.regexp_replace(pg_catalog.btrim(f.definition),'[[:space:]]+',' ','g')),
-    'normalized',pg_catalog.left(pg_catalog.regexp_replace(pg_catalog.btrim(f.definition),'[[:space:]]+',' ','g'),2048)),
+    'normalizedBytes',pg_catalog.octet_length(pg_catalog.btrim(pg_catalog.regexp_replace(f.definition,'[[:space:]]+',' ','g'))),
+    'normalized',pg_catalog.left(pg_catalog.btrim(pg_catalog.regexp_replace(f.definition,'[[:space:]]+',' ','g')),2048)),
   'body',pg_catalog.jsonb_build_object(
     'originalBytes',pg_catalog.octet_length(f.body),
-    'normalizedBytes',pg_catalog.octet_length(pg_catalog.regexp_replace(pg_catalog.btrim(f.body),'[[:space:]]+',' ','g')),
-    'normalized',pg_catalog.left(pg_catalog.regexp_replace(pg_catalog.btrim(f.body),'[[:space:]]+',' ','g'),1024)),
+    'normalizedBytes',pg_catalog.octet_length(pg_catalog.btrim(pg_catalog.regexp_replace(f.body,'[[:space:]]+',' ','g'))),
+    'normalized',pg_catalog.left(pg_catalog.btrim(pg_catalog.regexp_replace(f.body,'[[:space:]]+',' ','g')),1024)),
   'dependencies',pg_catalog.jsonb_build_object(
     'count',(SELECT count(*) FROM pg_catalog.pg_depend d
       WHERE d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND d.objid=f.oid),

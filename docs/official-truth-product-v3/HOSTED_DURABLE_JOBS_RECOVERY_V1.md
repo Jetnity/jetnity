@@ -180,3 +180,12 @@ Sole source parent: a686e608f597ffa82d44fc9d3992b9b566b89688; parent tree: b4f54
 Recovery changes only two exact HS1 package-context digest literals so both checks bind the corrected prerequisite; all locks, isolation, graph checks, unused/history refusal and RESTRICT teardown remain exact.
 
 SOURCE ONLY / NOT_RUN / UNAPPLIED. No project/parser/compiler/SQL/native/test/build/APT/CI or hosted execution, source GET, ref/PR publication, Ready or merge. Root alone reviews and selects a coherent integration and new complete gates; #917’s denied action and #1131 remain untouched.
+
+
+## HS1/HM04 FIX2 — SQL alias binding (source only)
+
+Continuation of the documented replacement session `/root/hs1_hm04_fix`; selected by [Root comment6830207449](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449) on immutable parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1`.
+
+The two copied HS1 inventory blocks receive the identical alias-only correction. The new HS1 installer digest is `f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620`; three installer, two recovery and one Native current dependency literals are rebound, with the existing catalog fingerprint mechanism unchanged. All 31 HM04 groups, quotas and cleanup budgets remain exact.
+
+CI4140 on the parent exposed `42702`; this candidate has not been executed. Current pins and inverse mappings are in the package manifest; earlier task/evidence text remains historical. Root must integrate COMPOSED/HDP pins and independently run the complete new-head gates before Dev installation. Unused-only recovery, #917 and #1131 boundaries remain unchanged.

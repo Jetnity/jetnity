@@ -473,9 +473,9 @@ BEGIN
       OR f.probin IS NOT NULL OR f.prosupport<>0::pg_catalog.oid OR f.prosqlbody IS NULL OR f.prosrc<>''
       OR f.procost<>100 OR f.prorows<>0
       OR f.proconfig IS DISTINCT FROM ARRAY['search_path=pg_catalog']::text[]
-      OR pg_catalog.regexp_replace(pg_catalog.btrim(pg_catalog.pg_get_functiondef(f.oid)),'[[:space:]]+',' ','g')
+      OR pg_catalog.btrim(pg_catalog.regexp_replace(pg_catalog.pg_get_functiondef(f.oid),'[[:space:]]+',' ','g'))
         IS DISTINCT FROM e.definition
-      OR pg_catalog.regexp_replace(pg_catalog.btrim(pg_catalog.pg_get_function_sqlbody(f.oid)),'[[:space:]]+',' ','g')
+      OR pg_catalog.btrim(pg_catalog.regexp_replace(pg_catalog.pg_get_function_sqlbody(f.oid),'[[:space:]]+',' ','g'))
         IS DISTINCT FROM e.body
       OR pg_catalog.obj_description(f.oid,'pg_proc') IS DISTINCT FROM 'jetnity:hmt1:public-invoker-v1:unused' THEN
       RAISE EXCEPTION 'hmt1 complete function identity invalid' USING ERRCODE='P7903';

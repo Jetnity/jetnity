@@ -63,3 +63,12 @@ The public CH→DE answer, D1 approval, source freshness and public cache automa
 The selected source parent is `a686e608f597ffa82d44fc9d3992b9b566b89688`. This diagnostic changes no install-candidate.sql or recovery-candidate.sql bytes and grants no hosted recovery permission.
 At only the first positive Native install, the exact installer prefix and suffix share the original connection and transaction around one read-only catalog query. Any primary failure keeps the original awaited ROLLBACK behavior; a rollback failure remains aggregated with the primary error. Diagnostic serialization failure cannot report PASS. Cleanup still disposes the sole owned lifetime unconditionally before reporting, under the unchanged total drain.
 The original eight proof groups and all recovery refusal tests remain mandatory and unexecuted in this delivery. The original P7903 is unresolved until actual diagnostic execution and independent review. No ref, PR, CI, local SQL, hosted action, source GET, credentials or #917/#1131 action occurred.
+
+
+---
+
+## HMT1-FIX2 — recovery comparison consistency
+
+Selected task: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449. On sole parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1`, the recovery candidate changes only the ordering of trim and whitespace collapse in its complete definition/body comparisons, matching the installer and bounded Native diagnostic. Exact strings, metadata, ACL/dependency checks, original OIDs, quiescence, fresh post-lock history refusal and DROP RESTRICT behavior remain unchanged.
+
+Continued replacement Generation2 session `/root/hmt_diagnosis`; SOURCE ONLY / NOT_RUN. No recovery or Dev action is authorized by this correction, and no runtime success is claimed. Prior evidence remains above; #917/#1131 boundaries are unchanged.

@@ -88,3 +88,20 @@ Four exact source edits have a complete inert inverse restoring original blob `4
 All eight groups, original hostile cases and 180/35/240-second limits remain. Exactly Native plus the four existing evidence documents change; 9,533 other leaves remain byte/type/mode exact against the selected parent.
 
 Root next independently reviews this candidate, reconciles it with the other #1196 corrections and selects the real full CI. A diagnostic result, if executed, must identify the actual failed inventory predicate before any installer change is selected. No hosted Dev write, actual Owner/AAL2 proof or public activation occurred. Retained UI work remains paused; #917/#1131 boundaries are unchanged. STOP reachable after immutable delivery.
+
+
+---
+
+## HMT1-FIX2 — trim after whitespace collapse
+
+**SOURCE ONLY / NOT_RUN.** Continued Generation2 session `/root/hmt_diagnosis`, sole parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1`, tree `5b2b7541b2404931ce3f7f0fa47f163384864624`. Selected task: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449.
+
+The complete CI4140 Hosted log (job 131342004913, 174664 UTF-8 bytes, SHA-256 `97246a3d1b8558b4473bd9773d21947a93dcbb2faba6c0db8b7a8f365aec6f74`) proves that every observed normalized definition is its exact expected definition plus one trailing space. All four bodies match and all dependency, ACL and effective-right mismatch counts are zero. Trimming before collapsing PostgreSQL's final newline creates that space.
+
+Installer and recovery now trim after collapsing whitespace for both complete definition and body comparisons. Native uses the same normalization in its four diagnostic expressions and updates only the two current SQL pins. Exact expected strings, full equality, permissions, identities and negative cases remain unchanged; reversing these substitutions restores all three parent blobs exactly.
+
+- `install-candidate.sql`: 53457 UTF-8 bytes; SHA-256 `727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c`; blob `6c5c36009e70468e96c8ecfe188cc4109b434716`.
+- `recovery-candidate.sql`: 82578 UTF-8 bytes; SHA-256 `a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595`; blob `516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9`.
+- `native.ts`: 71545 UTF-8 bytes; SHA-256 `b9f6cf05b9bffc42e50257da791485d17af0716ac2f1addf3699dd70c2d5e8bf`; blob `ac90f2bf4a81828157fed9c307513e0bdb107c96`.
+
+All eight mandatory groups, 180/35/240-second limits, 128 fixture / 160 total connection limits, three-cluster ceiling, 16 KiB diagnostic and 32 KiB receipt bounds remain. Prior evidence is preserved. The seven selected existing files change; 9531 other leaves remain exact. Root handles independent review, coherent downstream pins and fresh exact-head gates. This author ran no project code, SQL, tests, CI, hosted action or source GET and published no ref. HRS/UI stay paused; #917/#1131 boundaries are unchanged.

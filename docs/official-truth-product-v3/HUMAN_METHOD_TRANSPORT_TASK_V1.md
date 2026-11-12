@@ -145,3 +145,22 @@ All query promises remain registered/awaited by the same original lifetime; actu
 Allowed edits for this diagnostic head: HMT native.ts and its four existing HUMAN_METHOD_TRANSPORT evidence documents only;9533other parent leaves exact. Soleparenta686e608f597ffa82d44fc9d3992b9b566b89688. Preserve complete prior tasks, full DIAG1 and failed evidence. Publish no ref/PR; execute nothing. Return complete immutable source, exact inverse/pins/tree and NOT_RUN, then STOP. Root must independently review and select a coherent new integration/CI before any actual diagnostic execution.
 
 The retained UI work, including A1b #1169 comment6829466460, stays paused. #917/#1131 and genuine human identity boundaries remain unchanged.
+
+
+---
+
+## HMT1-FIX2 — selected causal normalization correction
+
+Source: https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449
+
+## TL — CI4140 findings and immediate FIX2 selection
+
+On exact head `e932aa20d6f2f834c13e3541c5eb25b13deef6d1`, Hosted PG17 job131342004913 completed28 tests:21 passed,7 failed,0 skipped/cancelled. PAI now passes all10 groups; HMA passes all8. HS1, HM04 intake installation and COMPOSED fail42702. HMT still refuses P7903, but DIAG1 now establishes all four observed wrapper bodies, dependency/ACL counts and effective-right mismatchcounts; each normalized full definition has a trailing space produced by trimming before newline collapse. Complete job log:174664 UTF8bytes, SHA256 `97246a3d1b8558b4473bd9773d21947a93dcbb2faba6c0db8b7a8f365aec6f74`.
+
+Root selects two disjoint source-only corrections on sole parent e932:
+- `/root/hs1_hm04_fix`: pause HRS; inspect the HS1 DO-record/SQL-alias collisions (including declared p/c/a), correct only actual ambiguous bindings, copied HM04 blocks and their required current HS1 dependency pins. Preserve all guard semantics, original function bodies and tests; no blanket variable_conflict directive.
+- `/root/hmt_diagnosis`: pause HRS helper work; trim the fully collapsed full-function definition/body comparison consistently in HMT installer/recovery and necessary Native counterpart/pins. Keep the complete equality, metadata, dependency, ACL and negative checks; no permission changes.
+
+Use only those existing package files and necessary current evidence/pins; keep new docs concise. Root handles coherent COMPOSED/HDP integration and fresh full gates after independent source review. No actual Dev change, role impersonation, old #917 scope or #1131 action. Other CI4140 jobs are still being observed; no full PASS is claimed.
+
+This is continued work by replacement Generation2 session `/root/hmt_diagnosis`; HRS helper and retained UI work stay paused. Only this package's installer, recovery, Native and four existing evidence files change. Full equality and all prior security/resource boundaries remain required; this delivery is SOURCE ONLY / NOT_RUN.

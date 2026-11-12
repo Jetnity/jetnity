@@ -382,7 +382,7 @@ DECLARE x record; p pg_catalog.pg_proc%ROWTYPE;
   owner_id oid := 'ot_v3_intake_owner'::pg_catalog.regrole;
   caller_id oid := 'ot_v3_intake_caller'::pg_catalog.regrole; expected_types oid[]; actual_types oid[];
 BEGIN
-  IF (SELECT count(*) FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+  IF (SELECT count(*) FROM pg_catalog.pg_proc function_inventory JOIN pg_catalog.pg_namespace n ON n.oid=function_inventory.pronamespace
     WHERE n.nspname IN ('official_v3_intake_private','official_v3_intake_api'))<>14 THEN
     RAISE EXCEPTION 'hs1 function inventory mismatch' USING ERRCODE='P7312';
   END IF;
@@ -442,8 +442,8 @@ BEGIN
   IF (SELECT count(*) FROM pg_catalog.pg_namespace n WHERE n.oid IN (private_id,api_id) AND n.nspowner=owner_id)<>2
     OR EXISTS (SELECT 1 FROM pg_catalog.pg_default_acl d WHERE d.defaclrole IN (owner_id,caller_id) OR d.defaclnamespace IN (private_id,api_id))
     OR pg_catalog.has_database_privilege(owner_id,current_database(),'CREATE')
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_class c WHERE c.relnamespace=api_id)
-    OR (SELECT count(*) FROM pg_catalog.pg_class c WHERE c.relnamespace=private_id)<>6
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_class class_inventory WHERE class_inventory.relnamespace=api_id)
+    OR (SELECT count(*) FROM pg_catalog.pg_class class_inventory WHERE class_inventory.relnamespace=private_id)<>6
     OR (SELECT count(*) FROM pg_catalog.pg_type t WHERE t.typnamespace=private_id)<>6
     OR EXISTS (SELECT 1 FROM pg_catalog.pg_type t WHERE t.typnamespace=api_id) THEN
     RAISE EXCEPTION 'hs1 schema/class/type inventory mismatch' USING ERRCODE='P7312';
@@ -558,15 +558,15 @@ BEGIN
       RAISE EXCEPTION 'hs1 exact column mismatch' USING ERRCODE='P7312';
     END IF;
   END LOOP;
-  IF (SELECT count(*) FROM pg_catalog.pg_attrdef d JOIN pg_catalog.pg_class c ON c.oid=d.adrelid
-    WHERE c.relnamespace=private_id)<>2 OR EXISTS (
-    SELECT 1 FROM pg_catalog.pg_attribute a JOIN pg_catalog.pg_class c ON c.oid=a.attrelid
-    WHERE c.relnamespace IN (private_id,api_id) AND (a.attacl IS NOT NULL OR a.attisdropped)) THEN
+  IF (SELECT count(*) FROM pg_catalog.pg_attrdef d JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=d.adrelid
+    WHERE class_inventory.relnamespace=private_id)<>2 OR EXISTS (
+    SELECT 1 FROM pg_catalog.pg_attribute attribute_inventory JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=attribute_inventory.attrelid
+    WHERE class_inventory.relnamespace IN (private_id,api_id) AND (attribute_inventory.attacl IS NOT NULL OR attribute_inventory.attisdropped)) THEN
     RAISE EXCEPTION 'hs1 column/default inventory mismatch' USING ERRCODE='P7312';
   END IF;
-  SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(c.relname,k.contype,
-      pg_catalog.pg_get_constraintdef(k.oid,false)) ORDER BY c.relname,k.contype,pg_catalog.pg_get_constraintdef(k.oid,false)) INTO actual
-    FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid WHERE c.relnamespace=private_id;
+  SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(class_inventory.relname,k.contype,
+      pg_catalog.pg_get_constraintdef(k.oid,false)) ORDER BY class_inventory.relname,k.contype,pg_catalog.pg_get_constraintdef(k.oid,false)) INTO actual
+    FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid WHERE class_inventory.relnamespace=private_id;
   SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_array(v.table_name,v.kind,v.definition)
     ORDER BY v.table_name,v.kind,v.definition) INTO expected FROM (VALUES
     ('operations_v1','p','PRIMARY KEY (operation_id)'),
@@ -587,28 +587,28 @@ BEGIN
     ('completions_v1','f','FOREIGN KEY (operation_id, generation) REFERENCES official_v3_intake_private.reservations_v1(operation_id, generation)')
   ) v(table_name,kind,definition);
   IF actual IS DISTINCT FROM expected OR EXISTS (
-    SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid
-    WHERE c.relnamespace=private_id AND (k.connamespace<>private_id OR k.condeferrable OR k.condeferred
+    SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid
+    WHERE class_inventory.relnamespace=private_id AND (k.connamespace<>private_id OR k.condeferrable OR k.condeferred
       OR NOT k.convalidated OR NOT k.conislocal OR k.coninhcount<>0 OR k.conparentid<>0
       OR k.contype='c' AND k.connoinherit
       OR k.contype='f' AND (k.confupdtype<>'a' OR k.confdeltype<>'a' OR k.confmatchtype<>'s'))) THEN
     RAISE EXCEPTION 'hs1 exact constraint mismatch' USING ERRCODE='P7312';
   END IF;
   SELECT p.oid INTO immutable_id FROM pg_catalog.pg_proc p WHERE p.pronamespace=private_id AND p.proname='immutable_v1';
-  IF (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND NOT g.tgisinternal)<>3
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND NOT g.tgisinternal AND
+  IF (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND NOT g.tgisinternal)<>3
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND NOT g.tgisinternal AND
         (g.tgname<>'immutable_v1' OR g.tgfoid<>immutable_id OR g.tgtype<>27 OR g.tgenabled<>'O'
           OR g.tgconstraint<>0 OR g.tgdeferrable OR g.tginitdeferred OR g.tgnargs<>0
           OR g.tgargs<>''::bytea OR g.tgattr<>''::pg_catalog.int2vector OR g.tgqual IS NOT NULL
           OR g.tgoldtable IS NOT NULL OR g.tgnewtable IS NOT NULL OR g.tgparentid<>0))
-    OR (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
-      WHERE c.relnamespace=private_id AND g.tgisinternal)<>12
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class c ON c.oid=g.tgrelid
+    OR (SELECT count(*) FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
+      WHERE class_inventory.relnamespace=private_id AND g.tgisinternal)<>12
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_trigger g JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=g.tgrelid
       JOIN pg_catalog.pg_proc p ON p.oid=g.tgfoid JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
       LEFT JOIN pg_catalog.pg_constraint k ON k.oid=g.tgconstraint
-      WHERE c.relnamespace=private_id AND g.tgisinternal AND
+      WHERE class_inventory.relnamespace=private_id AND g.tgisinternal AND
         (n.nspname<>'pg_catalog' OR k.contype IS DISTINCT FROM 'f' OR k.connamespace<>private_id
           OR g.tgenabled<>'O' OR g.tgdeferrable OR g.tginitdeferred OR g.tgnargs<>0
           OR g.tgargs<>''::bytea OR g.tgattr<>''::pg_catalog.int2vector OR g.tgqual IS NOT NULL
@@ -617,8 +617,8 @@ BEGIN
             OR p.proname='RI_FKey_check_upd' AND g.tgtype=17 AND g.tgrelid=k.conrelid AND g.tgconstrrelid=k.confrelid
             OR p.proname='RI_FKey_noaction_del' AND g.tgtype=9 AND g.tgrelid=k.confrelid AND g.tgconstrrelid=k.conrelid
             OR p.proname='RI_FKey_noaction_upd' AND g.tgtype=17 AND g.tgrelid=k.confrelid AND g.tgconstrrelid=k.conrelid)))
-    OR EXISTS (SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class c ON c.oid=k.conrelid
-      WHERE c.relnamespace=private_id AND k.contype='f' AND
+    OR EXISTS (SELECT 1 FROM pg_catalog.pg_constraint k JOIN pg_catalog.pg_class class_inventory ON class_inventory.oid=k.conrelid
+      WHERE class_inventory.relnamespace=private_id AND k.contype='f' AND
         (SELECT count(DISTINCT g.tgfoid) FROM pg_catalog.pg_trigger g WHERE g.tgconstraint=k.oid AND g.tgisinternal)<>4) THEN
     RAISE EXCEPTION 'hs1 exact trigger mismatch' USING ERRCODE='P7312';
   END IF;
@@ -1845,7 +1845,7 @@ BEGIN
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
       WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
-      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
+      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
   END IF;
   SELECT q.value INTO actual_value FROM (
@@ -3201,7 +3201,7 @@ SELECT pg_catalog.jsonb_build_object('oid',d.oid,'name',d.datname,'owner',d.datd
 ) q;
 
 INSERT INTO official_v3_jobs_private.catalog_binding_v1(object_identity,fingerprint)
-SELECT 'package-context','{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()));
+SELECT 'package-context','{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()));
 DO $hm04_bound_final_objects$
 DECLARE creator oid; owner_id oid:='ot_v3_jobs_owner'::pg_catalog.regrole;
   caller_id oid:='ot_v3_jobs_caller'::pg_catalog.regrole; intake_id oid:='ot_v3_intake_owner'::pg_catalog.regrole;
@@ -3216,7 +3216,7 @@ BEGIN
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
       WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
-      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"9430eb05890203b0aefedc2d5a12cb0b16d9940152b75afc864da2440ce62b55"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
+      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
   END IF;
   SELECT q.value INTO actual_value FROM (
