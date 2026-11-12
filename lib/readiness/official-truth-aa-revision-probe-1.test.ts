@@ -12,13 +12,15 @@ import { AA_REVISION_PROBE_V1_POLICY as policy } from './official-truth-aa-revis
 import {
   probeOfficialTruthAaReviewedRevisionV1,
   type OfficialTruthAaRevisionProbeV1Result,
-  type OfficialTruthServerOwnedRetrievalLookup,
-} from './official-truth-server-owned-retrieval'
+} from './official-truth-aa-revision-probe-1-server'
+import type { OfficialTruthServerOwnedRetrievalLookup } from './official-truth-server-owned-retrieval'
 import { AA_CH_DE_VISA_REVIEWED_SOURCE_CANDIDATE as reviewed } from './official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source'
 import * as fingerprint from './official-truth-source-fingerprint-v2'
 import { chDeAaS1VisaRowResearchFromHtml } from './official-truth-ch-de-aa-s1-visa-row-research-server'
 
 const readerPath = 'lib/readiness/official-truth-server-owned-retrieval.ts'
+const physicalPath = 'lib/readiness/official-truth-retrieval-physical-internal.ts'
+const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'
 const reviewedPath = 'lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts'
 const legacyNativePath = 'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts'
@@ -257,9 +259,22 @@ function fixture(options: Scenario = {}) {
       }
     },
   }
-  const readerFixture = loadFixtureModule<{
+  const physicalFixture = loadFixtureModule<Record<string, unknown>>(physicalPath, {
+    'node:dns': {
+      lookup: (hostname: string, settings: unknown, callback: (error: Error | null, addresses?: unknown) => void) => {
+        state.dns += 1
+        assert.equal(hostname, 'www.auswaertiges-amt.de')
+        assert.deepEqual(settings, { all: true, verbatim: true })
+        if (options.dns === 'error') callback(new Error(sentinel))
+        else callback(null, options.dns === 'empty' ? [] : [{ address: options.dns === 'private' ? '127.0.0.1' : '8.8.8.8', family: 4 }])
+      },
+    },
+    'node:net': { default: net },
+    'node:https': { default: fakeHttps },
+  })
+  const probeFixture = loadFixtureModule<{
     probeOfficialTruthAaReviewedRevisionV1: typeof probeOfficialTruthAaReviewedRevisionV1
-  }>(readerPath, {
+  }>(probePath, {
     'node:fs': files.module(),
     'node:path': { dirname, join, relative, resolve, isAbsolute: (path: string) => path.startsWith('/'), sep: '/' },
     'node:process': { env: { ...environment(), ...options.env }, cwd: () => workspace },
@@ -272,17 +287,7 @@ function fixture(options: Scenario = {}) {
       },
       clearTimeout: () => { state.timerCleared = true },
     },
-    'node:dns': {
-      lookup: (hostname: string, settings: unknown, callback: (error: Error | null, addresses?: unknown) => void) => {
-        state.dns += 1
-        assert.equal(hostname, 'www.auswaertiges-amt.de')
-        assert.deepEqual(settings, { all: true, verbatim: true })
-        if (options.dns === 'error') callback(new Error(sentinel))
-        else callback(null, options.dns === 'empty' ? [] : [{ address: options.dns === 'private' ? '127.0.0.1' : '8.8.8.8', family: 4 }])
-      },
-    },
-    'node:net': { default: net },
-    'node:https': { default: fakeHttps },
+    './official-truth-retrieval-physical-internal': physicalFixture,
     '@/lib/readiness/official-truth-aa-revision-probe-1-policy': {
       AA_REVISION_PROBE_V1_POLICY: { ...policy, runNumber: 1, expectedV2Pin: expectedPin, ...options.policy },
     },
@@ -307,7 +312,7 @@ function fixture(options: Scenario = {}) {
       quellenKatalogLesen: () => { throw new Error('SYNTHETIC_CATALOG_CALL_FORBIDDEN') },
     },
   })
-  return { invoke: readerFixture.probeOfficialTruthAaReviewedRevisionV1, state, files }
+  return { invoke: probeFixture.probeOfficialTruthAaReviewedRevisionV1, state, files }
 }
 
 const blockedReasons: readonly string[] = [
@@ -418,19 +423,65 @@ function staticString(node: ts.Node): string | null {
   }
   return null
 }
-function readerModule(file: string, value: string): boolean {
+function sourceModule(file: string, value: string, sourcePath: string): boolean {
   let clean = value.replace(/[?#].*$/, '')
   try { clean = clean.startsWith('file:') ? fileURLToPath(clean) : decodeURIComponent(clean) }
   catch { return false }
   clean = clean.replace(/\.[cm]?[jt]sx?$/, '')
   const target = clean.startsWith('@/') ? resolve(clean.slice(2))
     : clean.startsWith('.') ? resolve(dirname(file), clean) : resolve(clean)
-  return target === resolve(readerPath.replace(/\.ts$/, ''))
+  return target === resolve(sourcePath.replace(/\.ts$/, ''))
+}
+function readerModule(file: string, value: string): boolean { return sourceModule(file, value, readerPath) }
+
+const physicalImports = {
+  [readerPath]: [
+    'value:officialTruthServerOwnedRetrievalAdresseZulaessig', 'value:officialTruthServerOwnedRetrievalLookup',
+    'value:serverDns', 'value:serverHttp', 'value:serverUhr', 'value:hopLesen', 'value:textAus', 'value:uhrLesen',
+    'value:medientyp', 'value:inhaltLaenge', 'value:abbruch',
+    'type:OfficialTruthServerOwnedRetrievalDnsResolver', 'type:OfficialTruthServerOwnedRetrievalHttpClient',
+    'type:OfficialTruthServerOwnedRetrievalSperrgrund',
+  ],
+  [probePath]: [
+    'value:officialTruthServerOwnedRetrievalLookup', 'value:serverDns', 'value:serverHttp', 'value:serverUhr',
+    'value:hopLesen', 'value:textAus', 'value:uhrLesen', 'type:OfficialTruthServerOwnedRetrievalHttpClient',
+    'type:OfficialTruthServerOwnedRetrievalHttpErgebnis', 'type:OfficialTruthServerOwnedRetrievalSperrgrund',
+  ],
+} as const
+const physicalRuntimeExports = [
+  'officialTruthServerOwnedRetrievalAdresseZulaessig', 'officialTruthServerOwnedRetrievalLookup',
+  'medientyp', 'inhaltLaenge', 'textAus', 'uhrLesen', 'serverDns', 'serverHttp', 'serverUhr', 'abbruch', 'hopLesen',
+] as const
+const physicalTypeExports = [
+  'OfficialTruthServerOwnedRetrievalSperrgrund', 'OfficialTruthServerOwnedRetrievalAdresse',
+  'OfficialTruthServerOwnedRetrievalDnsResolver', 'OfficialTruthServerOwnedRetrievalLookup',
+  'OfficialTruthServerOwnedRetrievalHttpErgebnis', 'OfficialTruthServerOwnedRetrievalHttpClient',
+] as const
+function namedImportSelection(clause: ts.ImportClause): string[] {
+  assert(!clause.name && clause.namedBindings && ts.isNamedImports(clause.namedBindings),
+    'Only exact named static imports may cross the physical/probe boundary')
+  return clause.namedBindings.elements.map(name => {
+    assert.equal(name.propertyName, undefined, 'Physical/probe aliases are forbidden')
+    return (clause.isTypeOnly || name.isTypeOnly ? 'type:' : 'value:') + name.name.text
+  })
+}
+function declarationExports(tree: ts.SourceFile): string[] {
+  const names: string[] = []
+  for (const statement of tree.statements) {
+    if (ts.isExportDeclaration(statement)) continue
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) : undefined
+    if (!modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword)) continue
+    assert(!modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword))
+    assert((ts.isFunctionDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) && statement.name,
+      'No new physical/probe/Reader export kind')
+    names.push((ts.isTypeAliasDeclaration(statement) ? 'type:' : 'value:') + statement.name.text)
+  }
+  return names.sort()
 }
 function importBoundary(file: string, source: string): void {
-  const owned = file === readerPath || file === testPath
+  const owned = file === probePath || file === testPath
   const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true)
-  let passiveNamespaces = 0, r2ReaderImports = 0
+  let passiveNamespaces = 0, r2ReaderImports = 0, physicalSelections = 0, physicalReexports = 0, probeSelections = 0
   if (file === legacyNativePath) {
     assert.equal(Buffer.byteLength(source, 'utf8'), legacyProofPins[0].bytes)
     assert.equal(sha(source), legacyProofPins[0].sha256)
@@ -439,39 +490,105 @@ function importBoundary(file: string, source: string): void {
     if (!owned && ((ts.isIdentifier(node) && node.text === entry) || staticString(node) === entry)) {
       assert.fail('AA probe entry may only be consumed by its exact test')
     }
-    if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)
-      && readerModule(file, node.moduleSpecifier.text) && !node.importClause?.isTypeOnly) {
-      const clause = node.importClause
-      assert(clause && !clause.name && clause.namedBindings, 'No default or side-effect Reader forwarding')
-      if (ts.isNamespaceImport(clause.namedBindings)) {
-        // TASK V1/A1: one exact, unchanged private test-port transport. No file skip.
-        assert.equal(file, legacyNativePath)
-        assert.equal(clause.namedBindings.name.text, 'retrieval')
-        passiveNamespaces += 1
-      } else {
-        assert(ts.isNamedImports(clause.namedBindings))
-        for (const name of clause.namedBindings.elements) {
-          if ((name.propertyName?.text ?? name.name.text) === entry) {
-            assert.equal(file, testPath)
-            assert.equal(name.propertyName, undefined)
-            assert.equal(name.name.text, entry)
+    if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+      const target = node.moduleSpecifier.text
+      if (file === readerPath) {
+        for (const forbidden of [probePath, 'lib/readiness/official-truth-aa-revision-probe-1-policy.ts',
+          'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts']) {
+          assert(!sourceModule(file, target, forbidden), 'Reader must not import AA probe, policy or S1')
+        }
+      }
+      if (file === physicalPath) {
+        assert(['server-only', 'node:dns', 'node:http', 'node:https', 'node:net',
+          '@/lib/readiness/official-truth-bounded-response-body', '@/lib/readiness/source-registry'].includes(target),
+        'Physical dependency closure is finite')
+        if (target === '@/lib/readiness/source-registry' || target === 'node:http') {
+          assert(node.importClause?.isTypeOnly, 'Shared URL-error and IncomingMessage imports must remain type-only')
+        }
+      }
+      if (sourceModule(file, target, physicalPath)) {
+        assert(file === readerPath || file === probePath, 'Only Reader and probe may import the physical module')
+        assert(node.importClause)
+        assert.deepEqual(namedImportSelection(node.importClause), physicalImports[file])
+        physicalSelections += 1
+      }
+      if (sourceModule(file, target, probePath)) {
+        assert.equal(file, testPath, 'Only the AA test may import the probe')
+        assert(node.importClause)
+        assert.deepEqual(namedImportSelection(node.importClause), [
+          'value:' + entry, 'type:OfficialTruthAaRevisionProbeV1Result',
+        ])
+        probeSelections += 1
+      }
+      if (readerModule(file, target) && !node.importClause?.isTypeOnly) {
+        const clause = node.importClause
+        assert(clause && !clause.name && clause.namedBindings, 'No default or side-effect Reader forwarding')
+        if (ts.isNamespaceImport(clause.namedBindings)) {
+          // TASK V1/A1: one exact, unchanged private test-port transport. No file skip.
+          assert.equal(file, legacyNativePath)
+          assert.equal(clause.namedBindings.name.text, 'retrieval')
+          passiveNamespaces += 1
+        } else {
+          assert(ts.isNamedImports(clause.namedBindings))
+          for (const name of clause.namedBindings.elements) {
+            assert.notEqual(name.propertyName?.text ?? name.name.text, entry, 'Reader has no AA entry')
           }
         }
       }
     }
-    if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)
-      && readerModule(file, node.moduleSpecifier.text) && !node.isTypeOnly) {
-      assert(node.exportClause && ts.isNamedExports(node.exportClause), 'Reader wildcard forwarding is forbidden')
-      for (const name of node.exportClause.elements) assert.notEqual(name.propertyName?.text ?? name.name.text, entry)
+    if (ts.isExportDeclaration(node)) {
+      assert(file !== physicalPath && file !== probePath, 'Physical and probe modules have no forwarding exports')
+      if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+        const target = node.moduleSpecifier.text
+        assert(!sourceModule(file, target, probePath), 'Probe reexports are forbidden')
+        if (sourceModule(file, target, physicalPath)) {
+          assert.equal(file, readerPath, 'Only original Reader APIs may be reexported from physical')
+          assert(node.exportClause && ts.isNamedExports(node.exportClause))
+          const selection = node.exportClause.elements.map(name => {
+            assert.equal(name.propertyName, undefined)
+            assert.equal(name.isTypeOnly, false)
+            return name.name.text
+          })
+          assert.deepEqual(selection, node.isTypeOnly ? [
+            'OfficialTruthServerOwnedRetrievalAdresse', 'OfficialTruthServerOwnedRetrievalDnsResolver',
+            'OfficialTruthServerOwnedRetrievalHttpClient', 'OfficialTruthServerOwnedRetrievalHttpErgebnis',
+            'OfficialTruthServerOwnedRetrievalSperrgrund',
+          ] : ['officialTruthServerOwnedRetrievalAdresseZulaessig', 'officialTruthServerOwnedRetrievalLookup'])
+          physicalReexports += 1
+        }
+        if (readerModule(file, target) && !node.isTypeOnly) {
+          assert(node.exportClause && ts.isNamedExports(node.exportClause), 'Reader wildcard forwarding is forbidden')
+          for (const name of node.exportClause.elements) assert.notEqual(name.propertyName?.text ?? name.name.text, entry)
+        }
+        if (file === readerPath) {
+          for (const forbidden of ['lib/readiness/official-truth-aa-revision-probe-1-policy.ts',
+            'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts']) {
+            assert(!sourceModule(file, target, forbidden), 'Reader must not reexport AA policy or S1')
+          }
+        }
+      }
     }
     if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)
-      && node.moduleReference.expression && ts.isStringLiteral(node.moduleReference.expression)
-      && readerModule(file, node.moduleReference.expression.text)) {
-      assert.fail('Reader import-equals namespace forwarding is forbidden')
+      && node.moduleReference.expression && ts.isStringLiteral(node.moduleReference.expression)) {
+      const target = node.moduleReference.expression.text
+      assert(!readerModule(file, target), 'Reader import-equals namespace forwarding is forbidden')
+      assert(!sourceModule(file, target, physicalPath) && !sourceModule(file, target, probePath),
+        'Physical/probe import-equals forwarding is forbidden')
+      assert.notEqual(file, physicalPath, 'Physical dependencies must remain static ESM imports')
+    }
+    if (ts.isImportTypeNode(node) && ts.isLiteralTypeNode(node.argument) && ts.isStringLiteral(node.argument.literal)) {
+      const target = node.argument.literal.text
+      assert(!sourceModule(file, target, physicalPath) && !sourceModule(file, target, probePath),
+        'Physical/probe type namespaces are forbidden')
     }
     if (ts.isCallExpression(node) && (node.expression.kind === ts.SyntaxKind.ImportKeyword
       || (ts.isIdentifier(node.expression) && node.expression.text === 'require'))) {
+      assert.notEqual(file, physicalPath, 'Physical dependencies must remain static ESM imports')
       const target = node.arguments[0] ? staticString(node.arguments[0]) : null
+      if (target !== null) {
+        assert(!sourceModule(file, target, physicalPath) && !sourceModule(file, target, probePath),
+          'Dynamic physical/probe loading is forbidden')
+      }
       if (target !== null && readerModule(file, target)) {
         // Preserve an existing narrow R2 test form, never a namespace/rest/aliased binding.
         const awaited = node.parent
@@ -493,6 +610,26 @@ function importBoundary(file: string, source: string): void {
   visit(tree)
   if (file === legacyNativePath) assert.equal(passiveNamespaces, 1)
   if (file === legacyR2Path) assert.equal(r2ReaderImports, 1)
+  if (file === readerPath || file === probePath) assert.equal(physicalSelections, 1)
+  if (file === testPath) assert.equal(probeSelections, 1)
+  if (file === physicalPath) {
+    assert.deepEqual(declarationExports(tree), [
+      ...physicalRuntimeExports.map(name => 'value:' + name), ...physicalTypeExports.map(name => 'type:' + name),
+    ].sort())
+  }
+  if (file === probePath) {
+    assert.deepEqual(declarationExports(tree), ['type:OfficialTruthAaRevisionProbeV1Result', 'value:' + entry].sort())
+  }
+  if (file === readerPath) {
+    assert.equal(physicalReexports, 2)
+    assert.deepEqual(declarationExports(tree), [
+      'type:OfficialTruthServerOwnedRetrievalErgebnis', 'type:OfficialTruthServerOwnedRetrievalAbhaengigkeiten',
+      'type:OfficialTruthBernRealResearchIndicators', 'type:OfficialTruthBernRealResearchOutcome',
+      'value:decideOfficialTruthServerOwnedRetrieval', 'value:loadOfficialTruthServerOwnedRetrieval',
+      'value:loadOfficialTruthServerOwnedRetrievalWithCatalogTransport', 'value:retrieveOfficialTruthIsolatedPilotSource',
+      'value:decideOfficialTruthBernRealResearchForOfflineTests', 'value:retrieveOfficialTruthBernOneShotResearchOnly',
+    ].sort())
+  }
 }
 function astNodes(root: ts.Node): ts.Node[] {
   const result: ts.Node[] = []
@@ -643,6 +780,37 @@ function importInventory(): void {
     "const { decideOfficialTruthServerOwnedRetrieval } = await import('./official-truth-server-owned-retrieval')"))
   importBoundary(legacyR2Path,
     "const { decideOfficialTruthServerOwnedRetrieval } = await import('./official-truth-server-owned-retrieval')")
+  for (const target of ['@/' + physicalPath.replace(/\.ts$/, ''), '@/' + probePath.replace(/\.ts$/, '')]) {
+    for (const source of [
+      "import { serverDns } from '" + target + "'",
+      "import { serverDns as other } from '" + target + "'",
+      "import * as namespace from '" + target + "'",
+      "import picked from '" + target + "'",
+      "import '" + target + "'",
+      "export * from '" + target + "'",
+      "export { serverDns } from '" + target + "'",
+      "import picked = require('" + target + "')",
+      "const picked = require('" + target + "')",
+      "void import('" + target + "')",
+      "void import('" + target.slice(0, -1) + "' + '" + target.slice(-1) + "')",
+      "type Namespace = import('" + target + "')",
+    ]) assert.throws(() => importBoundary('app/forbidden-internal-consumer.ts', source))
+  }
+  assert.throws(() => importBoundary(testPath,
+    "import { probeOfficialTruthAaReviewedRevisionV1 as renamed, type OfficialTruthAaRevisionProbeV1Result } from './official-truth-aa-revision-probe-1-server'"))
+  for (const ownedPath of [readerPath, probePath]) {
+    const actual = sourceBytes.get(ownedPath)!.toString('utf8')
+    assert.throws(() => importBoundary(ownedPath, actual.replace('  serverDns,', '  serverDns as other,')))
+    assert.throws(() => importBoundary(ownedPath, actual + "\nexport { serverDns } from './official-truth-retrieval-physical-internal'\n"))
+    assert.throws(() => importBoundary(ownedPath, actual + "\nvoid import('./official-truth-retrieval-physical-internal')\n"))
+  }
+  const physicalSource = sourceBytes.get(physicalPath)!.toString('utf8')
+  assert.throws(() => importBoundary(physicalPath, physicalSource + "\nimport './official-truth-source-catalog-server'\n"))
+  assert.throws(() => importBoundary(physicalPath, physicalSource.replace('import type { QuellenUrlFehler }', 'import { QuellenUrlFehler }')))
+  assert.throws(() => importBoundary(physicalPath, physicalSource + "\nexport function anotherPhysicalPort() {}\n"))
+  const readerSource = sourceBytes.get(readerPath)!.toString('utf8')
+  assert.throws(() => importBoundary(readerPath, readerSource + "\nimport './official-truth-ch-de-aa-s1-visa-row-research-server'\n"))
+  assert.throws(() => importBoundary(readerPath, readerSource + "\nexport { AA_REVISION_PROBE_V1_POLICY } from './official-truth-aa-revision-probe-1-policy'\n"))
 }
 
 async function syntheticPreflight(): Promise<void> {
@@ -657,7 +825,7 @@ async function syntheticPreflight(): Promise<void> {
   assert.equal(policy.reviewedSourceBlob, 'e00f71f993fe558d657ca409436ee62410869b25')
   assert.equal(policy.maxBytes, 131_072)
   assert.equal(policy.timeoutMs, 10_000)
-  assert.equal(policy.sourceInventory.length, 13)
+  assert.equal(policy.sourceInventory.length, 15)
   for (const pin of policy.sourceInventory) {
     assert(Object.isFrozen(pin))
     const bytes = sourceBytes.get(pin.path)

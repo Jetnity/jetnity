@@ -114,13 +114,22 @@ export async function runR2BackendProof(primary: LocalIntegratedPilotEnvelope): 
       await noRows(owner)
       assert.equal((await owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_locks WHERE pid=$1::integer AND locktype='advisory' AND granted", [pgText(pid, 23)]))[0]?.n, '0')
       assert.equal((await readVerifiedIntegratedBundleLocally(cluster, primary.bundle.recordFingerprint)).status, 'receipt_absent')
-      const independent = await persistVerifiedIntegratedBundleLocally(cluster, oids, primary)
+      const originalConnect = LocalPgConnection.connect
+      const independentWriter: { connection?: LocalPgConnection } = {}
+      LocalPgConnection.connect = async (...args: Parameters<typeof LocalPgConnection.connect>) => {
+        const connection = await originalConnect.call(LocalPgConnection, ...args)
+        if (args[1] === 'ot_provenance_writer') independentWriter.connection = connection
+        return connection
+      }
+      let independent: Awaited<ReturnType<typeof persistVerifiedIntegratedBundleLocally>>
+      try { independent = await persistVerifiedIntegratedBundleLocally(cluster, oids, primary) }
+      finally { LocalPgConnection.connect = originalConnect }
       if (!independent.ok) console.error(JSON.stringify({
         schema: 'jetnity.native.r2-independent-failure.v1',
         scenario,
         reason: independent.reason === 'commit_outcome_unknown' ? 'commit_outcome_unknown' : 'bundle_verification_rejected',
         commitProtectionFailure: independent.reason === 'commit_outcome_unknown' ? independent.commitProtectionFailure ?? null : null,
-        operationDiagnostics: independent.reason === 'commit_outcome_unknown' ? independent.operationDiagnostics : [],
+        operationDiagnostics: independent.reason === 'commit_outcome_unknown' ? independentWriter.connection?.operationDiagnostics ?? [] : [],
       }))
       assert.ok(independent.ok); assert.equal(independent.outcome, 'inserted')
       checks.push(`r2_${scenario}_all_eight_tables_empty_lock_released_independent_writer_verified_readback`)

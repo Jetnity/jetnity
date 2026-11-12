@@ -1,3 +1,106 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A8-B + A1 + A2
+
+## Current source state — 12 November 2026
+
+**SOURCE-ONLY / Run 0 UNARMED / NOT_RUN / unpublished immutable candidate / independent Technical Lead review and all fresh exact-head execution gates pending.**
+
+Same actual implementation author: **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**. Same original reachable session: **/root/aa_revision_probe_writer_g1**. No successor, restored Cursor UI session or delegated implementation is claimed. No subagent was used for A8-B.
+
+The selected source correction is [A8-B](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825483434), with the expressly selected [BP1 preservation A1](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825534691) and [Reader source-safety A2](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825553869). [A8-A](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6824718530) selected read-only diagnosis only. All four complete receipts were reread and compared before their verbatim append to the existing Task document.
+
+This handoff describes only this source candidate. Earlier author self-reviews below are preserved history, not a transferred Technical Lead PASS. The author has not executed the project, TypeScript/parser/compiler, synthetic tests, native proofs, SQL, APT, build or CI. No AA source request, positive policy selection, rerun, branch/PR publication, Ready state or merge was performed.
+
+## Exact parent and integration boundary
+
+The sole parent is A7 **6ffbb8f1cf415e7e608634e236a47cf9872efebd**, tree **24c2709bb150d20f069ac6bfc40840048f5b83fa**. Its commit and complete untruncated recursive tree were independently reread. A7's ordered parents remain [7aa2f2fda1ad06fe2c85584f86f049c575d919da, ee6801e99e86144e60dbe86d72576f9ad7c3e9bb].
+
+At A8-B selection Root records accepted main **fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474** and passing actual-main PG1 run #4132. That is attributed Root evidence, not a new live-main or deployment check by this source-only author. This candidate does not integrate that main or adopt its HMA workflow changes. Policy baseSha remains **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, and runNumber remains **0**. Root must separately select integration and new exact-head gates; no consumed positive invocation can be reused.
+
+The exact authored allowlist contains 12 paths: nine existing leaves and three new files. The parent has 9,483 non-tree entries; construction preserves every other leaf's path, SHA, mode and type, adds exactly three 100644 blobs, and removes none. The completed commit/tree and full readback comparison are externally bound by the immutable delivery receipt so that this file and the manifest do not contain self-referential hashes.
+
+## Selected implementation and exact byte preservation
+
+The shared Reader now imports the existing physical implementation from the new server-only internal module. The AA probe, its policy/FS/CI claim logic, S1/parse5 dependency and probe fingerprint logic moved to their own server-only module. The Reader does not import or reexport the AA entry, policy or S1. Physical imports neither Reader nor probe and has no parser, catalog, Engine or application authority dependency. Its existing URL-error and IncomingMessage dependencies are type-only.
+
+The full original Reader remains authoritative: **5998fdea54d3337fb68cd7111460b59e43a3cef7**, **46,071 UTF-8 bytes**, SHA256 **b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994**. The manifest records 29 ordered source/target byte spans. Selecting the actual new Reader and actual Physical spans, plus exactly the original 25-byte URL-error import-wiring line, reconstructs every original byte and the original Gitblob/SHA256. There is no normalized AST baseline, ignored source region, duplicate implementation substitute or replacement authoritative pin.
+
+The only target bytes outside that original reconstruction are explicitly listed in the manifest: the Reader's 894-byte named import/legacy reexport wiring; Physical's server-only header and necessary Node/bounded-body/type imports; and nine seven-byte `export ` prefixes. All existing function bodies, DNS checks, public address checks, HTTP request options, fixed headers, TLS, redirects, framing proof, stream/length/MIME/UTF8 checks, cancellation and time semantics remain the actual original bytes.
+
+The physical module exports exactly 11 existing functions and six existing type names. Reader statically imports its exact 11-function/three-type selection; probe imports its exact seven-function/three-type selection. No namespace or dynamic selection is introduced. Reader reexports only its old address/lookup APIs and original associated types, including the merged lookup type/value name. No new public Reader raw-transport export is introduced.
+
+Bern's existing function bodies remain in Reader byte-exact. Its continuing calls to `medientyp`, `inhaltLaenge` and `abbruch` are explicitly imported from Physical. Its original bounded-response-body import remains in Reader; Physical also imports that same unchanged implementation. The live Bern hard stop, original budgets and all Bern behavior are unchanged.
+
+The old AA import addition remains exactly 690 bytes / SHA256 ee791811f307ed420b4c41c5d8fa812a0655d7b960ec1d0c0996ae73463be95f. The old AA appendix is exactly 18,729 bytes / SHA256 b5ebcb13fbeb6ec1bb3538233f2a26e81bea575b1fc7bfa088e3530a48b5ea32 after removing only the selected two new static inventory paths (129 bytes) from the moved appendix. The manifest records those actual Probe spans. Reinserting these actual moved additions into the restored original reconstructs the entire A7 Reader **2b14953968da35ca47b272fd67a1a912613b8e6d**, 65,490 bytes, SHA256 a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143. All old claim, deadline, noarg entry, finite result and fresh S1-after-MATCH logic remains exact.
+
+## Storage contract and proof-local diagnostics
+
+Storage is restored byte for byte to **109e8ac57029a03afa55219c8132e8bf004b2dee**, 18,102 bytes, SHA256 a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f. Removing only the 53-byte A6 addition `operationDiagnostics:connection.operationDiagnostics,` from A7 storage produces that exact original. This repairs the author-introduced enumerable-result regression; the unchanged R3 and integrated exact-result assertions are not widened.
+
+R2 retains its bounded existing failure record by observing the actual `ot_provenance_writer` connection inside the independent-write proof call. Its temporary `LocalPgConnection.connect` hook is restored in `finally`. Only the diagnostic field's source changes to that actual captured connection. No result shape, success/failure interpretation, assertion, query, budget, cleanup or wire behavior changes; no new readback is added. A successor failure without a subsequent fresh readback remains **UNKNOWN**.
+
+## Test and fixture scope
+
+The AA test now uses the probe's exact named static entry/result-type import. The existing fixture helper transpiles only one requested module and does not propagate dependency overrides recursively. Therefore each synthetic fixture first loads the actual Physical source under the same existing DNS/HTTPS/net fakes, then injects that private fixture object at the relative Physical dependency of the transpiled Probe. The object is not exposed from the fixture and no actual ESM Physical import is added to the test. This precise synthetic source-loading behavior is disclosed; it is not concealed as an absent dependency.
+
+Every existing synthetic case and assertion intent is preserved. The full `syntheticPreflight` function and final awaited preflight-before-real-entry sequence remain byte-exact except the selected inventory count 13 -> 15. Existing native-loader, producer and R2 test pins and the complete private-port evidence remain unchanged. The historical native namespace spread is still checked as a real private Reader port; the new Reader API no longer carries the AA entry into that port.
+
+The complete source import inventory continues across all 16 original directories and root JavaScript/TypeScript files without file skips. It checks the finite exact new Physical/Probe import and export selections, aliases, namespaces, recognized dynamic/require/import-equals forms, reexports and unapproved consumer paths. Added negative witnesses cover both new boundaries and the Reader's prohibition on AA/S1 dependencies. Existing negative witnesses and legacy selection checks remain.
+
+**AST limitation remains explicit:** staticString(Identifier) returns null. Constant strings, static templates/concatenations, recognized paths and static syntax are checked; arbitrary runtime-computed paths/names and indirect forwarding are not resolved universally. Independent Root exact-tree/diff/source review and the unchanged full legacy byte pins remain separately necessary. This limitation grants no permission for another consumer.
+
+A1 changes only BP1's AA Reader preservation metadata/predicate, its call wiring and its associated mutation proof. The new predicate binds all three complete files before reconstructing the original. Tests retain refusals for changed original/moved/probe bytes, missing/duplicated/misplaced spans, changed import/export wiring, trailing bytes and wrong complete files. Additional inverse-map mutations prove missing, duplicated, misplaced, shifted and wrong-source spans fail. Failures expose booleans only; the four other protected pins and unrelated BP1 observations are unchanged. The old A3 layout pins remain documented as historical evidence, not a second accepted current layout.
+
+A2 changes only the existing Reader test's source-inspection block. It reads the actual Reader and actual Physical file, checks server-only/forbidden authority and storage/provider/app patterns on both, and checks the real HTTPS request/bound lookup/fixed headers in Physical. Public entry arity and app/provider scans remain and also reject direct Physical imports. Every other Reader test byte and every dynamic case remains unchanged.
+
+The manifest records complete old/new source hashes, exact edited spans and all untouched intervals for AA test (10 selected edits), BP1 (3 selected edits), Reader source test (1 selected block) and R2 (2 selected edits). Reversing precisely those text edits recovers each full parent Gitblob. No test/parser/compiler was executed to make these source-preservation comparisons.
+
+## Closed runtime inventory and finite layout-gate review
+
+All 11 unchanged existing runtime inventory entries were independently read at the exact A7 parent and checked against byte count, SHA256 and Gitblob/tree metadata. The new policy updates only the actual Reader/test pins and appends the two new modules, yielding exactly 15 paths. Every other policy field remains unchanged, including Run0, baseSha, repository/workflow/job selection, fixed AA URL, reviewed V2 pin and binding, 131,072-byte limit and 10,000-ms deadline.
+
+The finite source-layout review covered BP1, Reader test, Bern research-only test, integrated official-source test, same-request extraction test, fingerprint-V2 test, S1 research test and bounded-response-body test. Only the two concrete layout predicates selected in A1/A2 required changes. Other inspected source gates introduce no additional selected blocker; this is a bounded read-only finding, not a passed CI suite or universal proof.
+
+## A8-A diagnosis preserved without overstating causation
+
+A7 #4131 / 43222610412 attempt 1 remains FAILED and was not rerun. Root's complete Core log pin is 4,241,384 bytes / SHA256 e3c59acd68a4e23802d5331bbe4996136265a98e6b2083b0b3a5b99eb4697afa; Lifecycle is 165,169 bytes / SHA256 edd3657eea245745fbf058ffc10ec4119809347b628951f81564e4c7b0093b6e.
+
+R2's independent successor recorded query 6,406 ms / COMMIT 20,045 ms / 57P01 / no ACK / protectionFailure null. It did not obtain a fresh readback after that failure, so its outcome remains UNKNOWN; prior absence before the successor is not that successor's readback. R3 recorded query 5,021 ms / COMMIT 20,038 ms / 57P01 / no ACK and a fresh receipt_absent.
+
+The fixed 20-second wire guard may terminate the same backend/transaction and discards its normal termination boolean. Null protectionFailure therefore does not establish that it did not fire normally. The precise actor/timing contribution remains unproved. Chrome's independent unchanged 5-second --version preflight ETIMEDOUT is preserved as separate evidence; no runner-load cause is assumed.
+
+Reader -> S1 -> parse5 introduced unnecessary source-graph work even under Run0. Main/PG1 had 63 primary / 72 composed artifacts and 30 code capsules; A7 had 68 / 77 and 35. The five additional code-artifact identities are pilot-code-30 through pilot-code-34. Per-capsule full digests and file placement were not logged; existing capsule content/digests can shift as well. This establishes graph growth, not its exact timing cost. This source separation is an architecture correction; it is not evidence that the 20-second failure or the separate Chrome failure is cured.
+
+## Exact source and documentation pins
+
+All paths below are immutable candidate contents; the final commit/tree and this handoff's own pin are supplied in the external delivery. Manifest/Task hashes bind their complete content, including the appended full task receipts. Policy remains separately bound by Root exact-head review.
+
+| Path | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 29611 | `933591ff7074c599dc5032f135103bd65f738314` | `ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2` |
+| lib/readiness/official-truth-retrieval-physical-internal.ts | 17726 | `bd995580bee6adb6b1a213b17a6001caa8f0aeff` | `aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f` |
+| lib/readiness/official-truth-aa-revision-probe-1-server.ts | 20051 | `8db7b78650fcd783a75f8b45753e196b8c0fd0f0` | `69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 4237 | `37bdeeb201d799bd918a62400e518c4052ad9bd2` | `64948e0a2f05ad2c5dd2c76ee4b9ee1ec32afd5d6627f4239e856d9e7b330d79` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 56184 | `c5acfc4e7320cf4794c547b915bbdb35efec4b22` | `89aca333a71996c489b172e1512470ad7870e982c398d0a47fb303c5eed06521` |
+| scripts/db/official-truth-integrated-pilot-1/storage.ts | 18102 | `109e8ac57029a03afa55219c8132e8bf004b2dee` | `a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f` |
+| scripts/db/official-truth-integrated-pilot-1/r2-proof.ts | 11305 | `9aec7a10a01bfe0717c6abc9bb6395ea9d937533` | `5f330819ea6c503bb4e65fbae6aacfe959951a8080fa5837874ff0d9418ad732` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 35509 | `7f95fd1225f9f1042251bd0ffbedfb13a9ede0a9` | `62621a5eb1d6496f923a3ee31f925be96504dc83659545bd1430d72c1d052e54` |
+| lib/readiness/official-truth-server-owned-retrieval.test.ts | 68545 | `1db87d5a80e913479157340803ddcdf2ac528d4d` | `a296f5212aadb14479657a9487e32fa6252d7fd41a16e18b37341a3eb2da1bc1` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 64700 | `d59505930c80eefd064021ba5fd37c2fea1a1233` | `d851e02399e30a770b2a6dd49c278d4b8a6ca252de1c11752e8d2350cc98ec78` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json | 53306 | `3c6f8e874aa86b433648cf9e53d44d24c741a696` | `e244a77d9ff56c279c916498ddd2b17abc89dc02b5272e6d21f84e278ab223fc` |
+
+## Author self-review and required next step
+
+Source-only comparisons establish the complete original Reader inverse, original storage equality, unchanged 11-entry legacy inventory, unchanged original synthetic scenarios, finite selected test/proof deltas and complete old task/handoff preservation. Nine source/proof blobs were written as immutable objects and reread in full before this handoff was prepared. This is an author self-review, never independent Technical Lead PASS.
+
+No native/database/runtime, CI, Vercel, current official revision, pilot-window or public-product truth has been established by this candidate. No query, wire timer, SQL, capture/Engine filter, Chrome preflight, S1 parser, package/lock or accepted Auth source is changed. #917/#1131 platform and safety boundaries remain untouched.
+
+Root and the independent reviewer must inspect the exact immutable candidate and its full tree. Root separately owns current-main/HMA integration, execution selection, fresh full exact-head gating, any later one-shot arm, Ready and merge. The author stops after immutable delivery and remains available in the same session for immediate review fixes.
+
+## Preserved complete prior handoff history
+
+The following is the entire prior A7 handoff verbatim: 80917 bytes, Gitblob d285e32eac66330360058d7c1404317bfadc24d2, SHA256 6da35bd767ed81add8656d73dc1bde7bc6a9027310b4675b8b0af885727dd4a5. Its internal current-state headings refer to their historical revisions. The existing Task prefix is also unchanged: 46809 bytes, Gitblob 004cf197bf2c404e51a040856dc35105f57d71a7, followed only by the four complete later Root receipts.
+
+<!-- BEGIN VERBATIM PRIOR HANDOFF d285e32eac66330360058d7c1404317bfadc24d2 -->
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A7
 
 ## Current A7 state — 12 November 2026
@@ -733,3 +836,4 @@ Original Reader: 46071 UTF-8 bytes, SHA256 `b83340d46dbf8dbc3d1ba389d6b38964bf48
 | lib/readiness/official-truth-content-identity-r2.test.ts | 41838 | `be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16` |
 
 Original reviewed metadata remains blob `e00f71f993fe558d657ca409436ee62410869b25`, 2142 bytes, SHA256 `478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5`. Its exact original source is checked by the new test before the real entry. No production import of the dormant reviewed candidate was added; only its immutable nine-field research binding and already-reviewed public pin are copied into the new policy.
+<!-- END VERBATIM PRIOR HANDOFF d285e32eac66330360058d7c1404317bfadc24d2 -->

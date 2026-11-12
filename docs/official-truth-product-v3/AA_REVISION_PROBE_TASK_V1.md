@@ -380,3 +380,133 @@ Deliver the immutable commit/tree/ordered parents, complete scope/pin comparison
 ## Persisted Root amendment A7
 
 https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6823551510
+
+
+---
+
+## A8-A / A8-B / A1 / A2 — verbatim Root review-fix authority
+
+The four following receipts are preserved verbatim. A8-A selected read-only diagnosis; only A8-B and its two finite supplements select this source correction. All earlier task text remains historical authority subject only to the explicit later exceptions below.
+
+### Root receipt 6824718530
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6824718530
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6824718530 -->
+## TL CHANGES REQUIRED — AA1 A8-A / actual A7 CI diagnosis (2026-11-12)
+
+Author/session remains **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**, `/root/aa_revision_probe_writer_g1`. Same reachable original session; no successor. Root alone owns Ready/merge.
+
+### Exact observed failure
+Published Draft head `6ffbb8f1cf415e7e608634e236a47cf9872efebd`, tree `24c2709bb150d20f069ac6bfc40840048f5b83fa`; current main `ee6801e99e86144e60dbe86d72576f9ad7c3e9bb`.
+Actual run [#4131](https://github.com/Jetnity/jetnity/actions/runs/43222610412), attempt 1, Core job `131197662032`: complete log 4,241,384 UTF8 bytes, SHA256 `e3c59acd68a4e23802d5331bbe4996136265a98e6b2083b0b3a5b99eb4697afa`. 8,738 tests / 8,734 passed / 2 failed / 0 cancelled / 2 existing skipped / 972 suites. Typecheck and lint passed; later build/check steps skipped after tests failed.
+
+R3 `selected_escaping_and_500`: startup 3 ms, BEGIN 1 ms, query 5,021 ms, COMMIT 20,038 ms -> SQLSTATE `57P01`, `commitAcknowledged:false`; total phase 25,097 ms; independent readback `receipt_absent`. Stack `r3-proof.ts:72`, `pg-wire.ts:316`. Native test failed after 60,158.547297 ms.
+R2 A6 diagnostic: `scenario:commit`, `reason:commit_outcome_unknown`, `commitProtectionFailure:null`; startup 6 ms, BEGIN 1 ms, query 6,406 ms, COMMIT 20,045 ms -> `57P01`, acknowledgement false. Independent assertion `r2-proof.ts:125 assert.ok(independent.ok)` failed; whole test 316,643.570797 ms. A6 diagnostic has therefore run, but it does not establish the terminating actor/cause.
+
+Separate Lifecycle job `131197662496`: full 165,169 bytes, SHA256 `edd3657eea245745fbf058ffc10ec4119809347b628951f81564e4c7b0093b6e`; unchanged `execFileSync('/usr/bin/google-chrome',['--version'], {timeout:5000})` failed ETIMEDOUT before bundle/cluster/fixture. 4 tests / 3 pass / 1 fail. No OS/runner-load cause inferred. Auth/UI/Atomic/Persisted/Store passed. Aggregate failed. No retry selected.
+
+### A8-A selected scope — diagnosis only
+Read the exact A7 source and complete logs. Reconstruct the real same-connection COMMIT protection, idle-transaction/deadline lifecycle, protocol and external terminator path from startup through actual query result, CPU-side verification, COMMIT write/ACK, cleanup and independent readback. Compare the same unchanged tests that pass on accepted main and PG1 #4130 with this A7 changed implementation; identify concrete behavioral differences rather than assigning runner load by assumption.
+
+Return a finite causal graph with exact file/blob/line excerpts, all observed timestamps, proven facts vs hypotheses, and the smallest proposed correction or missing diagnostic needed. Specifically account for 57P01 at the repeated 20-second point, protection failure null, and fresh receipt absence. Audit the separate Chrome preflight failure without silently modifying or widening its timeout.
+
+This is read-only source/log analysis: no authored Git objects yet, no repository/Node/project/parser/compiler/test/native/SQL/APT/build execution, no CI rerun, no ref/PR mutation, no hosted operation or official source GET. Pure text/hash comparisons are permitted. Do not change or weaken timeouts, commit truth, SQL semantics, assertion/mandatory groups, cleanup, policy inventory or the Run0 state. Do not propose broad skip/retry-to-green. Stop after reporting for Root's separate versioned implementation selection.
+
+All prior actual failed receipts remain immutable history. Run0 remains UNARMED; the earlier consumed positive invocation is not reusable. #917 denied action and #1131 remain untouched. No Ready, merge, Dev install, source-currentness or public activation claim.
+<!-- END VERBATIM ROOT RECEIPT 6824718530 -->
+
+### Root receipt 6825483434
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825483434
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6825483434 -->
+## TL CHANGES REQUIRED — AA1 A8-B / isolate probe dependencies and restore storage result contract
+
+2026-11-12. Same original author/session: **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**, `/root/aa_revision_probe_writer_g1`. This is the immediate review fix after A8-A (#1192 comment 6824718530), not a new product slice. Root alone decides publication, CI selection, Ready and merge.
+
+### Evidence and finite diagnosis accepted by Root
+
+A7 remains Draft head `6ffbb8f1cf415e7e608634e236a47cf9872efebd`, tree `24c2709bb150d20f069ac6bfc40840048f5b83fa`. Current accepted main is `fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474`; PG1 actual-main run #4132 passed. A7 run #4131 is still FAILED, no retry selected. Its full Core log pin remains 4,241,384 bytes / SHA256 `e3c59acd68a4e23802d5331bbe4996136265a98e6b2083b0b3a5b99eb4697afa`; Lifecycle 165,169 / `edd3657eea245745fbf058ffc10ec4119809347b628951f81564e4c7b0093b6e`.
+
+Root independently read current Reader imports, shared physical implementation, full AA policy, actual wire guard, storage and R2 changed region and both exact-result assertions. Removing exactly 53 UTF8 bytes `operationDiagnostics:connection.operationDiagnostics,` from storage blob `3079ee3149dc4ac0f505e1d683cb1099baa2b5ca` restores original blob `109e8ac57029a03afa55219c8132e8bf004b2dee` byte for byte (18,102 bytes; SHA256 `a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f`). The A6 enumerable property conflicts with unchanged R3 and integrated exact deepEqual expectations; those assertions were not reached in the earlier failing A7 path. It must not be normalized by widening those expectations.
+
+The shared Reader imports AA S1, and S1 imports parse5. Engine captures its complete source dependency graph even when Run0 is closed. The observed artifact counts increased from 63/72 on main/PG1 to 68/77 on A7 (code capsules 30 -> 35); no full per-capsule byte map was logged. Original wire/cluster/deferred SQL/Engine/capture source is unchanged. Extra graph work is established; its precise timing contribution to the 20-second failure is not established.
+
+The actual fixed wire guard sleeps 20 seconds and then may terminate the same backend/transaction. Its success callback discards the returned termination value; protectionFailure:null does not prove the guard did not fire normally. A7 R3 query 5,021 ms/COMMIT 20,038 ms and R2 query 6,406 ms/COMMIT 20,045 ms ended 57P01 without ACK. R3 fresh readback was absent. R2 did not perform a fresh readback after the failed successor; its prior absence must not be relabeled as that successor's result. Chrome's separate 5-second preflight timeout remains an independent observed failure, with no assumed load cause.
+
+### Selected A8-B correction and explicit architecture exception
+
+Author source-only on sole parent A7 `6ffbb8f1cf415e7e608634e236a47cf9872efebd`. No rebase/ref update yet; integration with then-current accepted main and new HMA workflow pins is a separate explicit Root step.
+
+1. Restore storage.ts exactly to blob `109e8ac57029a03afa55219c8132e8bf004b2dee`. Retain R2 failure diagnostics by observing the actual independent writer LocalPgConnection within the proof, following the already present R3/integrated test-local capture pattern. Restore the temporary hook in finally. Do not modify success/unknown/failure result shapes, existing assertions, queries, wire protocol, cleanup or budgets.
+2. Move AA-only imports and the complete AA appendix out of the shared Reader into new server-only `lib/readiness/official-truth-aa-revision-probe-1-server.ts`. Its sole runtime importer is the existing AA test, by exact named static import. S1/parse5, policy/FS/CI claim and probe fingerprint logic remain only on that probe side.
+3. Extract the existing shared physical implementation into new server-only `lib/readiness/official-truth-retrieval-physical-internal.ts`. This is an explicit narrow exception to the earlier V1 prohibition on primitive module boundaries: the Reader and the new AA probe may statically import an exact finite list of shared physical functions/types. No other production or test consumer, app/public barrel, dynamic/namespace import, setter, callback port, authority handoff, or new Reader public raw-transport export is permitted.
+4. Move existing implementation bodies byte-exact, except necessary export keywords/import wiring. Include the actual dependency closure: DNS/HTTPS/response streaming; address/public-IP and DNS-lookup checks; media-type/content-length/bounded-body reader; clock/UTF8 helpers and their existing constants/types. Keep existing Reader exported API names/types and their behavior through exact named reexports as needed. Preserve the existing HTTP framing proof. No duplicated parser/network implementation and no changes to request/redirect/DNS/TLS/body/time/error semantics.
+5. The Reader must no longer import or reexport the AA entry, policy or S1. The new physical module must not import the Reader, AA, S1, parser, catalog, Engine or application authority. Type-only existing shared URL-error typing is allowed if necessary; retain no runtime cycle.
+6. Update the AA test's fixture entry/imports and its existing complete import-boundary inventory to enforce these exact boundaries, including forbidden aliases, namespace/dynamic/reexports and unapproved consumer paths. Preserve every existing synthetic case and assertion intent, all existing byte-pinned legacy private-port exceptions, BP1 observation bytes, and one awaited preflight-before-real-entry ordering.
+7. Source inventory remains closed and expands the existing 13 exact paths with the two new implementation paths (15 total); bind their actual bytes/hashes and update Reader/test pins. Preserve all other source inventory entries and old historical evidence. Policy runNumber remains 0, baseSha remains its original accepted A7 base until separately reviewed integration, fixed AA URL/V2 pin/body limit/10-second/no redirect/no retry/no credentials and single-invocation claim remain unchanged.
+
+### Exact authored allowlist (10 paths)
+
+- lib/readiness/official-truth-server-owned-retrieval.ts
+- lib/readiness/official-truth-retrieval-physical-internal.ts (new)
+- lib/readiness/official-truth-aa-revision-probe-1-server.ts (new)
+- lib/readiness/official-truth-aa-revision-probe-1-policy.ts
+- lib/readiness/official-truth-aa-revision-probe-1.test.ts
+- scripts/db/official-truth-integrated-pilot-1/storage.ts (exact original restoration)
+- scripts/db/official-truth-integrated-pilot-1/r2-proof.ts
+- docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md
+- docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md
+- docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json (new)
+
+All other A7 leaves byte-exact, including pg-wire.ts, cluster.ts, Engine, capture, SQL, S1/parse5, Chrome preflight, historical native test assertions, CI/package/lock and existing BP1 patch. No timeout or selector change; no capture exclusions or arbitrary graph-count target. A new source boundary is not evidence that the timing failure is cured; only fresh full exact-head gates can establish candidate behavior.
+
+### Delivery and limits
+
+Deliver unpublished immutable blobs/tree/commit, complete full-tree delta proof, exact byte pins, a finite move manifest with each original byte span and target span plus inverse reconstruction proving original physical bodies, explicit import/export inventory, storage restoration equality, and full appended task/handoff history. Clearly mark source-only/NOT_RUN. Do not claim native, official-source currentness or pilot-window approval from this work.
+
+No local/project/parser/compiler/test/native/SQL/APT/build execution, GitHub rerun/ref/PR mutation, hosted action, source GET, publication, Ready or merge. Pure inert source/text/hash/tree work only. The previously consumed positive invocation cannot be reused. #917 and #1131 remain untouched; Root owns all later execution selection and re-gating.
+<!-- END VERBATIM ROOT RECEIPT 6825483434 -->
+
+### Root receipt 6825534691
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825534691
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6825534691 -->
+## AA1 A8-B A1 — exact BP1 preservation amendment
+
+Root supplement to selected A8-B (#1192 comment 6825483434), 2026-11-12. Same reachable original Generation1 session and source-only boundaries remain unchanged.
+
+Root independently read the complete affected preservation block in BP1 observation test blob `7b027b49af72a3f16b230acfeff7434f9a71b64e`. Its old predicate requires exactly Reader `2b14953968da35ca47b272fd67a1a912613b8e6d`, 65,490 bytes, and removes only the two A3 additions. The selected shared-physical/probe separation necessarily changes that file layout. Keeping this old current-layout predicate would deterministically reject the intended source-preserving refactor.
+
+One additional authored path is therefore selected:
+`lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts`.
+The complete A8-B allowlist is now 11 paths. This supersedes only the task sentence requiring this BP1 file byte-exact; all unrelated BP1 observations, checks and protected pins remain byte-exact.
+
+Replace only the AA Reader preservation metadata/predicate and its corresponding mutation proof/call wiring. The original authoritative Reader remains blob `5998fdea54d3337fb68cd7111460b59e43a3cef7`, 46,071 bytes, SHA256 `b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994`. Do not change that original pin, substitute an author-generated baseline, normalize ASTs, ignore source bytes, accept arbitrary alternate layouts, or weaken the other four protected file pins.
+
+The new finite predicate must independently bind the actual selected complete Reader, new physical module and new AA probe bytes/hashes. Use exact reviewed byte spans/inverse moves to reconstruct every byte of the original Reader from the actual new sources, accounting explicitly for only the selected import/export/header wiring. No duplicated implementation body may substitute for the code actually consumed. The old A3 current-file/addition pins remain documented as immutable history, not accepted as the new current layout.
+
+Retain and adapt the existing mutation proof: changed original body, changed moved physical body, changed probe/addition, missing/duplicated/misplaced spans, changed import/export wiring, extra trailing bytes and wrong complete file all refuse. Full source pins must reject unexpected bytes outside reconstructed spans as well. Boolean-only failure output; no raw bodies. Preserve original-byte comparison and the existing app/cold-import/unarmed/no-network/caller boundary semantics.
+
+The existing 15-path AA source inventory remains as selected; this amendment does not authorize a network run, source revision, policy arm, fixture/parser execution, native/SQL/build action, ref or CI mutation. Deliver the complete BP1 inverse and old-vs-new scoped diff alongside the A8-B move manifest for independent Root review.
+<!-- END VERBATIM ROOT RECEIPT 6825534691 -->
+
+### Root receipt 6825553869
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825553869
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6825553869 -->
+## AA1 A8-B A2 — preserve the existing Reader source-safety assertions across the selected module move
+
+Root supplement to A8-B (6825483434) and A1 (6825534691), 2026-11-12. Same original Generation1 session, sole A7 parent and all source-only/Run0 constraints remain.
+
+Root independently read `lib/readiness/official-truth-server-owned-retrieval.test.ts`, exact blob `30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9`, including test “29 und 30 kein App-Import und keine Annahme, kein Speicher, kein Extraktor, kein F8”. It currently expects https.request, bound lookup and fixed headers inside the single Reader file. Those exact implementation bodies are being moved into the explicitly selected shared physical module.
+
+Add exactly that test path to the authored allowlist (12 paths total). Only the source-inspection block of that existing test and necessary local path binding may change. Inspect the actual Reader and actual new physical source separately: keep business/catalog/caller/authority/app boundaries on Reader; require server-only, real https.request, exact bound lookup and fixed headers in the physical module; apply forbidden fetch/storage/provider/app/acceptance checks to both modules wherever relevant. Preserve the existing public entry arity and complete app/provider import scan; extend it to reject direct physical imports as well. No comments masquerading as implementation, unconditional pass, omitted assertion, dynamic test removal or weakened string match.
+
+Every other original Reader test byte and all dynamic test scenarios remain unchanged. The existing protected original Reader pin in BP1 remains unchanged. New complete source/test pins and the exact inverse of this narrow assertion move belong in the manifest and Root review. The 15-path probe runtime inventory stays as selected; this independent mandatory test is bound externally through exact tree/manifest/CI.
+
+Perform a finite read-only check for any further concrete source-layout gates before delivering objects; report exact paths and predicates if necessary. This is not permission to widen scope autonomously. No new source fetch, execution, timeouts, policy arming, ref, CI, Ready or merge.
+<!-- END VERBATIM ROOT RECEIPT 6825553869 -->

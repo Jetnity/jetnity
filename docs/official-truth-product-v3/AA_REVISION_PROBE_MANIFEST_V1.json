@@ -1,0 +1,1411 @@
+{
+  "schema": "jetnity.aa-revision-probe.source-manifest.v1",
+  "task": "CH-DE-AA-REVISION-PROBE-1",
+  "amendment": "A8-B + A1 + A2",
+  "date": "2026-11-12",
+  "author": {
+    "name": "Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1",
+    "session": "/root/aa_revision_probe_writer_g1",
+    "originalSession": true,
+    "cursorUiResumptionClaimed": false,
+    "subagentsUsed": false
+  },
+  "status": {
+    "sourceOnly": true,
+    "runNumber": 0,
+    "execution": "NOT_RUN",
+    "officialSourceRequest": "NOT_ATTEMPTED",
+    "policyArming": "NONE",
+    "refs": "NOT_MUTATED",
+    "ready": false,
+    "merge": false,
+    "technicalLeadPass": "PENDING"
+  },
+  "authority": [
+    {
+      "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6824718530",
+      "verbatimBodySha256": "7c1bbd6fe10e771136113fd98ee05b06e8142418b651688dd71e777baaa339f9",
+      "scope": "read_only_diagnosis"
+    },
+    {
+      "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825483434",
+      "verbatimBodySha256": "a304973dcb110420060658971c60c2bb63533a52d8f28db59ece65a58ee61756",
+      "scope": "source_fix"
+    },
+    {
+      "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825534691",
+      "verbatimBodySha256": "b52110cba6bb1447bb6291b55d4d80ec53d113662dc5c4b5b4d8b257fe3ee392",
+      "scope": "source_fix"
+    },
+    {
+      "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825553869",
+      "verbatimBodySha256": "c132b88c8f90de3f4587c203d076bebf1410f42975519860ba8bb1587c103e0a",
+      "scope": "source_fix"
+    }
+  ],
+  "parent": {
+    "commit": "6ffbb8f1cf415e7e608634e236a47cf9872efebd",
+    "tree": "24c2709bb150d20f069ac6bfc40840048f5b83fa",
+    "soleParent": true,
+    "orderedGrandparents": [
+      "7aa2f2fda1ad06fe2c85584f86f049c575d919da",
+      "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
+    ]
+  },
+  "integration": {
+    "policyBaseSha": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb",
+    "currentAcceptedMainAtRootSelection": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "currentMainMergedHere": false,
+    "hmaWorkflowAdopted": false,
+    "laterIntegrationRequiresSeparateRootSelection": true
+  },
+  "authoredAllowlist": [
+    "lib/readiness/official-truth-server-owned-retrieval.ts",
+    "lib/readiness/official-truth-retrieval-physical-internal.ts",
+    "lib/readiness/official-truth-aa-revision-probe-1-server.ts",
+    "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
+    "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+    "scripts/db/official-truth-integrated-pilot-1/storage.ts",
+    "scripts/db/official-truth-integrated-pilot-1/r2-proof.ts",
+    "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts",
+    "lib/readiness/official-truth-server-owned-retrieval.test.ts",
+    "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
+    "docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md",
+    "docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json"
+  ],
+  "completeTreeRule": {
+    "parentTreeReadbackUntruncated": true,
+    "parentLeafEntries": 9483,
+    "candidateLeafEntries": 9486,
+    "changedExistingLeaves": 9,
+    "addedLeaves": 3,
+    "deletedLeaves": 0,
+    "newMode": "100644",
+    "newType": "blob",
+    "preserveEveryOtherLeafShaModeType": true,
+    "finalCommitTreeAndThisDocumentPins": "Externally bound by final immutable delivery; no self-referential tree or document hash."
+  },
+  "sourcePins": [
+    {
+      "path": "lib/readiness/official-truth-server-owned-retrieval.ts",
+      "bytes": 29611,
+      "blob": "933591ff7074c599dc5032f135103bd65f738314",
+      "sha256": "ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2",
+      "parentBlob": "2b14953968da35ca47b272fd67a1a912613b8e6d"
+    },
+    {
+      "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+      "bytes": 17726,
+      "blob": "bd995580bee6adb6b1a213b17a6001caa8f0aeff",
+      "sha256": "aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f",
+      "parentBlob": null
+    },
+    {
+      "path": "lib/readiness/official-truth-aa-revision-probe-1-server.ts",
+      "bytes": 20051,
+      "blob": "8db7b78650fcd783a75f8b45753e196b8c0fd0f0",
+      "sha256": "69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617",
+      "parentBlob": null
+    },
+    {
+      "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
+      "bytes": 4237,
+      "blob": "37bdeeb201d799bd918a62400e518c4052ad9bd2",
+      "sha256": "64948e0a2f05ad2c5dd2c76ee4b9ee1ec32afd5d6627f4239e856d9e7b330d79",
+      "parentBlob": "8c53a47e1df0e5084fe5587af489d015563bb1cd"
+    },
+    {
+      "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+      "bytes": 56184,
+      "blob": "c5acfc4e7320cf4794c547b915bbdb35efec4b22",
+      "sha256": "89aca333a71996c489b172e1512470ad7870e982c398d0a47fb303c5eed06521",
+      "parentBlob": "a3f35c4f1d400b8acaca38c82484f0b7093dee07"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/storage.ts",
+      "bytes": 18102,
+      "blob": "109e8ac57029a03afa55219c8132e8bf004b2dee",
+      "sha256": "a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f",
+      "parentBlob": "3079ee3149dc4ac0f505e1d683cb1099baa2b5ca"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/r2-proof.ts",
+      "bytes": 11305,
+      "blob": "9aec7a10a01bfe0717c6abc9bb6395ea9d937533",
+      "sha256": "5f330819ea6c503bb4e65fbae6aacfe959951a8080fa5837874ff0d9418ad732",
+      "parentBlob": "e473bdf01ce26ec9f2f92d71cf0f25f4bda270c6"
+    },
+    {
+      "path": "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts",
+      "bytes": 35509,
+      "blob": "7f95fd1225f9f1042251bd0ffbedfb13a9ede0a9",
+      "sha256": "62621a5eb1d6496f923a3ee31f925be96504dc83659545bd1430d72c1d052e54",
+      "parentBlob": "7b027b49af72a3f16b230acfeff7434f9a71b64e"
+    },
+    {
+      "path": "lib/readiness/official-truth-server-owned-retrieval.test.ts",
+      "bytes": 68545,
+      "blob": "1db87d5a80e913479157340803ddcdf2ac528d4d",
+      "sha256": "a296f5212aadb14479657a9487e32fa6252d7fd41a16e18b37341a3eb2da1bc1",
+      "parentBlob": "30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
+      "bytes": 64700,
+      "blob": "d59505930c80eefd064021ba5fd37c2fea1a1233",
+      "sha256": "d851e02399e30a770b2a6dd49c278d4b8a6ca252de1c11752e8d2350cc98ec78",
+      "parentBlob": "004cf197bf2c404e51a040856dc35105f57d71a7"
+    }
+  ],
+  "runtimeInventory": {
+    "count": 15,
+    "paths": [
+      {
+        "path": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "bytes": 29611,
+        "sha256": "ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2",
+        "blob": "933591ff7074c599dc5032f135103bd65f738314"
+      },
+      {
+        "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+        "bytes": 56184,
+        "sha256": "89aca333a71996c489b172e1512470ad7870e982c398d0a47fb303c5eed06521",
+        "blob": "c5acfc4e7320cf4794c547b915bbdb35efec4b22"
+      },
+      {
+        "path": "lib/readiness/official-truth-bounded-response-body.ts",
+        "bytes": 1278,
+        "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2",
+        "blob": "783d802fff48a2969b86945515b159a513df76e9"
+      },
+      {
+        "path": "lib/readiness/official-truth-source-fingerprint-v2.ts",
+        "bytes": 5156,
+        "sha256": "d8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac",
+        "blob": "72d324d019625c5028be8f47763fdd0f6ffe38e5"
+      },
+      {
+        "path": "lib/readiness/digest.ts",
+        "bytes": 3013,
+        "sha256": "e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190",
+        "blob": "bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54"
+      },
+      {
+        "path": "lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts",
+        "bytes": 6702,
+        "sha256": "059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e",
+        "blob": "888435e2867ff373b85b0299833c3f1fe34c0af3"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "bytes": 12325,
+        "sha256": "3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18",
+        "blob": "22f6e50aaff600749814bf7e77e24c728b1cd5d5"
+      },
+      {
+        "path": "package.json",
+        "bytes": 6467,
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "blob": "3e8a2b7a40007af29320919401369f17ee53672a"
+      },
+      {
+        "path": "package-lock.json",
+        "bytes": 320689,
+        "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e",
+        "blob": "7b5394006458d34c833cdb5438b06f9f6af28353"
+      },
+      {
+        "path": "scripts/server-only-test-register.mjs",
+        "bytes": 508,
+        "sha256": "d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32",
+        "blob": "97e3f68e1669235c63d2763f611d1a6d0e18ff1b"
+      },
+      {
+        "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+        "bytes": 6501,
+        "sha256": "49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298",
+        "blob": "7f79dba1cbdc4a6807f094a4873ba3ad635b7b46"
+      },
+      {
+        "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+        "bytes": 9176,
+        "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572",
+        "blob": "b77667a2b345ff272a5379aaa9a08d409e25d208"
+      },
+      {
+        "path": "lib/readiness/official-truth-content-identity-r2.test.ts",
+        "bytes": 41838,
+        "sha256": "be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16",
+        "blob": "01c032582fb37fd0881c828610a83db483c6d688"
+      },
+      {
+        "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "bytes": 17726,
+        "sha256": "aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f",
+        "blob": "bd995580bee6adb6b1a213b17a6001caa8f0aeff"
+      },
+      {
+        "path": "lib/readiness/official-truth-aa-revision-probe-1-server.ts",
+        "bytes": 20051,
+        "sha256": "69a3520a9c8a31dc37bb45ce190668c41927f6f287f6fd1dc11d5d7acdc9b617",
+        "blob": "8db7b78650fcd783a75f8b45753e196b8c0fd0f0"
+      }
+    ],
+    "unchangedOriginalEntries": 11,
+    "oldReaderAndTestPinsReplaced": true,
+    "physicalAndProbeAdded": true,
+    "policyOwnBlobIsExternal": true
+  },
+  "readerInverse": {
+    "authoritativeOriginal": {
+      "path": "lib/readiness/official-truth-server-owned-retrieval.ts",
+      "bytes": 46071,
+      "blob": "5998fdea54d3337fb68cd7111460b59e43a3cef7",
+      "sha256": "b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994"
+    },
+    "offsetUnit": "UTF-8 byte offset; start inclusive and end exclusive",
+    "orderedSpans": [
+      {
+        "order": 0,
+        "name": "unchanged_reader",
+        "sourceStart": 0,
+        "sourceEnd": 805,
+        "sha256": "ccaf5071438bba48f8ff275189d28072c73593e6a8340047e8cdacdcd4d04bdd",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 0,
+        "targetEnd": 805
+      },
+      {
+        "order": 1,
+        "name": "unchanged_reader",
+        "sourceStart": 805,
+        "sourceEnd": 806,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 1699,
+        "targetEnd": 1700
+      },
+      {
+        "order": 2,
+        "name": "node_dns_https_imports",
+        "sourceStart": 806,
+        "sourceEnd": 933,
+        "sha256": "96cc7749e20e4be4240b09d0a83b264ee1c7cbb48dd64c2043bc7e3876e859d2",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 130,
+        "targetEnd": 257
+      },
+      {
+        "order": 3,
+        "name": "unchanged_reader",
+        "sourceStart": 933,
+        "sourceEnd": 1783,
+        "sha256": "2f7962905a91a8c04d567ab26daaf390da4de9b2af213bdd441771bbfbc0062c",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 1700,
+        "targetEnd": 2550
+      },
+      {
+        "order": 4,
+        "name": "url_error_type_import_wiring",
+        "sourceStart": 1783,
+        "sourceEnd": 1808,
+        "sha256": "286e4b726e1d7a2c10a39a0f493f579e8a8eb208d7af2e2b0a0f228d0bfc51e0",
+        "literal": "  type QuellenUrlFehler,\n"
+      },
+      {
+        "order": 5,
+        "name": "unchanged_reader",
+        "sourceStart": 1808,
+        "sourceEnd": 2104,
+        "sha256": "3a87d75e3ad0846601fbfead83cd52a5fecb2593cadbc21f335a811cd11edf87",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 2550,
+        "targetEnd": 2846
+      },
+      {
+        "order": 6,
+        "name": "redirect_statuses",
+        "sourceStart": 2104,
+        "sourceEnd": 2157,
+        "sha256": "68246e1f98c770d018d4c17a207a4117b3c466a558ab9e9cc750c2ccb92feabf",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 461,
+        "targetEnd": 514
+      },
+      {
+        "order": 7,
+        "name": "unchanged_reader",
+        "sourceStart": 2157,
+        "sourceEnd": 2228,
+        "sha256": "1c17e05a284a06b8ece103496a734946c963b61373ef99574d9ec5a029d2698a",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 2846,
+        "targetEnd": 2917
+      },
+      {
+        "order": 8,
+        "name": "fixed_headers",
+        "sourceStart": 2228,
+        "sourceEnd": 2333,
+        "sha256": "30c5c51d11aa790a24e78cc8db8e33a4a11bb65db02c155a59b7548a935246b5",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 514,
+        "targetEnd": 619
+      },
+      {
+        "order": 9,
+        "name": "unchanged_reader",
+        "sourceStart": 2333,
+        "sourceEnd": 4165,
+        "sha256": "e50f5ef71d17b74191bc016bd188e73a46c2bb7b4cb1a948af00977e9d13edaf",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 2917,
+        "targetEnd": 4749
+      },
+      {
+        "order": 10,
+        "name": "ipv4_denied_ranges",
+        "sourceStart": 4165,
+        "sourceEnd": 4527,
+        "sha256": "ab6a6ba035cbb9901b72b6572e0ca61c699e599ee9f73cfa552ce7ab07579f24",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 619,
+        "targetEnd": 981
+      },
+      {
+        "order": 11,
+        "name": "failure_type",
+        "sourceStart": 4527,
+        "sourceEnd": 5360,
+        "sha256": "2f8b395bf540cbf8d5958368c319d215167d76a2832c76d5457324c0a4775f19",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 981,
+        "targetEnd": 1814
+      },
+      {
+        "order": 12,
+        "name": "unchanged_reader",
+        "sourceStart": 5360,
+        "sourceEnd": 6081,
+        "sha256": "596bd439d31841c096f0b5b21a0209c646069f7fa088aded2be6ebddf42036f4",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 4749,
+        "targetEnd": 5470
+      },
+      {
+        "order": 13,
+        "name": "physical_types",
+        "sourceStart": 6081,
+        "sourceEnd": 7371,
+        "sha256": "150dd9535de1702de8ae4b22041da043d35f5edeb0289fc45dca2c2ff973b347",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 1814,
+        "targetEnd": 3104
+      },
+      {
+        "order": 14,
+        "name": "unchanged_reader",
+        "sourceStart": 7371,
+        "sourceEnd": 8552,
+        "sha256": "1139da8488ff06f9b7d04647efeb7a058c4ed4ef8a8e5381deee5a224fa8c2ad",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 5470,
+        "targetEnd": 6651
+      },
+      {
+        "order": 15,
+        "name": "address_and_lookup_functions",
+        "sourceStart": 8552,
+        "sourceEnd": 15199,
+        "sha256": "bb72fcbbfdc73064ae9ede2075fa04ddbfaca89c12a845360f173bf2bab11c4d",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 3104,
+        "targetEnd": 9751
+      },
+      {
+        "order": 16,
+        "name": "unchanged_reader",
+        "sourceStart": 15199,
+        "sourceEnd": 19855,
+        "sha256": "d62346c1c13593e38009a236096b28024eb3df5ddf695bc8de7eae8b586c45bf",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 6651,
+        "targetEnd": 11307
+      },
+      {
+        "order": 17,
+        "name": "media_length_utf8_clock_functions",
+        "sourceStart": 19855,
+        "sourceEnd": 20427,
+        "sha256": "125acc52bcbad41e7430de93b9ab04940046e25ae849cfabd8a5ae2cfc529b52",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 9758,
+        "targetEnd": 10330
+      },
+      {
+        "order": 18,
+        "name": "media_length_utf8_clock_functions",
+        "sourceStart": 20427,
+        "sourceEnd": 20763,
+        "sha256": "56d4b4034715f6ada102b48eef96b6766766bfd61e1d1202fc31348ad2f38acc",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 10337,
+        "targetEnd": 10673
+      },
+      {
+        "order": 19,
+        "name": "media_length_utf8_clock_functions",
+        "sourceStart": 20763,
+        "sourceEnd": 21341,
+        "sha256": "6b1023afcf68de2761fc6f5aa07aa84c2aa7829b20fb1ce60ee73035903aca4b",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 10680,
+        "targetEnd": 11258
+      },
+      {
+        "order": 20,
+        "name": "media_length_utf8_clock_functions",
+        "sourceStart": 21341,
+        "sourceEnd": 21580,
+        "sha256": "9cc4eec23b8ec5ed8e19560fa9c1732da84aea43d2806b8971c16a7c8c9d9259",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 11265,
+        "targetEnd": 11504
+      },
+      {
+        "order": 21,
+        "name": "unchanged_reader",
+        "sourceStart": 21580,
+        "sourceEnd": 21770,
+        "sha256": "203de9198abb5117f65ca69699d42a7f02d93c286f6275a5cd9e324ccc4c4893",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 11307,
+        "targetEnd": 11497
+      },
+      {
+        "order": 22,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 21770,
+        "sourceEnd": 22239,
+        "sha256": "1e71b759f92f02d6f1cb0e997a00c47a4f562854b13e1edf7d6b2e7be15cd315",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 11504,
+        "targetEnd": 11973
+      },
+      {
+        "order": 23,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 22239,
+        "sourceEnd": 22901,
+        "sha256": "4d65c1e13dec51f9bdca510ee931e6e80d3257799b3699f070f97c2fe84bf926",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 11980,
+        "targetEnd": 12642
+      },
+      {
+        "order": 24,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 22901,
+        "sourceEnd": 25282,
+        "sha256": "36be782615cc0c04af64db03a93ab7822500369e6dab7ac67c21ec21b95b927d",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 12649,
+        "targetEnd": 15030
+      },
+      {
+        "order": 25,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 25282,
+        "sourceEnd": 25546,
+        "sha256": "21b66ae6c2fe8d5e5c20c5137873f86a5323cf7b7d5d053320e48b165ed99600",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 15037,
+        "targetEnd": 15301
+      },
+      {
+        "order": 26,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 25546,
+        "sourceEnd": 25868,
+        "sha256": "bbd8ee8fef30a8e3990820a5297711590263520327b837ffb1bce48dd36d2497",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 15308,
+        "targetEnd": 15630
+      },
+      {
+        "order": 27,
+        "name": "native_http_and_hop_functions",
+        "sourceStart": 25868,
+        "sourceEnd": 27957,
+        "sha256": "2d31c0cdfa3894a273b3680bab9c1b972be3ef995e9e217dff998a821a8641f2",
+        "targetFile": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "targetStart": 15637,
+        "targetEnd": 17726
+      },
+      {
+        "order": 28,
+        "name": "unchanged_reader",
+        "sourceStart": 27957,
+        "sourceEnd": 46071,
+        "sha256": "1da779aadf7a00bc60c0a02fb76167e8182079eb344332c0dc77c97dc066b52f",
+        "targetFile": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "targetStart": 11497,
+        "targetEnd": 29611
+      }
+    ],
+    "restoredOriginalTypeImportLiteral": {
+      "bytes": 25,
+      "text": "  type QuellenUrlFehler,\n",
+      "reason": "Only original type-import wiring; actual URL-error typing now belongs to Physical."
+    },
+    "targetBytesOutsideInverse": [
+      {
+        "file": "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "start": 805,
+        "end": 1699,
+        "bytes": 894,
+        "sha256": "2b4a9a307b96397e736216196fc337d04e0519a29c1b23e5e6af59cebd930570",
+        "kind": "new_exact_named_import_and_legacy_reexport_wiring",
+        "text": "\nimport {\n  officialTruthServerOwnedRetrievalAdresseZulaessig,\n  officialTruthServerOwnedRetrievalLookup,\n  serverDns,\n  serverHttp,\n  serverUhr,\n  hopLesen,\n  textAus,\n  uhrLesen,\n  medientyp,\n  inhaltLaenge,\n  abbruch,\n  type OfficialTruthServerOwnedRetrievalDnsResolver,\n  type OfficialTruthServerOwnedRetrievalHttpClient,\n  type OfficialTruthServerOwnedRetrievalSperrgrund,\n} from './official-truth-retrieval-physical-internal'\nexport {\n  officialTruthServerOwnedRetrievalAdresseZulaessig,\n  officialTruthServerOwnedRetrievalLookup,\n} from './official-truth-retrieval-physical-internal'\nexport type {\n  OfficialTruthServerOwnedRetrievalAdresse,\n  OfficialTruthServerOwnedRetrievalDnsResolver,\n  OfficialTruthServerOwnedRetrievalHttpClient,\n  OfficialTruthServerOwnedRetrievalHttpErgebnis,\n  OfficialTruthServerOwnedRetrievalSperrgrund,\n} from './official-truth-retrieval-physical-internal'\n"
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 0,
+        "end": 130,
+        "bytes": 130,
+        "sha256": "81ac16d27c18c4cd3cc2e4259fbd2d80e78eb4e7aabffbbf8ec0e6b61a5d998b",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "// Internal shared physical implementation. The Reader and AA research probe are the only module consumers.\nimport 'server-only'\n\n"
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 257,
+        "end": 461,
+        "bytes": 204,
+        "sha256": "714135a9037aed7c33feb8a49ec63cdab30cc93f906760abd706cd0381853fd7",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "import net from 'node:net'\nimport { officialTruthBoundedResponseBody } from '@/lib/readiness/official-truth-bounded-response-body'\nimport type { QuellenUrlFehler } from '@/lib/readiness/source-registry'\n\n"
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 9751,
+        "end": 9758,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 10330,
+        "end": 10337,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 10673,
+        "end": 10680,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 11258,
+        "end": 11265,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 11973,
+        "end": 11980,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 12642,
+        "end": 12649,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 15030,
+        "end": 15037,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 15301,
+        "end": 15308,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      },
+      {
+        "file": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+        "start": 15630,
+        "end": 15637,
+        "bytes": 7,
+        "sha256": "814e26b2395ad89dfb0e0d27d3879d39899020aa55fc3b17a6c79d6e33087a53",
+        "kind": "header_or_import_wiring_or_export_keyword",
+        "text": "export "
+      }
+    ],
+    "movePreservation": {
+      "allOriginalBytesCoveredExactlyOnce": true,
+      "allMappedBodyBytesComparedExactly": true,
+      "fullRestoredOriginalGitBlobAndSha256Match": true,
+      "originalBoundedBodyImportRetainedInReaderForBern": true,
+      "addedExportKeywords": [
+        {
+          "name": "medientyp",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 9751,
+          "targetEnd": 9758
+        },
+        {
+          "name": "inhaltLaenge",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 10330,
+          "targetEnd": 10337
+        },
+        {
+          "name": "textAus",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 10673,
+          "targetEnd": 10680
+        },
+        {
+          "name": "uhrLesen",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 11258,
+          "targetEnd": 11265
+        },
+        {
+          "name": "serverDns",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 11973,
+          "targetEnd": 11980
+        },
+        {
+          "name": "serverHttp",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 12642,
+          "targetEnd": 12649
+        },
+        {
+          "name": "serverUhr",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 15030,
+          "targetEnd": 15037
+        },
+        {
+          "name": "abbruch",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 15301,
+          "targetEnd": 15308
+        },
+        {
+          "name": "hopLesen",
+          "bytes": 7,
+          "text": "export ",
+          "targetStart": 15630,
+          "targetEnd": 15637
+        }
+      ],
+      "bodyImplementationDuplicated": false
+    }
+  },
+  "probeMove": {
+    "sourceReaderBlob": "2b14953968da35ca47b272fd67a1a912613b8e6d",
+    "targetProbeBlob": "8db7b78650fcd783a75f8b45753e196b8c0fd0f0",
+    "originalImports": {
+      "sourceStart": 960,
+      "sourceEnd": 1650,
+      "bytes": 690,
+      "sha256": "ee791811f307ed420b4c41c5d8fa812a0655d7b960ec1d0c0996ae73463be95f",
+      "targetStart": 21,
+      "targetEnd": 711
+    },
+    "originalAppendix": {
+      "sourceStart": 46761,
+      "sourceEnd": 65490,
+      "bytes": 18729,
+      "sha256": "b5ebcb13fbeb6ec1bb3538233f2a26e81bea575b1fc7bfa088e3530a48b5ea32",
+      "segments": [
+        {
+          "sourceStart": 46761,
+          "sourceEnd": 49491,
+          "targetStart": 1193,
+          "targetEnd": 3923
+        },
+        {
+          "sourceStart": 49491,
+          "sourceEnd": 65490,
+          "targetStart": 4052,
+          "targetEnd": 20051
+        }
+      ]
+    },
+    "onlyAppendixDelta": {
+      "targetStart": 3923,
+      "targetEnd": 4052,
+      "bytes": 129,
+      "sha256": "f18f42f3671baf7e59726bcdef50c5cc62c2b57323d230b229a6205f9b6a7e61",
+      "text": "  'lib/readiness/official-truth-retrieval-physical-internal.ts',\n  'lib/readiness/official-truth-aa-revision-probe-1-server.ts',\n"
+    },
+    "inverseRule": "Restore original Reader from ordered readerInverse spans; insert actual probe imports at original Reader byte 960; append actual probe appendix spans. No normalization or body substitute.",
+    "fullA7Inverse": {
+      "bytes": 65490,
+      "blob": "2b14953968da35ca47b272fd67a1a912613b8e6d",
+      "sha256": "a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143",
+      "exactSourceComparison": true
+    }
+  },
+  "moduleBoundaries": {
+    "physical": {
+      "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+      "runtimeExports": [
+        "officialTruthServerOwnedRetrievalAdresseZulaessig",
+        "officialTruthServerOwnedRetrievalLookup",
+        "medientyp",
+        "inhaltLaenge",
+        "textAus",
+        "uhrLesen",
+        "serverDns",
+        "serverHttp",
+        "serverUhr",
+        "abbruch",
+        "hopLesen"
+      ],
+      "typeExports": [
+        "OfficialTruthServerOwnedRetrievalSperrgrund",
+        "OfficialTruthServerOwnedRetrievalAdresse",
+        "OfficialTruthServerOwnedRetrievalDnsResolver",
+        "OfficialTruthServerOwnedRetrievalLookup",
+        "OfficialTruthServerOwnedRetrievalHttpErgebnis",
+        "OfficialTruthServerOwnedRetrievalHttpClient"
+      ],
+      "runtimeDependencies": [
+        "server-only",
+        "node:dns",
+        "node:https",
+        "node:net",
+        "@/lib/readiness/official-truth-bounded-response-body"
+      ],
+      "typeOnlyDependencies": [
+        "node:http:IncomingMessage",
+        "@/lib/readiness/source-registry:QuellenUrlFehler"
+      ],
+      "actualStaticConsumers": [
+        "lib/readiness/official-truth-server-owned-retrieval.ts",
+        "lib/readiness/official-truth-aa-revision-probe-1-server.ts"
+      ],
+      "dynamicOrNamespaceConsumerAllowed": false,
+      "importsReaderOrProbeOrS1OrParserOrCatalogOrEngine": false
+    },
+    "reader": {
+      "runtimeImportsFromPhysical": [
+        "officialTruthServerOwnedRetrievalAdresseZulaessig",
+        "officialTruthServerOwnedRetrievalLookup",
+        "serverDns",
+        "serverHttp",
+        "serverUhr",
+        "hopLesen",
+        "textAus",
+        "uhrLesen",
+        "medientyp",
+        "inhaltLaenge",
+        "abbruch"
+      ],
+      "typeImportsFromPhysical": [
+        "OfficialTruthServerOwnedRetrievalDnsResolver",
+        "OfficialTruthServerOwnedRetrievalHttpClient",
+        "OfficialTruthServerOwnedRetrievalSperrgrund"
+      ],
+      "legacyRuntimeReexports": [
+        "officialTruthServerOwnedRetrievalAdresseZulaessig",
+        "officialTruthServerOwnedRetrievalLookup"
+      ],
+      "legacyExplicitTypeReexports": [
+        "OfficialTruthServerOwnedRetrievalAdresse",
+        "OfficialTruthServerOwnedRetrievalDnsResolver",
+        "OfficialTruthServerOwnedRetrievalHttpClient",
+        "OfficialTruthServerOwnedRetrievalHttpErgebnis",
+        "OfficialTruthServerOwnedRetrievalSperrgrund"
+      ],
+      "lookupMergedTypeAndValueReexportPreserved": true,
+      "newPublicTransportPort": false,
+      "importsAaProbePolicyOrS1": false,
+      "bernBodiesPreserved": true
+    },
+    "probe": {
+      "runtimeImportsFromPhysical": [
+        "officialTruthServerOwnedRetrievalLookup",
+        "serverDns",
+        "serverHttp",
+        "serverUhr",
+        "hopLesen",
+        "textAus",
+        "uhrLesen"
+      ],
+      "typeImportsFromPhysical": [
+        "OfficialTruthServerOwnedRetrievalHttpClient",
+        "OfficialTruthServerOwnedRetrievalHttpErgebnis",
+        "OfficialTruthServerOwnedRetrievalSperrgrund"
+      ],
+      "runtimeExports": [
+        "probeOfficialTruthAaReviewedRevisionV1"
+      ],
+      "typeExports": [
+        "OfficialTruthAaRevisionProbeV1Result"
+      ],
+      "actualStaticConsumer": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+      "noArgumentEntry": true,
+      "oldAaS1FingerprintClaimDeadlineLogicUnchanged": true
+    },
+    "syntheticFixture": {
+      "sourceOnlyAuthorExecution": "NOT_RUN",
+      "futureTestBehavior": "Existing loadFixtureModule transpiles actual Physical source under original DNS/HTTPS/net fakes, then injects this exact private fixture object at the relative Physical dependency of the transpiled Probe. The helper is one-level; direct Probe-only substitution would not propagate fake Node ports.",
+      "actualEsmPhysicalImportByTest": false,
+      "productionSourceUsesOnlyNamedStaticImports": true,
+      "fixtureObjectEscapes": false
+    },
+    "importGuard": {
+      "inventoryDirectories": [
+        ".cursor",
+        ".github",
+        ".jetnity",
+        "app",
+        "apps",
+        "components",
+        "data",
+        "docs",
+        "lib",
+        "public",
+        "scripts",
+        "styles",
+        "supabase",
+        "tests",
+        "types",
+        "widgets"
+      ],
+      "rootJsTsIncluded": true,
+      "fileSkips": [],
+      "legacyBytePinnedPrivatePortPreserved": true,
+      "legacyPins": [
+        {
+          "path": "scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts",
+          "bytes": 6501,
+          "sha256": "49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298",
+          "blob": "7f79dba1cbdc4a6807f094a4873ba3ad635b7b46"
+        },
+        {
+          "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts",
+          "bytes": 9176,
+          "sha256": "74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572",
+          "blob": "b77667a2b345ff272a5379aaa9a08d409e25d208"
+        },
+        {
+          "path": "lib/readiness/official-truth-content-identity-r2.test.ts",
+          "bytes": 41838,
+          "sha256": "be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16",
+          "blob": "01c032582fb37fd0881c828610a83db483c6d688"
+        }
+      ],
+      "knownStaticForms": [
+        "ESM named/default/namespace/side-effect imports",
+        "named/wildcard reexports",
+        "import-equals",
+        "literal type imports",
+        "constant recognized import()/require() strings",
+        "literal/parenthesized/template/constant-concatenation target forms",
+        "file URLs and percent-encoded static target forms"
+      ],
+      "limitations": "staticString(Identifier) returns null. Arbitrary runtime-computed paths, names and indirect forwarding are not resolved by this finite AST guard. Full independent Root exact-tree/diff/source review and unchanged legacy pins remain necessary; no new consumers are authorized by this limitation."
+    }
+  },
+  "storageRestoration": {
+    "parentBlob": "3079ee3149dc4ac0f505e1d683cb1099baa2b5ca",
+    "restoredBlob": "109e8ac57029a03afa55219c8132e8bf004b2dee",
+    "restoredBytes": 18102,
+    "restoredSha256": "a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f",
+    "exactInverseRemovedBytes": 53,
+    "exactInverseRemovedText": "operationDiagnostics:connection.operationDiagnostics,",
+    "originalResultShapesRestored": true,
+    "oldR3AndIntegratedAssertionsChanged": false
+  },
+  "r2Observation": {
+    "actualConnectionRole": "ot_provenance_writer",
+    "hook": "LocalPgConnection.connect",
+    "restoredInFinally": true,
+    "diagnosticsReadFromCapturedConnection": true,
+    "newQueries": false,
+    "newReadback": false,
+    "resultShapeChange": false,
+    "successorOutcomeWithoutFreshReadback": "UNKNOWN"
+  },
+  "scopedTestAndProofPreservation": {
+    "aaTest": {
+      "parentBlob": "a3f35c4f1d400b8acaca38c82484f0b7093dee07",
+      "candidateBlob": "c5acfc4e7320cf4794c547b915bbdb35efec4b22",
+      "inverseRestoresParent": true,
+      "replacements": [
+        {
+          "label": "entry_import",
+          "oldStart": 598,
+          "oldEnd": 694,
+          "newStart": 598,
+          "newEnd": 753,
+          "oldSha256": "94f01e74c4f70f23345ba9229ec0f98b39df25e713ca8235c3ffa2b30c11d897",
+          "newSha256": "1850e0f88be3ff023f7ac78819537e6b3bebd9013fd9275f9dd402c554cf14ce"
+        },
+        {
+          "label": "source_paths",
+          "oldStart": 1007,
+          "oldEnd": 1083,
+          "newStart": 1066,
+          "newEnd": 1304,
+          "oldSha256": "2ad5437bf66d014a67e797996a21f8b612a365cb321504c34d5eee9d57b83709",
+          "newSha256": "a838cc46efc1314bc1b9a6c87dbbf40cb1984ea8dd12f8dbe703087255e77aa6"
+        },
+        {
+          "label": "fixture_entry",
+          "oldStart": 12227,
+          "oldEnd": 12379,
+          "newStart": 12448,
+          "newEnd": 13269,
+          "oldSha256": "1756501cefa98d922c5b1e661e2de9526c5691b9ade843a9b39f501b2266e6ca",
+          "newSha256": "17bbbaddd100e3108e5323ea3ea2c3a6a019ca0b82725dd61c1350f25623d85d"
+        },
+        {
+          "label": "fixture_ports_move",
+          "oldStart": 12962,
+          "oldEnd": 13543,
+          "newStart": 13852,
+          "newEnd": 13921,
+          "oldSha256": "b39faee9ff930f48b70c208d11792479830c4f1b9cb3c967eb72566cd5d6626a",
+          "newSha256": "d9b693ee2552869e52acb23e51f99381007adca7aef12ad4d96664bc1662644e"
+        },
+        {
+          "label": "fixture_return",
+          "oldStart": 14632,
+          "oldEnd": 14717,
+          "newStart": 15010,
+          "newEnd": 15094,
+          "oldSha256": "beff3bf3b018cf655ba4f0d9e1818f27028358e43041205b48ef5b0488aa5581",
+          "newSha256": "c7f2de6ea702e28279bea68ab5ce87c91eb1c464a7c0ae2b3b6281bbeef3c229"
+        },
+        {
+          "label": "module_matcher_signature",
+          "oldStart": 20130,
+          "oldEnd": 20191,
+          "newStart": 20507,
+          "newEnd": 20588,
+          "oldSha256": "0d011a0637520b7ea204b47bd3ab1cffaa6fb2ad127a88d20206bd3cd0c16bb4",
+          "newSha256": "8be370abb1574eefea4e15fff878bc7ac7559d998a2e459ee27afe810cc0f27a"
+        },
+        {
+          "label": "module_matcher_target",
+          "oldStart": 20545,
+          "oldEnd": 20607,
+          "newStart": 20942,
+          "newEnd": 21114,
+          "oldSha256": "d94e4b6924e4f5aecdf05f4479e5760f564013bb65c5085f7dd5315fca766e0c",
+          "newSha256": "b1c445866f8ac457b3343d1d184a8e3fba6bda1f3feb5e952de22fc53923dab0"
+        },
+        {
+          "label": "closed_boundary_guard",
+          "oldStart": 20608,
+          "oldEnd": 24467,
+          "newStart": 21115,
+          "newEnd": 32838,
+          "oldSha256": "8c0d79d42d3c6b7f66137ced4d5a16b67d82e6cac1f54c6f349a561bdd7ef740",
+          "newSha256": "28e3cc2623b06f625d74e30acfb3697497ddc7ff8372986334ec2c90df79ff44"
+        },
+        {
+          "label": "new_boundary_negative_witnesses",
+          "oldStart": 34215,
+          "oldEnd": 34361,
+          "newStart": 42586,
+          "newEnd": 45097,
+          "oldSha256": "da11849e265aacf3350813807d705cd84acee897055cad6e7d4c9ddc83f151cb",
+          "newSha256": "11cbc6609ae35517aca4d7e252208677ec834ba44fd308ad946363e895f654ae"
+        },
+        {
+          "label": "inventory_count",
+          "oldStart": 35174,
+          "oldEnd": 35221,
+          "newStart": 45910,
+          "newEnd": 45957,
+          "oldSha256": "bbb2e9ef01c510686d427810005a7e22906b37cb877d9182dd6bf5ae07387f43",
+          "newSha256": "ea48655452a7eef03d62008f28d6a032dbc249b8c26f0ef2b32b7c68181e6c79"
+        }
+      ],
+      "unchangedByteRegions": [
+        {
+          "oldStart": 0,
+          "oldEnd": 598,
+          "newStart": 0,
+          "newEnd": 598,
+          "sha256": "61ed4c105e8190790fc9d9b034f5dd5de792fcf606180994514c02de34ed7e79"
+        },
+        {
+          "oldStart": 694,
+          "oldEnd": 1007,
+          "newStart": 753,
+          "newEnd": 1066,
+          "sha256": "8da1d43449cfe8cb03791ce342c443f49e8869bb916d5ee18a483ac1ef6be5ca"
+        },
+        {
+          "oldStart": 1083,
+          "oldEnd": 12227,
+          "newStart": 1304,
+          "newEnd": 12448,
+          "sha256": "9338b92121cd1751809c8cd4de5919fe2951f9b058010e13f6e20b3c8b7a48a2"
+        },
+        {
+          "oldStart": 12379,
+          "oldEnd": 12962,
+          "newStart": 13269,
+          "newEnd": 13852,
+          "sha256": "78a5d918712f67504854191bf71bd0749da2bc6689e7dde2c0b42a89e057b1b6"
+        },
+        {
+          "oldStart": 13543,
+          "oldEnd": 14632,
+          "newStart": 13921,
+          "newEnd": 15010,
+          "sha256": "4aa1cc801d18e9abb804de3d13a0c8d59caef791467c416b83d32e871fcc9249"
+        },
+        {
+          "oldStart": 14717,
+          "oldEnd": 20130,
+          "newStart": 15094,
+          "newEnd": 20507,
+          "sha256": "c82647ba3b02706323c15572c17474634999b7c53069b7c6dd79aa3f270c4289"
+        },
+        {
+          "oldStart": 20191,
+          "oldEnd": 20545,
+          "newStart": 20588,
+          "newEnd": 20942,
+          "sha256": "18c89ec8baadb18c5684aad1e950daeabf9f4af9ca138ac5f75400042ad40828"
+        },
+        {
+          "oldStart": 20607,
+          "oldEnd": 20608,
+          "newStart": 21114,
+          "newEnd": 21115,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "oldStart": 24467,
+          "oldEnd": 34215,
+          "newStart": 32838,
+          "newEnd": 42586,
+          "sha256": "31c24cefb44e0c0cc3d879d16a20855967972e889d214fb61577b65a38bce116"
+        },
+        {
+          "oldStart": 34361,
+          "oldEnd": 35174,
+          "newStart": 45097,
+          "newEnd": 45910,
+          "sha256": "57646b5d68fed78ef863ced0dc16a3919fda9c667bdcca4e74e8debf76c0372a"
+        },
+        {
+          "oldStart": 35221,
+          "oldEnd": 45448,
+          "newStart": 45957,
+          "newEnd": 56184,
+          "sha256": "ee4dd3f636fe66d1c3b7c0e0c2678dcaf3bb0e8ccd5445f51d34ebf90b405cd0"
+        }
+      ]
+    },
+    "bp1": {
+      "parentBlob": "7b027b49af72a3f16b230acfeff7434f9a71b64e",
+      "candidateBlob": "7f95fd1225f9f1042251bd0ffbedfb13a9ede0a9",
+      "inverseRestoresParent": true,
+      "replacements": [
+        {
+          "label": "metadata_predicate",
+          "oldStart": 15755,
+          "oldEnd": 18186,
+          "newStart": 15755,
+          "newEnd": 24853,
+          "oldSha256": "f19bb01378e98950f46fdd374095b733c9743e9129e2036c480d58a610520ea1",
+          "newSha256": "3cba9da83d85ff371e3152d19cf1a836ed972328ecd094b6a599a04e2be1ac45"
+        },
+        {
+          "label": "preservation_call",
+          "oldStart": 19082,
+          "oldEnd": 19178,
+          "newStart": 25749,
+          "newEnd": 25951,
+          "oldSha256": "0fefb09cda6df63001bb1ac43d02ab0c2f9674db344c6ad9cdd0efa4affd8bb9",
+          "newSha256": "04fab9dc9a11cbddb2147ee12571772decfa3d0f1858c50f9552fd5432de4f33"
+        },
+        {
+          "label": "mutation_proof",
+          "oldStart": 20358,
+          "oldEnd": 22442,
+          "newStart": 27131,
+          "newEnd": 32425,
+          "oldSha256": "f9ad5f61588e0a473f7f15a40c6c5649b33718d7c71b4b2da231bf2e6a5f0c20",
+          "newSha256": "70e034e51c8b9a11066d500ef0d5b97a268ed5685af4fe3a00f03c2220c0dddd"
+        }
+      ],
+      "unchangedByteRegions": [
+        {
+          "oldStart": 0,
+          "oldEnd": 15755,
+          "newStart": 0,
+          "newEnd": 15755,
+          "sha256": "29b071a2f6cae45e4051f62495a497e9ae272a349a5f43f821b88e34fd4437a3"
+        },
+        {
+          "oldStart": 18186,
+          "oldEnd": 19082,
+          "newStart": 24853,
+          "newEnd": 25749,
+          "sha256": "62560c0bf24be9e6778231dbe6a25b1b89fbe7dc29d7386eaaecf5b53c62cd03"
+        },
+        {
+          "oldStart": 19178,
+          "oldEnd": 20358,
+          "newStart": 25951,
+          "newEnd": 27131,
+          "sha256": "ebf07eaa6e4398d08899fb03a0dc10e6bea673763e17de55b6fd7eae3dca506a"
+        },
+        {
+          "oldStart": 22442,
+          "oldEnd": 25526,
+          "newStart": 32425,
+          "newEnd": 35509,
+          "sha256": "ba49d36b4f8df657bac2fce8a6838c8aeb1e63350df8b1f0608d0a9e898dfc75"
+        }
+      ]
+    },
+    "readerTest": {
+      "parentBlob": "30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9",
+      "candidateBlob": "1db87d5a80e913479157340803ddcdf2ac528d4d",
+      "inverseRestoresParent": true,
+      "replacements": [
+        {
+          "label": "source_safety_assertion_move",
+          "oldStart": 45386,
+          "oldEnd": 46557,
+          "newStart": 45386,
+          "newEnd": 46967,
+          "oldSha256": "c4310c32b70d10c39ec04d343bfc7d7007a6fd5a8093baa844c51ad9bf6fad54",
+          "newSha256": "9ed29ea40d77e8b04cf6d9a617a67410fa52e62120402467884beaac44931aed"
+        }
+      ],
+      "unchangedByteRegions": [
+        {
+          "oldStart": 0,
+          "oldEnd": 45386,
+          "newStart": 0,
+          "newEnd": 45386,
+          "sha256": "5481824f3080a71e912e18b8f34519baea85dfd4331233af19a5ed126ce14b00"
+        },
+        {
+          "oldStart": 46557,
+          "oldEnd": 68135,
+          "newStart": 46967,
+          "newEnd": 68545,
+          "sha256": "ffd767c78c2bb37a2d5bdcbfe5afdf860fbf21741c9677932bb210dfbd845840"
+        }
+      ]
+    },
+    "r2": {
+      "parentBlob": "e473bdf01ce26ec9f2f92d71cf0f25f4bda270c6",
+      "candidateBlob": "9aec7a10a01bfe0717c6abc9bb6395ea9d937533",
+      "inverseRestoresParent": true,
+      "replacements": [
+        {
+          "label": "temporary_actual_writer_capture",
+          "oldStart": 9771,
+          "oldEnd": 9866,
+          "newStart": 9771,
+          "newEnd": 10454,
+          "oldSha256": "fe756bbd8e54b1e6848910e89cd366a35ca81274cef1a09e596351903dd4e141",
+          "newSha256": "6c1f9c30ca5734fa37c1246390e0ba217acda4a03d22583a39a0e53abb291370"
+        },
+        {
+          "label": "proof_local_diagnostic_source",
+          "oldStart": 10270,
+          "oldEnd": 10380,
+          "newStart": 10858,
+          "newEnd": 10992,
+          "oldSha256": "9c6e9ee0c682e2c4638cbef8ce086a7700156055fa0be2d14419220a96d77e82",
+          "newSha256": "84fed8fabc8bbca7c740d8c206180a1d0ed4f877da1be0c934266cf646f427eb"
+        }
+      ],
+      "unchangedByteRegions": [
+        {
+          "oldStart": 0,
+          "oldEnd": 9771,
+          "newStart": 0,
+          "newEnd": 9771,
+          "sha256": "754754687fff0e43e739eba6e69bde2767b79e9fc09f7096f36bd6372bb4b1e9"
+        },
+        {
+          "oldStart": 9866,
+          "oldEnd": 10270,
+          "newStart": 10454,
+          "newEnd": 10858,
+          "sha256": "7af74332c93f52f6d9dda70cab59d6fad9e0b93b77cb04f1576b085da96536e6"
+        },
+        {
+          "oldStart": 10380,
+          "oldEnd": 10693,
+          "newStart": 10992,
+          "newEnd": 11305,
+          "sha256": "3e0ffda0eb7e3a9e5201968829aa22568e45d8dcdb49a84db929eec0829c3ac7"
+        }
+      ]
+    }
+  },
+  "finiteOtherLayoutGateReadback": [
+    {
+      "path": "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts",
+      "blob": "7b027b49af72a3f16b230acfeff7434f9a71b64e",
+      "conclusion": "selected A1 current-layout predicate; exact old original pin retained"
+    },
+    {
+      "path": "lib/readiness/official-truth-server-owned-retrieval.test.ts",
+      "blob": "30e441d1f4187eb9bc07bbcb0fdc48d9e2976cb9",
+      "conclusion": "selected A2 real physical source assertions moved; every other test byte retained"
+    },
+    {
+      "path": "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
+      "blob": "8e0945ee478435285a3068be94917a171570cfab",
+      "conclusion": "BODY_MAX and Bern source checks: retained Reader constant and Bern bodies"
+    },
+    {
+      "path": "lib/readiness/official-truth-integrated-pilot-official-source.test.ts",
+      "blob": "3857982ead18a226723808971e18143f18f54886",
+      "conclusion": "existing isolated retrieval helper consumer inventory: helper remains in Reader"
+    },
+    {
+      "path": "lib/readiness/official-truth-same-request-extraction-server.test.ts",
+      "blob": "befd65cf8186eb570a6bec7c1e3263adbd30a139",
+      "conclusion": "existing named catalog-transport consumer inventory: API remains in Reader"
+    },
+    {
+      "path": "lib/readiness/official-truth-source-fingerprint-v2.test.ts",
+      "blob": "e8599e4fec66009353819db2d465aafac658566b",
+      "conclusion": "No additional changed-Reader-layout predicate found in the inspected source; no edit selected."
+    },
+    {
+      "path": "lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.test.ts",
+      "blob": "c2ded4f1eef33e9d249b25559f1ae5bdf2d33895",
+      "conclusion": "No additional changed-Reader-layout predicate found in the inspected source; no edit selected."
+    },
+    {
+      "path": "lib/readiness/official-truth-bounded-response-body.test.ts",
+      "blob": "85c46a2bf39d6b07ac44313cfc7363a30e696fc5",
+      "conclusion": "No additional changed-Reader-layout predicate found in the inspected source; no edit selected."
+    }
+  ],
+  "history": {
+    "oldTaskPrefix": {
+      "bytes": 46809,
+      "blob": "004cf197bf2c404e51a040856dc35105f57d71a7",
+      "sha256": "9c3bd6a5f8d155ef27da489334f3e16dff784b56bf2d6fac6a63d6c54817a371",
+      "preservedVerbatim": true
+    },
+    "oldHandoff": {
+      "bytes": 80917,
+      "blob": "d285e32eac66330360058d7c1404317bfadc24d2",
+      "sha256": "6da35bd767ed81add8656d73dc1bde7bc6a9027310b4675b8b0af885727dd4a5",
+      "preservedVerbatimInNewHandoff": true
+    }
+  },
+  "acceptedDiagnosis": {
+    "reference": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6825483434",
+    "a7Run": 4131,
+    "runId": "43222610412",
+    "attempt": 1,
+    "status": "FAILED",
+    "coreLog": {
+      "bytes": 4241384,
+      "sha256": "e3c59acd68a4e23802d5331bbe4996136265a98e6b2083b0b3a5b99eb4697afa"
+    },
+    "lifecycleLog": {
+      "bytes": 165169,
+      "sha256": "edd3657eea245745fbf058ffc10ec4119809347b628951f81564e4c7b0093b6e"
+    },
+    "r2": {
+      "queryMs": 6406,
+      "commitMs": 20045,
+      "sqlState": "57P01",
+      "commitAck": false,
+      "protectionFailure": null,
+      "freshSuccessorReadback": false,
+      "outcome": "UNKNOWN"
+    },
+    "r3": {
+      "queryMs": 5021,
+      "commitMs": 20038,
+      "sqlState": "57P01",
+      "commitAck": false,
+      "freshReadback": "receipt_absent"
+    },
+    "graphCounts": {
+      "mainPrimary": 63,
+      "mainComposed": 72,
+      "a7Primary": 68,
+      "a7Composed": 77,
+      "mainCodeCapsules": 30,
+      "a7CodeCapsules": 35,
+      "extraCodeArtifactIds": [
+        "pilot-code-30",
+        "pilot-code-31",
+        "pilot-code-32",
+        "pilot-code-33",
+        "pilot-code-34"
+      ],
+      "perCapsuleDigestsAndFilePlacementLogged": false
+    },
+    "timerCause": "Not proved. Normal guard termination may discard its boolean result, so null protectionFailure does not prove the guard did not fire.",
+    "chrome": "Separate unchanged 5-second --version ETIMEDOUT. Cause not assumed or modified."
+  },
+  "nonClaims": [
+    "No author execution of project, parser, compiler, tests, native, SQL, APT or build",
+    "No new CI rerun, official source GET, branch/PR publication, Ready or merge",
+    "No positive policy selection or reuse of a consumed invocation",
+    "No current official revision, pilot-window extension or product activation",
+    "No claim that dependency separation cures the observed 20-second failures",
+    "No timeout, wire, SQL, capture, Engine, Chrome, S1 parser, package or lock change",
+    "No independent Technical Lead PASS from author self-review"
+  ],
+  "nextStep": "Root and independent reviewer inspect this exact source candidate; Root separately selects current-main/HMA integration and fresh final-head gates. Author stops after immutable delivery."
+}
