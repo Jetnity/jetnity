@@ -1,3 +1,119 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A11
+
+## Current source state — 12 November 2026
+
+**SOURCE-ONLY / Run 0 UNARMED / NOT_RUN / unpublished immutable review-fix candidate / independent A11 Technical Lead review and every fresh exact-head gate pending.**
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**. Same original reachable session: **/root/aa_revision_probe_writer_g1**. No new session, resumed Cursor UI session or delegated implementation is claimed. No subagent was used.
+
+The complete [Root A11 task](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827925972) was read, reread unchanged, and appended verbatim to the complete existing Task. It selects one finite metadata distinction in the existing BERN research test and these three existing evidence documents. Exactly four existing paths may change. Earlier Root approvals and parent CI results remain historical; they are not new-head or current A11 PASS.
+
+## Actual parent and failed/interrupted run
+
+The sole parent is **d8ecb572c848cf8d9535ad5a44d9014f886fd202**, tree **eef18231ba435a571633607d00831275c5a8b5f7**. The author independently read the full commit and untruncated recursive tree, and PR #1192 as Draft on that exact head and base **b5f33f66faab89454a874e641dbd0dfa66b09d2d**. No new main integration is selected.
+
+Root's independently read evidence in the binding A11 receipt is actual PR CI **#4137 / run 43245997688 / attempt 1**, Core job **131278670273**: full log **1,615,295 bytes**, SHA256 **c3cc6b90faba6ddf3dcda40499b9146db5bb1ba886b31857b8284ed01bb27fc8**. The source author read that exact Root receipt and does not claim an independent hosted/log read.
+
+Typecheck and Lint passed on the parent. The BERN guard failed because its whole-source string search counted the AA test's Reader export-allowlist metadata literal as a third consumer. Root read both full files and found exactly one AA reference to the BERN live-entry name, inside that quoted metadata list; the AA file neither imports nor invokes the BERN entry.
+
+At **15:19:50 UTC**, the runner also explicitly reports shutdown. The AA test receives **SIGKILL**, two other files receive **SIGTERM**, and operation canceled follows. **The shutdown cause remains UNKNOWN.** There is no complete tests summary or complete Core PASS. This amendment does not claim OOM, a source cause, timeout healing or a completed suite; it does not select a rerun or change CI/resources.
+
+## Exact bounded correction
+
+Only **lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts** changes as source. Its original transport/deadline/redirect/no-retry cases and external-resource cases remain byte-exact. There is one new node:crypto import and one finite replacement around the original source guard.
+
+The private helper **isPinnedAaBernMetadata** requires the exact AA path and complete raw bytes before an exception can be returned: **56,236 bytes**, Git blob **9e278742a53d64da9bb9063a91649a08e3f84649**, SHA256 **4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee**. It checks both the Git blob SHA-1 and SHA256, with the raw byte count. No source normalization occurs.
+
+It additionally requires the single BERN token at byte **32814**, no second occurrence, and the exact **691-byte** Reader declarationExports metadata block at byte interval **[32187, 32878)**. That raw block, including its quoted value: entry and enclosing Reader export-list assertions, is stored literally in the test; its SHA256 is **958d6619091fdfeb6f1c9ecedf1ee92c045076ea80eb8177219369d89277b881**. The AA source itself is unchanged: no token split, encoding, obfuscation, import or call is introduced there.
+
+The walk retains all original roots (**app, components, lib, scripts**), recursion, node_modules handling, extension filter, and existing Reader/self exclusions. It reads the raw bytes and decodes UTF-8 for the original string search. Only the exact pinned AA path is eligible for the private helper, and it enters a separately asserted one-file metadata list only after validation. A missing AA file or missing token cannot silently disappear: the required metadata-list assertion fails.
+
+The actual allowed runtime-consumer list remains exactly:
+
+1. **lib/readiness/official-truth-bern-g3-rq-fetch-1/cli.test.ts**
+2. **scripts/official-truth-bern-g3-rq-fetch-1/run.ts**
+
+No wildcard, path-family exception, third runtime caller, production export or globally relaxed string rule is added. This is the explicit versioned Root A11 exception, not a claim that the earlier naive guard had passed.
+
+### Finite negative checks authored, not executed
+
+One additional in-memory test first checks the exact pinned AA bytes, then authors eight negative checks: exact bytes under an unapproved path; a same-length whole-file byte change; an unrelated trailing byte; a missing token; a duplicate token; the unique token moved at the same total length; an appended actual-call string; and an appended actual-import string.
+
+The call/import witnesses are only inert Buffer contents submitted to the private predicate. They are never imported, evaluated or invoked. These tests have **not** been executed by this author; source construction, raw hashing and literal inverse comparisons are not a test-suite PASS.
+
+A complete SHA pin alone does not prove semantics. The finite raw context binds the reviewed metadata distinction, Root's independent inspection establishes the meaning of this exact source revision, and the unchanged source-import guards and full new-head CI remain required. Any future AA-file change must deliberately update and independently review the pin or fail this guard.
+
+## Exact source pins and whole-file inverse
+
+| Path | Bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts | 18579 | `d7fe7602934d52bf3432b8ecd2c5ef70f242aff6` | `247c409f63c235cac42d7ed780970a2690d8fc643b05df3edde63e2d29e217f4` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 85109 | `e41c3fe8c8e9684e0e895132c48e39356c5f3910` | `314920559a158d0d38608c3ad0a2f6ffa3e601ce39efe406d7fdc197ebac41b3` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json | 287820 | `c8fb5fd9047ec8599d6385d50192334f39323f58` | `dd8e41d0ede1eb464c503c6f18c6eb95fb3d320e027ae20061f4f734a5c84e2f` |
+
+The Handoff's own final pin, actual tree and sole-parent commit are supplied in the immutable delivery receipt, avoiding self-referential hashes. The complete Manifest also contains every finite before/after replacement, the raw metadata block, all runtime pins and the complete previous Manifest verbatim.
+
+The old BERN source is **14,461 bytes**, blob **8e0945ee478435285a3068be94917a171570cfab**, SHA256 **4db422ce4ed202cfefb63e7d053062b73417959ae36892a11c4f066ede835de3**. The new BERN source is **18,579 bytes**. The author applied an inert exact-text inverse: remove the new **41-byte** crypto import at new [40,81), and replace the new **5,076-byte** guard/helper/negative block [9409,14485) with the exact old **999-byte** guard [9368,10367). The result equals the complete original text, byte count, Git blob and SHA256.
+
+All unchanged complements were compared in full; offsets are zero-based half-open UTF-8 byte intervals:
+
+| Original bytes | Candidate bytes | Preserved byte count | SHA256 |
+|---|---|---:|---|
+| [0, 40) | [0, 40) | 40 | `7bbe6aaaf217ff2b06eb27c190b69746e693e5f8d55f865308551952386e105c` |
+| [40, 9368) | [81, 9409) | 9328 | `e81874e88ce4f4d25f2f03496e2215d565f7bc5a4d4ffa0a34ddebb80d5661ed` |
+| [10367, 14461) | [14485, 18579) | 4094 | `094f65cbbc795012a1f4cdc6fb931150c913419d4071558cf58768a3db8d3b1d` |
+
+This proves preservation of all other original test bytes. It does not execute the new helper, parse/compile the file, establish complete runtime correctness or replace independent review.
+
+## Policy and all 17 runtime inventory entries remain exact
+
+Policy remains **Run 0 UNARMED**, base **b5f33f66faab89454a874e641dbd0dfa66b09d2d**, **17 entries**, full blob **858e33f1a18889ae39130d6db2d108761ba85eed**, **4,574 bytes**, SHA256 **d608cc710720e45286357b163664d62135ae6a22e37d0794a8b1ec25fbd252bc**. No policy byte is changed; the BERN guard is source-review evidence and is not added to the closed runtime inventory.
+
+The author read all seventeen complete raw files directly from the exact parent and verified byte count, Git blob, SHA256 and each exact policy row. This is metadata verification only. Reader, Physical, Probe, AA test, BP1, ReaderTest, R2, Storage, BERN runner/CLI, package/lockfile, CI and both selectors retain their actual parent objects. The current Reader type API and earlier whole-source inverse remain as accepted in A10; the distinct uppercase type and lowercase runtime function are not conflated. Their complete previous metadata and limitations are retained in the new Manifest.
+
+| Runtime inventory path | Bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 29654 | `0a46e1e82574effef2a8bd39e5a1072394bad4b1` | `5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 56236 | `9e278742a53d64da9bb9063a91649a08e3f84649` | `4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee` |
+| lib/readiness/official-truth-bounded-response-body.ts | 1278 | `783d802fff48a2969b86945515b159a513df76e9` | `186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2` |
+| lib/readiness/official-truth-source-fingerprint-v2.ts | 5156 | `72d324d019625c5028be8f47763fdd0f6ffe38e5` | `d8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac` |
+| lib/readiness/digest.ts | 3013 | `bbb6ee9d8e1e1433cbb5753b15b86b7b215d8c54` | `e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190` |
+| lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts | 6702 | `888435e2867ff373b85b0299833c3f1fe34c0af3` | `059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e` |
+| .github/workflows/ci.yml | 23906 | `a422a67d3a0407f4c1301d3bcff75f736d7ea9b4` | `371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba` |
+| package.json | 6460 | `2a8d677d575b5762a5dd7091d161ea0da6edcea9` | `46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0` |
+| package-lock.json | 320689 | `7b5394006458d34c833cdb5438b06f9f6af28353` | `71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e` |
+| scripts/server-only-test-register.mjs | 508 | `97e3f68e1669235c63d2763f611d1a6d0e18ff1b` | `d565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32` |
+| scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts | 6501 | `7f79dba1cbdc4a6807f094a4873ba3ad635b7b46` | `49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298` |
+| lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts | 9176 | `b77667a2b345ff272a5379aaa9a08d409e25d208` | `74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572` |
+| lib/readiness/official-truth-content-identity-r2.test.ts | 41838 | `01c032582fb37fd0881c828610a83db483c6d688` | `be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16` |
+| lib/readiness/official-truth-retrieval-physical-internal.ts | 17726 | `bd995580bee6adb6b1a213b17a6001caa8f0aeff` | `aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f` |
+| lib/readiness/official-truth-aa-revision-probe-1-server.ts | 20156 | `df24e34575ef7d0ca211471b6a6a019f600871ec` | `a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f` |
+| scripts/official-truth-v3-test-selection.mjs | 5970 | `51a2a59e03104f83f3d392f0ffb79639274c1ae9` | `647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61` |
+| scripts/official-truth-v3-test-selection.test.mjs | 7360 | `bbc10fc9621e31c5af74421891608d3cdf27238d` | `edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730` |
+
+## Four-file tree boundary and complete history
+
+The exact parent has **9,504 leaves**. The authored tree replaces only the selected BERN test, Task, Handoff and Manifest: **four existing modified leaves**, **zero additions**, **zero deletions**, **9,500 other leaves** required to preserve every path/mode/type/SHA. The final immutable delivery is conditional on full recursive tree readback verifying every leaf; the final receipt supplies the resulting tree and commit.
+
+The Manifest includes a reproducible commitment to all 9,500 required unchanged leaves from the complete parent tree: **1,501,420 serialized bytes**, SHA256 **33903b89e2c923e7f4e6ed852b3ce9126118dbf56f97a796296d172fbd6e673a**. Serialize the preserved leaves as JSON.stringify of the array sorted by path in JavaScript code-unit order, each object in key order path/mode/type/sha, then one LF. Only the four explicit authored paths are excluded. The full Git tree remains the authoritative object list.
+
+The previous Task **e1079ec7cee7718ebf89af729dbc22c0a42d12e6** remains the exact **80,085-byte prefix**; the full A11 receipt and its URL are appended. The previous Handoff **84f8faffa1d28d7b8a6b308386e6e12524ad4507**, **123,697 bytes**, is included completely and verbatim below. The previous Manifest **2e7c506b9f634ed2d6a9315d7e56ee7b3224c35c**, **199,334 bytes**, is preserved as its exact UTF-8 string in history.previousManifest.verbatimUtf8. All earlier tasks, failures, corrections, receipts, original source inverses and limitations remain recoverable without rewriting their historical claims as current truth.
+
+## Honest self-review and remaining gates
+
+The author completed source inspection, inert source construction, complete raw-byte hashing, exact-text inverse checks and parent tree/inventory comparisons. The new test is a narrow, closed exception backed by the fixed source revision and exact metadata context. No evidence permits adding a BERN consumer.
+
+There has been **no author project/parser/compiler/AST/test/native/SQL/build/APT execution**, no CI dispatch or rerun, no official AA/BERN request, no hosted action, no ref/PR publication, Ready or merge. No positive run is selected. No source revision, pilot-window extension or public CH-DE activation is claimed.
+
+The shutdown cause remains **UNKNOWN**; the BERN metadata correction does not resolve or relabel that independent interruption. Earlier 20-second COMMIT failures and the separate Chrome timeout are not declared healed. The finite AA import guard still does not resolve arbitrary runtime-computed paths/names; complete independent Root exact-tree/diff/source review and preserved legacy pins remain necessary. Agent self-review is never Technical Lead PASS.
+
+**STOP for independent Root A11 review.** Root alone may publish the selected immutable candidate and requires every new exact-head CI/Vercel/thread gate. This author neither retries the failed head nor changes resources or arms the source probe. #917 and #1131 safety/platform boundaries remain untouched.
+
+---
+
+## Complete previous Handoff — verbatim historical record
+
+<!-- BEGIN COMPLETE PREVIOUS HANDOFF 84f8faffa1d28d7b8a6b308386e6e12524ad4507 -->
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A10 + A10-A1
 
 ## Current source state — 12 November 2026
@@ -1046,3 +1162,5 @@ Original reviewed metadata remains blob `e00f71f993fe558d657ca409436ee62410869b2
 <!-- END VERBATIM PRIOR HANDOFF d285e32eac66330360058d7c1404317bfadc24d2 -->
 <!-- END VERBATIM A8-B HANDOFF 8fd1b771fbe39f927bb743ebf343ea861750433d -->
 <!-- END VERBATIM A9 HANDOFF 1d80755b1206084428464338511de64fedde1df8 -->
+
+<!-- END COMPLETE PREVIOUS HANDOFF 84f8faffa1d28d7b8a6b308386e6e12524ad4507 -->

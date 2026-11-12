@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -214,25 +215,96 @@ test('deadline includes stalled response headers, no reattempt', async () => {
   assert.ok(res.elapsed < 200)
 })
 
-test('only task-owned runner and direct-denial test reference the live entry (no app/API/cron imports)', () => {
+const BERN_LIVE_ENTRY_TOKEN = 'retrieveOfficialTruthBernOneShotResearchOnly'
+const AA_BERN_METADATA_PIN = {
+  path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts',
+  bytes: 56_236,
+  blob: '9e278742a53d64da9bb9063a91649a08e3f84649',
+  sha256: '4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee',
+  contextStart: 32_187,
+  contextEnd: 32_878,
+  tokenStart: 32_814,
+} as const
+
+// A11 permits only this independently reviewed, complete raw source revision.
+// The hash binds bytes; the quoted Reader export-list context binds the finite
+// metadata distinction. Neither grants another BERN runtime consumer.
+const AA_BERN_METADATA_CONTEXT = `  if (file === readerPath) {
+    assert.equal(physicalReexports, 2)
+    assert.deepEqual(declarationExports(tree), [
+      'type:OfficialTruthServerOwnedRetrievalErgebnis', 'type:OfficialTruthServerOwnedRetrievalAbhaengigkeiten',
+      'type:OfficialTruthBernRealResearchIndicators', 'type:OfficialTruthBernRealResearchOutcome',
+      'value:decideOfficialTruthServerOwnedRetrieval', 'value:loadOfficialTruthServerOwnedRetrieval',
+      'value:loadOfficialTruthServerOwnedRetrievalWithCatalogTransport', 'value:retrieveOfficialTruthIsolatedPilotSource',
+      'value:decideOfficialTruthBernRealResearchForOfflineTests', 'value:retrieveOfficialTruthBernOneShotResearchOnly',
+    ].sort())
+  }`
+
+function isPinnedAaBernMetadata(path: string, bytes: Buffer): boolean {
+  if (path !== AA_BERN_METADATA_PIN.path || bytes.length !== AA_BERN_METADATA_PIN.bytes) return false
+  if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== AA_BERN_METADATA_PIN.blob
+    || createHash('sha256').update(bytes).digest('hex') !== AA_BERN_METADATA_PIN.sha256) return false
+  const token = Buffer.from(BERN_LIVE_ENTRY_TOKEN, 'utf8')
+  const first = bytes.indexOf(token)
+  if (first !== AA_BERN_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+  return bytes.subarray(AA_BERN_METADATA_PIN.contextStart, AA_BERN_METADATA_PIN.contextEnd)
+    .equals(Buffer.from(AA_BERN_METADATA_CONTEXT, 'utf8'))
+}
+
+test('only task-owned runner and direct-denial test consume the live entry; pinned AA reference is metadata', () => {
   const roots = ['app', 'components', 'lib', 'scripts']
   const imported: string[] = []
+  const metadataReferences: string[] = []
   const walk = (path: string) => {
     for (const d of readdirSync(path, { withFileTypes: true })) {
       const name = join(path, d.name)
       if (d.isDirectory()) {
         if (d.name !== 'node_modules') walk(name)
       } else if (/\.(ts|tsx|js|mjs)$/.test(d.name)) {
-        const text = readFileSync(name, 'utf8')
+        const bytes = readFileSync(name)
+        const text = bytes.toString('utf8')
         if (name !== 'lib/readiness/official-truth-server-owned-retrieval.ts'
           && name !== 'lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts'
-          && text.includes('retrieveOfficialTruthBernOneShotResearchOnly')) imported.push(name)
+          && text.includes('retrieveOfficialTruthBernOneShotResearchOnly')) {
+          if (name === AA_BERN_METADATA_PIN.path) {
+            assert.equal(isPinnedAaBernMetadata(name, bytes), true, 'AA BERN metadata must match its complete reviewed revision')
+            metadataReferences.push(name)
+          } else imported.push(name)
+        }
       }
     }
   }
   for (const root of roots) walk(root)
+  assert.deepEqual(metadataReferences, [AA_BERN_METADATA_PIN.path])
   assert.deepEqual(imported, ['lib/readiness/official-truth-bern-g3-rq-fetch-1/cli.test.ts',
     'scripts/official-truth-bern-g3-rq-fetch-1/run.ts'])
+})
+
+test('A11 BERN metadata exception rejects every finite changed-source witness', () => {
+  const bytes = readFileSync(AA_BERN_METADATA_PIN.path)
+  assert.equal(isPinnedAaBernMetadata(AA_BERN_METADATA_PIN.path, bytes), true)
+  assert.equal(isPinnedAaBernMetadata('lib/readiness/unapproved-aa-reference.test.ts', bytes), false)
+
+  const token = Buffer.from(BERN_LIVE_ENTRY_TOKEN, 'utf8')
+  const start = AA_BERN_METADATA_PIN.tokenStart
+  const end = start + token.length
+  const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(end)])
+  const changedByte = Buffer.from(bytes)
+  changedByte[0] = changedByte[0]! ^ 1
+  const sourceWithCall = '\nretrieveOfficialTruthBernOneShotResearchOnly()\n'
+  const sourceWithImport = "\nimport { retrieveOfficialTruthBernOneShotResearchOnly } from './official-truth-server-owned-retrieval'\n"
+  const cases: readonly [string, Buffer][] = [
+    ['changed complete bytes at same length', changedByte],
+    ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+    ['missing token', withoutToken],
+    ['duplicated token', Buffer.concat([bytes, token])],
+    ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+    ['appended actual call text', Buffer.concat([bytes, Buffer.from(sourceWithCall, 'utf8')])],
+    ['appended actual import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+  ]
+  for (const [name, candidate] of cases) {
+    assert.equal(isPinnedAaBernMetadata(AA_BERN_METADATA_PIN.path, candidate), false, name)
+  }
 })
 
 test('ALL 300–399 cancel without reading headers/body or attempting a second GET', async () => {

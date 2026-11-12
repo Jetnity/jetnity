@@ -646,3 +646,47 @@ Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827159555
 ## AA A10 / A1 — exact seven-path allowlist correction
 This is Root's correction to6827114603, not a new implementation scope. Replace the mistakenly named lib/readiness/official-truth-ch-de-source-budget-128k-1.test.ts entry with **lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts**. The actual required29span inverse/full Reader pins/22+7mutants are in that BP1 observation test. The source-budget test remains unchanged. Exactly seven selected paths total; every other A10 instruction, soleparent, body-preservation obligation and STOP remains in force. Root acknowledges the naming error; the original author correctly refused an unlisted edit.
 <!-- END VERBATIM ROOT RECEIPT 6827159555 -->
+
+## A11 — finite BERN metadata-reference amendment
+
+### Root receipt 6827925972
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827925972
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6827925972 -->
+## CHANGES REQUIRED — AA A11 / finite BERN metadata-reference amendment
+Same original AA Generation1 session /root/aa_revision_probe_writer_g1. Exact sole parent **d8ecb572c848cf8d9535ad5a44d9014f886fd202**, tree **eef18231ba435a571633607d00831275c5a8b5f7**. Root selects the following bounded review correction; no PO question is needed.
+
+### Actual failure, independently read
+Actual PR CI **#4137 / run43245997688 / attempt1**, Core job131278670273. Full log **1615295 bytes / SHA256c3cc6b90faba6ddf3dcda40499b9146db5bb1ba886b31857b8284ed01bb27fc8**. Typecheck and Lint passed. The BERN research-only guard failed because it counted the AA test's literal export-metadata string as a third consumer:
+- lib/readiness/official-truth-aa-revision-probe-1.test.ts, added to the actual string-match list;
+- the unchanged legitimate BERN cli.test.ts and run.ts remain the only expected consumers.
+
+Root read the actual guard (8e0945ee478435285a3068be94917a171570cfab) and actual AA test. The latter has exactly one reference to the BERN live-entry name, inside the Reader declarationExports string allowlist. It neither imports nor invokes that BERN entry. The guard uses whole-source text.includes and therefore conflates this precise metadata literal with a runtime reference.
+
+At15:19:50UTC the runner also explicitly reports shutdown; AA test receivesSIGKILL and two other filesSIGTERM, followed by operation canceled. **Cause of shutdown is UNKNOWN; do not claim OOM, timeout healing, completed suite or a source cause.** No tests summary or complete Core PASS exists. Do not rerun the failed head or change CI/resource limits blindly.
+
+### Four existing selected files only
+1. lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts
+2. docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md
+3. docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md
+4. docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json
+
+No AA Reader/Physical/Probe/Policy/test/BP1, runtime, BERN runner/CLI, selector, CI/package or other file changes.
+
+### Exact allowed metadata exception; preserve runtime boundary
+Implement a narrow **pinned metadata-only exception** in the existing BERN test guard, with complete actual AA test validation BEFORE applying it:
+- Fixed AA test path, exact current blob9e278742a53d64da9bb9063a91649a08e3f84649, **56236 bytes**, SHA256 **4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee**.
+- Require its full actual bytes/hash, and exactly one occurrence of the BERN live-entry token in the precise existing quoted `value:` Reader export-allowlist metadata context. Bind actual source region/expected literal as needed, without source normalization.
+- That exact file is metadata evidence, not an additional runtime consumer. The actual permitted consumer list MUST remain exactly the two existing paths; no wildcard/path-family exemption, global string-reference relaxation, new BERN caller or silent skip.
+- Do not evade the existing guard by splitting/encoding/obfuscating the BERN token in the AA source. AA source stays byte-exact.
+- Keep all original BERN transport/deadline/redirect/no-retry cases and all original source roots/walk behavior. Root selected only this exact metadata distinction.
+- Add finite in-memory negative checks sufficient to show modified full AA bytes, missing/duplicated/moved token and an appended actual call/import cannot acquire the exception. No live imports or execution of BERN/AA entrypoints in these checks. Prefer one private helper in the same test file; no test-only production export.
+
+A code-only SHA does not prove semantics on its own: Root has independently inspected the pinned actual AA source and will re-review this exact exception, while the original source-import guards remain in the complete CI suite. Future AA file changes must intentionally update/review the pin or fail this guard.
+
+### Evidence / delivery
+Preserve the complete previous Task/Handoff/Manifest history. Append this complete task and honest failed/interrupted-run facts; update current source inventory and finite whole-file inverse for this one BERN guard change. Record the exception as this explicit versioned Root amendment, not an old guard PASS or a broad permission. Current Policy remains Run0 UNARMED/baseb5f33/17entries and all its bytes exact. New source has no official GET or pilot-window effect.
+
+Immutable Git objects and inert text/hash/tree comparisons only. No project/parser/compiler/test/native/SQL/build/APT/CI/ref/PR/Ready/merge/hosted/sourceGET operation. Return full raw pins/soleparent/tree and every unchanged leaf, then STOP. Root alone independently reviews, publishes the new head and requires every fresh exact-head gate. #917/#1131 remain untouched.
+<!-- END VERBATIM ROOT RECEIPT 6827925972 -->
