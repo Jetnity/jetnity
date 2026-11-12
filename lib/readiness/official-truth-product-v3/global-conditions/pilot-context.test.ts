@@ -84,7 +84,7 @@ test('pure metadata mapping does not execute old travel-date validity or extract
   assert.equal(calls, 0)
 })
 
-test('protected sources retain historical C1 identities and exact reviewed MI1 and M04 R28 amendments', () => {
+test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successor identities', () => {
   const historicalBytes = readFileSync('docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json', 'utf8')
   assert.equal(sha256Hex(historicalBytes), '76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650')
   const manifest = JSON.parse(historicalBytes) as {
@@ -105,11 +105,26 @@ test('protected sources retain historical C1 identities and exact reviewed MI1 a
   const runnerAmendment = JSON.parse(runnerAmendmentBytes) as typeof amendment
   assert.deepEqual(runnerAmendment.files.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set([...amendment.files, ...runnerAmendment.files].map(row => row.path)).size, 3)
+  // R5-B adds only two fixed successors; historical C1/MI1/R28 identities stay exact.
+  const hostedAmendmentBytes = readFileSync('docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json', 'utf8')
+  assert.equal(sha256Hex(hostedAmendmentBytes), '200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973')
+  const hostedAmendment = JSON.parse(hostedAmendmentBytes) as {
+    files: Array<{
+      path: string
+      historical: { bytes: number; sha256: string }
+      previousManifest: { path: string; sha256: string; gitBlob: string }
+      previousReviewed: { bytes: number; sha256: string; gitBlob: string; mode: string }
+      reviewed: { bytes: number; sha256: string; gitBlob: string; mode: string }
+    }>
+  }
+  assert.deepEqual(hostedAmendment.files.map(row => row.path), ['.github/workflows/ci.yml', 'package.json'])
+  assert.equal(new Set(hostedAmendment.files.map(row => row.path)).size, 2)
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
   assert.equal(new Set(protectedRows.map(row => row.path)).size, 40)
   let reviewedMainRows = 0
   let reviewedRunnerRows = 0
+  let reviewedHostedRows = 0
   for (const row of protectedRows) {
     const changed = amendment.files.find(file => file.path === row.path)
     const runnerChanged = runnerAmendment.files.find(file => file.path === row.path)
@@ -122,7 +137,26 @@ test('protected sources retain historical C1 identities and exact reviewed MI1 a
       assert.deepEqual({ bytes: row.bytes, sha256: row.sha256 }, runnerChanged.historical, row.path)
       reviewedRunnerRows++
     }
-    const expected = changed?.reviewed ?? runnerChanged?.reviewed ?? row
+    const hostedChanged = hostedAmendment.files.find(file => file.path === row.path)
+    if (hostedChanged) {
+      assert.deepEqual({ bytes: row.bytes, sha256: row.sha256 }, hostedChanged.historical, row.path)
+      const previous = changed ?? runnerChanged
+      assert.ok(previous, row.path)
+      assert.deepEqual(hostedChanged.previousReviewed, previous.reviewed, row.path)
+      assert.deepEqual(hostedChanged.previousManifest, changed ? {
+        path: 'docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json',
+        sha256: '63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f',
+        gitBlob: '8edcf4befc19e3a6c743824da59e4634d0393ec9',
+      } : {
+        path: 'docs/official-truth-product-v3/M04_R28_PROTECTED_SOURCE_AMENDMENT_V1.json',
+        sha256: '2f8e301299f5e1aea9b414963032698236c5b241118062531e39c67c33549968',
+        gitBlob: '30e14e235b3a21ef681c470ced9a7efc271c0907',
+      }, row.path)
+      assert.equal(hostedChanged.reviewed.mode, '100644', row.path)
+      assert.match(hostedChanged.reviewed.gitBlob, /^[0-9a-f]{40}$/, row.path)
+      reviewedHostedRows++
+    }
+    const expected = hostedChanged?.reviewed ?? changed?.reviewed ?? runnerChanged?.reviewed ?? row
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -131,4 +165,5 @@ test('protected sources retain historical C1 identities and exact reviewed MI1 a
   }
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
+  assert.equal(reviewedHostedRows, 2)
 })

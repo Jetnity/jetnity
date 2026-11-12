@@ -1,0 +1,92 @@
+{
+  "schema": "hma1-pg17-protected-source-amendment-v1",
+  "status": "SOURCE_CANDIDATE_PENDING_INDEPENDENT_ROOT_REVIEW_AND_NEW_HEAD_GATES",
+  "rootTask": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081",
+  "priorDiagnosis": "https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661",
+  "sourceOnlyParent": {
+    "head": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
+    "tree": "76be1bc78228cc13aecfd3cb3ce2f2c268851f29"
+  },
+  "failedCandidate": {
+    "head": "20dea8b7965a430fa1dff0bfd9c426661e5575f6",
+    "workflow": {
+      "path": ".github/workflows/ci.yml",
+      "mode": "100644",
+      "type": "blob",
+      "utf8Bytes": 22398,
+      "sha256": "cb73cdd0294884896335177e5c0b5114739ecd1f6ffd130826de34d2024d509b",
+      "gitBlob": "60a791ee8642eb0164c9c2679872e1595a6faa73"
+    },
+    "runId": "43215288173",
+    "runNumber": 4128,
+    "attempt": 1,
+    "coreJobId": "131172859563",
+    "fullCoreLog": {
+      "utf8Bytes": 4296323,
+      "sha256": "0f64803235e1741c97bd4051657caa262df1ab4749048c065066bb7a7abbd905"
+    },
+    "acceptedPredecessor": false
+  },
+  "historicalManifest": {
+    "path": "docs/official-truth-product-v3/C1_PROTECTED_SOURCES_V1.json",
+    "gitBlob": "b5fa630722aa07114102da2f4dcb814e83e43715",
+    "sha256": "76a35e4f0b533462c3e3dfde0116f900b71bf253c41665a96bc3889df6b83650",
+    "protectedRows": 40,
+    "preservedHistoricalMi1Rows": 2,
+    "preservedHistoricalR28Rows": 1,
+    "distinctHistoricallyAmendedPaths": 3
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "historical": {
+        "bytes": 12329,
+        "sha256": "b87e82ebf0c6ffa2569b3a2b02007d1117aaf38713ffe1bec0aa20c05e9720bb"
+      },
+      "previousManifest": {
+        "path": "docs/official-truth-product-v3/M04_R28_PROTECTED_SOURCE_AMENDMENT_V1.json",
+        "sha256": "2f8e301299f5e1aea9b414963032698236c5b241118062531e39c67c33549968",
+        "gitBlob": "30e14e235b3a21ef681c470ced9a7efc271c0907"
+      },
+      "previousReviewed": {
+        "bytes": 12325,
+        "sha256": "3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18",
+        "gitBlob": "22f6e50aaff600749814bf7e77e24c728b1cd5d5",
+        "mode": "100644"
+      },
+      "reviewed": {
+        "bytes": 23906,
+        "sha256": "371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba",
+        "gitBlob": "a422a67d3a0407f4c1301d3bcff75f736d7ea9b4",
+        "mode": "100644"
+      },
+      "reason": "Move the exact signed official PG17 provision body into a mandatory isolated job; keep Core's PG16 assertions and all existing job budgets, and require success from the six explicit families."
+    },
+    {
+      "path": "package.json",
+      "historical": {
+        "bytes": 6330,
+        "sha256": "08dfb5ef390cae6fb5a9d5d1f980cebe2ce77f660a66e4c4c73d6c9a08f1730a"
+      },
+      "previousManifest": {
+        "path": "docs/official-truth-product-v3/MI1_PROTECTED_SOURCE_AMENDMENT_V1.json",
+        "sha256": "63f97a38aee742610261e2d8d9a41ee02e6eb20fd182e5da87b084c40c005d5f",
+        "gitBlob": "8edcf4befc19e3a6c743824da59e4634d0393ec9"
+      },
+      "previousReviewed": {
+        "bytes": 6467,
+        "sha256": "5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df",
+        "gitBlob": "3e8a2b7a40007af29320919401369f17ee53672a",
+        "mode": "100644"
+      },
+      "reviewed": {
+        "bytes": 6460,
+        "sha256": "46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0",
+        "gitBlob": "2a8d677d575b5762a5dd7091d161ea0da6edcea9",
+        "mode": "100644"
+      },
+      "reason": "Only required test scripts partition the complete prior Core universe, add the explicit mandatory hosted PG17 route and retain it once in the aggregate. No dependency or lockfile change."
+    }
+  ],
+  "boundary": "Exactly two reviewed successor identities: C1 -> R28 -> HMA1 for CI and C1 -> MI1 -> HMA1 for package. All three historical manifests and the MI1 lockfile stay exact. No wildcard, omitted protected row, runtime-derived expectation, automatic repinning, Auth/main/PG1 integration, execution or product activation. New exact-head independent review and actual gates remain required."
+}
