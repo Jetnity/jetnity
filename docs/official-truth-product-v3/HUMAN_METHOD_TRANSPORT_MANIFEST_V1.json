@@ -1,0 +1,508 @@
+{
+  "schema": "jetnity.human-method-transport.source-manifest.v1",
+  "status": "SOURCE_ONLY_UNPUBLISHED_UNAPPLIED_NOT_RUN",
+  "author": {
+    "name": "Jetnity Official Truth V3 Human Method Transport1 — Codex Generation1",
+    "session": "/root/human_method_transport_writer_g1",
+    "newSession": true,
+    "rootOwnsAcceptance": true
+  },
+  "authorization": {
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825050639",
+    "bodyBytes": 12329,
+    "bodySha256": "6c108fee70d310e9b1575f25aa89de53ecea3c72b9bdf5acd9d307085daf41a7",
+    "completeVerbatimTaskPath": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md"
+  },
+  "sourceParent": {
+    "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "tree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "parentCount": 1,
+    "baseLeaves": 9486,
+    "baseLeafInventorySha256": "d17063fa89c6f7700fb40f138fd67b49c55f07c7846bdec65281413adc614c53",
+    "inventoryEncoding": "UTF-8 JSON.stringify of all non-tree leaves, each {path,mode,type,sha}, sorted by JavaScript lexical path ordering"
+  },
+  "scope": {
+    "addedPaths": [
+      "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+      "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md"
+    ],
+    "modifiedExistingPaths": [],
+    "deletedPaths": [],
+    "expectedFinalLeaves": 9494,
+    "allExistingLeafBytesTypeModePreserved": true,
+    "noRefPrReadyMerge": true,
+    "noHmaIntegration": true,
+    "noSelectorPackageCiUiChange": true
+  },
+  "authoredArtifacts": [
+    {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 53457,
+      "sha256": "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e",
+      "gitBlobSha1": "35032f238248155338c0a8d379b32e514acb699c"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 82578,
+      "sha256": "466aec15092184101cca179201612b5569e3af3a758c71d1f0ad47ee962959e7",
+      "gitBlobSha1": "b3350758015503f63514552954cc6bcf2f1b8eb8"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 60316,
+      "sha256": "92a1167c391ce09c197fbcefb2a4965708d00428f6fe2d9806d1cf81d90755e8",
+      "gitBlobSha1": "42139d341977af27994cd812d1f970c05500319b"
+    },
+    {
+      "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 439,
+      "sha256": "f471be4cc81a58d9c4d715e642210ae9b50415836c3e3836e888b6d2c4337061",
+      "gitBlobSha1": "e5ce7611c0e894f25a5617dfc5fb8d60ce8b0055"
+    },
+    {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 13958,
+      "sha256": "81dcc830e3e17c2c8cc95220465ca88ee4838166ddf52c078c8e59fddc8b8353",
+      "gitBlobSha1": "5f813e9b3cd669695a19cebd5826ab21e1eb9189"
+    },
+    {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 10363,
+      "sha256": "31f3feb5b25cd5963b6bae778bea4c06cdd46b0c138ef6d9f3f2682c5ab75eb5",
+      "gitBlobSha1": "90ffbfaa2c9f6cc49d54437e6ab0a61c38863df9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_RECOVERY_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 6973,
+      "sha256": "27ef12443a2a68a57f2a5b2938921591e437ec6beae06c310480ba4bcc67d2f5",
+      "gitBlobSha1": "9dad9379108c8319625bf3ead60d624fb5482947"
+    }
+  ],
+  "manifestSelf": {
+    "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
+    "mode": "100644",
+    "type": "blob",
+    "binding": "The immutable delivery receipt and resulting Git tree independently bind this manifest's exact blob/bytes/SHA-256. A selfhash, resulting tree or resulting commit is deliberately not embedded."
+  },
+  "reusedImmutableSources": [
+    {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "commit": "b26c3a5ed0a16ef6d5c768a09391cfaa0412625b",
+      "blob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+      "bytes": 69705,
+      "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0",
+      "role": "read-only complete prerequisite; separately accepted integration required"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+      "commit": "b26c3a5ed0a16ef6d5c768a09391cfaa0412625b",
+      "blob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+      "bytes": 37227,
+      "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d",
+      "role": "source pin only; not invoked"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/native.ts",
+      "commit": "b26c3a5ed0a16ef6d5c768a09391cfaa0412625b",
+      "blob": "35442ef5d863a8a1bdbeb812e4aa2c1596d2b898",
+      "bytes": 62251,
+      "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e",
+      "role": "selected synthetic setup pattern source; not imported/executed"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2",
+      "role": "unchanged PG1 prerequisite, run only in future synthetic proof"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+      "role": "preserved shared source dependency"
+    },
+    {
+      "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+      "role": "preserved shared source dependency"
+    },
+    {
+      "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "b1a81a0f63fb0debaffa4db739adbb483ac1efc5",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+      "role": "preserved shared source dependency"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-method-authority-1/fixtures.ts",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "af7919f26cbb36038ba61a1b849815a3a29aac4b",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811",
+      "role": "preserved shared source dependency"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "commit": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+      "blob": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "mode": "100644",
+      "type": "blob",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e",
+      "role": "preserved shared source dependency"
+    }
+  ],
+  "nativeSourcePins": [
+    {
+      "relativePath": "./install-candidate.sql",
+      "sha256": "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e"
+    },
+    {
+      "relativePath": "./recovery-candidate.sql",
+      "sha256": "466aec15092184101cca179201612b5569e3af3a758c71d1f0ad47ee962959e7"
+    },
+    {
+      "relativePath": "../official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
+    },
+    {
+      "relativePath": "../official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+      "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
+    },
+    {
+      "relativePath": "../official-truth-v3-hosted-method-authority-1/native.ts",
+      "sha256": "b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e"
+    },
+    {
+      "relativePath": "../official-truth-v3-private-owner-guards-1/install-candidate.sql",
+      "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+    },
+    {
+      "relativePath": "../official-truth-integrated-pilot-1/local-cluster.ts",
+      "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10"
+    },
+    {
+      "relativePath": "../official-truth-integrated-pilot-1/pg-wire.ts",
+      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+    },
+    {
+      "relativePath": "../official-truth-atomic-version-refresh-1/test-lifetime.ts",
+      "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68"
+    },
+    {
+      "relativePath": "../official-truth-v3-method-authority-1/fixtures.ts",
+      "sha256": "f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811"
+    },
+    {
+      "relativePath": "../../../lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
+    },
+    {
+      "relativePath": "../../../lib/readiness/official-truth-v3-human-method-transport-1.test.ts",
+      "sha256": "f471be4cc81a58d9c4d715e642210ae9b50415836c3e3836e888b6d2c4337061"
+    }
+  ],
+  "prerequisiteAcceptance": {
+    "hmaCandidateCommit": "b26c3a5ed0a16ef6d5c768a09391cfaa0412625b",
+    "hmaCandidateTree": "eb71fad26c651edada873229efd62982472e5948",
+    "rootReviewAndRuntimeAtDispatch": "PENDING",
+    "nativeRequiresAcceptedSiblingIntegration": true,
+    "absentOrChangedSiblingFails": true,
+    "oldComplete1142InstallerExecuted": false
+  },
+  "wrappers": [
+    {
+      "signature": "public.official_v3_method_stage_draft_v1(text,text,integer,text,text,integer)",
+      "target": "official_v3_method_api.stage_draft_v1(text,text,integer,text,text,integer)",
+      "argumentNames": [
+        "p_operation_id",
+        "p_method_id",
+        "p_revision",
+        "p_method_digest",
+        "p_package_digest",
+        "p_predecessor_revision"
+      ],
+      "language": "sql",
+      "security": "INVOKER",
+      "volatility": "VOLATILE",
+      "parallel": "UNSAFE",
+      "nullInput": "CALLED ON NULL INPUT",
+      "owner": "postgres",
+      "returns": "jsonb",
+      "configuration": [
+        "search_path=pg_catalog"
+      ],
+      "parsedSingleReturn": true,
+      "normalDependencies": [
+        "public namespace",
+        "official_v3_method_api.stage_draft_v1(text,text,integer,text,text,integer)"
+      ],
+      "explicitExecuteAcl": [
+        "postgres",
+        "authenticated"
+      ],
+      "runtimeAuthority": "unchanged HMA1 -> PG1 current Owner/AAL2/session",
+      "restOnly": false,
+      "sqlBoundToOneD1Digest": false
+    },
+    {
+      "signature": "public.official_v3_method_approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)",
+      "target": "official_v3_method_api.approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)",
+      "argumentNames": [
+        "p_operation_id",
+        "p_method_id",
+        "p_revision",
+        "p_method_digest",
+        "p_package_digest",
+        "p_expected_revision",
+        "p_expected_method_digest",
+        "p_expected_package_digest",
+        "p_expected_epoch",
+        "p_expected_status",
+        "p_approval_mode",
+        "p_approval_until"
+      ],
+      "language": "sql",
+      "security": "INVOKER",
+      "volatility": "VOLATILE",
+      "parallel": "UNSAFE",
+      "nullInput": "CALLED ON NULL INPUT",
+      "owner": "postgres",
+      "returns": "jsonb",
+      "configuration": [
+        "search_path=pg_catalog"
+      ],
+      "parsedSingleReturn": true,
+      "normalDependencies": [
+        "public namespace",
+        "official_v3_method_api.approve_v1(text,text,integer,text,text,integer,text,text,integer,text,text,text)"
+      ],
+      "explicitExecuteAcl": [
+        "postgres",
+        "authenticated"
+      ],
+      "runtimeAuthority": "unchanged HMA1 -> PG1 current Owner/AAL2/session",
+      "restOnly": false,
+      "sqlBoundToOneD1Digest": false
+    },
+    {
+      "signature": "public.official_v3_method_revoke_v1(text,text,integer,text,text,integer)",
+      "target": "official_v3_method_api.revoke_v1(text,text,integer,text,text,integer)",
+      "argumentNames": [
+        "p_operation_id",
+        "p_method_id",
+        "p_revision",
+        "p_method_digest",
+        "p_package_digest",
+        "p_expected_epoch"
+      ],
+      "language": "sql",
+      "security": "INVOKER",
+      "volatility": "VOLATILE",
+      "parallel": "UNSAFE",
+      "nullInput": "CALLED ON NULL INPUT",
+      "owner": "postgres",
+      "returns": "jsonb",
+      "configuration": [
+        "search_path=pg_catalog"
+      ],
+      "parsedSingleReturn": true,
+      "normalDependencies": [
+        "public namespace",
+        "official_v3_method_api.revoke_v1(text,text,integer,text,text,integer)"
+      ],
+      "explicitExecuteAcl": [
+        "postgres",
+        "authenticated"
+      ],
+      "runtimeAuthority": "unchanged HMA1 -> PG1 current Owner/AAL2/session",
+      "restOnly": false,
+      "sqlBoundToOneD1Digest": false
+    },
+    {
+      "signature": "public.official_v3_method_confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)",
+      "target": "official_v3_method_api.confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)",
+      "argumentNames": [
+        "p_operation_id",
+        "p_action",
+        "p_method_id",
+        "p_revision",
+        "p_method_digest",
+        "p_package_digest",
+        "p_predecessor_revision",
+        "p_expected_revision",
+        "p_expected_method_digest",
+        "p_expected_package_digest",
+        "p_expected_epoch",
+        "p_expected_status",
+        "p_approval_mode",
+        "p_approval_until"
+      ],
+      "language": "sql",
+      "security": "INVOKER",
+      "volatility": "VOLATILE",
+      "parallel": "UNSAFE",
+      "nullInput": "CALLED ON NULL INPUT",
+      "owner": "postgres",
+      "returns": "jsonb",
+      "configuration": [
+        "search_path=pg_catalog"
+      ],
+      "parsedSingleReturn": true,
+      "normalDependencies": [
+        "public namespace",
+        "official_v3_method_api.confirm_operation_v1(text,text,text,integer,text,text,integer,integer,text,text,integer,text,text,text)"
+      ],
+      "explicitExecuteAcl": [
+        "postgres",
+        "authenticated"
+      ],
+      "runtimeAuthority": "unchanged HMA1 -> PG1 current Owner/AAL2/session",
+      "restOnly": false,
+      "sqlBoundToOneD1Digest": false
+    }
+  ],
+  "hmaBodies": {
+    "stage_draft_v1": "947d017cbc27e70a1df22ecbd19214e295d5162f371e00c8d040076e5a168c90",
+    "approve_v1": "df1a49cd377c135460f3e3691303bbe527c4b3fc4e293b486a85ea5b8b1a3f49",
+    "revoke_v1": "c6296c4a05ee52b32cdcf6145007dc5b8c3fd6867cf155e500b8bc27f738772f",
+    "confirm_operation_v1": "232cdcfb8c10161336d2755a83c2a941dd3a582b235515b01f7d6c167579078b"
+  },
+  "actualDevReceipt": {
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6824905662",
+    "bodySha256": "a97b2f5f020c21dd21ba8bcf6fc276eae83ba06c6ba5d3a490cd8bbcf612dbc1",
+    "observedBy": "Root, not this author",
+    "project": "yfvbxvijcorffwxbxahl",
+    "database": "postgres",
+    "sessionUser": "postgres",
+    "currentUser": "postgres",
+    "serverVersion": 170006,
+    "publicOid": 2200,
+    "publicOwner": "pg_database_owner",
+    "publicAcl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,postgres=U/pg_database_owner,anon=U/pg_database_owner,authenticated=U/pg_database_owner,service_role=U/pg_database_owner}",
+    "nonSuperCreateRoles": [
+      "pg_database_owner",
+      "postgres"
+    ],
+    "globalCreatorFunctionDefaultRows": 0,
+    "observedPublicDefaultOid": 16493,
+    "publicDefaultAcl": "{postgres=X/postgres,service_role=X/postgres}",
+    "fourNameCollisions": 0,
+    "freshHostedVerificationStillRequired": true,
+    "targetContextIsAcknowledgementNotProof": true
+  },
+  "recovery": {
+    "unusedOnly": true,
+    "externalRequestAndAdminQuiescenceIndependentlyRequired": true,
+    "callerFlagCatalogOrEmptyHistoryCannotProveQuiescence": true,
+    "originalFourOidReceiptRequired": true,
+    "maximumAcknowledgedIntervalMinutes": 5,
+    "isolationBeforeFirstQuery": "READ COMMITTED",
+    "historyLock": "ACCESS EXCLUSIVE",
+    "lockTimeoutMs": 2000,
+    "statementTimeoutMs": 30000,
+    "afterLockFreshHistoryCheck": true,
+    "onlyFourExactDropRestrict": true,
+    "historyDeletion": false,
+    "hmaPg1RecoveryInvoked": false,
+    "afterUse": "revoke and separately reviewed forward repair"
+  },
+  "native": {
+    "status": "NOT_RUN",
+    "postgreSqlMajor": 17,
+    "actualInstallerLogin": "postgres NOSUPER",
+    "syntheticOnly": true,
+    "hostedOrSignedHttpProof": false,
+    "mandatoryGroups": 8,
+    "effectLimitMs": 180000,
+    "totalTerminalDrainLimitMs": 35000,
+    "wrapperLimitMs": 240000,
+    "maximumOwnedClusters": 3,
+    "fixtureConnectionLimit": 128,
+    "totalConnectionLimit": 160,
+    "oneSharedLifetime": true,
+    "allFourWrappersInAuthNegatives": true,
+    "independentOperationConfirmationRequired": true,
+    "unavailableReadback": "UNKNOWN",
+    "rootClosedPg17SelectorIntegrationRequired": true,
+    "pg16FallbackAllowed": false
+  },
+  "primarySemanticsSources": [
+    "https://www.postgresql.org/docs/17/sql-createfunction.html",
+    "https://docs.postgrest.org/en/stable/references/api/functions.html",
+    "https://docs.postgrest.org/en/stable/references/auth.html",
+    "https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/utils/adt/ruleutils.c",
+    "https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/catalog/catalog.c",
+    "https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/commands/functioncmds.c"
+  ],
+  "verificationPerformed": [
+    "read exact Root task and E18B",
+    "read selected existing source artifacts",
+    "inert UTF-8 SHA-256 and Git blob SHA-1 calculation",
+    "immutable blob exact full readback, then complete tree and sole-parent commit readback required in delivery receipt"
+  ],
+  "verificationNotPerformed": [
+    "parser",
+    "compiler",
+    "SQL",
+    "native PostgreSQL",
+    "project tests/build",
+    "CI",
+    "hosted action",
+    "official source GET",
+    "signed JWT/AAL2 HTTP",
+    "Dev install",
+    "Production install",
+    "PostgREST cache reload",
+    "GraphQL QA"
+  ],
+  "remainingGates": [
+    "Root independent exact-source review",
+    "accepted HMA1/main source integration",
+    "closed PG17 selector and full partition proof",
+    "exact-head actual CI/native execution",
+    "actual Dev target/profile/default/creator prerequisites and E10 integrity",
+    "E18/E24 signed human HTTP and visibility/cache/negative roles/GraphQL",
+    "actual D1 tuple approval",
+    "official CH-DE source freshness and extended pilot",
+    "public cached CH-DE answer and automatic refresh"
+  ],
+  "boundaries": {
+    "917": "denied action never repeated, rerouted, reformulated or delegated; human Run2 limited to observed Stage1 fields",
+    "1131": "NOT_REQUIRED_UNTOUCHED",
+    "automaticFollowOn": false,
+    "stopAfterImmutableDelivery": true
+  }
+}

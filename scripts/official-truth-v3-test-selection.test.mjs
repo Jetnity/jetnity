@@ -14,7 +14,14 @@ import {
   SELECTOR_CONTRACT,
 } from './official-truth-v3-test-selection.mjs'
 
-const hosted = 'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts'
+const hosted = [
+  'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts',
+  'lib/readiness/official-truth-v3-human-method-transport-1.test.ts',
+  'lib/readiness/profile-authority-integrity-1.test.ts',
+]
 const contract = 'scripts/official-truth-v3-test-selection.test.mjs'
 const scriptTests = [
   'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts',
@@ -36,12 +43,12 @@ test('the actual original universe is partitioned once and its selector contract
     'scripts/operating-mode-guard.test.mjs',
     'scripts/dev-reference-local-pg-prep-1/*.test.ts',
   ])
-  assert.deepEqual(HOSTED_PG17_FILES, [hosted])
+  assert.deepEqual(HOSTED_PG17_FILES, hosted)
   assert.equal(SELECTOR_CONTRACT, contract)
   const original = discoverOriginalTestFiles()
   const partition = partitionRequiredTests(original)
   assert.deepEqual(partition.original, [...original].sort())
-  assert.deepEqual(partition.hostedPg17, [hosted])
+  assert.deepEqual(partition.hostedPg17, hosted)
   assert.equal(partition.core.filter((path) => path === contract).length, 1)
   assert.equal(partition.hostedPg17.includes(contract), false)
   const combined = [...partition.core.filter((path) => path !== contract), ...partition.hostedPg17]
@@ -52,7 +59,7 @@ test('the actual original universe is partitioned once and its selector contract
     assert.equal(partition.core.filter((candidate) => candidate === path).length, 1, path)
     assert.equal(partition.hostedPg17.includes(path), false, path)
   }
-  assert.equal(partition.core.includes(hosted), false)
+  for (const path of hosted) assert.equal(partition.core.includes(path), false, path)
 })
 
 test('discovery includes every family and new nested tests without a frozen original-file count', () => {
@@ -63,7 +70,7 @@ test('discovery includes every family and new nested tests without a frozen orig
     writeFileSync(file, '// inert discovery fixture; never imported\n')
   }
   try {
-    const expected = [...scriptTests, hosted, 'lib/top.test.ts', 'lib/new/nested.test.ts'].sort()
+    const expected = [...scriptTests, ...hosted, 'lib/top.test.ts', 'lib/new/nested.test.ts'].sort()
     for (const path of expected) create(path)
     create('lib/new/not-a-test.ts')
     create('scripts/outside-the-three-families.test.ts')
@@ -73,7 +80,7 @@ test('discovery includes every family and new nested tests without a frozen orig
     assert.deepEqual(discoverOriginalTestFiles(root), [...expected, added].sort())
     const split = partitionRequiredTests(discoverOriginalTestFiles(root))
     assert.ok(split.core.includes(added))
-    assert.deepEqual(split.hostedPg17, [hosted])
+    assert.deepEqual(split.hostedPg17, hosted)
     rmSync(join(root, scriptTests[0]))
     assert.throws(() => discoverOriginalTestFiles(root), /Missing required Script test/)
   } finally {
@@ -82,13 +89,19 @@ test('discovery includes every family and new nested tests without a frozen orig
 })
 
 test('missing, duplicate, invalid and unauthorized hosted membership cannot remove a required proof', () => {
-  const original = [hosted, 'lib/ordinary.test.ts']
+  const original = [...hosted, 'lib/ordinary.test.ts']
   assert.throws(() => partitionRequiredTests(['lib/ordinary.test.ts']), /Missing hosted test/)
-  assert.throws(() => partitionRequiredTests([...original, hosted]), /Duplicate original/)
-  assert.throws(() => partitionRequiredTests(original, [hosted, hosted]), /Duplicate hosted/)
+  for (const path of hosted) {
+    assert.throws(() => partitionRequiredTests(original.filter((candidate) => candidate !== path)), /Missing hosted test/, path)
+    assert.throws(() => partitionRequiredTests([...original, path]), /Duplicate original/, path)
+    assert.throws(() => partitionRequiredTests(original, [...hosted, path]), /Duplicate hosted/, path)
+    const incomplete = hosted.filter((candidate) => candidate !== path)
+    assert.throws(() => partitionRequiredTests(original, incomplete), /explicit reviewed amendment/, path)
+    assert.throws(() => partitionRequiredTests(original, [...incomplete, 'lib/ordinary.test.ts']), /explicit reviewed amendment/, path)
+  }
   assert.throws(() => partitionRequiredTests(original, []), /hosted must not be empty/)
   assert.throws(() => partitionRequiredTests(original, ['lib/missing.test.ts']), /Missing hosted test/)
-  assert.throws(() => partitionRequiredTests(original, [hosted, 'lib/ordinary.test.ts']), /explicit reviewed amendment/)
+  assert.throws(() => partitionRequiredTests(original, [...hosted, 'lib/ordinary.test.ts']), /explicit reviewed amendment/)
   assert.throws(() => partitionRequiredTests([]), /original must not be empty/)
   for (const invalid of ['', '../lib/out.test.ts', '/lib/out.test.ts', 'lib//out.test.ts',
     'lib/./out.test.ts', 'lib/../out.test.ts', 'lib\\out.test.ts', 'lib/\u0000out.test.ts',
@@ -106,10 +119,10 @@ test('only the two explicit modes are accepted and extra arguments are refused',
 })
 
 test('Node arguments retain imports and Core concurrency while the hosted family is explicit', () => {
-  const split = partitionRequiredTests([hosted, 'lib/ordinary.test.ts'])
+  const split = partitionRequiredTests([...hosted, 'lib/ordinary.test.ts'])
   const prefix = ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
   assert.deepEqual(nodeTestArguments('core', split), [...prefix, ...split.core])
-  assert.deepEqual(nodeTestArguments('hosted-pg17', split), [...prefix, '--test-concurrency=1', hosted])
+  assert.deepEqual(nodeTestArguments('hosted-pg17', split), [...prefix, '--test-concurrency=1', ...hosted])
   assert.throws(() => nodeTestArguments('unknown', split), /Expected exactly one mode/)
 })
 
@@ -139,5 +152,7 @@ test('package commands reach both mandatory families and retain every prior aggr
   ])
   const split = partitionRequiredTests(discoverOriginalTestFiles())
   assert.equal(nodeTestArguments('core', split).filter((path) => path === contract).length, 1)
-  assert.equal(nodeTestArguments('hosted-pg17', split).filter((path) => path === hosted).length, 1)
+  for (const path of hosted) {
+    assert.equal(nodeTestArguments('hosted-pg17', split).filter((candidate) => candidate === path).length, 1, path)
+  }
 })

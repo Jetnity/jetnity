@@ -1,0 +1,402 @@
+{
+  "schema": "jetnity.profile-authority-integrity.source-manifest.v1",
+  "selection": {
+    "task": "PROFILE-AUTHORITY-INTEGRITY-1",
+    "version": "SOURCE-V1",
+    "amendment": "A1",
+    "date": "2026-11-12",
+    "authorSession": "Jetnity Profile Authority Integrity1 — Codex Generation1",
+    "rootTask": {
+      "issue": 1139,
+      "comment": "6825593411",
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825593411",
+      "bytes": 12094,
+      "sha256": "ca75147bef77bc630911ad8af37e802e6924326ca4cb36fb412884a2f2a8c304"
+    },
+    "rootSupplement": {
+      "issue": 1139,
+      "comment": "6825665177",
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825665177",
+      "bytes": 1893,
+      "sha256": "436ecfbe14f341cb2e58d6df97106934b7da7959468d0422e2bb1ad716169623"
+    }
+  },
+  "truth": {
+    "state": "SOURCE_ONLY_UNPUBLISHED_NOT_RUN_NOT_INSTALLED",
+    "authorSelfReviewIsTechnicalLeadPass": false,
+    "ready": false,
+    "executedParser": false,
+    "executedCompiler": false,
+    "executedProjectTests": false,
+    "executedNative": false,
+    "executedSql": false,
+    "hostedMetadataCalledByAuthor": false,
+    "hostedMutation": false,
+    "officialSourceFetch": false,
+    "refMutation": false,
+    "pullRequestMutation": false,
+    "merged": false,
+    "e10Closed": false,
+    "e18Closed": false,
+    "e24Closed": false,
+    "chToDePublished": false
+  },
+  "gitEnvelope": {
+    "repository": "Jetnity/jetnity",
+    "soleParent": "fa8bd1d02ea67cf69ba3df9fea5a3d39a35a7474",
+    "baseTree": "d58c49fa41e28f203623dab56998dacf11eaabd3",
+    "baseLeafCount": 9486,
+    "expectedNewLeafCount": 9494,
+    "baseLeafStream": {
+      "encoding": "UTF-8",
+      "sort": "ascending path by code point",
+      "record": "path\\tmode\\ttype\\tsha\\n",
+      "sha256": "3893a6aaa16111dfba0af90e401674420040bb4c17b3ee4143eb1aa1467f9622"
+    },
+    "existingLeafMutationsAllowed": 0,
+    "addedLeafCount": 8,
+    "allPaths": [
+      "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+      "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+      "scripts/db/profile-authority-integrity-1/native.ts",
+      "lib/readiness/profile-authority-integrity-1.test.ts",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json"
+    ],
+    "candidateCommitTreeAndActualCompleteTreeReadback": "External delivery receipt; never self-referential in this source tree"
+  },
+  "artifacts": [
+    {
+      "path": "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 36608,
+      "sha256": "2dda7f1bd523e5046bcc72f352a876133d1c7ed01994eb7687c6d1c9d3218774",
+      "gitBlob": "1b7e36b8100e5425a833d7c44189ab6632611308"
+    },
+    {
+      "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 38527,
+      "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8",
+      "gitBlob": "bd32f072ae7d8edaee67297a26adab9c3a886d73"
+    },
+    {
+      "path": "scripts/db/profile-authority-integrity-1/native.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 62605,
+      "sha256": "b6576c95203080decd985d2759fad8482248190d7e91780119c8485e0f12623f",
+      "gitBlob": "74ee8cad74835c6e6fa6757cfefb40d878704898"
+    },
+    {
+      "path": "lib/readiness/profile-authority-integrity-1.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 569,
+      "sha256": "684526827bb055a4da3b80807171a88753a02d97245e5d094b9f7966090efbc0",
+      "gitBlob": "6b18b4e9e806c39ad13bea853c2ba2c8ed1c0377"
+    },
+    {
+      "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_TASK_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 54311,
+      "sha256": "56f11c73424f13484a8822952387690a9ef0318163d2842285c487ee458a6766",
+      "gitBlob": "be5613ac44f8cae6d8960f56930866bbee4294a9"
+    },
+    {
+      "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_HANDOFF_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 18004,
+      "sha256": "c5ee49cc63108e97b14cce4dc5fc04f67967eba2fe9ded0630f6ab5ae6a9aab1",
+      "gitBlob": "caccc4f01b468ad7adc2f8eac47ea1f865552363"
+    },
+    {
+      "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 5581,
+      "sha256": "106722108d3ef559cbd748e71ee5cc8bb82ab41de399a224b8838f87afe27b8f",
+      "gitBlob": "6fb20d7bfe299608c77c72efbfc1ec6f613b726b"
+    }
+  ],
+  "manifestSelf": {
+    "path": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_MANIFEST_V1.json",
+    "mode": "100644",
+    "type": "blob",
+    "selfPin": "Full UTF-8 byte length, SHA-256 and Git blob SHA-1 supplied by external delivery receipt after final serialization; intentionally not circular"
+  },
+  "actualMetadataEvidence": {
+    "target": {
+      "project": "yfvbxvijcorffwxbxahl",
+      "branch": "develop",
+      "parentProject": "qscbgcdmivbbnzrcyegn",
+      "database": "postgres",
+      "serverVersion": 170006,
+      "currentUser": "postgres",
+      "sessionUser": "postgres"
+    },
+    "receipts": [
+      {
+        "id": "6825177327",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825177327",
+        "bytes": 14358,
+        "sha256": "6d92ce6c0bcd4a4bfc760cb74a20f2b6e0d97d53cc0e24aec0fdbde55573ca1d"
+      },
+      {
+        "id": "6825374617",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825374617",
+        "bytes": 7067,
+        "sha256": "db71cda78f851c9fb748c85837a94335abd7a301d6df361a66265b27b301445f"
+      },
+      {
+        "id": "6825438601",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825438601",
+        "bytes": 10445,
+        "sha256": "67da823deadd306ffef579bb59f2d1d35cfe09f3f78e5943ea912f1600274a81"
+      },
+      {
+        "id": "6824905662",
+        "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6824905662",
+        "bytes": 5065,
+        "sha256": "a97b2f5f020c21dd21ba8bcf6fc276eae83ba06c6ba5d3a490cd8bbcf612dbc1"
+      }
+    ],
+    "containsAccountRows": false,
+    "containsAttackExecution": false,
+    "productionEqualityClaim": false,
+    "actualE18BOriginalJsonFabricated": false,
+    "baselineJson": "scripts/db/profile-authority-integrity-1/observed-baseline.json"
+  },
+  "runtimeContract": {
+    "function": "public.profil_autoritaet_integritaet_pruefen_v1()",
+    "trigger": "profiles_autoritaet_integritaet_v1",
+    "relation": "public.profiles",
+    "additiveFunctions": 1,
+    "additiveTriggers": 1,
+    "security": "INVOKER",
+    "language": "plpgsql",
+    "owner": "postgres",
+    "volatility": "VOLATILE",
+    "parallel": "UNSAFE",
+    "strict": false,
+    "searchPath": [
+      "pg_catalog"
+    ],
+    "arguments": 0,
+    "returns": "trigger",
+    "bodyBytes": 1828,
+    "bodySha256": "b513eca8cc5d7b3981d9b9eb1473428e628410dcb0f4b718290d4cc314756a8d",
+    "runtimeExecuteGrantees": [],
+    "ownerExecuteOnly": true,
+    "triggerType": 27,
+    "triggerEnabled": "O",
+    "triggerWhen": null,
+    "triggerColumnList": [],
+    "triggerArguments": [],
+    "identityColumnsAlwaysImmutable": [
+      "id",
+      "user_id"
+    ],
+    "foreignRankUsesOldRole": true,
+    "unknownRankRejected": true,
+    "ownStatusChangeRefused": true,
+    "ownDeletePreserved": true,
+    "deleteReturn": "OLD",
+    "updateReturn": "NEW",
+    "nullActorActualCurrentUsersOnly": [
+      "postgres",
+      "service_role"
+    ],
+    "claimRoleNeverPrincipal": true,
+    "helperBodiesRewritten": false,
+    "oldBodyPins": [
+      {
+        "name": "aktuelle_rolle",
+        "bytes": 92,
+        "sha256": "41b223309c2228d87a0ac273ac31cc9ffcaa7e3ac406059d00818b947b09cbd0"
+      },
+      {
+        "name": "aktuelles_admin_aal2",
+        "bytes": 66,
+        "sha256": "d3cf53b48caba5d05eef08d940f1199b7ad58a8a78acefd1e899fda0c502ff1a"
+      },
+      {
+        "name": "darf_konten_verwalten",
+        "bytes": 90,
+        "sha256": "35e41fdae08f4663ffd9f58b3e7912b7faf13661ab0159c67067ad43f43498ab"
+      },
+      {
+        "name": "hat_rolle_mindestens",
+        "bytes": 123,
+        "sha256": "367f630edefe6788750c6cabe7f5cb1b32d7c01ee4e3246d60632bf5ccd77f10"
+      },
+      {
+        "name": "profil_kerndaten_aus_auth",
+        "bytes": 352,
+        "sha256": "05f4673d2bd0e2236a8b6047c29b2105d787e4f55792d0f1b8251547cc8f8422"
+      },
+      {
+        "name": "profil_rollenwechsel_pruefen",
+        "bytes": 2440,
+        "sha256": "382d8bc00583596ef719b4185d47645baec410f71c2a7ebfb8e1c4df08ba8351"
+      },
+      {
+        "name": "rollenrang",
+        "bytes": 249,
+        "sha256": "56d5753e4ccb189c2472c02a2737b6662c182381d03bf4de1954d069829fe850"
+      }
+    ],
+    "oldTriggerBindings": [
+      {
+        "name": "profiles_kerndaten_aus_auth",
+        "function": "public.profil_kerndaten_aus_auth()",
+        "type": 5,
+        "enabled": "O"
+      },
+      {
+        "name": "profiles_rollenwechsel",
+        "function": "public.profil_rollenwechsel_pruefen()",
+        "type": 23,
+        "enabled": "O"
+      }
+    ]
+  },
+  "installer": {
+    "explicitTransaction": true,
+    "isolation": "READ COMMITTED",
+    "serverFamily": 17,
+    "creatorIsRealNosuperuserLoginPostgres": true,
+    "lock": "SHARE ROW EXCLUSIVE ON ONLY public.profiles",
+    "lockTimeoutMs": 2000,
+    "statementTimeoutMs": 10000,
+    "observedPortableContractChecked": true,
+    "fullRawRetainedCatalogComparedBeforeCommit": true,
+    "normalizeOnlyKnownDefaultsOnNewFunction": true,
+    "globalDefaultsMutated": false,
+    "unexpectedRightsOrCollisions": "REFUSE_ATOMICALLY",
+    "idempotentRerun": false,
+    "automaticRollbackToVulnerability": false,
+    "externalPrivilegedCatalogOperatorQuiescence": {
+      "requiredThroughoutApplyAndReadback": true,
+      "establishedByThisSource": false,
+      "tableLockProvesIt": false,
+      "flagCountOrSnapshotProvesIt": false
+    }
+  },
+  "native": {
+    "status": "AUTHORED_NOT_EXECUTED",
+    "wrapper": "lib/readiness/profile-authority-integrity-1.test.ts",
+    "mandatoryPgFamily": 17,
+    "ciRoutingAdded": false,
+    "requiredRoutingOwner": "Root before publication",
+    "skipAllowed": false,
+    "alternateAuthorityAllowed": false,
+    "effectLimitMs": 90000,
+    "existingDrainLimitMs": 35000,
+    "wrapperLimitMs": 130000,
+    "maxOwnedClusters": 3,
+    "maxCumulativeConnections": 16,
+    "maxCumulativeWireOperations": 4096,
+    "sourcePrerequisites": [
+      {
+        "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+        "gitBlob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+        "bytes": 10945,
+        "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2",
+        "purpose": "Unchanged accepted private PG1 authority implementation"
+      },
+      {
+        "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
+        "gitBlob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+        "bytes": 42247,
+        "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0",
+        "purpose": "Read source provenance for observed Auth helper bodies; not imported at runtime"
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/local-cluster.ts",
+        "gitBlob": "dc5a2583cd540b83062e8662cdb4b6af4befb376",
+        "bytes": 5280,
+        "sha256": "f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10",
+        "purpose": "Owned Unix-socket-only local cluster lifecycle"
+      },
+      {
+        "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
+        "gitBlob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
+        "bytes": 22433,
+        "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8",
+        "purpose": "Existing bounded local PG transport"
+      },
+      {
+        "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
+        "gitBlob": "b1a81a0f63fb0debaffa4db739adbb483ac1efc5",
+        "bytes": 9025,
+        "sha256": "e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68",
+        "purpose": "Existing ownership and complete fixed 35-second drain"
+      }
+    ],
+    "mandatoryGroups": [
+      "PAI1-01 old defects and false single-account sequence",
+      "PAI1-02 exact drift/default/collision/wrong-creator atomic refusal",
+      "PAI1-03 actual restricted creator installation and same attacks denied",
+      "PAI1-04 immutable keys, equal keys, own fields and upsert update",
+      "PAI1-05 24 status/delete rank pairs, own semantics, mixed row and dependent DML-CTE rollback",
+      "PAI1-06 existing insert/role behavior, fake/missing/malformed/unknown authority and direct NULL-actor guard cases",
+      "PAI1-07 unchanged private PG1 denies B and preserves original Owner binding",
+      "PAI1-08 actual Auth cascade context and existing privileged maintenance",
+      "PAI1-09 retained catalog, effective rights and temporary-object removal",
+      "PAI1-10 actual failure/timeout ownership, original query join and falsy failure handling"
+    ],
+    "syntheticOnly": true,
+    "signedOwnerProof": false,
+    "observedNativeEqualsHosted": false,
+    "authCascadeContextRequiredObservation": "postgres",
+    "authCascadeContextActuallyObservedByAuthor": false,
+    "fixtureAuthOwner": "supabase_auth_admin",
+    "fixtureProfileOwner": "postgres",
+    "temporaryCascadeObserver": "INVOKER; removed before final catalog comparison",
+    "temporaryNullActorPolicy": "owned fixture only; actual restricted authenticated reaches unchanged guard; removed",
+    "privatePg1Bridge": "owned fixture-only caller of unchanged private functions; removed; no private runtime EXECUTE grant",
+    "unknownUuidProviderExplicitlySynthetic": true,
+    "fixtureIndexesClaimLiveInventory": false,
+    "resetUsesActualAuthDelete": true,
+    "resetTruncate": false,
+    "finalAcrossDmlComparisonExcludedOnlyPhysicalFields": [
+      "relpages",
+      "reltuples",
+      "relallvisible",
+      "relfrozenxid",
+      "relminmxid"
+    ],
+    "installerComparisonExcludesNoneOfThoseFields": true,
+    "unjoinedEarlierDrainRace": false
+  },
+  "recovery": {
+    "document": "docs/official-truth-product-v3/PROFILE_AUTHORITY_INTEGRITY_RECOVERY_V1.md",
+    "failedInstall": "transaction rollback; independently bind actual outcome",
+    "acknowledgedInstallRegression": "fail-closed operator pause and reviewed forward repair",
+    "executableGuardRemovalRollback": false,
+    "liveDataPurge": false,
+    "triggerDisableRecovery": false,
+    "deleteSuppressionRecovery": false
+  },
+  "boundaries": {
+    "denied917ActionExcluded": true,
+    "branch1131Excluded": true,
+    "originalLeavesRemainExactRequired": true,
+    "hostedAccountOrOwnerMutation": false,
+    "rootIndependentReviewRequired": true,
+    "newHeadInvalidatesPriorGates": true
+  },
+  "primaryDocumentation": [
+    "https://www.postgresql.org/docs/17/sql-createtrigger.html",
+    "https://www.postgresql.org/docs/17/trigger-definition.html",
+    "https://supabase.com/changelog"
+  ],
+  "nextRequiredStep": "Root independent exact-source review of immutable eight-file commit; Root alone selects actual execution/integration/PG17 routing, re-gating, publication and separately bound Dev apply/readback"
+}

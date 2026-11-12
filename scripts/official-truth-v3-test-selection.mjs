@@ -10,7 +10,12 @@ export const ORIGINAL_TEST_FAMILIES = Object.freeze([
   'scripts/dev-reference-local-pg-prep-1/*.test.ts',
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts',
+  'lib/readiness/official-truth-v3-human-method-transport-1.test.ts',
+  'lib/readiness/profile-authority-integrity-1.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
