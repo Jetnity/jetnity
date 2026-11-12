@@ -1,3 +1,102 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A10 + A10-A1
+
+## Current source state — 12 November 2026
+
+**SOURCE-ONLY / Run 0 UNARMED / NOT_RUN / unpublished immutable review-fix candidate / independent A10 Technical Lead review and complete fresh-head CI/Vercel/thread re-gating pending.**
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**. Same original reachable session: **/root/aa_revision_probe_writer_g1**. No new session, resumed Cursor UI session or delegated implementation is claimed. No subagent was used.
+
+The full [A10 task](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827114603) selects the immediate fix for actual A9 CI typecheck failure. Its [A10-A1 correction](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827159555) replaces one mistakenly named source-budget test path with the actual BP1 observation test containing the required inverse and full-source pins. The author reported that concrete dependency before making an unlisted change. There are still exactly seven existing authored paths. The mistakenly named path is absent in the selected tree and is not created.
+
+Both complete Root receipts were reread unchanged and appended verbatim to the complete existing Task. Prior source approvals remain historical evidence and are not transferred as current A10 or runtime PASS.
+
+## Actual parent and failed-run evidence
+
+The sole parent is the actual published A9 head **cfdebe87bae2cb52b523acf68079f550a617597c**, tree **8331cb9dd10c0c932577395aab0d67304c65f8c5**. The complete commit/tree were independently read; PR #1192 was independently read as Draft on that exact head and base **b5f33f66faab89454a874e641dbd0dfa66b09d2d**. No new main integration is selected. The parent's existing ordered ancestry [d041feb553519aab574ce2c50aa8e5cdd9e694c1, b5f33f66faab89454a874e641dbd0dfa66b09d2d] is retained through the sole parent.
+
+Root's A10 receipt records the complete repository-verification log for actual CI **#4136 / run 43241573740 / attempt 1 / job 131263094386**: **111,314 bytes**, SHA256 **16de4e2b337fa62cd215abdd186bd71cca69959a09652d992dbb920f002b7a62**. The recorded checkout prefix is d49c727c6. The source author does not invent a longer checkout identity or claim an independent hosted/log read.
+
+Core Typecheck failed with TS2724 for the missing original type-only Reader API and consequent TS7006 callback errors, plus TS2345 in the widened two-path mutation loop. Later Core lint/tests/build did not run. This remains failed-run evidence, not a rerun instruction, skipped-gate waiver or evidence of any A7 timeout healing.
+
+## Correction of the author's earlier API claim
+
+The original symbols are distinct:
+
+- **OfficialTruthServerOwnedRetrievalLookup**, uppercase O, is the original type alias declared by Physical.
+- **officialTruthServerOwnedRetrievalLookup**, lowercase o, is the existing runtime function.
+
+The author's earlier handoff/manifest assertion that a runtime lookup reexport carried a merged type/value name was **incorrect**. A8-B omitted the separately named original uppercase type from the Reader's explicit type-reexport block. The prior source-byte inverse correctly preserved original implementation bytes but did not prove completeness of that new export wiring; it does not replace Typecheck or independent semantic review.
+
+A10 restores the original uppercase type through the existing `export type` block. The new current manifest records both distinct names and removes the incorrect merged-name assertion from current metadata. All previous documents remain verbatim historical evidence below and in the manifest, including the erroneous earlier claim; they are not restated as current truth.
+
+## Exact finite source changes
+
+**Reader:** Insert exactly one **43-byte** line:
+`  OfficialTruthServerOwnedRetrievalLookup,`
+inside the existing type-only reexport block from Physical. Removing that exact line restores the complete A9 Reader blob **933591ff7074c599dc5032f135103bd65f738314**. No Physical implementation, runtime import/export, consumer, request behavior or function body changes.
+
+**AA test:** Add only that original uppercase type to the exact Reader type-reexport AST allowlist, and preserve the existing two owned paths as the readonly literal tuple `[readerPath, probePath] as const`. The tuple retains the exact two already-inventoried strings; it adds no any/broad cast, alternate path, inventory entry or runtime behavior. Reversing the two exact edits restores **df87618a6e9a22e752b972d5fc2b072f90b5a121**. The entire syntheticPreflight function and final awaited preflight-before-real-entry sequence remain byte-identical.
+
+**Policy:** Update only the complete Reader and AA-test raw byte pins. RunNumber remains **0**, baseSha remains **b5f33f66faab89454a874e641dbd0dfa66b09d2d**, and the inventory remains **17 entries**. All other policy bytes and all fifteen other inventory entries remain exact. Reversing these two pin replacements restores **64052a43b7319988b862a48523b2d09d6402f264**.
+
+**BP1:** Update only the full Reader pin, the ten Reader target spans shifted by the inserted 43 bytes, and the corresponding mutation-proof Reader wiring end from **1,699 to 1,742**. All 29 original source spans, source hashes, Physical target spans and inverse order remain unchanged. The complete current Physical and Probe pins remain unchanged. All 22 whole-source mutants, seven span mutants, four other protected file pins and unrelated BP1 behavior remain intact. Reversing precisely these twelve dependent text edits restores **256dc4f180815fd0994568c55e0805f44cc88515**.
+
+No runtime test cases, callbacks, event guards, transport assertions, expected result shapes or native budgets are widened. The manifest records all before/after literals, UTF-8 byte offsets, hashes and the complete unchanged complement for Reader, AA test, Policy and BP1.
+
+## Original-byte inverse and complete target partition
+
+The original Reader remains authoritative:
+
+- **46,071 bytes**.
+- Gitblob **5998fdea54d3337fb68cd7111460b59e43a3cef7**.
+- SHA256 **b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994**.
+
+All 29 spans were recomputed from the actual candidate Reader and unchanged Physical bytes. They reproduce that complete original. No normalization, ignored source bytes or duplicate implementation substitute is used. The Reader target bytes partition completely into the original selected spans and the explicit named import/export wiring; the wiring now occupies bytes [805, 1742), exactly **937 bytes**. Physical's full retained-body/header/import/export-keyword partition remains exact. There are no hidden unmapped target bytes.
+
+With the unchanged actual Probe import/appendix spans, the restored original also reconstructs the complete historical A7 Reader **2b14953968da35ca47b272fd67a1a912613b8e6d**, **65,490 bytes**, SHA256 a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143. The Probe's existing four-path inventory addition remains 234 bytes; A10 changes no Probe byte.
+
+## Preserved implementation and full-tree scope
+
+| Completely unchanged file | UTF-8 bytes | Gitblob |
+|---|---:|---|
+| lib/readiness/official-truth-aa-revision-probe-1-server.ts | 20156 | `df24e34575ef7d0ca211471b6a6a019f600871ec` |
+| lib/readiness/official-truth-retrieval-physical-internal.ts | 17726 | `bd995580bee6adb6b1a213b17a6001caa8f0aeff` |
+| scripts/db/official-truth-integrated-pilot-1/r2-proof.ts | 11305 | `9aec7a10a01bfe0717c6abc9bb6395ea9d937533` |
+| scripts/db/official-truth-integrated-pilot-1/storage.ts | 18102 | `109e8ac57029a03afa55219c8132e8bf004b2dee` |
+| lib/readiness/official-truth-server-owned-retrieval.test.ts | 68545 | `1db87d5a80e913479157340803ddcdf2ac528d4d` |
+
+CI, package, both selectors, native proofs, protected-source amendments, accepted Auth/PG1/HMA sources and every other tree leaf remain unchanged. The same restored Storage result contract and proof-local R2 diagnostics remain; a successor without a fresh readback remains UNKNOWN.
+
+The immutable candidate is constructed on the complete sole-parent tree with exactly seven existing-file replacements. It retains **9,504 leaves**, adds/deletes none, and preserves **9,497 other leaves** with exact SHA, mode and type. The completed full-tree readback and final commit/tree identities are externally bound in the delivery, avoiding a self-referential document hash.
+
+## Current source/document pins
+
+The four new source blobs were created as immutable objects and reread in full before preparing this handoff. No compiler/parser/project or test was executed. The following source/document pins identify the complete prepared bytes; this Handoff's own pin is supplied with final immutable delivery.
+
+| Path | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 29654 | `0a46e1e82574effef2a8bd39e5a1072394bad4b1` | `5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 56236 | `9e278742a53d64da9bb9063a91649a08e3f84649` | `4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 4574 | `858e33f1a18889ae39130d6db2d108761ba85eed` | `d608cc710720e45286357b163664d62135ae6a22e37d0794a8b1ec25fbd252bc` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 35509 | `e27c3acafefeb4414617b74f5d84fb2ce99cd530` | `68fe43544e4588bc21f14a545172e6454a903202bfb5c004bce1fb0ca5a4d6e0` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 80085 | `e1079ec7cee7718ebf89af729dbc22c0a42d12e6` | `165875f1590dc5767cf379180fc7aa95329127122407470447514d3771a6cc80` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json | 199334 | `2e7c506b9f634ed2d6a9315d7e56ee7b3224c35c` | `1709a24fd27b243e48ca5302392abb3adb69bc41b0cce9ecc3e82e675a309b49` |
+
+## History, self-review and required next step
+
+The complete previous **75,249-byte Task** remains a byte-identical prefix. The complete previous **111,660-byte Handoff** follows verbatim below, including all earlier history. The full previous **123,750-byte Manifest** is preserved as a recoverable exact UTF-8 string in the new manifest. Current metadata clearly distinguishes the corrected API facts from the earlier incorrect assumption.
+
+The author has performed only Git source/metadata reads, immutable Git-object preparation and inert text/hash/tree comparisons. No project/parser/compiler/AST/test/native/SQL/APT/build execution, CI dispatch/rerun, official GET, hosted action, ref/PR publication, Ready or merge occurred. No positive invocation is reused or newly armed. No actual Typecheck PASS, runtime PASS, current official revision, pilot-window extension or product activation is claimed.
+
+The finite AST guard continues to recognize only its reviewed static/constant forms. Arbitrary runtime-computed paths/names are not universally resolved; the unchanged legacy pins and full independent Root exact-tree/diff/source review remain necessary. No new consumer is authorized.
+
+#917 and #1131 remain untouched. The author stops after immutable delivery and remains reachable in the same original session. Root independently reviews the exact A10 candidate, alone publishes selected source, and requires complete fresh-head CI/Vercel/review-thread re-gating. Existing failed or older-head evidence does not satisfy those gates.
+
+## Preserved complete A9 handoff history
+
+The exact prior Handoff follows: 111,660 bytes, Gitblob **1d80755b1206084428464338511de64fedde1df8**, SHA256 **711a7c64ba1767d4f0faebbf74db0993b28c000976888192d01d0ae4c4a569cb**. Its internal “current” statements are historical. In particular, the merged lookup type/value claim is superseded by the explicit correction above.
+
+<!-- BEGIN VERBATIM A9 HANDOFF 1d80755b1206084428464338511de64fedde1df8 -->
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A9 + A9-A1
 
 ## Current A9 source state — 12 November 2026
@@ -946,3 +1045,4 @@ Original Reader: 46071 UTF-8 bytes, SHA256 `b83340d46dbf8dbc3d1ba389d6b38964bf48
 Original reviewed metadata remains blob `e00f71f993fe558d657ca409436ee62410869b25`, 2142 bytes, SHA256 `478c86cc3efb6bca24f9eeb9aedb19d21c051d5a68e42308e0b73ca5979108f5`. Its exact original source is checked by the new test before the real entry. No production import of the dormant reviewed candidate was added; only its immutable nine-field research binding and already-reviewed public pin are copied into the new policy.
 <!-- END VERBATIM PRIOR HANDOFF d285e32eac66330360058d7c1404317bfadc24d2 -->
 <!-- END VERBATIM A8-B HANDOFF 8fd1b771fbe39f927bb743ebf343ea861750433d -->
+<!-- END VERBATIM A9 HANDOFF 1d80755b1206084428464338511de64fedde1df8 -->

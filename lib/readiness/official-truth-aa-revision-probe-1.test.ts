@@ -552,7 +552,7 @@ function importBoundary(file: string, source: string): void {
           assert.deepEqual(selection, node.isTypeOnly ? [
             'OfficialTruthServerOwnedRetrievalAdresse', 'OfficialTruthServerOwnedRetrievalDnsResolver',
             'OfficialTruthServerOwnedRetrievalHttpClient', 'OfficialTruthServerOwnedRetrievalHttpErgebnis',
-            'OfficialTruthServerOwnedRetrievalSperrgrund',
+            'OfficialTruthServerOwnedRetrievalLookup', 'OfficialTruthServerOwnedRetrievalSperrgrund',
           ] : ['officialTruthServerOwnedRetrievalAdresseZulaessig', 'officialTruthServerOwnedRetrievalLookup'])
           physicalReexports += 1
         }
@@ -798,7 +798,7 @@ function importInventory(): void {
   }
   assert.throws(() => importBoundary(testPath,
     "import { probeOfficialTruthAaReviewedRevisionV1 as renamed, type OfficialTruthAaRevisionProbeV1Result } from './official-truth-aa-revision-probe-1-server'"))
-  for (const ownedPath of [readerPath, probePath]) {
+  for (const ownedPath of [readerPath, probePath] as const) {
     const actual = sourceBytes.get(ownedPath)!.toString('utf8')
     assert.throws(() => importBoundary(ownedPath, actual.replace('  serverDns,', '  serverDns as other,')))
     assert.throws(() => importBoundary(ownedPath, actual + "\nexport { serverDns } from './official-truth-retrieval-physical-internal'\n"))

@@ -600,3 +600,49 @@ Correct exact pin for `scripts/official-truth-v3-test-selection.test.mjs`: **bbc
 
 Use this actual main leaf unchanged. No source scope, execution authority, policy, selected parents or other pin changes. Preserve this correction together with the complete original task; continue the same session's finite SOURCE-ONLY integration.
 <!-- END VERBATIM ROOT RECEIPT 6826586679 -->
+
+
+---
+
+## A10 / A10-A1 — exact A9 typecheck review-fix authority
+
+The complete previous A9 Task prefix remains unchanged. The two following complete Root receipts bind the exact typecheck correction and correct one mistaken allowlist path. A9's actual Core typecheck failed; prior source acceptance does not become runtime PASS.
+
+### Root receipt 6827114603
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827114603
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6827114603 -->
+## CHANGES REQUIRED — AA A10 / exact A9 CI typecheck correction
+Root independently read full repository-verification log for actual PR CI #4136 / run43241573740 attempt1, job131263094386. Checkout d49c727c6 merged exact head **cfdebe87bae2cb52b523acf68079f550a617597c** into main **b5f33f66faab89454a874e641dbd0dfa66b09d2d**. Full log:111314 bytes, SHA25616de4e2b337fa62cd215abdd186bd71cca69959a09652d992dbb920f002b7a62.
+Typecheck failed; later Core lint/tests/build did not run. No claim about A7 timeout healing. No rerun or skipped gate is authorized.
+
+### Same session / sole parent / finite correction
+Same original **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation1**. Sole parent is the current published A9 head above; no main merge is needed. Exactly these seven existing paths may change:
+- lib/readiness/official-truth-server-owned-retrieval.ts
+- lib/readiness/official-truth-aa-revision-probe-1.test.ts
+- lib/readiness/official-truth-aa-revision-probe-1-policy.ts
+- lib/readiness/official-truth-ch-de-source-budget-128k-1.test.ts
+- the existing AA Revision Probe1 Task, Handoff and Manifest paths
+
+A10-01: restore the **original type-only API** OfficialTruthServerOwnedRetrievalLookup via the Reader's existing export type block from the physical module. Physical already declares the exact type; no physical/runtime body change and no new runtime export/import consumer. This resolves TS2724 in AA/BERN/same-request/Reader tests and their consequential TS7006 callback errors. Update the existing AA exact Reader type-reexport AST allowlist for this one original type; all runtime restrictions and other consumers remain unchanged.
+
+A10-02: at the existing AA mutation loop for [readerPath,probePath] (line801), retain those two exact string literals as a readonly literal tuple (for example as const), fixing TS2345 at sourceBytes.get(ownedPath). No any/cast bypass, widening of repository inventory, test removal or assertion weakening.
+
+### Dependent pins / preserved evidence
+Update only directly dependent full Reader/test pins in Policy and BP1, and the Reader full-byte inverse offsets made necessary by the inserted type-only line. Keep the exact original Reader reconstruction5998fdea54d3337fb68cd7111460b59e43a3cef7 /46071bytes/SHA256b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994. Full current Reader/Physical/Probe pin checks, all22whole-source+7span mutants and original29span full inverse remain mandatory. Probe, Physical, R2, Storage, ReaderTest, CI/package/selectors and every other tree leaf unchanged. If the seven-path list cannot express an actual necessary fix, stop and report the precise additional dependency.
+
+Preserve complete A9 Task/Handoff/history verbatim; append this full task and failed-run evidence. Manifest exact pins, full old→new Reader/test/BP1/Policy inverse and all unchanged complement. Policy remains Run0 UNARMED, exact base b5f33f66faab89454a874e641dbd0dfa66b09d2d,17 inventory entries; no official source GET or window update.
+
+### Delivery / gate
+Immutable objects and inert text/hash/tree comparisons only; no project/parser/compiler/test/native/SQL/build/APT/CI/ref/PR/Ready/merge/hosted/sourceGET action. Deliver exact soleparent/tree/full raw pins and inverses, then STOP for Root review. Root alone publishes selected source and requires complete new-head CI/Vercel/thread re-gating. #917 and #1131 untouched.
+<!-- END VERBATIM ROOT RECEIPT 6827114603 -->
+
+### Root receipt 6827159555
+
+Source: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6827159555
+
+<!-- BEGIN VERBATIM ROOT RECEIPT 6827159555 -->
+## AA A10 / A1 — exact seven-path allowlist correction
+This is Root's correction to6827114603, not a new implementation scope. Replace the mistakenly named lib/readiness/official-truth-ch-de-source-budget-128k-1.test.ts entry with **lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts**. The actual required29span inverse/full Reader pins/22+7mutants are in that BP1 observation test. The source-budget test remains unchanged. Exactly seven selected paths total; every other A10 instruction, soleparent, body-preservation obligation and STOP remains in force. Root acknowledges the naming error; the original author correctly refused an unlisted edit.
+<!-- END VERBATIM ROOT RECEIPT 6827159555 -->

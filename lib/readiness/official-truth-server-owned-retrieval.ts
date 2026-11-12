@@ -40,6 +40,7 @@ export type {
   OfficialTruthServerOwnedRetrievalDnsResolver,
   OfficialTruthServerOwnedRetrievalHttpClient,
   OfficialTruthServerOwnedRetrievalHttpErgebnis,
+  OfficialTruthServerOwnedRetrievalLookup,
   OfficialTruthServerOwnedRetrievalSperrgrund,
 } from './official-truth-retrieval-physical-internal'
 

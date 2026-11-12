@@ -32,8 +32,8 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   // Finite actual-byte pins before the claim or any DNS/HTTPS effect.
   // This policy's own blob/tree is externally bound by Root exact-head review.
   sourceInventory: Object.freeze([
-    Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 29611, sha256: 'ef2fd19af4bf897bcab1a2898f447a9b2a47b759f5a4dfe4b286badae5082bd2' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 56184, sha256: '13fe0530ef3c4007fc44ccf30dda1f58673a5341177e88c6be9665a4f9f39876' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 29654, sha256: '5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 56236, sha256: '4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee' }),
     Object.freeze({ path: 'lib/readiness/official-truth-bounded-response-body.ts', bytes: 1278, sha256: '186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
