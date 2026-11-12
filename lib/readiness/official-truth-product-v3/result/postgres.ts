@@ -91,7 +91,7 @@ export function createHrs1ResultPorts(input: Readonly<{
       || !ownRecord(r.head, ['pointer','sourceDecisionRef','historyArchive'])) return null
     return immutable(JSON.parse(hrs1Canonical(r)) as HistoryState)
   }
-  const history: V3ImportHistoryPort<object> = Object.freeze({
+  const history: V3ImportHistoryPort<object> = Object.freeze<V3ImportHistoryPort<object>>({
     async read(contextKey, factKind, signal) {
       if (contextKey !== binding.contextKey || factKind !== binding.factKind) return { status: 'unavailable' }
       const r = await call('history', { contextKey, factKind }, signal), h = r.status === 'snapshot' ? state(r.value) : null
@@ -114,7 +114,7 @@ export function createHrs1ResultPorts(input: Readonly<{
       || !await source.reproveVerification(h.receipt, h.verification, at, signal) || signal.aborted) return null
     return source.held(h.receipt) === h.verification ? h : null
   }
-  const versionProofs: V3TransitionProofPort<object> = Object.freeze({
+  const versionProofs: V3TransitionProofPort<object> = Object.freeze<V3TransitionProofPort<object>>({
     async inspect(raw, checkedAt, legalDate, signal) {
       const prepared = preparedRead(raw, registry, binding)
       const at = hrs1Clock(checkedAt, binding.legalTimeZone)
@@ -149,7 +149,7 @@ export function createHrs1ResultPorts(input: Readonly<{
       verificationRef: h.verification.reference, intake: original }, signal, methodReceipt,
       cap < h.verification.validUntilExclusive ? cap : h.verification.validUntilExclusive)
   }
-  const versionStore: V3VersionCommitPort = Object.freeze({
+  const versionStore: V3VersionCommitPort = Object.freeze<V3VersionCommitPort>({
     async confirm(operationId, operationKey, signal) {
       const r = await call('version_confirm', { operationId, operationKey }, signal)
       return r.status === 'committed' ? { status: 'committed', confirmation: r.value }
@@ -162,7 +162,7 @@ export function createHrs1ResultPorts(input: Readonly<{
       return r.status === 'current' && ownRecord(r.value, ['pointer','sourceDecisionRef','historyArchive'])
         ? { status: 'current', head: r.value as V3VersionHead } : { status: 'unavailable' }
     },
-    atomicBoundary: Object.freeze({
+    atomicBoundary: Object.freeze<V3VersionCommitPort['atomicBoundary']>({
       async commit(command, signal) {
         const r = await transition(command, false, signal)
         return r.status === 'committed' ? { status: 'commit_reported' }
@@ -190,7 +190,7 @@ export function createHrs1ResultPorts(input: Readonly<{
       prepared, projection: projection.value, verificationRef: h.verification.reference, intake: original }, signal,
       methodReceipt, cap < h.verification.validUntilExclusive ? cap : h.verification.validUntilExclusive)
   }
-  const publication: V3ProjectionPublicationPort = Object.freeze({
+  const publication: V3ProjectionPublicationPort = Object.freeze<V3ProjectionPublicationPort>({
     async confirm(command, signal) {
       const r = await publicationCall(command, true, signal)
       if (r.status === 'confirmed' && ownRecord(r.value, ['operationId','operationKey','projectionRef','versionRef','checkedAt','freshUntil'])) {
@@ -219,7 +219,7 @@ export function createHrs1ResultPorts(input: Readonly<{
     return call(confirm ? 'escalation_confirm' : 'escalation', { ...value, verificationRef: issued.verification.reference, intake: original },
       signal, undefined, issued.verification.validUntilExclusive)
   }
-  const escalations: V3EscalationPublicationPort = Object.freeze({
+  const escalations: V3EscalationPublicationPort = Object.freeze<V3EscalationPublicationPort>({
     async confirm(command, signal) {
       const r = await escalationCall(command, true, signal)
       const v = r.status === 'confirmed' && ownRecord(r.value, ['operationKey','escalationKey'])

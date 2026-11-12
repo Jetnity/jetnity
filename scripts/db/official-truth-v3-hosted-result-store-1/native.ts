@@ -80,14 +80,15 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     route:'direct_entry',conditions:{status:'specified',expression:{op:'atomic',predicate:{kind:'travel_purpose',purpose:'visitor'}}},
   }))
   const identity=mustRead(createV3ContextIdentity(context))
-  const binding=readHrs1Binding({...HRS_METHOD,schema:1,qualificationScope:'global_context',context,contextKey:identity.contextKey,
+  const bindingRead=readHrs1Binding({...HRS_METHOD,schema:1,qualificationScope:'global_context',context,contextKey:identity.contextKey,
     factKind:'requirement_effect',dataMode:'synthetic_test',legalTimeZone:'Europe/Berlin',
     activeFrom:'2000-01-01T00:00:00.000Z',activeUntilExclusive:'2099-12-31T00:00:00.000Z',
     sourceMaxAgeMilliseconds:300000,projectionMaxAgeMilliseconds:60000,monitorIntervalMilliseconds:100,
     monitorLeaseMilliseconds:5000,attemptLimit:3,sources:SOURCE_ROLES.map(role=>({source:fixtureSource(role),canonicalUrl:fixtureUrl(role),
       contentType:'application/json',executableDigest:sha256Hex('hrs1 fictional extractor '+role),
       qualificationDigest:sha256Hex('hrs1 fictional global qualification '+role),role}))},registry)
-  assert.ok(binding)
+  assert.ok(bindingRead)
+  const binding:Hrs1Binding=bindingRead
   const control={epoch:1,mode:'agrees' as 'agrees'|'conflicts'|'not_found'|'unreachable'|'unclear',unavailable:false,resolve:false,
     retrievedAt:new Date().toISOString(),expiresAt:null as string|null,inspections:0,finalizations:0,reproofs:0,extracts:0,observations:0,producerCalls:0}
   const originals=new Map<string,Hrs1Original>()
@@ -151,7 +152,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     held.set(receipt,entry);assert.ok(known.size<256||known.has(verification.reference),'finite fixture custody')
     known.set(verification.reference,entry);return{receipt,verification}
   }
-  const issuer:Hrs1SourceCustodyIssuer=Object.freeze({
+  const issuer:Hrs1SourceCustodyIssuer=Object.freeze<Hrs1SourceCustodyIssuer>({
     async inspect(challenge,signal){
       if(!active(signal)||!hrs1Same(challenge.binding,binding)||!hrs1Same(challenge.request.context,context))return null
       control.inspections++
@@ -248,7 +249,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       deliveryId:'delivery3_'+sha256Hex(seed+'|delivery|'+tag).slice(0,32),inputRevision:'snapshot:'+sha256Hex(seed+'|synthetic-visa')}
     return{binding:intakeBinding,text}
   }
-  const producer:M04DeliveryProducer=Object.freeze({async produce({job},signal){
+  const producer:M04DeliveryProducer=Object.freeze<M04DeliveryProducer>({async produce({job},signal){
     assert.equal(signal.aborted,false);assert.equal(job.kind,'research_job_record')
     if(job.kind!=='research_job_record')return{status:'failed',reason:'unreachable'}
     assert.ok(hrs1Same(job.context,context));control.producerCalls++
@@ -467,15 +468,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
-    "blob": "6fe60ebc80ab8a49e57853cc3d1ff23a28d123d9",
-    "bytes": 23718,
-    "sha256": "66bac9f50df05465a27ced7c1c20a52b5a0a34ddfaa2397d7a3b8566bc0026b0"
+    "blob": "7a11fc86cf8553f6ec792065a8a19a201237377c",
+    "bytes": 23896,
+    "sha256": "80958da5e5cacfc74f88c176b9e99266354efd9f3d68464afed02edfa163da8c"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "blob": "17737fb84bf1aa2be2ecdad45647a85cbdf94ce5",
-    "bytes": 23586,
-    "sha256": "ccc9877249087521e96da6f48f91051ffb116df881d79848d0611ef39d585cf6"
+    "blob": "3a333c5458986941e800425393a3d756a65281b7",
+    "bytes": 23649,
+    "sha256": "4fa7c6e399a46387f977d3f62a5811c1dc5f68fe9222ba97c996d5a7f495acb9"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
@@ -617,9 +618,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
-    "bytes": 442213,
-    "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
+    "blob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
+    "bytes": 442780,
+    "sha256": "22b1ba34a765038eb713e395c127e8862f80738afbdd678cfe7319f9b11b9678"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -653,15 +654,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "410a00aa40f29118db75a27759372655dd73cc4e",
-    "bytes": 364374,
-    "sha256": "df9b56f35a92e785faf309c254e2a6529407270ac056459990225c2240ed1661"
+    "blob": "c412b61f5fd06f29345bdf0e6dbff0ef931d7e81",
+    "bytes": 364941,
+    "sha256": "87631ac49761d0e310fddb984b8bbd3d01508380d41f310f96f96ad6d3c60465"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "3bcdc66d5beb4ed0c7f7410ee7b57dd9f06dabe9",
-    "bytes": 159855,
-    "sha256": "a823884deee63767cbbab56942d34661aab5ee146b6d098c632514f63c6e77c9"
+    "blob": "2ef041a1e683a1394facd0ae6514b8d91d1a3688",
+    "bytes": 160989,
+    "sha256": "9f577d897419f67add68b2c53fd0dcba865a0b846541cc2b1735decbfc7c0d6c"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1412,7 +1413,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       }
     }
   }
-  const executor = (kind: HrsLoginKind): Hrs1TerminalExecutor => Object.freeze({
+  const executor = (kind: HrsLoginKind): Hrs1TerminalExecutor => Object.freeze<Hrs1TerminalExecutor>({
     executeFixed(request,signal) { return lifetime.run(() => execute(kind,request,signal)) },
   })
   return {
@@ -1511,7 +1512,7 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
   async function prepare(tag:string){
     const work=mustRead(createV3WorkIdentity({context:fixture.context,method:METHOD_REF,factKind:'requirement_effect',researchReason:{status:'missing'}}))
     const delivery=fixture.delivery({jobId:fixtureId('job3','hrs1-manual-'+tag),context:fixture.context,research:work.research},tag)
-    const parsed=readV3RetainableProposal(delivery.text,fixture.registry);assert.ok(parsed.ok);if(!parsed.ok)assert.fail(parsed.reason)
+    const parsed=readV3RetainableProposal(delivery.text,fixture.registry);assert.ok(parsed.ok)
     const upload=parsed.value,reference:V3IntakeReference={binding:delivery.binding,proposalDigest:upload.digest,bytes:upload.bytes}
     assert.deepEqual(await intake.capture(delivery.text,reference,sourceController.signal),{status:'recorded',reference})
     const actual=intake.quarantine(delivery.binding),finishGate=gate(lifetime);releaseGates.add(finishGate.release)
@@ -1570,6 +1571,7 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
     assert.equal(result.status,'processed');assert.ok(result.status==='processed')
     assert.equal(result.worker.status,'completed');assert.equal(result.worker.acceptedRule,false)
     assert.equal(result.worker.job.state,'succeeded');assert.equal(result.worker.job.jobId,enqueued.record.jobId)
+    assert.ok(result.worker.job.kind==='research_job_record')
     assert.deepEqual(result.worker.job.method,METHOD_REF)
     const latest=fixture.delivered.at(-1);assert.ok(latest)
     const reference:V3IntakeReference={binding:latest.binding,proposalDigest:sha256Hex(latest.text),bytes:Buffer.byteLength(latest.text,'utf8')}

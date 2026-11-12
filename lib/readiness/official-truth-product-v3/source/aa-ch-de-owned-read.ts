@@ -91,7 +91,7 @@ function readFrame(publication: FixedPublication, address: string, family: 4 | 6
         servername: publication.hostname, rejectUnauthorized: true, agent, family, autoSelectFamily: false,
         lookup: lookup as unknown as NonNullable<https.RequestOptions['lookup']>,
         headers: { accept: 'text/html', 'accept-encoding': 'identity', 'cache-control': 'no-cache', connection: 'close' },
-      }, (incoming) => {
+      } as https.RequestOptions & { autoSelectFamily: false }, (incoming) => {
         response = incoming; responseClosed = false
         incoming.once('close', () => { responseClosed = true; finish() })
         incoming.once('aborted', () => fail('framing'))

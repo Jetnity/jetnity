@@ -153,7 +153,7 @@ function session(target: V3PgTarget, address: string, password: string, kind: V3
     if (listeners.length !== 1) { force(); return }
     const parse = listeners[0]!
     stream.removeListener('data', parse as (chunk: Buffer) => void)
-    let held = Buffer.alloc(0), received = 0, frames = 0
+    let held: Buffer = Buffer.alloc(0), received = 0, frames = 0
     stream.on('data', (chunk: Buffer) => {
       if (closing || closed) return
       try {

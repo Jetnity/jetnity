@@ -178,7 +178,7 @@ export async function startOwnedTlsPgFixture(t: TestContext) {
       '-addext', 'subjectAltName=DNS:localhost', '-keyout', keyPath, '-out', certPath])
     chmodSync(keyPath, 0o600)
     const port = await vacantPort(), certificate = readFileSync(certPath, 'utf8'), key = readFileSync(keyPath, 'utf8')
-    writeFileSync(join(data, 'postgresql.auto.conf'), `listen_addresses='127.0.0.1'\nport=${port}\nssl=on\nssl_cert_file='${certPath}'\nssl_key_file='${keyPath}'\npassword_encryption='scram-sha-256'\nmax_connections=32\ntrack_activity_query_size=8192\n`, { mode: 0o600 })
+    writeFileSync(join(data, 'postgresql.auto.conf'), `listen_addresses='127.0.0.1'\nunix_socket_directories='${root}'\nunix_socket_permissions=0700\nport=${port}\nssl=on\nssl_cert_file='${certPath}'\nssl_key_file='${keyPath}'\npassword_encryption='scram-sha-256'\nmax_connections=32\ntrack_activity_query_size=8192\n`, { mode: 0o600 })
     command(join(bin, 'pg_ctl'), ['-D', data, '-l', join(root, 'server.log'), '-w', '-t', '10', 'start'])
     running = true
     function client(user: string, password: string): Client {

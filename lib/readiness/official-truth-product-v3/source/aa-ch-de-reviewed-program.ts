@@ -131,7 +131,8 @@ function compare(primary: V3SourceObservationRecord, counter: V3SourceObservatio
       ||primary.fact.schema!==1||counter.fact.schema!==1
       ||primary.fact.fact.kind!=='requirement_effect'||counter.fact.fact.kind!=='requirement_effect') return 'not_comparable' as const
     if(hrs1Same(primary.fact,counter.fact)) return 'agrees' as const
-    if(primary.fact.fact.effect!==counter.fact.fact.effect
+    if('effect' in primary.fact.fact && 'effect' in counter.fact.fact
+      &&primary.fact.fact.effect!==counter.fact.fact.effect
       &&['required','not_required'].includes(primary.fact.fact.effect)
       &&['required','not_required'].includes(counter.fact.fact.effect)) return 'conflicts' as const
     return 'not_comparable' as const

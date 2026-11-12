@@ -16,15 +16,16 @@ import { AA_CH_DE_SOURCE_CUSTODY_ISSUER as issuer } from './aa-ch-de-issuer'
 
 type WireOptions = Readonly<{ status?: number; headers?: readonly string[]; body?: string | Buffer;
   complete?: boolean; hangBody?: boolean; holdClose?: boolean }>
+type WireRequestOptions = https.RequestOptions & { autoSelectFamily?: boolean }
 function syntheticWire(options: WireOptions = {}, counterOptions: WireOptions = options) {
   let active = 0
-  const requests: https.RequestOptions[] = [], dns: string[] = []
+  const requests: WireRequestOptions[] = [], dns: string[] = []
   const releases = new Map<AaChDeSourceRole, () => void>()
   mock.method(Resolver.prototype, 'resolve4', (async (hostname: string) => { dns.push(hostname); return ['1.1.1.1'] }) as Resolver['resolve4'])
   mock.method(Resolver.prototype, 'resolve6', (async (hostname: string) => { dns.push(hostname); return [] }) as Resolver['resolve6'])
   mock.method(Resolver.prototype, 'cancel', () => undefined)
-  const implementation = ((configuration: https.RequestOptions, callback: (response: IncomingMessage) => void) => {
-    assert.ok([AA_CH_DE_PUBLICATION.hostname, BERN_CH_DE_PUBLICATION.hostname].includes(String(configuration.hostname)))
+  const implementation = ((configuration: WireRequestOptions, callback: (response: IncomingMessage) => void) => {
+    assert.ok(([AA_CH_DE_PUBLICATION.hostname, BERN_CH_DE_PUBLICATION.hostname] as readonly string[]).includes(String(configuration.hostname)))
     const role = configuration.hostname === AA_CH_DE_PUBLICATION.hostname ? 'primary' : 'counter'
     const selected = role === 'primary' ? options : counterOptions
     const body = selected.body ?? '<html><body>synthetic transport fixture</body></html>'
@@ -222,7 +223,7 @@ test('AA/Bern source: cancelling DNS joins both native operations, including a s
   let release: (() => void) | null = null, cancelled = 0, calls = 0, settled = false
   mock.method(Resolver.prototype, 'resolve4', (() => new Promise<string[]>((resolve, reject) => {
     void resolve; release = () => reject(new Error('synthetic cancellation'))
-  })) as Resolver['resolve4'])
+  })) as unknown as Resolver['resolve4'])
   mock.method(Resolver.prototype, 'resolve6', (() => { throw new Error('synthetic synchronous failure') }) as Resolver['resolve6'])
   mock.method(Resolver.prototype, 'cancel', () => { cancelled++ })
   mock.method(https, 'request', (() => { calls++; assert.fail('DNS failure reached HTTP') }) as typeof https.request)
@@ -239,7 +240,7 @@ test('AA/Bern source: cancelling DNS joins both native operations, including a s
 
 test('AA/Bern source: private DNS addresses and already-aborted calls never open HTTP or invent a completed read', async () => {
   let calls = 0
-  mock.method(Resolver.prototype, 'resolve4', (async () => ['127.0.0.1']) as Resolver['resolve4'])
+  mock.method(Resolver.prototype, 'resolve4', (async () => ['127.0.0.1']) as unknown as Resolver['resolve4'])
   mock.method(Resolver.prototype, 'resolve6', (async () => []) as Resolver['resolve6'])
   mock.method(Resolver.prototype, 'cancel', () => undefined)
   mock.method(https, 'request', (() => { calls++; assert.fail('refused address reached HTTP') }) as typeof https.request)

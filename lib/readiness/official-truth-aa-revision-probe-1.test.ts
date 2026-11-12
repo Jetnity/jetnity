@@ -23,9 +23,9 @@ const physicalPath = 'lib/readiness/official-truth-retrieval-physical-internal.t
 // The independently reviewed V3 reader uses only four pure physical helpers and a type.
 const aaBernReaderPath = 'lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts'
 const aaBernReaderPin = {
-  bytes: 13558,
-  blob: 'e9d801ddc8292428b8454b67eea4c9eb7c30d5aa',
-  sha256: '3f2660c8959a065a09a433cfb05be97db626b70c5c39276d5df455c3b65ede5d',
+  bytes: 13612,
+  blob: 'e08f89e2a8bf2f7f9344dd8e14a88a691aea5def',
+  sha256: '18fbdc571d85d62744fd132c6e0e8987487c448c2b50fbe830c56d4158a66100',
 } as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'

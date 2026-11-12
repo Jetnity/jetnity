@@ -779,14 +779,19 @@ BEGIN
      <>pg_catalog.cardinality(allowed_grantees) THEN
    RAISE EXCEPTION 'hrs1 exact function declaration or ACL: %',expected_function.function_name USING ERRCODE='P7802';
   END IF;
-  expected_dependency_count:=CASE WHEN target_oid IS NULL THEN 1 ELSE 2 END;
+  expected_dependency_count:=(CASE WHEN target_oid IS NULL THEN 1 ELSE 2 END)+(CASE WHEN expected_function.language_name='plpgsql' THEN 1 ELSE 0 END);
   IF (SELECT count(*) FROM pg_catalog.pg_depend dep WHERE dep.classid='pg_catalog.pg_proc'::regclass AND dep.objid=function_row.oid)<>expected_dependency_count
    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_depend dep WHERE dep.classid='pg_catalog.pg_proc'::regclass AND dep.objid=function_row.oid
     AND dep.refclassid='pg_catalog.pg_namespace'::regclass AND dep.refobjid=namespace_oid AND dep.deptype='n' AND dep.objsubid=0 AND dep.refobjsubid=0)
+   OR (expected_function.language_name='plpgsql' AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_depend dep
+    WHERE dep.classid='pg_catalog.pg_proc'::regclass AND dep.objid=function_row.oid
+     AND dep.refclassid='pg_catalog.pg_language'::regclass AND dep.refobjid=function_row.prolang
+     AND dep.deptype='n' AND dep.objsubid=0 AND dep.refobjsubid=0))
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_depend dep WHERE dep.classid='pg_catalog.pg_proc'::regclass AND dep.objid=function_row.oid
     AND (dep.objsubid<>0 OR dep.refobjsubid<>0 OR dep.deptype<>'n'
       OR NOT(dep.refclassid='pg_catalog.pg_namespace'::regclass AND dep.refobjid=namespace_oid
-        OR target_oid IS NOT NULL AND dep.refclassid='pg_catalog.pg_proc'::regclass AND dep.refobjid=target_oid)))
+        OR target_oid IS NOT NULL AND dep.refclassid='pg_catalog.pg_proc'::regclass AND dep.refobjid=target_oid
+        OR expected_function.language_name='plpgsql' AND dep.refclassid='pg_catalog.pg_language'::regclass AND dep.refobjid=function_row.prolang)))
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_init_privs init WHERE init.classoid='pg_catalog.pg_proc'::regclass AND init.objoid=function_row.oid)
    OR pg_catalog.obj_description(function_row.oid,'pg_proc') IS NOT NULL
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_seclabel label WHERE label.classoid='pg_catalog.pg_proc'::regclass AND label.objoid=function_row.oid) THEN
@@ -943,7 +948,7 @@ BEGIN
       AND pg_catalog.array_ndims(column_row.attoptions)=1 AND pg_catalog.array_lower(column_row.attoptions,1)=1
       AND pg_catalog.cardinality(column_row.attoptions)=1
       AND CASE WHEN column_row.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'
-        THEN pg_catalog.substring(column_row.attoptions[1] FROM 11)::numeric<=18446744073709551615::numeric ELSE false END)) THEN
+        THEN pg_catalog.substring(column_row.attoptions[1], 11)::numeric<=18446744073709551615::numeric ELSE false END)) THEN
    RAISE EXCEPTION 'hrs1 exact selected column: %.%',expected_column.table_name,expected_column.column_name USING ERRCODE='P7802';
   END IF;
  END LOOP;

@@ -504,9 +504,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "bytes": 442213,
-      "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
-      "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
+      "bytes": 442780,
+      "blob": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
+      "sha256": "22b1ba34a765038eb713e395c127e8862f80738afbdd678cfe7319f9b11b9678"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -1177,9 +1177,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "f608146967d820cf20173990e3b960ac1c1bc6be",
+      "blob": "0b77ae7de6cf27d9a4ffdbbcd5d352ba58d49eb8",
       "bytes": 100410,
-      "sha256": "8420140516ccab8b3f7496effdf3d74b930d04b65f6c942333efb1b4224b4f8e"
+      "sha256": "0e6ae62af769f697849396db64c30e911fc5ee90fe6b798f6a4f4e20317ae826"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1337,49 +1337,18 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "COHERENT_HRS_A3_FUNCTION_LOCAL_JIT",
-    "parent": "2838ecf05d0e3c19de4d41348c0e4965e71a5e9f",
+    "revision": "CI4159_MINIMAL_SOURCE_CORRECTIONS",
+    "parent": "1dba7bd5e5ba40706d8a7418a5dc494b23f0b933",
     "sourceRebindings": [
       {
-        "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-        "before": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779",
-        "after": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5"
-      },
-      {
-        "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-        "before": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3",
-        "after": "e54779dfa4cd65372f0f375182beafd4a1d155c1"
-      },
-      {
-        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-        "before": "19be9e9b914e37d115828edebdd71d14033fbfb1",
-        "after": "00d4edcb7daa090b61a28add33167ecd977e6324"
-      },
-      {
-        "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
-        "before": "0d29c60f54bf002a5d81f1a07670d742a25e08b1",
-        "after": "446e727e3e3030ef4949829864abb5c531abc5a7"
-      },
-      {
-        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-        "before": "3746b98623bc93d72abfe1cba8c8ebef42d0f34e",
-        "after": "8082bada0dad76c657b3c7a0367e56b4d634e5ce"
-      },
-      {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "before": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
-        "after": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
-      },
-      {
-        "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "before": "cc6fa87662468768c5898b1585de545fd8652c8c",
-        "after": "bf2e49359556daf4593e338076c4a97f6465bfc5"
+        "before": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+        "after": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd"
       }
     ],
     "originalOperationsAssertionsBudgetsUnchanged": true,
-    "diagnosticExpressionPins": "14 exact current expressions; only jobs-functions changes with jit=off",
-    "compatibility": "COMPOSED checks the original wholly absent HRS branch; the separate HRS Native checks the complete installed HRS branch",
-    "jitScope": "official_v3_jobs_private.assert_catalog_v1 only; no global, session, rights or deadline change",
+    "diagnosticExpressionPins": "All 14 current diagnostic expressions unchanged.",
+    "compatibility": "The original completely absent HRS branch remains accepted; separate HRS Native verifies the installed branch.",
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
@@ -1434,7 +1403,7 @@
     }
   },
   "previousIntegrationReference": {
-    "parent": "31771376b82f5d60132004e7dc555a4a446598b3",
-    "manifestBlob": "a59636599e21636f2a5f27b243a4b9297bfec04d"
+    "parent": "1dba7bd5e5ba40706d8a7418a5dc494b23f0b933",
+    "manifestBlob": "0240872067e0f8daedbda21c0a204d1592a0d8f1"
   }
 }

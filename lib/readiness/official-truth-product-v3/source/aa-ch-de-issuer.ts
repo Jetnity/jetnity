@@ -206,7 +206,7 @@ function validHeld(h: Held, verification: Hrs1Verification, at: V3ReadClock, sig
 
 /** The sole production issuer owns both real originals and the real counter
  * attempt. There is no issuer constructor, receipt setter or profile injection. */
-export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.freeze({
+export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.freeze<Hrs1SourceCustodyIssuer>({
   async inspect(challenge, signal) {
     try {
       if (!hrs1Data(challenge) || signal.aborted) return null

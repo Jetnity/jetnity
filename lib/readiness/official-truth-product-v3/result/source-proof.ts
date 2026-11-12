@@ -186,7 +186,7 @@ export function createHrs1SourceConsumer(input: Readonly<{
       && hrs1Same(end, hrs1Clock(end.now, binding.legalTimeZone)) && end.now >= at.now
       && end.legalDate === at.legalDate && end.now < verification.validUntilExclusive
   }
-  const evidence: V3ImportEvidencePort<object> = Object.freeze({
+  const evidence: V3ImportEvidencePort<object> = Object.freeze<V3ImportEvidencePort<object>>({
     async inspect(request, signal) {
       if (!issuer || signal.aborted || !hrs1Same(request.context, binding.context) || request.contextKey !== binding.contextKey
         || request.factKind !== binding.factKind || !hrs1Same(request.method, hrs1Method(binding))) return { status: 'unavailable' }
@@ -247,7 +247,7 @@ export function createHrs1SourceConsumer(input: Readonly<{
       return await reprove(receipt, h.verification, at, signal) ? { status: 'current' } : { status: 'unavailable' }
     },
   })
-  const sources: V3SourceObservationPort<object> = Object.freeze({
+  const sources: V3SourceObservationPort<object> = Object.freeze<V3SourceObservationPort<object>>({
     async observe(target, method, signal) {
       if (!issuer || signal.aborted || !hrs1Same(target.context, binding.context) || !hrs1Same(method, hrs1Method(binding))) return { status: 'unavailable' }
       const result = await issuer.observe(target, binding, signal)
