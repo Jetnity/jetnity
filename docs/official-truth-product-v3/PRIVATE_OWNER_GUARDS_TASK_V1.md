@@ -117,3 +117,50 @@ Create an immutable successor with sole parent `9ed5b60d7ca77974864a32a03ed029fc
 Preserve installer, recovery SQL, test wrapper and all existing base files byte exact. Only native.ts and the existing Task/Handoff/Manifest may change. Preserve complete previous Task content and append this R3 verbatim with URL. Preserve the previous Handoff as dated history, then record actual failure and truthful new NOT_RUN state; update only the changed native/source/ancestry pins in Manifest. No invented new CI or PG1 acceptance.
 
 Deliver exact new commit/tree, all seven current pins, four-path parent delta and complete unchanged-tree proof. Source-only immutable Git objects. **No project/parser/compiler/native/SQL/test/build/APT execution, no hosted query/apply, no Auth change, no branch/ref/PR publication, Ready or merge.** Root independently reviews and may publish the correction with a fresh complete exact-head gate. The current published head remains unchanged until Root does so. Stop after delivery; no automatic follow-on. #917/#1131 STOPs remain intact.
+
+---
+
+## Persisted same-session integration review amendment R4
+
+URL: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6823360792
+
+The complete previous Task above remains byte-exact. The following R4 body is appended verbatim; immutable preparation does not release Root's publication HOLD or transfer prior runtime gates.
+
+## Technical Lead — PG1 integration review-fix R4 / exact Auth-main source preparation
+
+**12 November 2026. Explicitly selected by Root for CH→DE.** Continue with **Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1**, original reachable session /root/v3_private_owner_guards_writer_g1. This is the same scoped #1193 prerequisite, not a new product slice.
+
+### Live integration basis
+
+#1194 was independently TL-PASS at https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6823268643 and merged at12:12:26Z. Fresh actual main is **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**, tree **c2fad9aff45aa07addb541fea8e6a38fb9f2a19e**, parents[dfd692440762b50183fdebbfd6bf8dabde4662d0,72ec65f55e2e69e737b774b83b20201fed1e1892]. This merge tree equals the exact successful #4127 tested checkout tree. Production dpl_9K9EfdobAp4ySCBbWoBnqE4vw78B is READY on that exact main and jetnity.com alias points to it.
+
+Separate merged-main CI **#4129/43215792152** is still running; actual Auth job131174573164 already SUCCESS. **Full post-merge acceptance is not yet asserted.** This task authorizes immutable source preparation in parallel; Root keeps executable publication on HOLD until the main post-merge evidence and independent successor review are complete.
+
+Existing Draft #1193 head **e464f6d8ffac77a124d5ab28637c7435337b222e**, tree **693400d99182fcf5bb48449cceb4fc2158c33c40**. Its actual #4124 PG1/Core/build/five companions passed; Auth alone failed on the field now classified in #1194. Preserve that evidence and failure truth: https://github.com/Jetnity/jetnity/pull/1193#issuecomment-6822867554 .
+
+### Exact permitted successor
+
+Prepare one immutable integration commit with ordered parents:
+1. **e464f6d8ffac77a124d5ab28637c7435337b222e**
+2. **ee6801e99e86144e60dbe86d72576f9ad7c3e9bb**
+
+Retain every actual-main leaf byte/mode/type exact. Add only the existing seven-file PG1 package. Of that package, the four code files **install-candidate.sql, recovery-candidate.sql, native.ts, mandatory wrapper** remain exactly R3. Only existing **PRIVATE_OWNER_GUARDS_TASK_V1.md, PRIVATE_OWNER_GUARDS_HANDOFF_V1.md, PRIVATE_OWNER_GUARDS_MANIFEST_V1.json** may change for this integration's provenance. Use their actual existing repository paths, do not create similarly named alternatives. No workflow/shared module/original MA1/Auth implementation change.
+
+Preserve the complete previous Task and Handoff history byte exactly, append this R4 and its persisted URL verbatim, and put current head/base/history/gate truth at the front of the Handoff. Manifest binds both exact parents/base trees, all seven resulting PG1 file pins and unchanged code, the full-tree comparison and the fact that previous runtime gates do not transfer to the successor. No circular embedded self-pin; final manifest/commit/tree identities belong in the external immutable delivery receipt.
+
+Required source-level comparison:
+- all9,479 current-main leaves preserved exactly;
+- exactly seven PG1 new leaves relative to main, total9,486;
+- no additional changed/new/deleted path;
+- all five Auth-main changed paths exact to actual main;
+- all four R3 PG1 source blobs exact.
+
+Do not include HMA1, HS1, AA, HM04 or a caller/Owner binding. No runtime repair or budget change is selected; if any unexpected conflict or source mismatch exists, stop and report the exact evidence rather than invent a fix.
+
+### Delivery and gates
+
+Deliver immutable commit/tree/ordered parents, full untruncated tree comparison, all seven byte/blob/SHA256 pins, complete provenance documents and explicit NOT_RUN status. Source-only in-memory preparation and immutable Git object writes/readback are allowed. No local/project/parser/compiler/SQL/native/test/build/CI/hosted/source-GET execution, package installation, ref/PR update, Ready or merge.
+
+Root independently reviews and publishes a new head only after the stated HOLD is resolved, then requires complete fresh exact-head CI/Preview/review-thread/source/target gates. All nine PG1 native groups and fixed budgets stay unchanged. Actual Dev remains UNAPPLIED; no signed Owner/AAL2 request or public CH→DE truth may be fabricated.
+
+Same reachable session handles any review finding. Root alone Ready/merge. #917/#1131 denied-action boundaries remain unchanged. STOP after this delivery; no follow-on.
