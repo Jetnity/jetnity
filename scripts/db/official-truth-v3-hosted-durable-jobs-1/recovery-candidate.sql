@@ -1,4 +1,4 @@
--- HM04 V1 + A1 UNAPPLIED, unused-only recovery. Source review is not permission to run.
+-- HM04 V1 + A1 + A3 UNAPPLIED, unused-only recovery. Source review is not permission to run.
 -- Root must independently bind original package/OIDs and controlled quiescence through COMMIT.
 -- The GUCs acknowledge that external evidence; they do not prove absent external users.
 BEGIN;
@@ -78,6 +78,126 @@ SELECT pg_catalog.jsonb_build_object(
     RAISE EXCEPTION 'hm04 original package/Creator/object OID mismatch' USING ERRCODE='P7607';
   END IF;
 END $hm04_recovery_context$;
+-- This local preservation snapshot is compared again after removal; the two
+-- original bound catalog checks below still validate the stored HM04 fingerprint.
+DO $hm04_recovery_hrs1_topology$
+BEGIN
+  IF (SELECT count(*) FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api'))=0
+    AND (SELECT count(*) FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))=0 THEN
+    RETURN;
+  END IF;
+  IF (SELECT count(*) FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>2
+    OR (SELECT count(*) FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))<>4
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+      AND (hrs_role.rolcanlogin IS DISTINCT FROM (hrs_role.rolname<>'ot_v3_result_owner')
+        OR hrs_role.rolinherit OR hrs_role.rolsuper OR hrs_role.rolcreatedb OR hrs_role.rolcreaterole
+        OR hrs_role.rolbypassrls OR hrs_role.rolreplication OR hrs_role.rolconfig IS NOT NULL
+        OR hrs_role.rolvaliduntil IS NOT NULL
+        OR hrs_role.rolconnlimit<>(CASE WHEN hrs_role.rolname='ot_v3_result_owner' THEN -1 ELSE 2 END)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_db_role_setting hrs_setting WHERE hrs_setting.setrole=hrs_role.oid)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl hrs_default WHERE hrs_default.defaclrole=hrs_role.oid)
+        OR (SELECT count(*) FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_role.oid IN
+          (hrs_edge.roleid,hrs_edge.member,hrs_edge.grantor))<>1
+        OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_edge.roleid=hrs_role.oid
+          AND hrs_edge.member='postgres'::pg_catalog.regrole AND hrs_edge.grantor=10
+          AND hrs_edge.admin_option AND NOT hrs_edge.inherit_option AND NOT hrs_edge.set_option)
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'USAGE')
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'SET'))) THEN
+    RAISE EXCEPTION 'hm04 exact optional HRS topology' USING ERRCODE='P7603';
+  END IF;
+END $hm04_recovery_hrs1_topology$;
+DO $hm04_recovery_hrs1_capture$
+DECLARE hrs_catalog jsonb;
+BEGIN
+  hrs_catalog:='null'::jsonb;
+  IF EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN
+    SELECT q.value INTO hrs_catalog FROM (
+SELECT pg_catalog.to_jsonb(pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(q.value::text,'UTF8')),'hex')) AS value FROM (
+WITH ns AS (
+ SELECT n.oid,n.nspname FROM pg_catalog.pg_namespace n WHERE n.nspname IN ('official_v3_result_private','official_v3_result_api')
+), tabs AS (
+ SELECT c.oid,c.reltoastrelid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace WHERE c.relkind='r'
+), classes AS (
+ SELECT c.oid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace
+ UNION SELECT t.reltoastrelid FROM tabs t WHERE t.reltoastrelid<>0
+ UNION SELECT i.indexrelid FROM pg_catalog.pg_index i JOIN tabs t ON i.indrelid=t.reltoastrelid WHERE t.reltoastrelid<>0
+), objects AS (
+ SELECT 'pg_catalog.pg_namespace'::pg_catalog.regclass::oid AS classid,n.oid AS objid FROM ns n
+ UNION SELECT 'pg_catalog.pg_class'::pg_catalog.regclass,c.oid FROM classes c
+ UNION SELECT 'pg_catalog.pg_type'::pg_catalog.regclass,t.oid FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace
+ UNION SELECT 'pg_catalog.pg_proc'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace
+ UNION SELECT 'pg_catalog.pg_constraint'::pg_catalog.regclass,c.oid FROM pg_catalog.pg_constraint c JOIN tabs t ON t.oid=c.conrelid
+ UNION SELECT 'pg_catalog.pg_trigger'::pg_catalog.regclass,g.oid FROM pg_catalog.pg_trigger g JOIN tabs t ON t.oid=g.tgrelid
+ UNION SELECT 'pg_catalog.pg_policy'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_policy p JOIN tabs t ON t.oid=p.polrelid
+ UNION SELECT 'pg_catalog.pg_attrdef'::pg_catalog.regclass,d.oid FROM pg_catalog.pg_attrdef d JOIN tabs t ON t.oid=d.adrelid
+), role_ids AS (
+ SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+), prerequisite_ns AS (
+ SELECT n.oid FROM pg_catalog.pg_namespace n WHERE n.nspname IN
+  ('jetnity_ot_auth','official_v3_method_private','official_v3_method_api','official_v3_intake_private','official_v3_intake_api')
+)
+SELECT jsonb_build_object(
+ 'database',(SELECT to_jsonb(d)-ARRAY['datfrozenxid','datminmxid'] FROM pg_catalog.pg_database d WHERE d.datname=current_database()),
+ 'creator',(SELECT to_jsonb(r) FROM pg_catalog.pg_roles r WHERE r.rolname='postgres'),
+ 'namespaces',(SELECT jsonb_agg(to_jsonb(n) ORDER BY n.oid) FROM pg_catalog.pg_namespace n JOIN ns s ON s.oid=n.oid),
+ 'roles',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_roles r JOIN role_ids i ON i.oid=r.oid),
+ 'memberships',(SELECT jsonb_agg(to_jsonb(m) ORDER BY m.oid) FROM pg_catalog.pg_auth_members m
+   WHERE EXISTS(SELECT 1 FROM role_ids r WHERE r.oid IN (m.roleid,m.member,m.grantor))
+    AND NOT(m.roleid='ot_v3_result_owner'::regrole AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+     AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option)),
+ 'settings',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.setdatabase,s.setrole) FROM pg_catalog.pg_db_role_setting s
+   WHERE s.setrole='postgres'::regrole OR s.setrole IN (SELECT oid FROM role_ids)),
+ 'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.oid) FROM pg_catalog.pg_default_acl d
+   WHERE d.defaclrole IN (SELECT oid FROM role_ids) OR d.defaclnamespace IN (SELECT oid FROM ns)
+    OR (d.defaclrole='postgres'::regrole AND d.defaclnamespace=0)),
+ 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace),
+ 'relations',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid'],
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'indexes',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.indexrelid) FROM pg_catalog.pg_index i WHERE i.indrelid=c.oid OR i.indexrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.adnum) FROM pg_catalog.pg_attrdef d WHERE d.adrelid=c.oid),
+   'inheritance',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.inhrelid,i.inhparent) FROM pg_catalog.pg_inherits i WHERE i.inhrelid=c.oid OR i.inhparent=c.oid),
+   'rewrites',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_rewrite r WHERE r.ev_class=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN classes i ON i.oid=c.oid),
+ 'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
+ 'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
+ 'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
+   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
+     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+ 'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
+   FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
+    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
+    AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
+     SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole
+      AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+      AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option))),
+ 'descriptions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classoid,d.objoid,d.objsubid) FROM pg_catalog.pg_description d
+   JOIN objects o ON o.classid=d.classoid AND o.objid=d.objoid),
+ 'labels',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.classoid,s.objoid,s.objsubid,s.provider) FROM pg_catalog.pg_seclabel s
+   JOIN objects o ON o.classid=s.classoid AND o.objid=s.objoid),
+ 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
+ 'prerequisiteRelations',(SELECT jsonb_agg(jsonb_build_object('oid',c.oid,'namespace',c.relnamespace,'owner',c.relowner,'kind',c.relkind,
+   'acl',c.relacl,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'options',c.reloptions,
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
+) AS value
+) q
+    ) q;
+  END IF;
+  PERFORM pg_catalog.set_config('jetnity.hm04_hrs1_recovery_catalog',hrs_catalog::text,true);
+END $hm04_recovery_hrs1_capture$;
+
+
 
 DO $hm04_recovery_final_roles$
 DECLARE creator oid; owner_id oid:='ot_v3_jobs_owner'::pg_catalog.regrole;
@@ -234,12 +354,125 @@ BEGIN
     RAISE EXCEPTION 'hm04 A2 exact restricted caller and creator-administration binding' USING ERRCODE='P7603';
   END IF;
 
+  -- The HRS binding is optional only at installation; it cannot appear, disappear or drift later.
+  IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN
+    IF EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))
+      OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='hrs1-catalog') THEN
+      RAISE EXCEPTION 'hm04 optional HRS disappearance/partial state' USING ERRCODE='P7603';
+    END IF;
+  ELSE
+    IF (SELECT count(*) FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>2
+      OR (SELECT count(*) FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))<>4
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+      AND (hrs_role.rolcanlogin IS DISTINCT FROM (hrs_role.rolname<>'ot_v3_result_owner')
+        OR hrs_role.rolinherit OR hrs_role.rolsuper OR hrs_role.rolcreatedb OR hrs_role.rolcreaterole
+        OR hrs_role.rolbypassrls OR hrs_role.rolreplication OR hrs_role.rolconfig IS NOT NULL
+        OR hrs_role.rolvaliduntil IS NOT NULL
+        OR hrs_role.rolconnlimit<>(CASE WHEN hrs_role.rolname='ot_v3_result_owner' THEN -1 ELSE 2 END)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_db_role_setting hrs_setting WHERE hrs_setting.setrole=hrs_role.oid)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl hrs_default WHERE hrs_default.defaclrole=hrs_role.oid)
+        OR (SELECT count(*) FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_role.oid IN
+          (hrs_edge.roleid,hrs_edge.member,hrs_edge.grantor))<>1
+        OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_edge.roleid=hrs_role.oid
+          AND hrs_edge.member='postgres'::pg_catalog.regrole AND hrs_edge.grantor=10
+          AND hrs_edge.admin_option AND NOT hrs_edge.inherit_option AND NOT hrs_edge.set_option)
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'USAGE')
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'SET'))) THEN
+      RAISE EXCEPTION 'hm04 exact bound HRS topology' USING ERRCODE='P7603';
+    END IF;
+    SELECT q.value INTO actual_value FROM (
+SELECT pg_catalog.to_jsonb(pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(q.value::text,'UTF8')),'hex')) AS value FROM (
+WITH ns AS (
+ SELECT n.oid,n.nspname FROM pg_catalog.pg_namespace n WHERE n.nspname IN ('official_v3_result_private','official_v3_result_api')
+), tabs AS (
+ SELECT c.oid,c.reltoastrelid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace WHERE c.relkind='r'
+), classes AS (
+ SELECT c.oid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace
+ UNION SELECT t.reltoastrelid FROM tabs t WHERE t.reltoastrelid<>0
+ UNION SELECT i.indexrelid FROM pg_catalog.pg_index i JOIN tabs t ON i.indrelid=t.reltoastrelid WHERE t.reltoastrelid<>0
+), objects AS (
+ SELECT 'pg_catalog.pg_namespace'::pg_catalog.regclass::oid AS classid,n.oid AS objid FROM ns n
+ UNION SELECT 'pg_catalog.pg_class'::pg_catalog.regclass,c.oid FROM classes c
+ UNION SELECT 'pg_catalog.pg_type'::pg_catalog.regclass,t.oid FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace
+ UNION SELECT 'pg_catalog.pg_proc'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace
+ UNION SELECT 'pg_catalog.pg_constraint'::pg_catalog.regclass,c.oid FROM pg_catalog.pg_constraint c JOIN tabs t ON t.oid=c.conrelid
+ UNION SELECT 'pg_catalog.pg_trigger'::pg_catalog.regclass,g.oid FROM pg_catalog.pg_trigger g JOIN tabs t ON t.oid=g.tgrelid
+ UNION SELECT 'pg_catalog.pg_policy'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_policy p JOIN tabs t ON t.oid=p.polrelid
+ UNION SELECT 'pg_catalog.pg_attrdef'::pg_catalog.regclass,d.oid FROM pg_catalog.pg_attrdef d JOIN tabs t ON t.oid=d.adrelid
+), role_ids AS (
+ SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+), prerequisite_ns AS (
+ SELECT n.oid FROM pg_catalog.pg_namespace n WHERE n.nspname IN
+  ('jetnity_ot_auth','official_v3_method_private','official_v3_method_api','official_v3_intake_private','official_v3_intake_api')
+)
+SELECT jsonb_build_object(
+ 'database',(SELECT to_jsonb(d)-ARRAY['datfrozenxid','datminmxid'] FROM pg_catalog.pg_database d WHERE d.datname=current_database()),
+ 'creator',(SELECT to_jsonb(r) FROM pg_catalog.pg_roles r WHERE r.rolname='postgres'),
+ 'namespaces',(SELECT jsonb_agg(to_jsonb(n) ORDER BY n.oid) FROM pg_catalog.pg_namespace n JOIN ns s ON s.oid=n.oid),
+ 'roles',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_roles r JOIN role_ids i ON i.oid=r.oid),
+ 'memberships',(SELECT jsonb_agg(to_jsonb(m) ORDER BY m.oid) FROM pg_catalog.pg_auth_members m
+   WHERE EXISTS(SELECT 1 FROM role_ids r WHERE r.oid IN (m.roleid,m.member,m.grantor))
+    AND NOT(m.roleid='ot_v3_result_owner'::regrole AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+     AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option)),
+ 'settings',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.setdatabase,s.setrole) FROM pg_catalog.pg_db_role_setting s
+   WHERE s.setrole='postgres'::regrole OR s.setrole IN (SELECT oid FROM role_ids)),
+ 'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.oid) FROM pg_catalog.pg_default_acl d
+   WHERE d.defaclrole IN (SELECT oid FROM role_ids) OR d.defaclnamespace IN (SELECT oid FROM ns)
+    OR (d.defaclrole='postgres'::regrole AND d.defaclnamespace=0)),
+ 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace),
+ 'relations',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid'],
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'indexes',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.indexrelid) FROM pg_catalog.pg_index i WHERE i.indrelid=c.oid OR i.indexrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.adnum) FROM pg_catalog.pg_attrdef d WHERE d.adrelid=c.oid),
+   'inheritance',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.inhrelid,i.inhparent) FROM pg_catalog.pg_inherits i WHERE i.inhrelid=c.oid OR i.inhparent=c.oid),
+   'rewrites',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_rewrite r WHERE r.ev_class=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN classes i ON i.oid=c.oid),
+ 'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
+ 'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
+ 'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
+   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
+     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+ 'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
+   FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
+    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
+    AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
+     SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole
+      AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+      AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option))),
+ 'descriptions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classoid,d.objoid,d.objsubid) FROM pg_catalog.pg_description d
+   JOIN objects o ON o.classid=d.classoid AND o.objid=d.objoid),
+ 'labels',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.classoid,s.objoid,s.objsubid,s.provider) FROM pg_catalog.pg_seclabel s
+   JOIN objects o ON o.classid=s.classoid AND o.objid=s.objoid),
+ 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
+ 'prerequisiteRelations',(SELECT jsonb_agg(jsonb_build_object('oid',c.oid,'namespace',c.relnamespace,'owner',c.relowner,'kind',c.relkind,
+   'acl',c.relacl,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'options',c.reloptions,
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
+) AS value
+) q
+    ) q;
+    SELECT fingerprint INTO bound_value FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='hrs1-catalog';
+    IF actual_value IS DISTINCT FROM bound_value THEN
+      RAISE EXCEPTION 'hm04 bound HRS catalog drift' USING ERRCODE='P7603';
+    END IF;
+  END IF;
   SELECT (fingerprint->>'installer')::oid INTO creator
     FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='creator-defaults';
   IF creator IS DISTINCT FROM 'postgres'::pg_catalog.regrole::oid
-    OR (SELECT count(*) FROM official_v3_jobs_private.catalog_binding_v1)<>15
+    OR (SELECT count(*) FROM official_v3_jobs_private.catalog_binding_v1)<>(15 + (CASE WHEN EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN 1 ELSE 0 END))
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
-      WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
+      WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context','hrs1-catalog' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
       IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
@@ -704,8 +937,15 @@ SELECT pg_catalog.jsonb_build_object('oid',d.oid,'name',d.datname,'owner',d.datd
     AND d.refobjid=intake_id AND d.deptype='o'
     AND NOT(d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
       AND (EXISTS(SELECT 1 FROM scope_objects o WHERE o.classid=d.classid AND o.objid=d.objid)
-        OR d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
-          WHERE p.oid=d.objid AND n.nspname='official_v3_jobs_private' AND p.proname IN ('s1_read_v1','s1_shape_v1') AND p.proowner=intake_id))))
+        OR d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND (EXISTS(SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+          WHERE p.oid=d.objid AND n.nspname='official_v3_jobs_private' AND p.proname IN ('s1_read_v1','s1_shape_v1') AND p.proowner=intake_id)
+          OR EXISTS(SELECT 1 FROM pg_catalog.pg_proc hrs_bridge
+            JOIN pg_catalog.pg_namespace hrs_namespace ON hrs_namespace.oid=hrs_bridge.pronamespace
+            WHERE hrs_bridge.oid=d.objid AND hrs_namespace.nspname='official_v3_result_private'
+              AND hrs_bridge.proname='s1_read_locked_v1' AND hrs_bridge.proowner=intake_id
+              AND hrs_bridge.pronargs=3 AND hrs_bridge.prorettype='pg_catalog.jsonb'::pg_catalog.regtype
+              AND ARRAY(SELECT hrs_arg FROM pg_catalog.unnest(hrs_bridge.proargtypes) hrs_arg)=ARRAY[
+                'pg_catalog.jsonb'::pg_catalog.regtype,'pg_catalog.text'::pg_catalog.regtype,'pg_catalog.int4'::pg_catalog.regtype]::oid[])))))
     INTO foreign_dependency;
   IF foreign_dependency THEN
     RAISE EXCEPTION 'hm04 HS1 owner foreign object' USING ERRCODE='P7603';
@@ -779,12 +1019,125 @@ BEGIN
     RAISE EXCEPTION 'hm04 caller graph boundary' USING ERRCODE='P7603';
   END IF;
 
+  -- The HRS binding is optional only at installation; it cannot appear, disappear or drift later.
+  IF NOT EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN
+    IF EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))
+      OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='hrs1-catalog') THEN
+      RAISE EXCEPTION 'hm04 optional HRS disappearance/partial state' USING ERRCODE='P7603';
+    END IF;
+  ELSE
+    IF (SELECT count(*) FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>2
+      OR (SELECT count(*) FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))<>4
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+      AND (hrs_role.rolcanlogin IS DISTINCT FROM (hrs_role.rolname<>'ot_v3_result_owner')
+        OR hrs_role.rolinherit OR hrs_role.rolsuper OR hrs_role.rolcreatedb OR hrs_role.rolcreaterole
+        OR hrs_role.rolbypassrls OR hrs_role.rolreplication OR hrs_role.rolconfig IS NOT NULL
+        OR hrs_role.rolvaliduntil IS NOT NULL
+        OR hrs_role.rolconnlimit<>(CASE WHEN hrs_role.rolname='ot_v3_result_owner' THEN -1 ELSE 2 END)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_db_role_setting hrs_setting WHERE hrs_setting.setrole=hrs_role.oid)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl hrs_default WHERE hrs_default.defaclrole=hrs_role.oid)
+        OR (SELECT count(*) FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_role.oid IN
+          (hrs_edge.roleid,hrs_edge.member,hrs_edge.grantor))<>1
+        OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_edge.roleid=hrs_role.oid
+          AND hrs_edge.member='postgres'::pg_catalog.regrole AND hrs_edge.grantor=10
+          AND hrs_edge.admin_option AND NOT hrs_edge.inherit_option AND NOT hrs_edge.set_option)
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'USAGE')
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'SET'))) THEN
+      RAISE EXCEPTION 'hm04 exact bound HRS topology' USING ERRCODE='P7603';
+    END IF;
+    SELECT q.value INTO actual_value FROM (
+SELECT pg_catalog.to_jsonb(pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(q.value::text,'UTF8')),'hex')) AS value FROM (
+WITH ns AS (
+ SELECT n.oid,n.nspname FROM pg_catalog.pg_namespace n WHERE n.nspname IN ('official_v3_result_private','official_v3_result_api')
+), tabs AS (
+ SELECT c.oid,c.reltoastrelid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace WHERE c.relkind='r'
+), classes AS (
+ SELECT c.oid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace
+ UNION SELECT t.reltoastrelid FROM tabs t WHERE t.reltoastrelid<>0
+ UNION SELECT i.indexrelid FROM pg_catalog.pg_index i JOIN tabs t ON i.indrelid=t.reltoastrelid WHERE t.reltoastrelid<>0
+), objects AS (
+ SELECT 'pg_catalog.pg_namespace'::pg_catalog.regclass::oid AS classid,n.oid AS objid FROM ns n
+ UNION SELECT 'pg_catalog.pg_class'::pg_catalog.regclass,c.oid FROM classes c
+ UNION SELECT 'pg_catalog.pg_type'::pg_catalog.regclass,t.oid FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace
+ UNION SELECT 'pg_catalog.pg_proc'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace
+ UNION SELECT 'pg_catalog.pg_constraint'::pg_catalog.regclass,c.oid FROM pg_catalog.pg_constraint c JOIN tabs t ON t.oid=c.conrelid
+ UNION SELECT 'pg_catalog.pg_trigger'::pg_catalog.regclass,g.oid FROM pg_catalog.pg_trigger g JOIN tabs t ON t.oid=g.tgrelid
+ UNION SELECT 'pg_catalog.pg_policy'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_policy p JOIN tabs t ON t.oid=p.polrelid
+ UNION SELECT 'pg_catalog.pg_attrdef'::pg_catalog.regclass,d.oid FROM pg_catalog.pg_attrdef d JOIN tabs t ON t.oid=d.adrelid
+), role_ids AS (
+ SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+), prerequisite_ns AS (
+ SELECT n.oid FROM pg_catalog.pg_namespace n WHERE n.nspname IN
+  ('jetnity_ot_auth','official_v3_method_private','official_v3_method_api','official_v3_intake_private','official_v3_intake_api')
+)
+SELECT jsonb_build_object(
+ 'database',(SELECT to_jsonb(d)-ARRAY['datfrozenxid','datminmxid'] FROM pg_catalog.pg_database d WHERE d.datname=current_database()),
+ 'creator',(SELECT to_jsonb(r) FROM pg_catalog.pg_roles r WHERE r.rolname='postgres'),
+ 'namespaces',(SELECT jsonb_agg(to_jsonb(n) ORDER BY n.oid) FROM pg_catalog.pg_namespace n JOIN ns s ON s.oid=n.oid),
+ 'roles',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_roles r JOIN role_ids i ON i.oid=r.oid),
+ 'memberships',(SELECT jsonb_agg(to_jsonb(m) ORDER BY m.oid) FROM pg_catalog.pg_auth_members m
+   WHERE EXISTS(SELECT 1 FROM role_ids r WHERE r.oid IN (m.roleid,m.member,m.grantor))
+    AND NOT(m.roleid='ot_v3_result_owner'::regrole AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+     AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option)),
+ 'settings',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.setdatabase,s.setrole) FROM pg_catalog.pg_db_role_setting s
+   WHERE s.setrole='postgres'::regrole OR s.setrole IN (SELECT oid FROM role_ids)),
+ 'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.oid) FROM pg_catalog.pg_default_acl d
+   WHERE d.defaclrole IN (SELECT oid FROM role_ids) OR d.defaclnamespace IN (SELECT oid FROM ns)
+    OR (d.defaclrole='postgres'::regrole AND d.defaclnamespace=0)),
+ 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace),
+ 'relations',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid'],
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'indexes',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.indexrelid) FROM pg_catalog.pg_index i WHERE i.indrelid=c.oid OR i.indexrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.adnum) FROM pg_catalog.pg_attrdef d WHERE d.adrelid=c.oid),
+   'inheritance',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.inhrelid,i.inhparent) FROM pg_catalog.pg_inherits i WHERE i.inhrelid=c.oid OR i.inhparent=c.oid),
+   'rewrites',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_rewrite r WHERE r.ev_class=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN classes i ON i.oid=c.oid),
+ 'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
+ 'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
+ 'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
+   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
+     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+ 'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
+   FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
+    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
+    AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
+     SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole
+      AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+      AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option))),
+ 'descriptions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classoid,d.objoid,d.objsubid) FROM pg_catalog.pg_description d
+   JOIN objects o ON o.classid=d.classoid AND o.objid=d.objoid),
+ 'labels',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.classoid,s.objoid,s.objsubid,s.provider) FROM pg_catalog.pg_seclabel s
+   JOIN objects o ON o.classid=s.classoid AND o.objid=s.objoid),
+ 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
+ 'prerequisiteRelations',(SELECT jsonb_agg(jsonb_build_object('oid',c.oid,'namespace',c.relnamespace,'owner',c.relowner,'kind',c.relkind,
+   'acl',c.relacl,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'options',c.reloptions,
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
+) AS value
+) q
+    ) q;
+    SELECT fingerprint INTO bound_value FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='hrs1-catalog';
+    IF actual_value IS DISTINCT FROM bound_value THEN
+      RAISE EXCEPTION 'hm04 bound HRS catalog drift' USING ERRCODE='P7603';
+    END IF;
+  END IF;
   SELECT (fingerprint->>'installer')::oid INTO creator
     FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='creator-defaults';
   IF creator IS DISTINCT FROM 'postgres'::pg_catalog.regrole::oid
-    OR (SELECT count(*) FROM official_v3_jobs_private.catalog_binding_v1)<>15
+    OR (SELECT count(*) FROM official_v3_jobs_private.catalog_binding_v1)<>(15 + (CASE WHEN EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN 1 ELSE 0 END))
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
-      WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
+      WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context','hrs1-catalog' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
       IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
@@ -1249,8 +1602,15 @@ SELECT pg_catalog.jsonb_build_object('oid',d.oid,'name',d.datname,'owner',d.datd
     AND d.refobjid=intake_id AND d.deptype='o'
     AND NOT(d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
       AND (EXISTS(SELECT 1 FROM scope_objects o WHERE o.classid=d.classid AND o.objid=d.objid)
-        OR d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND EXISTS(SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
-          WHERE p.oid=d.objid AND n.nspname='official_v3_jobs_private' AND p.proname IN ('s1_read_v1','s1_shape_v1') AND p.proowner=intake_id))))
+        OR d.classid='pg_catalog.pg_proc'::pg_catalog.regclass AND (EXISTS(SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+          WHERE p.oid=d.objid AND n.nspname='official_v3_jobs_private' AND p.proname IN ('s1_read_v1','s1_shape_v1') AND p.proowner=intake_id)
+          OR EXISTS(SELECT 1 FROM pg_catalog.pg_proc hrs_bridge
+            JOIN pg_catalog.pg_namespace hrs_namespace ON hrs_namespace.oid=hrs_bridge.pronamespace
+            WHERE hrs_bridge.oid=d.objid AND hrs_namespace.nspname='official_v3_result_private'
+              AND hrs_bridge.proname='s1_read_locked_v1' AND hrs_bridge.proowner=intake_id
+              AND hrs_bridge.pronargs=3 AND hrs_bridge.prorettype='pg_catalog.jsonb'::pg_catalog.regtype
+              AND ARRAY(SELECT hrs_arg FROM pg_catalog.unnest(hrs_bridge.proargtypes) hrs_arg)=ARRAY[
+                'pg_catalog.jsonb'::pg_catalog.regtype,'pg_catalog.text'::pg_catalog.regtype,'pg_catalog.int4'::pg_catalog.regtype]::oid[])))))
     INTO foreign_dependency;
   IF foreign_dependency THEN
     RAISE EXCEPTION 'hm04 HS1 owner foreign object' USING ERRCODE='P7603';
@@ -1408,4 +1768,117 @@ BEGIN
     RAISE EXCEPTION 'hm04 final removal boundary' USING ERRCODE='P7607';
   END IF;
 END $hm04_recovery_preserved_hs1_owner$;
+DO $hm04_recovery_hrs1_preserved$
+DECLARE hrs_catalog jsonb;
+BEGIN
+  hrs_catalog:='null'::jsonb;
+  IF EXISTS(SELECT 1 FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api')) THEN
+    IF (SELECT count(*) FROM pg_catalog.pg_namespace hrs_ns WHERE hrs_ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>2
+      OR (SELECT count(*) FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))<>4
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+      AND (hrs_role.rolcanlogin IS DISTINCT FROM (hrs_role.rolname<>'ot_v3_result_owner')
+        OR hrs_role.rolinherit OR hrs_role.rolsuper OR hrs_role.rolcreatedb OR hrs_role.rolcreaterole
+        OR hrs_role.rolbypassrls OR hrs_role.rolreplication OR hrs_role.rolconfig IS NOT NULL
+        OR hrs_role.rolvaliduntil IS NOT NULL
+        OR hrs_role.rolconnlimit<>(CASE WHEN hrs_role.rolname='ot_v3_result_owner' THEN -1 ELSE 2 END)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_db_role_setting hrs_setting WHERE hrs_setting.setrole=hrs_role.oid)
+        OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl hrs_default WHERE hrs_default.defaclrole=hrs_role.oid)
+        OR (SELECT count(*) FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_role.oid IN
+          (hrs_edge.roleid,hrs_edge.member,hrs_edge.grantor))<>1
+        OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members hrs_edge WHERE hrs_edge.roleid=hrs_role.oid
+          AND hrs_edge.member='postgres'::pg_catalog.regrole AND hrs_edge.grantor=10
+          AND hrs_edge.admin_option AND NOT hrs_edge.inherit_option AND NOT hrs_edge.set_option)
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'USAGE')
+        OR pg_catalog.pg_has_role('postgres'::pg_catalog.regrole,hrs_role.oid,'SET'))) THEN
+      RAISE EXCEPTION 'hm04 preserved HRS topology' USING ERRCODE='P7603';
+    END IF;
+    SELECT q.value INTO hrs_catalog FROM (
+SELECT pg_catalog.to_jsonb(pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(q.value::text,'UTF8')),'hex')) AS value FROM (
+WITH ns AS (
+ SELECT n.oid,n.nspname FROM pg_catalog.pg_namespace n WHERE n.nspname IN ('official_v3_result_private','official_v3_result_api')
+), tabs AS (
+ SELECT c.oid,c.reltoastrelid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace WHERE c.relkind='r'
+), classes AS (
+ SELECT c.oid FROM pg_catalog.pg_class c JOIN ns n ON n.oid=c.relnamespace
+ UNION SELECT t.reltoastrelid FROM tabs t WHERE t.reltoastrelid<>0
+ UNION SELECT i.indexrelid FROM pg_catalog.pg_index i JOIN tabs t ON i.indrelid=t.reltoastrelid WHERE t.reltoastrelid<>0
+), objects AS (
+ SELECT 'pg_catalog.pg_namespace'::pg_catalog.regclass::oid AS classid,n.oid AS objid FROM ns n
+ UNION SELECT 'pg_catalog.pg_class'::pg_catalog.regclass,c.oid FROM classes c
+ UNION SELECT 'pg_catalog.pg_type'::pg_catalog.regclass,t.oid FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace
+ UNION SELECT 'pg_catalog.pg_proc'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace
+ UNION SELECT 'pg_catalog.pg_constraint'::pg_catalog.regclass,c.oid FROM pg_catalog.pg_constraint c JOIN tabs t ON t.oid=c.conrelid
+ UNION SELECT 'pg_catalog.pg_trigger'::pg_catalog.regclass,g.oid FROM pg_catalog.pg_trigger g JOIN tabs t ON t.oid=g.tgrelid
+ UNION SELECT 'pg_catalog.pg_policy'::pg_catalog.regclass,p.oid FROM pg_catalog.pg_policy p JOIN tabs t ON t.oid=p.polrelid
+ UNION SELECT 'pg_catalog.pg_attrdef'::pg_catalog.regclass,d.oid FROM pg_catalog.pg_attrdef d JOIN tabs t ON t.oid=d.adrelid
+), role_ids AS (
+ SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
+), prerequisite_ns AS (
+ SELECT n.oid FROM pg_catalog.pg_namespace n WHERE n.nspname IN
+  ('jetnity_ot_auth','official_v3_method_private','official_v3_method_api','official_v3_intake_private','official_v3_intake_api')
+)
+SELECT jsonb_build_object(
+ 'database',(SELECT to_jsonb(d)-ARRAY['datfrozenxid','datminmxid'] FROM pg_catalog.pg_database d WHERE d.datname=current_database()),
+ 'creator',(SELECT to_jsonb(r) FROM pg_catalog.pg_roles r WHERE r.rolname='postgres'),
+ 'namespaces',(SELECT jsonb_agg(to_jsonb(n) ORDER BY n.oid) FROM pg_catalog.pg_namespace n JOIN ns s ON s.oid=n.oid),
+ 'roles',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_roles r JOIN role_ids i ON i.oid=r.oid),
+ 'memberships',(SELECT jsonb_agg(to_jsonb(m) ORDER BY m.oid) FROM pg_catalog.pg_auth_members m
+   WHERE EXISTS(SELECT 1 FROM role_ids r WHERE r.oid IN (m.roleid,m.member,m.grantor))
+    AND NOT(m.roleid='ot_v3_result_owner'::regrole AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+     AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option)),
+ 'settings',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.setdatabase,s.setrole) FROM pg_catalog.pg_db_role_setting s
+   WHERE s.setrole='postgres'::regrole OR s.setrole IN (SELECT oid FROM role_ids)),
+ 'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.oid) FROM pg_catalog.pg_default_acl d
+   WHERE d.defaclrole IN (SELECT oid FROM role_ids) OR d.defaclnamespace IN (SELECT oid FROM ns)
+    OR (d.defaclrole='postgres'::regrole AND d.defaclnamespace=0)),
+ 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace),
+ 'relations',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid'],
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'indexes',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.indexrelid) FROM pg_catalog.pg_index i WHERE i.indrelid=c.oid OR i.indexrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.adnum) FROM pg_catalog.pg_attrdef d WHERE d.adrelid=c.oid),
+   'inheritance',(SELECT jsonb_agg(to_jsonb(i) ORDER BY i.inhrelid,i.inhparent) FROM pg_catalog.pg_inherits i WHERE i.inhrelid=c.oid OR i.inhparent=c.oid),
+   'rewrites',(SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_catalog.pg_rewrite r WHERE r.ev_class=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN classes i ON i.oid=c.oid),
+ 'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
+ 'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
+ 'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
+   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
+     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+ 'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
+   FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
+    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
+    AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
+     SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole
+      AND m.member='postgres'::regrole AND m.grantor='postgres'::regrole
+      AND NOT m.admin_option AND NOT m.inherit_option AND m.set_option))),
+ 'descriptions',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classoid,d.objoid,d.objsubid) FROM pg_catalog.pg_description d
+   JOIN objects o ON o.classid=d.classoid AND o.objid=d.objoid),
+ 'labels',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.classoid,s.objoid,s.objsubid,s.provider) FROM pg_catalog.pg_seclabel s
+   JOIN objects o ON o.classid=s.classoid AND o.objid=s.objoid),
+ 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+   'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
+   FROM pg_catalog.pg_proc p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
+ 'prerequisiteRelations',(SELECT jsonb_agg(jsonb_build_object('oid',c.oid,'namespace',c.relnamespace,'owner',c.relowner,'kind',c.relkind,
+   'acl',c.relacl,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'options',c.reloptions,
+   'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
+   'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
+   'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
+   'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
+   ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
+) AS value
+) q
+    ) q;
+  ELSIF EXISTS(SELECT 1 FROM pg_catalog.pg_roles hrs_role WHERE hrs_role.rolname IN ('ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')) THEN
+    RAISE EXCEPTION 'hm04 partial preserved HRS topology' USING ERRCODE='P7603';
+  END IF;
+  IF hrs_catalog IS DISTINCT FROM pg_catalog.current_setting('jetnity.hm04_hrs1_recovery_catalog')::jsonb THEN
+    RAISE EXCEPTION 'hm04 changed preserved HRS catalog' USING ERRCODE='P7603';
+  END IF;
+END $hm04_recovery_hrs1_preserved$;
 COMMIT;

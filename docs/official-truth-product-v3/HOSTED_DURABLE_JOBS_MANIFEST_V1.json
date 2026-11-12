@@ -1,6 +1,6 @@
 {
   "schema": "jetnity.hm04.source.v2",
-  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_HM04_H4014_FIX",
+  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_HM04_HRS_A3",
   "author": {
     "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
     "session": "/root/hs1_hm04_fix",
@@ -17,12 +17,13 @@
     "revision": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826242276",
     "historicalV1SourceReview": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825977269",
     "historicalV1ReviewIsCurrentPass": false,
-    "reason": "Current correction: measured per-call JIT overhead in the exact HM04 catalog guard; one function-local setting with unchanged guard SQL, ownership, rights, proof groups and budgets. Earlier review records remain historical.",
+    "reason": "Selected HRS1 source implementation and exact optional HM04 A3 dependency binding; earlier reviews remain historical.",
     "currentFix": [
       "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829449466",
       "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6829611816"
     ],
-    "currentParent": "31771376b82f5d60132004e7dc555a4a446598b3"
+    "currentParent": "95afa6f9133d38454efd83716538b8b0566a4934",
+    "hrsA3": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6828412299"
   },
   "sourceOnly": {
     "executedProject": false,
@@ -84,21 +85,21 @@
   "artifacts": [
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-      "blob": "de130445fcee0450a759dde1c20e34a8e9c3afdf",
-      "bytes": 57058,
-      "sha256": "fb360f3cd1a21fe47c37f510c543d60aa0426c2df248ac423697f0a230383d68"
+      "blob": "0205eb00082b9446716c756f3b51c29084f2a017",
+      "bytes": 58756,
+      "sha256": "35287df4f969067771618ee1ab6d2f6f45b083da9aa31c378f74b378ec4cb166"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
-      "blob": "6af0cce20ce5941488091dc0bcd9b83255ad8298",
-      "bytes": 24112,
-      "sha256": "470d492dae4f5856e7ca83a1f5e1849f2e31239af9ae84e2754dc9b55bc2c5c8"
+      "blob": "989b4771ac109d4b46909ca605a9c724e0eb2f00",
+      "bytes": 25810,
+      "sha256": "5cb9ccac8a4d099bc9ee5bd161a667648b872b639668dfeeeed50f3bb3f04da4"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
-      "blob": "9aa0edb34930bf3462cea40e26439ba5615cdf7a",
-      "bytes": 35515,
-      "sha256": "86d8360058b41ca0954b44b81b17ce2bb7181c60f9a54e6919876ef0ed6959ad"
+      "blob": "22ceb24dec0196e7176d65e4c0185f2698a0a188",
+      "bytes": 37213,
+      "sha256": "92db17c363e2772f5b4e90f244adecd41b59fb54f010cf8bbc5df55ed71175ac"
     },
     {
       "path": "lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts",
@@ -108,9 +109,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d",
-      "bytes": 344228,
-      "sha256": "8ba705e332edaa0d5f886a8af03d4f9b294d97f970880d9ed220af555485ec88"
+      "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+      "bytes": 442213,
+      "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
@@ -120,9 +121,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "blob": "934cd6f01f1cafc86b92b512986d88110d928bb1",
-      "bytes": 120071,
-      "sha256": "67f2993d7a491111d23a6f38922fd7602776af7447e3e90d2ef03a42e70805bd"
+      "blob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
+      "bytes": 163561,
+      "sha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00"
     }
   ],
   "self": {
@@ -142,9 +143,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-      "blob": "4f6e3d1a8902b0637b6b7e219d210ff364fe9779",
-      "bytes": 22124,
-      "sha256": "ff060734982233c0afe4455da4865fbb70ada750e3a733165bbd8d33fda0bd34",
+      "blob": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5",
+      "bytes": 25086,
+      "sha256": "f9edce307a52cca4860c820adbc8c356fa3637e209dc6de4fe743070fbc69b34",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -156,9 +157,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-      "blob": "9c67612b77da9d6779a26f87d5aa1f785b8ab1a3",
-      "bytes": 27249,
-      "sha256": "46c8893003d337b736fc85f66db5ef828dafaecccfdbbfe1b027d60e7532684d",
+      "blob": "e54779dfa4cd65372f0f375182beafd4a1d155c1",
+      "bytes": 27465,
+      "sha256": "95e8233bd0fdbaa41fbb5cea03ec8a5a415161116cbdb44871d25f6c12661f06",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -198,9 +199,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1",
-      "bytes": 16656,
-      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d",
+      "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
+      "bytes": 33339,
+      "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -462,7 +463,7 @@
         "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
       }
     ],
-    "all18OriginalBlobsUnchanged": true,
+    "all18OriginalBlobsUnchanged": false,
     "preservedRegions": [
       {
         "name": "entire original R41 quota pair",
@@ -478,7 +479,13 @@
         "originalStart": 153475,
         "candidateStart": 186924
       }
-    ]
+    ],
+    "currentSelectedChanges": [
+      "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "lib/readiness/official-truth-product-v3/jobs/contract.ts"
+    ],
+    "pinMeaning": "The 18 original pins remain historical R41 evidence. Current reused pins bind the explicitly selected additive HRS composition, absolute deadlines and executor-only negative status. Original R41 SQL, Native, owned scope and budgets remain exact."
   },
   "prerequisites": [
     {
@@ -600,7 +607,7 @@
       "bytes": 3716,
       "sha256": "9f8b1139c8685dbe38a6b65ac60b2f1b644486fb3995e913d92a7e6e03036ea7",
       "sourceStart": 7219,
-      "candidateStart": 2824,
+      "candidateStart": 2829,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -609,7 +616,7 @@
       "bytes": 18577,
       "sha256": "b22d549077d86134e7e95a06097ee948bd0cd8270a4baf6c2dee8cb44c39f244",
       "sourceStart": 41692,
-      "candidateStart": 6542,
+      "candidateStart": 6547,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -618,7 +625,7 @@
       "bytes": 9424,
       "sha256": "643f8e42ae3520a657b27c40c49762b2d2614bd4b7328bd5af2ab43db640b343",
       "sourceStart": 60271,
-      "candidateStart": 25121,
+      "candidateStart": 25126,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -627,7 +634,7 @@
       "bytes": 1626,
       "sha256": "09c402ce39a40011ecd16fdd50004ecca1e83506aea383522e0c8eb6e2d3fd94",
       "sourceStart": 2633,
-      "candidateStart": 34547,
+      "candidateStart": 34552,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -636,7 +643,7 @@
       "bytes": 5775,
       "sha256": "19fdf19370bdc73155784916f6cac6b51525b5a9a7eb025865177d179d4433b6",
       "sourceStart": 93309,
-      "candidateStart": 36175,
+      "candidateStart": 36180,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
@@ -645,17 +652,24 @@
       "bytes": 16620,
       "sha256": "ad57ffc862f091ea394a7b90e503e87a86a29948fbf65e765d02f0bf99cea10a",
       "sourceStart": 99085,
-      "candidateStart": 41952,
+      "candidateStart": 41957,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "label": "hs1_dependency_boundary",
-      "bytes": 4514,
-      "sha256": "1002664e821a48712d721a1ec535e2d3764fbcf2b721067bc569b27ff5046d9a",
+      "bytes": 7018,
+      "sha256": "d2c9542cc8c7908b04f4dc6fb3adbb603c269b1246ef014a42b8db6d5e528cb5",
       "sourceStart": 115866,
-      "candidateStart": 58574,
-      "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
+      "candidateStart": 120001,
+      "scope": "Copied HS1 preflight plus the selected exact HRS parsed S1 bridge dependency/ownership incidence only; original HS1 artifact unchanged by HRS.",
+      "sourceOriginal": {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+        "start": 115866,
+        "bytes": 4514,
+        "sha256": "1002664e821a48712d721a1ec535e2d3764fbcf2b721067bc569b27ff5046d9a"
+      },
+      "exactOriginalBlock": false
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
@@ -663,12 +677,13 @@
       "bytes": 2177,
       "sha256": "77320fc284a5496fdd37b839a0187748bf0e2794266de049a59a292a425c12e7",
       "sourceStart": 120381,
-      "candidateStart": 63090,
+      "candidateStart": 127021,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     }
   ],
   "integration": {
     "requiredBeforePublicationOrExecution": [
+      "Root integrates HRS/A3, exact three external runtime pins, real source/transport and import-guard witnesses into one tree; complete new-head CI and independent Dev gates.",
       "Root independent full seven-path SOURCE-V2/A2 review; historical V1 SOURCE PASS is insufficient",
       "Separately selected accepted-main/prerequisite/HMT composition, using exact consumed SQL bytes",
       "All needed technical LOGINs created by real Creator and final DB access configured before HM04 creator-edge freeze",
@@ -681,7 +696,7 @@
     "availabilitySkip": false,
     "wrapperParentTimeoutMilliseconds": 300000,
     "noAutomaticFollowOn": true,
-    "compositionTaskSelectedHere": false,
+    "compositionTaskSelectedHere": true,
     "hmtIntegratedHere": false,
     "hmtSourceReview": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826146481"
   },
@@ -690,169 +705,169 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "originalBytes": 160983,
-      "candidateBytes": 344228,
+      "candidateBytes": 442213,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "8ba705e332edaa0d5f886a8af03d4f9b294d97f970880d9ed220af555485ec88",
+      "candidateSha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248",
       "retained": [
         {
           "originalStart": 7915,
           "originalEnd": 70828,
-          "candidateStart": 72375,
-          "candidateEnd": 135288,
+          "candidateStart": 136306,
+          "candidateEnd": 199219,
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205"
         },
         {
           "originalStart": 70893,
           "originalEnd": 71098,
-          "candidateStart": 135288,
-          "candidateEnd": 135493,
+          "candidateStart": 199219,
+          "candidateEnd": 199424,
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec"
         },
         {
           "originalStart": 71109,
           "originalEnd": 71463,
-          "candidateStart": 135512,
-          "candidateEnd": 135866,
+          "candidateStart": 199443,
+          "candidateEnd": 199797,
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4"
         },
         {
           "originalStart": 71531,
           "originalEnd": 71745,
-          "candidateStart": 135866,
-          "candidateEnd": 136080,
+          "candidateStart": 199797,
+          "candidateEnd": 200011,
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4"
         },
         {
           "originalStart": 71756,
           "originalEnd": 72116,
-          "candidateStart": 136099,
-          "candidateEnd": 136459,
+          "candidateStart": 200030,
+          "candidateEnd": 200390,
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973"
         },
         {
           "originalStart": 72192,
           "originalEnd": 72430,
-          "candidateStart": 136459,
-          "candidateEnd": 136697,
+          "candidateStart": 200390,
+          "candidateEnd": 200628,
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23"
         },
         {
           "originalStart": 72441,
           "originalEnd": 72817,
-          "candidateStart": 136716,
-          "candidateEnd": 137092,
+          "candidateStart": 200647,
+          "candidateEnd": 201023,
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91"
         },
         {
           "originalStart": 72893,
           "originalEnd": 73131,
-          "candidateStart": 137092,
-          "candidateEnd": 137330,
+          "candidateStart": 201023,
+          "candidateEnd": 201261,
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc"
         },
         {
           "originalStart": 73142,
           "originalEnd": 73518,
-          "candidateStart": 137349,
-          "candidateEnd": 137725,
+          "candidateStart": 201280,
+          "candidateEnd": 201656,
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e"
         },
         {
           "originalStart": 73595,
           "originalEnd": 73836,
-          "candidateStart": 137725,
-          "candidateEnd": 137966,
+          "candidateStart": 201656,
+          "candidateEnd": 201897,
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94"
         },
         {
           "originalStart": 73847,
           "originalEnd": 74225,
-          "candidateStart": 137985,
-          "candidateEnd": 138363,
+          "candidateStart": 201916,
+          "candidateEnd": 202294,
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86"
         },
         {
           "originalStart": 74307,
           "originalEnd": 74563,
-          "candidateStart": 138363,
-          "candidateEnd": 138619,
+          "candidateStart": 202294,
+          "candidateEnd": 202550,
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c"
         },
         {
           "originalStart": 74574,
           "originalEnd": 74962,
-          "candidateStart": 138638,
-          "candidateEnd": 139026,
+          "candidateStart": 202569,
+          "candidateEnd": 202957,
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff"
         },
         {
           "originalStart": 75037,
           "originalEnd": 75272,
-          "candidateStart": 139026,
-          "candidateEnd": 139261,
+          "candidateStart": 202957,
+          "candidateEnd": 203192,
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5"
         },
         {
           "originalStart": 75283,
           "originalEnd": 75739,
-          "candidateStart": 139280,
-          "candidateEnd": 139736,
+          "candidateStart": 203211,
+          "candidateEnd": 203667,
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293"
         },
         {
           "originalStart": 75739,
           "originalEnd": 75987,
-          "candidateStart": 243890,
-          "candidateEnd": 244138,
+          "candidateStart": 319173,
+          "candidateEnd": 319421,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         {
           "originalStart": 75987,
           "originalEnd": 75988,
-          "candidateStart": 139736,
-          "candidateEnd": 139737,
+          "candidateStart": 203667,
+          "candidateEnd": 203668,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 75988,
           "originalEnd": 77198,
-          "candidateStart": 244347,
-          "candidateEnd": 245557,
+          "candidateStart": 319630,
+          "candidateEnd": 320840,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         {
           "originalStart": 77198,
           "originalEnd": 77199,
-          "candidateStart": 139737,
-          "candidateEnd": 139738,
+          "candidateStart": 203668,
+          "candidateEnd": 203669,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77199,
           "originalEnd": 77512,
-          "candidateStart": 239199,
-          "candidateEnd": 239512,
+          "candidateStart": 314482,
+          "candidateEnd": 314795,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         {
           "originalStart": 77512,
           "originalEnd": 106302,
-          "candidateStart": 139738,
-          "candidateEnd": 168528,
+          "candidateStart": 203669,
+          "candidateEnd": 232459,
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d"
         },
         {
           "originalStart": 113882,
           "originalEnd": 136122,
-          "candidateStart": 201239,
-          "candidateEnd": 223479,
+          "candidateStart": 276522,
+          "candidateEnd": 298762,
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3"
         },
         {
           "originalStart": 136163,
           "originalEnd": 151653,
-          "candidateStart": 223522,
-          "candidateEnd": 239012,
+          "candidateStart": 298805,
+          "candidateEnd": 314295,
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db"
         }
       ],
@@ -869,8 +884,8 @@
           "end": 70828,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
-          "candidateStart": 72375,
-          "candidateEnd": 135288
+          "candidateStart": 136306,
+          "candidateEnd": 199219
         },
         {
           "start": 70828,
@@ -884,8 +899,8 @@
           "end": 71098,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
-          "candidateStart": 135288,
-          "candidateEnd": 135493
+          "candidateStart": 199219,
+          "candidateEnd": 199424
         },
         {
           "start": 71098,
@@ -899,8 +914,8 @@
           "end": 71463,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
-          "candidateStart": 135512,
-          "candidateEnd": 135866
+          "candidateStart": 199443,
+          "candidateEnd": 199797
         },
         {
           "start": 71463,
@@ -914,8 +929,8 @@
           "end": 71745,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
-          "candidateStart": 135866,
-          "candidateEnd": 136080
+          "candidateStart": 199797,
+          "candidateEnd": 200011
         },
         {
           "start": 71745,
@@ -929,8 +944,8 @@
           "end": 72116,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
-          "candidateStart": 136099,
-          "candidateEnd": 136459
+          "candidateStart": 200030,
+          "candidateEnd": 200390
         },
         {
           "start": 72116,
@@ -944,8 +959,8 @@
           "end": 72430,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
-          "candidateStart": 136459,
-          "candidateEnd": 136697
+          "candidateStart": 200390,
+          "candidateEnd": 200628
         },
         {
           "start": 72430,
@@ -959,8 +974,8 @@
           "end": 72817,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
-          "candidateStart": 136716,
-          "candidateEnd": 137092
+          "candidateStart": 200647,
+          "candidateEnd": 201023
         },
         {
           "start": 72817,
@@ -974,8 +989,8 @@
           "end": 73131,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
-          "candidateStart": 137092,
-          "candidateEnd": 137330
+          "candidateStart": 201023,
+          "candidateEnd": 201261
         },
         {
           "start": 73131,
@@ -989,8 +1004,8 @@
           "end": 73518,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
-          "candidateStart": 137349,
-          "candidateEnd": 137725
+          "candidateStart": 201280,
+          "candidateEnd": 201656
         },
         {
           "start": 73518,
@@ -1004,8 +1019,8 @@
           "end": 73836,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
-          "candidateStart": 137725,
-          "candidateEnd": 137966
+          "candidateStart": 201656,
+          "candidateEnd": 201897
         },
         {
           "start": 73836,
@@ -1019,8 +1034,8 @@
           "end": 74225,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
-          "candidateStart": 137985,
-          "candidateEnd": 138363
+          "candidateStart": 201916,
+          "candidateEnd": 202294
         },
         {
           "start": 74225,
@@ -1034,8 +1049,8 @@
           "end": 74563,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
-          "candidateStart": 138363,
-          "candidateEnd": 138619
+          "candidateStart": 202294,
+          "candidateEnd": 202550
         },
         {
           "start": 74563,
@@ -1049,8 +1064,8 @@
           "end": 74962,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
-          "candidateStart": 138638,
-          "candidateEnd": 139026
+          "candidateStart": 202569,
+          "candidateEnd": 202957
         },
         {
           "start": 74962,
@@ -1064,8 +1079,8 @@
           "end": 75272,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
-          "candidateStart": 139026,
-          "candidateEnd": 139261
+          "candidateStart": 202957,
+          "candidateEnd": 203192
         },
         {
           "start": 75272,
@@ -1079,56 +1094,56 @@
           "end": 75739,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
-          "candidateStart": 139280,
-          "candidateEnd": 139736
+          "candidateStart": 203211,
+          "candidateEnd": 203667
         },
         {
           "start": 75739,
           "end": 75987,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
-          "candidateStart": 243890,
-          "candidateEnd": 244138
+          "candidateStart": 319173,
+          "candidateEnd": 319421
         },
         {
           "start": 75987,
           "end": 75988,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 139736,
-          "candidateEnd": 139737
+          "candidateStart": 203667,
+          "candidateEnd": 203668
         },
         {
           "start": 75988,
           "end": 77198,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
-          "candidateStart": 244347,
-          "candidateEnd": 245557
+          "candidateStart": 319630,
+          "candidateEnd": 320840
         },
         {
           "start": 77198,
           "end": 77199,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 139737,
-          "candidateEnd": 139738
+          "candidateStart": 203668,
+          "candidateEnd": 203669
         },
         {
           "start": 77199,
           "end": 77512,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
-          "candidateStart": 239199,
-          "candidateEnd": 239512
+          "candidateStart": 314482,
+          "candidateEnd": 314795
         },
         {
           "start": 77512,
           "end": 106302,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
-          "candidateStart": 139738,
-          "candidateEnd": 168528
+          "candidateStart": 203669,
+          "candidateEnd": 232459
         },
         {
           "start": 106302,
@@ -1142,8 +1157,8 @@
           "end": 136122,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
-          "candidateStart": 201239,
-          "candidateEnd": 223479
+          "candidateStart": 276522,
+          "candidateEnd": 298762
         },
         {
           "start": 136122,
@@ -1157,8 +1172,8 @@
           "end": 151653,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
-          "candidateStart": 223522,
-          "candidateEnd": 239012
+          "candidateStart": 298805,
+          "candidateEnd": 314295
         },
         {
           "start": 151653,
@@ -1171,285 +1186,285 @@
       "candidateInverse": [
         {
           "start": 0,
-          "end": 72375,
+          "end": 136306,
           "kind": "new",
-          "sha256": "e82157f73cbcd3f32e116c094b783e0b9ec5e8132dc8524ef3185082e8c18532",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sha256": "c8157ff5d7302631f461286b586f3e0e8c77e264c19a06f6cfb59cf075a6bfac",
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 72375,
-          "end": 135288,
+          "start": 136306,
+          "end": 199219,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
           "originalStart": 7915,
           "originalEnd": 70828
         },
         {
-          "start": 135288,
-          "end": 135493,
+          "start": 199219,
+          "end": 199424,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
           "originalStart": 70893,
           "originalEnd": 71098
         },
         {
-          "start": 135493,
-          "end": 135512,
+          "start": 199424,
+          "end": 199443,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 135512,
-          "end": 135866,
+          "start": 199443,
+          "end": 199797,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
           "originalStart": 71109,
           "originalEnd": 71463
         },
         {
-          "start": 135866,
-          "end": 136080,
+          "start": 199797,
+          "end": 200011,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
           "originalStart": 71531,
           "originalEnd": 71745
         },
         {
-          "start": 136080,
-          "end": 136099,
+          "start": 200011,
+          "end": 200030,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 136099,
-          "end": 136459,
+          "start": 200030,
+          "end": 200390,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
           "originalStart": 71756,
           "originalEnd": 72116
         },
         {
-          "start": 136459,
-          "end": 136697,
+          "start": 200390,
+          "end": 200628,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
           "originalStart": 72192,
           "originalEnd": 72430
         },
         {
-          "start": 136697,
-          "end": 136716,
+          "start": 200628,
+          "end": 200647,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 136716,
-          "end": 137092,
+          "start": 200647,
+          "end": 201023,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
           "originalStart": 72441,
           "originalEnd": 72817
         },
         {
-          "start": 137092,
-          "end": 137330,
+          "start": 201023,
+          "end": 201261,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
           "originalStart": 72893,
           "originalEnd": 73131
         },
         {
-          "start": 137330,
-          "end": 137349,
+          "start": 201261,
+          "end": 201280,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 137349,
-          "end": 137725,
+          "start": 201280,
+          "end": 201656,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
           "originalStart": 73142,
           "originalEnd": 73518
         },
         {
-          "start": 137725,
-          "end": 137966,
+          "start": 201656,
+          "end": 201897,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
           "originalStart": 73595,
           "originalEnd": 73836
         },
         {
-          "start": 137966,
-          "end": 137985,
+          "start": 201897,
+          "end": 201916,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 137985,
-          "end": 138363,
+          "start": 201916,
+          "end": 202294,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
           "originalStart": 73847,
           "originalEnd": 74225
         },
         {
-          "start": 138363,
-          "end": 138619,
+          "start": 202294,
+          "end": 202550,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
           "originalStart": 74307,
           "originalEnd": 74563
         },
         {
-          "start": 138619,
-          "end": 138638,
+          "start": 202550,
+          "end": 202569,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 138638,
-          "end": 139026,
+          "start": 202569,
+          "end": 202957,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
           "originalStart": 74574,
           "originalEnd": 74962
         },
         {
-          "start": 139026,
-          "end": 139261,
+          "start": 202957,
+          "end": 203192,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
           "originalStart": 75037,
           "originalEnd": 75272
         },
         {
-          "start": 139261,
-          "end": 139280,
+          "start": 203192,
+          "end": 203211,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 139280,
-          "end": 139736,
+          "start": 203211,
+          "end": 203667,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
           "originalStart": 75283,
           "originalEnd": 75739
         },
         {
-          "start": 139736,
-          "end": 139737,
+          "start": 203667,
+          "end": 203668,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 75987,
           "originalEnd": 75988
         },
         {
-          "start": 139737,
-          "end": 139738,
+          "start": 203668,
+          "end": 203669,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 77198,
           "originalEnd": 77199
         },
         {
-          "start": 139738,
-          "end": 168528,
+          "start": 203669,
+          "end": 232459,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
           "originalStart": 77512,
           "originalEnd": 106302
         },
         {
-          "start": 168528,
-          "end": 201239,
+          "start": 232459,
+          "end": 276522,
           "kind": "new",
-          "sha256": "185dac1767242204eb275ef45d98e4f291ff78d29b154da71267ea53e626462c",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sha256": "939d8f315c5a2353869e1953ede2f2522a1e0f53cd870d4561bd8a506601b96c",
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 201239,
-          "end": 223479,
+          "start": 276522,
+          "end": 298762,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
           "originalStart": 113882,
           "originalEnd": 136122
         },
         {
-          "start": 223479,
-          "end": 223522,
+          "start": 298762,
+          "end": 298805,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 223522,
-          "end": 239012,
+          "start": 298805,
+          "end": 314295,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
           "originalStart": 136163,
           "originalEnd": 151653
         },
         {
-          "start": 239012,
-          "end": 239199,
+          "start": 314295,
+          "end": 314482,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 239199,
-          "end": 239512,
+          "start": 314482,
+          "end": 314795,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
           "originalStart": 77199,
           "originalEnd": 77512
         },
         {
-          "start": 239512,
-          "end": 243890,
+          "start": 314795,
+          "end": 319173,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 243890,
-          "end": 244138,
+          "start": 319173,
+          "end": 319421,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
           "originalStart": 75739,
           "originalEnd": 75987
         },
         {
-          "start": 244138,
-          "end": 244347,
+          "start": 319421,
+          "end": 319630,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         },
         {
-          "start": 244347,
-          "end": 245557,
+          "start": 319630,
+          "end": 320840,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
           "originalStart": 75988,
           "originalEnd": 77198
         },
         {
-          "start": 245557,
-          "end": 344228,
+          "start": 320840,
+          "end": 442213,
           "kind": "new",
-          "sha256": "b0b549e9e66cca24af35a47b9f3e32a6c2afd4df3bf4821f6ff73fa89fd933fc",
-          "sourceBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d"
+          "sha256": "6ba339ffdcd7be576fdb2a11f0984e3a943283169e81733bdd703e77bc208980",
+          "sourceBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27"
         }
       ],
       "editAnnotations": [
@@ -1464,9 +1479,13 @@
           "exactEditsBlob": "6547da75496936563c12def9339861d106ed6e29"
         },
         {
+          "reason": "Selected HRS A3: exact optional complete HRS catalog and sole additional parsed S1 bridge; original runtime effects remain unchanged.",
+          "exactEditsBlob": "4371630c9a7e768c24af0a94560459817aba7afe"
+        },
+        {
           "reason": "One function-local jit=off configuration on the unchanged HM04 catalog guard body; finite exact configuration expectations only.",
-          "parentBlob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "parentBlob": "576f05fd31f31b088ea7e0a66087255ecf6832b8",
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
@@ -1475,9 +1494,9 @@
         "intermediateSha256": "eac887ab9c1acd6988543a4ffb022f9e00af238b3ff7751ae6b8f6a715b127b4",
         "intermediateBytes": 341956,
         "currentRevision": {
-          "parentBlob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
-          "candidateBlob": "06cf1084277c9ae6f3f7b9bd09b92e052009523d",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "parentBlob": "576f05fd31f31b088ea7e0a66087255ecf6832b8",
+          "candidateBlob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       }
     },
@@ -1485,50 +1504,50 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
       "originalBytes": 6175,
-      "candidateBytes": 120071,
+      "candidateBytes": 163561,
       "originalSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
-      "candidateSha256": "67f2993d7a491111d23a6f38922fd7602776af7447e3e90d2ef03a42e70805bd",
+      "candidateSha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00",
       "retained": [
         {
           "originalStart": 1470,
           "originalEnd": 4785,
-          "candidateStart": 114314,
-          "candidateEnd": 117629,
+          "candidateStart": 147517,
+          "candidateEnd": 150832,
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d"
         },
         {
           "originalStart": 4785,
           "originalEnd": 4881,
-          "candidateStart": 113894,
-          "candidateEnd": 113990,
+          "candidateStart": 147097,
+          "candidateEnd": 147193,
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3"
         },
         {
           "originalStart": 4881,
           "originalEnd": 5034,
-          "candidateStart": 114025,
-          "candidateEnd": 114178,
+          "candidateStart": 147228,
+          "candidateEnd": 147381,
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7"
         },
         {
           "originalStart": 5034,
           "originalEnd": 6138,
-          "candidateStart": 117629,
-          "candidateEnd": 118733,
+          "candidateStart": 150832,
+          "candidateEnd": 151936,
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938"
         },
         {
           "originalStart": 6138,
           "originalEnd": 6167,
-          "candidateStart": 119035,
-          "candidateEnd": 119064,
+          "candidateStart": 152238,
+          "candidateEnd": 152267,
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8"
         },
         {
           "originalStart": 6167,
           "originalEnd": 6175,
-          "candidateStart": 120063,
-          "candidateEnd": 120071,
+          "candidateStart": 163553,
+          "candidateEnd": 163561,
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3"
         }
       ],
@@ -1545,129 +1564,129 @@
           "end": 4785,
           "kind": "retained",
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d",
-          "candidateStart": 114314,
-          "candidateEnd": 117629
+          "candidateStart": 147517,
+          "candidateEnd": 150832
         },
         {
           "start": 4785,
           "end": 4881,
           "kind": "retained",
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3",
-          "candidateStart": 113894,
-          "candidateEnd": 113990
+          "candidateStart": 147097,
+          "candidateEnd": 147193
         },
         {
           "start": 4881,
           "end": 5034,
           "kind": "retained",
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7",
-          "candidateStart": 114025,
-          "candidateEnd": 114178
+          "candidateStart": 147228,
+          "candidateEnd": 147381
         },
         {
           "start": 5034,
           "end": 6138,
           "kind": "retained",
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938",
-          "candidateStart": 117629,
-          "candidateEnd": 118733
+          "candidateStart": 150832,
+          "candidateEnd": 151936
         },
         {
           "start": 6138,
           "end": 6167,
           "kind": "retained",
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8",
-          "candidateStart": 119035,
-          "candidateEnd": 119064
+          "candidateStart": 152238,
+          "candidateEnd": 152267
         },
         {
           "start": 6167,
           "end": 6175,
           "kind": "retained",
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3",
-          "candidateStart": 120063,
-          "candidateEnd": 120071
+          "candidateStart": 163553,
+          "candidateEnd": 163561
         }
       ],
       "candidateInverse": [
         {
           "start": 0,
-          "end": 113894,
+          "end": 147097,
           "kind": "new",
-          "sha256": "fc3ec475042a9fb1a1c78bddb22580ecc2bd8b057a6f18f8e556a82d97bbc7a9",
-          "sourceBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1"
+          "sha256": "cd93f673f5c69bf4220bd9c2473fb15908a50b05aa42d3025732a11b0f348423",
+          "sourceBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5"
         },
         {
-          "start": 113894,
-          "end": 113990,
+          "start": 147097,
+          "end": 147193,
           "kind": "retained",
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3",
           "originalStart": 4785,
           "originalEnd": 4881
         },
         {
-          "start": 113990,
-          "end": 114025,
+          "start": 147193,
+          "end": 147228,
           "kind": "new",
           "sha256": "47a58b08cd975f11680454cbc825340225a8dd810600199cd70961d5d156893d",
-          "sourceBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1"
+          "sourceBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5"
         },
         {
-          "start": 114025,
-          "end": 114178,
+          "start": 147228,
+          "end": 147381,
           "kind": "retained",
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7",
           "originalStart": 4881,
           "originalEnd": 5034
         },
         {
-          "start": 114178,
-          "end": 114314,
+          "start": 147381,
+          "end": 147517,
           "kind": "new",
           "sha256": "586b92076f163b5bc7005150d36c9fff6384ff4b19417f4d817286f8f0115296",
-          "sourceBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1"
+          "sourceBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5"
         },
         {
-          "start": 114314,
-          "end": 117629,
+          "start": 147517,
+          "end": 150832,
           "kind": "retained",
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d",
           "originalStart": 1470,
           "originalEnd": 4785
         },
         {
-          "start": 117629,
-          "end": 118733,
+          "start": 150832,
+          "end": 151936,
           "kind": "retained",
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938",
           "originalStart": 5034,
           "originalEnd": 6138
         },
         {
-          "start": 118733,
-          "end": 119035,
+          "start": 151936,
+          "end": 152238,
           "kind": "new",
           "sha256": "65efc6f4c894c9f0a79fb595557317ffacdae12b2bed563de80d7723f621621b",
-          "sourceBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1"
+          "sourceBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5"
         },
         {
-          "start": 119035,
-          "end": 119064,
+          "start": 152238,
+          "end": 152267,
           "kind": "retained",
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8",
           "originalStart": 6138,
           "originalEnd": 6167
         },
         {
-          "start": 119064,
-          "end": 120063,
+          "start": 152267,
+          "end": 163553,
           "kind": "new",
-          "sha256": "940807f013e2b75d48ca168b38131e9c6ff31334a9edebca30e064e34a7d3d31",
-          "sourceBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1"
+          "sha256": "d1abdb5c4f66b1799481f9589965b51c6f003473d2ebe2a03c17f034826c57d7",
+          "sourceBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5"
         },
         {
-          "start": 120063,
-          "end": 120071,
+          "start": 163553,
+          "end": 163561,
           "kind": "retained",
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3",
           "originalStart": 6167,
@@ -1686,9 +1705,13 @@
           "exactEditsBlob": "6547da75496936563c12def9339861d106ed6e29"
         },
         {
+          "reason": "Selected HRS A3: exact optional complete HRS catalog and sole additional parsed S1 bridge; original runtime effects remain unchanged.",
+          "exactEditsBlob": "4371630c9a7e768c24af0a94560459817aba7afe"
+        },
+        {
           "reason": "One function-local jit=off configuration on the unchanged HM04 catalog guard body; finite exact configuration expectations only.",
-          "parentBlob": "cc6fa87662468768c5898b1585de545fd8652c8c",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "parentBlob": "c17b21a31606a67fb4d86968291525e8152f5823",
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
@@ -1697,9 +1720,9 @@
         "intermediateSha256": "9a42862f86ad6c9432309d181138b44eb1df495eddbc5b85c4da73d08addf1b1",
         "intermediateBytes": 118333,
         "currentRevision": {
-          "parentBlob": "cc6fa87662468768c5898b1585de545fd8652c8c",
-          "candidateBlob": "934cd6f01f1cafc86b92b512986d88110d928bb1",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "parentBlob": "c17b21a31606a67fb4d86968291525e8152f5823",
+          "candidateBlob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       }
     },
@@ -3302,7 +3325,7 @@
         {
           "reason": "One function-local jit=off configuration on the unchanged HM04 catalog guard body; finite exact configuration expectations only.",
           "parentBlob": "19be372cfa94656dad8e08213e908a028ba9f930",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
@@ -3313,7 +3336,7 @@
         "currentRevision": {
           "parentBlob": "19be372cfa94656dad8e08213e908a028ba9f930",
           "candidateBlob": "b7e0c9363e0a7a3b12958034a6674893a1b92c2e",
-          "exactEditsBlob": "f6b1a8f0468e91050989520febd540e383577264"
+          "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
         }
       }
     }
@@ -3336,8 +3359,8 @@
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
         "candidate": {
-          "start": 72375,
-          "end": 73385,
+          "start": 136306,
+          "end": 137316,
           "bytes": 1010,
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
@@ -3355,8 +3378,8 @@
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
         "candidate": {
-          "start": 73386,
-          "end": 74359,
+          "start": 137317,
+          "end": 138290,
           "bytes": 973,
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
@@ -3374,8 +3397,8 @@
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
         "candidate": {
-          "start": 74360,
-          "end": 75828,
+          "start": 138291,
+          "end": 139759,
           "bytes": 1468,
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
@@ -3393,8 +3416,8 @@
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
         "candidate": {
-          "start": 75829,
-          "end": 87025,
+          "start": 139760,
+          "end": 150956,
           "bytes": 11196,
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
@@ -3412,8 +3435,8 @@
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
         "candidate": {
-          "start": 87026,
-          "end": 88085,
+          "start": 150957,
+          "end": 152016,
           "bytes": 1059,
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
@@ -3431,8 +3454,8 @@
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
         "candidate": {
-          "start": 88086,
-          "end": 89225,
+          "start": 152017,
+          "end": 153156,
           "bytes": 1139,
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
@@ -3450,8 +3473,8 @@
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
         "candidate": {
-          "start": 89226,
-          "end": 89873,
+          "start": 153157,
+          "end": 153804,
           "bytes": 647,
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
@@ -3469,8 +3492,8 @@
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
         "candidate": {
-          "start": 89875,
-          "end": 95054,
+          "start": 153806,
+          "end": 158985,
           "bytes": 5179,
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
@@ -3488,8 +3511,8 @@
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
         "candidate": {
-          "start": 95055,
-          "end": 98618,
+          "start": 158986,
+          "end": 162549,
           "bytes": 3563,
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
@@ -3507,8 +3530,8 @@
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
         "candidate": {
-          "start": 98620,
-          "end": 105403,
+          "start": 162551,
+          "end": 169334,
           "bytes": 6783,
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
@@ -3526,8 +3549,8 @@
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
         "candidate": {
-          "start": 105404,
-          "end": 111469,
+          "start": 169335,
+          "end": 175400,
           "bytes": 6065,
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
@@ -3545,8 +3568,8 @@
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
         "candidate": {
-          "start": 111470,
-          "end": 117613,
+          "start": 175401,
+          "end": 181544,
           "bytes": 6143,
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
@@ -3564,8 +3587,8 @@
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
         "candidate": {
-          "start": 117614,
-          "end": 122192,
+          "start": 181545,
+          "end": 186123,
           "bytes": 4578,
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
@@ -3583,8 +3606,8 @@
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
         "candidate": {
-          "start": 122193,
-          "end": 123895,
+          "start": 186124,
+          "end": 187826,
           "bytes": 1702,
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
@@ -3602,8 +3625,8 @@
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
         "candidate": {
-          "start": 123896,
-          "end": 130141,
+          "start": 187827,
+          "end": 194072,
           "bytes": 6245,
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
@@ -3621,8 +3644,8 @@
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
         "candidate": {
-          "start": 134280,
-          "end": 135287,
+          "start": 198211,
+          "end": 199218,
           "bytes": 1007,
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
@@ -3640,8 +3663,8 @@
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         "candidate": {
-          "start": 243890,
-          "end": 244138,
+          "start": 319173,
+          "end": 319421,
           "bytes": 248,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
@@ -3659,8 +3682,8 @@
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         "candidate": {
-          "start": 244347,
-          "end": 245557,
+          "start": 319630,
+          "end": 320840,
           "bytes": 1210,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
@@ -3678,8 +3701,8 @@
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         "candidate": {
-          "start": 239199,
-          "end": 239512,
+          "start": 314482,
+          "end": 314795,
           "bytes": 313,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
@@ -3697,8 +3720,8 @@
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
         "candidate": {
-          "start": 139740,
-          "end": 151186,
+          "start": 203671,
+          "end": 215117,
           "bytes": 11446,
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
@@ -3716,8 +3739,8 @@
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
         "candidate": {
-          "start": 151188,
-          "end": 168526,
+          "start": 215119,
+          "end": 232457,
           "bytes": 17338,
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
@@ -3735,10 +3758,10 @@
           "sha256": "d66534a4b4493b8349cea92e7b7f1c388b63becbd401f23bfe171f785ae1e3e4"
         },
         "candidate": {
-          "start": 168528,
-          "end": 201239,
-          "bytes": 32711,
-          "sha256": "185dac1767242204eb275ef45d98e4f291ff78d29b154da71267ea53e626462c"
+          "start": 232459,
+          "end": 276522,
+          "bytes": 44063,
+          "sha256": "939d8f315c5a2353869e1953ede2f2522a1e0f53cd870d4561bd8a506601b96c"
         },
         "exactOriginalHeader": false,
         "originalHeader": {
@@ -3763,8 +3786,8 @@
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
         "candidate": {
-          "start": 201411,
-          "end": 202071,
+          "start": 276694,
+          "end": 277354,
           "bytes": 660,
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
@@ -3782,8 +3805,8 @@
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
         "candidate": {
-          "start": 202072,
-          "end": 203229,
+          "start": 277355,
+          "end": 278512,
           "bytes": 1157,
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
@@ -3801,8 +3824,8 @@
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
         "candidate": {
-          "start": 203230,
-          "end": 206292,
+          "start": 278513,
+          "end": 281575,
           "bytes": 3062,
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
@@ -3820,8 +3843,8 @@
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
         "candidate": {
-          "start": 206293,
-          "end": 208951,
+          "start": 281576,
+          "end": 284234,
           "bytes": 2658,
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
@@ -3839,8 +3862,8 @@
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
         "candidate": {
-          "start": 208952,
-          "end": 214332,
+          "start": 284235,
+          "end": 289615,
           "bytes": 5380,
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
@@ -3858,8 +3881,8 @@
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
         "candidate": {
-          "start": 214333,
-          "end": 222043,
+          "start": 289616,
+          "end": 297326,
           "bytes": 7710,
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
@@ -3877,8 +3900,8 @@
           "sha256": "2eb370f96a4bc5b0ac28cc68adb4120b742613f8a10eb5ae5e502b7bbe3e902b"
         },
         "candidate": {
-          "start": 222045,
-          "end": 239012,
+          "start": 297328,
+          "end": 314295,
           "bytes": 16967,
           "sha256": "401c11c9349930123792180067813ce53f1cb54574a14d3265944b892b9de126"
         },
@@ -3892,7 +3915,7 @@
       },
       {
         "name": "official_v3_jobs_private.assert_catalog_v1",
-        "change": "Fresh SOURCE-V1 hosted fingerprints and protected graph remain exact; only the selected A2 exact two-incidence restricted LOGIN predicate replaces A1. No other runtime fingerprint or header change. Review fix changes only the exact selected HS1 source-context digest; the fresh catalog fingerprint captures the corrected function body. Current JIT correction adds only function-local SET jit=off; the complete preceding hosted function body and all catalog predicates remain byte-identical. All other 29 current declarations are unchanged."
+        "change": "Fresh SOURCE-V1 hosted fingerprints and protected graph remain exact; only the selected A2 exact two-incidence restricted LOGIN predicate replaces A1. No other runtime fingerprint or header change. Review fix changes only the exact selected HS1 source-context digest; the fresh catalog fingerprint captures the corrected function body. Selected HRS A3 additionally binds the exact optional complete HRS catalog and sole Result-to-S1 bridge. All original 29 headers and 27 original full declarations remain exact. Function-local SET jit=off is inherited from the selected measured JIT repair; all A3 body bytes are unchanged by that propagation."
       }
     ],
     "newTupleBridge": {
@@ -3916,7 +3939,7 @@
     "bridges": 4,
     "parsedFunctionDependencies": 8,
     "bindings": 15,
-    "normalFunctionsUnchangedLogic": true,
+    "normalFunctionsUnchangedLogic": false,
     "snapshotKeys": [
       "jobs-functions",
       "jobs-relations",
@@ -3935,7 +3958,12 @@
       "package-context"
     ],
     "fingerprintMethod": "Fresh complete stable catalog projections, bounded SHA256 for all large values; full creator-defaults object and package/Creator/database context retained. No mutable statistics or runtime role session identity enters fingerprints. No prior-call cache or history shortcut.",
-    "runtimeProof": "Installation establishes exact declarations/finite structure. Every runtime guard recomputes the full current fingerprints; equality preserves those facts. Fresh separate role/foreign-ownership/dependency checks cover mutable graph and out-of-scope ownership. Owner temporary edges are never accepted at runtime."
+    "runtimeProof": "Installation establishes exact declarations/finite structure. Every runtime guard recomputes the full current fingerprints; equality preserves those facts. Fresh separate role/foreign-ownership/dependency checks cover mutable graph and out-of-scope ownership. Owner temporary edges are never accepted at runtime.",
+    "bindingsWithExactHrs": 16,
+    "optionalSnapshotKeys": [
+      "hrs1-catalog"
+    ],
+    "currentRuntimeDelta": "Only assert_catalog_v1 guards the selected optional HRS catalog and exact bridge; the other current 29 full declarations remain byte exact."
   },
   "owners": [
     {
@@ -4424,16 +4452,18 @@
     }
   ],
   "hs1Boundary": {
-    "installerPreCreationNoConsumerBlockExact": true,
+    "installerPreCreationNoConsumerBlockExact": false,
     "originalHs1ArtifactChanged": true,
     "applyNoConsumerBlockAtRuntime": false,
     "originalObjectsFullyFingerprintBound": true,
     "allowedAddedOwnerConsumers": [
       "official_v3_jobs_private.s1_read_v1",
-      "official_v3_jobs_private.s1_shape_v1"
+      "official_v3_jobs_private.s1_shape_v1",
+      "official_v3_result_private.s1_read_locked_v1(jsonb,text,int4)"
     ],
     "unknownConsumerOrOwnerObjectRefused": true,
-    "originalHs1ArtifactChange": "Selected FIX1 CASE parentheses and FIX2 SQL-alias alpha-renaming in the hosted installation/recovery inventory; original S1 and all 14 hosted runtime function declarations/bodies remain byte exact."
+    "originalHs1ArtifactChange": "Selected FIX1 CASE parentheses and FIX2 SQL-alias alpha-renaming in the hosted installation/recovery inventory; original S1 and all 14 hosted runtime function declarations/bodies remain byte exact.",
+    "hrsA3": "Completely absent HRS retains the original A2 topology. Fully present HRS is statically inventoried and its original metadata frozen before HM04 creation as hrs1-catalog. Runtime and unused recovery compare that same full catalog. Partial or altered HRS refuses."
   },
   "installSequence": [
     "Native/source composition prerequisite: real NOSUPER Creator creates designated restricted worker LOGIN and captures exact LOGIN/Creator/automatic membership OIDs before HM04 freeze; no real hosted provisioning executed here",
@@ -4486,7 +4516,9 @@
     "unbindOnlyCaller": true,
     "workerLoginAndAutomaticMembershipRetainedAcrossTeardownAndReinstall": true,
     "dropWorkerWhileFingerprintExists": false,
-    "syntheticNativeAdversarialException": "Six declared bootstrap-only corruptions of the one owned fixture worker membership row; restore its original OID/graph and compare pg_shdepend. No recovery artifact or actual Creator command removes a bootstrap-issued grant."
+    "syntheticNativeAdversarialException": "Six declared bootstrap-only corruptions of the one owned fixture worker membership row; restore its original OID/graph and compare pg_shdepend. No recovery artifact or actual Creator command removes a bootstrap-issued grant.",
+    "preserveExactHrsBeforeAndAfter": true,
+    "hrsOrder": "HM04 first, then unused HRS, HMT, HS1 and HMA1; preserve PG1/PAI."
   },
   "native": {
     "groupCount": 31,
@@ -12622,7 +12654,7 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     }
   },
-  "revisionPreservationScope": "Historical V1/A2/FIX1/FIX2 mappings remain as recorded; exact current a473→PG17.12-FIX3 changes are reviewFix3.codeChanges and diagnosticCleanup. Current H4014 metadata correction composes over the exact SQL maps; the completed failure-only diagnostic is removed and Native restored byte-exact to 777c0adf. Current function-local JIT configuration adjustment composes all three exact maps and rebinds the three current code pins; earlier historical identities remain historical.",
+  "revisionPreservationScope": "Historical V1/A2/FIX1/FIX2 mappings remain as recorded; exact current a473→PG17.12-FIX3 changes are reviewFix3.codeChanges and diagnosticCleanup. Current H4014 metadata correction composes over the exact SQL maps; the completed failure-only diagnostic is removed and Native restored byte-exact to 777c0adf. Current HRS A3 includes the selected standalone function-local JIT configuration fix; current 28 original headers and all 31 groups are explicitly bound.",
   "reviewFix2": {
     "id": "HS1/HM04-FIX2",
     "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
@@ -14342,6 +14374,79 @@
     "allSqlAnd31GroupsUnchanged": true,
     "sourceMapRebound": true
   },
+  "hrsA3": {
+    "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6828412299",
+    "continuation": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6830134112",
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "parent": "95afa6f9133d38454efd83716538b8b0566a4934",
+    "installer": {
+      "blob": "30455c38e5df79b862062ec7bfe45947f0c7fb27",
+      "bytes": 442213,
+      "sha256": "ff36e70c721f9bfdde4cbbe31bb422dd37844f1a86af44f866b2987084e87248"
+    },
+    "recovery": {
+      "blob": "bf2e49359556daf4593e338076c4a97f6465bfc5",
+      "bytes": 163561,
+      "sha256": "6d9aa065a77f5241049546501e63fa4a67b80c876c1b5aa1360e681aebcb7e00"
+    },
+    "exactTextInverse": "66c57e19676ee15689b44f780da49de923981f37",
+    "predecessorManifest": "b7cc245d4331324db50c482d0e82936d9c0a77f3",
+    "optionalCatalogRows": {
+      "absent": 15,
+      "fullyPresent": 16
+    },
+    "bridge": {
+      "signature": "official_v3_result_private.s1_read_locked_v1(jsonb,text,int4)",
+      "owner": "ot_v3_intake_owner",
+      "caller": "ot_v3_result_owner",
+      "target": "official_v3_intake_api.read_v1(jsonb,text,int4)",
+      "parsedSql": true
+    },
+    "newPermissions": false,
+    "newHrsIncomingDependencies": false,
+    "recoveryPreservesHrsCatalog": true,
+    "nativeUnchanged": {
+      "blob": "b7e0c9363e0a7a3b12958034a6674893a1b92c2e",
+      "bytes": 236733,
+      "sha256": "199dddfa379e29a9380de396e78218158aac8887173412204110fd10677d4cf1"
+    },
+    "declarations": {
+      "total": 30,
+      "unchangedFullAgainstParent": 29,
+      "changedGuard": "official_v3_jobs_private.assert_catalog_v1"
+    },
+    "externalRuntimeDependencies": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+        "blob": "e54779dfa4cd65372f0f375182beafd4a1d155c1",
+        "bytes": 27465,
+        "sha256": "95e8233bd0fdbaa41fbb5cea03ec8a5a415161116cbdb44871d25f6c12661f06"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+        "blob": "8082bada0dad76c657b3c7a0367e56b4d634e5ce",
+        "bytes": 12562,
+        "sha256": "a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/monitor/monitor.ts",
+        "blob": "446e727e3e3030ef4949829864abb5c531abc5a7",
+        "bytes": 15888,
+        "sha256": "d535f20a230d5d7d00bc29c1a9abb17cea360efe590789ec047be6ee29d0a10e"
+      }
+    ],
+    "priorManifestInverseMeaning": "Existing manifestRevisionInverse and revisionPreservation remain historical V1/A2 evidence; current preservation maps identify this A3 candidate.",
+    "historicalParent": "114811a6ba20b5d78d741c613cac35ea006248c2",
+    "previousSourceCommit": "51dc67ad8ef7264d2ea1295ba56ae44f69038409",
+    "historicalExactTextInverse": "4371630c9a7e768c24af0a94560459817aba7afe",
+    "priorA3Manifest": "9571867a4b8440dfdfa078f8fa8b0045cdc229ba",
+    "historicalNative": {
+      "blob": "19be372cfa94656dad8e08213e908a028ba9f930",
+      "bytes": 236406,
+      "sha256": "f8e905de99a9f3982c09e26b524aaf4bef0ea4c316bfbfced86b61bd5c22aa1b"
+    },
+    "nativeUnchangedMeaning": "Native is byte-identical to the selected standalone JIT baseline parent; its three exact configuration expectations have already been amended there. All 31 groups and budgets remain unchanged."
+  },
   "jitConfigFix": {
     "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
     "soleParent": "31771376b82f5d60132004e7dc555a4a446598b3",
@@ -14395,6 +14500,19 @@
       "https://www.postgresql.org/docs/17/jit-decision.html"
     ],
     "runtimeResult": "NOT_RUN: Root must select a coherent full CI run before accepting runtime evidence.",
-    "priorBindingParent": "a686e608f597ffa82d44fc9d3992b9b566b89688"
+    "priorBindingParent": "a686e608f597ffa82d44fc9d3992b9b566b89688",
+    "propagation": {
+      "previousA3Commit": "51dc67ad8ef7264d2ea1295ba56ae44f69038409",
+      "previousA3Manifest": "9571867a4b8440dfdfa078f8fa8b0045cdc229ba",
+      "selectedJitBaseline": "95afa6f9133d38454efd83716538b8b0566a4934",
+      "a3GuardBodyUnchanged": {
+        "bodySuffixBytes": 43857,
+        "bodySuffixSha256": "5eb39a4c4d113cc6b9975d7d6b15be5d79017cf8183147ae93458c5cf0c23e23"
+      },
+      "originalA3ExactEditsUnchanged": true,
+      "twoTransformationOrdersProduceIdenticalRawText": true,
+      "currentA3Inverse": "66c57e19676ee15689b44f780da49de923981f37",
+      "exactEditsBlob": "40368b05dcecafbb4480c9ac117fffe6368a79b9"
+    }
   }
 }
