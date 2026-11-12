@@ -1,3 +1,29 @@
+# M04 current handoff — corrected actual-main accepted / finite completion V1
+
+**12.11.2026 — M04 Recovery V31/R40: Code gemergt und tatsächlicher main unabhängig PASS.** [PR #1184](https://github.com/Jetnity/jetnity/pull/1184) ist nach dem [Exact-Head-TL-Review](https://github.com/Jetnity/jetnity/pull/1184#pullrequestreview-5868051404) gemergt. Tatsächlicher Code-main **32cd11f79eecb766d4a28d6db928d25bf1748bea**, [CI43141560597](https://github.com/Jetnity/jetnity/actions/runs/43141560597) / Versuch1 / push: **8/8 Jobs SUCCESS**, originale M04-Prüfung **31/31 in195543ms**, vollständige256/64Quoten, beide realenR9-Nachweise,27563/27563Operationen,4249/4249geschlosseneVerbindungen,0Cleanupfehler. Keine kontrollierte Laufzeitverbesserung oder Production-SLO wird daraus behauptet.
+
+[Abschlussreview](M04_COMPLETION_REVIEW_V1.md), [vollständige PR-/Actual-main-Evidence](M04_COMPLETION_EVIDENCE_V1.json), [aktueller Handoff](M04_HANDOFF_V1.md). [Root-Actual-main-PASS](https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6812970023) und [endlicher Acht-Pfad-Abschlussauftrag](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6812980964). Production **dpl_kWXrPghDnzJeprNVq1FJVf3k8pJk** ist READY/exakt32cd11f7; jetnity.com und jetnity-app.vercel.app wurden beide auf dieses Deployment geprüft. **Die öffentliche echte CH→DE-Antwort ist noch nicht live.**
+
+Dies ist der datierte Vorpublikationsstand der separaten Dokumentenschließung auf Basis32cd11f7: ihre eigenen Draft-/Exact-Head-/CI-/Preview-/Root-Release- und Actual-main-/Production-Gates sind noch offen. Spätere tatsächliche Ergebnisse stehen in deren PR und [#751](https://github.com/Jetnity/jetnity/issues/751); kein weiterer Selbstattestationscommit ist vorgesehen. Alle18Runtime-Sourcepins bleiben unverändert. R38FAILURE und R39DIAGNOSTIC_ONLY sowie alle älteren Nachweise bleiben erhalten.
+
+Implementierungsautor **Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4**, tatsächliche neue Session **/root/m04_durable_jobs_writer_g4**; die unerreichbare G3-Sitzung wurde nicht wiederaufgenommen. [Dauerhafte Nachfolgeregel](https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6811958036) ist genehmigt und im Betriebsstandard verankert. Root verfasst die Abschlussakten und entscheidet allein über PASS, Ready und Merge; unabhängige Reviews bleiben erforderlich.
+
+[Ownerauftrag](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6811993763): ausschließlich CH→DE, Ziel15.11.2026, alle fünf Schritte und D1 einmalig genehmigt. [Menschlicher Stage1-Run2 akzeptiert](https://github.com/Jetnity/jetnity/issues/917#issuecomment-6812112217), kein beobachteter Funktions-/ACL-/Fingerprint-Widerspruch; tatsächliche Ledger-ID/Eintrag/Historienabgleich waren out_of_scope und fehlen separat. [#1139 hat konkrete Kriterienfortschritte](https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6812118367), keinen17/17-PASS; #1142-Dev-Installation **NOT_VERIFIED**. [#1131 ist für den ausgewählten bestehenden privaten Native-HTTPS-Pfad NICHT ERFORDERLICH](https://github.com/Jetnity/jetnity/pull/1131#issuecomment-6812402217); sein Branch und die gesperrte Aktion bleiben unangetastet.
+
+Aktuelle vollständige Behördenrevision, verlängertes Produktfenster, tatsächliche Methodenautorität und öffentliche Cache-/Pending-/Aktualisierungsanbindung sind noch fertigzustellen. Die genehmigte Fensterverlängerung über13.11. ist noch nicht implementiert. Ein eng begrenzter metadatenliefernder AA-Revisionsabruf ist bislang nur geplant, nicht implementiert oder ausgeführt. Kein Hosted-Eingriff, keine Wiederholung oder Umgehung eines Plattform-STOPs und keine zusätzlichen Reise-/Hotel-/Flugfunktionen.
+
+## First unfinished step
+
+Complete the eight-path documentation PR's own independent exact-head gates and actual-main/Production verification. Final receipts are recorded on that PR/#751 without a further self-attestation commit. Then continue only the already authorized CH→DE route: current official-source comparison and versioned window, actual Dev/authority evidence, D1 and public cache/pending/update integration. No hosted install, source qualification or public answer is inferred from isolated native tests.
+
+## Preserved source and evidence
+
+The accepted repaired SQL is blob7021673c611b0b2cc5dc62cbd5dccb92e5024837; restored Native is blob0b3f7d9906687ec42171de5af60fed009d07b39f. Full18-source aggregate f9f0bfaf2476692119f63e474bb61988bc0d50bb3c4518b96ee4987ef56e40e2. All31groups, quotas, security headers, fallback/emitters, workflow and limits are preserved. The two completion files retain the full new original M04 payloads, complete companion records, separate raw22P02 lines and full-log identities for both PR and actual main. Auth metadata only; no artifact or independent screenshot inspection.
+
+---
+
+## Complete preceding handoff retained unchanged
+
 # M04 current handoff — R40 correction / Recovery V31 v2
 
 **12.11.2026 — CH→DE / M04 R40-Korrekturkandidat unter Recovery V31 v2.** Generation4 hat die enge Auswahlkorrektur geliefert; Root und unabhängige Reviewer haben die Quellen akzeptiert. **Neue CI-/Preview-/Release-Gates sind noch offen; keine Laufzeitverbesserung, Ready-/Merge-Freigabe oder öffentliche Einreiseantwort wird behauptet.**
