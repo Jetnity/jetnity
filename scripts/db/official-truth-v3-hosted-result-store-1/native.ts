@@ -1150,8 +1150,10 @@ async function resultRoleIdentity(creator:LocalPgConnection,owner:LocalPgConnect
       database_settings:'0',creator_usage:'false',creator_set:'false',memberships:null})
     const members=JSON.parse(row.memberships!) as Record<string,unknown>[];assert.equal(members.length,1)
     assert.deepEqual(Object.keys(members[0]!).sort(),['admin_option','grantor','inherit_option','member','oid','roleid','set_option'])
-    assert.deepEqual({...members[0],oid:null},{oid:null,roleid:Number(row.oid),member:Number(creatorOid),grantor:10,admin_option:true,inherit_option:false,set_option:false})
-    assert.ok(Number.isSafeInteger(members[0]!.oid))
+    assert.deepEqual({...members[0],oid:null},{oid:null,roleid:row.oid,member:creatorOid,grantor:'10',admin_option:true,inherit_option:false,set_option:false})
+    const membershipOid=members[0]!.oid
+    assert.ok(typeof membershipOid==='string' && /^[1-9][0-9]{0,9}$/.test(membershipOid)
+      && (membershipOid.length<10 || membershipOid<='4294967295'))
     await assert.rejects(creator.query('SET ROLE '+row.rolname),stateError('42501'))
   }
   if(original)assert.deepEqual(rows,original,'same four original role and automatic-edge identities')
