@@ -106,9 +106,9 @@
   "currentRootReceiptPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 93164,
-      "sha256": "ce39c46c59a296c93bfc53ce8a144c3305d0264b8a042d9a1ac0f64225085e98",
-      "blob": "4679d83c48ce0a419e01e186a77319760cf216cb"
+      "bytes": 100408,
+      "sha256": "877d191131174c95e8b188acc2e589725fe7a2d7ebdfafd6830e813f3293470c",
+      "blob": "d082553688f6ceb1a9d2fa4e7915f8695101a675"
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
@@ -225,15 +225,15 @@
     "noProjectParserCompilerOrCodeExecution": true,
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "bytes": 57095,
-      "sha256": "4cfd3d6473098bfbb58358d684727ebbc58f54dd0ed3a5ed9526e66829ac6753",
-      "blob": "a896dfde9c45f6688674e211f149068014a467e6"
+      "bytes": 57531,
+      "sha256": "8cd9bd37bb210ab513e8f81ff449e44c62005c266946e19993024db686ab4770",
+      "blob": "a59636599e21636f2a5f27b243a4b9297bfec04d"
     },
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "bytes": 93164,
-      "sha256": "ce39c46c59a296c93bfc53ce8a144c3305d0264b8a042d9a1ac0f64225085e98",
-      "blob": "4679d83c48ce0a419e01e186a77319760cf216cb"
+      "bytes": 100408,
+      "sha256": "877d191131174c95e8b188acc2e589725fe7a2d7ebdfafd6830e813f3293470c",
+      "blob": "d082553688f6ceb1a9d2fa4e7915f8695101a675"
     },
     "pins": [
       {
@@ -2339,26 +2339,37 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "STRICT_OID_FIX_AND_EXISTING_WIRE_TIMING",
+    "revision": "FAILURE_ONLY_C03_CATALOG_COMPONENT_MEASUREMENT",
     "parent": {
-      "commit": "c2ddea097b181162cb8df4f07986358750dad912",
-      "tree": "3b6463ad04b98596874291127e1a2cc365f7b68e"
+      "commit": "114811a6ba20b5d78d741c613cac35ea006248c2",
+      "tree": "4aeff6825f6c5200f11d7cd20165cfa6c764a6f0"
     },
-    "changedFiles": 5,
+    "changedFiles": 3,
     "originalLeafCount": 9545,
-    "unchangedLeaves": 9540,
+    "unchangedLeaves": 9542,
     "added": 0,
     "deleted": 0,
-    "hm04Change": "strict JSON OID string, same exact grantor and flags",
-    "composedPredicateUnchanged": true,
+    "originalSuccessPredicateUnchanged": true,
     "allSqlAnd66ConsumedPinsUnchanged": true,
-    "original31GroupsUnchanged": true,
+    "measurementOnly": {
+      "trigger": "existing C03 enqueue status is not confirmed",
+      "components": 14,
+      "expressionPins": "embedded exact source digests",
+      "role": "ot_v3_jobs_owner",
+      "transaction": "READ ONLY",
+      "maxTotalMs": 15000,
+      "ownedClusterOnly": true,
+      "deadlineStopsActualOwnedCluster": true,
+      "actualBackendAbsenceOrClusterStopJoined": true,
+      "output": "fixed component names and finite timing/JIT numbers only",
+      "guardAndJitSettingsUnchanged": true
+    },
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
   },
   "previousIntegrationReference": {
-    "parent": "c2ddea097b181162cb8df4f07986358750dad912",
-    "manifestBlob": "a2751e444ab84e93cd6522d6b23d37f185b09c3b"
+    "parent": "114811a6ba20b5d78d741c613cac35ea006248c2",
+    "manifestBlob": "301f680ad7b18ba7ef2f9e5f2254ba84a46eb3c4"
   }
 }

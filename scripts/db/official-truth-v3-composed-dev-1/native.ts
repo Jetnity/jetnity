@@ -680,6 +680,151 @@ async function wrapperIdentity(bootstrap: LocalPgConnection): Promise<PgRows> {
   }
   return all
 }
+// Failure-only measurement of the fourteen exact, already-pinned HM04 catalog
+// SELECT expressions. This never changes guards, catalog data, JIT or application
+// budgets. Its 15s window includes startup and actual owned backend disappearance.
+const C03_CATALOG_COMPONENT_PINS = [
+  {
+    "component": "jobs-functions",
+    "sha256": "89dd5fefe47a9884bd8a55b3b59fe981304441a67d773ca0cf540b3f8975f03e",
+    "bytes": 569
+  },
+  {
+    "component": "jobs-relations",
+    "sha256": "1adf44f61c95156c13b022e8aacc29a9d594b8e8f6da0b6e427af0f56a06aefa",
+    "bytes": 1874
+  },
+  {
+    "component": "jobs-types",
+    "sha256": "7df581650c5d6746705e7f9a532b3d2b8dc1a3d48387d91439d138b237a7794c",
+    "bytes": 365
+  },
+  {
+    "component": "jobs-schemas",
+    "sha256": "1ece741cca1dbe662e78d50ed0ff298545910e48d82c1001df35120e99856aca",
+    "bytes": 315
+  },
+  {
+    "component": "jobs-dependencies",
+    "sha256": "d733c4d06d5fdf0efdaf96c2efbc0aa27070cea4ef3526d1659a349f61273095",
+    "bytes": 2962
+  },
+  {
+    "component": "prerequisite-functions",
+    "sha256": "f378ff95c868b19e096b223cabb1a6ac4ed7fc84ed4dbb855a9d321c1e4c6bf1",
+    "bytes": 645
+  },
+  {
+    "component": "prerequisite-relations",
+    "sha256": "2e73b6bf750932e04361d789bf8f7db8d94985437baf9cc93fc1d6589d2e4d72",
+    "bytes": 1950
+  },
+  {
+    "component": "prerequisite-types",
+    "sha256": "2c34984dfdf6e9b0c9326a06b6615e6b943511886f284b658ac89abd66162310",
+    "bytes": 441
+  },
+  {
+    "component": "prerequisite-schemas",
+    "sha256": "9732bc8a02ef2a46b20847b9c6708324c460050ea36dcd45328a504a2a645397",
+    "bytes": 391
+  },
+  {
+    "component": "prerequisite-dependencies",
+    "sha256": "7002cc18724092f460368cc694f80fc8cf15b6a1c38b917c1315d1176b34d408",
+    "bytes": 3038
+  },
+  {
+    "component": "protected-roles",
+    "sha256": "e9e90add47c7d55ec7ab3ed595da16841b0ede2096dbab5ae2fee60b53a7419b",
+    "bytes": 838
+  },
+  {
+    "component": "creator-edges",
+    "sha256": "04f9237bd8d4dea322a0f02380c07424f171724b1463fb040c9fd9f91b47782a",
+    "bytes": 763
+  },
+  {
+    "component": "creator-defaults",
+    "sha256": "50fcf6733c38a6ccef0ed3381da2c3f9d53b49a1fd519e0408917c9759921452",
+    "bytes": 721
+  },
+  {
+    "component": "database",
+    "sha256": "a97fb6b34550ba9b9e2249295f7338907dfced08f5d5978bd971290f154fa865",
+    "bytes": 570
+  }
+] as const
+async function measureC03CatalogComponents(lifetime: OwnedTestLifetime,
+  common: { cluster: LocalProofCluster; observer: Connected }, files: ReadonlyMap<string, string>): Promise<void> {
+  const source = file(files, 'scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql')
+  const start = source.indexOf('CREATE FUNCTION official_v3_jobs_private.assert_catalog_v1()')
+  assert.ok(start >= 0)
+  const end = source.indexOf('\nEND $$;', start)
+  assert.ok(end > start)
+  const expressions = [...source.slice(start, end).matchAll(/  SELECT q\.value INTO actual_value FROM \(\n([\s\S]*?)\n  \) q;\n  SELECT fingerprint INTO bound_value FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='([^']+)';/g)]
+  assert.equal(expressions.length, C03_CATALOG_COMPONENT_PINS.length)
+  for (const [index, match] of expressions.entries()) {
+    const pin = C03_CATALOG_COMPONENT_PINS[index]!
+    assert.equal(match[2], pin.component)
+    assert.equal(Buffer.byteLength(match[1]!, 'utf8'), pin.bytes)
+    assert.equal(createHash('sha256').update(match[1]!).digest('hex'), pin.sha256)
+  }
+  const started = performance.now(), deadline = started + 15_000
+  let measurement: Connected | undefined, expired = false, closeRequested = false, absenceProved = false
+  const closeMeasurement = () => { if (measurement && !closeRequested) { closeRequested = true; measurement.connection.close() } }
+  const finiteNumber = (value: unknown) => typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null
+  // C03 has already failed. A real stop of this owned synthetic cluster bounds
+  // acquisition/SQL/rollback too; a timeout cannot leave a measurement actor alive.
+  const timer = setTimeout(() => { expired = true; lifetime.stopCluster(common.cluster) }, 15_000)
+  try {
+    measurement = await connect(lifetime, common.cluster)
+    await measurement.connection.query('BEGIN READ ONLY')
+    await measurement.connection.query('SET LOCAL ROLE ot_v3_jobs_owner')
+    assert.deepEqual(await measurement.connection.query("SELECT current_user::text AS role,current_setting('transaction_read_only') AS read_only"),
+      [{ role: 'ot_v3_jobs_owner', read_only: 'on' }])
+    for (const [index, match] of expressions.entries()) {
+      lifetime.check()
+      const remaining = Math.floor(deadline - performance.now())
+      assert.ok(!expired && remaining > 0 && remaining <= 15_000)
+      await measurement.connection.query("SET LOCAL statement_timeout='" + remaining + "ms'; SET LOCAL lock_timeout='1s'")
+      const componentStarted = performance.now()
+      const planValue = value(await measurement.connection.query('EXPLAIN (ANALYZE, FORMAT JSON, SUMMARY ON) ' + match[1]!), 'QUERY PLAN')
+      assert.ok(Array.isArray(planValue) && planValue.length === 1 && planValue[0] && typeof planValue[0] === 'object')
+      const plan = planValue[0] as Record<string, unknown>
+      const jit = plan.JIT && typeof plan.JIT === 'object' ? plan.JIT as Record<string, unknown> : {}
+      const timing = jit.Timing && typeof jit.Timing === 'object' ? jit.Timing as Record<string, unknown> : {}
+      console.error('COMPOSED_C03_CATALOG_COMPONENT_DIAG', JSON.stringify({
+        component: C03_CATALOG_COMPONENT_PINS[index]!.component,
+        wallMs: Math.ceil(performance.now() - componentStarted),
+        planningMs: finiteNumber(plan['Planning Time']), executionMs: finiteNumber(plan['Execution Time']),
+        jitFunctions: finiteNumber(jit.Functions), jitGenerationMs: finiteNumber(timing.Generation),
+        jitInliningMs: finiteNumber(timing.Inlining), jitOptimizationMs: finiteNumber(timing.Optimization),
+        jitEmissionMs: finiteNumber(timing.Emission), jitTotalMs: finiteNumber(timing.Total),
+      }))
+    }
+    await measurement.connection.query('ROLLBACK')
+    closeMeasurement()
+    await proveAbsent(lifetime, common.observer.connection, [measurement.identity])
+    absenceProved = true
+    assert.ok(!expired && performance.now() < deadline)
+    console.error('COMPOSED_C03_CATALOG_MEASUREMENT', JSON.stringify({ status: 'closed', components: expressions.length,
+      elapsedMs: Math.ceil(performance.now() - started) }))
+  } catch (error) {
+    // No plan trees, SQL, result rows, identities or error messages are emitted.
+    console.error('COMPOSED_C03_CATALOG_MEASUREMENT', JSON.stringify({ status: expired ? 'expired' : 'unavailable',
+      elapsedMs: Math.ceil(performance.now() - started),
+      code: error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code) ? error.code : null }))
+  } finally {
+    closeMeasurement()
+    if (measurement && !expired && !absenceProved) {
+      try { await proveAbsent(lifetime, common.observer.connection, [measurement.identity]) }
+      catch { lifetime.stopCluster(common.cluster) }
+    }
+    clearTimeout(timer)
+  }
+}
+
 async function makeCommon(lifetime: OwnedTestLifetime, cluster: LocalProofCluster, files: ReadonlyMap<string, string>) {
   const bootstrap = await connect(lifetime, cluster), observer = await connect(lifetime, cluster)
   const owner = bootstrap.connection
@@ -1123,6 +1268,7 @@ export async function runComposedDevNative(t: TestContext): Promise<void> {
           aborted: method.evidence.aborted, drained: method.evidence.drained,
           sqlCodes: method.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(0, 32) },
       }))
+      if (enqueued.status !== 'confirmed') await measureC03CatalogComponents(lifetime, u, files)
       assert.equal(enqueued.status, 'confirmed')
       const result = await lifetime.run(() => api.workOnce(input.claim(), lifetime.signal))
       await assertWorkerResult(u, input, result)
