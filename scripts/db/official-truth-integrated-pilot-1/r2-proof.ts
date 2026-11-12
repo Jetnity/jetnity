@@ -115,6 +115,13 @@ export async function runR2BackendProof(primary: LocalIntegratedPilotEnvelope): 
       assert.equal((await owner.query("SELECT count(*)::text AS n FROM pg_catalog.pg_locks WHERE pid=$1::integer AND locktype='advisory' AND granted", [pgText(pid, 23)]))[0]?.n, '0')
       assert.equal((await readVerifiedIntegratedBundleLocally(cluster, primary.bundle.recordFingerprint)).status, 'receipt_absent')
       const independent = await persistVerifiedIntegratedBundleLocally(cluster, oids, primary)
+      if (!independent.ok) console.error(JSON.stringify({
+        schema: 'jetnity.native.r2-independent-failure.v1',
+        scenario,
+        reason: independent.reason === 'commit_outcome_unknown' ? 'commit_outcome_unknown' : 'bundle_verification_rejected',
+        commitProtectionFailure: independent.reason === 'commit_outcome_unknown' ? independent.commitProtectionFailure ?? null : null,
+        operationDiagnostics: independent.reason === 'commit_outcome_unknown' ? independent.operationDiagnostics : [],
+      }))
       assert.ok(independent.ok); assert.equal(independent.outcome, 'inserted')
       checks.push(`r2_${scenario}_all_eight_tables_empty_lock_released_independent_writer_verified_readback`)
     } finally { for (const connection of connections) connection.close(); cluster.stop() }

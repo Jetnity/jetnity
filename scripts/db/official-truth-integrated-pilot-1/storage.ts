@@ -168,7 +168,7 @@ export async function persistVerifiedIntegratedBundleLocally(cluster:LocalProofC
   }catch(error){
     if(committing&&!committed){
       const protectionFailure=connection.operationDiagnostics.findLast(d=>d.phase==='commit')?.protectionFailure
-      return {ok:false as const,reason:'commit_outcome_unknown' as const,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
+      return {ok:false as const,reason:'commit_outcome_unknown' as const,operationDiagnostics:connection.operationDiagnostics,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
     }
     if(!committing){try{await connection.query('ROLLBACK')}catch{/* Closed connection cannot manufacture success. */}}
     throw error

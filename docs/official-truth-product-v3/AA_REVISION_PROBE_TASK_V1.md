@@ -306,3 +306,36 @@ Author must not execute project/parser/compiler/tests/build/SQL/network work, pu
 ## Persisted Root amendment A5
 
 https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6821817364
+
+
+## Technical Lead — AA A6 / preserve actual native-failure diagnostics
+
+**12 November 2026. CHANGES REQUIRED; diagnostic source amendment only.** Same original author/session **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**, `/root/aa_revision_probe_writer_g1`. Sole parent remains current Draft #1192 head **bb3b22d7ce6f60b2226e7d069287f99960de093f**. No new base/dependency integration is implicit.
+
+### Independently established failure
+
+[Root A5 failure receipt](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6822445249) binds run **43206762401 / #4123 / attempt 1**, verify **131143772437**, full log **4,237,330 bytes / SHA256 449fed066f4769e75545dfbe8eb20b1185c127cbdd26a1164c1be83cf866204d**. An independent read-only reviewer `/root/ch_de_ci_reconstruction` reproduced that identity and the prior A4 original log identity.
+
+Actual A5 checkout was synthetic merge **f23134d47b6525f658a9f58a5b1f4bfb32bfa6f9**, parents [dfd692440762b50183fdebbfd6bf8dabde4662d0, bb3b22d7ce6f60b2226e7d069287f99960de093f], tree exactly **e0da1e50dc5723f385a4e9b667932658bf261270**. Core: 8,730 tests / 8,726 pass / 2 fail / 2 existing skip. AA synthetic preflight passed; no actual AA observation record. **Run 0 / UNARMED.**
+
+R3 selected_escaping_and_500: Publish 5,282 ms succeeded; COMMIT 20,039 ms failed with57P01, no acknowledged commit, independent receipt_absent. The fixed unchanged20s backend guard explains the cutoff path, not why the workload reached it. A4 had Publish2,369ms / COMMIT10,392ms / verified_exact. No evidence establishes a runner defect.
+
+R2 `runR2BackendProof` at `assert.ok(independent.ok)` returned false. Root independently read full relevant R2 and storage source. `persistVerifiedIntegratedBundleLocally` can return false there either from strict preflight or from begun but unacknowledged COMMIT. A failure after acknowledged COMMIT throws instead. The actual scenario, return reason, protection failure and writer-operation diagnostics were not retained by the failing assertion.
+
+The controlled runtime captures complete loaded source files; AA's larger reader can therefore change native bundle input even when its positive entry is not called. Main→AA content differs; A4→A5 retains the exact same Reader. Neither zero influence nor proven timeout causation is established. Do not label these failures flakes or repaired.
+
+### Selected minimal diagnostic change
+
+Modify only these two additional existing source paths, plus the existing AA Task/Handoff:
+
+1. `scripts/db/official-truth-integrated-pilot-1/storage.ts`: in the **existing unacknowledged-COMMIT false-result branch only**, include an additive finite snapshot of this same connection's existing `operationDiagnostics` as `operationDiagnostics`. That getter already returns at most32 fixed records with phase/elapsed/outcome/finite code/optional ACK-dispatch-protection flags and expressly no SQL, parameters, identities, paths or raw database text. Preserve the existing ok:false, reason:'commit_outcome_unknown', optional commitProtectionFailure, all success/preflight results, error propagation, timing, guards, SQL, connection/query counts and finally cleanup. No new observer/callback/request/query or connection monkeypatch.
+2. `scripts/db/official-truth-integrated-pilot-1/r2-proof.ts`: immediately after the existing independent persistence attempt and before the unchanged success assertions, emit **one failure-only stderr JSON record** with schema `jetnity.native.r2-independent-failure.v1`, current literal scenario, reason category **commit_outcome_unknown** or **bundle_verification_rejected**, existing finite protection-failure flag or null, and the already-retained operations or an empty array. At most32 existing records; no dynamic SQL, bundle bytes, identities, arbitrary error message/stack or other data. No success fabrication, new publication/readback/retry, catch/ignore or altered assertion. The original failed outcome must still fail.
+3. Preserve all current six AA-scope implementation/policy/test bytes exactly except Task/Handoff history. **Policy remains byte exact Run0**, all13inventory pins unchanged. Do not alter the reader, positive selection, fixed source URL/limits, R3, SQL functions/triggers, shared Wire guard, budgets, workflows, fixtures or proof input.
+4. Append this full A6 with URL verbatim to Task and preserve complete prior Handoff as dated history. Record the actual unresolved A5 failure and this diagnostic-only intent, exact new storage/R2 pins and original inverse. This is not a functional fix or runtime acceptance. Whole final scope against main becomes **eight paths** (the existing six AA paths plus storage.ts/r2-proof.ts); first-parent changes exactly these two source paths and Task/Handoff.
+5. Deliver immutable sole-parent commit/tree, complete tree comparison, exact four changed-source/document pins and full bounded diff. Source-only authoring; no project/parser/compiler/test/native/SQL/CI/build/source-GET execution, branch/PR publication, Ready, merge, rearm or follow-on. Stop after delivery.
+
+Root will separately decide when to publish after independent source review and integration of the accepted Auth correction; no automatic retry of A5 is authorized by this task. Full fresh final-head gates remain required. Original #917/#1131 platform boundaries, actual Owner/AAL2 and source/custody/window gates are unchanged.
+
+## Persisted Root amendment A6
+
+https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6822711007

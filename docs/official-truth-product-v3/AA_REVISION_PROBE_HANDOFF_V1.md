@@ -1,3 +1,129 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A6
+
+## Current A6 state — 12 November 2026
+
+**Run 0 / UNARMED, byte-exact policy. Diagnostic source amendment only. A5 runtime failures remain unresolved. Independent review and fresh final-head gates are pending.**
+
+Authority is [Root TASK V1/A6](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6822711007), reread unchanged before verbatim embedding in Task. The sole parent is published Draft #1192 head `bb3b22d7ce6f60b2226e7d069287f99960de093f`, tree `e0da1e50dc5723f385a4e9b667932658bf261270`. The selected integration base is `dfd692440762b50183fdebbfd6bf8dabde4662d0`; the actual PR metadata read for this amendment still reports that base and the specified parent head.
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**.
+Same original actual session: **/root/aa_revision_probe_writer_g1**.
+This A6 amendment uses the same author/session, claims no resumed Cursor UI session and uses no subagent.
+
+This immutable candidate is not published by its author. It contains no Auth correction, base/dependency integration, positive selection or runtime acceptance. Root separately owns independent source review and any later integration/publication decision. Existing PR remains Draft/CHANGES REQUIRED; the new source is not Ready or merged.
+
+## Actual A5 failure evidence
+
+[Root A5 failure receipt](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6822445249) binds run **43206762401 / #4123 / attempt 1**, Repository verification job **131143772437**, to the parent A5 head.
+
+Root and independent read-only reviewer /root/ch_de_ci_reconstruction read the original log: **4,237,330 UTF-8 bytes**, SHA256 `449fed066f4769e75545dfbe8eb20b1185c127cbdd26a1164c1be83cf866204d`. Root records 8,730 core tests, 8,726 passed, two failed and two existing skips. The AA synthetic preflight passed, but no actual AA observation record occurred. The detailed original-log findings below are attributed to Root's receipt/A6 and independent reviewer; this author has not claimed to read that full log.
+
+The author independently read actual job metadata: Typecheck and Lint SUCCESS; Tests FAILURE; Admin protection, schema usage, unreachable-code, uncalled-export, unused-package and Production build SKIPPED. The five companion lanes succeeded; the separate Auth metadata lane and aggregator failed. No Auth log or Auth response was read or acted on.
+
+The author independently read synthetic checkout commit `f23134d47b6525f658a9f58a5b1f4bfb32bfa6f9`: parents are exactly [dfd692440762b50183fdebbfd6bf8dabde4662d0, bb3b22d7ce6f60b2226e7d069287f99960de093f], and its tree is exactly e0da1e50dc5723f385a4e9b667932658bf261270. The actual failed test source therefore matches the A5 candidate tree.
+
+### Unresolved native results
+
+R3 selected_escaping_and_500: Publish took **5,282 ms** and succeeded; COMMIT took **20,039 ms**, failed with **57P01**, had no acknowledged commit, and independent readback was **receipt_absent**. The existing unchanged 20-second backend guard explains the cutoff path, not why this workload reached it. Root's A4 comparison was Publish 2,369 ms / COMMIT 10,392 ms / verified_exact. No runner defect, flake classification, timing repair or safe retry is established.
+
+R2 stopped at the existing `assert.ok(independent.ok)` after an independent persistence attempt. The returned false result could originate from strict bundle preflight or the existing unacknowledged-COMMIT branch. Errors after an acknowledged COMMIT still throw. The old assertion did not retain the scenario, returned reason, protection failure or writer-operation diagnostics. A6 preserves those finite diagnostics without accepting the failed result.
+
+The controlled runtime captures complete loaded source files. The larger AA Reader can affect native bundle input even while the positive entry is not called. Main-to-AA source differs; A4-to-A5 Reader bytes are exact. Neither zero influence nor a proven timeout cause follows from that evidence. A6 does not edit fixtures, proof-input construction or supplied arguments; it does not resolve the influence/cause question.
+
+## Complete bounded source change
+
+### storage.ts
+
+Only the existing `committing && !committed` false-result branch gains the existing same-connection diagnostics snapshot:
+
+```diff
+-      return {ok:false as const,reason:'commit_outcome_unknown' as const,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
++      return {ok:false as const,reason:'commit_outcome_unknown' as const,operationDiagnostics:connection.operationDiagnostics,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
+```
+
+The existing getter returns an array snapshot via slice; the private recorder retains at most 32 frozen records. Those records contain phase, elapsedMs, outcome, finite code and optional ACK/dispatch/protection flags. The author read the full unchanged Wire source, Gitblob `c8bae7b92950a318e6555aaad930002c6726ca3e`, including its finite-code filter and retention limit. There is no SQL, parameter data, identity, socket path, raw database error or stack in this snapshot.
+
+The existing ok:false, reason, optional commitProtectionFailure, success/preflight returns, post-ACK throwing behavior, rollback, finally close and all query/connection/guard logic remain textually exact. The extra getter read is synchronous inside the already-existing failure branch; it starts no observer, callback, timer, connection or query and does not change a budget or cutoff.
+
+### r2-proof.ts
+
+Immediately after the existing independent persistence attempt, and before both unchanged success assertions, these seven lines are added:
+
+```ts
+      if (!independent.ok) console.error(JSON.stringify({
+        schema: 'jetnity.native.r2-independent-failure.v1',
+        scenario,
+        reason: independent.reason === 'commit_outcome_unknown' ? 'commit_outcome_unknown' : 'bundle_verification_rejected',
+        commitProtectionFailure: independent.reason === 'commit_outcome_unknown' ? independent.commitProtectionFailure ?? null : null,
+        operationDiagnostics: independent.reason === 'commit_outcome_unknown' ? independent.operationDiagnostics : [],
+      }))
+```
+
+The unchanged surrounding statements remain:
+
+```ts
+      const independent = await persistVerifiedIntegratedBundleLocally(cluster, oids, primary)
+      // The added failure-only block sits here.
+      assert.ok(independent.ok); assert.equal(independent.outcome, 'inserted')
+```
+
+The scenario is the existing literal union statement / lock_and_idle_transaction / commit. The reason is restricted to commit_outcome_unknown or bundle_verification_rejected. The existing finite protection flag is retained or null; a strict preflight refusal has an empty operations array. An unacknowledged-COMMIT result uses only its already-retained array, bounded by the unchanged Wire recorder to 32 records.
+
+The record uses one stderr JSON write only when independent.ok is false. The immediately following original assertion still fails, so this cannot fabricate success or continue to a later scenario after that failure. There is no success logging, raw exception, new publication/readback, retry, catch/ignore, monkeypatch, fixture or proof-input-construction change.
+
+## Exact inverse and preservation evidence
+
+Removing the single storage field addition restores the entire original storage source byte-for-byte. Removing the single seven-line R2 block restores the entire original R2 source byte-for-byte.
+
+| Original file | UTF-8 bytes restored | Original Gitblob | Original SHA256 |
+|---|---:|---|---|
+| storage.ts | 18102 | `109e8ac57029a03afa55219c8132e8bf004b2dee` | `a7a8bd6e65701e6482c8f7028ed1936df3cf02044adfb85e981f010b4d19f82f` |
+| r2-proof.ts | 10168 | `7f9f196d2a429debe11a48c41a859560ad2c2423` | `e55d76207674cb80e6430f8398e165655cd2c0438d22c684b2b2cf4f411562e1` |
+
+These inverse operations are source-string comparisons and independent metadata hashing. They are not execution of project code, its parser/compiler, tests or native proof.
+
+The existing AA Reader, policy, AA test and BP1 test remain byte-identical to the parent. Policy is exactly Gitblob `1630bdc14e40893fe9a1e398d8f5922c64aee849`, Run0, including all 13 unchanged inventory entries, base SHA, source URL/limits and selection/security boundaries. No new Reader consumer or export is added.
+
+R3, shared Wire/guards, deadlines, SQL functions/triggers, workflows, fixtures and all other parent files are unchanged. The source amendment preserves every existing assertion and every pre-existing failure/result decision apart from the explicitly additive diagnostic field and stderr record.
+
+The full **36,733-byte prior Task** is an exact prefix, followed by the full A6 comment verbatim and its URL. The full **51,363-byte prior Handoff** is preserved verbatim below as dated A5 history. Its previously pending/not-published statements are historical and do not override actual failed #4123.
+
+## Current eight-path manifest
+
+Seven non-Handoff blobs are fixed before writing this document. The Handoff's own hash and final commit/tree are supplied externally to avoid self-reference.
+
+| Path | UTF-8 bytes | Gitblob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 65490 | `2b14953968da35ca47b272fd67a1a912613b8e6d` | `a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 3874 | `1630bdc14e40893fe9a1e398d8f5922c64aee849` | `6bcb96a7091349d0e7cac7d6cac67bd18a49cbdad9dc89b1f1c04be8e8c6e667` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 45448 | `a3f35c4f1d400b8acaca38c82484f0b7093dee07` | `ca95ba6e164952a0046a4979e9d576e2473cc4b0e1780a9a68cb87c52209ba72` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 25526 | `7b027b49af72a3f16b230acfeff7434f9a71b64e` | `3804730801ec6713d75ee62d71a7e9c2e02a779469e59270d09a1e168b90884b` |
+| scripts/db/official-truth-integrated-pilot-1/storage.ts | 18155 | `3079ee3149dc4ac0f505e1d683cb1099baa2b5ca` | `5234193604d89a9cf0955aa847fb495d862ea6e779fb50597aeeda920757e920` |
+| scripts/db/official-truth-integrated-pilot-1/r2-proof.ts | 10693 | `e473bdf01ce26ec9f2f92d71cf0f25f4bda270c6` | `d2cc6c9d91574945d226607fb60eba95b80c49b2217b0a0521726fd71f5d674a` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 42267 | `cfbf5f02a0c4fd28de1241ecfb052f8e28bb996c` | `d37a492cabb993edabd1f0bb5545abb1dcb596e29eba8c1d76b3167eb5463801` |
+
+Exactly four first-parent paths change: storage.ts, r2-proof.ts, Task and Handoff. Against the selected dfd692 integration base, scope is exactly the existing six AA paths plus storage.ts/r2-proof.ts: eight paths total, four modified and four added. All 9,472 other base leaves remain identical in object, mode and type; all 9,476 other parent leaves remain identical.
+
+## Honest self-review, remaining gates and stop
+
+Author verification consists of complete relevant source reads, fixed-diff/inverse comparison, metadata byte hashing, immutable Git-object readback and full-tree preservation. The bounded field/record selection is supported by the existing Wire implementation and strict result union; no project/runtime assertion is claimed to have been run here.
+
+This is **diagnostic source only**, not a functional repair, reproduced runtime PASS, timeout diagnosis or acceptance of either native failure. The actual A5 result stays FAILURE. The A5 schema gate remained skipped despite its source-reviewed two-constructor fix. Earlier A4 passes and old exact-head Preview do not transfer to this changed candidate.
+
+Root must independently review this exact source/tree and separately decide when to integrate the accepted Auth correction and publish. No Auth/base integration is implicit in A6. The eventual final integration head requires fresh complete CI, native evidence/full permitted logs, exact Preview, current main/base and review-thread disposition. Ready, merge and actual-main/Production acceptance remain Root-only decisions.
+
+Run0 remains byte-exact. Historical selected #4120 is consumed. A6 authorizes neither another selected AA run nor a rerun/retry of A5; a later source request requires its separately persisted explicit Root selection and review. The original #917/#1131 platform boundaries, actual Owner/AAL2 and source/custody/window gates remain unchanged. No hosted installation, D1 activation, current revision, legal admission, pilot extension or public CH-DE release is claimed.
+
+A1's passive private Native-Harness boundary and R1's bounded AST-analysis limitation remain unchanged: arbitrary runtime-computed paths/names are not universally resolved by the source guard, and full exact-tree/diff/source review plus unchanged legacy pins remain separately necessary.
+
+**Author stops after immutable delivery.** No project/parser/compiler/test/native/SQL/CI/build or source-GET execution; no ref/PR publication, Ready, merge, positive rearm, subagents or automatic follow-on. Same actual session remains reachable only for an explicit further task. **Public CH-DE remains NOT LIVE.**
+
+## Historical A5 handoff — 12 November 2026 — preserved verbatim
+
+The following complete document belongs to published parent bb3b22d7ce6f60b2226e7d069287f99960de093f before actual failed CI #4123. It includes all earlier history. Current A6 failure evidence, diagnostic-only status and unchanged Run0 disposition above take precedence over its historical pending statements.
+
+---
+
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A5
 
 ## Current A5 state
