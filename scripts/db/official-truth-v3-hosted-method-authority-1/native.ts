@@ -688,7 +688,7 @@ export async function runHostedMethodAuthorityNative(t: TestContext): Promise<vo
         assert.deepEqual(await db.snapshot(), exact)
       }
       const originalTuple = functionDeclaration(original, 'official_v3_method_private.tuple_valid_v1').replace('CREATE FUNCTION','CREATE OR REPLACE FUNCTION')
-      const driftTuple = originalTuple.replace('AS $$', 'AS $$\n-- synthetic body drift\n')
+      const driftTuple = originalTuple.replace('AS $$', () => 'AS $$\n-- synthetic body drift\n')
       await db.installer.query(driftTuple)
       const drift = await db.snapshot()
       try {

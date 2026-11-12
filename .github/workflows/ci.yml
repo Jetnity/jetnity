@@ -50,8 +50,70 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # HMA1: this job's Core proofs require actual PostgreSQL17. The unchanged
-      # selector must choose the official files; companion jobs stay unchanged.
+      - name: Tests
+        run: npm run test:core
+
+      # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
+      # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
+      # prüfen – diese Kontrolle stellt sicher, dass keine ungeschützt bleibt.
+      - name: Schutz der Admin-API
+        run: npm run check:api-schutz
+
+      # Findet Zugriffe auf Tabellen und RPCs, die es im Schema nicht gibt.
+      # Liest nur types/supabase.ts und braucht deshalb keinen Datenbankzugang.
+      - name: Bezug auf das Schema
+        run: npm run check:schema-bezug
+
+      # Halten den Baum frei von Code und Paketen, die niemand mehr erreicht.
+      # Bewusste Ausnahmen sind in den Skripten mit Grund hinterlegt.
+      - name: Unerreichbarer Code
+        run: npm run check:dead
+
+      - name: Exporte ohne Aufrufer
+        run: npm run check:exports
+
+      - name: Ungenutzte Pakete
+        run: npm run check:deps
+
+      - name: Production build
+        run: npm run build
+
+  hosted_v3_native_pg17:
+    name: Hosted V3 — native PostgreSQL 17
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      # fetch-depth: 0 is required so the operating-mode guard can compute the
+      # exact PR-vs-base file list locally. GitHub's default shallow clone does
+      # not contain the base SHA, and the guard must not use network APIs,
+      # secrets, providers or paid services.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      # Bricht ab, wenn package-lock.json nicht zu package.json passt.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup check
+        run: npm run check:setup:ci
+
+      - name: Operating mode
+        env:
+          JETNITY_OPERATING_MODE_EVENT: ${{ github.event_name }}
+          JETNITY_OPERATING_MODE_REF: ${{ github.head_ref || github.ref_name }}
+          JETNITY_OPERATING_MODE_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run check:operating-mode
+
+      # Hosted V3 proofs require actual PostgreSQL17 in this isolated job.
+      # Core retains its mandatory PG16 proofs and the unchanged selector.
       - name: Provision mandatory PostgreSQL 17 from signed official packages
         shell: bash
         run: |
@@ -213,33 +275,8 @@ jobs:
           console.log('HMA1_POSTGRES17_PROVISION_RECEIPT ' + JSON.stringify(receipt))
           HMA_NODE
 
-      - name: Tests
-        run: npm run test:core
-
-      # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
-      # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
-      # prüfen – diese Kontrolle stellt sicher, dass keine ungeschützt bleibt.
-      - name: Schutz der Admin-API
-        run: npm run check:api-schutz
-
-      # Findet Zugriffe auf Tabellen und RPCs, die es im Schema nicht gibt.
-      # Liest nur types/supabase.ts und braucht deshalb keinen Datenbankzugang.
-      - name: Bezug auf das Schema
-        run: npm run check:schema-bezug
-
-      # Halten den Baum frei von Code und Paketen, die niemand mehr erreicht.
-      # Bewusste Ausnahmen sind in den Skripten mit Grund hinterlegt.
-      - name: Unerreichbarer Code
-        run: npm run check:dead
-
-      - name: Exporte ohne Aufrufer
-        run: npm run check:exports
-
-      - name: Ungenutzte Pakete
-        run: npm run check:deps
-
-      - name: Production build
-        run: npm run build
+      - name: Hosted V3 native proofs
+        run: npm run test:hosted-v3-native
 
   persisted_native:
     name: Persisted canonical read — native
@@ -411,24 +448,25 @@ jobs:
     name: Typecheck, Lint & Build
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    needs: [verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui]
+    needs: [verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui, hosted_v3_native_pg17]
     if: ${{ always() }}
 
     steps:
-      - name: Require all five verification job families to succeed
+      - name: Require all six verification job families to succeed
         env:
           CORE_RESULT: ${{ needs.verify.result }}
           PERSISTED_NATIVE_RESULT: ${{ needs.persisted_native.result }}
           REFRESH_NATIVE_RESULT: ${{ needs.refresh_native.result }}
           ACCEPTED_STORE_NATIVE_RESULT: ${{ needs.accepted_store_native.result }}
           OFFICIAL_TRUTH_V3_UI_RESULT: ${{ needs.official_truth_v3_ui.result }}
+          HOSTED_V3_NATIVE_PG17_RESULT: ${{ needs.hosted_v3_native_pg17.result }}
         run: |
-          printf 'Core result: %.32s\nPersisted native result: %.32s\nRefresh native result: %.32s\nAccepted store native result: %.32s\nOfficial truth V3 UI result: %.32s\n' "$CORE_RESULT" "$PERSISTED_NATIVE_RESULT" "$REFRESH_NATIVE_RESULT" "$ACCEPTED_STORE_NATIVE_RESULT" "$OFFICIAL_TRUTH_V3_UI_RESULT"
-          if [ "$CORE_RESULT" != "success" ] || [ "$PERSISTED_NATIVE_RESULT" != "success" ] || [ "$REFRESH_NATIVE_RESULT" != "success" ] || [ "$ACCEPTED_STORE_NATIVE_RESULT" != "success" ] || [ "$OFFICIAL_TRUTH_V3_UI_RESULT" != "success" ]; then
-            printf '%s\n' 'All five verification job families must succeed.'
+          printf 'Core result: %.32s\nPersisted native result: %.32s\nRefresh native result: %.32s\nAccepted store native result: %.32s\nOfficial truth V3 UI result: %.32s\nHosted V3 native PG17 result: %.32s\n' "$CORE_RESULT" "$PERSISTED_NATIVE_RESULT" "$REFRESH_NATIVE_RESULT" "$ACCEPTED_STORE_NATIVE_RESULT" "$OFFICIAL_TRUTH_V3_UI_RESULT" "$HOSTED_V3_NATIVE_PG17_RESULT"
+          if [ "$CORE_RESULT" != "success" ] || [ "$PERSISTED_NATIVE_RESULT" != "success" ] || [ "$REFRESH_NATIVE_RESULT" != "success" ] || [ "$ACCEPTED_STORE_NATIVE_RESULT" != "success" ] || [ "$OFFICIAL_TRUTH_V3_UI_RESULT" != "success" ] || [ "$HOSTED_V3_NATIVE_PG17_RESULT" != "success" ]; then
+            printf '%s\n' 'All six verification job families must succeed.'
             exit 1
           fi
-          printf '%s\n' 'All five verification job families succeeded.'
+          printf '%s\n' 'All six verification job families succeeded.'
 
   # Die Auth-Konfiguration liegt nicht in der Datenbank, sondern beim
   # Auth-Server des Branches. Sie kann sich also ohne Commit ändern – ein Klick

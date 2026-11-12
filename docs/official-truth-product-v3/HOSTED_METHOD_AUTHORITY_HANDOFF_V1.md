@@ -1,3 +1,74 @@
+# HMA1 R5-B — source correction delivered for independent Root review
+
+12 November 2026. **SOURCE_ONLY / NOT_RUN_FOR_R5_B / STOP.** Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, actual session `/root/hosted_method_authority_writer_g1`; no Cursor claim and no author replacement. Root alone decides acceptance, publication, Ready and merge.
+
+## Current immutable basis and scope
+
+Sole parent **20dea8b7965a430fa1dff0bfd9c426661e5575f6**, tree **76be1bc78228cc13aecfd3cb3ce2f2c268851f29**. No additional parent or main/PG1/Auth integration. Current candidate has exactly twelve changed paths relative to this parent: nine modifications and three new files, no deletion. Parent has 9,491 leaves; candidate has 9,494, with all 9,482 unmodified parent leaves retaining path/type/mode/blob. Final commit/tree and manifest self-pin belong to the external immutable delivery, not a circular embedded hash.
+
+[R5-A](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661) is read-only diagnosis; [R5-B](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081) explicitly selects this finite implementation. Complete prior Handoff history follows this current section, and both full persisted task texts follow that history verbatim.
+
+## Actual failed predecessor — not transferred as a new-head PASS
+
+Run **43215288173 / #4128 / attempt1**, Core job **131172859563**: https://github.com/Jetnity/jetnity/actions/runs/43215288173/job/131172859563 . The author read the original complete Core log and independently matched **4,296,323 UTF8 bytes / SHA256 0f64803235e1741c97bd4051657caa262df1ab4749048c065066bb7a7abbd905** to Root's retained evidence. Core reported **8,731 tests, 8,723 pass, six failures, two existing skips**. Typecheck, Lint and official signed PG17 provisioning/import succeeded. The five existing companion jobs succeeded; aggregate failed, later hygiene/build were skipped, and Auth had the separately identified old classification failure.
+
+All six failures remain recorded:
+
+1. workspace-refusal / accepted-read-proof: `native_postgresql16_required` after the newly installed PG17 won the unchanged selector.
+2. current-version lookup: expected PostgreSQL16 but observed `postgres (PostgreSQL) 17.11 (Ubuntu 17.11-1.pgdg24.04+2)`.
+3. original-custody M1–M4: the same explicit PG16 mismatch.
+4. protected C1/MI1/R28 source guard: CI length **22398 !== 12325**.
+5. HMA1-04 unused recovery: `local_pg_42601`, 113.245981ms, before later proof phases.
+6. HMA1 parent: required group 04 completion assertion `false !== true`.
+
+Actual HMA1 groups 01–03 passed, including unchanged installation through real non-superuser LOGIN postgres on actual version 170011. Receipt: 310/310 settled operations, 7/7 closed connections, one stopped owned cluster, zero pending; `cleanupWitnesses=[]`, `lateWriterRecovery=null`. Group 04 did not complete and all later groups remain unproved. These real bounded fixture results are not complete package acceptance or hosted evidence.
+
+## Finite source corrections
+
+Native correction is only six inserted bytes: the driftTuple replacement string becomes a callback. ECMAScript replacement templates interpret `$$` as `$`; the callback retains the SQL opening `$$` delimiter. The original declaration, restoration query, P7802 expectation, every assertion, native group and budget are unchanged. Removing only `() => ` reconstructs the previous native blob exactly. The wrapper changes only its discovery comment; import, name and 240000ms option are exact.
+
+The selector uses Node22's built-in `globSync` on precisely the original three families, validates regular relative paths without symlink components, requires the five existing Script tests, sorts deterministically and partitions by an explicit list containing only HMA1. At the parent, original discovery is625 lib + 1 operating-mode + 4 Dev-reference = 630 files. The split is629 existing Core files and one existing PG17 wrapper. The additional selector contract is required exactly once in Core. Dynamic discovery continues to include later unrelated tests; there is no broad Hosted exclusion, optional absence, filter, skip, connection override or shared binary-selector change. Invalid/missing/duplicate paths and unknown/extra modes fail. Node runs via an argument array with unchanged imports, inherited Core concurrency and explicit hosted concurrency 1. Signals/errors/missing exit statuses cannot report success; importing the selector does not start it recursively.
+
+Seven authored selector-contract groups cover actual complete union/disjointness/once-only assignment; all five Script and four PG16/PG1 test paths; dynamic inert discovery fixtures; missing/duplicate/invalid/unauthorized membership; unknown/extra modes; exact Node arguments; child failure status and package reachability. These contract tests were authored, not executed here.
+
+Package changes only the required scripts: Core selector, new `test:hosted-v3-native`, and that command exactly once after all prior `test` aggregate commands. Both PostgreSQL-version-bound groups require separate environments. `npm test` is not claimed to pass on an unsuitable single machine; its version assertions remain mandatory and fail closed. Dependencies and package-lock are unchanged.
+
+The entire official signed PG17 provisioning step and its shell/Node run body are byte-exact, moved from verify into mandatory `hosted_v3_native_pg17`. New job uses ubuntu-24.04, 30 minutes, checkout depth 0, Node 22.x/npm cache, npm ci, setup, the exact original operating guard and the Hosted command. Core no longer installs17; every existing job budget remains unchanged. An unexpectedly different preferred PostgreSQL image version fails the old assertions; no binary is hidden, removed, repointed or bypassed. No source fallback, retry, insecure package source, optional job or continue-on-error is added.
+
+The aggregate retains `Typecheck, Lint & Build`, always() and two-minute limit. Exactly six families must report success; failure/cancelled/skipped/empty/missing is rejected. The UI CI contract gains the sixth family, empty/missing negative fixtures and mandatory isolated-job checks while preserving all prior UI/browser/artifact invariants. Existing Visitor duplication outside the split is unchanged and is not claimed eliminated.
+
+Protected identities follow explicit chains **C1→R28→HMA1 for CI** and **C1→MI1→HMA1 for package**. The new amendment lists exactly these two sorted paths and binds prior manifest identities, full prior reviewed pins and new final file identities. The failed R4 workflow remains failed-candidate history. All three historical manifests and MI1 lockfile stay byte exact; the guard retains 40 C1 rows, 2 MI1 rows, 1 R28 row, and 3 distinct historically amended paths, all old hash/UTF8/length/uniqueness assertions and adds exactly two checked successors with a fixed amendment digest.
+
+## Current code and amendment pins
+
+| Path | UTF8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| .github/workflows/ci.yml | 23906 | a422a67d3a0407f4c1301d3bcff75f736d7ea9b4 | 371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba |
+| docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json | 4169 | 623df1665b55be485b7a8fb5ba1c587dc3247dab | 200d64253d3d57db7b973bdddde63350a8a0fd46ba9ff36a7b20802fa7b63973 |
+| lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts | 10779 | 0a11b2b2e2bd1df3bac812b9a1319b64435c0ca2 | 9ff3682f909665354616b9b0636b6f12d2c17f98a2e67af6a6637b2acae12cdc |
+| lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts | 343 | 98252252911d0aaa54484ce0d5cb48efde7be67d | 3d361e5e8f52aed6c8f748dbe92fe0d1bbe60735160169d4f955d27179fce24c |
+| package.json | 6460 | 2a8d677d575b5762a5dd7091d161ea0da6edcea9 | 46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0 |
+| scripts/db/official-truth-v3-hosted-method-authority-1/native.ts | 62251 | 35442ef5d863a8a1bdbeb812e4aa2c1596d2b898 | b8370649fb278c9c5a7f60bccd2f866ef972c642facc2683babdd6e1dcbfb19e |
+| scripts/official-truth-product-v3-ui/ci-contract.test.mjs | 7754 | bc31a87dd7017e89a720c0218319cad5c00beb67 | b0520e3b768affee12aa65f628a8da962a19d19f5866f93815b4671a07fa1902 |
+| scripts/official-truth-v3-test-selection.mjs | 5970 | 51a2a59e03104f83f3d392f0ffb79639274c1ae9 | 647e5b113666f0e77253ce8a823942e480b853d0c95ac545e67d4074ea5b7e61 |
+| scripts/official-truth-v3-test-selection.test.mjs | 7360 | bbc10fc9621e31c5af74421891608d3cdf27238d | edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730 |
+
+Task/Handoff and full Manifest pins are recorded in the final manifest/external delivery without self-reference. Full previous Task blob d06522483502e05e51b5e5fcda0c609c0ae7b100 and Handoff blob 6dcc8691844b45996bc841a45f39b2a922f3bdc1 are retained verbatim. Previous raw Manifest blob 35bd4f3cbc781d1b54d563a518eb5b841de93704 remains historical evidence; original MA1 inverse/function/body pins and all earlier amendment records are preserved.
+
+## Preserved boundaries, risks and required next gates
+
+Installer 9c17260c202e430e4c779e47fee0a62c047c4d87, recovery 477c646b4c886f4532d1f938cdf9ce2ba95711a9 and recovery document 66d6352d5f4ed9382ab37be5122a3835dd00e7d9 remain exact. All seven inherited PG1 R3 files, shared native infrastructure, original authority/history semantics, locks/Owner requirements and 180s effect / 35s owned drain / 240s wrapper limits remain exact.
+
+The three P1 findings **HMA1-CI-03**, **HMA1-PINS-01**, **HMA1-NATIVE-03** remain open until independent new-head acceptance and actual gates. No new concrete P0 is established by this source work. Remaining P1 evidence: full PG17 HMA1 all groups / late writer / drain, PG16 Core, all six families, Auth, hygiene/build/Preview and final accepted-base binding. Native compatibility and fixed budgets remain unproved at this head; no timeout widening or coverage removal is selected. Source-only author checks are not independent TL PASS.
+
+At R5-B selection Root reported accepted main ee6801e99e86144e60dbe86d72576f9ad7c3e9bb after #4129 attempt2 and exact Production readback, receipt https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6824208724 ; PG1 R4 #4130 and AA A7 #4131 were running. This is attributed dispatch context, not this author's independent live validation or permission to integrate. Current parent remains 20dea exactly. No old-head gate transfers.
+
+HS1/HM04 are not integrated or prelisted. Root must select each later exact wrapper and preserve its own budgets. HS1's source-reviewed 4278696db179cd1b1d056bb64237e3bfff12ef8a is still a separate package; no actual runtime or hosted success follows from this prerequisite. #917/#1131 STOPs remain intact. No actual source revision, signed Owner method request, pilot-window extension, Dev install, public answer, cache/update queue or scheduler activation is accomplished by R5-B.
+
+**Author STOP.** Only source reads/composition/hash/tree comparison and immutable Git object write/readback were performed. Parser/compiler/project/native/SQL/APT/test/build/CI/hosted/official-source-GET execution: **NOT_RUN_FOR_R5_B**. No refs, PR update, Ready, merge or follow-on. Root independently reviews, explicitly binds accepted main/PG1, then selects publication and complete new-head gates.
+
+## Complete preserved Handoff history through R4
+
 # Hosted Method Authority 1 — current R4 review-fix handoff
 
 **12 November 2026. CHANGES REQUIRED successor / SOURCE CANDIDATE / R4 ALL EXECUTION NOT_RUN / STOP.**
@@ -423,3 +494,112 @@ P3 residual: candidate package comments remain identifying metadata and are not 
 AA selected4120 failed before Tests; A4 is RUN0/UNARMED in the task's evidence. This author does not rearm/call AA. No current source revision, pilot validity, public cache/refresh, D1 operational signed approval, scheduler or production enablement is accomplished by these files. **Hosted install unproven; signed Owner request absent; public CH→DE launch false.**
 
 The author stops after immutable delivery. Only Root chooses any correction, publication, existing CI, acceptance or follow-on.
+
+
+---
+
+## Amendment R5-A — complete persisted diagnosis task
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661
+
+## Technical Lead — HMA1 CHANGES REQUIRED / R5-A bounded diagnosis and correction plan
+
+**12 November 2026.** Same original author **Jetnity Official Truth V3 Hosted Method Authority 1 — Codex Generation1**, /root/hosted_method_authority_writer_g1. Current Draft #1195 head **20dea8b7965a430fa1dff0bfd9c426661e5575f6**, tree76be1bc78228cc13aecfd3cb3ce2f2c268851f29. R4 source PASS is superseded for acceptance by actual failing CI; no Ready/merge/install acceptance.
+
+### Actual exact-head #4128 evidence
+
+Run **43215288173/#4128/attempt1**, Core**131172859563**, original full**4,296,323UTF8B / SHA2560f64803235e1741c97bd4051657caa262df1ab4749048c065066bb7a7abbd905**. Type/Lint and signed PG17 setup/import succeeded. Core8731tests/8723pass/6fail/2skip. All five companions succeeded; Auth failed on the older unintegrated classification, aggregate failed. Build/later checks were skipped.
+
+Distinct actual failures:
+1. **HMA1-CI-03/P1:** adding PG17 to the Core runner changed unchanged findLocalPgBins selection to /usr/lib/postgresql/17/bin. Three existing deliberately PG16-bound proofs fail: workspace-refusal/accepted-read-proof throws native_postgresql16_required; current-version-lookup and original-custody assert PG16 but observe **17.11**. Do not loosen/remove their PG16 assertions or shared selector guards.
+2. **HMA1-PINS-01/P1:** global-conditions/pilot-context.test.ts line129 rejects changed protected .github/workflows/ci.yml:22398 versus original12325 bytes. Preserve historic C1/R28 source identity and add an explicitly reviewed exact amendment, not blanket re-pinning or weakening.
+3. **HMA1-NATIVE-03/P1:** group04 fails local_pg_42601, followed by its correctly failed completion assertion. Actual HMA1 receipt version170011; groups01–03 PASS including exact artifact installation through actual non-superuser LOGIN postgres. Main cleanup310/310operations,7/7connections,1cluster,0pending. Group04 failed after113ms; late-writer entry null and cleanup-witnesses empty. No later groups or recovery success is proved. Locate the exact invalid statement; do not guess from generic SQLSTATE.
+
+Root independently read the full failure log, all affected stack traces, the unchanged selector roots (17 before16), new CI source, group04 and protected-pin test. The current first three HMA1 native passes are real bounded fixture evidence, not complete package acceptance.
+
+### R5-A scope: diagnosis/design only
+
+Read the actual immutable current sources and necessary existing test selection, workflow-contract and protected-pin documents. Return a concrete finite correction plan before authoring any new Git object:
+- Keep current Core and old PG16 proofs on their existing required version, with **no changed historical assertions, optional skips, fallback selector or environment override bypass**. Propose a separate mandatory PG17 companion job for hosted V3 proofs; existing Core selection must partition exactly so every required test still executes once, and aggregate must fail if the new job fails or is absent/skipped. Identify every required source/workflow/test-selector/contract/pin/document path. Preserve signed official PG17 provision checks and all fixed budgets; no new hidden optional verification.
+- Explain how the protected CI identity can retain historic source and allow only this explicit reviewed successor, following existing amendment conventions. List exact source pins and required related test updates.
+- Independently isolate group04's42601 by source/primary-document review. If exact localization cannot be proved without a new run, propose only bounded nonsecret phase diagnostics while retaining failure; no fabricated root cause or weakened assertion.
+- No Auth/PG1-main integration is implicit. Fresh actual main ee6801e99e86144e60dbe86d72576f9ad7c3e9bb is merged/Production READY, but post-merge #4129 has a separate Chrome --version availability failure under investigation; its publication HOLD remains. Later integration requires explicit binding.
+- Account for already-source-reviewed HS1/HM04 future PG17 prerequisites without silently implementing or accepting them.
+
+**Read-only/source reasoning only in R5-A:** no edits/Git object creation, project/parser/compiler/SQL/native/APT/test/build/CI/hosted/GET execution, refs/PR/Ready/merge. No subagent implementation or automatic follow-on. Root will independently review your finite plan and issue R5-B with selected exact paths/changes before implementation. Same session must then execute the selected fix and full new-head re-gating. #917/#1131 boundaries unchanged. STOP after the diagnosis/plan.
+
+---
+
+## Amendment R5-B — complete persisted selected implementation task
+
+Source: https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6824317081
+
+## Technical Lead — HMA1 review-fix R5-B / selected implementation
+
+**12 November 2026. Root explicitly selects this finite R5-B after independent R5-A review.** Continue with **Jetnity Official Truth V3 Hosted Method Authority1 — Codex Generation1**, original reachable session **/root/hosted_method_authority_writer_g1**. No replacement/session exception needed.
+
+### Basis, independent findings and exact source-only parent
+
+Current Draft #1195 **20dea8b7965a430fa1dff0bfd9c426661e5575f6**, tree **76be1bc78228cc13aecfd3cb3ce2f2c268851f29**. Prepare one immutable successor with this **sole parent**; no main/PG1/Auth integration in R5-B. Root will explicitly bind accepted integration before executable publication.
+
+Preserve the full actual failed #4128/43215288173 evidence and [R5-A6823880661](https://github.com/Jetnity/jetnity/pull/1195#issuecomment-6823880661). All three P1 findings remain open until new actual gates, not merely source edits.
+
+Root independently read the native failing group, shared selector, full current workflow, package scripts, existing UI/Protected-source contracts and MI1/R28 amendments. Full tree independently yields625lib+1operating-mode+4Dev-reference = **630 existing Core test files**. Only the exact HMA1 wrapper needs PG17 now. Root also reproduced the isolated JavaScript replacement semantics using an inert string and independently read [ECMAScript replace/GetSubstitution](https://tc39.es/ecma262/multipage/text-processing.html#sec-getsubstitution) and [PG17 dollar quoting](https://www.postgresql.org/docs/17/sql-syntax-lexical.html#SQL-SYNTAX-DOLLAR-QUOTING). No project or SQL was executed.
+
+### 1. Native correction: exactly one line
+
+In scripts/db/official-truth-v3-hosted-method-authority-1/native.ts replace only the second argument of the driftTuple replacement with a callback:
+
+```ts
+const driftTuple = originalTuple.replace('AS $$', () => 'AS $$\n-- synthetic body drift\n')
+```
+
+The replacement string currently contracts $$ to $, producing invalid opening SQL dollar quoting; the callback preserves the intended delimiter. Keep every other native byte unchanged, including original/restoration statement, P7802 expectation, snapshots, all groups, clients/ownership/cleanup and **180s effect /35s drain /240s wrapper** limits. Source identifies a concrete invalid query; actual successful execution remains unproved. No extra phase diagnostics or unrelated SQL alteration selected.
+
+In lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts change only the obsolete Core-discovery comment to accurately state mandatory PG17-job discovery. Import/test/name/240000ms option unchanged.
+
+### 2. Closed complete Core/PG17 partition
+
+Add exactly:
+- scripts/official-truth-v3-test-selection.mjs
+- scripts/official-truth-v3-test-selection.test.mjs
+
+Modes are exactly **core** and **hosted-pg17**. Discover the original three families (lib/**/*.test.ts, exact scripts/operating-mode-guard.test.mjs, scripts/dev-reference-local-pg-prep-1/*.test.ts) deterministically and completely. The explicit PG17 list contains **only lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts**. Require it to exist in the discovered universe. Core is the exact complement; no broad hosted-name exclusion, optional absence, skipped wrapper, test-name filter or hidden future membership.
+
+Reject duplicate/invalid/missing paths and unknown mode/extra arguments; reject omissions or overlaps. Keep every original file exactly once across this split. At this parent:629existingCore+1existingPG17. Add the new selector contract exactly once to Core as an additional required file. Preserve all five existing Script test paths, PG1 and the three explicitly PG16-bound old proofs.
+
+Spawn Node with an argument array and unchanged server-only register/tsx/test imports, no shell command interpolation. Core retains existing concurrency. PG17 may use --test-concurrency=1; native internal concurrency unchanged. Signal/error/null child exit cannot report success. No connection/toolchain/environment override or shared selector modification.
+
+Meaningful contract cases must cover whole union/intersection/once-only assignment, missing/duplicate hosted entries, unknown modes, exact preserved five Script tests, actual package route and the contract's own required route. Importing the selector for its contract must not start the runner recursively. Keep dynamic discovery complete when unrelated test files are added; the finite PG17 allowlist only changes under a later explicit task.
+
+In package.json change only required test scripts: test:core uses core selector; add **test:hosted-v3-native** for hosted-pg17; existing test aggregate invokes new command exactly once in addition to all previous mandatory groups. No dependency/lockfile change. Document that both PostgreSQL-version-bound groups require separate environments; do not claim npm test succeeds on an unsuitable single host or weaken version assertions to make it do so.
+
+### 3. Mandatory isolated PG17 family
+
+In .github/workflows/ci.yml move the entire existing reviewed signed official PG17 provision step from verify to new **hosted_v3_native_pg17**. Preserve its complete shell/Node run-body bytes, signing/TLS/origin/version/dpkg/file-realpath checks, isolated apt source state, no-system-cluster/service suppression and restoration, unchanged findLocalPgBins check. Only location and explanatory outer comment change. Do not remove/hide installed binaries, repoint the selector, add insecure sources/retry/fallback or modify existing job limits.
+
+New job: ubuntu-24.04, timeout30min, checkout fetch-depth0, Node22.x/npmcache, npm ci, setup and exact existing operating-mode event/ref/base/head guard, provision step, **npm run test:hosted-v3-native**. No optional conditions or continue-on-error. Core no longer installs17 and retains the old mandatory16 assertions; an unexpected runner image fails closed.
+
+Required aggregate keeps name **Typecheck, Lint & Build**, always() and timeout2min. Its exact needs become [verify,persisted_native,refresh_native,accepted_store_native,official_truth_v3_ui,hosted_v3_native_pg17]. Add corresponding HOSTED_V3_NATIVE_PG17_RESULT bound to needs.hosted_v3_native_pg17.result. All six must equal success; failure/cancelled/skipped/empty/missing must fail.
+
+Update scripts/official-truth-product-v3-ui/ci-contract.test.mjs only for the exact six-family aggregate/new mandatory job contract and empty/missing result negatives. Preserve every existing UI/browser/artifact invariant. Assert new job's mandatory existence, setup/guard/command and no continue-on-error. Existing visitor duplication outside the original Core partition is unchanged, not falsely claimed eliminated.
+
+### 4. Explicit chained two-path protected-source amendment
+
+Add docs/official-truth-product-v3/HMA1_PG17_PROTECTED_SOURCE_AMENDMENT_V1.json. Exactly sorted paths **[.github/workflows/ci.yml,package.json]**. Pin original C1 identities, exact accepted prior identities and final bytes/blob/SHA256/mode; include this R5-B URL and explicit finite reason. Current failed22398B R4 workflow belongs only to failed-candidate history.
+
+Accepted predecessor for CI is preserved R28 reviewed12325B/SHA3889e092f9cf4ce4b917a786a3267bf9bb510b727d5c76db7cabf6b08f9e6d18/blob22f6e50aaff600749814bf7e77e24c728b1cd5d5. Package predecessor is preserved MI1 reviewed6467B/SHA5ce795c22de79e205f6528e8ae3329d4a7863e11178e0b3fe32a1425e54af4df/blob3e8a2b7a40007af29320919401369f17ee53672a.
+
+Update lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts: preserve all existing historical digest/path/unique/UTF8/length/SHA checks, 40C1rows,2MI1rows,1R28row,3distincthistoricallyamendedpaths. Pin new amendment's own fixed digest; exact2paths; predecessor equality to appropriate MI1/R28 reviewed entry; count exactly2successoroverlays; compare current actual bytes only to fixed reviewed final identities. No runtime-derived expectedpin, omittedrow/wildcard/automaticrepin. package-lock retains existing MI1 identity exactly.
+
+Keep C1_PROTECTED_SOURCES_V1.json, MI1_PROTECTED_SOURCE_AMENDMENT_V1.json and M04_R28_PROTECTED_SOURCE_AMENDMENT_V1.json byte/mode/type exact.
+
+### 5. Complete allowed path set and delivery
+
+Exactly12authoredpaths: the9code/contract/amendment paths named above plus existing HOSTED_METHOD_AUTHORITY_TASK_V1.md, HOSTED_METHOD_AUTHORITY_HANDOFF_V1.md, HOSTED_METHOD_AUTHORITY_MANIFEST_V1.json. These are **9existing modifications+3new files** relative to sole parent; every other parent leaf unchanged. No deletion.
+
+Retain full prior Task/Handoff history, append complete R5-A and R5-B with persisted URLs verbatim. Put current failure/source-only/gate truth at front. Manifest binds complete changed paths/newpins, preserved originals/three historical amendments/package-lock/PG1, exact630-file partition plus newcontract, native one-line inverse and provision-body movement equality. No circular final-commit/tree/manifest selfpin; externaldeliveryrecords those.
+
+Installer SQL, recovery SQL/document, all7PG1files, Auth and common native infrastructure remain exact. HS1/HM04 are not integrated or silently prelisted; their exact wrappers require later selected additions and their own fixed budgets. Current main ee6801 is now accepted at [6824208724](https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6824208724), PG1R4#4130 andAAA7#4131running; none changes R5-B's soleparent/sourceboundary.
+
+Only source reads, pure in-memory composition/hash/tree comparison and immutable Git object write/readback are permitted. **No project/parser/compiler/native/SQL/APT/test/build/CI/hosted/source-GET execution; no ref/PR/Ready/merge.** Return immutable commit/tree/parent, full source and byte/blob/SHA256/tree proofs; STOP. Root reviews independently, selects accepted-main integration, publishes, and requires fresh PG16Core/fullPG17HMA(allgroups/latewriter/drain)/sixfamilies/Auth/build/Preview/threads. No oldheadgate transfer. Original #917/#1131 STOPs intact.

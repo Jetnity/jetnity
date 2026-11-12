@@ -10,15 +10,17 @@ import { selectU1SystemBrowser } from './browser.mjs'
 const require = createRequire(import.meta.url)
 const { load } = require('js-yaml')
 const workflow = load(readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8'))
-const families = ['verify', 'persisted_native', 'refresh_native', 'accepted_store_native', 'official_truth_v3_ui']
+const families = ['verify', 'persisted_native', 'refresh_native', 'accepted_store_native', 'official_truth_v3_ui', 'hosted_v3_native_pg17']
 
-test('CI aggregate requires success from all original families and the isolated UI family', () => {
+test('CI aggregate requires success from all six families including isolated UI and hosted PG17', () => {
   const aggregate = workflow.jobs.required_verify
+  assert.equal(aggregate.name, 'Typecheck, Lint & Build')
+  assert.equal(aggregate['timeout-minutes'], 2)
   assert.deepEqual(aggregate.needs, families)
   assert.equal(aggregate.if, '${{ always() }}')
   const gate = aggregate.steps[0]
   const variables = Object.keys(gate.env)
-  assert.equal(variables.length, 5)
+  assert.equal(variables.length, 6)
   for (const family of families) {
     assert.ok(workflow.jobs[family])
     assert.ok(Object.values(gate.env).includes(`\${{ needs.${family}.result }}`))
@@ -26,9 +28,49 @@ test('CI aggregate requires success from all original families and the isolated 
   const allSucceeded = Object.fromEntries(variables.map((name) => [name, 'success']))
   const run = (results) => spawnSync('/bin/bash', ['-e', '-o', 'pipefail', '-c', gate.run], { env: { PATH: process.env.PATH, ...results }, encoding: 'utf8' })
   assert.equal(run(allSucceeded).status, 0)
-  for (const name of variables) for (const status of ['failure', 'cancelled', 'skipped']) {
+  for (const name of variables) for (const status of ['failure', 'cancelled', 'skipped', '']) {
     assert.notEqual(run({ ...allSucceeded, [name]: status }).status, 0, `${name}/${status} must fail the aggregate`)
   }
+  for (const name of variables) {
+    const missing = { ...allSucceeded }
+    delete missing[name]
+    assert.notEqual(run(missing).status, 0, `${name}/missing must fail the aggregate`)
+  }
+})
+
+test('hosted PG17 is a mandatory isolated family with the original setup and operating guards', () => {
+  const job = workflow.jobs.hosted_v3_native_pg17
+  assert.ok(job)
+  assert.equal(job['runs-on'], 'ubuntu-24.04')
+  assert.equal(job['timeout-minutes'], 30)
+  assert.equal('if' in job, false)
+  assert.equal('continue-on-error' in job, false)
+  assert.ok(job.steps.every((step) => !('if' in step) && !('continue-on-error' in step)))
+  assert.equal(job.steps[0].uses, 'actions/checkout@v4')
+  assert.equal(job.steps[0].with['fetch-depth'], 0)
+  const node = job.steps.find((step) => step.uses === 'actions/setup-node@v4')
+  assert.deepEqual(node?.with, { 'node-version': '22.x', cache: 'npm' })
+  for (const command of ['npm ci', 'npm run check:setup:ci', 'npm run check:operating-mode']) {
+    assert.equal(job.steps.filter((step) => step.run === command).length, 1, command)
+  }
+  const operating = job.steps.find((step) => step.run === 'npm run check:operating-mode')
+  assert.deepEqual(operating.env, {
+    JETNITY_OPERATING_MODE_EVENT: '${{ github.event_name }}',
+    JETNITY_OPERATING_MODE_REF: '${{ github.head_ref || github.ref_name }}',
+    JETNITY_OPERATING_MODE_BASE_SHA: '${{ github.event.pull_request.base.sha || github.event.before }}',
+    JETNITY_OPERATING_MODE_HEAD_SHA: '${{ github.event.pull_request.head.sha || github.sha }}',
+  })
+  const provisionName = 'Provision mandatory PostgreSQL 17 from signed official packages'
+  const provision = job.steps.find((step) => step.name === provisionName)
+  assert.ok(provision)
+  assert.equal(provision.shell, 'bash')
+  assert.equal(job.steps.filter((step) => step.name === provisionName).length, 1)
+  assert.ok(job.steps.indexOf(operating) < job.steps.indexOf(provision))
+  assert.equal(job.steps.at(-1).run, 'npm run test:hosted-v3-native')
+  assert.equal(job.steps.filter((step) => step.run === 'npm run test:hosted-v3-native').length, 1)
+  assert.equal(workflow.jobs.verify.steps.some((step) => step.name === provisionName), false)
+  assert.equal(workflow.jobs.verify.steps.filter((step) => step.run === 'npm run test:core').length, 1)
+  assert.equal(JSON.stringify(job).includes('secrets.'), false)
 })
 
 test('isolated UI job keeps setup/operating gates and always preserves actual artifacts', () => {
