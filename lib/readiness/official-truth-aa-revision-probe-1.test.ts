@@ -40,6 +40,32 @@ const headSha = 'c'.repeat(40), checkoutSha = 'd'.repeat(40)
 const sha = (value: Uint8Array | string) => createHash('sha256').update(value).digest('hex')
 const sourceBytes = new Map(policy.sourceInventory.map(pin => [pin.path, fs.readFileSync(pin.path)] as const))
 
+type AaPreflightDiagnosticPhase =
+  | 'static_begin' | 'static_end' | 'legacy_begin' | 'legacy_end'
+  | 'inventory_begin' | 'inventory_progress' | 'inventory_end' | 'fixture'
+  | 'synthetic_finished' | 'closed_native_begin' | 'closed_native_end'
+let aaDiagnosticLines = 0, aaDiagnosticSources = 0, aaDiagnosticFixtures = 0
+let aaDiagnosticStarted: bigint | null = null
+
+// Synthetic progress only: fixed labels and our process counters, never source evidence.
+function aaPreflightDiagnostic(phase: AaPreflightDiagnosticPhase): void {
+  if (aaDiagnosticLines >= 64) return
+  aaDiagnosticLines += 1
+  try {
+    const now = process.hrtime.bigint()
+    aaDiagnosticStarted ??= now
+    const { rss, heapUsed, external } = process.memoryUsage()
+    const elapsedMs = Math.floor(Number(now - aaDiagnosticStarted) / 1_000_000)
+    if (![rss, heapUsed, external, elapsedMs].every(value => Number.isFinite(value) && value >= 0)) return
+    console.error('AA_PREFLIGHT_DIAG_V1 ' + JSON.stringify({
+      phase, line: aaDiagnosticLines, sources: aaDiagnosticSources, fixtures: aaDiagnosticFixtures,
+      rss, heapUsed, external, elapsedMs,
+    }))
+  } catch {
+    // Only diagnostic work is guarded; no preflight assertion or invocation is caught here.
+  }
+}
+
 function html(extra = '', row = '<tr><td>Schweiz</td><td>Nein</td></tr>'): string {
   return [
     '<!doctype html><html><head><title>SYNTHETIC RESEARCH FIXTURE ONLY</title></head><body>',
@@ -188,6 +214,8 @@ type RequestOptions = {
 }
 
 function fixture(options: Scenario = {}) {
+  aaDiagnosticFixtures += 1
+  if (aaDiagnosticFixtures === 1 || aaDiagnosticFixtures % 16 === 0) aaPreflightDiagnostic('fixture')
   const files = options.fs ?? new FixtureFs(options.eventBytes ?? Buffer.from(JSON.stringify(options.event ?? eventValue())))
   files.fault = options.fault ?? files.fault
   files.faultPath = options.faultPath ?? files.faultPath
@@ -745,7 +773,11 @@ function importInventory(): void {
         const file = join(directory, item.name).replace(/\\/g, '/')
         assert(!item.isSymbolicLink(), 'probe import inventory requires ordinary checkout entries')
         if (item.isDirectory()) walk(file)
-        else if (item.isFile() && /\.[cm]?[jt]sx?$/.test(file)) importBoundary(file, fs.readFileSync(file, 'utf8'))
+        else if (item.isFile() && /\.[cm]?[jt]sx?$/.test(file)) {
+          importBoundary(file, fs.readFileSync(file, 'utf8'))
+          aaDiagnosticSources += 1
+          if (aaDiagnosticSources % 256 === 0) aaPreflightDiagnostic('inventory_progress')
+        }
       }
     }
     walk(required)
@@ -753,6 +785,8 @@ function importInventory(): void {
   for (const item of fs.readdirSync('.', { withFileTypes: true })) {
     if (item.isFile() && /\.[cm]?[jt]sx?$/.test(item.name)) {
       importBoundary(item.name, fs.readFileSync(item.name, 'utf8'))
+      aaDiagnosticSources += 1
+      if (aaDiagnosticSources % 256 === 0) aaPreflightDiagnostic('inventory_progress')
     }
   }
   for (const source of [
@@ -814,6 +848,7 @@ function importInventory(): void {
 }
 
 async function syntheticPreflight(): Promise<void> {
+  aaPreflightDiagnostic('static_begin')
   assert(Object.isFrozen(policy) && Object.isFrozen(policy.binding) && Object.isFrozen(policy.sourceInventory))
   assert.equal(policy.url, reviewed.requestUrl)
   assert.equal(policy.url, reviewed.canonicalUrl)
@@ -833,8 +868,13 @@ async function syntheticPreflight(): Promise<void> {
     assert.equal(bytes.byteLength, pin.bytes)
     assert.equal(sha(bytes), pin.sha256)
   }
+  aaPreflightDiagnostic('static_end')
+  aaPreflightDiagnostic('legacy_begin')
   legacyPrivatePortBoundary()
+  aaPreflightDiagnostic('legacy_end')
+  aaPreflightDiagnostic('inventory_begin')
   importInventory()
+  aaPreflightDiagnostic('inventory_end')
 
   for (const runNumber of [0, -1, 1.5, Number.NaN, '1', null]) {
     await refusal(fixture({ policy: { runNumber } }), 'unarmed')
@@ -985,7 +1025,10 @@ async function syntheticPreflight(): Promise<void> {
 // All fixture results above remain synthetic and are never emitted as source evidence.
 test('AA revision probe V1: synthetic preflight precedes the single closed native CI entry', async () => {
   await syntheticPreflight()
+  aaPreflightDiagnostic('synthetic_finished')
+  aaPreflightDiagnostic('closed_native_begin')
   const actual = await probeOfficialTruthAaReviewedRevisionV1()
+  aaPreflightDiagnostic('closed_native_end')
   finiteResult(actual)
   if (actual.ci !== null) console.log('AA_REVISION_PROBE_V1 ' + JSON.stringify(actual))
   // MATCH, MISMATCH and a controlled transport refusal are observations, not retry instructions.

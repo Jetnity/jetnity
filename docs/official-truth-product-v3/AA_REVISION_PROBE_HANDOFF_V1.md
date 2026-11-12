@@ -1164,3 +1164,19 @@ Original reviewed metadata remains blob `e00f71f993fe558d657ca409436ee62410869b2
 <!-- END VERBATIM A9 HANDOFF 1d80755b1206084428464338511de64fedde1df8 -->
 
 <!-- END COMPLETE PREVIOUS HANDOFF 84f8faffa1d28d7b8a6b308386e6e12524ad4507 -->
+
+
+## A12 current delivery — synthetic diagnostics only
+
+**Status: SOURCE_ONLY / NOT_RUN / HOLD_FOR_ROOT_REVIEW.** New replacement AA Generation2 author session `/root/readiness`; original Generation1 is unreachable, with replacement authorized in [Root A12](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6829857507). Sole parent `8df8d7c5a8aef903607372294e68e9b1226b9595` / tree `343192538ab78fb2661e225ca4e63fd8ee8b2333`; the entire preceding handoff remains byte-exact history.
+
+The test adds a private diagnostic function with a hard64-line cap and fixed phase labels. It reports only elapsedMs, own-process rss/heapUsed/external, checked-source count and fixture count. Calls surround static/legacy checks and the complete inventory, follow each256th successful file boundary check, precede fixture1/every16th fixture, and mark completed synthetic preflight and begin/end of the existing closed native invocation. There is no new timer, worker, retry, import consumer, source read or fixture cache. The small try/catch encloses only diagnostic collection/output; all original assertions and awaited work remain outside it and propagate unchanged.
+
+Policy changes only the full AA test byte/hash pin; BERN changes only that test's full byte/blob/hash and the shifted offsets into its exact unchanged691-byte Reader metadata context. All original AA and BERN cases, all source roots/walks, single awaited flow, physical/Reader/probe modules, Run0/baseb5f33/17entries and CI budgets remain. The three source changes have exact reversible text deltas; Task/Handoff inverse is removal of the appended suffix, and the original Manifest remains immutable at blob`c8fb5fd9047ec8599d6385d50192334f39323f58` (287820bytes, SHA256`dd8e41d0ede1eb464c503c6f18c6eb95fb3d320e027ae20061f4f734a5c84e2f`).
+
+Current source pins:
+- AA test:58259bytes, blob`42863c2e61d987993c32c433d4522ff6bcabfb52`, SHA256`f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853`.
+- Policy:4574bytes, blob`978b62fdc444b1b6a2d024eb2752a46f482463c5`, SHA256`ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd`.
+- BERN test:18579bytes, blob`3aab2832d70067f79512d6be149411c809a2769b`, SHA256`66ab4a5f80eea73e023ff48ba00d0483f99f7f21e7fe7b9ad3fad8dd05412262`.
+
+Actual attempt2 run43253092355/Corejob131316131237 stopped after suite577; Root's full log pin is1424657bytes/SHA256`ff204c35273c4590cddef773440deed0c0ac220a1344eb3ec851eede4314c427`. The new author independently read its shutdown message but has no causal OOM/assertion/resource proof. These diagnostics are not source evidence and do not prove that the interrupted run is fixed. No source request, runtime test, parser/compiler, Dev change or activation was performed. Independent Root review, coherent publication and complete fresh CI remain next; no same-head retry, Ready or merge is claimed.

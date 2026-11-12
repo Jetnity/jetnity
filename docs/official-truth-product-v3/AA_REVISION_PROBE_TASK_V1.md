@@ -690,3 +690,17 @@ Preserve the complete previous Task/Handoff/Manifest history. Append this comple
 
 Immutable Git objects and inert text/hash/tree comparisons only. No project/parser/compiler/test/native/SQL/build/APT/CI/ref/PR/Ready/merge/hosted/sourceGET operation. Return full raw pins/soleparent/tree and every unchanged leaf, then STOP. Root alone independently reviews, publishes the new head and requires every fresh exact-head gate. #917/#1131 remain untouched.
 <!-- END VERBATIM ROOT RECEIPT 6827925972 -->
+
+
+## A12 — bounded synthetic-preflight diagnostics, 12 November 2026
+
+Root selection: https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6829857507.
+Replacement author: **Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation2**, actual session **/root/readiness**; the original Generation1 session is unreachable, as Root recorded. This is a new source-author session under the standing Owner exception, with prior evidence retained and independent Root review still required.
+
+Sole parent `8df8d7c5a8aef903607372294e68e9b1226b9595`, tree `343192538ab78fb2661e225ca4e63fd8ee8b2333`. Only six existing files may change: the AA test, its policy, the BERN research-only test, and these three AA evidence documents. Add at most64 fixed-label/numeric diagnostic lines for static and legacy checks, complete source inventory (every256 checked files), fixture1/every16 fixtures, synthetic completion and the closed native entry. Report only own-process RSS/heapUsed/external and elapsed milliseconds plus finite counters. No environment, response/source text, claims, credentials, accounts, new timers or resources.
+
+Keep every case/assertion/import boundary, all production modules, Run0, baseb5f33, all17inventory entries and CI limits unchanged. Policy and BERN may change only the actual dependent AA test pins and BERN context offsets. Diagnostics must not catch original test failures or create a PASS. No speculative optimization or unchanged-head retry.
+
+Actual attempt2 evidence supplied by Root: run43253092355, Corejob131316131237, log1424657bytes, SHA256`ff204c35273c4590cddef773440deed0c0ac220a1344eb3ec851eede4314c427`; runner shutdown after suite577, no assertion/OOM cause established. This amendment adds observability only and does not label the interruption repaired.
+
+SOURCE ONLY: immutable objects and inert text/hash/tree comparisons; no project/parser/compiler/test/native/SQL/APT/CI/refs/PRs/Ready/merge/hosted/sourceGET. Preserve all existing Task/Handoff bytes as prefixes and retain the predecessor Manifest by immutable reference; append concise current evidence. Return exact pins/inverses and STOP for independent Root review and separately selected full new-head CI. #917/#1131 remain untouched.
