@@ -451,7 +451,7 @@ function nativeFailure(error: unknown, depth = 0): Readonly<{ kind: string; code
   return { kind: 'fixture', code: 'unclassified_failure' }
 }
 
-test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership', { timeout: 300000 }, async t => {
+test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original uncertainty and terminal ownership', { timeout: 300000, concurrency: 2 }, async t => {
   const effectAbort = new AbortController(), parent = AbortSignal.any([t.signal, effectAbort.signal])
   const lifetime = new OwnedTestLifetime(parent), started = performance.now(), children = new Set<ChildProcess>()
   const timer = setTimeout(() => effectAbort.abort(Error('M04 240s effect budget exceeded')), 240000)
@@ -459,7 +459,8 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   const allocate = () => { assert.ok(++clusters <= 3, 'three owned clusters maximum'); return lifetime.startCluster(startLocalProofCluster) }
   lifetime.installConnectOwnership()
   const cleanup: (() => Promise<void> | void)[] = []
-  const proofs: { id: string; milliseconds: number }[] = []
+  let proofOrdinal = 0
+  const proofs: { ordinal: number; id: string; name: string; milliseconds: number }[] = []
   const nestedRaceWitnesses: Readonly<Record<string, unknown>>[] = []
   function newQuotaCounters() {
     return { lastStartedIndex: null as number | null, lastCompletedIndex: null as number | null,
@@ -468,34 +469,89 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       commandCallsStarted: 0, commandCallsCompleted: 0, commandCommits: 0,
       startCallsStarted: 0, startCallsCompleted: 0, startReservations: 0 }
   }
+  type QuotaLane = 'ledger' | 'cycles'
+  type QuotaBoundary = 'not_started' | 'absent_probe' | 'ledger_fill' | 'claim_255' | 'start_1' |
+    'interstitial_refusal' | 'terminal_256' | 'ledger_quota_refusal' | 'cycle_enqueue' | 'cycle_claim' |
+    'cycle_start' | 'cycle_fail' | 'enqueue_65' | 'claim_65_refusal' | 'pointer_refusal' | 'done'
+  const quotaLane = (group: 'N05/A03' | 'N05') => ({ ...newQuotaCounters(), group,
+    ordinal: null as number | null, phase: null as string | null, boundary: 'not_started' as QuotaBoundary,
+    status: 'not_started' as 'not_started' | 'running' | 'passed' | 'failed',
+    startedMilliseconds: null as number | null, bodyStartedMilliseconds: null as number | null,
+    bodySettledMilliseconds: null as number | null, completedMilliseconds: null as number | null,
+    bodyJoined: false, ownedBodyJoined: false, runnerJoined: false, proofJoined: false,
+    failure: null as { phase: string; boundary: QuotaBoundary; error: ReturnType<typeof nativeFailure> } | null })
+  const serialEvidence = () => ({ admitted: 0, settled: 0, pending: 0, maximumPending: 0 })
   const quotaProgress = {
-    currentGroup: 'none' as 'none' | 'N05/A03' | 'N05',
-    boundary: 'not_started' as 'not_started' | 'absent_probe' | 'ledger_fill' | 'claim_255' | 'start_1' |
-      'interstitial_refusal' | 'terminal_256' | 'ledger_quota_refusal' | 'cycle_enqueue' | 'cycle_claim' |
-      'cycle_start' | 'cycle_fail' | 'enqueue_65' | 'claim_65_refusal' | 'pointer_refusal' | 'done',
+    currentGroup: 'none' as 'none' | 'concurrent_quotas',
+    boundary: 'not_started' as 'not_started' | 'running' | 'failed' | 'done',
     indexBase: 0, millisecondsCap: 300000,
-    timingMeaning: 'client await durations including construction/transport; not server statement profiling',
-    ledger: newQuotaCounters(), cycles: newQuotaCounters(),
+    timingMeaning: 'client await durations including construction/transport; concurrent lane/group durations overlap; not server profiling or CPU parallelism',
+    ledger: quotaLane('N05/A03'), cycles: quotaLane('N05'),
+    ownerQueries: serialEvidence(), observerQueries: serialEvidence(),
+    fixedOverlap: { active: 0, maximum: 0, intervals: 0, milliseconds: 0 },
+    extraRuntimeOpened: false, extraRuntimeAbsent: false, pairJoined: false,
+    firstFailureLane: null as QuotaLane | null,
   }
+  let firstQuotaFailure: { lane: QuotaLane; ordinal: number | null; phase: string; error: unknown } | undefined
+  let fixedOverlapStarted: number | undefined
+  const quotaAt = () => Math.max(0, Math.ceil(performance.now() - started))
+  function failQuota(laneName: QuotaLane, failurePhase: string, error: unknown) {
+    const lane = quotaProgress[laneName]
+    lane.status = 'failed'
+    lane.failure ??= { phase: failurePhase, boundary: lane.boundary, error: nativeFailure(error) }
+    if (firstQuotaFailure === undefined) {
+      // Capture the actual cause BEFORE lifetime.run's abort check can replace it.
+      firstQuotaFailure = { lane: laneName, ordinal: lane.ordinal, phase: failurePhase, error }
+      quotaProgress.firstFailureLane = laneName; quotaProgress.boundary = 'failed'
+      effectAbort.abort(error)
+    }
+  }
+  function quotaSerial(evidence: ReturnType<typeof serialEvidence>) {
+    let tail: Promise<void> = Promise.resolve()
+    return {
+      async run<T>(operation: () => Promise<T>): Promise<T> {
+        lifetime.check(); assert.ok(evidence.pending < 2, 'at most one shared-query admission per quota lane')
+        evidence.admitted++; evidence.pending++; evidence.maximumPending = Math.max(evidence.maximumPending, evidence.pending)
+        const pending = tail.then(async () => { lifetime.check(); return await operation() })
+        // Advance the FIFO after either outcome; the caller retains rejection.
+        tail = pending.then(() => {}, () => {})
+        try { return await pending } finally { evidence.pending--; evidence.settled++ }
+      },
+      async join() { await tail; assert.equal(evidence.pending, 0); assert.equal(evidence.admitted, evidence.settled) },
+    }
+  }
+  const quotaOwner = quotaSerial(quotaProgress.ownerQueries), quotaObserver = quotaSerial(quotaProgress.observerQueries)
   const quotaElapsed = (before: number) => Math.max(0, Math.min(300000, Math.ceil(performance.now() - before)))
   async function quotaCommand(progress: ReturnType<typeof newQuotaCounters>, command: unknown, current: V3ManagedJobRecord | null) {
-    progress.commandRequestsStarted++; const before = performance.now()
+    lifetime.check(); progress.commandRequestsStarted++; const before = performance.now()
     try { const value = await commandRequest(command, current); progress.commandRequestsCompleted++; return value }
     finally { progress.commandRequestMilliseconds = Math.min(300000, progress.commandRequestMilliseconds + quotaElapsed(before)) }
   }
   async function quotaFixed(progress: ReturnType<typeof newQuotaCounters>, connection: LocalPgConnection,
     operation: unknown, epoch: number | null, phase = 'authorized') {
+    lifetime.check()
     const name = operation !== null && typeof operation === 'object' ? (operation as { operation?: unknown }).operation : undefined
     progress.fixedCallsStarted++
     if (name === 'queue_cas') progress.commandCallsStarted++
     if (name === 'execution_start') progress.startCallsStarted++
     const before = performance.now()
+    assert.ok(quotaProgress.fixedOverlap.active < 2, 'exactly two quota runtime lanes maximum')
+    quotaProgress.fixedOverlap.active++; quotaProgress.fixedOverlap.maximum = Math.max(quotaProgress.fixedOverlap.maximum, quotaProgress.fixedOverlap.active)
+    if (quotaProgress.fixedOverlap.active === 2) { fixedOverlapStarted = before; quotaProgress.fixedOverlap.intervals++ }
     try {
       const value = await fixed(connection, operation, epoch, phase); progress.fixedCallsCompleted++
       if (name === 'queue_cas') { progress.commandCallsCompleted++; if (value.status === 'committed') progress.commandCommits++ }
       if (name === 'execution_start') { progress.startCallsCompleted++; if (value.status === 'reserved') progress.startReservations++ }
       return value
-    } finally { progress.fixedCallMilliseconds = Math.min(300000, progress.fixedCallMilliseconds + quotaElapsed(before)) }
+    } finally {
+      progress.fixedCallMilliseconds = Math.min(300000, progress.fixedCallMilliseconds + quotaElapsed(before))
+      if (quotaProgress.fixedOverlap.active === 2) {
+        assert.ok(fixedOverlapStarted !== undefined)
+        quotaProgress.fixedOverlap.milliseconds += Math.max(0, performance.now() - fixedOverlapStarted)
+        fixedOverlapStarted = undefined
+      }
+      quotaProgress.fixedOverlap.active--
+    }
   }
   let phase = 'initial_setup', primaryPhase: string | null = null
   const setPhase = (value: string) => { assert.match(value, /^[A-Za-z0-9_:/-]{1,80}$/); phase = value }
@@ -527,23 +583,66 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
   let activeObserver: LocalPgConnection | undefined
   let minimumInheritedConnections = 0, inheritedCommitGuardPairs = 0
   const backendInventory = (observer: LocalPgConnection) => observer.query("SELECT pid::text,backend_start::text AS birth FROM pg_catalog.pg_stat_activity WHERE backend_type='client backend' AND datname=current_database() ORDER BY pid")
-  async function proof(id: string, name: string, run: () => Promise<void>) {
-    setPhase('proof_' + (proofs.length + 1) + ':' + id)
-    lifetime.check(); assert.ok(performance.now() - started < 240000)
-    const at = performance.now()
-    const before = activeObserver ? await backendInventory(activeObserver) : undefined
-    let passed = false, assertionFailure: unknown
-    await t.test(id + ' ' + name, async () => {
-      try { await lifetime.run(run); passed = true }
-      catch (error) { assertionFailure = error; throw error }
-    })
-    if (assertionFailure) throw assertionFailure
-    assert.equal(passed, true, id + ' native obligation failed')
-    if (activeObserver && before) await until(lifetime, async () => JSON.stringify(await backendInventory(activeObserver!)) === JSON.stringify(before),
-      id + ': unexpected native backend after terminal scenario, including inherited commit guard/control')
-    lifetime.check(); proofs.push({ id, milliseconds: Math.ceil(performance.now() - at) })
+  async function proof(id: string, name: string, run: () => Promise<void>, laneName?: QuotaLane) {
+    const ordinal = ++proofOrdinal, proofPhase = 'proof_' + ordinal + ':' + id
+    const lane = laneName ? quotaProgress[laneName] : undefined
+    if (lane) { lane.ordinal = ordinal; lane.phase = proofPhase; lane.status = 'running'; lane.startedMilliseconds = quotaAt() }
+    else setPhase(proofPhase)
+    let body: Promise<void> | undefined, ownedBody: Promise<void> | undefined, runner: Promise<void> | undefined
+    let runnerSettled = false, passed = false, assertionFailurePresent = false, assertionFailure: unknown
+    const inventory = () => laneName
+      ? quotaObserver.run(() => backendInventory(activeObserver!))
+      : backendInventory(activeObserver!)
+    try {
+      lifetime.check(); assert.ok(performance.now() - started < 240000)
+      const at = performance.now(), before = activeObserver ? await inventory() : undefined
+      runner = t.test(id + ' ' + name, async () => {
+        try {
+          // A cancelled/settled runner must never admit a later unjoined body.
+          assert.equal(runnerSettled, false, 'proof runner already settled')
+          ownedBody = lifetime.run(() => {
+            try {
+              if (lane) lane.bodyStartedMilliseconds = quotaAt()
+              body = run()
+              return body.then(() => { if (lane) lane.bodySettledMilliseconds = quotaAt() }, error => {
+                if (lane) lane.bodySettledMilliseconds = quotaAt()
+                if (laneName) failQuota(laneName, proofPhase, error)
+                throw error
+              })
+            } catch (error) {
+              if (laneName) failQuota(laneName, proofPhase, error)
+              throw error
+            }
+          })
+          await ownedBody; passed = true
+        } catch (error) {
+          assertionFailure = error; assertionFailurePresent = true
+          if (laneName) failQuota(laneName, proofPhase, error)
+          throw error
+        }
+      })
+      try { await runner } finally { runnerSettled = true }
+      if (assertionFailurePresent) throw assertionFailure
+      assert.equal(passed, true, id + ' native obligation failed')
+      if (activeObserver && before) await until(lifetime, async () => JSON.stringify(await inventory()) === JSON.stringify(before),
+        id + ': unexpected native backend after terminal scenario, including inherited commit guard/control')
+      lifetime.check(); proofs.push({ ordinal, id, name, milliseconds: Math.ceil(performance.now() - at) })
+      if (lane) { lane.status = 'passed'; lane.completedMilliseconds = quotaAt() }
+    } catch (error) {
+      if (laneName) failQuota(laneName, proofPhase, error)
+      throw error
+    } finally {
+      runnerSettled = true
+      if (lane) {
+        // Node runner cancellation can settle t.test before its async body.
+        // Retain and join raw BODY, owned lifetime wrapper and runner separately.
+        await Promise.allSettled([...(body ? [body] : []), ...(ownedBody ? [ownedBody] : []), ...(runner ? [runner] : [])])
+        lane.bodyJoined = body !== undefined; lane.ownedBodyJoined = ownedBody !== undefined
+        lane.runnerJoined = runner !== undefined; lane.proofJoined = true
+      }
+    }
   }
-  let primary: unknown, cleanupReceipt: Awaited<ReturnType<OwnedTestLifetime['dispose']>> | undefined
+  let primary: unknown, primaryFailurePresent = false, cleanupReceipt: Awaited<ReturnType<OwnedTestLifetime['dispose']>> | undefined
   try {
     const f = await makeFixture(lifetime, allocate, true, true, setPhase)
     cleanup.push(() => f.close())
@@ -1942,99 +2041,132 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       const state = JSON.parse((await f.state(input.identity.jobKey))[0]!.state!)
       assert.equal(state.results, null); assert.equal(state.dispositions[0].kind, 'settled_failure'); assert.equal(state.dispositions[0].failure_reason, 'invalid_proposal')
     })
-    await proof('N05/A03', 'actual 254/255/256 ledger boundary preserves the sole original terminal credit', async () => {
-      const progress = quotaProgress.ledger
-      quotaProgress.currentGroup = 'N05/A03'; quotaProgress.boundary = 'absent_probe'
-      const base = m04Fixture('native-ledger-quota-base')
-      const input = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
-      assert.notEqual(input.discovery.jobKey, base.discovery.jobKey, 'ledger quota uses a distinct Discovery subject')
-      assert.equal((await quotaFixed(progress, runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
-      let current: V3ManagedJobRecord | null = null
-      const epoch = await currentEpoch()
-      for (let n = 0; n < 254; n++) {
-        quotaProgress.boundary = 'ledger_fill'; progress.lastStartedIndex = n
-        const q = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
-          operationId: ids('op3', 'quota-enqueue-' + n), jobId: ids('job3', 'quota-cycle-' + n), attemptLimit: 1 } }, current)
-        assert.equal((await quotaFixed(progress, runtime, q, epoch)).status, 'committed', 'ledger command ' + n)
-        current = q.body.commit.next; progress.lastCompletedIndex = n
-      }
-      quotaProgress.boundary = 'claim_255'
-      const originalClaim = { ...input.claim('combination_discovery'), operationId: ids('op3', 'quota-boundary-claim') }
-      const claim = await quotaCommand(progress, { action: 'claim', input: originalClaim }, current)
-      assert.equal((await quotaFixed(progress, runtime, claim, epoch)).status, 'committed'); current = claim.body.commit.next
-      assert.deepEqual(await f.owner.query('SELECT operation_count::text,terminal_credit_claim FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1', text([input.discovery.jobKey])), [{ operation_count: '255', terminal_credit_claim: originalClaim.operationId }])
-      quotaProgress.boundary = 'start_1'
-      const start = await quotaFixed(progress, runtime, { operation: 'execution_start', body: { claim: originalClaim, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
-      assert.equal(start.status, 'reserved')
-      const before = await f.state(input.discovery.jobKey)
-      quotaProgress.boundary = 'interstitial_refusal'
-      const unentitled = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-cannot-steal'), jobId: ids('job3', 'quota-cannot-steal') } }, current)
-      assert.equal((await quotaFixed(progress, runtime, unentitled, epoch)).status, 'blocked', 'old unknown gate precedes otherwise possible interstitial command')
-      assert.deepEqual(await f.state(input.discovery.jobKey), before)
-      // This finite test caller owns a synchronously terminal failed producer and
-      // has no callback/native children. The DB validates token/claim/command;
-      // it does not infer that external terminal fact from a reason string.
-      quotaProgress.boundary = 'terminal_256'
-      const failure = await quotaCommand(progress, { action: 'fail', input: { operationId: ids('op3', 'quota-final-fail'), jobKey: input.discovery.jobKey,
-        fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
-      const terminalRequest = { ...failure, body: { ...failure.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }
-      assert.equal((await quotaFixed(progress, runtime, terminalRequest, epoch)).status, 'committed')
-      const final = JSON.parse((await f.state(input.discovery.jobKey))[0]!.state!)
-      assert.equal(final.commands.length, 256); assert.equal(final.subjects[0].operation_count, 256); assert.equal(final.subjects[0].terminal_credit_claim, null)
-      assert.equal(final.dispositions.length, 1); assert.equal(final.subjects[0].current_job.state, 'exhausted')
-      quotaProgress.boundary = 'ledger_quota_refusal'
-      const beyond = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-beyond'), jobId: ids('job3', 'quota-beyond') } }, final.subjects[0].current_job)
-      assert.equal((await quotaFixed(progress, runtime, beyond, epoch)).status, 'quota')
-      assert.deepEqual(JSON.parse((await f.state(input.discovery.jobKey))[0]!.state!), final)
-      quotaProgress.boundary = 'done'; quotaProgress.currentGroup = 'none'
-    })
-    await proof('N05', 'sixty-four actual starts retain all older history and refuse the sixty-fifth claim', async () => {
-      const progress = quotaProgress.cycles
-      quotaProgress.currentGroup = 'N05'; quotaProgress.boundary = 'absent_probe'
-      const base = m04Fixture('native-start-quota-base')
-      const input = m04Fixture('native-start-quota', { context: base.originals.context('CH', 'NO') }), epoch = await currentEpoch()
-      const ledger = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
-      assert.equal(new Set([base.discovery.jobKey, ledger.discovery.jobKey, input.discovery.jobKey]).size, 3, 'quota Discovery subjects are distinct from each other and the earlier default')
-      assert.equal((await quotaFixed(progress, runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
-      let current: V3ManagedJobRecord | null = null
-      for (let n = 0; n < 64; n++) {
-        quotaProgress.boundary = 'cycle_enqueue'; progress.lastStartedIndex = n
-        const enqueue = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
-          operationId: ids('op3', 'start-quota-enqueue-' + n), jobId: ids('job3', 'start-quota-cycle-' + n), attemptLimit: 1 } }, current)
-        assert.equal((await quotaFixed(progress, runtime, enqueue, epoch)).status, 'committed'); current = enqueue.body.commit.next
-        quotaProgress.boundary = 'cycle_claim'
-        const c = { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-claim-' + n), leaseId: ids('lease3', 'start-quota-' + n) }
-        const claim = await quotaCommand(progress, { action: 'claim', input: c }, current)
+    // R41: only these independent subjects overlap, on the same owned cluster.
+    // Open the extra restricted handle before BOTH unchanged inventory witnesses.
+    setPhase('quota_pair_setup')
+    const beforeQuotaRuntime = await backendInventory(f.observer)
+    const quotaRuntime = await f.connect(M04_TEST_LOGIN.jobs, 'ot_v3_jobs_caller')
+    quotaProgress.extraRuntimeOpened = true
+    assert.ok(!beforeQuotaRuntime.some(row => row.pid === quotaRuntime.identity.pid && row.birth === quotaRuntime.identity.birth))
+    quotaProgress.currentGroup = 'concurrent_quotas'; quotaProgress.boundary = 'running'
+    setPhase('quota_pair_24_25')
+    const quotaProofs = [
+      proof('N05/A03', 'actual 254/255/256 ledger boundary preserves the sole original terminal credit', async () => {
+        const progress = quotaProgress.ledger
+        progress.boundary = 'absent_probe'
+        const base = m04Fixture('native-ledger-quota-base')
+        const input = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
+        assert.notEqual(input.discovery.jobKey, base.discovery.jobKey, 'ledger quota uses a distinct Discovery subject')
+        assert.equal((await quotaFixed(progress, runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
+        let current: V3ManagedJobRecord | null = null
+        const epoch = await quotaOwner.run(() => currentEpoch())
+        for (let n = 0; n < 254; n++) {
+          progress.boundary = 'ledger_fill'; progress.lastStartedIndex = n
+          const q = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
+            operationId: ids('op3', 'quota-enqueue-' + n), jobId: ids('job3', 'quota-cycle-' + n), attemptLimit: 1 } }, current)
+          assert.equal((await quotaFixed(progress, runtime, q, epoch)).status, 'committed', 'ledger command ' + n)
+          current = q.body.commit.next; progress.lastCompletedIndex = n
+        }
+        progress.boundary = 'claim_255'
+        const originalClaim = { ...input.claim('combination_discovery'), operationId: ids('op3', 'quota-boundary-claim') }
+        const claim = await quotaCommand(progress, { action: 'claim', input: originalClaim }, current)
         assert.equal((await quotaFixed(progress, runtime, claim, epoch)).status, 'committed'); current = claim.body.commit.next
-        quotaProgress.boundary = 'cycle_start'
-        const start = await quotaFixed(progress, runtime, { operation: 'execution_start', body: { claim: c, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
+        assert.deepEqual(await quotaOwner.run(() => f.owner.query('SELECT operation_count::text,terminal_credit_claim FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1', text([input.discovery.jobKey]))), [{ operation_count: '255', terminal_credit_claim: originalClaim.operationId }])
+        progress.boundary = 'start_1'
+        const start = await quotaFixed(progress, runtime, { operation: 'execution_start', body: { claim: originalClaim, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
         assert.equal(start.status, 'reserved')
-        quotaProgress.boundary = 'cycle_fail'
-        const failed = await quotaCommand(progress, { action: 'fail', input: { operationId: ids('op3', 'start-quota-fail-' + n), jobKey: input.discovery.jobKey,
+        const before = await quotaOwner.run(() => f.state(input.discovery.jobKey))
+        progress.boundary = 'interstitial_refusal'
+        const unentitled = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-cannot-steal'), jobId: ids('job3', 'quota-cannot-steal') } }, current)
+        assert.equal((await quotaFixed(progress, runtime, unentitled, epoch)).status, 'blocked', 'old unknown gate precedes otherwise possible interstitial command')
+        assert.deepEqual(await quotaOwner.run(() => f.state(input.discovery.jobKey)), before)
+        // This finite test caller owns a synchronously terminal failed producer and
+        // has no callback/native children. The DB validates token/claim/command;
+        // it does not infer that external terminal fact from a reason string.
+        progress.boundary = 'terminal_256'
+        const failure = await quotaCommand(progress, { action: 'fail', input: { operationId: ids('op3', 'quota-final-fail'), jobKey: input.discovery.jobKey,
           fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
-        assert.equal((await quotaFixed(progress, runtime, { ...failed, body: { ...failed.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }, epoch)).status, 'committed')
-        current = failed.body.commit.next; progress.lastCompletedIndex = n
-      }
-      quotaProgress.boundary = 'enqueue_65'
-      const last = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
-        operationId: ids('op3', 'start-quota-65-enqueue'), jobId: ids('job3', 'start-quota-65-cycle') } }, current)
-      assert.equal((await quotaFixed(progress, runtime, last, epoch)).status, 'committed'); current = last.body.commit.next
-      const before = await f.state(input.discovery.jobKey)
-      quotaProgress.boundary = 'claim_65_refusal'
-      const rejected = await quotaCommand(progress, { action: 'claim', input: { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-65-claim') } }, current)
-      assert.equal((await quotaFixed(progress, runtime, rejected, epoch)).status, 'quota'); assert.deepEqual(await f.state(input.discovery.jobKey), before)
-      const history = JSON.parse(before[0]!.state!)
-      assert.equal(history.starts.length, 64); assert.equal(history.dispositions.length, 64)
-      assert.equal(history.commands.length, 193)
-      // A contradictory retained pointer is detected by full-history comparison;
-      // the controlled test restores exactly its prior value, never deletes rows.
-      quotaProgress.boundary = 'pointer_refusal'
-      await f.owner.query("UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=$2 WHERE job_key=$1", text([input.discovery.jobKey, history.starts[0].attempt_key]))
-      await assert.rejects(quotaFixed(progress, runtime, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe'), code('P7603'))
-      await f.owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=NULL WHERE job_key=$1', text([input.discovery.jobKey]))
-      assert.deepEqual(await f.state(input.discovery.jobKey), before)
+        const terminalRequest = { ...failure, body: { ...failure.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }
+        assert.equal((await quotaFixed(progress, runtime, terminalRequest, epoch)).status, 'committed')
+        const final = JSON.parse((await quotaOwner.run(() => f.state(input.discovery.jobKey)))[0]!.state!)
+        assert.equal(final.commands.length, 256); assert.equal(final.subjects[0].operation_count, 256); assert.equal(final.subjects[0].terminal_credit_claim, null)
+        assert.equal(final.dispositions.length, 1); assert.equal(final.subjects[0].current_job.state, 'exhausted')
+        progress.boundary = 'ledger_quota_refusal'
+        const beyond = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput, operationId: ids('op3', 'quota-beyond'), jobId: ids('job3', 'quota-beyond') } }, final.subjects[0].current_job)
+        assert.equal((await quotaFixed(progress, runtime, beyond, epoch)).status, 'quota')
+        assert.deepEqual(JSON.parse((await quotaOwner.run(() => f.state(input.discovery.jobKey)))[0]!.state!), final)
+        progress.boundary = 'done'
+      }, 'ledger'),
+      proof('N05', 'sixty-four actual starts retain all older history and refuse the sixty-fifth claim', async () => {
+        const progress = quotaProgress.cycles
+        progress.boundary = 'absent_probe'
+        const base = m04Fixture('native-start-quota-base')
+        const input = m04Fixture('native-start-quota', { context: base.originals.context('CH', 'NO') }), epoch = await quotaOwner.run(() => currentEpoch())
+        const ledger = m04Fixture('native-ledger-quota', { context: base.originals.context('CH', 'IS') })
+        assert.equal(new Set([base.discovery.jobKey, ledger.discovery.jobKey, input.discovery.jobKey]).size, 3, 'quota Discovery subjects are distinct from each other and the earlier default')
+        assert.equal((await quotaFixed(progress, quotaRuntime.connection, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe')).status, 'absent')
+        let current: V3ManagedJobRecord | null = null
+        for (let n = 0; n < 64; n++) {
+          progress.boundary = 'cycle_enqueue'; progress.lastStartedIndex = n
+          const enqueue = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
+            operationId: ids('op3', 'start-quota-enqueue-' + n), jobId: ids('job3', 'start-quota-cycle-' + n), attemptLimit: 1 } }, current)
+          assert.equal((await quotaFixed(progress, quotaRuntime.connection, enqueue, epoch)).status, 'committed'); current = enqueue.body.commit.next
+          progress.boundary = 'cycle_claim'
+          const c = { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-claim-' + n), leaseId: ids('lease3', 'start-quota-' + n) }
+          const claim = await quotaCommand(progress, { action: 'claim', input: c }, current)
+          assert.equal((await quotaFixed(progress, quotaRuntime.connection, claim, epoch)).status, 'committed'); current = claim.body.commit.next
+          progress.boundary = 'cycle_start'
+          const start = await quotaFixed(progress, quotaRuntime.connection, { operation: 'execution_start', body: { claim: c, leasedJob: current, subjectText: claim.body.subjectText } }, epoch)
+          assert.equal(start.status, 'reserved')
+          progress.boundary = 'cycle_fail'
+          const failed = await quotaCommand(progress, { action: 'fail', input: { operationId: ids('op3', 'start-quota-fail-' + n), jobKey: input.discovery.jobKey,
+            fence: { jobId: current.jobId, revision: current.revision, leaseId: current.lease!.leaseId, generation: current.lease!.generation }, reason: 'unreachable' } }, current)
+          assert.equal((await quotaFixed(progress, quotaRuntime.connection, { ...failed, body: { ...failed.body, disposition: { kind: 'settled_failure', attemptKey: start.attemptKey, token: start.token } } }, epoch)).status, 'committed')
+          current = failed.body.commit.next; progress.lastCompletedIndex = n
+        }
+        progress.boundary = 'enqueue_65'
+        const last = await quotaCommand(progress, { action: 'enqueue', kind: 'combination_discovery', input: { ...input.discoveryInput,
+          operationId: ids('op3', 'start-quota-65-enqueue'), jobId: ids('job3', 'start-quota-65-cycle') } }, current)
+        assert.equal((await quotaFixed(progress, quotaRuntime.connection, last, epoch)).status, 'committed'); current = last.body.commit.next
+        const before = await quotaOwner.run(() => f.state(input.discovery.jobKey))
+        progress.boundary = 'claim_65_refusal'
+        const rejected = await quotaCommand(progress, { action: 'claim', input: { ...input.claim('combination_discovery'), operationId: ids('op3', 'start-quota-65-claim') } }, current)
+        assert.equal((await quotaFixed(progress, quotaRuntime.connection, rejected, epoch)).status, 'quota'); assert.deepEqual(await quotaOwner.run(() => f.state(input.discovery.jobKey)), before)
+        const history = JSON.parse(before[0]!.state!)
+        assert.equal(history.starts.length, 64); assert.equal(history.dispositions.length, 64)
+        assert.equal(history.commands.length, 193)
+        // A contradictory retained pointer is detected by full-history comparison;
+        // the controlled test restores exactly its prior value, never deletes rows.
+        progress.boundary = 'pointer_refusal'
+        await quotaOwner.run(() => f.owner.query("UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=$2 WHERE job_key=$1", text([input.discovery.jobKey, history.starts[0].attempt_key])))
+        await assert.rejects(quotaFixed(progress, quotaRuntime.connection, { operation: 'queue_read', body: { jobKey: input.discovery.jobKey, continuation: null } }, null, 'probe'), code('P7603'))
+        await quotaOwner.run(() => f.owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET open_attempt=NULL WHERE job_key=$1', text([input.discovery.jobKey])))
+        assert.deepEqual(await quotaOwner.run(() => f.state(input.discovery.jobKey)), before)
+        progress.boundary = 'done'
+      }, 'cycles'),
+    ]
+    const quotaOutcomes = await Promise.allSettled(quotaProofs)
+    const serialOutcomes = await Promise.allSettled([quotaOwner.join(), quotaObserver.join()])
+    quotaProgress.pairJoined = true
+    try {
+      if (firstQuotaFailure !== undefined) throw firstQuotaFailure.error
+      for (const outcome of [...quotaOutcomes, ...serialOutcomes]) if (outcome.status === 'rejected') throw outcome.reason
+      lifetime.check()
+      assert.equal(quotaProgress.fixedOverlap.active, 0)
+      assert.equal(quotaProgress.fixedOverlap.maximum, 2, 'both actual fixed-call await intervals overlapped')
+      assert.ok(quotaProgress.fixedOverlap.milliseconds > 0)
+      // Both complete proofs and both full inventory comparisons have joined.
+      setPhase('quota_pair_runtime_absence')
+      quotaRuntime.connection.close()
+      await until(lifetime, async () => JSON.stringify(await backendInventory(f.observer)) === JSON.stringify(beforeQuotaRuntime),
+        'extra restricted quota runtime backend must disappear before later proofs')
+      quotaProgress.extraRuntimeAbsent = true
       quotaProgress.boundary = 'done'; quotaProgress.currentGroup = 'none'
-    })
+    } catch (error) {
+      const failure = firstQuotaFailure === undefined ? error : firstQuotaFailure.error
+      quotaProgress.boundary = 'failed'; effectAbort.abort(failure)
+      throw failure
+    }
     await proof('N15', 'nonempty real command/unknown/prepared/success/failure history forbids rollback', async () => {
       const snapshot = await catalog(f.owner)
       await refusal(f.owner, rollback, 'P7606')
@@ -2152,7 +2284,7 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
       writer.connection.close(); destroyer.connection.close()
     })
     assert.ok(performance.now() - started < 240000, 'effect/test work stayed inside frozen 240s')
-  } catch (error) { primary = error; primaryPhase = phase }
+  } catch (error) { primary = error; primaryFailurePresent = true; primaryPhase = firstQuotaFailure?.phase ?? phase }
   finally {
     clearTimeout(timer)
     const cleanupStarted = performance.now(), errors: unknown[] = []
@@ -2173,14 +2305,14 @@ test('M04 mandatory native: finite durable jobs, full S1/MA1 authority, original
     } catch (error) { errors.push(error) }
     t.diagnostic('M04_NATIVE_RECEIPT ' + JSON.stringify({ schema: 'jetnity.m04.native.v1', candidateSha256: digest(candidate), rollbackSha256: digest(rollback),
       executed: true, effectAndCleanupMilliseconds: Math.ceil(performance.now() - started), cleanupMilliseconds: Math.ceil(performance.now() - cleanupStarted),
-      clusters, childProcesses: children.size, lifetime: cleanupReceipt ?? null, groups: proofs,
+      clusters, childProcesses: children.size, lifetime: cleanupReceipt ?? null, groups: [...proofs].sort((a, b) => a.ordinal - b.ordinal),
       nestedRaceWitnesses, quotaProgress,
       connections: { aggregateWorkConnectionBound: 40, maximumJobs: familyMaximum.jobs, maximumIntake: familyMaximum.intake,
         maximumMethod: familyMaximum.method, m04ObserverLimit: 2, maximumM04Observers: maximumFamilyObservers,
         methodObserverLimit: 1, fixturePerClusterLimit: 16, inheritedCommitGuardPairs, minimumOwned: minimumInheritedConnections },
-      failure: primary ? { phase: primaryPhase, error: nativeFailure(primary) } : null,
+      failure: primaryFailurePresent ? { phase: primaryPhase, error: nativeFailure(primary) } : null,
       cleanupFailures: errors.slice(0, 8).map(error => nativeFailure(error)), cleanupFailureCount: errors.length,
-      nativePass: !primary && errors.length === 0 }))
-    if (primary || errors.length) throw new AggregateError([...(primary ? [primary] : []), ...errors], 'M04 native proof or terminal cleanup failed')
+      nativePass: !primaryFailurePresent && errors.length === 0 }))
+    if (primaryFailurePresent || errors.length) throw new AggregateError([...(primaryFailurePresent ? [primary] : []), ...errors], 'M04 native proof or terminal cleanup failed')
   }
 })
