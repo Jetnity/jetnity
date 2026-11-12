@@ -257,7 +257,7 @@ function fixture(options: Scenario = {}) {
       }
     },
   }
-  const module = loadFixtureModule<{
+  const readerFixture = loadFixtureModule<{
     probeOfficialTruthAaReviewedRevisionV1: typeof probeOfficialTruthAaReviewedRevisionV1
   }>(readerPath, {
     'node:fs': files.module(),
@@ -307,7 +307,7 @@ function fixture(options: Scenario = {}) {
       quellenKatalogLesen: () => { throw new Error('SYNTHETIC_CATALOG_CALL_FORBIDDEN') },
     },
   })
-  return { invoke: module.probeOfficialTruthAaReviewedRevisionV1, state, files }
+  return { invoke: readerFixture.probeOfficialTruthAaReviewedRevisionV1, state, files }
 }
 
 const blockedReasons: readonly string[] = [

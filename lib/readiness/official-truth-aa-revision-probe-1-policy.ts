@@ -3,7 +3,7 @@ import 'server-only'
 // Closed research task data. Run 0 is unarmed; only Root may select one reviewed CI run.
 // No environment/caller override, setter, registry admission or product-window change.
 export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
-  runNumber: 4120 as number,
+  runNumber: 0 as number,
   baseSha: 'dfd692440762b50183fdebbfd6bf8dabde4662d0',
   repository: 'Jetnity/jetnity',
   repositoryId: 1020187087,
@@ -33,7 +33,7 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   // This policy's own blob/tree is externally bound by Root exact-head review.
   sourceInventory: Object.freeze([
     Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 65490, sha256: 'a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 45408, sha256: '487789d625d885d5567438f8ee1a2c5ad1870e6a208154f18949bcacae3228cf' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 45422, sha256: 'c29587c5314b7c4f3a7dea5d66e3fb7c9e612b3822076a4f8b99fb508793b4a5' }),
     Object.freeze({ path: 'lib/readiness/official-truth-bounded-response-body.ts', bytes: 1278, sha256: '186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),

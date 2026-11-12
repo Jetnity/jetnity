@@ -1,3 +1,86 @@
+# CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A4
+
+## Current A4 state
+
+**UNARMED / policy.runNumber: 0 / same-session source fix / independent review and new-head CI pending.**
+
+This immutable candidate has not been pushed by its author. Existing PR #1192 remains Draft/CHANGES REQUIRED on published head `38fd761205d33fd32ff14bc680fa4699e32f15f4` until Root performs its independently reviewed expected-old-head update. The new candidate's sole parent is that published head, making the intended update a fast-forward. Integration base/current main remains `dfd692440762b50183fdebbfd6bf8dabde4662d0`.
+
+Same actual author: **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**.
+Same original actual session: **/root/aa_revision_probe_writer_g1**.
+No successor and no resumed Cursor UI session are claimed.
+
+Authority is [Root TASK V1/A4](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6816241910). A4 explicitly disarms the previous positive selection. **4120 is consumed and is not retried, silently renumbered or rearmed.** The historical positive-selection statements preserved below are superseded for current status by this Run0 state.
+
+## Actual failed selection and absence of source observation
+
+Selected CI **43165807743 / #4120 / attempt1 / pull_request**, verify job **131007285525**, belongs to published head 38fd761205d33fd32ff14bc680fa4699e32f15f4. It completed FAILURE.
+
+Root read the complete original verify log: **197714 UTF-8 bytes**, SHA256 `145ef09582cfa31dfd9e197b7e287ad87ec04cd25b6a0b7d6832db2f1261e648`. A4 records the exact error at **2026-11-12T06:08:28.8870261Z**:
+`lib/readiness/official-truth-aa-revision-probe-1.test.ts:260:3`,
+`@next/next/no-assign-module-variable`, assigning the local variable `module`.
+Summary: one error and 195 existing warnings; exit 1 at 06:08:29.2122215Z.
+
+This author independently read the actual job step metadata: Typecheck SUCCESS, Lint FAILURE, Tests SKIPPED, all five later hygiene steps SKIPPED, Production build SKIPPED. The prior Typecheck result covers only its old exact head; it is not a gate for this changed candidate.
+
+The real AA entry is inside the skipped Tests flow. Root's full original contains no `AA_REVISION_PROBE_V1` record. No AA observation, MATCH or current source revision was obtained by that selected verify job. Other old-head workflow jobs do not turn this failed selection into a candidate PASS.
+
+This is an ordinary lint failure, not a platform/security denial. It does not clear or alter #917/#1131 boundaries.
+
+## Exact minimal fix
+
+The AA test changes only two occurrences of one local identifier:
+
+- `const module = loadFixtureModule<{` becomes `const readerFixture = loadFixtureModule<{`.
+- The matching returned entry reference uses `readerFixture.probeOfficialTruthAaReviewedRevisionV1`.
+
+The existing `FixtureFs.module()` method and `files.module()` call remain unchanged. Reversing these two replacements restores the complete prior test source byte-for-byte. No preflight, negative case, transport behavior, assertion, lint rule, skip or workflow is changed.
+
+Policy changes only:
+
+1. `runNumber: 4120 as number` becomes `runNumber: 0 as number`.
+2. The AA-test inventory row changes from 45408 bytes / SHA256 `487789d625d885d5567438f8ee1a2c5ad1870e6a208154f18949bcacae3228cf` to 45422 bytes / SHA256 `c29587c5314b7c4f3a7dea5d66e3fb7c9e612b3822076a4f8b99fb508793b4a5`.
+
+The other twelve inventory entries are exact. The selected base, URL, budget, expected V2 pin, binding, claim, caller restrictions and finite output remain unchanged. Run0 closes the actual entry before filesystem/DNS/HTTPS selection effects; this new candidate selects no external AA request.
+
+Reader blob `2b14953968da35ca47b272fd67a1a912613b8e6d` and BP1 test blob `7b027b49af72a3f16b230acfeff7434f9a71b64e` stay byte-identical. A3's complete original Reader reconstruction, exact two-addition pins, current Reader pin, twelve in-memory negative-case sources and all other BP1 protections remain intact.
+
+The complete prior Task is an exact prefix, followed by the full A4 comment verbatim and its persisted URL. The complete prior A3 Handoff is retained verbatim in the historical section below.
+
+## Current six-file inventory
+
+The five non-Handoff blobs are fixed before this Handoff is written. This file's own hash and the final candidate commit/tree are delivered externally, avoiding self-reference.
+
+| Path | UTF-8 bytes | Git blob | SHA256 |
+|---|---:|---|---|
+| lib/readiness/official-truth-server-owned-retrieval.ts | 65490 | `2b14953968da35ca47b272fd67a1a912613b8e6d` | `a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143` |
+| lib/readiness/official-truth-aa-revision-probe-1-policy.ts | 3874 | `4ccf8276dbc24fd989ce0d1d7f0fb0a9e3b84c9c` | `24a41f9a9dd3909d27a2b939337c074cacfd1416c43f036a17e5140bc1ca9f14` |
+| lib/readiness/official-truth-aa-revision-probe-1.test.ts | 45422 | `6da4fe65f0c40c56c4cf49bcdff2ea4d6d975fe6` | `c29587c5314b7c4f3a7dea5d66e3fb7c9e612b3822076a4f8b99fb508793b4a5` |
+| lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts | 25526 | `7b027b49af72a3f16b230acfeff7434f9a71b64e` | `3804730801ec6713d75ee62d71a7e9c2e02a779469e59270d09a1e168b90884b` |
+| docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md | 32623 | `78226548a1f6038bddc12fe7eed563ef694f2af4` | `4fb8cc7d11c9884fb0c12475284e4df0c83865db67cb9576472fe44540755efb` |
+
+Exactly the same six paths differ from the integration base. Relative to published A3 head 38fd7612, only AA test, policy, Task and Handoff change. Every other leaf, including Reader and BP1 test, must remain object/type/mode-identical.
+
+## Honest verification limits and remaining gates
+
+The rename and pin changes were verified by complete source/metadata comparison and immutable Git-object readback. **The author has not run project code, a parser/compiler, tests, lint, build, native/SQL work or an AA/network request.** There is no new-head runtime PASS yet. No ref/PR update, Ready or merge was performed by the author.
+
+Root and an independent reviewer must review the exact new source/tree/diff. Root alone may update the existing branch with expected old head 38fd761205d33fd32ff14bc680fa4699e32f15f4. The resulting ordinary unarmed PR CI is verification of a new head, not a rerun of 4120.
+
+Required evidence remains: complete actual unarmed CI, including synthetic preflight and preserved BP1 checks; all required companion gates; exact new-head Preview; current main/base equality; and review-thread/review disposition. Prior Preview `dpl_FYqy1Eoc9eJyD2qffpyaZxg4GY7o` is tied to old 38fd head and cannot cover this candidate. Ready, merge and any later actual-main/Production acceptance remain Root decisions with their own exact-head evidence.
+
+Only after full actual unarmed CI and synthetic preflight PASS may Root consider a separately persisted and independently reviewed future positive one-shot selection, with a fresh main/workflow inventory. That is not automatic and is not selected by A4 or this author. A consumed selection or a genuine security/platform refusal is never bypassed by rerun, another transport or silent rearming.
+
+A1's passive private Native-Harness transport and R1's bounded AST-analysis statement remain unchanged. Arbitrary runtime-computed paths/names are not universally resolved by the guard; complete exact-tree/diff/source review and unchanged legacy pins remain separately necessary. No new consumer is permitted.
+
+No hosted installation, D1 operational binding, custody/legal admission, pilot-window extension or public CH→DE activation is claimed. All existing product/authority/install/public gates and #917/#1131 STOPs remain intact.
+
+## Historical A3 handoff — preserved verbatim
+
+The following complete document belongs to published candidate `38fd761205d33fd32ff14bc680fa4699e32f15f4`, before the actual lint failure and this A4 disarming. Its earlier selected 4120/source-only/not-published statements are historical; they do not override the current failed-selection evidence or Run0 state.
+
+---
+
 # CH-DE-AA-REVISION-PROBE-1 — author handoff V1 / A3
 
 ## Current A3 disposition

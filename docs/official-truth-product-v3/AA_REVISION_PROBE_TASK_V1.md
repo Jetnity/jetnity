@@ -233,3 +233,40 @@ The independently accepted R41 actual-main/Production decision6815551751 remains
 ## Persisted Root amendment A3
 
 https://github.com/Jetnity/jetnity/issues/1162#issuecomment-6815846159
+
+
+## Technical Lead — CHANGES REQUIRED / AA A4 immediate review fix
+
+**Exact PR #1192 head38fd761205d33fd32ff14bc680fa4699e32f15f4**, tree594de1058f4abbe9feb8d525f1f2ce9558ac0138; base/current main dfd692440762b50183fdebbfd6bf8dabde4662d0. Earlier SOURCE_PASS is source-only history, not runtime/Ready/merge PASS.
+
+### Actual CI finding AA-A4-LINT-01
+
+Selected CI **43165807743 / #4120 / attempt1 / pull_request** is bound to this exact head/branch. Verify job **131007285525** completed FAILURE. Typecheck passed; Lint failed; Tests, all later hygiene steps and Production build were SKIPPED.
+
+Full original verify log was read by Root:197714UTF8bytes, SHA256145ef09582cfa31dfd9e197b7e287ad87ec04cd25b6a0b7d6832db2f1261e648. Actual error at2026-11-12T06:08:28.8870261Z:
+lib/readiness/official-truth-aa-revision-probe-1.test.ts:260:3 — @next/next/no-assign-module-variable, Do not assign to the variable module.
+Summary:1error,195existing warnings; exit1 at06:08:29.2122215Z.
+
+Root checked the complete actual job step states and source: the local fixture declares const module=loadFixtureModule(...). The real one-shot entry is inside the skipped Tests step; it was not executed by the selected verify job. No AA_REVISION_PROBE_V1 record occurs in that log. There is no source observation/MATCH. Other workflow jobs remain separately pending where applicable.
+
+**4120 is now a consumed failed selection, not a run that may be retried or silently renumbered.** No rerun/alternate source call/transport is selected.
+
+### TASK V1 amendment A4 — same original session, unarmed verification first
+
+Author **Jetnity Official Truth CH-DE AA Revision Probe 1 — Codex Generation1**, actual original session **/root/aa_revision_probe_writer_g1**. Immediate fix of the same PR; no successor.
+
+1. Rename only the offending local fixture variable to a normal specific identifier and its references. Preserve all preflight/security/negative/transport behavior; no lint suppression, rule disable, skip, relaxed assertion or workflow change.
+2. Explicitly set policy.runNumber to **0 (UNARMED)**. This amendment selects a safe complete synthetic/CI verification round with no external AA request. It does not select a new positive run. Refresh only the AA-test inventory bytes/SHA256 required by the rename; all12other inventory entries stay exact.
+3. Reader2b14953968da35ca47b272fd67a1a912613b8e6d and BP1-test7b027b49af72a3f16b230acfeff7434f9a71b64e stay byte-exact. Complete original preservation, fixed URL/budget/V2/one-shot/security boundaries and passive legacy Native import exception remain exact.
+4. Preserve complete prior Task and append this A4 verbatim with URL. Handoff records failed4120/job/sourcefinding, skippedTests/no observation, current UNARMED state, same-session fix and remaining runtime/Preview/main/threads gates. Retain complete historical handoff verbatim, clearly superseded for current selection/status.
+5. Prepare a new immutable fast-forward candidate with soleparent **38fd761205d33fd32ff14bc680fa4699e32f15f4**. Exactly the same6paths against main; relative toA3 only AA-test, policy, Task and Handoff may change. Every other baseleaf, Reader and BP1 stays exact. Deliver full six-file manifest, full source/diff, byte identities and truthful source-only review.
+
+No ref/PR push, Ready/merge, local project/parser/compiler/test/build/SQL/network execution or source request by the author. Root alone performs independent source regating and expected-old-head ref update. The ordinary new unarmed PR CI is a new-head verification, not a rerun of4120. No positive rearm is part of A4.
+
+After actual full unarmed CI and synthetic preflight pass, Root may consider a separately persisted, explicitly reviewed future one-shot selection under the already authorized CH→DE path. That requires a fresh main/workflow inventory and complete exact-head review; it is not automatic, not permission to repeat a refused platform action, and not an agent-authorized follow-on.
+
+PR remains Draft/CHANGES REQUIRED. Current Previewdpl_FYqy1Eoc9eJyD2qffpyaZxg4GY7o is READY for old38fdhead only and cannot cover the forthcoming head. #917/#1131 STOPs and all other product/authority/install/public gates remain unchanged.
+
+## Persisted Root amendment A4
+
+https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6816241910
