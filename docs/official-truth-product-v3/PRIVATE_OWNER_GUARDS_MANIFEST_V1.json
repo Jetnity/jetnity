@@ -7,11 +7,10 @@
   "author": {
     "name": "Jetnity Official Truth V3 Private Owner Guards 1 — Codex Generation1",
     "session": "/root/v3_private_owner_guards_writer_g1",
-    "kind": "actual-new-delegated-Codex-session",
+    "kind": "same-delegated-Codex-session-documentation-review-fix-R2",
     "cursorSessionClaimed": false
   },
-  "soleParent": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
-  "baseTree": "cbc79e627161d4ace132b84cf057c18adc86586c",
+  "soleParent": "28ee04afcd74123cea8803f67d379184353e231d",
   "containingCommitAndTree": "External immutable Git identities in author delivery; no circular self-pin.",
   "bindingTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6815884525",
@@ -50,7 +49,19 @@
     "refBranchPrPublication": false,
     "ready": false,
     "merged": false,
-    "followOn": false
+    "followOn": false,
+    "deltaBasis": "integrationBaseline",
+    "parentDelta": {
+      "basis": "28ee04afcd74123cea8803f67d379184353e231d",
+      "addedLeaves": 0,
+      "removedLeaves": 0,
+      "modifiedPaths": [
+        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json"
+      ],
+      "allFourCodeBlobsUnchanged": true,
+      "completeTaskV1R1Unchanged": true
+    }
   },
   "code": [
     {
@@ -87,9 +98,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_HANDOFF_V1.md",
-      "blob": "879c276e7e81cfb0c505bc0be5a91ac2ed99009e",
-      "bytes": 16976,
-      "sha256": "738d959911a1e8b6d3b18d13c8269d58b098cc1fd0b1d804fe4ac5ba9a1ce00a"
+      "blob": "b82504256fb97bfa37adf26e7cca84d52d2c4dbe",
+      "bytes": 19704,
+      "sha256": "256f23951c9f02549fb7937411aa7e6cd7cb3fd7fa5c94bcf0decf15c49ae2fc"
     }
   ],
   "manifestSelfIdentity": "This path's Git blob/UTF-8 bytes/SHA256 are in final external author readback; not recursively embedded.",
@@ -184,7 +195,7 @@
       "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
     }
   ],
-  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All existing leaves remain bound to the sole-parent tree. No old Auth fixture or authority loader is imported.",
+  "runtimeImportScope": "Pins cover the named reused modules and unchanged MA1 method contract; no claim of exhaustive independent transitive-module review. All original integration-baseline source leaves and the four previously reviewed PG1 code leaves remain exact. No old Auth fixture or authority loader is imported.",
   "existingDisposableRollback": {
     "blob": "2b6f0e0007fb03587347ac56ae9c8d5f374642cb",
     "changed": false,
@@ -238,7 +249,8 @@
     "apiSettingsVerified": false,
     "hostedInstall": false,
     "syntheticFixtureIsHostedProfile": false,
-    "m04RoleProfileMismatch": "Unresolved outside this task; never alter managed postgres to satisfy a fixture."
+    "m04RoleProfileMismatch": "Unresolved outside this task; never alter managed postgres to satisfy a fixture.",
+    "hostedMa1CreatorMembershipCompatibility": "UNPROVEN; separate from the known M04 platform-owner-profile mismatch."
   },
   "nativePlan": {
     "status": "NOT_RUN",
@@ -346,6 +358,85 @@
     "runtimePass": false,
     "technicalLeadPass": false
   },
-  "firstUnfinishedStep": "Root independent complete-candidate review and exact-head CI after Root-owned publication selection; actual target gates remain separate.",
-  "stop": "No execution, ref/PR, Ready, merge, hosted write or follow-on by author."
+  "firstUnfinishedStep": "Root independent regating of the final R2 package and exact identities, then Root-selected publication and required exact-head CI. AA4120 is consumed failed before Tests; A4 is RUN0/UNARMED with no observation, retry or positive rearm. Hosted MA1 creator-membership compatibility and actual target gates remain separately unproven.",
+  "stop": "No execution, ref/PR, Ready, merge, hosted write or follow-on by author.",
+  "parentTree": "8e60897fd154ef410752c392f0e657f21e62352e",
+  "integrationBaseline": {
+    "commit": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+    "tree": "cbc79e627161d4ace132b84cf057c18adc86586c"
+  },
+  "documentationAmendment": {
+    "id": "R2",
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816413260",
+    "originalBodyUtf8Bytes": 2556,
+    "originalBodySha256": "8f2eb2643adb33d56fb31b2feb51d0166679376ec0ba36c66eb6ff96d90f40ab",
+    "attributedTo": "Root / Technical Lead; independent reviewer /root/ch_de_release_gate_audit",
+    "correctedInSameSession": true,
+    "changes": "Current AA4120/A4 status, separate unproven hosted MA1 creator-membership boundary, correct successor parent and unchanged integration baseline.",
+    "priorCandidate": "28ee04afcd74123cea8803f67d379184353e231d",
+    "priorTree": "8e60897fd154ef410752c392f0e657f21e62352e",
+    "codeSourceReviewAtParent": "ROOT_RECORDED_SOURCE_ONLY_REVIEW",
+    "currentPackageReview": "ROOT_REGATING_REQUIRED",
+    "runtimePass": false
+  },
+  "latestHostedPrerequisiteReceipt": {
+    "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816258415",
+    "observedBy": "Root, separately bound Dev SELECT",
+    "authorPerformedQuery": false,
+    "serverVersionNum": 170006,
+    "postgresqlVersion": "17.6",
+    "creatorRole": "postgres",
+    "creatorOid": 16388,
+    "createRoleSelfGrant": "",
+    "databaseCreate": true,
+    "databaseCreateWithGrantOption": true,
+    "bootstrapRole": {
+      "oid": 10,
+      "name": "supabase_admin",
+      "superuser": true
+    },
+    "membershipOptionColumns": [
+      "admin_option",
+      "inherit_option",
+      "set_option"
+    ],
+    "newRoleCreated": false,
+    "createdRoleCreatorMembershipEdgeObserved": false,
+    "hostedMa1InstallProven": false,
+    "limitation": "Observed creator prerequisites are not proof of the actual resulting new-role membership graph or a successful hosted MA1 install."
+  },
+  "relatedWork": {
+    "aa": {
+      "decision": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6816241910",
+      "consumedRun": {
+        "runId": 43165807743,
+        "runNumber": 4120,
+        "attempt": 1,
+        "verifyJobId": 131007285525,
+        "conclusion": "failure",
+        "typecheck": "passed",
+        "lint": "failed",
+        "tests": "skipped",
+        "laterHygieneAndBuild": "skipped",
+        "selectedAaEntryExecuted": false,
+        "aaObservation": false,
+        "match": false
+      },
+      "correction": "A4",
+      "policyRunNumber": 0,
+      "selectionState": "RUN0_UNARMED",
+      "retry4120Selected": false,
+      "positiveRearmSelected": false,
+      "pg1AuthorizesAaExecution": false
+    },
+    "hostedMa1": {
+      "task": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6816388805",
+      "selection": "SEPARATE_SOURCE_ONLY_PREPARATION",
+      "scope": "Hosted MA1 creator-membership installation boundary",
+      "acceptanceProvenBySelection": false,
+      "hostedInstallProven": false,
+      "implementedByPg1": false,
+      "m04ProfileMismatchResolved": false
+    }
+  }
 }
