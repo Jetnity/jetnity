@@ -105,3 +105,11 @@ Continuation of the documented replacement session `/root/hs1_hm04_fix`; selecte
 The `hs1_function_pins` SQL alias `p` and the `hs1_structure` SQL aliases `c`/`a` collided with declared PL/pgSQL records. Only those query aliases and their qualified references now use `function_inventory`, `class_inventory`, and `attribute_inventory`; installer and recovery retain every predicate, expected value and all 14 original runtime function bodies. HS1 Native is unchanged.
 
 CI4140 on the parent exposed `42702`; this candidate has not been executed. Current pins and inverse mappings are in the package manifest; earlier task/evidence text remains historical. Root must integrate COMPOSED/HDP pins and independently run the complete new-head gates before Dev installation. Unused-only recovery, #917 and #1131 boundaries remain unchanged.
+
+## PG17.12 column metadata correction — SOURCE ONLY
+
+CI4148 on a4731c2fbbddccab15c641dd8154426d59c68121 identified C0109: the engine's new internal pg_attver option, not a user ACL or runtime failure. Only NULL or, on PG17.12+, one one-dimensional, lower-bound-1 pg_attver value in canonical uint64 decimal form is admitted; all user options remain forbidden. PG17's default attstattarget is explicitly NULL. No engine safety setting changes.
+
+The selected correction preserves original S1/MA1 execution bodies and all proof groups/budgets. Four real ALTER-column negatives are added inside existing HS1 installer/recovery groups; temporary diagnostics are removed. This source has not been executed, installed or accepted as a runtime pass.
+
+Unused recovery retains exact OIDs, original catalog/role/ACL checks and history refusal. The same finite engine-option predicate applies on recovery; HM04's recorded catalog fingerprints continue to compare the entire actual attribute metadata, including pg_attver, so post-install metadata changes are not silently recaptured. n_distinct and explicit statistics-target drift must still refuse before removal.

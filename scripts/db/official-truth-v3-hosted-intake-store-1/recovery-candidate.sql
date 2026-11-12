@@ -292,8 +292,19 @@ BEGIN
       WHERE c0.relnamespace=private_id AND c0.relname=x.table_name AND a0.attnum=x.position;
     IF a.attname IS DISTINCT FROM x.column_name OR a.attisdropped OR a.atttypid<>x.type_name::pg_catalog.regtype
       OR a.attnotnull<>x.not_null OR a.attgenerated<>'' OR a.attidentity<>'' OR a.atthasmissing
-      OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL
-      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''
+      OR a.attacl IS NOT NULL
+      -- PG17.12 internal composite-layout version only; user options still fail.
+      -- NULL remains the legitimate pre-versioning/upgrade representation.
+      OR (a.attoptions IS NOT NULL AND NOT (
+        pg_catalog.current_setting('server_version_num')::integer>=170012
+        AND pg_catalog.array_ndims(a.attoptions)=1
+        AND pg_catalog.array_lower(a.attoptions,1)=1
+        AND pg_catalog.cardinality(a.attoptions)=1
+        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'
+          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric
+          ELSE false END))
+      OR a.attfdwoptions IS NOT NULL
+      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''
       OR a.attstorage<>(SELECT t.typstorage FROM pg_catalog.pg_type t WHERE t.oid=a.atttypid)
       OR a.attcollation<>(SELECT t.typcollation FROM pg_catalog.pg_type t WHERE t.oid=a.atttypid)
       OR (SELECT pg_catalog.pg_get_expr(d.adbin,d.adrelid) FROM pg_catalog.pg_attrdef d

@@ -359,8 +359,8 @@ describe('registry and production dormancy', () => {
   const COMPOSED_GOVUK_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
     bytes: 90987,
-    blob: '555a49ff94764ba8636258c3da4dc3454e958897',
-    sha256: '582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429',
+    blob: 'beb5d99906db4810fd25eaa2870a8a0b5279b652',
+    sha256: '0cc3c1a1d945292f86cc3e8e39240f981ad777fac00b65e882788f59309bed6d',
     contextStart: 4322,
     contextEnd: 4568,
     tokenStart: 4353,

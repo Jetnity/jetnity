@@ -549,8 +549,19 @@ BEGIN
       WHERE c0.relnamespace=private_id AND c0.relname=x.table_name AND a0.attnum=x.position;
     IF a.attname IS DISTINCT FROM x.column_name OR a.attisdropped OR a.atttypid<>x.type_name::pg_catalog.regtype
       OR a.attnotnull<>x.not_null OR a.attgenerated<>'' OR a.attidentity<>'' OR a.atthasmissing
-      OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL
-      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''
+      OR a.attacl IS NOT NULL
+      -- PG17.12 internal composite-layout version only; user options still fail.
+      -- NULL remains the legitimate pre-versioning/upgrade representation.
+      OR (a.attoptions IS NOT NULL AND NOT (
+        pg_catalog.current_setting('server_version_num')::integer>=170012
+        AND pg_catalog.array_ndims(a.attoptions)=1
+        AND pg_catalog.array_lower(a.attoptions,1)=1
+        AND pg_catalog.cardinality(a.attoptions)=1
+        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'
+          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric
+          ELSE false END))
+      OR a.attfdwoptions IS NOT NULL
+      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''
       OR a.attstorage<>(SELECT t.typstorage FROM pg_catalog.pg_type t WHERE t.oid=a.atttypid)
       OR a.attcollation<>(SELECT t.typcollation FROM pg_catalog.pg_type t WHERE t.oid=a.atttypid)
       OR (SELECT pg_catalog.pg_get_expr(d.adbin,d.adrelid) FROM pg_catalog.pg_attrdef d
@@ -1845,7 +1856,7 @@ BEGIN
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
       WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
-      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
+      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
   END IF;
   SELECT q.value INTO actual_value FROM (
@@ -3201,7 +3212,7 @@ SELECT pg_catalog.jsonb_build_object('oid',d.oid,'name',d.datname,'owner',d.datd
 ) q;
 
 INSERT INTO official_v3_jobs_private.catalog_binding_v1(object_identity,fingerprint)
-SELECT 'package-context','{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()));
+SELECT 'package-context','{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()));
 DO $hm04_bound_final_objects$
 DECLARE creator oid; owner_id oid:='ot_v3_jobs_owner'::pg_catalog.regrole;
   caller_id oid:='ot_v3_jobs_caller'::pg_catalog.regrole; intake_id oid:='ot_v3_intake_owner'::pg_catalog.regrole;
@@ -3216,7 +3227,7 @@ BEGIN
     OR EXISTS(SELECT 1 FROM official_v3_jobs_private.catalog_binding_v1
       WHERE object_identity<>ALL(ARRAY['jobs-functions','jobs-relations','jobs-types','jobs-schemas','jobs-dependencies','prerequisite-functions','prerequisite-relations','prerequisite-types','prerequisite-schemas','prerequisite-dependencies','protected-roles','creator-edges','creator-defaults','database','package-context' ]::text[]))
     OR (SELECT fingerprint FROM official_v3_jobs_private.catalog_binding_v1 WHERE object_identity='package-context')
-      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
+      IS DISTINCT FROM ('{"package":"HM04-v1-A1","original_jobs_sha256":"0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4","original_r41_native_sha256":"a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea","pg1_sha256":"3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2","hma1_sha256":"edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0","hs1_sha256":"f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"}'::jsonb || pg_catalog.jsonb_build_object('creator','postgres'::pg_catalog.regrole::oid,'database',(SELECT d.oid FROM pg_catalog.pg_database d WHERE d.datname=current_database()))) THEN
     RAISE EXCEPTION 'hm04 original Creator/package binding' USING ERRCODE='P7603';
   END IF;
   SELECT q.value INTO actual_value FROM (

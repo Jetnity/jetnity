@@ -6,7 +6,7 @@
   "generation": "replacement after original Generation1",
   "sessionKind": "documented replacement",
   "mode": "NORMAL",
-  "soleParent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+  "soleParent": "a4731c2fbbddccab15c641dd8154426d59c68121",
   "task": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6826971069",
     "bodyUtf8Bytes": 2624,
@@ -50,23 +50,23 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
       "mode": "100644",
-      "bytes": 123734,
-      "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
-      "gitBlob": "290e0a725477113086c2170a90d74f3a7acd4be8"
+      "bytes": 124354,
+      "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+      "gitBlob": "faac74e6ab56072f01d941d24a8be28aa7895d94"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
       "mode": "100644",
-      "bytes": 42689,
-      "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
-      "gitBlob": "828ab2b2ded83acdeb45d71454049d655e9af184"
+      "bytes": 43309,
+      "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db",
+      "gitBlob": "fc902540cea4c34783bdedbcde2be8a77a9fe672"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
       "mode": "100644",
-      "bytes": 76320,
-      "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134",
-      "gitBlob": "fa58410d80f7b420cf97429ab220544b9a1ddcef"
+      "bytes": 65670,
+      "sha256": "70ccd8fbd951e69e2d8f10457a20af1bb88d493946cce0240ef111f7bbb15eab",
+      "gitBlob": "ddc95df93df52152fa5363b25820d79a57100809"
     },
     {
       "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
@@ -78,23 +78,23 @@
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
       "mode": "100644",
-      "bytes": 23960,
-      "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
-      "gitBlob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396"
+      "bytes": 25324,
+      "sha256": "0b56d8b0ec079f337bb632ea3f150485ba3b2ad29c3ee5eefdcfc066b44232bb",
+      "gitBlob": "d3893ddb823fff86eaf3166c57ab1f3478d9c9d7"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "mode": "100644",
-      "bytes": 22050,
-      "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
-      "gitBlob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5"
+      "bytes": 22795,
+      "sha256": "f9cb386cf96dc4b6f6693f8df665f26db551932ca6681aa285333cba4f463cb2",
+      "gitBlob": "c862eaeaacdd0dab8a7715fc3aaf5162f58cb0ce"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "mode": "100644",
-      "bytes": 13120,
-      "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
-      "gitBlob": "34c82c92f2f056f9b08475481493d65926b5e24c"
+      "bytes": 14277,
+      "sha256": "889b6ccdfe518bd171411ebf96478a66500b6365563514f84c9516c62f14b65d",
+      "gitBlob": "aab0bfbfaf7a2bf3b9b7b78af393d0da2fd21453"
     }
   ],
   "self": {
@@ -103,24 +103,34 @@
     "identity": "Manifest UTF8 bytes/SHA256/Git blob are provided by immutable delivery receipt and enclosing Git tree. No circular self-digest is embedded."
   },
   "baseTreeProof": {
-    "parent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
-    "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "parent": "a4731c2fbbddccab15c641dd8154426d59c68121",
+    "tree": "87a70d81affcd38209e75f654cf3f9f1403bde8e",
     "recursiveReadTruncated": false,
     "leafCount": 9538,
     "modifiedPaths": [
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+      "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
       "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+      "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
     ],
-    "expectedModifiedLeaves": 5,
-    "expectedComplementLeaves": 9533,
+    "expectedModifiedLeaves": 14,
+    "expectedComplementLeaves": 9524,
     "expectedNewLeaves": 0,
     "expectedDeletedLeaves": 0,
     "expectedFinalLeafCount": 9538,
-    "canonicalLeafFormat": "ASCII path sort; mode SPACE type SPACE Git object SHA TAB path LF",
-    "complementSha256": "acad2f91643afaf53ae0a10f2d17b373ceca5046cf4bf67dbcce5faf22c40fd0",
+    "canonicalLeafFormat": "one UTF8 LF line: mode TAB type TAB blob TAB path; ascending path using localeCompare",
+    "parentSha256": "cb9e9229b8b7439894d49fdfc92b7ef1b4794ad002262a53b8e82322310d1385",
+    "complementSha256": "7ae2e690b5676f633eac7d732e1b0f915b6863823c3513bf7098df01f608c8b7",
     "deliveryReadbackRequired": "Actual complete final tree and all raw changed files; final commit/tree and manifest self pin are external."
   },
   "preservation": {
@@ -853,9 +863,9 @@
       },
       {
         "start": 93057,
-        "end": 123734,
+        "end": 124354,
         "kind": "new",
-        "sha256": "be5d6e5122af66071b2917a0ef8d6ed7b3859011ff03323619fac4bcd292d80c"
+        "sha256": "39b56bda2c5d6a67d683f9cd10e7f5920536b9c439bc3f3f5c07916c47bd00e1"
       }
     ],
     "tables": [
@@ -898,8 +908,8 @@
         "originalStart": 6365,
         "originalEnd": 10938,
         "originalSha256": "9252e20e71a7c1b21cf4fbfe59f88e24f2df6b464d0d2d51c4a3fd9f9c64ffa8",
-        "candidateStart": 40703,
-        "candidateEnd": 45686,
+        "candidateStart": 37740,
+        "candidateEnd": 42723,
         "candidateSha256": "ba3602e347bd4dbed9a5ad55821c7514b8b2cecc36de522be0d4ea61bde69f91",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -908,8 +918,8 @@
         "originalStart": 10938,
         "originalEnd": 12256,
         "originalSha256": "105326a80667cb57f8b7d555dfc63f6ab333d4731e7ecfa41000cd85301cf71a",
-        "candidateStart": 45686,
-        "candidateEnd": 47003,
+        "candidateStart": 42723,
+        "candidateEnd": 44040,
         "candidateSha256": "35fd10e8f2392bf8e97093db1c2b13cfc2ca36a6e9ddac5e4c40c21232d06f8f",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -918,8 +928,8 @@
         "originalStart": 12256,
         "originalEnd": 14007,
         "originalSha256": "99bf054be6e43e6d5624ca75b997af4bde85c5a466e1a5b9de1a7103502e5978",
-        "candidateStart": 47003,
-        "candidateEnd": 48753,
+        "candidateStart": 44040,
+        "candidateEnd": 45790,
         "candidateSha256": "894045f65be7bfb1ef701ed287f2ada41cb4838a0dc89ba0e7550260bc42927c",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -928,8 +938,8 @@
         "originalStart": 14007,
         "originalEnd": 15558,
         "originalSha256": "2133a068101d9bb4f242af70bdb81d04d268f9911b013d780da1662c41d974d7",
-        "candidateStart": 48753,
-        "candidateEnd": 50303,
+        "candidateStart": 45790,
+        "candidateEnd": 47340,
         "candidateSha256": "0244602032b12091bf8973c2efabbc78407d39fa2892ee05390d5fb4df32c98d",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -938,8 +948,8 @@
         "originalStart": 15558,
         "originalEnd": 18022,
         "originalSha256": "be522bb071e8b156681a05a7e43358043a3b6a76b4973f8e468e81da1cb089d9",
-        "candidateStart": 50303,
-        "candidateEnd": 52766,
+        "candidateStart": 47340,
+        "candidateEnd": 49803,
         "candidateSha256": "b698d09b77a707fdff72aed9c1f185763b84f4b59291618fea7abf23ca9e1b18",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -948,8 +958,8 @@
         "originalStart": 18022,
         "originalEnd": 19529,
         "originalSha256": "b7c4553a8240e31505ed1d252ba418705dd3659fc5be1ac8f229c84b6243a378",
-        "candidateStart": 52766,
-        "candidateEnd": 54272,
+        "candidateStart": 49803,
+        "candidateEnd": 51309,
         "candidateSha256": "ba320ac84d728203b8e1e778ae8074ab16c59ec6296194046bcc144d8a1bd99a",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -958,8 +968,8 @@
         "originalStart": 19529,
         "originalEnd": 21213,
         "originalSha256": "4ec82bf5473d6c77e622bf330ea6399c219e10aeda4d1a32be95c95eff08a319",
-        "candidateStart": 54272,
-        "candidateEnd": 55955,
+        "candidateStart": 51309,
+        "candidateEnd": 52992,
         "candidateSha256": "8455643cec4b28b7114cbb07a872eec4e836c34ce8078abfe867039856679c98",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -968,8 +978,8 @@
         "originalStart": 21213,
         "originalEnd": 23620,
         "originalSha256": "659552436e6d85a1ce6f94c654b62fd479cae6cc4f3df8f34173c9eed4e8005e",
-        "candidateStart": 55955,
-        "candidateEnd": 58334,
+        "candidateStart": 52992,
+        "candidateEnd": 55371,
         "candidateSha256": "e441954af80a862135714fc35f4a7f8a9d726e3bda2e0cfc46952c4c06ea6e70",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -978,8 +988,8 @@
         "originalStart": 23620,
         "originalEnd": 26950,
         "originalSha256": "0bff59681f16614a1e7843b96a59ff648fb69a71d4d2e1ef311174e8efb21bbd",
-        "candidateStart": 58334,
-        "candidateEnd": 61636,
+        "candidateStart": 55371,
+        "candidateEnd": 58673,
         "candidateSha256": "66db81917fc311dcc313a9c4b84db0fc64cad85016f59855c93ad04d91bf121b",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       },
@@ -988,8 +998,8 @@
         "originalStart": 26950,
         "originalEnd": 30792,
         "originalSha256": "60515d81057a88528f0f75828b37dec84e552c1c8a32a48c22f6f4815f703b33",
-        "candidateStart": 61636,
-        "candidateEnd": 66720,
+        "candidateStart": 58673,
+        "candidateEnd": 63757,
         "candidateSha256": "1fadc26da585c96d5fc2ac490893b7120512c5e266cfdbd9299e09633b9fa8c4",
         "mode": "adapted harness; all semantic assertions retained or scoped to their exact fixture"
       }
@@ -1093,84 +1103,84 @@
     "candidateInverse": [
       {
         "start": 0,
-        "end": 40703,
-        "classification": "new HS1 harness/install/recovery source",
-        "sha256": "64c9faab79dffe2d88e841e9681e08fe5e8be4d924ed222d0be3d1cfaf35a920"
+        "end": 37740,
+        "classification": "HS1 harness and existing installer/recovery groups; four finite column drift negatives",
+        "sha256": "1cff798dc253cc7de6c26b077a05a1c50c68bd850bfcc925f1ee2cadb51bbfe7"
       },
       {
-        "start": 40703,
-        "end": 45686,
-        "classification": "adapted original S1 semantic group",
+        "start": 37740,
+        "end": 42723,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "exact least privileges, FORCE RLS, fixed definers, no PUBLIC or API roles, immutable originals",
         "sha256": "ba3602e347bd4dbed9a5ad55821c7514b8b2cecc36de522be0d4ea61bde69f91"
       },
       {
-        "start": 45686,
-        "end": 47003,
-        "classification": "adapted original S1 semantic group",
+        "start": 42723,
+        "end": 44040,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "direct RPC retains supported full shapes and rejects PII/null/free-text at every depth before INSERT",
         "sha256": "35fd10e8f2392bf8e97093db1c2b13cfc2ca36a6e9ddac5e4c40c21232d06f8f"
       },
       {
-        "start": 47003,
-        "end": 48753,
-        "classification": "adapted original S1 semantic group",
+        "start": 44040,
+        "end": 45790,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "byte-preserving capture/reconnect, whitespace collision and complete server binding collisions",
         "sha256": "894045f65be7bfb1ef701ed287f2ada41cb4838a0dc89ba0e7550260bc42927c"
       },
       {
-        "start": 48753,
-        "end": 50303,
-        "classification": "adapted original S1 semantic group",
+        "start": 45790,
+        "end": 47340,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "independent concurrent clients serialize; expiry reclaims generation and rejects old ticket",
         "sha256": "0244602032b12091bf8973c2efabbc78407d39fa2892ee05390d5fb4df32c98d"
       },
       {
-        "start": 50303,
-        "end": 52766,
-        "classification": "adapted original S1 semantic group",
+        "start": 47340,
+        "end": 49803,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "I1 uses durable quarantine for every terminal outcome and full archived escalation replay",
         "sha256": "b698d09b77a707fdff72aed9c1f185763b84f4b59291618fea7abf23ca9e1b18"
       },
       {
-        "start": 52766,
-        "end": 54272,
-        "classification": "adapted original S1 semantic group",
+        "start": 49803,
+        "end": 51309,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "finish direct RPC refuses null, incomplete nested records and free text without storing a completion",
         "sha256": "ba320ac84d728203b8e1e778ae8074ab16c59ec6296194046bcc144d8a1bd99a"
       },
       {
-        "start": 54272,
-        "end": 55955,
-        "classification": "adapted original S1 semantic group",
+        "start": 51309,
+        "end": 52992,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "actual commit then lost acknowledgement requires same-operation readback, with no duplicate completion",
         "sha256": "8455643cec4b28b7114cbb07a872eec4e836c34ce8078abfe867039856679c98"
       },
       {
-        "start": 55955,
-        "end": 58334,
-        "classification": "adapted original S1 semantic group",
+        "start": 52992,
+        "end": 55371,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "failure before commit, transaction abort and post-write lease lapse leave no partial data",
         "sha256": "e441954af80a862135714fc35f4a7f8a9d726e3bda2e0cfc46952c4c06ea6e70"
       },
       {
-        "start": 58334,
-        "end": 61636,
-        "classification": "adapted original S1 semantic group",
+        "start": 55371,
+        "end": 58673,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "cancellation owns, terminates and drains a genuinely blocked PostgreSQL call",
         "sha256": "66db81917fc311dcc313a9c4b84db0fc64cad85016f59855c93ad04d91bf121b"
       },
       {
-        "start": 61636,
-        "end": 66720,
-        "classification": "adapted original S1 semantic group",
+        "start": 58673,
+        "end": 63757,
+        "classification": "adapted original S1 semantic group, unchanged",
         "group": "actual importer process interruption and new process reconnect preserve original and completed outcome",
         "sha256": "1fadc26da585c96d5fc2ac490893b7120512c5e266cfdbd9299e09633b9fa8c4"
       },
       {
-        "start": 66720,
-        "end": 68633,
-        "classification": "new used-history refusal and owned settlement receipt",
+        "start": 63757,
+        "end": 65670,
+        "classification": "used-history refusal and owned settlement, unchanged",
         "sha256": "6451d6e4b4a312fdc2a91e7ad714e8a2706cecc96b279f85d837a2a2d8b6fe55"
       }
     ]
@@ -1260,58 +1270,58 @@
   "sourceReadback": {
     "changedArtifactBlobs": [
       {
-        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
-        "mode": "100644",
-        "bytes": 76320,
-        "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134",
-        "gitBlob": "fa58410d80f7b420cf97429ab220544b9a1ddcef"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-        "mode": "100644",
-        "bytes": 23960,
-        "sha256": "a08f27adc1f9266db9d978369029a7ab148db71d7a6bc32edd07cf4a6bd2efa4",
-        "gitBlob": "8704a6120b1dd11bfb4b25b46f214fea3eb59396"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
-        "mode": "100644",
-        "bytes": 22050,
-        "sha256": "289baac80261bbfbbfe3796c9d79aaaf05db87ac66c54ad8a6bbc0e497400440",
-        "gitBlob": "6ba1f49c7f68159780256f977dd8cc36bff68fb5"
-      }
-    ],
-    "unchangedArtifactPins": [
-      {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
         "mode": "100644",
-        "bytes": 123734,
-        "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
-        "gitBlob": "290e0a725477113086c2170a90d74f3a7acd4be8"
+        "bytes": 124354,
+        "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+        "gitBlob": "faac74e6ab56072f01d941d24a8be28aa7895d94"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
         "mode": "100644",
-        "bytes": 42689,
-        "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2",
-        "gitBlob": "828ab2b2ded83acdeb45d71454049d655e9af184"
+        "bytes": 43309,
+        "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db",
+        "gitBlob": "fc902540cea4c34783bdedbcde2be8a77a9fe672"
       },
+      {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "mode": "100644",
+        "bytes": 65670,
+        "sha256": "70ccd8fbd951e69e2d8f10457a20af1bb88d493946cce0240ef111f7bbb15eab",
+        "gitBlob": "ddc95df93df52152fa5363b25820d79a57100809"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "mode": "100644",
+        "bytes": 25324,
+        "sha256": "0b56d8b0ec079f337bb632ea3f150485ba3b2ad29c3ee5eefdcfc066b44232bb",
+        "gitBlob": "d3893ddb823fff86eaf3166c57ab1f3478d9c9d7"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "mode": "100644",
+        "bytes": 22795,
+        "sha256": "f9cb386cf96dc4b6f6693f8df665f26db551932ca6681aa285333cba4f463cb2",
+        "gitBlob": "c862eaeaacdd0dab8a7715fc3aaf5162f58cb0ce"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "mode": "100644",
+        "bytes": 14277,
+        "sha256": "889b6ccdfe518bd171411ebf96478a66500b6365563514f84c9516c62f14b65d",
+        "gitBlob": "aab0bfbfaf7a2bf3b9b7b78af393d0da2fd21453"
+      }
+    ],
+    "unchangedArtifactPins": [
       {
         "path": "lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts",
         "mode": "100644",
         "bytes": 348,
         "sha256": "39a52aafd6caf137ef1e8b0bd22844889c7fd90747e209c82fb0f5c141889263",
         "gitBlob": "18aa68d5a8d845c6e94df52a24e4c95ff2d21d16"
-      },
-      {
-        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
-        "mode": "100644",
-        "bytes": 13120,
-        "sha256": "b99af5d40109920b6f292146216ce9679224a4c58687e9984900d545f1241c0d",
-        "gitBlob": "34c82c92f2f056f9b08475481493d65926b5e24c"
       }
     ],
-    "meaning": "Current immutable blob identities; final exact raw-byte and tree readback is recorded externally after commit creation."
+    "meaning": "Full candidate code blobs were read back exactly. Final manifest/tree identity is external."
   },
   "catalogContract": {
     "schemas": [
@@ -1383,7 +1393,14 @@
       "explicitNonExemptRole": "ot_v3_method_caller",
       "afterUse": "refuse; separately reviewed forward repair",
       "unknownCommit": "STOP; supported readback only of this new scope; no blind replay"
-    }
+    },
+    "pg17AttributeOptions": [
+      "Only server_version_num>=170012 may have exactly one pg_attver element in a one-dimensional lower-bound-1 array.",
+      "CASE first validates canonical 0 or nonzero 1..20 digit decimal spelling, then compares numeric value <=18446744073709551615.",
+      "NULL remains valid before versioning and after upgrade for old attributes; no live metadata or engine security setting is modified.",
+      "PG17 default attstattarget must be NULL; any explicit nondefault statistic target refuses.",
+      "HM04 captures and compares full raw catalog attributes, preserving actual internal version identity rather than stripping or recapturing it."
+    ]
   },
   "nativeContract": {
     "status": "NOT_RUN",
@@ -1405,9 +1422,22 @@
     "jobsPerChildBound": 4,
     "originalS1InstallerExecuted": false,
     "originalS1RollbackExecuted": false,
-    "sharedWireDuplicateColumnRefusalUnchanged": true
+    "sharedWireDuplicateColumnRefusalUnchanged": true,
+    "columnDriftNegatives": {
+      "groups": "existing HS1 installer group 02 and unused-recovery group 04",
+      "added": [
+        "        {name:'column option drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1);',code:'P7312'},\n        {name:'column statistics drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1;',code:'P7312'},\n",
+        "        {name:'column option drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1)',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id RESET (n_distinct)',code:'P7312'},\n        {name:'column statistics drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS -1',code:'P7312'},\n"
+      ],
+      "expectedSqlState": "P7312",
+      "runtimeStatus": "NOT_RUN",
+      "all18GroupsPreserved": true,
+      "all10OriginalSemanticGroupsByteExact": true,
+      "hm04All31GroupsByteExact": true,
+      "budgetsAndQuotasUnchanged": true
+    }
   },
-  "status": "SOURCE_ONLY_NOT_RUN_DIAGNOSTIC",
+  "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_PG17_12_FIX3",
   "scopeContinuity": {
     "issue917": "human evidence scoped; denied action neither repeated nor rerouted",
     "issue1131": "NOT_REQUIRED and untouched",
@@ -1444,7 +1474,7 @@
       "immutable Git blobs/tree/commit and raw readback"
     ]
   },
-  "sourceRevision": "HS1-DIAG1",
+  "sourceRevision": "HS1-PG17.12-FIX3",
   "originalInstallationTask": {
     "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822245339",
     "bodyUtf8Bytes": 11579,
@@ -1452,11 +1482,20 @@
     "preservedVerbatim": true
   },
   "modifiedPaths": [
+    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
     "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+    "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+    "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
     "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
-    "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts"
+    "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+    "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+    "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+    "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+    "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+    "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
   ],
   "label1": {
     "schema": "hs1-native-label1-inverse-v1",
@@ -3473,5 +3512,357 @@
       "bytes": 175657,
       "sha256": "627d61a2355dcf4d55165ea87e4f211721108a11701d3666f7fb06d9d865a099"
     }
+  },
+  "reviewFix3": {
+    "id": "HS1/HM04-PG17.12-FIX3",
+    "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
+    "session": "/root/hs1_hm04_fix",
+    "scope": {
+      "soleParent": "a4731c2fbbddccab15c641dd8154426d59c68121",
+      "parentTree": "87a70d81affcd38209e75f654cf3f9f1403bde8e",
+      "leaves": 9538,
+      "changed": 14,
+      "unchanged": 9524,
+      "added": 0,
+      "removed": 0,
+      "changedPaths": [
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
+        "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_TASK_V1.md",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_RECOVERY_V1.md",
+        "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_TASK_V1.md",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+        "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+        "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+        "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql"
+      ],
+      "serialization": "one UTF8 LF line: mode TAB type TAB blob TAB path; ascending path using localeCompare",
+      "baseSha256": "cb9e9229b8b7439894d49fdfc92b7ef1b4794ad002262a53b8e82322310d1385",
+      "complementSha256": "7ae2e690b5676f633eac7d732e1b0f915b6863823c3513bf7098df01f608c8b7"
+    },
+    "observedFailure": {
+      "ci": 4148,
+      "job": 131373335513,
+      "code": "C0109",
+      "site": "operations_v1.operation_id: attoptions",
+      "logBytes": 181014,
+      "logSha256": "8a7dd2eb14ec3c4b9fb57b12900bc43497ca7f337e8f12c5549afda35222c500"
+    },
+    "predicate": {
+      "before": "OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''",
+      "after": "OR a.attacl IS NOT NULL\n      -- PG17.12 internal composite-layout version only; user options still fail.\n      -- NULL remains the legitimate pre-versioning/upgrade representation.\n      OR (a.attoptions IS NOT NULL AND NOT (\n        pg_catalog.current_setting('server_version_num')::integer>=170012\n        AND pg_catalog.array_ndims(a.attoptions)=1\n        AND pg_catalog.array_lower(a.attoptions,1)=1\n        AND pg_catalog.cardinality(a.attoptions)=1\n        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'\n          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric\n          ELSE false END))\n      OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''"
+    },
+    "rules": [
+      "Only server_version_num>=170012 may have exactly one pg_attver element in a one-dimensional lower-bound-1 array.",
+      "CASE first validates canonical 0 or nonzero 1..20 digit decimal spelling, then compares numeric value <=18446744073709551615.",
+      "NULL remains valid before versioning and after upgrade for old attributes; no live metadata or engine security setting is modified.",
+      "PG17 default attstattarget must be NULL; any explicit nondefault statistic target refuses.",
+      "HM04 captures and compares full raw catalog attributes, preserving actual internal version identity rather than stripping or recapturing it."
+    ],
+    "primarySources": [
+      {
+        "url": "https://www.postgresql.org/docs/17/catalog-pg-attribute.html"
+      },
+      {
+        "url": "https://www.postgresql.org/docs/release/17.12/"
+      },
+      {
+        "repository": "postgres/postgres",
+        "ref": "REL_17_12",
+        "path": "src/backend/catalog/README.attver.md",
+        "blob": "fca1ab950aff1f65d841fee9b073a1843aee72c6",
+        "sha256": "c729bcbdbea21eee5a596c26b28bf2543dd584ace2f1f5ed0d8053f2e09cb1e8"
+      },
+      {
+        "repository": "postgres/postgres",
+        "ref": "REL_17_12",
+        "path": "src/backend/access/common/reloptions.c",
+        "blob": "dddbe4cc1cbc0c49e558a31eae01a23aaa2b2a8b",
+        "sha256": "6c2a5fb41e4e1be4925f570e08f31376193db11bc0173e166558959d1fd9ac21"
+      },
+      {
+        "repository": "postgres/postgres",
+        "ref": "REL_17_12",
+        "path": "src/backend/catalog/heap.c",
+        "blob": "cf57a1604df14bf5da31c2796af636acf5b19258",
+        "sha256": "0fa51d541ac96503fd14a9396f19322cbdfa7799865fafd726ad2e20149e1a4c"
+      }
+    ],
+    "diagnosticCleanup": {
+      "parent": {
+        "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+        "mode": "100644",
+        "blob": "fa58410d80f7b420cf97429ab220544b9a1ddcef",
+        "bytes": 76320,
+        "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134"
+      },
+      "clean": {
+        "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
+        "bytes": 64749,
+        "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21"
+      },
+      "commonPrefixBytes": 16806,
+      "commonSuffixBytes": 47845,
+      "parentReplaced": {
+        "start": 16806,
+        "end": 28475,
+        "sha256": "a767e2ef3efed65b1cd4ba2a1ad0d7ff428412000c76a1719d9645a1b1ce0246"
+      },
+      "cleanReplacement": {
+        "start": 16806,
+        "end": 16904,
+        "sha256": "ae7348736ebd805a40b93b0a96852405894540627749c4d2044386179b15fb55"
+      },
+      "scope": "Removal of the two selected temporary installer diagnostics only; original rejectScript and all 18 groups restored exactly."
+    },
+    "codeChanges": [
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+          "mode": "100644",
+          "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
+          "bytes": 123734,
+          "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+          "mode": "100644",
+          "blob": "faac74e6ab56072f01d941d24a8be28aa7895d94",
+          "bytes": 124354,
+          "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"
+        },
+        "edits": [
+          {
+            "label": "PG17.12 exact internal option and strict statistics default",
+            "sourceStart": 108111,
+            "sourceEnd": 108282,
+            "before": "OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''",
+            "after": "OR a.attacl IS NOT NULL\n      -- PG17.12 internal composite-layout version only; user options still fail.\n      -- NULL remains the legitimate pre-versioning/upgrade representation.\n      OR (a.attoptions IS NOT NULL AND NOT (\n        pg_catalog.current_setting('server_version_num')::integer>=170012\n        AND pg_catalog.array_ndims(a.attoptions)=1\n        AND pg_catalog.array_lower(a.attoptions,1)=1\n        AND pg_catalog.cardinality(a.attoptions)=1\n        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'\n          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric\n          ELSE false END))\n      OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''",
+            "beforeSha256": "3857e4b924455e2e75281be3884b05f0f084a2669e79b869cfbd6c11922c5def",
+            "afterSha256": "9f86406d866f87c2d3aad70ebbc6beb50ca1e09d0a251ed0f8ef5c96c9563aaa"
+          }
+        ]
+      },
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+          "mode": "100644",
+          "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
+          "bytes": 42689,
+          "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+          "mode": "100644",
+          "blob": "fc902540cea4c34783bdedbcde2be8a77a9fe672",
+          "bytes": 43309,
+          "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db"
+        },
+        "edits": [
+          {
+            "label": "PG17.12 exact internal option and strict statistics default",
+            "sourceStart": 22877,
+            "sourceEnd": 23048,
+            "before": "OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''",
+            "after": "OR a.attacl IS NOT NULL\n      -- PG17.12 internal composite-layout version only; user options still fail.\n      -- NULL remains the legitimate pre-versioning/upgrade representation.\n      OR (a.attoptions IS NOT NULL AND NOT (\n        pg_catalog.current_setting('server_version_num')::integer>=170012\n        AND pg_catalog.array_ndims(a.attoptions)=1\n        AND pg_catalog.array_lower(a.attoptions,1)=1\n        AND pg_catalog.cardinality(a.attoptions)=1\n        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'\n          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric\n          ELSE false END))\n      OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''",
+            "beforeSha256": "3857e4b924455e2e75281be3884b05f0f084a2669e79b869cfbd6c11922c5def",
+            "afterSha256": "9f86406d866f87c2d3aad70ebbc6beb50ca1e09d0a251ed0f8ef5c96c9563aaa"
+          }
+        ]
+      },
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+          "mode": "100644",
+          "blob": "fa58410d80f7b420cf97429ab220544b9a1ddcef",
+          "bytes": 76320,
+          "sha256": "c4e630281775e4a0a6429abe018e122df72b7fd8ace037f516289814c10e6134"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-intake-store-1/native.ts",
+          "mode": "100644",
+          "blob": "ddc95df93df52152fa5363b25820d79a57100809",
+          "bytes": 65670,
+          "sha256": "70ccd8fbd951e69e2d8f10457a20af1bb88d493946cce0240ef111f7bbb15eab"
+        },
+        "baseline": {
+          "blob": "25fb64ae0c42d688bd6701f7c1a1db3bd4c74916",
+          "bytes": 64749,
+          "sha256": "4e1483dcdc5bab2c90ef5fbc8945bf406f9ca35c995e220dbe31adfbe9310c21"
+        },
+        "edits": [
+          {
+            "label": "two actual installer column drift faults",
+            "sourceStart": 22844,
+            "sourceEnd": 22877,
+            "before": "        {name:'final table grant'",
+            "after": "        {name:'column option drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1);',code:'P7312'},\n        {name:'column statistics drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1;',code:'P7312'},\n        {name:'final table grant'",
+            "beforeSha256": "ce6b59b6c6d8edd101247a556a2e2b885d7d0665069ae2806b607e3a976c7cf6",
+            "afterSha256": "63dbac2669455c4def909e141b97a398a33d9ee88e6b5c7d02c03088d88a2912"
+          },
+          {
+            "label": "two actual unused recovery column drift mutations",
+            "sourceStart": 26130,
+            "sourceEnd": 26161,
+            "before": "        {name:'function config'",
+            "after": "        {name:'column option drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1)',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id RESET (n_distinct)',code:'P7312'},\n        {name:'column statistics drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS -1',code:'P7312'},\n        {name:'function config'",
+            "beforeSha256": "b0302c251e15fcdc2f6450826d0f9f14f8d90127ba139bdcc3383e95d06a6824",
+            "afterSha256": "b04c74f1f4c2258aab22c03394f446cfc87a09f8241a01cd3a66248a7fc03819"
+          }
+        ]
+      },
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+          "mode": "100644",
+          "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
+          "bytes": 343198,
+          "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+          "mode": "100644",
+          "blob": "a71222d8ad64aa51aa0f97f2ecc7454deef7c45e",
+          "bytes": 343818,
+          "sha256": "9bc095f65ab26049c7241d5c649cdf46205c28ef30c72596530708b62532dfc4"
+        },
+        "edits": [
+          {
+            "label": "PG17.12 exact internal option and strict statistics default",
+            "sourceStart": 50978,
+            "sourceEnd": 51149,
+            "before": "OR a.attacl IS NOT NULL OR a.attoptions IS NOT NULL OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget<>-1 OR a.attcompression<>''",
+            "after": "OR a.attacl IS NOT NULL\n      -- PG17.12 internal composite-layout version only; user options still fail.\n      -- NULL remains the legitimate pre-versioning/upgrade representation.\n      OR (a.attoptions IS NOT NULL AND NOT (\n        pg_catalog.current_setting('server_version_num')::integer>=170012\n        AND pg_catalog.array_ndims(a.attoptions)=1\n        AND pg_catalog.array_lower(a.attoptions,1)=1\n        AND pg_catalog.cardinality(a.attoptions)=1\n        AND CASE WHEN a.attoptions[1] ~ '^pg_attver=(0|[1-9][0-9]{0,19})$'\n          THEN pg_catalog.split_part(a.attoptions[1],'=',2)::numeric<=18446744073709551615::numeric\n          ELSE false END))\n      OR a.attfdwoptions IS NOT NULL\n      OR a.atttypmod<>-1 OR a.attndims<>0 OR a.attstattarget IS NOT NULL OR a.attcompression<>''",
+            "beforeSha256": "3857e4b924455e2e75281be3884b05f0f084a2669e79b869cfbd6c11922c5def",
+            "afterSha256": "9f86406d866f87c2d3aad70ebbc6beb50ca1e09d0a251ed0f8ef5c96c9563aaa"
+          },
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 294454,
+            "sourceEnd": 294518,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          },
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 292582,
+            "sourceEnd": 292646,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          },
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 170318,
+            "sourceEnd": 170382,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          }
+        ]
+      },
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+          "mode": "100644",
+          "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
+          "bytes": 119673,
+          "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
+          "mode": "100644",
+          "blob": "b88fbe76b4f2af71c3cdd0a298c49857179e5d87",
+          "bytes": 119673,
+          "sha256": "cbf12e7d1eb4e94680c441a11f7ed401cb31556442258fbaa2f954d606825fc3"
+        },
+        "edits": [
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 65969,
+            "sourceEnd": 66033,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          },
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 17517,
+            "sourceEnd": 17581,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          }
+        ]
+      },
+      {
+        "before": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+          "mode": "100644",
+          "blob": "86c35585a450678026829964088b507368be2b15",
+          "bytes": 233228,
+          "sha256": "6ff9abeb50a6a3f777b4f335229b014b05faf5bcdb50f20b542ff78e9284f414"
+        },
+        "after": {
+          "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
+          "mode": "100644",
+          "blob": "777c0adfdef0f341d87e698e01d481d5149504b9",
+          "bytes": 233228,
+          "sha256": "ef06af449271c28ce85516dd19dda731cecabc7f7ad9df018e9abd58d6b7b7be"
+        },
+        "edits": [
+          {
+            "label": "current HS1 installer dependency only",
+            "sourceStart": 23647,
+            "sourceEnd": 23711,
+            "before": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620",
+            "after": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+            "beforeSha256": "3b49169856355ac3e54e847161e72a70aa53dcea75b76575895a455d1ad14408",
+            "afterSha256": "8d7d444f634700c3a9d86c4a19b89f51ad9eaf41c74bc74c8b1df93a5a088f82"
+          }
+        ]
+      }
+    ],
+    "realDriftNegatives": {
+      "groups": "existing HS1 installer group 02 and unused-recovery group 04",
+      "added": [
+        "        {name:'column option drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1);',code:'P7312'},\n        {name:'column statistics drift',at:'-- HS1_BEFORE_EXACT_PACKAGE_CHECK',sql:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1;',code:'P7312'},\n",
+        "        {name:'column option drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET (n_distinct=1)',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id RESET (n_distinct)',code:'P7312'},\n        {name:'column statistics drift',before:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS 1',after:'ALTER TABLE official_v3_intake_private.operations_v1 ALTER COLUMN operation_id SET STATISTICS -1',code:'P7312'},\n"
+      ],
+      "expectedSqlState": "P7312",
+      "runtimeStatus": "NOT_RUN",
+      "all18GroupsPreserved": true,
+      "all10OriginalSemanticGroupsByteExact": true,
+      "hm04All31GroupsByteExact": true,
+      "budgetsAndQuotasUnchanged": true
+    },
+    "historicalEvidence": "Previous reviews/diagnostics remain historical only. This source requires fresh full gates; no PASS transfer.",
+    "priorManifests": [
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
+        "mode": "100644",
+        "blob": "da1f596488c86433355e19bdfb522e50d4fd56b4",
+        "bytes": 185481,
+        "sha256": "eb9a4c0ff53c7a7ed8b98a2ad1b5504a3b600de29068168ab38cc26af39640a5"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
+        "mode": "100644",
+        "blob": "ee1a383528edd54ae98d97a0ac7b9b37a0d26883",
+        "bytes": 638807,
+        "sha256": "66af2f648c77fd7c845c1093f1eb181ff3d85248f016cbf1baf0bea98e9f3899"
+      }
+    ]
   }
 }

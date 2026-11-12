@@ -191,3 +191,9 @@ CI4140 on the parent exposed `42702`; this candidate has not been executed. Curr
 ## HS1 DIAG1 — one bounded unexpected-guard probe
 
 Root selected a Native-only diagnostic on parent `4afd9543d953fba974750854ba7f1defb7bcfce2` after CI4143 reached `P7312`. Only an unexpected `P7312` in an installer fault case expecting `P7311` admits one owned probe: the 18 existing guard sites receive fixed codes H3101–H3118, and the terminal COMMIT becomes ROLLBACK. The probe verifies its complete inverse, always rolls back and asserts no package plus the exact fixture baseline; output contains only a fixed code/site. The original error is rethrown to the unchanged assertion predicate, so diagnostic output cannot become a passing test. Original SQL, all 18 groups, budgets, quotas and cleanup remain; this source has not run. Current pins, site map and inverse are in the manifest, with earlier evidence retained.
+
+## PG17.12 column metadata correction — SOURCE ONLY
+
+CI4148 on a4731c2fbbddccab15c641dd8154426d59c68121 identified C0109: the engine's new internal pg_attver option, not a user ACL or runtime failure. Only NULL or, on PG17.12+, one one-dimensional, lower-bound-1 pg_attver value in canonical uint64 decimal form is admitted; all user options remain forbidden. PG17's default attstattarget is explicitly NULL. No engine safety setting changes.
+
+The selected correction preserves original S1/MA1 execution bodies and all proof groups/budgets. Four real ALTER-column negatives are added inside existing HS1 installer/recovery groups; temporary diagnostics are removed. This source has not been executed, installed or accepted as a runtime pass.

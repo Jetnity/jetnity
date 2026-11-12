@@ -60,9 +60,9 @@
       "path": "scripts/db/official-truth-v3-human-method-transport-1/native.ts",
       "mode": "100644",
       "type": "blob",
-      "bytes": 71545,
-      "sha256": "b7ca669495c10289b7f943b7786df8a97a57fc6391f3d78e81efdfbb210d0a38",
-      "gitBlobSha1": "acc823f1097b0973c0baf25bf09eb607fd2f101e"
+      "bytes": 60316,
+      "sha256": "8feb21f40f19e22d6c7caeed2929ee4e4881991dff0f484b3dff90048adb393f",
+      "gitBlobSha1": "79ce6820c1d26eacb9d05147911457fd19a73bf8"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-transport-1.test.ts",

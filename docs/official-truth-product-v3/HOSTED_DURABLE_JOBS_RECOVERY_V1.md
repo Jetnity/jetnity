@@ -189,3 +189,13 @@ Continuation of the documented replacement session `/root/hs1_hm04_fix`; selecte
 The two copied HS1 inventory blocks receive the identical alias-only correction. The new HS1 installer digest is `f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620`; three installer, two recovery and one Native current dependency literals are rebound, with the existing catalog fingerprint mechanism unchanged. All 31 HM04 groups, quotas and cleanup budgets remain exact.
 
 CI4140 on the parent exposed `42702`; this candidate has not been executed. Current pins and inverse mappings are in the package manifest; earlier task/evidence text remains historical. Root must integrate COMPOSED/HDP pins and independently run the complete new-head gates before Dev installation. Unused-only recovery, #917 and #1131 boundaries remain unchanged.
+
+## PG17.12 column metadata correction — SOURCE ONLY
+
+CI4148 on a4731c2fbbddccab15c641dd8154426d59c68121 identified C0109: the engine's new internal pg_attver option, not a user ACL or runtime failure. Only NULL or, on PG17.12+, one one-dimensional, lower-bound-1 pg_attver value in canonical uint64 decimal form is admitted; all user options remain forbidden. PG17's default attstattarget is explicitly NULL. No engine safety setting changes.
+
+The selected correction preserves original S1/MA1 execution bodies and all proof groups/budgets. Four real ALTER-column negatives are added inside existing HS1 installer/recovery groups; temporary diagnostics are removed. This source has not been executed, installed or accepted as a runtime pass.
+
+The copied HS1 preflight and exact current HS1 installer digest are rebound together. HM04 recovery changes only its two dependency-context literals; HM04 Native changes only its selected HS1 hash. Original 31 groups, runtime semantics, ownership and all quotas remain unchanged; COMPOSED and selector/guard pins are Root integration work.
+
+Unused recovery retains exact OIDs, original catalog/role/ACL checks and history refusal. The same finite engine-option predicate applies on recovery; HM04's recorded catalog fingerprints continue to compare the entire actual attribute metadata, including pg_attver, so post-install metadata changes are not silently recaptured. n_distinct and explicit statistics-target drift must still refuse before removal.
