@@ -1,7 +1,7 @@
 {
   "schema": "jetnity.aa-revision-probe.source-manifest.v1",
   "task": "CH-DE-AA-REVISION-PROBE-1",
-  "amendment": "A12",
+  "amendment": "A13",
   "date": "2026-11-12",
   "author": {
     "name": "Jetnity Official Truth CH-DE AA Revision Probe1 — Codex Generation2",
@@ -11,7 +11,8 @@
     "previousSessionAvailability": "UNREACHABLE_AS_RECORDED_BY_ROOT",
     "replacementAuthorization": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6829857507",
     "cursorUiResumptionClaimed": false,
-    "subagentsUsed": false
+    "subagentsUsed": false,
+    "continuedSameGeneration2Session": true
   },
   "status": {
     "sourceOnly": true,
@@ -23,7 +24,7 @@
     "publication": "HOLD_FOR_ROOT_REVIEW",
     "ready": false,
     "merge": false,
-    "technicalLeadPass": "PENDING_FOR_A12"
+    "technicalLeadPass": "PENDING_FOR_A13"
   },
   "authority": [
     {
@@ -35,124 +36,127 @@
       "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6829857507",
       "scope": "SIX_EXISTING_FILES_BOUNDED_SYNTHETIC_DIAGNOSTICS_ONLY",
       "fullSelectedTaskReference": true
+    },
+    {
+      "url": "https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6830362382",
+      "scope": "ONE_SEPARATE_TEMPORARY_DIAGNOSTIC_WORKFLOW_AND_THREE_EXISTING_DOCS",
+      "fullSelectedTaskReference": true
     }
   ],
   "parent": {
-    "commit": "8df8d7c5a8aef903607372294e68e9b1226b9595",
-    "tree": "343192538ab78fb2661e225ca4e63fd8ee8b2333",
+    "commit": "6577d4b73abcabfea6335f4dcdfbb0d6b4ef8767",
+    "tree": "438264a8069fddea7026a0a98437be8cb7655be7",
     "soleParent": true,
     "parentsOfParent": [
-      "d8ecb572c848cf8d9535ad5a44d9014f886fd202"
+      "8df8d7c5a8aef903607372294e68e9b1226b9595"
     ],
     "publishedPrHeadSuppliedByRoot": true,
     "pr": 1192,
     "prDraft": true,
-    "prBaseAtSelection": "b5f33f66faab89454a874e641dbd0dfa66b09d2d",
     "additionalMainMerge": false
   },
   "authoredAllowlist": [
-    "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
-    "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
-    "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
+    ".github/workflows/aa-preflight-diagnostic.yml",
     "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
     "docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md",
     "docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json"
   ],
   "failedRunEvidence": {
-    "attribution": "Root A12 selection; replacement author independently read the same complete job log shutdown message; complete byte/hash pin supplied by Root",
+    "attribution": "Root A13 actual CI/log inspection; no author runtime execution",
     "pr": 1192,
-    "sourceHead": "8df8d7c5a8aef903607372294e68e9b1226b9595",
-    "runId": 43253092355,
-    "attempt": 2,
-    "coreJobId": 131316131237,
-    "logBytes": 1424657,
-    "logSha256": "ff204c35273c4590cddef773440deed0c0ac220a1344eb3ec851eede4314c427",
+    "sourceHead": "6577d4b73abcabfea6335f4dcdfbb0d6b4ef8767",
+    "runNumber": 4141,
+    "runId": 43264116451,
+    "attempt": 1,
+    "coreJobId": 131342947173,
+    "logBytes": 1424246,
+    "logSha256": "5cef5431f1f277dcc450ccb7bf899e5e9267e54c9cc522db50f11e17a4ef0c60",
     "lastReportedSuite": 577,
-    "shutdownReportedAt": "2026-11-12T16:19:16.0111072Z",
-    "operationCanceled": true,
-    "shutdownCause": "UNKNOWN",
+    "lastSuiteAt": "2026-11-12T16:59:58.934Z",
+    "shutdownReportedAt": "2026-11-12T17:00:26.618Z",
+    "aaPreflightDiagnosticLines": 0,
     "reportedAssertionFailure": false,
     "oomEvidence": false,
-    "testsSummary": "ABSENT",
+    "shutdownCause": "UNKNOWN",
     "completeCorePass": false,
-    "unchangedHeadRetrySelected": false,
-    "interruptionRepairedClaim": false
+    "unchangedHeadRetrySelected": false
   },
   "correction": {
-    "kind": "BOUNDED_SYNTHETIC_PREFLIGHT_DIAGNOSTICS_ONLY",
-    "maximumDiagnosticLines": 64,
-    "outputPrefix": "AA_PREFLIGHT_DIAG_V1",
-    "fixedLabels": [
-      "static_begin",
-      "static_end",
-      "legacy_begin",
-      "legacy_end",
-      "inventory_begin",
-      "inventory_progress",
-      "inventory_end",
-      "fixture",
-      "synthetic_finished",
-      "closed_native_begin",
-      "closed_native_end"
+    "kind": "SEPARATE_BOUNDED_DIAGNOSTIC_WORKFLOW",
+    "workflow": ".github/workflows/aa-preflight-diagnostic.yml",
+    "workflowName": "AA preflight diagnostic",
+    "event": "pull_request",
+    "baseBranch": "main",
+    "eventTypes": [
+      "opened",
+      "synchronize",
+      "reopened"
     ],
-    "numericFields": [
-      "line",
-      "sources",
-      "fixtures",
-      "rss",
-      "heapUsed",
-      "external",
-      "elapsedMs"
-    ],
-    "sourceProgress": "After each256th fully checked source file, with all prior roots/walks and importBoundary calls retained",
-    "fixtureProgress": "Before fixture1 and every16th fixture",
-    "memoryScope": "Own Node process only",
-    "diagnosticGuard": "Only measurement/output is inside the catch; original assertions and awaited work remain outside and propagate",
-    "sourceEvidence": false,
-    "environmentOrClaimOrBodyOrCredentialOrAccountOutput": false,
-    "newTimerOrResource": false,
-    "productionSourceChanges": false,
-    "speculativeOptimization": false,
-    "policyPinOnly": true,
-    "bernPinOnly": true,
-    "bernMetadataContext": {
-      "bytes": 691,
-      "contextStart": 33566,
-      "contextEnd": 34257,
-      "tokenStart": 34193,
-      "fullContextUnchanged": true,
-      "tokenUnique": true
+    "repository": "Jetnity/jetnity",
+    "pullRequestNumber": 1192,
+    "headRepository": "Jetnity/jetnity",
+    "headBranch": "feat/official-truth-aa-revision-probe-1-20261112",
+    "permissions": {
+      "contents": "read"
     },
-    "allOriginalCasesAssertionsAndImportConsumersPreserved": true,
-    "allOriginalNativeAndCiBudgetsPreserved": true,
-    "originalEntryOrderAndRun0Preserved": true
+    "runner": "ubuntu-24.04",
+    "node": "22.x",
+    "timeoutMinutes": 8,
+    "actions": [
+      "actions/checkout@v4",
+      "actions/setup-node@v4"
+    ],
+    "checkoutRef": "github.event.pull_request.head.sha",
+    "persistCredentials": false,
+    "npmInstall": "npm ci",
+    "beforeInvocationGuard": {
+      "policy": "Complete exact4574-byte policy SHA256 plus unique literal Run0 row",
+      "policySha256": "ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd",
+      "test": "Complete exact58259-byte AA test SHA256",
+      "testSha256": "f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853",
+      "builtinNodeDataOnly": true,
+      "guardFailureStopsInvocation": true
+    },
+    "command": "node --max-old-space-size=1024 --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+    "v8OldSpaceMiB": 1024,
+    "testConcurrency": 1,
+    "singleOriginalTest": true,
+    "memoryCapAppliesOnlyToDiagnosticCommand": true,
+    "environmentOrCallerOverride": false,
+    "positiveSourceArming": false,
+    "sourceOrDbOrCredentialEffect": false,
+    "secretInputs": false,
+    "deployment": false,
+    "newDispatch": false,
+    "existingWorkflowOrTestOrSelectorOrBudgetChanges": false,
+    "fullCiPassTransfer": false,
+    "causalOomConclusion": false,
+    "temporaryRemoval": "Root removes this workflow after the finding"
   },
   "completeTreeRule": {
     "parentLeaves": 9504,
-    "candidateLeaves": 9504,
-    "changedExistingLeaves": 6,
-    "addedLeaves": 0,
+    "candidateLeaves": 9505,
+    "changedExistingLeaves": 3,
+    "addedLeaves": 1,
     "deletedLeaves": 0,
-    "unchangedLeaves": 9498,
+    "unchangedLeaves": 9501,
     "preserveEveryOtherShaModeType": true,
-    "allProductionCiPackageSelectorLeavesExact": true,
+    "allExistingSourcePolicyBernCiPackageSelectorLeavesExact": true,
     "preservedLeafCommitment": {
-      "leafCount": 9498,
-      "sha256": "3188280f233332149f1d8eb351ea32f119f4d6c7e2ba69b801c01e230466a1b0",
-      "bytes": 1501124,
-      "serialization": "JSON.stringify(array sorted by path using JavaScript code-unit order), each object insertion order {path,mode,type,sha}, followed by LF",
-      "parentTree": "343192538ab78fb2661e225ca4e63fd8ee8b2333",
+      "parentLeaves": 9504,
+      "leafCount": 9501,
+      "bytes": 1501580,
+      "sha256": "89b307d95caf7ab34d05199f9504671bc785440ed67f4781612d61924eff0583",
       "excludedOnly": [
-        "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
-        "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
-        "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
         "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
         "docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md",
         "docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json"
-      ]
+      ],
+      "serialization": "JSON.stringify(array sorted by path using JavaScript code-unit order), each object insertion order {path,mode,type,sha}, followed by LF",
+      "parentTree": "438264a8069fddea7026a0a98437be8cb7655be7"
     },
     "finalTreeCommitAndDocumentPins": "Externally bound by completed immutable delivery; no self-referential hashes.",
-    "finalRecursiveReadback": "Required before author delivery; exact complete parent/candidate leaf comparison."
+    "finalRecursiveReadback": "Required before author delivery, complete exact parent/candidate leaf comparison"
   },
   "sourcePins": [
     {
@@ -217,15 +221,15 @@
     },
     {
       "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
-      "bytes": 87353,
-      "blob": "4d702b8529e8bdaaebef6318470eda24e5b44f48",
-      "sha256": "fcc1abbb71198d08c055e134c83893ead085990077205922ae61dda40ab43cf9"
+      "bytes": 89194,
+      "blob": "a79032a65b106f41b77609abd29f2e6962229d2b",
+      "sha256": "a7959fff72fee30171f1d1ce5c2e74c1b401dcef6fe6f8b2a49ca58718f050b5"
     },
     {
       "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md",
-      "bytes": 141801,
-      "blob": "0d1f151550eb72baf6ff06e10fa7037d1781c001",
-      "sha256": "b8c10ddc75b7a5d0aa32ce4f0cd838af7d7504f6e78df2ddf4653ab0b28c5334"
+      "bytes": 143758,
+      "blob": "a0b5c430dc3ae7da3d7e3e5c10e1ed74425723e3",
+      "sha256": "53b388cf8cedebe5a59c540a846af8c0dbe93a5d13164e3b3f3fa58cb435e921"
     }
   ],
   "runtimeInventory": {
@@ -334,10 +338,8 @@
         "sha256": "edbbcb838a8d8642d21afe7b1608f137ff60d53e1214c4a9cc8f012d16ff6730"
       }
     ],
-    "unchangedPriorEntries": 16,
-    "updatedPriorPaths": [
-      "lib/readiness/official-truth-aa-revision-probe-1.test.ts"
-    ],
+    "unchangedPriorEntries": 17,
+    "updatedPriorPaths": [],
     "newPaths": [],
     "policyOwnBlobExternal": true,
     "noPositiveRunSelected": true,
@@ -354,151 +356,22 @@
     "runNumber": 0,
     "baseSha": "b5f33f66faab89454a874e641dbd0dfa66b09d2d",
     "inventoryCount": 17,
-    "allBytesUnchanged": false,
-    "onlyChangedRow": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+    "allBytesUnchanged": true,
+    "onlyChangedRow": null,
     "bernGuardNotAddedToRuntimeInventory": true
   },
   "finiteSourceChanges": [
     {
-      "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
-      "parent": {
-        "bytes": 56236,
-        "blob": "9e278742a53d64da9bb9063a91649a08e3f84649",
-        "sha256": "4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee"
-      },
+      "path": ".github/workflows/aa-preflight-diagnostic.yml",
+      "parent": "ABSENT",
       "candidate": {
-        "bytes": 58259,
-        "blob": "42863c2e61d987993c32c433d4522ff6bcabfb52",
-        "sha256": "f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853"
+        "path": ".github/workflows/aa-preflight-diagnostic.yml",
+        "bytes": 2640,
+        "blob": "e9586d8a17efdb9e68a04d284d14d5357738a1cd",
+        "sha256": "5e6df02c3cef655299f569440126cb6d2b22bd1bad4eae0df348b1e5e8e8e0a4"
       },
-      "wholeFileInverse": true,
-      "orderedExactTextEdits": [
-        {
-          "label": "bounded diagnostic helper",
-          "before": "const sourceBytes = new Map(policy.sourceInventory.map(pin => [pin.path, fs.readFileSync(pin.path)] as const))\n",
-          "after": "const sourceBytes = new Map(policy.sourceInventory.map(pin => [pin.path, fs.readFileSync(pin.path)] as const))\n\ntype AaPreflightDiagnosticPhase =\n  | 'static_begin' | 'static_end' | 'legacy_begin' | 'legacy_end'\n  | 'inventory_begin' | 'inventory_progress' | 'inventory_end' | 'fixture'\n  | 'synthetic_finished' | 'closed_native_begin' | 'closed_native_end'\nlet aaDiagnosticLines = 0, aaDiagnosticSources = 0, aaDiagnosticFixtures = 0\nlet aaDiagnosticStarted: bigint | null = null\n\n// Synthetic progress only: fixed labels and our process counters, never source evidence.\nfunction aaPreflightDiagnostic(phase: AaPreflightDiagnosticPhase): void {\n  if (aaDiagnosticLines >= 64) return\n  aaDiagnosticLines += 1\n  try {\n    const now = process.hrtime.bigint()\n    aaDiagnosticStarted ??= now\n    const { rss, heapUsed, external } = process.memoryUsage()\n    const elapsedMs = Math.floor(Number(now - aaDiagnosticStarted) / 1_000_000)\n    if (![rss, heapUsed, external, elapsedMs].every(value => Number.isFinite(value) && value >= 0)) return\n    console.error('AA_PREFLIGHT_DIAG_V1 ' + JSON.stringify({\n      phase, line: aaDiagnosticLines, sources: aaDiagnosticSources, fixtures: aaDiagnosticFixtures,\n      rss, heapUsed, external, elapsedMs,\n    }))\n  } catch {\n    // Only diagnostic work is guarded; no preflight assertion or invocation is caught here.\n  }\n}\n",
-          "stageStartByte": 2598,
-          "beforeBytes": 111,
-          "afterBytes": 1360,
-          "beforeSha256": "c30f3977222a23cf1217ef07ceadd38a43ede9ab6c394a87d5752939a64d314c",
-          "afterSha256": "c9d2e6faa78bb08506e00fb5cb38fae5b369237e0e390008307916b574d36c52"
-        },
-        {
-          "label": "fixture progress",
-          "before": "function fixture(options: Scenario = {}) {\n",
-          "after": "function fixture(options: Scenario = {}) {\n  aaDiagnosticFixtures += 1\n  if (aaDiagnosticFixtures === 1 || aaDiagnosticFixtures % 16 === 0) aaPreflightDiagnostic('fixture')\n",
-          "stageStartByte": 10409,
-          "beforeBytes": 43,
-          "afterBytes": 173,
-          "beforeSha256": "0987aba7fb71702c0c8576fa0c416e1c723ebbb75614340464448a14736c08f3",
-          "afterSha256": "0f3c1ec4f686963a87d27da2cbae905447296c63790b156c61e94a56a9322463"
-        },
-        {
-          "label": "directory inventory progress",
-          "before": "        else if (item.isFile() && /\\.[cm]?[jt]sx?$/.test(file)) importBoundary(file, fs.readFileSync(file, 'utf8'))",
-          "after": "        else if (item.isFile() && /\\.[cm]?[jt]sx?$/.test(file)) {\n          importBoundary(file, fs.readFileSync(file, 'utf8'))\n          aaDiagnosticSources += 1\n          if (aaDiagnosticSources % 256 === 0) aaPreflightDiagnostic('inventory_progress')\n        }",
-          "stageStartByte": 41751,
-          "beforeBytes": 115,
-          "afterBytes": 263,
-          "beforeSha256": "c6ad8d08753ad324beed41104c1396119f2cd4e7fbd4b8e29aa7182fbceb89bf",
-          "afterSha256": "0c5da139c17942691fd9c6ae6e41cdb6b7499636396127e46383e8abc7c00c7b"
-        },
-        {
-          "label": "root inventory progress",
-          "before": "      importBoundary(item.name, fs.readFileSync(item.name, 'utf8'))\n",
-          "after": "      importBoundary(item.name, fs.readFileSync(item.name, 'utf8'))\n      aaDiagnosticSources += 1\n      if (aaDiagnosticSources % 256 === 0) aaPreflightDiagnostic('inventory_progress')\n",
-          "stageStartByte": 42183,
-          "beforeBytes": 68,
-          "afterBytes": 186,
-          "beforeSha256": "d5ffafdb77aa97b65890b93b43f2f9593eed5977879e23126695e8971174931b",
-          "afterSha256": "e26a066f5f678d4aa1febab7a900f88f968252bccdc67c638276d8d88000441c"
-        },
-        {
-          "label": "static phase start",
-          "before": "async function syntheticPreflight(): Promise<void> {\n",
-          "after": "async function syntheticPreflight(): Promise<void> {\n  aaPreflightDiagnostic('static_begin')\n",
-          "stageStartByte": 46797,
-          "beforeBytes": 53,
-          "afterBytes": 93,
-          "beforeSha256": "e441ce8cfede70ca5b39464232717025b3db7308c2150666b0696da3a78a811a",
-          "afterSha256": "9f7fc2155a3edbfc00ce6c74a81fb61575c11a29a178053ff780297015f92208"
-        },
-        {
-          "label": "static legacy inventory phases",
-          "before": "  legacyPrivatePortBoundary()\n  importInventory()\n",
-          "after": "  aaPreflightDiagnostic('static_end')\n  aaPreflightDiagnostic('legacy_begin')\n  legacyPrivatePortBoundary()\n  aaPreflightDiagnostic('legacy_end')\n  aaPreflightDiagnostic('inventory_begin')\n  importInventory()\n  aaPreflightDiagnostic('inventory_end')\n",
-          "stageStartByte": 47927,
-          "beforeBytes": 50,
-          "afterBytes": 250,
-          "beforeSha256": "a79e59c6e7c8a892236b343b300510eff179a68b6786fe789a39bba50759a056",
-          "afterSha256": "0253a2c74c9b9aea647bd079cfc3205a2c3dcdd95fa2239c6cac4a84a90dd51b"
-        },
-        {
-          "label": "synthetic completion and closed native phases",
-          "before": "  await syntheticPreflight()\n  const actual = await probeOfficialTruthAaReviewedRevisionV1()\n  finiteResult(actual)\n",
-          "after": "  await syntheticPreflight()\n  aaPreflightDiagnostic('synthetic_finished')\n  aaPreflightDiagnostic('closed_native_begin')\n  const actual = await probeOfficialTruthAaReviewedRevisionV1()\n  aaPreflightDiagnostic('closed_native_end')\n  finiteResult(actual)\n",
-          "stageStartByte": 57728,
-          "beforeBytes": 116,
-          "afterBytes": 254,
-          "beforeSha256": "1346a1a3d7ab66e060524dcd245af9a43a5f58227383a5fb2537c479d719f914",
-          "afterSha256": "acf8952d50081ff87228f17e067f58f125e26b30a670d2782413d6834bcd5d65"
-        }
-      ],
-      "inverseRule": "Reverse orderedExactTextEdits; require each after string once and replace with before; require complete parent pin."
-    },
-    {
-      "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
-      "parent": {
-        "bytes": 4574,
-        "blob": "858e33f1a18889ae39130d6db2d108761ba85eed",
-        "sha256": "d608cc710720e45286357b163664d62135ae6a22e37d0794a8b1ec25fbd252bc"
-      },
-      "candidate": {
-        "bytes": 4574,
-        "blob": "978b62fdc444b1b6a2d024eb2752a46f482463c5",
-        "sha256": "ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd"
-      },
-      "wholeFileInverse": true,
-      "orderedExactTextEdits": [
-        {
-          "label": "current AA test pin only",
-          "before": "Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 56236, sha256: '4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee' })",
-          "after": "Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 58259, sha256: 'f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853' })",
-          "stageStartByte": 1836,
-          "beforeBytes": 173,
-          "afterBytes": 173,
-          "beforeSha256": "d373bbf859c0fc9e344e72a4221fcde58d799e3c3926805bfddb47aca1e89544",
-          "afterSha256": "0e5a32169a3a054a5d3cb9b4847b492c1eaadd720a4746c7425ccf6f19636ec6"
-        }
-      ],
-      "inverseRule": "Reverse orderedExactTextEdits; require each after string once and replace with before; require complete parent pin."
-    },
-    {
-      "path": "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
-      "parent": {
-        "bytes": 18579,
-        "blob": "d7fe7602934d52bf3432b8ecd2c5ef70f242aff6",
-        "sha256": "247c409f63c235cac42d7ed780970a2690d8fc643b05df3edde63e2d29e217f4"
-      },
-      "candidate": {
-        "bytes": 18579,
-        "blob": "3aab2832d70067f79512d6be149411c809a2769b",
-        "sha256": "66ab4a5f80eea73e023ff48ba00d0483f99f7f21e7fe7b9ad3fad8dd05412262"
-      },
-      "wholeFileInverse": true,
-      "orderedExactTextEdits": [
-        {
-          "label": "complete AA test pin and exact unchanged metadata context offsets",
-          "before": "  bytes: 56_236,\n  blob: '9e278742a53d64da9bb9063a91649a08e3f84649',\n  sha256: '4a4d12f93b03d376b744fbc894e3edd2698e5cda2b4b573bcc688d34797e99ee',\n  contextStart: 32_187,\n  contextEnd: 32_878,\n  tokenStart: 32_814,",
-          "after": "  bytes: 58_259,\n  blob: '42863c2e61d987993c32c433d4522ff6bcabfb52',\n  sha256: 'f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853',\n  contextStart: 33_566,\n  contextEnd: 34_257,\n  tokenStart: 34_193,",
-          "stageStartByte": 9585,
-          "beforeBytes": 214,
-          "afterBytes": 214,
-          "beforeSha256": "c44f5d420bcfcce0d34a50495d02c6930776973d3e7002f43a4833625cb971bc",
-          "afterSha256": "8d19aa622ef8658a2c6c1f602962d6cb70fa6917e8ed854e412be1ce522d19a0"
-        }
-      ],
-      "inverseRule": "Reverse orderedExactTextEdits; require each after string once and replace with before; require complete parent pin."
+      "inverse": "Delete only this added path; no existing workflow edited.",
+      "completeAddedText": "name: AA preflight diagnostic\n\n# Temporary A13 diagnosis only; Root removes this workflow after the finding.\non:\n  pull_request:\n    branches: [main]\n    types: [opened, synchronize, reopened]\n\npermissions:\n  contents: read\n\njobs:\n  aa_preflight_diagnostic:\n    name: AA synthetic preflight only\n    if: >-\n      ${{ github.event_name == 'pull_request' &&\n          github.repository == 'Jetnity/jetnity' &&\n          github.event.pull_request.number == 1192 &&\n          github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' &&\n          github.event.pull_request.head.ref == 'feat/official-truth-aa-revision-probe-1-20261112' }}\n    runs-on: ubuntu-24.04\n    timeout-minutes: 8\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.pull_request.head.sha }}\n          fetch-depth: 1\n          persist-credentials: false\n\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22.x\n\n      - name: Install dependencies\n        run: npm ci\n\n      - name: Require exact Run0 source and run isolated preflight\n        shell: bash\n        run: |\n          node --input-type=module <<'NODE'\n          import { readFileSync } from 'node:fs'\n          import { createHash } from 'node:crypto'\n\n          const requireSource = (path, expectedBytes, expectedSha256) => {\n            const bytes = readFileSync(path)\n            if (bytes.byteLength !== expectedBytes ||\n                createHash('sha256').update(bytes).digest('hex') !== expectedSha256) {\n              throw new Error('AA diagnostic requires the exact reviewed source')\n            }\n            return bytes.toString('utf8')\n          }\n          const policy = requireSource(\n            'lib/readiness/official-truth-aa-revision-probe-1-policy.ts',\n            4574,\n            'ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd',\n          )\n          const runRows = policy.split('\\n').filter(line => line.trimStart().startsWith('runNumber:'))\n          if (runRows.length !== 1 || runRows[0] !== '  runNumber: 0 as number,') {\n            throw new Error('AA diagnostic refuses an armed or ambiguous policy')\n          }\n          requireSource(\n            'lib/readiness/official-truth-aa-revision-probe-1.test.ts',\n            58259,\n            'f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853',\n          )\n          console.log('AA_DIAGNOSTIC_RUN0_PIN_CONFIRMED')\n          NODE\n          node --max-old-space-size=1024 --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 lib/readiness/official-truth-aa-revision-probe-1.test.ts\n"
     }
   ],
   "retainedPriorApiCorrection": {
@@ -1255,6 +1128,18 @@
       "sha256": "5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10"
     },
     {
+      "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
+      "bytes": 58259,
+      "blob": "42863c2e61d987993c32c433d4522ff6bcabfb52",
+      "sha256": "f3e9e2f8f98977403343dd9ef0aebb90e114ae1cc35ac1055e8ce50c9aaff853"
+    },
+    {
+      "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
+      "bytes": 4574,
+      "blob": "978b62fdc444b1b6a2d024eb2752a46f482463c5",
+      "sha256": "ae784339b019958ee7e496a90028a69b91634c0424a64285d613cacc09e817fd"
+    },
+    {
       "path": "lib/readiness/official-truth-bundesportal-bp1-observation-1/observation.test.ts",
       "bytes": 35509,
       "blob": "e27c3acafefeb4414617b74f5d84fb2ce99cd530",
@@ -1289,6 +1174,12 @@
       "bytes": 68545,
       "blob": "1db87d5a80e913479157340803ddcdf2ac528d4d",
       "sha256": "a296f5212aadb14479657a9487e32fa6252d7fd41a16e18b37341a3eb2da1bc1"
+    },
+    {
+      "path": "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
+      "bytes": 18579,
+      "blob": "3aab2832d70067f79512d6be149411c809a2769b",
+      "sha256": "66ab4a5f80eea73e023ff48ba00d0483f99f7f21e7fe7b9ad3fad8dd05412262"
     }
   ],
   "storageRestoration": {
@@ -1384,7 +1275,38 @@
       }
     },
     "priorHistoryFields": "Existing previousTask/previousHandoff/previousManifest and embedded earlier history remain the unchanged A11 history; predecessorA11 is the immediate A12 predecessor.",
-    "manifestInverse": "Restore the complete raw predecessorA11 blob and verify its bytes/SHA256; no self-reference and no copied whole-history addition."
+    "manifestInverse": "Restore complete predecessorA12 blob and verify its bytes/SHA256; older predecessorA11 and earlier raw history remain unchanged.",
+    "predecessorA12": {
+      "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_MANIFEST_V1.json",
+      "bytes": 288474,
+      "blob": "3a286fb8b403106f243efab11ef75bb392e0c8fc",
+      "sha256": "7558ada9581b44f40ca2286d7787fae2145234565ce01e8d41ac980b97ae6fcf",
+      "commit": "6577d4b73abcabfea6335f4dcdfbb0d6b4ef8767",
+      "immutableReferenceRetained": true,
+      "verbatimReduplicationAdded": false
+    },
+    "a13DocumentPrefixes": [
+      {
+        "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_TASK_V1.md",
+        "bytes": 89194,
+        "blob": "a79032a65b106f41b77609abd29f2e6962229d2b",
+        "sha256": "a7959fff72fee30171f1d1ce5c2e74c1b401dcef6fe6f8b2a49ca58718f050b5",
+        "parentBytes": 87353,
+        "appendedBytes": 1841,
+        "completePrefixPreserved": true,
+        "inverse": "Keep exactly the first parentBytes UTF-8 bytes."
+      },
+      {
+        "path": "docs/official-truth-product-v3/AA_REVISION_PROBE_HANDOFF_V1.md",
+        "bytes": 143758,
+        "blob": "a0b5c430dc3ae7da3d7e3e5c10e1ed74425723e3",
+        "sha256": "53b388cf8cedebe5a59c540a846af8c0dbe93a5d13164e3b3f3fa58cb435e921",
+        "parentBytes": 141801,
+        "appendedBytes": 1957,
+        "completePrefixPreserved": true,
+        "inverse": "Keep exactly the first parentBytes UTF-8 bytes."
+      }
+    ]
   },
   "nonClaims": [
     "No author project, parser, compiler, AST, test, native, SQL, APT or build execution.",
@@ -1398,7 +1320,15 @@
     "The finite AA AST guard does not resolve arbitrary runtime-computed paths/names; full independent Root tree/diff/source review remains necessary.",
     "#917 and #1131 platform and safety boundaries remain untouched.",
     "No causal OOM, runaway, timeout-healing or interrupted-suite repair claim.",
-    "Diagnostics are synthetic own-process progress, never official-source evidence."
+    "Diagnostics are synthetic own-process progress, never official-source evidence.",
+    "The isolated workflow has not executed; any future isolated result does not replace full CI acceptance.",
+    "No cause for repeated runner shutdown or zero preflight markers is established."
   ],
-  "nextStep": "STOP for independent Root A12 source review; Root alone may publish a coherent new exact head and select full fresh CI. No same-head retry, positive arming, source request, Ready or merge by this author."
+  "nextStep": "STOP for independent Root A13 source review and separately selected new-head publication; Root alone selects diagnosis and later removes the temporary workflow. No author runtime execution, unchanged retry, Ready or merge.",
+  "diagnosticWorkflowPin": {
+    "path": ".github/workflows/aa-preflight-diagnostic.yml",
+    "bytes": 2640,
+    "blob": "e9586d8a17efdb9e68a04d284d14d5357738a1cd",
+    "sha256": "5e6df02c3cef655299f569440126cb6d2b22bd1bad4eae0df348b1e5e8e8e0a4"
+  }
 }

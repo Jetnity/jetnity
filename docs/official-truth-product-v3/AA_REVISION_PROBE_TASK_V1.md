@@ -704,3 +704,14 @@ Keep every case/assertion/import boundary, all production modules, Run0, baseb5f
 Actual attempt2 evidence supplied by Root: run43253092355, Corejob131316131237, log1424657bytes, SHA256`ff204c35273c4590cddef773440deed0c0ac220a1344eb3ec851eede4314c427`; runner shutdown after suite577, no assertion/OOM cause established. This amendment adds observability only and does not label the interruption repaired.
 
 SOURCE ONLY: immutable objects and inert text/hash/tree comparisons; no project/parser/compiler/test/native/SQL/APT/CI/refs/PRs/Ready/merge/hosted/sourceGET. Preserve all existing Task/Handoff bytes as prefixes and retain the predecessor Manifest by immutable reference; append concise current evidence. Return exact pins/inverses and STOP for independent Root review and separately selected full new-head CI. #917/#1131 remain untouched.
+
+
+## A13 — separate bounded preflight diagnostic
+
+[Root selection6830362382](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6830362382), 12 November 2026; same AA Generation2 author session `/root/readiness`. Sole parent `6577d4b73abcabfea6335f4dcdfbb0d6b4ef8767`, tree `438264a8069fddea7026a0a98437be8cb7655be7`. Only one new `.github/workflows/aa-preflight-diagnostic.yml` and the three existing AA documents are selected.
+
+A12 CI4141/run43264116451/Corejob131342947173 again stopped after suite577: last suite16:59:58.934UTC, shutdown17:00:26.618UTC. Root log pin:1424246bytes/SHA256`5cef5431f1f277dcc450ccb7bf899e5e9267e54c9cc522db50f11e17a4ef0c60`; zero AA_PREFLIGHT_DIAG lines, no assertion/OOM evidence or causal conclusion. No unchanged-head retry.
+
+Add a temporary pull_request-only job restricted to same-repository PR1192 and the exact AA head branch, contents:read, ubuntu24.04, Node22, npmci, maximum8minutes. Before the direct unchanged AA test invocation, fail closed unless the actual complete policy is its exact reviewed Run0 source; also pin the unchanged AA test. Use the existing server-only register and tsx with test-concurrency1 and max-old-space-size1024 for this diagnostic command only. No environment/caller override, official-source/DB/credential effect, deployment, secret or new dispatch path. Existing CI, all tests/selectors, source pins, Run0/base and budgets stay unchanged. Isolated diagnosis is not a full runtime PASS and this workflow is removed after the finding.
+
+SOURCE ONLY: immutable objects and inert data comparisons, no local workflow/parser/compiler/test/CI execution or ref/PR/Ready/merge/hosted/source request. Append concise history, retain the previous Manifest by immutable reference, return exact four-path candidate and STOP for independent Root review before publication.

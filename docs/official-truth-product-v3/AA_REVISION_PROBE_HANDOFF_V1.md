@@ -1180,3 +1180,14 @@ Current source pins:
 - BERN test:18579bytes, blob`3aab2832d70067f79512d6be149411c809a2769b`, SHA256`66ab4a5f80eea73e023ff48ba00d0483f99f7f21e7fe7b9ad3fad8dd05412262`.
 
 Actual attempt2 run43253092355/Corejob131316131237 stopped after suite577; Root's full log pin is1424657bytes/SHA256`ff204c35273c4590cddef773440deed0c0ac220a1344eb3ec851eede4314c427`. The new author independently read its shutdown message but has no causal OOM/assertion/resource proof. These diagnostics are not source evidence and do not prove that the interrupted run is fixed. No source request, runtime test, parser/compiler, Dev change or activation was performed. Independent Root review, coherent publication and complete fresh CI remain next; no same-head retry, Ready or merge is claimed.
+
+
+## A13 current delivery — isolated diagnostic workflow
+
+**SOURCE_ONLY / NOT_RUN / HOLD_FOR_ROOT_REVIEW.** Same replacement AA Generation2 session `/root/readiness`, under [Root A13](https://github.com/Jetnity/jetnity/pull/1192#issuecomment-6830362382); sole parent `6577d4b73abcabfea6335f4dcdfbb0d6b4ef8767` / tree `438264a8069fddea7026a0a98437be8cb7655be7`.
+
+One temporary workflow adds a separate ubuntu24.04/Node22 job with contents:read and an8-minute limit. The job requires pull_request, official repository, PR1192, the same head repository and the exact AA branch; checkout uses the event head SHA and does not persist credentials. After npmci, a builtin-Node data guard verifies the complete current policy byte/hash, its single exact Run0 row, and the unchanged AA test byte/hash immediately before direct single-file execution with the original register/tsx, concurrency1 and a1024MiB V8-old-space cap. There is no override, secret, deployment, dispatch, source arming or existing-CI change. The heap cap belongs only to the diagnostic command.
+
+A12's zero diagnostic lines and runner shutdown remain unexplained; the new isolated run has not occurred and would not transfer a PASS to full CI or establish the cause of the previous termination. All AA/Policy/BERN/production code and17runtime source pins are unchanged. Root removes the temporary workflow once the finding is captured.
+
+Complete parent Task/Handoff bytes remain prefixes. Their inverse is truncation to87353/141801bytes; the new-workflow inverse is deletion of that sole added path. The previous Manifest is blob`3a286fb8b403106f243efab11ef75bb392e0c8fc`,288474bytes/SHA256`7558ada9581b44f40ca2286d7787fae2145234565ce01e8d41ac980b97ae6fcf`. No old full-history copy was added. No workflow/test/parser/compiler/build/native/SQL/hosted/sourceGET/ref/PR/CI action was executed by the author; immutable source review and separately selected publication remain Root's next steps.
