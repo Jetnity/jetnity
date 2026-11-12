@@ -142,9 +142,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-      "blob": "60076e1f95d5e7e4b46d54f9680884905c05a3ad",
+      "blob": "b9b0a7f585da09f2b0a1f65d73b1e70bd19dbd1d",
       "bytes": 46393,
-      "sha256": "e5f17a999c586f2351f0187b5e2ac0e734a21411cdb4de6e953d8f5e7a3abed5"
+      "sha256": "5c2e86fe7755ced3c131aebdd2171f366bcd56d0f6e2ea5a8d19b717639b9b7b"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
@@ -197,14 +197,14 @@
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
       "bytes": 59026,
-      "blob": "af5d93f06dd7536d7567145b51b36452e48331ca",
-      "sha256": "a0ca2d5fd02857ea1f4fbad9a8e622bef78cffe888221c9edf6f3fc768bf3e03"
+      "blob": "48dde468c901706ee9307da0edfe53806b65d7a0",
+      "sha256": "a79840e619d737036059afbf9f3be5fead70b1c3b09fbcc728c89d9790fd3127"
     },
     {
       "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts",
       "bytes": 37016,
-      "blob": "fc279677b400ed27d7e86a0093116b5e981b8d7f",
-      "sha256": "843b3ce9aa55eb5c46f2c23d46f629a1aec4102b97fae86612afc8ae6a7ce677"
+      "blob": "f53b4fa30ae01a4f8c17cd602bc7a1b297a64da0",
+      "sha256": "3069652a54be290e18cfce6442d984588c30f46c9c57a6b565281b711c7aef69"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
@@ -299,14 +299,14 @@
     {
       "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
       "bytes": 60064,
-      "blob": "b784794c52a48f7dfd26924851df1e5ea3f2b9d3",
-      "sha256": "3ddb0bf405b7a0f4327524fa87fd32cd6b8a91d879846e4f36f086293a6b79d2"
+      "blob": "4c7d9e580dd05f5e0aca8721a36f756863a4bc46",
+      "sha256": "46fc9450e39eb83191c5f841149ec6e2d193d884a510b1c27d04bf31766b0c9b"
     },
     {
       "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
       "bytes": 90727,
-      "blob": "f424324f0c7dc7046fb0a0bb2b2c784da8913bf1",
-      "sha256": "96e50d03c44bb5bf8cf4b0e6c14f7b1d1aff531ecfc0580eb319bf7b91dbe315"
+      "blob": "b980e50ef1a6a13dad741595d7c53960e3ebfcf8",
+      "sha256": "000c422379021688bb0a91a3c18983f70d1b918080fc520b1ab130b3c5460f2b"
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
@@ -340,9 +340,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "9c30a0ae5bfa61b0fd9fbee0e21ed7a58a5df645",
-      "bytes": 197585,
-      "sha256": "ec33c8a39188a7fd0778023b9a35a5df62dad8c0fab8ab6e4c70161842e1053b"
+      "blob": "4a415748ab5337ccfd38d949c80c25999557f3ec",
+      "bytes": 197706,
+      "sha256": "0d335b6936aeaac91fe0a84220df774380eb2505d5abf73661564f862339bd4d"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -462,9 +462,9 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-        "blob": "60076e1f95d5e7e4b46d54f9680884905c05a3ad",
+        "blob": "b9b0a7f585da09f2b0a1f65d73b1e70bd19dbd1d",
         "bytes": 46393,
-        "sha256": "e5f17a999c586f2351f0187b5e2ac0e734a21411cdb4de6e953d8f5e7a3abed5"
+        "sha256": "5c2e86fe7755ced3c131aebdd2171f366bcd56d0f6e2ea5a8d19b717639b9b7b"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_TASK_V1.md",
@@ -534,9 +534,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-        "blob": "9c30a0ae5bfa61b0fd9fbee0e21ed7a58a5df645",
-        "bytes": 197585,
-        "sha256": "ec33c8a39188a7fd0778023b9a35a5df62dad8c0fab8ab6e4c70161842e1053b"
+        "blob": "4a415748ab5337ccfd38d949c80c25999557f3ec",
+        "bytes": 197706,
+        "sha256": "0d335b6936aeaac91fe0a84220df774380eb2505d5abf73661564f862339bd4d"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -2396,7 +2396,7 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "CI4167_NATIVE_OID_ASSERTIONS",
+    "revision": "CI4169_COMPLETE_SYNTHETIC_VISA_FACTS",
     "status": "SOURCE_REVIEWED_NOT_RUN",
     "allRuntimeTargetsAndIssuerSelectorsRemainNull": true,
     "hrsPins": 72,
@@ -2413,8 +2413,8 @@
       "databaseCalls": 0
     },
     "next": "Fresh full CI; green gates required before actual Dev installation.",
-    "previousActualFailureRun": 43327421658,
-    "correction": "Match PostgreSQL OID JSON strings exactly and validate membership OID as a positive uint32 string. Preserve SQL, role identity, membership flags, native groups and budgets.",
+    "previousActualFailureRun": 43329916352,
+    "correction": "Supply the mandatory nullable visaMode field in the synthetic proposal, original fact and three exact expectations; preserve the canonical fact/retention readers and all SQL, rights, groups and budgets. Include the actual refusal reason at the first proposal assertion.",
     "publicMethodAndTargetSelectorsRemainUnselected": true,
     "apiSourceIntegration": {
       "paths": [
@@ -2434,8 +2434,8 @@
       "tickScheduling": false
     },
     "priorObservedResults": {
-      "run": 43327421658,
-      "hrs": "installer passed; N01 failed OID expectation; later HRS gates not reached",
+      "run": 43329916352,
+      "hrs": "N01/N02 passed; N03 refused missing fixture visaMode; N04-N12 not reached",
       "composed": "C01-C05 passed",
       "hm04": "31 groups passed",
       "a3": "11 groups passed",
@@ -2443,7 +2443,7 @@
     }
   },
   "previousIntegrationReference": {
-    "parent": "b88743f5e18beef3846133c1aec9a4fa6d1cb28a",
-    "manifestBlob": "93a2513958d1253233e80014b30f3ba8b2bf66fb"
+    "parent": "7399cbad880096d2e129635b7f16b72f377a8543",
+    "manifestBlob": "5faf3b4c352a2ad2f3b7e9c5234d1e617c4974c7"
   }
 }

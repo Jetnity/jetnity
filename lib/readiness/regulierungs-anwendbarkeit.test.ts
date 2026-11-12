@@ -124,12 +124,12 @@ test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources a
 // HRS: one reviewed literal PINS row, never permission for a runtime import.
 const HRS_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-  bytes: 197585,
-  blob: '9c30a0ae5bfa61b0fd9fbee0e21ed7a58a5df645',
-  sha256: 'ec33c8a39188a7fd0778023b9a35a5df62dad8c0fab8ab6e4c70161842e1053b',
-  contextStart: 36025,
-  contextEnd: 36249,
-  tokenStart: 36056,
+  bytes: 197706,
+  blob: '4a415748ab5337ccfd38d949c80c25999557f3ec',
+  sha256: '0d335b6936aeaac91fe0a84220df774380eb2505d5abf73661564f862339bd4d',
+  contextStart: 36104,
+  contextEnd: 36328,
+  tokenStart: 36135,
 } as const
 const HRS_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
 const HRS_REGULATORY_METADATA_CONTEXT = `  {

@@ -106,7 +106,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     const cacheKey=hrs1Canonical([control.epoch,role,unclear,effect,control.retrievedAt])
     const existing=originals.get(cacheKey);if(existing)return existing
     const bodyText=JSON.stringify(unclear?{synthetic:true,epoch:control.epoch,statements:['visa required','visa not required']}
-      :{synthetic:true,epoch:control.epoch,sourceRole:role,fact:{kind:'requirement_effect',effect}})
+      :{synthetic:true,epoch:control.epoch,sourceRole:role,fact:{kind:'requirement_effect',effect,visaMode:null}})
     const source=fixtureSource(role),fingerprint=evidenceQuellenFingerprint(bodyText);assert.ok(fingerprint)
     const work=mustRead(createV3WorkIdentity({context,method:METHOD_REF,factKind:'requirement_effect',researchReason:{status:'missing'}}))
     const versionId=fixtureId('ev2',seed+'|'+source.sourceId+'|'+bodyText+'|'+control.retrievedAt)
@@ -243,11 +243,11 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
   function delivery(job:{jobId:string;context:V3GlobalRuleContext;research:V3ResearchProposal['research']},tag:string){
     const work=mustRead(createV3WorkIdentity({context:job.context,method:METHOD_REF,factKind:'requirement_effect',researchReason:{status:'missing'}}))
     const proposal={schema:3,kind:'untrusted_research_proposal',jobId:job.jobId,operationId:fixtureId('op3',seed+'|proposal|'+tag),
-      context:job.context,contextKey:work.contextKey,research:job.research,proposedFact:{schema:1,fact:{kind:'requirement_effect',effect:'required'}},
+      context:job.context,contextKey:work.contextKey,research:job.research,proposedFact:{schema:1,fact:{kind:'requirement_effect',effect:'required',visaMode:null}},
       references:[{source:{sourceId:fixtureSource('primary').sourceId,contentItemId:fixtureSource('primary').contentItemId,
         representationId:fixtureSource('primary').representationId},claimedRetrievedAt:'2000-01-01T00:00:00.000Z',
         claimedValidity:{status:'specified',validFrom:null,validUntil:null}}]}
-    const text=JSON.stringify(proposal,null,2),parsed=readV3RetainableProposal(text,registry);assert.ok(parsed.ok)
+    const text=JSON.stringify(proposal,null,2),parsed=readV3RetainableProposal(text,registry);if(!parsed.ok)assert.fail('synthetic proposal refused: '+parsed.reason)
     const intakeBinding:V3IntakeBinding={schema:3,kind:'proposal_intake_binding',operationId:proposal.operationId,jobId:job.jobId,
       contextKey:work.contextKey,method:METHOD_REF,runnerId:'runner3_'+sha256Hex(seed+'|runner').slice(0,32),
       deliveryId:'delivery3_'+sha256Hex(seed+'|delivery|'+tag).slice(0,32),inputRevision:'snapshot:'+sha256Hex(seed+'|synthetic-visa')}
@@ -1774,7 +1774,7 @@ async function n04(h:Harness){
   const outcome=worked.record.completion!.outcome;assert.ok(outcome.status==='prepared')
   assert.equal(outcome.value.proposalDisposition,'superseded_by_source')
   assert.equal(outcome.value.version.subject.fact.fact.kind,'requirement_effect')
-  assert.deepEqual(outcome.value.version.subject.fact.fact,{kind:'requirement_effect',effect:'not_required'})
+  assert.deepEqual(outcome.value.version.subject.fact.fact,{kind:'requirement_effect',effect:'not_required',visaMode:null})
   assert.equal(published.versionRef,outcome.value.version.reference)
   const v=h.verification(outcome)
   assert.ok(v.decision.evaluatedAt>v.request.clock.now);assert.ok(h.fixture.clock().now>=v.decision.evaluatedAt)
@@ -2130,7 +2130,7 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   assert.ok(suppression);assert.equal(suppression.effect.escalationKey,null)
   const custody=suppressed.qualifications_v1.find(row=>row.kind==='observation'&&row.reference===suppression.observationRef)?.record as Hrs1ObservedSource|undefined
   assert.ok(custody&&custody.status==='observed'&&custody.original.observation)
-  assert.deepEqual(custody.original.observation.fact.fact,{kind:'requirement_effect',effect:'not_required'})
+  assert.deepEqual(custody.original.observation.fact.fact,{kind:'requirement_effect',effect:'not_required',visaMode:null})
   assert.equal(custody.target.role,'primary');assert.deepEqual(custody.target.source,primary.source)
   assert.notEqual(custody.observation.fingerprint.sourceContentHash,primary.baseline.sourceContentHash)
   assert.deepEqual(suppressed.versions_v1,retained.versions_v1,'source change alone never accepts or changes a legal rule')
@@ -2149,7 +2149,7 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   assert.ok(refreshed.record.completion?.outcome.status==='prepared')
   const accepted=refreshed.record.completion.outcome.value
   assert.equal(accepted.version.subject.evidence.sourceContentHash,custody.observation.fingerprint.sourceContentHash)
-  assert.deepEqual(accepted.version.subject.fact.fact,{kind:'requirement_effect',effect:'not_required'})
+  assert.deepEqual(accepted.version.subject.fact.fact,{kind:'requirement_effect',effect:'not_required',visaMode:null})
   assert.equal((await h.raw('projection',{key:publicKey(h.fixture)})).status,'current')
 
   h.fixture.refresh('agrees');h.fixture.control.expiresAt=new Date(Date.now()+3000).toISOString()
