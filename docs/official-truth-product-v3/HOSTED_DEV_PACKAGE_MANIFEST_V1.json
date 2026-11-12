@@ -107,8 +107,8 @@
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
       "bytes": 90987,
-      "sha256": "0cc3c1a1d945292f86cc3e8e39240f981ad777fac00b65e882788f59309bed6d",
-      "blob": "beb5d99906db4810fd25eaa2870a8a0b5279b652"
+      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
+      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55"
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
@@ -191,21 +191,21 @@
     "pins": [
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_HANDOFF_V1.md",
-        "blob": "b8a4161542bfbea011c1a07556ad7726708dfb71",
-        "bytes": 56163,
-        "sha256": "d4c8e665533bd1585c3acfd1fa5d274b1dd0878ad1bd89d7d10d7bb0c9f0084b"
+        "blob": "de130445fcee0450a759dde1c20e34a8e9c3afdf",
+        "bytes": 57058,
+        "sha256": "fb360f3cd1a21fe47c37f510c543d60aa0426c2df248ac423697f0a230383d68"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-        "blob": "3bd4bd455ef329d3ab5f836d52dbb4e2d5d0d49b",
-        "bytes": 664421,
-        "sha256": "bc338fb2a2754081615be3ef3881a34937373933577a72fa0071c3284fd5cb52"
+        "blob": "cbfd963c9365bfeaf40ecbe84fac4b710fc61e0a",
+        "bytes": 622856,
+        "sha256": "128e4ae3e9282b9c4b6c46338a218c70212bfdb2a59280533a15afb8efa7568a"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-        "blob": "b4c79fb58a63373d005c060f921415682544b0f8",
-        "bytes": 239589,
-        "sha256": "d6521a45b48db1c91fd5276e89fd7f710f59fe1284fe3ff14eb0a8d0fb99575a"
+        "blob": "777c0adfdef0f341d87e698e01d481d5149504b9",
+        "bytes": 233228,
+        "sha256": "ef06af449271c28ce85516dd19dda731cecabc7f7ad9df018e9abd58d6b7b7be"
       }
     ],
     "collisionCount": 0,
@@ -225,15 +225,15 @@
     "noProjectParserCompilerOrCodeExecution": true,
     "sourceManifest": {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-      "bytes": 59680,
-      "sha256": "d233adffcc46e44d4acf3140cc01afa087e0a4e824f07b58228b64111652449f",
-      "blob": "41139960a2d3dfd9717d404ab210b5158be0aeac"
+      "bytes": 57270,
+      "sha256": "3bfc1bf16c7d3b4b53abc5abcde5e45a07e9db7880d32407c4f4f1b505f1b653",
+      "blob": "a641b5f412a3badfdc5dfbc99760ad3673e90a7b"
     },
     "sourceNative": {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
       "bytes": 90987,
-      "sha256": "0cc3c1a1d945292f86cc3e8e39240f981ad777fac00b65e882788f59309bed6d",
-      "blob": "beb5d99906db4810fd25eaa2870a8a0b5279b652"
+      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
+      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55"
     },
     "pins": [
       {
@@ -610,15 +610,15 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "bytes": 343818,
-        "blob": "a71222d8ad64aa51aa0f97f2ecc7454deef7c45e",
-        "sha256": "9bc095f65ab26049c7241d5c649cdf46205c28ef30c72596530708b62532dfc4"
+        "bytes": 343804,
+        "blob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
+        "sha256": "b75587b414c2f93f78b61ee2fe3c6cd72d49294ad84b5a4685333e34c0526b8f"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "bytes": 119673,
-        "blob": "b88fbe76b4f2af71c3cdd0a298c49857179e5d87",
-        "sha256": "cbf12e7d1eb4e94680c441a11f7ed401cb31556442258fbaa2f954d606825fc3"
+        "bytes": 119659,
+        "blob": "cc6fa87662468768c5898b1585de545fd8652c8c",
+        "sha256": "9138b4ce7590d1305ed6de15e42144454a4d07729a91f27e010d3ed5d7e264bc"
       },
       {
         "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -633,8 +633,8 @@
         "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352"
       }
     ],
-    "currentCandidateChangedPins": 0,
-    "currentCandidateUnchangedPins": 66,
+    "currentCandidateChangedPins": 2,
+    "currentCandidateUnchangedPins": 64,
     "currentAuthorFullRawSourcesBackread": 4,
     "currentAuthorFullRawChangedSourcesBackread": 4,
     "all66CurrentPathModeTypeBlobSizeMatch": true
@@ -2339,59 +2339,62 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "HM04_INSTALL_DIAGNOSTIC_AND_REUSED_PIN_REPAIR",
-    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6832531035",
-    "parent": {
-      "commit": "d2fd523c78a580d73a0f77500a01aee136c0f9c1",
-      "tree": "08d429a30c23c399d509231fc68a00d8feaf68d2",
-      "soleParent": true,
-      "leafCount": 9538,
-      "failedPublishedParent": true,
-      "parentGateNotTransferredToCandidate": true
-    },
-    "origins": [
+    "revision": "HM04_CATALOG_TYPE_REPAIR_AND_ACCEPTED_MAIN",
+    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6833403277",
+    "parents": [
       {
-        "commit": "8da4706d83c5364c7ce76335a38c9b1981844bec",
-        "tree": "1b1749c9292b72a719251cc2b63e9e898c1e817a",
-        "selectedPaths": 3
+        "commit": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
+        "tree": "c9dd00acba1635e5ae7b9c887d259224d5273148"
+      },
+      {
+        "commit": "63544e820e912bd275556588c956a09b99b1cf90",
+        "acceptedMain": true
       }
     ],
+    "origin": {
+      "commit": "6c96b5a56cbc479b0856a3e9a20e9191ad938403",
+      "tree": "c8ea76aa4c7338a769baa0fd5f4cdc5f49dd5250",
+      "selectedPaths": 5
+    },
     "treeProof": {
       "parentLeaves": 9538,
-      "candidateLeaves": 9538,
-      "addedLeaves": 0,
-      "modifiedExistingLeaves": 4,
+      "candidateLeaves": 9545,
+      "addedLeaves": 7,
+      "modifiedExistingLeaves": 14,
       "deletedLeaves": 0,
-      "unchangedParentLeaves": 9534,
-      "exactImports": 3,
+      "unchangedParentLeaves": 9524,
+      "exactSourceImports": 5,
+      "exactAcceptedMainImports": 13,
+      "rootChangedFiles": 3,
       "everyComplementPathModeTypeBlobExact": true,
       "finalReadback": "required after creation"
     },
     "sourceReview": {
-      "nativeCompleteInverseToParent": true,
-      "diagnosticSites": 49,
-      "executingInstallerDoBlocks": 6,
-      "storedSqlBodiesUnchanged": true,
-      "originalFailureRethrown": true,
-      "realRollbackAbsenceAndBaselineRequired": true,
+      "sqlCompleteInverseToParent": true,
+      "finiteInventoryTables": 4,
+      "storedRuntimeBodiesUnchanged": true,
+      "allAclPredicatesRetained": true,
+      "nullTypeResolutionRefused": true,
+      "diagnosticRemoved": true,
+      "hm04NativeRestored": "777c0adfdef0f341d87e698e01d481d5149504b9",
       "hm04ConsumedPins": 35,
       "hm04ConsumedPreservationMaps": 3,
-      "retainedSpansRechecked": 124,
+      "retainedSpansRechecked": 68,
+      "partitionSpansRechecked": 251,
       "originalGroups": 31,
-      "currentGroupOffsetsRechecked": 31,
-      "composedAndThreeMetadataGuardsUnchanged": true,
-      "all66ComposedPinsUnchanged": true
+      "composedNativeOnlyTwoSqlPinRecordsChanged": true,
+      "all66ComposedPinsMatch": true,
+      "mainMergeConflicts": 0
     },
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
   },
   "previousIntegrationReference": {
-    "commit": "d2fd523c78a580d73a0f77500a01aee136c0f9c1",
+    "ref": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
     "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
-    "blob": "5002031f29d8f7f8eed2865d83ad3ebcce0ea7b1",
-    "bytes": 186622,
-    "sha256": "b7525861251b8d0cd008618ff06e8aa896a56382e7d98f337d4a09c2487ae4df",
-    "historicalReviewPreservedInImmutableParent": true
+    "bytes": 173442,
+    "sha256": "85c2a20f0e6b453ed92b1250a5aae62336584ac8e083dc7b4e94f1ce75f714c8",
+    "blob": "0d1fa8dd1451d9f5683c5c997df730aae7040581"
   }
 }

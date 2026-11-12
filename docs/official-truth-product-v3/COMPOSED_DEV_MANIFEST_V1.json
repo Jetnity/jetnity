@@ -480,15 +480,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-      "bytes": 123734,
-      "blob": "290e0a725477113086c2170a90d74f3a7acd4be8",
-      "sha256": "f56bd702c8e9228251382d5986eadb88895925ca0224b96f0c8f56b70a9b5620"
+      "bytes": 124354,
+      "blob": "faac74e6ab56072f01d941d24a8be28aa7895d94",
+      "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-      "bytes": 42689,
-      "blob": "828ab2b2ded83acdeb45d71454049d655e9af184",
-      "sha256": "4717879a9499a5d7673e975478e4056c6b1fbc5ff9551c8841c4cf2ff6b818f2"
+      "bytes": 43309,
+      "blob": "fc902540cea4c34783bdedbcde2be8a77a9fe672",
+      "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db"
     },
     {
       "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -504,15 +504,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "bytes": 343198,
-      "blob": "073d7a368c6eca4c3e1b14be9e4311b30c79dbf9",
-      "sha256": "342b0564c01820896a0795244bbbf42b58cada892643f55c5ec345b6515999b6"
+      "bytes": 343804,
+      "blob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
+      "sha256": "b75587b414c2f93f78b61ee2fe3c6cd72d49294ad84b5a4685333e34c0526b8f"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "bytes": 119673,
-      "blob": "686f533a6d79e9223e519ac9ba84f6f8b91fdfd0",
-      "sha256": "a306f9c7a92939de0209f88e749c5a6358f62bf3d5b8dd079b8bb749c43f0651"
+      "bytes": 119659,
+      "blob": "cc6fa87662468768c5898b1585de545fd8652c8c",
+      "sha256": "9138b4ce7590d1305ed6de15e42144454a4d07729a91f27e010d3ed5d7e264bc"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1177,8 +1177,8 @@
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
       "bytes": 90987,
-      "blob": "555a49ff94764ba8636258c3da4dc3454e958897",
-      "sha256": "582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429",
+      "blob": "8824575974c8678c2f65d7f2f45c29f21d3b1a55",
+      "sha256": "0ffc000fb3e919e451a513f7a64d3c2e2b2d230715f8133cb8b0ffdd711a0c9e",
       "role": "existing proof; one HMT recovery source pin updated, all test code unchanged"
     },
     {
@@ -1337,84 +1337,13 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "HDP1-FIX3-HS1-DIAG1",
-    "authority": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830894319",
-    "author": "Root",
-    "parent": {
-      "commit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
-      "tree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
-      "soleParent": true
-    },
-    "origins": [
-      {
-        "package": "HS1 DIAG1",
-        "commit": "473978440d58958bee93abea353d6a470ab5ef91",
-        "tree": "90d7b5c91412fbeced4aebebaf2dcd8aa4b14aeb",
-        "changedPaths": 5
-      },
-      {
-        "package": "HMT1 FIX3",
-        "commit": "d0d70fafb2d3a3d005b548569b5617cffa1813de",
-        "tree": "10eeff84f4ff9ee2d9ce6944c93d7c714f2a9b35",
-        "changedPaths": 6
-      }
-    ],
-    "priorFailure": {
-      "runId": 43266988022,
-      "runNumber": 4143,
-      "jobId": 131353065696,
-      "hosted": {
-        "tests": 30,
-        "pass": 23,
-        "fail": 7
-      },
-      "hs": "P7312, exact guard pending diagnostic",
-      "hmt": "2201B invalid repetition bound",
-      "priorPassesTransferred": false
-    },
-    "treeProof": {
-      "parentLeaves": 9538,
-      "candidateLeaves": 9538,
-      "addedLeaves": 0,
-      "modifiedExistingLeaves": 14,
-      "deletedLeaves": 0,
-      "unchangedParentLeaves": 9524,
-      "exactImports": 11,
-      "onlyComposedCodeEdits": "one complete HMT recovery pin object",
-      "everyComplementPathModeTypeBlobExact": true,
-      "finalReadback": "required after creation"
-    },
-    "nativeInverse": {
-      "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "before": {
-        "bytes": 90987,
-        "sha256": "e41640d2ccfe47429f7f4f99ef5f27922d41a942fa41ef28c5c0467e89ae5dfa",
-        "blob": "2c9475997ae04d19b466ecacbdc4d2efdc6ab466"
-      },
-      "after": {
-        "bytes": 90987,
-        "sha256": "582695695e5384072f969ed2db53ffd8dca735ffea51d2aec3b909085742f429",
-        "blob": "555a49ff94764ba8636258c3da4dc3454e958897"
-      },
-      "changedPinObjects": [
-        {
-          "before": {
-            "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-            "bytes": 82578,
-            "blob": "516a744ad9f0a8e2ea2bc1a7f604dbab21a664e9",
-            "sha256": "a591cb0228822817fabf1f787c3427087c30d8c7af85a3b0aa85c3ae36ebb595"
-          },
-          "after": {
-            "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-            "bytes": 82633,
-            "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
-            "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
-          }
-        }
-      ],
-      "wholeFileInverseExact": true,
-      "other65PinsExact": true
-    },
+    "revision": "HM04_H4014_EXACT_CATALOG_TYPES",
+    "parent": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
+    "origin": "6c96b5a56cbc479b0856a3e9a20e9191ad938403",
+    "changedConsumedPins": 2,
+    "retainedConsumedPins": 64,
+    "nativeOutsidePinsByteExact": true,
+    "all66PathModeTypeBlobSizeMatch": true,
     "runtime": "NOT_RUN",
     "hostedApplied": false,
     "publicActivated": false
@@ -1469,10 +1398,10 @@
     }
   },
   "previousIntegrationReference": {
-    "ref": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "ref": "1048f07bf57f866fdb519d4f4150cbaecbb36439",
     "path": "docs/official-truth-product-v3/COMPOSED_DEV_MANIFEST_V1.json",
-    "bytes": 74195,
-    "sha256": "9fb020a4c654f39c226857ee6b6ba6d7fb2b7edef23f00665413046d4c283176",
-    "blob": "37acd2e6444bf5e70e1f6655657a14ce4eb078a9"
+    "bytes": 59680,
+    "blob": "41139960a2d3dfd9717d404ab210b5158be0aeac",
+    "sha256": "d233adffcc46e44d4acf3140cc01afa087e0a4e824f07b58228b64111652449f"
   }
 }

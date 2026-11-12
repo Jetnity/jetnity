@@ -2781,15 +2781,15 @@ BEGIN
     RAISE EXCEPTION 'hm04 function inventory' USING ERRCODE='P7603';
   END IF;
   FOR expected IN SELECT * FROM (VALUES
-    ('official_v3_jobs_private','exact_keys_v1','jsonb,text[]',ARRAY['v','expected']::text[],'boolean','sql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','unique_json_v1','json,integer',ARRAY['v','d']::text[],'boolean','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','nodes_v1','jsonb,integer,integer,integer',ARRAY['v','d','max_d','max_n']::text[],'integer','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','canonical_v1','jsonb,integer',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','exact_keys_v1','jsonb,text[]',ARRAY['v','expected']::text[],'bool','sql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','unique_json_v1','json,int4',ARRAY['v','d']::text[],'bool','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','nodes_v1','jsonb,int4,int4,int4',ARRAY['v','d','max_d','max_n']::text[],'int4','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','wire_v1','text',ARRAY['t']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','civil_date_v1','text',ARRAY['t']::text[],'boolean','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','civil_date_v1','text',ARRAY['t']::text[],'bool','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','timestamp_v1','text',ARRAY['t']::text[],'timestamptz','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','predicate_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','expression_v1','jsonb,boolean,integer',ARRAY['v','strip_support','d']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','expression_v1','jsonb,bool,int4',ARRAY['v','strip_support','d']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','context_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','subject_v1','text,jsonb',ARRAY['kind','v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','job_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
@@ -2797,28 +2797,29 @@ BEGIN
     ('official_v3_jobs_private','reference_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','transition_v1','jsonb,jsonb,jsonb',ARRAY['command','current_record','commit']::text[],'void','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','s1_read_v1','jsonb,text,integer',ARRAY['b','d','n']::text[],'jsonb','sql','v',true,'ot_v3_intake_owner'),
-    ('official_v3_jobs_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'boolean','sql','i',true,'ot_v3_intake_owner'),
-    ('official_v3_jobs_private','ma1_require_v1','text,integer,text,text,integer',ARRAY['m','r','d','p','e']::text[],'void','sql','v',true,'postgres'),
+    ('official_v3_jobs_private','s1_read_v1','jsonb,text,int4',ARRAY['b','d','n']::text[],'jsonb','sql','v',true,'ot_v3_intake_owner'),
+    ('official_v3_jobs_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',true,'ot_v3_intake_owner'),
+    ('official_v3_jobs_private','ma1_require_v1','text,int4,text,text,int4',ARRAY['m','r','d','p','e']::text[],'void','sql','v',true,'postgres'),
     ('official_v3_jobs_private','consume_s1_v1','jsonb,jsonb,jsonb,text',ARRAY['reply','job','result','purpose']::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','assert_history_v1','text',ARRAY['k']::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','assert_catalog_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_read_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_confirm_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_read_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_start_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_prepare_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_cas_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_api','execute_v1','text,text,integer,text,text,integer,integer,text',ARRAY['wire','method_id','revision','method_digest','package_digest','epoch','remaining_ms','absolute_not_after']::text[],'jsonb','plpgsql','v',true,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','ma1_tuple_valid_v1','text,integer,text,text',ARRAY['m','r','d','p']::text[],'boolean','sql','i',true,'postgres')
+    ('official_v3_jobs_private','tx_queue_read_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_queue_confirm_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_read_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_start_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_prepare_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_queue_cas_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_api','execute_v1','text,text,int4,text,text,int4,int4,text',ARRAY['wire','method_id','revision','method_digest','package_digest','epoch','remaining_ms','absolute_not_after']::text[],'jsonb','plpgsql','v',true,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','ma1_tuple_valid_v1','text,int4,text,text',ARRAY['m','r','d','p']::text[],'bool','sql','i',true,'postgres')
   ) e(schema_name,function_name,argument_types,argument_names,result_type,language_name,volatility,definer,owner_name) LOOP
     SELECT p.* INTO actual_function FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
       WHERE n.nspname=expected.schema_name AND p.proname=expected.function_name;
     SELECT COALESCE(pg_catalog.array_agg(pg_catalog.to_regtype('pg_catalog.'||t)::oid ORDER BY ordinal),ARRAY[]::oid[])
       INTO expected_types FROM pg_catalog.unnest(CASE WHEN expected.argument_types='' THEN ARRAY[]::text[]
         ELSE pg_catalog.string_to_array(expected.argument_types,',') END) WITH ORDINALITY AS v(t,ordinal);
-    IF actual_function.oid IS NULL OR actual_function.proowner<>pg_catalog.to_regrole(expected.owner_name)
-      OR actual_function.prokind<>'f' OR actual_function.prorettype<>pg_catalog.to_regtype('pg_catalog.'||expected.result_type)
+    IF pg_catalog.array_position(expected_types,NULL::oid) IS NOT NULL
+      OR actual_function.oid IS NULL OR actual_function.proowner<>pg_catalog.to_regrole(expected.owner_name)
+      OR actual_function.prokind<>'f' OR actual_function.prorettype IS DISTINCT FROM pg_catalog.to_regtype('pg_catalog.'||expected.result_type)
       OR actual_function.prolang<>(SELECT l.oid FROM pg_catalog.pg_language l WHERE l.lanname=expected.language_name)
       OR actual_function.prosecdef IS DISTINCT FROM expected.definer OR actual_function.provolatile::text<>expected.volatility
       OR actual_function.proparallel<>'u' OR actual_function.proisstrict OR actual_function.proleakproof
@@ -3571,15 +3572,15 @@ BEGIN
     RAISE EXCEPTION 'hm04 function inventory' USING ERRCODE='P7603';
   END IF;
   FOR expected IN SELECT * FROM (VALUES
-    ('official_v3_jobs_private','exact_keys_v1','jsonb,text[]',ARRAY['v','expected']::text[],'boolean','sql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','unique_json_v1','json,integer',ARRAY['v','d']::text[],'boolean','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','nodes_v1','jsonb,integer,integer,integer',ARRAY['v','d','max_d','max_n']::text[],'integer','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','canonical_v1','jsonb,integer',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','exact_keys_v1','jsonb,text[]',ARRAY['v','expected']::text[],'bool','sql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','unique_json_v1','json,int4',ARRAY['v','d']::text[],'bool','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','nodes_v1','jsonb,int4,int4,int4',ARRAY['v','d','max_d','max_n']::text[],'int4','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','wire_v1','text',ARRAY['t']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','civil_date_v1','text',ARRAY['t']::text[],'boolean','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','civil_date_v1','text',ARRAY['t']::text[],'bool','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','timestamp_v1','text',ARRAY['t']::text[],'timestamptz','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','predicate_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','expression_v1','jsonb,boolean,integer',ARRAY['v','strip_support','d']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','expression_v1','jsonb,bool,int4',ARRAY['v','strip_support','d']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','context_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','subject_v1','text,jsonb',ARRAY['kind','v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','job_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
@@ -3587,28 +3588,29 @@ BEGIN
     ('official_v3_jobs_private','reference_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','transition_v1','jsonb,jsonb,jsonb',ARRAY['command','current_record','commit']::text[],'void','plpgsql','i',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','s1_read_v1','jsonb,text,integer',ARRAY['b','d','n']::text[],'jsonb','sql','v',true,'ot_v3_intake_owner'),
-    ('official_v3_jobs_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'boolean','sql','i',true,'ot_v3_intake_owner'),
-    ('official_v3_jobs_private','ma1_require_v1','text,integer,text,text,integer',ARRAY['m','r','d','p','e']::text[],'void','sql','v',true,'postgres'),
+    ('official_v3_jobs_private','s1_read_v1','jsonb,text,int4',ARRAY['b','d','n']::text[],'jsonb','sql','v',true,'ot_v3_intake_owner'),
+    ('official_v3_jobs_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',true,'ot_v3_intake_owner'),
+    ('official_v3_jobs_private','ma1_require_v1','text,int4,text,text,int4',ARRAY['m','r','d','p','e']::text[],'void','sql','v',true,'postgres'),
     ('official_v3_jobs_private','consume_s1_v1','jsonb,jsonb,jsonb,text',ARRAY['reply','job','result','purpose']::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','assert_history_v1','text',ARRAY['k']::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
     ('official_v3_jobs_private','assert_catalog_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_read_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_confirm_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_read_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_start_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_execution_prepare_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','tx_queue_cas_v1','jsonb,jsonb,integer,integer,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_api','execute_v1','text,text,integer,text,text,integer,integer,text',ARRAY['wire','method_id','revision','method_digest','package_digest','epoch','remaining_ms','absolute_not_after']::text[],'jsonb','plpgsql','v',true,'ot_v3_jobs_owner'),
-    ('official_v3_jobs_private','ma1_tuple_valid_v1','text,integer,text,text',ARRAY['m','r','d','p']::text[],'boolean','sql','i',true,'postgres')
+    ('official_v3_jobs_private','tx_queue_read_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_queue_confirm_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_read_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_start_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_execution_prepare_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','tx_queue_cas_v1','jsonb,jsonb,int4,int4,timestamptz',ARRAY['q','b','e','remaining','deadline']::text[],'jsonb','plpgsql','v',false,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_api','execute_v1','text,text,int4,text,text,int4,int4,text',ARRAY['wire','method_id','revision','method_digest','package_digest','epoch','remaining_ms','absolute_not_after']::text[],'jsonb','plpgsql','v',true,'ot_v3_jobs_owner'),
+    ('official_v3_jobs_private','ma1_tuple_valid_v1','text,int4,text,text',ARRAY['m','r','d','p']::text[],'bool','sql','i',true,'postgres')
   ) e(schema_name,function_name,argument_types,argument_names,result_type,language_name,volatility,definer,owner_name) LOOP
     SELECT p.* INTO actual_function FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
       WHERE n.nspname=expected.schema_name AND p.proname=expected.function_name;
     SELECT COALESCE(pg_catalog.array_agg(pg_catalog.to_regtype('pg_catalog.'||t)::oid ORDER BY ordinal),ARRAY[]::oid[])
       INTO expected_types FROM pg_catalog.unnest(CASE WHEN expected.argument_types='' THEN ARRAY[]::text[]
         ELSE pg_catalog.string_to_array(expected.argument_types,',') END) WITH ORDINALITY AS v(t,ordinal);
-    IF actual_function.oid IS NULL OR actual_function.proowner<>pg_catalog.to_regrole(expected.owner_name)
-      OR actual_function.prokind<>'f' OR actual_function.prorettype<>pg_catalog.to_regtype('pg_catalog.'||expected.result_type)
+    IF pg_catalog.array_position(expected_types,NULL::oid) IS NOT NULL
+      OR actual_function.oid IS NULL OR actual_function.proowner<>pg_catalog.to_regrole(expected.owner_name)
+      OR actual_function.prokind<>'f' OR actual_function.prorettype IS DISTINCT FROM pg_catalog.to_regtype('pg_catalog.'||expected.result_type)
       OR actual_function.prolang<>(SELECT l.oid FROM pg_catalog.pg_language l WHERE l.lanname=expected.language_name)
       OR actual_function.prosecdef IS DISTINCT FROM expected.definer OR actual_function.provolatile::text<>expected.volatility
       OR actual_function.proparallel<>'u' OR actual_function.proisstrict OR actual_function.proleakproof

@@ -403,15 +403,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 343818,
-    "blob": "a71222d8ad64aa51aa0f97f2ecc7454deef7c45e",
-    "sha256": "9bc095f65ab26049c7241d5c649cdf46205c28ef30c72596530708b62532dfc4"
+    "bytes": 343804,
+    "blob": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
+    "sha256": "b75587b414c2f93f78b61ee2fe3c6cd72d49294ad84b5a4685333e34c0526b8f"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-    "bytes": 119673,
-    "blob": "b88fbe76b4f2af71c3cdd0a298c49857179e5d87",
-    "sha256": "cbf12e7d1eb4e94680c441a11f7ed401cb31556442258fbaa2f954d606825fc3"
+    "bytes": 119659,
+    "blob": "cc6fa87662468768c5898b1585de545fd8652c8c",
+    "sha256": "9138b4ce7590d1305ed6de15e42144454a4d07729a91f27e010d3ed5d7e264bc"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",

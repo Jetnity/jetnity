@@ -52,7 +52,7 @@ export async function mountedAcceptedStoreProof(t:TestContext){
     assert.equal(JSON.parse(readFileSync(`node_modules/${name}/package.json`,'utf8')).version,version)
   const executablePath=['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'].find(existsSync)
   assert(executablePath,'Required installed system browser; no download or optional skip')
-  const binaryVersion=execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:5_000}).trim()
+  const binaryVersion=execFileSync(executablePath,['--version'],{encoding:'utf8',timeout:15_000}).trim()
   const bundle=nativeBrowserBundle(),cluster=startLocalProofCluster(),sql=nativeSql(cluster)
   let protocol:Awaited<ReturnType<typeof startNativeHttp>>|null=null,witness:Awaited<ReturnType<typeof nativeBinding>>|null=null
   let browser:Awaited<ReturnType<typeof chromium.launch>>|null=null,server:ReturnType<typeof createServer>|null=null

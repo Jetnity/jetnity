@@ -251,6 +251,111 @@ test('strict report rejects raw additions; all maximum finite fields remain unde
     startedAt: '2026-10-14T10:00:00.000Z', completedAt: '2026-10-14T10:00:10.000Z', completeBodyBytes: 65_536, indicators }))
 })
 
+// AA TASK V1/A8-B A1: bind all three complete sources and invert the exact
+// selected move. The authoritative original pin and all original body bytes remain.
+const BP1_READER_PATH = 'lib/readiness/official-truth-server-owned-retrieval.ts'
+const BP1_PHYSICAL_PATH = 'lib/readiness/official-truth-retrieval-physical-internal.ts'
+const BP1_AA_PROBE_PATH = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
+type Bp1ReaderSources = Readonly<{ reader: Buffer; physical: Buffer; probe: Buffer }>
+type Bp1ReaderSpan = Readonly<{
+  sourceStart: number; sourceEnd: number; sha256: string
+  file?: 'reader' | 'physical'; start?: number; end?: number; literal?: string
+}>
+const BP1_READER_AA_PRESERVATION = Object.freeze({
+  originalBytes: 46_071,
+  originalBlob: '5998fdea54d3337fb68cd7111460b59e43a3cef7',
+  originalSha256: 'b83340d46dbf8dbc3d1ba389d6b38964bf48fa05132655854ee0e49cc66db994',
+  sources: Object.freeze({
+    reader: Object.freeze({ bytes: 29654, blob: '0a46e1e82574effef2a8bd39e5a1072394bad4b1', sha256: '5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10' }),
+    physical: Object.freeze({ bytes: 17726, blob: 'bd995580bee6adb6b1a213b17a6001caa8f0aeff', sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),
+    probe: Object.freeze({ bytes: 20156, blob: 'df24e34575ef7d0ca211471b6a6a019f600871ec', sha256: 'a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f' }),
+  }),
+  // Immutable A3 evidence only. It is not an alternative accepted current layout.
+  priorA3Layout: Object.freeze({
+    currentBytes: 65_490,
+    currentBlob: '2b14953968da35ca47b272fd67a1a912613b8e6d',
+    currentSha256: 'a9aad4542c70c6dbb1f59cbbce003559fc9b06a5fc6c6065a75fb7ea8e7a9143',
+    importsStart: 960, importsEnd: 1_650, importsBytes: 690,
+    importsSha256: 'ee791811f307ed420b4c41c5d8fa812a0655d7b960ec1d0c0996ae73463be95f',
+    appendixStart: 46_761, appendixEnd: 65_490, appendixBytes: 18_729,
+    appendixSha256: 'b5ebcb13fbeb6ec1bb3538233f2a26e81bea575b1fc7bfa088e3530a48b5ea32',
+  }),
+})
+const BP1_READER_INVERSE_SPANS: readonly Bp1ReaderSpan[] = [
+  { sourceStart: 0, sourceEnd: 805, file: 'reader', start: 0, end: 805, sha256: 'ccaf5071438bba48f8ff275189d28072c73593e6a8340047e8cdacdcd4d04bdd' },
+  { sourceStart: 805, sourceEnd: 806, file: 'reader', start: 1742, end: 1743, sha256: '01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b' },
+  { sourceStart: 806, sourceEnd: 933, file: 'physical', start: 130, end: 257, sha256: '96cc7749e20e4be4240b09d0a83b264ee1c7cbb48dd64c2043bc7e3876e859d2' },
+  { sourceStart: 933, sourceEnd: 1783, file: 'reader', start: 1743, end: 2593, sha256: '2f7962905a91a8c04d567ab26daaf390da4de9b2af213bdd441771bbfbc0062c' },
+  { sourceStart: 1783, sourceEnd: 1808, literal: "  type QuellenUrlFehler,\n", sha256: '286e4b726e1d7a2c10a39a0f493f579e8a8eb208d7af2e2b0a0f228d0bfc51e0' },
+  { sourceStart: 1808, sourceEnd: 2104, file: 'reader', start: 2593, end: 2889, sha256: '3a87d75e3ad0846601fbfead83cd52a5fecb2593cadbc21f335a811cd11edf87' },
+  { sourceStart: 2104, sourceEnd: 2157, file: 'physical', start: 461, end: 514, sha256: '68246e1f98c770d018d4c17a207a4117b3c466a558ab9e9cc750c2ccb92feabf' },
+  { sourceStart: 2157, sourceEnd: 2228, file: 'reader', start: 2889, end: 2960, sha256: '1c17e05a284a06b8ece103496a734946c963b61373ef99574d9ec5a029d2698a' },
+  { sourceStart: 2228, sourceEnd: 2333, file: 'physical', start: 514, end: 619, sha256: '30c5c51d11aa790a24e78cc8db8e33a4a11bb65db02c155a59b7548a935246b5' },
+  { sourceStart: 2333, sourceEnd: 4165, file: 'reader', start: 2960, end: 4792, sha256: 'e50f5ef71d17b74191bc016bd188e73a46c2bb7b4cb1a948af00977e9d13edaf' },
+  { sourceStart: 4165, sourceEnd: 4527, file: 'physical', start: 619, end: 981, sha256: 'ab6a6ba035cbb9901b72b6572e0ca61c699e599ee9f73cfa552ce7ab07579f24' },
+  { sourceStart: 4527, sourceEnd: 5360, file: 'physical', start: 981, end: 1814, sha256: '2f8b395bf540cbf8d5958368c319d215167d76a2832c76d5457324c0a4775f19' },
+  { sourceStart: 5360, sourceEnd: 6081, file: 'reader', start: 4792, end: 5513, sha256: '596bd439d31841c096f0b5b21a0209c646069f7fa088aded2be6ebddf42036f4' },
+  { sourceStart: 6081, sourceEnd: 7371, file: 'physical', start: 1814, end: 3104, sha256: '150dd9535de1702de8ae4b22041da043d35f5edeb0289fc45dca2c2ff973b347' },
+  { sourceStart: 7371, sourceEnd: 8552, file: 'reader', start: 5513, end: 6694, sha256: '1139da8488ff06f9b7d04647efeb7a058c4ed4ef8a8e5381deee5a224fa8c2ad' },
+  { sourceStart: 8552, sourceEnd: 15199, file: 'physical', start: 3104, end: 9751, sha256: 'bb72fcbbfdc73064ae9ede2075fa04ddbfaca89c12a845360f173bf2bab11c4d' },
+  { sourceStart: 15199, sourceEnd: 19855, file: 'reader', start: 6694, end: 11350, sha256: 'd62346c1c13593e38009a236096b28024eb3df5ddf695bc8de7eae8b586c45bf' },
+  { sourceStart: 19855, sourceEnd: 20427, file: 'physical', start: 9758, end: 10330, sha256: '125acc52bcbad41e7430de93b9ab04940046e25ae849cfabd8a5ae2cfc529b52' },
+  { sourceStart: 20427, sourceEnd: 20763, file: 'physical', start: 10337, end: 10673, sha256: '56d4b4034715f6ada102b48eef96b6766766bfd61e1d1202fc31348ad2f38acc' },
+  { sourceStart: 20763, sourceEnd: 21341, file: 'physical', start: 10680, end: 11258, sha256: '6b1023afcf68de2761fc6f5aa07aa84c2aa7829b20fb1ce60ee73035903aca4b' },
+  { sourceStart: 21341, sourceEnd: 21580, file: 'physical', start: 11265, end: 11504, sha256: '9cc4eec23b8ec5ed8e19560fa9c1732da84aea43d2806b8971c16a7c8c9d9259' },
+  { sourceStart: 21580, sourceEnd: 21770, file: 'reader', start: 11350, end: 11540, sha256: '203de9198abb5117f65ca69699d42a7f02d93c286f6275a5cd9e324ccc4c4893' },
+  { sourceStart: 21770, sourceEnd: 22239, file: 'physical', start: 11504, end: 11973, sha256: '1e71b759f92f02d6f1cb0e997a00c47a4f562854b13e1edf7d6b2e7be15cd315' },
+  { sourceStart: 22239, sourceEnd: 22901, file: 'physical', start: 11980, end: 12642, sha256: '4d65c1e13dec51f9bdca510ee931e6e80d3257799b3699f070f97c2fe84bf926' },
+  { sourceStart: 22901, sourceEnd: 25282, file: 'physical', start: 12649, end: 15030, sha256: '36be782615cc0c04af64db03a93ab7822500369e6dab7ac67c21ec21b95b927d' },
+  { sourceStart: 25282, sourceEnd: 25546, file: 'physical', start: 15037, end: 15301, sha256: '21b66ae6c2fe8d5e5c20c5137873f86a5323cf7b7d5d053320e48b165ed99600' },
+  { sourceStart: 25546, sourceEnd: 25868, file: 'physical', start: 15308, end: 15630, sha256: 'bbd8ee8fef30a8e3990820a5297711590263520327b837ffb1bce48dd36d2497' },
+  { sourceStart: 25868, sourceEnd: 27957, file: 'physical', start: 15637, end: 17726, sha256: '2d31c0cdfa3894a273b3680bab9c1b972be3ef995e9e217dff998a821a8641f2' },
+  { sourceStart: 27957, sourceEnd: 46071, file: 'reader', start: 11540, end: 29654, sha256: '1da779aadf7a00bc60c0a02fb76167e8182079eb344332c0dc77c97dc066b52f' },
+]
+
+/** Local inverse test helper. Every original byte is selected from actual sources,
+ * except the explicitly restored original URL-error type-import wiring. */
+function bp1ReaderInverse(sources: Bp1ReaderSources, spans: readonly Bp1ReaderSpan[]): Buffer | null {
+  const pin = BP1_READER_AA_PRESERVATION
+  const parts: Buffer[] = []
+  let cursor = 0
+  for (const span of spans) {
+    if (span.sourceStart !== cursor || !Number.isSafeInteger(span.sourceEnd)
+      || span.sourceEnd <= span.sourceStart || span.sourceEnd > pin.originalBytes) return null
+    let selected: Buffer
+    if (span.literal !== undefined) {
+      if (span.file !== undefined || span.start !== undefined || span.end !== undefined) return null
+      selected = Buffer.from(span.literal, 'utf8')
+    } else {
+      if ((span.file !== 'reader' && span.file !== 'physical') || typeof span.start !== 'number'
+        || typeof span.end !== 'number' || !Number.isSafeInteger(span.start) || !Number.isSafeInteger(span.end)
+        || span.start < 0 || span.end <= span.start || span.end > sources[span.file].length) return null
+      selected = sources[span.file].subarray(span.start, span.end)
+    }
+    if (selected.length !== span.sourceEnd - span.sourceStart
+      || createHash('sha256').update(selected).digest('hex') !== span.sha256) return null
+    parts.push(selected)
+    cursor = span.sourceEnd
+  }
+  if (cursor !== pin.originalBytes) return null
+  const original = Buffer.concat(parts)
+  if (original.length !== pin.originalBytes
+    || createHash('sha1').update('blob ' + original.length + '\0').update(original).digest('hex') !== pin.originalBlob
+    || createHash('sha256').update(original).digest('hex') !== pin.originalSha256) return null
+  return original
+}
+
+/** Local test predicate only. The complete selected layout is mandatory. */
+function bp1PreservedOriginalReader(sources: Bp1ReaderSources): Buffer | null {
+  for (const name of ['reader', 'physical', 'probe'] as const) {
+    const bytes = sources[name], pin = BP1_READER_AA_PRESERVATION.sources[name]
+    if (bytes.length !== pin.bytes
+      || createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== pin.blob
+      || createHash('sha256').update(bytes).digest('hex') !== pin.sha256) return null
+  }
+  return bp1ReaderInverse(sources, BP1_READER_INVERSE_SPANS)
+}
+
 test('protected transport/profile/application remain byte-identical, closed and unreachable from app', () => {
   const pins = {
     'lib/readiness/official-truth-server-owned-retrieval.ts': '5998fdea54d3337fb68cd7111460b59e43a3cef7',
@@ -261,7 +366,11 @@ test('protected transport/profile/application remain byte-identical, closed and 
     'lib/readiness/official-truth-ch-de-application-pilot-1/evaluate-server.ts': '975206af1755dba3282193f456d1f92d92f8d0ad',
   }
   for (const [path, expected] of Object.entries(pins)) {
-    const bytes = readFileSync(path)
+    const currentBytes = readFileSync(path)
+    const bytes = path === BP1_READER_PATH ? bp1PreservedOriginalReader({
+      reader: currentBytes, physical: readFileSync(BP1_PHYSICAL_PATH), probe: readFileSync(BP1_AA_PROBE_PATH),
+    }) : currentBytes
+    assert.ok(bytes, path)
     assert.equal(createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'), expected, path)
   }
   assert.equal(applicationPilotEnabled(), false); assert.equal(applicationContract('bp1', 'anything'), null)
@@ -282,6 +391,85 @@ test('protected transport/profile/application remain byte-identical, closed and 
 })
 
 
+test('AA A8-B exact Reader preservation refuses original, moved body, probe and boundary mutations in memory', () => {
+  const sources: Bp1ReaderSources = {
+    reader: readFileSync(BP1_READER_PATH), physical: readFileSync(BP1_PHYSICAL_PATH), probe: readFileSync(BP1_AA_PROBE_PATH),
+  }
+  const pin = BP1_READER_AA_PRESERVATION
+  const original = bp1PreservedOriginalReader(sources)
+  assert.ok(original, 'exact reviewed sources must reconstruct the complete pinned original')
+  assert.equal(original.length, pin.originalBytes)
+  assert.equal(createHash('sha1').update('blob ' + original.length + '\0').update(original).digest('hex'), pin.originalBlob)
+  assert.equal(createHash('sha256').update(original).digest('hex'), pin.originalSha256)
+  const readerWiringStart = 805, readerWiringEnd = 1_742
+  const physicalBodyStart = 3104, physicalBodyEnd = 9751
+  const probeAppendixStart = 1195
+  const readerWiring = sources.reader.subarray(readerWiringStart, readerWiringEnd)
+  const physicalBody = sources.physical.subarray(physicalBodyStart, physicalBodyEnd)
+  const probeAppendix = sources.probe.subarray(probeAppendixStart)
+  const flip = (name: keyof Bp1ReaderSources, offset: number): Bp1ReaderSources => {
+    const changed = Buffer.from(sources[name])
+    changed[offset] = changed[offset]! ^ 1
+    return { ...sources, [name]: changed }
+  }
+  const mutants: [string, Bp1ReaderSources][] = [
+    ['altered original prefix', flip('reader', 0)],
+    ['altered original final byte', flip('reader', sources.reader.length - 1)],
+    ['altered moved physical body', flip('physical', physicalBodyStart + 100)],
+    ['altered import wiring', flip('reader', readerWiringStart + 17)],
+    ['altered physical export wiring', flip('physical', 9_751)],
+    ['altered probe import addition', flip('probe', 130)],
+    ['altered probe appendix addition', flip('probe', probeAppendixStart + 100)],
+    ['missing import wiring', { ...sources, reader: Buffer.concat([
+      sources.reader.subarray(0, readerWiringStart), sources.reader.subarray(readerWiringEnd),
+    ]) }],
+    ['duplicated import wiring', { ...sources, reader: Buffer.concat([
+      sources.reader.subarray(0, readerWiringEnd), readerWiring, sources.reader.subarray(readerWiringEnd),
+    ]) }],
+    ['misplaced import wiring', { ...sources, reader: Buffer.concat([
+      sources.reader.subarray(0, readerWiringStart), sources.reader.subarray(readerWiringEnd, readerWiringEnd + 1),
+      readerWiring, sources.reader.subarray(readerWiringEnd + 1),
+    ]) }],
+    ['missing moved span', { ...sources, physical: Buffer.concat([
+      sources.physical.subarray(0, physicalBodyStart), sources.physical.subarray(physicalBodyEnd),
+    ]) }],
+    ['duplicated moved span', { ...sources, physical: Buffer.concat([
+      sources.physical.subarray(0, physicalBodyEnd), physicalBody, sources.physical.subarray(physicalBodyEnd),
+    ]) }],
+    ['misplaced moved span', { ...sources, physical: Buffer.concat([
+      sources.physical.subarray(0, physicalBodyStart), sources.physical.subarray(physicalBodyEnd, physicalBodyEnd + 1),
+      physicalBody, sources.physical.subarray(physicalBodyEnd + 1),
+    ]) }],
+    ['missing probe addition', { ...sources, probe: sources.probe.subarray(0, probeAppendixStart) }],
+    ['duplicated probe addition', { ...sources, probe: Buffer.concat([sources.probe, probeAppendix]) }],
+    ['misplaced probe addition', { ...sources, probe: Buffer.concat([
+      sources.probe.subarray(0, probeAppendixStart - 1), probeAppendix, sources.probe.subarray(probeAppendixStart - 1, probeAppendixStart),
+    ]) }],
+    ['extra trailing Reader byte', { ...sources, reader: Buffer.concat([sources.reader, Buffer.from('\n')]) }],
+    ['extra trailing physical byte', { ...sources, physical: Buffer.concat([sources.physical, Buffer.from('\n')]) }],
+    ['extra trailing probe byte', { ...sources, probe: Buffer.concat([sources.probe, Buffer.from('\n')]) }],
+    ['unextended original is not the selected current Reader', { ...sources, reader: original }],
+    ['wrong complete physical file', { ...sources, physical: sources.reader }],
+    ['wrong complete probe file', { ...sources, probe: sources.reader }],
+  ]
+  for (const [name, changed] of mutants) {
+    // Boolean-only assertion output; do not print the complete source buffers.
+    assert.equal(bp1PreservedOriginalReader(changed) === null, true, name)
+  }
+  const spans = BP1_READER_INVERSE_SPANS
+  const inverseMutants: [string, readonly Bp1ReaderSpan[]][] = [
+    ['missing inverse span', spans.slice(1)],
+    ['duplicated inverse span', [spans[0]!, ...spans]],
+    ['misplaced inverse spans', [spans[1]!, spans[0]!, ...spans.slice(2)]],
+    ['changed target range', spans.map((span, index) => index === 15 ? { ...span, start: span.start! + 1 } : span)],
+    ['changed original type-import wiring', spans.map(span => span.literal === undefined ? span : { ...span, literal: span.literal + '\n' })],
+    ['original span gap', spans.map((span, index) => index === 1 ? { ...span, sourceStart: span.sourceStart + 1 } : span)],
+    ['wrong actual moved-body source', spans.map((span, index) => index === 15 ? { ...span, file: 'reader' } : span)],
+  ]
+  for (const [name, changed] of inverseMutants) {
+    assert.equal(bp1ReaderInverse(sources, changed) === null, true, name)
+  }
+})
 test('cold imports and real CLI default/plan/invalid process paths are network-free', () => {
   const block = `const https = require('node:https'), dns = require('node:dns');
     let calls = 0;
