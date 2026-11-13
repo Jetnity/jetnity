@@ -6,6 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 
 import { TRAVELLER_CONTEXT_GRENZEN } from '@/lib/readiness/domain'
@@ -56,6 +57,132 @@ import {
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
+
+// #1196: one reviewed literal PINS row, never permission for a runtime import.
+const COMPOSED_REGULATORY_METADATA_PIN = {
+  path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
+  bytes: 103371,
+  blob: '5c0bd82493c66a61c73634d3c41d3bcc3e3e3ddf',
+  sha256: 'a41b1661348eaaa821c82eef771114b365dbca522b49179a629403bf340c62b3',
+  contextStart: 11576,
+  contextEnd: 11800,
+  tokenStart: 11607,
+} as const
+const COMPOSED_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
+const COMPOSED_REGULATORY_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+    "bytes": 108170,
+    "blob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+    "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+  }`
+
+function isPinnedComposedRegulatoryMetadata(path: string, bytes: Buffer): boolean {
+  if (path !== COMPOSED_REGULATORY_METADATA_PIN.path || bytes.length !== COMPOSED_REGULATORY_METADATA_PIN.bytes) return false
+  if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== COMPOSED_REGULATORY_METADATA_PIN.blob
+    || createHash('sha256').update(bytes).digest('hex') !== COMPOSED_REGULATORY_METADATA_PIN.sha256) return false
+  const token = Buffer.from(COMPOSED_REGULATORY_METADATA_TOKEN, 'utf8')
+  const first = bytes.indexOf(token)
+  if (first !== COMPOSED_REGULATORY_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+  return bytes.subarray(COMPOSED_REGULATORY_METADATA_PIN.contextStart, COMPOSED_REGULATORY_METADATA_PIN.contextEnd)
+    .equals(Buffer.from(COMPOSED_REGULATORY_METADATA_CONTEXT, 'utf8'))
+}
+
+test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources and actual imports', () => {
+  const bytes = readFileSync(COMPOSED_REGULATORY_METADATA_PIN.path)
+  assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, bytes), true)
+  for (const path of [
+    './' + COMPOSED_REGULATORY_METADATA_PIN.path,
+    COMPOSED_REGULATORY_METADATA_PIN.path + '.evil.ts',
+    'scripts/db/official-truth-v3-composed-dev-1/native-other.ts',
+    'scripts/db/official-truth-v3-composed-dev-1/../official-truth-v3-composed-dev-1/native.ts',
+    'app/api/official-truth-v3-composed-dev-1/native.ts',
+  ]) assert.equal(isPinnedComposedRegulatoryMetadata(path, bytes), false, path)
+  const token = Buffer.from(COMPOSED_REGULATORY_METADATA_TOKEN, 'utf8')
+  const start = COMPOSED_REGULATORY_METADATA_PIN.tokenStart
+  const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+  const changedByte = Buffer.from(bytes)
+  changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+  const changedContext = Buffer.from(bytes)
+  changedContext[COMPOSED_REGULATORY_METADATA_PIN.contextStart] = changedContext[COMPOSED_REGULATORY_METADATA_PIN.contextStart]! ^ 1
+  const sourceWithImport = "\nimport { civilDateOrdinalLesen } from '../../../lib/readiness/regulierungs-anwendbarkeit'\n"
+  const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/regulierungs-anwendbarkeit')\n"
+  const cases: readonly [string, Buffer][] = [
+    ['changed complete bytes at same length', changedByte],
+    ['changed literal context at same length', changedContext],
+    ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+    ['missing token', withoutToken],
+    ['duplicated token', Buffer.concat([bytes, token])],
+    ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+    ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+    ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+  ]
+  for (const [name, candidate] of cases) {
+    assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, candidate), false, name)
+  }
+})
+
+// HRS: one reviewed literal PINS row, never permission for a runtime import.
+const HRS_REGULATORY_METADATA_PIN = {
+  path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
+  bytes: 230520,
+  blob: '4ae34407e2943845c1ea6b897aff7eb1d1a82798',
+  sha256: '3dfb36f3088c590144627b60d4ff780983b447083e98a19bc750bb2e6a008cc8',
+  contextStart: 37976,
+  contextEnd: 38200,
+  tokenStart: 38007,
+} as const
+const HRS_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
+const HRS_REGULATORY_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/regulierungs-anwendbarkeit.ts",
+    "bytes": 108170,
+    "blob": "cac99bc39eefa470f3269892808f76c6b76d8130",
+    "sha256": "5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f"
+  }`
+
+function isPinnedHrsRegulatoryMetadata(path: string, bytes: Buffer): boolean {
+  if (path !== HRS_REGULATORY_METADATA_PIN.path || bytes.length !== HRS_REGULATORY_METADATA_PIN.bytes) return false
+  if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== HRS_REGULATORY_METADATA_PIN.blob
+    || createHash('sha256').update(bytes).digest('hex') !== HRS_REGULATORY_METADATA_PIN.sha256) return false
+  const token = Buffer.from(HRS_REGULATORY_METADATA_TOKEN, 'utf8')
+  const first = bytes.indexOf(token)
+  if (first !== HRS_REGULATORY_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+  return bytes.subarray(HRS_REGULATORY_METADATA_PIN.contextStart, HRS_REGULATORY_METADATA_PIN.contextEnd)
+    .equals(Buffer.from(HRS_REGULATORY_METADATA_CONTEXT, 'utf8'))
+}
+
+test('HRS regulierungs-anwendbarkeit pin metadata rejects changed sources and actual imports', () => {
+  const bytes = readFileSync(HRS_REGULATORY_METADATA_PIN.path)
+  assert.equal(isPinnedHrsRegulatoryMetadata(HRS_REGULATORY_METADATA_PIN.path, bytes), true)
+  for (const path of [
+    './' + HRS_REGULATORY_METADATA_PIN.path,
+    HRS_REGULATORY_METADATA_PIN.path + '.evil.ts',
+    'scripts/db/official-truth-v3-hosted-result-store-1/native-other.ts',
+    'scripts/db/official-truth-v3-hosted-result-store-1/../official-truth-v3-hosted-result-store-1/native.ts',
+    'app/api/official-truth-v3-hosted-result-store-1/native.ts',
+  ]) assert.equal(isPinnedHrsRegulatoryMetadata(path, bytes), false, path)
+  const token = Buffer.from(HRS_REGULATORY_METADATA_TOKEN, 'utf8')
+  const start = HRS_REGULATORY_METADATA_PIN.tokenStart
+  const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+  const changedByte = Buffer.from(bytes)
+  changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+  const changedContext = Buffer.from(bytes)
+  changedContext[HRS_REGULATORY_METADATA_PIN.contextStart] = changedContext[HRS_REGULATORY_METADATA_PIN.contextStart]! ^ 1
+  const sourceWithImport = "\nimport { civilDateOrdinalLesen } from '../../../lib/readiness/regulierungs-anwendbarkeit'\n"
+  const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/regulierungs-anwendbarkeit')\n"
+  const cases: readonly [string, Buffer][] = [
+    ['changed complete bytes at same length', changedByte],
+    ['changed literal context at same length', changedContext],
+    ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+    ['missing token', withoutToken],
+    ['duplicated token', Buffer.concat([bytes, token])],
+    ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+    ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+    ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+  ]
+  for (const [name, candidate] of cases) {
+    assert.equal(isPinnedHrsRegulatoryMetadata(HRS_REGULATORY_METADATA_PIN.path, candidate), false, name)
+  }
+})
 
 function ev(n: number): string {
   return `ev2_${n.toString(16).padStart(32, '0')}`
@@ -932,6 +1059,9 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
       // #1175 MA1: exact dormant method draft/preimage/clock reader only.
       join(hier, 'official-truth-product-v3/method/contract.ts'),
+      // Selected HRS civil-date reader and the closed reviewed AA/Bern method preimage.
+      join(hier, 'official-truth-product-v3/result/contract.ts'),
+      join(hier, 'official-truth-product-v3/source/aa-ch-de-reviewed-program.ts'),
       // #1164 I1 Guard R1: exact reviewed server and its existing synthetic tests.
       join(hier, 'official-truth-product-v3/import/service-server.ts'),
       join(hier, 'official-truth-product-v3/import/service.test.ts'),
@@ -1064,10 +1194,41 @@ describe('regulierungs-anwendbarkeit', () => {
       }
     }
     assert.equal(eigene.has(`${hier}/official-truth-product-v3/storage/unreviewed.ts`), false)
-    const fremd = dateien(wurzel).filter((pfad) => !eigene.has(pfad) && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'))
+    for (const name of ['result/contract.ts', 'source/aa-ch-de-reviewed-program.ts']) {
+      const path = `official-truth-product-v3/${name}`
+      assert.equal(eigene.has(join(hier, path)), true)
+      for (const spelling of [
+        `${hier}/${path}.evil.ts`, `${hier}/${path}/../unreviewed.ts`,
+        `${hier}/official-truth-product-v3/../${path}`, `${hier}/official-truth-product-v30/${name}`,
+        `${wurzel}/app/api/${path}`, `${hier}/official-truth-product-v3/${name.replace('.ts', '-copy.ts')}`,
+      ]) assert.equal(eigene.has(spelling), false, spelling)
+    }
+    const metadaten: string[] = []
+    const referenzen = dateien(wurzel).filter((pfad) => {
+      const bytes = readFileSync(pfad)
+      if (!bytes.toString('utf8').includes('regulierungs-anwendbarkeit')) return false
+      if (pfad === join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path)) {
+        assert.equal(isPinnedComposedRegulatoryMetadata(COMPOSED_REGULATORY_METADATA_PIN.path, bytes), true,
+          'COMPOSED regulatory pin must match its complete reviewed revision')
+        metadaten.push(pfad)
+        return false
+      }
+      if (pfad === join(wurzel, HRS_REGULATORY_METADATA_PIN.path)) {
+        assert.equal(isPinnedHrsRegulatoryMetadata(HRS_REGULATORY_METADATA_PIN.path, bytes), true,
+          'HRS regulatory pin must match its complete reviewed revision')
+        metadaten.push(pfad)
+        return false
+      }
+      return true
+    })
+    assert.deepEqual(metadaten.sort(), [join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path),
+      join(wurzel, HRS_REGULATORY_METADATA_PIN.path)].sort())
+    assert.equal(eigene.has(join(wurzel, COMPOSED_REGULATORY_METADATA_PIN.path)), false)
+    assert.equal(eigene.has(join(wurzel, HRS_REGULATORY_METADATA_PIN.path)), false)
+    const fremd = referenzen.filter((pfad) => !eigene.has(pfad))
     assert.deepEqual(fremd, [])
-    const produktion = dateien(wurzel).filter(
-      (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx') && readFileSync(pfad, 'utf8').includes('regulierungs-anwendbarkeit'),
+    const produktion = referenzen.filter(
+      (pfad) => !pfad.endsWith('.test.ts') && !pfad.endsWith('.test.tsx'),
     )
     assert.deepEqual(
       produktion.sort(),
@@ -1080,6 +1241,8 @@ describe('regulierungs-anwendbarkeit', () => {
         join(hier, 'official-truth-product-v3/contract.ts'),
         join(hier, 'official-truth-product-v3/global-conditions/pilot-context.ts'),
         join(hier, 'official-truth-product-v3/method/contract.ts'),
+        join(hier, 'official-truth-product-v3/result/contract.ts'),
+        join(hier, 'official-truth-product-v3/source/aa-ch-de-reviewed-program.ts'),
         join(hier, 'official-truth-product-v3/import/service-server.ts'),
         join(hier, 'official-truth-product-v3/visitor/presentation.ts'),
         join(hier, 'official-truth-product-v3/visitor/query.ts'),

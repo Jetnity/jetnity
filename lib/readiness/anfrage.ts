@@ -17,7 +17,7 @@ export function readinessInhaltstypOk(contentType: string | null): boolean {
 
 export function readinessContentLengthUeberschritten(
   contentLength: string | null,
-  maxBytes = READINESS_GRENZEN.maxAnfrageBytes,
+  maxBytes: number = READINESS_GRENZEN.maxAnfrageBytes,
 ): boolean {
   return providerOpsContentLengthUeberschritten(contentLength, maxBytes)
 }

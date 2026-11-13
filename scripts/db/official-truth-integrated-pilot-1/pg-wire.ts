@@ -6,7 +6,258 @@ import { assertOwnedLocalProofCluster, LOCAL_PG_DEADLINES, LOCAL_PG_STARTUP_OPTI
 
 export type PgParameter = Readonly<{ oid: number; bytes: Uint8Array; binary?: boolean }>
 export type PgRows = readonly Readonly<Record<string, string | null>>[]
-export class LocalPgError extends Error { constructor(readonly code: string) { super(`local_pg_${code}`) } }
+export type LocalPgGuardDiagnostic = Readonly<{
+  guard: string
+  statementTag?: 'inline_code_block' | 'hrs1_assert_catalog'
+  line?: number
+  position?: number
+  internalPosition?: number
+}>
+// Exact source-owned HRS/HMA labels only; never retain raw PostgreSQL message,
+// context, detail, hint, internal query, SQL, parameters or catalog/data values.
+const P7802_GUARD_LABELS = new Map<string, string>([
+  [
+    "hma1 exact identity invalid",
+    "hma1_identity"
+  ],
+  [
+    "hrs1 exact restrictive roles and automatic edges required",
+    "hrs1_guard_01"
+  ],
+  [
+    "hrs1 exact catalog changed",
+    "hrs1_guard_02"
+  ],
+  [
+    "hrs1 runtime membership drift",
+    "hrs1_guard_03"
+  ],
+  [
+    "hrs1 exact temporary intake SET edge required",
+    "hrs1_guard_04"
+  ],
+  [
+    "hrs1 exact function count",
+    "hrs1_guard_05"
+  ],
+  [
+    "hrs1 immutable function missing",
+    "hrs1_guard_06"
+  ],
+  [
+    "hrs1 exact schema/relation/type count or ownership",
+    "hrs1_guard_07"
+  ],
+  [
+    "hrs1 exact namespace ACL",
+    "hrs1_guard_08"
+  ],
+  [
+    "hrs1 forbidden ambient schema/database rights",
+    "hrs1_guard_09"
+  ],
+  [
+    "hrs1 extra or missing table column",
+    "hrs1_guard_10"
+  ],
+  [
+    "hrs1 exact unique index metadata",
+    "hrs1_guard_11"
+  ],
+  [
+    "hrs1 unknown dependency/ownership/label/extension",
+    "hrs1_guard_12"
+  ],
+  [
+    "hrs1 exact new database CONNECT ACL",
+    "hrs1_guard_13"
+  ],
+  [
+    "hrs1 final catalog differs after temporary rights removal",
+    "hrs1_guard_14"
+  ],
+  [
+    "hrs1 final role topology differs",
+    "hrs1_guard_15"
+  ],
+  [
+    "hrs1 original intake role topology differs",
+    "hrs1_guard_16"
+  ]
+])
+const P7802_FUNCTIONS = [
+  "exact_keys_v1",
+  "nodes_v1",
+  "canonical_v1",
+  "civil_date_v1",
+  "timestamp_v1",
+  "predicate_v1",
+  "expression_v1",
+  "context_v1",
+  "subject_v1",
+  "reference_v1",
+  "safe_data_v1",
+  "unique_json_v1",
+  "proposal_shape_v1",
+  "data_nodes_v1",
+  "shape_matches_v1",
+  "proposal_retainable_v1",
+  "validate_s1_copy_v1",
+  "immutable_v1",
+  "hash_v1",
+  "ref_v1",
+  "time_text_v1",
+  "s1_shape_v1",
+  "record_shape_v1",
+  "binding_valid_v1",
+  "catalog_v1",
+  "assert_catalog_v1",
+  "selected_binding_v1",
+  "state_v1",
+  "assert_history_v1",
+  "original_v1",
+  "observations_v1",
+  "verification_v1",
+  "fence_v1",
+  "keep_original_v1",
+  "attest_v1",
+  "consume_s1_v1",
+  "keep_decision_v1",
+  "prepared_v1",
+  "transition_v1",
+  "publication_v1",
+  "escalation_v1",
+  "projection_binding_v1",
+  "current_projection_v1",
+  "plan_v1",
+  "plan_current_v1",
+  "suppress_v1",
+  "monitor_claim_v1",
+  "monitor_finish_v1",
+  "command_v1",
+  "dispatch_v1",
+  "execute_v1",
+  "read_v1",
+  "ma1_require_current_locked_v1",
+  "s1_read_locked_v1"
+] as const
+const P7802_COLUMNS = [
+  "binding_v1.singleton",
+  "binding_v1.binding",
+  "binding_v1.binding_hash",
+  "binding_v1.creator_oid",
+  "binding_v1.catalog",
+  "originals_v1.version_id",
+  "originals_v1.evidence",
+  "originals_v1.body_text",
+  "originals_v1.raw_digest",
+  "extractions_v1.version_id",
+  "extractions_v1.record",
+  "qualifications_v1.reference",
+  "qualifications_v1.kind",
+  "qualifications_v1.record",
+  "qualifications_v1.digest",
+  "qualifications_v1.decision_ref",
+  "qualifications_v1.decision_content_key",
+  "qualifications_v1.valid_until",
+  "qualifications_v1.original_ids",
+  "decisions_v1.reference",
+  "decisions_v1.predecessor_ref",
+  "decisions_v1.record",
+  "decisions_v1.archive_ref",
+  "decisions_v1.verification_ref",
+  "archive_pages_v1.reference",
+  "archive_pages_v1.predecessor_ref",
+  "archive_pages_v1.revision",
+  "archive_pages_v1.record",
+  "versions_v1.reference",
+  "versions_v1.revision",
+  "versions_v1.predecessor_ref",
+  "versions_v1.decision_ref",
+  "versions_v1.verification_ref",
+  "versions_v1.prepared",
+  "versions_v1.committed_at",
+  "projections_v1.reference",
+  "projections_v1.version_ref",
+  "projections_v1.verification_ref",
+  "projections_v1.record",
+  "projections_v1.suppression_epoch",
+  "projections_v1.published_at",
+  "heads_v1.singleton",
+  "heads_v1.context_key",
+  "heads_v1.version_ref",
+  "heads_v1.decision_ref",
+  "heads_v1.sticky_decision_ref",
+  "heads_v1.projection_ref",
+  "heads_v1.suppression",
+  "heads_v1.suppression_epoch",
+  "heads_v1.generation",
+  "heads_v1.coverage",
+  "operations_v1.operation_kind",
+  "operations_v1.operation_id",
+  "operations_v1.operation_key",
+  "operations_v1.command_digest",
+  "operations_v1.command",
+  "operations_v1.result",
+  "operations_v1.head_generation",
+  "operations_v1.recorded_at",
+  "outbox_v1.escalation_key",
+  "outbox_v1.decision_ref",
+  "outbox_v1.operation_kind",
+  "outbox_v1.operation_id",
+  "outbox_v1.record",
+  "outbox_v1.recorded_at",
+  "monitor_schedule_v1.singleton",
+  "monitor_schedule_v1.generation",
+  "monitor_schedule_v1.claimed_by",
+  "monitor_schedule_v1.claim_operation",
+  "monitor_schedule_v1.next_check_at",
+  "monitor_schedule_v1.lease_until",
+  "monitor_schedule_v1.outcomes",
+  "monitor_schedule_v1.finish_operation"
+] as const
+const P7802_TABLES = [
+  "binding_v1",
+  "originals_v1",
+  "extractions_v1",
+  "qualifications_v1",
+  "decisions_v1",
+  "archive_pages_v1",
+  "versions_v1",
+  "projections_v1",
+  "heads_v1",
+  "operations_v1",
+  "outbox_v1",
+  "monitor_schedule_v1"
+] as const
+for (const name of P7802_FUNCTIONS) {
+  P7802_GUARD_LABELS.set('hrs1 exact function declaration or ACL: ' + name, 'hrs1_function_declaration:' + name)
+  P7802_GUARD_LABELS.set('hrs1 exact function dependencies: ' + name, 'hrs1_function_dependencies:' + name)
+}
+for (const name of P7802_COLUMNS) P7802_GUARD_LABELS.set('hrs1 exact selected column: ' + name, 'hrs1_column:' + name)
+for (const name of P7802_TABLES) {
+  P7802_GUARD_LABELS.set('hrs1 exact constraint: ' + name, 'hrs1_constraint:' + name)
+  P7802_GUARD_LABELS.set('hrs1 exact table ACL/RLS/immutability: ' + name, 'hrs1_table_boundary:' + name)
+}
+function readP7802GuardDiagnostic(code: string, message?: string, context?: string, position?: string, internalPosition?: string): LocalPgGuardDiagnostic | undefined {
+  if (code !== 'P7802') return undefined
+  const guard = P7802_GUARD_LABELS.get(message ?? '')
+  if (!guard) return undefined
+  const numericPosition = (value: string | undefined): number | undefined => value !== undefined
+    && /^[1-9][0-9]{0,7}$/.test(value) && Number(value) <= 10_485_760 ? Number(value) : undefined
+  const match = context?.match(/^PL\/pgSQL function (inline_code_block|official_v3_result_private\.assert_catalog_v1\(\)) line ([1-9][0-9]{0,5}) at RAISE$/m)
+  const at = numericPosition(position), internalAt = numericPosition(internalPosition)
+  return Object.freeze({ guard,
+    ...(match ? { statementTag: match[1] === 'inline_code_block' ? 'inline_code_block' as const : 'hrs1_assert_catalog' as const, line: Number(match[2]) } : {}),
+    ...(at === undefined ? {} : { position: at }),
+    ...(internalAt === undefined ? {} : { internalPosition: internalAt }),
+  })
+}
+const localPgGuardDiagnostics = new WeakMap<LocalPgError, LocalPgGuardDiagnostic>()
+export class LocalPgError extends Error {
+  constructor(readonly code: string) { super(`local_pg_${code}`) }
+  get guardDiagnostic(): LocalPgGuardDiagnostic | undefined { return localPgGuardDiagnostics.get(this) }
+}
 const i16 = (n: number) => { const b = Buffer.alloc(2); b.writeInt16BE(n); return b }
 const i32 = (n: number) => { const b = Buffer.alloc(4); b.writeInt32BE(n); return b }
 const z = (s: string) => Buffer.from(`${s}\0`)
@@ -129,8 +380,29 @@ export class LocalPgConnection {
       if (tag === 'C') this.commandTag = bytes.subarray(0, bytes.length - 1).toString()
       if (tag === 'E') {
         let offset = 0, code = 'query_failed'
-        while (offset < bytes.length && bytes[offset]) { const field = String.fromCharCode(bytes[offset++]!); const end = bytes.indexOf(0, offset); if (end < 0) break; if (field === 'C') code = bytes.subarray(offset, end).toString(); offset = end + 1 }
+        let guardMessage: string | undefined, guardContext: string | undefined, position: string | undefined, internalPosition: string | undefined
+        const diagnosticFields = new Set<string>(); let repeatedDiagnosticField = false
+        while (offset < bytes.length && bytes[offset]) {
+          const field = String.fromCharCode(bytes[offset++]!), end = bytes.indexOf(0, offset)
+          if (end < 0) break
+          if (field === 'C') code = bytes.subarray(offset, end).toString()
+          if (field === 'M' || field === 'W' || field === 'P' || field === 'p') {
+            if (diagnosticFields.has(field)) repeatedDiagnosticField = true
+            diagnosticFields.add(field)
+            const limit = field === 'M' ? 256 : field === 'W' ? 8192 : 8
+            if (end - offset <= limit) {
+              const value = bytes.subarray(offset, end).toString()
+              if (field === 'M') guardMessage = value
+              else if (field === 'W') guardContext = value
+              else if (field === 'P') position = value
+              else internalPosition = value
+            }
+          }
+          offset = end + 1
+        }
         failure = new LocalPgError(code)
+        const guard = repeatedDiagnosticField ? undefined : readP7802GuardDiagnostic(code, guardMessage, guardContext, position, internalPosition)
+        if (guard) localPgGuardDiagnostics.set(failure, guard)
       }
       if (tag === 'T') {
         names = []; let offset = 2

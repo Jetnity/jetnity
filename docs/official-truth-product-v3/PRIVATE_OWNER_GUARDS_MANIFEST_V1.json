@@ -110,9 +110,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-private-owner-guards-1/native.ts",
-      "blob": "21886dbcbcaea1e04817df3fdd7eb7344a44c460",
+      "blob": "7c288584c09b5dcf44729ec40a69473fadaa9ffd",
       "bytes": 42247,
-      "sha256": "2db1e629b5d425fb0161f6d22458714c5487762ade36448d40d0ed89e84abbf0"
+      "sha256": "5416805d9d4a916eaeb9f1e1da7a86b5f0a5caff2351cd1bbaf4ed3b5881e854"
     },
     {
       "path": "lib/readiness/official-truth-v3-private-owner-guards-1.test.ts",
@@ -204,9 +204,9 @@
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-      "blob": "c8bae7b92950a318e6555aaad930002c6726ca3e",
-      "bytes": 22433,
-      "sha256": "57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8"
+      "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
+      "bytes": 30699,
+      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
     },
     {
       "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",

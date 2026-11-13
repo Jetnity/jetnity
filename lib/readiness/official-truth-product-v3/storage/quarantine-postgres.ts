@@ -17,9 +17,12 @@ import { readV3QuarantineCompletion, type V3DecodedCompletion } from './quaranti
  * There is deliberately no environment connection or production implementation.
  */
 export interface V3IntakeSqlExecutor {
-  execute(statement: string, parameters: readonly (string | number)[], signal: AbortSignal): Promise<
+  execute(statement: string, parameters: readonly (string | number)[], signal: AbortSignal,
+    budget?: Readonly<{ deadline: number }>): Promise<
     { status: 'acknowledged'; rows: readonly Readonly<Record<string, string | null>>[] }
-    | { status: 'unavailable' | 'unconfirmed' }>
+    | { status: 'unavailable' | 'unconfirmed' }
+    /** Local children joined/closed; remote outcome unproved, physical pair poisoned. */
+    | Readonly<{ status: 'blocked_remote_unknown' }>>
 }
 export type V3StoredProposal = Readonly<{
   reference: V3IntakeReference; text: string; upload: V3ProposalUpload; completion: V3DecodedCompletion | null;
@@ -53,6 +56,7 @@ export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, exe
     try {
       const reply = await executor.execute(statement, parameters, signal)
       if (signal.aborted) return { status: 'unconfirmed' }
+      if (reply.status === 'blocked_remote_unknown') return { status: 'unconfirmed' }
       if (reply.status !== 'acknowledged') return { status: reply.status === 'unavailable' ? 'unavailable' : 'unconfirmed' }
       if (reply.rows.length !== 1) return { status: 'unconfirmed' }
       const row = ownRecord(reply.rows[0], ['result'])

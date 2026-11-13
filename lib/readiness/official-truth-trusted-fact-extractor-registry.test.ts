@@ -5,6 +5,7 @@ import { r2Registry, r2Binding, r2Ref } from './official-truth-content-identity-
 // Sie sind keine Behördenparser und stehen nicht im Produktionsregister.
 
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -23,11 +24,25 @@ import { regelScopeAusEvidenceScope, type RegelScope } from '@/lib/readiness/rul
 import { quellenRegistryErstellen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 
 const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
+const HRS_FIXTURE_PIN = {
+  path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
+  bytes: 230520,
+  blob: '4ae34407e2943845c1ea6b897aff7eb1d1a82798',
+  sha256: '3dfb36f3088c590144627b60d4ff780983b447083e98a19bc750bb2e6a008cc8',
+} as const
+
+function isPinnedHrsFixture(path: string, bytes: Buffer): boolean {
+  return path === HRS_FIXTURE_PIN.path && bytes.length === HRS_FIXTURE_PIN.bytes
+    && createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') === HRS_FIXTURE_PIN.blob
+    && createHash('sha256').update(bytes).digest('hex') === HRS_FIXTURE_PIN.sha256
+}
 // #899 permits this one fixed-corpus developer execution, never a live importer.
 const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
   'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
   'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts',
-  'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts']
+  'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts',
+  // The actual synthetic HRS proof uses only the fixture entry; no production registry selection.
+  HRS_FIXTURE_PIN.path]
 function fixtureImporterErlaubt(path: string): boolean { return FIXTURE_IMPORTER.includes(path) }
 const ZEIT = '2026-10-03T00:00:00.000Z'
 const SCOPE = `rule-scope:v1:${'a'.repeat(64)}`
@@ -833,7 +848,10 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
       for (const pfad of dateienUnter(start)) {
         const relativ = pfad.slice(process.cwd().length + 1)
         if (relativ.includes('.test.')) continue
-        const text = readFileSync(pfad, 'utf8')
+        const bytes = readFileSync(pfad), text = bytes.toString('utf8')
+        if (relativ === HRS_FIXTURE_PIN.path) {
+          assert.equal(isPinnedHrsFixture(relativ, bytes), true, 'HRS fixture must match its complete reviewed revision')
+        }
         if (/officialTruthTrustedFactExtrahieren(?!MitDefinitionen)/.test(text)) produktion.push(relativ)
         if (text.includes('officialTruthTrustedFactExtrahierenMitDefinitionen')) naht.push(relativ)
       }
@@ -850,6 +868,23 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
   })
 
   test('die endliche Fixture-Importer-Liste erlaubt weder Routen noch Namensähnlichkeit', () => {
+    assert.equal(fixtureImporterErlaubt(HRS_FIXTURE_PIN.path), true)
+    const hrsBytes = readFileSync(HRS_FIXTURE_PIN.path)
+    assert.equal(isPinnedHrsFixture(HRS_FIXTURE_PIN.path, hrsBytes), true)
+    for (const path of ['./' + HRS_FIXTURE_PIN.path, HRS_FIXTURE_PIN.path + '.evil.ts',
+      HRS_FIXTURE_PIN.path + '/../unreviewed.ts', 'app/' + HRS_FIXTURE_PIN.path,
+      'scripts/db/official-truth-v3-hosted-result-store-1/fixture.ts',
+      'scripts/db/official-truth-v3-hosted-result-store-2/native.ts']) {
+      assert.equal(fixtureImporterErlaubt(path), false, path)
+      assert.equal(isPinnedHrsFixture(path, hrsBytes), false, path)
+    }
+    const changedHrs = Buffer.from(hrsBytes)
+    changedHrs[changedHrs.length - 2] = changedHrs[changedHrs.length - 2]! ^ 1
+    for (const bytes of [changedHrs, hrsBytes.subarray(0, -1),
+      Buffer.concat([hrsBytes, Buffer.from('\nofficialTruthTrustedFactExtrahieren({})\n')]),
+      Buffer.concat([hrsBytes, Buffer.from('\nconsumeOfficialTruthTrustedFactExecutionContext({})\n')])]) {
+      assert.equal(isPinnedHrsFixture(HRS_FIXTURE_PIN.path, bytes), false)
+    }
     assert.equal(fixtureImporterErlaubt('scripts/official-truth-integrated-pilot-1/engine.ts'), true)
     for (const path of ['app/api/official-truth/route.ts', 'lib/readiness/unknown.ts',
       'scripts/official-truth-integrated-pilot-1/official-source.ts', 'scripts/official-truth-integrated-pilot-1/unknown.ts',

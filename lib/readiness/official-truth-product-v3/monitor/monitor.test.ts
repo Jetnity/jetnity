@@ -66,7 +66,10 @@ describe('M1 source monitor preserves source comparison and suppression truth', 
     const result = await runV3SourceMonitorOnce(t.deps)
     assert.equal(result.status, 'complete'); assert.ok(result.outcomes.some((item) => item.status === 'research_queued'))
     assert.ok(result.outcomes.every((item) => item.ruleChange === 'not_asserted'))
-    assert.equal(t.h.storage.records.size, 1); assert.equal(t.events.size, 0)
+    assert.equal(t.h.storage.records.size, 1); assert.equal(t.events.size, 1)
+    assert.ok(result.outcomes.some((item) => item.status === 'suppressed'))
+    assert.equal([...t.events.values()][0].reason, 'source_changed')
+    assert.equal(t.active.size, 0); assert.equal(t.escalations.size, 0)
     assert.equal(t.h.storage.records.values().next().value?.state, 'queued')
   })
   test('unchanged content does not manufacture a newer rule or rejuvenate the existing source expiry', async () => {
