@@ -33,6 +33,7 @@ test('five hotel nights preserve checkout and cannot become confirmed booking', 
   assert.equal(p.provider, null)
   assert.equal(p.booking_url, null)
   assert.throws(() => savedOfferPlanValues({ ...saved, ends_on: null }, {}, '2026-11-20'), /Check-in und Check-out/)
+  assert.throws(() => savedOfferPlanValues({ ...saved, starts_on: null }, {}, '2026-11-25'), /Check-out/)
 })
 
 test('overnight flight preserves next day arrival; unsupported dateline route stops explicitly', () => {

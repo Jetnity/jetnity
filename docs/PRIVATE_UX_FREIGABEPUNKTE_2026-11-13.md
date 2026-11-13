@@ -16,7 +16,7 @@ Die jüngste PO-Antwort ersetzt die frühere allgemeine Zeitfreigabe:
 Branch basiert auf veröffentlichtem main `63544e8`. Die beiden Hauptchat-PRs
 bleiben unverändert. Kein Merge und keine Production-Veröffentlichung.
 
-Neue Migration `20261113173524_saved_offers.sql` auf Preview-Projekt
+Neue Migration `20261113173644_saved_offers.sql` auf Preview-Projekt
 `yfvbxvijcorffwxbxahl` installiert. RLS-Transaktion unter zwei vorhandenen
 Kontoeigentümern bestanden: eigenes CRUD erlaubt; fremdes Lesen, Ändern,
 Löschen und fremde Eigentümer beim Anlegen gesperrt; anonymes Lesen gesperrt.
@@ -60,12 +60,18 @@ produktive Widget wurde nicht geändert.
 - Datumsgrenzen der vorhandenen Reise-Datenbank bleiben: Ein Flug über die Datumsgrenze
   mit rückwärts laufendem lokalem Datum benötigt den vollständigen Flugeditor.
   Die Merkliste darf ihn behalten, die einfache Übernahme weist die Grenze aus.
-- Öffentliche CDG/BKK-Referenzsuche in Preview ist leer, Live nicht. Keine alten
-  Tabellen/RLS oder Referenzdaten ohne zusätzliche konkrete Freigabe ändern.
+- Zusätzlich ausdrücklich freigegeben und ausgeführt: 5.331 fehlende öffentliche
+  Flughafen-Referenzen aus dem aktuellen Live-Bestand nur in Preview eingefügt.
+  Bestand jetzt 5.332, CDG/BKK vorhanden. Keine vorhandenen Zeilen überschrieben,
+  Zürich-Fingerprint unverändert `9b89551731e6bbd498570b9090e08cf0`.
+  Schema/RLS unverändert; keine Production-Schreibzugriffe. Freigegebenes Paket:
+  SHA-256 `fb567e725fb7e3b95e64bc102a013a32c32c91008b987c641a4386d7b7dfd820`.
 - Credentialless Aktivitätsrahmen verwenden in der Vorschau eine getrennte öffentliche
   statische Hülle mit exakter Parent-CSP. Consent, Sandbox und Nachrichtenprüfung bleiben.
   Production nutzt ohne Vorschauvariable unverändert die bestehenden eigenen Embed-Routen.
   Browsernachweis des neuen Deployments steht noch aus.
-- Stadtbilder decken bisher zehn Ziele ab; weltweite automatische Abdeckung bleibt offen.
+- Automatische Ergänzung der Stadtbilder über exakte GeoNames-/Land-Zuordnung und
+  freie Commons-Lizenz ist implementiert; Metadatenprobe Berlin bestanden.
+  Neuer Deployment-/Browsernachweis steht aus. Ohne passende freie Aufnahme neutral.
 
 Details zum begrenzten Merkliste-Schnitt: [Umsetzungsnachweis](PRIVATE_UX_SAVED_OFFERS_2026-11-13.md).

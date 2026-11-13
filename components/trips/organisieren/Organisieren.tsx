@@ -2,6 +2,7 @@
 
 import { useId, useLayoutEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import Reisefoto from './Reisefoto'
+import { StadtbildNachweis } from './Stadtbild'
 import ManualOffer from '@/components/saved-offers/ManualOffer'
 import {
   Plane,
@@ -69,7 +70,7 @@ function Etappenkarten({ reise, waehlen }: { reise: Trip; waehlen: (s: TripStage
               onClick={() => waehlen(s)}
               aria-label={'Unterkünfte in ' + s.name + ' suchen'}
             >
-              <Reisefoto src={reiseFoto(s)} breite={400} hoehe={158} />
+              <Reisefoto src={reiseFoto(s)} ziel={s} breite={400} hoehe={158} />
               <span className="org-stagecaption">
                 <small>{etappenZeitraumAnzeigen(daten.anreise, daten.abreise) ?? 'Zeitraum offen'}</small>
                 <b>{s.name}</b>
@@ -180,7 +181,7 @@ export default function Organisieren({
       aria-labelledby="workspace-organisieren-titel"
     >
       <header className="org-hero">
-        <Reisefoto src={reiseFoto(erste, true)} sofort breite={1200} hoehe={270} />
+        <Reisefoto src={reiseFoto(erste, true)} ziel={erste} sofort breite={1200} hoehe={270} />
         <div className="org-shade" />
         <div className="org-wrap org-heading">
           <p className="org-kicker">
@@ -261,7 +262,7 @@ export default function Organisieren({
           </a>
         </footer>
       </div>
-    <div className="org-wrap py-6"><ManualOffer key={tab} category={({ fluege: 'flight', unterkunft: 'stay', aktivitaeten: 'activity', mietwagen: 'rental_car', verbindungen: 'transfer' } as const)[tab]} destination={reise.stages.find(s => s.id === etappeId)?.name ?? erste?.name ?? ''} startsOn={reise.startDate ?? ''} endsOn={reise.endDate ?? ''} /></div>
+    <div className="org-wrap grid gap-3 py-6">{Array.from(new Map(reise.stages.map(s => [s.placeId ?? s.name, s])).values()).map(s => <StadtbildNachweis key={s.id} ziel={s} />)}<ManualOffer key={tab} category={({ fluege: 'flight', unterkunft: 'stay', aktivitaeten: 'activity', mietwagen: 'rental_car', verbindungen: 'transfer' } as const)[tab]} destination={reise.stages.find(s => s.id === etappeId)?.name ?? erste?.name ?? ''} startsOn={reise.startDate ?? ''} endsOn={reise.endDate ?? ''} /></div>
     </section>
   )
 }

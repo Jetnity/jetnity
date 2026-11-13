@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { CATEGORIES, type OfferInput } from '@/lib/saved-offers/contract'
 import { saveManualOffer } from '@/lib/saved-offers/actions'
-import '@/components/trips/organisieren/auswahl/suchauswahl.css'
 
 const field = 'min-h-11 w-full rounded-xl border border-line-200 bg-white px-3 py-2 text-base text-brand-800'
 export default function ManualOffer({ category = 'stay', destination = '', startsOn = '', endsOn = '', onSaved }: {

@@ -6,6 +6,8 @@ export type PlanDays = { days: { id: string; dayDate: string | null; dayIndex: n
 export function savedOfferPlanValues(offer: SavedOffer, timing: unknown, dayDate: string | null) {
   const values = offerInput.parse({ ...Object.fromEntries(['category', 'title', 'url', 'destination', 'starts_on', 'ends_on', 'starts_at', 'ends_at', 'start_timezone', 'end_timezone'].map(k => [k, offer[k as keyof SavedOffer]])), ...(typeof timing === 'object' && timing ? timing : {}) })
   if (!values.starts_on) values.starts_on = dayDate
+  // Revalidate after filling a missing date from the selected day (including checkout).
+  offerInput.parse(values)
   if (dayDate && values.starts_on !== dayDate) throw new Error('Wähle den Reisetag des Anfangsdatums. Bei Flügen zählt der Abflugtag.')
   if (values.ends_on && !values.starts_on) throw new Error('Bitte ergänze das Anfangsdatum.')
   if (values.ends_at && !values.starts_at) throw new Error('Bitte ergänze die Anfangszeit oder lasse beide Zeiten offen.')

@@ -37,6 +37,7 @@ export default function DatenquellenPage() {
         </section>
         <section aria-labelledby="reisefotos-title" className="space-y-4 rounded-2xl border border-line-200 bg-white p-6">
           <h2 id="reisefotos-title" className="text-2xl font-semibold">Reisefotografien</h2>
+          <p>Für weitere eindeutig zugeordnete Ziele bezieht Jetnity automatisch Fotografien aus Wikimedia Commons. Die Zuordnung erfolgt über die GeoNames-Kennung und das Land in Wikidata. Urheber, Original und freie Lizenz werden unmittelbar bei der Reise genannt und verlinkt. Die Darstellung kann einen Bildausschnitt zeigen. Ohne eindeutige Zuordnung oder geeignete Lizenz bleibt ein neutrales Ersatzmotiv.</p>
           <p>
             Das Paris-Foto „Skyline of Paris with the Eiffel Tower 2“ stammt von{' '}
             <a href="https://commons.wikimedia.org/wiki/File:Skyline_of_Paris_with_the_Eiffel_Tower_2.jpg" className="underline underline-offset-4">

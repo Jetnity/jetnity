@@ -62,3 +62,31 @@ node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/tr
 ```
 
 Die integrierte private Browser-Vorschau, responsive Bildausschnitte und übergreifende Prüfung erfolgen im Hauptarbeitsverzeichnis. In diesem Teilzweig wurden keine Browser-/Production-/Datenbankaktionen ausgeführt und nichts veröffentlicht oder gemergt.
+
+
+## Automatische Ergänzung – 13. November, neuer Umsetzungsschritt
+
+Für Ziele ausserhalb des lokalen Katalogs wird jetzt die exakte GeoNames-Kennung
+zusammen mit dem Land über Wikidata aufgelöst. Nur eindeutig zugeordnete Commons-
+Bilder mit akzeptierter freier Lizenz und vollständiger Attribution werden verwendet.
+Keine Namenssuche, keine Bildgenerierung, kein API-Schlüssel, keine neue Datenbank.
+Fehlende Zuordnung oder unklare Rechte bleiben neutral. Vorhandene lokale Motive,
+insbesondere Paris, bleiben konsistent. Urheber, Originalseite und Lizenz stehen
+verlinkt bei den Reisekarten sowie im Plan und Organisieren.
+
+Neue Grenze: `/api/travel-images` liest ausschliesslich feste Wikimedia-Endpunkte,
+validiert Zielkennung/Land, begrenzt Antwortgrösse/Timeout und Parallelität und cached
+öffentliche Metadaten. Kein Bildproxy und keine Erweiterung von Next Image Remote-
+Patterns. HTML-Metadaten werden nur als bereinigter Text verwendet. Bilder werden
+unverändert vom Commons-Bildhost geladen; der Darstellungszuschnitt ist bezeichnet.
+
+Live-Metadatenprobe Berlin (`geonames:2950159`, DE): `Cityscape Berlin.jpg`,
+Thomas Wolf, www.foto-tw.de, CC BY-SA 3.0, Originalquelle
+https://commons.wikimedia.org/wiki/File:Cityscape_Berlin.jpg.
+33 gezielte Tests bestanden (einschliesslich Eingabe-/Lizenzgrenzen und bestehenden
+Workspace-/Bildtests). Die Browserabnahme des neuen Deployments steht noch aus.
+
+Offizielle Schnittstellen: https://www.mediawiki.org/wiki/API:Imageinfo und
+https://www.wikidata.org/wiki/Wikidata:Data_access. Diese Erweiterung ersetzt die
+oben dokumentierte frühere reine Zehn-Ziele-Grenze; ohne freie Aufnahme bleibt der
+Fallback bewusst bestehen.
