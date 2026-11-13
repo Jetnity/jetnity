@@ -54,3 +54,37 @@ Root independently reviewed candidate `5a702579155f96dcc68a440225a9a6d55f030ec9`
 ## Dev activation preparation
 
 This source-only successor binds display data and the actual method/package tuple to Root's reviewed AA/Bern program at `20ceabc4329cc3a3ca4fa5a638a72eaa1b80bf22`; Swiss-passport direct-entry scope and the technical operating window replace the old tourism/source-window labels. Root explicitly selected `until_revoked` with null expiry under #1169: one human method approval, then automatic operation within the separate operating window. `SELECTED_RELEASE` remains null pending the actual Dev head, predecessor and activation identity. All four RPCs, Owner/AAL2 gates, original-operation confirmations and the Dev-only target check remain unchanged. No local runtime, login, installation or approval was performed.
+
+## Current Dev descriptor candidate — 13 November 2026 / Hauptplan 81
+
+Author: **Jetnity CH-DE Hosted Batch Fix — Codex Generation4**, actual session
+`/root/hosted_batch_fix_g4`; transparent successor under the existing HUI task.
+Sole parent: `6435c4e691b9cbc8d1c25b3167506b16914bcfae`. Earlier null-release receipts
+above remain history; this candidate selects only a reviewable Dev descriptor.
+
+Root selected `hmr1_fad09ef526aeea7eeeb3fb1f22c894f1`, revision 1 and null predecessor/head
+after its fresh READ ONLY HMA readback found zero revisions, heads and operations.
+Method/package digests, scope, operating window and `until_revoked`/null remain
+unchanged. The package link now identifies the actual parent program. Its earlier
+link differed only in two exports and an effect type guard, not package content.
+
+The unchanged inert `selectedV3PgTarget()` now guards materialization with all
+five existing Preview conditions. Production stays closed even with a Dev URL.
+The existing server separately refuses every non-exact Supabase target before
+client construction. The boundary test permits only the direct named selector;
+credentials, other exports, namespace/alias/dynamic imports and session/executor/pg
+access remain excluded. No other runtime, SQL, Auth or UI behavior changes.
+
+Focused local run on Node `v24.22.1`: **27/27 PASS**, no failures or skips, across
+`official-truth-v3-human-method-ui-1.test.ts`, PG `boundary.test.ts` and unchanged
+PG `offline.test.ts` with the existing server-only/tsx and experimental-module-mock
+test setup. Every refusal case records zero mocked client/RPC calls. This is
+offline evidence, not a real Owner session or hosted approval. Current HUI/HDP
+pins are reconciled; historical preparation receipts are retained.
+
+**methodApproved=false; actualOwnerAAL2=NOT_RUN.** No Auth, SQL, credentials,
+provider protection, source package, shared audit, #1198 or Production changes.
+Local candidate only. Root reports full parent CI4224 PASS (all nine jobs); that
+does not gate this changed head. Root must independently review, publish and
+obtain fresh complete CI/Preview gates. Real staging, confirmation,
+approval and confirmation remain with the PO. No publication by this author. STOP.

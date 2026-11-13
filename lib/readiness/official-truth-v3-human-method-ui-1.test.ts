@@ -10,10 +10,9 @@ import {
   appendHumanOperation, buildHumanCommand, createHumanOperationId, humanRequestHeadersAllowed, humanRpcArguments,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome,
   readHumanReceipt, readHumanRelease, readHumanRequestText,
-  type HumanAction, type HumanCommand, type HumanOperation, type HumanRelease, type HumanSnapshot,
+  type HumanAction, type HumanCommand, type HumanOperation, type HumanRelease, type HumanRequest, type HumanSnapshot,
 } from './official-truth-product-v3/method/human-contract'
 import { getHumanRelease, HUMAN_METHOD_REVIEWED_DATA } from './official-truth-product-v3/method/human-release'
-import { runHumanMethodRequest } from './official-truth-product-v3/method/human-server'
 
 // Synthetic fixtures only. They establish no real Owner, MFA, hosted schema,
 // method approval, database execution or public entry-rule evidence.
@@ -62,13 +61,71 @@ function child(value: Record<string, unknown>, key: string): Record<string, unkn
   return nested as Record<string, unknown>
 }
 
-test('production release is closed and cannot dispatch selected work', async () => {
+test('fixed Dev selection retains every Preview and target refusal before client construction', async t => {
+  const guards = { VERCEL_ENV: 'preview', VERCEL_PROJECT_ID: 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM',
+    VERCEL_GIT_REPO_OWNER: 'Jetnity', VERCEL_GIT_REPO_SLUG: 'jetnity',
+    VERCEL_GIT_COMMIT_REF: 'feat/official-truth-human-method-ui-1-20261112' }
+  const environment = { ...guards, NEXT_PUBLIC_SUPABASE_URL: HUMAN_METHOD_DEV_URL }
+  const previous = new Map(Object.keys(environment).map(key => [key, process.env[key]]))
+  t.after(() => { for (const [key, value] of previous) {
+    if (value === undefined) delete process.env[key]
+    else process.env[key] = value
+  } })
+  Object.assign(process.env, environment)
+  let target: string | undefined = HUMAN_METHOD_DEV_URL
+  let clientCalls = 0, rpcCalls = 0
+  t.mock.module(new URL('../supabase/server.ts', import.meta.url), { namedExports: {
+    getServerSupabaseUrl() { return target },
+    async createServerComponentClient() {
+      clientCalls++
+      return { rpc() { rpcCalls++; throw Error('unexpected mocked RPC') } }
+    },
+  } })
+  const { runHumanMethodRequest } = await import('./official-truth-product-v3/method/human-server')
+  const release = getHumanRelease()
+  assert.ok(release)
+  assert.equal(release.selectionId, 'hmr1_fad09ef526aeea7eeeb3fb1f22c894f1')
+  assert.equal(release.methodId, 'jetnity-destination-primary-ch-de-visa')
+  assert.equal(release.revision, 1)
+  assert.equal(release.methodDigest, '44ce02752da05796bef98c55b5099b81f915fe6b0975472e163721a06793bdb3')
+  assert.equal(release.packageDigest, '0beb25db2e1f6e4c2c96d61ded30b59a8e06a32ed94498903fbeecc3b6f267e9')
+  assert.equal(release.predecessorRevision, null); assert.equal(release.expectedHead, null)
+  assert.equal(release.targetUrl, HUMAN_METHOD_DEV_URL)
+  assert.equal(release.packageHref, 'https://github.com/Jetnity/jetnity/blob/6435c4e691b9cbc8d1c25b3167506b16914bcfae/lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts')
   assert.deepEqual(HUMAN_METHOD_REVIEWED_DATA.approval, { mode: 'until_revoked', until: null })
+  assert.deepEqual(release.approval, HUMAN_METHOD_REVIEWED_DATA.approval)
+  const request: HumanRequest = { ...op('stage'), selectionId: release.selectionId, intent: 'mutate' }
+  const refuse = async (input: HumanRequest, code: 'unselected' | 'target_refused' | 'selection_mismatch') => {
+    const result = await runHumanMethodRequest(input, ACTOR, new AbortController().signal)
+    assert.equal(result.status, 'unresolved'); assert.equal(result.code, code); assert.equal(result.recordedAt, null)
+    assert.equal(clientCalls, 0); assert.equal(rpcCalls, 0)
+  }
+  for (const [key, expected] of Object.entries(guards)) {
+    delete process.env[key]
+    assert.equal(getHumanRelease(), null, `missing ${key}`)
+    await refuse(request, 'unselected')
+    process.env[key] = 'unselected-' + expected
+    assert.equal(getHumanRelease(), null, `wrong ${key}`)
+    await refuse(request, 'unselected')
+    process.env[key] = expected
+  }
+  process.env.VERCEL_ENV = 'production'
+  assert.equal(process.env.NEXT_PUBLIC_SUPABASE_URL, HUMAN_METHOD_DEV_URL)
   assert.equal(getHumanRelease(), null)
-  const result = await runHumanMethodRequest({ ...op('stage'), intent: 'mutate' }, ACTOR, new AbortController().signal)
-  assert.equal(result.status, 'unresolved')
-  assert.equal(result.code, 'unselected')
-  assert.equal(result.recordedAt, null)
+  await refuse(request, 'unselected')
+  process.env.VERCEL_ENV = 'preview'
+  assert.deepEqual(getHumanRelease(), release)
+  for (const wrong of [undefined, 'https://qscbgcdmivbbnzrcyegn.supabase.co', HUMAN_METHOD_DEV_URL + '/', 'https://example.invalid']) {
+    target = wrong
+    await refuse(request, 'target_refused')
+  }
+  target = HUMAN_METHOD_DEV_URL
+  for (const selectionId of [null, '', FIXTURE.selectionId, 'hmr1_' + '2'.repeat(32)]) {
+    const input = { ...request, selectionId }
+    if (selectionId === null || selectionId === '') assert.equal(readHumanRequestText(JSON.stringify(input)), null)
+    await refuse(input as HumanRequest, 'selection_mismatch')
+  }
+  assert.equal(readHumanRelease(null), null)
 })
 
 test('release permits only exact Dev, full reviewed shape and legal finite transitions', () => {

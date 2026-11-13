@@ -13,10 +13,11 @@ const sessions = RUNTIME + 'node-postgres-owned-session.ts'
 const selection = RUNTIME + 'node-postgres-selection.ts'
 const executors = RUNTIME + 'node-postgres-executors.ts'
 const composition = 'lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts'
+const humanRelease = 'lib/readiness/official-truth-product-v3/method/human-release.ts'
 const devVerification = 'scripts/official-truth-product-v3-dev/verify-installed-dev.mjs'
 const allowed: Readonly<Record<string, readonly string[]>> = {
   [sessions]: [executors, PROOF + 'offline.test.ts', devVerification],
-  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition, devVerification],
+  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition, humanRelease, devVerification],
   [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition, devVerification],
   pg: [sessions, PROOF + 'owned-tls-fixture.ts'],
 }
@@ -33,6 +34,13 @@ function target(from: string, specifier: string): string {
     : specifier.startsWith('.') ? relative(ROOT, resolve(ROOT, dirname(from), specifier)) : specifier
   return path.replace(/\\/g, '/').replace(/\.(?:[cm]?js|tsx?)$/, '') + '.ts'
 }
+function humanSelectorImport(node: ts.Node): boolean {
+  if (!ts.isImportDeclaration(node) || !node.importClause || node.importClause.isTypeOnly || node.importClause.name) return false
+  const names = node.importClause.namedBindings
+  if (!names || !ts.isNamedImports(names) || names.elements.length !== 1) return false
+  const item = names.elements[0]!
+  return !item.isTypeOnly && !item.propertyName && item.name.text === 'selectedV3PgTarget'
+}
 test('private Node-Postgres construction has only the finite reviewed importers', () => {
   const seen = new Map<string, Set<string>>()
   for (const path of ['app','components','lib','scripts'].flatMap(files)) {
@@ -46,6 +54,7 @@ test('private Node-Postgres construction has only the finite reviewed importers'
         assert.ok(ts.isImportDeclaration(node) && node.importClause?.isTypeOnly, 'offline fixture receives no real connection constructor')
       }
       if (path === composition) assert.ok(ts.isImportDeclaration(node), 'the fixed server composition uses only direct imports')
+      if (path === humanRelease) assert.ok(selected === selection && humanSelectorImport(node), 'human release imports only the inert named Dev selector')
       assert.ok(!ts.isExportDeclaration(node), 'private transport has no re-export entry point')
       const importers = seen.get(selected) ?? new Set<string>(); importers.add(path); seen.set(selected, importers)
     }
@@ -57,7 +66,7 @@ test('private Node-Postgres construction has only the finite reviewed importers'
         || ts.isIdentifier(node.expression) && node.expression.text === 'require')) {
         const arg = node.arguments[0]
         if (arg && ts.isStringLiteral(arg)) check(arg.text, node)
-        else if (path.startsWith(RUNTIME) || path === composition) assert.fail('runtime transport has no computed loader')
+        else if (path.startsWith(RUNTIME) || path === composition || path === humanRelease) assert.fail('runtime transport has no computed loader')
       }
       ts.forEachChild(node, visit)
     }
@@ -72,6 +81,10 @@ test('the CH-to-DE server entry adds no other transport or browser importer', ()
   const permits = (from: string, specifier: string) => allowed[target(from, specifier)]?.includes(from) ?? false
   assert.equal(permits(composition, '../transport/node-postgres-selection'), true)
   assert.equal(permits(composition, '../transport/node-postgres-executors'), true)
+  assert.equal(permits(humanRelease, '../transport/node-postgres-selection'), true)
+  for (const specifier of ['../transport/node-postgres-executors', '../transport/node-postgres-owned-session', 'pg', 'pg/native', 'pg-native']) {
+    assert.equal(permits(humanRelease, specifier), false, specifier)
+  }
   for (const specifier of ['../transport/node-postgres-owned-session', 'pg', 'pg/native', 'pg-native']) {
     assert.equal(permits(composition, specifier), false, specifier)
   }
@@ -82,4 +95,21 @@ test('the CH-to-DE server entry adds no other transport or browser importer', ()
   const source = ts.createSourceFile(composition, readFileSync(resolve(ROOT, composition), 'utf8'), ts.ScriptTarget.Latest, true)
   assert.ok(source.statements.some(node => ts.isImportDeclaration(node) && !node.importClause
     && ts.isStringLiteral(node.moduleSpecifier) && node.moduleSpecifier.text === 'server-only'))
+})
+
+test('human release cannot import credentials, aliases, namespaces or dynamic selectors', () => {
+  const parse = (source: string) => ts.createSourceFile(humanRelease, source, ts.ScriptTarget.Latest, true).statements[0]!
+  assert.equal(humanSelectorImport(parse("import { selectedV3PgTarget } from '../transport/node-postgres-selection'")), true)
+  for (const source of [
+    "import { readV3PgPassword } from '../transport/node-postgres-selection'",
+    "import { selectedV3PgTarget, readV3PgPassword } from '../transport/node-postgres-selection'",
+    "import { selectedV3PgTarget as selected } from '../transport/node-postgres-selection'",
+    "import * as selected from '../transport/node-postgres-selection'",
+    "import selected from '../transport/node-postgres-selection'",
+    "import type { selectedV3PgTarget } from '../transport/node-postgres-selection'",
+    "import { type selectedV3PgTarget } from '../transport/node-postgres-selection'",
+    "export { selectedV3PgTarget } from '../transport/node-postgres-selection'",
+    "import('../transport/node-postgres-selection')",
+    "require('../transport/node-postgres-selection')",
+  ]) assert.equal(humanSelectorImport(parse(source)), false, source)
 })

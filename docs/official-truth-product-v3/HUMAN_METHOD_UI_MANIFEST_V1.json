@@ -7,8 +7,35 @@
   "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
   "parentTree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
   "parentLeaves": 9538,
-  "release": null,
-  "releaseState": "UNSELECTED",
+  "release": {
+    "schema": 1,
+    "selectionId": "hmr1_fad09ef526aeea7eeeb3fb1f22c894f1",
+    "targetUrl": "https://yfvbxvijcorffwxbxahl.supabase.co",
+    "methodId": "jetnity-destination-primary-ch-de-visa",
+    "revision": 1,
+    "methodDigest": "44ce02752da05796bef98c55b5099b81f915fe6b0975472e163721a06793bdb3",
+    "packageDigest": "0beb25db2e1f6e4c2c96d61ded30b59a8e06a32ed94498903fbeecc3b6f267e9",
+    "predecessorRevision": null,
+    "expectedHead": null,
+    "approval": {
+      "mode": "until_revoked",
+      "until": null
+    },
+    "packageVersion": "AA und Deutsche Botschaft Bern \u00b7 CH\u2192DE Visum \u00b7 Revision 1",
+    "packageHref": "https://github.com/Jetnity/jetnity/blob/6435c4e691b9cbc8d1c25b3167506b16914bcfae/lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+    "scope": {
+      "citizenship": "CH",
+      "destination": "DE",
+      "requirement": "visa",
+      "document": "swiss_passport",
+      "route": "direct_entry",
+      "conditions": "unconditional",
+      "activeFrom": "2026-11-12T19:41:09.241Z",
+      "activeUntilExclusive": "2027-11-13T00:00:00.000Z",
+      "reviewedScope": "Gepr\u00fcft wird die Visumpflicht f\u00fcr Schweizer Reisep\u00e4sse bei direkter Einreise nach Deutschland. Der gepr\u00fcfte Visumfakt enth\u00e4lt keine Bedingung zu Reisezweck oder Aufenthaltsdauer. Aufenthaltsrecht, Erwerbst\u00e4tigkeit und die vollst\u00e4ndige Einreiseberechtigung werden damit nicht best\u00e4tigt."
+    }
+  },
+  "releaseState": "SELECTED_DEV_DESCRIPTOR_OWNER_NOT_APPROVED",
   "allowedTarget": "https://yfvbxvijcorffwxbxahl.supabase.co",
   "taskReferences": [
     {
@@ -91,15 +118,15 @@
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
-      "bytes": 4158,
-      "blob": "c65f492ae9d01b609856c6f2c316f626e16a8f56",
-      "sha256": "2134ff68b185619a558bda22bda2a79203e29bbddade273d1ba8c7ffdd413459"
+      "bytes": 6396,
+      "blob": "0992c7574467463aa45f7c735bdafc0f1d8d3eec",
+      "sha256": "f82a5504d1e6ce3b1aea930339ea7fa64450a3e980fa48decb9b150b0bbb45c1"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
-      "bytes": 3479,
-      "blob": "6e05c342ecfca06d45d0966e956085a9ea86c507",
-      "sha256": "1bc7d44b5346d7f3ae334669513137733361cf4797f5a9c4a466e1f78acd2b45"
+      "bytes": 5534,
+      "blob": "2ae66d10cb46df0733bbbefc0d373cc7640ccce7",
+      "sha256": "2f46762a5668df98c29c0af7c1cfe5b81cdd73255e370435c043b02dc3403a73"
     },
     {
       "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
@@ -115,9 +142,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-release.ts",
-      "bytes": 2626,
-      "blob": "a28db94927c473fa386a0772844127ae717a7059",
-      "sha256": "1b62c99b9313fc41b89ddc25d6da1c14c45262d1f3ccc0ef54145151bafb975e"
+      "bytes": 2875,
+      "blob": "f6dca5495ad213a82165f67b70e5fb644ce6bad3",
+      "sha256": "baf0ab753a069cebcb684eec064f4d4f1ac7df2b3a476dfa71b18730e49d5944"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-server.ts",
@@ -127,9 +154,9 @@
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
-      "bytes": 23334,
-      "blob": "885f23ba10a50e4cee9e5bfd98153db96fc4fdc5",
-      "sha256": "d7e4f07bd757b1b52a40cb9b963a0ae54689233e4d6d26c8cf2a5a827376ce2f"
+      "bytes": 26694,
+      "blob": "6ad04b77a3c2ec9e1af5204741b51a8f90757407",
+      "sha256": "0261222fc8bf74bfd25169c677a04fe52c46c619377b95a10757ec187117ad13"
     },
     {
       "path": "scripts/db/verwendung.mjs",
@@ -451,5 +478,108 @@
       "all SQL/grants",
       "all existing admin auth routes"
     ]
+  },
+  "currentDevSelection": {
+    "status": "LOCAL_SOURCE_CANDIDATE_NOT_PUBLISHED",
+    "author": "Jetnity CH-DE Hosted Batch Fix \u2014 Codex Generation4",
+    "actualSession": "/root/hosted_batch_fix_g4",
+    "replacesUnreachableSessions": [
+      "/root/source_and_schema",
+      "/root/hmt_diagnosis"
+    ],
+    "sameOriginalSession": false,
+    "soleParent": "6435c4e691b9cbc8d1c25b3167506b16914bcfae",
+    "parentTree": "369f2c0bf0cea767ff126b4bf23ac93ef0c508a9",
+    "scope": "Exactly the seven paths below. Earlier source-origin parent/scope and null-release preparation receipts remain historical.",
+    "modifiedPaths": [
+      "lib/readiness/official-truth-product-v3/method/human-release.ts",
+      "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
+      "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json"
+    ],
+    "selectionId": "hmr1_fad09ef526aeea7eeeb3fb1f22c894f1",
+    "predecessorRevision": null,
+    "expectedHead": null,
+    "methodApproved": false,
+    "actualOwnerAAL2": "NOT_RUN",
+    "rootObservedDevBeforeDispatch": {
+      "evidence": "Fresh READ ONLY readback reported by Root; no SQL performed by this author",
+      "transactionReadOnly": true,
+      "overall": {
+        "revisions": 0,
+        "heads": 0,
+        "operations": 0
+      },
+      "selectedMethod": {
+        "revisions": 0,
+        "heads": 0,
+        "operations": 0
+      }
+    },
+    "guard": {
+      "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
+      "namedExport": "selectedV3PgTarget",
+      "unchanged": true,
+      "fiveExistingPreviewFields": true,
+      "credentialsRead": false,
+      "clientOrTransportConstructed": false,
+      "productionEvenWithDevUrl": "REFUSED",
+      "serverExactSupabaseTargetCheck": "UNCHANGED_BEFORE_CLIENT"
+    },
+    "additionalSourcePins": [
+      {
+        "path": "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
+        "bytes": 7947,
+        "blob": "fdc7fbc7454455428cb5b49031c21ca2e4e10791",
+        "sha256": "8713ef44dc8a990f851b998bf587ebfe82ec116bf00966ed4f119a9fea8e04ef"
+      }
+    ],
+    "consumedSourcePins": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
+        "bytes": 4765,
+        "blob": "3dbd8a3227c6349f2a34e4d830577c37c1c49bd2",
+        "sha256": "a3a5547b3b13c103b10f305204ad637704fea9a1797036529582e5429880d0e6"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+        "bytes": 11290,
+        "blob": "3460c7a0bd5744ceabc8dcda7e1c7108e79b13f2",
+        "sha256": "e56733466881e26a0368838d7c69419479b2122322d72d144c727f124654a8a5"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
+        "bytes": 19120,
+        "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
+        "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+      }
+    ],
+    "localTests": {
+      "node": "v24.22.1",
+      "tests": 27,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "families": [
+        "Human Method UI contract",
+        "PG boundary",
+        "PG offline"
+      ],
+      "refusalCasesClientCalls": 0,
+      "refusalCasesRpcCalls": 0,
+      "actualHostedOrAuthCalls": 0
+    },
+    "parentCi4224": "FULL_PASS_9_JOBS_REPORTED_BY_ROOT",
+    "remainingGates": [
+      "Independent Root review",
+      "Fresh exact-head complete CI and Preview",
+      "Real Owner/AAL2 staging and approval with PO"
+    ],
+    "noRemotePublication": true,
+    "noSqlOrAuthAction": true,
+    "noProductionAuthority": true
   }
 }

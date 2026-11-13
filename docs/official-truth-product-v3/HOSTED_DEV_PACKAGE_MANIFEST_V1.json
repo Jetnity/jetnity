@@ -202,21 +202,21 @@
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
-      "blob": "c65f492ae9d01b609856c6f2c316f626e16a8f56",
-      "bytes": 4158,
-      "sha256": "2134ff68b185619a558bda22bda2a79203e29bbddade273d1ba8c7ffdd413459"
+      "blob": "0992c7574467463aa45f7c735bdafc0f1d8d3eec",
+      "bytes": 6396,
+      "sha256": "f82a5504d1e6ce3b1aea930339ea7fa64450a3e980fa48decb9b150b0bbb45c1"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json",
-      "blob": "c34ed4e4f1c85a3a289372462cd95476dc873292",
-      "bytes": 20732,
-      "sha256": "7f97955b659c4cb5d4e3c836d26194b4409a9782e4bbead3972cea4b9ef8004b"
+      "blob": "be6af778718592d831428d967ee0c7f170590b3e",
+      "bytes": 26210,
+      "sha256": "77746995caa9dcf3f5dc73394623eb5b6988b84cfa4e2595ca043e44e170b5ec"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
-      "blob": "6e05c342ecfca06d45d0966e956085a9ea86c507",
-      "bytes": 3479,
-      "sha256": "1bc7d44b5346d7f3ae334669513137733361cf4797f5a9c4a466e1f78acd2b45"
+      "blob": "2ae66d10cb46df0733bbbefc0d373cc7640ccce7",
+      "bytes": 5534,
+      "sha256": "2f46762a5668df98c29c0af7c1cfe5b81cdd73255e370435c043b02dc3403a73"
     },
     {
       "path": "docs/official-truth-product-v3/PRIVATE_OWNER_GUARDS_MANIFEST_V1.json",
@@ -298,9 +298,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-release.ts",
-      "blob": "a28db94927c473fa386a0772844127ae717a7059",
-      "bytes": 2626,
-      "sha256": "1b62c99b9313fc41b89ddc25d6da1c14c45262d1f3ccc0ef54145151bafb975e"
+      "blob": "f6dca5495ad213a82165f67b70e5fb644ce6bad3",
+      "bytes": 2875,
+      "sha256": "baf0ab753a069cebcb684eec064f4d4f1ac7df2b3a476dfa71b18730e49d5944"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-server.ts",
@@ -436,9 +436,9 @@
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
-      "blob": "885f23ba10a50e4cee9e5bfd98153db96fc4fdc5",
-      "bytes": 23334,
-      "sha256": "d7e4f07bd757b1b52a40cb9b963a0ae54689233e4d6d26c8cf2a5a827376ce2f"
+      "blob": "6ad04b77a3c2ec9e1af5204741b51a8f90757407",
+      "bytes": 26694,
+      "sha256": "0261222fc8bf74bfd25169c677a04fe52c46c619377b95a10757ec187117ad13"
     },
     {
       "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
@@ -514,9 +514,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
-      "blob": "f9a4163d44cac656f976a2a998d823186b6fcd18",
-      "bytes": 5699,
-      "sha256": "859a39f56886ce371f20e2c861d44ddfbdf7999653df32ee9468a16baee470fc"
+      "blob": "fdc7fbc7454455428cb5b49031c21ca2e4e10791",
+      "bytes": 7947,
+      "sha256": "8713ef44dc8a990f851b998bf587ebfe82ec116bf00966ed4f119a9fea8e04ef"
     },
     {
       "path": "scripts/db/official-truth-v3-node-postgres-transport-1/owned-tls-fixture.ts",
@@ -2804,7 +2804,7 @@
         "scripts/next-16-4-1-security-patch-p1/audit.test.mjs",
         "vercel.json"
       ],
-      "methodReleaseSelected": false,
+      "methodReleaseSelected": true,
       "ownerProfileCreated": false,
       "privateCronSecretConfigured": false,
       "cronScheduled": false,
@@ -2819,7 +2819,7 @@
       "devTargetIncluded": false,
       "runtime": "NOT_RUN"
     },
-    "humanReleaseRemainsNull": true,
+    "humanReleaseRemainsNull": false,
     "productionTargetSelected": false,
     "devTargetPreparation": {
       "status": "UNPUBLISHED_DIRECT_DEV_TARGET_AND_MJS_LINT_FIX_SOURCE_ONLY",
@@ -2958,6 +2958,20 @@
         "officialSourceGetAttempted": false,
         "fullCiForThisCandidate": "NOT_RUN"
       }
+    },
+    "humanReleaseSelection": {
+      "status": "LOCAL_DEV_DESCRIPTOR_CANDIDATE_OWNER_NOT_APPROVED",
+      "selectionId": "hmr1_fad09ef526aeea7eeeb3fb1f22c894f1",
+      "predecessorRevision": null,
+      "expectedHead": null,
+      "soleParent": "6435c4e691b9cbc8d1c25b3167506b16914bcfae",
+      "actualSession": "/root/hosted_batch_fix_g4",
+      "guard": "Unchanged selectedV3PgTarget five-field Preview refusal plus unchanged exact Dev Supabase URL check",
+      "methodApproved": false,
+      "actualOwnerAAL2": "NOT_RUN",
+      "fullExactHeadCi": "NOT_RUN",
+      "actualSelectedPreview": "NOT_RUN",
+      "manifest": "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json"
     }
   },
   "previousIntegrationReference": {
