@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, Globe2, Menu, Moon, PanelLeftClose, PanelLeftOpen, Plus, Settings2, Sun, Luggage, UsersRound, X } from 'lucide-react'
+import { Compass, Globe2, Menu, Moon, PanelLeftClose, PanelLeftOpen, Plus, Sun, Luggage, UsersRound, X } from 'lucide-react'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
@@ -18,7 +18,6 @@ const PERSONAL = [
   { label: 'Meine Reisen', href: '/reisen', icon: Luggage },
   { label: 'Meine Welt', href: '/account/welt', icon: Globe2 },
   { label: 'Reisende', href: '/account/travellers', icon: UsersRound },
-  { label: 'Einstellungen', href: '/account/settings', icon: Settings2 },
 ] as const
 
 const FOCUSABLE = 'a[href], button:not(:disabled), summary, [tabindex="0"]'
@@ -162,7 +161,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     [navigation, mobile, actions, title, closeNavigation, finishNavigation])
   const heading = pathname === '/planen' ? 'Reise planen'
     : pathname === '/reisen' ? 'Meine Reisen'
-    : pathname === '/account/welt' ? 'Meine Welt' : pathname === '/account' ? 'Mein Konto' : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
+    : pathname === '/account/welt' ? 'Meine Welt' : pathname === '/account' ? 'Dein Jetnity' : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
 
   return (
     <WorkspaceContext.Provider value={slots}>

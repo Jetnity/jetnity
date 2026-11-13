@@ -4,6 +4,7 @@ import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { tageDifferenz } from '@/lib/activities/zeit'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import type { Trip, TripStage, TripSummaryStage } from '@/types/trips'
+import { reisebildAusEtappe } from './reisebilder'
 
 const foto = (name: string) => '/images/organisieren/' + name + '.webp'
 
@@ -114,19 +115,10 @@ export function etappenZiel(etappe: Pick<TripSummaryStage, 'name' | 'countryCode
   }
 }
 
-export function reiseFoto(etappe?: Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'>, titel = false): string {
-  const ziel = etappenZiel(etappe)
-  if (ziel) return (titel && ziel.kopf) || ziel.bild
-  if (etappe?.placeId === 'geonames:1631470' || (etappe?.countryCode === 'ID' && etappe.name.trim().toLowerCase() === 'nusa penida')) return foto('nusa-penida')
-  if (etappe?.placeId === 'geonames:3703430' || etappe?.placeId === 'geonames:3703443') return foto('panama')
-  if (etappe?.placeId === 'geonames:1605651') return foto('hero')
-  const weitere: Record<string, string> = {
-    'geonames:2759794': 'amsterdam',
-    'geonames:2267057': 'lisbon',
-    'geonames:2657928': 'zermatt',
-  }
-  const datei = weitere[etappe?.placeId ?? '']
-  return datei ? '/images/' + datei + '.jpg' : foto('reise')
+export function reiseFoto(etappe?: Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'>, _titel = false): string {
+  // Keep the existing call signature; title and card now share the destination image.
+  void _titel
+  return reisebildAusEtappe(etappe)
 }
 
 export function vorgeschlagenerFlughafen(

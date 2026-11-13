@@ -21,7 +21,7 @@ import {
 import type { Trip, TripItemKind, TripSource } from '@/types/trips'
 import { landName } from '@/lib/country/darstellung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
-import { reiseFoto } from '@/lib/trips/organisieren/katalog'
+import { StadtbildMiniatur, StadtbildNachweis, useStadtbild } from '@/components/trips/organisieren/Stadtbild'
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
@@ -91,6 +91,7 @@ export default function Etappenplan({
   const [platzieren, setPlatzieren] = useState(false)
   const [ohneTage, setOhneTage] = useState<string | null>(null)
   const stages = [...reise.stages].sort((a, b) => a.position - b.position)
+  const heroBild = useStadtbild(stages[0])
   const activeDay = !ohneTage && !focusRoute && tagId ? reise.days.find((d) => d.id === tagId) : undefined
   const activeStage = stages.find((s) => s.id === (ohneTage || activeDay?.stageId))
   const activeRun = activeDay && route.find((r) => r.art === 'lauf' && r.tagIds.includes(activeDay.id))
@@ -161,7 +162,7 @@ export default function Etappenplan({
         </span>
         <span className="et-stage-surface">
           {stage && (
-            <span className="et-thumb" style={{ backgroundImage: 'url(' + reiseFoto(stage) + ')' }} />
+            <StadtbildMiniatur className="et-thumb" ziel={stage} />
           )}
           <span className="et-tiletext">
             <b>{title}</b>
@@ -182,7 +183,7 @@ export default function Etappenplan({
         style={{
           backgroundImage:
             'linear-gradient(90deg,rgba(11,49,42,.98) 0%,rgba(13,48,41,.91) 35%,rgba(13,48,41,.20) 100%),url(' +
-            reiseFoto(stages[0], true) +
+            heroBild.src +
             ')',
         }}
       >
@@ -255,10 +256,7 @@ export default function Etappenplan({
               </button>
               <div className="et-detail-title">
                 {activeStage && (
-                  <span
-                    className="et-thumb detail"
-                    style={{ backgroundImage: 'url(' + reiseFoto(activeStage) + ')' }}
-                  />
+                  <StadtbildMiniatur className="et-thumb detail" ziel={activeStage} />
                 )}
                 <div>
                   <small>{country || 'Reiseplan'}</small>
@@ -481,6 +479,7 @@ export default function Etappenplan({
           />
         </div>
       </div>
+      <div className="grid gap-1 px-4 py-3">{Array.from(new Map(stages.map(s => [s.placeId ?? s.name, s])).values()).map(s => <StadtbildNachweis key={s.id} ziel={s} />)}</div>
     </div>
   )
 }

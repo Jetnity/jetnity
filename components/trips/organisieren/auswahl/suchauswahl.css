@@ -50,13 +50,26 @@
 }
 .reise-auswahl-option[data-state='checked'] { font-weight: 700; background: #e8f2ec; }
 .reise-auswahl-option[data-highlighted] { background: #153f35; color: white; }
-.org-field.reise-datum-trigger {
+.reise-datum-trigger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 66px;
+  padding: 10px 14px;
+  border: 1px solid rgb(var(--jet-line-200));
+  border-radius: 12px;
+  background: rgb(var(--jet-surface-0));
+  color: rgb(var(--jet-brand-800));
   text-align: left;
   cursor: pointer;
   align-items: stretch;
   gap: 4px;
   font: inherit;
 }
+.reise-datum-trigger > span { color: var(--org-muted, rgb(var(--jet-ink-700))); font-size: 12px; line-height: 1.4; }
+.reise-datum-trigger:disabled { cursor: default; opacity: .6; }
 .reise-datum-trigger strong {
   display: flex;
   justify-content: space-between;
@@ -70,6 +83,15 @@
 .reise-datum-trigger svg { flex-shrink: 0; color: var(--org-muted, #506760); }
 .reise-datum-trigger[aria-expanded='true'] { border-color: #477762; box-shadow: 0 0 0 3px #dcebe4; }
 .reise-datum-trigger[data-invalid='true'] { border-color: #a94332; }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger {
+  border-color: var(--white-mint-control);
+  background: var(--white-mint-card);
+  color: var(--white-mint-ink);
+}
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger > span,
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger svg { color: var(--white-mint-muted); }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger strong { color: var(--white-mint-ink); }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger[data-invalid='true'] { border-color: #a94332; }
 .reise-kalender {
   --kal-ink: #153f35;
   --kal-muted: #61776c;
@@ -101,7 +123,7 @@
 .reise-kalender-kopf { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 24px 16px; }
 .reise-kalender-eyebrow { color: var(--kal-muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 650; }
 .reise-kalender h2 { font-size: 21px; letter-spacing: -.035em; font-weight: 700; margin: 4px 0 0; line-height: 1.25; }
-.reise-kalender .reise-icon { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border: 1px solid var(--kal-line); border-radius: 50%; background: var(--kal-bg); color: var(--kal-ink); padding: 0; }
+.reise-kalender .reise-icon { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border: 1px solid var(--kal-line); border-radius: 50%; background: var(--kal-bg); color: var(--kal-ink); padding: 0; }
 .reise-icon:hover:not(:disabled) { background: var(--kal-soft); }
 .reise-icon:disabled { opacity: .3; }
 .reise-kalender-auswahl { display: flex; gap: 10px; padding: 0 24px 18px; }
@@ -110,10 +132,10 @@
 .reise-kalender-auswahl button > span { display: block; color: var(--kal-muted); font-size: 11px; margin-bottom: 3px; }
 .reise-kalender-auswahl b { font-size: 15px; font-weight: 650; }
 .reise-kalender-auswahl svg { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); }
-.reise-kalender-monate { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 0 24px 18px; position: relative; }
+.reise-kalender-monate { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; padding: 0 24px 18px; position: relative; }
 .reise-kalender-nav { position: absolute; left: 24px; right: 24px; top: 0; display: flex; justify-content: space-between; pointer-events: none; }
 .reise-kalender-nav button { pointer-events: auto; }
-.reise-monat h3 { text-align: center; font-size: 16px; margin: 0 35px 16px; min-height: 36px; line-height: 36px; font-weight: 650; }
+.reise-monat h3 { text-align: center; font-size: 16px; margin: 0 44px 16px; min-height: 44px; line-height: 44px; font-weight: 650; }
 .reise-monat table { border-collapse: collapse; width: 100%; table-layout: fixed; }
 .reise-monat th { font-size: 11px; color: var(--kal-muted); font-weight: 500; text-align: center; height: 25px; }
 .reise-monat td { padding: 0; height: 42px; text-align: center; }
@@ -126,7 +148,7 @@
 .reise-monat td > button.reise-tag-gewaehlt:hover { background: #245e49; }
 .reise-kalender-fuss { border-top: 1px solid var(--kal-line); background: var(--kal-bg); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; position: sticky; bottom: 0; }
 .reise-kalender-fuss p { font-size: 12px; color: var(--kal-muted); margin: 0; }
-.reise-kalender-fuss > div { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.reise-kalender-fuss > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-items: center; min-width: 0; }
 .reise-kalender-fuss button { padding: 11px 16px; min-height: 44px; border-radius: 10px; font-size: 13px; font-weight: 650; }
 .reise-kalender .reise-abbrechen { border: 1px solid var(--kal-line); color: var(--kal-ink); background: var(--kal-bg); }
 .reise-kalender .reise-uebernehmen { display: flex; gap: 7px; align-items: center; background: #153f35; color: white; border: 1px solid #153f35; }
@@ -154,12 +176,13 @@
   .reise-monat-zweiter { display: none; }
   .reise-kalender-nav { left: 18px; right: 18px; }
   .reise-monat td { height: 44px; }
-  .reise-monat td > button { width: 42px; height: 42px; }
+  .reise-monat td > button { width: min(44px, 100%); height: 44px; }
   .reise-monat .reise-tag-bereich { background: var(--kal-soft); }
   .reise-kalender-fuss { display: block; padding: 14px 18px max(16px, env(safe-area-inset-bottom)); }
   .reise-kalender-fuss p { margin: 0 0 12px; min-height: 18px; }
   .reise-kalender-fuss > div { justify-content: flex-end; }
 }
 @media (max-width: 359px) {
-  .reise-monat td > button { width: 36px; }
+  .reise-kalender-kopf, .reise-kalender-auswahl, .reise-kalender-monate, .reise-kalender-fuss { padding-inline: 10px; }
+  .reise-kalender-nav { left: 10px; right: 10px; }
 }

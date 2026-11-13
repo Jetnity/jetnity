@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { BedDouble, Check, MapPin, Star } from 'lucide-react'
 import type { Trip } from '@/types/trips'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
@@ -28,6 +29,7 @@ export default function KayakHotels({ reise }: { reise: Trip }) {
       <PreviewNotice />
       <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
         event.preventDefault()
+        if (!checkIn || !checkOut) { preview.setError('Bitte wähle Anreise und Abreise.'); return }
         if (!coordinates || !stage) { preview.setError('Für dieses Reiseziel fehlt der genaue Ort. Bitte bestätige das Ziel zuerst unter „Reise ändern“.'); return }
         void preview.search({ kind: 'hotels', latitude: stage.latitude!, longitude: stage.longitude!, checkIn, checkOut, adults, rooms })
       }}>
@@ -42,8 +44,9 @@ export default function KayakHotels({ reise }: { reise: Trip }) {
             const nights = dates ? naechteZwischen(dates.checkIn, dates.checkOut) : null
             return <option key={item.id} value={item.id}>{item.name} · {nights ? `${nights} ${nights === 1 ? 'Nacht' : 'Nächte'}` : HOTELZEITRAUM_OFFEN}</option>
           })}</select></label>
-          <label className="grid gap-2 text-sm font-medium text-brand-800">Anreise<input type="date" className={inputClass} required value={checkIn} onChange={(event) => setCheckIn(event.target.value)} /></label>
-          <label className="grid gap-2 text-sm font-medium text-brand-800">Abreise<input type="date" className={inputClass} required min={checkIn} value={checkOut} onChange={(event) => setCheckOut(event.target.value)} /></label>
+          <Suchkalender start={checkIn} ende={checkOut} startLabel="Anreise" endeLabel="Abreise"
+            min="1900-01-01" max="9999-12-31" minTage={1} maxTage={30} naechte
+            setzen={(start, ende) => { setCheckIn(start); setCheckOut(ende); preview.reset() }} />
         </div>
         <div className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr]">
           <label className="grid gap-2 text-sm font-medium text-brand-800">Erwachsene<input type="number" min={1} max={9} required className={inputClass} value={adults} onChange={(event) => setAdults(Number(event.target.value))} /></label>

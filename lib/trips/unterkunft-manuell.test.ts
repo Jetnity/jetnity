@@ -174,6 +174,8 @@ type Props = {
   children?: React.ReactNode; type?: string; value?: string; id?: string; htmlFor?: string; role?: string
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
   onSubmit?: (event: { preventDefault: () => void }) => Promise<void>
+  start?: string; ende?: string; startLabel?: string; endeLabel?: string; startId?: string; endeId?: string
+  setzen?: (start: string, ende: string) => void
 }
 function elements(node: React.ReactNode, match: (el: React.ReactElement<Props>) => boolean): React.ReactElement<Props>[] {
   const found: React.ReactElement<Props>[] = []
@@ -219,13 +221,13 @@ function editor(item = stay(), outcome: string | null | Error = null) {
   }
   const buttons = () => elements(render(), el => el.type === 'button')
   const open = () => buttons()[0]!.props.onClick!()
-  const inputs = () => elements(render(), el => el.type === 'input')
+  const calendars = () => elements(render(), el => typeof el.type === 'function' && el.type.name === 'Suchkalender')
+  const dates = () => { const calendar = calendars()[0]; return calendar ? [calendar.props.start, calendar.props.ende] : [] }
   const submit = () => elements(render(), el => el.type === 'form')[0]!.props.onSubmit!({ preventDefault() {} })
   const fill = (dates: typeof zeitraum) => {
-    inputs()[0]!.props.onChange!({ target: { value: dates.startsOn } })
-    inputs()[1]!.props.onChange!({ target: { value: dates.endsOn } })
+    calendars()[0]!.props.setzen!(dates.startsOn, dates.endsOn)
   }
-  return { render, open, inputs, submit, fill, calls, buttons }
+  return { render, open, calendars, dates, submit, fill, calls, buttons }
 }
 
 describe('Unterkunft UI: echte Render- und Submit-Pfade', () => {
@@ -245,12 +247,18 @@ describe('Unterkunft UI: echte Render- und Submit-Pfade', () => {
     }
     assert.doesNotMatch(html(stay(), false), /Zeitraum ergänzen|Zeitraum ändern/)
   })
-  test('vorhandene Werte werden vorgefüllt, fehlende bleiben leer; native Inputs haben Labels', () => {
+  test('vorhandene Werte werden vorgefüllt, fehlende bleiben leer; Kalender hat beschriftete Auslöser', () => {
     for (const dates of [zeitraum, { startsOn: null, endsOn: null }, { startsOn: zeitraum.startsOn, endsOn: null }]) {
       const ui = editor(stay(dates)); ui.open()
-      assert.deepEqual(ui.inputs().map(input => input.props.value), [dates.startsOn ?? '', dates.endsOn ?? ''])
-      assert.deepEqual(ui.inputs().map(input => input.props.type), ['date', 'date'])
-      assert.deepEqual(elements(ui.render(), el => el.type === 'label').map(label => label.props.htmlFor), ui.inputs().map(input => input.props.id))
+      assert.deepEqual(ui.dates(), [dates.startsOn ?? '', dates.endsOn ?? ''])
+      const calendar = ui.calendars()[0]!
+      assert.deepEqual([calendar.props.startLabel, calendar.props.endeLabel], ['Check-in', 'Check-out'])
+      const rendered = renderToStaticMarkup(calendar)
+      assert.match(rendered, /id="date-editor-check-in"/)
+      assert.match(rendered, /id="date-editor-check-out"/)
+      assert.match(rendered, /aria-label="Check-in: /)
+      assert.match(rendered, /aria-label="Check-out: /)
+      assert.equal((rendered.match(/aria-haspopup="dialog"/g) ?? []).length, 2)
       assert.deepEqual(ui.calls, [])
     }
   })
@@ -265,17 +273,17 @@ describe('Unterkunft UI: echte Render- und Submit-Pfade', () => {
     assert.deepEqual(ui.calls, [], 'kein Autosave')
     await ui.submit()
     assert.deepEqual(ui.calls, [[ITEM, zeitraum.startsOn, zeitraum.endsOn]])
-    assert.equal(ui.inputs().length, 0)
+    assert.equal(ui.calendars().length, 0)
     assert.equal(elements(ui.render(), el => el.props.role === 'status').length, 1)
   })
   test('Fehler behält Eingaben, thrown error bleibt begrenzt; Abbrechen schreibt nicht', async () => {
     for (const outcome of ['Speichern fehlgeschlagen.', new Error('internal detail')]) {
       const ui = editor(stay(), outcome); ui.open(); ui.fill(zeitraum); await ui.submit()
-      assert.deepEqual(ui.inputs().map(input => input.props.value), Object.values(zeitraum))
+      assert.deepEqual(ui.dates(), Object.values(zeitraum))
       const alert = elements(ui.render(), el => el.props.role === 'alert')[0]!
       assert.doesNotMatch(String(alert.props.children), /internal detail/)
       ui.buttons().at(-1)!.props.onClick!()
-      assert.equal(ui.inputs().length, 0)
+      assert.equal(ui.calendars().length, 0)
       assert.equal(ui.calls.length, 1)
     }
   })

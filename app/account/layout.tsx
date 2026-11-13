@@ -6,6 +6,7 @@
 import type { Metadata } from 'next'
 
 import WorkspaceShell from '@/components/workspace/WorkspaceShell'
+import '@/components/trips/organisieren/auswahl/suchauswahl.css'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },

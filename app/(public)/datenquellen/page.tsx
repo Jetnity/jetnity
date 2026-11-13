@@ -3,7 +3,7 @@ import { KANONISCHE_PUBLIC_ORIGIN } from '@/lib/seo/oeffentlicher-origin'
 
 export const metadata: Metadata = {
   title: 'Datenquellen & Lizenzen',
-  description: 'Quellen und Lizenzhinweise zu den Ortsdaten von Jetnity.',
+  description: 'Quellen und Lizenzhinweise zu den Ortsdaten und Reisefotografien von Jetnity.',
   alternates: { canonical: `${KANONISCHE_PUBLIC_ORIGIN}/datenquellen` },
 }
 
@@ -33,6 +33,23 @@ export default function DatenquellenPage() {
             <a href="https://www.geonames.org/about.html" className="underline underline-offset-4">GeoNames</a>
             {' '}und im{' '}
             <a href="https://creativecommons.org/licenses/by/4.0/legalcode.de" className="underline underline-offset-4">Lizenztext</a>.
+          </p>
+        </section>
+        <section aria-labelledby="reisefotos-title" className="space-y-4 rounded-2xl border border-line-200 bg-white p-6">
+          <h2 id="reisefotos-title" className="text-2xl font-semibold">Reisefotografien</h2>
+          <p>Für weitere eindeutig zugeordnete Ziele bezieht Jetnity automatisch Fotografien aus Wikimedia Commons. Die Zuordnung erfolgt über die GeoNames-Kennung und das Land in Wikidata. Urheber, Original und freie Lizenz werden unmittelbar bei der Reise genannt und verlinkt. Die Darstellung kann einen Bildausschnitt zeigen. Ohne eindeutige Zuordnung oder geeignete Lizenz bleibt ein neutrales Ersatzmotiv.</p>
+          <p>
+            Das Paris-Foto „Skyline of Paris with the Eiffel Tower 2“ stammt von{' '}
+            <a href="https://commons.wikimedia.org/wiki/File:Skyline_of_Paris_with_the_Eiffel_Tower_2.jpg" className="underline underline-offset-4">
+              DiscoA340 auf Wikimedia Commons
+            </a>{' '}
+            und steht unter{' '}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="underline underline-offset-4">CC BY-SA 4.0</a>.
+            Die Originaldatei bleibt unverändert; die Darstellung wird je nach Bildschirm zugeschnitten.
+          </p>
+          <p>
+            Die einzelnen Quellen, Urheber und Lizenzen weiterer Reisemotive findest du in den{' '}
+            <a href="/images/organisieren/Bildnachweise.txt" className="underline underline-offset-4">Bildnachweisen</a>.
           </p>
         </section>
       </article>

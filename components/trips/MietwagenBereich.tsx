@@ -7,6 +7,7 @@
 // Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { Car, ChevronDown, Plus } from 'lucide-react'
 
 import { mietwagenBestand, mietwagenDetails } from '@/lib/rental-cars/bestand'
@@ -299,16 +300,9 @@ function ManuellerMietwagen({
 
         <OrganisierenFeldgruppe titel="Abholung">
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
-              Abholdatum
-              <input
-                type="date"
-                value={pickupOn}
-                disabled={laeuft}
-                onChange={(ereignis) => setPickupOn(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
-              />
-            </label>
+            <Suchkalender start={pickupOn} ende="" startLabel="Abholdatum" endeLabel="" einzeln optional
+              min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Deine eigenen Angaben"
+              setzen={wert => setPickupOn(wert)} />
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               Uhrzeit
               <input
@@ -324,16 +318,9 @@ function ManuellerMietwagen({
 
         <OrganisierenFeldgruppe titel="Rückgabe">
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
-              Rückgabedatum
-              <input
-                type="date"
-                value={dropoffOn}
-                disabled={laeuft}
-                onChange={(ereignis) => setDropoffOn(ereignis.target.value)}
-                className={ORGANISIEREN_EINGABE_KLASSE}
-              />
-            </label>
+            <Suchkalender start={dropoffOn} ende="" startLabel="Rückgabedatum" endeLabel="" einzeln optional
+              min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Deine eigenen Angaben"
+              setzen={wert => setDropoffOn(wert)} />
             <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">
               Uhrzeit
               <input

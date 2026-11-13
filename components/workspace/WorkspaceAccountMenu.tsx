@@ -24,12 +24,11 @@ export default function WorkspaceAccountMenu() {
       <div className="workspace-account-panel" onClick={(e) => {
         if ((e.target as HTMLElement).closest('a')) ref.current?.removeAttribute('open')
       }}>
-        <p>Dein Jetnity</p>
+        <p>Konto &amp; Einstellungen</p>
         <ul>
-          <li><Link href="/reisen">Meine Reisen</Link></li>
+          <li><Link href="/account/merkliste">Meine Merkliste</Link></li>
           <li><Link href="/account/settings">Einstellungen</Link></li>
           <li><Link href="/account/bookings">Bestätigte Buchungen</Link></li>
-          <li><Link href="/#pro">Jetnity Pro</Link></li>
         </ul>
         <p>Jetnity</p>
         <ul>

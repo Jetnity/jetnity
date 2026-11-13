@@ -487,9 +487,10 @@ export default function AktivitaetenBereich({
             </div>
           ) : null}
         </div>
-      ) : (
+      ) : null}
+      {wahl.ziele.length === 0 ? (
         <p className="mt-4 text-sm leading-6 text-ink-800">Diese Reise hat noch kein Ziel. Jetnity legt dafür keine Etappe an.</p>
-      )}
+      ) : null}
 
       {gewaehlt?.status === 'ausstehend' ? (
         <p aria-busy="true" className="mt-4 text-sm leading-6 text-ink-800">

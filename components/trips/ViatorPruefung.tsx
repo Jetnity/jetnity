@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 
 import {
   VIATOR_SEARCH_CURRENCIES,
@@ -267,19 +268,9 @@ function ViatorPruefungLauf({
         </p>
       ) : null}
       <div className="mt-4 grid min-w-0 max-w-full grid-cols-1 gap-3">
-        <label className="grid min-w-0 gap-1 text-sm text-ink-800">
-          Datum
-          <input
-            type="date"
-            value={datum}
-            onChange={(event) => {
-              setDatum(event.target.value)
-              setStartzeit('')
-              verwerfen()
-            }}
-            className="min-h-11 w-full min-w-0 max-w-full rounded-xl border border-line-200 px-3"
-          />
-        </label>
+        <Suchkalender start={datum} ende="" startLabel="Datum" endeLabel="" einzeln
+          min={heuteIso()} max="9999-12-31" minTage={0} kontext="Dein Erlebnis"
+          setzen={wert => { setDatum(wert); setStartzeit(''); verwerfen() }} />
         {optionen.length > 0 ? (
           <label className="grid min-w-0 gap-1 text-sm text-ink-800">
             Option

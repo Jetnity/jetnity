@@ -28,7 +28,8 @@ import type { Trip, TripItem } from '@/types/trips'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const require = createRequire(import.meta.url)
 const JETZT = '2026-10-24T00:00:00.000Z'
-const VERBINDUNG_HASH = '75e3838db77f502469a8e5f4705c182ccaa1e50dbc53ff6fd162d07bf8de118a'
+// Calendar-only UI revision from 2026-11-13; historical completion evidence stays unchanged.
+const VERBINDUNG_KALENDER_HASH = '1257552f40bb21002c9b23d432ce656d1c3b814299256dc890d658c6fc6c5f2d'
 const MIETWAGEN_GESPEICHERT = 'Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.'
 const MIETWAGEN_ABGELEHNT = 'Der Mietwagen konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten.'
 
@@ -96,6 +97,8 @@ type Props = {
   children?: React.ReactNode
   type?: string
   value?: string
+  start?: string
+  setzen?: (start: string, ende: string) => void
   disabled?: boolean
   role?: string
     'aria-disabled'?: boolean
@@ -391,9 +394,12 @@ describe('manual rental entry keeps the submitted draft', () => {
     assert.ok(child)
     return (child.type as (props: Props) => React.ReactNode)(child.props as Props)
   })
-  const controls = (tree: React.ReactNode) => elements(tree, (el) => el.type === 'input' || el.type === 'select' || el.type === 'textarea')
+  const controls = (tree: React.ReactNode) => elements(tree, (el) => el.type === 'input' || el.type === 'select' || el.type === 'textarea' || (typeof el.type === 'function' && el.type.name === 'Suchkalender'))
+  const controlValue = (control: React.ReactElement<Props>) => control.props.start ?? control.props.value
   const setControl = (tree: React.ReactNode, index: number, value: string) => {
-    controls(tree)[index]!.props.onChange?.({ target: { value } })
+    const control = controls(tree)[index]!
+    if (control.props.setzen) control.props.setzen(value, '')
+    else control.props.onChange?.({ target: { value } })
   }
 
   test('ten fields stay stable, errors keep values, success resets only the owned form', async () => {
@@ -430,14 +436,14 @@ describe('manual rental entry keeps the submitted draft', () => {
     assert.equal(rentalCarManuellSchema.safeParse(payload).success, true)
     tree = draw()
     assert.equal(controls(tree).every((control) => control.props.disabled === true), true)
-    assert.deepEqual(controls(tree).map((control) => control.props.value), values)
+    assert.deepEqual(controls(tree).map(controlValue), values)
     outcome = 'error'
     release('Mietwagen abgelehnt.')
     await first
     await tick()
     tree = draw()
     assert.deepEqual(alertText(tree), ['Mietwagen abgelehnt.'])
-    assert.deepEqual(controls(tree).map((control) => control.props.value), values)
+    assert.deepEqual(controls(tree).map(controlValue), values)
     assert.equal(controls(tree).every((control) => control.props.disabled === false), true)
 
     outcome = 'reject'
@@ -447,13 +453,13 @@ describe('manual rental entry keeps the submitted draft', () => {
     tree = draw()
     assert.deepEqual(alertText(tree), [MIETWAGEN_ABGELEHNT])
     assert.equal(alertText(tree).join('').includes('secret'), false)
-    assert.deepEqual(controls(tree).map((control) => control.props.value), values)
+    assert.deepEqual(controls(tree).map(controlValue), values)
 
     outcome = 'throw'
     const thrown = elements(draw(), (el) => el.type === 'form')[0]!.props.onSubmit?.({ preventDefault() {} })
     await thrown
     await tick()
-    assert.deepEqual(controls(draw()).map((control) => control.props.value), values)
+    assert.deepEqual(controls(draw()).map(controlValue), values)
 
     outcome = 'ok'
     const before = calls.length
@@ -462,7 +468,7 @@ describe('manual rental entry keeps the submitted draft', () => {
     await tick()
     assert.equal(calls.length, before + 1)
     tree = draw()
-    assert.deepEqual(controls(tree).map((control) => control.props.value), ['', '', '', '', '', '', '', '', '', ''])
+    assert.deepEqual(controls(tree).map(controlValue), ['', '', '', '', '', '', '', '', '', ''])
     assert.ok(statusText(tree).includes(MIETWAGEN_GESPEICHERT))
 
     outcome = 'hold'
@@ -476,7 +482,7 @@ describe('manual rental entry keeps the submitted draft', () => {
     await tick()
     tree = draw(reise({ id: 'trip-other' }))
     assert.equal(calls.length, kept)
-    assert.deepEqual(controls(tree).map((control) => control.props.value), values)
+    assert.deepEqual(controls(tree).map(controlValue), values)
     assert.equal(controls(tree).every((control) => control.props.disabled === false), true)
   })
 
@@ -505,9 +511,9 @@ describe('manual rental entry keeps the submitted draft', () => {
   })
 })
 
-test('manual connection function matches the named completion hash', () => {
+test('manual connection function matches the reviewed calendar completion hash', () => {
   const source = readFileSync(resolve(root, 'components/trips/MobilitaetBereich.tsx'), 'utf8')
   const start = source.indexOf('export function ManuelleVerbindung')
   assert.ok(start > 0)
-  assert.equal(createHash('sha256').update(source.slice(start)).digest('hex'), VERBINDUNG_HASH)
+  assert.equal(createHash('sha256').update(source.slice(start)).digest('hex'), VERBINDUNG_KALENDER_HASH)
 })

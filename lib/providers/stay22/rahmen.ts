@@ -32,7 +32,10 @@ export function stay22Rahmen(host: HTMLElement, url: string, status: (phase: Sta
   frame.title = 'Unterkünfte, Preise und Karte von Stay22'
   frame.className = 'stay22-frame'
   frame.setAttribute('sandbox', STAY22_SANDBOX)
-  frame.setAttribute('credentialless', '')
+  // Chromium forces noopener on credentialless popups, preventing asynchronous
+  // popup flows from retaining a usable window handle. Use a normal sandboxed
+  // frame for the supplier's redirects, consistent with Safari's behavior.
+  // Keep the cross-origin sandbox, consent gate and restricted permissions.
   frame.referrerPolicy = 'origin'
   frame.allow = "fullscreen; camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'"
   let beendet = false
