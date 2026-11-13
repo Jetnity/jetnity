@@ -504,9 +504,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "bytes": 442740,
-      "blob": "bf986ee1d586b131258152a349ab5dde2d618565",
-      "sha256": "36f2e73ced2d4cf15bea46d682d0694409d860a00fb689e9a684b418d4dbae43"
+      "bytes": 442759,
+      "blob": "46c58fa1c35742ddf6957503c6946d73c5211657",
+      "sha256": "778720104798a3b619eb74a58d8866885b041f1e977fce102745344af83e5792"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -1253,9 +1253,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "d27cd098237e9f315f84ce15f1135146bb0aaf3b",
+      "blob": "b996242986fe7216dc3a7a70580aee3207ad7d31",
       "bytes": 103371,
-      "sha256": "5aa0fa812f7053b0d4734ac407f2905b21009e36f41fdf9010d0b875a32310f3"
+      "sha256": "adf3731a168333a0481027793ec0ec52ede9a1146a789236b843795c01b878b4"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -1413,20 +1413,21 @@
     "exactOriginalRecoverableFromGit": true
   },
   "currentIntegration": {
-    "revision": "CI4163_CONSTRAINT_EXPECTATION",
-    "parent": "70f64a8efbcdcb6501e96250d1c4c0c4266a1c07",
+    "revision": "HOSTED_REVIEW_FIX_4182_4183",
+    "parent": "0edc00ce2e04e05669a05b91a90a118e494f3fd1",
     "sourceRebindings": [
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "before": "becfa6be1b8600cea2ef0cf6eb6f9481a427bbcd",
-        "after": "0cd707fc73593048feeb076fceead13580af2c02"
+        "before": "bf986ee1d586b131258152a349ab5dde2d618565",
+        "after": "46c58fa1c35742ddf6957503c6946d73c5211657"
       }
     ],
     "originalOperationsAssertionsBudgetsUnchanged": true,
     "diagnosticExpressionPins": "All 14 diagnostic expressions unchanged.",
     "runtime": "NOT_RUN",
     "hostedApplied": false,
-    "publicActivated": false
+    "publicActivated": false,
+    "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6842283013"
   },
   "historyPreservation": {
     "previousManifest": {

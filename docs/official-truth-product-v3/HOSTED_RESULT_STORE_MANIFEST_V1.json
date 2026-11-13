@@ -93,21 +93,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-      "blob": "322c8faa842971d5074a0fc3f621cbae72bd58c1",
-      "bytes": 368034,
-      "sha256": "7894b797689c319385e58d9b2b2d3e483f3bfe9fb1892c1fe4e7f9dbea771007"
+      "blob": "f0149301935fb6e2be0d51e0d4919e69d037918d",
+      "bytes": 368065,
+      "sha256": "5b820daada83d54a5158553f0b0c3939c0ab691a336ee5b6ea3bb7fceb3fbfb7"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "c85f2526ad9dc952813e449a31e7b7a80555b5de",
+      "blob": "4dd26035d58c0c1e124d7ff4bfdf22b252d48d0e",
       "bytes": 207929,
-      "sha256": "66198a019074e3e5def803e14481c015b95cadba12f7c06dd07046618116f9f5"
+      "sha256": "91f5b46a14fc51196045cfd6ffb2fb3574ffb9f74542e857a8ed792117f1f58d"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-      "blob": "e173fae09bc7eb11759929d2c441ad01bc4c9273",
-      "bytes": 161251,
-      "sha256": "35608d73fdf43f9b3941a509d18e489aa4c3f611da818d6c056a841327e65a1b"
+      "blob": "c5b3008eddd563be3e98ae5c8d23129506d4b325",
+      "bytes": 161289,
+      "sha256": "3d1d39c3d00d0b26b43eaf4612a133e28887fa85a38ac765dbec195ed8acb750"
     }
   ],
   "selectedExisting": [
@@ -119,9 +119,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "76a7cdec3e43f106c4d496c788c31305ed02ce64",
-      "bytes": 650283,
-      "sha256": "81d7e2a6d437b9639759fd533bafc1da75c29a64bf9fd1090ac89f84d5216eb3"
+      "blob": "e41469f4270e073ee709af5b20eab5b335487253",
+      "bytes": 652500,
+      "sha256": "dbd4ac58e99365ad67e8162ce8782ae824ad76d0fce14d79a810df2fa1c0686a"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
@@ -149,9 +149,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "bf986ee1d586b131258152a349ab5dde2d618565",
-      "bytes": 442740,
-      "sha256": "36f2e73ced2d4cf15bea46d682d0694409d860a00fb689e9a684b418d4dbae43"
+      "blob": "46c58fa1c35742ddf6957503c6946d73c5211657",
+      "bytes": 442759,
+      "sha256": "778720104798a3b619eb74a58d8866885b041f1e977fce102745344af83e5792"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -167,9 +167,9 @@
   },
   "sourceClosure": {
     "native": {
-      "blob": "c85f2526ad9dc952813e449a31e7b7a80555b5de",
+      "blob": "4dd26035d58c0c1e124d7ff4bfdf22b252d48d0e",
       "bytes": 207929,
-      "sha256": "66198a019074e3e5def803e14481c015b95cadba12f7c06dd07046618116f9f5"
+      "sha256": "91f5b46a14fc51196045cfd6ffb2fb3574ffb9f74542e857a8ed792117f1f58d"
     },
     "literalCount": 80,
     "pins": [
@@ -511,9 +511,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "blob": "bf986ee1d586b131258152a349ab5dde2d618565",
-        "bytes": 442740,
-        "sha256": "36f2e73ced2d4cf15bea46d682d0694409d860a00fb689e9a684b418d4dbae43"
+        "blob": "46c58fa1c35742ddf6957503c6946d73c5211657",
+        "bytes": 442759,
+        "sha256": "778720104798a3b619eb74a58d8866885b041f1e977fce102745344af83e5792"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -547,15 +547,15 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-        "blob": "322c8faa842971d5074a0fc3f621cbae72bd58c1",
-        "bytes": 368034,
-        "sha256": "7894b797689c319385e58d9b2b2d3e483f3bfe9fb1892c1fe4e7f9dbea771007"
+        "blob": "f0149301935fb6e2be0d51e0d4919e69d037918d",
+        "bytes": 368065,
+        "sha256": "5b820daada83d54a5158553f0b0c3939c0ab691a336ee5b6ea3bb7fceb3fbfb7"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-        "blob": "e173fae09bc7eb11759929d2c441ad01bc4c9273",
-        "bytes": 161251,
-        "sha256": "35608d73fdf43f9b3941a509d18e489aa4c3f611da818d6c056a841327e65a1b"
+        "blob": "c5b3008eddd563be3e98ae5c8d23129506d4b325",
+        "bytes": 161289,
+        "sha256": "3d1d39c3d00d0b26b43eaf4612a133e28887fa85a38ac765dbec195ed8acb750"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -958,9 +958,9 @@
     "newPermissions": false,
     "newHrsIncomingDependencies": false,
     "unchangedNative": {
-      "blob": "b7e0c9363e0a7a3b12958034a6674893a1b92c2e",
-      "bytes": 236733,
-      "sha256": "199dddfa379e29a9380de396e78218158aac8887173412204110fd10677d4cf1"
+      "blob": "ff1639160c9e5db664a4edbbee8880a948d7c70e",
+      "bytes": 238402,
+      "sha256": "918313434f1b9a7fc97050062fd0f4a632ca1a212de714c65ac3dc6157c9cf30"
     },
     "unchanged31Groups": true,
     "currentDeclarations": 30,
@@ -968,9 +968,9 @@
     "changedGuardOnly": "assert_catalog_v1",
     "preservationManifest": {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "76a7cdec3e43f106c4d496c788c31305ed02ce64",
-      "bytes": 650283,
-      "sha256": "81d7e2a6d437b9639759fd533bafc1da75c29a64bf9fd1090ac89f84d5216eb3"
+      "blob": "e41469f4270e073ee709af5b20eab5b335487253",
+      "bytes": 652500,
+      "sha256": "dbd4ac58e99365ad67e8162ce8782ae824ad76d0fce14d79a810df2fa1c0686a"
     },
     "historicalBaseline": {
       "originalInstall": "67345144418cd23b9a22d2c1fdf0ddd2f6d40d7c",
@@ -982,7 +982,7 @@
         "sha256": "f8e905de99a9f3982c09e26b524aaf4bef0ea4c316bfbfced86b61bd5c22aa1b"
       }
     },
-    "unchangedNativeScope": "Historical standalone JIT/A3 baseline; the current preservation manifest binds the sole failure-only N15 snapshot diagnostic. All 31 groups and budgets remain unchanged.",
+    "unchangedNativeScope": "All 31 groups and budgets remain. Only final N15 comparison uses fresh copies excluding direct relations[*].relpages/reltuples/relallvisible/relfrozenxid/relminmxid; every other field and array order remains strictly compared. Raw snapshots, SQL, hashes, full difference count and history checks are retained; diagnostic path cap is 64. This current Native is not byte-identical to the earlier standalone JIT or diagnostic-only baseline.",
     "functionLocalJit": {
       "function": "official_v3_jobs_private.assert_catalog_v1()",
       "configuration": [
@@ -1135,5 +1135,23 @@
     "exactEdits": "be86dc3aff8871a40c5994cb1caa590433128c55",
     "bodyHash": "00ce3331c7c10b824f7ca53b23b4a9ce5eb40b597832a3cc76cc74bbac452079",
     "strictContextKeyAndExpressionValidationUnchanged": true
+  },
+  "hostedReviewFix4182": {
+    "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6842283013",
+    "author": "Jetnity CH-DE Hosted Review Fix — Codex Generation1",
+    "actualSession": "/root/hosted_batch_fix_g1",
+    "soleParent": "0edc00ce2e04e05669a05b91a90a118e494f3fd1",
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "dispatcherConfiguration": [
+      "search_path=pg_catalog",
+      "jit=off"
+    ],
+    "dispatcherBodySha256": "034449052e7103134c487c9372f9b76b1df1b6d7eb893299f8b08015a0b7f4fb",
+    "finiteProconfigSites": 4,
+    "existingN04ComponentDiagnosticAndN09ByteUnchanged": true,
+    "n15": "Only final comparison excludes five direct relation maintenance fields from fresh copies; raw diagnosis retained with cap 64 and every other field strict.",
+    "guardsRightsBudgetsUnchanged": true,
+    "devTargetIncluded": false,
+    "performance": "NOT_MEASURED"
   }
 }

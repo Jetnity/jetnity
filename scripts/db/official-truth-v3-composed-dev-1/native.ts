@@ -403,9 +403,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 442740,
-    "blob": "bf986ee1d586b131258152a349ab5dde2d618565",
-    "sha256": "36f2e73ced2d4cf15bea46d682d0694409d860a00fb689e9a684b418d4dbae43"
+    "bytes": 442759,
+    "blob": "46c58fa1c35742ddf6957503c6946d73c5211657",
+    "sha256": "778720104798a3b619eb74a58d8866885b041f1e977fce102745344af83e5792"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",

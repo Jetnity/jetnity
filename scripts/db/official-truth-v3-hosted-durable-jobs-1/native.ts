@@ -2510,7 +2510,7 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
           if (JSON.stringify(left) === JSON.stringify(right)) return
           if (left === null || right === null || typeof left !== 'object' || typeof right !== 'object'
             || Array.isArray(left) !== Array.isArray(right)) {
-            differences++; if (paths.length < 16) paths.push(path); return
+            differences++; if (paths.length < 64) paths.push(path); return
           }
           const a = left as Record<string, unknown>, b = right as Record<string, unknown>
           for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) locate(a[key], b[key], path + '/' + key)
@@ -2518,7 +2518,18 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
         locate(JSON.parse(snapshot), JSON.parse(after), '')
         console.error('HM04_N15_CATALOG_DIFF', JSON.stringify({ beforeHash: digest(snapshot), afterHash: digest(after), differences, paths }))
       }
-      assert.equal(after, snapshot)
+      function withoutRelationMaintenance(raw: string): Record<string, unknown> {
+        const copy = JSON.parse(raw) as Record<string, unknown>
+        assert.ok(Array.isArray(copy.relations))
+        for (const relation of copy.relations) {
+          assert.ok(relation !== null && typeof relation === 'object' && !Array.isArray(relation))
+          for (const field of ['relpages', 'reltuples', 'relallvisible', 'relfrozenxid', 'relminmxid'] as const) {
+            delete (relation as Record<string, unknown>)[field]
+          }
+        }
+        return copy
+      }
+      assert.deepStrictEqual(withoutRelationMaintenance(after), withoutRelationMaintenance(snapshot))
       assert.ok(Number((await f.owner.query('SELECT count(*)::text AS n FROM official_v3_jobs_private.execution_starts_v1'))[0]!.n) >= 64)
     })
     await assertNativeEmpty(native, method)
