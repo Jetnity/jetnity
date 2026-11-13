@@ -163,7 +163,7 @@ DECLARE role_row record; creator oid:='postgres'::regrole; owner_id oid:='ot_v3_
  temporary_edge boolean:=false;
 BEGIN
  IF session_user<>'postgres'
-  OR current_user<>CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END THEN
+  OR current_user<>(CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END) THEN
   RAISE EXCEPTION 'hrs1 exact recovery role transition required' USING ERRCODE='P7802';
  END IF;
  FOR role_row IN SELECT role.* FROM pg_catalog.pg_roles role WHERE role.rolname IN
@@ -175,7 +175,7 @@ BEGIN
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl defaults WHERE defaults.defaclrole=role_row.oid)
    OR pg_catalog.has_database_privilege(role_row.oid,current_database(),'CREATE')
    OR (SELECT count(*) FROM pg_catalog.pg_auth_members membership WHERE role_row.oid IN (membership.roleid,membership.member,membership.grantor))
-     <>CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END
+     <>(CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END)
    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members membership WHERE membership.roleid=role_row.oid
      AND membership.member=creator AND membership.grantor=10 AND membership.admin_option
      AND NOT membership.inherit_option AND NOT membership.set_option)
@@ -664,7 +664,7 @@ DECLARE role_row record; creator oid:='postgres'::regrole; owner_id oid:='ot_v3_
  temporary_edge boolean:=true;
 BEGIN
  IF session_user<>'postgres'
-  OR current_user<>CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END THEN
+  OR current_user<>(CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END) THEN
   RAISE EXCEPTION 'hrs1 exact recovery role transition required' USING ERRCODE='P7802';
  END IF;
  FOR role_row IN SELECT role.* FROM pg_catalog.pg_roles role WHERE role.rolname IN
@@ -676,7 +676,7 @@ BEGIN
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl defaults WHERE defaults.defaclrole=role_row.oid)
    OR pg_catalog.has_database_privilege(role_row.oid,current_database(),'CREATE')
    OR (SELECT count(*) FROM pg_catalog.pg_auth_members membership WHERE role_row.oid IN (membership.roleid,membership.member,membership.grantor))
-     <>CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END
+     <>(CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END)
    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members membership WHERE membership.roleid=role_row.oid
      AND membership.member=creator AND membership.grantor=10 AND membership.admin_option
      AND NOT membership.inherit_option AND NOT membership.set_option)
@@ -878,7 +878,7 @@ DECLARE role_row record; creator oid:='postgres'::regrole; owner_id oid:='ot_v3_
  temporary_edge boolean:=true;
 BEGIN
  IF session_user<>'postgres'
-  OR current_user<>CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END THEN
+  OR current_user<>(CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END) THEN
   RAISE EXCEPTION 'hrs1 exact recovery role transition required' USING ERRCODE='P7802';
  END IF;
  FOR role_row IN SELECT role.* FROM pg_catalog.pg_roles role WHERE role.rolname IN
@@ -890,7 +890,7 @@ BEGIN
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl defaults WHERE defaults.defaclrole=role_row.oid)
    OR pg_catalog.has_database_privilege(role_row.oid,current_database(),'CREATE')
    OR (SELECT count(*) FROM pg_catalog.pg_auth_members membership WHERE role_row.oid IN (membership.roleid,membership.member,membership.grantor))
-     <>CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END
+     <>(CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END)
    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members membership WHERE membership.roleid=role_row.oid
      AND membership.member=creator AND membership.grantor=10 AND membership.admin_option
      AND NOT membership.inherit_option AND NOT membership.set_option)
@@ -1642,7 +1642,7 @@ DECLARE role_row record; creator oid:='postgres'::regrole; owner_id oid:='ot_v3_
  temporary_edge boolean:=false;
 BEGIN
  IF session_user<>'postgres'
-  OR current_user<>CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END THEN
+  OR current_user<>(CASE WHEN temporary_edge THEN 'ot_v3_result_owner' ELSE 'postgres' END) THEN
   RAISE EXCEPTION 'hrs1 exact recovery role transition required' USING ERRCODE='P7802';
  END IF;
  FOR role_row IN SELECT role.* FROM pg_catalog.pg_roles role WHERE role.rolname IN
@@ -1654,7 +1654,7 @@ BEGIN
    OR EXISTS(SELECT 1 FROM pg_catalog.pg_default_acl defaults WHERE defaults.defaclrole=role_row.oid)
    OR pg_catalog.has_database_privilege(role_row.oid,current_database(),'CREATE')
    OR (SELECT count(*) FROM pg_catalog.pg_auth_members membership WHERE role_row.oid IN (membership.roleid,membership.member,membership.grantor))
-     <>CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END
+     <>(CASE WHEN temporary_edge AND role_row.oid=owner_id THEN 2 ELSE 1 END)
    OR NOT EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members membership WHERE membership.roleid=role_row.oid
      AND membership.member=creator AND membership.grantor=10 AND membership.admin_option
      AND NOT membership.inherit_option AND NOT membership.set_option)

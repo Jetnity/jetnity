@@ -290,7 +290,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
 }
 type VisaFixture=ReturnType<typeof makeVisaFixture>
 
-const EFFECT_MS=180_000,DRAIN_MS=35_000,MAX_CONNECTIONS=2048,MAX_OPERATIONS=32768
+const EFFECT_MS=180_000,DRAIN_MS=35_000,MAX_CONNECTIONS=2304,MAX_OPERATIONS=32768
 const GROUPS=['N01','N02','N03','N04','N05','N06','N07','N08','N09','N10','N11','N12'] as const
 const ROOT=new URL('../../../',import.meta.url)
 const TARGET_ACK='dev:yfvbxvijcorffwxbxahl:postgres:E18B6824905662'
@@ -684,9 +684,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "46697334a057772c7bad1c6f4da777aa1495de81",
-    "bytes": 163144,
-    "sha256": "bc9ab5a5411982986da9787e73c466dca331656182626de153dd62156ebfe533"
+    "blob": "86166f2a5e1a7c305e5bcf5660e0fb236a10b070",
+    "bytes": 163160,
+    "sha256": "8bda577ef539586f78d6f155b88635de793dd7034f3dc0ff0183ca208365d317"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
