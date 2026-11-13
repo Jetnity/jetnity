@@ -27,8 +27,8 @@ const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 const HRS_FIXTURE_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
   bytes: 209621,
-  blob: '58680412a463fa2f42a803a94f122dda36a1f538',
-  sha256: '3be76d9cb5a4f46260294b4d99914948eed95a2b00623ae3217f354b84b04d15',
+  blob: '3ecaba5c57e7dce3657ac80c59a3f1dac796d220',
+  sha256: '0cce02023fde4a073b16119094c9dc49873ced3939608568cf13ae0c9d697223',
 } as const
 
 function isPinnedHrsFixture(path: string, bytes: Buffer): boolean {

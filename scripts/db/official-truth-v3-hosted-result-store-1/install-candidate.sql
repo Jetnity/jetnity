@@ -1631,8 +1631,31 @@ WITH ns AS (
 ), prerequisite_ns AS (
  SELECT n.oid FROM pg_catalog.pg_namespace n WHERE n.nspname IN
   ('jetnity_ot_auth','official_v3_method_private','official_v3_method_api','official_v3_intake_private','official_v3_intake_api')
+), proc_attribute_inventory AS (
+ SELECT array_agg(a.attnum ORDER BY a.attnum)=ARRAY[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]::pg_catalog.int2[]
+   AND array_agg(a.attname::text ORDER BY a.attnum)=ARRAY[
+    'oid','proname','pronamespace','proowner','prolang',
+    'procost','prorows','provariadic','prosupport','prokind',
+    'prosecdef','proleakproof','proisstrict','proretset','provolatile',
+    'proparallel','pronargs','pronargdefaults','prorettype','proargtypes',
+    'proallargtypes','proargmodes','proargnames','proargdefaults','protrftypes',
+    'prosrc','probin','prosqlbody','proconfig','proacl']::text[]
+   AND array_agg(a.atttypid ORDER BY a.attnum)=ARRAY[
+    'pg_catalog.oid'::pg_catalog.regtype::oid,'pg_catalog.name'::pg_catalog.regtype::oid,'pg_catalog.oid'::pg_catalog.regtype::oid,
+    'pg_catalog.oid'::pg_catalog.regtype::oid,'pg_catalog.oid'::pg_catalog.regtype::oid,'pg_catalog.float4'::pg_catalog.regtype::oid,
+    'pg_catalog.float4'::pg_catalog.regtype::oid,'pg_catalog.oid'::pg_catalog.regtype::oid,'pg_catalog.regproc'::pg_catalog.regtype::oid,
+    'pg_catalog."char"'::pg_catalog.regtype::oid,'pg_catalog.bool'::pg_catalog.regtype::oid,'pg_catalog.bool'::pg_catalog.regtype::oid,
+    'pg_catalog.bool'::pg_catalog.regtype::oid,'pg_catalog.bool'::pg_catalog.regtype::oid,'pg_catalog."char"'::pg_catalog.regtype::oid,
+    'pg_catalog."char"'::pg_catalog.regtype::oid,'pg_catalog.int2'::pg_catalog.regtype::oid,'pg_catalog.int2'::pg_catalog.regtype::oid,
+    'pg_catalog.oid'::pg_catalog.regtype::oid,'pg_catalog.oidvector'::pg_catalog.regtype::oid,'pg_catalog.oid[]'::pg_catalog.regtype::oid,
+    'pg_catalog."char"[]'::pg_catalog.regtype::oid,'pg_catalog.text[]'::pg_catalog.regtype::oid,'pg_catalog.pg_node_tree'::pg_catalog.regtype::oid,
+    'pg_catalog.oid[]'::pg_catalog.regtype::oid,'pg_catalog.text'::pg_catalog.regtype::oid,'pg_catalog.text'::pg_catalog.regtype::oid,
+    'pg_catalog.pg_node_tree'::pg_catalog.regtype::oid,'pg_catalog.text[]'::pg_catalog.regtype::oid,'pg_catalog.aclitem[]'::pg_catalog.regtype::oid]
+   AND bool_and(a.attisdropped IS FALSE) AS matches_pg17
+ FROM pg_catalog.pg_attribute a
+ WHERE a.attrelid='pg_catalog.pg_proc'::pg_catalog.regclass AND a.attnum>0
 )
-SELECT jsonb_build_object(
+SELECT CASE WHEN (SELECT matches_pg17 FROM proc_attribute_inventory) IS TRUE THEN jsonb_build_object(
  'database',(SELECT to_jsonb(d)-ARRAY['datfrozenxid','datminmxid'] FROM pg_catalog.pg_database d WHERE d.datname=current_database()),
  'creator',(SELECT to_jsonb(r) FROM pg_catalog.pg_roles r WHERE r.rolname='postgres'),
  'namespaces',(SELECT jsonb_agg(to_jsonb(n) ORDER BY n.oid) FROM pg_catalog.pg_namespace n JOIN ns s ON s.oid=n.oid),
@@ -1646,9 +1669,17 @@ SELECT jsonb_build_object(
  'defaults',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.oid) FROM pg_catalog.pg_default_acl d
    WHERE d.defaclrole IN (SELECT oid FROM role_ids) OR d.defaclnamespace IN (SELECT oid FROM ns)
     OR (d.defaclrole='postgres'::regrole AND d.defaclnamespace=0)),
- 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+ 'functions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p),
    'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
-   FROM pg_catalog.pg_proc p JOIN ns n ON n.oid=p.pronamespace),
+   FROM (
+    SELECT p.oid,p.proname,p.pronamespace,p.proowner,p.prolang,
+     p.procost,p.prorows,p.provariadic,p.prosupport,p.prokind,
+     p.prosecdef,p.proleakproof,p.proisstrict,p.proretset,p.provolatile,
+     p.proparallel,p.pronargs,p.pronargdefaults,p.prorettype,p.proargtypes,
+     p.proallargtypes,p.proargmodes,p.proargnames,p.proargdefaults,p.protrftypes,
+     p.proconfig,p.proacl
+    FROM pg_catalog.pg_proc p
+   ) p JOIN ns n ON n.oid=p.pronamespace),
  'relations',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid'],
    'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
    'constraints',(SELECT jsonb_agg(to_jsonb(k) ORDER BY k.oid) FROM pg_catalog.pg_constraint k WHERE k.conrelid=c.oid),
@@ -1676,9 +1707,17 @@ SELECT jsonb_build_object(
    JOIN objects o ON o.classid=d.classoid AND o.objid=d.objoid),
  'labels',(SELECT jsonb_agg(to_jsonb(s) ORDER BY s.classoid,s.objoid,s.objsubid,s.provider) FROM pg_catalog.pg_seclabel s
    JOIN objects o ON o.classid=s.classoid AND o.objid=s.objoid),
- 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p)-ARRAY['prosrc','prosqlbody','probin'],
+ 'prerequisiteFunctions',(SELECT jsonb_agg(jsonb_build_object('catalog',to_jsonb(p),
    'definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid)
-   FROM pg_catalog.pg_proc p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
+   FROM (
+    SELECT p.oid,p.proname,p.pronamespace,p.proowner,p.prolang,
+     p.procost,p.prorows,p.provariadic,p.prosupport,p.prokind,
+     p.prosecdef,p.proleakproof,p.proisstrict,p.proretset,p.provolatile,
+     p.proparallel,p.pronargs,p.pronargdefaults,p.prorettype,p.proargtypes,
+     p.proallargtypes,p.proargmodes,p.proargnames,p.proargdefaults,p.protrftypes,
+     p.proconfig,p.proacl
+    FROM pg_catalog.pg_proc p
+   ) p JOIN prerequisite_ns n ON n.oid=p.pronamespace),
  'prerequisiteRelations',(SELECT jsonb_agg(jsonb_build_object('oid',c.oid,'namespace',c.relnamespace,'owner',c.relowner,'kind',c.relkind,
    'acl',c.relacl,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'options',c.reloptions,
    'attributes',(SELECT jsonb_agg(to_jsonb(a) ORDER BY a.attnum) FROM pg_catalog.pg_attribute a WHERE a.attrelid=c.oid),
@@ -1686,7 +1725,7 @@ SELECT jsonb_build_object(
    'triggers',(SELECT jsonb_agg(to_jsonb(g) ORDER BY g.oid) FROM pg_catalog.pg_trigger g WHERE g.tgrelid=c.oid),
    'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
    ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
-)
+) ELSE NULL::jsonb END
 $catalog$;
 CREATE FUNCTION official_v3_result_private.assert_catalog_v1() RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog AS $$
@@ -2922,7 +2961,7 @@ BEGIN
   ('official_v3_result_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'841d087a3a3cf4a29b9e698589707d65a82d72431e55944300afef543f32de91',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','record_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6d18053b7c43efb8887bffdb14ab0e9a85547dcee9bc331c5783af9ea8793ec2',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','binding_valid_v1','jsonb',ARRAY['b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'00ce3331c7c10b824f7ca53b23b4a9ce5eb40b597832a3cc76cc74bbac452079',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f1a6b5870f0563ac41bf9f41f0c746a6d37ace0d3b8b83685afbeede818b0fbb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'ac8151dc90ec603ea9170b3527b749fd488bb144474fe6c6cc1ee16f9168bbf1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','assert_catalog_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0126d96e6d154e9875f39ddc53f8f81f5696825e3e94ff677179cac5604950f6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','selected_binding_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'07c52251c1bf1f38b251ed6cb33d834c7319cd7e7b43e14e44a478695043daad',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','state_v1','',NULL::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1f181715fa3cb5a84b9fb6fad2658c92138b8e1ac0bed03de0a5d47b1df1b701',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
