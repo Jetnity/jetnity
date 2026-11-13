@@ -135,6 +135,9 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     { path: 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
       previousReviewed: { bytes: 22433, sha256: '57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8' },
       reviewed: { bytes: 30699, sha256: '9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b' } },
+    { path: 'components/readiness/OfficialTruthVisitorV3.tsx',
+      previousReviewed: { bytes: 9935, sha256: '62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35' },
+      reviewed: { bytes: 11117, sha256: 'e4b9fa59e6b92e3c1f4ad8b395495e19c5227c3c47702547da17e8148d5a4df3' } },
     { path: '.github/workflows/ci.yml',
       previousReviewed: { bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' },
       reviewed: { bytes: 23939, sha256: '7ebcde1fa3c9717ed7fbf555d0bace34a4da1457563de6fea2296437520400ae' } },
@@ -142,9 +145,10 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.deepEqual(currentSourceAmendment.map(row => row.path), [
     'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
     'package-lock.json', 'package.json', 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
+    'components/readiness/OfficialTruthVisitorV3.tsx',
     '.github/workflows/ci.yml',
   ])
-  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 5)
+  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 6)
   let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
@@ -199,5 +203,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
-  assert.equal(reviewedCurrentRows, 5)
+  assert.equal(reviewedCurrentRows, 6)
 })
