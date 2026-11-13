@@ -6,6 +6,8 @@
 
 import { viatorSuchname } from '@/lib/activities/viator-widget/suche'
 
+import { activityPreviewOrigin } from '@/lib/activities/preview-origin'
+
 export const VIATOR_PARTNER_ID = 'P00328015'
 export const VIATOR_WIDGET_REF = 'W-a3c98184-2fae-4bf6-919e-1c32bc42d788'
 export const VIATOR_WIDGET_SRC = 'https://www.viator.com/orion/partner/widget.js'
@@ -66,7 +68,8 @@ function kopf(aktiv: boolean): Headers {
 export function viatorEmbedPfad(name: string): string {
   const params = new URLSearchParams()
   params.set('name', name)
-  return `/embed/viator?${params.toString()}`
+  const preview = activityPreviewOrigin()
+  return preview ? `${preview}/viator.html?${params.toString()}` : `/embed/viator?${params.toString()}`
 }
 
 export function viatorParameterLesen(roh: string): string | null {

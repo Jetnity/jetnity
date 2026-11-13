@@ -35,6 +35,7 @@ angemeldeten Browsertest ausdrücklich noch kein Funktionsnachweis.
 | `NEXT_PUBLIC_SUPABASE_URL` | Unverändert bisherige Vorschau-DB | Bestehenden Live-Wert behalten |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Unverändert bisheriger öffentlicher Key | Bestehenden Live-Wert behalten |
 | `NEXT_PUBLIC_TRAVELPAYOUTS_FRAME_ORIGIN` | Öffentliche URL der getrennten statischen Widget-Vorschau | Bestehendes `https://jetnity-flight-widget.vercel.app` behalten |
+| `NEXT_PUBLIC_ACTIVITIES_FRAME_ORIGIN` | Öffentliche URL der getrennten statischen Aktivitätsrahmen | Nicht setzen; bestehende Live-Routen bleiben |
 | `JETNITY_DISCOVERCARS_SEARCH_ENABLED` | Bestehenden aktivierten Suchwert übernommen | Bestehenden Wert behalten |
 | `DISCOVERCARS_API_KEY` | Serverseitiger Sensitive-Wert, vorhandene Integration | Bestehenden serverseitigen Wert behalten |
 | `OMIO_KATALOG_SCHLUESSEL` | Serverseitiger Sensitive-Wert, vorhandene Integration | Bestehenden serverseitigen Wert behalten |
@@ -61,8 +62,10 @@ produktive Widget wurde nicht geändert.
   Die Merkliste darf ihn behalten, die einfache Übernahme weist die Grenze aus.
 - Öffentliche CDG/BKK-Referenzsuche in Preview ist leer, Live nicht. Keine alten
   Tabellen/RLS oder Referenzdaten ohne zusätzliche konkrete Freigabe ändern.
-- Credentialless Aktivitätsrahmen treffen in der geschützten Vorschau auf Vercel SSO.
-  Zugangsschutz und Auth wurden nicht abgeschaltet oder umgangen.
+- Credentialless Aktivitätsrahmen verwenden in der Vorschau eine getrennte öffentliche
+  statische Hülle mit exakter Parent-CSP. Consent, Sandbox und Nachrichtenprüfung bleiben.
+  Production nutzt ohne Vorschauvariable unverändert die bestehenden eigenen Embed-Routen.
+  Browsernachweis des neuen Deployments steht noch aus.
 - Stadtbilder decken bisher zehn Ziele ab; weltweite automatische Abdeckung bleibt offen.
 
 Details zum begrenzten Merkliste-Schnitt: [Umsetzungsnachweis](PRIVATE_UX_SAVED_OFFERS_2026-11-13.md).
