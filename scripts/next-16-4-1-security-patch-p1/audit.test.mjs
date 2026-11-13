@@ -37,6 +37,7 @@ const cases = [
   ['changed historical executable', s => { s.protectedBlobs['scripts/next-16-3-8-security-upgrade-1-audit.mjs'] = 'altered' }, 'historical audit/config/deployment blob drift'],
   ['changed config bytes', s => { s.protectedBlobs['next.config.js'] = 'altered' }, 'historical audit/config/deployment blob drift'],
   ['historical deployment is not the selected successor', s => { s.protectedBlobs['vercel.json'] = '85deee8e24190cf03ff339b4273b2a3295847073' }, 'historical audit/config/deployment blob drift'],
+  ['previous deployment omits the manual import region', s => { s.protectedBlobs['vercel.json'] = '62aeabfcc0123e4592b05820ca2798a661a4d28c' }, 'historical audit/config/deployment blob drift'],
   ['changed deployment bytes', s => { s.protectedBlobs['vercel.json'] = 'altered' }, 'historical audit/config/deployment blob drift'],
   ['widened host', s => { s.historical.report.remotePatterns[0].hostname = '*' }, 'historical remotePatterns drift'],
   ['cache enabled', s => { s.historical.report.deployment.cacheComponents = true }, 'historical deployment drift'],

@@ -11,6 +11,11 @@
       "regions": [
         "fra1"
       ]
+    },
+    "app/api/internal/readiness/ch-de-owner-import/route.ts": {
+      "regions": [
+        "fra1"
+      ]
     }
   }
 }

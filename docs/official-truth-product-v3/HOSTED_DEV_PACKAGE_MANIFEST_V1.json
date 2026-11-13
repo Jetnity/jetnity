@@ -340,9 +340,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
-      "blob": "5bceb7d219600301fece5042ccbb16286c0c7a20",
-      "bytes": 2393,
-      "sha256": "79d356bb8e4f59648ef6b87c6b1a4c5f148f157b0e23572304b5f9885a6b0078"
+      "blob": "f16bd00e2010f0f769c1ca966bd9228f182cf19d",
+      "bytes": 3573,
+      "sha256": "74716a3e8f86f7a339620465a5c50f24deec0210575aa16545a5ededb84a767d"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.test.ts",
@@ -544,21 +544,21 @@
     },
     {
       "path": "scripts/next-16-4-1-security-patch-p1/audit.mjs",
-      "blob": "ca5143100c10922ef19842fce35b26f1d01c4a25",
-      "bytes": 13427,
-      "sha256": "805453f12b86fa06946c75327edcff243554a6f8ec462598db3e1a69af89e28c"
+      "blob": "f2d2aa53d01839ce8b81b4649d334ffb679666a2",
+      "bytes": 13514,
+      "sha256": "6bf7f7bbb20763f556d3a81479a5fd0e00a9ab3f623b3295c5dfdb08e1147dd5"
     },
     {
       "path": "scripts/next-16-4-1-security-patch-p1/audit.test.mjs",
-      "blob": "4873e04cfb653f676a1e55a316067fa3ab1a123c",
-      "bytes": 6084,
-      "sha256": "5379d0c64b6f3553a1ddeb5a4c60f8cf5f81fc33ab90ac39ef8e785d428cd62d"
+      "blob": "5e129c99d866d8dc0f7c15e6a4ab07f0f034ef68",
+      "bytes": 6278,
+      "sha256": "66019ee354a831f0218259d1841c9abbef44c7b17d33521b515d2d84267d92f6"
     },
     {
       "path": "vercel.json",
-      "blob": "62aeabfcc0123e4592b05820ca2798a661a4d28c",
-      "bytes": 414,
-      "sha256": "c12ff4c5dfcbbef0a828121ad4d2ea9ff79ce588322b8b5750bb564c93e47aa1"
+      "blob": "6c74719acbe8b3f4552b669f7a2836ec3acfe210",
+      "bytes": 527,
+      "sha256": "795484f151c88cf8d5b086de8a5af2b2a09508ac92c387a8977138dd97ff474a"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
