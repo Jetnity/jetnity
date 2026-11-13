@@ -1485,6 +1485,7 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
       },async rollback(){if(!completed){completed=true;await common.human.connection.query('ROLLBACK')}}}
     }catch(error){await common.human.connection.query('ROLLBACK');throw error}
   }
+  const completedRawCalls:Readonly<{operation:Hrs1Operation;status:Hrs1Reply['status'];awaitMilliseconds:number}>[]=[]
   async function raw(operation:Hrs1Operation,body:Readonly<Record<string,unknown>>,signal:AbortSignal=sourceController.signal,
     override:NativeRequestOverride={},login?:HrsLoginKind):Promise<Hrs1Reply>{
     assert.ok(methodHead&&methodHead.epoch>0,'direct synthetic probe requires actual human receipt')
@@ -1502,9 +1503,13 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
       bindingHash:commandValue.bindingHash,budget:Object.freeze({deadline}),legalDate:at.legalDate,...override,notAfter} as Hrs1FixedRequest
     const kind=login??(request.channel==='attest'?'verifier':request.channel==='execute'?'writer'
       :['coverage','projection','projection_current','projection_batch'].includes(operation)?'reader':'writer')
+    const rawStarted=performance.now()
     const result=await hrs[kind].executeFixed(request,signal)
-    return result.status==='acknowledged'?readHrs1Reply(result.rows)??{status:'unconfirmed'}
+    const reply:Hrs1Reply=result.status==='acknowledged'?readHrs1Reply(result.rows)??{status:'unconfirmed'}
       :{status:result.status==='blocked_remote_unknown'?'unconfirmed':result.status}
+    completedRawCalls.push(Object.freeze({operation,status:reply.status,awaitMilliseconds:performance.now()-rawStarted}))
+    if(completedRawCalls.length>8)completedRawCalls.shift()
+    return reply
   }
   const fixed:Hrs1FixedOperation=(c,signal,_receipt,notAfter)=>raw(c.operation,c.body,signal,notAfter?{notAfter}:{})
   const source=createHrs1SourceConsumer({binding:fixture.binding,registry:fixture.registry,fixed,clock:fixture.clock,fixtureIssuer:fixture.issuer})
@@ -1557,6 +1562,10 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
     return v
   }
   function transition(item:Awaited<ReturnType<typeof prepare>>){
+    if(item.outcome.status!=='prepared')console.error('HRS1_PREPARE_DIAG',JSON.stringify({status:item.outcome.status,
+      reason:'reason' in item.outcome?item.outcome.reason:null,
+      inspections:fixture.control.inspections,finalizations:fixture.control.finalizations,reproofs:fixture.control.reproofs,
+      completedRawCalls}))
     assert.equal(item.outcome.status,'prepared');assert.ok(item.outcome.status==='prepared')
     const prepared=item.outcome.value,plan=mustRead(createV3TransitionIdempotencyKey(prepared.transition))
     return{operationKey:hrs1Ref('version-commit',{planKey:plan,prepared}),prepared,
