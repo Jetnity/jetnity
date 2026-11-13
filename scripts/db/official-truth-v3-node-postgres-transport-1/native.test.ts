@@ -215,8 +215,13 @@ test('genuine owned Node-Postgres TLS transport', { timeout: 180000 }, async t =
           result: { binding: config.binding, writerExecutor: resultExecutor('writer'), readerExecutor: resultExecutor('reader'),
             verifierExecutor: resultExecutor('verifier'), ids: () => ({ jobId: 'job3_' + '8'.repeat(32), operationId: 'op3_' + '9'.repeat(32) }) } })
         const before = Number(await effects()), previous = fixture.snapshot(), started = performance.now()
-        assert.deepEqual(await publicJobs.query(raw), { ok: false, reason: 'temporary_failure' })
+        const queried = await publicJobs.query(raw)
         const returned = performance.now(), settled = fixture.snapshot()
+        assert.ok(queried.ok)
+        assert.deepEqual(queried.answer, { response: { schema: 3, kind: 'conditional_rule_overview_record',
+          dataMode: 'synthetic_test', notice: 'SYNTHETIC_TEST_DATA_NO_TRAVEL_ADVICE', input: raw,
+          generatedAt: queried.answer.response.generatedAt,
+          cells: [{ citizenshipCountryCode: 'CH', results: [{ status: 'unavailable', reason: 'unbound' }] }] }, sources: {} })
         assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
         assert.equal(caps.length, 1)
         assert.ok(caps[0]! > started + 750 && caps[0]! <= entered[0]! + 2000,

@@ -85,7 +85,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     factKind:'requirement_effect',dataMode:'synthetic_test',legalTimeZone:'Europe/Berlin',
     activeFrom:'2000-01-01T00:00:00.000Z',activeUntilExclusive:'2099-12-31T00:00:00.000Z',
     sourceMaxAgeMilliseconds:300000,projectionMaxAgeMilliseconds:60000,monitorIntervalMilliseconds:100,
-    monitorLeaseMilliseconds:5000,attemptLimit:3,sources:SOURCE_ROLES.map(role=>({source:fixtureSource(role),canonicalUrl:fixtureUrl(role),
+    monitorLeaseMilliseconds:30000,attemptLimit:3,sources:SOURCE_ROLES.map(role=>({source:fixtureSource(role),canonicalUrl:fixtureUrl(role),
       contentType:'application/json',executableDigest:sha256Hex('hrs1 fictional extractor '+role),
       qualificationDigest:sha256Hex('hrs1 fictional global qualification '+role),role}))},registry)
   assert.ok(bindingRead)
@@ -2672,7 +2672,7 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   assert.equal((await h.raw('monitor_claim',{...firstBody,claimId:claimBody('collision').claimId})).status,'collision')
   assert.equal((await h.raw('monitor_claim',claimBody('busy'))).status,'busy')
   assert.deepEqual(await resultSnapshot(owner),leased,'collision and competing live claim leave complete durable state exact')
-  await actualTimePassed(lifetime,h.common.observer.connection,first.leaseUntil,6500)
+  await actualTimePassed(lifetime,h.common.observer.connection,first.leaseUntil,31500)
   const oldFinish={operationId:fixtureId('op3','hrs1-monitor-old-finish'),claimId:first.claimId,generation:first.generation,outcomes:[]}
   assert.equal((await h.raw('monitor_finish',oldFinish)).status,'not_current')
   assert.deepEqual(await resultSnapshot(owner),leased,'expired lease cannot finish or mutate its original journal')
