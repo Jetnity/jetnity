@@ -765,7 +765,9 @@ BEGIN
    OR function_row.provariadic<>0 OR function_row.prosupport<>0 OR function_row.probin IS NOT NULL OR function_row.protrftypes IS NOT NULL
    OR function_row.procost<>100 OR function_row.prorows<>0 OR function_row.pronargdefaults<>expected_function.defaults
    OR pg_catalog.pg_get_expr(function_row.proargdefaults,0) IS DISTINCT FROM expected_function.default_expression
-   OR function_row.proconfig IS DISTINCT FROM ARRAY[expected_function.config]
+   OR function_row.proconfig IS DISTINCT FROM (CASE
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='catalog_v1'
+     THEN ARRAY[expected_function.config,'jit=off'] ELSE ARRAY[expected_function.config] END)
    OR (expected_function.body_hash IS NOT NULL AND (function_row.prosqlbody IS NOT NULL
      OR pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(function_row.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected_function.body_hash))
    OR (expected_function.parsed_body IS NOT NULL AND (function_row.prosqlbody IS NULL OR function_row.prosrc<>'' OR target_oid IS NULL
