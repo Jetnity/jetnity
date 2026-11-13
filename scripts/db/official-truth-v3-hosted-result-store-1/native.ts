@@ -642,9 +642,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "79a7b523374f2fd3b5061fd0ddb2cc309e43bddf",
-    "bytes": 442759,
-    "sha256": "885dc5a711ffa8df786df67e33f3dd1f7aefaea5adb7d119b3b41a602ac994e6"
+    "blob": "15821002a6aeeff777c7362530c13d8228af3c40",
+    "bytes": 442763,
+    "sha256": "4256607f667e4d23d467e247f206aa87324f8bd962d6b73cf4c9701da6f2498a"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -678,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "74a6d443f7384b39e7d3d6a44bf6368ebd557e38",
-    "bytes": 373503,
-    "sha256": "dc2fd2cf0f824174dc85ef7554d5f0cc887674f4c43132cff1f8cab840e6a623"
+    "blob": "957ac8163fda912eda38c6e5ed841c4f541cc19b",
+    "bytes": 373534,
+    "sha256": "c85700c2e17698422bfb067349d86aa7f0b453281ea64ec967a150578b4b7ed7"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "648fc0fd7d65e02000692e456a7e28989a21a43b",
-    "bytes": 161289,
-    "sha256": "bab6848d2b4944a856de9971bc8129eff49c61700fdc9bf5be5de207b5dbec61"
+    "blob": "071b0122cf95a1dae3b996c6ca3a202e8d5c0742",
+    "bytes": 161297,
+    "sha256": "4077c493334edd224017b2c10d66c48a5b0d3a0da4df0342a6bd8228d4ebc5bb"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -2310,7 +2310,42 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
   }
   const fresh=await h.raw('projection_current',{binding})
   assert.equal(fresh.status,'conflict');assert.deepEqual(fresh.value,{decisionRef:ambiguous.outcome.decision.reference,reason:'primary_unclear'})
+  const beforeView={
+    hrs:{admitted:h.hrs.evidence.admitted,calls:h.hrs.evidence.calls.length,sqlCodes:h.hrs.evidence.sqlCodes.length},
+    method:{admitted:h.method.evidence.admitted,dispatched:h.method.evidence.dispatched,drained:h.method.evidence.drained,
+      calls:h.method.evidence.calls.length,sqlCodes:h.method.evidence.sqlCodes.length},
+    m04:{admitted:h.m04.evidence.admitted,dispatched:h.m04.evidence.dispatched,acknowledged:h.m04.evidence.acknowledged,
+      lost:h.m04.evidence.lost,aborted:h.m04.evidence.aborted,drained:h.m04.evidence.drained,
+      calls:h.m04.evidence.calls.length,sqlCodes:h.m04.evidence.sqlCodes.length},
+  }
+  const viewStarted=performance.now()
   const view=await h.jobs.query({destinationCountryCode:'DE',citizenshipCountryCodes:['CH']},h.signal)
+  if(!view.ok)console.error('HRS1_N10_QUERY_DIAG',JSON.stringify({
+    outcome:view.reason,awaitMilliseconds:performance.now()-viewStarted,callerAborted:h.signal.aborted,
+    hrs:{admitted:h.hrs.evidence.admitted-beforeView.hrs.admitted,
+      callCount:h.hrs.evidence.calls.length-beforeView.hrs.calls,sqlCodeCount:h.hrs.evidence.sqlCodes.length-beforeView.hrs.sqlCodes,
+      calls:h.hrs.evidence.calls.slice(beforeView.hrs.calls).slice(-8).map(c=>({
+        id:c.id,kind:c.kind,operation:c.operation,dispatched:c.dispatched,committed:c.committed,drained:c.drained,
+        awaitMilliseconds:c.awaitMilliseconds,targetOperations:c.targetOperations,
+      })),
+      sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeView.hrs.sqlCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+    method:{admitted:h.method.evidence.admitted-beforeView.method.admitted,
+      dispatched:h.method.evidence.dispatched-beforeView.method.dispatched,drained:h.method.evidence.drained-beforeView.method.drained,
+      callCount:h.method.evidence.calls.length-beforeView.method.calls,sqlCodeCount:h.method.evidence.sqlCodes.length-beforeView.method.sqlCodes,
+      calls:h.method.evidence.calls.slice(beforeView.method.calls).slice(-8).map(c=>({
+        joined:c.joined,pending:c.pending,targetAbsent:c.targetAbsent,controlAbsent:c.controlAbsent,stoppedFailure:c.stoppedFailure,
+      })),
+      sqlCodes:h.method.evidence.sqlCodes.slice(beforeView.method.sqlCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+    m04:{admitted:h.m04.evidence.admitted-beforeView.m04.admitted,
+      dispatched:h.m04.evidence.dispatched-beforeView.m04.dispatched,acknowledged:h.m04.evidence.acknowledged-beforeView.m04.acknowledged,
+      lost:h.m04.evidence.lost-beforeView.m04.lost,aborted:h.m04.evidence.aborted-beforeView.m04.aborted,
+      drained:h.m04.evidence.drained-beforeView.m04.drained,
+      callCount:h.m04.evidence.calls.length-beforeView.m04.calls,sqlCodeCount:h.m04.evidence.sqlCodes.length-beforeView.m04.sqlCodes,
+      calls:h.m04.evidence.calls.slice(beforeView.m04.calls).slice(-8).map(c=>({
+        id:c.id,kind:c.kind,operation:c.operation,dispatched:c.dispatched,committed:c.committed,drained:c.drained,
+      })),
+      sqlCodes:h.m04.evidence.sqlCodes.slice(beforeView.m04.sqlCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+  }))
   assert.ok(view.ok);assert.equal(view.answer.response.cells.flatMap(c=>c.results).some(r=>r.status==='accepted'),false)
   assert.equal(h.hrs.snapshot().active,0)
   return{ambiguous,binding}

@@ -1661,7 +1661,9 @@ END $$;
 -- The one installer-owned SET edge is excluded from the stored snapshot and
 -- independently forbidden by assert_catalog_v1 after installation.
 CREATE FUNCTION official_v3_result_private.catalog_v1() RETURNS jsonb
-LANGUAGE sql STABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog SET jit=off AS $catalog$
+LANGUAGE plpgsql STABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog SET jit=off AS $catalog$
+BEGIN
+ RETURN (
 WITH ns AS (
  SELECT n.oid,n.nspname FROM pg_catalog.pg_namespace n WHERE n.nspname IN ('official_v3_result_private','official_v3_result_api')
 ), tabs AS (
@@ -1779,6 +1781,8 @@ SELECT CASE WHEN (SELECT matches_pg17 FROM proc_attribute_inventory) IS TRUE THE
    'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY p.oid) FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid))
    ORDER BY c.oid) FROM pg_catalog.pg_class c JOIN prerequisite_ns n ON n.oid=c.relnamespace)
 ) ELSE NULL::jsonb END
+);
+END
 $catalog$;
 CREATE FUNCTION official_v3_result_private.assert_catalog_v1() RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog AS $$
@@ -3014,7 +3018,7 @@ BEGIN
   ('official_v3_result_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'841d087a3a3cf4a29b9e698589707d65a82d72431e55944300afef543f32de91',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','record_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6d18053b7c43efb8887bffdb14ab0e9a85547dcee9bc331c5783af9ea8793ec2',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','binding_valid_v1','jsonb',ARRAY['b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'00ce3331c7c10b824f7ca53b23b4a9ce5eb40b597832a3cc76cc74bbac452079',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'ac8151dc90ec603ea9170b3527b749fd488bb144474fe6c6cc1ee16f9168bbf1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a103c90fb3589a9c8819e5ec4c2eb9fbf8bd7e22a049ebe542b64d8184557a81',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','assert_catalog_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0126d96e6d154e9875f39ddc53f8f81f5696825e3e94ff677179cac5604950f6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','selected_binding_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'07c52251c1bf1f38b251ed6cb33d834c7319cd7e7b43e14e44a478695043daad',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','state_v1','',NULL::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1f181715fa3cb5a84b9fb6fad2658c92138b8e1ac0bed03de0a5d47b1df1b701',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),

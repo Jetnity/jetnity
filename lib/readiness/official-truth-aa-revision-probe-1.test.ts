@@ -27,6 +27,13 @@ const aaBernReaderPin = {
   blob: 'e08f89e2a8bf2f7f9344dd8e14a88a691aea5def',
   sha256: '18fbdc571d85d62744fd132c6e0e8987487c448c2b50fbe830c56d4158a66100',
 } as const
+// One reviewed synthetic HRS proof may consume only the actual pure UTF-8 decoder.
+const hrsNativeDecoderPath = 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts'
+const hrsNativeDecoderPin = {
+  bytes: 224112,
+  blob: 'd1748a5e3e253b5a30ed5a8f49e66b13798edfe2',
+  sha256: 'a9e91817a70be062bfb8a6c8086a39b2c5f13a7be2f113e86f44b201d983db06',
+} as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'
 const reviewedPath = 'lib/readiness/official-truth-ch-de-aa-visa-mapping-candidate-1/reviewed-source.ts'
@@ -470,6 +477,7 @@ function sourceModule(file: string, value: string, sourcePath: string): boolean 
 function readerModule(file: string, value: string): boolean { return sourceModule(file, value, readerPath) }
 
 const physicalImports = {
+  [hrsNativeDecoderPath]: ['value:textAus'],
   [aaBernReaderPath]: [
     'value:officialTruthServerOwnedRetrievalAdresseZulaessig', 'value:medientyp',
     'value:inhaltLaenge', 'value:textAus', 'type:OfficialTruthServerOwnedRetrievalLookup',
@@ -525,6 +533,12 @@ function importBoundary(file: string, source: string): void {
     assert.equal(sha(bytes), aaBernReaderPin.sha256)
     assert.equal(createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex'), aaBernReaderPin.blob)
   }
+  if (file === hrsNativeDecoderPath) {
+    const bytes = Buffer.from(source, 'utf8')
+    assert.equal(bytes.length, hrsNativeDecoderPin.bytes)
+    assert.equal(sha(bytes), hrsNativeDecoderPin.sha256)
+    assert.equal(createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex'), hrsNativeDecoderPin.blob)
+  }
   const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true)
   let passiveNamespaces = 0, r2ReaderImports = 0, physicalSelections = 0, physicalReexports = 0, probeSelections = 0
   if (file === legacyNativePath) {
@@ -552,8 +566,8 @@ function importBoundary(file: string, source: string): void {
         }
       }
       if (sourceModule(file, target, physicalPath)) {
-        assert(file === readerPath || file === probePath || file === aaBernReaderPath,
-          'Only the exact original Reader, consumed probe and pinned V3 reader may import the physical module')
+        assert(file === readerPath || file === probePath || file === aaBernReaderPath || file === hrsNativeDecoderPath,
+          'Only the exact original Reader, consumed probe, pinned V3 reader and pinned HRS decoder proof may import the physical module')
         assert(node.importClause)
         assert.deepEqual(namedImportSelection(node.importClause), physicalImports[file])
         physicalSelections += 1
@@ -656,7 +670,7 @@ function importBoundary(file: string, source: string): void {
   visit(tree)
   if (file === legacyNativePath) assert.equal(passiveNamespaces, 1)
   if (file === legacyR2Path) assert.equal(r2ReaderImports, 1)
-  if (file === readerPath || file === probePath || file === aaBernReaderPath) assert.equal(physicalSelections, 1)
+  if (file === readerPath || file === probePath || file === aaBernReaderPath || file === hrsNativeDecoderPath) assert.equal(physicalSelections, 1)
   if (file === testPath) assert.equal(probeSelections, 1)
   if (file === physicalPath) {
     assert.deepEqual(declarationExports(tree), [
@@ -878,6 +892,32 @@ function importInventory(): void {
     aaBernSource + "\nvoid import('@/lib/readiness/official-truth-retrieval-physical-internal')\n",
     aaBernSource + "\nconst moduleName = '@/lib/readiness/official-truth-retrieval-physical-internal'; void import(moduleName)\n",
   ]) assert.throws(() => importBoundary(aaBernReaderPath, source))
+  const hrsNativeSource = fs.readFileSync(hrsNativeDecoderPath, 'utf8')
+  const decoderImport = "import { textAus } from '../../../lib/readiness/official-truth-retrieval-physical-internal'"
+  assert.equal(hrsNativeSource.split(decoderImport).length - 1, 1)
+  importBoundary(hrsNativeDecoderPath, hrsNativeSource)
+  // Resolve the same physical module even from intentionally misplaced paths.
+  const misplacedDecoder = hrsNativeSource.replace(decoderImport,
+    "import { textAus } from '@/lib/readiness/official-truth-retrieval-physical-internal'")
+  for (const path of ['./' + hrsNativeDecoderPath, hrsNativeDecoderPath + '.evil.ts',
+    hrsNativeDecoderPath + '/../unreviewed.ts', 'app/' + hrsNativeDecoderPath,
+    hrsNativeDecoderPath.replace('/native.ts', '/native-copy.ts')]) {
+    assert.throws(() => importBoundary(path, misplacedDecoder), path)
+  }
+  for (const source of [
+    hrsNativeSource + '\n',
+    hrsNativeSource.replace(decoderImport, ''),
+    hrsNativeSource + '\n' + decoderImport + '\n',
+    hrsNativeSource.replace('{ textAus }', '{ textAus as renamed }'),
+    hrsNativeSource.replace('{ textAus }', '{ textAus, serverDns }'),
+    hrsNativeSource.replace('{ textAus }', '{ type textAus }'),
+    hrsNativeSource.replace('{ textAus }', 'decoder'),
+    hrsNativeSource.replace('{ textAus }', '* as decoder'),
+    hrsNativeSource + "\nexport { textAus } from '@/lib/readiness/official-truth-retrieval-physical-internal'\n",
+    hrsNativeSource + "\nconst decoder = require('@/lib/readiness/official-truth-retrieval-physical-internal')\n",
+    hrsNativeSource + "\nvoid import('@/lib/readiness/official-truth-retrieval-physical-internal')\n",
+    hrsNativeSource + "\nconst moduleName = '@/lib/readiness/official-truth-retrieval-physical-internal'; void import(moduleName)\n",
+  ]) assert.throws(() => importBoundary(hrsNativeDecoderPath, source))
 }
 
 async function syntheticPreflight(): Promise<void> {
