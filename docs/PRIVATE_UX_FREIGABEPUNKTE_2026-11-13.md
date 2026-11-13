@@ -116,3 +116,27 @@ Details zum begrenzten Merkliste-Schnitt: [Umsetzungsnachweis](PRIVATE_UX_SAVED_
   Deshalb ausdrücklich nicht grün. Der Harness verwendet jetzt die vorhandene
   gemeinsame Serveraktionsgrenze; alle Assertions bleiben bestehen. Neuer voller
   Core-Lauf ist vor Merge weiterhin zwingend. Keine Workflow-/Paketänderung.
+
+## Angemeldete Chrome-Prüfung
+
+Der PO meldete sich mit einem vorhandenen Preview-Testkonto an. Kein Auth-Konto
+und kein Passwort wurden vom Agent geändert. Die eigene Paris-Gastreise wurde
+über den bestehenden Ablauf ins Konto übernommen und in `QA PR1198 – Paris`
+umbenannt. Bestehende andere Reisen bleiben unberührt.
+
+- Konkretes Normandy-Hotel manuell gemerkt; nach Neuladen vorhanden.
+- Echte DiscoverCars-Karte Toyota Aygo am Herz gemerkt, serverseitig erneut gelesen,
+  in der Merkliste mit Anbieterreferenz, Zeitraum und Ortszeiten angezeigt.
+- Hotel über vorausgewählten Paris-Tag übernommen: 20.–25.11.2026, fünf Nächte,
+  `unconfirmed`, ohne Bestätigungsdatum. Wiederholter Klick bleibt ein Planpunkt.
+- Klar synthetischer Nachtflug für den Zeitgrenzentest: 20.11., 23:30 bis 21.11.,
+  01:00. Browsermeldung und tatsächlicher Datenbank-Readback stimmen überein;
+  kein reales Flugangebot oder gebuchter Flug behauptet.
+- Ergänzt: erfolgreiche Planübernahme invalidiert die vorhandenen Reiseansichten
+  und `/reisen`; der Erfolgslink öffnet unmittelbar `?ansicht=reiseplan`.
+  Echte Serveraktionslogik mit ersetzter Auth-/DB-Transportgrenze geprüft:
+  anonym/fremdes Angebot ohne Schreiben, bestätigter Readback, idempotenter Retry,
+  fehlender Readback ohne Erfolgsmeldung. Neun Merkliste-/Planprüfungen und
+  41 strenge Security-Inventarprüfungen bestanden. Neuer Core-Head erforderlich.
+- Erneutes Anmelden, unabhängige zweite Sitzung und physisches Gerät bleiben bis
+  zum tatsächlichen Nachweis offen. Browser-Neuladen ist kein Gerätewechsel.
