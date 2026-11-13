@@ -17,8 +17,9 @@ export type Hrs1MonitorResult = Readonly<{
 }>
 export type Hrs1Facade = M04Facade & Readonly<{
   query(raw: unknown, signal?: AbortSignal): Promise<V3VisitorQueryResult>;
-  monitorOnce(signal?: AbortSignal): Promise<Hrs1MonitorResult>;
-  workSelectedOnce(kind: 'rule_research' | 'combination_discovery', signal?: AbortSignal): ReturnType<M04Facade['workOnce']>;
+  monitorOnce(signal?: AbortSignal, budget?: Readonly<{ deadline: number }>): Promise<Hrs1MonitorResult>;
+  workSelectedOnce(kind: 'rule_research' | 'combination_discovery', signal?: AbortSignal,
+    budget?: Readonly<{ deadline: number }>): ReturnType<M04Facade['workOnce']>;
 }>
 
 /** Internal only. Neither a connection nor a proof receipt is returned by the

@@ -42,12 +42,14 @@ function Result({ result }: { result: V3VisitorViewResult }) {
 }
 
 /**
- * Dormant client component. A later client-owned transport may supply query;
+ * Client display. A client-owned transport may supply query;
  * this file imports no server ports, registry, credentials or proof machinery.
  */
-export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, initialInput }: {
-  query?: V3VisitorLoad; initialInput?: V3VisitorInput
+export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, initialInput, mode }: {
+  query?: V3VisitorLoad; initialInput?: V3VisitorInput; mode?: 'ch-de-visa'
 }) {
+  const fixedChDe = mode === 'ch-de-visa'
+  const ResultHeading = fixedChDe ? 'h2' : 'h3'
   const id = useId()
   const [destination, setDestination] = useState(initialInput?.destinationCountryCode ?? '')
   const [citizenships, setCitizenships] = useState<string[]>(initialInput ? [...initialInput.citizenshipCountryCodes] : [''])
@@ -59,20 +61,34 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
     if ((state.phase === 'ready' || state.phase === 'error') && state.focusResult) heading.current?.focus()
   }, [state])
   const selected = [...new Set(citizenships.filter(istKatalogLand))].sort()
-  const valid = istKatalogLand(destination) && selected.length > 0 && citizenships.every((country) => istKatalogLand(country)) && citizenships.length <= 5
+  const valid = fixedChDe || (istKatalogLand(destination) && selected.length > 0 && citizenships.every((country) => istKatalogLand(country)) && citizenships.length <= 5)
   const changed = (action: () => void) => { controller.invalidate(); action() }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!valid) return
+    if (fixedChDe) {
+      void controller.submit({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
+      return
+    }
+    if (!istKatalogLand(destination)) return
     void controller.submit({ destinationCountryCode: destination, citizenshipCountryCodes: selected })
   }
   return <section className="mx-auto grid w-full min-w-0 max-w-4xl grid-cols-1 gap-6 text-foreground [overflow-wrap:anywhere]" aria-labelledby={`${id}-title`}>
     <header className="min-w-0 space-y-3">
       <p className="text-sm font-medium text-brand-600">Einreise vorbereiten</p>
-      <h2 id={`${id}-title`} className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Einreisebestimmungen</h2>
-      <p className="max-w-2xl text-base leading-7 text-ink-950">Wähle dein Zielland und deine Staatsangehörigkeiten. Du erhältst die Angaben für jede Staatsangehörigkeit getrennt, mit ihren Bedingungen und amtlichen Quellen.</p>
+      {fixedChDe ? <h1 id={`${id}-title`} className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Visum für Deutschland</h1>
+        : <h2 id={`${id}-title`} className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">Einreisebestimmungen</h2>}
+      <p className="max-w-2xl text-base leading-7 text-ink-950">{fixedChDe
+        ? 'Amtliche Angaben zur Visumpflicht für Schweizer Staatsangehörige mit Schweizer Reisepass bei direkter Einreise nach Deutschland.'
+        : 'Wähle dein Zielland und deine Staatsangehörigkeiten. Du erhältst die Angaben für jede Staatsangehörigkeit getrennt, mit ihren Bedingungen und amtlichen Quellen.'}</p>
     </header>
     <form onSubmit={submit} noValidate className="grid min-w-0 grid-cols-1 gap-5 rounded-3xl border border-border bg-card px-[min(1.25rem,4vw)] py-5 sm:p-8">
+      {fixedChDe ? <dl className="grid min-w-0 grid-cols-1 gap-4 text-sm leading-6 sm:grid-cols-2">
+        <div><dt className="font-medium">Zielland</dt><dd>Deutschland</dd></div>
+        <div><dt className="font-medium">Staatsangehörigkeit</dt><dd>Schweiz</dd></div>
+        <div><dt className="font-medium">Reisedokument</dt><dd>Schweizer Reisepass</dd></div>
+        <div><dt className="font-medium">Einreise</dt><dd>Direkte Einreise nach Deutschland</dd></div>
+      </dl> : <>
       <LandFeld id={`${id}-destination`} label="Zielland" value={destination} optional={false} searchable={false}
         onChange={(country) => changed(() => setDestination(country))} />
       <fieldset className="grid min-w-0 grid-cols-1 gap-3" aria-describedby={`${id}-citizenship-help`}>
@@ -87,10 +103,11 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
         {citizenships.length < 5 ? <button type="button" className={`${secondary} justify-self-start`}
           onClick={() => changed(() => setCitizenships((items) => [...items, '']))}>Weitere Staatsangehörigkeit</button> : null}
       </fieldset>
+      </>}
       <div className="min-w-0 space-y-2 border-t border-border pt-5">
         <button type="submit" disabled={!valid || state.phase === 'loading'} aria-describedby={!valid ? `${id}-selection-help` : undefined}
           className="min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full bg-primary px-[min(1.25rem,4vw)] py-3 font-semibold text-primary-foreground transition-colors hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-5">
-          {state.phase === 'loading' ? 'Angaben werden geladen …' : 'Einreisebestimmungen anzeigen'}
+          {state.phase === 'loading' ? 'Angaben werden geladen …' : fixedChDe ? 'Visumangaben anzeigen' : 'Einreisebestimmungen anzeigen'}
         </button>
         {!valid ? <p id={`${id}-selection-help`} className="text-sm leading-6 text-ink-950">Bitte wähle ein Zielland und in jedem Feld eine Staatsangehörigkeit.</p> : null}
       </div>
@@ -101,12 +118,12 @@ export default function OfficialTruthVisitorV3({ query = unboundV3VisitorLoad, i
     </p>
     {state.phase === 'loading' ? <p className="rounded-2xl bg-muted px-[min(1.25rem,4vw)] py-5 text-ink-950 sm:p-5">Vorbereitete Angaben werden abgerufen …</p> : null}
     {state.phase === 'error' ? <div className="min-w-0 space-y-2 rounded-2xl border border-border bg-muted px-[min(1.25rem,4vw)] py-5 sm:p-5">
-      <h3 ref={heading} tabIndex={-1} className="font-semibold focus:outline-none">Abfrage fehlgeschlagen</h3>
+      <ResultHeading ref={heading} tabIndex={-1} className="font-semibold focus:outline-none">Abfrage fehlgeschlagen</ResultHeading>
       <p className="text-ink-950">{state.message}</p>
     </div> : null}
     {state.phase === 'ready' ? <div className="grid min-w-0 grid-cols-1 gap-5">
       <div className="min-w-0 space-y-2">
-        <h3 ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">Einreise nach {landAnzeigeText(state.view.input.destinationCountryCode)}</h3>
+        <ResultHeading ref={heading} tabIndex={-1} className="text-2xl font-semibold tracking-tight focus:outline-none">Einreise nach {landAnzeigeText(state.view.input.destinationCountryCode)}</ResultHeading>
         <p className="text-sm leading-6 text-ink-950">Es gelten die jeweils angegebenen Bedingungen. Die Übersicht ist keine individuelle Einreisezusage.</p>
         {state.message ? <p className="rounded-xl bg-muted px-[min(0.75rem,3vw)] py-3 text-sm leading-6 text-ink-950 sm:px-3">{state.message}</p> : null}
         {state.view.synthetic ? <p className="rounded-xl border border-border bg-citrus-300 px-[min(0.75rem,3vw)] py-3 text-sm font-semibold text-brand-900 sm:px-3">Synthetische Testdaten · Keine echte Einreiseauskunft</p> : null}
