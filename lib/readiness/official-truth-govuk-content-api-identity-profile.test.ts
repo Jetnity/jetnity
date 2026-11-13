@@ -421,9 +421,9 @@ describe('registry and production dormancy', () => {
   // HRS: one reviewed literal PINS row, never permission for a runtime import.
   const HRS_GOVUK_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-    bytes: 224112,
-    blob: 'c83c04d3258794f663815c7efe65b268e1f234a8',
-    sha256: 'eeebbf0fbe0a09d14df9059b906da6e574aaa554923631b270c78ecf66093350',
+    bytes: 229008,
+    blob: 'b7108088e37f224b7dd9ee56652ccb75988632bc',
+    sha256: '47ac7f501e0c9391a92180b994325195db393377523372149e686d7fe6bb3e8a',
     contextStart: 29514,
     contextEnd: 29760,
     tokenStart: 29545,

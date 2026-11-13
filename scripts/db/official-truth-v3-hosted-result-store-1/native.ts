@@ -2252,6 +2252,70 @@ async function n09(h:Harness){
   return{lost,body,confirmation,next,projected}
 }
 
+/** Failure-only isolated measurements on the existing bootstrap connection.
+ * Each read-only transaction reproduces the owner's dispatch GUCs, then rolls
+ * back. These measurements are not timings of the original dispatch. */
+async function n10ComponentDiagnostics(h:Harness,trigger:'batch'|'query'){
+  const components:readonly Readonly<{name:string;sql:string;fields:readonly string[]}>[]=[
+    {name:'catalog',sql:'SELECT official_v3_result_private.catalog_v1() IS NOT NULL AS measured',fields:['measured']},
+    {name:'history',sql:'SELECT official_v3_result_private.assert_history_v1() AS measured',fields:[]},
+    {name:'qualification_hashes',sql:`SELECT count(*)::text AS qualification_count,
+      (count(*) FILTER (WHERE q.digest<>official_v3_result_private.hash_v1(q.record)))::text AS mismatches
+      FROM official_v3_result_private.qualifications_v1 q`,fields:['qualification_count','mismatches']},
+    {name:'referenced_original_hashes',sql:`SELECT count(*)::text AS original_reference_count,
+      (count(*) FILTER (WHERE o.version_id IS NULL OR e.version_id IS NULL
+        OR o.raw_digest<>encode(sha256(convert_to(o.body_text,'UTF8')),'hex')))::text AS mismatches
+      FROM official_v3_result_private.qualifications_v1 q
+      CROSS JOIN LATERAL jsonb_array_elements_text(q.original_ids) ids
+      LEFT JOIN official_v3_result_private.originals_v1 o ON o.version_id=ids.value
+      LEFT JOIN official_v3_result_private.extractions_v1 e ON e.version_id=ids.value`,fields:['original_reference_count','mismatches']},
+    {name:'sizes',sql:`WITH qualification_sizes AS (
+        SELECT octet_length(q.record::text)::bigint AS bytes,jsonb_array_length(q.original_ids)::bigint AS reference_count
+        FROM official_v3_result_private.qualifications_v1 q
+      ), original_sizes AS (
+        SELECT o.version_id,octet_length(o.body_text)::bigint AS bytes FROM official_v3_result_private.originals_v1 o
+      ) SELECT
+        (SELECT count(*)::text FROM qualification_sizes) AS qualification_count,
+        (SELECT COALESCE(sum(bytes),0)::text FROM qualification_sizes) AS qualification_bytes,
+        (SELECT COALESCE(max(bytes),0)::text FROM qualification_sizes) AS qualification_max_bytes,
+        (SELECT count(*)::text FROM qualification_sizes WHERE bytes>262144) AS qualification_over_fast_path_cap,
+        (SELECT COALESCE(sum(reference_count),0)::text FROM qualification_sizes) AS original_reference_count,
+        (SELECT count(*)::text FROM original_sizes) AS stored_original_count,
+        (SELECT COALESCE(sum(bytes),0)::text FROM original_sizes) AS stored_unique_original_bytes,
+        (SELECT COALESCE(sum(o.bytes),0)::text FROM official_v3_result_private.qualifications_v1 q
+          CROSS JOIN LATERAL jsonb_array_elements_text(q.original_ids) ids
+          JOIN original_sizes o ON o.version_id=ids.value) AS referenced_original_bytes`,
+      fields:['qualification_count','qualification_bytes','qualification_max_bytes','qualification_over_fast_path_cap',
+        'original_reference_count','stored_original_count','stored_unique_original_bytes','referenced_original_bytes']},
+  ]
+  const safeError=(error:unknown)=>error instanceof LocalPgError
+    ?(/^[0-9A-Z]{5}$/.test(error.code)?error.code:'transport_error'):'unexpected_error'
+  for(const component of components){
+    let queryMilliseconds:number|null=null,errorClass:string|null=null,rollbackErrorClass:string|null=null
+    let aggregates:Readonly<Record<string,string|null>>|null=null
+    try{
+      await h.common.bootstrap.connection.query('BEGIN READ ONLY')
+      await h.common.bootstrap.connection.query("SET LOCAL statement_timeout='2s'")
+      await h.common.bootstrap.connection.query("SET LOCAL lock_timeout='1s'")
+      await h.common.bootstrap.connection.query('SET LOCAL ROLE ot_v3_result_owner')
+      await h.common.bootstrap.connection.query('SET LOCAL search_path=pg_catalog')
+      await h.common.bootstrap.connection.query('SET LOCAL jit=off')
+      await h.common.bootstrap.connection.query('SET LOCAL plan_cache_mode=force_generic_plan')
+      const started=performance.now()
+      try{
+        const rows=await h.common.bootstrap.connection.query(component.sql)
+        aggregates=Object.fromEntries(component.fields.map(field=>[field,rows[0]?.[field]??null]))
+      }finally{queryMilliseconds=performance.now()-started}
+    }catch(error){errorClass=safeError(error)}
+    finally{
+      try{await h.common.bootstrap.connection.query('ROLLBACK')}
+      catch(error){rollbackErrorClass=safeError(error)}
+    }
+    console.error('HRS1_N10_COMPONENT_DIAG',JSON.stringify({trigger,measurement:'isolated_existing_connection',
+      component:component.name,queryMilliseconds,errorClass,rollbackErrorClass,aggregates}))
+  }
+}
+
 async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnType<typeof n04>>,current:Awaited<ReturnType<typeof n09>>){
   const binding=projectionBinding(current.projected.projection)
   assert.equal((await h.raw('projection_current',{binding})).status,'current')
@@ -2303,6 +2367,7 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
         awaitMilliseconds:c.awaitMilliseconds,targetOperations:c.targetOperations,
       })),
     }))
+    if(!['not_current','missing'].includes(batchReply.status))await n10ComponentDiagnostics(h,'batch')
     assert.ok(['not_current','missing'].includes(batchReply.status),'batch confirms against the committed suppression, never the old optimistic projection')
   }finally{
     abortSingle.abort();await lock.release()
@@ -2346,6 +2411,7 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
       })),
       sqlCodes:h.m04.evidence.sqlCodes.slice(beforeView.m04.sqlCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
   }))
+  if(!view.ok)await n10ComponentDiagnostics(h,'query')
   assert.ok(view.ok);assert.equal(view.answer.response.cells.flatMap(c=>c.results).some(r=>r.status==='accepted'),false)
   assert.equal(h.hrs.snapshot().active,0)
   return{ambiguous,binding}
