@@ -2759,7 +2759,7 @@ END $$;
 CREATE FUNCTION official_v3_result_private.dispatch_v1(channel_value text,wire_value jsonb,binding_hash_value text,
  method_id_value text,revision_value integer,method_digest_value text,package_digest_value text,
  epoch_value integer,remaining_ms_value integer,not_after_value text,legal_day_value text) RETURNS jsonb
-LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog SET jit=off AS $$
+LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog SET jit=off SET plan_cache_mode=force_generic_plan AS $$
 DECLARE b jsonb:=official_v3_result_private.selected_binding_v1(); q jsonb; operation_value text:=wire_value->>'operation';
  expected_channel text; deadline timestamptz; actual_now timestamptz:=clock_timestamp(); reply_value jsonb; proof_value jsonb;
  head_row official_v3_result_private.heads_v1%ROWTYPE; original_operation official_v3_result_private.operations_v1%ROWTYPE;
@@ -3086,7 +3086,9 @@ BEGIN
    OR function_row.procost<>100 OR function_row.prorows<>0 OR function_row.pronargdefaults<>expected_function.defaults
    OR pg_catalog.pg_get_expr(function_row.proargdefaults,0) IS DISTINCT FROM expected_function.default_expression
    OR function_row.proconfig IS DISTINCT FROM (CASE
-     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name IN ('catalog_v1','dispatch_v1')
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='dispatch_v1'
+     THEN ARRAY[expected_function.config,'jit=off','plan_cache_mode=force_generic_plan']
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='catalog_v1'
      THEN ARRAY[expected_function.config,'jit=off'] ELSE ARRAY[expected_function.config] END)
    OR (expected_function.body_hash IS NOT NULL AND (function_row.prosqlbody IS NOT NULL
      OR pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(function_row.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected_function.body_hash))

@@ -218,12 +218,12 @@ test('deadline includes stalled response headers, no reattempt', async () => {
 const BERN_LIVE_ENTRY_TOKEN = 'retrieveOfficialTruthBernOneShotResearchOnly'
 const AA_BERN_METADATA_PIN = {
   path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts',
-  bytes: 60_358,
-  blob: '868f6d21119d52dba89afbb0bcbfca629af9b070',
-  sha256: '2cd8e5ca4eaa7c9a031dbd6aa0b9b069f42a4ad56965665cfa318a623dd767ed',
-  contextStart: 34_586,
-  contextEnd: 35_277,
-  tokenStart: 35_213,
+  bytes: 63_059,
+  blob: '2fb94d98180a1db5ffe56ec43f3614303cea52b3',
+  sha256: '6f33e5126d61712526f195178b129656af6bc4048268c2377f83d4cbfeb8d2a4',
+  contextStart: 35_420,
+  contextEnd: 36_111,
+  tokenStart: 36_047,
 } as const
 
 // A11 permits only this independently reviewed, complete raw source revision.
