@@ -9,6 +9,14 @@ Keine Veröffentlichung, kein Merge, keine Anbieteraktivierung, keine Production
 Supabase-Schreibzugriffe. Auth, ENV, package/lock, CI, Schema und RLS unverändert.
 Hauptplan 79/80 und sämtliche Dateien von #1196/#1197 haben Vorrang und sind gesperrt.
 
+Ausnahme nach ausdrücklicher PO-Freigabe am 13. November: ausschließlich
+`NEXT_PUBLIC_SUPABASE_URL` und `NEXT_PUBLIC_SUPABASE_ANON_KEY` aus
+`feat/booking-cj-hotel-flight-search-20261109` unverändert als Preview-Variablen
+für `feat/private-travel-ux-20261113` übernommen. Rücklesen bestätigt beide Werte
+und den ausschließlichen Branch-/Preview-Scope. Der bestehende Schlüssel ist ein
+öffentlicher Publishable-Key. Kein service_role, keine anderen kopierten Variablen,
+keine Änderung an Production, Datenbank, Auth oder Vorschau-Schutz.
+
 ## Rekonstruierte Basis
 
 Der angegebene Ordner enthält 18 ältere Git-Arbeitskopien. Keine offenen Codeänderungen;
@@ -91,3 +99,27 @@ anzeigen oder ihre Inhalte aktualisieren; Jetnity entfernt ihre Hinweise nicht.
   25 Tests sind im grünen 317er-Nachlauf enthalten. Kein Vollsuite-Erfolg wird behauptet.
 - Erneut geladene Dateilisten von #1196/#1197: keine Überschneidung. Auch der Vergleich
   883c2a0 → aktueller main 63544e8 enthält keine Änderung an den betroffenen Dateien.
+
+## Fortsetzung: Vorschau und reale Browser-Harness
+
+- GitHub live: Draft #1198, Ausgangshead `c20306e`, CI-Lauf `43447231427` fehlgeschlagen.
+  Der Core-Teil hatte 8.775 Tests, 8.769 bestanden, vier fehlgeschlagen, zwei übersprungen.
+  Vier Fehler reproduziert: Viator füllte ein entferntes Datum-Input; der Editor erwartete
+  vier Label statt zwei Kalender-Buttons plus zwei Zeitfelder; zwei Navigationstests
+  erwarteten Einstellungen noch in der Sidebar statt im Kontomenü.
+- Die drei Browser-Harness bedienen nun die echten Kalender und die vereinbarte
+  Navigation. Der November-Test setzt eine feste Browserzeit vor seinen Reisedaten;
+  echte Zukunftsgrenzen werden nicht deaktiviert. Der echte Kalenderstil wird geladen.
+  Dadurch wurde zusätzlich zu schwacher Text-/Rahmenkontrast im hellen Editor entdeckt
+  und mit den bestehenden White/Mint-Farbtokens korrigiert. Kontrast-Gegenprobe bleibt aktiv.
+- Nachlauf der drei vollständigen Browserdateien: 24/24 Tests bestanden, keine Skips.
+  TypeScript vollständig und ESLint der geänderten Testdateien bestanden.
+- Neubau von `c20306e`: Vercel `dpl_GfqnYsBmP2FGP929NMpS3rHFo9kT` READY, nur Preview.
+  `/planen` liefert HTTP 200 und lädt in einem separaten sichtbaren Chrome-Fenster.
+  Zeitraum 20.–25. November auswählbar; bei 390 × 844 liegt der Kalender vollständig
+  im sichtbaren Bereich, kein horizontaler Überlauf, keine JavaScript-Seitenfehler.
+  Dies ist noch keine vollständige Hotel-, Safari- oder iPhone-Abnahme.
+- Der separate Hosted-PostgreSQL-Job scheiterte bereits beim Paket-/Schlüssel-Download
+  mit Exit 28 (Zeitlimit). Keine Änderung am geschützten CI-Workflow.
+- Für den Nachfolgecommit bleibt ein vollständiger grüner Core-/CI-Lauf erforderlich.
+  Merge bleibt bis dahin und bis zur ausdrücklichen zeitlichen PO-Bestätigung gesperrt.

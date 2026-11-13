@@ -83,6 +83,15 @@
 .reise-datum-trigger svg { flex-shrink: 0; color: var(--org-muted, #506760); }
 .reise-datum-trigger[aria-expanded='true'] { border-color: #477762; box-shadow: 0 0 0 3px #dcebe4; }
 .reise-datum-trigger[data-invalid='true'] { border-color: #a94332; }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger {
+  border-color: var(--white-mint-control);
+  background: var(--white-mint-card);
+  color: var(--white-mint-ink);
+}
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger > span,
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger svg { color: var(--white-mint-muted); }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger strong { color: var(--white-mint-ink); }
+.workspace-shell[data-workspace-theme='light'] .reise-datum-trigger[data-invalid='true'] { border-color: #a94332; }
 .reise-kalender {
   --kal-ink: #153f35;
   --kal-muted: #61776c;

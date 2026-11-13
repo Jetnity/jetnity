@@ -109,8 +109,9 @@ async function projektCss(mint: boolean) {
   const workspace = readFileSync(join(process.cwd(), 'components/workspace/workspace.css'), 'utf8')
   const surfaces = readFileSync(join(process.cwd(), 'components/workspace/workspace-surfaces.css'), 'utf8')
   const etappen = readFileSync(join(process.cwd(), 'components/trips/reiseplan/etappen.css'), 'utf8')
+  const kalender = readFileSync(join(process.cwd(), 'components/trips/organisieren/auswahl/suchauswahl.css'), 'utf8')
   const weiss = mint ? readFileSync(join(process.cwd(), 'styles/white-mint.css'), 'utf8') : ''
-  return `${ergebnis.css}\n${workspace}\n${surfaces}\n${etappen}\n${weiss}`.replaceAll('</style', '<\\/style')
+  return `${ergebnis.css}\n${workspace}\n${surfaces}\n${etappen}\n${weiss}\n${kalender}`.replaceAll('</style', '<\\/style')
 }
 
 async function bundeln() {
@@ -523,10 +524,10 @@ describe('rendered white/mint homepage and light workspace', () => {
     await bild(basis.page, 'before-workspace-1440')
     await schliessen(basis.context)
 
-    const konto = await oeffnen({ schicht: 'mint', pfad: '/account/settings', breite: 1440 })
+    const konto = await oeffnen({ schicht: 'mint', pfad: '/account/welt', breite: 1440 })
     await konto.page.waitForSelector('.workspace-shell[data-workspace-theme="light"]')
     const gewaehlt = konto.page.locator('.workspace-nav-link[aria-current="page"]')
-    assert.equal(await gewaehlt.innerText(), 'Einstellungen')
+    assert.equal(await gewaehlt.innerText(), 'Meine Welt')
     const kontoFarbe = rgbAus(await gewaehlt.evaluate((el) => getComputedStyle(el).backgroundColor))
     assert.equal(aehnlich(kontoFarbe, WHITE_MINT.selected), true)
     await konto.page.locator('summary[aria-label="Kontomenü"]').click()
@@ -639,8 +640,13 @@ describe('rendered white/mint homepage and light workspace', () => {
       }
       await page.locator('.workspace-sidebar').hover()
       await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
-      const kontrast = await audit(page, '.workspace-sidebar', ['Übersicht', 'Reiseplan', 'Organisieren', 'Einstellungen'])
+      const kontrast = await audit(page, '.workspace-sidebar', ['Übersicht', 'Reiseplan', 'Organisieren', 'Meine Reisen', 'Meine Welt', 'Reisende'])
       assert.equal(kontrast.urteil.ok, true, kontrast.urteil.fehler.join('\n'))
+      await page.locator('summary[aria-label="Kontomenü"]').click()
+      const kontoKontrast = await audit(page, '.workspace-account-panel', ['Einstellungen', 'Bestätigte Buchungen'])
+      assert.equal(kontoKontrast.urteil.ok, true, kontoKontrast.urteil.fehler.join('\n'))
+      assert.equal(await page.getByRole('link', { name: 'Einstellungen', exact: true }).getAttribute('href'), '/account/settings')
+      await page.locator('summary[aria-label="Kontomenü"]').click()
       await bild(page, `navigation-hover-${thema}`)
     }
     assert.equal(await page.locator('.workspace-credit').getByText(/GeoNames/).count(), 0)

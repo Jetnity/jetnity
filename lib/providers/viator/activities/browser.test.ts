@@ -135,6 +135,7 @@ async function css(): Promise<string> {
     'styles/white-mint.css',
     'components/workspace/workspace.css',
     'components/workspace/workspace-surfaces.css',
+    'components/trips/organisieren/auswahl/suchauswahl.css',
   ]
   const teile: string[] = []
   for (const datei of reihenfolge) {
@@ -303,6 +304,8 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
 
   async function seite(breite: number, variante: { unbenannt?: boolean } = {}): Promise<Page> {
     const page = await browser.newPage({ viewport: { width: breite, height: 900 } })
+    // The fixture offers November dates; keep them in the future for the real calendar.
+    await page.clock.setFixedTime(new Date('2026-11-01T12:00:00Z'))
     let checks = 0
     let details = 0
     let schedules = 0
@@ -431,11 +434,14 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(träger.suchen[0]?.day?.dayDate, '2026-11-02')
     await page.getByRole('region', { name: 'Viator-Prüfung' }).getByRole('button', { name: 'Erneut laden' }).click()
     await page.getByText('Details werden geladen.').waitFor()
-    await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').fill('2026-11-03')
+    const datum = page.getByRole('region', { name: 'Viator-Prüfung' }).getByRole('button', { name: /^Datum:/ })
+    await datum.click()
+    await page.getByRole('dialog').locator('[data-datum="2026-11-03"]').click()
+    await page.getByRole('dialog').getByRole('button', { name: 'Übernehmen' }).click()
     träger.releaseDetail()
     await page.getByLabel('Erwachsene Anzahl').waitFor()
     assert.equal(await page.getByText('Details werden geladen.').count(), 0)
-    assert.equal(await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').inputValue(), '2026-11-03')
+    assert.equal(await datum.getAttribute('aria-label'), 'Datum: 03.11.2026')
     await page.getByLabel('Option').waitFor()
     assert.equal(await page.getByLabel('Option').inputValue(), '')
     await page.getByLabel('Option').selectOption({ label: 'Morgentour' })
@@ -447,7 +453,9 @@ describe('Viator activities browser harness', { timeout: 180_000 }, () => {
     assert.equal(träger.gesendet[0]?.productOptionCode, 'TG1')
     assert.equal(träger.gesendet[0]?.startTime, '10:00')
     assert.equal(JSON.stringify(träger.gesendet[0]).includes('DEFAULT'), false)
-    await page.getByRole('region', { name: 'Viator-Prüfung' }).getByLabel('Datum').fill('2026-11-02')
+    await datum.click()
+    await page.getByRole('dialog').locator('[data-datum="2026-11-02"]').click()
+    await page.getByRole('dialog').getByRole('button', { name: 'Übernehmen' }).click()
     träger.releaseFirst()
     await page.waitForTimeout(50)
     assert.equal(await page.getByText('111').count(), 0)

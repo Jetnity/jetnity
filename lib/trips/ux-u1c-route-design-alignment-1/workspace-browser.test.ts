@@ -145,7 +145,7 @@ async function plan(page: Page) {
 }
 
 function shellCss(): string {
-  return ['components/workspace/workspace.css', 'components/workspace/workspace-surfaces.css', 'components/trips/reiseplan/etappen.css']
+  return ['components/workspace/workspace.css', 'components/workspace/workspace-surfaces.css', 'components/trips/reiseplan/etappen.css', 'components/trips/organisieren/auswahl/suchauswahl.css']
     .map((datei) => readFileSync(join(process.cwd(), datei), 'utf8'))
     .join('\n')
 }
@@ -294,8 +294,11 @@ async function editorPruefen(formular: ReturnType<Page['locator']>, hinweis: str
   const messung = await editorMessung(formular)
   const fehlt = fehlendePflicht(messung.map((eintrag) => eintrag.name), pflicht)
   assert.deepEqual(fehlt, [], `${hinweis} fehlt ${fehlt.join(', ')}`)
-  const daten = messung.filter((eintrag) => eintrag.tag === 'LABEL' && /Anfangs|End/.test(eintrag.name))
-  assert.equal(daten.length, 4, `${hinweis} Datumsfelder ${daten.map((eintrag) => eintrag.name).join('|')}`)
+  const daten = messung.filter((eintrag) => eintrag.tag === 'BUTTON' && /^(Anfangsdatum|Enddatum)/.test(eintrag.name))
+  assert.equal(daten.length, 2, `${hinweis} Kalenderfelder ${daten.map((eintrag) => eintrag.name).join('|')}`)
+  assert.equal(await formular.locator('button.reise-datum-trigger[aria-haspopup="dialog"]').count(), 2)
+  const zeiten = messung.filter((eintrag) => eintrag.tag === 'LABEL' && /^(Anfangszeit|Endzeit)/.test(eintrag.name))
+  assert.equal(zeiten.length, 2, `${hinweis} Zeitfelder ${zeiten.map((eintrag) => eintrag.name).join('|')}`)
   for (const eintrag of messung) {
     if (eintrag.role === 'alert' || eintrag.role === 'status') continue
     assert.ok(eintrag.wert >= 4.5, `${hinweis} ${eintrag.tag} ${eintrag.disabled ? 'deaktiviert' : 'aktiv'} ${eintrag.name} ${JSON.stringify(eintrag)}`)
@@ -677,16 +680,15 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     }
     await page.setViewportSize({ width: 768, height: 900 })
     await themaSetzen('green')
-    await bearbeiten.locator('label').filter({ hasText: 'Enddatum, optional' }).evaluate((el) => {
-      const flaeche = el.closest('form')
-      el.style.color = flaeche ? getComputedStyle(flaeche).backgroundColor : 'rgb(15, 48, 42)'
+    await bearbeiten.getByRole('button', { name: /^Enddatum, optional:/ }).evaluate((el) => {
+      el.style.color = getComputedStyle(el).backgroundColor
     })
-    const beschaedigt = (await editorMessung(bearbeiten)).filter((eintrag) => eintrag.tag === 'LABEL' && eintrag.name.includes('Enddatum'))
+    const beschaedigt = (await editorMessung(bearbeiten)).filter((eintrag) => eintrag.tag === 'BUTTON' && eintrag.name.includes('Enddatum'))
     assert.equal(beschaedigt.length, 1)
     assert.ok((beschaedigt[0]?.wert ?? 99) < 4.5, JSON.stringify(beschaedigt[0]))
     const erste = (await editorMessung(bearbeiten)).find((eintrag) => eintrag.tag === 'LABEL' && eintrag.name.includes('Ort oder Aktivität'))
     assert.ok((erste?.wert ?? 0) >= 4.5, JSON.stringify(erste))
-    await bearbeiten.locator('label').filter({ hasText: 'Enddatum, optional' }).evaluate((el) => { el.style.color = '' })
+    await bearbeiten.getByRole('button', { name: /^Enddatum, optional:/ }).evaluate((el) => { el.style.color = '' })
     await editorPruefen(bearbeiten, 'grün bestand nach Gegenprobe', 'bestand')
     await bearbeiten.locator('button[type="submit"]').click()
     await page.getByText('wurde bearbeitet', { exact: false }).first().waitFor()
