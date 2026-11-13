@@ -1,3 +1,4 @@
+import { atlasServerActions } from '@/scripts/trip-plan-browser/server-actions'
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { createServer, type Server } from 'node:http'
@@ -126,7 +127,7 @@ async function bundeln() {
     jsx: 'automatic',
     define: { 'process.env.NODE_ENV': '"production"' },
     banner: { js: 'var __name=(target)=>target;globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};globalThis.global=globalThis;' },
-    plugins: [
+    plugins: [atlasServerActions,
       {
         name: 'white-mint-shims',
         setup(build) {

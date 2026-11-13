@@ -53,7 +53,8 @@ produktive Widget wurde nicht geändert.
 
 - Der volle Core muss auf dem neuen Code-Head grün sein; alte Ergebnisse ersetzen ihn nicht.
 - Echte angemeldete Browserprüfung, erneuter Login und zweites Gerät fehlen noch.
-- Safari-Zugriff fehlt (Remote Automation deaktiviert); echtes iPhone nicht vorhanden.
+- Safari ist über die native Oberfläche erreichbar; Remote Automation bleibt deaktiviert.
+  Die private App verlangt dort noch Vercel-Anmeldung; echtes iPhone nicht vorhanden.
 - Hotel-/Flug-/Aktivitäts-Widgets liefern keine verifizierbaren Einzelangebotsdaten.
   Kein Herz über einer Suchseite als angebliches konkretes Angebot. Manuelle
   Erfassung ist getrennt gekennzeichnet. Preise/Bilder/Tokens werden nicht gespeichert.
@@ -69,9 +70,49 @@ produktive Widget wurde nicht geändert.
 - Credentialless Aktivitätsrahmen verwenden in der Vorschau eine getrennte öffentliche
   statische Hülle mit exakter Parent-CSP. Consent, Sandbox und Nachrichtenprüfung bleiben.
   Production nutzt ohne Vorschauvariable unverändert die bestehenden eigenen Embed-Routen.
-  Browsernachweis des neuen Deployments steht noch aus.
+  Chrome: GetYourGuide und Viator zeigen echte Paris-Angebote; beide Rahmen bleiben
+  beim Kategorienwechsel erhalten. Die isolierten Hosts sind nur Preview.
 - Automatische Ergänzung der Stadtbilder über exakte GeoNames-/Land-Zuordnung und
   freie Commons-Lizenz ist implementiert; Metadatenprobe Berlin bestanden.
-  Neuer Deployment-/Browsernachweis steht aus. Ohne passende freie Aufnahme neutral.
+  Chrome: Berlin-Foto lädt in Meine Reisen, Reiseplan und Organisieren mit
+  verlinktem Urheber-/Lizenznachweis; 390 px ohne horizontalen Überlauf. Ohne passende freie Aufnahme neutral.
 
 Details zum begrenzten Merkliste-Schnitt: [Umsetzungsnachweis](PRIVATE_UX_SAVED_OFFERS_2026-11-13.md).
+
+## Browser- und Core-Nachlauf am 13.11.2026
+
+- Laufzeitcode `8bf7155`, darauf nur Testinventar-Korrektur `f85f22a`. Preview
+  `dpl_3zv8qkwc1BencLwmaQDMEYRKQwfd` READY, aktueller main weiter `63544e8`.
+- Sichtbares Chrome: Travelpayouts ZRH–CDG, 20.–25.11.2026, zwei Personen,
+  echte SWISS-/Condor-/Air-France-Angebote. Suche und Ergebnisabrufe HTTP 200.
+  Separate Headless-Chrome-Probe bekam HTTP 403 vom Anbieter; dieser Lauf ist
+  kein bestandener Angebotsnachweis und ersetzt nicht den sichtbaren Browser.
+- Sichtbares Chrome: Normandy Hotel Paris über linke Liste und Kartenmarker
+  führt zu Booking mit Hotelreferenz 51548, 20.–25.11., zwei Erwachsenen, einem
+  Zimmer und aid 1607597; Zielseiten gefüllt, keine Buchung ausgelöst.
+- Chrome: Hotelsterne allein, Bewertung allein, Kombination 4 Sterne / 8 von 10,
+  Reset, CHF-Gesamtpreis und EUR-Nachtpreis liefern Paris-Angebote.
+  Hotelrahmen und Ergebnistext nach Flugwechsel identisch. Ferienwohnungen
+  bleiben Teil des Anbieters; Hotelsterne klassifizieren keine Ferienwohnungen.
+- Safari, direktes öffentliches Stay22-Fenster mit denselben Suchparametern:
+  Hotel des Orfèvres über Liste und Kartenmarker erfolgreich; Hotelreferenz
+  212149, Zeitraum, Personen/Zimmer und Partnerparameter auf Booking korrekt.
+  Dies ist noch keine Prüfung der eingebetteten privaten Safari-App.
+- Chrome: DiscoverCars Paris-CDG liefert 522 Angebote; erste zwölf echte Karten
+  mit CHF-Gesamtpreisen sichtbar. Station und erste Angebotskarte nach
+  Kategorienwechsel unverändert. Omio zeigt die vorhandenen Zürich–Paris-
+  Katalogwerte für Zug, Bus und Flug und erhält sie beim Wechsel. Keine
+  Abfahrtszeit oder Live-Verfügbarkeit aus dem Katalog erfunden.
+- Die Chrome-Anmeldung des PO ist weiterhin offen. Kontoweites Merken,
+  Wiederanmelden, zweites Gerät und echte Planübernahme sind daher noch keine
+  bestandenen Browserprüfungen. SQL-RLS- und Vertragsprüfungen separat siehe oben.
+- Core `43480815808`: neue Serveraktionen fehlten im isolierten Browser-Bundler
+  und im exakten Sicherheitsinventar. Nur explizite neue Dateihashes ergänzt;
+  historische Auth-/Action-Hashes, Konfiguration und Paket-Pins unverändert.
+  41 Security-Kontrolltests und drei Security-Vertragstests lokal bestanden,
+  einschliesslich Negativfällen für veränderte/fehlende/unbekannte Actions.
+- Core `43483237261`: 8.787 Tests, 8.773 bestanden, null Testfehler, aber zwölf
+  Abbrüche im White/Mint-Browser-Harness durch dieselbe fehlende Action-Grenze.
+  Deshalb ausdrücklich nicht grün. Der Harness verwendet jetzt die vorhandene
+  gemeinsame Serveraktionsgrenze; alle Assertions bleiben bestehen. Neuer voller
+  Core-Lauf ist vor Merge weiterhin zwingend. Keine Workflow-/Paketänderung.
