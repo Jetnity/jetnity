@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { BedDouble } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
@@ -248,8 +249,8 @@ function UnterkunftZeitraum({
 }) {
   const id = React.useId()
   const knopf = React.useRef<HTMLButtonElement>(null)
-  const checkIn = React.useRef<HTMLInputElement>(null)
-  const checkOut = React.useRef<HTMLInputElement>(null)
+  const checkIn = React.useRef<HTMLButtonElement>(null)
+  const checkOut = React.useRef<HTMLButtonElement>(null)
   const zusammenfassung = React.useRef<HTMLParagraphElement>(null)
   const lebendig = React.useRef(true)
   const schreibt = React.useRef(false)
@@ -308,9 +309,9 @@ function UnterkunftZeitraum({
 
   React.useEffect(() => {
     if (fokus === 0) return
-    const ziel = checkIn.current?.getAttribute('aria-invalid') === 'true'
+    const ziel = checkIn.current?.getAttribute('data-invalid') === 'true'
       ? checkIn.current
-      : checkOut.current?.getAttribute('aria-invalid') === 'true'
+      : checkOut.current?.getAttribute('data-invalid') === 'true'
         ? checkOut.current
         : zusammenfassung.current
     ziel?.focus()
@@ -405,20 +406,13 @@ function UnterkunftZeitraum({
       {offen ? (
         <form id={`${id}-formular`} aria-label={`Zeitraum für ${item.title}`} noValidate onSubmit={speichern} className="mt-3 grid min-w-0 max-w-full gap-3" aria-busy={laeuft}>
           <div className="grid min-w-0 max-w-full gap-3 sm:grid-cols-2">
-            <label className="grid min-w-0 max-w-full gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-in`}>
-              Check-in
-              <input ref={checkIn} id={`${id}-check-in`} type="date" required value={startsOn} disabled={laeuft}
-                onChange={(event) => { setStartsOn(event.target.value); setFehler('') }}
-                aria-invalid={feldUngueltig('startsOn') || undefined} aria-describedby={meldung ? `${id}-fehler` : undefined}
-                className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
-            </label>
-            <label className="grid min-w-0 max-w-full gap-1 text-sm font-medium text-brand-800" htmlFor={`${id}-check-out`}>
-              Check-out
-              <input ref={checkOut} id={`${id}-check-out`} type="date" required value={endsOn} disabled={laeuft}
-                onChange={(event) => { setEndsOn(event.target.value); setFehler('') }}
-                aria-invalid={feldUngueltig('endsOn') || undefined} aria-describedby={meldung ? `${id}-fehler` : undefined}
-                className="min-h-11 min-w-0 w-full max-w-full rounded-xl border border-line-300 bg-white px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15" />
-            </label>
+            <Suchkalender start={startsOn} ende={endsOn} startLabel="Check-in" endeLabel="Check-out"
+              min="1900-01-01" max="9999-12-31" minTage={1} naechte disabled={laeuft}
+              startId={`${id}-check-in`} endeId={`${id}-check-out`}
+              startRef={el => { checkIn.current = el }} endeRef={el => { checkOut.current = el }}
+              startFehler={feldUngueltig('startsOn')} endeFehler={feldUngueltig('endsOn')}
+              startBeschrieben={meldung ? `${id}-fehler` : undefined} endeBeschrieben={meldung ? `${id}-fehler` : undefined}
+              setzen={(start, ende) => { setStartsOn(start); setEndsOn(ende); setFehler('') }} />
           </div>
           {meldung ? <p ref={zusammenfassung} id={`${id}-fehler`} role="alert" tabIndex={-1} className="break-words rounded text-sm text-danger-600 focus:outline-none focus:ring-4 focus:ring-brand-600/15">{meldung}</p> : null}
           <div className="flex flex-wrap gap-2">

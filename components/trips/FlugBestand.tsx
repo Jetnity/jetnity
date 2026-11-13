@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { CircleAlert, Plane } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
@@ -128,7 +129,7 @@ function ManuelleFlugRoute({
   React.useEffect(() => {
     if (fokusVersuch === 0) return
     // Erst nach dem Render sind aktuelle Markierungen und Summary im DOM.
-    const ziel = formular.current?.querySelector<HTMLInputElement>('input[aria-invalid="true"]')
+    const ziel = formular.current?.querySelector<HTMLElement>('input[aria-invalid="true"], button[data-invalid="true"]')
       ?? fehlerZusammenfassung.current
     ziel?.focus()
   }, [fokusVersuch])
@@ -223,6 +224,11 @@ function ManuelleFlugRoute({
                     const feldmeldung = feldfehler.get(`${index}-${feld.name}`)
                     return (
                       <div key={feld.name} className="grid min-w-0 max-w-full grid-cols-[minmax(0,1fr)] gap-1">
+                        {feld.type === 'date' ? <Suchkalender start={segment[feld.name]} ende="" startLabel={feld.label} endeLabel="" einzeln
+                          startId={feldId} min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft}
+                          kontext={`Segment ${index + 1} · Ortsdatum`} startFehler={Boolean(feldmeldung)} startBeschrieben={feldmeldung ? `${feldId}-fehler` : undefined}
+                          setzen={wert => setSegments(bisher => bisher.map((eintrag, stelle) =>
+                            stelle === index ? { ...eintrag, [feld.name]: wert } : eintrag))} /> : <>
                         <label htmlFor={feldId} className="min-w-0 max-w-full break-words text-sm font-medium text-brand-800">{feld.label}</label>
                         <input id={feldId} type={feld.type} value={segment[feld.name] ?? ''}
                           required={feld.type !== 'time'} maxLength={feld.type === 'text' ? 3 : undefined}
@@ -231,6 +237,7 @@ function ManuelleFlugRoute({
                           onChange={(event) => setSegments((bisher) => bisher.map((eintrag, stelle) =>
                             stelle === index ? { ...eintrag, [feld.name]: event.target.value } : eintrag))}
                           className={`min-h-11 min-w-0 w-full max-w-full rounded-xl border px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${feldmeldung ? 'border-danger-600 bg-surface-50' : 'border-line-300 bg-white'}`} />
+                        </>}
                         {feldmeldung ? <p id={`${feldId}-fehler`} role="alert" className="flex min-w-0 gap-1 text-sm text-danger-600">
                           <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                           <span className="min-w-0 break-words">{feldmeldung}</span>

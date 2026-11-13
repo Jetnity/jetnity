@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { useWorkspaceEditSurface } from './TripWorkspaceEditSurface'
 import { workspaceEditFocus } from '@/lib/trips/workspace-edit-focus'
 import ReiseAenderungAuswirkungen from './ReiseAenderungAuswirkungen'
@@ -39,7 +40,7 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
   React.useLayoutEffect(() => { onSperre(pending || ungewiss); return () => onSperre(false) }, [pending, ungewiss, onSperre])
   React.useEffect(() => {
     if (vorschau || erfolg) workspaceEditFocus(heading.current)
-    else workspaceEditFocus(root.current?.querySelector<HTMLElement>('[id^="edit-group-"]:not([hidden]) input:not(:disabled)') ?? null)
+    else workspaceEditFocus(root.current?.querySelector<HTMLElement>('[id^="edit-group-"]:not([hidden]) :is(input, button.reise-datum-trigger):not(:disabled)') ?? null)
   }, [vorschau, erfolg])
   React.useEffect(() => { if (meldung) workspaceEditFocus(alert.current) }, [meldung])
 
@@ -141,7 +142,11 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
         </div></details>
         </div>
         <div id="edit-group-zeitraum" hidden={gruppe !== 'zeitraum'} inert={gruppe !== 'zeitraum'} className={gruppe === 'zeitraum' ? 'grid min-w-0 gap-5' : undefined}>
-        <label className="grid min-w-0 grid-cols-1 gap-2">Reisebeginn<input type="date" className={input} value={form.startDate} aria-invalid={invalid('startDate')} aria-describedby={invalid('startDate') ? errorId : undefined} onChange={e => update({ ...form, startDate: e.target.value })} /><span className="text-xs">Kalenderdatum. Geschützte Buchungstermine bleiben fest. Ein gesetztes Datum kann hier nicht geleert werden.</span></label>
+        <div className="grid min-w-0 grid-cols-1 gap-2"><Suchkalender start={form.startDate} ende="" startLabel="Reisebeginn" endeLabel="" einzeln
+          min="1900-01-01" max="9999-12-31" minTage={0} disabled={pending || stale || ungewiss}
+          startFehler={invalid('startDate')} startBeschrieben={invalid('startDate') ? errorId : undefined}
+          kontext="Deine Reise" setzen={wert => update({ ...form, startDate: wert })} />
+          <p className="text-xs">Kalenderdatum. Geschützte Buchungstermine bleiben fest. Ein gesetztes Datum kann hier nicht geleert werden.</p></div>
         <label className="grid min-w-0 grid-cols-1 gap-2">Dauer bearbeiten<select className={input} value={dauerArt} onChange={e => { generation.current++; setDauerArt(e.target.value as typeof dauerArt); setVersucht(false) }}><option value="gesamt">Gesamtdauer</option><option value="etappen">Dauer der bestehenden Etappen</option></select></label>
         {dauerArt === 'gesamt' ? <label className="grid min-w-0 grid-cols-1 gap-2">Gesamtdauer in Tagen<input type="number" min="1" max={GRENZEN.reisetageJeReise} className={input} value={form.duration} aria-invalid={invalid('duration')} aria-describedby={invalid('duration') ? errorId : undefined} onChange={e => update({ ...form, duration: e.target.value })} /><span className="text-xs leading-5">Verlängern fügt am Ende Tage hinzu. Verkürzen entfernt die letzten Tage samt normalen Planpunkten; geschützte Punkte bleiben ungeplant erhalten. Höchstens 30 Tage Unterschied je Änderung.</span></label>
           : <p className="text-sm leading-6">Die Dauer wird über die Etappen bestimmt. <button type="button" className={button} onClick={() => selectGroup('etappen')}>Etappen bearbeiten</button></p>}

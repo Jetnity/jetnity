@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState, type ReactNode, type KeyboardEvent } from 'react'
+import { useId, useLayoutEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import Reisefoto from './Reisefoto'
 import {
   Plane,
@@ -22,6 +22,7 @@ import type { Trip, TripStage } from '@/types/trips'
 import Flugsuche from './Flugsuche'
 import type { Suchkategorie } from '@/lib/trips/workspace-mode'
 import Hotelsuche from './Hotelsuche'
+import { SuchbereichKontext } from './SuchbereichKontext'
 import { hotelKontextVersion } from '@/lib/trips/hotel-suchkontext'
 import Aktivitaeten from './Aktivitaeten'
 import dynamic from 'next/dynamic'
@@ -102,7 +103,34 @@ export default function Organisieren({
 }) {
   const uid = useId()
   const [auswahlVersion, setAuswahlVersion] = useState(0)
-  const einstieg = reise.stages.find(s => s.id === etappeId)
+  // Resume a category's existing search. Only an explicit route/destination
+  // request changes its entry context; ordinary tab navigation supplies none.
+  const eingang = JSON.stringify([tab, etappeId, hotelOrtKey, kanteId])
+  const [sitzung, setSitzung] = useState(() => ({
+    eingang,
+    besucht: [tab] as Suchkategorie[],
+    hotel: { etappeId: tab === 'unterkunft' ? etappeId : undefined, ort: tab === 'unterkunft' ? hotelOrtKey : undefined },
+    aktivitaeten: tab === 'aktivitaeten' ? etappeId : undefined,
+    verbindungen: tab === 'verbindungen' ? kanteId : undefined,
+  }))
+  if (sitzung.eingang !== eingang) {
+    setSitzung({
+      ...sitzung, eingang,
+      besucht: sitzung.besucht.includes(tab) ? sitzung.besucht : [...sitzung.besucht, tab],
+      hotel: tab === 'unterkunft' && (etappeId || hotelOrtKey) ? { etappeId, ort: hotelOrtKey } : sitzung.hotel,
+      aktivitaeten: tab === 'aktivitaeten' && etappeId ? etappeId : sitzung.aktivitaeten,
+      verbindungen: tab === 'verbindungen' && kanteId ? kanteId : sitzung.verbindungen,
+    })
+  }
+  const einstieg = reise.stages.find(s => s.id === sitzung.hotel.etappeId)
+  const scrollPositionen = useRef<Partial<Record<Suchkategorie, number>>>({})
+  const scrollZiel = useRef<number | null>(null)
+  useLayoutEffect(() => {
+    if (scrollZiel.current !== null) {
+      window.scrollTo({ top: scrollZiel.current, behavior: 'instant' })
+      scrollZiel.current = null
+    }
+  }, [tab])
   const erste = reise.stages[0]
   const land = erste?.countryCode
   const landTitel = land && reise.stages.every((s) => s.countryCode === land) ? landName(land, 'de') : null
@@ -120,9 +148,11 @@ export default function Organisieren({
       }}
     />
   )
-  function wechsle(k: Suchkategorie) {
+  function wechsle(k: Suchkategorie, tastatur = false) {
     if (k !== tab) {
-      kategorieWaehlen(k, k === 'unterkunft' || k === 'aktivitaeten' ? einstieg?.id : undefined)
+      scrollPositionen.current[tab] = window.scrollY
+      scrollZiel.current = tastatur ? null : (scrollPositionen.current[k] ?? null)
+      kategorieWaehlen(k)
     }
   }
   function taste(e: KeyboardEvent, index: number) {
@@ -138,7 +168,7 @@ export default function Organisieren({
               : null
     if (ziel !== null) {
       e.preventDefault()
-      wechsle(tabs[ziel]!.key)
+      wechsle(tabs[ziel]!.key, true)
       document.getElementById(uid + '-' + tabs[ziel]!.key)?.focus()
     }
   }
@@ -193,7 +223,7 @@ export default function Organisieren({
               role="tab"
               id={uid + '-' + t.key}
               aria-selected={tab === t.key}
-              aria-controls={uid + '-panel'}
+              aria-controls={uid + '-panel-' + t.key}
               tabIndex={tab === t.key ? 0 : -1}
               onKeyDown={(e) => taste(e, i)}
               onClick={() => wechsle(t.key)}
@@ -203,22 +233,27 @@ export default function Organisieren({
             </button>
           ))}
         </div>
-        <div id={uid + '-panel'} role="tabpanel" aria-labelledby={uid + '-' + tab}>
-          {tab === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
-          {tab === 'unterkunft' && (
+        {tabs.filter(t => sitzung.besucht.includes(t.key) || t.key === tab).map(t => (
+        <SuchbereichKontext.Provider key={t.key} value={tab === t.key}>
+        <div id={uid + '-panel-' + t.key} role="tabpanel" aria-labelledby={uid + '-' + t.key}
+          hidden={tab !== t.key} inert={tab !== t.key} data-suchbereich={t.key}>
+          {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
+          {t.key === 'unterkunft' && (
             <Hotelsuche
-              key={hotelKontextVersion(reise) + ':' + (hotelOrtKey ?? '')}
+              key={hotelKontextVersion(reise) + ':' + (sitzung.hotel.ort ?? '')}
               reise={reise}
               start={einstieg ?? erste}
-              startOrt={hotelOrtKey}
+              startOrt={sitzung.hotel.ort}
               auswahlVersion={auswahlVersion}
               etappen={etappen}
             />
           )}
-          {tab === 'aktivitaeten' && <Aktivitaeten key={etappeId} reise={reise} startId={einstieg?.id} partner={partnerAktivitaeten} />}
-          {tab === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {tab === 'verbindungen' && <OmioImReiseplan key={kanteId} reise={reise} etappen={etappen} kanteId={kanteId} />}
+          {t.key === 'aktivitaeten' && <Aktivitaeten key={sitzung.aktivitaeten} reise={reise} startId={sitzung.aktivitaeten} partner={partnerAktivitaeten} />}
+          {t.key === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
+          {t.key === 'verbindungen' && <OmioImReiseplan key={sitzung.verbindungen} reise={reise} etappen={etappen} kanteId={sitzung.verbindungen} />}
         </div>
+        </SuchbereichKontext.Provider>
+        ))}
         <footer className="org-footer">
           <a href="/images/organisieren/Bildnachweise.txt" target="_blank" rel="noopener">
             Bildnachweise

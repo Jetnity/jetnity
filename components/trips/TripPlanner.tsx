@@ -29,7 +29,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   ArrowRight,
-  CalendarDays,
   ChevronDown,
   ChevronUp,
   Cloud,
@@ -41,6 +40,7 @@ import {
 } from 'lucide-react'
 
 import OrtSuche from '@/components/places/OrtSuche'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { Feld, FELD_FEHLER_RAHMEN, FormularZusammenfassung } from '@/components/ui/feld'
 import {
   FORMULAR_ZUSAMMENFASSUNG,
@@ -67,7 +67,7 @@ import TripStageDayAllocation, {
 } from '@/components/trips/TripStageDayAllocation'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import { createDayPositions, tageszuordnungAngleichen } from '@/lib/trips/create-day-assignment'
-import { ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
+import { ZEITRAUM_ZU_LANG, REISEDAUER_MAXIMUM, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 import {
   CREATE_PERSISTENZ_INTERESSEN,
   CREATE_PERSISTENZ_TEMPO,
@@ -193,7 +193,7 @@ export default function TripPlanner({
   const [meldung, setMeldung] = React.useState('')
   const [feldfehler, setFeldfehler] = React.useState<Feldfehler<string>>({})
   const [bestehendeReise, setBestehendeReise] = React.useState('')
-  const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | null>>>({})
+  const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | HTMLButtonElement | null>>>({})
   const zusaetzlicheFelder = React.useRef<Record<string, HTMLInputElement | null>>({})
   const anvisiert = React.useRef<string | null>(null)
   const naechsterExtraKey = React.useRef(handoff.weitere.length + 1)
@@ -819,67 +819,22 @@ export default function TripPlanner({
 
           <Planungsgruppe id="planen-gruppe-zeitraum" titel="Zeitraum">
             <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
-          <Feld
-            id="feld-start"
-            label="Abreise"
-            className={feldReflowClass}
-            fehler={feldfehler.startDate}
-            icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
-          >
-            <input
-              id="feld-start"
-              ref={(el) => {
-                felder.current.startDate = el
-              }}
-              type="date"
-              min={heuteIso()}
-              value={startDate}
-              aria-invalid={Boolean(feldfehler.startDate) || undefined}
-              aria-describedby={feldfehler.startDate ? feldFehlerId('feld-start') : undefined}
-              aria-required="true"
-              disabled={laeuft}
-              onChange={(ereignis) => {
-                if (lifecycle.gesperrt()) return
-                setStartDate(ereignis.target.value)
-                feldKorrigieren('startDate')
-                if (endDate && ereignis.target.value > endDate) {
-                  setEndDate('')
+              <Suchkalender start={startDate} ende={endDate} startLabel="Abreise" endeLabel="Rückreise"
+                kontext="Deine Reise" min={heuteIso()} max="9999-12-31" minTage={0} maxTage={REISEDAUER_MAXIMUM}
+                disabled={laeuft} startId="feld-start" endeId="feld-ende"
+                startRef={el => { felder.current.startDate = el }} endeRef={el => { felder.current.endDate = el }}
+                startFehler={Boolean(feldfehler.startDate)} endeFehler={Boolean(feldfehler.endDate || zeitraumZuLang)}
+                startBeschrieben={feldfehler.startDate ? feldFehlerId('feld-start') : undefined}
+                endeBeschrieben={feldfehler.endDate || zeitraumZuLang ? feldFehlerId('feld-ende') : undefined}
+                setzen={(start, ende) => {
+                  if (lifecycle.gesperrt()) return
+                  setStartDate(start)
+                  setEndDate(ende)
+                  feldKorrigieren('startDate')
                   feldKorrigieren('endDate')
-                } else if (endDate && ereignis.target.value <= endDate) {
-                  feldKorrigieren('endDate')
-                }
-              }}
-              className={cn(fieldClass, feldfehler.startDate && FELD_FEHLER_RAHMEN)}
-            />
-          </Feld>
-
-          <Feld
-            id="feld-ende"
-            label="Rückreise"
-            className={feldReflowClass}
-            fehler={feldfehler.endDate || (zeitraumZuLang ? ZEITRAUM_ZU_LANG : undefined)}
-            icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}
-          >
-            <input
-              id="feld-ende"
-              ref={(el) => {
-                felder.current.endDate = el
-              }}
-              type="date"
-              min={startDate || heuteIso()}
-              value={endDate}
-              aria-invalid={Boolean(feldfehler.endDate || zeitraumZuLang) || undefined}
-              aria-describedby={feldfehler.endDate || zeitraumZuLang ? feldFehlerId('feld-ende') : undefined}
-              aria-required="true"
-              disabled={laeuft}
-              onChange={(ereignis) => {
-                if (lifecycle.gesperrt()) return
-                setEndDate(ereignis.target.value)
-                feldKorrigieren('endDate')
-              }}
-              className={cn(fieldClass, (feldfehler.endDate || zeitraumZuLang) && FELD_FEHLER_RAHMEN)}
-            />
-          </Feld>
+                }} />
+              {feldfehler.startDate && <p id={feldFehlerId('feld-start')} role="alert" className="text-sm text-danger-600 sm:col-start-1">{feldfehler.startDate}</p>}
+              {(feldfehler.endDate || zeitraumZuLang) && <p id={feldFehlerId('feld-ende')} role="alert" className="text-sm text-danger-600 sm:col-start-2">{feldfehler.endDate || ZEITRAUM_ZU_LANG}</p>}
             </div>
           </Planungsgruppe>
 

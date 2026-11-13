@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useSuchbereichAktiv } from '../SuchbereichKontext'
 import {
   Loader2,
   Maximize2,
@@ -29,12 +30,21 @@ export default function Flugergebnisse({ suche }: { suche: FlugSuchauftrag }) {
   const [phase, setPhase] = useState<FlugRahmenPhase>('laedt')
   const [versuch, setVersuch] = useState(0)
   const [gross, setGross] = useState(false)
+  const aktiv = useSuchbereichAktiv()
+  if (!aktiv && gross) setGross(false)
   useEffect(() => {
     bereich.current?.show()
   }, [])
   useEffect(() => {
     if (host.current) return flugRahmen(host.current, suche.url, setPhase)
   }, [suche.url, versuch])
+  useLayoutEffect(() => {
+    if (!aktiv) {
+      bereich.current?.close()
+      bereich.current?.show()
+      scrollPosition.current = null
+    }
+  }, [aktiv])
   useLayoutEffect(() => {
     if (!gross) {
       const position = scrollPosition.current

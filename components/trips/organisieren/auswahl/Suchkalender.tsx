@@ -1,7 +1,10 @@
 'use client'
 
-import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react'
+import { useCallback, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react'
 import { CalendarDays, Check, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { kalenderPosition } from '@/lib/trips/suchkalender-position'
+import { useSuchbereichAktiv } from '../SuchbereichKontext'
 import { tageDifferenz, tageUtc } from '@/lib/activities/zeit'
 import { datumVerschieben, kalenderGrenzen, monatVerschieben, monatsTage, zeitraumGueltig, type KalenderGrenzen } from '@/lib/trips/suchkalender'
 
@@ -11,11 +14,25 @@ type Props = KalenderGrenzen & {
   ende: string
   startLabel: string
   endeLabel: string
+  className?: string
+  titel?: string
+  kontext?: string
+  disabled?: boolean
+  startId?: string
+  endeId?: string
+  startRef?: (element: HTMLButtonElement | null) => void
+  endeRef?: (element: HTMLButtonElement | null) => void
+  startFehler?: boolean
+  endeFehler?: boolean
+  startBeschrieben?: string
+  endeBeschrieben?: string
+  optional?: boolean
   startName?: string
   endeName?: string
   fehler?: string | null
   fehlerId?: string
   naechte?: boolean
+  dauerAnzeigen?: boolean
   setzen: (start: string, ende: string) => void
 }
 
@@ -32,16 +49,31 @@ const monatsName = (d: string) => new Intl.DateTimeFormat('de-CH', {
 export default function Suchkalender(props: Props) {
   const id = useId()
   const [offen, setOffen] = useState<Teil | null>(null)
+  const aktiv = useSuchbereichAktiv()
+  if (offen && (!aktiv || props.disabled)) setOffen(null)
   const startRef = useRef<HTMLButtonElement>(null)
   const endeRef = useRef<HTMLButtonElement>(null)
+  const externeStartRef = props.startRef
+  const externeEndeRef = props.endeRef
+  const startElement = useCallback((element: HTMLButtonElement | null) => {
+    startRef.current = element
+    externeStartRef?.(element)
+  }, [externeStartRef])
+  const endeElement = useCallback((element: HTMLButtonElement | null) => {
+    endeRef.current = element
+    externeEndeRef?.(element)
+  }, [externeEndeRef])
   const feld = (teil: Teil) => {
     const start = teil === 'start'
     const label = start ? props.startLabel : props.endeLabel
     const name = start ? props.startName : props.endeName
-    return <button type="button" ref={start ? startRef : endeRef} name={name}
-      className="org-field reise-datum-trigger" aria-label={`${label}: ${kurz(start ? props.start : props.ende)}`}
+    const ungueltig = (start ? props.startFehler : props.endeFehler) || Boolean(name && props.fehler === name)
+    const beschrieben = (start ? props.startBeschrieben : props.endeBeschrieben) ?? (ungueltig ? props.fehlerId : undefined)
+    return <button type="button" id={start ? props.startId : props.endeId} disabled={props.disabled}
+      ref={start ? startElement : endeElement} name={name}
+      className={`org-field reise-datum-trigger${props.className ? ` ${props.className}` : ''}`} aria-label={`${label}: ${kurz(start ? props.start : props.ende)}`}
       aria-haspopup="dialog" aria-expanded={offen === teil} aria-controls={offen ? id : undefined}
-      data-invalid={Boolean(name && props.fehler === name)} aria-describedby={name && props.fehler === name ? props.fehlerId : undefined}
+      data-invalid={ungueltig} aria-describedby={beschrieben}
       onClick={() => setOffen(teil)}>
       <span>{label}</span><strong>{kurz(start ? props.start : props.ende)}<CalendarDays size={17} aria-hidden="true" /></strong>
     </button>
@@ -49,7 +81,7 @@ export default function Suchkalender(props: Props) {
   return <>
     {feld('start')}
     {!props.einzeln && feld('ende')}
-    {offen && <KalenderDialog {...props} id={id} teil={offen} anker={offen === 'start' ? startRef : endeRef}
+    {offen && !props.disabled && <KalenderDialog {...props} id={id} teil={offen} anker={offen === 'start' ? startRef : endeRef}
       schliessen={() => setOffen(null)} />}
   </>
 }
@@ -58,12 +90,14 @@ function KalenderDialog(props: Props & {
   id: string; teil: Teil; anker: RefObject<HTMLButtonElement | null>; schliessen: () => void
 }) {
   const { id, anker, schliessen } = props
+  const heute = heutigesDatum()
   const dialog = useRef<HTMLDialogElement>(null)
   const [start, setStart] = useState(props.start)
   const [ende, setEnde] = useState(props.ende)
   const [teil, setTeil] = useState<Teil>(tageUtc(props.start) === null ? 'start' : props.teil)
   const initial = props.teil === 'ende' && tageUtc(props.ende) !== null ? props.ende : props.start
-  const initialDatum = tageUtc(initial) === null || initial < props.min ? props.min : initial > props.max ? props.max : initial
+  const basisDatum = tageUtc(initial) === null ? heute : initial
+  const initialDatum = basisDatum < props.min ? props.min : basisDatum > props.max ? props.max : basisDatum
   const [monat, setMonat] = useState(() => monatVerschieben(initialDatum, 0))
   const [fokus, setFokus] = useState(initialDatum)
   const [hover, setHover] = useState('')
@@ -73,7 +107,7 @@ function KalenderDialog(props: Props & {
   const dauer = tageDifferenz(start, ende)
   const vorschauEnde = teil === 'ende' && hover >= grenze.min && hover <= grenze.max ? hover : ende
   const status = fertig ? props.einzeln ? lang(start)
-    : `${kurz(start)} – ${kurz(ende)} · ${props.naechte ? `${dauer} ${dauer === 1 ? 'Nacht' : 'Nächte'}` : `${(dauer ?? 0) + 1} ${dauer === 0 ? 'Reisetag' : 'Reisetage'}`}`
+    : `${kurz(start)} – ${kurz(ende)}${props.dauerAnzeigen === false ? '' : ` · ${props.naechte ? `${dauer} ${dauer === 1 ? 'Nacht' : 'Nächte'}` : `${(dauer ?? 0) + 1} ${dauer === 0 ? 'Reisetag' : 'Reisetage'}`}`}`
     : `${teil === 'start' ? props.startLabel : props.endeLabel} wählen`
 
   useLayoutEffect(() => {
@@ -82,25 +116,26 @@ function KalenderDialog(props: Props & {
     if (!el) return
     el.showModal()
     const position = () => {
-      const r = trigger?.getBoundingClientRect()
-      const width = el.getBoundingClientRect().width
-      const height = el.getBoundingClientRect().height
-      const vw = document.documentElement.clientWidth
-      const vh = window.visualViewport?.height ?? window.innerHeight
-      const mobile = vw <= 640
-      const left = mobile ? 8 : Math.max(16, Math.min(r?.left ?? 16, vw - width - 16))
-      const below = (r?.bottom ?? 0) + 10
-      const above = (r?.top ?? 0) - height - 10
-      const top = mobile ? Math.max(8, vh - height - 8)
-        : below + height <= vh - 16 ? below : above >= 16 ? above : Math.max(16, (vh - height) / 2)
-      el.style.left = `${left}px`
-      el.style.top = `${top}px`
+      const viewport = window.visualViewport
+      const vw = viewport?.width ?? document.documentElement.clientWidth
+      const vh = viewport?.height ?? window.innerHeight
+      const margin = vw <= 640 ? 8 : 16
+      el.style.maxWidth = `${Math.max(0, vw - margin * 2)}px`
+      el.style.maxHeight = `${Math.max(0, vh - margin * 2)}px`
+      const rect = el.getBoundingClientRect()
+      const position = kalenderPosition({
+        width: vw, height: vh, offsetLeft: viewport?.offsetLeft ?? 0, offsetTop: viewport?.offsetTop ?? 0,
+      }, { width: rect.width, height: rect.height }, trigger?.getBoundingClientRect())
+      el.style.left = `${position.left}px`
+      el.style.top = `${position.top}px`
     }
     position()
     const observer = new ResizeObserver(position)
     observer.observe(el)
     window.addEventListener('resize', position)
     window.visualViewport?.addEventListener('resize', position)
+    window.visualViewport?.addEventListener('scroll', position)
+    window.addEventListener('scroll', position, { capture: true, passive: true })
     el.querySelector<HTMLButtonElement>('[data-focus-day="true"]')?.focus({ preventScroll: true })
     const oldOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -108,6 +143,8 @@ function KalenderDialog(props: Props & {
       observer.disconnect()
       window.removeEventListener('resize', position)
       window.visualViewport?.removeEventListener('resize', position)
+      window.visualViewport?.removeEventListener('scroll', position)
+      window.removeEventListener('scroll', position, true)
       document.body.style.overflow = oldOverflow
       el.close()
       trigger?.focus({ preventScroll: true })
@@ -171,12 +208,13 @@ function KalenderDialog(props: Props & {
 
   return <dialog ref={dialog} id={id} className="reise-kalender" aria-labelledby={`${id}-titel`} aria-describedby={`${id}-status`}
     onCancel={e => { e.preventDefault(); schliessen() }}
+    onKeyDown={e => { if (e.key === 'Escape') e.stopPropagation() }}
     onClick={e => { if (e.target === e.currentTarget) {
       const r = e.currentTarget.getBoundingClientRect()
       if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) schliessen()
     } }}>
     <div className="reise-kalender-kopf">
-      <div><span className="reise-kalender-eyebrow">{props.naechte ? 'Dein Aufenthalt' : 'Deine Flugdaten'}</span><h2 id={`${id}-titel`}>{props.einzeln ? 'Wann möchtest du fliegen?' : 'Wähle deinen Zeitraum'}</h2></div>
+      <div><span className="reise-kalender-eyebrow">{props.kontext ?? (props.naechte ? 'Dein Aufenthalt' : 'Deine Reisedaten')}</span><h2 id={`${id}-titel`}>{props.titel ?? (props.einzeln ? 'Wähle deinen Reisetag' : 'Wähle deinen Zeitraum')}</h2></div>
       <button type="button" className="reise-icon" aria-label="Kalender schliessen" onClick={schliessen}><X size={20} /></button>
     </div>
     <div className="reise-kalender-auswahl" role="group" aria-label="Datum bearbeiten">
@@ -188,7 +226,7 @@ function KalenderDialog(props: Props & {
         <button type="button" className="reise-icon" aria-label="Vorheriger Monat" disabled={monat <= monatVerschieben(grenze.min, 0)} onClick={() => { setHover(''); setMonat(monatVerschieben(monat, -1)) }}><ChevronLeft size={20} /></button>
         <button type="button" className="reise-icon" aria-label="Nächster Monat" disabled={monat >= monatVerschieben(grenze.max, 0)} onClick={() => { setHover(''); setMonat(monatVerschieben(monat, 1)) }}><ChevronRight size={20} /></button>
       </nav>
-      {[monat, monatVerschieben(monat, 1)].map((m, index) => {
+      {(monat.slice(0, 7) === props.max.slice(0, 7) ? [monat] : [monat, monatVerschieben(monat, 1)]).map((m, index) => {
         const tage = monatsTage(m)
         const fokusTag = tage.includes(fokus) && fokus >= grenze.min && fokus <= grenze.max ? fokus : tage.find(d => d && d >= grenze.min && d <= grenze.max)
         return <section key={m} className={'reise-monat' + (index ? ' reise-monat-zweiter' : '')} aria-label={monatsName(m)}>
@@ -200,7 +238,7 @@ function KalenderDialog(props: Props & {
                 const zwischen = d && !props.einzeln && start && vorschauEnde > start && d > start && d < vorschauEnde
                 return <td key={d ?? tag} aria-selected={d ? selected : undefined} className={zwischen ? 'reise-tag-bereich' : d === start ? 'reise-tag-start' : d === vorschauEnde ? 'reise-tag-ende' : undefined}>
                   {d && <button type="button" data-datum={d} data-focus-day={d === fokusTag} tabIndex={d === fokusTag ? 0 : -1}
-                    disabled={d < grenze.min || d > grenze.max} aria-label={lang(d)} aria-current={d === props.min ? 'date' : undefined}
+                    disabled={d < grenze.min || d > grenze.max} aria-label={lang(d)} aria-current={d === heute ? 'date' : undefined}
                     className={selected ? 'reise-tag-gewaehlt' : undefined}
                     onMouseEnter={() => setHover(d)} onFocus={() => setFokus(d)} onKeyDown={e => tastatur(e, d)} onClick={() => waehlen(d)}>{Number(d.slice(-2))}</button>}
                 </td>
@@ -212,7 +250,7 @@ function KalenderDialog(props: Props & {
     </div>
     <div className="reise-kalender-fuss">
       <p id={`${id}-status`} role="status" aria-live="polite">{status}</p>
-      <div><button type="button" className="reise-abbrechen" onClick={schliessen}>Abbrechen</button><button type="button" className="reise-uebernehmen" disabled={!fertig} onClick={() => { props.setzen(start, props.einzeln ? props.ende : ende); schliessen() }}><Check size={17} aria-hidden="true" /> Übernehmen</button></div>
+      <div>{props.optional && <button type="button" className="reise-abbrechen" onClick={() => { props.setzen('', ''); schliessen() }}>{props.einzeln ? 'Datum löschen' : 'Zeitraum löschen'}</button>}<button type="button" className="reise-abbrechen" onClick={schliessen}>Abbrechen</button><button type="button" className="reise-uebernehmen" disabled={!fertig} onClick={() => { props.setzen(start, props.einzeln ? props.ende : ende); schliessen() }}><Check size={17} aria-hidden="true" /> Übernehmen</button></div>
     </div>
   </dialog>
 }

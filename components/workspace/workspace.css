@@ -94,6 +94,10 @@
 .workspace-button.workspace-primary { color: rgb(var(--jet-surface-0)); background: rgb(var(--jet-brand-800)); border-color: transparent; }
 .workspace-primary:hover { background: rgb(var(--jet-brand-900)); }
 .workspace-icon-button { width: 2.75rem; min-width: 44px; min-height: max(44px, 2.75rem); flex-shrink: 0; padding: .5rem; }
+.workspace-header-global .workspace-icon-button { border-color: transparent; background: transparent; border-radius: 50%; }
+.workspace-header-global .workspace-icon-button svg { width: 1rem; height: 1rem; stroke-width: 1.65; }
+.workspace-header-global .workspace-icon-button:hover { background: rgb(var(--jet-surface-100)); }
+.workspace-header-global .workspace-icon-button:focus-visible { outline: 2px solid rgb(var(--jet-brand-600)); outline-offset: 2px; }
 .workspace-theme-toggle { white-space: nowrap; }
 .workspace-menu-button { flex-direction: column; gap: .1rem; padding: .25rem; font-size: .625rem; }
 .workspace-touch-toggle { display: none; }

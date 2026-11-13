@@ -69,12 +69,14 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
   const [fehler, setFehler] = useState('')
   const [fehlerfeld, setFehlerfeld] = useState<Stay22Fehlerfeld | null>(null)
   const [ergebnis, setErgebnis] = useState<Stay22Suche | null>(null)
+  const [geaendert, setGeaendert] = useState(false)
   const [suchlauf, setSuchlauf] = useState(0)
   const anker = hotelPlanOrte(reise, stage)
   const umgebung = useHotelUmgebung(anker.find(a => a.key === d.umgebung))
-  const reset = () => { setErgebnis(null); setFehler(''); setFehlerfeld(null) }
+  const reset = () => { setFehler(''); setFehlerfeld(null) }
   const patch = (wert: Partial<Entwurf>) => {
     reset()
+    setGeaendert(true)
     merken(wert)
   }
   const ortWaehlen = async (auswahl: OrtAuswahl | null) => {
@@ -130,6 +132,7 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
       setGaesteOffen(false)
       setSuchlauf(v => v + 1)
       setErgebnis(result.suche)
+      setGeaendert(false)
     }}>
       <div className="org-formtop"><h2>Finde deine Unterkunft</h2></div>
       <div className="org-fields">
@@ -143,7 +146,7 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
           setzen={(anreise, abreise) => patch({ anreise, abreise })} />
         <button type="button" name="gaeste" aria-describedby={fehlerfeld === 'gaeste' ? `${id}-fehler` : undefined} className="org-field stay22-guestbutton" aria-expanded={gaesteOffen} aria-controls={`${id}-gaeste`} onClick={() => setGaesteOffen(v => !v)}><span>Gäste</span><b>{personen} <ChevronDown size={15} aria-hidden="true" /></b></button>
         <Feld label="Zimmer"><select value={d.zimmer} onChange={e => patch({ zimmer: Number(e.target.value) })}>{Array.from({ length: Math.min(d.erwachsene, 8) }, (_, i) => <option key={i} value={i + 1}>{i + 1} Zimmer</option>)}</select></Feld>
-        <button type="submit" className="org-go" disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> Suchen</button>
+        <button type="submit" className="org-go" disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> {ergebnis ? 'Suche aktualisieren' : 'Suchen'}</button>
       </div>
       {stageId === 'anderer-ort' ? <div className="stay22-other-place"><label htmlFor={`${id}-ort`}>Stadt, Insel oder Region</label><OrtSuche rolle="ziel" variante="field" value={andererOrt} inputId={`${id}-ort`} ungueltig={fehlerfeld === 'ort' || Boolean(ortFehler)} describedBy={fehlerfeld === 'ort' ? `${id}-fehler` : ortFehler ? `${id}-ortfehler` : undefined} placeholder="Wohin möchtest du reisen?" inputClassName="stay22-placeinput" onChange={ortWaehlen} /><p>Diese Suche ändert deine Reiseetappen nicht.</p>{ortLaedt ? <p role="status">Reiseziel wird bestätigt …</p> : null}{ortFehler ? <p role="alert" id={`${id}-ortfehler`}>{ortFehler}</p> : null}</div> : null}
       {gaesteOffen ? <fieldset id={`${id}-gaeste`} className="stay22-guests"><legend>Belegung für die Suche</legend>
@@ -170,6 +173,7 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
         <label>Währung<select name="waehrung" value={d.waehrung} onChange={e => patch({ waehrung: e.target.value })}>{STAY22_WAEHRUNGEN.map(w => <option key={w}>{w}</option>)}</select></label>
         {d.filter.sterne > 0 || d.filter.bewertung > 0 ? <button type="button" className="stay22-smallbutton" onClick={() => patch({ filter: { ...d.filter, sterne: 0, bewertung: 0 } })}>Filter zurücksetzen</button> : null}
       </div>
+      {ergebnis && geaendert ? <p role="status" className="stay22-datecontext">Deine Auswahl ist geändert. Die bisherigen Ergebnisse bleiben sichtbar, bis du „Suche aktualisieren“ wählst.</p> : null}
       {fehler ? <p role="alert" id={`${id}-fehler`} className="stay22-error">{fehler}</p> : null}
     </form>
     {ergebnis ? <Stay22Ergebnisse key={suchlauf} suche={ergebnis} schliessen={() => setErgebnis(null)} /> : <div className="stay22-intro">

@@ -6,8 +6,9 @@
 // wechseln die Adresse. Sie tauschen diese Instanz nicht aus.
 
 import { useState } from 'react'
-import { AlertCircle, MapPin, Plus, RefreshCw, Search, X } from 'lucide-react'
+import { AlertCircle, RefreshCw, Search, X } from 'lucide-react'
 
+import PersoenlicherReiseeinstieg from '@/components/account/PersoenlicherReiseeinstieg'
 import { useGeraetekalendertag } from '@/components/account/account-home-export-1/useGeraetekalendertag'
 import { archivierteReisenAus, kontoReisenSichten, offeneReisenAus } from '@/lib/account/reise-archiv'
 import KontoReiseEintrag from '@/components/trips/KontoReiseEintrag'
@@ -88,6 +89,7 @@ export default function MyTripsCollection({
   const weiterFrei = einig && Boolean(angenommen?.hatWeiter && angenommen.naechsterCursor)
   const erneutFrei = einig
   const leerKonto = Boolean(angenommen && !angenommen.ungueltig && !problem && zeilen.length === 0 && q === '' && auswahl === 'alle' && cursor === null)
+  const persoenlicherEinstieg = Boolean(angenommen && !angenommen.ungueltig && !problem && q === '' && auswahl === 'alle' && cursor === null)
   const fortsetzungLeer = Boolean(angenommen && !angenommen.ungueltig && !problem && zeilen.length === 0 && cursor)
   const keineSuche = Boolean(angenommen && !angenommen.ungueltig && !problem && zeilen.length === 0 && q !== '' && cursor === null)
   const keineAuswahl = Boolean(
@@ -130,7 +132,8 @@ export default function MyTripsCollection({
       data-sammlung-einig={einig ? '1' : '0'}
       className="min-w-0 space-y-6 overflow-x-hidden"
     >
-      <form onSubmit={absenden} role="search" className="flex min-w-0 flex-wrap items-center gap-3">
+      {persoenlicherEinstieg ? <PersoenlicherReiseeinstieg reisen={zeilen} weitereReisen={angenommen?.hatWeiter} /> : null}
+      {!leerKonto ? <form onSubmit={absenden} role="search" className="flex min-w-0 flex-wrap items-center gap-3">
         <div className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto sm:flex-1">
           <label className="relative min-w-0 flex-1">
             <span className="sr-only">Nach Reisetitel, Reiseziel oder Abreiseort suchen</span>
@@ -155,7 +158,7 @@ export default function MyTripsCollection({
           setGesuchterText('')
           navigation.abschicken('clear', sammlungHref({ archiv: auswahl, cursor: null }))
         }} className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-brand-800"><X aria-hidden="true" className="h-4 w-4" />Suche leeren</button> : null}
-      </form>
+      </form> : null}
 
       {navigation.laden ? <p role="status" className="text-sm text-ink-700">Reisen werden geladen …</p> : null}
       {besitz ? <p data-sammlung-besitz className="sr-only">{besitz}</p> : null}
@@ -184,24 +187,7 @@ export default function MyTripsCollection({
         </section>
       ) : null}
 
-      {leerKonto ? (
-        <section className="rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-            <MapPin className="h-5 w-5" />
-          </span>
-          <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">{leerTitel}</h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">
-            Erstelle deine erste Reise. Sie wird dauerhaft gespeichert und lässt sich von jedem Gerät aus weiterplanen.
-          </p>
-          <a
-            href="/planen"
-            className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white"
-          >
-            <Plus className="h-4 w-4" />
-            Reise erstellen
-          </a>
-        </section>
-      ) : null}
+      {leerKonto ? <p role="status" className="text-sm text-ink-700">{leerTitel}</p> : null}
 
       {keineSuche ? <p className="text-sm leading-6 text-ink-700">Keine Reise passt zur Suche.</p> : null}
       {keineAuswahl ? <p className="text-sm leading-6 text-ink-700">Keine Reise in dieser Auswahl.</p> : null}

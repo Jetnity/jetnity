@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ChevronRight, Fingerprint, FolderLock, UserRound, UsersRound } from 'lucide-react'
 
+import PersoenlicherReiseeinstieg from '@/components/account/PersoenlicherReiseeinstieg'
 import { begruessungName } from '@/lib/account/begruessung'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Mein Konto',
-  description: 'Persönliche Daten, Reisende und Sicherheit verwalten.',
+  title: 'Dein Jetnity',
+  description: 'Deine Reise fortsetzen, eine neue Reise beginnen und dein Konto verwalten.',
   robots: { index: false, follow: false },
 }
 
@@ -29,7 +30,9 @@ export default async function AccountSeite() {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-8 sm:py-14">
-      <h1 className="mb-6 text-3xl font-semibold tracking-[-0.045em] text-brand-800 sm:text-5xl">Mein Konto</h1>
+      <h1 className="mb-6 text-3xl font-semibold tracking-[-0.045em] text-brand-800 sm:text-5xl">Dein Jetnity</h1>
+      <PersoenlicherReiseeinstieg />
+      <h2 className="mb-4 mt-10 text-xl font-semibold tracking-tight text-brand-800">Dein Konto</h2>
       <section aria-label="Kontoprofil" className="flex min-w-0 items-center gap-4 rounded-t-[26px] bg-brand-800 px-5 py-7 text-white sm:gap-6 sm:px-8">
         <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-white/25 bg-white/10 text-2xl font-semibold">
           {initiale ? initiale : <UserRound aria-hidden="true" />}

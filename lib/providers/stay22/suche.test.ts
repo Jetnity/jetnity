@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { stay22Suche, stay22OrtAusEtappe, stay22Ansicht, type Stay22Eingabe } from './suche'
+import { STAY22_FILTER, STAY22_WAEHRUNGEN, stay22Suche, stay22OrtAusEtappe, stay22Ansicht, type Stay22Eingabe } from './suche'
 import { stay22DatenschutzErlaubt } from './rahmen'
 import { CMP_CATEGORIES } from '@/lib/privacy/privacybee-cmp/vertrag'
 
@@ -95,4 +95,33 @@ test('Ansichtswechsel bewahrt Suchbedingungen und Ortsmarker', () => {
     assert.equal(danach.get('listviewexpand'), String(ansicht === 'all'))
     for (const [key, value] of vorher) if (!['viewmode','listviewexpand'].includes(key)) assert.equal(danach.get(key), value)
   }
+})
+
+test('Filterkombinationen und Währungswechsel bewahren Reisedaten und Partnerzuordnung', () => {
+  for (const sterne of [0, 1, 2, 3, 4, 5]) for (const bewertung of [0, 6, 7, 8, 9]) {
+    for (const preis of ['total', 'nightly'] as const) for (const waehrung of STAY22_WAEHRUNGEN) {
+      const result = stay22Suche({ ...eingabe, waehrung, filter: { sterne, bewertung, preis } }, heute)
+      assert.ok('suche' in result)
+      const p = new URL(result.suche.url).searchParams
+      assert.equal(p.get('minstarrating'), sterne ? String(sterne) : null)
+      assert.equal(p.get('minguestrating'), bewertung ? String(bewertung) : null)
+      assert.equal(p.get('currency'), waehrung)
+      assert.equal(p.get('priceper'), preis)
+      assert.equal(p.get('min'), null, 'Währung darf keinen USD-Budgetfilter erzeugen')
+      assert.equal(p.get('max'), null)
+      for (const [name, value] of Object.entries({ aid: 'jetnity', campaign: 'jetnity-unterkunft',
+        checkin: eingabe.anreise, checkout: eingabe.abreise, adults: '2', children: '1', rooms: '2', lat: '13.75', lng: '100.52' })) {
+        assert.equal(p.get(name), value, name)
+      }
+    }
+  }
+})
+
+test('Filter zurücksetzen entfernt Sterne und Gästebewertung ohne die Suche zu verlieren', () => {
+  const gefiltert = stay22Suche({ ...eingabe, filter: { sterne: 5, bewertung: 9, preis: 'nightly' } }, heute)
+  const zurueckgesetzt = stay22Suche({ ...eingabe, filter: { ...STAY22_FILTER } }, heute)
+  const standard = stay22Suche(eingabe, heute)
+  assert.ok('suche' in gefiltert && 'suche' in zurueckgesetzt && 'suche' in standard)
+  assert.notEqual(gefiltert.suche.url, zurueckgesetzt.suche.url)
+  assert.equal(zurueckgesetzt.suche.url, standard.suche.url)
 })

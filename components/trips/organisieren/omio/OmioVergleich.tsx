@@ -18,6 +18,7 @@ import {
   TrainFront,
 } from 'lucide-react'
 import Ortswahl from './Ortswahl'
+import Suchkalender from '../auswahl/Suchkalender'
 import Streckenkarte from './Streckenkarte'
 import WeitereVerbindungen from './WeitereVerbindungen'
 import { useStreckenwerte } from './Streckenwerte'
@@ -221,20 +222,9 @@ export default function OmioVergleich({
               setNach(o)
             }}
           />
-          <label className="ov-date">
-            Reisedatum
-            <span>
-              <CalendarDays size={17} />
-              <input
-                type="date"
-                value={datum}
-                onChange={(e) => {
-                  setDatum(e.target.value)
-                  bearbeiten()
-                }}
-              />
-            </span>
-          </label>
+          <Suchkalender className="ov-date" start={datum} ende="" startLabel="Reisedatum" endeLabel=""
+            einzeln optional min={heute()} max="9999-12-31" minTage={0} kontext="Deine Verbindung"
+            setzen={wert => { setDatum(wert); bearbeiten() }} />
           <label className="ov-people">
             Reisende
             <select

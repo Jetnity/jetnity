@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 
 import './multi-stop-create-day-allocation-1/allocation.css'
 
@@ -122,36 +123,12 @@ export default function TripStageDayAllocation({
                     <p className="tageszuordnung-ziel text-sm font-semibold text-brand-900">
                       {ziel.position}. {ziel.label}
                     </p>
-                    <label className="tageszuordnung-feld text-sm font-medium text-brand-800" htmlFor={vonId}>
-                      <span>Von</span>
-                      <input
-                        id={vonId}
-                        type="date"
-                        value={anspruch.startDate}
-                        min={startDate}
-                        max={endDate}
-                        disabled={disabled}
-                        aria-invalid={Boolean(fehler) || undefined}
-                        aria-describedby={fehler ? 'zuordnung-fehler' : undefined}
-                        onChange={(ereignis) => onAnspruch(ziel.key, { startDate: ereignis.target.value })}
-                        className="h-12 w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-0 px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
-                      />
-                    </label>
-                    <label className="tageszuordnung-feld text-sm font-medium text-brand-800" htmlFor={bisId}>
-                      <span>Bis</span>
-                      <input
-                        id={bisId}
-                        type="date"
-                        value={anspruch.endDate}
-                        min={startDate}
-                        max={endDate}
-                        disabled={disabled}
-                        aria-invalid={Boolean(fehler) || undefined}
-                        aria-describedby={fehler ? 'zuordnung-fehler' : undefined}
-                        onChange={(ereignis) => onAnspruch(ziel.key, { endDate: ereignis.target.value })}
-                        className="h-12 w-full min-w-0 max-w-full rounded-2xl border border-line-200 bg-surface-0 px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
-                      />
-                    </label>
+                    <Suchkalender start={anspruch.startDate} ende={anspruch.endDate} startLabel="Von" endeLabel="Bis"
+                      startId={vonId} endeId={bisId} min={startDate} max={endDate} minTage={0} disabled={disabled}
+                      kontext={ziel.label} titel="Tage deiner Etappe wählen" optional
+                      startFehler={Boolean(fehler)} endeFehler={Boolean(fehler)}
+                      startBeschrieben={fehler ? 'zuordnung-fehler' : undefined} endeBeschrieben={fehler ? 'zuordnung-fehler' : undefined}
+                      setzen={(von, bis) => onAnspruch(ziel.key, { startDate: von, endDate: bis })} />
                     </div>
                   </fieldset>
                 )

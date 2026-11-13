@@ -410,9 +410,9 @@ describe('P2 correction: local airport times and legacy summary representability
   test('editor accepts and prefills the exact local route rather than its degraded summary', async () => {
     for (const segment of [datumslinie, frueheOrtszeit]) {
       const ui = editor(); ui.open(); ui.fill([segment]); await ui.submit()
-      assert.deepEqual(ui.calls, [[ITEM, [segment]]]); assert.equal(ui.inputs().length, 0)
+      assert.deepEqual(ui.calls, [[ITEM, [segment]]]); assert.equal(ui.fields().length, 0)
       const reopened = editor(flug(manuelleFlugRouteBauen([segment])!)); reopened.open()
-      assert.deepEqual(reopened.inputs().map(input => input.props.value), [segment.origin, segment.destination,
+      assert.deepEqual(reopened.values(), [segment.origin, segment.destination,
         segment.departureDate, segment.departureTime, segment.arrivalDate, segment.arrivalTime])
     }
   })
@@ -421,6 +421,7 @@ describe('P2 correction: local airport times and legacy summary representability
 type Props = {
   onSpeichern?: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null>
   children?: React.ReactNode; type?: string; value?: string; id?: string; htmlFor?: string; role?: string; disabled?: boolean; 'aria-label'?: string
+  start?: string; startLabel?: string; startId?: string; setzen?: (start: string, ende: string) => void
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
   onSubmit?: (event: { preventDefault: () => void }) => Promise<void>
 }
@@ -454,14 +455,19 @@ function editor(item = flug(), outcome: string | null | Error | (() => Promise<s
   const render = () => { index = 0; refIndex = 0; return (child.type as (props: Props) => React.ReactNode)({ ...child.props, onSpeichern: save }) }
   const buttons = () => elements(render(), el => el.type === 'button')
   const open = () => buttons()[0]!.props.onClick!()
-  const inputs = () => elements(render(), el => el.type === 'input')
+  const fields = () => elements(render(), el => el.type === 'input' || (typeof el.type === 'function' && el.type.name === 'Suchkalender'))
+  const values = () => fields().map(field => field.props.start ?? field.props.value)
   const submit = () => elements(render(), el => el.type === 'form')[0]!.props.onSubmit!({ preventDefault() {} })
   const fill = (data: FlugSegmentManuell[], append = true) => {
-    if (append) for (let i = inputs().length / 6; i < data.length; i++) buttons().find(b => b.props.children === 'Segment hinzufügen')!.props.onClick!()
+    if (append) for (let i = fields().length / 6; i < data.length; i++) buttons().find(b => b.props.children === 'Segment hinzufügen')!.props.onClick!()
     data.flatMap(segment => [segment.origin, segment.destination, segment.departureDate, segment.departureTime ?? '', segment.arrivalDate, segment.arrivalTime ?? ''])
-      .forEach((value, i) => inputs()[i]!.props.onChange!({ target: { value } }))
+      .forEach((value, i) => {
+        const field = fields()[i]!
+        if (field.props.setzen) field.props.setzen(value, '')
+        else field.props.onChange!({ target: { value } })
+      })
   }
-  return { render, open, inputs, submit, fill, calls, buttons }
+  return { render, open, fields, values, submit, fill, calls, buttons }
 }
 
 describe('Flight editor: actual render and event paths', () => {
@@ -484,21 +490,27 @@ describe('Flight editor: actual render and event paths', () => {
     const ui = editor(); ui.open()
     assert.doesNotMatch(renderToStaticMarkup(React.createElement(React.Fragment, null, ui.render())), /Als gebucht markieren/)
   })
-  test('empty fields are not inferred; saved route prefill, labelled date/time inputs', () => {
+  test('empty fields are not inferred; saved route prefill, labelled calendar and time fields', () => {
     const empty = editor(flug({ startsOn: '2026-11-01', startsAt: '09:00' })); empty.open()
-    assert.deepEqual(empty.inputs().map(input => input.props.value), Array(6).fill(''))
+    assert.deepEqual(empty.values(), Array(6).fill(''))
     const ui = editor(flug(manuelleFlugRouteBauen(segments)!)); ui.open()
-    assert.deepEqual(ui.inputs().map(input => input.props.value), segments.flatMap(s => [s.origin, s.destination, s.departureDate, s.departureTime, s.arrivalDate, s.arrivalTime]))
-    assert.deepEqual(elements(ui.render(), el => el.type === 'label').map(l => l.props.htmlFor), ui.inputs().map(i => i.props.id))
-    assert.deepEqual(ui.inputs().map(i => i.props.type), ['text', 'text', 'date', 'time', 'date', 'time', 'text', 'text', 'date', 'time', 'date', 'time'])
+    assert.deepEqual(ui.values(), segments.flatMap(s => [s.origin, s.destination, s.departureDate, s.departureTime, s.arrivalDate, s.arrivalTime]))
+    assert.deepEqual(elements(ui.render(), el => el.type === 'label').map(l => l.props.htmlFor), ui.fields().filter(i => i.type === 'input').map(i => i.props.id))
+    assert.deepEqual(ui.fields().map(i => i.props.setzen ? 'calendar' : i.props.type), ['text', 'text', 'calendar', 'time', 'calendar', 'time', 'text', 'text', 'calendar', 'time', 'calendar', 'time'])
+    for (const field of ui.fields().filter(i => i.props.setzen)) {
+      const markup = renderToStaticMarkup(field)
+      assert.ok(markup.includes(`id="${field.props.startId}"`))
+      assert.ok(markup.includes(`aria-label="${field.props.startLabel}:`))
+      assert.match(markup, /aria-haspopup="dialog"/)
+    }
     assert.deepEqual(ui.calls, [])
   })
   test('explicit add/remove; 1–4 bound; removing middle does not silently repair continuity', async () => {
     const ui = editor(); ui.open(); ui.fill(segments)
     for (let i = 0; i < 5; i++) ui.buttons().find(b => b.props.children === 'Segment hinzufügen')!.props.onClick!()
-    assert.equal(ui.inputs().length, 24); assert.equal(ui.buttons().find(b => b.props.children === 'Segment hinzufügen')!.props.disabled, true)
+    assert.equal(ui.fields().length, 24); assert.equal(ui.buttons().find(b => b.props.children === 'Segment hinzufügen')!.props.disabled, true)
     ui.buttons().find(b => b.props['aria-label'] === 'Segment 2 entfernen')!.props.onClick!()
-    assert.equal(ui.inputs().length, 18); await ui.submit(); assert.deepEqual(ui.calls, [])
+    assert.equal(ui.fields().length, 18); await ui.submit(); assert.deepEqual(ui.calls, [])
   })
   test('invalid submit no callback; no autosave; exact normalized payload; success closes', async () => {
     const ui = editor(); ui.open(); await ui.submit(); assert.deepEqual(ui.calls, [])
@@ -506,14 +518,14 @@ describe('Flight editor: actual render and event paths', () => {
     assert.equal(elements(ui.render(), el => el.props.role === 'alert').length, 1)
     ui.fill([{ ...direkt, origin: 'zrh', departureTime: null }]); assert.deepEqual(ui.calls, [])
     await ui.submit(); assert.deepEqual(ui.calls, [[ITEM, [{ ...direkt, departureTime: null }]]])
-    assert.equal(ui.inputs().length, 0); assert.equal(elements(ui.render(), el => el.props.role === 'status').length, 1)
+    assert.equal(ui.fields().length, 0); assert.equal(elements(ui.render(), el => el.props.role === 'status').length, 1)
   })
   test('failure keeps input; thrown details sanitized; cancel writes nothing', async () => {
     for (const outcome of ['Airport unbekannt.', new Error('secret transport')]) {
       const ui = editor(flug(), outcome); ui.open(); ui.fill(segments); await ui.submit()
-      assert.equal(ui.inputs().length, 12); assert.equal(ui.inputs()[0]!.props.value, 'ZRH')
+      assert.equal(ui.fields().length, 12); assert.equal(ui.fields()[0]!.props.value, 'ZRH')
       assert.doesNotMatch(String(elements(ui.render(), el => el.props.role === 'alert')[0]!.props.children), /secret/)
-      ui.buttons().at(-1)!.props.onClick!(); assert.equal(ui.inputs().length, 0); assert.equal(ui.calls.length, 1)
+      ui.buttons().at(-1)!.props.onClick!(); assert.equal(ui.fields().length, 0); assert.equal(ui.calls.length, 1)
     }
     const ui = editor(); ui.open(); ui.fill(segments); ui.buttons().at(-1)!.props.onClick!(); assert.deepEqual(ui.calls, [])
   })
@@ -521,13 +533,13 @@ describe('Flight editor: actual render and event paths', () => {
     let finish!: (value: null) => void
     const ui = editor(flug(), () => new Promise(resolve => { finish = resolve })); ui.open(); ui.fill(segments)
     const first = ui.submit(); await ui.submit(); assert.equal(ui.calls.length, 1)
-    finish(null); await first; assert.equal(ui.inputs().length, 0)
+    finish(null); await first; assert.equal(ui.fields().length, 0)
   })
   test('legacy multi-leg and >4 segment routes are never silently truncated or rewritten', async () => {
     const route = manuelleFlugRouteBauen(segments)!.routeItinerary
     for (const routeItinerary of [{ ...route, legs: [...route.legs, ...route.legs] }, { ...route, legs: [{ segments: Array(5).fill(route.legs[0]!.segments[0]!) }] }]) {
       const ui = editor(flug({ routeItinerary })); ui.open(); await ui.submit()
-      assert.deepEqual(ui.calls, []); assert.equal(ui.inputs().length, 0)
+      assert.deepEqual(ui.calls, []); assert.equal(ui.fields().length, 0)
       assert.equal(elements(ui.render(), el => el.props.role === 'alert').length, 1)
     }
   })
