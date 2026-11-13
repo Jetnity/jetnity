@@ -2119,6 +2119,7 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
   h.fixture.refresh('unclear')
   const ambiguous=await h.prepare('n10-current-read-suppression');await ambiguous.finish()
   assert.ok(ambiguous.outcome.status==='escalation'&&ambiguous.outcome.reason==='primary_unclear')
+  const beforeSuppression={calls:h.hrs.evidence.calls.length,sqlCodes:h.hrs.evidence.sqlCodes.length}
   const lock=await resultLocker(lifetime,h,'outbox_v1'),writer=lifetime.run(()=>h.raw('escalation',h.escalation(ambiguous)))
   const abortSingle=new AbortController()
   let single:Promise<Hrs1Reply>|undefined,batch:Promise<Hrs1Reply>|undefined
@@ -2133,7 +2134,18 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
     await blocked(lifetime,h,'projection_batch',writerIdentity)
     await lock.release()
     assert.equal((await writer).status,'reported')
-    assert.ok(['not_current','missing'].includes((await batch).status),'batch confirms against the committed suppression, never the old optimistic projection')
+    const batchReply=await batch
+    if(!['not_current','missing'].includes(batchReply.status))console.error('HRS1_N10_BATCH_DIAG',JSON.stringify({
+      status:batchReply.status,signalAborted:h.signal.aborted,
+      sqlCodeCount:h.hrs.evidence.sqlCodes.length-beforeSuppression.sqlCodes,
+      sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeSuppression.sqlCodes).slice(-8),
+      callCount:h.hrs.evidence.calls.length-beforeSuppression.calls,
+      calls:h.hrs.evidence.calls.slice(beforeSuppression.calls).slice(-8).map(c=>({
+        id:c.id,kind:c.kind,operation:c.operation,dispatched:c.dispatched,committed:c.committed,drained:c.drained,
+        awaitMilliseconds:c.awaitMilliseconds,targetOperations:c.targetOperations,
+      })),
+    }))
+    assert.ok(['not_current','missing'].includes(batchReply.status),'batch confirms against the committed suppression, never the old optimistic projection')
   }finally{
     abortSingle.abort();await lock.release()
     await Promise.allSettled([writer,...(single?[single]:[]),...(batch?[batch]:[])])
@@ -2241,8 +2253,17 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   assert.equal((await h.raw('monitor_finish',{...finish,generation:first.generation})).status,'not_current')
   const finished=await h.raw('monitor_finish',finish);assert.equal(finished.status,'finished')
   const finishedValue=finished.value as {generation:number;nextCheckAt:string}
-  assert.equal(finishedValue.generation,next.generation);assert.ok(finishedValue.nextCheckAt>h.fixture.clock().now)
+  assert.equal(finishedValue.generation,next.generation)
   const finishState=await resultSnapshot(owner)
+  const finishOperations=finishState.operations_v1.filter(row=>row.operation_kind==='monitor_finish'&&row.operation_id===finish.operationId)
+  assert.equal(finishOperations.length,1);assert.equal(finishState.monitor_schedule_v1.length,1)
+  const finishOperation=finishOperations[0]!,finishSchedule=finishState.monitor_schedule_v1[0]!
+  assert.deepEqual(finishOperation.command,finish);assert.deepEqual(finishOperation.result,finishedValue)
+  assert.equal(Date.parse(finishedValue.nextCheckAt)-Date.parse(String(finishOperation.recorded_at)),h.fixture.binding.monitorIntervalMilliseconds)
+  assert.equal(finishSchedule.finish_operation,finish.operationId)
+  assert.equal(Date.parse(String(finishSchedule.next_check_at)),Date.parse(finishedValue.nextCheckAt))
+  assert.equal(finishSchedule.generation,next.generation)
+  assert.equal(finishSchedule.claimed_by,null);assert.equal(finishSchedule.lease_until,null)
   assert.deepEqual(await h.raw('monitor_finish',finish),finished)
   assert.deepEqual(await resultSnapshot(owner),finishState,'finish replay cannot renew the next check or duplicate the operation')
 

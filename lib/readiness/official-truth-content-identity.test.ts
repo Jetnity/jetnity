@@ -550,9 +550,9 @@ describe('dormancy and architectural boundaries', () => {
   const REVIEWED_CONTENT_FIXTURE_PINS = [
     {
       path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-      bytes: 207929,
-      blob: '4dd26035d58c0c1e124d7ff4bfdf22b252d48d0e',
-      sha256: '91f5b46a14fc51196045cfd6ffb2fb3574ffb9f74542e857a8ed792117f1f58d',
+      bytes: 209621,
+      blob: '58680412a463fa2f42a803a94f122dda36a1f538',
+      sha256: '3be76d9cb5a4f46260294b4d99914948eed95a2b00623ae3217f354b84b04d15',
       importText: "import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
     },
     {
