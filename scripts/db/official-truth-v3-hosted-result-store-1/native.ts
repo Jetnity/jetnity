@@ -438,9 +438,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
-    "bytes": 33339,
-    "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb"
+    "blob": "1c420f807e393556a68b48a105623a1f94016ea0",
+    "bytes": 34286,
+    "sha256": "0063de3f54a0ac3f092fd5bdfb35628742aff4068eea52b1797c0163698a53c6"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -480,9 +480,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-    "blob": "ddb7b40fd32e9d3146cfde63c142dd2dbd96449e",
-    "bytes": 11338,
-    "sha256": "48722cf799ae8f08350f4c5ef227c85e37df8b860708ab2b210dbcdc7650a79e"
+    "blob": "45b3a6f934ce73122f09d65aad6ee29cef6bd837",
+    "bytes": 11424,
+    "sha256": "4cbfd123a92d70422f5706ef3a36778662d58b90bb8ae8c10f03b87ebf37b7b0"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
