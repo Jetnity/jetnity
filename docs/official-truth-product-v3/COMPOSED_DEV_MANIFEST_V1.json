@@ -558,9 +558,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
-      "bytes": 8285,
-      "blob": "8fba173650c9049c44ad08386d9bfc8aed9f5552",
-      "sha256": "e8455ea24e9aba165ff3b933b7ea95ac444fdd20fea0398e61e2b32d1dbc2619"
+      "bytes": 8412,
+      "blob": "2335a1c2a7f0a5114ec5c467f5d4700d5e85c69e",
+      "sha256": "b634cf95892c6209d974b0adf4c778c889313c5130c8eec4bc921611951b0c26"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
@@ -1253,9 +1253,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "8f977950c7887f80c17c7d8caaf64005175fa088",
+      "blob": "a9703012f046efd29f3a85367b75f10d831e2da6",
       "bytes": 103371,
-      "sha256": "a6525c8eeb64e2f43c5a7e586a1b61c5f061620c33f964efdd4559b319d9e4a4"
+      "sha256": "ada64508bd458a786f862cac99f3588b6d03e43d08f738c508481edf401165b5"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",

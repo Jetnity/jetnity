@@ -764,9 +764,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
-    "bytes": 8285,
-    "blob": "8fba173650c9049c44ad08386d9bfc8aed9f5552",
-    "sha256": "e8455ea24e9aba165ff3b933b7ea95ac444fdd20fea0398e61e2b32d1dbc2619"
+    "bytes": 8412,
+    "blob": "2335a1c2a7f0a5114ec5c467f5d4700d5e85c69e",
+    "sha256": "b634cf95892c6209d974b0adf4c778c889313c5130c8eec4bc921611951b0c26"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
@@ -1368,7 +1368,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
   let poisoned = false, stopped = false, cleanupTail = Promise.resolve()
   const evidence = { admitted: 0, dispatched: 0, acknowledged: 0, lost: 0, aborted: 0, drained: 0,
     sqlCodes: [] as string[], calls: [] as Readonly<{ id: number; kind: HrsLoginKind; operation: Hrs1Operation;
-      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean; awaitMilliseconds: number }>[] }
+      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean; awaitMilliseconds: number; targetOperations: LocalPgConnection['operationDiagnostics'] }>[] }
   const removeStop = lifetime.onStop(() => { stop.abort(Error('hrs1_native_lifetime_stopped')) })
   function poison() {
     if (poisoned) return
@@ -1480,7 +1480,8 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       } finally {
         budget.active--; contexts.delete(call)
         evidence.calls.push(Object.freeze({ id:call.id,kind,operation:command.operation,target:call.targetId??null,control:call.controlId??null,
-          dispatched:call.dispatched,committed:call.committed,drained:call.drained,awaitMilliseconds:performance.now()-admittedAt }))
+          dispatched:call.dispatched,committed:call.committed,drained:call.drained,awaitMilliseconds:performance.now()-admittedAt,
+          targetOperations:call.target?.operationDiagnostics.slice(-8)??[] }))
       }
     }
   }
@@ -1680,9 +1681,12 @@ async function blocked(lifetime:OwnedTestLifetime,h:Harness,operation:Hrs1Operat
     }return false
   });assert.ok(found);return found
 }
-async function resultLocker(lifetime:OwnedTestLifetime,h:Harness,table:'heads_v1'|'outbox_v1'){
+async function resultLocker(lifetime:OwnedTestLifetime,h:Harness,target:'heads_v1'|'outbox_v1'|'head_row'){
   const own=await connect(lifetime,h.common.cluster)
-  await own.connection.query('BEGIN');await own.connection.query('LOCK TABLE official_v3_result_private.'+table+' IN SHARE MODE')
+  await own.connection.query('BEGIN')
+  if(target==='head_row')assert.deepEqual(await own.connection.query(
+    'SELECT singleton::text AS singleton FROM official_v3_result_private.heads_v1 WHERE singleton FOR UPDATE'),[{singleton:'true'}])
+  else await own.connection.query('LOCK TABLE official_v3_result_private.'+target+' IN SHARE MODE')
   let released=false
   const stop=lifetime.onStop(()=>own.connection.close())
   return{...own,async release(){if(released)return;released=true;await own.connection.query('ROLLBACK');own.connection.close();stop()
@@ -1887,11 +1891,11 @@ async function n04(h:Harness){
     methodDrained:h.method.evidence.drained,methodSql:h.method.evidence.sqlCodes.length}
   const queryStarted=performance.now()
   const answer=await h.jobs.query({destinationCountryCode:'DE',citizenshipCountryCodes:['CH']},h.signal)
-  if(!answer.ok)console.error('HRS1_QUERY_DIAG',JSON.stringify({reason:answer.reason,awaitMilliseconds:performance.now()-queryStarted,
+  console.error('HRS1_QUERY_DIAG',JSON.stringify({outcome:answer.ok?'current':answer.reason,awaitMilliseconds:performance.now()-queryStarted,
     callerAborted:h.signal.aborted,hrs:{admitted:h.hrs.evidence.admitted-beforeQuery.hrsAdmitted,
       completed:h.hrs.evidence.calls.length-beforeQuery.hrsCalls,
       calls:h.hrs.evidence.calls.slice(beforeQuery.hrsCalls).slice(-8).map(c=>({kind:c.kind,operation:c.operation,
-        dispatched:c.dispatched,committed:c.committed,drained:c.drained,awaitMilliseconds:c.awaitMilliseconds})),
+        dispatched:c.dispatched,committed:c.committed,drained:c.drained,awaitMilliseconds:c.awaitMilliseconds,targetOperations:c.targetOperations})),
       sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeQuery.hrsSql).slice(-8)},
     method:{admitted:h.method.evidence.admitted-beforeQuery.methodAdmitted,dispatched:h.method.evidence.dispatched-beforeQuery.methodDispatched,
       drained:h.method.evidence.drained-beforeQuery.methodDrained,completed:h.method.evidence.calls.length-beforeQuery.methodCalls,
@@ -1978,8 +1982,8 @@ async function n06(lifetime:OwnedTestLifetime,h:Harness,race:Awaited<ReturnType<
 async function actualTimePassed(lifetime:OwnedTestLifetime,owner:LocalPgConnection,instant:string,milliseconds=4500){
   await until(lifetime,async()=>scalar(await owner.query('SELECT (clock_timestamp()>$1::timestamptz)::text AS passed',text([instant])),'passed')==='true',milliseconds)
 }
-async function waitedRefusal(lifetime:OwnedTestLifetime,h:Harness,body:Readonly<Record<string,unknown>>,afterWait:()=>Promise<void>,override:NativeRequestOverride={}){
-  const before=await resultSnapshot(h.common.bootstrap.connection),lock=await resultLocker(lifetime,h,'heads_v1')
+async function waitedRefusal(lifetime:OwnedTestLifetime,h:Harness,body:Readonly<Record<string,unknown>>,afterWait:()=>Promise<void>,override:NativeRequestOverride={},lockTarget:'heads_v1'|'head_row'='heads_v1'){
+  const before=await resultSnapshot(h.common.bootstrap.connection),lock=await resultLocker(lifetime,h,lockTarget)
   const pending=lifetime.run(()=>h.raw('transition',body,h.signal,override))
   let reply:Hrs1Reply|undefined
   try{await blocked(lifetime,h,'transition',lock.identity);await afterWait()}
@@ -2006,11 +2010,14 @@ async function n07(lifetime:OwnedTestLifetime,h:Harness){
   const actual=h.fixture.clock().legalDate
   const previousDay=new Date(Date.parse(actual+'T00:00:00.000Z')-86400000).toISOString().slice(0,10)
   assert.notEqual(actual,previousDay)
-  // A separately bound stale legal day reaches the real post-lock fence. This
-  // does not simulate or claim that physical midnight occurred during the test.
+  // A SHARE table lock does not block the dispatcher's SELECT FOR UPDATE.
+  // Lock the actual head row so the stale legal day reaches its first fence
+  // only after a witnessed wait; this does not simulate physical midnight.
+  const calendarCodes=h.hrs.evidence.sqlCodes.length
   await waitedRefusal(lifetime,h,h.transition(calendar),async()=>{
     assert.equal(h.fixture.clock().legalDate,actual)
-  },{legalDate:previousDay})
+  },{legalDate:previousDay},'head_row')
+  assert.deepEqual(h.hrs.evidence.sqlCodes.slice(calendarCodes),['P7806'],'the actual post-lock legal-day fence refuses the stale day')
   const currentDay=await h.raw('history',{contextKey:h.fixture.binding.contextKey,factKind:'requirement_effect'})
   assert.equal(currentDay.status,'snapshot','fresh actual selected-calendar read remains available')
 }

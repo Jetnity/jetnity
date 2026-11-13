@@ -65,7 +65,8 @@ export function qualifyAaChDeOriginal(raw: AaChDeOwnedOriginal, binding: Hrs1Bin
     const fingerprint = protocol === 2
       ? officialTruthSourceFingerprintV2(raw.bodyText, { ...selected.source, canonicalUrl: raw.finalUrl, contentType: raw.contentType })
       : protocol === 1 ? evidenceQuellenFingerprint(raw.bodyText) : null
-    const lookup = contentEvidenceLookupV3(binding.context.scope, selected.source)
+    const lookup = contentEvidenceLookupV3(binding.context.scope, { sourceId: selected.source.sourceId,
+      contentItemId: selected.source.contentItemId, representationId: selected.source.representationId })
     if (!protocol || !fingerprint || !lookup.ok) return null
     const interpretation: AaChDeSemanticResult = selected.documentIdentity(raw.bodyText)
       ? selected.interpret(raw.bodyText) : { status: 'unclear', reason: 'unqualified_destination_authority' }

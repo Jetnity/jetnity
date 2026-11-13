@@ -457,9 +457,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
-    "bytes": 8285,
-    "blob": "8fba173650c9049c44ad08386d9bfc8aed9f5552",
-    "sha256": "e8455ea24e9aba165ff3b933b7ea95ac444fdd20fea0398e61e2b32d1dbc2619"
+    "bytes": 8412,
+    "blob": "2335a1c2a7f0a5114ec5c467f5d4700d5e85c69e",
+    "sha256": "b634cf95892c6209d974b0adf4c778c889313c5130c8eec4bc921611951b0c26"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
