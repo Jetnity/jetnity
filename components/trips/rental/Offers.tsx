@@ -1,6 +1,6 @@
 'use client'
 /* eslint-disable @next/next/no-img-element -- Provider images are allowlisted, transient and loaded directly without extending the image-optimizer trust boundary. */
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { ArrowRight, Car, ExternalLink, Gauge, Luggage, ShieldCheck, Star, Users } from 'lucide-react'
 import type { RentalOffer } from '@/lib/providers/discovercars/search/contract'
 import { BUTTON, CATEGORY, money, PRIMARY, TRANSMISSION } from './client'
@@ -29,7 +29,7 @@ function facts(o: RentalOffer) {
     ['Stornierung', cancellation(o)],
   ]
 }
-export function OfferCard({ offer: o, selected, onCompare, onDetails, expired }: { offer: RentalOffer; selected: boolean; onCompare: () => void; onDetails: () => void; expired: boolean }) {
+export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, saveAction }: { offer: RentalOffer; selected: boolean; onCompare: () => void; onDetails: () => void; expired: boolean; saveAction?: ReactNode }) {
   return <article className={`flex min-w-0 flex-col rounded-3xl border bg-white p-4 transition sm:p-5 ${selected ? 'border-brand-600 ring-1 ring-brand-600' : 'border-line-200 hover:border-line-400'}`}>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-600">
       <span className="rounded-full bg-surface-50 px-2.5 py-1.5 font-medium text-brand-700">{CATEGORY[o.car.category ?? ''] ?? 'Mietwagen'}</span>
@@ -56,6 +56,7 @@ export function OfferCard({ offer: o, selected, onCompare, onDetails, expired }:
       <p className="text-xs text-ink-600">Gesamtpreis für deinen Mietzeitraum</p>
       <p className="mt-1 text-2xl font-bold tracking-tight text-brand-800">{money(o.price.total, o.price.currency)}</p>
       <button className={`${PRIMARY} mt-3 w-full`} type="button" disabled={expired} onClick={onDetails}>Angebot ansehen<ArrowRight className="h-4 w-4" aria-hidden="true" /></button>
+      {saveAction}
       <label className="mt-1 flex min-h-11 cursor-pointer items-center justify-center gap-2 text-sm font-medium text-brand-800"><input type="checkbox" checked={selected} disabled={expired} onChange={onCompare} className="h-4 w-4 accent-brand-800" />Vergleichen<span className="sr-only">: {o.car.name} bei {o.supplier?.name}</span></label>
     </div>
   </article>

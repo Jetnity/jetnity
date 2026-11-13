@@ -2,6 +2,7 @@
 
 import { useId, useLayoutEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import Reisefoto from './Reisefoto'
+import ManualOffer from '@/components/saved-offers/ManualOffer'
 import {
   Plane,
   BedDouble,
@@ -260,6 +261,7 @@ export default function Organisieren({
           </a>
         </footer>
       </div>
+    <div className="org-wrap py-6"><ManualOffer key={tab} category={({ fluege: 'flight', unterkunft: 'stay', aktivitaeten: 'activity', mietwagen: 'rental_car', verbindungen: 'transfer' } as const)[tab]} destination={reise.stages.find(s => s.id === etappeId)?.name ?? erste?.name ?? ''} startsOn={reise.startDate ?? ''} endsOn={reise.endDate ?? ''} /></div>
     </section>
   )
 }

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { RegistryWorkflow } from '@/components/account/useAccountRegistryWorkflow'
 import LandFeld from '@/components/country/LandFeld'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
+import '@/components/trips/organisieren/auswahl/suchauswahl.css'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { COUNTRY_COPY } from '@/lib/country/copy'
 import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
@@ -710,15 +712,10 @@ export default function AccountReisendeKarte({
                   </select>
                   <span className="font-normal text-ink-700">{REGISTRY_COPY.dokumentCitizenshipHinweis}</span>
                 </label>
-                <label className="grid gap-1 text-sm font-medium text-brand-800">
-                  {REGISTRY_COPY.dokumentGueltigLabel}
-                  <input
-                    type="date"
-                    value={dokument.expiresOn}
-                    onChange={(event) => workflow.setzen(dokumentSlot.editor, { ...dokument, expiresOn: event.target.value })}
-                    className={feldKlasse}
-                  />
-                </label>
+                <Suchkalender start={dokument.expiresOn} ende="" einzeln optional
+                  startLabel={REGISTRY_COPY.dokumentGueltigLabel} endeLabel=""
+                  min="1900-01-01" max="9999-12-31" minTage={0} disabled={unterwegs}
+                  setzen={value => workflow.setzen(dokumentSlot.editor, { ...dokument, expiresOn: value })} />
                 {dokumentSlot.konflikt ? (
                   <div className="grid gap-2">
                     <p>{REGISTRY_COPY.konflikt}</p>

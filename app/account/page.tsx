@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronRight, Fingerprint, FolderLock, UserRound, UsersRound } from 'lucide-react'
+import { ChevronRight, Fingerprint, FolderLock, Heart, UserRound, UsersRound } from 'lucide-react'
 
 import PersoenlicherReiseeinstieg from '@/components/account/PersoenlicherReiseeinstieg'
 import { begruessungName } from '@/lib/account/begruessung'
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 const bereiche = [
+  { href: '/account/merkliste', name: 'Meine Merkliste', text: 'Gemerkte Angebote wiederfinden und planen', icon: Heart },
   { href: '/account/travellers', name: 'Reisende verwalten', text: 'Dein Reiseprofil und deine Mitreisenden', icon: UsersRound },
   { href: '/account/security', name: 'Anmeldung & Sicherheit', text: 'Passwort, Zwei-Faktor-Anmeldung und Sitzung', icon: Fingerprint },
   { href: '/account/settings#account-datenexport-title', name: 'Daten & Datenschutz', text: 'Kontodaten exportieren und Konto verwalten', icon: FolderLock },

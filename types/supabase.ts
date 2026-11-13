@@ -17,6 +17,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      saved_offers: {
+        Row: {
+          category: string
+          created_at: string
+          destination: string | null
+          end_timezone: string | null
+          ends_at: string | null
+          ends_on: string | null
+          expires_at: string | null
+          id: string
+          offer_ref: string
+          provider: string
+          source: string
+          start_timezone: string | null
+          starts_at: string | null
+          starts_on: string | null
+          title: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          destination?: string | null
+          end_timezone?: string | null
+          ends_at?: string | null
+          ends_on?: string | null
+          expires_at?: string | null
+          id?: string
+          offer_ref: string
+          provider: string
+          source: string
+          start_timezone?: string | null
+          starts_at?: string | null
+          starts_on?: string | null
+          title: string
+          url: string
+          user_id?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          destination?: string | null
+          end_timezone?: string | null
+          ends_at?: string | null
+          ends_on?: string | null
+          expires_at?: string | null
+          id?: string
+          offer_ref?: string
+          provider?: string
+          source?: string
+          start_timezone?: string | null
+          starts_at?: string | null
+          starts_on?: string | null
+          title?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       account_traveller_citizenships: {
         Row: {
           client_ref: string

@@ -26,6 +26,7 @@ export default function WorkspaceAccountMenu() {
       }}>
         <p>Konto &amp; Einstellungen</p>
         <ul>
+          <li><Link href="/account/merkliste">Meine Merkliste</Link></li>
           <li><Link href="/account/settings">Einstellungen</Link></li>
           <li><Link href="/account/bookings">Bestätigte Buchungen</Link></li>
         </ul>
