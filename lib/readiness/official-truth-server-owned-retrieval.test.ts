@@ -1023,26 +1023,30 @@ describe('official truth server-owned retrieval', () => {
 
   test('29 und 30 kein App-Import und keine Annahme, kein Speicher, kein Extraktor, kein F8', () => {
     const text = datei(DATEI)
-    assert.match(text, /import 'server-only'/)
-    assert.match(text, /https\.request/)
-    assert.match(text, /lookup: anfrage\.lookup/)
-    assert.match(text, /headers: \{ \.\.\.FESTE_HEADER \}/)
-    assert.doesNotMatch(text, /\bfetch\s*\(/)
-    assert.doesNotMatch(text, /regelKandidatAkzeptieren/)
-    assert.doesNotMatch(text, /officialTruthAbgerufenMaterialPruefen/)
-    assert.doesNotMatch(text, /official-truth-store|official-truth-rule-candidate|evidenceKandidatAusModell/)
-    assert.doesNotMatch(text, /sherpa|timatic|requirementsProviderAus/i)
-    assert.doesNotMatch(text, /from ['"]@\/app\//)
+    const physical = datei('lib/readiness/official-truth-retrieval-physical-internal.ts')
+    for (const source of [text, physical]) {
+      assert.match(source, /import 'server-only'/)
+      assert.doesNotMatch(source, /\bfetch\s*\(/)
+      assert.doesNotMatch(source, /regelKandidatAkzeptieren/)
+      assert.doesNotMatch(source, /officialTruthAbgerufenMaterialPruefen/)
+      assert.doesNotMatch(source, /official-truth-store|official-truth-rule-candidate|evidenceKandidatAusModell/)
+      assert.doesNotMatch(source, /sherpa|timatic|requirementsProviderAus/i)
+      assert.doesNotMatch(source, /from ['"]@\/app\//)
+    }
+    assert.match(physical, /https\.request/)
+    assert.match(physical, /lookup: anfrage\.lookup/)
+    assert.match(physical, /headers: \{ \.\.\.FESTE_HEADER \}/)
     assert.equal(loadOfficialTruthServerOwnedRetrieval.length, 1)
     const app = dateienUnter('app')
     for (const pfad of app) {
       assert.equal(readFileSync(pfad, 'utf8').includes('official-truth-server-owned-retrieval'), false, pfad)
+      assert.equal(readFileSync(pfad, 'utf8').includes('official-truth-retrieval-physical-internal'), false, pfad)
     }
     for (const pfad of dateienUnter('lib/server/providers')) {
       assert.equal(readFileSync(pfad, 'utf8').includes('official-truth-server-owned-retrieval'), false, pfad)
+      assert.equal(readFileSync(pfad, 'utf8').includes('official-truth-retrieval-physical-internal'), false, pfad)
     }
   })
-
   test('Tracking scheitert, funktionale Parameter bleiben, der Live-Einstieg nimmt keine Abhängigkeiten', async () => {
     const tracking = await laufen({ eingabe: { sourceId: AMTLICH, url: `${AMTLICH_URL}?utm_source=tracking-secret-91f3` } })
     assert.equal(grund(tracking), 'tracking_parameter')

@@ -1,0 +1,308 @@
+{
+  "schema": "jetnity.auth.single-switch-observation.manifest.v1",
+  "revision": "R1",
+  "status": "SOURCE_PREPARED",
+  "preparedDateUTC": "2026-11-12",
+  "author": {
+    "logicalName": "Jetnity CH-DE Auth Configuration Observation 1 — Codex Generation1",
+    "actualSession": "/root/auth_configuration_observation_writer_g1",
+    "sameOriginalSession": true
+  },
+  "originalTaskURL": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822302560",
+  "amendmentURL": "https://github.com/Jetnity/jetnity/pull/1194#issuecomment-6822593796",
+  "soleParent": "2b866c77b09fa2f2efd91d9b9a21bbc904754d20",
+  "parentTree": "4557407761dd979bc69fe6ec4c959290eaf206a9",
+  "integrationBaseline": "dfd692440762b50183fdebbfd6bf8dabde4662d0",
+  "integrationBaselineTree": "cbc79e627161d4ace132b84cf057c18adc86586c",
+  "containingCommitAndTree": "Reported by immutable Git-object delivery; not self-embedded.",
+  "code": [
+    {
+      "path": "lib/supabase/auth-erwartung.ts",
+      "gitBlob": "25ef939f111ba0db5475cdf1e4d1c55364193512",
+      "utf8Bytes": 19854,
+      "sha256": "46ead850c64d6cd0c152f7750c0cdf0f0934eea734e75274f2b19d30d89aa58e"
+    },
+    {
+      "path": "lib/supabase/auth-bericht.test.ts",
+      "gitBlob": "1406705421fe3b2c3d312bbc067556d695eb76a7",
+      "utf8Bytes": 8497,
+      "sha256": "e9413d4246959a3f0b012f91522571b7ba26c21a0ea5a669a2a4ef7909eaa25d"
+    },
+    {
+      "path": "scripts/auth/pruefen.ts",
+      "gitBlob": "c8fd418105c211a8827361300c92e13c8535bb8b",
+      "utf8Bytes": 1578,
+      "sha256": "10894ba9ecb529c67ee897aa171f60dee028b26f48fe8088e81813d0b33175c9",
+      "exactRestoration": true
+    }
+  ],
+  "documentation": [
+    {
+      "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+      "gitBlob": "bec28fc005b3d1191354948ae7026d30bdfe1cde",
+      "utf8Bytes": 10169,
+      "sha256": "09bacca39ccf833c220b8cdd7a343b958fbb8107e70bf910ea640a3c812ebe66"
+    },
+    {
+      "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+      "gitBlob": "7c3100827240d05c75ab1049a115fe66f1105086",
+      "utf8Bytes": 10327,
+      "sha256": "822a5a1789e9cdb40b34a1ef87866a6ac4cfc5f0c42a27491f4b0eb4000bd641"
+    }
+  ],
+  "manifestSelfIdentity": {
+    "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json",
+    "location": "External delivery records exact Git blob, UTF-8 bytes and SHA256; no circular self-hash."
+  },
+  "scope": {
+    "versusParent": {
+      "modified": [
+        "lib/supabase/auth-erwartung.ts",
+        "lib/supabase/auth-bericht.test.ts",
+        "scripts/auth/pruefen.ts",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json"
+      ],
+      "added": [],
+      "removed": [],
+      "parentLeaves": 9479,
+      "expectedUnchangedLeaves": 9473,
+      "expectedCandidateLeaves": 9479
+    },
+    "versusIntegrationBaseline": {
+      "modified": [
+        "lib/supabase/auth-erwartung.ts",
+        "lib/supabase/auth-bericht.test.ts"
+      ],
+      "added": [
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json"
+      ],
+      "removed": [],
+      "paths": [
+        "lib/supabase/auth-erwartung.ts",
+        "lib/supabase/auth-bericht.test.ts",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_MANIFEST_V1.json"
+      ],
+      "baselineLeaves": 9476,
+      "expectedUnchangedLeaves": 9474,
+      "expectedCandidateLeaves": 9479,
+      "scriptEqualsBaseline": true
+    },
+    "completeRecursiveComparison": "Required and supplied in final delivery after nontruncated parent/baseline/candidate tree readback.",
+    "pg1Hma1AaIntegration": false
+  },
+  "preservationPolicy": {
+    "field": "external_email_magic_link_disabled",
+    "expectedType": "boolean",
+    "expectedValue": false,
+    "required": true,
+    "provenance": "Explicit Root preservation policy in R1 after independent typed branch observation; existing Admin email Magic-Link path.",
+    "tomlMappingSelected": false,
+    "managementDefaultClaimed": false,
+    "engineInversionClaimed": false,
+    "nullSemanticsClaimed": false,
+    "coercion": false,
+    "fallback": false,
+    "genericComparatorsChanged": false,
+    "otherUnknownKeysStillFail": true,
+    "hostedSettingChange": false
+  },
+  "codeChangeProof": {
+    "expectation": {
+      "parentBlob": "0dfd71702f0d1226cd35cdac449b3260c961e31a",
+      "parentUtf8Bytes": 19457,
+      "parentSha256": "51b0e3c566b8c3f1bccb46ac2463e0c20c8a4f854a73768fee036769d30853bb",
+      "entryInsertions": 1,
+      "insertedUtf8Bytes": 397,
+      "insertedSha256": "5c1e2d4b6f4ae5a2216318f1b5540a67868a5a3d4ea5c0ceeb6c35ea44f50f49",
+      "removeExactInsertionRestoresEntireOriginal": true
+    },
+    "reportTest": {
+      "parentBlob": "ad2506e0690ec52725a5cf13db00478107afeea1",
+      "parentUtf8Bytes": 6460,
+      "parentSha256": "94daf5d73694e3ac1303cd00d9df3c7c9d3545fa728b84bd246ab17053a992a2",
+      "completePriorFilePreservedAsPrefix": true,
+      "appendedUtf8Bytes": 2037,
+      "appendedSha256": "28a3105f2d595aa776479d2605f052bc4be837ad67000db857b2cd83ab9fe51b",
+      "newBehaviorCasesAuthored": 8,
+      "execution": "NOT_RUN",
+      "cases": [
+        "false accepted and classified",
+        "true rejected for the exact required key",
+        "null rejected for the exact required key",
+        "string false rejected for the exact required key",
+        "zero rejected for the exact required key",
+        "object rejected for the exact required key",
+        "missing field rejected without default",
+        "other unknown disabled key rejected without secret raw value"
+      ]
+    },
+    "script": {
+      "parentDiagnosticBlob": "9d035c3da0ecd0e4343d0d63cb909c9680e5942a",
+      "restoredBlob": "c8fd418105c211a8827361300c92e13c8535bb8b",
+      "restoredUtf8Bytes": 1578,
+      "restoredSha256": "10894ba9ecb529c67ee897aa171f60dee028b26f48fe8088e81813d0b33175c9",
+      "equalsPreDiagnosticAndIntegrationBaseline": true,
+      "diagnosticRemains": false
+    }
+  },
+  "documentationPreservation": {
+    "completePriorTaskExactPrefix": true,
+    "priorTaskBlob": "7744d702610c45bb0d49372fa64769f8c79b4b62",
+    "fullR1Verbatim": true,
+    "amendmentCommentUtf8Bytes": 5085,
+    "amendmentCommentSha256": "5d083703b8efacec2ba1e8ae80c3b5bcf2d8fc4c1943a1d6e954ef68cea5434c",
+    "fullPriorHandoffPreservedAsDatedHistory": true,
+    "priorHandoffBlob": "1a45526446ff4919bc15cf0203560e8fbae30cf0"
+  },
+  "diagnosticHistory": {
+    "status": "HISTORICAL V1; superseded only by explicit current R1 statements.",
+    "commit": "2b866c77b09fa2f2efd91d9b9a21bbc904754d20",
+    "tree": "4557407761dd979bc69fe6ec4c959290eaf206a9",
+    "originalTaskURL": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6822302560",
+    "originalFiles": [
+      {
+        "path": "scripts/auth/pruefen.ts",
+        "gitBlob": "9d035c3da0ecd0e4343d0d63cb909c9680e5942a",
+        "utf8Bytes": 2529,
+        "sha256": "07729518d4a9a50fb71b664e162fb6a762b2a77691199cb4c26ea0b3fa254bcc"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_TASK_V1.md",
+        "gitBlob": "7744d702610c45bb0d49372fa64769f8c79b4b62",
+        "utf8Bytes": 4900,
+        "sha256": "85cc5b8d692e7c7937b97add2498dbbc4a6f38d967b1f98f9e1a08134082f483"
+      },
+      {
+        "path": "docs/official-truth-product-v3/AUTH_CONFIGURATION_OBSERVATION_HANDOFF_V1.md",
+        "gitBlob": "1a45526446ff4919bc15cf0203560e8fbae30cf0",
+        "utf8Bytes": 4576,
+        "sha256": "1cbfbafffcb63d41d0f01e16b91866cc1c377afe05ac1346abef86548d9e33c3"
+      }
+    ],
+    "originalManifest": {
+      "gitBlob": "7d1489cc3f06c513798db7de3f631ae8dbf264f3",
+      "utf8Bytes": 6479,
+      "sha256": "61c7cfd595801ce7fce64b04f09ceaa2c6aa07773bdbbfa2e5360295d0d2f496"
+    },
+    "diagnostic": {
+      "schema": "jetnity.auth.single-switch-observation.v1",
+      "field": "external_email_magic_link_disabled",
+      "stream": "stderr",
+      "ownPropertyOnly": true,
+      "typeCategories": [
+        "missing",
+        "null",
+        "boolean",
+        "string",
+        "number",
+        "object",
+        "array",
+        "other"
+      ],
+      "valuePolicy": "Actual primitive boolean only; all nonboolean or missing values emit null.",
+      "defaulting": false,
+      "coercion": false,
+      "inversion": false,
+      "extraNetworkRequests": 0,
+      "wholeResponseSerialization": false,
+      "nonbooleanValueSerialization": false,
+      "nonbooleanValueHashing": false,
+      "otherKeyValueDisclosure": false,
+      "stdoutReportChanges": false
+    },
+    "initialFailure": {
+      "provenance": "Root's persisted Task V1 original-log review; not fetched or executed by this author.",
+      "pr": 1193,
+      "runId": 43206051112,
+      "runNumber": 4122,
+      "authJobId": 131141360881,
+      "logUtf8Bytes": 21280,
+      "logSha256": "e15a71b71a45543cf0db3c77832a63a33f67b120de2c17037efa3ff2ec7ed589",
+      "expectedValuesMatching": 55,
+      "keysObserved": 244,
+      "unclassifiedField": "external_email_magic_link_disabled",
+      "aa4123SameCauseAssumed": false
+    }
+  },
+  "actualRootReadback": {
+    "provenance": "Root's independent original-job read and persisted R1; author read the receipt, not the credentialed job.",
+    "runId": 43209969369,
+    "runNumber": 4125,
+    "attempt": 1,
+    "authJobId": 131154770471,
+    "exactHead": "2b866c77b09fa2f2efd91d9b9a21bbc904754d20",
+    "recordTimestampUTC": "2026-11-12T11:33:17.1912005Z",
+    "logUtf8Bytes": 21295,
+    "logSha256": "7b0d115ecdbc3d92d98c30b6d7be3d3d239672d337e9c4ede52501646dca0f4d",
+    "record": {
+      "schema": "jetnity.auth.single-switch-observation.v1",
+      "field": "external_email_magic_link_disabled",
+      "present": true,
+      "type": "boolean",
+      "value": false
+    },
+    "expectedExistingValuesMatching": 55,
+    "keysObserved": 244,
+    "unexpectedProviderHook": false,
+    "passwordPolicyMatches": true,
+    "unknownKeys": [
+      "external_email_magic_link_disabled"
+    ],
+    "exitCode": 1,
+    "releasePass": false,
+    "productionRead": false
+  },
+  "unchangedContracts": [
+    {
+      "path": "scripts/auth/ziel.ts",
+      "gitBlob": "6620f9746dbce409c5e8555fc33206aff2c28651",
+      "utf8Bytes": 7855,
+      "sha256": "98f9147b7bb7036e1d31c078b0e30fc1f1395d634b05dea6fbe5fb7f46ffb58b",
+      "readInFull": true
+    },
+    {
+      "path": "lib/supabase/auth-bericht.ts",
+      "gitBlob": "272db17b128c5f1f84b550fbfad9b4a0edadf9ff",
+      "utf8Bytes": 7175,
+      "sha256": "5205a4ff8bd7c69ac1464cd32c2a2808dfe9e2a2f1a767121d6308328d5a155b",
+      "readInFull": true
+    },
+    {
+      "path": "lib/supabase/auth-erwartung.test.ts",
+      "gitBlob": "ca330ff53b27ca8ff95973ca25b132274308a0b9",
+      "utf8Bytes": 13321,
+      "sha256": "b04c132709bd403637df766cd6cfdddaf63fca40e8aa5fad851705db5df7eaa8",
+      "readInFull": true
+    }
+  ],
+  "currentExecution": {
+    "projectParserCompiler": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "lint": "NOT_RUN",
+    "focusedTests": "NOT_RUN",
+    "fullTests": "NOT_RUN",
+    "native": "NOT_RUN",
+    "hygiene": "NOT_RUN",
+    "build": "NOT_RUN",
+    "ci": "NOT_RUN",
+    "auth": "NOT_RUN",
+    "preview": "NOT_RUN",
+    "independentTLReview": "PENDING",
+    "hostedMutation": false,
+    "credentialAccess": false,
+    "browserOperation": false,
+    "sourceObservation": false,
+    "refPublication": false,
+    "prPublication": false,
+    "ready": false,
+    "merged": false
+  },
+  "firstUnfinishedStep": "Root exact-candidate independent review, Root ref update and complete fresh exact-head gates.",
+  "stop": "No Ready, merge or automatic follow-on; #917/#1131 STOPs and real AAL2/Owner authority remain untouched."
+}

@@ -111,6 +111,7 @@ Der Technical Lead entscheidet selbst:
 Session-Regel:
 
 - gleicher Slice / gleicher PR / unmittelbare Review-Korrektur → **denselben Agenten** weiterverwenden;
+- **Dauerhaft genehmigte Ausnahme bei nicht mehr erreichbarer Ursprungssitzung (PO, 12.11.2026):** Der Technical Lead darf auch für einen unmittelbaren Review-Fix ohne erneute Freigabe eine frische nummerierte Generation starten. Er dokumentiert den belegten Ausfall der Ursprungssitzung, den exakten Namen und die tatsächliche neue Session; eine Wiederaufnahme derselben Sitzung darf nicht behauptet werden. Der Nachfolger übernimmt den versionierten Auftrag und alle bisherigen Nachweise vollständig. Scope, Sicherheits-/Plattformgrenzen, unabhängiger Technical-Lead-Review und vollständiges Re-Gating bleiben unverändert. Die Ausnahme erlaubt keinen Ersatzweg für eine abgelehnte Plattformaktion. PO-Evidence: [V31 v2](https://github.com/Jetnity/jetnity/pull/1184#issuecomment-6811958036), [Continuity-Entscheidung](https://github.com/Jetnity/jetnity/issues/751#issuecomment-6811993763).
 - neuer klar getrennter Slice / Modul-Checkpoint / Kontextüberladung → **frische nummerierte Agenten-Generation**;
 - Generationen niemals aus Erinnerung erraten; Repository-/Continuity-Evidence zuerst prüfen.
 - Der Technical Lead weist einen **exakten logischen Anzeigenamen** zu, z. B. `Jetnity quality security audit 3`. Agenten und der Technical Lead verwenden genau diesen Namen in Task, Status, Handoff, Self-Review und PR-Kommunikation. Eine andere Generation wird nicht erfunden.
@@ -197,7 +198,7 @@ Findet der Technical Lead einen relevanten Fehler:
 - Review-Vermerk mit **exakt geprüftem Head-SHA**;
 - konkrete Findings mit Begründung und gewünschtem Endzustand;
 - Scope der Korrektur eng halten;
-- denselben Agenten / dieselbe Session bei unmittelbarem Fix weiterverwenden;
+- denselben Agenten / dieselbe Session bei unmittelbarem Fix weiterverwenden; ist die Ursprungssitzung nachweislich nicht mehr erreichbar, gilt die dauerhaft genehmigte und zu dokumentierende Nachfolgeausnahme aus Phase B;
 - der Agent darf nur die Review-Fixes bearbeiten;
 - nach Push des Fixes ist **jede alte Exact-Head-Evidence ungültig**;
 - vollständiger Re-Review auf neuem Head;

@@ -94,8 +94,9 @@ test('new package stays outside app imports, hosted commands and activation', ()
 test('CI keeps complete native proofs mandatory with unchanged existing test commands', () => {
   const pkg = JSON.parse(read('package.json')) as { scripts: Record<string, string> }
   assert.equal(pkg.scripts['test:refresh-native'], 'node --import ./scripts/server-only-test-register.mjs --import tsx --test scripts/db/official-truth-atomic-version-refresh-1/native.test.ts')
-  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native')
-  assert.equal(pkg.scripts['test:core'], "node --import ./scripts/server-only-test-register.mjs --import tsx --test \"lib/**/*.test.ts\" \"scripts/operating-mode-guard.test.mjs\" \"scripts/dev-reference-local-pg-prep-1/*.test.ts\"")
+  assert.equal(pkg.scripts.test, 'npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native && npm run test:hosted-v3-native')
+  assert.equal(pkg.scripts['test:core'], 'node scripts/official-truth-v3-test-selection.mjs core')
+  assert.equal(pkg.scripts['test:hosted-v3-native'], 'node scripts/official-truth-v3-test-selection.mjs hosted-pg17')
   assert.equal(pkg.scripts['test:accepted-store-native'], 'npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle')
   const acceptedRoot = 'scripts/db/official-truth-accepted-store-trip-integration-1/'
   const groups = { store: ['acceptance', 'context', 'integrity', 'native'], lifecycle: ['boundaries', 'browser', 'recovery', 'wait-lifecycle'] }
@@ -130,7 +131,7 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
     acceptedRoot + 'required-tests/*.test.ts', '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])
   const workflow = read('.github/workflows/ci.yml')
   assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)
-  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui\]/)
+  assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui, hosted_v3_native_pg17\]/)
   assert.match(workflow, /REFRESH_NATIVE_RESULT: \$\{\{ needs.refresh_native.result \}\}/)
   assert.match(workflow, /"\$REFRESH_NATIVE_RESULT" != "success"/)
   assert.match(workflow, /if: \$\{\{ always\(\) \}\}/)
@@ -156,7 +157,8 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
   assert.ok(aggregate)
   for (const [name, family] of [['CORE_RESULT', 'verify'], ['PERSISTED_NATIVE_RESULT', 'persisted_native'],
     ['REFRESH_NATIVE_RESULT', 'refresh_native'], ['ACCEPTED_STORE_NATIVE_RESULT', 'accepted_store_native'],
-    ['OFFICIAL_TRUTH_V3_UI_RESULT', 'official_truth_v3_ui']]) {
+    ['OFFICIAL_TRUTH_V3_UI_RESULT', 'official_truth_v3_ui'],
+    ['HOSTED_V3_NATIVE_PG17_RESULT', 'hosted_v3_native_pg17']]) {
     assert.ok(aggregate.includes(name + ': ${{ needs.' + family + '.result }}'))
     assert.ok(aggregate.includes('"$' + name + '" != "success"'))
   }
