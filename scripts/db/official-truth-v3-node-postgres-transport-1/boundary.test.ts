@@ -13,10 +13,11 @@ const sessions = RUNTIME + 'node-postgres-owned-session.ts'
 const selection = RUNTIME + 'node-postgres-selection.ts'
 const executors = RUNTIME + 'node-postgres-executors.ts'
 const composition = 'lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts'
+const devVerification = 'scripts/official-truth-product-v3-dev/verify-installed-dev.cjs'
 const allowed: Readonly<Record<string, readonly string[]>> = {
-  [sessions]: [executors, PROOF + 'offline.test.ts'],
-  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition],
-  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition],
+  [sessions]: [executors, PROOF + 'offline.test.ts', devVerification],
+  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition, devVerification],
+  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition, devVerification],
   pg: [sessions, PROOF + 'owned-tls-fixture.ts'],
 }
 function files(directory: string): string[] {

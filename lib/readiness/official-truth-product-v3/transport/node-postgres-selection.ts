@@ -1,4 +1,4 @@
-// Server-owned selection. Shape, environment and an available driver never select a target.
+// Server-owned literal Dev selection. Environment guards can only refuse this target.
 import 'server-only'
 
 /** Root selection #1139/6832438377. These are not the native-fixture LOGINs. */
@@ -19,8 +19,8 @@ export const V3_PG_LOGINS = Object.freeze({
 export type V3PgLogin = keyof typeof V3_PG_LOGINS
 
 /** Internal literal configuration only. No constructor, URL or caller override.
- * A later selection must bind the actual session endpoint, database, certificate
- * and backend TLS readback. The production selector below is deliberately null.
+ * The reconstructed Dev candidate binds the observed session endpoint and public
+ * CA bytes. Installation, backend TLS readback and human release remain separate.
  * The separate native test mocks this module only inside an owned local fixture;
  * there is no runtime test flag or runtime fixture branch. */
 export type V3PgTarget = Readonly<{
@@ -29,10 +29,47 @@ export type V3PgTarget = Readonly<{
   expectedServerMajor: 17; requireBackendTls: true;
 }>
 
+// Reconstructed from the current observed Dev Connect/CA and Vercel values;
+// this is not a byte-identical recovery of the unavailable earlier delivery.
+const DEV_SESSION_TARGET: V3PgTarget = Object.freeze({
+  connectHost: 'aws-0-eu-central-2.pooler.supabase.com',
+  tlsHostname: 'aws-0-eu-central-2.pooler.supabase.com',
+  port: 5432, database: 'postgres', usernameSuffix: '.yfvbxvijcorffwxbxahl',
+  certificateAuthorityPem: `-----BEGIN CERTIFICATE-----
+MIIDxDCCAqygAwIBAgIUbLxMod62P2ktCiAkxnKJwtE9VPYwDQYJKoZIhvcNAQEL
+BQAwazELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5l
+dyBDYXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJh
+c2UgUm9vdCAyMDIxIENBMB4XDTIxMDQyODEwNTY1M1oXDTMxMDQyNjEwNTY1M1ow
+azELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5ldyBD
+YXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJhc2Ug
+Um9vdCAyMDIxIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqQXW
+QyHOB+qR2GJobCq/CBmQ40G0oDmCC3mzVnn8sv4XNeWtE5XcEL0uVih7Jo4Dkx1Q
+DmGHBH1zDfgs2qXiLb6xpw/CKQPypZW1JssOTMIfQppNQ87K75Ya0p25Y3ePS2t2
+GtvHxNjUV6kjOZjEn2yWEcBdpOVCUYBVFBNMB4YBHkNRDa/+S4uywAoaTWnCJLUi
+cvTlHmMw6xSQQn1UfRQHk50DMCEJ7Cy1RxrZJrkXXRP3LqQL2ijJ6F4yMfh+Gyb4
+O4XajoVj/+R4GwywKYrrS8PrSNtwxr5StlQO8zIQUSMiq26wM8mgELFlS/32Uclt
+NaQ1xBRizkzpZct9DwIDAQABo2AwXjALBgNVHQ8EBAMCAQYwHQYDVR0OBBYEFKjX
+uXY32CztkhImng4yJNUtaUYsMB8GA1UdIwQYMBaAFKjXuXY32CztkhImng4yJNUt
+aUYsMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAB8spzNn+4VU
+tVxbdMaX+39Z50sc7uATmus16jmmHjhIHz+l/9GlJ5KqAMOx26mPZgfzG7oneL2b
+VW+WgYUkTT3XEPFWnTp2RJwQao8/tYPXWEJDc0WVQHrpmnWOFKU/d3MqBgBm5y+6
+jB81TU/RG2rVerPDWP+1MMcNNy0491CTL5XQZ7JfDJJ9CCmXSdtTl4uUQnSuv/Qx
+Cea13BX2ZgJc7Au30vihLhub52De4P/4gonKsNHYdbWjg7OWKwNv/zitGDVDB9Y2
+CMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P
+o/bKiIz+Fq8=
+-----END CERTIFICATE-----
+`,
+  certificateAuthoritySha256: '700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7',
+  expectedServerMajor: 17, requireBackendTls: true,
+})
+
 export function selectedV3PgTarget(): V3PgTarget | null {
-  // No hosted endpoint, certificate, secret handoff or operational terminal
-  // acceptance is established by this source-only candidate.
-  return null
+  if (process.env.VERCEL_ENV !== 'preview'
+    || process.env.VERCEL_PROJECT_ID !== 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
+    || process.env.VERCEL_GIT_REPO_OWNER !== 'Jetnity'
+    || process.env.VERCEL_GIT_REPO_SLUG !== 'jetnity'
+    || process.env.VERCEL_GIT_COMMIT_REF !== 'feat/official-truth-human-method-ui-1-20261112') return null
+  return DEV_SESSION_TARGET
 }
 
 /** Called only after a literal target has been selected. No PG* / DATABASE_URL /

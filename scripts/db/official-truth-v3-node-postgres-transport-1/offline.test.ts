@@ -1,6 +1,7 @@
 // SOURCE_ONLY at delivery. Run separately with --experimental-test-module-mocks.
 // This suite mocks only the private physical pair; it makes no native/SQL claim.
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { test } from 'node:test'
 import { performance } from 'node:perf_hooks'
 import type { PgOwnedPair, PgOwnedReply, PgOwnedSession } from '../../../lib/readiness/official-truth-product-v3/transport/node-postgres-owned-session'
@@ -113,7 +114,52 @@ function fakePair(kind: V3PgLogin, options: { closeGate?: ReturnType<typeof defe
 }
 
 test('PG transport offline contracts and reserved terminal ownership', { timeout: 15000 }, async t => {
-  assert.equal(selectedV3PgTarget(), null)
+  await t.test('literal Dev target requires every exact Vercel guard and ignores target overrides', () => {
+    const guards = { VERCEL_ENV: 'preview', VERCEL_PROJECT_ID: 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM',
+      VERCEL_GIT_REPO_OWNER: 'Jetnity', VERCEL_GIT_REPO_SLUG: 'jetnity',
+      VERCEL_GIT_COMMIT_REF: 'feat/official-truth-human-method-ui-1-20261112' }
+    const overrides = { PGHOST: 'unselected.invalid', PGPORT: '6543', PGDATABASE: 'unselected',
+      PGUSER: 'unselected', PGSSLMODE: 'disable', PGSSLROOTCERT: '/unselected/ca.pem',
+      DATABASE_URL: 'postgresql://unselected.invalid/unselected' }
+    const previous = new Map<string, string | undefined>(
+      Object.keys({ ...guards, ...overrides }).map(key => [key, process.env[key]]))
+    try {
+      for (const key of previous.keys()) delete process.env[key]
+      assert.equal(selectedV3PgTarget(), null)
+      Object.assign(process.env, guards)
+      const target = selectedV3PgTarget(); assert.ok(target)
+      const { certificateAuthorityPem, ...identity } = target
+      assert.deepEqual(identity, { connectHost: 'aws-0-eu-central-2.pooler.supabase.com',
+        tlsHostname: 'aws-0-eu-central-2.pooler.supabase.com', port: 5432, database: 'postgres',
+        usernameSuffix: '.yfvbxvijcorffwxbxahl',
+        certificateAuthoritySha256: '700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7',
+        expectedServerMajor: 17, requireBackendTls: true })
+      assert.equal(Buffer.byteLength(certificateAuthorityPem, 'utf8'), 1367)
+      assert.equal(createHash('sha256').update(certificateAuthorityPem, 'utf8').digest('hex'), target.certificateAuthoritySha256)
+      assert.equal(Object.isFrozen(target), true)
+      for (const [key, value] of Object.entries(guards)) {
+        delete process.env[key]
+        assert.equal(selectedV3PgTarget(), null, key + ' missing refuses the target')
+        process.env[key] = value + '-unselected'
+        assert.equal(selectedV3PgTarget(), null, key + ' mismatch refuses the target')
+        process.env[key] = value
+      }
+      for (const environment of ['production', 'development']) {
+        process.env.VERCEL_ENV = environment
+        assert.equal(selectedV3PgTarget(), null, environment + ' never selects the Dev target')
+      }
+      process.env.VERCEL_ENV = guards.VERCEL_ENV
+      Object.assign(process.env, overrides)
+      assert.equal(selectedV3PgTarget(), target, 'environment target/URL/TLS overrides cannot replace the literal selection')
+      delete process.env.VERCEL_PROJECT_ID
+      assert.equal(selectedV3PgTarget(), null, 'overrides cannot bypass a missing guard')
+    } finally {
+      for (const [key, value] of previous) {
+        if (value === undefined) delete process.env[key]
+        else process.env[key] = value
+      }
+    }
+  })
   assert.deepEqual(Object.values(V3_PG_LOGINS).map(x => x.login), ['ot_v3_method_transport_login','ot_v3_intake_transport_login',
     'ot_v3_jobs_transport_login','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'])
   let count = 0, options: Parameters<typeof fakePair>[1] = {}, last: ReturnType<typeof fakePair> | null = null
