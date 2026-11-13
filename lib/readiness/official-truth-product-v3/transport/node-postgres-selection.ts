@@ -19,8 +19,8 @@ export const V3_PG_LOGINS = Object.freeze({
 export type V3PgLogin = keyof typeof V3_PG_LOGINS
 
 /** Internal literal configuration only. No constructor, URL or caller override.
- * The reconstructed Dev candidate binds the observed session endpoint and public
- * CA bytes. Installation, backend TLS readback and human release remain separate.
+ * The unpublished direct Dev candidate binds the observed direct endpoint and
+ * unchanged public CA bytes. IPv4 activation and direct acceptance remain pending.
  * The separate native test mocks this module only inside an owned local fixture;
  * there is no runtime test flag or runtime fixture branch. */
 export type V3PgTarget = Readonly<{
@@ -29,12 +29,12 @@ export type V3PgTarget = Readonly<{
   expectedServerMajor: 17; requireBackendTls: true;
 }>
 
-// Reconstructed from the current observed Dev Connect/CA and Vercel values;
-// this is not a byte-identical recovery of the unavailable earlier delivery.
-const DEV_SESSION_TARGET: V3PgTarget = Object.freeze({
-  connectHost: 'aws-0-eu-central-2.pooler.supabase.com',
-  tlsHostname: 'aws-0-eu-central-2.pooler.supabase.com',
-  port: 5432, database: 'postgres', usernameSuffix: '.yfvbxvijcorffwxbxahl',
+// Prepared from Root-observed direct Dev Connect values; the public CA stays exact.
+// IPv4 add-on approval/activation and direct connection evidence remain separate.
+const DEV_DIRECT_TARGET: V3PgTarget = Object.freeze({
+  connectHost: 'db.yfvbxvijcorffwxbxahl.supabase.co',
+  tlsHostname: 'db.yfvbxvijcorffwxbxahl.supabase.co',
+  port: 5432, database: 'postgres', usernameSuffix: '',
   certificateAuthorityPem: `-----BEGIN CERTIFICATE-----
 MIIDxDCCAqygAwIBAgIUbLxMod62P2ktCiAkxnKJwtE9VPYwDQYJKoZIhvcNAQEL
 BQAwazELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5l
@@ -69,7 +69,7 @@ export function selectedV3PgTarget(): V3PgTarget | null {
     || process.env.VERCEL_GIT_REPO_OWNER !== 'Jetnity'
     || process.env.VERCEL_GIT_REPO_SLUG !== 'jetnity'
     || process.env.VERCEL_GIT_COMMIT_REF !== 'feat/official-truth-human-method-ui-1-20261112') return null
-  return DEV_SESSION_TARGET
+  return DEV_DIRECT_TARGET
 }
 
 /** Called only after a literal target has been selected. No PG* / DATABASE_URL /

@@ -129,9 +129,9 @@ test('PG transport offline contracts and reserved terminal ownership', { timeout
       Object.assign(process.env, guards)
       const target = selectedV3PgTarget(); assert.ok(target)
       const { certificateAuthorityPem, ...identity } = target
-      assert.deepEqual(identity, { connectHost: 'aws-0-eu-central-2.pooler.supabase.com',
-        tlsHostname: 'aws-0-eu-central-2.pooler.supabase.com', port: 5432, database: 'postgres',
-        usernameSuffix: '.yfvbxvijcorffwxbxahl',
+      assert.deepEqual(identity, { connectHost: 'db.yfvbxvijcorffwxbxahl.supabase.co',
+        tlsHostname: 'db.yfvbxvijcorffwxbxahl.supabase.co', port: 5432, database: 'postgres',
+        usernameSuffix: '',
         certificateAuthoritySha256: '700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7',
         expectedServerMajor: 17, requireBackendTls: true })
       assert.equal(Buffer.byteLength(certificateAuthorityPem, 'utf8'), 1367)

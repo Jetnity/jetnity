@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.cjs && npm run build",
+  "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.mjs && npm run build",
   "functions": {
     "app/api/readiness/ch-de-visa/route.ts": {
       "regions": [

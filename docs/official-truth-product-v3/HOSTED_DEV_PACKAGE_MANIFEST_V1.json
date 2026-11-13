@@ -514,9 +514,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
-      "blob": "2ed958074fcd0c75e4265a47e77481e6e8227dd6",
+      "blob": "f9a4163d44cac656f976a2a998d823186b6fcd18",
       "bytes": 5699,
-      "sha256": "61b9b53e293fcb08e8634e42ba596708667b8311b43fbc3ab70ae5248517844b"
+      "sha256": "859a39f56886ce371f20e2c861d44ddfbdf7999653df32ee9468a16baee470fc"
     },
     {
       "path": "scripts/db/official-truth-v3-node-postgres-transport-1/owned-tls-fixture.ts",
@@ -544,9 +544,9 @@
     },
     {
       "path": "scripts/next-16-4-1-security-patch-p1/audit.mjs",
-      "blob": "098cf9644669eab0cb6b89e0b3296e0b1610f86e",
+      "blob": "ca5143100c10922ef19842fce35b26f1d01c4a25",
       "bytes": 13427,
-      "sha256": "187146b4ee266008cd45c9624ef6f378bdc04beaf3db4df3da6ecaf34441acbc"
+      "sha256": "805453f12b86fa06946c75327edcff243554a6f8ec462598db3e1a69af89e28c"
     },
     {
       "path": "scripts/next-16-4-1-security-patch-p1/audit.test.mjs",
@@ -556,27 +556,27 @@
     },
     {
       "path": "vercel.json",
-      "blob": "311bdd5860b2ab3e000ba8dd15e7ca50307009cc",
+      "blob": "62aeabfcc0123e4592b05820ca2798a661a4d28c",
       "bytes": 414,
-      "sha256": "daa36d3f4d0a74a8f80a3b08a15cc8f722e177837d7b58eb900e07efa3b8f3e6"
+      "sha256": "c12ff4c5dfcbbef0a828121ad4d2ea9ff79ce588322b8b5750bb564c93e47aa1"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
-      "bytes": 4783,
-      "blob": "dcac04006c0acd9d96d9ba01559d09f7b9132423",
-      "sha256": "f6ca817aebd687480e63d4d4287d021ee13c8e1df05bfd66f7fbc13cfc346b58"
+      "bytes": 4765,
+      "blob": "3dbd8a3227c6349f2a34e4d830577c37c1c49bd2",
+      "sha256": "a3a5547b3b13c103b10f305204ad637704fea9a1797036529582e5429880d0e6"
     },
     {
       "path": "scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts",
-      "bytes": 21535,
-      "blob": "b01d670bf5428b0db899358d9ef0716f4c3a6388",
-      "sha256": "9cef1aab1d10813913de4111e4cbbae86fbbd73244915689d0c5fa56c2d0756d"
+      "bytes": 21508,
+      "blob": "f3190eaf032773884b865b64fa03f341af453ee4",
+      "sha256": "afc9a0d18c337f4ebdea0f7b1967f3e6992ab8cb3e5935322f3f4e7c57f1023d"
     },
     {
-      "path": "scripts/official-truth-product-v3-dev/verify-installed-dev.cjs",
-      "bytes": 16379,
-      "blob": "bcdfc7c3e11b2cf17cd2f2a96170ef0cf753bca9",
-      "sha256": "650a91858a326a594cb4adebca200a4f850b64e341249903c4870d30d6cb11ff"
+      "path": "scripts/official-truth-product-v3-dev/verify-installed-dev.mjs",
+      "bytes": 16460,
+      "blob": "96ec09808167d4d0b6d309b4bbf33e696eddac61",
+      "sha256": "3f80d5fd306455c7fd512275a901c44c7c26658cbcdd057007a7e8f05936185e"
     }
   ],
   "scope": {
@@ -2822,12 +2822,12 @@
     "humanReleaseRemainsNull": true,
     "productionTargetSelected": false,
     "devTargetPreparation": {
-      "status": "UNPUBLISHED_DEV_TARGET_AND_TEMPORARY_BUILD_VERIFICATION_SOURCE_ONLY",
-      "baseCommit": "2e4d287af6216957817ad2a5a41782cf01da3470",
+      "status": "UNPUBLISHED_DIRECT_DEV_TARGET_AND_MJS_LINT_FIX_SOURCE_ONLY",
+      "baseCommit": "9b2fb3fdc4315aebf759fe0474110364f046e4f7",
       "author": "Jetnity CH-DE Hosted Batch Fix \u2014 Codex Generation3",
       "actualSession": "/root/hosted_batch_fix_g3",
       "date": "2026-11-13",
-      "provenance": "Reconstructed from the current observed Supabase Session pooler, downloaded public CA and Vercel preview metadata; not a byte-identical recovery of the unavailable earlier delivery.",
+      "provenance": "Direct endpoint observed by Root in the develop PREVIEW dashboard; the previously downloaded public CA and exact Vercel guards stay unchanged. This candidate has no direct connection evidence.",
       "priorDeliveryRecoveredByteIdentically": false,
       "paths": [
         "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json",
@@ -2835,15 +2835,15 @@
         "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
         "scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts",
         "scripts/next-16-4-1-security-patch-p1/audit.mjs",
-        "scripts/official-truth-product-v3-dev/verify-installed-dev.cjs",
+        "scripts/official-truth-product-v3-dev/verify-installed-dev.mjs",
         "vercel.json"
       ],
       "target": {
-        "connectHost": "aws-0-eu-central-2.pooler.supabase.com",
-        "tlsHostname": "aws-0-eu-central-2.pooler.supabase.com",
+        "connectHost": "db.yfvbxvijcorffwxbxahl.supabase.co",
+        "tlsHostname": "db.yfvbxvijcorffwxbxahl.supabase.co",
         "port": 5432,
         "database": "postgres",
-        "usernameSuffix": ".yfvbxvijcorffwxbxahl",
+        "usernameSuffix": "",
         "expectedServerMajor": 17,
         "requireBackendTls": true
       },
@@ -2864,27 +2864,31 @@
       "humanReleaseSelected": false,
       "hostedConnectionAttempted": false,
       "hostedInstallationProved": false,
-      "publicationAndUse": "Only after separate Root selection, green CI, PO trust decision and actual Dev installation evidence.",
+      "publicationAndUse": "Pending separate Root review/selection and PO cost approval; the Preview-only IPv4 add-on is not authorized or activated. Full green exact-head CI and actual direct Dev acceptance are required before use. No HumanRelease or Production authority.",
       "offlineProof": {
-        "status": "PASS_OFFLINE_ONLY",
+        "status": "PASS_OFFLINE_AND_BOUNDARY_ONLY",
         "node": "v24.22.1",
-        "tests": 13,
-        "passed": 13,
+        "tests": 15,
+        "passed": 15,
         "failed": 0,
         "skipped": 0,
-        "command": "node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts",
+        "command": "node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
         "physicalPairMocked": true,
         "networkOrDatabaseAttempted": false,
         "fullCiForThisCandidate": "NOT_RUN",
-        "baseCommit": "971e9e13e31fb3645fa8eddceb0c30f79e56877c",
-        "sourceFilesByteIdenticalAfterRebase": true
+        "baseCommit": "9b2fb3fdc4315aebf759fe0474110364f046e4f7",
+        "sourceFilesByteIdenticalAfterRebase": false,
+        "offlineTests": 13,
+        "boundaryTests": 2
       },
-      "scopeBasis": "These exact seven paths are the current unpublished Dev candidate relative to baseCommit. The two DevTarget TS files remain byte-identical to the frozen three-file preparation; its current source pins and all 2e4 source pins are retained except the explicitly changed boundary, deployment and deployment-audit pins. Top-level scope.allModifiedPaths and treeProof retain the historical CI4159 assembly.",
+      "scopeBasis": "Exactly seven logical files relative to baseCommit, with eight Git paths because the diagnostic is renamed from .cjs to .mjs. Only literal direct selection, its offline expectation, the module bridge and exact boundary/build/audit references/current pins change. Top-level scope.allModifiedPaths and treeProof retain the historical CI4159 assembly.",
       "runtimeCredentialsProved": false,
       "hostedTlsConnectionProved": false,
       "baseCiAtPreparation": {
-        "runNumber": 4208,
-        "status": "GREEN_REPORTED_BY_ROOT",
+        "runNumber": 4210,
+        "status": "COMPLETED_FAILURE_REPORTED_BY_ROOT",
+        "primaryFailure": "CJS_ESLINT_PLUGIN_SCOPE",
+        "aggregateFailureIsConsequence": true,
         "thisUnpublishedCandidate": "NOT_RUN"
       },
       "previousPreparationBase": "c0a1366ca613d1ef74efec97757ffb446eda62aa",
@@ -2897,9 +2901,9 @@
         "frozenWorktreeUnchanged": true
       },
       "temporaryBuildVerification": {
-        "script": "scripts/official-truth-product-v3-dev/verify-installed-dev.cjs",
+        "script": "scripts/official-truth-product-v3-dev/verify-installed-dev.mjs",
         "status": "NOT_RUN_SOURCE_ONLY",
-        "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.cjs && npm run build",
+        "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.mjs && npm run build",
         "scope": "Only the exact five refusalGuards above run the diagnostic; other builds proceed to the unchanged npm run build.",
         "matchingBuilds": "Runs again on every matching build of this source; no durable one-shot marker or one-time guarantee.",
         "database": "One owned work/control pair for each of the six existing LOGIN kinds; BEGIN READ ONLY, own catalog/TLS/role checks, ROLLBACK/Idle and joined local close. One existing jobs queue_read probe with phase probe, epoch null and exact absent result.",
@@ -2915,8 +2919,44 @@
         "safeOutput": "Fixed statuses/check booleans and technical PID/birth/loginOID/dbOID; fixed source URLs, byte counts and hashes. No passwords, raw SQL rows, errors, article bodies or personal data.",
         "databaseWritesRequested": 0,
         "ownerOrImportAttempted": false,
-        "runtimeModuleBytesChanged": false,
-        "removal": "Remove the temporary script, vercel.json buildCommand, exact boundary importer permit and temporary deployment-audit witness in the bundled protection package before Production."
+        "runtimeModuleBytesChanged": true,
+        "removal": "Remove the temporary script, vercel.json buildCommand, exact boundary importer permit and temporary deployment-audit witness in the bundled protection package before Production.",
+        "runtimeModuleChangeScope": "Only the literal target selection changes; owned-session and executor implementation bytes, SQL, guards, quotas and deadlines remain exact."
+      },
+      "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6858253863",
+      "evidenceScope": "Connection, credentials, TLS, CI and installation proof flags in this object concern this unpublished direct candidate. Earlier pooler and official-source observations remain in the selected Root receipt.",
+      "ipv4Addon": {
+        "observedStatus": "DISABLED_REPORTED_BY_ROOT",
+        "poCostApproval": false,
+        "activatedByThisCandidate": false,
+        "monthlyUsdPerDatabaseBeforeTax": 4,
+        "scope": "develop PREVIEW only"
+      },
+      "localChecks": {
+        "node": "v24.22.1",
+        "lint": {
+          "command": "npm run lint",
+          "exitCode": 0,
+          "errors": 0,
+          "warnings": 199
+        },
+        "typecheck": {
+          "command": "NEXT_TELEMETRY_DISABLED=1 npm run typecheck",
+          "exitCode": 0
+        },
+        "deploymentAudit": {
+          "command": "node --preserve-symlinks --test --test-reporter=tap scripts/next-16-4-1-security-patch-p1/audit.test.mjs",
+          "status": "FAILED_HOST_NODE24_ONLY",
+          "tests": 40,
+          "passed": 39,
+          "failed": 1,
+          "onlyFailure": "Node 22 compatibility contract drift",
+          "node22CiStillRequired": true
+        },
+        "postgresServerStarted": false,
+        "hostedConnectionAttempted": false,
+        "officialSourceGetAttempted": false,
+        "fullCiForThisCandidate": "NOT_RUN"
       }
     }
   },

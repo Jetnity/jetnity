@@ -1,4 +1,4 @@
-'use strict';
+import { createRequire } from 'node:module';
 
 // Temporary Dev acceptance only; remove this hook and its exact importer permit
 // in the protection package before Production. Each matching build runs it again.
@@ -23,6 +23,7 @@ async function main() {
     return;
   }
   stage = 'imports';
+  const require = createRequire(import.meta.url);
   const { performance } = require('node:perf_hooks');
   const { V3_PG_LOGINS, selectedV3PgTarget, readV3PgPassword } = require('../../lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts');
   const { openOwnedV3PgPair } = require('../../lib/readiness/official-truth-product-v3/transport/node-postgres-owned-session.ts');
