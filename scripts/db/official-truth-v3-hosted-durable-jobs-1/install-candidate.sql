@@ -857,7 +857,21 @@ BEGIN
  END LOOP;
  FOR role_row IN SELECT role.oid FROM pg_catalog.pg_roles role WHERE role.rolname IN
   ('ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier','anon','authenticated','service_role','postgres','ot_v3_intake_owner') LOOP
-  IF pg_catalog.has_schema_privilege(role_row.oid,private_id,'USAGE,CREATE')
+  -- The existing managed Creator has one exact read-only predefined-role edge.
+  -- No other principal, schema CREATE, table/column write or write-role path is admitted.
+  IF pg_catalog.has_schema_privilege(role_row.oid,private_id,'CREATE')
+   OR ((pg_catalog.has_schema_privilege(role_row.oid,private_id,'USAGE')
+       OR pg_catalog.pg_has_role(role_row.oid,'pg_read_all_data','MEMBER'))
+     AND NOT(role_row.oid='postgres'::pg_catalog.regrole
+       AND (SELECT count(*) FROM pg_catalog.pg_auth_members m
+         WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=role_row.oid)=1
+       AND EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m
+         WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=role_row.oid
+           AND m.grantor=10 AND m.admin_option AND m.inherit_option AND m.set_option)))
+   OR pg_catalog.pg_has_role(role_row.oid,'pg_write_all_data','MEMBER')
+   OR EXISTS(SELECT 1 FROM pg_catalog.pg_class rel WHERE rel.relnamespace=private_id AND rel.relkind='r'
+     AND (pg_catalog.has_table_privilege(role_row.oid,rel.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+       OR pg_catalog.has_any_column_privilege(role_row.oid,rel.oid,'INSERT,UPDATE,REFERENCES')))
    OR pg_catalog.has_schema_privilege(role_row.oid,api_id,'CREATE')
    OR pg_catalog.has_database_privilege(role_row.oid,current_database(),'CREATE') AND role_row.oid NOT IN ('postgres'::regrole) THEN
    RAISE EXCEPTION 'hrs1 forbidden ambient schema/database rights' USING ERRCODE='P7802';
@@ -3577,7 +3591,21 @@ BEGIN
     OR NOT pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_api','USAGE')
     OR pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_api','CREATE')
     OR pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_private','USAGE,CREATE')
-    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','USAGE,CREATE')
+    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','CREATE')
+    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_api','CREATE')
+    OR ((pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','USAGE')
+        OR pg_catalog.pg_has_role(creator,'pg_read_all_data','MEMBER'))
+      AND NOT(creator='postgres'::pg_catalog.regrole
+        AND (SELECT count(*) FROM pg_catalog.pg_auth_members m
+          WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=creator)=1
+        AND EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m
+          WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=creator
+            AND m.grantor=10 AND m.admin_option AND m.inherit_option AND m.set_option)))
+    OR pg_catalog.pg_has_role(creator,'pg_write_all_data','MEMBER')
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_class c
+      WHERE c.relnamespace='official_v3_jobs_private'::pg_catalog.regnamespace AND c.relkind='r'
+        AND (pg_catalog.has_table_privilege(creator,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+          OR pg_catalog.has_any_column_privilege(creator,c.oid,'INSERT,UPDATE,REFERENCES')))
     OR pg_catalog.has_schema_privilege(intake_id,'official_v3_jobs_private','USAGE,CREATE')
     OR (SELECT count(*) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
       WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api'))<>23
@@ -4495,7 +4523,21 @@ BEGIN
     OR NOT pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_api','USAGE')
     OR pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_api','CREATE')
     OR pg_catalog.has_schema_privilege(caller_id,'official_v3_jobs_private','USAGE,CREATE')
-    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','USAGE,CREATE')
+    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','CREATE')
+    OR pg_catalog.has_schema_privilege(creator,'official_v3_jobs_api','CREATE')
+    OR ((pg_catalog.has_schema_privilege(creator,'official_v3_jobs_private','USAGE')
+        OR pg_catalog.pg_has_role(creator,'pg_read_all_data','MEMBER'))
+      AND NOT(creator='postgres'::pg_catalog.regrole
+        AND (SELECT count(*) FROM pg_catalog.pg_auth_members m
+          WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=creator)=1
+        AND EXISTS(SELECT 1 FROM pg_catalog.pg_auth_members m
+          WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole AND m.member=creator
+            AND m.grantor=10 AND m.admin_option AND m.inherit_option AND m.set_option)))
+    OR pg_catalog.pg_has_role(creator,'pg_write_all_data','MEMBER')
+    OR EXISTS(SELECT 1 FROM pg_catalog.pg_class c
+      WHERE c.relnamespace='official_v3_jobs_private'::pg_catalog.regnamespace AND c.relkind='r'
+        AND (pg_catalog.has_table_privilege(creator,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN')
+          OR pg_catalog.has_any_column_privilege(creator,c.oid,'INSERT,UPDATE,REFERENCES')))
     OR pg_catalog.has_schema_privilege(intake_id,'official_v3_jobs_private','USAGE,CREATE')
     OR (SELECT count(*) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
       WHERE n.nspname IN ('official_v3_jobs_private','official_v3_jobs_api'))<>23

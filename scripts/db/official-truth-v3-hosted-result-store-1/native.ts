@@ -642,15 +642,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "b4be092a426696d5a771661133bb14509a1ba111",
-    "bytes": 443491,
-    "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
+    "blob": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+    "bytes": 446847,
+    "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-    "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",
-    "bytes": 163333,
-    "sha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa"
+    "blob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee",
+    "bytes": 165529,
+    "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
@@ -678,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "fa76535f430bad3bfff79373dc3faee9c4f18edc",
-    "bytes": 382230,
-    "sha256": "9557a908c596e3591eafab73aab243d899edc0793f9a29375a99485f0acb4e36"
+    "blob": "bb98fa79f46faa555632b669e97bfcbf9bf99220",
+    "bytes": 383390,
+    "sha256": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "86166f2a5e1a7c305e5bcf5660e0fb236a10b070",
-    "bytes": 163160,
-    "sha256": "8bda577ef539586f78d6f155b88635de793dd7034f3dc0ff0183ca208365d317"
+    "blob": "1be5313364314dbbc923ad89603da00122ee679c",
+    "bytes": 165480,
+    "sha256": "dd5cd8a05802242e33c6ac552757849cd5587416cecb5ec3863577d02ebecdc0"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1050,6 +1050,8 @@ async function makeCommon(lifetime: OwnedTestLifetime, cluster: LocalProofCluste
   assert.equal(bootstrap.identity.login_oid, '10', 'actual original owned cluster bootstrap')
   await observer.connection.query("SET statement_timeout='1s'; SET lock_timeout='1s'")
   await owner.query(file(files, 'scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql'))
+  // Reproduce the observed managed Creator read grant before every catalog freeze.
+  await owner.query('GRANT pg_read_all_data TO postgres WITH ADMIN TRUE, INHERIT TRUE, SET TRUE')
   const creator = await connect(lifetime, cluster, 'postgres')
   await creatorIdentity(creator.connection)
   await owner.query('SET search_path=pg_catalog,public,extensions')
@@ -2015,6 +2017,51 @@ async function canonicalParity(common:Common){
   ])await assert.rejects(owner.query(sql),stateError('P7601'))
 }
 
+// Exact original readback, on the actual restricted Creator; faults belong only to this owned fixture.
+async function managedCreatorReadProof(owner: LocalPgConnection, creator: LocalPgConnection, source: string): Promise<void> {
+  const blocks = source.match(/DO \$hrs1_structure_inventory\$[\s\S]*?END \$hrs1_structure_inventory\$;/g)
+  assert.equal(blocks?.length, 1)
+  const readback = async () => {
+    try { await creator.query('BEGIN READ ONLY; SET LOCAL search_path=pg_catalog;\n' + blocks![0]!) }
+    finally { await creator.query('ROLLBACK') }
+  }
+  const memberships = () => owner.query("SELECT m.oid::text AS oid,m.grantor::text AS grantor,"
+    + "m.admin_option::text AS admin,m.inherit_option::text AS inherit,m.set_option::text AS set_option"
+    + " FROM pg_catalog.pg_auth_members m WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole"
+    + " AND m.member='postgres'::pg_catalog.regrole ORDER BY m.oid")
+  const before = await memberships()
+  assert.equal(before.length, 1); assert.ok(before[0]?.oid)
+  assert.deepEqual(before, [{ oid: before[0]!.oid, grantor: '10', admin: 'true', inherit: 'true', set_option: 'true' }])
+  assert.deepEqual(await creator.query("SELECT session_user::text AS login,current_user::text AS role,"
+    + "pg_catalog.has_schema_privilege('postgres','official_v3_result_private','USAGE')::text AS private_read,"
+    + "pg_catalog.has_schema_privilege('postgres','official_v3_result_private','CREATE')::text AS private_create,"
+    + "pg_catalog.pg_has_role('postgres','pg_write_all_data','MEMBER')::text AS write_role"),
+    [{ login: 'postgres', role: 'postgres', private_read: 'true', private_create: 'false', write_role: 'false' }])
+  await readback()
+  // Preserve the exact row/OID; never replace a catalog baseline after a negative proof.
+  for (const assignment of ["grantor='postgres'::pg_catalog.regrole", 'admin_option=false', 'inherit_option=false', 'set_option=false']) {
+    try {
+      await owner.query('UPDATE pg_catalog.pg_auth_members SET ' + assignment + ' WHERE oid=$1::oid', text([before[0]!.oid!]))
+      await assert.rejects(readback(), stateError('P7802'), 'only the observed direct read grant is admissible: ' + assignment)
+    } finally {
+      await owner.query('UPDATE pg_catalog.pg_auth_members SET grantor=10,admin_option=true,inherit_option=true,set_option=true WHERE oid=$1::oid', text([before[0]!.oid!]))
+    }
+    assert.deepEqual(await memberships(), before, 'exact read membership restored')
+  }
+  const faults: readonly [string, string][] = [
+    ['GRANT pg_write_all_data TO postgres WITH ADMIN FALSE, INHERIT TRUE, SET TRUE', 'REVOKE pg_write_all_data FROM postgres RESTRICT'],
+    ['GRANT pg_write_all_data TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE', 'REVOKE pg_write_all_data FROM postgres RESTRICT'],
+    ['GRANT CREATE ON SCHEMA official_v3_result_private TO postgres', 'REVOKE CREATE ON SCHEMA official_v3_result_private FROM postgres RESTRICT'],
+    ['GRANT pg_read_all_data TO ot_v3_result_reader WITH ADMIN FALSE, INHERIT TRUE, SET TRUE', 'REVOKE pg_read_all_data FROM ot_v3_result_reader RESTRICT'],
+  ]
+  for (const [inject, restore] of faults) {
+    try { await owner.query(inject); await assert.rejects(readback(), stateError('P7802'), 'write or foreign read capability is refused') }
+    finally { await owner.query(restore) }
+  }
+  await readback()
+  assert.deepEqual(await memberships(), before)
+}
+
 async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:HrsBudget){
   for(const common of commons){
     await creatorIdentity(common.creator.connection);await frozen(common)
@@ -2042,7 +2089,11 @@ async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:H
           text([HRS_METHOD.methodId,1,HRS_METHOD.methodDigest,HRS_METHOD.packageDigest,1])),stateError('42501'))
       }finally{caller.connection.close();await proveAbsent(lifetime,common.observer.connection,[caller.identity])}
     }
-    if(common===commons[0])await canonicalParity(common)
+    if(common===commons[0]){
+      await managedCreatorReadProof(common.bootstrap.connection,common.creator.connection,
+        readFileSync(new URL('./install-candidate.sql',import.meta.url),'utf8'))
+      await canonicalParity(common)
+    }
     await frozen(common)
   }
 }

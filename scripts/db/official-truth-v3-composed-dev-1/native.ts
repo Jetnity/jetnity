@@ -403,15 +403,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 443491,
-    "blob": "b4be092a426696d5a771661133bb14509a1ba111",
-    "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
+    "bytes": 446847,
+    "blob": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+    "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-    "bytes": 163333,
-    "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",
-    "sha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa"
+    "bytes": 165529,
+    "blob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee",
+    "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -906,6 +906,8 @@ async function makeCommon(lifetime: OwnedTestLifetime, cluster: LocalProofCluste
   assert.equal(bootstrap.identity.login_oid, '10', 'actual original owned cluster bootstrap')
   await observer.connection.query("SET statement_timeout='1s'; SET lock_timeout='1s'")
   await owner.query(file(files, 'scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql'))
+  // Reproduce the observed managed Creator read grant before every catalog freeze.
+  await owner.query('GRANT pg_read_all_data TO postgres WITH ADMIN TRUE, INHERIT TRUE, SET TRUE')
   const creator = await connect(lifetime, cluster, 'postgres')
   await creatorIdentity(creator.connection)
   await owner.query('SET search_path=pg_catalog,public,extensions')

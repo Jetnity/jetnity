@@ -264,6 +264,7 @@ async function installHostedSyntheticAuth(owner: LocalPgConnection): Promise<voi
     'CREATE ROLE authenticated NOLOGIN INHERIT NOSUPERUSER NOBYPASSRLS',
     'CREATE ROLE service_role NOLOGIN INHERIT NOSUPERUSER BYPASSRLS',
     'CREATE ROLE postgres LOGIN INHERIT NOSUPERUSER BYPASSRLS CREATEROLE CREATEDB REPLICATION',
+    'GRANT pg_read_all_data TO postgres WITH ADMIN TRUE, INHERIT TRUE, SET TRUE',
     'ALTER DATABASE postgres OWNER TO postgres',
     "ALTER ROLE postgres SET application_name='hm04-synthetic-fixture'",
     "ALTER ROLE postgres IN DATABASE postgres SET statement_timeout='25s'",
@@ -296,6 +297,51 @@ async function installHostedSyntheticAuth(owner: LocalPgConnection): Promise<voi
     "INSERT INTO auth.sessions(id,user_id,aal) VALUES('" + MA1_AUTH.session + "','" + MA1_AUTH.owner + "','aal2'),('" + MA1_AUTH.foreignSession + "','" + MA1_AUTH.other + "','aal2')",
   ].join(';\n') + ';')
 }
+// Exact original readback, on the actual restricted Creator; faults belong only to this owned fixture.
+async function managedCreatorReadProof(owner: LocalPgConnection, creator: LocalPgConnection, source: string): Promise<void> {
+  const blocks = source.match(/DO \$hm04_final_creator_readback\$[\s\S]*?END \$hm04_final_creator_readback\$;/g)
+  assert.equal(blocks?.length, 1)
+  const readback = async () => {
+    try { await creator.query('BEGIN READ ONLY; SET LOCAL search_path=pg_catalog;\n' + blocks![0]!) }
+    finally { await creator.query('ROLLBACK') }
+  }
+  const memberships = () => owner.query("SELECT m.oid::text AS oid,m.grantor::text AS grantor,"
+    + "m.admin_option::text AS admin,m.inherit_option::text AS inherit,m.set_option::text AS set_option"
+    + " FROM pg_catalog.pg_auth_members m WHERE m.roleid='pg_read_all_data'::pg_catalog.regrole"
+    + " AND m.member='postgres'::pg_catalog.regrole ORDER BY m.oid")
+  const before = await memberships()
+  assert.equal(before.length, 1); assert.ok(before[0]?.oid)
+  assert.deepEqual(before, [{ oid: before[0]!.oid, grantor: '10', admin: 'true', inherit: 'true', set_option: 'true' }])
+  assert.deepEqual(await creator.query("SELECT session_user::text AS login,current_user::text AS role,"
+    + "pg_catalog.has_schema_privilege('postgres','official_v3_jobs_private','USAGE')::text AS private_read,"
+    + "pg_catalog.has_schema_privilege('postgres','official_v3_jobs_private','CREATE')::text AS private_create,"
+    + "pg_catalog.pg_has_role('postgres','pg_write_all_data','MEMBER')::text AS write_role"),
+    [{ login: 'postgres', role: 'postgres', private_read: 'true', private_create: 'false', write_role: 'false' }])
+  await readback()
+  // Preserve the exact row/OID; never replace a catalog baseline after a negative proof.
+  for (const assignment of ["grantor='postgres'::pg_catalog.regrole", 'admin_option=false', 'inherit_option=false', 'set_option=false']) {
+    try {
+      await owner.query('UPDATE pg_catalog.pg_auth_members SET ' + assignment + ' WHERE oid=$1::oid', text([before[0]!.oid!]))
+      await assert.rejects(readback(), code('P7603'), 'only the observed direct read grant is admissible: ' + assignment)
+    } finally {
+      await owner.query('UPDATE pg_catalog.pg_auth_members SET grantor=10,admin_option=true,inherit_option=true,set_option=true WHERE oid=$1::oid', text([before[0]!.oid!]))
+    }
+    assert.deepEqual(await memberships(), before, 'exact read membership restored')
+  }
+  const faults: readonly [string, string][] = [
+    ['GRANT pg_write_all_data TO postgres WITH ADMIN FALSE, INHERIT TRUE, SET TRUE', 'REVOKE pg_write_all_data FROM postgres RESTRICT'],
+    ['GRANT pg_write_all_data TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE', 'REVOKE pg_write_all_data FROM postgres RESTRICT'],
+    ['GRANT CREATE ON SCHEMA official_v3_jobs_private TO postgres', 'REVOKE CREATE ON SCHEMA official_v3_jobs_private FROM postgres RESTRICT'],
+    ['GRANT pg_read_all_data TO ot_v3_jobs_caller WITH ADMIN FALSE, INHERIT TRUE, SET TRUE', 'REVOKE pg_read_all_data FROM ot_v3_jobs_caller RESTRICT'],
+  ]
+  for (const [inject, restore] of faults) {
+    try { await owner.query(inject); await assert.rejects(readback(), code('P7603'), 'write or foreign read capability is refused') }
+    finally { await owner.query(restore) }
+  }
+  await readback()
+  assert.deepEqual(await memberships(), before)
+}
+
 async function bindRecovery(owner: LocalPgConnection, installer: LocalPgConnection, packageName: 'hm04' | 'hs1' | 'hma1'): Promise<void> {
   // Independent readback is limited to the owned synthetic fixture; no hosted identity is fabricated.
   if (packageName === 'hma1') {
@@ -879,6 +925,8 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
     assertHostedSourcePins()
     const f = await makeFixture(lifetime, allocate, true, true, setPhase)
     cleanup.push(() => f.close())
+    setPhase('managed_creator_readback')
+    await managedCreatorReadProof(f.owner, f.installer, candidate)
     setPhase('grant_runners')
     await f.grantRunners()
     setPhase('native_executors')
@@ -927,7 +975,9 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
         + "pg_has_role('postgres','ot_v3_intake_owner','SET')::text AS creator_intake_set"),
         [{ owner_db_create: 'false', creator_owner_set: 'false', creator_intake_set: 'false' }])
       await f.owner.query('SELECT official_v3_jobs_private.assert_catalog_v1()')
-      for (const sql of ['SET ROLE ot_v3_jobs_owner', 'SET ROLE ot_v3_intake_owner', 'SELECT * FROM official_v3_jobs_private.subjects_v1']) {
+      assert.deepEqual(await f.installer.query('SELECT count(*)::text AS n FROM official_v3_jobs_private.subjects_v1'), [{ n: '0' }],
+        'the exact managed Creator read grant permits reading the empty private table')
+      for (const sql of ['SET ROLE ot_v3_jobs_owner', 'SET ROLE ot_v3_intake_owner']) {
         await assert.rejects(f.installer.query(sql), code('42501'), 'actual Creator has no remaining temporary owner capability')
       }
       // A completely fresh restricted connection after all installation SET/schema grants were revoked.

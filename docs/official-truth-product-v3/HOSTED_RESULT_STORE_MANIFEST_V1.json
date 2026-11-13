@@ -93,21 +93,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-      "blob": "fa76535f430bad3bfff79373dc3faee9c4f18edc",
-      "bytes": 382230,
-      "sha256": "9557a908c596e3591eafab73aab243d899edc0793f9a29375a99485f0acb4e36"
+      "blob": "bb98fa79f46faa555632b669e97bfcbf9bf99220",
+      "bytes": 383390,
+      "sha256": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "52c3a2581df8194fe7d53ced01bfddfaa79ee48c",
-      "bytes": 249858,
-      "sha256": "65bf3d6e31e4b3e84b784dc914dd0023f642fa2d52ef12177bbc6d0a57fd5803"
+      "blob": "9ede81d9072921b46e0e46a82a2e484990867bd0",
+      "bytes": 253638,
+      "sha256": "d45fb6d4083a02e147ab6c78c94f93a4dee364a7227b8750c5e643ba158235a7"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-      "blob": "86166f2a5e1a7c305e5bcf5660e0fb236a10b070",
-      "bytes": 163160,
-      "sha256": "8bda577ef539586f78d6f155b88635de793dd7034f3dc0ff0183ca208365d317"
+      "blob": "1be5313364314dbbc923ad89603da00122ee679c",
+      "bytes": 165480,
+      "sha256": "dd5cd8a05802242e33c6ac552757849cd5587416cecb5ec3863577d02ebecdc0"
     }
   ],
   "selectedExisting": [
@@ -119,9 +119,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "6522445b7513998e3312bafc9a7f56884265d6af",
-      "bytes": 656010,
-      "sha256": "9820955abba86e4f1ae68ef036eacf55cf24ad18c3b7287bf311284222a82d62"
+      "blob": "0ed450c32f6fd7df96cd63c335f8f15c4875464c",
+      "bytes": 658330,
+      "sha256": "6f610fa35ad37842d5967f66c8c6361dbd29669965b7eed5a83cefdb313dc3ed"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",
@@ -149,15 +149,15 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "b4be092a426696d5a771661133bb14509a1ba111",
-      "bytes": 443491,
-      "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
+      "blob": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+      "bytes": 446847,
+      "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",
-      "bytes": 163333,
-      "sha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa"
+      "blob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee",
+      "bytes": 165529,
+      "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
     }
   ],
   "self": {
@@ -167,9 +167,9 @@
   },
   "sourceClosure": {
     "native": {
-      "blob": "52c3a2581df8194fe7d53ced01bfddfaa79ee48c",
-      "bytes": 249858,
-      "sha256": "65bf3d6e31e4b3e84b784dc914dd0023f642fa2d52ef12177bbc6d0a57fd5803"
+      "blob": "9ede81d9072921b46e0e46a82a2e484990867bd0",
+      "bytes": 253638,
+      "sha256": "d45fb6d4083a02e147ab6c78c94f93a4dee364a7227b8750c5e643ba158235a7"
     },
     "literalCount": 80,
     "pins": [
@@ -511,15 +511,15 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-        "blob": "b4be092a426696d5a771661133bb14509a1ba111",
-        "bytes": 443491,
-        "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
+        "blob": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+        "bytes": 446847,
+        "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-        "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",
-        "bytes": 163333,
-        "sha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa"
+        "blob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee",
+        "bytes": 165529,
+        "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
@@ -547,15 +547,15 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-        "blob": "fa76535f430bad3bfff79373dc3faee9c4f18edc",
-        "bytes": 382230,
-        "sha256": "9557a908c596e3591eafab73aab243d899edc0793f9a29375a99485f0acb4e36"
+        "blob": "bb98fa79f46faa555632b669e97bfcbf9bf99220",
+        "bytes": 383390,
+        "sha256": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-        "blob": "86166f2a5e1a7c305e5bcf5660e0fb236a10b070",
-        "bytes": 163160,
-        "sha256": "8bda577ef539586f78d6f155b88635de793dd7034f3dc0ff0183ca208365d317"
+        "blob": "1be5313364314dbbc923ad89603da00122ee679c",
+        "bytes": 165480,
+        "sha256": "dd5cd8a05802242e33c6ac552757849cd5587416cecb5ec3863577d02ebecdc0"
       },
       {
         "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1153,5 +1153,18 @@
     "guardsRightsBudgetsUnchanged": true,
     "devTargetIncluded": false,
     "performance": "NOT_MEASURED"
+  },
+  "managedCreatorCompatibility": {
+    "parent": "c0a1366ca613d1ef74efec97757ffb446eda62aa",
+    "status": "SOURCE_ONLY_RUNTIME_NOT_RUN",
+    "scope": "Eight copied Install/Recovery catalog checks accept only the observed managed Creator read grant while retaining CREATE and effective WRITE refusals. The HRS runtime catalog/certificate architecture is unchanged.",
+    "native": "Both owned fixtures now have the exact grant before package freeze. The first fixture executes the original HRS structure DO as postgres in READ ONLY transactions against four malformed read edges and four write/foreign-read faults, restoring the exact baseline.",
+    "allExistingRoleAndConnectionLimitsUnchanged": true,
+    "newConnections": 0,
+    "newHrsFixedCalls": 0,
+    "additionalNativeWireOperations": 45,
+    "allGroupsAndBudgetsUnchanged": true,
+    "historicalHm04Records": "hm04A3 and prior fix records remain historical; current HM04 source identities are in selectedExisting and its current preservation manifest.",
+    "liveDatabaseMutationByThisPatch": false
   }
 }

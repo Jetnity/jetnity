@@ -109,21 +109,21 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "b4be092a426696d5a771661133bb14509a1ba111",
-      "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787",
-      "bytes": 443491
+      "blob": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+      "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818",
+      "bytes": 446847
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
-      "blob": "ff1639160c9e5db664a4edbbee8880a948d7c70e",
-      "bytes": 238402,
-      "sha256": "918313434f1b9a7fc97050062fd0f4a632ca1a212de714c65ac3dc6157c9cf30"
+      "blob": "0eea69053b2802b433211126bd8d9f1641a4d41c",
+      "bytes": 242154,
+      "sha256": "9496998d4f0dd957bd7abd174bcb4a4194ab273184349c0102d5fcc831866405"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
-      "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",
-      "bytes": 163333,
-      "sha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa"
+      "blob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee",
+      "bytes": 165529,
+      "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
     }
   ],
   "self": {
@@ -669,7 +669,7 @@
       "bytes": 7018,
       "sha256": "d2c9542cc8c7908b04f4dc6fb3adbb603c269b1246ef014a42b8db6d5e528cb5",
       "sourceStart": 115866,
-      "candidateStart": 121450,
+      "candidateStart": 122610,
       "scope": "Copied HS1 preflight plus the selected exact HRS parsed S1 bridge dependency/ownership incidence only; original HS1 artifact unchanged by HRS.",
       "sourceOriginal": {
         "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
@@ -685,7 +685,7 @@
       "bytes": 2177,
       "sha256": "77320fc284a5496fdd37b839a0187748bf0e2794266de049a59a292a425c12e7",
       "sourceStart": 120381,
-      "candidateStart": 128470,
+      "candidateStart": 129630,
       "scope": "Installer pre-creation only; not unmodified runtime no-consumer validation"
     }
   ],
@@ -713,169 +713,169 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "originalBytes": 160983,
-      "candidateBytes": 443491,
+      "candidateBytes": 446847,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787",
+      "candidateSha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818",
       "retained": [
         {
           "originalStart": 7915,
           "originalEnd": 70828,
-          "candidateStart": 137755,
-          "candidateEnd": 200668,
+          "candidateStart": 138915,
+          "candidateEnd": 201828,
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205"
         },
         {
           "originalStart": 70893,
           "originalEnd": 71098,
-          "candidateStart": 200668,
-          "candidateEnd": 200873,
+          "candidateStart": 201828,
+          "candidateEnd": 202033,
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec"
         },
         {
           "originalStart": 71109,
           "originalEnd": 71463,
-          "candidateStart": 200892,
-          "candidateEnd": 201246,
+          "candidateStart": 202052,
+          "candidateEnd": 202406,
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4"
         },
         {
           "originalStart": 71531,
           "originalEnd": 71745,
-          "candidateStart": 201246,
-          "candidateEnd": 201460,
+          "candidateStart": 202406,
+          "candidateEnd": 202620,
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4"
         },
         {
           "originalStart": 71756,
           "originalEnd": 72116,
-          "candidateStart": 201479,
-          "candidateEnd": 201839,
+          "candidateStart": 202639,
+          "candidateEnd": 202999,
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973"
         },
         {
           "originalStart": 72192,
           "originalEnd": 72430,
-          "candidateStart": 201839,
-          "candidateEnd": 202077,
+          "candidateStart": 202999,
+          "candidateEnd": 203237,
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23"
         },
         {
           "originalStart": 72441,
           "originalEnd": 72817,
-          "candidateStart": 202096,
-          "candidateEnd": 202472,
+          "candidateStart": 203256,
+          "candidateEnd": 203632,
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91"
         },
         {
           "originalStart": 72893,
           "originalEnd": 73131,
-          "candidateStart": 202472,
-          "candidateEnd": 202710,
+          "candidateStart": 203632,
+          "candidateEnd": 203870,
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc"
         },
         {
           "originalStart": 73142,
           "originalEnd": 73518,
-          "candidateStart": 202729,
-          "candidateEnd": 203105,
+          "candidateStart": 203889,
+          "candidateEnd": 204265,
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e"
         },
         {
           "originalStart": 73595,
           "originalEnd": 73836,
-          "candidateStart": 203105,
-          "candidateEnd": 203346,
+          "candidateStart": 204265,
+          "candidateEnd": 204506,
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94"
         },
         {
           "originalStart": 73847,
           "originalEnd": 74225,
-          "candidateStart": 203365,
-          "candidateEnd": 203743,
+          "candidateStart": 204525,
+          "candidateEnd": 204903,
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86"
         },
         {
           "originalStart": 74307,
           "originalEnd": 74563,
-          "candidateStart": 203743,
-          "candidateEnd": 203999,
+          "candidateStart": 204903,
+          "candidateEnd": 205159,
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c"
         },
         {
           "originalStart": 74574,
           "originalEnd": 74962,
-          "candidateStart": 204018,
-          "candidateEnd": 204406,
+          "candidateStart": 205178,
+          "candidateEnd": 205566,
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff"
         },
         {
           "originalStart": 75037,
           "originalEnd": 75272,
-          "candidateStart": 204406,
-          "candidateEnd": 204641,
+          "candidateStart": 205566,
+          "candidateEnd": 205801,
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5"
         },
         {
           "originalStart": 75283,
           "originalEnd": 75739,
-          "candidateStart": 204660,
-          "candidateEnd": 205116,
+          "candidateStart": 205820,
+          "candidateEnd": 206276,
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293"
         },
         {
           "originalStart": 75739,
           "originalEnd": 75987,
-          "candidateStart": 320565,
-          "candidateEnd": 320813,
+          "candidateStart": 321725,
+          "candidateEnd": 321973,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         {
           "originalStart": 75987,
           "originalEnd": 75988,
-          "candidateStart": 205116,
-          "candidateEnd": 205117,
+          "candidateStart": 206276,
+          "candidateEnd": 206277,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 75988,
           "originalEnd": 77198,
-          "candidateStart": 321022,
-          "candidateEnd": 322232,
+          "candidateStart": 322182,
+          "candidateEnd": 323392,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         {
           "originalStart": 77198,
           "originalEnd": 77199,
-          "candidateStart": 205117,
-          "candidateEnd": 205118,
+          "candidateStart": 206277,
+          "candidateEnd": 206278,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 77199,
           "originalEnd": 77512,
-          "candidateStart": 315874,
-          "candidateEnd": 316187,
+          "candidateStart": 317034,
+          "candidateEnd": 317347,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         {
           "originalStart": 77512,
           "originalEnd": 106302,
-          "candidateStart": 205118,
-          "candidateEnd": 233908,
+          "candidateStart": 206278,
+          "candidateEnd": 235068,
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d"
         },
         {
           "originalStart": 113882,
           "originalEnd": 136122,
-          "candidateStart": 277914,
-          "candidateEnd": 300154,
+          "candidateStart": 279074,
+          "candidateEnd": 301314,
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3"
         },
         {
           "originalStart": 136163,
           "originalEnd": 151653,
-          "candidateStart": 300197,
-          "candidateEnd": 315687,
+          "candidateStart": 301357,
+          "candidateEnd": 316847,
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db"
         }
       ],
@@ -892,8 +892,8 @@
           "end": 70828,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
-          "candidateStart": 137755,
-          "candidateEnd": 200668
+          "candidateStart": 138915,
+          "candidateEnd": 201828
         },
         {
           "start": 70828,
@@ -907,8 +907,8 @@
           "end": 71098,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
-          "candidateStart": 200668,
-          "candidateEnd": 200873
+          "candidateStart": 201828,
+          "candidateEnd": 202033
         },
         {
           "start": 71098,
@@ -922,8 +922,8 @@
           "end": 71463,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
-          "candidateStart": 200892,
-          "candidateEnd": 201246
+          "candidateStart": 202052,
+          "candidateEnd": 202406
         },
         {
           "start": 71463,
@@ -937,8 +937,8 @@
           "end": 71745,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
-          "candidateStart": 201246,
-          "candidateEnd": 201460
+          "candidateStart": 202406,
+          "candidateEnd": 202620
         },
         {
           "start": 71745,
@@ -952,8 +952,8 @@
           "end": 72116,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
-          "candidateStart": 201479,
-          "candidateEnd": 201839
+          "candidateStart": 202639,
+          "candidateEnd": 202999
         },
         {
           "start": 72116,
@@ -967,8 +967,8 @@
           "end": 72430,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
-          "candidateStart": 201839,
-          "candidateEnd": 202077
+          "candidateStart": 202999,
+          "candidateEnd": 203237
         },
         {
           "start": 72430,
@@ -982,8 +982,8 @@
           "end": 72817,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
-          "candidateStart": 202096,
-          "candidateEnd": 202472
+          "candidateStart": 203256,
+          "candidateEnd": 203632
         },
         {
           "start": 72817,
@@ -997,8 +997,8 @@
           "end": 73131,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
-          "candidateStart": 202472,
-          "candidateEnd": 202710
+          "candidateStart": 203632,
+          "candidateEnd": 203870
         },
         {
           "start": 73131,
@@ -1012,8 +1012,8 @@
           "end": 73518,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
-          "candidateStart": 202729,
-          "candidateEnd": 203105
+          "candidateStart": 203889,
+          "candidateEnd": 204265
         },
         {
           "start": 73518,
@@ -1027,8 +1027,8 @@
           "end": 73836,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
-          "candidateStart": 203105,
-          "candidateEnd": 203346
+          "candidateStart": 204265,
+          "candidateEnd": 204506
         },
         {
           "start": 73836,
@@ -1042,8 +1042,8 @@
           "end": 74225,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
-          "candidateStart": 203365,
-          "candidateEnd": 203743
+          "candidateStart": 204525,
+          "candidateEnd": 204903
         },
         {
           "start": 74225,
@@ -1057,8 +1057,8 @@
           "end": 74563,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
-          "candidateStart": 203743,
-          "candidateEnd": 203999
+          "candidateStart": 204903,
+          "candidateEnd": 205159
         },
         {
           "start": 74563,
@@ -1072,8 +1072,8 @@
           "end": 74962,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
-          "candidateStart": 204018,
-          "candidateEnd": 204406
+          "candidateStart": 205178,
+          "candidateEnd": 205566
         },
         {
           "start": 74962,
@@ -1087,8 +1087,8 @@
           "end": 75272,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
-          "candidateStart": 204406,
-          "candidateEnd": 204641
+          "candidateStart": 205566,
+          "candidateEnd": 205801
         },
         {
           "start": 75272,
@@ -1102,56 +1102,56 @@
           "end": 75739,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
-          "candidateStart": 204660,
-          "candidateEnd": 205116
+          "candidateStart": 205820,
+          "candidateEnd": 206276
         },
         {
           "start": 75739,
           "end": 75987,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
-          "candidateStart": 320565,
-          "candidateEnd": 320813
+          "candidateStart": 321725,
+          "candidateEnd": 321973
         },
         {
           "start": 75987,
           "end": 75988,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 205116,
-          "candidateEnd": 205117
+          "candidateStart": 206276,
+          "candidateEnd": 206277
         },
         {
           "start": 75988,
           "end": 77198,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
-          "candidateStart": 321022,
-          "candidateEnd": 322232
+          "candidateStart": 322182,
+          "candidateEnd": 323392
         },
         {
           "start": 77198,
           "end": 77199,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 205117,
-          "candidateEnd": 205118
+          "candidateStart": 206277,
+          "candidateEnd": 206278
         },
         {
           "start": 77199,
           "end": 77512,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
-          "candidateStart": 315874,
-          "candidateEnd": 316187
+          "candidateStart": 317034,
+          "candidateEnd": 317347
         },
         {
           "start": 77512,
           "end": 106302,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
-          "candidateStart": 205118,
-          "candidateEnd": 233908
+          "candidateStart": 206278,
+          "candidateEnd": 235068
         },
         {
           "start": 106302,
@@ -1165,8 +1165,8 @@
           "end": 136122,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
-          "candidateStart": 277914,
-          "candidateEnd": 300154
+          "candidateStart": 279074,
+          "candidateEnd": 301314
         },
         {
           "start": 136122,
@@ -1180,8 +1180,8 @@
           "end": 151653,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
-          "candidateStart": 300197,
-          "candidateEnd": 315687
+          "candidateStart": 301357,
+          "candidateEnd": 316847
         },
         {
           "start": 151653,
@@ -1194,285 +1194,285 @@
       "candidateInverse": [
         {
           "start": 0,
-          "end": 137755,
+          "end": 138915,
           "kind": "new",
-          "sha256": "e8e9373675117aaa0e14e294a1ec727adf514e19383ca6470394831a23d8f5a1",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sha256": "03c74f4531183c0ce94e979bd42446b9a76b28c6aa619c4120bfb7216fb5021a",
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 137755,
-          "end": 200668,
+          "start": 138915,
+          "end": 201828,
           "kind": "retained",
           "sha256": "a404d2e2bab92fb8d80f1e03dfa66d1c7b2fdcc820485f4a525d50f55bef0205",
           "originalStart": 7915,
           "originalEnd": 70828
         },
         {
-          "start": 200668,
-          "end": 200873,
+          "start": 201828,
+          "end": 202033,
           "kind": "retained",
           "sha256": "28823631c0f3a8d255951a5482076ae42a9067a6a919639aa3a2002b144c93ec",
           "originalStart": 70893,
           "originalEnd": 71098
         },
         {
-          "start": 200873,
-          "end": 200892,
+          "start": 202033,
+          "end": 202052,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 200892,
-          "end": 201246,
+          "start": 202052,
+          "end": 202406,
           "kind": "retained",
           "sha256": "fdc5b309de826c77a19b00f0f8b6dfe10585610abbff5a70981632757bc984b4",
           "originalStart": 71109,
           "originalEnd": 71463
         },
         {
-          "start": 201246,
-          "end": 201460,
+          "start": 202406,
+          "end": 202620,
           "kind": "retained",
           "sha256": "bf7fcf1c03da8b7d36ee36e3fbaba219e51d06edbab1b0f4db7764559c76ccb4",
           "originalStart": 71531,
           "originalEnd": 71745
         },
         {
-          "start": 201460,
-          "end": 201479,
+          "start": 202620,
+          "end": 202639,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 201479,
-          "end": 201839,
+          "start": 202639,
+          "end": 202999,
           "kind": "retained",
           "sha256": "97f8977e23484c26e9b273b9e0b022e0cfaaeec6ec6ca48b751e1e4839038973",
           "originalStart": 71756,
           "originalEnd": 72116
         },
         {
-          "start": 201839,
-          "end": 202077,
+          "start": 202999,
+          "end": 203237,
           "kind": "retained",
           "sha256": "a7641e55ad9f144604983d5f2085a8a9b2e58d382c6d0f040b35f06e0caa6b23",
           "originalStart": 72192,
           "originalEnd": 72430
         },
         {
-          "start": 202077,
-          "end": 202096,
+          "start": 203237,
+          "end": 203256,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 202096,
-          "end": 202472,
+          "start": 203256,
+          "end": 203632,
           "kind": "retained",
           "sha256": "3b03f9b2f84b9cc06f96264447fa06e2ed4d38e1282fa4515a9f0e612faa5f91",
           "originalStart": 72441,
           "originalEnd": 72817
         },
         {
-          "start": 202472,
-          "end": 202710,
+          "start": 203632,
+          "end": 203870,
           "kind": "retained",
           "sha256": "ceca29c808d852c603870768a5c9255cc8b16c3440e5edc9bbbe80d03cf621bc",
           "originalStart": 72893,
           "originalEnd": 73131
         },
         {
-          "start": 202710,
-          "end": 202729,
+          "start": 203870,
+          "end": 203889,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 202729,
-          "end": 203105,
+          "start": 203889,
+          "end": 204265,
           "kind": "retained",
           "sha256": "157add613569c613aaef98b045c0751937fbdc3cdae447625b0bec22c7cb7a3e",
           "originalStart": 73142,
           "originalEnd": 73518
         },
         {
-          "start": 203105,
-          "end": 203346,
+          "start": 204265,
+          "end": 204506,
           "kind": "retained",
           "sha256": "e37c5488eb49dd460a96c4ff6026616c9c029c7d240fec1ac3a4a33c9e999d94",
           "originalStart": 73595,
           "originalEnd": 73836
         },
         {
-          "start": 203346,
-          "end": 203365,
+          "start": 204506,
+          "end": 204525,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 203365,
-          "end": 203743,
+          "start": 204525,
+          "end": 204903,
           "kind": "retained",
           "sha256": "44bedac37e0eae3fe6249d66aab21822e2b88025ce2da0a27a63e3881a799a86",
           "originalStart": 73847,
           "originalEnd": 74225
         },
         {
-          "start": 203743,
-          "end": 203999,
+          "start": 204903,
+          "end": 205159,
           "kind": "retained",
           "sha256": "1322da72edde8b563a7885378f8f492accdbec55963230105dc6576e3a2be62c",
           "originalStart": 74307,
           "originalEnd": 74563
         },
         {
-          "start": 203999,
-          "end": 204018,
+          "start": 205159,
+          "end": 205178,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 204018,
-          "end": 204406,
+          "start": 205178,
+          "end": 205566,
           "kind": "retained",
           "sha256": "4304e5b266b43118990672d991e4a839d6ade45bbd8d4b74a858ecc56380dbff",
           "originalStart": 74574,
           "originalEnd": 74962
         },
         {
-          "start": 204406,
-          "end": 204641,
+          "start": 205566,
+          "end": 205801,
           "kind": "retained",
           "sha256": "1f87994cc09b8ed401645962bf99a07b1252a142ee5f6ee39e871e14243b9bf5",
           "originalStart": 75037,
           "originalEnd": 75272
         },
         {
-          "start": 204641,
-          "end": 204660,
+          "start": 205801,
+          "end": 205820,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 204660,
-          "end": 205116,
+          "start": 205820,
+          "end": 206276,
           "kind": "retained",
           "sha256": "76443ad986faa3be604cc50d633d2186d7edb4ef64c4cb8e4571279fa56c4293",
           "originalStart": 75283,
           "originalEnd": 75739
         },
         {
-          "start": 205116,
-          "end": 205117,
+          "start": 206276,
+          "end": 206277,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 75987,
           "originalEnd": 75988
         },
         {
-          "start": 205117,
-          "end": 205118,
+          "start": 206277,
+          "end": 206278,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 77198,
           "originalEnd": 77199
         },
         {
-          "start": 205118,
-          "end": 233908,
+          "start": 206278,
+          "end": 235068,
           "kind": "retained",
           "sha256": "3c7a23e80b9325be9aa23030f68099a9fa3954611216ce44bbcb2b79860c9d4d",
           "originalStart": 77512,
           "originalEnd": 106302
         },
         {
-          "start": 233908,
-          "end": 277914,
+          "start": 235068,
+          "end": 279074,
           "kind": "new",
           "sha256": "434b0e23f47d9041786d26366e1ed2f9c28cbdc57bbd0d6d0b6dd0ecd423b00d",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 277914,
-          "end": 300154,
+          "start": 279074,
+          "end": 301314,
           "kind": "retained",
           "sha256": "c86229bfd3d797607656b8c120b26904d51e1e3f03cecf8f170961a1965c68c3",
           "originalStart": 113882,
           "originalEnd": 136122
         },
         {
-          "start": 300154,
-          "end": 300197,
+          "start": 301314,
+          "end": 301357,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 300197,
-          "end": 315687,
+          "start": 301357,
+          "end": 316847,
           "kind": "retained",
           "sha256": "6273237b425dc09060742f28eaef0fd2daa837bc6e62b58b3df6ea9b4b9632db",
           "originalStart": 136163,
           "originalEnd": 151653
         },
         {
-          "start": 315687,
-          "end": 315874,
+          "start": 316847,
+          "end": 317034,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 315874,
-          "end": 316187,
+          "start": 317034,
+          "end": 317347,
           "kind": "retained",
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144",
           "originalStart": 77199,
           "originalEnd": 77512
         },
         {
-          "start": 316187,
-          "end": 320565,
+          "start": 317347,
+          "end": 321725,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 320565,
-          "end": 320813,
+          "start": 321725,
+          "end": 321973,
           "kind": "retained",
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685",
           "originalStart": 75739,
           "originalEnd": 75987
         },
         {
-          "start": 320813,
-          "end": 321022,
+          "start": 321973,
+          "end": 322182,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         },
         {
-          "start": 321022,
-          "end": 322232,
+          "start": 322182,
+          "end": 323392,
           "kind": "retained",
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3",
           "originalStart": 75988,
           "originalEnd": 77198
         },
         {
-          "start": 322232,
-          "end": 443491,
+          "start": 323392,
+          "end": 446847,
           "kind": "new",
-          "sha256": "25c91e35aa97b37609040c75e98f24fe9738adc3bd6e95b086a8782fab11ef49",
-          "sourceBlob": "b4be092a426696d5a771661133bb14509a1ba111"
+          "sha256": "65a920c4daca326d18b759bf780010dd87d77b2dc6e18ce95b10f835ff3134a9",
+          "sourceBlob": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
         }
       ],
       "editAnnotations": [
@@ -1600,50 +1600,50 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/jobs-candidate.rollback.sql",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
       "originalBytes": 6175,
-      "candidateBytes": 163333,
+      "candidateBytes": 165529,
       "originalSha256": "9b9089d74242a802455cc7e3fb8a0a8515c17b61b45ae730b9bbba1adb650a66",
-      "candidateSha256": "4022e7ea644e3626e0422a2fc3ac083a670b1fcdcf93a2a3f329e673b916edfa",
+      "candidateSha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af",
       "retained": [
         {
           "originalStart": 1470,
           "originalEnd": 4785,
-          "candidateStart": 147346,
-          "candidateEnd": 150661,
+          "candidateStart": 149542,
+          "candidateEnd": 152857,
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d"
         },
         {
           "originalStart": 4785,
           "originalEnd": 4881,
-          "candidateStart": 146926,
-          "candidateEnd": 147022,
+          "candidateStart": 149122,
+          "candidateEnd": 149218,
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3"
         },
         {
           "originalStart": 4881,
           "originalEnd": 5034,
-          "candidateStart": 147057,
-          "candidateEnd": 147210,
+          "candidateStart": 149253,
+          "candidateEnd": 149406,
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7"
         },
         {
           "originalStart": 5034,
           "originalEnd": 6138,
-          "candidateStart": 150661,
-          "candidateEnd": 151765,
+          "candidateStart": 152857,
+          "candidateEnd": 153961,
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938"
         },
         {
           "originalStart": 6138,
           "originalEnd": 6167,
-          "candidateStart": 152067,
-          "candidateEnd": 152096,
+          "candidateStart": 154263,
+          "candidateEnd": 154292,
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8"
         },
         {
           "originalStart": 6167,
           "originalEnd": 6175,
-          "candidateStart": 163325,
-          "candidateEnd": 163333,
+          "candidateStart": 165521,
+          "candidateEnd": 165529,
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3"
         }
       ],
@@ -1660,129 +1660,129 @@
           "end": 4785,
           "kind": "retained",
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d",
-          "candidateStart": 147346,
-          "candidateEnd": 150661
+          "candidateStart": 149542,
+          "candidateEnd": 152857
         },
         {
           "start": 4785,
           "end": 4881,
           "kind": "retained",
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3",
-          "candidateStart": 146926,
-          "candidateEnd": 147022
+          "candidateStart": 149122,
+          "candidateEnd": 149218
         },
         {
           "start": 4881,
           "end": 5034,
           "kind": "retained",
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7",
-          "candidateStart": 147057,
-          "candidateEnd": 147210
+          "candidateStart": 149253,
+          "candidateEnd": 149406
         },
         {
           "start": 5034,
           "end": 6138,
           "kind": "retained",
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938",
-          "candidateStart": 150661,
-          "candidateEnd": 151765
+          "candidateStart": 152857,
+          "candidateEnd": 153961
         },
         {
           "start": 6138,
           "end": 6167,
           "kind": "retained",
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8",
-          "candidateStart": 152067,
-          "candidateEnd": 152096
+          "candidateStart": 154263,
+          "candidateEnd": 154292
         },
         {
           "start": 6167,
           "end": 6175,
           "kind": "retained",
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3",
-          "candidateStart": 163325,
-          "candidateEnd": 163333
+          "candidateStart": 165521,
+          "candidateEnd": 165529
         }
       ],
       "candidateInverse": [
         {
           "start": 0,
-          "end": 146926,
+          "end": 149122,
           "kind": "new",
-          "sha256": "f32d8da8714a4186e4bd851fdc660a229b69bb773691051c65ed08061cc5234c",
-          "sourceBlob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0"
+          "sha256": "1eb6384faffd7485e0021b38e5438873cc4776d67756490f4ede32dc82a79502",
+          "sourceBlob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee"
         },
         {
-          "start": 146926,
-          "end": 147022,
+          "start": 149122,
+          "end": 149218,
           "kind": "retained",
           "sha256": "e7c6ca0ede39107897bfaea7688b8bbde126b945a812bc973846dd7aa1b4a6e3",
           "originalStart": 4785,
           "originalEnd": 4881
         },
         {
-          "start": 147022,
-          "end": 147057,
+          "start": 149218,
+          "end": 149253,
           "kind": "new",
           "sha256": "47a58b08cd975f11680454cbc825340225a8dd810600199cd70961d5d156893d",
-          "sourceBlob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0"
+          "sourceBlob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee"
         },
         {
-          "start": 147057,
-          "end": 147210,
+          "start": 149253,
+          "end": 149406,
           "kind": "retained",
           "sha256": "d4d6786bddc0dd844c55b39a371d7c43db3b8a381852f8d8d1db21fb33e445d7",
           "originalStart": 4881,
           "originalEnd": 5034
         },
         {
-          "start": 147210,
-          "end": 147346,
+          "start": 149406,
+          "end": 149542,
           "kind": "new",
           "sha256": "586b92076f163b5bc7005150d36c9fff6384ff4b19417f4d817286f8f0115296",
-          "sourceBlob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0"
+          "sourceBlob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee"
         },
         {
-          "start": 147346,
-          "end": 150661,
+          "start": 149542,
+          "end": 152857,
           "kind": "retained",
           "sha256": "426671fb96b1a8d8550d98125ab703470242ff20affb5dda3a09a5e8f49d416d",
           "originalStart": 1470,
           "originalEnd": 4785
         },
         {
-          "start": 150661,
-          "end": 151765,
+          "start": 152857,
+          "end": 153961,
           "kind": "retained",
           "sha256": "a14625f0b989cb6ac71309019ed16082ecb767d1131ebf6d4b77b14a43d47938",
           "originalStart": 5034,
           "originalEnd": 6138
         },
         {
-          "start": 151765,
-          "end": 152067,
+          "start": 153961,
+          "end": 154263,
           "kind": "new",
           "sha256": "65efc6f4c894c9f0a79fb595557317ffacdae12b2bed563de80d7723f621621b",
-          "sourceBlob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0"
+          "sourceBlob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee"
         },
         {
-          "start": 152067,
-          "end": 152096,
+          "start": 154263,
+          "end": 154292,
           "kind": "retained",
           "sha256": "a29f9e74f898777097fa8719833296fdacd23c0df73f65b55a911d37b35f3bc8",
           "originalStart": 6138,
           "originalEnd": 6167
         },
         {
-          "start": 152096,
-          "end": 163325,
+          "start": 154292,
+          "end": 165521,
           "kind": "new",
           "sha256": "a42e76862095b457edc2c0d5781853ca07f53d5c603596a99e92b73a888899cb",
-          "sourceBlob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0"
+          "sourceBlob": "5fadd08645390c8d78c3f0ce6fb35c65e62890ee"
         },
         {
-          "start": 163325,
-          "end": 163333,
+          "start": 165521,
+          "end": 165529,
           "kind": "retained",
           "sha256": "e83e8c1f4ad612a5bd92067c29bdb9b1597fd541ebed41026079aabd6a4a5bf3",
           "originalStart": 6167,
@@ -1831,9 +1831,9 @@
       "originalPath": "scripts/db/official-truth-v3-durable-jobs-1/native.ts",
       "candidatePath": "scripts/db/official-truth-v3-hosted-durable-jobs-1/native.ts",
       "originalBytes": 199707,
-      "candidateBytes": 238402,
+      "candidateBytes": 242154,
       "originalSha256": "a61b94e98691ecf6212f2e9cadfada3d470927c319f0ef9a6ed008f63ec658ea",
-      "candidateSha256": "918313434f1b9a7fc97050062fd0f4a632ca1a212de714c65ac3dc6157c9cf30",
+      "candidateSha256": "9496998d4f0dd957bd7abd174bcb4a4194ab273184349c0102d5fcc831866405",
       "retained": [
         {
           "originalStart": 91,
@@ -1964,183 +1964,190 @@
         {
           "originalStart": 19222,
           "originalEnd": 20558,
-          "candidateStart": 34406,
-          "candidateEnd": 35742,
+          "candidateStart": 37882,
+          "candidateEnd": 39218,
           "sha256": "f5046f05dd75ee9f37d94e968d56e04be4e3159228e561b5f33e7ea07498906d"
         },
         {
           "originalStart": 20976,
           "originalEnd": 21060,
-          "candidateStart": 41198,
-          "candidateEnd": 41282,
+          "candidateStart": 44674,
+          "candidateEnd": 44758,
           "sha256": "bbef9d0b13731480feceaaaba1f8b88515907f95b563fd27ddb6065c4ccdb975"
         },
         {
           "originalStart": 21129,
           "originalEnd": 22855,
-          "candidateStart": 41355,
-          "candidateEnd": 43081,
+          "candidateStart": 44831,
+          "candidateEnd": 46557,
           "sha256": "81c8a96a463335abd70af213ad4edf4854686466aa6c51b0df10720f2f7bbf39"
         },
         {
           "originalStart": 23320,
           "originalEnd": 24282,
-          "candidateStart": 44165,
-          "candidateEnd": 45127,
+          "candidateStart": 47641,
+          "candidateEnd": 48603,
           "sha256": "82019232ebca8b5af61c5c378382e26172c550519fe7dab03ae5503d1c445ae3"
         },
         {
           "originalStart": 24403,
           "originalEnd": 28617,
-          "candidateStart": 45331,
-          "candidateEnd": 49545,
+          "candidateStart": 48807,
+          "candidateEnd": 53021,
           "sha256": "02b9ecf8068906fdff679366361020d8666826958d467e7a6268c3ab906169c7"
         },
         {
           "originalStart": 28664,
           "originalEnd": 38086,
-          "candidateStart": 49626,
-          "candidateEnd": 59048,
+          "candidateStart": 53102,
+          "candidateEnd": 62524,
           "sha256": "ecd1defcaef0b5b64b65c3c6367127aaa1f97dfa3c2b3e574259d5d2ea53deba"
         },
         {
           "originalStart": 38186,
           "originalEnd": 38445,
-          "candidateStart": 62165,
-          "candidateEnd": 62424,
+          "candidateStart": 65641,
+          "candidateEnd": 65900,
           "sha256": "be562857dfa2d93f7ea84f348750aef64760625d289c8b260751aed730690cbf"
         },
         {
           "originalStart": 38612,
           "originalEnd": 51547,
-          "candidateStart": 62505,
-          "candidateEnd": 75440,
+          "candidateStart": 65981,
+          "candidateEnd": 78916,
           "sha256": "8f82545815c484ac0ca1a32fade5d344c8a7a5c81044d8646b964b0ea95bf5c0"
         },
         {
           "originalStart": 51620,
+          "originalEnd": 51655,
+          "candidateStart": 79018,
+          "candidateEnd": 79053,
+          "sha256": "19cee590feea3b9574bdbcbc9e489cb37bb6b21f8b94fee6689e479d1069aee3"
+        },
+        {
+          "originalStart": 51655,
           "originalEnd": 53543,
-          "candidateStart": 75542,
-          "candidateEnd": 77465,
-          "sha256": "3fca3a1af63f03d5153d72646607d3563333b048086a458976ff129724a0aeae"
+          "candidateStart": 79161,
+          "candidateEnd": 81049,
+          "sha256": "b575a9e1b9a640b4f1c749115ec0f12f07107d4fddbf97022174610f8e020a2d"
         },
         {
           "originalStart": 53653,
           "originalEnd": 53946,
-          "candidateStart": 77575,
-          "candidateEnd": 77868,
+          "candidateStart": 81159,
+          "candidateEnd": 81452,
           "sha256": "db83c6ac59a4ea79b2377dcbf9345af2ef914c2a948b9132b43e6bbbea0427de"
         },
         {
           "originalStart": 54010,
           "originalEnd": 54322,
-          "candidateStart": 77940,
-          "candidateEnd": 78252,
+          "candidateStart": 81524,
+          "candidateEnd": 81836,
           "sha256": "621cdec098a474db96af9764abae206cc56c49c6a5009cb8f892c8ebd1b92b4f"
         },
         {
           "originalStart": 54359,
           "originalEnd": 54872,
-          "candidateStart": 78383,
-          "candidateEnd": 78896,
+          "candidateStart": 81967,
+          "candidateEnd": 82480,
           "sha256": "f8d80719fa125fc16ef60bd56a4c093611582fd2739296d2103af7bc84853eca"
         },
         {
           "originalStart": 54975,
           "originalEnd": 55034,
-          "candidateStart": 79295,
-          "candidateEnd": 79354,
+          "candidateStart": 82879,
+          "candidateEnd": 82938,
           "sha256": "d006e2b087514fe45cb1ce6d97d21de5b7341f17a14e6675a0e11ccb97773ccc"
         },
         {
           "originalStart": 55364,
           "originalEnd": 98190,
-          "candidateStart": 88797,
-          "candidateEnd": 131623,
+          "candidateStart": 92549,
+          "candidateEnd": 135375,
           "sha256": "a578c96a39b33c6bff1222b152bf4355bdcd2f2731d9372d0e5281506b668da3"
         },
         {
           "originalStart": 98377,
           "originalEnd": 186008,
-          "candidateStart": 131826,
-          "candidateEnd": 219457,
+          "candidateStart": 135578,
+          "candidateEnd": 223209,
           "sha256": "2bb32fef913a51a4a7969cef1ef749e856ba2c83c889557b3b9f0966e49c3d00"
         },
         {
           "originalStart": 186055,
           "originalEnd": 186056,
-          "candidateStart": 219752,
-          "candidateEnd": 219753,
+          "candidateStart": 223504,
+          "candidateEnd": 223505,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "originalStart": 186109,
           "originalEnd": 187269,
-          "candidateStart": 221475,
-          "candidateEnd": 222635,
+          "candidateStart": 225227,
+          "candidateEnd": 226387,
           "sha256": "00ba0eb030480013a512d2f1b3b0a246aa977bcdbc844f02621f0d3d41b9cca4"
         },
         {
           "originalStart": 188866,
           "originalEnd": 189774,
-          "candidateStart": 224429,
-          "candidateEnd": 225337,
+          "candidateStart": 228181,
+          "candidateEnd": 229089,
           "sha256": "d95d848add4fd86271ad7f78771719c915f1990bacfac416692bd9c4041a96c4"
         },
         {
           "originalStart": 189891,
           "originalEnd": 190554,
-          "candidateStart": 225458,
-          "candidateEnd": 226121,
+          "candidateStart": 229210,
+          "candidateEnd": 229873,
           "sha256": "f15e7190ad6708f65a3d9ed8d775261e204215b1e81c83545d8c6b3d1252ecea"
         },
         {
           "originalStart": 191671,
           "originalEnd": 192205,
-          "candidateStart": 227994,
-          "candidateEnd": 228528,
+          "candidateStart": 231746,
+          "candidateEnd": 232280,
           "sha256": "69df49b747e1bc81827a802039125e6eddb689dcc154351d340809d20ba4ab49"
         },
         {
           "originalStart": 193003,
           "originalEnd": 193594,
-          "candidateStart": 230370,
-          "candidateEnd": 230961,
+          "candidateStart": 234122,
+          "candidateEnd": 234713,
           "sha256": "3397ba33ec1882332911d98f601914392bc6f7749931e1dc26ed5e5329f62cdf"
         },
         {
           "originalStart": 193729,
           "originalEnd": 193872,
-          "candidateStart": 231139,
-          "candidateEnd": 231282,
+          "candidateStart": 234891,
+          "candidateEnd": 235034,
           "sha256": "cbb705ad31bbddfec557e733e956ebc5dd07a93df34aaf5f81f27d3814612fa7"
         },
         {
           "originalStart": 194964,
           "originalEnd": 195092,
-          "candidateStart": 232932,
-          "candidateEnd": 233060,
+          "candidateStart": 236684,
+          "candidateEnd": 236812,
           "sha256": "86c57d3acd42522da7e9c999f6aa8a4562816cab4b63037c0daee392eab035ee"
         },
         {
           "originalStart": 196761,
           "originalEnd": 198371,
-          "candidateStart": 235411,
-          "candidateEnd": 237021,
+          "candidateStart": 239163,
+          "candidateEnd": 240773,
           "sha256": "7a5a2160121156e0acd23525c8bccab9c141dd211ec43f64ad4e7421a6473106"
         },
         {
           "originalStart": 198456,
           "originalEnd": 199703,
-          "candidateStart": 237152,
-          "candidateEnd": 238399,
+          "candidateStart": 240904,
+          "candidateEnd": 242151,
           "sha256": "33e78863dd1c02ed43d222411807bbd4ca4ca04b8ecd8a78d8870aa1020bd284"
         },
         {
           "originalStart": 199706,
           "originalEnd": 199707,
-          "candidateStart": 238401,
-          "candidateEnd": 238402,
+          "candidateStart": 242153,
+          "candidateEnd": 242154,
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         }
       ],
@@ -2413,8 +2420,8 @@
           "end": 20558,
           "kind": "retained",
           "sha256": "f5046f05dd75ee9f37d94e968d56e04be4e3159228e561b5f33e7ea07498906d",
-          "candidateStart": 34406,
-          "candidateEnd": 35742
+          "candidateStart": 37882,
+          "candidateEnd": 39218
         },
         {
           "start": 20558,
@@ -2428,8 +2435,8 @@
           "end": 21060,
           "kind": "retained",
           "sha256": "bbef9d0b13731480feceaaaba1f8b88515907f95b563fd27ddb6065c4ccdb975",
-          "candidateStart": 41198,
-          "candidateEnd": 41282
+          "candidateStart": 44674,
+          "candidateEnd": 44758
         },
         {
           "start": 21060,
@@ -2443,8 +2450,8 @@
           "end": 22855,
           "kind": "retained",
           "sha256": "81c8a96a463335abd70af213ad4edf4854686466aa6c51b0df10720f2f7bbf39",
-          "candidateStart": 41355,
-          "candidateEnd": 43081
+          "candidateStart": 44831,
+          "candidateEnd": 46557
         },
         {
           "start": 22855,
@@ -2458,8 +2465,8 @@
           "end": 24282,
           "kind": "retained",
           "sha256": "82019232ebca8b5af61c5c378382e26172c550519fe7dab03ae5503d1c445ae3",
-          "candidateStart": 44165,
-          "candidateEnd": 45127
+          "candidateStart": 47641,
+          "candidateEnd": 48603
         },
         {
           "start": 24282,
@@ -2473,8 +2480,8 @@
           "end": 28617,
           "kind": "retained",
           "sha256": "02b9ecf8068906fdff679366361020d8666826958d467e7a6268c3ab906169c7",
-          "candidateStart": 45331,
-          "candidateEnd": 49545
+          "candidateStart": 48807,
+          "candidateEnd": 53021
         },
         {
           "start": 28617,
@@ -2488,8 +2495,8 @@
           "end": 38086,
           "kind": "retained",
           "sha256": "ecd1defcaef0b5b64b65c3c6367127aaa1f97dfa3c2b3e574259d5d2ea53deba",
-          "candidateStart": 49626,
-          "candidateEnd": 59048
+          "candidateStart": 53102,
+          "candidateEnd": 62524
         },
         {
           "start": 38086,
@@ -2503,8 +2510,8 @@
           "end": 38445,
           "kind": "retained",
           "sha256": "be562857dfa2d93f7ea84f348750aef64760625d289c8b260751aed730690cbf",
-          "candidateStart": 62165,
-          "candidateEnd": 62424
+          "candidateStart": 65641,
+          "candidateEnd": 65900
         },
         {
           "start": 38445,
@@ -2518,8 +2525,8 @@
           "end": 51547,
           "kind": "retained",
           "sha256": "8f82545815c484ac0ca1a32fade5d344c8a7a5c81044d8646b964b0ea95bf5c0",
-          "candidateStart": 62505,
-          "candidateEnd": 75440
+          "candidateStart": 65981,
+          "candidateEnd": 78916
         },
         {
           "start": 51547,
@@ -2530,11 +2537,19 @@
         },
         {
           "start": 51620,
+          "end": 51655,
+          "kind": "retained",
+          "sha256": "19cee590feea3b9574bdbcbc9e489cb37bb6b21f8b94fee6689e479d1069aee3",
+          "candidateStart": 79018,
+          "candidateEnd": 79053
+        },
+        {
+          "start": 51655,
           "end": 53543,
           "kind": "retained",
-          "sha256": "3fca3a1af63f03d5153d72646607d3563333b048086a458976ff129724a0aeae",
-          "candidateStart": 75542,
-          "candidateEnd": 77465
+          "sha256": "b575a9e1b9a640b4f1c749115ec0f12f07107d4fddbf97022174610f8e020a2d",
+          "candidateStart": 79161,
+          "candidateEnd": 81049
         },
         {
           "start": 53543,
@@ -2548,8 +2563,8 @@
           "end": 53946,
           "kind": "retained",
           "sha256": "db83c6ac59a4ea79b2377dcbf9345af2ef914c2a948b9132b43e6bbbea0427de",
-          "candidateStart": 77575,
-          "candidateEnd": 77868
+          "candidateStart": 81159,
+          "candidateEnd": 81452
         },
         {
           "start": 53946,
@@ -2563,8 +2578,8 @@
           "end": 54322,
           "kind": "retained",
           "sha256": "621cdec098a474db96af9764abae206cc56c49c6a5009cb8f892c8ebd1b92b4f",
-          "candidateStart": 77940,
-          "candidateEnd": 78252
+          "candidateStart": 81524,
+          "candidateEnd": 81836
         },
         {
           "start": 54322,
@@ -2578,8 +2593,8 @@
           "end": 54872,
           "kind": "retained",
           "sha256": "f8d80719fa125fc16ef60bd56a4c093611582fd2739296d2103af7bc84853eca",
-          "candidateStart": 78383,
-          "candidateEnd": 78896
+          "candidateStart": 81967,
+          "candidateEnd": 82480
         },
         {
           "start": 54872,
@@ -2593,8 +2608,8 @@
           "end": 55034,
           "kind": "retained",
           "sha256": "d006e2b087514fe45cb1ce6d97d21de5b7341f17a14e6675a0e11ccb97773ccc",
-          "candidateStart": 79295,
-          "candidateEnd": 79354
+          "candidateStart": 82879,
+          "candidateEnd": 82938
         },
         {
           "start": 55034,
@@ -2608,8 +2623,8 @@
           "end": 98190,
           "kind": "retained",
           "sha256": "a578c96a39b33c6bff1222b152bf4355bdcd2f2731d9372d0e5281506b668da3",
-          "candidateStart": 88797,
-          "candidateEnd": 131623
+          "candidateStart": 92549,
+          "candidateEnd": 135375
         },
         {
           "start": 98190,
@@ -2623,8 +2638,8 @@
           "end": 186008,
           "kind": "retained",
           "sha256": "2bb32fef913a51a4a7969cef1ef749e856ba2c83c889557b3b9f0966e49c3d00",
-          "candidateStart": 131826,
-          "candidateEnd": 219457
+          "candidateStart": 135578,
+          "candidateEnd": 223209
         },
         {
           "start": 186008,
@@ -2638,8 +2653,8 @@
           "end": 186056,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 219752,
-          "candidateEnd": 219753
+          "candidateStart": 223504,
+          "candidateEnd": 223505
         },
         {
           "start": 186056,
@@ -2653,8 +2668,8 @@
           "end": 187269,
           "kind": "retained",
           "sha256": "00ba0eb030480013a512d2f1b3b0a246aa977bcdbc844f02621f0d3d41b9cca4",
-          "candidateStart": 221475,
-          "candidateEnd": 222635
+          "candidateStart": 225227,
+          "candidateEnd": 226387
         },
         {
           "start": 187269,
@@ -2668,8 +2683,8 @@
           "end": 189774,
           "kind": "retained",
           "sha256": "d95d848add4fd86271ad7f78771719c915f1990bacfac416692bd9c4041a96c4",
-          "candidateStart": 224429,
-          "candidateEnd": 225337
+          "candidateStart": 228181,
+          "candidateEnd": 229089
         },
         {
           "start": 189774,
@@ -2683,8 +2698,8 @@
           "end": 190554,
           "kind": "retained",
           "sha256": "f15e7190ad6708f65a3d9ed8d775261e204215b1e81c83545d8c6b3d1252ecea",
-          "candidateStart": 225458,
-          "candidateEnd": 226121
+          "candidateStart": 229210,
+          "candidateEnd": 229873
         },
         {
           "start": 190554,
@@ -2698,8 +2713,8 @@
           "end": 192205,
           "kind": "retained",
           "sha256": "69df49b747e1bc81827a802039125e6eddb689dcc154351d340809d20ba4ab49",
-          "candidateStart": 227994,
-          "candidateEnd": 228528
+          "candidateStart": 231746,
+          "candidateEnd": 232280
         },
         {
           "start": 192205,
@@ -2713,8 +2728,8 @@
           "end": 193594,
           "kind": "retained",
           "sha256": "3397ba33ec1882332911d98f601914392bc6f7749931e1dc26ed5e5329f62cdf",
-          "candidateStart": 230370,
-          "candidateEnd": 230961
+          "candidateStart": 234122,
+          "candidateEnd": 234713
         },
         {
           "start": 193594,
@@ -2728,8 +2743,8 @@
           "end": 193872,
           "kind": "retained",
           "sha256": "cbb705ad31bbddfec557e733e956ebc5dd07a93df34aaf5f81f27d3814612fa7",
-          "candidateStart": 231139,
-          "candidateEnd": 231282
+          "candidateStart": 234891,
+          "candidateEnd": 235034
         },
         {
           "start": 193872,
@@ -2743,8 +2758,8 @@
           "end": 195092,
           "kind": "retained",
           "sha256": "86c57d3acd42522da7e9c999f6aa8a4562816cab4b63037c0daee392eab035ee",
-          "candidateStart": 232932,
-          "candidateEnd": 233060
+          "candidateStart": 236684,
+          "candidateEnd": 236812
         },
         {
           "start": 195092,
@@ -2758,8 +2773,8 @@
           "end": 198371,
           "kind": "retained",
           "sha256": "7a5a2160121156e0acd23525c8bccab9c141dd211ec43f64ad4e7421a6473106",
-          "candidateStart": 235411,
-          "candidateEnd": 237021
+          "candidateStart": 239163,
+          "candidateEnd": 240773
         },
         {
           "start": 198371,
@@ -2773,8 +2788,8 @@
           "end": 199703,
           "kind": "retained",
           "sha256": "33e78863dd1c02ed43d222411807bbd4ca4ca04b8ecd8a78d8870aa1020bd284",
-          "candidateStart": 237152,
-          "candidateEnd": 238399
+          "candidateStart": 240904,
+          "candidateEnd": 242151
         },
         {
           "start": 199703,
@@ -2788,8 +2803,8 @@
           "end": 199707,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-          "candidateStart": 238401,
-          "candidateEnd": 238402
+          "candidateStart": 242153,
+          "candidateEnd": 242154
         }
       ],
       "candidateInverse": [
@@ -2798,7 +2813,7 @@
           "end": 255,
           "kind": "new",
           "sha256": "a8fbe91056f071b60fa8831e810ba6fd025b4388ce7844df2ad24cae3be9daac",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 255,
@@ -2813,7 +2828,7 @@
           "end": 581,
           "kind": "new",
           "sha256": "597bdf8daeb6d0bb6a24f36dd1c75555bf2a9058cce6484f8c5e4f87102cfce0",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 581,
@@ -2828,7 +2843,7 @@
           "end": 937,
           "kind": "new",
           "sha256": "296a7b8c8f6c7de0e6bc68b19b448af230f1333af7147848b824225b7cfaf75f",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 937,
@@ -2843,7 +2858,7 @@
           "end": 2680,
           "kind": "new",
           "sha256": "b7b52babf5b764333d9ef17c392d918bdf928ba6a2e61cd747ac715cc8ae1f5f",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 2680,
@@ -2858,7 +2873,7 @@
           "end": 2818,
           "kind": "new",
           "sha256": "d9910240fd60110339710a945eb9308b5eb232884f23dbecf1172c77ae83e85a",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 2818,
@@ -2873,7 +2888,7 @@
           "end": 2946,
           "kind": "new",
           "sha256": "588f785b2ba327679880f60e016c5347fbee3e9428777baa103eb40237d2ccf4",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 2946,
@@ -2888,7 +2903,7 @@
           "end": 3819,
           "kind": "new",
           "sha256": "506f9c79377fecef387dfc5124e35b2de0178be435f3c6be0b8f05fd3d6847a7",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 3819,
@@ -2903,7 +2918,7 @@
           "end": 7519,
           "kind": "new",
           "sha256": "1a87f8fe1eb695e61c9583708dc4b3ee24f51cfd99e38cb34d1774cbd2e51902",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 7519,
@@ -2918,7 +2933,7 @@
           "end": 8388,
           "kind": "new",
           "sha256": "fc0abd0269a0f09dac5d3f229485715b994e7df7d3961f08a76adf0ded49ce9b",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 8388,
@@ -2933,7 +2948,7 @@
           "end": 9704,
           "kind": "new",
           "sha256": "c44a37d155c5d6c409e431a666fedcbe0db6b0947b3d8d83160c78ca65895c7d",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 9704,
@@ -2948,7 +2963,7 @@
           "end": 11032,
           "kind": "new",
           "sha256": "f8b04a962406ea00fd42a1ca1a302af4046f95cb4f2efd480146c03b6ad3c848",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 11032,
@@ -2963,7 +2978,7 @@
           "end": 11217,
           "kind": "new",
           "sha256": "6b692741d60c55a00e6b073978dd5a0df7304bcd6a1bb459ec64f48e76bcd0bf",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 11217,
@@ -2978,7 +2993,7 @@
           "end": 12823,
           "kind": "new",
           "sha256": "8e94c79407d4cd3ddbc9ebbf548a9989e45d8fefd4318d0b3f75348d4df53ffd",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 12823,
@@ -2993,7 +3008,7 @@
           "end": 13011,
           "kind": "new",
           "sha256": "70c86d0e8c6f2fddd470d22e80a94e73c1a3b114cde9a72801a97c7ac9797e11",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 13011,
@@ -3008,7 +3023,7 @@
           "end": 13184,
           "kind": "new",
           "sha256": "ed968ea935d510520cd1a27cf042f7a6390a0e7d6a2ad112234ff644610827bc",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 13184,
@@ -3023,7 +3038,7 @@
           "end": 13647,
           "kind": "new",
           "sha256": "5d7ce1b5d637b32e9d52f537439fbc12646abfd4d0656510abbd984cdeda173b",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 13647,
@@ -3038,7 +3053,7 @@
           "end": 13947,
           "kind": "new",
           "sha256": "619e8da8e7b8db390fc09f29e55344e4bda6335a20a12401ddc03dd66687934f",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 13947,
@@ -3053,7 +3068,7 @@
           "end": 18762,
           "kind": "new",
           "sha256": "778ba5dbf8ff295a0fcf29e47d53da4aba0746625767e62bd98e65122d8bb57e",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
           "start": 18762,
@@ -3065,389 +3080,404 @@
         },
         {
           "start": 21260,
-          "end": 34406,
+          "end": 37882,
           "kind": "new",
-          "sha256": "61b97b2304455edf1f5cb45faff726a081b95c2c79775fe04d7c56a680b1fa43",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sha256": "c970cabb5d84da55d874759e13d9299c2503e7e957110827138f92b45de457e1",
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 34406,
-          "end": 35742,
+          "start": 37882,
+          "end": 39218,
           "kind": "retained",
           "sha256": "f5046f05dd75ee9f37d94e968d56e04be4e3159228e561b5f33e7ea07498906d",
           "originalStart": 19222,
           "originalEnd": 20558
         },
         {
-          "start": 35742,
-          "end": 41198,
+          "start": 39218,
+          "end": 44674,
           "kind": "new",
           "sha256": "6f74882bf83e414e6c248b1821405f986422b47663b73c468c1fe4c7849b2776",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 41198,
-          "end": 41282,
+          "start": 44674,
+          "end": 44758,
           "kind": "retained",
           "sha256": "bbef9d0b13731480feceaaaba1f8b88515907f95b563fd27ddb6065c4ccdb975",
           "originalStart": 20976,
           "originalEnd": 21060
         },
         {
-          "start": 41282,
-          "end": 41355,
+          "start": 44758,
+          "end": 44831,
           "kind": "new",
           "sha256": "afbb4d5700658fa3d084b036493588fb51e61cd8b48b9431166151760b117ae1",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 41355,
-          "end": 43081,
+          "start": 44831,
+          "end": 46557,
           "kind": "retained",
           "sha256": "81c8a96a463335abd70af213ad4edf4854686466aa6c51b0df10720f2f7bbf39",
           "originalStart": 21129,
           "originalEnd": 22855
         },
         {
-          "start": 43081,
-          "end": 44165,
+          "start": 46557,
+          "end": 47641,
           "kind": "new",
           "sha256": "d4e0ba86122b74755515f13f5df861f5f2cca0f08b1f422669479d106a7d6391",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 44165,
-          "end": 45127,
+          "start": 47641,
+          "end": 48603,
           "kind": "retained",
           "sha256": "82019232ebca8b5af61c5c378382e26172c550519fe7dab03ae5503d1c445ae3",
           "originalStart": 23320,
           "originalEnd": 24282
         },
         {
-          "start": 45127,
-          "end": 45331,
+          "start": 48603,
+          "end": 48807,
           "kind": "new",
           "sha256": "9b50d41fce620355824a66bb7f9d2c8e4cad9c3aa0d84e999fff35270d2dff42",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 45331,
-          "end": 49545,
+          "start": 48807,
+          "end": 53021,
           "kind": "retained",
           "sha256": "02b9ecf8068906fdff679366361020d8666826958d467e7a6268c3ab906169c7",
           "originalStart": 24403,
           "originalEnd": 28617
         },
         {
-          "start": 49545,
-          "end": 49626,
+          "start": 53021,
+          "end": 53102,
           "kind": "new",
           "sha256": "13e669d4da5615b1d6d5f9c9940368ba35e32e9b3f3f0d24e5b97bfe52b544c9",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 49626,
-          "end": 59048,
+          "start": 53102,
+          "end": 62524,
           "kind": "retained",
           "sha256": "ecd1defcaef0b5b64b65c3c6367127aaa1f97dfa3c2b3e574259d5d2ea53deba",
           "originalStart": 28664,
           "originalEnd": 38086
         },
         {
-          "start": 59048,
-          "end": 62165,
+          "start": 62524,
+          "end": 65641,
           "kind": "new",
           "sha256": "02c403d1e65b445fe8430c9b89278fff6ef73303426793615680fb3a6b300fb9",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 62165,
-          "end": 62424,
+          "start": 65641,
+          "end": 65900,
           "kind": "retained",
           "sha256": "be562857dfa2d93f7ea84f348750aef64760625d289c8b260751aed730690cbf",
           "originalStart": 38186,
           "originalEnd": 38445
         },
         {
-          "start": 62424,
-          "end": 62505,
+          "start": 65900,
+          "end": 65981,
           "kind": "new",
           "sha256": "9645c98c0abea9a1fc806cd2891073e64340595c3cc9dec7ced5eb1e448557fd",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 62505,
-          "end": 75440,
+          "start": 65981,
+          "end": 78916,
           "kind": "retained",
           "sha256": "8f82545815c484ac0ca1a32fade5d344c8a7a5c81044d8646b964b0ea95bf5c0",
           "originalStart": 38612,
           "originalEnd": 51547
         },
         {
-          "start": 75440,
-          "end": 75542,
+          "start": 78916,
+          "end": 79018,
           "kind": "new",
           "sha256": "4e2c430edbfbfa3be45c1609e4ff3c036f1668209e9bc81de84bc84a3c75040d",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 75542,
-          "end": 77465,
+          "start": 79018,
+          "end": 79053,
           "kind": "retained",
-          "sha256": "3fca3a1af63f03d5153d72646607d3563333b048086a458976ff129724a0aeae",
+          "sha256": "19cee590feea3b9574bdbcbc9e489cb37bb6b21f8b94fee6689e479d1069aee3",
           "originalStart": 51620,
+          "originalEnd": 51655
+        },
+        {
+          "start": 79053,
+          "end": 79161,
+          "kind": "new",
+          "sha256": "e02da2460d5babea1a89795ac3e93b4bd7382e910a23b88fc35ff28d4923244b",
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
+        },
+        {
+          "start": 79161,
+          "end": 81049,
+          "kind": "retained",
+          "sha256": "b575a9e1b9a640b4f1c749115ec0f12f07107d4fddbf97022174610f8e020a2d",
+          "originalStart": 51655,
           "originalEnd": 53543
         },
         {
-          "start": 77465,
-          "end": 77575,
+          "start": 81049,
+          "end": 81159,
           "kind": "new",
           "sha256": "67741a244b436092a3da9ad985ffd06133e20000af4f4400f4af561d0c6e1752",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 77575,
-          "end": 77868,
+          "start": 81159,
+          "end": 81452,
           "kind": "retained",
           "sha256": "db83c6ac59a4ea79b2377dcbf9345af2ef914c2a948b9132b43e6bbbea0427de",
           "originalStart": 53653,
           "originalEnd": 53946
         },
         {
-          "start": 77868,
-          "end": 77940,
+          "start": 81452,
+          "end": 81524,
           "kind": "new",
           "sha256": "486bcb3594bafcc2d714ce4c575d3f3141b89c86df7cfc7bc3e27190f61b7e1b",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 77940,
-          "end": 78252,
+          "start": 81524,
+          "end": 81836,
           "kind": "retained",
           "sha256": "621cdec098a474db96af9764abae206cc56c49c6a5009cb8f892c8ebd1b92b4f",
           "originalStart": 54010,
           "originalEnd": 54322
         },
         {
-          "start": 78252,
-          "end": 78383,
+          "start": 81836,
+          "end": 81967,
           "kind": "new",
           "sha256": "084cb5a971d3f2741469384ae47846404e974c3853f4da29c33a23a22b5a3e77",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 78383,
-          "end": 78896,
+          "start": 81967,
+          "end": 82480,
           "kind": "retained",
           "sha256": "f8d80719fa125fc16ef60bd56a4c093611582fd2739296d2103af7bc84853eca",
           "originalStart": 54359,
           "originalEnd": 54872
         },
         {
-          "start": 78896,
-          "end": 79295,
+          "start": 82480,
+          "end": 82879,
           "kind": "new",
           "sha256": "b7f1a2830a538fb13909eb455c20ecc151f83bf819280ce67c2dd67309571b3f",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 79295,
-          "end": 79354,
+          "start": 82879,
+          "end": 82938,
           "kind": "retained",
           "sha256": "d006e2b087514fe45cb1ce6d97d21de5b7341f17a14e6675a0e11ccb97773ccc",
           "originalStart": 54975,
           "originalEnd": 55034
         },
         {
-          "start": 79354,
-          "end": 88797,
+          "start": 82938,
+          "end": 92549,
           "kind": "new",
-          "sha256": "f89f49db3b77d1f3b6bb52ce6f544c0ae0e204e067811eee3bd52b4ef07f1a05",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sha256": "a46d4002a29eb0c53ceec5d1aafe3ce84c084d96475268b67543e8eb65377489",
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 88797,
-          "end": 131623,
+          "start": 92549,
+          "end": 135375,
           "kind": "retained",
           "sha256": "a578c96a39b33c6bff1222b152bf4355bdcd2f2731d9372d0e5281506b668da3",
           "originalStart": 55364,
           "originalEnd": 98190
         },
         {
-          "start": 131623,
-          "end": 131826,
+          "start": 135375,
+          "end": 135578,
           "kind": "new",
           "sha256": "8583bfdb1903a19ebbaad7a0a103e0b9d1cc9524e7c2ea1fbc873159a4c2d25d",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 131826,
-          "end": 219457,
+          "start": 135578,
+          "end": 223209,
           "kind": "retained",
           "sha256": "2bb32fef913a51a4a7969cef1ef749e856ba2c83c889557b3b9f0966e49c3d00",
           "originalStart": 98377,
           "originalEnd": 186008
         },
         {
-          "start": 219457,
-          "end": 219752,
+          "start": 223209,
+          "end": 223504,
           "kind": "new",
           "sha256": "f3bb636db48f14863b4d0ed656bf3fe335a7d12429d87ca8f56e629bfa2e7532",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 219752,
-          "end": 219753,
+          "start": 223504,
+          "end": 223505,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 186055,
           "originalEnd": 186056
         },
         {
-          "start": 219753,
-          "end": 221475,
+          "start": 223505,
+          "end": 225227,
           "kind": "new",
           "sha256": "6e467d9d0225d82727354c5be205902a50feafe849ad42e1998ad149c801c05a",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 221475,
-          "end": 222635,
+          "start": 225227,
+          "end": 226387,
           "kind": "retained",
           "sha256": "00ba0eb030480013a512d2f1b3b0a246aa977bcdbc844f02621f0d3d41b9cca4",
           "originalStart": 186109,
           "originalEnd": 187269
         },
         {
-          "start": 222635,
-          "end": 224429,
+          "start": 226387,
+          "end": 228181,
           "kind": "new",
           "sha256": "081e1551d5067f20c4d751f96b952999e905cfed2ef792f00b1453081f36a78f",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 224429,
-          "end": 225337,
+          "start": 228181,
+          "end": 229089,
           "kind": "retained",
           "sha256": "d95d848add4fd86271ad7f78771719c915f1990bacfac416692bd9c4041a96c4",
           "originalStart": 188866,
           "originalEnd": 189774
         },
         {
-          "start": 225337,
-          "end": 225458,
+          "start": 229089,
+          "end": 229210,
           "kind": "new",
           "sha256": "4c4a5b66d4f36b7d35e812bc99a9b1a7dc6479b8df55dbf123d2f76eb57de2ba",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 225458,
-          "end": 226121,
+          "start": 229210,
+          "end": 229873,
           "kind": "retained",
           "sha256": "f15e7190ad6708f65a3d9ed8d775261e204215b1e81c83545d8c6b3d1252ecea",
           "originalStart": 189891,
           "originalEnd": 190554
         },
         {
-          "start": 226121,
-          "end": 227994,
+          "start": 229873,
+          "end": 231746,
           "kind": "new",
           "sha256": "e834b89e95f414d06f34893b4e84052ce9ed977276ed115d10fa4cfd64111747",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 227994,
-          "end": 228528,
+          "start": 231746,
+          "end": 232280,
           "kind": "retained",
           "sha256": "69df49b747e1bc81827a802039125e6eddb689dcc154351d340809d20ba4ab49",
           "originalStart": 191671,
           "originalEnd": 192205
         },
         {
-          "start": 228528,
-          "end": 230370,
+          "start": 232280,
+          "end": 234122,
           "kind": "new",
           "sha256": "056d7de6c859103e7959557569510507a24202f040a657c55c2aff184d9c19a2",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 230370,
-          "end": 230961,
+          "start": 234122,
+          "end": 234713,
           "kind": "retained",
           "sha256": "3397ba33ec1882332911d98f601914392bc6f7749931e1dc26ed5e5329f62cdf",
           "originalStart": 193003,
           "originalEnd": 193594
         },
         {
-          "start": 230961,
-          "end": 231139,
+          "start": 234713,
+          "end": 234891,
           "kind": "new",
           "sha256": "6b89bce22c089c8ea7e4d8085b6e258c052b804baf137a4925142bbdf91bd00d",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 231139,
-          "end": 231282,
+          "start": 234891,
+          "end": 235034,
           "kind": "retained",
           "sha256": "cbb705ad31bbddfec557e733e956ebc5dd07a93df34aaf5f81f27d3814612fa7",
           "originalStart": 193729,
           "originalEnd": 193872
         },
         {
-          "start": 231282,
-          "end": 232932,
+          "start": 235034,
+          "end": 236684,
           "kind": "new",
           "sha256": "5f7624a91ff2e0c785ff7dc51c7758406c93f8d194f02e5daa68f2e4801c4baa",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 232932,
-          "end": 233060,
+          "start": 236684,
+          "end": 236812,
           "kind": "retained",
           "sha256": "86c57d3acd42522da7e9c999f6aa8a4562816cab4b63037c0daee392eab035ee",
           "originalStart": 194964,
           "originalEnd": 195092
         },
         {
-          "start": 233060,
-          "end": 235411,
+          "start": 236812,
+          "end": 239163,
           "kind": "new",
           "sha256": "5b8dc9ca55c514e9bf334bdb191ff847b146fd16de0a4d95e90c04a36cd4b823",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 235411,
-          "end": 237021,
+          "start": 239163,
+          "end": 240773,
           "kind": "retained",
           "sha256": "7a5a2160121156e0acd23525c8bccab9c141dd211ec43f64ad4e7421a6473106",
           "originalStart": 196761,
           "originalEnd": 198371
         },
         {
-          "start": 237021,
-          "end": 237152,
+          "start": 240773,
+          "end": 240904,
           "kind": "new",
           "sha256": "41047a532ccedaae20dc7b8f2f754249626e2d43a3feb5aeb22fa78eed0a9c91",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 237152,
-          "end": 238399,
+          "start": 240904,
+          "end": 242151,
           "kind": "retained",
           "sha256": "33e78863dd1c02ed43d222411807bbd4ca4ca04b8ecd8a78d8870aa1020bd284",
           "originalStart": 198456,
           "originalEnd": 199703
         },
         {
-          "start": 238399,
-          "end": 238401,
+          "start": 242151,
+          "end": 242153,
           "kind": "new",
           "sha256": "2efa0aebfef8debada553c940ee7996212b444c54070e1a80be8aa5a7d45349a",
-          "sourceBlob": "ff1639160c9e5db664a4edbbee8880a948d7c70e"
+          "sourceBlob": "0eea69053b2802b433211126bd8d9f1641a4d41c"
         },
         {
-          "start": 238401,
-          "end": 238402,
+          "start": 242153,
+          "end": 242154,
           "kind": "retained",
           "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
           "originalStart": 199706,
@@ -3508,8 +3538,8 @@
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
         "candidate": {
-          "start": 137755,
-          "end": 138765,
+          "start": 138915,
+          "end": 139925,
           "bytes": 1010,
           "sha256": "cbc74fc8dde0548fdde3dcd3cdc10a85435dadc9387f61e1eb70b1cf861e8a1e"
         },
@@ -3527,8 +3557,8 @@
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
         "candidate": {
-          "start": 138766,
-          "end": 139739,
+          "start": 139926,
+          "end": 140899,
           "bytes": 973,
           "sha256": "f760dc16a10d049b960eb5a4b04b9496621aa583b38469748c2c5d45ecdbd8fa"
         },
@@ -3546,8 +3576,8 @@
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
         "candidate": {
-          "start": 139740,
-          "end": 141208,
+          "start": 140900,
+          "end": 142368,
           "bytes": 1468,
           "sha256": "7b49232a8f8c0c1dd5deb6774306204528d988ee613e292f96042d9b4110ae91"
         },
@@ -3565,8 +3595,8 @@
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
         "candidate": {
-          "start": 141209,
-          "end": 152405,
+          "start": 142369,
+          "end": 153565,
           "bytes": 11196,
           "sha256": "4b8632c5d76eaa0c2b9eb83c378d2f01aa9bce4eefe71f0704b342017c16b148"
         },
@@ -3584,8 +3614,8 @@
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
         "candidate": {
-          "start": 152406,
-          "end": 153465,
+          "start": 153566,
+          "end": 154625,
           "bytes": 1059,
           "sha256": "39d15547645c80479a21443efeeb84ea895599198067f1df991c4755e021c2ab"
         },
@@ -3603,8 +3633,8 @@
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
         "candidate": {
-          "start": 153466,
-          "end": 154605,
+          "start": 154626,
+          "end": 155765,
           "bytes": 1139,
           "sha256": "37d1b980e568229e11228427f8dc006fab15b4d9e0ade172be6356f9c5967d0d"
         },
@@ -3622,8 +3652,8 @@
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
         "candidate": {
-          "start": 154606,
-          "end": 155253,
+          "start": 155766,
+          "end": 156413,
           "bytes": 647,
           "sha256": "564a8a16750d0ed2d24816b91ad133716d54d611bc32b3a7e3bbf7accc939551"
         },
@@ -3641,8 +3671,8 @@
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
         "candidate": {
-          "start": 155255,
-          "end": 160434,
+          "start": 156415,
+          "end": 161594,
           "bytes": 5179,
           "sha256": "025efd8b8ece8aef0a6964b12beb18f46f88515cebf36148b0fa827dbae99d4c"
         },
@@ -3660,8 +3690,8 @@
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
         "candidate": {
-          "start": 160435,
-          "end": 163998,
+          "start": 161595,
+          "end": 165158,
           "bytes": 3563,
           "sha256": "d665637dda4729308c8748e9c72ff61dd7fc2352f5c7f2dbe7b16ed11b3ee527"
         },
@@ -3679,8 +3709,8 @@
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
         "candidate": {
-          "start": 164000,
-          "end": 170783,
+          "start": 165160,
+          "end": 171943,
           "bytes": 6783,
           "sha256": "44784d6e0aefb34b310049f1354e8dd44aae9fdf68ec6c0b2cb0b9cfbe7e48b5"
         },
@@ -3698,8 +3728,8 @@
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
         "candidate": {
-          "start": 170784,
-          "end": 176849,
+          "start": 171944,
+          "end": 178009,
           "bytes": 6065,
           "sha256": "e7858217d30b67584f50cf1b03228845629bfcd04654e04f3e91ee8e953e870c"
         },
@@ -3717,8 +3747,8 @@
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
         "candidate": {
-          "start": 176850,
-          "end": 182993,
+          "start": 178010,
+          "end": 184153,
           "bytes": 6143,
           "sha256": "6e1eb8e766994f0e7ac95d20acd277f27a37636cd1e1ada7ebcbe44ba8654ec4"
         },
@@ -3736,8 +3766,8 @@
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
         "candidate": {
-          "start": 182994,
-          "end": 187572,
+          "start": 184154,
+          "end": 188732,
           "bytes": 4578,
           "sha256": "d4c888b8a062cd7004235b49d496525c6f4304a0c3e15a44d8f8fdf75e323371"
         },
@@ -3755,8 +3785,8 @@
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
         "candidate": {
-          "start": 187573,
-          "end": 189275,
+          "start": 188733,
+          "end": 190435,
           "bytes": 1702,
           "sha256": "0477bd7a093031f86a63089ea1d1e6ba59b05256d2e8a38d8e45582b906c3f32"
         },
@@ -3774,8 +3804,8 @@
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
         "candidate": {
-          "start": 189276,
-          "end": 195521,
+          "start": 190436,
+          "end": 196681,
           "bytes": 6245,
           "sha256": "10343f6ee75bf82afd327f304c7d233d6ca3183039d7785ab4b4b8e0c82c09b9"
         },
@@ -3793,8 +3823,8 @@
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
         "candidate": {
-          "start": 199660,
-          "end": 200667,
+          "start": 200820,
+          "end": 201827,
           "bytes": 1007,
           "sha256": "03bfa3bfc21334643581b917405d802e63d97cc053339c79038a265fb90c0fe2"
         },
@@ -3812,8 +3842,8 @@
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
         "candidate": {
-          "start": 320565,
-          "end": 320813,
+          "start": 321725,
+          "end": 321973,
           "bytes": 248,
           "sha256": "028d4116cfd998b98b0a02555beeb006cdf2aa920b8592b0f3a3ccd71c19a685"
         },
@@ -3831,8 +3861,8 @@
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
         "candidate": {
-          "start": 321022,
-          "end": 322232,
+          "start": 322182,
+          "end": 323392,
           "bytes": 1210,
           "sha256": "a9ac04c827cbda935f2819a56084738b215e1e557fa8d5ad34f17e04aa6c55a3"
         },
@@ -3850,8 +3880,8 @@
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
         "candidate": {
-          "start": 315874,
-          "end": 316187,
+          "start": 317034,
+          "end": 317347,
           "bytes": 313,
           "sha256": "77a6c79a73db874337734b4bf8b4e0f412515c31573a4fedba58e2bfca511144"
         },
@@ -3869,8 +3899,8 @@
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
         "candidate": {
-          "start": 205120,
-          "end": 216566,
+          "start": 206280,
+          "end": 217726,
           "bytes": 11446,
           "sha256": "23f390411e5f9c99d1b2728604b9fce80ea8fa334d18bdb3bd16fb735f2527a0"
         },
@@ -3888,8 +3918,8 @@
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
         "candidate": {
-          "start": 216568,
-          "end": 233906,
+          "start": 217728,
+          "end": 235066,
           "bytes": 17338,
           "sha256": "c54380747ea25ee12bd8871c7cdbc52b1956f2ebb3beaad32f01f8a1697327ed"
         },
@@ -3907,8 +3937,8 @@
           "sha256": "d66534a4b4493b8349cea92e7b7f1c388b63becbd401f23bfe171f785ae1e3e4"
         },
         "candidate": {
-          "start": 233908,
-          "end": 277914,
+          "start": 235068,
+          "end": 279074,
           "bytes": 44006,
           "sha256": "434b0e23f47d9041786d26366e1ed2f9c28cbdc57bbd0d6d0b6dd0ecd423b00d"
         },
@@ -3935,8 +3965,8 @@
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
         "candidate": {
-          "start": 278086,
-          "end": 278746,
+          "start": 279246,
+          "end": 279906,
           "bytes": 660,
           "sha256": "fbb4ef46e838f685eb8efeb362521732a530fc2a3be79b6d6480e6833e95872c"
         },
@@ -3954,8 +3984,8 @@
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
         "candidate": {
-          "start": 278747,
-          "end": 279904,
+          "start": 279907,
+          "end": 281064,
           "bytes": 1157,
           "sha256": "5c5a2ba7c14f9468d2eaf61003e620e24388584bda0605a895dcb40afe2bd100"
         },
@@ -3973,8 +4003,8 @@
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
         "candidate": {
-          "start": 279905,
-          "end": 282967,
+          "start": 281065,
+          "end": 284127,
           "bytes": 3062,
           "sha256": "921eadb23256f40bcfb60c105f1d80ff8f935d3556c339492ede99a5031f777e"
         },
@@ -3992,8 +4022,8 @@
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
         "candidate": {
-          "start": 282968,
-          "end": 285626,
+          "start": 284128,
+          "end": 286786,
           "bytes": 2658,
           "sha256": "f6908053fa2eb9ae096d78dfd73c26f61b66a2c842433865c0d176576396dff2"
         },
@@ -4011,8 +4041,8 @@
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
         "candidate": {
-          "start": 285627,
-          "end": 291007,
+          "start": 286787,
+          "end": 292167,
           "bytes": 5380,
           "sha256": "17523855db22ff3304343454ac92574b445c22126830660862a371fb7373fad5"
         },
@@ -4030,8 +4060,8 @@
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
         "candidate": {
-          "start": 291008,
-          "end": 298718,
+          "start": 292168,
+          "end": 299878,
           "bytes": 7710,
           "sha256": "a937f7618b2634183a0d2235894a880453bfede8df6597aa6f8af1cbd6924809"
         },
@@ -4049,8 +4079,8 @@
           "sha256": "2eb370f96a4bc5b0ac28cc68adb4120b742613f8a10eb5ae5e502b7bbe3e902b"
         },
         "candidate": {
-          "start": 298720,
-          "end": 315687,
+          "start": 299880,
+          "end": 316847,
           "bytes": 16967,
           "sha256": "401c11c9349930123792180067813ce53f1cb54574a14d3265944b892b9de126"
         },
@@ -4677,15 +4707,15 @@
         "id": "N01",
         "name": "exact finite objects, fixed ownership, FORCE RLS, roles and permitted login only",
         "originalNameByteOffset": 52489,
-        "candidateNameByteOffset": 76425,
-        "adaptation": "Hosted owners/ACLs and automatic grantors; no JobsOwner DB CREATE; actual Creator SET/table denials after cleanup; fresh actual restricted authorized read traverses both MA1 bridges; nine finite A1 drift cases plus denied delegation. A2: real NOSUPER Creator provisions the designated worker before freeze; captured role/membership OIDs; required automatic edge; all six automatic-edge negatives plus extra outgoing edge execute actual runtime refusals and restore exact graph/dependencies."
+        "candidateNameByteOffset": 80009,
+        "adaptation": "Hosted owners/ACLs and automatic grantors; no JobsOwner DB CREATE; actual Creator SET denials and exact managed read-only table access after cleanup; fresh actual restricted authorized read traverses both MA1 bridges; nine finite A1 drift cases plus denied delegation. A2: real NOSUPER Creator provisions the designated worker before freeze; captured role/membership OIDs; required automatic edge; all six automatic-edge negatives plus extra outgoing edge execute actual runtime refusals and restore exact graph/dependencies. Current managed-Creator compatibility: exact predefined readall membership permits Creator SELECT; both owner SET refusals remain. The original final Creator DO is exercised against four malformed read edges and four write/foreign-read faults before runner binding. Existing generic LOGIN and adapter contracts remain unchanged."
       },
       {
         "ordinal": 2,
         "id": "N02",
         "name": "actual S0 seventeen-kind/native canonical parity and closed direct-entry witnesses",
         "originalNameByteOffset": 55382,
-        "candidateNameByteOffset": 88829,
+        "candidateNameByteOffset": 92581,
         "adaptation": "The original S1 namespace-absence assertion follows new real JobsOwner; all original seventeen-kind/canonical/direct-entry/rename/full-history assertions remain."
       },
       {
@@ -4693,7 +4723,7 @@
         "id": "N03",
         "name": "actual durable command replay, independent subjects, cycle collisions and active dedup",
         "originalNameByteOffset": 105789,
-        "candidateNameByteOffset": 139252,
+        "candidateNameByteOffset": 143004,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4701,7 +4731,7 @@
         "id": "N07",
         "name": "actual S1/I1 Rule completion, immutable original and final MA1 authority",
         "originalNameByteOffset": 110872,
-        "candidateNameByteOffset": 144335,
+        "candidateNameByteOffset": 148087,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4709,7 +4739,7 @@
         "id": "N07/R4",
         "name": "actual S1 archived history and linked method revision survive full native consumption",
         "originalNameByteOffset": 114283,
-        "candidateNameByteOffset": 147749,
+        "candidateNameByteOffset": 151501,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4717,7 +4747,7 @@
         "id": "N08",
         "name": "sixteen actual persisted originals complete inside fixed call budgets",
         "originalNameByteOffset": 120705,
-        "candidateNameByteOffset": 154168,
+        "candidateNameByteOffset": 157920,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4725,7 +4755,7 @@
         "id": "N08/U04",
         "name": "duplicate or missing final member is rejected before the first S1 effect for the whole batch",
         "originalNameByteOffset": 122312,
-        "candidateNameByteOffset": 155779,
+        "candidateNameByteOffset": 159531,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4733,7 +4763,7 @@
         "id": "N02/U04",
         "name": "maximum node/support cardinalities fit the source-derived worst-valid wire bound",
         "originalNameByteOffset": 124127,
-        "candidateNameByteOffset": 157594,
+        "candidateNameByteOffset": 161346,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4741,7 +4771,7 @@
         "id": "N04/N06",
         "name": "two actual native starts race after preflight, one owned producer and no losing claim mutation",
         "originalNameByteOffset": 125443,
-        "candidateNameByteOffset": 158910,
+        "candidateNameByteOffset": 162662,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4749,7 +4779,7 @@
         "id": "N04/N06/N10",
         "name": "older active start blocks a new claim while an independent subject progresses",
         "originalNameByteOffset": 130617,
-        "candidateNameByteOffset": 164088,
+        "candidateNameByteOffset": 167840,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4757,7 +4787,7 @@
         "id": "N05/N09",
         "name": "real process crash preserves older unknown across IDs, reason and reapproved epoch",
         "originalNameByteOffset": 132685,
-        "candidateNameByteOffset": 166152,
+        "candidateNameByteOffset": 169904,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4765,7 +4795,7 @@
         "id": "N09",
         "name": "prepared and completed lost acknowledgements recover in a fresh process without producer reuse",
         "originalNameByteOffset": 135003,
-        "candidateNameByteOffset": 168466,
+        "candidateNameByteOffset": 172218,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4773,7 +4803,7 @@
         "id": "N10/U06",
         "name": "delivered producer does not terminate a pending I1 evidence callback",
         "originalNameByteOffset": 139732,
-        "candidateNameByteOffset": 173199,
+        "candidateNameByteOffset": 176951,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4781,7 +4811,7 @@
         "id": "N11",
         "name": "anchored budgets and actual due/lease checks after MA1, subject, advisory and table waits",
         "originalNameByteOffset": 141297,
-        "candidateNameByteOffset": 174760,
+        "candidateNameByteOffset": 178512,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4789,7 +4819,7 @@
         "id": "N11",
         "name": "actual revoke held in a native transaction defeats staged queue writes after the wait",
         "originalNameByteOffset": 146246,
-        "candidateNameByteOffset": 179709,
+        "candidateNameByteOffset": 183461,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4797,7 +4827,7 @@
         "id": "N12",
         "name": "acquisition, control failure and real drain never free a live native lane",
         "originalNameByteOffset": 147732,
-        "candidateNameByteOffset": 181195,
+        "candidateNameByteOffset": 184947,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4805,7 +4835,7 @@
         "id": "N04/N10/N12",
         "name": "lost actual START or nested I1 finish ACK remains unknown and cannot call a new producer",
         "originalNameByteOffset": 151503,
-        "candidateNameByteOffset": 184974,
+        "candidateNameByteOffset": 188726,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4813,7 +4843,7 @@
         "id": "N12/U06/R9",
         "name": "actual nested I1 S1 reserve remains owned past timeout and explicit worker caller-abort races",
         "originalNameByteOffset": 153485,
-        "candidateNameByteOffset": 186955,
+        "candidateNameByteOffset": 190707,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4821,7 +4851,7 @@
         "id": "N12/R7-03",
         "name": "intentional child crash retains a thrown actual native cancellation cleanup failure",
         "originalNameByteOffset": 162561,
-        "candidateNameByteOffset": 196030,
+        "candidateNameByteOffset": 199782,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4829,7 +4859,7 @@
         "id": "N11",
         "name": "staged PREPARED waits on the actual S1 operation before final current MA1",
         "originalNameByteOffset": 164302,
-        "candidateNameByteOffset": 197765,
+        "candidateNameByteOffset": 201517,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4837,7 +4867,7 @@
         "id": "N11",
         "name": "real immediate FK wait precedes final authority and leaves no attempted start on revoke",
         "originalNameByteOffset": 166078,
-        "candidateNameByteOffset": 199541,
+        "candidateNameByteOffset": 203293,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4845,7 +4875,7 @@
         "id": "N11",
         "name": "actual unique-operation wait and deferred-trigger drift cannot move effects beyond authority",
         "originalNameByteOffset": 167716,
-        "candidateNameByteOffset": 201179,
+        "candidateNameByteOffset": 204931,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4853,7 +4883,7 @@
         "id": "N13",
         "name": "legacy raw aliases remain in actual S1 unchanged but never become M04 preparation",
         "originalNameByteOffset": 170881,
-        "candidateNameByteOffset": 204344,
+        "candidateNameByteOffset": 208096,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4861,7 +4891,7 @@
         "id": "N05/A03",
         "name": "actual 254/255/256 ledger boundary preserves the sole original terminal credit",
         "originalNameByteOffset": 174632,
-        "candidateNameByteOffset": 208099,
+        "candidateNameByteOffset": 211851,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4869,7 +4899,7 @@
         "id": "N05",
         "name": "sixty-four actual starts retain all older history and refuse the sixty-fifth claim",
         "originalNameByteOffset": 179448,
-        "candidateNameByteOffset": 212911,
+        "candidateNameByteOffset": 216663,
         "adaptation": "Original proof body and assertions retained; shared Hosted fixture/catalog boundary changes only."
       },
       {
@@ -4877,7 +4907,7 @@
         "id": "N15",
         "name": "nonempty real command/unknown/prepared/success/failure history forbids rollback",
         "originalNameByteOffset": 185852,
-        "candidateNameByteOffset": 219315,
+        "candidateNameByteOffset": 223067,
         "adaptation": "Same actual used-history refusal, but through real NOSUPER Creator, independent synthetic recovery identity and inherited REPEATABLE READ."
       },
       {
@@ -4885,7 +4915,7 @@
         "id": "N14",
         "name": "creator ACLs, protected membership/role/language/body/owner/ACL drift refuse before creation",
         "originalNameByteOffset": 187093,
-        "candidateNameByteOffset": 222473,
+        "candidateNameByteOffset": 226225,
         "adaptation": "Same eight creator/default/membership/role/owner/ACL cases and both body/language mutations; actual Creator executes candidate and exact predecessor error states are asserted."
       },
       {
@@ -4893,7 +4923,7 @@
         "id": "N01/N14/T02",
         "name": "temporary catalog/type shadows do not influence the new install or runtime",
         "originalNameByteOffset": 190441,
-        "candidateNameByteOffset": 226030,
+        "candidateNameByteOffset": 229782,
         "adaptation": "Actual Creator and restricted-runtime temporary shadows; all original assertions retained. Unbind removes only the exact Caller edge; worker LOGIN/automatic edge retain original OIDs and fresh catalog still passes."
       },
       {
@@ -4901,7 +4931,7 @@
         "id": "N14",
         "name": "actual consumed S1/MA1 RESTRICT dependencies preserve the complete pristine catalog",
         "originalNameByteOffset": 191689,
-        "candidateNameByteOffset": 228026,
+        "candidateNameByteOffset": 231778,
         "adaptation": "Original genuine 2BP01 S1/MA1 dependencies preserved via correct-owner rolled-back DROP; hosted no-consumer preflights recorded separately; new tuple dependency tested as third genuine 2BP01 case; bootstrap reader edge retained."
       },
       {
@@ -4909,7 +4939,7 @@
         "id": "N15/T02",
         "name": "empty companion-first exact teardown survives temporary shadows and preserves predecessors",
         "originalNameByteOffset": 193747,
-        "candidateNameByteOffset": 231175,
+        "candidateNameByteOffset": 234927,
         "adaptation": "Actual unused HM04 recovery with external identity, Creator connection and inherited REPEATABLE READ; old defaults/prerequisites preserved; HS1 then HMA1 separately recovered with their own contexts. Worker LOGIN and automatic bootstrap edge remain exact before and after unused HM04 recovery; no deletion while fingerprints exist."
       },
       {
@@ -4917,7 +4947,7 @@
         "id": "N15",
         "name": "rollback waits for actual late writer then rechecks nonempty history atomically",
         "originalNameByteOffset": 194982,
-        "candidateNameByteOffset": 232964,
+        "candidateNameByteOffset": 236716,
         "adaptation": "Same real late-write meaning; writer is now the real restricted jobs role and performs its real command before Recovery starts. Writer blocks Recovery, commits, and fresh RC recovery sees history under inherited RR. Reinstall binds the same retained worker identity and fresh actual writer asserts its original LOGIN OID."
       }
     ],
@@ -14759,5 +14789,20 @@
       "additionalDatabaseQueries": 0,
       "otherUnseenDifferencesExplained": false
     }
+  },
+  "managedCreatorCompatibility": {
+    "parent": "c0a1366ca613d1ef74efec97757ffb446eda62aa",
+    "status": "SOURCE_ONLY_RUNTIME_NOT_RUN",
+    "creatorReadOnlyAllowance": "Only postgres with exactly one direct pg_read_all_data membership from grantor10, ADMIN/INHERIT/SET true. A Creator with neither that membership nor private USAGE remains supported.",
+    "refused": [
+      "private or API CREATE",
+      "pg_write_all_data membership including non-inherited SET paths",
+      "effective private table or column WRITE",
+      "a readall exception for any other principal"
+    ],
+    "allExistingRoleAndConnectionLimitsUnchanged": true,
+    "currentPreservationMaps": "Top-level preservation/functionPreservation and native group offsets describe the current bytes. All historical amendment records retain their original source identities.",
+    "runtimeGuardsAndCatalogFingerprintsUnchanged": true,
+    "liveDatabaseMutationByThisPatch": false
   }
 }
