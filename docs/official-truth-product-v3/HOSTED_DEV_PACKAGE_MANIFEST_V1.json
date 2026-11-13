@@ -142,9 +142,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-      "blob": "61bd76952fe8ffc7a49a4a0a49d433389a8c2898",
+      "blob": "22fab35a220617430ed7c3c873f70fc5a4c558ca",
       "bytes": 48649,
-      "sha256": "8524afc5d194403ea527641f09bd7b8f5de3be399305cd900bc2271bf8d2186b"
+      "sha256": "363f2e806fad53be247058cbbf5d140e470aefda1e43bf9a2c9a1b2b7463f80f"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
@@ -196,15 +196,15 @@
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
-      "blob": "80f99c45a925c39d356aaf2f92bedd367e72d188",
+      "blob": "4c20173135cd69b80a0fdf2dfe263f9955a9ea67",
       "bytes": 59026,
-      "sha256": "9411a3c6b3f287bd05b10ee0af82f12c2985b916c8bae8e2fe7c30450b2e604e"
+      "sha256": "018be201d74f0ce8b2011728d5e82d4b06331fe79d3d3fc5cc3edf98c0357342"
     },
     {
       "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts",
-      "blob": "cd4b558727aee6e3b8a889892fef31bbcb40140f",
+      "blob": "500ab760235cc88e0e9a382806f3444f6b403f7a",
       "bytes": 37016,
-      "sha256": "3bb5f90840506d899585f32b0efc43cb7fea40a3833ad2109ba5101cccf23ceb"
+      "sha256": "6ee689d2be4b4b43093dd8176b303ab7e58f38d799d8c145e97dfb9be5aaba1c"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
@@ -310,15 +310,15 @@
     },
     {
       "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
-      "blob": "4cb3bc15692bd3affb4419ffb3bd34bb7d336c8f",
+      "blob": "dc64d7ad6d60460267a2fc0b80f1ff5fd5506ab9",
       "bytes": 60064,
-      "sha256": "823bda9ae484b2c1dc2ab6437cac4b7f14c7146c8bb3b024de42b01cd076a11c"
+      "sha256": "1523f43ccc519171fa110e5005bc68c5b15d1d1da24d62b76b0e40e5e141ba78"
     },
     {
       "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
-      "blob": "1be593fbf77183c0ff15da7270c00c6d44342829",
+      "blob": "4e901eeda12669e03221d622657c918cafa0fc6e",
       "bytes": 90727,
-      "sha256": "39543aeb9f5197d4c46832b34ca45aa062e4a14a927fae05d0c8cabd8cb2bf43"
+      "sha256": "5ce9105684ed9afffe71f1e2a6ee56e015eb916238fca6588c351bbdd7edbdf0"
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
@@ -364,9 +364,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "adf14b36b5db5bad2d7fb597d159e7f712b2efc9",
-      "bytes": 206913,
-      "sha256": "b37a5730c57940bc6ca98ccb87bc3f47f602b2c76a15f6030bd63ed40f57bf79"
+      "blob": "c85f2526ad9dc952813e449a31e7b7a80555b5de",
+      "bytes": 207929,
+      "sha256": "66198a019074e3e5def803e14481c015b95cadba12f7c06dd07046618116f9f5"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -486,9 +486,9 @@
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-        "blob": "61bd76952fe8ffc7a49a4a0a49d433389a8c2898",
+        "blob": "22fab35a220617430ed7c3c873f70fc5a4c558ca",
         "bytes": 48649,
-        "sha256": "8524afc5d194403ea527641f09bd7b8f5de3be399305cd900bc2271bf8d2186b"
+        "sha256": "363f2e806fad53be247058cbbf5d140e470aefda1e43bf9a2c9a1b2b7463f80f"
       },
       {
         "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_TASK_V1.md",
@@ -606,9 +606,9 @@
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-        "blob": "adf14b36b5db5bad2d7fb597d159e7f712b2efc9",
-        "bytes": 206913,
-        "sha256": "b37a5730c57940bc6ca98ccb87bc3f47f602b2c76a15f6030bd63ed40f57bf79"
+        "blob": "c85f2526ad9dc952813e449a31e7b7a80555b5de",
+        "bytes": 207929,
+        "sha256": "66198a019074e3e5def803e14481c015b95cadba12f7c06dd07046618116f9f5"
       },
       {
         "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -1135,8 +1135,8 @@
       "sha256": "7d776c5ba99fffb537b62e32c283f457301bf6060f0550f9adc7d1c4dca9cbf2"
     },
     "completeNativeDataLiteralMatchesManifest": true,
-    "currentCandidateChangedPins": 2,
-    "currentCandidateUnchangedPins": 76,
+    "currentCandidateChangedPins": 0,
+    "currentCandidateUnchangedPins": 78,
     "noProjectParserCompilerOrCodeExecution": true,
     "allCurrentPathModeTypeBlobSizeMatch": true
   },
@@ -2540,7 +2540,7 @@
     "allOther9517LeavesExact": true
   },
   "currentIntegration": {
-    "revision": "CATALOG_MEMBERSHIP_AND_RECOVERY_DIAGNOSTIC",
+    "revision": "N04_COMPONENT_DIAGNOSTIC_AND_N09_CONTRACT",
     "status": "SOURCE_REVIEWED_NOT_RUN",
     "hrsPins": 80,
     "hm04Pins": 35,
@@ -2556,8 +2556,8 @@
       "databaseCalls": 0
     },
     "next": "Fresh full CI; green gates required before actual Dev installation.",
-    "previousActualFailureRun": 43346679283,
-    "correction": "Express the same three positive catalog membership predicates as uncorrelated tuple IN in all exact operative HRS copies; retain all catalog rows and rights checks. Add failure-only N15 field paths and hashes from the existing snapshots without new database calls. The actual performance gain remains unmeasured; the original 750ms window, COMMIT/drain guarantees and full snapshot assertion remain unchanged.",
+    "previousActualFailureRun": 43350054502,
+    "correction": "Add two fixed sequential read-only component timings on the existing bootstrap connection after the completed N04 public query. N09 now requires exact P7804 for the changed completed S1 outcome and verifies collision through one additional version_confirm read. Runtime SQL, all original deadlines, rights and snapshot assertions are unchanged; no executed-transition collision proof is claimed.",
     "publicMethodAndTargetSelectorsRemainUnselected": true,
     "apiSourceIntegration": {
       "paths": [
@@ -2577,12 +2577,12 @@
       "tickScheduling": false
     },
     "priorObservedResults": {
-      "backendRun": 43346679283,
-      "uiRun": 43346834132,
+      "backendRun": 43350054502,
+      "uiRun": 43350190121,
       "core": "Both actual Core jobs completed successfully: backend8803pass andUI8835pass, zero failures and2existingSkips each; allCoreprotectiongates andbuilds passed",
       "isolatedUi": "Both complete actual browser jobs succeeded",
-      "hostedBackend": "N01-N03 passed includingP2negative; original750ms deadline reached, fixedSQL158/163/160ms versusCOMMIT9/10/9ms; N07/N11notreached",
-      "hostedUi": "N04 original750ms deadline reached, fixedSQL188/190/188ms versusCOMMIT10/10/9ms; additionally HM04N15fullcatalogdifference afterexpectedP7606, differencehiddenbytruncatedassertion; allconnectionsdrained"
+      "hostedBackend": "N01-N03 passed; original 750ms deadline reached with SQL 198/203/202ms and third COMMIT refused before dispatch; N07/N11 not reached",
+      "hostedUi": "N01-N08 passed, N04 current in704.14ms, N07/P7806 passed; N09 received unconfirmed instead of collision for changed completed S1 outcome; N11 not reached. Both HM04 suites passed all31 groups, N15 cause remains unproved"
     },
     "databaseTargetAndHumanReleaseRemainNull": true,
     "sourceSelection": {
@@ -2593,7 +2593,7 @@
     }
   },
   "previousIntegrationReference": {
-    "parent": "f9b0acebfce2b66064f090e0307c18150824773b",
-    "manifestBlob": "948f000795eebe7409607c895be58a54bbfe184c"
+    "parent": "be355228b2ad7234737c0568646a56afb014de93",
+    "manifestBlob": "48b5ca20c16ac330de0c4642be4694ac4f52ea3d"
   }
 }

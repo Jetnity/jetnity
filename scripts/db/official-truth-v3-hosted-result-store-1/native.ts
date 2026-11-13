@@ -1902,6 +1902,17 @@ async function n04(h:Harness){
       calls:h.method.evidence.calls.slice(beforeQuery.methodCalls).slice(-8).map(c=>({joined:c.joined,pending:c.pending,
         targetAbsent:c.targetAbsent,controlAbsent:c.controlAbsent,stoppedFailure:c.stoppedFailure})),
       sqlCodes:h.method.evidence.sqlCodes.slice(beforeQuery.methodSql).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)}}))
+  for(const [operation,sql] of [
+    ['catalog_v1','SELECT official_v3_result_private.catalog_v1() IS NOT NULL AS measured'],
+    ['assert_history_v1','SELECT official_v3_result_private.assert_history_v1() AS measured'],
+  ] as const){
+    const started=performance.now()
+    let errorClass:string|null=null
+    try{await h.common.bootstrap.connection.query(sql)}
+    catch(error){errorClass=error instanceof LocalPgError
+      ?(/^[0-9A-Z]{5}$/.test(error.code)?error.code:'transport_error'):'unexpected_error'}
+    console.error('HRS1_COMPONENT_DIAG',JSON.stringify({operation,awaitMilliseconds:performance.now()-started,errorClass}))
+  }
   assert.equal(answer.ok,true);assert.ok(answer.ok)
   assert.equal(answer.answer.response.dataMode,'synthetic_test');assert.equal(answer.answer.response.notice,'SYNTHETIC_TEST_DATA_NO_TRAVEL_ADVICE')
   const accepted=answer.answer.response.cells.flatMap(c=>c.results).filter(r=>r.status==='accepted')
@@ -2080,7 +2091,12 @@ async function n09(h:Harness){
   assert.notEqual(body.prepared.proposalDisposition,changed.proposalDisposition)
   const different={...body,prepared:changed,operationKey:hrs1Ref('version-commit',{
     planKey:mustRead(createV3TransitionIdempotencyKey(changed.transition)),prepared:changed})}
-  assert.equal((await h.raw('transition',different)).status,'collision')
+  const refusalCodes=h.hrs.evidence.sqlCodes.length
+  assert.equal((await h.raw('transition',different)).status,'unconfirmed')
+  assert.deepEqual(h.hrs.evidence.sqlCodes.slice(refusalCodes),['P7804'],
+    'a changed completed S1 outcome is refused before operation replay')
+  assert.notEqual(different.operationKey,same.operationKey)
+  assert.equal((await h.raw('version_confirm',{...same,operationKey:different.operationKey})).status,'collision')
   assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),committed)
   const next=await h.prepare('n09-new-head');await next.finish();const nextBody=h.transition(next)
   assert.equal((await h.raw('transition',nextBody)).status,'committed')
