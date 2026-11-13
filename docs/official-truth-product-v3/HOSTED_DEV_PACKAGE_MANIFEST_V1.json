@@ -412,15 +412,15 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/visitor/ch-de-http.test.ts",
-      "blob": "cd970dbd248a3228f4c863cb89284c3f0a61608c",
-      "bytes": 5844,
-      "sha256": "08a9b30f0492ca7d471eeaf78ce40601a245780d600fcfa6c41b2a3df041f162"
+      "blob": "013260514ea9edb3c3022e43e9a469fe4b4f0a7f",
+      "bytes": 5935,
+      "sha256": "b9e29269ebcffc3ca1e787580446b93e432344e8786cb79938d0d9a642569cbc"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/visitor/ch-de-http.ts",
-      "blob": "9d000f8be1e3204a9d4ed573383b43eb06040b77",
-      "bytes": 4100,
-      "sha256": "ba23f5ad5b9a8d5935e2a91974b75e57a048902d8bf85dcca40a64a30d78682d"
+      "blob": "f816ca559c66a50f7801ec1496fdd6decff09277",
+      "bytes": 4201,
+      "sha256": "f3655bde5e463979193bec69a145ccdfe50e24545c26e3089e2cac66c3aa9035"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/visitor/ch-de-route.test.ts",
@@ -2533,15 +2533,15 @@
   "authoredDocumentPins": [
     {
       "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_TASK_V1.md",
-      "bytes": 30453,
-      "blob": "70485fa80d2c6e532cd5d68b1c5d5ddc96fa06b7",
-      "sha256": "ea9bd4bd90dea9d90de75ee3ac58e259e609facdd4663392639a486f2ace950c"
+      "bytes": 32380,
+      "blob": "3b308d9d5f48e0bc9ae419791af84e417bb95e01",
+      "sha256": "03af2e879bfdd9a6b7a222787d7961e95f5b85e23957a22845fc900ddce29e73"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_HANDOFF_V1.md",
-      "bytes": 66601,
-      "blob": "7e2d1e11c583dbe2500a92a8ed767c4e9db7a405",
-      "sha256": "accc5c404c3f72d2ec35e19984ff771ff35560a6f1a3a741cf00f522da08c732"
+      "bytes": 68571,
+      "blob": "10ae175b538a346d3efdf2311dfd404004a44f06",
+      "sha256": "a2ea3f84e012914491c720c87441ee1adba0cb16c13c109ff30697e2241c9855"
     }
   ],
   "externalSelfPins": {

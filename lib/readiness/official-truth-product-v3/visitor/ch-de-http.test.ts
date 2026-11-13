@@ -43,11 +43,11 @@ test('public decoder rejects foreign cells, synthetic data, extra fields, missin
   ]) assert.equal(readChDeVisaView(value), null)
 })
 
-test('public loader sends the fixed request without credentials and validates the returned body', async t => {
+test('public loader retains same-origin Preview access for the fixed request and validates the returned body', async t => {
   const signal = new AbortController().signal
   const fetch = t.mock.method(globalThis, 'fetch', async (url: string | URL | Request, init?: RequestInit) => {
     assert.equal(url, CH_DE_VISA_HTTP_PATH); assert.equal(init?.method, 'POST')
-    assert.equal(init?.signal, signal); assert.equal(init?.credentials, 'omit')
+    assert.equal(init?.signal, signal); assert.equal(init?.credentials, 'same-origin')
     assert.equal(init?.cache, 'no-store'); assert.equal(init?.redirect, 'error')
     assert.equal(init?.body, JSON.stringify(CH_DE_VISA_INPUT))
     return Response.json(unavailableView())
@@ -79,7 +79,8 @@ test('public loader joins cancellation of an oversized response and never render
 test('public loader keeps HTTP errors and malformed or synthetic replies unavailable', async t => {
   let next = new Response('unavailable', { status: 503 })
   t.mock.method(globalThis, 'fetch', async () => next)
-  for (const response of [next, new Response('{broken', { headers: { 'content-type': 'application/json' } }),
+  for (const response of [next, Response.json({ error: 'Protected deployment' }, { status: 401 }),
+    new Response('{broken', { headers: { 'content-type': 'application/json' } }),
     Response.json({ ...unavailableView(), synthetic: true }), new Response('html', { headers: { 'content-type': 'text/html' } })]) {
     next = response
     const result = await loadChDeVisa(CH_DE_VISA_INPUT, new AbortController().signal)

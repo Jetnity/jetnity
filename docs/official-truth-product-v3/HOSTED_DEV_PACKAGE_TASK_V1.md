@@ -233,3 +233,32 @@ No project/parser/compiler/native/SQL/test/build execution, hosted action, sourc
 ---
 
 FIX2 assembly by `/root/hmt_diagnosis` on sole parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1` follows the [selected task](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449), importing exact [HS1/HM04](https://github.com/Jetnity/jetnity/commit/3a88fed3a6cd32c852814b4b23598653faadd56e) and [HMT](https://github.com/Jetnity/jetnity/commit/d7ebe727c7c90813a358baf10d6c6ccd642e558a) corrections. The [CI4140 Hosted log](https://github.com/Jetnity/jetnity/actions/runs/43263850640/job/131342004913) remains failed historical evidence; its PAI 10/10 and HMA 8/8 passes do not transfer. Only six consumed SQL pin objects change in COMPOSED; all 66 dependencies match, with 27 existing paths changed and 9511 other leaves exact. **SOURCE ONLY / NOT_RUN**: Root must independently accept this assembly and run fresh full gates; no Dev or public activation occurred.
+
+## Preview request correction — 13 November 2026 / Hauptplan 81
+
+Root selects **Jetnity CH-DE Hosted Batch Fix — Codex Generation4**, actual session
+`/root/hosted_batch_fix_g4`, on sole parent `4837456fb39995e2c3300ec028179819df5026f6`.
+Generation3 `/root/hosted_batch_fix_g3` is absent from the current agent tree; this is
+a transparent replacement under the standing PO exception, not a resumed session.
+
+Dev IPv4 is now active with PO authorization (4 USD/month plus tax, Dev only).
+The real build diagnosis passed 9/9, all twelve exact probe backends are absent,
+and both owned official-source checks passed. CI4223 is still running. The real
+Preview form fails earlier: its fixed same-origin POST uses `credentials: 'omit'`
+and receives HTTP401 from Vercel Authentication. The page itself loads normally.
+
+Scope: allow same-origin browser credentials only for this existing fixed relative
+public API request, retain redirect refusal, body/response bounds, cancellation,
+strict DTO validation and negative-state handling; adapt its existing focused
+transport test and reconcile only changed current manifest pins. Record concise
+self-review and results in the existing HDP handoff. Preserve historical pins.
+No SQL, roles, Owner/AAL2, method release, source authority, time budgets, provider
+protection, secrets, Production, shared audit files or #1198-owned files change.
+No new dependency or running cost. This request does not grant publication rights.
+
+Acceptance: the actual protected Preview must render the ordinary unapproved
+state after the click, with protection still enabled. Root independently reviews,
+publishes and requires fresh complete CI/Preview gates on the resulting head.
+Author may run focused local tests and make a local commit, then STOP with exact
+diff, hashes and honest results. Do not mark Ready; do not merge; do not publish;
+do not start a follow-up slice. #917/#1131 remain untouched.

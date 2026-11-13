@@ -50,8 +50,9 @@ export const loadChDeVisa: V3VisitorLoad = async (input, signal) => {
   const unavailable = { daten: null, fehler: { meldung: 'Die Visumauskunft konnte nicht geladen werden. Bitte erneut versuchen.', wiederholbar: true } }
   if (signal.aborted || !readChDeVisaInput(input)) return unavailable
   try {
+    // Keep protected Preview access on this fixed origin; cookies grant no method authority.
     const response = await fetch(CH_DE_VISA_HTTP_PATH, { method: 'POST', signal,
-      credentials: 'omit', cache: 'no-store', redirect: 'error',
+      credentials: 'same-origin', cache: 'no-store', redirect: 'error',
       headers: { 'content-type': 'application/json', accept: 'application/json' },
       body: JSON.stringify(CH_DE_VISA_INPUT) })
     if (signal.aborted || !response.ok || !providerOpsInhaltstypOk(response.headers.get('content-type'))

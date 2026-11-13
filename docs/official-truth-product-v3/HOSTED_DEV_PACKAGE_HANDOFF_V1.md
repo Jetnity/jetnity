@@ -475,3 +475,31 @@ No project/parser/compiler/native/SQL/test/build execution, hosted action, sourc
 ---
 
 FIX2 assembly by `/root/hmt_diagnosis` on sole parent `e932aa20d6f2f834c13e3541c5eb25b13deef6d1` follows the [selected task](https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6830207449), importing exact [HS1/HM04](https://github.com/Jetnity/jetnity/commit/3a88fed3a6cd32c852814b4b23598653faadd56e) and [HMT](https://github.com/Jetnity/jetnity/commit/d7ebe727c7c90813a358baf10d6c6ccd642e558a) corrections. The [CI4140 Hosted log](https://github.com/Jetnity/jetnity/actions/runs/43263850640/job/131342004913) remains failed historical evidence; its PAI 10/10 and HMA 8/8 passes do not transfer. Only six consumed SQL pin objects change in COMPOSED; all 66 dependencies match, with 27 existing paths changed and 9511 other leaves exact. **SOURCE ONLY / NOT_RUN**: Root must independently accept this assembly and run fresh full gates; no Dev or public activation occurred.
+
+## Preview request correction — 13 November 2026 / Hauptplan 81
+
+Author: **Jetnity CH-DE Hosted Batch Fix — Codex Generation4**, actual session
+`/root/hosted_batch_fix_g4`; sole parent `4837456fb39995e2c3300ec028179819df5026f6`.
+Generation3 is unavailable in this thread; this is the explicitly selected
+replacement, with the scope recorded in the existing HDP task.
+
+The fixed relative public API request now uses `credentials: 'same-origin'` so
+the protected Preview can receive its existing browser access cookie. Redirects
+remain refused. The public route still derives no method or Owner authority from
+cookies, and all request/response bounds, cancellation, strict DTO decoding,
+negative states and server authority checks are unchanged. The existing transport
+test now asserts same-origin credentials and also retains HTTP401 as an error.
+Only the two changed current source pins and the current Task/Handoff pins are
+reconciled; historical receipts remain unchanged.
+
+Focused local proof on Node `v24.22.1`: **8/8 PASS**, zero failures or skips, using
+`node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 lib/readiness/official-truth-product-v3/visitor/ch-de-http.test.ts lib/readiness/official-truth-product-v3/visitor/ch-de-route.test.ts`.
+These tests mock transport and prove no real protected Preview success. Root's
+parent-head receipts cover Dev IPv4 activation, the 9/9 real build diagnosis,
+clean closure of twelve probe sessions and both SOURCE_CHECK_ONLY source reads;
+they are not exact-head evidence for this correction. Fresh Node22 CI and the
+actual protected Preview click remain required after Root's independent review.
+
+No SQL, roles, secrets, provider protection, time budget, Owner/AAL2, HumanRelease,
+Production or shared audit file changes. No remote publication or follow-up;
+local candidate only. Root owns review and publication. STOP.
