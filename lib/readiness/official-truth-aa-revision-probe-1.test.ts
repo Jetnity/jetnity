@@ -30,9 +30,9 @@ const aaBernReaderPin = {
 // One reviewed synthetic HRS proof may consume only the actual pure UTF-8 decoder.
 const hrsNativeDecoderPath = 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts'
 const hrsNativeDecoderPin = {
-  bytes: 229008,
-  blob: 'b7108088e37f224b7dd9ee56652ccb75988632bc',
-  sha256: '47ac7f501e0c9391a92180b994325195db393377523372149e686d7fe6bb3e8a',
+  bytes: 229663,
+  blob: 'be0595005f2e235fe4f66ca7e94ffd52b388a7af',
+  sha256: 'cc81c135888c1b8fd0c7997a4dd34febe883a3b51f1de7d10b6f7d280258fdbe',
 } as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'

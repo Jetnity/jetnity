@@ -642,9 +642,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "03a587d8ec5f9762c492372a9ddbaa757c0b8f09",
+    "blob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
     "bytes": 442952,
-    "sha256": "e97471c5f1db39c2c328a57a6dab95c1ba3eda21c30a5100111f818ecbe097b1"
+    "sha256": "2a6547bcf68ca7f164cd415c70871f86853662cdd7053a19cc675e0d5cbe9ba1"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -678,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "5ba04d1f0ecf1424a50c1c05d4712780d971e6da",
-    "bytes": 373762,
-    "sha256": "aa4755ce4110d280ed82e24b7e5a45b2049695019078835419dbff61d3746edd"
+    "blob": "da3ae010a0e0ed266220eea9bc0affdf17bbb0b7",
+    "bytes": 373766,
+    "sha256": "1b2872f8e9b0cdc99f52ac7ba59e33d77e2d3d9ad839588af89b46e4fb00002f"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "db3204a5ca36f1b5641a6de44bbdff369eff4dfd",
+    "blob": "bae3a223587528c5b39cde8557453b459135d079",
     "bytes": 161675,
-    "sha256": "176ca7bc15a292bfcfc45dc6856e96d2e63bb31e85a5dfc7aa2d272f53a9b382"
+    "sha256": "d27f52be843a019aff62ebdf983c335c9010a398b0e93a64b656b849051efec1"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1722,6 +1722,14 @@ async function canonicalParity(common:Common){
       expected:String.raw`{"a\"\\":{"":true},"z":{"a":"plain","b":"{, [, ,} ,] \" \\ /"}}`},
     {label:'numeric array positions cross index nine',depth:0,
       wire:'[0,1,2,3,4,5,6,7,8,9,10,11,12]',expected:'[0,1,2,3,4,5,6,7,8,9,10,11,12]'},
+    {label:'wide array preserves descending values through positions 255 and 256',depth:0,
+      wire:'['+Array.from({length:257},(_,index)=>String(256-index)).join(',')+']',
+      expected:JSON.stringify(Array.from({length:257},(_,index)=>256-index))},
+    {label:'C-order spans 257 reverse-input object members with array values',depth:0,
+      wire:JSON.stringify(Object.fromEntries(Array.from({length:257},(_,index)=>{
+        const position=256-index;return['k'+String(position).padStart(3,'0'),[position]]
+      }))),
+      expected:'{'+Array.from({length:257},(_,position)=>'"k'+String(position).padStart(3,'0')+'":['+position+']').join(',')+'}'},
     {label:'literal backslash-u text is not a NUL value',depth:0,
       wire:String.raw`["\\u0000"]`,expected:String.raw`["\\u0000"]`},
     {label:'mixed containers preserve all empty positions',depth:0,

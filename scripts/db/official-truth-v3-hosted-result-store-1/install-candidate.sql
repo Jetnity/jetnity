@@ -854,9 +854,9 @@ BEGIN
     fast_text:=v::text;
     IF octet_length(fast_text)<=262144 THEN
       WITH RECURSIVE walk_nodes(node,member_key,node_path,node_depth,node_type,member_position) AS (
-        SELECT v,NULL::text,ARRAY[]::bigint[],d,jsonb_typeof(v),0::bigint
+        SELECT v,NULL::text,''::bytea,d,jsonb_typeof(v),0::bigint
         UNION ALL
-        SELECT j.node,j.member_key,array_append(w.node_path,j.member_position),w.node_depth+1,
+        SELECT j.node,j.member_key,w.node_path||pg_catalog.int8send(j.member_position),w.node_depth+1,
           jsonb_typeof(j.node),j.member_position
           FROM walk_nodes w CROSS JOIN LATERAL (
             SELECT q.value AS node,q.key AS member_key,
@@ -891,7 +891,7 @@ BEGIN
           END AS piece
           FROM walk_nodes w
         UNION ALL
-        SELECT array_append(w.node_path,NULL::bigint),true,
+        SELECT w.node_path||pg_catalog.decode('ff','hex'),true,
           CASE WHEN w.node_type='object' THEN '}' ELSE ']' END
           FROM walk_nodes w WHERE w.node_type IN ('object','array')
       )
@@ -2996,7 +2996,7 @@ BEGIN
  FOR expected_function IN SELECT * FROM (VALUES
   ('official_v3_result_private','exact_keys_v1','jsonb,_text',ARRAY['v','expected']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'ee7cf54b133b5ba633b55372c6f98b06058d3fbc4ffe8bda08813fc77865cc33',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','nodes_v1','jsonb,int4,int4,int4',ARRAY['v','d','max_d','max_n']::text[],'int4','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'d2bf4eb545e4c0453f4511ed6585a7643b440ba58dfc35ff1192feeae72941e3',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'5642627eca961dd2b5de97327d8ea3d977b238f2145ce6962d04ac363506f477',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'a0a6b9d5e9294c37c7e030d118ae71e5e9f097e8ded0d63727ffb71c8b4284e1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','civil_date_v1','text',ARRAY['t']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'fd5ada592127225a2d995658a74f0ba58bd5b4e7e65301a9d656a07d50eb7ea8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','timestamp_v1','text',ARRAY['t']::text[],'timestamptz','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'d2139f87c826b7eaaa7846b9812a6e056240d79650f365aad2733efb2947613c',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','predicate_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'28c043c0fc46032e63286c74bc91945c0ed9eeff1a4a09a99263038f9450b4af',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
