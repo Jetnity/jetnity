@@ -505,8 +505,8 @@
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "bytes": 442968,
-      "blob": "ba9c279ff143cc1d5a46f4295cf1a39001327906",
-      "sha256": "7d4e8d4eef5f36c54a5f9d5796820d88ae0efa35632022d03957c235d584b588"
+      "blob": "3b81640acb219b37dd1230f6d2a9467a34a41676",
+      "sha256": "e7391abc228fc90ced4d6dd57c808f50a9853c7bfe5f58c532ff257848b557ce"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -1177,9 +1177,9 @@
   "authoredPins": [
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "1305b2ce30bb1070eced6397e451b2c8e57bbfff",
+      "blob": "82a5a71a361faf9a96f715cae571fadb620bb47e",
       "bytes": 100410,
-      "sha256": "8639ad6e3b1d25084f9ac8bae4dfab4164c2acc45d643c11e9752aabc61034ee"
+      "sha256": "b7dcf4433968ba65992131b4db22e9410bfda5e54c60ee80e78cb1f962d2b03c"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",

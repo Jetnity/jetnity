@@ -2245,14 +2245,14 @@ BEGIN
   INSERT INTO official_v3_result_private.operations_v1(operation_kind,operation_id,operation_key,command_digest,command,result,head_generation,recorded_at)
    VALUES('publication',q->>'operationId',expected_key,official_v3_result_private.hash_v1(q),q,
     jsonb_build_object('projectionRef',projection_value->'reference','versionRef',prepared_value#>'{version,reference}',
-      'publishedAt',official_v3_result_private.time_text_v1(at_time),'freshUntil',projection_value->'expiresAt'),head_row.generation+1,at_time);
+      'publishedAt',official_v3_result_private.time_text_v1(at_time),'freshUntil',proof_value->'validUntilExclusive'),head_row.generation+1,at_time);
  END IF;
  PERFORM official_v3_result_private.assert_history_v1();
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,LEAST(deadline,desired_expiry),legal_day,proof_value);
  IF NOT confirm_only THEN RETURN jsonb_build_object('status','reported'); END IF;
  RETURN jsonb_build_object('status','confirmed','value',jsonb_build_object('operationId',q->'operationId','operationKey',q->'operationKey',
   'projectionRef',projection_value->'reference','versionRef',prepared_value#>'{version,reference}',
-  'checkedAt',official_v3_result_private.time_text_v1(clock_timestamp()),'freshUntil',projection_value->'expiresAt'));
+  'checkedAt',official_v3_result_private.time_text_v1(clock_timestamp()),'freshUntil',proof_value->'validUntilExclusive'));
 END $$;
 CREATE FUNCTION official_v3_result_private.escalation_v1(q jsonb,b jsonb,epoch_value integer,deadline timestamptz,legal_day text,confirm_only boolean) RETURNS jsonb
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog AS $$
@@ -2900,7 +2900,7 @@ BEGIN
   ('official_v3_result_private','keep_decision_v1','jsonb',ARRAY['v']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'91351a13b82f9c45e364126032feeea3d9a515a3e693efb37caf3bb8b0ed9bf5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','prepared_v1','jsonb,jsonb,jsonb',ARRAY['prepared_value','proof_value','b']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6c476735120c4aa69295f881e083efab1d3069a28507d6f3cb7dcf0ff5121a3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'4311dc7c4c7b70e7e3bbbc2a2ad37de9fd83ed5231eb277a33b7560e1e9e4d3e',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2f467e6d9d6ba5985d9424b172a751313ff05fcd567590fc3dcaa37d7bc86c35',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'06d0f730fd449ae367cde5bc4e06ec2e6b4cf5f351d037c3d3f9920b73d3e6d8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1a7b5cad87c42ffebf4c3b41ce6e3eabd62caf656c67e858e9254b6975d3a64f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','projection_binding_v1','jsonb',ARRAY['p']::text[],'jsonb','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2b4281e9e5160277fdcf081797401b01929c17ac084c9ca92c8b846ab9aaca14',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','current_projection_v1','jsonb,text',ARRAY['b','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'bb464fa0264d0c26fdd71e61ba586e5dd68cb7a38992497dd270be994d2a21cb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
