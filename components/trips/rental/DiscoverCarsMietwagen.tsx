@@ -191,7 +191,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
         {comparison.length ? <OfferComparison offers={comparison} onClose={() => setCompare([])} /> : null}
         <p role="status" className="text-sm text-ink-600">{visible.length} passende Angebote · bis zu drei Fahrzeuge vergleichen</p>
         {!visible.length ? <p className="text-sm text-ink-800">Zu diesen Filtern gibt es keine Treffer. Ändere Getriebe oder Fahrzeugklasse.</p> : null}
-        <RentalHearts offers={visible.slice(0, limit).map(o => o.offer_id)} timing={{ starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }}>
+        <RentalHearts key={result.searchedAt} offers={result.offers.map(o => o.offer_id)} timing={{ starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }}>
         <div data-rental-grid className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} saveAction={<RentalHeart offerId={o.offer_id} token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
         </div>
