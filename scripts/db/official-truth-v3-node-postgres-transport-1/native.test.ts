@@ -194,54 +194,106 @@ test('genuine owned Node-Postgres TLS transport', { timeout: 180000 }, async t =
       assert.equal(fixture.snapshot().lost, 1)
       await fixture.absent(); assert.equal(state().jobs, 'idle')
     })
+    await t.test('synthetic GitHub public HRS query reaches real TLS with its fixed 2000-ms cap', async () => {
+      const previousGithubActions = process.env.GITHUB_ACTIONS
+      process.env.GITHUB_ACTIONS = 'true'
+      try {
+        const config = publicFailureFixture(), raw = { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] }
+        const calls = { method: 0, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 }
+        const caps: number[] = [], entered: number[] = []
+        const methodExecutor: Ma1MethodSqlExecutor = { async readCurrent(request, activeSignal, cap) {
+          calls.method++; assert.ok(cap); caps.push(cap.deadline); entered.push(performance.now())
+          return port.method.readCurrent(request, activeSignal, cap)
+        } }
+        const resultExecutor = (kind: 'writer' | 'reader' | 'verifier'): Hrs1TerminalExecutor => ({ async executeFixed(request, activeSignal) {
+          calls[kind]++; return port[kind].executeFixed(request, activeSignal)
+        } })
+        const publicJobs = createV3PostgresResultJobs({ binding, registry: config.registry, clock: config.clock, methodExecutor,
+          intakeExecutor: { async execute(...args) { calls.intake++; return port.intake.execute(...args) } },
+          jobsExecutor: { async executeFixed(...args) { calls.jobs++; return port.jobs.executeFixed(...args) } },
+          producer: { async produce() { calls.producer++; return { status: 'failed', reason: 'unreachable' } } },
+          result: { binding: config.binding, writerExecutor: resultExecutor('writer'), readerExecutor: resultExecutor('reader'),
+            verifierExecutor: resultExecutor('verifier'), ids: () => ({ jobId: 'job3_' + '8'.repeat(32), operationId: 'op3_' + '9'.repeat(32) }) } })
+        const before = Number(await effects()), previous = fixture.snapshot(), started = performance.now()
+        assert.deepEqual(await publicJobs.query(raw), { ok: false, reason: 'temporary_failure' })
+        const returned = performance.now(), settled = fixture.snapshot()
+        assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
+        assert.equal(caps.length, 1)
+        assert.ok(caps[0]! > started + 750 && caps[0]! <= entered[0]! + 2000,
+          'the valid synthetic GitHub composition passes its selected 2000-ms cap to the actual MA1 transport')
+        assert.equal(settled.local.calls.connect - previous.local.calls.connect, 2)
+        assert.ok(settled.local.calls.auth > previous.local.calls.auth && settled.local.calls.query > previous.local.calls.query)
+        assert.equal(settled.lost, previous.lost)
+        assert.equal(state().method, 'idle')
+        assert.deepEqual(settled.local.active, { connect: 0, auth: 0, query: 0, socket: 0 })
+        assert.ok(settled.local.lastCallbackAt <= returned)
+        t.diagnostic(JSON.stringify({ case: 'HRS-public-synthetic-GitHub', businessCapMilliseconds: 2000,
+          remainingAtMethodMilliseconds: caps[0]! - entered[0]!, totalMilliseconds: returned - started,
+          overBusinessDeadlineMilliseconds: Math.max(0, returned - caps[0]!) }))
+        await pause(30)
+        assert.deepEqual(fixture.snapshot().local, settled.local, 'all native callbacks ended before the answer')
+        assert.equal(Number(await effects()), before, 'an absent method cannot authorize any write')
+        await fixture.absent()
+      } finally {
+        if (previousGithubActions === undefined) delete process.env.GITHUB_ACTIONS
+        else process.env.GITHUB_ACTIONS = previousGithubActions
+      }
+    })
     await t.test('valid public HRS query joins real dual-channel loss under its original 750-ms cap', async () => {
-      assert.equal(HRS1_LIMITS.publicMilliseconds, 750)
-      const config = publicFailureFixture(), raw = { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] }
-      const calls = { method: 0, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 }
-      const caps: number[] = [], entered: number[] = []
-      const methodExecutor: Ma1MethodSqlExecutor = { async readCurrent(request, activeSignal, cap) {
-        calls.method++; assert.ok(cap); caps.push(cap.deadline); entered.push(performance.now())
-        return port.method.readCurrent(request, activeSignal, cap)
-      } }
-      const resultExecutor = (kind: 'writer' | 'reader' | 'verifier'): Hrs1TerminalExecutor => ({ async executeFixed(request, activeSignal) {
-        calls[kind]++; return port[kind].executeFixed(request, activeSignal)
-      } })
-      const publicJobs = createV3PostgresResultJobs({ binding, registry: config.registry, clock: config.clock, methodExecutor,
-        intakeExecutor: { async execute(...args) { calls.intake++; return port.intake.execute(...args) } },
-        jobsExecutor: { async executeFixed(...args) { calls.jobs++; return port.jobs.executeFixed(...args) } },
-        producer: { async produce() { calls.producer++; return { status: 'failed', reason: 'unreachable' } } },
-        result: { binding: config.binding, writerExecutor: resultExecutor('writer'), readerExecutor: resultExecutor('reader'),
-          verifierExecutor: resultExecutor('verifier'), ids: () => ({ jobId: 'job3_' + '8'.repeat(32), operationId: 'op3_' + '9'.repeat(32) }) } })
-      const before = Number(await effects()), previous = fixture.snapshot(), started = performance.now()
-      let publishes = 0
-      fixture.loseNextCommit(true)
-      const answer = await publicJobs.query(raw).then(value => { publishes++; return value })
-      const returned = performance.now(), settled = fixture.snapshot()
-      assert.deepEqual(answer, { ok: false, reason: 'temporary_failure' })
-      assert.equal(calls.method, 1, 'valid public composition reached the actual MA1 transport')
-      assert.equal(caps.length, 1); assert.ok(caps[0]! > started && caps[0]! <= entered[0]! + 750)
-      assert.equal(settled.local.calls.connect - previous.local.calls.connect, 2)
-      assert.ok(settled.local.calls.auth > previous.local.calls.auth && settled.local.calls.query > previous.local.calls.query)
-      assert.equal(settled.lost, previous.lost + 1, 'the actual MA1 COMMIT response was dropped')
-      assert.equal(state().method, 'blocked_terminal')
-      assert.deepEqual(settled.local.active, { connect: 0, auth: 0, query: 0, socket: 0 })
-      assert.ok(settled.lastLossAt >= started && settled.lastLossAt <= returned && settled.local.lastCallbackAt <= returned)
-      t.diagnostic(JSON.stringify({ case: 'HRS-public-dual-loss', businessCapMilliseconds: 750,
-        remainingAtMethodMilliseconds: caps[0]! - entered[0]!, totalMilliseconds: returned - started,
-        drainAfterLossMilliseconds: returned - settled.lastLossAt, overBusinessDeadlineMilliseconds: Math.max(0, returned - caps[0]!) }))
-      assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
-      assert.deepEqual(await publicJobs.query(raw), { ok: false, reason: 'temporary_failure' })
-      assert.deepEqual(await publicJobs.enqueueRule({}), { status: 'unavailable' })
-      assert.deepEqual(await publicJobs.enqueueDiscovery({}), { status: 'unavailable' })
-      assert.deepEqual(await publicJobs.workOnce({}), { status: 'unavailable' })
-      assert.deepEqual(await publicJobs.workSelectedOnce('rule_research'), { status: 'unavailable' })
-      assert.deepEqual(await publicJobs.monitorOnce(), { status: 'unavailable', outcomes: [] })
-      await pause(30)
-      assert.equal(publishes, 1, 'no later public completion')
-      assert.deepEqual(fixture.snapshot().local, settled.local, 'all real local callbacks had already ended at return')
-      assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
-      assert.equal(Number(await effects()), before, 'no publication or other write followed the unknown MA1 outcome')
-      await fixture.absent() // Independent fixture observation, never a runtime receipt.
+      const previousGithubActions = process.env.GITHUB_ACTIONS
+      delete process.env.GITHUB_ACTIONS
+      try {
+        assert.equal(HRS1_LIMITS.publicMilliseconds, 750)
+        const config = publicFailureFixture(), raw = { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] }
+        const calls = { method: 0, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 }
+        const caps: number[] = [], entered: number[] = []
+        const methodExecutor: Ma1MethodSqlExecutor = { async readCurrent(request, activeSignal, cap) {
+          calls.method++; assert.ok(cap); caps.push(cap.deadline); entered.push(performance.now())
+          return port.method.readCurrent(request, activeSignal, cap)
+        } }
+        const resultExecutor = (kind: 'writer' | 'reader' | 'verifier'): Hrs1TerminalExecutor => ({ async executeFixed(request, activeSignal) {
+          calls[kind]++; return port[kind].executeFixed(request, activeSignal)
+        } })
+        const publicJobs = createV3PostgresResultJobs({ binding, registry: config.registry, clock: config.clock, methodExecutor,
+          intakeExecutor: { async execute(...args) { calls.intake++; return port.intake.execute(...args) } },
+          jobsExecutor: { async executeFixed(...args) { calls.jobs++; return port.jobs.executeFixed(...args) } },
+          producer: { async produce() { calls.producer++; return { status: 'failed', reason: 'unreachable' } } },
+          result: { binding: config.binding, writerExecutor: resultExecutor('writer'), readerExecutor: resultExecutor('reader'),
+            verifierExecutor: resultExecutor('verifier'), ids: () => ({ jobId: 'job3_' + '8'.repeat(32), operationId: 'op3_' + '9'.repeat(32) }) } })
+        const before = Number(await effects()), previous = fixture.snapshot(), started = performance.now()
+        let publishes = 0
+        fixture.loseNextCommit(true)
+        const answer = await publicJobs.query(raw).then(value => { publishes++; return value })
+        const returned = performance.now(), settled = fixture.snapshot()
+        assert.deepEqual(answer, { ok: false, reason: 'temporary_failure' })
+        assert.equal(calls.method, 1, 'valid public composition reached the actual MA1 transport')
+        assert.equal(caps.length, 1); assert.ok(caps[0]! > started && caps[0]! <= entered[0]! + 750)
+        assert.equal(settled.local.calls.connect - previous.local.calls.connect, 2)
+        assert.ok(settled.local.calls.auth > previous.local.calls.auth && settled.local.calls.query > previous.local.calls.query)
+        assert.equal(settled.lost, previous.lost + 1, 'the actual MA1 COMMIT response was dropped')
+        assert.equal(state().method, 'blocked_terminal')
+        assert.deepEqual(settled.local.active, { connect: 0, auth: 0, query: 0, socket: 0 })
+        assert.ok(settled.lastLossAt >= started && settled.lastLossAt <= returned && settled.local.lastCallbackAt <= returned)
+        t.diagnostic(JSON.stringify({ case: 'HRS-public-dual-loss', businessCapMilliseconds: 750,
+          remainingAtMethodMilliseconds: caps[0]! - entered[0]!, totalMilliseconds: returned - started,
+          drainAfterLossMilliseconds: returned - settled.lastLossAt, overBusinessDeadlineMilliseconds: Math.max(0, returned - caps[0]!) }))
+        assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
+        assert.deepEqual(await publicJobs.query(raw), { ok: false, reason: 'temporary_failure' })
+        assert.deepEqual(await publicJobs.enqueueRule({}), { status: 'unavailable' })
+        assert.deepEqual(await publicJobs.enqueueDiscovery({}), { status: 'unavailable' })
+        assert.deepEqual(await publicJobs.workOnce({}), { status: 'unavailable' })
+        assert.deepEqual(await publicJobs.workSelectedOnce('rule_research'), { status: 'unavailable' })
+        assert.deepEqual(await publicJobs.monitorOnce(), { status: 'unavailable', outcomes: [] })
+        await pause(30)
+        assert.equal(publishes, 1, 'no later public completion')
+        assert.deepEqual(fixture.snapshot().local, settled.local, 'all real local callbacks had already ended at return')
+        assert.deepEqual(calls, { method: 1, intake: 0, jobs: 0, writer: 0, reader: 0, verifier: 0, producer: 0 })
+        assert.equal(Number(await effects()), before, 'no publication or other write followed the unknown MA1 outcome')
+        await fixture.absent() // Independent fixture observation, never a runtime receipt.
+      } finally {
+        if (previousGithubActions === undefined) delete process.env.GITHUB_ACTIONS
+        else process.env.GITHUB_ACTIONS = previousGithubActions
+      }
     })
     await t.test('simultaneous channel loss returns explicit remote unknown with no slot reuse', async () => {
       const before = Number(await effects()), started = performance.now()

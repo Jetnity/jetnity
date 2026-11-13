@@ -123,6 +123,9 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   // C1/MI1/R28/HMA1 evidence above remains byte-identical and independently checked.
   // No working-tree-derived pins, skipped rows, live source or activation change.
   const currentSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/visitor/query.ts',
+      previousReviewed: { bytes: 20238, sha256: '89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6' },
+      reviewed: { bytes: 20341, sha256: 'dcdd2c352f770d3ea3ec70bf0a1c3f85b471347ddfb519c7ec8632a8fc818b37' } },
     { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
       previousReviewed: { bytes: 12288, sha256: 'ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127' },
       reviewed: { bytes: 12562, sha256: 'a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6' } },
@@ -134,7 +137,7 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       reviewed: { bytes: 6507, sha256: '328d8e2fe4f99a59030886f6c7a6684add34f6c0026c89633e6fef731cee026a' } },
     { path: 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
       previousReviewed: { bytes: 22433, sha256: '57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8' },
-      reviewed: { bytes: 30699, sha256: '9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b' } },
+      reviewed: { bytes: 32943, sha256: '02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d' } },
     { path: 'components/readiness/OfficialTruthVisitorV3.tsx',
       previousReviewed: { bytes: 9935, sha256: '62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35' },
       reviewed: { bytes: 11117, sha256: 'e4b9fa59e6b92e3c1f4ad8b395495e19c5227c3c47702547da17e8148d5a4df3' } },
@@ -143,12 +146,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       reviewed: { bytes: 23939, sha256: '7ebcde1fa3c9717ed7fbf555d0bace34a4da1457563de6fea2296437520400ae' } },
   ] as const
   assert.deepEqual(currentSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/visitor/query.ts',
     'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
     'package-lock.json', 'package.json', 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
     'components/readiness/OfficialTruthVisitorV3.tsx',
     '.github/workflows/ci.yml',
   ])
-  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 6)
+  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 7)
   let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
@@ -203,5 +207,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
-  assert.equal(reviewedCurrentRows, 6)
+  assert.equal(reviewedCurrentRows, 7)
 })

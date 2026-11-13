@@ -1351,6 +1351,11 @@ type HrsCall = { id: number; kind: HrsLoginKind; operation: Hrs1Operation; contr
   target?: LocalPgConnection; controlId?: BackendIdentity; targetId?: BackendIdentity; cancellation?: Promise<void>;
   dispatched: boolean; committed: boolean; drained: boolean }
 type HrsBudget = { admitted: number; active: number; maximumActive: number; directAdmitted:number; directSettled:number }
+type NativeMonitorDiagnostic = {
+  replyStatus: Hrs1Reply['status'] | 'invalid' | null; requestGeneration: number | null; replyGeneration: number | null;
+  claimMatches: boolean | null; generationMatches: boolean | null;
+  leaseRemainingBeforeDispatchMilliseconds: number | null; leaseRemainingAfterReplyMilliseconds: number | null;
+}
 const HRS_LOGINS = Object.freeze({ writer: 'ot_v3_result_writer', reader: 'ot_v3_result_reader', verifier: 'ot_v3_result_verifier' })
 const BACKEND_IDENTITY_SQL = 'SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth,session_user::text AS login,current_user::text AS role FROM pg_stat_activity WHERE pid=pg_backend_pid()'
 function backendIdentity(rows: PgRows, login: string): BackendIdentity {
@@ -1370,9 +1375,11 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
   await observer.query("SELECT set_config('statement_timeout','1000',false) AS statement_timeout,set_config('lock_timeout','1000',false) AS lock_timeout")
   const contexts = new Set<HrsCall>(), stop = new AbortController(), loseResponseFor = new Set<Hrs1Operation>()
   let poisoned = false, stopped = false, cleanupTail = Promise.resolve()
+  let acknowledgedMonitorClaim: Readonly<{ claimId:string; generation:number; leaseUntil:number }> | null = null
   const evidence = { admitted: 0, dispatched: 0, acknowledged: 0, lost: 0, aborted: 0, drained: 0,
     sqlCodes: [] as string[], calls: [] as Readonly<{ id: number; kind: HrsLoginKind; operation: Hrs1Operation;
-      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean; awaitMilliseconds: number; targetOperations: LocalPgConnection['operationDiagnostics'] }>[] }
+      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean; awaitMilliseconds: number;
+      monitor: Readonly<NativeMonitorDiagnostic> | null; targetOperations: LocalPgConnection['operationDiagnostics'] }>[] }
   const removeStop = lifetime.onStop(() => { stop.abort(Error('hrs1_native_lifetime_stopped')) })
   function poison() {
     if (poisoned) return
@@ -1420,6 +1427,13 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       || budget.active >= 2 || budget.admitted >= 256) return { status: 'unavailable' as const }
     const admittedAt = performance.now()
     const call: HrsCall = { id: ++budget.admitted, kind, operation: command.operation, dispatched: false, committed: false, drained: false }
+    // Diagnostic-only capture from this already admitted native call. Never used
+    // to authorize work; identifiers remain private and only equality is emitted.
+    const monitor: NativeMonitorDiagnostic | null = command.operation === 'monitor_claim' || command.operation === 'monitor_finish'
+      ? { replyStatus:null,requestGeneration:typeof command.body.generation==='number'&&Number.isSafeInteger(command.body.generation)
+          ?command.body.generation:null,replyGeneration:null,claimMatches:null,generationMatches:null,
+        leaseRemainingBeforeDispatchMilliseconds:null,leaseRemainingAfterReplyMilliseconds:null } : null
+    let monitorReply: Hrs1Reply | null = null
     contexts.add(call); budget.active++; budget.maximumActive = Math.max(budget.maximumActive,budget.active); evidence.admitted++
     let began = false, timer: ReturnType<typeof setTimeout> | undefined
     const abort = () => {
@@ -1446,11 +1460,28 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       const remaining = Math.min(HRS1_LIMITS.effectMilliseconds,Math.floor(deadline-performance.now()))
       assert.ok(remaining >= 1)
       call.dispatched = true; evidence.dispatched++
+      const observedLease = monitor && command.operation === 'monitor_finish' ? acknowledgedMonitorClaim : null
+      if (monitor && observedLease) {
+        monitor.claimMatches = command.body.claimId === observedLease.claimId
+        monitor.generationMatches = command.body.generation === observedLease.generation
+        monitor.leaseRemainingBeforeDispatchMilliseconds = observedLease.leaseUntil - Date.now()
+      }
       const rows = await call.target.query(HRS1_SQL[request.channel],[
         pgText(request.operationText),pgText(request.bindingHash),pgText(request.methodId),pgText(String(request.revision),23),
         pgText(request.methodDigest),pgText(request.packageDigest),pgText(String(request.epoch),23),pgText(String(remaining),23),
         pgText(request.notAfter),pgText(request.legalDate),
       ])
+      if (monitor) {
+        // Parse only the two small monitor replies already held; no new SQL or
+        // per-read payload processing. Local clock samples do not assert a DB cause.
+        monitorReply = readHrs1Reply(rows)
+        monitor.replyStatus = monitorReply?.status ?? 'invalid'
+        const value = monitorReply?.value as Partial<NativeMonitorClaim> | undefined
+        if (value && typeof value === 'object' && typeof value.generation === 'number' && Number.isSafeInteger(value.generation)) {
+          monitor.replyGeneration = value.generation
+        }
+        if (observedLease) monitor.leaseRemainingAfterReplyMilliseconds = observedLease.leaseUntil - Date.now()
+      }
       if (signal.aborted || stop.signal.aborted || performance.now() >= deadline) return { status:'unconfirmed' as const }
       const committed = await call.target.commitBefore(deadline,databaseMicroseconds(request.notAfter))
       call.committed = committed.acknowledged && !committed.protectionFailure
@@ -1459,6 +1490,14 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       // Selected test-owned response completion loss after actual guarded COMMIT.
       if (signal.aborted || performance.now() >= deadline || loseResponseFor.delete(command.operation)) {
         evidence.lost++; return { status:'unconfirmed' as const }
+      }
+      if (command.operation === 'monitor_claim' && monitorReply?.status === 'claimed') {
+        const claim = monitorReply.value as Partial<NativeMonitorClaim> | undefined
+        if (claim && typeof claim === 'object' && typeof claim.claimId === 'string' && /^hrsclaim1_[a-f0-9]{32}$/.test(claim.claimId)
+          && typeof claim.generation === 'number' && Number.isSafeInteger(claim.generation) && claim.generation > 0
+          && typeof claim.leaseUntil === 'string' && hrs1Time(claim.leaseUntil)) {
+          acknowledgedMonitorClaim = { claimId:claim.claimId,generation:claim.generation,leaseUntil:Date.parse(claim.leaseUntil) }
+        }
       }
       return { status:'acknowledged' as const, rows }
     } catch (error) {
@@ -1485,7 +1524,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
         budget.active--; contexts.delete(call)
         evidence.calls.push(Object.freeze({ id:call.id,kind,operation:command.operation,target:call.targetId??null,control:call.controlId??null,
           dispatched:call.dispatched,committed:call.committed,drained:call.drained,awaitMilliseconds:performance.now()-admittedAt,
-          targetOperations:call.target?.operationDiagnostics.slice(-8)??[] }))
+          monitor:monitor?Object.freeze({...monitor}):null,targetOperations:call.target?.operationDiagnostics.slice(-8)??[] }))
       }
     }
   }
@@ -2696,7 +2735,33 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   assert.deepEqual(await resultSnapshot(owner),beforeNegatives)
   assert.equal((await h.raw('projection_current',{binding:currentBinding})).status,'current')
   await actualTimePassed(lifetime,h.common.observer.connection,finishedValue.nextCheckAt,1500)
+  const beforeMonitor={hrsCalls:h.hrs.evidence.calls.length,hrsCodes:h.hrs.evidence.sqlCodes.length,
+    methodCalls:h.method.evidence.calls.length,methodCodes:h.method.evidence.sqlCodes.length,
+    m04Calls:h.m04.evidence.calls.length,m04Codes:h.m04.evidence.sqlCodes.length}
+  const monitorStarted=performance.now()
   const changed=await lifetime.run(()=>h.jobs.monitorOnce(h.signal))
+  if(changed.status!=='complete')console.error('HRS1_N11_MONITOR_DIAG',JSON.stringify({
+    status:changed.status,awaitMilliseconds:performance.now()-monitorStarted,callerAborted:h.signal.aborted,
+    outcomeCount:changed.outcomes.length,
+    outcomeCounts:Object.fromEntries(['unchanged','research_queued','already_researched','optional_unreachable','source_unavailable',
+      'suppressed','unconfirmed','unavailable','not_due','invalid'].map(status=>[status,changed.outcomes.filter(o=>o.status===status).length])),
+    hrs:{callCount:h.hrs.evidence.calls.length-beforeMonitor.hrsCalls,
+      calls:h.hrs.evidence.calls.slice(beforeMonitor.hrsCalls).slice(-16).map(c=>({
+        kind:c.kind,operation:c.operation,dispatched:c.dispatched,committed:c.committed,drained:c.drained,
+        awaitMilliseconds:c.awaitMilliseconds,monitor:c.monitor,targetOperations:c.targetOperations})),
+      sqlCodeCount:h.hrs.evidence.sqlCodes.length-beforeMonitor.hrsCodes,
+      sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeMonitor.hrsCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+    method:{callCount:h.method.evidence.calls.length-beforeMonitor.methodCalls,
+      calls:h.method.evidence.calls.slice(beforeMonitor.methodCalls).slice(-8).map(c=>({
+        joined:c.joined,pending:c.pending,targetAbsent:c.targetAbsent,controlAbsent:c.controlAbsent,stoppedFailure:c.stoppedFailure})),
+      sqlCodeCount:h.method.evidence.sqlCodes.length-beforeMonitor.methodCodes,
+      sqlCodes:h.method.evidence.sqlCodes.slice(beforeMonitor.methodCodes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+    m04:{callCount:h.m04.evidence.calls.length-beforeMonitor.m04Calls,
+      calls:h.m04.evidence.calls.slice(beforeMonitor.m04Calls).slice(-8).map(c=>({
+        kind:c.kind,operation:c.operation,dispatched:c.dispatched,committed:c.committed,drained:c.drained})),
+      sqlCodeCount:h.m04.evidence.sqlCodes.length-beforeMonitor.m04Codes,
+      sqlCodes:h.m04.evidence.sqlCodes.slice(beforeMonitor.m04Codes).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)},
+  }))
   assert.equal(changed.status,'complete')
   assert.ok(changed.outcomes.some(o=>o.sourceId===primary.source.sourceId&&o.status==='suppressed'))
   assert.ok(changed.outcomes.some(o=>o.status==='research_queued'))

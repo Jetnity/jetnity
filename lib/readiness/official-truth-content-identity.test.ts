@@ -550,16 +550,16 @@ describe('dormancy and architectural boundaries', () => {
   const REVIEWED_CONTENT_FIXTURE_PINS = [
     {
       path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-      bytes: 240915,
-      blob: 'c03c4e55a944b95924d30aa6bf1a64492bd78202',
-      sha256: 'd597c7cf7c6cbe3cfbfcca81230894bc9244ab00bec12d7b0e12a53eea5e4dfc',
+      bytes: 246302,
+      blob: 'ce197c02c2304a3241179269271fe849d60caa54',
+      sha256: 'aa5fd5c204fe8c421e2cbbe3ba11afa5d9c4ad39d2e5a9588bafbdb111fda98e',
       importText: "import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
     },
     {
       path: 'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
-      bytes: 22064,
-      blob: 'c1f988b10a277aec72988810cbff777f7d248f93',
-      sha256: '7b28f6f43f93948ef99abe6309ed77afa5a9d6b1663f8a36d8644c7988e1042f',
+      bytes: 26044,
+      blob: 'd8e8ce4b11480fae5726ae35cbcde3916c28bbe7',
+      sha256: '841906361cc616b095c218e43cf0dacc174401d406aaa491ffefa505d16c852f',
       importText: "import { createContentIdentityGraph } from '../../../lib/readiness/official-truth-content-identity'",
     },
   ] as const
