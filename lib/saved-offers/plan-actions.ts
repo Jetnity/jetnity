@@ -1,9 +1,13 @@
 'use server'
 
 import { createHash } from 'node:crypto'
+import { isDeepStrictEqual } from 'node:util'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createServerActionClient } from '@/lib/supabase/server'
+import { flugRouteManuellSchema } from '@/lib/trips/schema'
+import { manuelleFlugRouteBauen } from '@/lib/trips/flug-manuell'
+import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
 import { savedOfferPlanValues, type PlanChoice, type PlanDays } from './plan'
 
 type Result<T> = { ok: true; value: T } | { ok: false; message: string }
@@ -38,6 +42,7 @@ export async function savedOfferDays(tripId: unknown): Promise<Result<PlanDays>>
 export async function savedOfferToPlan(input: unknown): Promise<Result<string>> {
   const parsed = z.object({ offerId: z.string().uuid(), tripId: z.string().uuid(), dayId: z.string().uuid(),
     timing: z.object({ starts_on: z.string().nullable(), ends_on: z.string().nullable(), starts_at: z.string().nullable(), ends_at: z.string().nullable() }).strict(),
+    directFlight: z.object({ origin: z.string().max(32), destination: z.string().max(32), confirmed: z.literal(true) }).strict().optional(),
   }).strict().safeParse(input)
   if (!parsed.success) return { ok: false, message: 'Bitte wähle Reise und Tag und prüfe die Zeitangaben.' }
   const { db, user } = await account()
@@ -49,7 +54,17 @@ export async function savedOfferToPlan(input: unknown): Promise<Result<string>> 
   ])
   if (offer.error || !offer.data || day.error || !day.data) return { ok: false, message: 'Angebot oder Reisetag ist nicht verfügbar. Bitte lade die Ansicht neu.' }
   try {
-    const values = savedOfferPlanValues(offer.data, v.timing, day.data.day_date)
+    let route: NonNullable<ReturnType<typeof manuelleFlugRouteBauen>> | undefined
+    if (v.directFlight) {
+      if (offer.data.category !== 'flight') return { ok: false, message: 'Eine Flugroute passt nur zu einem Flugangebot.' }
+      const { segments } = flugRouteManuellSchema.parse({ segments: [{ origin: v.directFlight.origin, destination: v.directFlight.destination, departureDate: v.timing.starts_on ?? day.data.day_date, arrivalDate: v.timing.ends_on, departureTime: v.timing.starts_at, arrivalTime: v.timing.ends_at }] })
+      const codes = segments.flatMap(s => [s.origin, s.destination])
+      const refs = await flughafenReferenzLesen(codes, db)
+      if (codes.some(code => !Object.hasOwn(refs, code))) return { ok: false, message: 'Ein Flughafen konnte nicht bestätigt werden. Bitte prüfe die IATA-Codes oder versuche es später erneut.' }
+      route = manuelleFlugRouteBauen(segments, refs) ?? undefined
+      if (!route) return { ok: false, message: 'Die Flugroute konnte nicht übernommen werden.' }
+    }
+    const values = savedOfferPlanValues(offer.data, v.timing, day.data.day_date, route)
     // Deterministic request identity: a retry after a lost response cannot duplicate this offer/day.
     const hex = createHash('sha256').update(`${user.id}:${v.offerId}:${v.tripId}:${v.dayId}`).digest('hex')
     const id = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-a${hex.slice(17, 20)}-${hex.slice(20, 32)}`
@@ -57,10 +72,16 @@ export async function savedOfferToPlan(input: unknown): Promise<Result<string>> 
     if (last.error) return unavailable
     const result = await db.from('trip_items').insert({ ...values, id, user_id: user.id, trip_id: v.tripId, day_id: v.dayId, stage_id: day.data.stage_id, position: Math.min((last.data?.[0]?.position ?? 0) + 1, 500) }).select('id').single()
     if (result.error && result.error.code !== '23505') return { ok: false, message: 'Das Angebot konnte nicht eingeplant werden. Bitte prüfe die Reise und versuche es erneut.' }
-    const confirmed = await db.from('trip_items').select('id,title,starts_on,ends_on,starts_at,ends_at').eq('id', id).eq('user_id', user.id).eq('trip_id', v.tripId).maybeSingle()
+    const confirmed = await db.from('trip_items').select('id,title,starts_on,ends_on,starts_at,ends_at,metadata').eq('id', id).eq('user_id', user.id).eq('trip_id', v.tripId).maybeSingle()
     if (confirmed.error || !confirmed.data) return { ok: false, message: 'Speichern konnte nicht bestätigt werden. Lade die Reise neu; ein erneuter Versuch erzeugt keinen zweiten Eintrag.' }
     const c = confirmed.data
     if (c.title !== values.title || c.starts_on !== values.starts_on || c.ends_on !== values.ends_on || (c.starts_at?.slice(0, 5) ?? null) !== values.starts_at || (c.ends_at?.slice(0, 5) ?? null) !== values.ends_at) return { ok: false, message: 'Dieses Angebot wurde an diesem Tag bereits mit anderen Angaben eingeplant. Bitte bearbeite es im Reiseplan.' }
+    if (route) {
+      const metadata = c.metadata && typeof c.metadata === 'object' && !Array.isArray(c.metadata) ? c.metadata : {}
+      // JSONB reorders keys; compare validated route values rather than serialized object order.
+      const saved = metadata.routeItinerary
+      if (!isDeepStrictEqual(saved, route.routeItinerary)) return { ok: false, message: 'Dieses Angebot ist bereits mit einer anderen Flugroute eingeplant. Bitte prüfe den Flugeditor im Reiseplan.' }
+    }
     revalidatePath(`/reisen/${v.tripId}`)
     revalidatePath('/reisen')
     return { ok: true, value: `/reisen/${v.tripId}?ansicht=plan` }

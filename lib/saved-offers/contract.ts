@@ -28,12 +28,13 @@ const zone = optionalText(64).refine(v => {
   try { new Intl.DateTimeFormat('de', { timeZone: v }).format(); return true } catch { return false }
 }, 'Die Zeitzone ist unbekannt.')
 
+export const offerTimingInput = z.object({ starts_on: date, ends_on: date, starts_at: time, ends_at: time }).strict()
+
 export const offerInput = z.object({
   category: z.enum(['stay', 'flight', 'activity', 'rental_car', 'transfer']),
   title: z.string().trim().min(1, 'Bitte benenne das konkrete Angebot.').max(200),
   url: z.string().trim().refine(v => !!safeOfferUrl(v), 'Bitte verwende den HTTPS-Link zum konkreten Angebot, ohne Zugangsdaten oder Suchseite.').transform(v => safeOfferUrl(v)!),
-  destination: optionalText(200), starts_on: date, ends_on: date,
-  starts_at: time, ends_at: time, start_timezone: zone, end_timezone: zone,
+  destination: optionalText(200), ...offerTimingInput.shape, start_timezone: zone, end_timezone: zone,
 }).strict().superRefine((v, ctx) => {
   if (v.starts_at && !v.starts_on) ctx.addIssue({ code: 'custom', path: ['starts_on'], message: 'Zur Anfangszeit fehlt das Datum.' })
   if (v.ends_at && !v.ends_on) ctx.addIssue({ code: 'custom', path: ['ends_on'], message: 'Zur Endzeit fehlt das Datum.' })

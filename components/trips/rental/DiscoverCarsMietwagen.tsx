@@ -14,6 +14,7 @@ import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experi
 import type { Trip } from '@/types/trips'
 import StationField from './StationField'
 import RentalHeart from '@/components/saved-offers/RentalHeart'
+import RentalHearts from '@/components/saved-offers/RentalHearts'
 import { OfferCard, OfferComparison, OfferDetails } from './Offers'
 import { BUTTON, CATEGORY, FIELD, PRIMARY, rentalDate, rentalRequest } from './client'
 
@@ -190,9 +191,11 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
         {comparison.length ? <OfferComparison offers={comparison} onClose={() => setCompare([])} /> : null}
         <p role="status" className="text-sm text-ink-600">{visible.length} passende Angebote · bis zu drei Fahrzeuge vergleichen</p>
         {!visible.length ? <p className="text-sm text-ink-800">Zu diesen Filtern gibt es keine Treffer. Ändere Getriebe oder Fahrzeugklasse.</p> : null}
+        <RentalHearts offers={visible.slice(0, limit).map(o => o.offer_id)} timing={{ starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }}>
         <div data-rental-grid className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} saveAction={<RentalHeart token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
+          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} saveAction={<RentalHeart offerId={o.offer_id} token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
         </div>
+        </RentalHearts>
         {compare.length === 3 ? <p role="status" className="text-sm text-ink-600">Drei Fahrzeuge sind ausgewählt. Entferne eines, um ein anderes hinzuzufügen.</p> : null}
         {visible.length > limit ? <button type="button" className={`${BUTTON} justify-self-center`} onClick={() => setLimit(x => x + 12)}>Weitere Angebote anzeigen ({visible.length - limit})</button> : null}
       </>}

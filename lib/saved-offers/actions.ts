@@ -1,11 +1,11 @@
 'use server'
 
-import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createServerActionClient } from '@/lib/supabase/server'
 import { createRentalSearch, rentalAccess } from '@/lib/providers/discovercars/search/server'
-import { offerInput, type OfferInput, type SavedOffer } from './contract'
+import { offerInput, offerTimingInput, type OfferInput, type SavedOffer } from './contract'
+import { offerReference } from './reference'
 
 type Result<T> = { ok: true; value: T } | { ok: false; message: string }
 const LOGIN = 'Bitte melde dich an, um Angebote in deinem Konto zu merken.'
@@ -29,7 +29,7 @@ export async function savedOffersList(): Promise<Result<SavedOffer[]>> {
 async function save(value: OfferInput, source: 'manual' | 'discovercars', ref?: string, expiresAt?: number): Promise<Result<SavedOffer>> {
   const { db, user } = await account()
   if (!user) return { ok: false, message: LOGIN }
-  const offer_ref = createHash('sha256').update(JSON.stringify([source, ref ?? value.url, value.starts_on, value.ends_on, value.starts_at, value.ends_at])).digest('hex')
+  const offer_ref = offerReference(source, ref ?? value.url, value)
   const row = { ...value, source, user_id: user.id, offer_ref, provider: source === 'discovercars' ? 'DiscoverCars' : new URL(value.url).hostname,
     expires_at: expiresAt ? new Date(expiresAt).toISOString() : null }
   // A unique owner/reference key handles retries and concurrent tabs without overwriting a saved entry.
@@ -46,6 +46,22 @@ export async function saveManualOffer(input: unknown): Promise<Result<SavedOffer
   const parsed = offerInput.safeParse(input)
   if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? FAILURE }
   return save(parsed.data, 'manual')
+}
+
+/** One owner-scoped read for the visible cards; no provider call and no public cache. */
+export async function savedRentalOfferStates(input: unknown): Promise<Result<Record<string, string>>> {
+  const parsed = z.object({
+    offers: z.array(z.string().min(1).max(300)).max(2000),
+    timing: offerTimingInput,
+  }).strict().safeParse(input)
+  if (!parsed.success) return { ok: false, message: 'Der Merkstatus konnte nicht geprüft werden.' }
+  const { db, user } = await account()
+  if (!user) return { ok: false, message: LOGIN }
+  const refs = new Map(parsed.data.offers.map(id => [offerReference('discovercars', id, parsed.data.timing), id]))
+  if (!refs.size) return { ok: true, value: {} }
+  const { data, error } = await db.from('saved_offers').select('id,offer_ref').eq('user_id', user.id).eq('source', 'discovercars').limit(501)
+  if (error || !data || data.length > 500) return { ok: false, message: 'Der Merkstatus konnte nicht geladen werden. Bitte prüfe deine Merkliste oder versuche es erneut.' }
+  return { ok: true, value: Object.fromEntries(data.filter(row => refs.has(row.offer_ref)).map(row => [refs.get(row.offer_ref)!, row.id])) }
 }
 
 export async function saveRentalOffer(input: unknown): Promise<Result<SavedOffer>> {

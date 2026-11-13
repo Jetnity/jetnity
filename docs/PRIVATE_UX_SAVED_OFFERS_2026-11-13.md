@@ -50,5 +50,31 @@ Manuelle Flugzeitzonen stehen in der Notiz, ohne strukturierte Flughafenroute
 nicht in der Chronologie. Vollständige Flugroute/Zeitzonen und Datumsgrenzfälle
 brauchen den vorhandenen Flugeditor. Eine Route wird nicht aus dem Titel erfunden.
 
+## Ergänzung nach dem Safari-Nachweis
+
+- Mietwagenherzen lesen den eigenen gespeicherten Zustand gesammelt für die
+  angezeigten Karten. Wiederholte Suche und Rückkehr aus einem anderen Tab lesen
+  neu; ein Ladefehler erscheint nicht als leere Merkliste. Kein Provideraufruf
+  pro Herz. Identität bleibt die bestehende Angebotsreferenz samt Mietzeiten.
+- Bei einem ausdrücklich gewählten Flug ohne Umstieg kann die Planübernahme
+  Abflug- und Ankunftsflughafen mitnehmen. IATA-Referenzen werden ausschliesslich
+  serverseitig gelesen; Länder und Orte kommen nicht aus dem Browser. Das
+  bestehende Route-Itinerary erhält lokale Ankunftsdaten über die Datumsgrenze.
+  Die Legacy-Zusammenfassung erfindet dabei keine negative Flugdauer.
+- Keine neue Tabelle, Migration, Policy, Variable oder Anbieterfreigabe. Eigene
+  Serveraktionen und deren eigenes Hash-Inventar ergänzt; `audit.mjs`,
+  `audit.test.mjs` und `Reisevorbereitung.tsx` bleiben bis #1197 unverändert.
+- 13 gezielte Tests und 41 Security-Tests grün; TypeScript grün. Neue Browser-
+  Nachweise und vollständige CI sind nach Deployment separat festzuhalten.
+- iPhone-Synchronisierung wurde gefunden, ist gesperrt. PO meldet das iPhone
+  derzeit als nicht verfügbar. Eine echte Geräteabnahme bleibt ausdrücklich
+  offen; schmale Chrome-Ansicht und Desktop-Safari ersetzen sie nicht.
+
+Grenze bleibt: eingebettete Hotel-, Flug- und Aktivitätenanbieter geben keine
+konkreten Angebote an Jetnity zurück. Die funktionierende Alternative ist ein
+selbst erfasster konkreter Angebotslink, keine allgemeine Suche. Umsteigeverbindungen
+werden im vorhandenen Flugeditor erfasst. Zeitzonen stehen als eigene Angaben in
+der Notiz; daraus wird keine bestätigte UTC-Chronologie abgeleitet.
+
 Aktueller Freigabe-/Konfliktstand und genaue Grenzen:
 [Freigabepunkte](PRIVATE_UX_FREIGABEPUNKTE_2026-11-13.md).

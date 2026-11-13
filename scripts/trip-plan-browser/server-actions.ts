@@ -11,7 +11,7 @@ export const atlasServerActions: Plugin = {
         'aenderungErzeugenGast', 'aenderungOrteAufloesen', 'aenderungUebernehmen',
       ],
       '@/lib/places/aktionen': ['ortBestaetigen', 'reiseorteBestaetigen'],
-      '@/lib/saved-offers/actions': ['savedOffersList', 'saveManualOffer', 'saveRentalOffer', 'removeSavedOffer'],
+      '@/lib/saved-offers/actions': ['savedOffersList', 'savedRentalOfferStates', 'saveManualOffer', 'saveRentalOffer', 'removeSavedOffer'],
       '@/lib/saved-offers/plan-actions': ['savedOfferTrips', 'savedOfferDays', 'savedOfferToPlan'],
     } as const
     build.onResolve({ filter: /^@\/lib\/((reiseaenderung|places)\/aktionen|saved-offers\/(actions|plan-actions))$/ }, args => ({

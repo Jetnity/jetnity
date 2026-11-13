@@ -20,6 +20,7 @@ export default function OfferPlan({ offer }: { offer: SavedOffer }) {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [target, setTarget] = useState('')
+  const [direct, setDirect] = useState(false)
   const generation = useRef(0)
   const choose = async (id: string) => {
     const ticket = ++generation.current
@@ -43,7 +44,7 @@ export default function OfferPlan({ offer }: { offer: SavedOffer }) {
     {open && <form className="mt-4 grid gap-3 rounded-2xl bg-surface-50 p-4 sm:grid-cols-2" onSubmit={async e => {
       e.preventDefault(); const form = new FormData(e.currentTarget); setBusy(true); setMessage(''); setTarget('')
       try {
-        const result = await savedOfferToPlan({ offerId: offer.id, tripId: trip, dayId: day, timing: { starts_on: start || null, ends_on: end || null, starts_at: String(form.get('starts_at') ?? '') || null, ends_at: String(form.get('ends_at') ?? '') || null } })
+        const result = await savedOfferToPlan({ offerId: offer.id, tripId: trip, dayId: day, timing: { starts_on: start || null, ends_on: end || null, starts_at: String(form.get('starts_at') ?? '') || null, ends_at: String(form.get('ends_at') ?? '') || null }, ...(direct ? { directFlight: { origin: String(form.get('origin') ?? ''), destination: String(form.get('destination') ?? ''), confirmed: true } } : {}) })
         if (result.ok) { setTarget(result.value); setMessage('Im Reiseplan vorgemerkt – nicht gebucht.') } else setMessage(result.message)
       } catch { setMessage('Speichern konnte nicht bestätigt werden. Bitte prüfe die Reise; ein erneuter Versuch legt keinen zweiten Eintrag an.') } finally { setBusy(false) }
     }}>
@@ -53,6 +54,15 @@ export default function OfferPlan({ offer }: { offer: SavedOffer }) {
       <Suchkalender start={end} ende="" einzeln optional startLabel={offer.category === 'stay' ? 'Check-out' : 'Ende / Ankunft'} endeLabel="" min="1900-01-01" max="9999-12-31" minTage={0} disabled={busy} setzen={setEnd} />
       <label className="grid gap-1 text-sm">Anfangszeit<input type="time" name="starts_at" defaultValue={offer.starts_at?.slice(0, 5) ?? ''} disabled={busy} className={field} /></label>
       <label className="grid gap-1 text-sm">Endzeit<input type="time" name="ends_at" defaultValue={offer.ends_at?.slice(0, 5) ?? ''} disabled={busy} className={field} /></label>
+      {offer.category === 'flight' && <fieldset disabled={busy} className="grid min-w-0 gap-3 sm:col-span-2 sm:grid-cols-2">
+        <legend className="sr-only">Flugroute</legend>
+        <label className="flex min-h-11 items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" checked={direct} onChange={e => setDirect(e.target.checked)} className="h-4 w-4" />Flug ohne Umstieg: Flughäfen mit übernehmen</label>
+        {direct && <>
+          <label className="grid min-w-0 gap-1 text-sm">Abflugflughafen (IATA)<input className={field} name="origin" required minLength={3} maxLength={3} pattern="[A-Za-z]{3}" autoCapitalize="characters" placeholder="z. B. ZRH" /></label>
+          <label className="grid min-w-0 gap-1 text-sm">Ankunftsflughafen (IATA)<input className={field} name="destination" required minLength={3} maxLength={3} pattern="[A-Za-z]{3}" autoCapitalize="characters" placeholder="z. B. CDG" /></label>
+        </>}
+        <p className="text-xs leading-5 text-ink-700 sm:col-span-2">Bei Flügen ohne Umstieg bleiben mit den Flughäfen auch Ankünfte am vorherigen Ortsdatum erhalten. Umstiege ergänzst du im Flugeditor deines Reiseplans. Wir leiten keine Flughäfen oder Flugdauer aus dem Titel ab.</p>
+      </fieldset>}
       <p className="text-xs leading-5 text-ink-700 sm:col-span-2">Bitte prüfe Ziel, Datum und Ortszeiten. Ein Hotel wird bis zum Check-out eingeplant; dieser zählt nicht als zusätzliche Nacht. Ein Nachtflug behält sein eigenes Ankunftsdatum. Preis und Verfügbarkeit sind nicht bestätigt.</p>
       {!busy && !trips.length && <p className="text-sm sm:col-span-2">Hier erscheinen deine im Konto gespeicherten Reisen. Eine Gastreise kannst du zuerst über „Meine Reisen“ ins Konto übernehmen.</p>}
       <button type="submit" disabled={busy || !day} className="min-h-11 rounded-full bg-brand-800 px-5 py-3 text-sm font-semibold text-white disabled:opacity-50 sm:col-span-2">{busy ? 'Bitte warten …' : 'Als geplant hinzufügen'}</button>
