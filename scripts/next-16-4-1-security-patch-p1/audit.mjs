@@ -8,6 +8,8 @@ import { spawnSync } from 'node:child_process'
 import { isDeepStrictEqual } from 'node:util'
 
 const control = JSON.parse(readFileSync(new URL('./historical-control.json', import.meta.url), 'utf8'))
+// Explicitly reviewed additions from PR #1198; historical action hashes stay unchanged.
+const savedOfferActions = JSON.parse(readFileSync(new URL('./saved-offers-actions.json', import.meta.url), 'utf8'))
 const historicalPath = 'scripts/next-16-3-8-security-upgrade-1-audit.mjs'
 const expectedHistoricalFailures = [
   'next pin is 16.4.1, expected 16.3.8',
@@ -89,7 +91,7 @@ export function validate(snapshot) {
   try {
     const { pkg, lock, installLock, installed, historical, runtime } = snapshot
     check(isDeepStrictEqual(snapshot.protectedBlobs, control.protectedBlobs), 'historical audit/config/deployment blob drift')
-    check(isDeepStrictEqual(snapshot.serverActions, control.serverActions), 'server action source inventory drift')
+    check(isDeepStrictEqual(snapshot.serverActions, { ...control.serverActions, ...savedOfferActions }), 'server action source inventory drift')
     check(historical.status === 1 && historical.signal === null && !historical.error && historical.stderrEmpty, 'historical audit unexpected process result')
     check(historical.report.slice === 'next-16-3-8-security-upgrade-1', 'historical audit identity drift')
     check(isDeepStrictEqual(historical.report.failures, expectedHistoricalFailures), 'historical audit unexpected failures')
