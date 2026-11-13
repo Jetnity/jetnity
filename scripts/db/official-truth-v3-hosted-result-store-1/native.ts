@@ -13,6 +13,7 @@ import { createM04NativeExecutors, M04_FIXED_SQL } from '../official-truth-v3-du
 import { M04_TEST_LOGIN, m04Canonical } from '../official-truth-v3-durable-jobs-1/fixtures'
 import { sha256Hex } from '../../../lib/readiness/digest'
 import { evidenceQuellenFingerprint } from '../../../lib/readiness/evidence'
+import { textAus } from '../../../lib/readiness/official-truth-retrieval-physical-internal'
 import { quellenRegistryErstellen } from '../../../lib/readiness/source-registry'
 import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'
 import { officialTruthTrustedFactExtrahierenMitDefinitionen, type OfficialTruthExtractorDefinition } from '../../../lib/readiness/official-truth-trusted-fact-extractor-registry'
@@ -105,8 +106,11 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     const effect=role==='counter'&&control.mode==='conflicts'?'required':'not_required'
     const cacheKey=hrs1Canonical([control.epoch,role,unclear,effect,control.retrievedAt])
     const existing=originals.get(cacheKey);if(existing)return existing
-    const bodyText=JSON.stringify(unclear?{synthetic:true,epoch:control.epoch,statements:['visa required','visa not required']}
-      :{synthetic:true,epoch:control.epoch,sourceRole:role,fact:{kind:'requirement_effect',effect,visaMode:null}})
+    const renderedBody=JSON.stringify(unclear?{synthetic:true,utf8Probe:'Grüße aus Zürich: Einreise für Gäste.',epoch:control.epoch,statements:['visa required','visa not required']}
+      :{synthetic:true,utf8Probe:'Grüße aus Zürich: Einreise für Gäste.',epoch:control.epoch,sourceRole:role,fact:{kind:'requirement_effect',effect,visaMode:null}})+'\r\n'
+    const decoded=textAus(new TextEncoder().encode(renderedBody));assert.ok(decoded.ok)
+    if(!decoded.ok)assert.fail('synthetic original UTF8 refused')
+    const bodyText=decoded.text;assert.equal(bodyText,renderedBody,'actual strict decode preserves every original byte')
     const source=fixtureSource(role),fingerprint=evidenceQuellenFingerprint(bodyText);assert.ok(fingerprint)
     const work=mustRead(createV3WorkIdentity({context,method:METHOD_REF,factKind:'requirement_effect',researchReason:{status:'missing'}}))
     const versionId=fixtureId('ev2',seed+'|'+source.sourceId+'|'+bodyText+'|'+control.retrievedAt)
@@ -638,9 +642,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "85dc84893ff8e8c2c86f06752c5eabc8996ea5c6",
+    "blob": "79a7b523374f2fd3b5061fd0ddb2cc309e43bddf",
     "bytes": 442759,
-    "sha256": "74642ccb247f4b9544c9ea794e1de0b870c6db371cdc91d64086381125ba1aeb"
+    "sha256": "885dc5a711ffa8df786df67e33f3dd1f7aefaea5adb7d119b3b41a602ac994e6"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -674,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "3541d570f39243a4f3c3d6f19cc295da64f74df3",
-    "bytes": 371147,
-    "sha256": "869e69c894acd9cd803984520cf799ac685031f2b319659cfaeb9b666283bab3"
+    "blob": "74a6d443f7384b39e7d3d6a44bf6368ebd557e38",
+    "bytes": 373503,
+    "sha256": "dc2fd2cf0f824174dc85ef7554d5f0cc887674f4c43132cff1f8cab840e6a623"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "39a696c1845892575b7d573a4715d168c78acb46",
+    "blob": "648fc0fd7d65e02000692e456a7e28989a21a43b",
     "bytes": 161289,
-    "sha256": "3ec28ac8ffb667339876038ac42f8f8601113992fb903b7722d274a5c7809baa"
+    "sha256": "bab6848d2b4944a856de9971bc8129eff49c61700fdc9bf5be5de207b5dbec61"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1699,6 +1703,125 @@ function projectionBinding(projection:V3PublicProjectionRecord):V3ProjectionBind
 function publicKey(fixture:VisaFixture){return{destinationCountryCode:'DE',citizenshipCountryCode:'CH',contextKey:fixture.binding.contextKey,
   factKind:'requirement_effect' as const,method:METHOD_REF}}
 
+async function canonicalParity(common:Common){
+  const owner=common.bootstrap.connection
+  type Vector={label:string;wire:string;depth:number;expected:string;size?:'general'|'fallback'}
+  const nested=(levels:number,leaf:string)=>{
+    let wire=leaf
+    for(let i=0;i<levels;i++)wire=i%2===0?'['+wire+']':'{"":'+wire+'}'
+    return wire
+  }
+  const quotedBody=('quote " backslash \\ {, [, ,} ,] / ').repeat(400)
+  const fallbackBody='x'.repeat(262144)
+  const shared:Vector[]=[
+    {label:'C-order includes empty, numeric-looking and differently sized keys',depth:0,
+      wire:'{"b":4,"aa":3,"2":2,"10":1,"":0,"a":true}',
+      expected:'{"":0,"10":1,"2":2,"a":true,"aa":3,"b":4}'},
+    {label:'quoted/backslash keys and token-looking string data remain exact',depth:0,
+      wire:String.raw`{"z":{"b":"{, [, ,} ,] \" \\ /","a":"plain"},"a\"\\":{"":true}}`,
+      expected:String.raw`{"a\"\\":{"":true},"z":{"a":"plain","b":"{, [, ,} ,] \" \\ /"}}`},
+    {label:'numeric array positions cross index nine',depth:0,
+      wire:'[0,1,2,3,4,5,6,7,8,9,10,11,12]',expected:'[0,1,2,3,4,5,6,7,8,9,10,11,12]'},
+    {label:'literal backslash-u text is not a NUL value',depth:0,
+      wire:String.raw`["\\u0000"]`,expected:String.raw`["\\u0000"]`},
+    {label:'mixed containers preserve all empty positions',depth:0,
+      wire:'[{},{"z":[true,false,null],"":[[],{"":{}}]},[]]',
+      expected:'[{},{"":[[],{"":{}}],"z":[true,false,null]},[]]'},
+    {label:'scaled integers, negative zero, exponent and safe 16-digit values',depth:0,
+      wire:'{"values":[1.00,-0.000,1000000000000000,9007199254740991.000,-9007199254740991,1e3,10e-1]}',
+      expected:'{"values":[1,0,1000000000000000,9007199254740991,-9007199254740991,1000,1]}'},
+    {label:'plain scalar string',depth:24,wire:'" ~"',expected:'" ~"'},
+    {label:'empty object at shared depth limit',depth:24,wire:'{}',expected:'{}'},
+    {label:'empty array at shared depth limit',depth:24,wire:'[]',expected:'[]'},
+    {label:'mixed offset tree ends in scalar at shared limit',depth:22,wire:nested(2,'"edge"'),expected:nested(2,'"edge"')},
+    {label:'mixed offset tree ends in empty array at shared limit',depth:22,wire:nested(2,'[]'),expected:nested(2,'[]')},
+    {label:'verification-like bodyText and arrays exceed old 8192-byte fast path',depth:0,
+      wire:JSON.stringify({verification:{record:{bodyText:quotedBody,items:[3,2,1]}}}),
+      expected:'{"verification":{"record":{"bodyText":'+JSON.stringify(quotedBody)+',"items":[3,2,1]}}}',size:'general'},
+    {label:'general fast-path size cap preserves acceptance through original fallback',depth:0,
+      wire:JSON.stringify({bodyText:fallbackBody,items:[[],{}]}),
+      expected:'{"bodyText":'+JSON.stringify(fallbackBody)+',"items":[[],{}]}',size:'fallback'},
+  ]
+  for(const vector of shared){
+    const rows=await owner.query(`SELECT official_v3_result_private.canonical_v1($1::jsonb,$2::integer) AS hrs,
+      official_v3_jobs_private.canonical_v1($1::jsonb,$2::integer) AS jobs,
+      octet_length(($1::jsonb)::text)::text AS input_bytes`,text([vector.wire,vector.depth]))
+    assert.equal(rows.length,1)
+    const row=rows[0]!
+    assert.ok(row.hrs===row.jobs,vector.label+': complete parity with unchanged installed HM04')
+    assert.ok(row.hrs===vector.expected,vector.label+': complete independent expected text')
+    const bytes=Number(row.input_bytes);assert.ok(Number.isSafeInteger(bytes)&&bytes>0)
+    if(vector.size==='general')assert.ok(bytes>8192&&bytes<=262144)
+    if(vector.size==='fallback')assert.ok(bytes>262144)
+  }
+  const rejected=[
+    {label:'unicode key',wire:'{"é":[]}',depth:0},
+    {label:'control key',wire:String.raw`{"\u001f":[]}`,depth:0},
+    {label:'DEL key',wire:String.raw`{"\u007f":[]}`,depth:0},
+    {label:'fraction',wire:'[0.1]',depth:0},
+    {label:'exact fractional precision cannot round into an integer',wire:'{"a":1.0000000000000001}',depth:0},
+    {label:'positive safe-integer overflow',wire:'[9007199254740992]',depth:0},
+    {label:'negative safe-integer overflow',wire:'[-9007199254740992]',depth:0},
+    {label:'negative depth',wire:'[]',depth:-1},
+  ]
+  for(const vector of rejected){
+    await assert.rejects(owner.query('SELECT official_v3_result_private.canonical_v1($1::jsonb,$2::integer) AS canonical',
+      text([vector.wire,vector.depth])),stateError('P7601'),vector.label+': HRS')
+    await assert.rejects(owner.query('SELECT official_v3_jobs_private.canonical_v1($1::jsonb,$2::integer) AS canonical',
+      text([vector.wire,vector.depth])),stateError('P7601'),vector.label+': unchanged HM04')
+  }
+  // HRS already admits valid UTF8 values without NUL; its keys remain ASCII.
+  // The unchanged HM04 implementation is an oracle only in the shared domain.
+  for(const stringValue of ['Grüße aus Zürich','Zeile\r\nweiter\t\b\f\u001f\u007f','漢字 😀','e\u0301','\u2028\u2029']){
+    assert.equal(hrs1Data(stringValue),true)
+    for(const data of [stringValue,{value:stringValue,items:[stringValue]}]){
+      const rows=await owner.query(`SELECT official_v3_result_private.canonical_v1($1::jsonb,0) AS canonical,
+        official_v3_result_private.hash_v1($1::jsonb) AS digest`,text([JSON.stringify(data)]))
+      assert.equal(rows.length,1)
+      assert.equal(rows[0]!.canonical,hrs1Canonical(data),'complete UTF8 canonical text equals the existing TS contract')
+      assert.equal(rows[0]!.digest,hrs1Hash(data),'complete UTF8 canonical hash equals the existing TS contract')
+    }
+    await assert.rejects(owner.query('SELECT official_v3_jobs_private.canonical_v1($1::jsonb,0)',
+      text([JSON.stringify(stringValue)])),stateError('P7601'),'HM04 retains its original ASCII-only value domain')
+  }
+  const largeUtf8='ü'.repeat(131073)
+  for(const data of [{value:largeUtf8},{outer:{value:largeUtf8}},[largeUtf8]]){
+    const rows=await owner.query(`SELECT official_v3_result_private.canonical_v1($1::jsonb,0) AS canonical,
+      octet_length(($1::jsonb)::text)::text AS input_bytes`,text([JSON.stringify(data)]))
+    assert.equal(rows.length,1);assert.ok(Number(rows[0]!.input_bytes)>262144)
+    assert.ok(rows[0]!.canonical===hrs1Canonical(data),'UTF8 survives the original object/child/array fallback above the fast-path cap')
+  }
+  for(const bytes of [[0xc3,0x28],[0xed,0xa0,0x80],[0xf0,0x9f],[0xc0,0x80]]){
+    assert.deepEqual(textAus(Uint8Array.from(bytes)),{ok:false,reason:'invalid_utf8'},'the actual owned-source decoder rejects malformed UTF8')
+  }
+  for(const invalid of ['\u0000','\ud800','\udc00','a\ud800b']){
+    assert.equal(hrs1Data(invalid),false,'the real HRS data boundary refuses NUL and lone surrogates')
+  }
+  const decodedNul=textAus(Uint8Array.of(0));assert.ok(decodedNul.ok)
+  if(decodedNul.ok)assert.equal(hrs1Data(decodedNul.text),false,'UTF8 decoding does not substitute for the separate HRS NUL refusal')
+  for(const depth of [25,26,27,28,29,30,31,32]){
+    for(const leaf of ['"edge"','[]','{}']){
+      const wire=nested(32-depth,leaf)
+      const actual=scalar(await owner.query('SELECT official_v3_result_private.canonical_v1($1::jsonb,$2::integer) AS canonical',
+        text([wire,depth])),'canonical')
+      assert.equal(actual,wire,'HRS offset '+depth+' permits final scalar/empty container exactly at32')
+    }
+    await assert.rejects(owner.query('SELECT official_v3_result_private.canonical_v1($1::jsonb,$2::integer) AS canonical',
+      text([nested(33-depth,'null'),depth])),stateError('P7601'),'HRS offset '+depth+' rejects a child at33')
+  }
+  for(const leaf of ['"edge"','[]','{}']){
+    const wire=nested(32,leaf)
+    assert.equal(scalar(await owner.query('SELECT official_v3_result_private.canonical_v1($1::jsonb,0) AS canonical',text([wire])),'canonical'),wire)
+    await assert.rejects(owner.query('SELECT official_v3_result_private.canonical_v1($1::jsonb,0) AS canonical',
+      text([nested(33,leaf)])),stateError('P7601'))
+  }
+  for(const sql of [
+    'SELECT official_v3_result_private.canonical_v1(NULL::jsonb,0)',
+    "SELECT official_v3_result_private.canonical_v1('[]'::jsonb,NULL::integer)",
+    "SELECT official_v3_result_private.canonical_v1('{}'::jsonb,33)",
+  ])await assert.rejects(owner.query(sql),stateError('P7601'))
+}
+
 async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:HrsBudget){
   for(const common of commons){
     await creatorIdentity(common.creator.connection);await frozen(common)
@@ -1725,6 +1848,7 @@ async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:H
           text([HRS_METHOD.methodId,1,HRS_METHOD.methodDigest,HRS_METHOD.packageDigest,1])),stateError('42501'))
       }finally{caller.connection.close();await proveAbsent(lifetime,common.observer.connection,[caller.identity])}
     }
+    if(common===commons[0])await canonicalParity(common)
     await frozen(common)
   }
 }
@@ -1767,10 +1891,32 @@ async function n02(h:Harness){
   assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),before)
 }
 async function n03(h:Harness){
+  const attestStart=h.hrs.evidence.calls.length
   const incomplete=await h.prepare('n03-incomplete'),body=h.transition(incomplete)
   const pending=await h.intake.read(incomplete.reference,h.signal)
   assert.equal(pending.status,'recorded');assert.ok(pending.status==='recorded');assert.equal(pending.record.completion,null)
   const before=await resultSnapshot(h.common.bootstrap.connection)
+  const verified=h.verification(incomplete.outcome)
+  const attested=h.hrs.evidence.calls.slice(attestStart).filter(call=>call.operation==='attest'&&call.kind==='verifier')
+  assert.ok(attested.length>0&&attested.every(call=>call.dispatched&&call.committed&&call.drained&&call.target&&call.control),
+    'UTF8 originals cross the actual restricted verifier Fixed-Call and complete COMMIT/drain')
+  const qualifications=before.qualifications_v1.filter(row=>row.kind==='verification'&&row.reference===verified.reference)
+  assert.equal(qualifications.length,1)
+  assert.deepEqual(qualifications[0]!.record,verified,'complete qualified verification preserves original UTF8 values')
+  assert.equal(qualifications[0]!.digest,hrs1Hash(verified),'persisted SQL verification hash equals the independent TS hash')
+  assert.ok(verified.originals.length>0)
+  for(const original of verified.originals){
+    const evidence=hrs1OriginalEvidence(original)
+    assert.ok(original.bodyText.includes('Grüße aus Zürich')&&original.bodyText.endsWith('\r\n'))
+    assert.equal(JSON.parse(original.bodyText).utf8Probe,'Grüße aus Zürich: Einreise für Gäste.')
+    assert.equal(evidence.sourceFingerprintProtocol,1)
+    assert.equal(evidence.sourceContentHash,evidenceQuellenFingerprint(original.bodyText),'the existing Protocol1 fingerprint rule is unchanged')
+    assert.equal(original.rawDigest,sha256Hex(original.bodyText),'raw digest hashes the complete original UTF8 including CRLF')
+    assert.notEqual(original.rawDigest,evidence.sourceContentHash,'Protocol1 fingerprint normalization is not raw-source normalization')
+    const stored=before.originals_v1.filter(row=>row.version_id===evidence.versionId)
+    assert.equal(stored.length,1);assert.equal(stored[0]!.body_text,original.bodyText)
+    assert.equal(stored[0]!.raw_digest,original.rawDigest);assert.deepEqual(stored[0]!.evidence,evidence)
+  }
   const refusal=await h.raw('transition',body)
   assert.ok(['unavailable','unconfirmed','not_current'].includes(refusal.status),'actual existing S1 operation without finish cannot publish')
   assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),before)
@@ -2120,23 +2266,35 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
   const ambiguous=await h.prepare('n10-current-read-suppression');await ambiguous.finish()
   assert.ok(ambiguous.outcome.status==='escalation'&&ambiguous.outcome.reason==='primary_unclear')
   const beforeSuppression={calls:h.hrs.evidence.calls.length,sqlCodes:h.hrs.evidence.sqlCodes.length}
-  const lock=await resultLocker(lifetime,h,'outbox_v1'),writer=lifetime.run(()=>h.raw('escalation',h.escalation(ambiguous)))
+  const lock=await resultLocker(lifetime,h,'outbox_v1')
+  const raceStarted=performance.now(),raceTimings:Record<string,number>={writerStarted:0}
+  const writer=lifetime.run(()=>h.raw('escalation',h.escalation(ambiguous)))
+    .finally(()=>{raceTimings.writerCompleted=performance.now()-raceStarted})
   const abortSingle=new AbortController()
   let single:Promise<Hrs1Reply>|undefined,batch:Promise<Hrs1Reply>|undefined
   try{
     const writerIdentity=await blocked(lifetime,h,'escalation',lock.identity)
+    raceTimings.writerBlockedObserved=performance.now()-raceStarted
+    raceTimings.singleStarted=performance.now()-raceStarted
     single=lifetime.run(()=>h.raw('projection_current',{binding},abortSingle.signal))
+      .finally(()=>{raceTimings.singleCompleted=performance.now()-raceStarted})
     await blocked(lifetime,h,'projection_current',writerIdentity)
+    raceTimings.singleBlockedObserved=performance.now()-raceStarted
     abortSingle.abort(Error('join single read before admitting second reader'))
     assert.equal((await single).status,'unconfirmed')
     assert.equal(h.hrs.snapshot().active,1,'cancelled single reader releases its actual drained slot')
+    raceTimings.batchStarted=performance.now()-raceStarted
     batch=lifetime.run(()=>h.raw('projection_batch',{bindings:[binding]}))
+      .finally(()=>{raceTimings.batchCompleted=performance.now()-raceStarted})
     await blocked(lifetime,h,'projection_batch',writerIdentity)
+    raceTimings.batchBlockedObserved=performance.now()-raceStarted
+    raceTimings.releaseStarted=performance.now()-raceStarted
     await lock.release()
+    raceTimings.releaseCompleted=performance.now()-raceStarted
     assert.equal((await writer).status,'reported')
     const batchReply=await batch
     if(!['not_current','missing'].includes(batchReply.status))console.error('HRS1_N10_BATCH_DIAG',JSON.stringify({
-      status:batchReply.status,signalAborted:h.signal.aborted,
+      status:batchReply.status,signalAborted:h.signal.aborted,timings:raceTimings,
       sqlCodeCount:h.hrs.evidence.sqlCodes.length-beforeSuppression.sqlCodes,
       sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeSuppression.sqlCodes).slice(-8),
       callCount:h.hrs.evidence.calls.length-beforeSuppression.calls,

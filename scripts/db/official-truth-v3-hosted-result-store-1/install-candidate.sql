@@ -848,6 +848,59 @@ BEGIN
     END IF;
     fast_text:=NULL;
   END IF;
+  -- Bounded general-container serialization; the complete fallback below is
+  -- still authoritative whenever any node is outside this fast path's domain.
+  IF jsonb_typeof(v) IN ('object','array') THEN
+    fast_text:=v::text;
+    IF octet_length(fast_text)<=262144 THEN
+      WITH RECURSIVE walk_nodes(node,member_key,node_path,node_depth,node_type,member_position) AS (
+        SELECT v,NULL::text,ARRAY[]::bigint[],d,jsonb_typeof(v),0::bigint
+        UNION ALL
+        SELECT j.node,j.member_key,array_append(w.node_path,j.member_position),w.node_depth+1,
+          jsonb_typeof(j.node),j.member_position
+          FROM walk_nodes w CROSS JOIN LATERAL (
+            SELECT q.value AS node,q.key AS member_key,
+              row_number() OVER (ORDER BY q.key COLLATE "C") AS member_position
+              FROM jsonb_each(CASE WHEN w.node_type='object' AND w.node_depth<32
+                THEN w.node ELSE '{}'::jsonb END) q
+            UNION ALL
+            SELECT q.value,NULL::text,q.ordinality
+              FROM jsonb_array_elements(CASE WHEN w.node_type='array' AND w.node_depth<32
+                THEN w.node ELSE '[]'::jsonb END) WITH ORDINALITY q(value,ordinality)
+          ) j WHERE w.node_type IN ('object','array') AND w.node_depth<32
+      ), token_rows AS (
+        SELECT w.node_path AS token_path,
+          (w.member_key IS NULL OR w.member_key !~ '[^ -~]') AND w.node_depth<=32 AND
+          CASE w.node_type
+            WHEN 'object' THEN w.node_depth<32 OR w.node='{}'::jsonb
+            WHEN 'array' THEN w.node_depth<32 OR w.node='[]'::jsonb
+            WHEN 'string' THEN true
+            WHEN 'number' THEN w.node::numeric=trunc(w.node::numeric)
+              AND w.node::numeric BETWEEN -9007199254740991 AND 9007199254740991
+            WHEN 'boolean' THEN true
+            WHEN 'null' THEN true
+            ELSE false
+          END AS is_valid,
+          (CASE WHEN w.member_position>1 THEN ',' ELSE '' END)||
+          (CASE WHEN w.member_key IS NULL THEN '' ELSE to_jsonb(w.member_key)::text||':' END)||
+          CASE w.node_type
+            WHEN 'object' THEN '{'
+            WHEN 'array' THEN '['
+            WHEN 'number' THEN trunc(w.node::numeric)::text
+            ELSE w.node::text
+          END AS piece
+          FROM walk_nodes w
+        UNION ALL
+        SELECT array_append(w.node_path,NULL::bigint),true,
+          CASE WHEN w.node_type='object' THEN '}' ELSE ']' END
+          FROM walk_nodes w WHERE w.node_type IN ('object','array')
+      )
+      SELECT CASE WHEN bool_and(t.is_valid) IS TRUE THEN string_agg(t.piece,'' ORDER BY t.token_path) END
+        INTO fast_text FROM token_rows t;
+      IF fast_text IS NOT NULL THEN RETURN fast_text; END IF;
+    END IF;
+    fast_text:=NULL;
+  END IF;
   CASE jsonb_typeof(v)
   WHEN 'object' THEN
     current_depth:=d;
@@ -857,7 +910,7 @@ BEGIN
         CASE WHEN j.key ~ '[^ -~]' OR current_depth+1>32 THEN NULL
         ELSE to_jsonb(j.key)::text||':'||
           CASE jsonb_typeof(j.value)
-          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'string' THEN j.value::text
           WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
             AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
           WHEN 'boolean' THEN j.value::text
@@ -889,7 +942,7 @@ BEGIN
                 CASE WHEN j.key ~ '[^ -~]' OR child_depth+1>32 THEN NULL
                 ELSE to_jsonb(j.key)::text||':'||
                   CASE jsonb_typeof(j.value)
-                  WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+                  WHEN 'string' THEN j.value::text
                   WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
                     AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
                   WHEN 'boolean' THEN j.value::text
@@ -917,7 +970,7 @@ BEGIN
           END IF;
         WHEN 'array' THEN child_text:=official_v3_result_private.canonical_v1(e,current_depth+1);
         WHEN 'string' THEN
-          s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+          s:=e#>>'{}';
           child_text:=e::text;
         WHEN 'number' THEN
           number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
@@ -952,7 +1005,7 @@ BEGIN
       WHEN 'object' THEN child_text:=official_v3_result_private.canonical_v1(e,d+1);
       WHEN 'array' THEN child_text:=official_v3_result_private.canonical_v1(e,d+1);
       WHEN 'string' THEN
-        s:=e#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+        s:=e#>>'{}';
         child_text:=e::text;
       WHEN 'number' THEN
         number_value:=e::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
@@ -965,7 +1018,7 @@ BEGIN
     END LOOP;
     RETURN '['||array_to_string(parts,',')||']';
   WHEN 'string' THEN
-    s:=v#>>'{}'; IF s ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+    s:=v#>>'{}';
     RETURN v::text;
   WHEN 'number' THEN
     number_value:=v::text::numeric; IF number_value<>trunc(number_value) OR number_value NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
@@ -2939,7 +2992,7 @@ BEGIN
  FOR expected_function IN SELECT * FROM (VALUES
   ('official_v3_result_private','exact_keys_v1','jsonb,_text',ARRAY['v','expected']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'ee7cf54b133b5ba633b55372c6f98b06058d3fbc4ffe8bda08813fc77865cc33',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','nodes_v1','jsonb,int4,int4,int4',ARRAY['v','d','max_d','max_n']::text[],'int4','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'d2bf4eb545e4c0453f4511ed6585a7643b440ba58dfc35ff1192feeae72941e3',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'8e7603943fbb64a7641c169196cc2d49690ddf2e6290b15cfc98a9f90d8e58a2',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','canonical_v1','jsonb,int4',ARRAY['v','d']::text[],'text','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'5642627eca961dd2b5de97327d8ea3d977b238f2145ce6962d04ac363506f477',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','civil_date_v1','text',ARRAY['t']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'fd5ada592127225a2d995658a74f0ba58bd5b4e7e65301a9d656a07d50eb7ea8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','timestamp_v1','text',ARRAY['t']::text[],'timestamptz','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'d2139f87c826b7eaaa7846b9812a6e056240d79650f365aad2733efb2947613c',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','predicate_v1','jsonb',ARRAY['v']::text[],'jsonb','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'28c043c0fc46032e63286c74bc91945c0ed9eeff1a4a09a99263038f9450b4af',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
