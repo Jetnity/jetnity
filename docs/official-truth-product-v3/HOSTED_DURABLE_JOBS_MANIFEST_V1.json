@@ -199,10 +199,10 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
-      "bytes": 33339,
-      "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb",
-      "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
+      "blob": "1c420f807e393556a68b48a105623a1f94016ea0",
+      "bytes": 34286,
+      "sha256": "0063de3f54a0ac3f092fd5bdfb35628742aff4068eea52b1797c0163698a53c6",
+      "ref": "07f1bba169767588df030c5c5deaf7a55591bd6a"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
@@ -14600,7 +14600,7 @@
   "bindingNormalFormFix4164": {
     "status": "SOURCE_ONLY_NOT_RUN",
     "parent": "5c2c27ee6ac05d53bb907cf6df0da7f97956fdee",
-    "previousManifest": "65d72798f786b710d73d73b3425b630d82833003",
+    "previousManifest": "479e4e60f26aa4070290efd3965958575c926350",
     "exactEdits": "be86dc3aff8871a40c5994cb1caa590433128c55",
     "bodyHash": "00ce3331c7c10b824f7ca53b23b4a9ce5eb40b597832a3cc76cc74bbac452079"
   }
