@@ -26,7 +26,7 @@ describe('Einheitliche zielgebundene Reisefotos', () => {
     assert.equal(reiseFoto({ ...paris, name: '  PARIS  ', placeId: null }), reiseFoto(paris))
     assert.equal(reiseFoto({ ...paris, placeId: null, countryCode: null }), reiseFoto())
     assert.equal(reiseFoto({ ...paris, placeId: null, countryCode: 'US' }), reiseFoto())
-    assert.equal(reiseFoto({ name: 'Lisboa', placeId: null, countryCode: 'PT' }), '/images/lisbon.jpg')
+    assert.equal(reiseFoto({ name: 'Lisboa', placeId: null, countryCode: 'PT' }), '/images/organisieren/lisbon-commons.jpg')
     assert.equal(reiseFoto({ name: 'Koh  Chang', placeId: null, countryCode: 'TH' }), '/images/organisieren/chang.webp')
   })
 

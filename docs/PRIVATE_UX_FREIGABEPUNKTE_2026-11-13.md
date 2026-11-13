@@ -45,7 +45,8 @@ Dieses Verhalten ist beschrieben, aber noch nicht durch neue Merken-/Übernahme-
 Paris und die bereits vorhandenen Ziele sind lokal und konsistent abgedeckt. Andere Ziele
 erhalten ein als Ersatz geeignetes neutrales Motiv. Für weltweite echte Stadtbilder fehlt
 eine abgestimmte Quelle mit Ortsauflösung, Nutzungsrechten und vollständiger Attribution.
-Die Provenienz älterer Amsterdam-/Lissabon-/Zermatt-Bilder ist im Bestand nicht belegt.
+Der Reisebildresolver verwendet inzwischen nachgewiesene Commons-Originale für Amsterdam,
+Lissabon und Zermatt. Die älteren Bilder anderer Inspirationsflächen sind damit nicht auditiert.
 
 ## Private Vorschau
 

@@ -66,7 +66,7 @@ test('CMP-Ablehnung und fehlerhafte API blockieren die explizite Suche', () => {
   assert.equal(stay22DatenschutzErlaubt({ ...api, hasExplicitConsent: () => false }, false), false)
 })
 
-test('Bewiesene Filter und begrenzte Kartenorte werden ohne private Zusatzfelder übergeben', () => {
+test('Maps-Bewertung wird auf die Anbieterskala umgerechnet; Kartenorte enthalten keine privaten Zusatzfelder', () => {
   const result = stay22Suche({ ...eingabe, filter: { sterne: 4, bewertung: 8, preis: 'nightly' }, umgebung: true, kartenorte: [
     { name: 'Reisestopp <1>\n', latitude: 13.75, longitude: 100.52 },
     { name: 'Ungültig', latitude: NaN, longitude: 100.52 },
@@ -74,7 +74,7 @@ test('Bewiesene Filter und begrenzte Kartenorte werden ohne private Zusatzfelder
   ] }, heute)
   assert.ok('suche' in result)
   const p = new URL(result.suche.url).searchParams
-  assert.equal(p.get('minstarrating'), '4'); assert.equal(p.get('minguestrating'), '8')
+  assert.equal(p.get('minstarrating'), '4'); assert.equal(p.get('minguestrating'), '4')
   assert.equal(p.get('priceper'), 'nightly'); assert.equal(p.get('zoom'), '14')
   const pois = JSON.parse(p.get('poi')!)
   assert.equal(pois.length, 8)
@@ -98,13 +98,16 @@ test('Ansichtswechsel bewahrt Suchbedingungen und Ortsmarker', () => {
 })
 
 test('Filterkombinationen und Währungswechsel bewahren Reisedaten und Partnerzuordnung', () => {
+  // Observed Maps contract: 6/10 → 3, 7/10 → 3.5, 8/10 → 4, 9/10 → 4.5.
+  // Do not reuse the distinct v3 accommodation API's ten-point scale.
+  const mapsBewertungen: Record<number, string | null> = { 0: null, 6: '3', 7: '3.5', 8: '4', 9: '4.5' }
   for (const sterne of [0, 1, 2, 3, 4, 5]) for (const bewertung of [0, 6, 7, 8, 9]) {
     for (const preis of ['total', 'nightly'] as const) for (const waehrung of STAY22_WAEHRUNGEN) {
       const result = stay22Suche({ ...eingabe, waehrung, filter: { sterne, bewertung, preis } }, heute)
       assert.ok('suche' in result)
       const p = new URL(result.suche.url).searchParams
       assert.equal(p.get('minstarrating'), sterne ? String(sterne) : null)
-      assert.equal(p.get('minguestrating'), bewertung ? String(bewertung) : null)
+      assert.equal(p.get('minguestrating'), mapsBewertungen[bewertung])
       assert.equal(p.get('currency'), waehrung)
       assert.equal(p.get('priceper'), preis)
       assert.equal(p.get('min'), null, 'Währung darf keinen USD-Budgetfilter erzeugen')

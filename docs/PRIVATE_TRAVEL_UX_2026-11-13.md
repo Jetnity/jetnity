@@ -123,3 +123,37 @@ anzeigen oder ihre Inhalte aktualisieren; Jetnity entfernt ihre Hinweise nicht.
   mit Exit 28 (Zeitlimit). Keine Änderung am geschützten CI-Workflow.
 - Für den Nachfolgecommit bleibt ein vollständiger grüner Core-/CI-Lauf erforderlich.
   Merge bleibt bis dahin und bis zur ausdrücklichen zeitlichen PO-Bestätigung gesperrt.
+
+## Erneute vollständige PO-Abnahme: Arbeitsstand
+
+Live-Basis: Draft #1198, Head `ef3a59b`, Preview `jetnity-odik02yw8-jetnity-e1b93c82.vercel.app`.
+CI `43452401417` ist vollständig erfolgreich, Core 8.775 Tests / 8.773 bestanden /
+0 fehlgeschlagen / 2 bestehende lokale Browser-Skips. Diese Skips sind keine Browserabnahme.
+Der neue Auftrag verlangt acht einzeln belegte Produktpunkte. Vorgehen SINGLE_AGENT:
+read-only Browseraudit plus eng begrenzte Korrekturen auf dem eigenen Branch;
+keine weiteren ENV-/Auth-/DB-/Provider-Aktivierungen und kein Merge. Neue Commits
+brauchen ihren eigenen vollständigen CI-Nachlauf.
+
+Tatsächlich neu reproduzierter Defekt: `minguestrating=8` erzeugt im Stay22-Maps-
+Fenster bei Paris eine leere Liste. Der alte Test bestätigte irrtümlich nur diesen
+Parameter. Die öffentliche Maps-Implementierung nutzt 3 / 3.5 / 4 / 4.5 für
+6 / 7 / 8 / 9 von 10 (`listview.159b5b88c508a1b2b459.js`, beobachtet 13.11.2026),
+während die separate v3-API eine Zehnerskala dokumentiert. Korrektur am Maps-Adapter:
+UI-Wert halbieren; Sterneskala, Partnerkennung und Reisedaten bleiben identisch.
+Browser-Gegenprobe am offiziellen Fenster: Paris 20.–25.11., vier Sterne plus 8/10
+liefert mit `minguestrating=4` wieder Angebote. Parameterquellen:
+https://dev.stay22.com/docs/maps/parameters und
+https://dev.stay22.com/docs/api/accommodations-v3/search .
+
+Chrome-Weiterleitung mit realem Normandy Hotel Paris - Saint-Honoré: Liste und
+Karte öffnen gefüllte Booking.com-Ergebnisse mit genau diesem Hotel an erster Stelle;
+`dest_type=hotel`, `dest_id=51548`, 20.–25.11.2026, 2 Erwachsene, 1 Zimmer.
+Listenübergabe geht über Stay22 Allez mit Jetnity-Kennung und `jetnity-unterkunft`;
+beide Booking-Ziele haben `aid=1607597` und eigene Trackinglabels. Kein Kauf und
+keine Behauptung einer im Partnerkonto verbuchten Provision.
+
+Der gemeinsame Bildresolver verwendet für Amsterdam, Lissabon und Zermatt jetzt
+eigene Commons-Originale mit live geprüften Quellen-/Lizenznachweisen statt der
+unbelegten Altdateien. Bilder visuell geprüft, Originaldateien nicht bearbeitet.
+Weltweite Bildabdeckung, kontoweite Einzelangebotsmerkliste und intelligente
+Anbieterübernahme bleiben offen und werden nicht aus grüner CI abgeleitet.
