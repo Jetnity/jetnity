@@ -62,8 +62,8 @@ const wurzel = join(hier, '../..')
 const COMPOSED_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
   bytes: 103371,
-  blob: 'b996242986fe7216dc3a7a70580aee3207ad7d31',
-  sha256: 'adf3731a168333a0481027793ec0ec52ede9a1146a789236b843795c01b878b4',
+  blob: '6e948d09c4e52ee8dd55152050084d106786d921',
+  sha256: '542c5ec7be67f4d0c9f06b84ce0685a80023b6fcfc321a199f00e0ce89de8e15',
   contextStart: 11576,
   contextEnd: 11800,
   tokenStart: 11607,
@@ -125,8 +125,8 @@ test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources a
 const HRS_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
   bytes: 207929,
-  blob: '4dd26035d58c0c1e124d7ff4bfdf22b252d48d0e',
-  sha256: '91f5b46a14fc51196045cfd6ffb2fb3574ffb9f74542e857a8ed792117f1f58d',
+  blob: 'f960a60c5b67ff488cd76c508a0b19e29e0e6ba8',
+  sha256: '39b0ca0a2e2c9f13b086c712f6e4233a624f3ace309ae5b0f45c347605b6ec1f',
   contextStart: 37488,
   contextEnd: 37712,
   tokenStart: 37519,
