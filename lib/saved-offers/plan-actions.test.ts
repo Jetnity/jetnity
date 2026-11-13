@@ -5,6 +5,7 @@ import { test } from 'node:test'
 import ts from 'typescript'
 import * as plan from './plan'
 import type * as Actions from './plan-actions'
+import { modusAusQuery } from '../trips/workspace-mode'
 
 const require = createRequire(import.meta.url)
 const USER = '10000000-0000-4000-a000-000000000001'
@@ -64,7 +65,10 @@ test('saved-offer plan actions reject unsigned and foreign-offer writes before i
 test('verified hotel write refreshes visited routes, opens the plan and safely retries', async () => {
   const f = fixture()
   const first = await f.actions.savedOfferToPlan(input)
-  assert.deepEqual(first, { ok: true, value: `/reisen/${TRIP}?ansicht=reiseplan` })
+  assert.equal(first.ok, true)
+  const destination = new URL(first.value, 'https://jetnity.test')
+  assert.equal(destination.pathname, `/reisen/${TRIP}`)
+  assert.equal(modusAusQuery(destination.searchParams).ansicht, 'plan')
   assert.deepEqual(f.refreshed, [`/reisen/${TRIP}`, '/reisen'])
   const row = { ...f.row() }
   assert.equal(row.ends_on, '2026-11-25')

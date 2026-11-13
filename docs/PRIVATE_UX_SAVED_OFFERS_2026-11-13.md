@@ -34,3 +34,21 @@ Nur Branch `feat/private-travel-ux-20261113`: `DISCOVERCARS_API_KEY` und
 nur den eigenen stabilen Vorschau-Origin. Bestehende Supabase-Public-Werte bleiben.
 Production erhält keine neue Variable durch diese Umsetzung; vor dem gemeinsamen
 Schritt wird die genaue Soll-/Ist-Liste nochmals vorgelegt.
+
+## Tatsächlich geprüft am 13.11.2026
+
+Chrome mit vorhandenem Preview-Konto: konkretes Hotel manuell merken, nach
+Neuladen und unabhängigem zweitem Login wiederfinden. Echte DiscoverCars-Karte
+am Herz merken, in der Merkliste finden, entfernen; Löschung auch in der zweiten
+Sitzung bestätigt. Hotel mit fünf Nächten und ausdrücklich synthetischer Nachtflug
+mit Ankunft am Folgetag als `unconfirmed` übernommen, im Reiseplan angezeigt und
+per Datenbank-Readback kontrolliert. Wiederholung erzeugt keinen zweiten Eintrag.
+Kein physischer Gerätewechsel behauptet. Ein reines Suchergebnis ersetzt weiterhin
+kein konkretes Angebot; bei eingebetteten Anbietern bleibt manuelle Erfassung.
+
+Manuelle Flugzeitzonen stehen in der Notiz, ohne strukturierte Flughafenroute
+nicht in der Chronologie. Vollständige Flugroute/Zeitzonen und Datumsgrenzfälle
+brauchen den vorhandenen Flugeditor. Eine Route wird nicht aus dem Titel erfunden.
+
+Aktueller Freigabe-/Konfliktstand und genaue Grenzen:
+[Freigabepunkte](PRIVATE_UX_FREIGABEPUNKTE_2026-11-13.md).

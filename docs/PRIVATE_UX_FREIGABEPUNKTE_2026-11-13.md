@@ -1,5 +1,41 @@
 # Aktuelle Freigabe und verbleibende Grenzen – PR #1198
 
+## Aktueller Nachweisstand (13.11., 19:13 UTC)
+
+Dieser Abschnitt ersetzt überholte Zwischenstände im folgenden Prüfjournal.
+
+- Die tatsächliche Chrome-Anmeldung und eine zweite, unabhängige Chrome-Sitzung
+  sind erfolgt. Das manuell gespeicherte Normandy-Hotel und der ausdrücklich
+  synthetische Nachtflug sind nach erneutem Login vorhanden. Der am echten
+  DiscoverCars-Herz gemerkte und danach entfernte Toyota Aygo bleibt entfernt.
+  Keine Cookies zwischen Sitzungen kopiert; kein physisches zweites Gerät geprüft.
+- Planübernahme im angemeldeten Browser und Datenbank-Readback bestanden:
+  20.–25.11.2026 als fünf Hotelnächte; Nachtflug 20.11.23:30 bis 21.11.01:00;
+  unbestätigter Buchungsstatus, Wiederholungen erzeugen keinen zweiten Planpunkt.
+- Beim Nachlauf von `112e9c5` zeigte sich: Der Erfolgslink benutzte den unbekannten
+  URL-Modus `reiseplan` und landete dadurch in der Übersicht. Korrigiert auf den
+  vorhandenen Modus `plan`; der Aktionstest prüft jetzt gegen den tatsächlichen
+  Workspace-URL-Parser. Browsernachweis des korrigierten Deployments folgt.
+- Mobile Chrome-Emulation: Merkliste und Kalender bei 390 × 844 ohne horizontalen
+  Überlauf; Dialog vollständig im Viewport (x 8, Breite 374, y 142–836), Escape
+  schliesst. Das Testkonto hat keine gespeicherten Reisenden; Dokumentdatum im
+  Konto wurde deshalb nicht mit realen Profildaten geprüft. Keine dafür angelegt.
+- Vollständiger erneuter Datei-Abgleich mit #1197 (`9b2fb3f`) findet zwei
+  Überschneidungen: `scripts/next-16-4-1-security-patch-p1/audit.mjs` und
+  `audit.test.mjs`. #1198 erweitert das exakte Inventar um neue Merkliste-Actions;
+  #1197 prüft den ausgewählten Deployment-Nachfolger. Frühere Aussagen ohne
+  Überschneidung waren unvollständig. Keine weitere Änderung dieser beiden
+  gemeinsamen Dateien, kein Merge; PO um Freigabe zur Abstimmung gebeten.
+- `main` aktuell `63544e8`, im eigenen Branch enthalten; #1196 ohne Überschneidung.
+  Vollständiger Core ist auf dem jeweiligen letzten Head weiterhin Pflicht.
+- Flug-Zeitzonen aus manuellen Merkeinträgen bleiben als Notiz erhalten. Ohne
+  strukturierte Flughäfen entsteht keine vollständige Route oder UTC-Dauer; der
+  Plan kann deshalb „Ortszeit ohne Zeitzone“ anzeigen. Für vollständige Route,
+  Zeitvergleich und rückwärts laufendes Ortsdatum bleibt der vorhandene Flugeditor
+  erforderlich. Keine Flughäfen oder Anbieterbelege aus Freitext erfunden.
+- Production bleibt unverändert. `saved_offers` dort nur gemeinsam mit dem PO.
+
+
 Die jüngste PO-Antwort ersetzt die frühere allgemeine Zeitfreigabe:
 
 - Merkliste: nur neue Tabelle `saved_offers` und ihre RLS, zuerst bisherige
@@ -23,10 +59,10 @@ Löschen und fremde Eigentümer beim Anlegen gesperrt; anonymes Lesen gesperrt.
 Alle Testzeilen zurückgerollt. Bestehender Policy-Fingerprint vorher/nachher:
 `4971993b6a3d775e01cc66eac9dc8d02`. Keine Auth-Konten erstellt/geändert.
 
-Die Oberfläche enthält jetzt kontoweite Merkliste, Entfernen, manuelle konkrete
+Die Oberfläche enthält kontoweite Merkliste, Entfernen, manuelle konkrete
 Angebotserfassung, ein DiscoverCars-Herz mit serverseitiger Nachprüfung und
-vorausgefüllte Planübernahme. Dieser Code ist bis zum neuen Deployment und
-angemeldeten Browsertest ausdrücklich noch kein Funktionsnachweis.
+vorausgefüllte Planübernahme. Angemeldete Browsernachweise stehen im aktuellen
+Abschnitt oben; die Anbieter- und Gerätegrenzen bleiben ausdrücklich bestehen.
 
 ## Genaue Konfiguration
 
@@ -52,7 +88,7 @@ produktive Widget wurde nicht geändert.
 ## Offene Nachweise und Grenzen
 
 - Der volle Core muss auf dem neuen Code-Head grün sein; alte Ergebnisse ersetzen ihn nicht.
-- Echte angemeldete Browserprüfung, erneuter Login und zweites Gerät fehlen noch.
+- Angemeldete Browserprüfung und unabhängige zweite Sitzung bestanden; physisches zweites Gerät fehlt.
 - Safari ist über die native Oberfläche erreichbar; Remote Automation bleibt deaktiviert.
   Die private App verlangt dort noch Vercel-Anmeldung; echtes iPhone nicht vorhanden.
 - Hotel-/Flug-/Aktivitäts-Widgets liefern keine verifizierbaren Einzelangebotsdaten.
@@ -133,7 +169,7 @@ umbenannt. Bestehende andere Reisen bleiben unberührt.
   01:00. Browsermeldung und tatsächlicher Datenbank-Readback stimmen überein;
   kein reales Flugangebot oder gebuchter Flug behauptet.
 - Ergänzt: erfolgreiche Planübernahme invalidiert die vorhandenen Reiseansichten
-  und `/reisen`; der Erfolgslink öffnet unmittelbar `?ansicht=reiseplan`.
+  und `/reisen`; der Erfolgslink war zunächst fehlerhaft (Korrektur siehe oben).
   Echte Serveraktionslogik mit ersetzter Auth-/DB-Transportgrenze geprüft:
   anonym/fremdes Angebot ohne Schreiben, bestätigter Readback, idempotenter Retry,
   fehlender Readback ohne Erfolgsmeldung. Neun Merkliste-/Planprüfungen und

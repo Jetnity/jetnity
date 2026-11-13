@@ -63,6 +63,6 @@ export async function savedOfferToPlan(input: unknown): Promise<Result<string>> 
     if (c.title !== values.title || c.starts_on !== values.starts_on || c.ends_on !== values.ends_on || (c.starts_at?.slice(0, 5) ?? null) !== values.starts_at || (c.ends_at?.slice(0, 5) ?? null) !== values.ends_at) return { ok: false, message: 'Dieses Angebot wurde an diesem Tag bereits mit anderen Angaben eingeplant. Bitte bearbeite es im Reiseplan.' }
     revalidatePath(`/reisen/${v.tripId}`)
     revalidatePath('/reisen')
-    return { ok: true, value: `/reisen/${v.tripId}?ansicht=reiseplan` }
+    return { ok: true, value: `/reisen/${v.tripId}?ansicht=plan` }
   } catch (error) { return { ok: false, message: error instanceof z.ZodError ? error.issues[0]?.message ?? 'Bitte prüfe deine Angaben.' : error instanceof Error ? error.message : 'Speichern ist gerade nicht möglich.' } }
 }
