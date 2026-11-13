@@ -408,27 +408,42 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
       : kind === 'monitorOnce' ? { status: interrupted ? 'interrupted' as const : 'unavailable' as const, outcomes: [] }
         : { status: 'unavailable' as const }
   }
-  async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal) {
+  async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal, budget?: Readonly<{ deadline: number }>) {
     if (transportBlocked || !config || !result || !selected || signal?.aborted) return failure(kind, signal?.aborted)
     const publicRead = kind === 'query', worker = kind === 'workOnce' || kind === 'monitorOnce'
     const milliseconds = publicRead ? hrs1PublicReadMilliseconds(selected.dataMode) : worker ? HRS1_LIMITS.workerMilliseconds : HRS1_LIMITS.effectMilliseconds
+    // Additive worker/monitor cap only. Capture once before allocation or await;
+    // a caller cannot extend it by mutating the input while an effect is active.
+    let outerDeadline = Infinity
+    if (budget !== undefined) {
+      try {
+        const cap = ownRecord(budget, ['deadline'])
+        if (!worker || !cap || typeof cap.deadline !== 'number' || !Number.isFinite(cap.deadline)
+          || cap.deadline <= performance.now()) return failure(kind, signal?.aborted)
+        outerDeadline = cap.deadline
+      } catch { return failure(kind, signal?.aborted) }
+    }
     const controller = new AbortController(), stop = () => controller.abort()
     signal?.addEventListener('abort', stop, { once: true })
-    const start = performance.now(), timer = setTimeout(stop, milliseconds)
+    const start = performance.now(), deadline = Math.min(start + milliseconds, outerDeadline)
+    const timer = setTimeout(stop, budget === undefined ? milliseconds : Math.max(0, deadline - performance.now()))
+    if (budget !== undefined && performance.now() >= deadline) {
+      controller.abort(); clearTimeout(timer); signal?.removeEventListener('abort', stop); return failure(kind, signal?.aborted)
+    }
     const scope = createM04InvocationScope(pool, worker ? 30000 : 5000, controller.signal)
     if (!scope) { clearTimeout(timer); signal?.removeEventListener('abort', stop); return failure(kind) }
     activeControllers.add(controller)
     let assembly: ReturnType<typeof composeHrs1Invocation> | null = null
     try {
-      const core = authorityCore(config.binding, config.methodExecutor, { scope, config, callCap: start + milliseconds,
+      const core = authorityCore(config.binding, config.methodExecutor, { scope, config, callCap: deadline,
         result: { config: result, binding: selected, shared, calls: 0 } })
-      assembly = composeHrs1Invocation({ config, result, binding: selected, scope, callDeadline: start + milliseconds, authority: core.port,
+      assembly = composeHrs1Invocation({ config, result, binding: selected, scope, callDeadline: deadline, authority: core.port,
         processingAuthority: core.processingAuthority, fixed: core.fixed, processingFixed: core.processingFixed,
         resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed })
       const value = kind === 'monitorOnce' ? await assembly.monitorOnce(scope.signal)
         : await assembly[kind](raw, scope.signal)
       await assembly.drain()
-      if (scope.signal.aborted || performance.now() >= start + milliseconds || scope.snapshot().activeCallbacks > 0) {
+      if (scope.signal.aborted || performance.now() >= deadline || scope.snapshot().activeCallbacks > 0) {
         return kind === 'enqueueRule' || kind === 'enqueueDiscovery' || kind === 'workOnce'
           ? { status: 'unconfirmed' as const } : failure(kind, signal?.aborted)
       }
@@ -446,7 +461,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
     enqueueRule: (raw, signal) => invoke('enqueueRule',raw,signal) as ReturnType<Hrs1Facade['enqueueRule']>,
     enqueueDiscovery: (raw, signal) => invoke('enqueueDiscovery',raw,signal) as ReturnType<Hrs1Facade['enqueueDiscovery']>,
     workOnce: (raw, signal) => invoke('workOnce',raw,signal) as ReturnType<Hrs1Facade['workOnce']>,
-    async workSelectedOnce(kind, signal) {
+    async workSelectedOnce(kind, signal, budget) {
       if (transportBlocked || !selected || !result || signal?.aborted) return { status: 'unavailable' }
       if (kind !== 'rule_research' && kind !== 'combination_discovery') return { status: 'invalid' }
       const method = { methodId: selected.methodId, revision: selected.revision }
@@ -461,9 +476,9 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
       const claim = { operationId: ids.operationId, jobKey: identity.value.jobKey,
         leaseId: 'lease3_' + hrs1Hash({ kind: 'hrs1-selected-worker', jobKey: identity.value.jobKey, ...ids }).slice(0, 32),
         leaseMilliseconds: 30000 }
-      return invoke('workOnce',claim,signal) as ReturnType<Hrs1Facade['workSelectedOnce']>
+      return invoke('workOnce',claim,signal,budget) as ReturnType<Hrs1Facade['workSelectedOnce']>
     },
     query: (raw, signal) => invoke('query',raw,signal) as ReturnType<Hrs1Facade['query']>,
-    monitorOnce: signal => invoke('monitorOnce',undefined,signal) as ReturnType<Hrs1Facade['monitorOnce']>,
+    monitorOnce: (signal, budget) => invoke('monitorOnce',undefined,signal,budget) as ReturnType<Hrs1Facade['monitorOnce']>,
   })
 }
