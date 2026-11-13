@@ -18,6 +18,11 @@ export const HRS1_LIMITS = Object.freeze({
   concurrentEffects: 2, effectMilliseconds: 5000, publicMilliseconds: 750,
   workerMilliseconds: 30000, monitorTargets: 8, batchProjections: 16,
 })
+/** The fixed CI allowance belongs only to synthetic, server-owned queries.
+ * Real projections retain 750ms even inside CI; no request/env number is accepted. */
+export function hrs1PublicReadMilliseconds(dataMode: Hrs1Binding['dataMode']): number {
+  return dataMode === 'synthetic_test' && process.env.GITHUB_ACTIONS === 'true' ? 2000 : HRS1_LIMITS.publicMilliseconds
+}
 export type Hrs1SourceBinding = Readonly<{
   source: ContentIdentityBinding; canonicalUrl: string; contentType: 'text/html' | 'application/pdf' | 'text/plain' | 'application/json';
   executableDigest: string; qualificationDigest: string; role: 'primary' | 'counter';

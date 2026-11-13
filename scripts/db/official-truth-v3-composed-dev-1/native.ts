@@ -163,9 +163,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "bytes": 33339,
-    "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
-    "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb"
+    "bytes": 33382,
+    "blob": "56915ac1c118a9d13f65c875a4deaecd7aff7611",
+    "sha256": "791778c6bd1860ab5c43c20721e3d61c4341467d5b828ef0d201409e2aeac5f8"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -241,9 +241,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
-    "bytes": 20238,
-    "blob": "9ba1fcb92775107e4c0ec99bac96312a0b9c120a",
-    "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6"
+    "bytes": 20341,
+    "blob": "010691537ad00c217a2599a5878a6dc4c3bb9b6f",
+    "sha256": "dcdd2c352f770d3ea3ec70bf0a1c3f85b471347ddfb519c7ec8632a8fc818b37"
   },
   {
     "path": "lib/readiness/official-truth-research-request.ts",
@@ -313,9 +313,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-    "bytes": 30699,
-    "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
-    "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
+    "bytes": 32943,
+    "blob": "e5cb5b32457ac75670582ee54b781eac8c1db027",
+    "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d"
   },
   {
     "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
@@ -403,9 +403,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "bytes": 442952,
-    "blob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
-    "sha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8"
+    "bytes": 443491,
+    "blob": "b4be092a426696d5a771661133bb14509a1ba111",
+    "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -481,9 +481,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
-    "bytes": 17006,
-    "blob": "ba1e67ec4a512cc85ade31c315bf69a05ddf6cc2",
-    "sha256": "5d4bb7bd380247f7b56a841c3e930ea84da59bcfc2cc5d71e6ee5969d63a78ea"
+    "bytes": 17379,
+    "blob": "aa9d423625c58207e65448e5d1aa5e12bbd78092",
+    "sha256": "352d3fed1723f7148e07d68f07e809ade680bf2c47e4019791b7924853b1d576"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",

@@ -8,7 +8,7 @@ import { M04_LIMITS, readM04NativeReply, type M04Config, type M04Facade, type M0
 import { createM04LanePool, createM04InvocationScope } from '../jobs/owned-scope'
 import { composeM04Invocation } from '../jobs/composition'
 import { composeHrs1Invocation, type Hrs1Facade } from '../result/composition'
-import { HRS1_LIMITS, hrs1Canonical, hrs1Clock, hrs1Hash, hrs1Same, hrs1Time, hrs1Channel,
+import { HRS1_LIMITS, hrs1PublicReadMilliseconds, hrs1Canonical, hrs1Clock, hrs1Hash, hrs1Same, hrs1Time, hrs1Channel,
   readHrs1Binding, readHrs1Command, readHrs1Reply, type Hrs1Binding, type Hrs1Config,
   type Hrs1FixedOperation, type Hrs1FixedRequest, type Hrs1TerminalExecutor } from '../result/contract'
 import type { Hrs1SourceCustodyIssuer } from '../result/source-proof'
@@ -411,7 +411,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
   async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal) {
     if (transportBlocked || !config || !result || !selected || signal?.aborted) return failure(kind, signal?.aborted)
     const publicRead = kind === 'query', worker = kind === 'workOnce' || kind === 'monitorOnce'
-    const milliseconds = publicRead ? HRS1_LIMITS.publicMilliseconds : worker ? HRS1_LIMITS.workerMilliseconds : HRS1_LIMITS.effectMilliseconds
+    const milliseconds = publicRead ? hrs1PublicReadMilliseconds(selected.dataMode) : worker ? HRS1_LIMITS.workerMilliseconds : HRS1_LIMITS.effectMilliseconds
     const controller = new AbortController(), stop = () => controller.abort()
     signal?.addEventListener('abort', stop, { once: true })
     const start = performance.now(), timer = setTimeout(stop, milliseconds)

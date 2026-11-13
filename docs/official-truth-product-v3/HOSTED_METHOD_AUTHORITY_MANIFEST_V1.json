@@ -371,9 +371,9 @@
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b",
-      "gitBlob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
-      "utf8Bytes": 30699
+      "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d",
+      "gitBlob": "e5cb5b32457ac75670582ee54b781eac8c1db027",
+      "utf8Bytes": 32943
     },
     {
       "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",
@@ -506,8 +506,8 @@
       "mode": "100644",
       "type": "blob",
       "utf8Bytes": 62251,
-      "sha256": "228e074a0fd6bb6b8e7b7480edb67666d6ce0a8f8909f6ce36380bc9e36f4297",
-      "gitBlob": "3337dac96e0a22622625477123b48a9868ed6e97"
+      "sha256": "5703bad92b750b9665f630ce6d97d59f9606e08b8d58da2980de5bb3e9160262",
+      "gitBlob": "42787dd97b3d5ca52445edec9052c3d69b250988"
     },
     "priorActualGroups": [
       "HMA1-01",

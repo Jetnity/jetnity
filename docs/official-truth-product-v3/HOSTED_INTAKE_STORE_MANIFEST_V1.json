@@ -1252,9 +1252,9 @@
     },
     {
       "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-      "bytes": 30699,
-      "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b",
-      "gitBlob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
+      "bytes": 32943,
+      "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d",
+      "gitBlob": "e5cb5b32457ac75670582ee54b781eac8c1db027",
       "inspection": "complete source read",
       "role": "unchanged actual bounded wire; duplicate-column refusal retained"
     },

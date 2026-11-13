@@ -4,7 +4,7 @@ import { verifyIntegratedPilotBundle, verifyLocalIntegratedPilotBundle, LOCAL_IN
 import { decodeProvenanceBytes, provenanceCanonical } from '../../../lib/readiness/official-truth-autonomous-provenance-artifact'
 import { sha256Hex } from '../../../lib/readiness/digest'
 import type { LocalProofCluster } from './local-cluster'
-import { LocalPgConnection, pgBytes, pgCompositeArray, pgText, type PgRows } from './pg-wire'
+import { LocalPgConnection, localPgCommitWasNotDispatched, pgBytes, pgCompositeArray, pgText, type PgRows } from './pg-wire'
 
 export type StructuralByteFixture = IntegratedPilotBundleInput
 export async function installLocalProofSchema(owner: LocalPgConnection): Promise<void> {
@@ -157,6 +157,9 @@ export async function persistVerifiedIntegratedBundleLocally(cluster:LocalProofC
   try {
     await connection.query('BEGIN ISOLATION LEVEL READ COMMITTED')
     const outcome=await publishIntegratedBundle(connection,oids,envelope,mode)
+    // Finish every unchanged deferred constraint while failure can still be
+    // handled before COMMIT dispatch. This private writer performs no more DML.
+    await connection.query('SET CONSTRAINTS ALL IMMEDIATE')
     committing=true;await connection.query('COMMIT');committed=true
     const readback=await readVerifiedIntegratedBundleLocally(cluster,envelope.bundle.recordFingerprint)
     if(readback.status!=='verified')throw Error('local_storage_postcommit_absent')
@@ -166,6 +169,7 @@ export async function persistVerifiedIntegratedBundleLocally(cluster:LocalProofC
     const protectionFailure=connection.operationDiagnostics.findLast(d=>d.phase==='commit')?.protectionFailure
     return {ok:true as const,outcome,readback,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}
   }catch(error){
+    if(committing&&!committed&&localPgCommitWasNotDispatched(error))committing=false
     if(committing&&!committed){
       const protectionFailure=connection.operationDiagnostics.findLast(d=>d.phase==='commit')?.protectionFailure
       return {ok:false as const,reason:'commit_outcome_unknown' as const,...(protectionFailure?{commitProtectionFailure:protectionFailure}:{})}

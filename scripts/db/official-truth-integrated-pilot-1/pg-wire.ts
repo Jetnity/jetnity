@@ -258,6 +258,18 @@ export class LocalPgError extends Error {
   constructor(readonly code: string) { super(`local_pg_${code}`) }
   get guardDiagnostic(): LocalPgGuardDiagnostic | undefined { return localPgGuardDiagnostics.get(this) }
 }
+// Only this transport can attest that no COMMIT frame reached socket.write.
+// Mint a fresh wrapper; never stamp a caller's or lower layer's error in place.
+const localPgUnsentCommitErrors = new WeakSet<LocalPgError>()
+function commitNotDispatched(error: unknown): LocalPgError {
+  const marked = new LocalPgError(error instanceof LocalPgError ? error.code : 'commit_not_dispatched')
+  if (error instanceof LocalPgError && error.guardDiagnostic) localPgGuardDiagnostics.set(marked, error.guardDiagnostic)
+  localPgUnsentCommitErrors.add(marked)
+  return marked
+}
+export function localPgCommitWasNotDispatched(error: unknown): error is LocalPgError {
+  return error instanceof LocalPgError && localPgUnsentCommitErrors.has(error)
+}
 const i16 = (n: number) => { const b = Buffer.alloc(2); b.writeInt16BE(n); return b }
 const i32 = (n: number) => { const b = Buffer.alloc(4); b.writeInt32BE(n); return b }
 const z = (s: string) => Buffer.from(`${s}\0`)
@@ -287,7 +299,7 @@ export type LocalPgOperationDiagnostic = Readonly<{
   commitDispatched?: boolean
   protectionFailure?: 'commit_guard_lost' | 'commit_control_failed' | 'commit_disarm_failed'
 }>
-/** Only the new bounded COMMIT path reports dispatch separately from ACK. */
+/** The bounded COMMIT result reports dispatch separately from ACK. */
 export type LocalPgBoundedCommit = Readonly<{
   dispatched: boolean; acknowledged: boolean; code: string | null;
   protectionFailure?: LocalPgOperationDiagnostic['protectionFailure'];
@@ -300,7 +312,7 @@ type CommitDeadline = {
   failure(): LocalPgOperationDiagnostic['protectionFailure']
 }
 const diagnosticCode = (error: unknown): string | null => error instanceof LocalPgError
-  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count','commit_deadline_not_armed','commit_bound_elapsed'].includes(error.code) ? error.code : 'transport_error') : null
+  ? (/^[0-9A-Z]{5}$/.test(error.code) || ['connection_closed','connection_failed','connection_state','authentication_forbidden','response_bound','row_bound','parameter_bound','duplicate_column','column_count','commit_deadline_not_armed','commit_bound_elapsed','commit_not_dispatched'].includes(error.code) ? error.code : 'transport_error') : null
 export class LocalPgConnection {
   private buffer: Buffer = Buffer.alloc(0)
   private messages: { tag: string; bytes: Buffer }[] = []
@@ -427,10 +439,17 @@ export class LocalPgConnection {
    */
   private async armCommitDeadline(bound?: CommitBound): Promise<CommitDeadline> {
     const guard = await LocalPgConnection.connect(this.cluster)
+    // Sample the guard's own live connection, never a recyclable PID observed
+    // by another backend. Retain this original pair through arm and cleanup.
+    const guardIdentity = await guard.query('SELECT backend_start::text AS birth FROM pg_catalog.pg_stat_get_activity(pg_catalog.pg_backend_pid())')
+      .then(rows => {
+        const birth = rows[0]?.birth
+        if (rows.length !== 1 || !birth) throw new LocalPgError('commit_deadline_not_armed')
+        return Object.freeze({ pid: guard.backendPid, birth })
+      }).catch(error => { guard.close(); throw error })
     let control: LocalPgConnection | undefined, pending: Promise<void> | undefined, recovery: Promise<void> | undefined
     let armed = false, sent = false, completed = false, disarming = false, finished = false
     let protectionFailure: LocalPgOperationDiagnostic['protectionFailure']
-    let guardBirth: string | undefined
     let target: Readonly<Record<string, string | null>> | undefined
     let absoluteCutoff: string | undefined
     const recover = async () => {
@@ -460,7 +479,7 @@ export class LocalPgConnection {
         await recovery
         if (pending && !finished) {
           // No target command or later work can start until cancel + join ends.
-          await control!.query('SELECT pg_catalog.pg_cancel_backend(a.pid) FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz', [pgText(String(guard.backendPid), 23), pgText(guardBirth!)])
+          await control!.query('SELECT pg_catalog.pg_cancel_backend(a.pid) FROM pg_catalog.pg_stat_get_activity($1::integer) a WHERE a.backend_start=$2::timestamptz', [pgText(String(guardIdentity.pid), 23), pgText(guardIdentity.birth)])
         }
         await pending
       } finally { control?.close(); guard.close() }
@@ -489,8 +508,8 @@ export class LocalPgConnection {
       }
       control = await LocalPgConnection.connect(this.cluster)
       await control.query(`SET statement_timeout=${LOCAL_PG_DEADLINES.commitRecoveryStatementMs}`)
-      guardBirth = (await control.query('SELECT backend_start::text AS birth FROM pg_catalog.pg_stat_get_activity($1::integer)', [pgText(String(guard.backendPid), 23)]))[0]?.birth ?? undefined
-      if (!guardBirth) throw new LocalPgError('commit_deadline_not_armed')
+      const originalGuard = await control.query('SELECT backend_start::text AS birth FROM pg_catalog.pg_stat_get_activity($1::integer) WHERE backend_start=$2::timestamptz', [pgText(String(guardIdentity.pid), 23), pgText(guardIdentity.birth)])
+      if (originalGuard.length !== 1) throw new LocalPgError('commit_deadline_not_armed')
       // pg_sleep returns the empty void text. Using its length in the activity
       // function argument forces the fresh activity lookup AFTER the sleep.
       // The ordinary fixed path is byte-for-byte the same SQL/20s budget. The
@@ -510,8 +529,9 @@ export class LocalPgConnection {
           }
         })
       for (let attempt = 0; attempt < 50 && !finished; attempt++) {
-        const state = (await control.query('SELECT state,wait_event,backend_start::text AS birth FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer', [pgText(String(guard.backendPid), 23)]))[0]
-        if (state?.state === 'active' && state.wait_event === 'PgSleep' && state.birth) { guardBirth = state.birth; armed = true; break }
+        const state = (await control.query('SELECT state,wait_event FROM pg_catalog.pg_stat_activity WHERE pid=$1::integer AND backend_start=$2::timestamptz', [pgText(String(guardIdentity.pid), 23), pgText(guardIdentity.birth)]))[0]
+        if (!state) throw new LocalPgError('commit_deadline_not_armed')
+        if (state.state === 'active' && state.wait_event === 'PgSleep') { armed = true; break }
         await new Promise<void>(resolve => setTimeout(resolve, 20))
       }
       if (!armed || finished) throw new LocalPgError('commit_deadline_not_armed')
@@ -563,12 +583,12 @@ export class LocalPgConnection {
       ...((deadline?.failure() ?? cleanupFailure) ? { protectionFailure: deadline?.failure() ?? cleanupFailure } : {}) })
   }
   async query(sql: string, parameters: readonly PgParameter[] = []): Promise<PgRows> {
-    if (this.busy || this.closed) throw new LocalPgError('connection_state')
-    if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) throw new LocalPgError('parameter_bound')
-    this.busy = true; this.timedOut = false
     const command = /^(BEGIN|COMMIT|ROLLBACK)\b/i.exec(sql.trim())?.[1]?.toLowerCase()
     const phase: LocalPgOperationDiagnostic['phase'] = command === 'begin' || command === 'commit' || command === 'rollback' ? command : 'query'
-    const started = performance.now(); let failure: unknown, deadline: CommitDeadline | undefined
+    if (this.busy || this.closed) { const error = new LocalPgError('connection_state'); throw phase === 'commit' ? commitNotDispatched(error) : error }
+    if (parameters.reduce((sum, p) => sum + p.bytes.length + 12, Buffer.byteLength(sql)) > 10_485_760) { const error = new LocalPgError('parameter_bound'); throw phase === 'commit' ? commitNotDispatched(error) : error }
+    this.busy = true; this.timedOut = false
+    const started = performance.now(); let failure: unknown, deadline: CommitDeadline | undefined, dispatched = false
     let cleanupFailure: LocalPgOperationDiagnostic['protectionFailure']
     this.commandTag = null
     // The backend already bounds every statement (including COMMIT), locks and
@@ -576,28 +596,43 @@ export class LocalPgConnection {
     // during an operation; ordinary idle sessions remain reusable.
     this.socket.setTimeout(30_000)
     try {
-      if (phase === 'commit') { deadline = await this.armCommitDeadline(); deadline.sent() }
-      if (!parameters.length) {const frame=packet('Q',z(sql));if(frame.length>10_485_760)throw new LocalPgError('parameter_bound');this.socket.write(frame)}
+      let frame: Buffer
+      if (!parameters.length) frame = packet('Q', z(sql))
       else {
         const parse = Buffer.concat([z(''), z(sql), i16(parameters.length), ...parameters.map(p => i32(p.oid))])
         const bind = Buffer.concat([z(''), z(''), i16(parameters.length), ...parameters.map(p => i16(p.binary ? 1 : 0)), i16(parameters.length), ...parameters.flatMap(p => [i32(p.bytes.length), Buffer.from(p.bytes)]), i16(0)])
-        const frame=Buffer.concat([packet('P', parse), packet('B', bind), packet('D', Buffer.concat([Buffer.from('P'), z('')])), packet('E', Buffer.concat([z(''), i32(0)])), packet('S', Buffer.alloc(0))])
-        if(frame.length>10_485_760)throw new LocalPgError('parameter_bound')
-        this.socket.write(frame)
+        frame = Buffer.concat([packet('P', parse), packet('B', bind), packet('D', Buffer.concat([Buffer.from('P'), z('')])), packet('E', Buffer.concat([z(''), i32(0)])), packet('S', Buffer.alloc(0))])
       }
+      if (frame.length > 10_485_760) throw new LocalPgError('parameter_bound')
+      if (phase === 'commit') {
+        deadline = await this.armCommitDeadline()
+        if (this.closed) throw new LocalPgError('connection_state')
+        deadline.sent()
+        // No await after this conservative handoff point, in either protocol.
+        dispatched = true
+      }
+      this.socket.write(frame)
       return await this.result()
     } catch (error) {
       failure = error
       // CommandComplete(COMMIT) is an actual backend acknowledgement even if
       // ReadyForQuery is lost. Preserve it; fresh readback still verifies bytes.
       if (phase === 'commit' && this.commandTag === 'COMMIT') return []
+      if (phase === 'commit' && !dispatched) throw commitNotDispatched(error)
+      if (phase === 'commit' && localPgCommitWasNotDispatched(error)) {
+        // A lower layer must not reuse an earlier attempt's unsent attestation
+        // after this attempt has already handed its frame to the transport.
+        const unmarked = new LocalPgError(error.code)
+        if (error.guardDiagnostic) localPgGuardDiagnostics.set(unmarked, error.guardDiagnostic)
+        throw unmarked
+      }
       throw error
     }
     finally {
       deadline?.completed()
       this.socket.setTimeout(0)
       try { await deadline?.cleanup() } catch { cleanupFailure = 'commit_disarm_failed'; this.closed = true; this.socket.destroy() }
-      finally { this.busy = false; this.recordOperation(phase, started, failure, deadline?.failure() ?? cleanupFailure) }
+      finally { this.busy = false; this.recordOperation(phase, started, failure, deadline?.failure() ?? cleanupFailure, phase === 'commit' ? dispatched : undefined) }
     }
   }
   close() { this.socket.setTimeout(0); this.socket.end(packet('X', Buffer.alloc(0))); this.closed = true }

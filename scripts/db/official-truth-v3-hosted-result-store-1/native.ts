@@ -31,7 +31,7 @@ import type { M04DeliveryProducer } from '../../../lib/readiness/official-truth-
 import type { V3VersionHead } from '../../../lib/readiness/official-truth-product-v3/monitor/recovery'
 import type { V3MonitorTarget, V3ProjectionSuppression } from '../../../lib/readiness/official-truth-product-v3/monitor/monitor'
 import { prepareV3VisitorProjection, type V3ProjectionBinding } from '../../../lib/readiness/official-truth-product-v3/visitor/query'
-import { HRS1_LIMITS, HRS1_FIELDS, HRS1_SQL, hrs1Canonical, hrs1Hash, hrs1Ref, hrs1Same, hrs1Time,
+import { HRS1_LIMITS, hrs1PublicReadMilliseconds, HRS1_FIELDS, HRS1_SQL, hrs1Canonical, hrs1Hash, hrs1Ref, hrs1Same, hrs1Time,
   hrs1Clock, hrs1Data, hrs1Channel, hrs1OriginalEvidence, readHrs1Binding, readHrs1Reply,
   type Hrs1Binding, type Hrs1Original, type Hrs1Ambiguity, type Hrs1Verification, type Hrs1Operation,
   type Hrs1Command, type Hrs1FixedRequest, type Hrs1FixedOperation, type Hrs1Reply,
@@ -438,9 +438,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "blob": "00d4edcb7daa090b61a28add33167ecd977e6324",
-    "bytes": 33339,
-    "sha256": "4402caba7216960cac671ec949893b51178b9532ae07db2c50e82902ec3549cb"
+    "blob": "56915ac1c118a9d13f65c875a4deaecd7aff7611",
+    "bytes": 33382,
+    "sha256": "791778c6bd1860ab5c43c20721e3d61c4341467d5b828ef0d201409e2aeac5f8"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -486,9 +486,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
-    "blob": "ba1e67ec4a512cc85ade31c315bf69a05ddf6cc2",
-    "bytes": 17006,
-    "sha256": "5d4bb7bd380247f7b56a841c3e930ea84da59bcfc2cc5d71e6ee5969d63a78ea"
+    "blob": "aa9d423625c58207e65448e5d1aa5e12bbd78092",
+    "bytes": 17379,
+    "sha256": "352d3fed1723f7148e07d68f07e809ade680bf2c47e4019791b7924853b1d576"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
@@ -540,9 +540,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
-    "bytes": 20238,
-    "blob": "9ba1fcb92775107e4c0ec99bac96312a0b9c120a",
-    "sha256": "89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6"
+    "bytes": 20341,
+    "blob": "010691537ad00c217a2599a5878a6dc4c3bb9b6f",
+    "sha256": "dcdd2c352f770d3ea3ec70bf0a1c3f85b471347ddfb519c7ec8632a8fc818b37"
   },
   {
     "path": "lib/readiness/official-truth-research-request.ts",
@@ -618,9 +618,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-    "bytes": 30699,
-    "blob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
-    "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b"
+    "bytes": 32943,
+    "blob": "e5cb5b32457ac75670582ee54b781eac8c1db027",
+    "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d"
   },
   {
     "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
@@ -642,9 +642,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
-    "bytes": 442952,
-    "sha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8"
+    "blob": "b4be092a426696d5a771661133bb14509a1ba111",
+    "bytes": 443491,
+    "sha256": "1889ecfcb082f747360e7153020f930e8b10e62c7c4c73923f48520f010e9787"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -678,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "8421006be431ccf9af697eec0dd1b4c64d1c4666",
-    "bytes": 375586,
-    "sha256": "2fa7a2643d58d18980552b2df6bb1b87fd5c110f5957034d0c2d33ef32aab272"
+    "blob": "fa76535f430bad3bfff79373dc3faee9c4f18edc",
+    "bytes": 382230,
+    "sha256": "9557a908c596e3591eafab73aab243d899edc0793f9a29375a99485f0acb4e36"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "fd2a2155126a54d311788f60d970ec3ae134d3ba",
-    "bytes": 161675,
-    "sha256": "a1ec47e602ce362bc433c597a28e3a5018a8ac6c51a04a34e45f724757cacb07"
+    "blob": "46697334a057772c7bad1c6f4da777aa1495de81",
+    "bytes": 163144,
+    "sha256": "bc9ab5a5411982986da9787e73c466dca331656182626de153dd62156ebfe533"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -1510,6 +1510,135 @@ async function resultSnapshot(connection:LocalPgConnection):Promise<ResultSnapsh
   const fields=RESULT_TABLES.map(name=>"'"+name+"',(SELECT COALESCE(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text),'[]'::jsonb) FROM official_v3_result_private."+name+' t)')
   return value(await connection.query('SELECT jsonb_build_object('+fields.join(',')+') AS value')) as ResultSnapshot
 }
+function originalBinding(snapshot:ResultSnapshot):Readonly<Record<string,unknown>>{
+  assert.equal(snapshot.binding_v1.length,1)
+  const {state_certificate,...original}=snapshot.binding_v1[0]!
+  assert.ok(state_certificate===null||typeof state_certificate==='string')
+  return original
+}
+async function currentStateCertificate(connection:LocalPgConnection):Promise<string>{
+  const rows=await connection.query(`SELECT state_certificate,
+    official_v3_result_private.state_fingerprint_v1() AS actual
+    FROM official_v3_result_private.binding_v1 WHERE singleton`)
+  const certificate=scalar(rows,'state_certificate')
+  assert.match(certificate,/^[0-9a-f]{64}$/);assert.equal(certificate,scalar(rows,'actual'))
+  return certificate
+}
+/** These owned synthetic corruption probes restore the exact trigger catalog
+ * before each public call; the deliberate test bypass is never left installed. */
+async function replaceSyntheticCertificate(connection:LocalPgConnection,certificate:string|null){
+  await connection.query('BEGIN')
+  try{
+    await connection.query('ALTER TABLE official_v3_result_private.binding_v1 DISABLE TRIGGER hrs1_immutable_row')
+    await connection.query("UPDATE official_v3_result_private.binding_v1 SET state_certificate=NULLIF($1::text,'') WHERE singleton",text([certificate]))
+    await connection.query('ALTER TABLE official_v3_result_private.binding_v1 ENABLE TRIGGER hrs1_immutable_row')
+    await connection.query('COMMIT')
+  }catch(error){await connection.query('ROLLBACK');throw error}
+}
+async function replaceSyntheticQualification(connection:LocalPgConnection,reference:string,record:unknown){
+  const wire=JSON.stringify(record);assert.equal(typeof wire,'string')
+  await connection.query('BEGIN')
+  try{
+    await connection.query('ALTER TABLE official_v3_result_private.qualifications_v1 DISABLE TRIGGER hrs1_immutable_row')
+    await connection.query('UPDATE official_v3_result_private.qualifications_v1 SET record=$2::jsonb WHERE reference=$1::text',
+      text([reference,wire]))
+    await connection.query('ALTER TABLE official_v3_result_private.qualifications_v1 ENABLE TRIGGER hrs1_immutable_row')
+    await connection.query('COMMIT')
+  }catch(error){await connection.query('ROLLBACK');throw error}
+}
+async function certificateRefusals(h:Harness,before:ResultSnapshot,oldCertificate:string,reference:string){
+  const owner=h.common.bootstrap.connection,certificate=await currentStateCertificate(owner)
+  const coverage={destinationCountryCode:'DE',citizenshipCountryCode:'CH'}
+  assert.notEqual(certificate,oldCertificate)
+  assert.equal((await h.raw('coverage',coverage)).status,'current')
+  assert.deepEqual(await resultSnapshot(owner),before,'a public read preserves the complete certified state, including binding')
+  for(const invalid of [null,'0'.repeat(64),oldCertificate]){
+    try{
+      await replaceSyntheticCertificate(owner,invalid)
+      const corrupted=await resultSnapshot(owner),codes=h.hrs.evidence.sqlCodes.length
+      assert.equal((await h.raw('coverage',coverage)).status,'unconfirmed')
+      assert.deepEqual(h.hrs.evidence.sqlCodes.slice(codes),['P7804'],'missing, changed and old certificates fail closed')
+      assert.deepEqual(await resultSnapshot(owner),corrupted,'a refused read never creates or repairs a certificate')
+    }finally{await replaceSyntheticCertificate(owner,certificate)}
+    assert.deepEqual(await resultSnapshot(owner),before)
+  }
+  const qualification=before.qualifications_v1.find(row=>row.reference===reference)
+  assert.ok(qualification&&qualification.record&&typeof qualification.record==='object'&&!Array.isArray(qualification.record))
+  try{
+    await replaceSyntheticQualification(owner,reference,{...qualification.record,reference:'synthetic-tampered-record'})
+    const corrupted=await resultSnapshot(owner),codes=h.hrs.evidence.sqlCodes.length
+    assert.equal((await h.raw('coverage',coverage)).status,'unconfirmed')
+    assert.deepEqual(h.hrs.evidence.sqlCodes.slice(codes),['P7804'],'actual changed history cannot reuse the stored certificate')
+    await assert.rejects(owner.query(`UPDATE official_v3_result_private.binding_v1
+      SET state_certificate=official_v3_result_private.state_fingerprint_v1() WHERE singleton`),stateError('P7804'),
+      'the active binding trigger rejects a privileged direct certificate update for inconsistent history')
+    assert.deepEqual(await resultSnapshot(owner),corrupted,'failed direct certification changes no durable row')
+  }finally{await replaceSyntheticQualification(owner,reference,qualification.record)}
+  await assert.rejects(owner.query(`UPDATE official_v3_result_private.binding_v1
+    SET binding_hash=repeat('0',64),state_certificate=official_v3_result_private.state_fingerprint_v1() WHERE singleton`),stateError('P7804'),
+    'certification never permits a change to the original binding fields')
+  assert.equal(await currentStateCertificate(owner),certificate)
+  assert.deepEqual(await resultSnapshot(owner),before)
+}
+async function certifiedReadLocks(lifetime:OwnedTestLifetime,h:Harness,budget:HrsBudget,reference:string){
+  const before=await resultSnapshot(h.common.bootstrap.connection)
+  const reader=await connect(lifetime,h.common.cluster,HRS_LOGINS.reader)
+  const owner=h.common.bootstrap.connection,observer=h.common.observer.connection
+  let began=false,rogueBegan=false,admitted=false
+  let joined:Promise<PromiseSettledResult<PgRows>[]>|undefined,settled:PromiseSettledResult<PgRows>[]=[]
+  try{
+    const at=h.fixture.clock(),head=h.head();assert.ok(head)
+    const milliseconds=hrs1PublicReadMilliseconds(h.fixture.binding.dataMode),deadline=performance.now()+milliseconds
+    const notAfter=new Date(Math.min(Date.parse(at.now)+milliseconds,Date.parse(h.fixture.binding.activeUntilExclusive),
+      head.approvalUntil?Date.parse(head.approvalUntil):Infinity)).toISOString()
+    const commandValue:Hrs1Command={schema:1,operation:'coverage',bindingHash:hrs1Hash(h.fixture.binding),
+      body:{destinationCountryCode:'DE',citizenshipCountryCode:'CH'}}
+    await reader.connection.query('BEGIN ISOLATION LEVEL READ COMMITTED');began=true
+    await reader.connection.query("SELECT set_config('statement_timeout',$1::text,true) AS statement_timeout,set_config('lock_timeout',$1::text,true) AS lock_timeout",text([milliseconds]))
+    const remaining=Math.floor(deadline-performance.now());assert.ok(remaining>0)
+    assert.ok(budget.admitted<256&&budget.active<2)
+    budget.admitted++;budget.directAdmitted++;budget.active++;budget.maximumActive=Math.max(budget.maximumActive,budget.active);admitted=true
+    const rows=await reader.connection.query(HRS1_SQL.read,text([hrs1Canonical(commandValue),commandValue.bindingHash,
+      HRS_METHOD.methodId,HRS_METHOD.revision,HRS_METHOD.methodDigest,HRS_METHOD.packageDigest,head.epoch,remaining,notAfter,at.legalDate]))
+    assert.equal(readHrs1Reply(rows)?.status,'current')
+    assert.ok(performance.now()<deadline,'the real restricted public call completes within its selected original budget')
+    const relationList=RESULT_TABLES.map(name=>"'official_v3_result_private."+name+"'::regclass").join(',')
+    assert.equal(scalar(await observer.query(`SELECT count(*)::text AS held FROM pg_catalog.pg_locks
+      WHERE pid=$1::integer AND locktype='relation' AND mode='ShareLock' AND granted
+      AND relation=ANY(ARRAY[${relationList}])`,text([reader.identity.pid])),'held'),'12')
+    await owner.query('BEGIN');rogueBegan=true
+    await owner.query("SET LOCAL statement_timeout='2s'; SET LOCAL lock_timeout='2s'")
+    const pending=lifetime.run(()=>owner.query('UPDATE official_v3_result_private.qualifications_v1 SET digest=digest WHERE reference=$1::text',text([reference])))
+    joined=Promise.allSettled([pending])
+    await until(lifetime,async()=>{
+      const rows=await observer.query(`SELECT a.pid::text AS pid,a.backend_start::text AS birth,
+        array_to_json(pg_blocking_pids(a.pid))::text AS blockers
+        FROM pg_catalog.pg_stat_activity a WHERE a.pid=$1::integer AND a.backend_start=$2::timestamptz
+        AND a.wait_event_type='Lock' AND EXISTS(SELECT 1 FROM pg_catalog.pg_locks l
+          WHERE l.pid=a.pid AND l.locktype='relation' AND l.relation='official_v3_result_private.qualifications_v1'::regclass
+          AND l.mode='RowExclusiveLock' AND NOT l.granted)`,text([h.common.bootstrap.identity.pid,h.common.bootstrap.identity.birth]))
+      return rows.length===1&&rows[0]!.pid===h.common.bootstrap.identity.pid&&rows[0]!.birth===h.common.bootstrap.identity.birth
+        &&(JSON.parse(rows[0]!.blockers!) as number[]).includes(Number(reader.identity.pid))
+    },1000)
+  }finally{
+    try{
+      try{if(began)await reader.connection.query('ROLLBACK')}finally{reader.connection.close()}
+    }finally{
+      try{if(joined)settled=await joined}finally{
+        try{if(rogueBegan)await owner.query('ROLLBACK')}finally{
+          try{await proveAbsent(lifetime,observer,[reader.identity])}finally{
+            if(admitted){budget.directSettled++;budget.active--}
+          }
+        }
+      }
+    }
+  }
+  assert.equal(settled.length,1);assert.ok(settled[0]?.status==='rejected')
+  assert.ok(stateError('P7803')(settled[0].reason),'after the reader releases its real locks the unchanged immutable trigger rejects direct DML')
+  assert.deepEqual(await resultSnapshot(owner),before,'the actual non-advisory DML race leaves every certified row exact')
+  await currentStateCertificate(owner)
+}
+
 function noResultEffects(snapshot:ResultSnapshot){
   for(const name of RESULT_TABLES)if(!['binding_v1','heads_v1','monitor_schedule_v1'].includes(name))assert.deepEqual(snapshot[name],[],name+' initially empty')
 }
@@ -1560,7 +1689,7 @@ async function createHarness(lifetime:OwnedTestLifetime,common:Common,fixture:Vi
     override:NativeRequestOverride={},login?:HrsLoginKind):Promise<Hrs1Reply>{
     assert.ok(methodHead&&methodHead.epoch>0,'direct synthetic probe requires actual human receipt')
     const publicRead=['coverage','projection','projection_current','projection_batch'].includes(operation)
-    const milliseconds=publicRead?HRS1_LIMITS.publicMilliseconds:HRS1_LIMITS.effectMilliseconds
+    const milliseconds=publicRead?hrs1PublicReadMilliseconds(fixture.binding.dataMode):HRS1_LIMITS.effectMilliseconds
     const at=fixture.clock(),deadline=performance.now()+milliseconds
     const verification=typeof body.verificationRef==='string'?fixture.verificationForReference(body.verificationRef):null
     const projection=body.projection as {expiresAt?:unknown}|undefined
@@ -1840,6 +1969,7 @@ async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:H
   for(const common of commons){
     await creatorIdentity(common.creator.connection);await frozen(common)
     noResultEffects(await resultSnapshot(common.bootstrap.connection))
+    await currentStateCertificate(common.bootstrap.connection)
     const actual=JSON.parse(common.resultIdentity) as {catalog:unknown}
     assert.deepEqual(value(await common.creator.connection.query('SELECT ('+HRS_CATALOG_SQL+') AS value')),actual.catalog,
       'restricted Creator independently reads the complete original metadata without ResultOwner membership')
@@ -1904,12 +2034,18 @@ async function n02(h:Harness){
   assert.ok(['unavailable','unconfirmed'].includes(readerPrivate.status),'public Reader cannot enter a private read with a valid tuple')
   assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),before)
 }
-async function n03(h:Harness){
+async function n03(lifetime:OwnedTestLifetime,h:Harness,budget:HrsBudget){
+  const beforeAttest=await resultSnapshot(h.common.bootstrap.connection)
+  const oldCertificate=await currentStateCertificate(h.common.bootstrap.connection)
   const attestStart=h.hrs.evidence.calls.length
   const incomplete=await h.prepare('n03-incomplete'),body=h.transition(incomplete)
   const pending=await h.intake.read(incomplete.reference,h.signal)
   assert.equal(pending.status,'recorded');assert.ok(pending.status==='recorded');assert.equal(pending.record.completion,null)
   const before=await resultSnapshot(h.common.bootstrap.connection)
+  assert.deepEqual(before.heads_v1,beforeAttest.heads_v1,'attestation changes no head generation')
+  assert.deepEqual(originalBinding(before),originalBinding(beforeAttest),'all original binding fields remain exact')
+  assert.notEqual(await currentStateCertificate(h.common.bootstrap.connection),oldCertificate,
+    'the actual first attestation certifies its new originals and qualifications without a head-generation change')
   const verified=h.verification(incomplete.outcome)
   const attested=h.hrs.evidence.calls.slice(attestStart).filter(call=>call.operation==='attest'&&call.kind==='verifier')
   assert.ok(attested.length>0&&attested.every(call=>call.dispatched&&call.committed&&call.drained&&call.target&&call.control),
@@ -1931,6 +2067,8 @@ async function n03(h:Harness){
     assert.equal(stored.length,1);assert.equal(stored[0]!.body_text,original.bodyText)
     assert.equal(stored[0]!.raw_digest,original.rawDigest);assert.deepEqual(stored[0]!.evidence,evidence)
   }
+  await certificateRefusals(h,before,oldCertificate,verified.reference)
+  await certifiedReadLocks(lifetime,h,budget,verified.reference)
   const refusal=await h.raw('transition',body)
   assert.ok(['unavailable','unconfirmed','not_current'].includes(refusal.status),'actual existing S1 operation without finish cannot publish')
   assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),before)
@@ -2747,7 +2885,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     const used=state.used,unused=state.unused,fixture=state.fixture;assert.ok(used&&unused&&fixture)
     const h=await createHarness(lifetime,used,fixture,budget);harnesses.push(h)
     await proof('N02','exact context/source/method and closed production issuance',()=>n02(h))
-    const initial=await proof('N03','actual full completed S1 custody and incomplete/mismatched originals refuse',()=>n03(h))
+    const initial=await proof('N03','actual full completed S1 custody and incomplete/mismatched originals refuse',()=>n03(lifetime,h,budget))
     const first=await proof('N04','actual I1 transition/publication/current public read with advancing source custody',()=>n04(h))
     const race=await proof('N05','two actual blocked writers retain exactly one CAS winner and immutable history',()=>n05(lifetime,h))
     await proof('N06','actual head/revoke/reapproved epoch waits refuse old authority at the end',()=>n06(lifetime,h,race))
@@ -2758,7 +2896,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     await proof('N11','initial sticky conflict, outbox dedup, real leases, clear source change and expiry',()=>n11(lifetime,h,initial))
     await proof('N12','unused exact recovery, used-history refusal and complete caller drain',()=>n12(lifetime,h,unused,files))
     assert.deepEqual(completed,GROUPS);assert.equal(budget.active,0);assert.equal(budget.maximumActive,2)
-    assert.equal(budget.directAdmitted,8);assert.equal(budget.directSettled,budget.directAdmitted)
+    assert.equal(budget.directAdmitted,9);assert.equal(budget.directSettled,budget.directAdmitted) // eight original rights refusals plus one certified-read lock proof
     assert.equal(budget.admitted,h.hrs.evidence.admitted+budget.directAdmitted);assert.ok(budget.admitted<=256)
   }catch(error){
     failed=true;failure=error
@@ -2787,7 +2925,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
       assert.ok(performance.now()-cleanupStart<=DRAIN_MS,'one total cleanup deadline')
       if(!failed)assert.equal(terminal.stoppedClusters,2)
       t.diagnostic('HRS1 synthetic terminal '+JSON.stringify({completed,...terminal,fixedCalls:budget.admitted,
-        directRightsCalls:budget.directAdmitted,maximumActive:budget.maximumActive,effectsLimitMs:EFFECT_MS,cleanupLimitMs:DRAIN_MS,
+        directApiCalls:budget.directAdmitted,maximumActive:budget.maximumActive,effectsLimitMs:EFFECT_MS,cleanupLimitMs:DRAIN_MS,
         maxConnections:MAX_CONNECTIONS,maxOperations:MAX_OPERATIONS}))
     }catch(error){errors.push(error)}
     if(errors.length){failure=new AggregateError(failed?[failure,...errors]:errors,'hrs1_proof_or_cleanup_failed');failed=true}

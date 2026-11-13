@@ -211,7 +211,7 @@ DECLARE expected_function record; function_row pg_catalog.pg_proc%ROWTYPE; expec
  target_oid oid; target_types oid[]; target_name text; namespace_oid oid; owner_oid oid; expected_dependency_count integer;
 BEGIN
  IF (SELECT count(*) FROM pg_catalog.pg_proc f JOIN pg_catalog.pg_namespace ns ON ns.oid=f.pronamespace
-  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>55 THEN
+  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>56 THEN
   RAISE EXCEPTION 'hrs1 exact function count' USING ERRCODE='P7802';
  END IF;
  FOR expected_function IN SELECT * FROM (VALUES
@@ -232,7 +232,8 @@ BEGIN
   ('official_v3_result_private','shape_matches_v1','jsonb,jsonb,jsonb,jsonb,int4',ARRAY['v','s','defs','countries','depth']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',1,'0','4b558e73233251f166c11558d8426f2956433a5dfe079acdd0090d40b3ee2181',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','proposal_retainable_v1','jsonb',ARRAY['v']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9264fea3daaddb89d01aea123a1d7fc83aa83cdfe78689281fbda198f46eb4dc',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','validate_s1_copy_v1','jsonb,jsonb,jsonb,text',ARRAY['reply','job','result','purpose']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'343bee988dd465557620d5211bde7017bdf236569f2705e31edcf840c8822e06',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'510b2e846162da437c9d0989015c449b6f8435e1e6eae91356f23ec5aafc827f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','state_fingerprint_v1','',NULL::text[],'text','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a29d456069d288346a0a2eb69aba0d58f2c22df7f38d81e2ee5c9720796d7b25',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0862c8153ca0d1d26a1f70580366d1b242da401d91ec036f8734f2838e14839a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','hash_v1','jsonb',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6a7d2ac8da921bb8553fcf00d9c5823aad51c9f0d7b965d733f86405f7d812a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','ref_v1','text,jsonb',ARRAY['kind','v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a4b35b5651099a7373d08ff29b809a3a6c21a97199c564bfad1d4c8558ad6010',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','time_text_v1','timestamptz',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f07bb7b06d64d88c0d2f3ad3bed101439bb95eda8147e5616e54252ba598804d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
@@ -253,18 +254,18 @@ BEGIN
   ('official_v3_result_private','consume_s1_v1','jsonb,jsonb,jsonb',ARRAY['ref','expected_outcome','b']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2db23086828983df4a93e79bc74c35d93c7c408c612c49885cac327b3fb96111',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','keep_decision_v1','jsonb',ARRAY['v']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'91351a13b82f9c45e364126032feeea3d9a515a3e693efb37caf3bb8b0ed9bf5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','prepared_v1','jsonb,jsonb,jsonb',ARRAY['prepared_value','proof_value','b']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6c476735120c4aa69295f881e083efab1d3069a28507d6f3cb7dcf0ff5121a3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'4311dc7c4c7b70e7e3bbbc2a2ad37de9fd83ed5231eb277a33b7560e1e9e4d3e',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'06d0f730fd449ae367cde5bc4e06ec2e6b4cf5f351d037c3d3f9920b73d3e6d8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1a7b5cad87c42ffebf4c3b41ce6e3eabd62caf656c67e858e9254b6975d3a64f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'ac7027e6d63e9edc455ee4eec6f7371bddc43cc595b7542df4a1f601c8a1b13d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0a7161f416d8184b0e0d657ed417d2bbed5df4d42bfacbbc197430126d335f7a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a2096968e60ddf678ba4970529fe0130b90c2883cca1d3bcfde468e3c422274f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','projection_binding_v1','jsonb',ARRAY['p']::text[],'jsonb','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2b4281e9e5160277fdcf081797401b01929c17ac084c9ca92c8b846ab9aaca14',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','current_projection_v1','jsonb,text',ARRAY['b','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'bb464fa0264d0c26fdd71e61ba586e5dd68cb7a38992497dd270be994d2a21cb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_v1','jsonb',ARRAY['b']::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'cb6c8195f6347fe381407c9fbc17a13babfe80654a01073666e8e5c7a97f37e9',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_current_v1','int8,jsonb,jsonb',ARRAY['generation_value','target_value','b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'56e2e7134965eb9495d1598e4f1a538af276408d7618a91b11c71c7817be86dd',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9082b6172399afbfb132819cf0e78a5f11031a443bfe95eb5768317cc62098a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'258079e814d0add8de6cd3a7da0bbe106b803863665a0c4c8f12cbd68ec909f5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_claim_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'d2f5f8cb1f33d926a463a65f5f49941af2c209c1275da0d4a9f9f8afc30a3971',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_finish_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'37a5426679629449bec19e1a86c95a1f5689300aa5fdaedcb8457976f14f9e3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','command_v1','jsonb,jsonb',ARRAY['wire_value','b']::text[],'jsonb','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a1672b93a0d614293ddaa6362db17204e74a025072e08ad6cad3958263bd4ac1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'034449052e7103134c487c9372f9b76b1df1b6d7eb893299f8b08015a0b7f4fb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0c911e7dd3dca1ff93c64f5d374789182c3e35dd93902dd74b6b121d68cbd6e6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_api','attest_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''attest''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_verifier']::text[]),
   ('official_v3_result_api','execute_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''execute''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer']::text[]),
   ('official_v3_result_api','read_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''read''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader']::text[]),
@@ -307,6 +308,8 @@ BEGIN
    OR function_row.procost<>100 OR function_row.prorows<>0 OR function_row.pronargdefaults<>expected_function.defaults
    OR pg_catalog.pg_get_expr(function_row.proargdefaults,0) IS DISTINCT FROM expected_function.default_expression
    OR function_row.proconfig IS DISTINCT FROM (CASE
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='state_fingerprint_v1'
+     THEN ARRAY[expected_function.config,'TimeZone=UTC','DateStyle=ISO, YMD']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='dispatch_v1'
      THEN ARRAY[expected_function.config,'jit=off','plan_cache_mode=force_generic_plan']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='catalog_v1'
@@ -404,6 +407,7 @@ BEGIN
   ('binding_v1',3,'binding_hash','text',true),
   ('binding_v1',4,'creator_oid','oid',true),
   ('binding_v1',5,'catalog','jsonb',true),
+  ('binding_v1',6,'state_certificate','text',false),
   ('originals_v1',1,'version_id','text',true),
   ('originals_v1',2,'evidence','jsonb',true),
   ('originals_v1',3,'body_text','text',true),
@@ -495,7 +499,7 @@ BEGIN
   END IF;
  END LOOP;
  IF (SELECT count(*) FROM pg_catalog.pg_attribute attribute JOIN pg_catalog.pg_class rel ON rel.oid=attribute.attrelid
-   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>73 THEN
+   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>74 THEN
   RAISE EXCEPTION 'hrs1 extra or missing table column' USING ERRCODE='P7802';
  END IF;
  FOR expected_constraint IN SELECT * FROM (VALUES
@@ -713,7 +717,9 @@ BEGIN
   OR bound.binding_hash IS DISTINCT FROM expected_identity->>'bindingHash'
   OR bound.catalog IS DISTINCT FROM expected_identity->'catalog'
   OR official_v3_result_private.binding_valid_v1(bound.binding) IS NOT TRUE
-  OR official_v3_result_private.hash_v1(bound.binding) IS DISTINCT FROM bound.binding_hash THEN
+  OR official_v3_result_private.hash_v1(bound.binding) IS DISTINCT FROM bound.binding_hash
+  OR (bound.state_certificate ~ '^[a-f0-9]{64}$') IS NOT TRUE
+  OR bound.state_certificate IS DISTINCT FROM official_v3_result_private.state_fingerprint_v1() THEN
   RAISE EXCEPTION 'hrs1 complete original binding or stored catalog differs' USING ERRCODE='P7802';
  END IF;
  IF EXISTS(SELECT 1 FROM official_v3_result_private.originals_v1)
@@ -920,7 +926,7 @@ DECLARE expected_function record; function_row pg_catalog.pg_proc%ROWTYPE; expec
  target_oid oid; target_types oid[]; target_name text; namespace_oid oid; owner_oid oid; expected_dependency_count integer;
 BEGIN
  IF (SELECT count(*) FROM pg_catalog.pg_proc f JOIN pg_catalog.pg_namespace ns ON ns.oid=f.pronamespace
-  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>55 THEN
+  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>56 THEN
   RAISE EXCEPTION 'hrs1 exact function count' USING ERRCODE='P7802';
  END IF;
  FOR expected_function IN SELECT * FROM (VALUES
@@ -941,7 +947,8 @@ BEGIN
   ('official_v3_result_private','shape_matches_v1','jsonb,jsonb,jsonb,jsonb,int4',ARRAY['v','s','defs','countries','depth']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',1,'0','4b558e73233251f166c11558d8426f2956433a5dfe079acdd0090d40b3ee2181',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','proposal_retainable_v1','jsonb',ARRAY['v']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9264fea3daaddb89d01aea123a1d7fc83aa83cdfe78689281fbda198f46eb4dc',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','validate_s1_copy_v1','jsonb,jsonb,jsonb,text',ARRAY['reply','job','result','purpose']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'343bee988dd465557620d5211bde7017bdf236569f2705e31edcf840c8822e06',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'510b2e846162da437c9d0989015c449b6f8435e1e6eae91356f23ec5aafc827f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','state_fingerprint_v1','',NULL::text[],'text','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a29d456069d288346a0a2eb69aba0d58f2c22df7f38d81e2ee5c9720796d7b25',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0862c8153ca0d1d26a1f70580366d1b242da401d91ec036f8734f2838e14839a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','hash_v1','jsonb',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6a7d2ac8da921bb8553fcf00d9c5823aad51c9f0d7b965d733f86405f7d812a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','ref_v1','text,jsonb',ARRAY['kind','v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a4b35b5651099a7373d08ff29b809a3a6c21a97199c564bfad1d4c8558ad6010',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','time_text_v1','timestamptz',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f07bb7b06d64d88c0d2f3ad3bed101439bb95eda8147e5616e54252ba598804d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
@@ -962,18 +969,18 @@ BEGIN
   ('official_v3_result_private','consume_s1_v1','jsonb,jsonb,jsonb',ARRAY['ref','expected_outcome','b']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2db23086828983df4a93e79bc74c35d93c7c408c612c49885cac327b3fb96111',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','keep_decision_v1','jsonb',ARRAY['v']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'91351a13b82f9c45e364126032feeea3d9a515a3e693efb37caf3bb8b0ed9bf5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','prepared_v1','jsonb,jsonb,jsonb',ARRAY['prepared_value','proof_value','b']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6c476735120c4aa69295f881e083efab1d3069a28507d6f3cb7dcf0ff5121a3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'4311dc7c4c7b70e7e3bbbc2a2ad37de9fd83ed5231eb277a33b7560e1e9e4d3e',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'06d0f730fd449ae367cde5bc4e06ec2e6b4cf5f351d037c3d3f9920b73d3e6d8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1a7b5cad87c42ffebf4c3b41ce6e3eabd62caf656c67e858e9254b6975d3a64f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'ac7027e6d63e9edc455ee4eec6f7371bddc43cc595b7542df4a1f601c8a1b13d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0a7161f416d8184b0e0d657ed417d2bbed5df4d42bfacbbc197430126d335f7a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a2096968e60ddf678ba4970529fe0130b90c2883cca1d3bcfde468e3c422274f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','projection_binding_v1','jsonb',ARRAY['p']::text[],'jsonb','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2b4281e9e5160277fdcf081797401b01929c17ac084c9ca92c8b846ab9aaca14',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','current_projection_v1','jsonb,text',ARRAY['b','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'bb464fa0264d0c26fdd71e61ba586e5dd68cb7a38992497dd270be994d2a21cb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_v1','jsonb',ARRAY['b']::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'cb6c8195f6347fe381407c9fbc17a13babfe80654a01073666e8e5c7a97f37e9',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_current_v1','int8,jsonb,jsonb',ARRAY['generation_value','target_value','b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'56e2e7134965eb9495d1598e4f1a538af276408d7618a91b11c71c7817be86dd',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9082b6172399afbfb132819cf0e78a5f11031a443bfe95eb5768317cc62098a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'258079e814d0add8de6cd3a7da0bbe106b803863665a0c4c8f12cbd68ec909f5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_claim_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'d2f5f8cb1f33d926a463a65f5f49941af2c209c1275da0d4a9f9f8afc30a3971',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_finish_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'37a5426679629449bec19e1a86c95a1f5689300aa5fdaedcb8457976f14f9e3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','command_v1','jsonb,jsonb',ARRAY['wire_value','b']::text[],'jsonb','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a1672b93a0d614293ddaa6362db17204e74a025072e08ad6cad3958263bd4ac1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'034449052e7103134c487c9372f9b76b1df1b6d7eb893299f8b08015a0b7f4fb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0c911e7dd3dca1ff93c64f5d374789182c3e35dd93902dd74b6b121d68cbd6e6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_api','attest_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''attest''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_verifier']::text[]),
   ('official_v3_result_api','execute_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''execute''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer']::text[]),
   ('official_v3_result_api','read_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''read''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader']::text[]),
@@ -1016,6 +1023,8 @@ BEGIN
    OR function_row.procost<>100 OR function_row.prorows<>0 OR function_row.pronargdefaults<>expected_function.defaults
    OR pg_catalog.pg_get_expr(function_row.proargdefaults,0) IS DISTINCT FROM expected_function.default_expression
    OR function_row.proconfig IS DISTINCT FROM (CASE
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='state_fingerprint_v1'
+     THEN ARRAY[expected_function.config,'TimeZone=UTC','DateStyle=ISO, YMD']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='dispatch_v1'
      THEN ARRAY[expected_function.config,'jit=off','plan_cache_mode=force_generic_plan']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='catalog_v1'
@@ -1113,6 +1122,7 @@ BEGIN
   ('binding_v1',3,'binding_hash','text',true),
   ('binding_v1',4,'creator_oid','oid',true),
   ('binding_v1',5,'catalog','jsonb',true),
+  ('binding_v1',6,'state_certificate','text',false),
   ('originals_v1',1,'version_id','text',true),
   ('originals_v1',2,'evidence','jsonb',true),
   ('originals_v1',3,'body_text','text',true),
@@ -1204,7 +1214,7 @@ BEGIN
   END IF;
  END LOOP;
  IF (SELECT count(*) FROM pg_catalog.pg_attribute attribute JOIN pg_catalog.pg_class rel ON rel.oid=attribute.attrelid
-   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>73 THEN
+   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>74 THEN
   RAISE EXCEPTION 'hrs1 extra or missing table column' USING ERRCODE='P7802';
  END IF;
  FOR expected_constraint IN SELECT * FROM (VALUES
@@ -1370,7 +1380,9 @@ BEGIN
   OR bound.binding_hash IS DISTINCT FROM expected_identity->>'bindingHash'
   OR bound.catalog IS DISTINCT FROM expected_identity->'catalog'
   OR official_v3_result_private.binding_valid_v1(bound.binding) IS NOT TRUE
-  OR official_v3_result_private.hash_v1(bound.binding) IS DISTINCT FROM bound.binding_hash THEN
+  OR official_v3_result_private.hash_v1(bound.binding) IS DISTINCT FROM bound.binding_hash
+  OR (bound.state_certificate ~ '^[a-f0-9]{64}$') IS NOT TRUE
+  OR bound.state_certificate IS DISTINCT FROM official_v3_result_private.state_fingerprint_v1() THEN
   RAISE EXCEPTION 'hrs1 complete original binding or stored catalog differs' USING ERRCODE='P7802';
  END IF;
  IF EXISTS(SELECT 1 FROM official_v3_result_private.originals_v1)
@@ -1581,6 +1593,8 @@ DROP FUNCTION official_v3_result_private.time_text_v1(timestamptz) RESTRICT;
 DROP FUNCTION official_v3_result_private.ref_v1(text,jsonb) RESTRICT;
 
 DROP FUNCTION official_v3_result_private.hash_v1(jsonb) RESTRICT;
+
+DROP FUNCTION official_v3_result_private.state_fingerprint_v1() RESTRICT;
 
 DROP FUNCTION official_v3_result_private.immutable_v1() RESTRICT;
 

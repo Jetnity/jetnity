@@ -1535,7 +1535,7 @@ END $$;
 -- HRS owns only these twelve finite tables. Records and original bytes are append-only.
 CREATE TABLE official_v3_result_private.binding_v1(
  singleton boolean PRIMARY KEY CHECK(singleton), binding jsonb NOT NULL, binding_hash text NOT NULL UNIQUE,
- creator_oid oid NOT NULL, catalog jsonb NOT NULL);
+ creator_oid oid NOT NULL, catalog jsonb NOT NULL, state_certificate text);
 CREATE TABLE official_v3_result_private.originals_v1(
  version_id text PRIMARY KEY, evidence jsonb NOT NULL, body_text text NOT NULL, raw_digest text NOT NULL,
  CHECK(octet_length(body_text) BETWEEN 1 AND 131072 AND raw_digest ~ '^[a-f0-9]{64}$'));
@@ -1587,6 +1587,41 @@ CREATE TABLE official_v3_result_private.monitor_schedule_v1(
  claimed_by text, claim_operation text, next_check_at timestamptz NOT NULL CHECK(isfinite(next_check_at)),
  lease_until timestamptz, outcomes jsonb NOT NULL, finish_operation text,
  CHECK((claimed_by IS NULL)=(lease_until IS NULL) AND (lease_until IS NULL OR isfinite(lease_until))));
+-- This native unchanged-state fingerprint does not repeat semantic/canonical
+-- validation. Its protected certificate is issued only by immutable_v1 after
+-- the complete history check while every covered table is SHARE-locked.
+CREATE FUNCTION official_v3_result_private.state_fingerprint_v1() RETURNS text
+LANGUAGE sql STABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT
+ SET search_path=pg_catalog SET timezone='UTC' SET datestyle='ISO, YMD' AS $$
+ WITH row_values(table_name,primary_key,secondary_key,row_value) AS (
+  SELECT 'binding_v1'::text,b.singleton::text,''::text,to_jsonb(b)-'state_certificate'
+    FROM official_v3_result_private.binding_v1 b
+  UNION ALL SELECT 'originals_v1',r.version_id,'',to_jsonb(r) FROM official_v3_result_private.originals_v1 r
+  UNION ALL SELECT 'extractions_v1',r.version_id,'',to_jsonb(r) FROM official_v3_result_private.extractions_v1 r
+  UNION ALL SELECT 'qualifications_v1',r.reference,'',to_jsonb(r) FROM official_v3_result_private.qualifications_v1 r
+  UNION ALL SELECT 'decisions_v1',r.reference,'',to_jsonb(r) FROM official_v3_result_private.decisions_v1 r
+  UNION ALL SELECT 'archive_pages_v1',r.reference,'',to_jsonb(r) FROM official_v3_result_private.archive_pages_v1 r
+  UNION ALL SELECT 'versions_v1',r.reference,'',to_jsonb(r) FROM official_v3_result_private.versions_v1 r
+  UNION ALL SELECT 'heads_v1',r.singleton::text,'',to_jsonb(r) FROM official_v3_result_private.heads_v1 r
+  UNION ALL SELECT 'projections_v1',r.reference,'',to_jsonb(r) FROM official_v3_result_private.projections_v1 r
+  UNION ALL SELECT 'operations_v1',r.operation_kind,r.operation_id,to_jsonb(r) FROM official_v3_result_private.operations_v1 r
+  UNION ALL SELECT 'outbox_v1',r.escalation_key,'',to_jsonb(r) FROM official_v3_result_private.outbox_v1 r
+  UNION ALL SELECT 'monitor_schedule_v1',r.singleton::text,'',to_jsonb(r) FROM official_v3_result_private.monitor_schedule_v1 r
+ ), row_digests AS (
+  SELECT table_name,primary_key,secondary_key,
+    encode(sha256(convert_to(row_value::text,'UTF8')),'hex') AS digest FROM row_values
+ ), table_digests AS (
+  SELECT expected.table_name,count(r.primary_key) AS row_count,
+    encode(sha256(convert_to('hrs1-state-table:v1:'||expected.table_name||':'||count(r.primary_key)::text||':'||
+      COALESCE(string_agg(r.digest,'' ORDER BY r.primary_key COLLATE "C",r.secondary_key COLLATE "C"),''),'UTF8')),'hex') AS digest
+   FROM (VALUES ('binding_v1'),('originals_v1'),('extractions_v1'),('qualifications_v1'),('decisions_v1'),('archive_pages_v1'),
+     ('versions_v1'),('heads_v1'),('projections_v1'),('operations_v1'),('outbox_v1'),('monitor_schedule_v1')) expected(table_name)
+   LEFT JOIN row_digests r ON r.table_name=expected.table_name GROUP BY expected.table_name
+ )
+ SELECT encode(sha256(convert_to('hrs1-state:v1:'||string_agg(table_name||':'||row_count::text||':'||digest,
+   '|' ORDER BY table_name COLLATE "C"),'UTF8')),'hex') FROM table_digests
+$$;
+
 CREATE FUNCTION official_v3_result_private.immutable_v1() RETURNS trigger
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog AS $$
 BEGIN
@@ -1599,6 +1634,23 @@ BEGIN
   ELSIF TG_TABLE_NAME='monitor_schedule_v1'
    AND to_jsonb(OLD)->'singleton'=to_jsonb(NEW)->'singleton'
    AND (to_jsonb(NEW)->>'generation')::bigint>=(to_jsonb(OLD)->>'generation')::bigint THEN RETURN NEW;
+  ELSIF TG_TABLE_NAME='binding_v1' THEN
+   IF convert_to((to_jsonb(OLD)-'state_certificate')::text,'UTF8')
+       IS DISTINCT FROM convert_to((to_jsonb(NEW)-'state_certificate')::text,'UTF8')
+    OR (NEW.state_certificate ~ '^[a-f0-9]{64}$') IS NOT TRUE THEN
+    RAISE EXCEPTION 'hrs1 protected state certificate update invalid' USING ERRCODE='P7804';
+   END IF;
+ LOCK TABLE official_v3_result_private.archive_pages_v1,official_v3_result_private.binding_v1,
+  official_v3_result_private.decisions_v1,official_v3_result_private.extractions_v1,
+  official_v3_result_private.heads_v1,official_v3_result_private.monitor_schedule_v1,
+  official_v3_result_private.operations_v1,official_v3_result_private.originals_v1,
+  official_v3_result_private.outbox_v1,official_v3_result_private.projections_v1,
+  official_v3_result_private.qualifications_v1,official_v3_result_private.versions_v1 IN SHARE MODE;
+   PERFORM official_v3_result_private.assert_history_v1();
+   IF NEW.state_certificate IS DISTINCT FROM official_v3_result_private.state_fingerprint_v1() THEN
+    RAISE EXCEPTION 'hrs1 state certificate does not cover checked history' USING ERRCODE='P7804';
+   END IF;
+   RETURN NEW;
   END IF;
  END IF;
  RAISE EXCEPTION 'hrs1 immutable history' USING ERRCODE='P7803';
@@ -2361,7 +2413,6 @@ BEGIN
   VALUES('version',prepared_value#>>'{transition,operationId}',expected_key,command_digest,q-'expectedHead',
    jsonb_build_object('confirmation',result_value,'suppressionEpoch',new_epoch),new_generation,at_time);
  -- Every write/unique/FK wait has completed. Any failure now aborts the whole transaction.
- PERFORM official_v3_result_private.assert_history_v1();
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,deadline,legal_day,proof_value);
  RETURN jsonb_build_object('status','committed','value',result_value);
 END $$;
@@ -2412,7 +2463,6 @@ BEGIN
     jsonb_build_object('projectionRef',projection_value->'reference','versionRef',prepared_value#>'{version,reference}',
       'publishedAt',official_v3_result_private.time_text_v1(at_time),'freshUntil',proof_value->'validUntilExclusive'),head_row.generation+1,at_time);
  END IF;
- PERFORM official_v3_result_private.assert_history_v1();
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,LEAST(deadline,desired_expiry),legal_day,proof_value);
  IF NOT confirm_only THEN RETURN jsonb_build_object('status','reported'); END IF;
  RETURN jsonb_build_object('status','confirmed','value',jsonb_build_object('operationId',q->'operationId','operationKey',q->'operationKey',
@@ -2464,7 +2514,6 @@ BEGIN
  INSERT INTO official_v3_result_private.outbox_v1(escalation_key,decision_ref,operation_kind,operation_id,record,recorded_at)
   SELECT outcome_value->>'key',outcome_value#>>'{decision,reference}','escalation',q->>'operationId',outcome_value,at_time
   WHERE NOT EXISTS(SELECT 1 FROM official_v3_result_private.outbox_v1 stored WHERE stored.escalation_key=outcome_value->>'key');
- PERFORM official_v3_result_private.assert_history_v1();
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,deadline,legal_day,proof_value);
  RETURN jsonb_build_object('status','reported');
 END $$;
@@ -2657,7 +2706,6 @@ BEGIN
    SELECT escalation_value,target_value->>'sourceDecisionRef','suppression',effect_value->>'operationId',effect_value,at_time
    WHERE NOT EXISTS(SELECT 1 FROM official_v3_result_private.outbox_v1 stored WHERE stored.escalation_key=escalation_value);
  END IF;
- PERFORM official_v3_result_private.assert_history_v1();
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,LEAST(deadline,COALESCE(observation_expiry,deadline)),legal_day);
  RETURN jsonb_build_object('status','confirmed','value',jsonb_build_object('auditRef',audit_value));
 END $$;
@@ -2796,6 +2844,7 @@ DECLARE b jsonb:=official_v3_result_private.selected_binding_v1(); q jsonb; oper
  expected_channel text; deadline timestamptz; actual_now timestamptz:=clock_timestamp(); reply_value jsonb; proof_value jsonb;
  head_row official_v3_result_private.heads_v1%ROWTYPE; original_operation official_v3_result_private.operations_v1%ROWTYPE;
  projection_value jsonb; projection_binding jsonb; requested jsonb; key_value jsonb; refs jsonb:='[]'; public_reader boolean;
+ stored_certificate text; certificate_rows bigint;
 BEGIN
  IF b IS NULL OR current_setting('transaction_isolation')<>'read committed'
   OR binding_hash_value IS DISTINCT FROM official_v3_result_private.hash_v1(b)
@@ -2826,15 +2875,28 @@ BEGIN
  -- A reader waits for any in-progress write and checks freshness after that wait.
  IF channel_value IN ('execute','attest') THEN
   PERFORM pg_advisory_xact_lock(771105,2);
-  SELECT * INTO head_row FROM official_v3_result_private.heads_v1 WHERE singleton FOR UPDATE;
  ELSE
   PERFORM pg_advisory_xact_lock_shared(771105,2);
+ END IF;
+ LOCK TABLE official_v3_result_private.archive_pages_v1,official_v3_result_private.binding_v1,
+  official_v3_result_private.decisions_v1,official_v3_result_private.extractions_v1,
+  official_v3_result_private.heads_v1,official_v3_result_private.monitor_schedule_v1,
+  official_v3_result_private.operations_v1,official_v3_result_private.originals_v1,
+  official_v3_result_private.outbox_v1,official_v3_result_private.projections_v1,
+  official_v3_result_private.qualifications_v1,official_v3_result_private.versions_v1 IN SHARE MODE;
+ IF channel_value IN ('execute','attest') THEN
+  SELECT * INTO head_row FROM official_v3_result_private.heads_v1 WHERE singleton FOR UPDATE;
+ ELSE
   SELECT * INTO head_row FROM official_v3_result_private.heads_v1 WHERE singleton FOR SHARE;
  END IF;
  IF NOT FOUND THEN RAISE EXCEPTION 'hrs1 selected durable head absent' USING ERRCODE='P7803'; END IF;
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,deadline,legal_day_value);
  PERFORM official_v3_result_private.assert_catalog_v1();
- PERFORM official_v3_result_private.assert_history_v1();
+ SELECT stored.state_certificate INTO stored_certificate FROM official_v3_result_private.binding_v1 stored WHERE stored.singleton;
+ IF (stored_certificate ~ '^[a-f0-9]{64}$') IS NOT TRUE
+  OR stored_certificate IS DISTINCT FROM official_v3_result_private.state_fingerprint_v1() THEN
+  RAISE EXCEPTION 'hrs1 checked durable state changed or absent' USING ERRCODE='P7804';
+ END IF;
  IF operation_value IN ('history','head') THEN
   IF q->'contextKey' IS DISTINCT FROM b->'contextKey' OR q->'factKind' IS DISTINCT FROM b->'factKind' THEN
    RAISE EXCEPTION 'hrs1 context read mismatch' USING ERRCODE='P7804';
@@ -2944,7 +3006,18 @@ BEGIN
   RAISE EXCEPTION 'hrs1 response invalid or unbounded' USING ERRCODE='P7804';
  END IF;
  PERFORM official_v3_result_private.assert_catalog_v1();
- PERFORM official_v3_result_private.assert_history_v1();
+ IF channel_value IN ('attest','execute') THEN
+  -- The existing immutable trigger owns the complete validation and refuses a
+  -- forged certificate, including an otherwise privileged direct UPDATE.
+  UPDATE official_v3_result_private.binding_v1 SET state_certificate=official_v3_result_private.state_fingerprint_v1() WHERE singleton;
+  GET DIAGNOSTICS certificate_rows=ROW_COUNT;
+  IF certificate_rows<>1 THEN RAISE EXCEPTION 'hrs1 state certificate row absent' USING ERRCODE='P7804'; END IF;
+ ELSE
+  IF stored_certificate IS DISTINCT FROM (SELECT stored.state_certificate FROM official_v3_result_private.binding_v1 stored WHERE stored.singleton)
+   OR stored_certificate IS DISTINCT FROM official_v3_result_private.state_fingerprint_v1() THEN
+   RAISE EXCEPTION 'hrs1 checked durable state changed during read' USING ERRCODE='P7804';
+  END IF;
+ END IF;
  PERFORM official_v3_result_private.fence_v1(b,epoch_value,deadline,legal_day_value);
  RETURN reply_value;
 END $$;
@@ -3022,7 +3095,7 @@ DECLARE expected_function record; function_row pg_catalog.pg_proc%ROWTYPE; expec
  target_oid oid; target_types oid[]; target_name text; namespace_oid oid; owner_oid oid; expected_dependency_count integer;
 BEGIN
  IF (SELECT count(*) FROM pg_catalog.pg_proc f JOIN pg_catalog.pg_namespace ns ON ns.oid=f.pronamespace
-  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>55 THEN
+  WHERE ns.nspname IN ('official_v3_result_private','official_v3_result_api'))<>56 THEN
   RAISE EXCEPTION 'hrs1 exact function count' USING ERRCODE='P7802';
  END IF;
  FOR expected_function IN SELECT * FROM (VALUES
@@ -3043,7 +3116,8 @@ BEGIN
   ('official_v3_result_private','shape_matches_v1','jsonb,jsonb,jsonb,jsonb,int4',ARRAY['v','s','defs','countries','depth']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',1,'0','4b558e73233251f166c11558d8426f2956433a5dfe079acdd0090d40b3ee2181',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','proposal_retainable_v1','jsonb',ARRAY['v']::text[],'bool','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9264fea3daaddb89d01aea123a1d7fc83aa83cdfe78689281fbda198f46eb4dc',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','validate_s1_copy_v1','jsonb,jsonb,jsonb,text',ARRAY['reply','job','result','purpose']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog, pg_temp',0,NULL::text,'343bee988dd465557620d5211bde7017bdf236569f2705e31edcf840c8822e06',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'510b2e846162da437c9d0989015c449b6f8435e1e6eae91356f23ec5aafc827f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','state_fingerprint_v1','',NULL::text[],'text','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a29d456069d288346a0a2eb69aba0d58f2c22df7f38d81e2ee5c9720796d7b25',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','immutable_v1','',NULL::text[],'trigger','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0862c8153ca0d1d26a1f70580366d1b242da401d91ec036f8734f2838e14839a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','hash_v1','jsonb',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6a7d2ac8da921bb8553fcf00d9c5823aad51c9f0d7b965d733f86405f7d812a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','ref_v1','text,jsonb',ARRAY['kind','v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a4b35b5651099a7373d08ff29b809a3a6c21a97199c564bfad1d4c8558ad6010',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','time_text_v1','timestamptz',ARRAY['v']::text[],'text','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f07bb7b06d64d88c0d2f3ad3bed101439bb95eda8147e5616e54252ba598804d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
@@ -3064,18 +3138,18 @@ BEGIN
   ('official_v3_result_private','consume_s1_v1','jsonb,jsonb,jsonb',ARRAY['ref','expected_outcome','b']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2db23086828983df4a93e79bc74c35d93c7c408c612c49885cac327b3fb96111',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','keep_decision_v1','jsonb',ARRAY['v']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'91351a13b82f9c45e364126032feeea3d9a515a3e693efb37caf3bb8b0ed9bf5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','prepared_v1','jsonb,jsonb,jsonb',ARRAY['prepared_value','proof_value','b']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6c476735120c4aa69295f881e083efab1d3069a28507d6f3cb7dcf0ff5121a3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'4311dc7c4c7b70e7e3bbbc2a2ad37de9fd83ed5231eb277a33b7560e1e9e4d3e',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'06d0f730fd449ae367cde5bc4e06ec2e6b4cf5f351d037c3d3f9920b73d3e6d8',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1a7b5cad87c42ffebf4c3b41ce6e3eabd62caf656c67e858e9254b6975d3a64f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','transition_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','current_check']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'ac7027e6d63e9edc455ee4eec6f7371bddc43cc595b7542df4a1f601c8a1b13d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','publication_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0a7161f416d8184b0e0d657ed417d2bbed5df4d42bfacbbc197430126d335f7a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','escalation_v1','jsonb,jsonb,int4,timestamptz,text,bool',ARRAY['q','b','epoch_value','deadline','legal_day','confirm_only']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a2096968e60ddf678ba4970529fe0130b90c2883cca1d3bcfde468e3c422274f',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','projection_binding_v1','jsonb',ARRAY['p']::text[],'jsonb','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'2b4281e9e5160277fdcf081797401b01929c17ac084c9ca92c8b846ab9aaca14',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','current_projection_v1','jsonb,text',ARRAY['b','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'bb464fa0264d0c26fdd71e61ba586e5dd68cb7a38992497dd270be994d2a21cb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_v1','jsonb',ARRAY['b']::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'cb6c8195f6347fe381407c9fbc17a13babfe80654a01073666e8e5c7a97f37e9',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','plan_current_v1','int8,jsonb,jsonb',ARRAY['generation_value','target_value','b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'56e2e7134965eb9495d1598e4f1a538af276408d7618a91b11c71c7817be86dd',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9082b6172399afbfb132819cf0e78a5f11031a443bfe95eb5768317cc62098a7',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','suppress_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'258079e814d0add8de6cd3a7da0bbe106b803863665a0c4c8f12cbd68ec909f5',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_claim_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'d2f5f8cb1f33d926a463a65f5f49941af2c209c1275da0d4a9f9f8afc30a3971',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','monitor_finish_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'37a5426679629449bec19e1a86c95a1f5689300aa5fdaedcb8457976f14f9e3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','command_v1','jsonb,jsonb',ARRAY['wire_value','b']::text[],'jsonb','plpgsql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a1672b93a0d614293ddaa6362db17204e74a025072e08ad6cad3958263bd4ac1',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'034449052e7103134c487c9372f9b76b1df1b6d7eb893299f8b08015a0b7f4fb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','dispatch_v1','text,jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['channel_value','wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0c911e7dd3dca1ff93c64f5d374789182c3e35dd93902dd74b6b121d68cbd6e6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_api','attest_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''attest''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_verifier']::text[]),
   ('official_v3_result_api','execute_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''execute''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer']::text[]),
   ('official_v3_result_api','read_v1','jsonb,text,text,int4,text,text,int4,int4,text,text',ARRAY['wire_value','binding_hash_value','method_id_value','revision_value','method_digest_value','package_digest_value','epoch_value','remaining_ms_value','not_after_value','legal_day_value']::text[],'jsonb','sql','v',true,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,NULL::text,'RETURN official_v3_result_private.dispatch_v1(''read''::text, wire_value, binding_hash_value, method_id_value, revision_value, method_digest_value, package_digest_value, epoch_value, remaining_ms_value, not_after_value, legal_day_value)','official_v3_result_private.dispatch_v1(text,jsonb,text,text,int4,text,text,int4,int4,text,text)',ARRAY['ot_v3_result_owner','ot_v3_result_writer','ot_v3_result_reader']::text[]),
@@ -3118,6 +3192,8 @@ BEGIN
    OR function_row.procost<>100 OR function_row.prorows<>0 OR function_row.pronargdefaults<>expected_function.defaults
    OR pg_catalog.pg_get_expr(function_row.proargdefaults,0) IS DISTINCT FROM expected_function.default_expression
    OR function_row.proconfig IS DISTINCT FROM (CASE
+     WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='state_fingerprint_v1'
+     THEN ARRAY[expected_function.config,'TimeZone=UTC','DateStyle=ISO, YMD']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='dispatch_v1'
      THEN ARRAY[expected_function.config,'jit=off','plan_cache_mode=force_generic_plan']
      WHEN expected_function.schema_name='official_v3_result_private' AND expected_function.function_name='catalog_v1'
@@ -3214,6 +3290,7 @@ BEGIN
   ('binding_v1',3,'binding_hash','text',true),
   ('binding_v1',4,'creator_oid','oid',true),
   ('binding_v1',5,'catalog','jsonb',true),
+  ('binding_v1',6,'state_certificate','text',false),
   ('originals_v1',1,'version_id','text',true),
   ('originals_v1',2,'evidence','jsonb',true),
   ('originals_v1',3,'body_text','text',true),
@@ -3305,7 +3382,7 @@ BEGIN
   END IF;
  END LOOP;
  IF (SELECT count(*) FROM pg_catalog.pg_attribute attribute JOIN pg_catalog.pg_class rel ON rel.oid=attribute.attrelid
-   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>73 THEN
+   WHERE rel.relnamespace=private_id AND rel.relkind='r' AND attribute.attnum>0)<>74 THEN
   RAISE EXCEPTION 'hrs1 extra or missing table column' USING ERRCODE='P7802';
  END IF;
  FOR expected_constraint IN SELECT * FROM (VALUES
@@ -3460,7 +3537,7 @@ BEGIN
  END IF;
 END $hrs1_dependency_boundary$;
 DO $hrs1_initial_state$
-DECLARE binding_value jsonb; selected_catalog jsonb;
+DECLARE binding_value jsonb; selected_catalog jsonb; certificate_rows bigint;
 BEGIN
  BEGIN binding_value:=pg_catalog.current_setting('jetnity.hrs1_binding')::jsonb;
  EXCEPTION WHEN invalid_text_representation THEN RAISE EXCEPTION 'hrs1 invalid selected binding JSON' USING ERRCODE='P7801'; END;
@@ -3475,7 +3552,11 @@ BEGIN
  selected_catalog:=official_v3_result_private.catalog_v1();
  INSERT INTO official_v3_result_private.binding_v1(singleton,binding,binding_hash,creator_oid,catalog)
   VALUES(true,binding_value,official_v3_result_private.hash_v1(binding_value),'postgres'::regrole,selected_catalog);
- PERFORM official_v3_result_private.assert_history_v1();
+ -- NULL exists only inside this uncommitted installation. The same protected
+ -- UPDATE trigger certifies the completely checked initial empty state.
+ UPDATE official_v3_result_private.binding_v1 SET state_certificate=official_v3_result_private.state_fingerprint_v1() WHERE singleton;
+ GET DIAGNOSTICS certificate_rows=ROW_COUNT;
+ IF certificate_rows<>1 THEN RAISE EXCEPTION 'hrs1 initial state certificate absent' USING ERRCODE='P7804'; END IF;
  PERFORM pg_catalog.set_config('jetnity.hrs1_install_frozen_catalog',selected_catalog::text,true);
 END $hrs1_initial_state$;
 RESET ROLE;

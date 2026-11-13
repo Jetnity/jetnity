@@ -16,7 +16,7 @@ const SOURCE_PINS = Object.freeze([
   ['./recovery-candidate.sql', '869ed584a9f1aeb4d56a198ec2c94d20569f5cead3f99532753e9d2ab3edb78b'],
   ['../official-truth-v3-method-authority-1/method-candidate.sql', '269c8567da63014c3aa80905aa0773afa4203778985b44ad84fea48d0f24eee6'],
   ['../official-truth-integrated-pilot-1/local-cluster.ts', 'f6d21b3fef8f0ad41a8ac3951972ea5cba0394cfe41037eba8d0258ed508aa10'],
-  ['../official-truth-integrated-pilot-1/pg-wire.ts', '9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b'],
+  ['../official-truth-integrated-pilot-1/pg-wire.ts', '02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d'],
   ['../official-truth-atomic-version-refresh-1/test-lifetime.ts', 'e7a6a5deb652019209fd9e4bd2f1ce71bef3c15a4988838ab5b35f147dbbee68'],
   ['../official-truth-v3-method-authority-1/fixtures.ts', 'f6c2fe919e7ccd056fd0120010cf4189540c4b71a818f105d38e276577c03811'],
   ['../../../lib/readiness/official-truth-product-v3/method/contract.ts', '77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e'],

@@ -91,8 +91,8 @@
       "mode": "100644",
       "type": "blob",
       "bytes": 62649,
-      "sha256": "6ac7a74b73757b9b200f313f890f26840b947c378d698e78b045cc0cbeaf7ffa",
-      "gitBlob": "3677eb6574e5482c1d3cf14f11a01eb370b3a2da"
+      "sha256": "699101fd9527410c9cce8f37341e2e6634536cf1a7a917a18be9c6bdf0a51907",
+      "gitBlob": "1676dc8b481169b52c50b355e8d367017695c917"
     },
     {
       "path": "lib/readiness/profile-authority-integrity-1.test.ts",
@@ -329,9 +329,9 @@
       },
       {
         "path": "scripts/db/official-truth-integrated-pilot-1/pg-wire.ts",
-        "gitBlob": "78e92ebfb61ce6fd1aaa8c554d19ad157978d39c",
-        "bytes": 30699,
-        "sha256": "9ad361433f7d0563ae892d4b24d0fee3acbcb8ea567d750f5f3cb4be6989da3b",
+        "gitBlob": "e5cb5b32457ac75670582ee54b781eac8c1db027",
+        "bytes": 32943,
+        "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d",
         "purpose": "Existing bounded local PG transport"
       },
       {
