@@ -166,3 +166,11 @@ eigene Commons-Originale mit live geprüften Quellen-/Lizenznachweisen statt der
 unbelegten Altdateien. Bilder visuell geprüft, Originaldateien nicht bearbeitet.
 Weltweite Bildabdeckung, kontoweite Einzelangebotsmerkliste und intelligente
 Anbieterübernahme bleiben offen und werden nicht aus grüner CI abgeleitet.
+
+Dritter Live-Befund: Escape im Kalender innerhalb „Reise ändern“ schloss auch den
+äusseren Bearbeitungsdialog. React reicht das native cancel-Ereignis weiter; nur
+keydown zu stoppen genügte nicht. Der Kalender stoppt jetzt auch cancel. Ein neuer
+Test im bestehenden echten Workspace-Browser-Harness reproduziert zuerst den Fehler
+und prüft danach: nur Kalender zu, Eltern-Dialog sichtbar, Fokus am Datumsauslöser,
+ungespeicherter Titel erhalten und gespeicherte Gastreise unverändert. Die gemeinsame
+Eltern-Dialog-/Auth-Implementierung wird nicht geändert.

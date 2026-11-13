@@ -207,7 +207,7 @@ function KalenderDialog(props: Props & {
   }
 
   return <dialog ref={dialog} id={id} className="reise-kalender" aria-labelledby={`${id}-titel`} aria-describedby={`${id}-status`}
-    onCancel={e => { e.preventDefault(); schliessen() }}
+    onCancel={e => { e.preventDefault(); e.stopPropagation(); schliessen() }}
     onKeyDown={e => { if (e.key === 'Escape') e.stopPropagation() }}
     onClick={e => { if (e.target === e.currentTarget) {
       const r = e.currentTarget.getBoundingClientRect()

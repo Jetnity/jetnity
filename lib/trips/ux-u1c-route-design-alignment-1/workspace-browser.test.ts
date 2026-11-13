@@ -448,6 +448,33 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     } finally {await page.close()}
   })
 
+  test('Escape im Kalender erhält den offenen Reiseänderungsdialog samt ungespeichertem Entwurf', async () => {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+    page.setDefaultTimeout(10_000)
+    const original = referenzReise()
+    await page.addInitScript(reise => {
+      localStorage.setItem('jetnity:reise:v3', JSON.stringify(reise))
+    }, original)
+    try {
+      await page.goto(origin, { waitUntil: 'domcontentloaded' })
+      await page.locator('[data-u1c-probe="gast"]').click()
+      await page.getByRole('button', { name: 'Reise ändern', exact: true }).first().click()
+      const editor = page.getByRole('dialog', { name: 'Reise ändern', exact: true })
+      await editor.getByLabel('Reisetitel', { exact: true }).fill('Ungespeicherter Kalenderentwurf')
+      await editor.getByRole('button', { name: '2. Zeitraum', exact: true }).click()
+      const trigger = editor.getByRole('button', { name: /^Reisebeginn:/ })
+      await trigger.click()
+      await page.locator('dialog.reise-kalender[open]').waitFor()
+      await page.keyboard.press('Escape')
+      await page.locator('dialog.reise-kalender[open]').waitFor({ state: 'detached' })
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+      assert.equal(await editor.isVisible(), true, 'Kalender-cancel darf nicht zum äusseren Dialog propagieren')
+      assert.equal(await trigger.evaluate(el => el === document.activeElement), true)
+      assert.equal(await editor.getByLabel('Reisetitel', { exact: true }).inputValue(), 'Ungespeicherter Kalenderentwurf')
+      assert.deepEqual(JSON.parse(await page.evaluate(() => localStorage.getItem('jetnity:reise:v3')) ?? 'null'), original)
+    } finally { await page.close() }
+  })
+
   test('guest discard and account deletion stay reachable in both headers', async () => {
     const gast = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true })
     await gast.addInitScript((reise) => {
