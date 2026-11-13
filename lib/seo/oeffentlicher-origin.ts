@@ -160,7 +160,7 @@ export function oeffentlicherOrigin(env?: OriginUmgebung): OeffentlicherOrigin {
  * können; die URL selbst darf niemals auf *.vercel.app oder localhost fallen.
  */
 export function kanonischeUrl(
-  pfad: '/' | '/planen',
+  pfad: '/' | '/planen' | '/einreise',
   _env?: OriginUmgebung,
 ): string {
   return pfad === '/' ? `${KANONISCHE_PUBLIC_ORIGIN}/` : `${KANONISCHE_PUBLIC_ORIGIN}${pfad}`
