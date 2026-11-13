@@ -1,7 +1,51 @@
 # Noch benötigte Entscheidungen für die private UX-Runde
 
-Keine Freigabe für eine öffentliche Veröffentlichung, einen Merge oder Änderungen an Supabase.
-Dieses Dokument ist ein Entwurf zur Entscheidung, keine Migration und keine Anbieteraktivierung.
+## Aktuelle Freigabe vom 13. November 2026
+
+Der PO hat Umsetzung und anschliessende Veröffentlichung der vollständigen Wunschliste
+auf jetnity.com freigegeben. Eine weitere allgemeine Veröffentlichungs- oder zeitliche
+Freigabe ist nicht nötig. Voraussetzungen bleiben vollständige Funktion, erfolgreiche
+Abschlussprüfung und keine Kollision mit dem Hauptchat. Zusätzliche Eingriffe in
+geschützte Bereiche müssen weiterhin vorab konkret gemeldet und freigegeben werden.
+
+Der eigene Branch wurde konfliktfrei auf den veröffentlichten main `63544e8` gebracht
+(Integrationscommit `416d4e3`). Die bereits veröffentlichten gemeinsamen Dateien wurden
+unverändert übernommen; der eigene PR-Diff gegenüber main enthält weiterhin keine Datei
+von #1196/#1197. Deren offene Branches wurden nicht übernommen oder verändert.
+
+### Konkrete noch geschützte Eingriffe
+
+1. **Merkliste / Datenbank:** neue Tabelle `public.saved_offers`, passende Indizes,
+   Eigentümerzugriff über RLS und bestehende Anmeldung, zuerst in der bisherigen
+   Vorschau-Datenbank und nach bestandener Abnahme in Production. Das genaue
+   begrenzte Datenpaket steht unten. Keine Änderungen an bestehenden Auth-Regeln,
+   keine Service-Role-Nutzung in der Anwendung und keine versteckte Speicherung
+   in vorhandenen Reise-/Buchungstabellen. Die Umsetzung und Anwendung dieser
+   Migration sind noch nicht freigegeben. Anbieterfreigaben sind davon getrennt.
+2. **Geschützte Datei aus #1197:** `components/trips/Reisevorbereitung.tsx`,
+   ausschliesslich das vorhandene Datumsfeld „Ablaufdatum, falls bekannt“ durch den
+   gemeinsamen Einzeltermin-Kalender ersetzen. Keine Änderung an Dokumentdaten,
+   Validierung oder Readiness-Logik. Die Datei gehört weiterhin dem Hauptchat;
+   vor diesem Eingriff ist dessen Eigentums-/Integrationskonflikt zu klären.
+3. **Vollständig vergleichbare Vorschau:** zusätzlich zu den zwei bereits erlaubten
+   Supabase-Werten fehlen `NEXT_PUBLIC_TRAVELPAYOUTS_FRAME_ORIGIN`,
+   `JETNITY_DISCOVERCARS_SEARCH_ENABLED`, `DISCOVERCARS_API_KEY` und
+   `OMIO_KATALOG_SCHLUESSEL` im eigenen Branch. Nur diese Branch-Preview-Zuordnung
+   ist vorgeschlagen, nicht eine Änderung der vorhandenen Production-Werte.
+   Für Travelpayouts muss zusätzlich ein getrenntes statisches Widget-Preview mit
+   exakt erlaubtem Branch-Ursprung vorbereitet werden; der produktive Widget-Host
+   wird nicht verändert. Die credentialless Aktivitäten-Frames brauchen ebenfalls
+   einen ausdrücklich abgestimmten Vorschau-Zugangsweg; kein pauschales Abschalten
+   des Zugangsschutzes oder Auslesen fremder Widget-Inhalte.
+4. **Vorschau-Referenzdaten:** Orts-/Flughafensuche bleibt auf der bereits genehmigten
+   Datenbank. CDG/BKK sind über den öffentlichen Vorschau-Leseweg leer, auf Production
+   nicht. Vor Datenimport oder RLS-Eingriff sind Ursache und begrenztes Datenpaket
+   separat nachzuweisen; keine automatische Umstellung auf die Live-Datenbank.
+
+Dies ist eine konkrete Eingriffsübersicht, keine ausgeführte Migration, keine
+Anbieteraktivierung und keine Umgebungsänderung. Der bestehende Stay22-Weg und die
+Travelpayouts-Anbindung bleiben erhalten. Ohne belastbaren Einzelangebotsvertrag
+werden Suchlinks nicht als konkrete gemerkte Angebote ausgegeben.
 
 ## Kontoweite Merkliste
 
@@ -60,6 +104,6 @@ Team `jetnity-e1b93c82`. Seine Nicht-Custom-Domains sind bereits per SSO geschü
 und ein eigener Draft-PR verwendet. Kein Production-Ziel, keine Domainzuordnung und
 keine Änderung der Auth-, Schutz-, Build- oder Umgebungs-Konfiguration.
 
-Die öffentliche Veröffentlichung bleibt bis zu Sasas ausdrücklicher Freigabe nach der
-Vorschau gesperrt. Ein Merge braucht zusätzlich die zeitliche Abstimmung mit dem Hauptchat
-sowie eine erneute Aktualisierung von main und Prüfung gegen #1196/#1197.
+Die frühere allgemeine Veröffentlichungs-/Zeitfreigabe ist durch die aktuelle Freigabe
+oben ersetzt. Vor Merge bleiben die vollständige Funktionsabnahme und die erneute
+Prüfung des aktuellen main sowie der laufenden Hauptchat-Arbeit erforderlich.
