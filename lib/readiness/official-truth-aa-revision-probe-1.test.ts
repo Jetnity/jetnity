@@ -23,16 +23,16 @@ const physicalPath = 'lib/readiness/official-truth-retrieval-physical-internal.t
 // The independently reviewed V3 reader uses only four pure physical helpers and a type.
 const aaBernReaderPath = 'lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts'
 const aaBernReaderPin = {
-  bytes: 13612,
-  blob: 'e08f89e2a8bf2f7f9344dd8e14a88a691aea5def',
-  sha256: '18fbdc571d85d62744fd132c6e0e8987487c448c2b50fbe830c56d4158a66100',
+  bytes: 13633,
+  blob: 'd816e3b3c6168936d8f84f579207b87514ed834f',
+  sha256: '1522707c63b62ca2f50e4de60c3751ce4eef166fffd93e7bcf37424c8bf04c26',
 } as const
 // One reviewed synthetic HRS proof may consume only the actual pure UTF-8 decoder.
 const hrsNativeDecoderPath = 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts'
 const hrsNativeDecoderPin = {
-  bytes: 229663,
-  blob: 'be0595005f2e235fe4f66ca7e94ffd52b388a7af',
-  sha256: 'cc81c135888c1b8fd0c7997a4dd34febe883a3b51f1de7d10b6f7d280258fdbe',
+  bytes: 230520,
+  blob: '4ae34407e2943845c1ea6b897aff7eb1d1a82798',
+  sha256: '3dfb36f3088c590144627b60d4ff780983b447083e98a19bc750bb2e6a008cc8',
 } as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'

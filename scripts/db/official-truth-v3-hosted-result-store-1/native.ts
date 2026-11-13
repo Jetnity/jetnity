@@ -642,9 +642,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
+    "blob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
     "bytes": 442952,
-    "sha256": "2a6547bcf68ca7f164cd415c70871f86853662cdd7053a19cc675e0d5cbe9ba1"
+    "sha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -678,15 +678,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "da3ae010a0e0ed266220eea9bc0affdf17bbb0b7",
-    "bytes": 373766,
-    "sha256": "1b2872f8e9b0cdc99f52ac7ba59e33d77e2d3d9ad839588af89b46e4fb00002f"
+    "blob": "8421006be431ccf9af697eec0dd1b4c64d1c4666",
+    "bytes": 375586,
+    "sha256": "2fa7a2643d58d18980552b2df6bb1b87fd5c110f5957034d0c2d33ef32aab272"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "bae3a223587528c5b39cde8557453b459135d079",
+    "blob": "fd2a2155126a54d311788f60d970ec3ae134d3ba",
     "bytes": 161675,
-    "sha256": "d27f52be843a019aff62ebdf983c335c9010a398b0e93a64b656b849051efec1"
+    "sha256": "a1ec47e602ce362bc433c597a28e3a5018a8ac6c51a04a34e45f724757cacb07"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -762,9 +762,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts",
-    "bytes": 13612,
-    "blob": "e08f89e2a8bf2f7f9344dd8e14a88a691aea5def",
-    "sha256": "18fbdc571d85d62744fd132c6e0e8987487c448c2b50fbe830c56d4158a66100"
+    "bytes": 13633,
+    "blob": "d816e3b3c6168936d8f84f579207b87514ed834f",
+    "sha256": "1522707c63b62ca2f50e4de60c3751ce4eef166fffd93e7bcf37424c8bf04c26"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
@@ -1730,6 +1730,9 @@ async function canonicalParity(common:Common){
         const position=256-index;return['k'+String(position).padStart(3,'0'),[position]]
       }))),
       expected:'{'+Array.from({length:257},(_,position)=>'"k'+String(position).padStart(3,'0')+'":['+position+']').join(',')+'}'},
+    {label:'mixed flat containers retain prefixes, escaping, nulls and closing order',depth:0,
+      wire:String.raw`{"z":[{"zz":null,"a\"\\":false},[1.00,-0.000,true,false,null,"[,]"]],"a":{"b":2,"aa":1}}`,
+      expected:String.raw`{"a":{"aa":1,"b":2},"z":[{"a\"\\":false,"zz":null},[1,0,true,false,null,"[,]"]]}`},
     {label:'literal backslash-u text is not a NUL value',depth:0,
       wire:String.raw`["\\u0000"]`,expected:String.raw`["\\u0000"]`},
     {label:'mixed containers preserve all empty positions',depth:0,
@@ -1770,6 +1773,9 @@ async function canonicalParity(common:Common){
     {label:'exact fractional precision cannot round into an integer',wire:'{"a":1.0000000000000001}',depth:0},
     {label:'positive safe-integer overflow',wire:'[9007199254740992]',depth:0},
     {label:'negative safe-integer overflow',wire:'[-9007199254740992]',depth:0},
+    {label:'nested flat object cannot hide a unicode key after valid siblings',wire:'{"a":[true,false,null],"z":{"ok":1,"é":2}}',depth:0},
+    {label:'nested flat array cannot round an exact fraction into an integer',wire:'{"a":{"ok":true},"z":[1,1.0000000000000001]}',depth:0},
+    {label:'nested flat object cannot hide safe-integer overflow',wire:'{"a":[],"z":{"n":9007199254740992}}',depth:0},
     {label:'negative depth',wire:'[]',depth:-1},
   ]
   for(const vector of rejected){
@@ -1782,7 +1788,7 @@ async function canonicalParity(common:Common){
   // The unchanged HM04 implementation is an oracle only in the shared domain.
   for(const stringValue of ['Grüße aus Zürich','Zeile\r\nweiter\t\b\f\u001f\u007f','漢字 😀','e\u0301','\u2028\u2029']){
     assert.equal(hrs1Data(stringValue),true)
-    for(const data of [stringValue,{value:stringValue,items:[stringValue]}]){
+    for(const data of [stringValue,{value:stringValue,items:[stringValue]},[{value:stringValue}]]){
       const rows=await owner.query(`SELECT official_v3_result_private.canonical_v1($1::jsonb,0) AS canonical,
         official_v3_result_private.hash_v1($1::jsonb) AS digest`,text([JSON.stringify(data)]))
       assert.equal(rows.length,1)
@@ -2393,6 +2399,7 @@ async function n10(lifetime:OwnedTestLifetime,h:Harness,previous:Awaited<ReturnT
   }
   const viewStarted=performance.now()
   const view=await h.jobs.query({destinationCountryCode:'DE',citizenshipCountryCodes:['CH']},h.signal)
+  console.error('HRS1_N10_QUERY_TIMING',JSON.stringify({ok:view.ok,awaitMilliseconds:performance.now()-viewStarted}))
   if(!view.ok)console.error('HRS1_N10_QUERY_DIAG',JSON.stringify({
     outcome:view.reason,awaitMilliseconds:performance.now()-viewStarted,callerAborted:h.signal.aborted,
     hrs:{admitted:h.hrs.evidence.admitted-beforeView.hrs.admitted,

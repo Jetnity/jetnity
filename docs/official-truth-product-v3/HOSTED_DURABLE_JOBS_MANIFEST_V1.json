@@ -109,8 +109,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-      "blob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
-      "sha256": "2a6547bcf68ca7f164cd415c70871f86853662cdd7053a19cc675e0d5cbe9ba1",
+      "blob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
+      "sha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8",
       "bytes": 442952
     },
     {
@@ -707,7 +707,7 @@
       "originalBytes": 160983,
       "candidateBytes": 442952,
       "originalSha256": "0d2210d84c02aacbeef1c8e14b38e7be6c2e3e8c387057fd97666fb00c71bba4",
-      "candidateSha256": "2a6547bcf68ca7f164cd415c70871f86853662cdd7053a19cc675e0d5cbe9ba1",
+      "candidateSha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8",
       "retained": [
         {
           "originalStart": 7915,
@@ -1188,8 +1188,8 @@
           "start": 0,
           "end": 137216,
           "kind": "new",
-          "sha256": "01162e3f1e293e0c31f130e387c9cebe7413c139425b684c8537273a08439772",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sha256": "a601b15060d80a30d4f2ad7a207ad1b67bd0aba3ffc187cb60e07b2a862e2bb7",
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 137216,
@@ -1212,7 +1212,7 @@
           "end": 200353,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 200353,
@@ -1235,7 +1235,7 @@
           "end": 200940,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 200940,
@@ -1258,7 +1258,7 @@
           "end": 201557,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 201557,
@@ -1281,7 +1281,7 @@
           "end": 202190,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 202190,
@@ -1304,7 +1304,7 @@
           "end": 202826,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 202826,
@@ -1327,7 +1327,7 @@
           "end": 203479,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 203479,
@@ -1350,7 +1350,7 @@
           "end": 204121,
           "kind": "new",
           "sha256": "d24817447ce9dc9430353976e774d9f36671f3ae9029cfb75a62dc7e084028ef",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 204121,
@@ -1389,7 +1389,7 @@
           "end": 277375,
           "kind": "new",
           "sha256": "434b0e23f47d9041786d26366e1ed2f9c28cbdc57bbd0d6d0b6dd0ecd423b00d",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 277375,
@@ -1404,7 +1404,7 @@
           "end": 299658,
           "kind": "new",
           "sha256": "8ed11299df1dd4b1e7f289f1d1430ff7f704ddbba17e7268e1272189a1ee1a65",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 299658,
@@ -1419,7 +1419,7 @@
           "end": 315335,
           "kind": "new",
           "sha256": "882764f29baa9c46c6bfa5870102ceebf34d33cc8cdcef19243dc0aacdc2e47f",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 315335,
@@ -1434,7 +1434,7 @@
           "end": 320026,
           "kind": "new",
           "sha256": "bd4ee695fe26c574c83f0138bf04860c4c927a7d17c76dc0775217ddbdda2b4d",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 320026,
@@ -1449,7 +1449,7 @@
           "end": 320483,
           "kind": "new",
           "sha256": "c3e8d88003f98a21e7a7191590a0f10d7003d12d60697b2b95fe6cf1412852b0",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         },
         {
           "start": 320483,
@@ -1464,7 +1464,7 @@
           "end": 442952,
           "kind": "new",
           "sha256": "25c91e35aa97b37609040c75e98f24fe9738adc3bd6e95b086a8782fab11ef49",
-          "sourceBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b"
+          "sourceBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1"
         }
       ],
       "editAnnotations": [
@@ -1562,6 +1562,12 @@
           "parentBlob": "03a587d8ec5f9762c492372a9ddbaa757c0b8f09",
           "candidateBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
           "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6846300739"
+        },
+        {
+          "reason": "Only the exact HRS canonical_v1 bodyhash follows the fully validated flat-container serialization; every HM04 declaration, query and runtime body remains byte-exact.",
+          "parentBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
+          "candidateBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
+          "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6850897419"
         }
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
@@ -1570,9 +1576,9 @@
         "intermediateSha256": "eac887ab9c1acd6988543a4ffb022f9e00af238b3ff7751ae6b8f6a715b127b4",
         "intermediateBytes": 341956,
         "currentRevision": {
-          "parentBlob": "03a587d8ec5f9762c492372a9ddbaa757c0b8f09",
-          "candidateBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
-          "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6846300739"
+          "parentBlob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
+          "candidateBlob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
+          "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6850897419"
         }
       }
     },
@@ -14509,9 +14515,9 @@
     "status": "SOURCE_ONLY_NOT_RUN",
     "parent": "95afa6f9133d38454efd83716538b8b0566a4934",
     "installer": {
-      "blob": "0c340ce778efca6e3643fd2ed9ea67e06116319b",
+      "blob": "f3215231e50a086b6a87e46f63d5ae9c1b79f5c1",
       "bytes": 442952,
-      "sha256": "2a6547bcf68ca7f164cd415c70871f86853662cdd7053a19cc675e0d5cbe9ba1"
+      "sha256": "4fb352f321d0ceb5b37b133bc3d594c0ed4e7ad4779a57ce850f5c69034881c8"
     },
     "recovery": {
       "blob": "c1c6d8a204a470a45279013e8ab5c978ee339ba0",

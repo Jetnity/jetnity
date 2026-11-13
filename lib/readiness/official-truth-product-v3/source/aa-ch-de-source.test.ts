@@ -114,6 +114,43 @@ test('AA/Bern source: each complete fixed read joins resources and retains exact
   }
 })
 
+test('AA/Bern source: digest completion must remain inside the original monotonic deadline before custody', async () => {
+  const body = '<html><body>synthetic digest deadline fixture</body></html>'
+  const expectedDigest = sha256Hex(body)
+  for (const role of ['primary','counter'] as const) for (const atDeadline of [false, true]) {
+    let monotonic = 1000, digestCalls = 0
+    const deadline = monotonic + publicationFor(role).maximumMilliseconds
+    const encode = TextEncoder.prototype.encode
+    const wire = syntheticWire({ body })
+    try {
+      mock.method(performance, 'now', () => monotonic)
+      mock.method(TextEncoder.prototype, 'encode', function(this: TextEncoder, input?: string) {
+        const encoded = encode.call(this, input)
+        if (input === body) { digestCalls++; monotonic = deadline - (atDeadline ? 0 : 1) }
+        return encoded
+      })
+      const read = await readerFor(role)(new AbortController().signal, deadline)
+      assert.equal(digestCalls, 1); assert.equal(wire.calls, 1); assert.equal(wire.active, 0)
+      assert.deepEqual(wire.dns, [publicationFor(role).hostname, publicationFor(role).hostname])
+      if (atDeadline) {
+        assert.equal(read.status, 'unavailable')
+        if (read.status !== 'unavailable') assert.fail('digest reached the original deadline')
+        assert.equal(read.reason, 'clock'); assert.ok(read.attempt)
+        const attempt = inspectAaChDeOwnedAttempt(read.attempt)
+        assert.ok(attempt); assert.equal(attempt.role, role)
+        assert.equal(attempt.status, 'unavailable'); assert.equal(attempt.reason, 'clock')
+        assert.equal(inspectAaChDeOwnedOriginal(read.attempt), null)
+      } else {
+        assert.equal(read.status, 'read')
+        if (read.status !== 'read') assert.fail('digest completed before the original deadline')
+        const original = inspectAaChDeOwnedOriginal(read.receipt)
+        assert.ok(original); assert.equal(original.role, role)
+        assert.equal(original.bodyText, body); assert.equal(original.rawDigest, expectedDigest)
+      }
+    } finally { wire.releaseAll(); mock.restoreAll() }
+  }
+})
+
 test('AA/Bern source: one paired operation makes exactly two distinct publication attempts and preserves both receipts', async () => {
   const wire = syntheticWire({ body: '<html>primary transport bytes</html>' }, { body: '<html>counter transport bytes</html>' })
   try {

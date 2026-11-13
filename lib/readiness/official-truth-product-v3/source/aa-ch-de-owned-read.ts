@@ -195,11 +195,12 @@ async function readOwned(role: AaChDeSourceRole, signal: AbortSignal, parentDead
     if (controller.signal.aborted || expired()) return fail('deadline')
     const decoded = textAus(bytes)
     if (!decoded.ok) return fail('invalid_text')
+    const rawDigest = sha256Hex(decoded.text)
     const retrievedAt = new Date().toISOString()
     if (retrievedAt < startedAt || controller.signal.aborted || expired()) return fail('clock')
     const value: AaChDeOwnedOriginal = Object.freeze({ role, requestUrl: publication.url, finalUrl: publication.url,
       method: 'GET', redirectCount: 0, httpStatus: 200, contentType: publication.mediaType,
-      bodyText: decoded.text, bytes: bytes.length, rawDigest: sha256Hex(decoded.text), retrievedAt, startedAt })
+      bodyText: decoded.text, bytes: bytes.length, rawDigest, retrievedAt, startedAt })
     const receipt = attempt('read', null, retrievedAt)
     if (!receipt) return unavailable('clock')
     originals.set(receipt, value)
