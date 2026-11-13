@@ -1662,11 +1662,11 @@ SELECT jsonb_build_object(
  'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
  'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
  'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
-   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
-     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+   FROM pg_catalog.pg_depend d WHERE (d.classid,d.objid) IN (SELECT classid,objid FROM objects)
+     OR (d.refclassid,d.refobjid) IN (SELECT classid,objid FROM objects)),
  'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
    FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
-    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    AND (d.classid,d.objid) IN (SELECT classid,objid FROM objects))
     OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
     AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
      SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole
@@ -2922,7 +2922,7 @@ BEGIN
   ('official_v3_result_private','s1_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'841d087a3a3cf4a29b9e698589707d65a82d72431e55944300afef543f32de91',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','record_shape_v1','jsonb,text',ARRAY['v','tag']::text[],'bool','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6d18053b7c43efb8887bffdb14ab0e9a85547dcee9bc331c5783af9ea8793ec2',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','binding_valid_v1','jsonb',ARRAY['b']::text[],'bool','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'00ce3331c7c10b824f7ca53b23b4a9ce5eb40b597832a3cc76cc74bbac452079',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'a42ffaa362b535b17e4f2dfbc016ca9cd3dda7e3b06fdf018c402c8c7c1d1cf3',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','catalog_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f1a6b5870f0563ac41bf9f41f0c746a6d37ace0d3b8b83685afbeede818b0fbb',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','assert_catalog_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'0126d96e6d154e9875f39ddc53f8f81f5696825e3e94ff677179cac5604950f6',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','selected_binding_v1','',NULL::text[],'jsonb','sql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'07c52251c1bf1f38b251ed6cb33d834c7319cd7e7b43e14e44a478695043daad',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','state_v1','',NULL::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'1f181715fa3cb5a84b9fb6fad2658c92138b8e1ac0bed03de0a5d47b1df1b701',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
@@ -3407,11 +3407,11 @@ SELECT jsonb_build_object(
  'types',(SELECT jsonb_agg(to_jsonb(t) ORDER BY t.oid) FROM pg_catalog.pg_type t JOIN ns n ON n.oid=t.typnamespace),
  'objects',(SELECT jsonb_agg(to_jsonb(o) ORDER BY o.classid,o.objid) FROM objects o),
  'dependencies',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype)
-   FROM pg_catalog.pg_depend d WHERE EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid)
-     OR EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.refclassid AND o.objid=d.refobjid)),
+   FROM pg_catalog.pg_depend d WHERE (d.classid,d.objid) IN (SELECT classid,objid FROM objects)
+     OR (d.refclassid,d.refobjid) IN (SELECT classid,objid FROM objects)),
  'shared',(SELECT jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype)
    FROM pg_catalog.pg_shdepend d WHERE ((d.dbid=(SELECT b.oid FROM pg_catalog.pg_database b WHERE b.datname=current_database())
-    AND EXISTS(SELECT 1 FROM objects o WHERE o.classid=d.classid AND o.objid=d.objid))
+    AND (d.classid,d.objid) IN (SELECT classid,objid FROM objects))
     OR (d.refclassid='pg_catalog.pg_authid'::regclass AND d.refobjid IN (SELECT oid FROM role_ids)))
     AND NOT(d.dbid=0 AND d.classid='pg_catalog.pg_auth_members'::regclass AND EXISTS(
      SELECT 1 FROM pg_catalog.pg_auth_members m WHERE m.oid=d.objid AND m.roleid='ot_v3_result_owner'::regrole

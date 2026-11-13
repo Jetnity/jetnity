@@ -2501,7 +2501,24 @@ export async function runHostedDurableJobsNative(t: TestContext): Promise<void> 
       await f.installer.query("SET default_transaction_isolation='repeatable read'")
       try { await refusal(f.installer, rollback, 'P7606') }
       finally { await f.installer.query("SET default_transaction_isolation='read committed'") }
-      assert.equal(await catalog(f.owner), snapshot)
+      const after = await catalog(f.owner)
+      if (after !== snapshot) {
+        // Existing snapshots only: field paths and hashes, never catalog values.
+        const paths: string[] = []
+        let differences = 0
+        function locate(left: unknown, right: unknown, path: string): void {
+          if (JSON.stringify(left) === JSON.stringify(right)) return
+          if (left === null || right === null || typeof left !== 'object' || typeof right !== 'object'
+            || Array.isArray(left) !== Array.isArray(right)) {
+            differences++; if (paths.length < 16) paths.push(path); return
+          }
+          const a = left as Record<string, unknown>, b = right as Record<string, unknown>
+          for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) locate(a[key], b[key], path + '/' + key)
+        }
+        locate(JSON.parse(snapshot), JSON.parse(after), '')
+        console.error('HM04_N15_CATALOG_DIFF', JSON.stringify({ beforeHash: digest(snapshot), afterHash: digest(after), differences, paths }))
+      }
+      assert.equal(after, snapshot)
       assert.ok(Number((await f.owner.query('SELECT count(*)::text AS n FROM official_v3_jobs_private.execution_starts_v1'))[0]!.n) >= 64)
     })
     await assertNativeEmpty(native, method)
