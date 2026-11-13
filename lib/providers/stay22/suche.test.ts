@@ -110,6 +110,7 @@ test('Filterkombinationen und Währungswechsel bewahren Reisedaten und Partnerzu
       assert.equal(p.get('minguestrating'), mapsBewertungen[bewertung])
       assert.equal(p.get('currency'), waehrung)
       assert.equal(p.get('priceper'), preis)
+      assert.equal(p.get('hotelsapi'), 'booking', 'Hotelquelle mit live geprüfter Sterneskala bleibt stabil')
       assert.equal(p.get('min'), null, 'Währung darf keinen USD-Budgetfilter erzeugen')
       assert.equal(p.get('max'), null)
       for (const [name, value] of Object.entries({ aid: 'jetnity', campaign: 'jetnity-unterkunft',

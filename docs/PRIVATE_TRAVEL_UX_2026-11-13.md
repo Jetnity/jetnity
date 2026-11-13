@@ -152,6 +152,15 @@ Listenübergabe geht über Stay22 Allez mit Jetnity-Kennung und `jetnity-unterku
 beide Booking-Ziele haben `aid=1607597` und eigene Trackinglabels. Kein Kauf und
 keine Behauptung einer im Partnerkonto verbuchten Provision.
 
+Zweiter Live-Befund: Stay22 wählt automatisch teils Hotels.com. Dessen Antwort
+zeigte trotz `minstarrating=4` echte Drei-Sterne-Hotels (u.a. Albe Hôtel Saint-Michel),
+auch nach abgeschlossenem Laden. Der dokumentierte Maps-Parameter
+`hotelsapi=booking` bindet die bereits verwendete Booking-Hotelquelle ausdrücklich;
+dieselbe Browserprobe enthält dann nur klassifizierte Hotels ab vier Sternen.
+Keine neue Anbieterfreigabe oder API, keine Änderung der Partnerkennung.
+Ferienwohnungen bleiben Teil des Widgets; Hotelsterne sind keine Klassifizierung
+von Ferienwohnungen. Für die Fixes wird ein neuer Exact-Head-Nachlauf abgewartet.
+
 Der gemeinsame Bildresolver verwendet für Amsterdam, Lissabon und Zermatt jetzt
 eigene Commons-Originale mit live geprüften Quellen-/Lizenznachweisen statt der
 unbelegten Altdateien. Bilder visuell geprüft, Originaldateien nicht bearbeitet.

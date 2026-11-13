@@ -82,6 +82,9 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
   const url = new URL('https://www.stay22.com/embed/gm')
   const parameter = {
     aid: 'jetnity', campaign: 'jetnity-unterkunft', address: ort.adresse.trim(),
+    // Keep the already-used hotel source stable: the automatic Hotels.com
+    // variant returned three-star hotels even with minstarrating=4 in live QA.
+    hotelsapi: 'booking',
     checkin: anreise, checkout: abreise, adults: String(erwachsene), children: String(kinder), rooms: String(zimmer),
     currency: waehrung, ljs: 'de', unitsystem: 'metric', priceper: filter.preis,
     maincolor: '153a33', fontcolor: 'ffffff', hotelscolor: '153a33', hotelsfontcolor: 'ffffff',
