@@ -1,5 +1,5 @@
-// HRS1 SOURCE-V1/A1: complete consumer; actual global production issuer is NOT selected.
-// No legacy Same-request/capability path, source GET, environment flag or test issuer.
+// HRS1 SOURCE-V1/A1: the reviewed AA/Bern issuer is selected only for its exact binding.
+// Source selection grants no method approval, database access or accepted result.
 import 'server-only'
 import { sha256Hex } from '@/lib/readiness/digest'
 import { ownRecord, immutable } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
@@ -9,6 +9,8 @@ import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 import { readV3SourceDecisionRecord, readV3ConflictArchiveRecord, type V3ReadClock, type V3SourceDecisionRecord, type V3SourceObservationRecord, type V3ConflictArchiveRecord } from '../contract'
 import type { V3ImportEvidencePort, V3ImportVerificationRequest, V3ImportHistory } from '../import/service-server'
 import type { V3SourceObservationPort, V3MonitorTarget } from '../monitor/monitor'
+import { AA_CH_DE_SOURCE_CUSTODY_ISSUER } from '../source/aa-ch-de-issuer'
+import { selectedAaChDeProgramForBinding } from '../source/aa-ch-de-qualification'
 import {
   HRS1_LIMITS, hrs1Canonical, hrs1Data, hrs1Hash, hrs1Ref, hrs1Same, hrs1Time, hrs1Clock, hrs1Method, hrs1OriginalEvidence,
   type Hrs1Binding, type Hrs1Verification, type Hrs1FixedOperation, type Hrs1Original,
@@ -25,7 +27,7 @@ export type Hrs1ObservedSource = Readonly<{
     fingerprint: Readonly<{ sourceContentHash: string; sourceFingerprintProtocol: 1 | 2 }>; retrievedAt: string }>;
   original: Hrs1Original; status: 'observed' | 'unclear'; checkedAt: string;
 }>
-/** Future genuine issuer contract. Its object must be selected by a reviewed,
+/** Genuine issuer contract. Its object must be selected by a reviewed,
  * literal server import below. An arbitrary configured implementation is not a
  * production authority. Each receipt belongs to the issuer's private invocation
  * custody; reprove returns full checked facts, not a boolean or DTO certificate.
@@ -40,10 +42,11 @@ export interface Hrs1SourceCustodyIssuer {
     { receipt: object; value: Hrs1ObservedSource } | { status: 'unreachable' | 'unavailable' }>
   reproveObservation(receipt: object, value: Hrs1ObservedSource, clock: V3ReadClock, signal: AbortSignal): Promise<Hrs1ObservedSource | null>
 }
-// Root A1: the genuine global issuer is a separate selected source task. This
-// nonexported selector has no caller setter, loader, environment path or issuer.
-// Later integration must replace this literal with its independently gated import.
-function selectedProductionIssuer(): Hrs1SourceCustodyIssuer | null { return null }
+// Exact reviewed context, method and both publications are required. A relabelled
+// synthetic binding or a caller-supplied fixture cannot select this issuer.
+function selectedProductionIssuer(binding: Hrs1Binding): Hrs1SourceCustodyIssuer | null {
+  return selectedAaChDeProgramForBinding(binding) ? AA_CH_DE_SOURCE_CUSTODY_ISSUER : null
+}
 
 export type Hrs1SourceConsumer = Readonly<{
   available: boolean;
@@ -147,7 +150,13 @@ function readVerification(raw: unknown, binding: Hrs1Binding, registry: QuellenR
       && !v.originals.some(o => hrs1Same(hrs1OriginalEvidence(o), v.decision.primary.status === 'unclear' ? v.decision.primary.evidence : null))) return null
     if (v.stickyDecision) for (const old of v.stickyDecision.knownConflicts) {
       const retained = v.decision.knownConflicts.find(c => c.reference === old.reference)
-      if (!retained || !hrs1Same({ ...retained, resolution: null }, { ...old, resolution: null })
+      if (!retained) {
+        // The canonical decision reader above has proved this exact append and
+        // its predecessor. An open conflict can never leave the inline set.
+        if (!old.resolution || !v.archiveAppend?.entries.some(entry => hrs1Same(entry, old))) return null
+        continue
+      }
+      if (!hrs1Same({ ...retained, resolution: null }, { ...old, resolution: null })
         || (old.resolution && !hrs1Same(old.resolution, retained.resolution) && retained.resolution?.predecessor !== old.resolution.reference)) return null
     }
     return immutable(v)
@@ -162,7 +171,7 @@ export function createHrs1SourceConsumer(input: Readonly<{
   fixtureIssuer?: Hrs1SourceCustodyIssuer | null;
 }>): Hrs1SourceConsumer {
   const { binding, registry, fixed, clock } = input
-  const issuer = binding.dataMode === 'official_projection' ? selectedProductionIssuer()
+  const issuer = binding.dataMode === 'official_projection' ? selectedProductionIssuer(binding)
     : binding.sources.every(s => new URL(s.canonicalUrl).hostname.endsWith('.example')) ? input.fixtureIssuer ?? null : null
   const held = new WeakMap<object, { issuerReceipt: object; verification: Hrs1Verification; finalized: boolean }>()
   const observed = new WeakMap<object, { issuerReceipt: object; value: Hrs1ObservedSource }>()

@@ -1838,6 +1838,7 @@ $$;
 CREATE FUNCTION official_v3_result_private.verification_v1(v jsonb,b jsonb,require_current boolean) RETURNS void
 LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog AS $$
 DECLARE o jsonb; ev jsonb; ids text[]:='{}'; seen jsonb; snapshot jsonb; prior jsonb; conflict_value jsonb; retained jsonb;
+ archive_value jsonb:=v->'archiveAppend'; previous_value jsonb:=v->'previousDecision'; removed_conflicts jsonb:='[]'::jsonb; archived_entry jsonb;
 BEGIN
  IF official_v3_result_private.exact_keys_v1(v,ARRAY['reference','request','decision','previousDecision','archiveAppend','originals','history','stickyDecision','suppressionEpoch','validUntilExclusive']) IS NOT TRUE
   OR v->>'reference' IS DISTINCT FROM official_v3_result_private.ref_v1('hrs1-verification',v-'reference')
@@ -1924,8 +1925,44 @@ BEGIN
  END IF;
  prior:=v->'stickyDecision';
  IF prior<>'null'::jsonb THEN
+  IF archive_value<>'null'::jsonb THEN
+   -- The same bounded canonical append checked by validate_s1_copy_v1 must
+   -- already hold before archival can satisfy this verification's sticky set.
+   FOR conflict_value IN SELECT value FROM jsonb_array_elements(previous_value->'knownConflicts') LOOP
+    IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(v#>'{decision,knownConflicts}') current_conflict
+     WHERE current_conflict.value->'reference'=conflict_value->'reference') THEN
+     IF conflict_value->'resolution'='null'::jsonb THEN
+      RAISE EXCEPTION 'hrs1 unresolved archive removal' USING ERRCODE='P7804';
+     END IF;
+     removed_conflicts:=removed_conflicts||jsonb_build_array(conflict_value);
+    END IF;
+   END LOOP;
+   IF archive_value->'contextKey' IS DISTINCT FROM b->'contextKey' OR archive_value->'factKind' IS DISTINCT FROM b->'factKind'
+    OR archive_value->'fromDecisionRef' IS DISTINCT FROM previous_value->'reference'
+    OR archive_value->'head' IS DISTINCT FROM v#>'{decision,historyArchive}'
+    OR archive_value->'predecessor' IS DISTINCT FROM previous_value->'historyArchive'
+    OR archive_value->>'archivedAt'<previous_value->>'evaluatedAt' OR archive_value->>'archivedAt'>v#>>'{decision,evaluatedAt}'
+    OR archive_value#>'{head,reference}'=archive_value#>'{predecessor,reference}'
+    OR (archive_value#>>'{head,revision}')::integer<>COALESCE((archive_value#>>'{predecessor,revision}')::integer,0)+1
+    OR (archive_value#>>'{head,totalConflicts}')::integer<>COALESCE((archive_value#>>'{predecessor,totalConflicts}')::integer,0)+jsonb_array_length(archive_value->'entries')
+    OR jsonb_array_length(archive_value->'entries')<>jsonb_array_length(removed_conflicts)
+    OR (SELECT count(DISTINCT value->>'reference') FROM jsonb_array_elements(archive_value->'entries'))<>jsonb_array_length(removed_conflicts) THEN
+    RAISE EXCEPTION 'hrs1 canonical sticky archive mismatch' USING ERRCODE='P7804';
+   END IF;
+   FOR archived_entry IN SELECT value FROM jsonb_array_elements(archive_value->'entries') LOOP
+    IF NOT EXISTS(SELECT 1 FROM jsonb_array_elements(removed_conflicts) WHERE value=archived_entry)
+     OR archived_entry#>'{primary,contextKey}' IS DISTINCT FROM b->'contextKey'
+     OR archived_entry#>'{primary,fact,fact,kind}' IS DISTINCT FROM b->'factKind'
+     OR archived_entry->'resolution'='null'::jsonb OR archived_entry#>>'{resolution,resolvedAt}'>archive_value->>'archivedAt' THEN
+     RAISE EXCEPTION 'hrs1 exact resolved archive entry required' USING ERRCODE='P7804';
+    END IF;
+   END LOOP;
+  END IF;
   FOR conflict_value IN SELECT value FROM jsonb_array_elements(prior->'knownConflicts') LOOP
    SELECT value INTO retained FROM jsonb_array_elements(v#>'{decision,knownConflicts}') WHERE value->'reference'=conflict_value->'reference';
+   IF retained IS NULL AND conflict_value->'resolution'<>'null'::jsonb AND archive_value<>'null'::jsonb THEN
+    SELECT value INTO retained FROM jsonb_array_elements(archive_value->'entries') WHERE value=conflict_value;
+   END IF;
    IF retained IS NULL OR (retained-'resolution') IS DISTINCT FROM (conflict_value-'resolution')
     OR (conflict_value->'resolution'<>'null'::jsonb AND retained->'resolution' IS DISTINCT FROM conflict_value->'resolution'
      AND retained#>'{resolution,predecessor}' IS DISTINCT FROM conflict_value#>'{resolution,reference}') THEN
@@ -2892,7 +2929,7 @@ BEGIN
   ('official_v3_result_private','assert_history_v1','',NULL::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'9454a79fdebfce4cb63c60bb404bf6321a9fe7c09b825e9f6ce32e750f225c3a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','original_v1','jsonb,jsonb',ARRAY['o','b']::text[],'jsonb','plpgsql','s',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'357efc28a494fa8e002683e760cff7e7c8c05035914c5f40f5931272e0990e3d',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','observations_v1','jsonb',ARRAY['v']::text[],'jsonb','sql','i',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'f6be0f59dbcc0795f2afdf85f2bd13f7eae358f8782a3cfd01737890c713613a',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
-  ('official_v3_result_private','verification_v1','jsonb,jsonb,bool',ARRAY['v','b','require_current']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'6e2717a4b06e1f300ef6c8dacc6f19c19c0e241f189f1bc3ebcda23cb8c007c3',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
+  ('official_v3_result_private','verification_v1','jsonb,jsonb,bool',ARRAY['v','b','require_current']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'c3c1bda8bc1403bdb48423f454d5ea2fa324e6bea84127729b80b31f71c302d4',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','fence_v1','jsonb,int4,timestamptz,text,jsonb',ARRAY['b','epoch_value','deadline','legal_day','verification_value']::text[],'void','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',1,'NULL::jsonb','0a1813c8c4b290f07e7ac47db92c39880b53241dcd96ae6276c7fd4a31e39963',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','keep_original_v1','jsonb,jsonb',ARRAY['o','b']::text[],'text','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'43b1eb6dd9d99e45a4b1c3bed80d92b5d3c4390544f6394aaa61acf322be4d14',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),
   ('official_v3_result_private','attest_v1','jsonb,jsonb,int4,timestamptz,text',ARRAY['q','b','epoch_value','deadline','legal_day']::text[],'jsonb','plpgsql','v',false,'ot_v3_result_owner','search_path=pg_catalog',0,NULL::text,'47a2a1b76f6c088f656c235f5becdfa6f5d23d0e6b4efea7b27a6b15ae4cac17',NULL::text,NULL::text,ARRAY['ot_v3_result_owner']::text[]),

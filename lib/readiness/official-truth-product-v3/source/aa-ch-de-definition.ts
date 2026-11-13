@@ -4,6 +4,7 @@ import type { ContentIdentityBinding } from '@/lib/readiness/official-truth-cont
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 import type { V3GlobalRuleContext, V3LegalValidity, V3MethodRef, V3RuleFact, V3SourceObservationRecord } from '../contract'
 import type { Hrs1Binding, Hrs1SourceBinding } from '../result/contract'
+import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from './aa-ch-de-reviewed-program'
 
 /** Fixed physical publications, not registration, qualification or approval. */
 export const AA_CH_DE_PUBLICATION = Object.freeze({
@@ -61,5 +62,5 @@ export interface AaChDeQualificationProgram extends AaChDePublicationProgram {
  * consumed #1192 one-shot observation and old date-window pilot are no authority.
  * No setter, configurable implementation or test-profile injection is exported. */
 export function selectedAaChDeQualification(): AaChDeQualificationProgram | null {
-  return null
+  return AA_BERN_CH_DE_REVIEWED_PROGRAM
 }

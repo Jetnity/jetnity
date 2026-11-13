@@ -6,7 +6,8 @@ import https from 'node:https'
 import { performance } from 'node:perf_hooks'
 import { test, mock } from 'node:test'
 import { sha256Hex } from '@/lib/readiness/digest'
-import { hrs1Clock, hrs1OriginalEvidence } from '../result/contract'
+import { hrs1Clock, hrs1OriginalEvidence, type Hrs1Binding } from '../result/contract'
+import { createHrs1SourceConsumer } from '../result/source-proof'
 import { AA_CH_DE_PUBLICATION, BERN_CH_DE_PUBLICATION, selectedAaChDeQualification,
   type AaChDeSourceRole } from './aa-ch-de-definition'
 import { readAaChDeOwnedSource, readBernChDeOwnedSource, readAaChDeOwnedSources,
@@ -261,7 +262,7 @@ test('AA/Bern source: private DNS addresses and already-aborted calls never open
 
 test('AA/Bern source: reviewed binding cannot omit, swap, duplicate or relabel its counter', () => {
   const program = selectedAaChDeQualification()
-  if (program === null) { assert.equal(selectedAaChDeProgramForBinding({} as never), null); return }
+  assert.ok(program)
   assert.equal(selectedAaChDeProgramForBinding(program.binding), program)
   assert.equal(program.binding.sources.length, 2); assert.equal(program.counterInventory.eligibleRepresentations.length, 1)
   assert.notEqual(program.source.contentItemId, program.counter.source.contentItemId)
@@ -272,9 +273,33 @@ test('AA/Bern source: reviewed binding cannot omit, swap, duplicate or relabel i
   }
 })
 
+test('AA/Bern source: production consumer requires the exact reviewed binding before any source or database I/O', () => {
+  const fail = () => { assert.fail('binding selection performed I/O') }
+  mock.method(Resolver.prototype, 'resolve4', fail as Resolver['resolve4'])
+  mock.method(Resolver.prototype, 'resolve6', fail as Resolver['resolve6'])
+  mock.method(https, 'request', fail as typeof https.request)
+  try {
+    const program = selectedAaChDeQualification(); assert.ok(program)
+    const at = hrs1Clock(program.binding.activeFrom, program.binding.legalTimeZone); assert.ok(at)
+    const consumer = (binding: Hrs1Binding) => createHrs1SourceConsumer({ binding, registry: program.registry,
+      fixed: async () => assert.fail('binding selection dispatched database work'), clock: () => at, fixtureIssuer: issuer })
+    const selected = consumer(program.binding)
+    assert.equal(selected.available, true)
+    assert.equal(selected.held({}), null, 'selected configuration is not a source receipt')
+    for (const binding of [
+      { ...program.binding, methodDigest: '0'.repeat(64) },
+      { ...program.binding, packageDigest: '0'.repeat(64) },
+      { ...program.binding, contextKey: 'official-truth-context:v3:' + '0'.repeat(64) },
+      { ...program.binding, sources: program.binding.sources.map((source, index) => ({ ...source,
+        canonicalUrl: 'https://hrs1-synthetic-' + index + '.example/fictional-visa-rules' })) },
+      { ...program.binding, dataMode: 'synthetic_test' as const },
+    ]) assert.equal(consumer(binding).available, false, 'foreign binding cannot select production or use fixture fallback')
+  } finally { mock.restoreAll() }
+})
+
 test('AA/Bern source: unrelated counter body remains an original ambiguity, never an agreement or manufactured fact', () => {
   const program = selectedAaChDeQualification()
-  if (program === null) { assert.equal(qualifyAaChDeOriginal({} as never, {} as never, {} as never), null); return }
+  assert.ok(program)
   const at = hrs1Clock(program.binding.activeFrom, program.binding.legalTimeZone); assert.ok(at)
   const bodyText = '<html><body>unrelated publication with no entry rule</body></html>'
   const raw: AaChDeOwnedOriginal = { role: 'counter', requestUrl: BERN_CH_DE_PUBLICATION.url, finalUrl: BERN_CH_DE_PUBLICATION.url,

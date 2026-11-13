@@ -18,7 +18,7 @@ import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../li
 import { officialTruthTrustedFactExtrahierenMitDefinitionen, type OfficialTruthExtractorDefinition } from '../../../lib/readiness/official-truth-trusted-fact-extractor-registry'
 import { createV3ContextIdentity, createV3WorkIdentity, createV3TransitionIdempotencyKey, readV3GlobalRuleContext,
   readV3SourceDecisionRecord, readV3PublicProjectionRecord, readV3ResearchJobRecord, type V3ReadResult, type V3GlobalRuleContext,
-  type V3SourceObservationRecord, type V3SourceDecisionRecord, type V3MethodRef, type V3PublicProjectionRecord,
+  type V3SourceObservationRecord, type V3SourceDecisionRecord, type V3ConflictArchiveRecord, type V3MethodRef, type V3PublicProjectionRecord,
   type V3ResearchProposal } from '../../../lib/readiness/official-truth-product-v3/contract'
 import { createV3PostgresMethodAuthority, createV3PostgresResultJobs } from '../../../lib/readiness/official-truth-product-v3/method/authority-postgres'
 import { createV3ImportCoordinator, type V3ImportHistory, type V3ImportOutcome, type V3ImportAudit,
@@ -89,7 +89,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       qualificationDigest:sha256Hex('hrs1 fictional global qualification '+role),role}))},registry)
   assert.ok(bindingRead)
   const binding:Hrs1Binding=bindingRead
-  const control={epoch:1,mode:'agrees' as 'agrees'|'conflicts'|'not_found'|'unreachable'|'unclear',unavailable:false,resolve:false,
+  const control={epoch:1,mode:'agrees' as 'agrees'|'conflicts'|'not_found'|'unreachable'|'unclear',unavailable:false,resolve:false,omitSticky:false,archiveResolved:false,
     retrievedAt:new Date().toISOString(),expiresAt:null as string|null,inspections:0,finalizations:0,finalizationAttempts:0,reproofs:0,extracts:0,observations:0,reopens:0,producerCalls:0}
   const originals=new Map<string,Hrs1Original>()
   const held=new WeakMap<object,{verification:Hrs1Verification;generation:string}>()
@@ -97,7 +97,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
   const observationHeld=new WeakMap<object,{value:Hrs1ObservedSource;generation:string}>()
   const delivered:{binding:V3IntakeBinding;text:string}[]=[]
   let serial=0
-  const generation=()=>hrs1Canonical([control.epoch,control.mode,control.retrievedAt,control.expiresAt,control.resolve])
+  const generation=()=>hrs1Canonical([control.epoch,control.mode,control.retrievedAt,control.expiresAt,control.resolve,control.omitSticky,control.archiveResolved])
   const clock=()=>{const at=hrs1Clock(new Date().toISOString(),binding.legalTimeZone);assert.ok(at);return at}
   function active(signal?:AbortSignal){assertOwnedLocalProofCluster(cluster);lifetime.check();return!control.unavailable&&!signal?.aborted}
   function material(role:FixtureSourceRole,checkedAt:string):Hrs1Original{
@@ -158,7 +158,7 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       if(!active(signal)||!hrs1Same(challenge.binding,binding)||!hrs1Same(challenge.request.context,context))return null
       const request=challenge.request,primary=material('primary',request.clock.now),prior=challenge.history.decision
       const currentOriginals:Hrs1Original[]=[primary],conflicts=detached(prior?.knownConflicts??[])
-      for(const old of challenge.stickyDecision?.knownConflicts??[])if(!conflicts.some(c=>c.reference===old.reference))conflicts.push(detached(old))
+      if(!control.omitSticky)for(const old of challenge.stickyDecision?.knownConflicts??[])if(!conflicts.some(c=>c.reference===old.reference))conflicts.push(detached(old))
       const attempts:V3SourceDecisionRecord['counterCheck']['attempts']=[]
       if(control.mode==='agrees'||control.mode==='conflicts'||control.mode==='unclear'){
         const counter=material('counter',request.clock.now);assert.ok(counter.observation);currentOriginals.push(counter)
@@ -180,16 +180,30 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
       }else if(control.mode==='unreachable')attempts.push({status:'unreachable',attemptedAt:request.clock.now,
         source:{sourceId:fixtureSource('counter').sourceId,contentItemId:fixtureSource('counter').contentItemId,representationId:fixtureSource('counter').representationId}})
       else attempts.push({status:'not_found',source:null,attemptedAt:request.clock.now})
+      // Only exact conflicts already resolved in the real predecessor may leave
+      // the inline set. The canonical reader below checks the complete append.
+      const removed=control.archiveResolved?conflicts.filter(conflict=>conflict.resolution!==null
+        &&prior?.knownConflicts.some(old=>hrs1Same(old,conflict))):[]
+      let archiveAppend:V3ConflictArchiveRecord|null=null
+      if(removed.length){
+        assert.ok(prior)
+        archiveAppend={schema:3,kind:'resolved_conflict_archive_record',
+          head:{reference:hrs1Ref('conflict-archive',{fromDecisionRef:prior.reference,decisionRef:request.decisionRef,entries:removed}),
+            revision:(prior.historyArchive?.revision??0)+1,totalConflicts:(prior.historyArchive?.totalConflicts??0)+removed.length},
+          predecessor:prior.historyArchive,contextKey:binding.contextKey,factKind:'requirement_effect',
+          fromDecisionRef:prior.reference,archivedAt:request.clock.now,entries:removed}
+      }
+      const retained=conflicts.filter(conflict=>!removed.some(old=>old.reference===conflict.reference))
       const decision=mustRead(readV3SourceDecisionRecord({schema:3,kind:'source_decision_record',reference:request.decisionRef,
         predecessor:prior?.reference??null,method:METHOD_REF,context,contextKey:binding.contextKey,factKind:'requirement_effect',
         evaluatedAt:request.clock.now,legalAsOfDate:request.clock.legalDate,
         primary:primary.observation===null?{status:'unclear',reason:primary.ambiguity.reason,evidence:primary.ambiguity.evidence}
           :{status:'clear',observation:primary.observation,qualification:{reference:hrs1Ref('destination-qualification',{decision:request.decisionRef}),
             representedCountryCode:'DE',role:'destination_authority',method:METHOD_REF,evidenceVersionId:primary.observation.evidence.versionId,checkedAt:request.clock.now}},
-        counterCheck:{attemptPlanRevision:1,attempts},knownConflicts:conflicts,historyArchive:prior?.historyArchive??null,
-        conclusion:conflicts.some(c=>c.resolution===null)?'comparable_conflict':primary.observation===null?'primary_unclear':'clear_primary',
-      },registry,prior,null))
-      const body={request,decision,previousDecision:prior,archiveAppend:null,originals:currentOriginals,history:challenge.history,
+        counterCheck:{attemptPlanRevision:1,attempts},knownConflicts:retained,historyArchive:archiveAppend?.head??prior?.historyArchive??null,
+        conclusion:retained.some(c=>c.resolution===null)?'comparable_conflict':primary.observation===null?'primary_unclear':'clear_primary',
+      },registry,prior,archiveAppend))
+      const body={request,decision,previousDecision:prior,archiveAppend,originals:currentOriginals,history:challenge.history,
         stickyDecision:challenge.stickyDecision,suppressionEpoch:challenge.suppressionEpoch,validUntilExclusive:expiry(currentOriginals)}
       const verification=freezeData<Hrs1Verification>({reference:hrs1Ref('hrs1-verification',body),...detached(body)})
       await lifetime.wait(1) // Real owned wait: I1 must finalize against its later actual clock, without refreshing this expiry.
@@ -263,7 +277,9 @@ function makeVisaFixture(cluster:LocalProofCluster,lifetime:OwnedTestLifetime,se
     ids:()=>({jobId:fixtureId('job3',seed+'|auto|'+(++serial)),operationId:fixtureId('op3',seed+'|auto|'+serial)}),
     claim:(jobKey:string,tag:string)=>({operationId:fixtureId('op3',seed+'|claim|'+tag),jobKey,
       leaseId:fixtureId('lease3',seed+'|lease|'+tag),leaseMilliseconds:30000}),
-    refresh(mode:typeof control.mode=control.mode){control.epoch++;control.mode=mode;control.retrievedAt=new Date().toISOString();control.expiresAt=null},
+    refresh(mode:typeof control.mode=control.mode){control.epoch++;control.mode=mode;control.retrievedAt=new Date().toISOString();control.expiresAt=null
+      control.omitSticky=false;control.archiveResolved=false},
+    latestVerification(){return[...known.values()].at(-1)?.verification??null},
     verificationForDecision(decision:V3SourceDecisionRecord){return[...known.values()].reverse().find(v=>hrs1Same(v.verification.decision,decision))?.verification??null},
     verificationForReference(reference:string){return known.get(reference)?.verification??null},
   }
@@ -478,9 +494,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "blob": "3a333c5458986941e800425393a3d756a65281b7",
-    "bytes": 23649,
-    "sha256": "4fa7c6e399a46387f977d3f62a5811c1dc5f68fe9222ba97c996d5a7f495acb9"
+    "blob": "268743bdd378583a0745fac5b0c5defe096a4138",
+    "bytes": 24113,
+    "sha256": "d17f92ece2feec486a6a82988977d8a0d60efa0c201effca82377235c40fd038"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
@@ -622,9 +638,9 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
-    "blob": "3b81640acb219b37dd1230f6d2a9467a34a41676",
+    "blob": "1d5ff0ee3da8e0c7dbad8a3ddffaeefa9cfa3896",
     "bytes": 442968,
-    "sha256": "e7391abc228fc90ced4d6dd57c808f50a9853c7bfe5f58c532ff257848b557ce"
+    "sha256": "5c417f51012b33d7e2a09513742df0b5c99a726cf7a84a6c5c331c4e9c7eb3d3"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/recovery-candidate.sql",
@@ -658,15 +674,15 @@ const PINS = [
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
-    "blob": "d45972d5453de4353af1975f4a2a69a2b1acacc3",
-    "bytes": 365215,
-    "sha256": "86da364aecc4e2c9e4c773132c929751cf376df5be040aa20e59983df08474ff"
+    "blob": "b963213b9d0ee4c88da2b0753101c5e93a0a5221",
+    "bytes": 368148,
+    "sha256": "09be03c1688e0654ce7726c1aa7aa8c49ee94cd1bfeda1a1a67cdd96952e9bb0"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
-    "blob": "939879d5e4130b92af18cbbe351637b23a6d2c48",
+    "blob": "f55c6640b9b235089fe89e20c477df93358c0ff4",
     "bytes": 161365,
-    "sha256": "6f0d26b5b0aae044e18736a22ec19d4fa625d67a05b75beb9c5096d761042a17"
+    "sha256": "f4c79bd8c0b254c7c40b564fb5a026b8ec715ad507d063e52f8661196f54dc6c"
   },
   {
     "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
@@ -715,6 +731,54 @@ const PINS = [
     "bytes": 17666,
     "blob": "15b8506a5c005bb7a5afcc466bc26881e3083d6d",
     "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4"
+  },
+  {
+    "path": "lib/readiness/official-truth-bounded-response-body.ts",
+    "bytes": 1278,
+    "blob": "783d802fff48a2969b86945515b159a513df76e9",
+    "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
+    "bytes": 19120,
+    "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
+    "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-definition.ts",
+    "bytes": 3109,
+    "blob": "840f21c99b9f4a35e78c21281046e5743835842a",
+    "sha256": "f70dc95feabec51553faffdb517c96d36ac87e4154fc1d41a6741a3654a8ce94"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts",
+    "bytes": 25409,
+    "blob": "5b4ec00a5c863a689d01598ee4a05b90e3b61628",
+    "sha256": "4b750c5370ec53b5a44d218c149309ed715846032965916b67309e69cf20f442"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts",
+    "bytes": 13612,
+    "blob": "e08f89e2a8bf2f7f9344dd8e14a88a691aea5def",
+    "sha256": "18fbdc571d85d62744fd132c6e0e8987487c448c2b50fbe830c56d4158a66100"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
+    "bytes": 8285,
+    "blob": "8fba173650c9049c44ad08386d9bfc8aed9f5552",
+    "sha256": "e8455ea24e9aba165ff3b933b7ea95ac444fdd20fea0398e61e2b32d1dbc2619"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+    "bytes": 11290,
+    "blob": "3460c7a0bd5744ceabc8dcda7e1c7108e79b13f2",
+    "sha256": "e56733466881e26a0368838d7c69419479b2122322d72d144c727f124654a8a5"
+  },
+  {
+    "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+    "bytes": 17726,
+    "blob": "bd995580bee6adb6b1a213b17a6001caa8f0aeff",
+    "sha256": "aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f"
   }
 ] as const
 
@@ -1304,7 +1368,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
   let poisoned = false, stopped = false, cleanupTail = Promise.resolve()
   const evidence = { admitted: 0, dispatched: 0, acknowledged: 0, lost: 0, aborted: 0, drained: 0,
     sqlCodes: [] as string[], calls: [] as Readonly<{ id: number; kind: HrsLoginKind; operation: Hrs1Operation;
-      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean }>[] }
+      target: BackendIdentity | null; control: BackendIdentity | null; dispatched: boolean; committed: boolean; drained: boolean; awaitMilliseconds: number }>[] }
   const removeStop = lifetime.onStop(() => { stop.abort(Error('hrs1_native_lifetime_stopped')) })
   function poison() {
     if (poisoned) return
@@ -1350,6 +1414,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       : kind === 'verifier' ? request.channel === 'attest' : request.channel === 'read')
     if (poisoned || stopped || signal.aborted || stop.signal.aborted || performance.now() >= deadline
       || budget.active >= 2 || budget.admitted >= 256) return { status: 'unavailable' as const }
+    const admittedAt = performance.now()
     const call: HrsCall = { id: ++budget.admitted, kind, operation: command.operation, dispatched: false, committed: false, drained: false }
     contexts.add(call); budget.active++; budget.maximumActive = Math.max(budget.maximumActive,budget.active); evidence.admitted++
     let began = false, timer: ReturnType<typeof setTimeout> | undefined
@@ -1415,7 +1480,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
       } finally {
         budget.active--; contexts.delete(call)
         evidence.calls.push(Object.freeze({ id:call.id,kind,operation:command.operation,target:call.targetId??null,control:call.controlId??null,
-          dispatched:call.dispatched,committed:call.committed,drained:call.drained }))
+          dispatched:call.dispatched,committed:call.committed,drained:call.drained,awaitMilliseconds:performance.now()-admittedAt }))
       }
     }
   }
@@ -1734,6 +1799,25 @@ async function n03(h:Harness){
   assert.deepEqual(state.history.pointer,{revision:0,state:'missing',versionRef:null});assert.equal(state.history.version,null);assert.equal(state.history.decision,null)
   assert.deepEqual(state.stickyDecision,conflict.outcome.decision);assert.ok(state.suppressionEpoch>0)
   h.fixture.refresh('not_found')
+  // No accepted predecessor exists here: the canonical decision alone permits
+  // an empty conflict set. Runtime custody and actual SQL must still retain the
+  // independently stored open sticky conflict, without writing any HRS state.
+  h.fixture.control.omitSticky=true
+  try{
+    const codes=h.hrs.evidence.sqlCodes.length
+    const omitted=await h.prepare('n03-open-sticky-omitted');await omitted.finish()
+    assert.deepEqual(omitted.outcome,{status:'unavailable',reason:'verification_unavailable'})
+    const verification=h.fixture.latestVerification();assert.ok(verification)
+    assert.equal(verification.previousDecision,null);assert.equal(verification.archiveAppend,null)
+    assert.ok(verification.stickyDecision?.knownConflicts.some(item=>item.resolution===null))
+    assert.deepEqual(verification.decision.knownConflicts,[])
+    assert.deepEqual(mustRead(readV3SourceDecisionRecord(verification.decision,h.fixture.registry,
+      verification.previousDecision,verification.archiveAppend)),verification.decision,'the omitted sticky conflict is outside canonical predecessor validation')
+    assert.equal(h.hrs.evidence.sqlCodes.length,codes,'runtime refusal occurs before attestation')
+    assert.equal((await h.raw('attest',{kind:'verification',verification})).status,'unconfirmed')
+    assert.deepEqual(h.hrs.evidence.sqlCodes.slice(codes),['P7804'],'actual verifier also rejects the omitted open sticky conflict')
+    assert.deepEqual(await resultSnapshot(h.common.bootstrap.connection),first,'neither boundary changes durable HRS state')
+  }finally{h.fixture.control.omitSticky=false}
   const sticky=await h.prepare('n03-sticky-without-counter');await sticky.finish()
   assert.equal(sticky.outcome.status,'escalation');assert.ok(sticky.outcome.status==='escalation')
   assert.equal(sticky.outcome.reason,'comparable_conflict');assert.equal(sticky.outcome.key,conflict.outcome.key)
@@ -1798,7 +1882,22 @@ async function n04(h:Harness){
   const issuerWork=()=>({inspect:h.fixture.control.inspections,finalize:h.fixture.control.finalizationAttempts,
     reprove:h.fixture.control.reproofs,observe:h.fixture.control.observations,extract:h.fixture.control.extracts,reopen:h.fixture.control.reopens})
   const beforeIssuerWork=issuerWork()
+  const beforeQuery={hrsCalls:h.hrs.evidence.calls.length,hrsAdmitted:h.hrs.evidence.admitted,hrsSql:h.hrs.evidence.sqlCodes.length,
+    methodCalls:h.method.evidence.calls.length,methodAdmitted:h.method.evidence.admitted,methodDispatched:h.method.evidence.dispatched,
+    methodDrained:h.method.evidence.drained,methodSql:h.method.evidence.sqlCodes.length}
+  const queryStarted=performance.now()
   const answer=await h.jobs.query({destinationCountryCode:'DE',citizenshipCountryCodes:['CH']},h.signal)
+  if(!answer.ok)console.error('HRS1_QUERY_DIAG',JSON.stringify({reason:answer.reason,awaitMilliseconds:performance.now()-queryStarted,
+    callerAborted:h.signal.aborted,hrs:{admitted:h.hrs.evidence.admitted-beforeQuery.hrsAdmitted,
+      completed:h.hrs.evidence.calls.length-beforeQuery.hrsCalls,
+      calls:h.hrs.evidence.calls.slice(beforeQuery.hrsCalls).slice(-8).map(c=>({kind:c.kind,operation:c.operation,
+        dispatched:c.dispatched,committed:c.committed,drained:c.drained,awaitMilliseconds:c.awaitMilliseconds})),
+      sqlCodes:h.hrs.evidence.sqlCodes.slice(beforeQuery.hrsSql).slice(-8)},
+    method:{admitted:h.method.evidence.admitted-beforeQuery.methodAdmitted,dispatched:h.method.evidence.dispatched-beforeQuery.methodDispatched,
+      drained:h.method.evidence.drained-beforeQuery.methodDrained,completed:h.method.evidence.calls.length-beforeQuery.methodCalls,
+      calls:h.method.evidence.calls.slice(beforeQuery.methodCalls).slice(-8).map(c=>({joined:c.joined,pending:c.pending,
+        targetAbsent:c.targetAbsent,controlAbsent:c.controlAbsent,stoppedFailure:c.stoppedFailure})),
+      sqlCodes:h.method.evidence.sqlCodes.slice(beforeQuery.methodSql).filter(code=>/^[0-9A-Z]{5}$/.test(code)).slice(-8)}}))
   assert.equal(answer.ok,true);assert.ok(answer.ok)
   assert.equal(answer.answer.response.dataMode,'synthetic_test');assert.equal(answer.answer.response.notice,'SYNTHETIC_TEST_DATA_NO_TRAVEL_ADVICE')
   const accepted=answer.answer.response.cells.flatMap(c=>c.results).filter(r=>r.status==='accepted')
@@ -1897,7 +1996,7 @@ async function n07(lifetime:OwnedTestLifetime,h:Harness){
   h.fixture.refresh('agrees')
   const method=await h.prepare('n07-method-expiry');await method.finish()
   await h.human('revoke')
-  const methodUntil=databaseMicroseconds(new Date(Date.now()+2000).toISOString())
+  const methodUntil=new Date(Date.now()+2000).toISOString()
   await h.human('approve',methodUntil)
   await waitedRefusal(lifetime,h,h.transition(method),()=>actualTimePassed(lifetime,h.common.observer.connection,methodUntil))
   const expiredRead=await h.raw('projection',{key:publicKey(h.fixture)})
@@ -2051,10 +2150,24 @@ async function n11(lifetime:OwnedTestLifetime,h:Harness,initial:Awaited<ReturnTy
   for(const row of initial.initialOutbox)assert.equal(prior.outbox_v1.filter(current=>hrs1Same(current,row)).length,1,
     'the actual initial conflict still has exactly one byte-identical original outbox record')
 
-  h.fixture.refresh('agrees');h.fixture.control.resolve=true
+  h.fixture.refresh('agrees');h.fixture.control.resolve=true;h.fixture.control.archiveResolved=true
   const baseline=await h.prepare('n11-monitor-baseline');await baseline.finish()
+  const archivedProof=h.verification(baseline.outcome),archive=archivedProof.archiveAppend
+  assert.ok(archive&&archivedProof.previousDecision&&archivedProof.stickyDecision)
+  assert.ok(archivedProof.stickyDecision.knownConflicts.length>0)
+  for(const conflict of archivedProof.stickyDecision.knownConflicts){
+    assert.ok(conflict.resolution)
+    assert.equal(archive.entries.filter(entry=>hrs1Same(entry,conflict)).length,1,'each resolved sticky conflict has one exact canonical archive entry')
+  }
+  assert.deepEqual(archivedProof.decision.knownConflicts,[])
+  assert.deepEqual(archive.entries,archivedProof.previousDecision.knownConflicts)
   assert.equal((await h.raw('transition',h.transition(baseline))).status,'committed')
   const published=await publishPrepared(h,baseline),retained=await resultSnapshot(owner)
+  const archiveRows=retained.archive_pages_v1.filter(row=>row.reference===archive.head.reference)
+  assert.equal(archiveRows.length,1,'actual transition persists the complete canonical archive page')
+  assert.deepEqual(archiveRows[0]!.record,archive)
+  assert.equal(archiveRows[0]!.predecessor_ref,archive.predecessor?.reference??null)
+  assert.equal(archiveRows[0]!.revision,archive.head.revision)
   const currentBinding=projectionBinding(published.projection),plan=await monitorPlan(h)
   const primary=plan.plan.targets.find(t=>t.role==='primary'),counter=plan.plan.targets.find(t=>t.role==='counter')
   assert.ok(primary&&counter)
