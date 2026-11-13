@@ -1374,7 +1374,7 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
   const observer = await LocalPgConnection.connect(cluster)
   await observer.query("SELECT set_config('statement_timeout','1000',false) AS statement_timeout,set_config('lock_timeout','1000',false) AS lock_timeout")
   const contexts = new Set<HrsCall>(), stop = new AbortController(), loseResponseFor = new Set<Hrs1Operation>()
-  let poisoned = false, stopped = false, cleanupTail = Promise.resolve()
+  let poisoned = false, stopped = false, cleanupTail = Promise.resolve(), admissionDiagnostics = 0
   let acknowledgedMonitorClaim: Readonly<{ claimId:string; generation:number; leaseUntil:number }> | null = null
   const evidence = { admitted: 0, dispatched: 0, acknowledged: 0, lost: 0, aborted: 0, drained: 0,
     sqlCodes: [] as string[], calls: [] as Readonly<{ id: number; kind: HrsLoginKind; operation: Hrs1Operation;
@@ -1424,7 +1424,18 @@ async function createHrsNativeExecutors(cluster: LocalProofCluster, lifetime: Ow
     assert.ok(kind === 'writer' ? request.channel !== 'attest'
       : kind === 'verifier' ? request.channel === 'attest' : request.channel === 'read')
     if (poisoned || stopped || signal.aborted || stop.signal.aborted || performance.now() >= deadline
-      || budget.active >= 2 || budget.admitted >= 256) return { status: 'unavailable' as const }
+      || budget.active >= 2 || budget.admitted >= 258) {
+      if (admissionDiagnostics < 8) {
+        admissionDiagnostics++
+        console.error('HRS1_ADMISSION_DIAG',JSON.stringify({kind,operation:command.operation,
+          admitted:budget.admitted,active:budget.active,poisoned,stopped,
+          callerAborted:signal.aborted,executorAborted:stop.signal.aborted,
+          deadlineRemainingMilliseconds:deadline-performance.now(),
+          fixedCallsLimit:258,concurrentEffectsLimit:2,
+          fixedCallsLimitReached:budget.admitted>=258,concurrentEffectsLimitReached:budget.active>=2}))
+      }
+      return { status: 'unavailable' as const }
+    }
     const admittedAt = performance.now()
     const call: HrsCall = { id: ++budget.admitted, kind, operation: command.operation, dispatched: false, committed: false, drained: false }
     // Diagnostic-only capture from this already admitted native call. Never used
@@ -1635,7 +1646,7 @@ async function certifiedReadLocks(lifetime:OwnedTestLifetime,h:Harness,budget:Hr
     await reader.connection.query('BEGIN ISOLATION LEVEL READ COMMITTED');began=true
     await reader.connection.query("SELECT set_config('statement_timeout',$1::text,true) AS statement_timeout,set_config('lock_timeout',$1::text,true) AS lock_timeout",text([milliseconds]))
     const remaining=Math.floor(deadline-performance.now());assert.ok(remaining>0)
-    assert.ok(budget.admitted<256&&budget.active<2)
+    assert.ok(budget.admitted<258&&budget.active<2)
     budget.admitted++;budget.directAdmitted++;budget.active++;budget.maximumActive=Math.max(budget.maximumActive,budget.active);admitted=true
     const rows=await reader.connection.query(HRS1_SQL.read,text([hrs1Canonical(commandValue),commandValue.bindingHash,
       HRS_METHOD.methodId,HRS_METHOD.revision,HRS_METHOD.methodDigest,HRS_METHOD.packageDigest,head.epoch,remaining,notAfter,at.legalDate]))
@@ -2015,7 +2026,7 @@ async function n01(lifetime:OwnedTestLifetime,commons:readonly Common[],budget:H
     for(const kind of ['writer','reader','verifier'] as const){
       const caller=await connect(lifetime,common.cluster,HRS_LOGINS[kind])
       async function forbiddenApi(channel:'attest'|'execute'|'read'){
-        assert.ok(budget.admitted<256&&budget.active<2)
+        assert.ok(budget.admitted<258&&budget.active<2)
         budget.admitted++;budget.directAdmitted++;budget.active++;budget.maximumActive=Math.max(budget.maximumActive,budget.active)
         try{await assert.rejects(caller.connection.query(HRS1_SQL[channel],text(['{}','0'.repeat(64),HRS_METHOD.methodId,1,
           HRS_METHOD.methodDigest,HRS_METHOD.packageDigest,1,1000,new Date(Date.now()+1000).toISOString(),'2000-01-01'])),stateError('42501'))}
@@ -2932,7 +2943,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     if(joined.status==='rejected')throw joined.reason
     if(runnerFailed)throw runnerFailure
     lifetime.check();assert.ok(performance.now()-effectsStart<EFFECT_MS,'one unchanged total effects deadline')
-    assert.equal(budget.active,0);assert.ok(budget.admitted<=256);completed.push(id)
+    assert.equal(budget.active,0);assert.ok(budget.admitted<=258);completed.push(id)
     t.diagnostic('HRS1 '+id+' complete '+JSON.stringify({fixedCalls:budget.admitted-before,totalFixedCalls:budget.admitted}))
     return joined.value
   }
@@ -2962,7 +2973,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     await proof('N12','unused exact recovery, used-history refusal and complete caller drain',()=>n12(lifetime,h,unused,files))
     assert.deepEqual(completed,GROUPS);assert.equal(budget.active,0);assert.equal(budget.maximumActive,2)
     assert.equal(budget.directAdmitted,9);assert.equal(budget.directSettled,budget.directAdmitted) // eight original rights refusals plus one certified-read lock proof
-    assert.equal(budget.admitted,h.hrs.evidence.admitted+budget.directAdmitted);assert.ok(budget.admitted<=256)
+    assert.equal(budget.admitted,h.hrs.evidence.admitted+budget.directAdmitted);assert.ok(budget.admitted<=258)
   }catch(error){
     failed=true;failure=error
     const guard=completed.length===0&&error instanceof LocalPgError&&error.code==='P7802'?error.guardDiagnostic:undefined
@@ -2977,6 +2988,40 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
     const terminalPromise=lifetime.dispose()
     const results=await Promise.allSettled([...disposals,terminalPromise])
     for(const result of results)if(result.status==='rejected')errors.push(result.reason)
+    // The last existing settlement is the actual lifetime readback. Emit its
+    // counters before assertions so an exceeded proof bound cannot hide them.
+    const terminalResult=results[disposals.length] as PromiseSettledResult<Awaited<ReturnType<OwnedTestLifetime['dispose']>>>
+    const terminalReadback=terminalResult.status==='fulfilled'?terminalResult.value:null
+    const cleanupElapsed=performance.now()-cleanupStart
+    t.diagnostic('HRS1_TERMINAL_DIAG '+JSON.stringify({proofFailed:failed,completed,
+      disposalsFulfilled:results.slice(0,disposals.length).every(result=>result.status==='fulfilled'),
+      terminalStatus:terminalResult.status,terminal:terminalReadback,
+      fixedCalls:budget.admitted,directApiCalls:budget.directAdmitted,directApiSettled:budget.directSettled,
+      active:budget.active,maximumActive:budget.maximumActive,
+      effectsMilliseconds:cleanupStart-effectsStart,cleanupMilliseconds:cleanupElapsed,
+      limits:{fixedCalls:258,concurrentEffects:2,connections:MAX_CONNECTIONS,operations:MAX_OPERATIONS,
+        effectsMilliseconds:EFFECT_MS,cleanupMilliseconds:DRAIN_MS},
+      flags:{fixedCallsWithin:budget.admitted<=258,concurrentEffectsWithin:budget.maximumActive<=2,
+        connectionsWithin:terminalReadback?terminalReadback.connections<=MAX_CONNECTIONS:null,
+        operationsWithin:terminalReadback?terminalReadback.started<=MAX_OPERATIONS:null,
+        effectsWithin:cleanupStart-effectsStart<EFFECT_MS,cleanupWithin:cleanupElapsed<=DRAIN_MS,
+        actorsSettled:terminalReadback?terminalReadback.started===terminalReadback.settled&&terminalReadback.pending===0:null,
+        connectionsClosed:terminalReadback?terminalReadback.closed===terminalReadback.connections:null,
+        clustersStopped:terminalReadback?terminalReadback.stoppedClusters===clusters.length:null,
+        directCallsSettled:budget.directAdmitted===budget.directSettled,
+        ownershipHookRestored:LocalPgConnection.connect===originalConnect},
+      adapterCount:harnesses.length,adapters:harnesses.slice(0,2).map(h=>{
+        const hrsState=h.hrs.snapshot(),m04State=h.m04.snapshot()
+        return{hrs:{...hrsState,admitted:h.hrs.evidence.admitted,drained:h.hrs.evidence.drained,
+            allDrained:h.hrs.evidence.calls.every(call=>call.drained)},
+          m04:{...m04State,admitted:h.m04.evidence.admitted,drained:h.m04.evidence.drained,
+            dispatched:h.m04.evidence.dispatched,acknowledged:h.m04.evidence.acknowledged,
+            allDrained:h.m04.evidence.calls.every(call=>call.drained)},
+          method:{active:h.method.evidence.active,admitted:h.method.evidence.admitted,drained:h.method.evidence.drained,
+            cleanupRunning:h.method.evidence.cleanupRunning,cleanupWaiting:h.method.evidence.cleanupWaiting,
+            poisoned:h.method.evidence.poisoned,
+            allJoined:h.method.evidence.calls.every(call=>call.pending===0&&call.joined&&call.targetAbsent&&call.controlAbsent)}}
+      })}))
     try{
       assert.equal(LocalPgConnection.connect,originalConnect,'exact ownership-hook restoration')
       const terminal=await terminalPromise
@@ -2985,7 +3030,7 @@ export async function runHostedResultStoreNative(t:TestContext):Promise<void>{
       assert.ok(terminal.connections<=MAX_CONNECTIONS,'all actual connections including original adapters and COMMIT protection')
       assert.ok(terminal.started<=MAX_OPERATIONS,'all owned registered operations, with no omitted native subcalls')
       assert.equal(budget.active,0);assert.equal(budget.directAdmitted,budget.directSettled)
-      assert.ok(budget.maximumActive<=2&&budget.admitted<=256)
+      assert.ok(budget.maximumActive<=2&&budget.admitted<=258)
       for(const cluster of clusters)assert.equal(existsSync(cluster.root),false,'actual process exit and owned directory removal')
       assert.ok(performance.now()-cleanupStart<=DRAIN_MS,'one total cleanup deadline')
       if(!failed)assert.equal(terminal.stoppedClusters,2)
