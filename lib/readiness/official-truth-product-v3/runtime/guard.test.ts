@@ -6,6 +6,7 @@ import { NextRequest } from 'next/server'
 import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../../scripts/db/verwendung.mjs'
 import { assertTransactionBody, compileCandidate, compileMigrationBody, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
 import { compileStatusMigrationBody } from '../../../../scripts/db/official-truth-v3-background-guard-1/status-rpc-build.mjs'
+import { compileRecoveryMigrationBody, RECOVERY_PREDECESSORS, RECOVERY_REPLACEMENTS } from '../../../../scripts/db/official-truth-v3-background-guard-1/recovery-build.mjs'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, devGuardReceipt, readDevGuardRequest,
   readDevGuardReview, readDevGuardResult, readDevGuardText } from './guard-contract'
 
@@ -127,6 +128,66 @@ test('the anonymous status successor binds the installed BG1 and complete catalo
   assert.ok(generated.includes('GRANT EXECUTE ON FUNCTION public.official_v3_guard_alarm_status_v1() TO anon;'))
   assert.equal(/GRANT (?:USAGE|SELECT|ALL)\b/.test(generated), false)
   assert.equal((generated.match(/extract\(epoch FROM b\.installed_at\)/g) ?? []).length, 2, 'old-baseline hash is session-time-zone independent')
+})
+test('later recovery preserves both installed bodies and exactly binds replacements, private state and authority restoration', () => {
+  const bg1 = compileMigrationBody(), status = compileStatusMigrationBody(), generated = compileRecoveryMigrationBody()
+  assert.equal(createHash('sha256').update(bg1).digest('hex'), RECOVERY_PREDECESSORS.bg1)
+  assert.equal(createHash('sha256').update(status).digest('hex'), RECOVERY_PREDECESSORS.status)
+  assert.equal(generated, readFileSync(new URL('../../../../scripts/db/official-truth-v3-background-guard-1/recovery-provider-migration-body.sql', import.meta.url), 'utf8'))
+  assertTransactionBody(generated)
+  const prior = new Map([...functionsIn(bg1), ...functionsIn(status)].map(f => [f.signature, f]))
+  const next = functionsIn(generated)
+  assert.deepEqual(next.filter(f => prior.has(f.signature)).map(f => f.signature), RECOVERY_REPLACEMENTS)
+  assert.deepEqual(next.filter(f => !prior.has(f.signature)).map(f => f.signature), ['official_v3_guard_private.recovery_canonical_v1(jsonb,integer)'])
+  for (const signature of ['recovery_jobs_v1()', 'check_retirements_v1()', 'check_retired_hrs_v1(jsonb)']) {
+    assert.ok(generated.includes(prior.get('official_v3_guard_private.' + signature)!.body.trim() + ';'), 'original first-attempt body retained: ' + signature)
+  }
+  assert.equal((generated.match(/GRANT ot_v3_\w+_owner TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE GRANTED BY postgres;/g) ?? []).length, 2)
+  assert.equal((generated.match(/REVOKE ot_v3_\w+_owner FROM postgres GRANTED BY postgres;/g) ?? []).length, 2)
+  assert.equal(/(?:GRANT|REVOKE) ot_v3_intake_owner\b/.test(generated), false)
+  assert.equal(/GRANT (?:EXECUTE|SELECT|UPDATE|INSERT|DELETE|ALL)\b/.test(generated), false)
+  assert.equal(/(?:CREATE|ALTER|DROP) ROLE\b/.test(generated), false)
+  assert.ok(generated.includes("('memberships',COALESCE((SELECT jsonb_agg(to_jsonb(m) ORDER BY m.oid) FROM pg_auth_members m)"))
+  assert.ok(generated.includes("kind='memberships'"))
+  assert.ok(generated.includes("kind='schema_acl'"))
+  assert.ok(generated.includes('bg1 recovery exact authority restoration required'))
+  assert.ok(generated.includes("c.confrelid='official_v3_guard_private.owner_operations_v1'::regclass"))
+  assert.ok(generated.includes("a.grantee<>'postgres'::regrole OR a.grantor<>'postgres'::regrole OR a.is_grantable"))
+  assert.equal(/(?:UPDATE|DELETE FROM|ALTER TABLE) official_v3_guard_private\.(?:baselines_v1|status_baseline_v1|retired_attempts_v1|state_v1|runs_v1|incidents_v1)\b/.test(generated), false)
+  assert.equal(/(?:PERFORM|SELECT) official_v3_guard_private.audit_v1\(/.test(generated), false, 'migration never manufactures a post-installation proof')
+})
+test('later retirement gates current history, preserved source entries and lower business admission on a real successor proof', () => {
+  const fs = new Map(functionsIn(compileRecoveryMigrationBody()).map(f => [f.signature, f.body]))
+  const body = (name: string) => { const result = fs.get(name); assert.ok(result); return result }
+  const jobs = body('official_v3_guard_private.recovery_jobs_v1()')
+  assert.ok(jobs.includes('(n BETWEEN 2 AND 4) IS NOT TRUE'))
+  assert.ok(jobs.includes('s.start_count<>n')); assert.ok(jobs.includes("'operationCount',s.operation_count"))
+  assert.ok(jobs.includes('expected<>n')); assert.ok(jobs.includes('bg1 genuine preceding retirement required'))
+  const close = body('official_v3_guard_private.close_jobs_v1(text)')
+  assert.ok(close.includes("operation_count=(evidence#>>'{job,operationCount}')::integer"))
+  assert.ok(close.includes('SET open_attempt=NULL'))
+  assert.equal(/SET (?:current_job|start_count|operation_count|terminal_credit_claim)\s*=/.test(close), false)
+  const hrs = body('official_v3_guard_private.check_retired_hrs_v1(jsonb)')
+  for (const kind of ['originals', 'extractions', 'qualifications']) assert.ok(hrs.includes('{result,inventory,' + kind + '}'))
+  assert.equal(hrs.includes('state_fingerprint_v1()'), false, 'retired evidence does not freeze later legitimate appends')
+  for (const name of ['official_v3_guard_private.require_open_v1()', 'public.official_v3_guard_alarm_status_v1()']) {
+    const gate = body(name)
+    for (const required of ['recovery_baseline_v1', 'status_baseline_v1', 'required_generation', 'proof_not_before', "run.outcome='complete'", 'last_proof_started<earliest_proof']) assert.ok(gate.includes(required), name + ' ' + required)
+    for (const forbidden of ['audit_v1(', 'UPDATE ', 'INSERT ', 'DELETE ']) assert.equal(gate.includes(forbidden), false, forbidden)
+  }
+})
+test('later review shows actual bounded attempts and evidence counts without widening the first-attempt contract', () => {
+  const candidate = { ...review, retirement: { status: 'reviewable', selection: 'b'.repeat(64), attempt: 2,
+    originals: 4, qualifications: 2, acceptedVersions: 0, leaseEndedAt: '2026-11-14T14:32:19.000Z' } }
+  assert.ok(readDevGuardReview(candidate))
+  for (const attempt of [2, 3, 4]) for (const [originals, qualifications] of [[2, 1], [4, 2], [5, 2], [8, 3]]) {
+    assert.ok(readDevGuardReview({ ...candidate, retirement: { ...candidate.retirement, attempt, originals, qualifications } }))
+  }
+  for (const change of [{ attempt: 0 }, { attempt: 5 }, { attempt: 2.5 }, { originals: -1 }, { qualifications: -1 },
+    { acceptedVersions: 1 }, { attempt: 1 }, { operationId: 'untrusted' }]) {
+    assert.equal(readDevGuardReview({ ...candidate, retirement: { ...candidate.retirement, ...change } }), null)
+  }
+  assert.ok(readDevGuardReview({ ...candidate, retirement: { ...candidate.retirement, attempt: 1, originals: 2, qualifications: 1 } }))
 })
 test('guard contract keeps exact reviewed selection, original operation and absent outcomes distinct', () => {
   assert.ok(readDevGuardRequest(operation)); assert.ok(readDevGuardReview(review))

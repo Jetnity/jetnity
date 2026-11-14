@@ -98,12 +98,12 @@ export default function DevGuardPanel() {
     <button type="button" className={button} disabled={busy || operation !== null} onClick={() => void dispatch({ schema: 1, intent: 'review' })}>Gespeicherten Dev-Stand lesen</button>
     {review ? <>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="retirement-title">
-        <h2 id="retirement-title" className="text-lg font-semibold">Offener erster Quellenversuch</h2>
+        <h2 id="retirement-title" className="text-lg font-semibold">Offener Quellenversuch</h2>
         {review.retirement.status === 'reviewable' ? <>
-          <p>Versuch 1 ist abgelaufen. Gespeichert sind zwei Originale und eine Quellenprüfung, aber keine akzeptierte Regelversion. Ende der alten Arbeitsfrist: {time(review.retirement.leaseEndedAt)}.</p>
+          <p>Versuch {review.retirement.attempt} ist abgelaufen. Gespeicherte Originale: {review.retirement.originals}. Quellenprüfungen: {review.retirement.qualifications}. Es gibt keine akzeptierte Regelversion. Ende der alten Arbeitsfrist: {time(review.retirement.leaseEndedAt)}.</p>
           <p>Schließen hält den unbekannten Ausgang fest und sperrt weitere Abschlüsse unter den alten Vorgangskennungen. Bisherige Belege bleiben erhalten. Ein späterer Quellenlauf benötigt einen eigenen Start.</p>
           <button type="button" className={button} disabled={busy || !!operation || !consent || !storageReady} onClick={() => mutate('retire_unknown')}>{label('retire_unknown')}</button>
-        </> : <p>{review.retirement.status === 'closed' ? 'Der erste Versuch ist bereits durch eine eigene Quittung geschlossen.' : 'Der fest vorgesehene erste Versuch ist in diesem Zustand nicht abschließbar.'}</p>}
+        </> : <p>{review.retirement.status === 'closed' ? 'Der letzte offene Versuch ist durch eine eigene Quittung geschlossen.' : 'Der vorgesehene Quellenversuch ist in diesem Zustand nicht abschließbar.'}</p>}
       </section>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="incident-title">
         <h2 id="incident-title" className="text-lg font-semibold">Hintergrundprüfung und Sperre</h2>

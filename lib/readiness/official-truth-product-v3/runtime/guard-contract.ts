@@ -17,8 +17,9 @@ const requestSchema = z.discriminatedUnion('intent', [
 const reviewSchema = z.object({ schema: z.literal(1), status: z.literal('reviewed'),
   retirement: z.union([
     z.object({ status: z.enum(['closed', 'unavailable']) }).strict(),
-    z.object({ status: z.literal('reviewable'), selection, attempt: z.literal(1), originals: z.literal(2),
-      qualifications: z.literal(1), acceptedVersions: z.literal(0), leaseEndedAt: time }).strict(),
+    z.object({ status: z.literal('reviewable'), selection, attempt: z.number().int().min(1).max(4), originals: counter,
+      qualifications: counter, acceptedVersions: z.literal(0), leaseEndedAt: time }).strict()
+      .refine(value => value.attempt !== 1 || value.originals === 2 && value.qualifications === 1),
   ]),
   incident: z.object({ status: z.enum(['clear', 'blocked']), selection, generation: counter,
     methodEpoch: counter.nullable(), proofFinished: time.nullable(), validUntil: time.nullable(), canResume: z.boolean() }).strict(),
