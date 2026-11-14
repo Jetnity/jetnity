@@ -96,7 +96,7 @@ DECLARE
   request_body jsonb;
   start_left integer;
   operation_left integer;
-  subject_count integer;
+  quota jsonb;
   response_verified boolean:=false;
   target_url constant text:='https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/api/internal/readiness/ch-de-dev-refresh';
   target_path constant text:='/api/internal/readiness/ch-de-dev-refresh';
@@ -111,16 +111,6 @@ BEGIN
     UPDATE jetnity_dev_import_scheduler.state_v1 SET status='transport_access_expired',observed_at=moment WHERE singleton;
     RETURN 'transport_access_expired';
   END IF;
-  SELECT count(*),64-max(start_count),256-max(operation_count)
-    INTO subject_count,start_left,operation_left FROM official_v3_jobs_private.subjects_v1
-    WHERE job_key='research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513'
-      AND kind='rule_research';
-  UPDATE jetnity_dev_import_scheduler.state_v1 SET observed_at=moment,
-    remaining_starts=start_left,remaining_operations=operation_left WHERE singleton;
-  IF subject_count<>1 OR start_left<0 OR operation_left<0 THEN
-    UPDATE jetnity_dev_import_scheduler.state_v1 SET status='quota_state_unavailable' WHERE singleton;
-    RETURN 'quota_state_unavailable';
-  END IF;
   -- Unchanged normal BG1 remains authoritative; this sender never runs an audit.
   IF NOT EXISTS(SELECT 1 FROM official_v3_guard_private.state_v1
     WHERE singleton AND incident_generation=resumed_generation AND valid_until>moment
@@ -128,6 +118,29 @@ BEGIN
     UPDATE jetnity_dev_import_scheduler.state_v1 SET status='guard_not_current' WHERE singleton;
     RETURN 'guard_not_current';
   END IF;
+  IF to_regprocedure('official_v3_guard_private.ch_de_quota_v2()') IS NULL THEN
+    UPDATE jetnity_dev_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;
+    RETURN 'quota_state_unavailable';
+  END IF;
+  -- The separately installed successor owns rolling admission and terminal
+  -- reserve. Never derive a daily allowance by resetting lifetime counters.
+  quota:=official_v3_guard_private.ch_de_quota_v2();
+  IF quota->>'model' IS DISTINCT FROM 'rolling_24h_v2' OR quota->'clock_ok' IS DISTINCT FROM 'true'::jsonb
+    OR jsonb_typeof(quota->'remaining_starts') IS DISTINCT FROM 'number'
+    OR jsonb_typeof(quota->'remaining_operations') IS DISTINCT FROM 'number'
+    OR (quota->>'remaining_starts') !~ '^[0-9]{1,2}$'
+    OR (quota->>'remaining_operations') !~ '^[0-9]{1,3}$' THEN
+    UPDATE jetnity_dev_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;
+    RETURN 'quota_state_unavailable';
+  END IF;
+  start_left:=(quota->>'remaining_starts')::integer;
+  operation_left:=(quota->>'remaining_operations')::integer;
+  IF start_left>64 OR operation_left>256 THEN
+    UPDATE jetnity_dev_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;
+    RETURN 'quota_state_unavailable';
+  END IF;
+  UPDATE jetnity_dev_import_scheduler.state_v1 SET observed_at=moment,
+    remaining_starts=start_left,remaining_operations=operation_left WHERE singleton;
   SELECT decrypted_secret INTO STRICT signing_key FROM vault.decrypted_secrets
     WHERE name='jetnity_dev_import_cron_v1';
   IF signing_key IS NULL OR length(signing_key) NOT BETWEEN 32 AND 256 OR signing_key !~ '^[A-Za-z0-9_-]+$' THEN
@@ -154,8 +167,8 @@ BEGIN
     END IF;
     -- Reserve the existing attempt/operation allowance. Never reset or increase it.
     IF start_left<4 OR operation_left<16 THEN
-      UPDATE jetnity_dev_import_scheduler.state_v1 SET status='pilot_capacity_low' WHERE singleton;
-      RETURN 'pilot_capacity_low';
+      UPDATE jetnity_dev_import_scheduler.state_v1 SET status='daily_capacity_low' WHERE singleton;
+      RETURN 'daily_capacity_low';
     END IF;
     INSERT INTO jetnity_dev_import_scheduler.cycles_v1(operation_id,lease_id)
       VALUES('op3_'||replace(gen_random_uuid()::text,'-',''),'lease3_'||replace(gen_random_uuid()::text,'-',''))

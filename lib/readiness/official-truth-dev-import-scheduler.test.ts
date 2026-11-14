@@ -30,6 +30,11 @@ CREATE SCHEMA official_v3_guard_private;
 CREATE TABLE official_v3_guard_private.state_v1(singleton boolean,incident_generation bigint,resumed_generation bigint,
 valid_until timestamptz,last_proof_started timestamptz,last_finished timestamptz);
 INSERT INTO official_v3_guard_private.state_v1 VALUES(true,0,0,clock_timestamp()+interval '1 hour',clock_timestamp(),clock_timestamp());
+-- Explicit quota provider fixture; the successor has its own full-history native proof.
+CREATE FUNCTION official_v3_guard_private.ch_de_quota_v2() RETURNS jsonb LANGUAGE sql AS $$
+ SELECT jsonb_build_object('model','rolling_24h_v2','clock_ok',true,
+ 'remaining_starts',greatest(0,64-start_count),'remaining_operations',greatest(0,256-operation_count))
+ FROM official_v3_jobs_private.subjects_v1 LIMIT 1 $$;
 CREATE SCHEMA net;
 CREATE TABLE net.http_request_queue(id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,method text,url text,headers jsonb,body bytea,timeout_milliseconds integer);
 CREATE TABLE net._http_response(id bigint PRIMARY KEY,status_code integer,content_type text,headers jsonb,content text,timed_out boolean,error_msg text,created timestamptz DEFAULT clock_timestamp());
@@ -194,16 +199,16 @@ const cases: readonly Case[] = [
       PERFORM proof.check_ok((SELECT count(*)=1 AND bool_and(state='blocked') FROM jetnity_dev_import_scheduler.cycles_v1),'revoked method not blocked');`,
   },
   {
-    name: 'stale guard and both finite pilot limits stop before transport',
+    name: 'stale guard and both daily capacity limits stop before transport',
     sql: `
       PERFORM proof.arm();
       UPDATE official_v3_guard_private.state_v1 SET incident_generation=1;
       PERFORM proof.tick('guard_not_current');
       UPDATE official_v3_guard_private.state_v1 SET incident_generation=0;
       UPDATE official_v3_jobs_private.subjects_v1 SET start_count=61;
-      PERFORM proof.tick('pilot_capacity_low');
+      PERFORM proof.tick('daily_capacity_low');
       UPDATE official_v3_jobs_private.subjects_v1 SET start_count=4,operation_count=241;
-      PERFORM proof.tick('pilot_capacity_low');
+      PERFORM proof.tick('daily_capacity_low');
       PERFORM proof.check_ok((SELECT count(*)=0 FROM net.http_request_queue),'guard or quota bypassed');`,
   },
   {
@@ -223,6 +228,34 @@ const cases: readonly Case[] = [
       PERFORM proof.check_ok((SELECT count(*)=1 FROM net.http_request_queue),'expired preview sent another dispatch');
       PERFORM proof.check_ok((SELECT operation_id=original.operation_id AND lease_id=original.lease_id AND state='active'
         FROM jetnity_dev_import_scheduler.cycles_v1),'expired preview discarded original request');`,
+  },
+  {
+    name: 'missing reviewed rolling quota sends no request',
+    sql: `
+      PERFORM proof.arm(); DROP FUNCTION official_v3_guard_private.ch_de_quota_v2();
+      PERFORM proof.tick('quota_state_unavailable');
+      PERFORM proof.check_ok((SELECT count(*)=0 FROM net.http_request_queue),'missing quota dispatched');`,
+  },
+  {
+    name: 'rolling readback allows continued work beyond lifetime counts without mutating them',
+    sql: `
+      PERFORM proof.arm(); UPDATE official_v3_jobs_private.subjects_v1 SET start_count=100,operation_count=300;
+      EXECUTE 'CREATE OR REPLACE FUNCTION official_v3_guard_private.ch_de_quota_v2() RETURNS jsonb LANGUAGE sql AS $f$
+        SELECT jsonb_build_object(''model'',''rolling_24h_v2'',''clock_ok'',true,''remaining_starts'',28,''remaining_operations'',148) $f$';
+      PERFORM proof.tick('dispatched_start');
+      PERFORM proof.check_ok((SELECT start_count=100 AND operation_count=300 FROM official_v3_jobs_private.subjects_v1),'lifetime counter changed');`,
+  },
+  {
+    name: 'a rollback clock or substituted quota model cannot start another request',
+    sql: `
+      PERFORM proof.arm();
+      EXECUTE 'CREATE OR REPLACE FUNCTION official_v3_guard_private.ch_de_quota_v2() RETURNS jsonb LANGUAGE sql AS $f$
+        SELECT jsonb_build_object(''model'',''rolling_24h_v2'',''clock_ok'',false,''remaining_starts'',64,''remaining_operations'',256) $f$';
+      PERFORM proof.tick('quota_state_unavailable');
+      EXECUTE 'CREATE OR REPLACE FUNCTION official_v3_guard_private.ch_de_quota_v2() RETURNS jsonb LANGUAGE sql AS $f$
+        SELECT jsonb_build_object(''model'',''lifetime_v1'',''clock_ok'',true,''remaining_starts'',64,''remaining_operations'',256) $f$';
+      PERFORM proof.tick('quota_state_unavailable');
+      PERFORM proof.check_ok((SELECT count(*)=0 FROM net.http_request_queue),'invalid quota sent transport');`,
   },
   {
     name: 'a preview credential containing an application cookie is refused before dispatch',

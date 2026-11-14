@@ -52,8 +52,8 @@ signing secret there would be unsafe. Signed responses also prevent a writer of
 the response table from forging publication evidence. Such a writer can still
 deny service; the scheduler parks rather than manufacturing a successful run.
 
-Vercel Authentication separately protects the Preview. Its alias-specific
-Shareable Link was created with an explicit 48-hour TTL. A GET to the same alias
+Vercel Authentication separately protects the Preview. The initial admission
+proof used an alias-specific Shareable Link with an explicit 48-hour TTL. A GET to the same alias
 with `_vercel_share` returns a 307 and a `_vercel_jwt` cookie. The actual observed
 JWT audience is the exact alias, subject is `protection-bypass-url`, and its
 `exp` matches the Shareable Link expiry. A cookie-only GET to the existing import
@@ -69,52 +69,95 @@ additional cookie or application session is admitted. The private scheduler also
 stops at the verified JWT expiry. Privileged Supabase operators with Vault read
 access remain inside the platform trust boundary; no global roles are changed.
 
+### Recurring preview admission
+
+`preview-renewal.sql` adds a private candidate ledger and a read-only credential
+refresh. A separate, revocable Shareable Link with no TTL is scoped to this exact
+Dev alias and encrypted as `jetnity_dev_import_preview_share_v1`. The sender GETs
+only that fixed host and stores no Vercel management API key. The share link grants
+preview access, while application and import authority still require their own
+checks. Its transport visibility has the same provider trust boundary as the cookie.
+
+The actual pg_net probe followed the 307 to a 200 and retained the initial
+Set-Cookie header. Renewal accepts only its own recent response and a single
+bounded cookie whose decoded metadata names the exact alias, purpose and share
+link. The permanent link's actual JWT has no `exp`; its use is therefore limited
+locally to seven days after its `iat`. When `exp` is present, it must be numeric
+and within that same maximum. The issue time must match the dispatch; the
+effective use horizon must be over 24 hours away and newer than the current credential.
+These are candidate checks, not JWT signature verification. Vercel independently
+validates admission; only an HMAC-authenticated import response can prove source
+publication. A writer of PUBLIC net responses can deny service but cannot forge
+an import result.
+
+The next renewal is due 24 hours before that candidate use horizon. Malformed, missing,
+late or older responses retain the previous credential. Eight unsuccessful GETs
+park renewal for review. `run_v1()` isolates operational renewal errors in a
+subtransaction and still invokes the ordinary import gates with the existing
+credential. An expired credential continues to stop import dispatch.
+
 ## Installation and activation
 
 1. Review the complete runtime/SQL/test candidate and exact branch configuration.
    Require all existing CI gates and the matching Ready Preview deployment.
 2. Provision the two Dev Vault entries and the branch-only Sensitive HMAC
    variable without writing credential values into Git, comments or evidence.
-3. Record the current BG1 protected catalog hash and require its complete
-   baseline equality. Wrap `core.sql` in one transaction, setting
+3. Call `official_v3_guard_private.assert_catalog_v1()` and record the current
+   `catalog_status_v1()` hash. This checks the complete immutable successor
+   chain, including the installed gap-recovery baseline; an older intermediate
+   baseline alone is not the current catalog. Wrap `core.sql` in one transaction, setting
    `SET LOCAL jetnity.dev_import_target='dev:yfvbxvijcorffwxbxahl:refresh1'`.
-   Recheck catalog equality in the same transaction before COMMIT. The new
+   Recheck that assertion and unchanged current catalog in the same transaction before COMMIT. The new
    independent schema starts disabled; no source request is sent by installation.
 4. Verify the deployed UI's normal source run. Preserve original request IDs
    when any outcome is unknown; do not repeat completed Owner approvals.
-5. Set the exact target and `jetnity.dev_import_preview_expires` to the actual,
-   verified JWT `exp` for the following transaction, then execute `activate.sql`.
+5. Set the exact target and `jetnity.dev_import_preview_expires` to the verified
+   finite use horizon: the JWT's actual `exp`, or `iat + 7 days` for the observed
+   permanent-link JWT without `exp`. Then execute `activate.sql`.
    It refuses an existing schedule instead of silently replacing it. It creates
    only `jetnity-ch-de-dev-import-v1`, checks its exact command/user/database,
    and enables the private state. Existing guard and cleanup schedules remain.
 6. Observe actual cron dispatch, queued acknowledgement, fresh source work and
    signed publication. Compare the real visitor response/version/expiry and
-   normal following BG1 full proof. Observe the next scheduled cycle separately;
-   a job registration or synthetic test is not a live renewal receipt.
+   normal following BG1 full proof. The scheduled publication must renew the
+   previously confirmed manual result. Verify its next due time precedes its
+   actual expiry, plus the active cron, rolling quota and renewal configuration.
+   This supports ‘first automatic follow-up confirmed’; a second observed
+   automatic cycle or indefinite provider availability is not implied.
+7. For recurring preview access, install `preview-renewal.sql` with the same
+   catalog checks, provision the exact alias link in Vault, and run
+   `activate-preview-renewal.sql`. It changes only this job's exact old command
+   to `SELECT jetnity_dev_import_scheduler.run_v1();`, preserving its identity
+   and history. Verify actual candidate renewal and a subsequent signed import.
 
-## Finite v1 limit — not a permanent-operation claim
+## Reviewed rolling quota is required
 
 The installed M04 model limits a subject to 64 STARTs and 256 queue operations
-over its **entire lifetime**. These are not daily allowances. The sender reads
-those counters, never resets/increases them, and requires at least four STARTs
-and sixteen queue operations before beginning another cycle. The state records
-remaining capacity. With the observed initial 4 STARTs and 13 operations, at
-most 57 more single-START cycles fit this reserve. At 40-minute cadence the last
-projection may expire approximately 38 hours after the first cycle; retries can
-shorten this. Preview access also has an explicit expiry.
+over its **entire lifetime**. These are not daily allowances. With the observed
+initial 4 STARTs and 13 operations, a lifetime-only sender would fit at most 57
+more single-START cycles with a four-START reserve: approximately 38 hours of
+freshness at this cadence. That finite pilot was not sufficient for this task.
 
-This v1 package therefore proves a finite scheduled Dev pilot. A permanent
-operation claim requires a separately reviewed versioned quota policy for
-recurring work, complete replay/terminal-credit protection and a measured
-history/guard capacity envelope. Retained evidence, unknown operations and
-method authority must not be reset, relabelled or rotated to evade v1 limits.
-No new paid scheduler, plan or archive is activated by this package.
+Activation therefore requires the separately reviewed
+`official-truth-v3-rolling-jobs-quota-1` successor. The sender reads only
+`official_v3_guard_private.ch_de_quota_v2()`, requires its exact `rolling_24h_v2`
+model and valid clock, and retains a reserve of four STARTs and sixteen queue
+operations before starting another cycle. Its getter already accounts for any
+terminal operation credit. A missing successor, invalid clock or exhausted
+window stops new dispatch. Admission itself remains enforced in the normal
+database API and shared with manual source runs.
+
+Lifetime counts and complete evidence remain append-only. No reset, new subject
+key, method rotation or historical relabelling is used to evade a limit. Quota
+and preview renewal remove the known fixed lifetime and link-expiry stops;
+provider availability, method approval, normal guards and the measured history
+capacity envelope still apply. No new paid scheduler, plan or archive is activated.
 
 ## Readback, failure and stop
 
 Read `state_v1`, `cycles_v1`, `dispatches_v1` and this named job's
 `cron.job_run_details`; never return Vault values or raw HTTP headers.
-`transport_access_expired`, `pilot_capacity_low`, `guard_not_current`, and
+`transport_access_expired`, `daily_capacity_low`, `quota_state_unavailable`, `guard_not_current`, and
 `operator_review_required` need operator attention. Status rows alone are not an
 independent external alert. Production needs its own verified alarm delivery.
 
@@ -133,4 +176,7 @@ It proves state transitions, identity custody, SQL/Node MAC agreement, negative
 ACL/immutability, malformed/forged/stale replies, bounded retries, guard/capacity
 and preview-expiry gates. Hosted extension behavior and real publication remain
 separate live checks. Existing runtime/replay/Owner/architecture/audit tests are
-preserved, and the selector includes this file in its mandatory PG17 group.
+preserved, and the selector includes these files in its mandatory PG17 group.
+The renewal proof executes the actual additive SQL with explicit synthetic
+Vault/net providers, including malformed JWT payloads, exact scope and expiry,
+retained IDs and counters, retry bounds, ACLs, and isolated provider failures.

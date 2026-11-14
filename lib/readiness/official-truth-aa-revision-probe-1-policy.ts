@@ -34,7 +34,7 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   // This policy's own blob/tree is externally bound by Root exact-head review.
   sourceInventory: Object.freeze([
     Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 29654, sha256: '5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 63059, sha256: 'a3e70a3153be9237118d4749cc75932e5e6d40a8a0cfe4e5dff69d2cda3c846b' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 63059, sha256: '35b0e81c9fc35c9cdd3ee7a5de90b9867f8534337db97e837c8dcb07a59f4cfb' }),
     Object.freeze({ path: 'lib/readiness/official-truth-bounded-response-body.ts', bytes: 1278, sha256: '186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
@@ -48,7 +48,7 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/official-truth-content-identity-r2.test.ts', bytes: 41838, sha256: 'be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16' }),
     Object.freeze({ path: 'lib/readiness/official-truth-retrieval-physical-internal.ts', bytes: 17726, sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),
     Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1-server.ts', bytes: 20156, sha256: 'a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f' }),
-    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.mjs', bytes: 7581, sha256: '0f1a21ce0656abb48cd81e39451be4bcdfddec57a8ac00e63f63c6747d974f15' }),
-    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.test.mjs', bytes: 10579, sha256: 'f2cc5b5922f8929d9ff960f558169a18b3fd426f9dcc4c3285b81b0611a7207d' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.mjs', bytes: 7770, sha256: 'dd88e15a30ae3cc1af775245eb44bf1abc5dbb9e1abd7168b0f36a6365392e92' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.test.mjs', bytes: 10768, sha256: '5422f91855d6f544c03339c76847703e26aa308eb7e392377ef91253eae549cb' }),
   ]),
 } as const)

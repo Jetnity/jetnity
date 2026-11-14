@@ -17,6 +17,7 @@ import {
 
 const hosted = [
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
+  'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
@@ -24,6 +25,7 @@ const hosted = [
   'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-result-store-1.test.ts',
   'lib/readiness/official-truth-v3-human-method-transport-1.test.ts',
+  'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
   'lib/readiness/profile-authority-integrity-1.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ]
