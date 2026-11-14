@@ -9,6 +9,7 @@ import { M04_LIMITS, readM04Command, readM04NativeReply, type M04Config, type M0
 import type { V3ManagedJobRecord } from '../monitor/queue'
 import { createM04LanePool, createM04InvocationScope } from '../jobs/owned-scope'
 import { composeM04Invocation } from '../jobs/composition'
+import { selectRetainedChDeClaim, guardRetainedChDeClaim } from '../jobs/selected-claim'
 import { composeHrs1Invocation, type Hrs1Facade } from '../result/composition'
 import { HRS1_LIMITS, hrs1PublicReadMilliseconds, hrs1Canonical, hrs1Clock, hrs1Hash, hrs1Same, hrs1Time, hrs1Channel,
   readHrs1Binding, readHrs1Command, readHrs1Reply, type Hrs1Binding, type Hrs1Config,
@@ -521,7 +522,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
       : kind === 'monitorOnce' ? { status: interrupted ? 'interrupted' as const : 'unavailable' as const, outcomes: [] }
         : { status: 'unavailable' as const }
   }
-  async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal, budget?: Readonly<{ deadline: number }>) {
+  async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal, budget?: Readonly<{ deadline: number }>, retainedSelection = false) {
     if (transportBlocked || !config || !result || !selected || signal?.aborted) return failure(kind, signal?.aborted)
     const publicRead = kind === 'query', worker = kind === 'workOnce' || kind === 'monitorOnce'
     const milliseconds = publicRead ? hrs1PublicReadMilliseconds(selected.dataMode) : worker ? HRS1_LIMITS.workerMilliseconds : HRS1_LIMITS.effectMilliseconds
@@ -548,10 +549,30 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
     activeControllers.add(controller)
     let assembly: ReturnType<typeof composeHrs1Invocation> | null = null
     try {
+      const invocationResult: ResultJoint = { config: result, binding: selected, shared, calls: 0 }
+      let selection: Awaited<ReturnType<typeof selectRetainedChDeClaim>> | null = null
+      if (retainedSelection) {
+        if (kind !== 'workOnce') return { status: 'invalid' as const }
+        const command = readM04Command({ action: 'claim', input: raw })
+        if (!command || command.kind !== 'rule_research') return { status: 'invalid' as const }
+        // Selection owns no worker receipt. In particular, confirming the expired
+        // original must not transfer that anchor to the distinct following claim.
+        // Both private instances share this one scope, deadline and native limits.
+        const observation = authorityCore(config.binding, config.methodExecutor, { scope, config, callCap: deadline,
+          result: invocationResult })
+        selection = await selectRetainedChDeClaim({ root: command.value.input as M04Claim,
+          attemptLimit: selected.attemptLimit, method: { methodId: selected.methodId, revision: selected.revision },
+          fixed: observation.fixed, now: () => config!.clock().now, deadline, signal: scope.signal })
+        if (selection.status === 'exhausted') return { status: 'worker_only' as const, worker: { status: 'exhausted' as const, job: selection.job } }
+        if (selection.status !== 'selected') return { status: 'unconfirmed' as const }
+        raw = selection.claim
+      }
       const core = authorityCore(config.binding, config.methodExecutor, { scope, config, callCap: deadline,
-        result: { config: result, binding: selected, shared, calls: 0 } })
+        result: invocationResult })
       assembly = composeHrs1Invocation({ config, result, binding: selected, scope, callDeadline: deadline, authority: core.port,
-        processingAuthority: core.processingAuthority, fixed: core.fixed, processingFixed: core.processingFixed,
+        processingAuthority: core.processingAuthority,
+        fixed: selection?.status === 'selected' ? guardRetainedChDeClaim(selection, core.fixed) : core.fixed,
+        processingFixed: selection?.status === 'selected' ? guardRetainedChDeClaim(selection, core.processingFixed) : core.processingFixed,
         resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed,
         acquireOperationAuthority: core.acquireOperationAuthority, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority })
       const value = kind === 'monitorOnce' ? await assembly.monitorOnce(scope.signal)
@@ -593,7 +614,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
           || typeof held.leaseId !== 'string' || !/^lease3_[a-f0-9]{32}$/.test(held.leaseId)) return { status: 'invalid' }
         const claim = Object.freeze({ operationId: held.operationId, jobKey: identity.value.jobKey,
           leaseId: held.leaseId, leaseMilliseconds: 30000 })
-        return invoke('workOnce',claim,signal,budget) as ReturnType<Hrs1Facade['workSelectedOnce']>
+        return invoke('workOnce',claim,signal,budget,true) as ReturnType<Hrs1Facade['workSelectedOnce']>
       }
       let ids: Record<string, unknown> | null = null
       try { ids = ownRecord(result.ids(), ['jobId','operationId']) } catch { return { status: 'unavailable' } }

@@ -443,10 +443,16 @@ const PINS = [
     "sha256": "3cdc8646f82e7b9c9134232cceaeaf424cd3b2454a40c64d8d13f0830940f96c"
   },
   {
+    "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+    "bytes": 14218,
+    "blob": "f878b2d19ed6b603375fe38d6b62467ac11ed47e",
+    "sha256": "f891862b12c7fc2f0d2ef6ffa5faa190f04dd604762e13cad7e626d999e40776"
+  },
+  {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "blob": "521dff54f6597eb1d9ade2a5b7add71b545a3ef6",
-    "bytes": 44287,
-    "sha256": "965ad24c74182126752b9a9c64419358d45ef99a4897cdcb7d78fbd19be5ef0e"
+    "blob": "0e17413577d0e667c8c3d848df584a4809632566",
+    "bytes": 46008,
+    "sha256": "3ffe09aff83549d5bc3efa3e1297abb6419c4a20f20885d689d9602804d6ab42"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",

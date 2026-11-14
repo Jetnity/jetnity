@@ -13,4 +13,6 @@ test('rolling quota artifact is exactly its immutable-predecessor deterministic 
 test('rolling quota real PG17 canonical byte memo is exactly the unchanged serializer', { timeout: 120000 }, runRollingCanonicalNative)
 test('rolling quota real PG17 window, clock and retained terminal credit', { timeout: 120000 }, runRollingWindowNative)
 test('rolling quota real PG17 64 START refusal with operation capacity still available', { timeout: 120000 }, runRollingStartBoundary)
-test('rolling quota complete native PG17 successor above both lifetime caps', { timeout: 700000 }, runRollingQuotaNative)
+// Test harness only: 700s for the unchanged real API buildup plus at most 300s
+// for the next ordinary BG1 due slot. API 5s, audit 30s and Hosted-CI 30m stay fixed.
+test('rolling quota complete native PG17 successor above both lifetime caps', { timeout: 1000000 }, runRollingQuotaNative)

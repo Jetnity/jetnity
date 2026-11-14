@@ -5,8 +5,11 @@ import { test } from 'node:test'
 import { createContentIdentityGraph } from '@/lib/readiness/official-truth-content-identity'
 import { quellenRegistryErstellen } from '@/lib/readiness/source-registry'
 import { createV3ContextIdentity, createV3WorkIdentity, readV3GlobalRuleContext } from '../contract'
-import type { M04TerminalExecutor } from '../jobs/contract'
-import { hrs1Clock, readHrs1Binding, type Hrs1TerminalExecutor } from '../result/contract'
+import { readM04Command, type M04TerminalExecutor, type M04Claim } from '../jobs/contract'
+import { chDeRefreshRequestIdentity, retainedChDeClaim } from '../jobs/selected-claim'
+import { key } from '../monitor/internal'
+import type { V3ManagedJobRecord, V3QueueCommit } from '../monitor/queue'
+import { hrs1Clock, hrs1Canonical, readHrs1Binding, type Hrs1TerminalExecutor } from '../result/contract'
 import type { Hrs1SourceCustodyIssuer } from '../result/source-proof'
 import { withDevImportDiagnostics } from '../runtime/dev-diagnostics'
 import { createV3PostgresResultJobs, type Ma1MethodSqlExecutor } from './authority-postgres'
@@ -88,6 +91,161 @@ function fixture(options: {
   })
   return { facade, binding, calls, state }
 }
+
+/** Real HRS factory/strict native codecs and queues, with finite protocol doubles.
+ * These tests do not claim hosted SQL, source or publication acceptance. */
+function retainedFactory(options: { generation?: number; legacy?: boolean; expired?: boolean;
+  execution?: 'absent' | 'unknown' | 'prepared' | 'completed'; loseClaimAck?: boolean } = {}) {
+  type ResearchRecord = Extract<V3ManagedJobRecord, { kind: 'research_job_record' }>
+  const now = '2026-11-12T20:00:00.000Z', timestamp = (delta: number) => new Date(Date.parse(now) + delta).toISOString()
+  const requests: Record<string, unknown>[] = [], operations = new Map<string, V3QueueCommit>()
+  let record: ResearchRecord, originalResult: Record<string, unknown> | null = null, lost = false, writes = 0
+  const mode = options.execution ?? 'absent'
+  const h = fixture({
+    async method() { return { status: 'rows', rows: [{ status: 'approved', method_id: method.methodId,
+      revision: '1', method_digest: method.methodDigest, package_digest: method.packageDigest, epoch: '1',
+      approval_mode: 'until_revoked', approval_until: null, observed_at: now, remaining_ms: '5000' }] } },
+    async jobs(request) {
+      const q = JSON.parse(request.operationText), b = q.body
+      requests.push(q)
+      let reply: unknown
+      if (q.operation === 'execution_read') {
+        const matches = originalResult && hrs1Canonical(originalResult.claim) === hrs1Canonical(b.claim)
+        reply = matches ? q.phase === 'probe' ? { status: 'requires_authority' } : originalResult
+          : { status: mode === 'prepared' || mode === 'unknown' ? 'blocked' : 'absent' }
+      } else if (q.operation === 'queue_read') {
+        reply = mode === 'prepared' || mode === 'unknown' ? { status: 'blocked' }
+          : q.phase === 'probe' ? { status: 'requires_authority' } : { status: 'present', record }
+      } else if (q.operation === 'queue_confirm') {
+        const c = readM04Command(b.command)!, old = operations.get(c.operationId)
+        reply = mode === 'prepared' ? { status: 'blocked' } : !old ? { status: 'not_attempted' }
+          : q.phase === 'probe' ? { status: 'requires_authority' }
+            : { status: 'committed', operationId: c.operationId, commandKey: c.commandKey,
+              commandText: c.commandText, envelopeText: hrs1Canonical(old), record: old.next }
+      } else if (q.operation === 'queue_cas') {
+        assert.equal(b.command.action, 'claim')
+        assert.deepEqual(b.commit.expected, record)
+        record = b.commit.next; operations.set(b.commit.operationId, b.commit); writes++
+        if (options.loseClaimAck && !lost) { lost = true; return { status: 'unconfirmed' } }
+        reply = { status: 'committed', record }
+      } else {
+        assert.equal(q.operation, 'execution_start')
+        // Reaching the genuine fixed START proves the new private claim anchor;
+        // the negative native reply deliberately prevents any producer execution.
+        reply = { status: 'blocked' }
+      }
+      return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
+    },
+    ids() { assert.fail('retained requests never allocate replacement random IDs') },
+  })
+  const identity = createV3WorkIdentity({ context: h.binding.context,
+    method: { methodId: method.methodId, revision: method.revision }, factKind: 'requirement_effect', researchReason: { status: 'missing' } })
+  assert.ok(identity.ok)
+  const root: M04Claim = { operationId: 'op3_' + 'a'.repeat(32), leaseId: 'lease3_' + 'b'.repeat(32),
+    jobKey: identity.value.jobKey, leaseMilliseconds: 30000 }
+  const derived = chDeRefreshRequestIdentity(root)!, cycle = options.legacy
+    ? { operationId: 'op3_' + 'c'.repeat(32), jobId: 'job3_' + 'd'.repeat(32) } : derived
+  record = { schema: 3, kind: 'research_job_record', ...cycle, jobKey: root.jobKey,
+    context: h.binding.context, contextKey: identity.value.contextKey, research: identity.value.research,
+    method: { methodId: method.methodId, revision: method.revision }, revision: 1, predecessorRevision: null,
+    state: 'queued', createdAt: timestamp(-120000), updatedAt: timestamp(-120000), attempt: 0, attemptLimit: 3,
+    lease: null, nextAttemptAt: null, lastFailure: null, resultDecisionRef: null }
+  const generation = options.generation ?? 0
+  let claim = root
+  for (let index = 0; index <= generation; index++) {
+    claim = retainedChDeClaim(root, index)!
+    const command = readM04Command({ action: 'claim', input: claim })!
+    const expected: ResearchRecord = record
+    const at = timestamp(index === generation ? options.expired ? -31000 : -10000 : -60000 * (generation - index + 1))
+    record = { ...expected, state: 'leased', revision: expected.revision + 1, predecessorRevision: expected.revision,
+      updatedAt: at, attempt: index + 1, lease: { leaseId: claim.leaseId, generation: expected.revision + 1,
+        acquiredAt: at, expiresAt: new Date(Date.parse(at) + 30000).toISOString() } }
+    operations.set(claim.operationId, { operationId: claim.operationId, commandKey: command.commandKey,
+      jobKey: root.jobKey, expected, next: record, notAfter: new Date(Date.parse(at) + 5000).toISOString(),
+      audit: { reference: key('queue-event', { op: claim.operationId, command: command.commandKey }),
+        kind: index === 0 ? 'leased' : 'reclaimed', observedAt: at, priorRevision: expected.revision, nextRevision: record.revision } })
+  }
+  if (mode === 'prepared' || mode === 'completed') {
+    const leasedJob = record, decisionRef = 'source-decision:v3:' + 'e'.repeat(64)
+    const result = { kind: 'rule_research', jobId: record.jobId, operationId: record.operationId, jobKey: root.jobKey,
+      preparedAt: new Date(Date.parse(record.lease!.acquiredAt) + 1000).toISOString(), decisionRef }
+    const references = [{ binding: { schema: 3, kind: 'proposal_intake_binding', operationId: 'op3_' + '1'.repeat(32),
+      jobId: record.jobId, contextKey: identity.value.contextKey, method: record.method,
+      runnerId: 'runner3_' + '2'.repeat(32), deliveryId: 'delivery3_' + '3'.repeat(32), inputRevision: 'snapshot:' + '4'.repeat(64) },
+    proposalDigest: '5'.repeat(64), bytes: 100 }]
+    if (mode === 'completed') record = { ...record, state: 'succeeded', revision: record.revision + 1,
+      predecessorRevision: record.revision, updatedAt: timestamp(-100), lease: null, resultDecisionRef: decisionRef }
+    originalResult = { status: mode, attemptKey: 'execution-attempt:v3:' + '6'.repeat(64),
+      claim, leasedJob, result, references, ...(mode === 'completed' ? { job: record } : {}) }
+  }
+  return { ...h, root, claim, requests, operations, record: () => record, writes: () => writes,
+    run: (budget?: Budget) => h.facade.workSelectedOnce('rule_research', signal(), budget,
+      { operationId: root.operationId, leaseId: root.leaseId }) }
+}
+
+test('retained HRS factory reclaims one expired unstarted job under separate genuine anchors and one outer deadline', async () => {
+  const h = retainedFactory({ expired: true }), before = h.record(), cap = { deadline: performance.now() + 30000 }
+  await h.run(cap)
+  const following = retainedChDeClaim(h.root, 1)!
+  assert.equal(h.writes(), 1)
+  assert.equal(h.record().jobId, before.jobId); assert.equal(h.record().attempt, 2)
+  const writes = h.requests.filter(q => q.operation === 'queue_cas') as { body: { commit: V3QueueCommit } }[]
+  assert.deepEqual(writes[0]!.body.commit.expected, before)
+  const starts = h.requests.filter(q => q.operation === 'execution_start') as { body: { claim: M04Claim } }[]
+  assert.equal(starts.length, 1); assert.deepEqual(starts[0]!.body.claim, following)
+  assert.ok(h.calls.every(call => call.budget.deadline <= cap.deadline))
+  assert.equal(h.state.settled, h.calls.length); assert.equal(h.state.unexpected, 0)
+})
+
+test('retained HRS factory finds following PREPARED/COMPLETED after blocked ordinary reads without a replacement claim', async t => {
+  for (const execution of ['prepared', 'completed'] as const) await t.test(execution, async () => {
+    const h = retainedFactory({ generation: 1, execution })
+    await h.run()
+    const reads = h.requests.filter(q => q.operation === 'execution_read') as { phase: string; body: { claim: M04Claim; purpose: string } }[]
+    const actual = reads.filter(q => q.phase === 'authorized' && q.body.claim.operationId === h.claim.operationId)
+    assert.ok(actual.length >= 2, 'both independent private selection and actual worker consume the same genuine result')
+    assert.equal(h.writes(), 0)
+    assert.ok(h.requests.every(q => q.operation !== 'execution_start'))
+    if (execution === 'prepared') assert.ok(h.requests.some(q => q.operation === 'queue_confirm'), 'blocked initial queue read did not seal actual worker execution')
+    else assert.ok(actual.some(q => q.body.purpose === 'artifact'))
+    assert.equal(h.state.settled, h.calls.length)
+  })
+})
+
+test('retained HRS factory preserves genuine legacy original results and still-valid original claims', async t => {
+  for (const execution of ['absent', 'prepared', 'completed'] as const) await t.test(execution, async () => {
+    const h = retainedFactory({ legacy: true, execution })
+    await h.run()
+    assert.equal(h.writes(), 0)
+    const reads = h.requests.filter(q => q.operation === 'execution_read') as { phase: string; body: { claim: M04Claim } }[]
+    assert.ok(reads.length >= 2)
+    assert.ok(reads.every(q => q.body.claim.operationId === h.root.operationId))
+    if (execution === 'absent') assert.ok(h.requests.some(q => q.operation === 'execution_start'))
+    else assert.ok(reads.filter(q => q.phase === 'authorized').length >= 2)
+  })
+  const expired = retainedFactory({ legacy: true, expired: true })
+  assert.equal((await expired.run()).status, 'unconfirmed'); assert.equal(expired.writes(), 0)
+  assert.ok(expired.requests.every(q => q.operation !== 'execution_start'))
+})
+
+test('retained HRS factory never advances unknown START and recovers a lost following-claim ACK exactly', async t => {
+  await t.test('unknown START', async () => {
+    const h = retainedFactory({ generation: 1, execution: 'unknown', expired: true })
+    assert.equal((await h.run()).status, 'unconfirmed')
+    assert.equal(h.writes(), 0)
+    assert.ok(h.requests.every(q => q.operation === 'queue_read' || q.operation === 'execution_read'))
+    assert.ok(h.calls.length <= 6)
+  })
+  await t.test('lost claim ACK', async () => {
+    const h = retainedFactory({ expired: true, loseClaimAck: true })
+    assert.deepEqual(await h.run(), { status: 'worker_only', worker: { status: 'unconfirmed' } })
+    const acquired = structuredClone(h.record())
+    await h.run()
+    assert.equal(h.writes(), 1); assert.deepEqual(h.record(), acquired)
+    const starts = h.requests.filter(q => q.operation === 'execution_start') as { body: { claim: M04Claim } }[]
+    assert.equal(starts.length, 1); assert.deepEqual(starts[0]!.body.claim, retainedChDeClaim(h.root, 1))
+  })
+})
 
 test('optional worker and monitor caps only shorten the real HRS factory', { timeout: 15000 }, async t => {
   let now = 100_000

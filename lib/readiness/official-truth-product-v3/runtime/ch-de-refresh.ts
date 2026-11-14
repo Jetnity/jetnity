@@ -1,6 +1,6 @@
 import 'server-only'
-import { createHash } from 'node:crypto'
 import { createV3WorkIdentity } from '../contract'
+import { chDeRefreshRequestIdentity } from '../jobs/selected-claim'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
 import { officialTruthV3ChDeRuntime } from './ch-de-server'
 import { readChDeOwnerImportRequest, type ChDeOwnerImportRequest, type ChDeOwnerImportOutcome } from './ch-de-owner-import-contract'
@@ -10,9 +10,7 @@ import { readChDeOwnerImportRequest, type ChDeOwnerImportRequest, type ChDeOwner
 export function chDeRefreshQueueIdentity(request: ChDeOwnerImportRequest): Readonly<{ operationId: string; jobId: string }> | null {
   const parsed = readChDeOwnerImportRequest(JSON.stringify(request))
   if (!parsed) return null
-  const input = parsed.operationId + '\n' + parsed.leaseId
-  const digest = (kind: string) => createHash('sha256').update('jetnity.ch-de-refresh.' + kind + '.v1\n' + input).digest('hex').slice(0, 32)
-  return Object.freeze({ operationId: 'op3_' + digest('enqueue'), jobId: 'job3_' + digest('job') })
+  return chDeRefreshRequestIdentity(parsed)
 }
 
 /** Enqueue and research are separate, already bounded ordinary entrances. A

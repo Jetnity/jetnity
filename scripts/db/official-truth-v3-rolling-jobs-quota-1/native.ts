@@ -128,6 +128,22 @@ export async function runRollingQuotaNative(t: TestContext) {
         milliseconds: measured.milliseconds, ...counts })
       return measured.reply
     }
+    const confirmOriginalTerminal = async (request: M04Operation & { operation: 'queue_cas' }, record: V3ManagedJobRecord) => {
+      const command = readM04Command(request.body.command); assert.ok(command)
+      const historyDigest = `to_jsonb(encode(sha256(convert_to((${history})::text,'UTF8')),'hex'))`
+      const unchanged = await proof.value<string>(historyDigest, creator)
+      // A completed CAS keeps its original five-second notAfter. Reconcile the
+      // same original command through the ordinary fresh bounded confirmation.
+      const confirmed = await jobs({ operation: 'queue_confirm', body: { command: request.body.command, continuation: null } })
+      assert.equal(confirmed.status, 'committed'); assert.ok(confirmed.status === 'committed')
+      assert.equal(confirmed.operationId, command.operationId)
+      assert.equal(confirmed.commandKey, command.commandKey)
+      assert.equal(confirmed.commandText, command.commandText)
+      assert.equal(confirmed.envelopeText, hrs1Canonical(request.body.commit))
+      assert.deepEqual(confirmed.record, record)
+      assert.equal(await proof.value<string>(historyDigest, creator), unchanged,
+        'original confirmation changes neither complete history nor lifetime counters')
+    }
     let current: V3ManagedJobRecord = fixture.subjectRow.current_job
     let lastGuardCheck = Date.now()
     const maintainGuard = async () => {
@@ -164,7 +180,7 @@ export async function runRollingQuotaNative(t: TestContext) {
         const queued = (await jobs(await enqueueOperation(String(number)))); assert.equal(queued.status, 'committed'); assert.ok(queued.status === 'committed')
         current = queued.record
         const { failure, finished } = await finishCycle(String(number))
-        if (number === 86) assert.deepEqual((await jobs(failure)), finished, 'exact current replay consumes no quota')
+        if (number === 86) await confirmOriginalTerminal(failure, finished.record)
       }
       const quota = (await proof.value<{ lifetime_starts: number; lifetime_operations: number; starts: number; operations: number; credit: number }>(
         'official_v3_guard_private.ch_de_quota_v2()', creator))
@@ -173,7 +189,7 @@ export async function runRollingQuotaNative(t: TestContext) {
       const last = timings.slice(-5)
       t.diagnostic('cycle86 actual SQL milliseconds: ' + JSON.stringify(last))
     })
-    await t.test('real 256-operation window preserves one terminal credit and exact replay at the boundary', async () => {
+    await t.test('real 256-operation window preserves one terminal credit and exact original confirmation at the boundary', async () => {
       const queued = (await jobs(await enqueueOperation('87'))); assert.equal(queued.status, 'committed'); assert.ok(queued.status === 'committed')
       current = queued.record
       // Each new, ordinary deduplicated enqueue is a genuine immutable operation.
@@ -197,7 +213,7 @@ export async function runRollingQuotaNative(t: TestContext) {
       failure.body.disposition = { kind: 'settled_failure', attemptKey: started.attemptKey, token: started.token }
       const finished = (await jobs(failure)); assert.equal(finished.status, 'committed'); assert.ok(finished.status === 'committed')
       current = finished.record
-      assert.deepEqual((await jobs(failure)), finished, 'exact terminal replay is free at 256 operations')
+      await confirmOriginalTerminal(failure, finished.record)
       assert.equal((await jobs(fixture.oldQueueConfirm)).status, 'committed', 'old original confirmation is free at full rolling quota')
       assert.equal((await jobs(await enqueueOperation('quota-denied'))).status, 'quota')
       const quota = (await proof.value<{ lifetime_starts: number; lifetime_operations: number; operations: number; credit: number }>(

@@ -198,10 +198,16 @@
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "bytes": 14218,
+      "blob": "f878b2d19ed6b603375fe38d6b62467ac11ed47e",
+      "sha256": "f891862b12c7fc2f0d2ef6ffa5faa190f04dd604762e13cad7e626d999e40776"
+    },
+    {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "521dff54f6597eb1d9ade2a5b7add71b545a3ef6",
-      "bytes": 44287,
-      "sha256": "965ad24c74182126752b9a9c64419358d45ef99a4897cdcb7d78fbd19be5ef0e",
+      "blob": "0e17413577d0e667c8c3d848df584a4809632566",
+      "bytes": 46008,
+      "sha256": "3ffe09aff83549d5bc3efa3e1297abb6419c4a20f20885d689d9602804d6ab42",
       "historicalRef": "07f1bba169767588df030c5c5deaf7a55591bd6a",
       "currentSourceSelection": {
         "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6851586927",

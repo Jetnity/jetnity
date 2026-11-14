@@ -129,8 +129,8 @@ fixture before BG1 installation; it neither edits timestamps later nor invents
 accepted source results. The full native proof then executes real API cycles
 65–86, exceeds both old lifetime ceilings, fills the rolling operation window
 through genuine ordinary deduplicated enqueues, proves the last reserved terminal
-operation and free exact replay at 256 operations, and runs a subsequent normal
-BG1 audit in its actual next due slot. A separate complete-stack case proves the
+operation and free exact original-ID confirmation at 256 operations, and runs a
+subsequent normal BG1 audit in its actual next due slot. A separate complete-stack case proves the
 64 START refusal while operation capacity remains available. Focused actual PG17
 calculation tests cover 24-hour edges, future timestamps, retained old terminal
 credit and the unchanged legacy model for other subjects.
@@ -144,6 +144,13 @@ recalculates every stored canonical value at its original depth.
 
 Native output records actual SQL max/p95 M04 time under the unchanged 5-second
 deadline and the full BG1 audit duration under its unchanged 30-second deadline.
+Both terminal confirmations use the original operation/command/envelope and
+require unchanged complete history and lifetime counters. They do not replay an
+expired CAS envelope. The expired-original-CAS negative case and valid original
+CAS replay at the full START window remain in the proof. The test-only parent
+budget is 1000 seconds: 700 seconds for all 22 real cycles and 187 real deduplicated
+API calls, plus at most 300 seconds for the next ordinary BG1 slot. The existing
+30-minute Hosted-CI job limit remains a hard gate, with no guaranteed reserve.
 It does not prove an official HTTP import or hosted cron delivery; Dev activation
 still requires the real source run, accepted publication and observed recurring
 sender cycle.

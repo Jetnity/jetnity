@@ -269,10 +269,16 @@
       "sha256": "3cdc8646f82e7b9c9134232cceaeaf424cd3b2454a40c64d8d13f0830940f96c"
     },
     {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "bytes": 14218,
+      "blob": "f878b2d19ed6b603375fe38d6b62467ac11ed47e",
+      "sha256": "f891862b12c7fc2f0d2ef6ffa5faa190f04dd604762e13cad7e626d999e40776"
+    },
+    {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "bytes": 44287,
-      "blob": "521dff54f6597eb1d9ade2a5b7add71b545a3ef6",
-      "sha256": "965ad24c74182126752b9a9c64419358d45ef99a4897cdcb7d78fbd19be5ef0e"
+      "bytes": 46008,
+      "blob": "0e17413577d0e667c8c3d848df584a4809632566",
+      "sha256": "3ffe09aff83549d5bc3efa3e1297abb6419c4a20f20885d689d9602804d6ab42"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -623,7 +629,7 @@
     "completeSha256": true,
     "completeGitBlobSha1": true,
     "utf8Roundtrip": true,
-    "files": 81,
+    "files": 82,
     "unchangedModuleClosure": 48,
     "unchangedSql": 8,
     "unchangedBaselineJson": 1,
@@ -1270,24 +1276,11 @@
   },
   "authoredPins": [
     {
-      "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "8ff5b8ffeccf55de46f900153b0b9f4e692e1273",
-      "bytes": 104296,
-      "sha256": "2564c3ffe85f7a0543b0afbc67b1edef2ccc57a309742a68d94e8307431121b9"
-    },
-    {
-      "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
-      "bytes": 10807,
-      "blob": "4de6082b084cc24538733e7232a59778edb36a1f",
-      "sha256": "e0cba309cff43eb44faf0ec88b61c3ab6bba38db7270f22004917bf248bb96a2",
-      "role": "new exact decoded accepted PAI1 fixture data file"
-    },
-    {
-      "path": "lib/readiness/official-truth-v3-composed-dev-1.test.ts",
-      "bytes": 347,
-      "blob": "655f8e5e1dbbf745b1304888bd6e1196f9edd9d4",
-      "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352",
-      "role": "new mandatory wrapper, no selector/CI integration"
+      "path": "docs/official-truth-product-v3/COMPOSED_DEV_HANDOFF_V1.md",
+      "bytes": 17520,
+      "blob": "41c725195a82cdcbdef2980e43667b08f0b6dc4c",
+      "sha256": "eb8806f53b5e96949ddd4eab14f16e5857be7a014a832401adbcba6a88856c94",
+      "role": "source handoff, limits, ordering, scope and STOP"
     },
     {
       "path": "docs/official-truth-product-v3/COMPOSED_DEV_TASK_V1.md",
@@ -1297,11 +1290,24 @@
       "role": "complete selected task and full A1/A2 authority"
     },
     {
-      "path": "docs/official-truth-product-v3/COMPOSED_DEV_HANDOFF_V1.md",
-      "bytes": 17520,
-      "blob": "41c725195a82cdcbdef2980e43667b08f0b6dc4c",
-      "sha256": "eb8806f53b5e96949ddd4eab14f16e5857be7a014a832401adbcba6a88856c94",
-      "role": "source handoff, limits, ordering, scope and STOP"
+      "path": "lib/readiness/official-truth-v3-composed-dev-1.test.ts",
+      "bytes": 347,
+      "blob": "655f8e5e1dbbf745b1304888bd6e1196f9edd9d4",
+      "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352",
+      "role": "new mandatory wrapper, no selector/CI integration"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
+      "blob": "8c58bfbaa87e63bb8a050487bd59bb2a6205fb0c",
+      "bytes": 104540,
+      "sha256": "1801be3cfa21697ec698faccadb12f9f541ea4cbb9a2b64f3e3c209d6f9856c0"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
+      "bytes": 10807,
+      "blob": "4de6082b084cc24538733e7232a59778edb36a1f",
+      "sha256": "e0cba309cff43eb44faf0ec88b61c3ab6bba38db7270f22004917bf248bb96a2",
+      "role": "new exact decoded accepted PAI1 fixture data file"
     }
   ],
   "manifestSelfHash": {
