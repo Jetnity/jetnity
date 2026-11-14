@@ -1,11 +1,11 @@
-// Private, bounded observation only. The manual Dev route opens this context
-// after its existing target, request and current Owner/AAL2 checks.
+// Private, bounded observation only. Dev routes open this context only after
+// exact target/request checks and current Owner/AAL2 or scheduler MAC admission.
 import 'server-only'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { performance } from 'node:perf_hooks'
 
 const STAGES = new Set([
-  'method_precheck', 'tick', 'tick_discovery', 'tick_monitor', 'tick_research',
+  'method_precheck', 'refresh_enqueue', 'tick', 'tick_discovery', 'tick_monitor', 'tick_research',
   'monitor_claim', 'monitor_reconfirm', 'monitor_enqueue', 'monitor_finish',
   'i1_reserve', 'i1_prepare', 'i1_method_resolve', 'i1_history_read', 'i1_evidence_inspect',
   'i1_evidence_reproof', 'i1_history_reproof', 'i1_method_reproof', 'i1_finish',
@@ -17,7 +17,7 @@ const STATUSES = new Set([
   'snapshot', 'inspected', 'current', 'changed', 'prepared', 'escalation', 'quarantined',
   'recorded', 'unconfirmed', 'outcome_unknown', 'rejected', 'processed', 'worker_only',
   'complete', 'stopped', 'interrupted', 'invalid', 'not_due', 'backoff', 'exhausted', 'superseded',
-  'claimed', 'not_current', 'confirmed', 'finished', 'contended',
+  'claimed', 'not_current', 'confirmed', 'finished', 'contended', 'queued', 'unresolved',
 ])
 // VERCEL_REGION is the function's actual region, never an edge-log inference.
 const REGIONS = new Set([
@@ -78,7 +78,7 @@ function emit(current: Context, stage: Stage, phase: 'started' | 'settled' | 'th
   }
 }
 
-/** Only the already authorized manual Dev route calls this in application code.
+/** Only already authorized fixed Dev routes call this in application code.
  * sink is an isolated test seam, never request/ENV configuration or a transport. */
 export async function withDevImportDiagnostics<T>(run: () => Promise<T>, sink: Sink | null = line => console.info(line)): Promise<T> {
   const rawRegion = process.env.VERCEL_REGION

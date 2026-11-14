@@ -41,6 +41,9 @@ test('manual diagnostics open only after all five Dev guards, exact URL and the 
   t.mock.module(new URL('./ch-de-server.ts', import.meta.url), { namedExports: {
     async checkOfficialTruthV3ChDeMethod() { approvals++; return 'approved' },
   } })
+  t.mock.module(new URL('./ch-de-refresh.ts', import.meta.url), { namedExports: {
+    async enqueueOfficialTruthV3ChDeRefresh() { throw Error('legacy diagnostic request cannot enqueue a new refresh') },
+  } })
   t.mock.module(new URL('./ch-de-tick.ts', import.meta.url), { namedExports: {
     async runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<ChDeTickReport> {
       ticks++; assert.equal(signal.aborted, false)

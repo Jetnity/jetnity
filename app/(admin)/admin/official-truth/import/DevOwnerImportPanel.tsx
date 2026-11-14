@@ -36,7 +36,7 @@ export default function DevOwnerImportPanel() {
   return (
     <section className="space-y-4 rounded-lg border p-4" aria-labelledby="dev-import-title" aria-busy={busy}>
       <h2 id="dev-import-title" className="text-lg font-semibold">Amtliche Quellen jetzt prüfen</h2>
-      <p>Der Lauf liest die ausgewählten amtlichen Quellen und kann eine geprüfte Visumauskunft in Dev veröffentlichen. Die Methode muss weiterhin freigegeben sein; dein aktueller Owner-Zugang und die Zwei-Faktor-Prüfung werden erneut geprüft.</p>
+      <p>Der Lauf speichert zuerst eine neue Quellenanforderung und liest danach die ausgewählten amtlichen Quellen. Er kann eine geprüfte Visumauskunft in Dev veröffentlichen. Die Methode muss weiterhin freigegeben sein; dein aktueller Owner-Zugang und die Zwei-Faktor-Prüfung werden erneut geprüft.</p>
       <button type="button" disabled={busy || outcome?.status === 'published'} onClick={() => void start()}
         className="min-h-11 rounded-md border px-4 py-2 text-left font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
         {busy ? 'Quellenimport läuft …' : attempted ? 'Gespeicherten Vorgang prüfen und fortsetzen' : 'Quellenimport für Dev starten'}

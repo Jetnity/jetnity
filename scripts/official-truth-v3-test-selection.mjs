@@ -16,6 +16,7 @@ export const TRANSPORT_TEST_FILES = Object.freeze([
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',

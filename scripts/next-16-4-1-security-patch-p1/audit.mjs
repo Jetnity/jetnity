@@ -11,7 +11,7 @@ const control = JSON.parse(readFileSync(new URL('./historical-control.json', imp
 // Root-selected CH-DE deployment successor; the original historical control stays exact.
 const reviewedDeployment = Object.freeze({
   predecessorBlob: '85deee8e24190cf03ff339b4273b2a3295847073',
-  reviewedBlob: 'ded48d8cb3c1cbce5ae6d0b9bb5cbf426a2c5100',
+  reviewedBlob: '9218721ef49b47fad5e94d5663ba7e03cba5f1fd',
   value: {
     version: 2,
     buildCommand: 'node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.mjs && npm run build',
@@ -20,6 +20,7 @@ const reviewedDeployment = Object.freeze({
       'app/api/internal/readiness/ch-de-visa-tick/route.ts': { regions: ['fra1'] },
       'app/api/internal/readiness/ch-de-owner-import/route.ts': { regions: ['fra1'] },
       'app/api/internal/readiness/ch-de-owner-guard/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-dev-refresh/route.ts': { regions: ['fra1'] },
     },
   },
 })

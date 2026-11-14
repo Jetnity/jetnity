@@ -516,9 +516,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
-    "bytes": 7255,
-    "blob": "af0dcf7c449949972ade2e2334418ce6584fdf39",
-    "sha256": "3270f63b47537e7e7786b094011bc7c4e4d8333452d78611da9b9d9d87bda083"
+    "bytes": 7306,
+    "blob": "0ccb8029fcd87798d04de9ed7fe6df3ae030ddba",
+    "sha256": "9c1eb4a194071845f9efe997cba9ba9844b71e0f33c5c2ba4f8b91184a433764"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",

@@ -26,7 +26,7 @@ export function readChDeOwnerImportRequest(text: string): ChDeOwnerImportRequest
 
 const outcomeSchema = z.object({
   schema: z.literal(1),
-  status: z.enum(['published', 'complete', 'exhausted', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved']),
+  status: z.enum(['queued', 'published', 'complete', 'exhausted', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved']),
   published: z.number().int().min(0).max(32),
 }).strict().refine(value => value.status === 'published' ? value.published > 0
   : value.status === 'unresolved' || value.published === 0)
@@ -41,6 +41,7 @@ export function readChDeOwnerImportOutcome(value: unknown): ChDeOwnerImportOutco
 
 export function chDeOwnerImportMessage(outcome: ChDeOwnerImportOutcome): string {
   switch (outcome.status) {
+    case 'queued': return 'Die neue Quellenanforderung wurde gespeichert. Der Quellenimport wird mit derselben ursprünglichen Anfrage fortgesetzt.'
     case 'published': return `${outcome.published} Veröffentlichung${outcome.published === 1 ? '' : 'en'} bestätigt. Prüfe jetzt die Visumauskunft in der Vorschau; dieser Lauf ersetzt nicht deren Prüfung.`
     case 'complete': return 'Der Lauf ist abgeschlossen. Er hat keine Veröffentlichung bestätigt. Prüfe den aktuellen Stand der Visumauskunft in der Vorschau.'
     case 'exhausted': return 'Die Versuche dieses Quellenlaufs sind ausgeschöpft und abgeschlossen. Es wurde kein weiterer Quellenversuch begonnen. Ein neuer Lauf benötigt eine neue reguläre Anforderung.'
@@ -119,8 +120,23 @@ export function createChDeOwnerImportStarter() {
   } })
 }
 
-const PENDING_REQUEST_KEY = 'jetnity.dev.ch-de-import.request.v2'
+const LEGACY_REQUEST_KEY = 'jetnity.dev.ch-de-import.request.v2'
+const PENDING_REQUEST_KEY = 'jetnity.dev.ch-de-import.request.v3'
 type RequestStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
+type PendingRequest = Readonly<{ schema: 1; request: ChDeOwnerImportRequest; phase: 'enqueue' | 'work' }>
+
+function readPendingRequest(text: string): PendingRequest | null {
+  try {
+    const parsed: unknown = JSON.parse(text)
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
+    const row = parsed as Record<string, unknown>
+    if (row.schema !== 1 || (row.phase !== 'enqueue' && row.phase !== 'work')) return null
+    const request = readChDeOwnerImportRequest(JSON.stringify(row.request))
+    if (!request || request.mode !== 'start') return null
+    const value: PendingRequest = Object.freeze({ schema: 1, request, phase: row.phase })
+    return JSON.stringify(value) === text ? value : null
+  } catch { return null }
+}
 
 /** Keeps request identity, never credentials or source/worker authority. Every
  * continuation is another explicit click and uses the actual original IDs.
@@ -128,7 +144,7 @@ type RequestStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 export function createChDeOwnerImportContinuation(options: Readonly<{
   storage?: () => RequestStorage; identifier?: () => string;
 }> = {}) {
-  let active = false, pending: ChDeOwnerImportRequest | null = null, blocked = false, finished = false
+  let active = false, pending: PendingRequest | null = null, legacy = false, blocked = false, finished = false
   const listeners = new Set<() => void>()
   const notify = () => { for (const listener of listeners) listener() }
   const storage = () => options.storage ? options.storage() : window.sessionStorage
@@ -136,20 +152,24 @@ export function createChDeOwnerImportContinuation(options: Readonly<{
   function restore(): boolean {
     if (finished || blocked) return false
     try {
-      const text = storage().getItem(PENDING_REQUEST_KEY)
-      if (text === null) return pending !== null
-      const found = readChDeOwnerImportRequest(text)
-      if (!found || found.mode !== 'start' || (pending && (pending.operationId !== found.operationId || pending.leaseId !== found.leaseId))) {
+      const text = storage().getItem(PENDING_REQUEST_KEY), old = storage().getItem(LEGACY_REQUEST_KEY)
+      if (text !== null && old !== null) { blocked = true; return false }
+      if (text === null && old === null) return pending !== null
+      const original = old === null ? null : readChDeOwnerImportRequest(old)
+      const found: PendingRequest | null = text !== null ? readPendingRequest(text)
+        : original?.mode === 'start' ? Object.freeze({ schema: 1, request: original, phase: 'work' }) : null
+      if (!found || (pending && (pending.request.operationId !== found.request.operationId || pending.request.leaseId !== found.request.leaseId
+        || pending.phase === 'work' && found.phase !== 'work'))) {
         blocked = true; return false
       }
-      pending = found
+      pending = found; legacy = old !== null
       return true
     } catch { blocked = true; return false }
   }
   return Object.freeze({ restore,
     subscribe(listener: () => void) {
       listeners.add(listener)
-      const changed = (event: StorageEvent) => { if (event.key === PENDING_REQUEST_KEY || event.key === null) listener() }
+      const changed = (event: StorageEvent) => { if (event.key === PENDING_REQUEST_KEY || event.key === LEGACY_REQUEST_KEY || event.key === null) listener() }
       if (typeof window !== 'undefined') window.addEventListener('storage', changed)
       return () => {
         listeners.delete(listener)
@@ -165,36 +185,57 @@ export function createChDeOwnerImportContinuation(options: Readonly<{
       if (signal.aborted) stop()
       const timer = setTimeout(stop, 65_000)
       try {
-        const resumed = restore()
+        restore()
         if (blocked) return { schema: 1, status: 'unavailable', published: 0 }
         if (!pending) {
           const created = readChDeOwnerImportRequest(JSON.stringify({ schema: 2, mode: 'start',
             operationId: 'op3_' + identifier(), leaseId: 'lease3_' + identifier() }))
           if (!created) return { schema: 1, status: 'unavailable', published: 0 }
           // Persist before dispatch. If this fails, no request is sent.
-          storage().setItem(PENDING_REQUEST_KEY, JSON.stringify(created))
-          pending = created
+          const retained: PendingRequest = Object.freeze({ schema: 1, request: created, phase: 'enqueue' })
+          storage().setItem(PENDING_REQUEST_KEY, JSON.stringify(retained))
+          pending = retained; legacy = false
           notify()
         }
-        const body = JSON.stringify({ ...pending, mode: resumed ? 'resume' : 'start' })
-        if (controller.signal.aborted) return unknown
-        const response = await fetch(CH_DE_OWNER_IMPORT_PATH, {
-          method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error', signal: controller.signal,
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body,
-        })
-        if (response.status === 401 || response.status === 403) {
-          await response.body?.cancel().catch(() => undefined)
-          return controller.signal.aborted ? unknown : { schema: 1, status: 'access_required', published: 0 }
+        // At most enqueue then work in this explicit click. An unknown outcome
+        // never retries or changes phase. Restore/render remain effect-free.
+        for (let step = 0; step < 2; step++) {
+          const phase = pending.phase
+          const body = JSON.stringify({ ...pending.request, mode: phase === 'enqueue' ? 'start' : 'resume' })
+          if (controller.signal.aborted) return unknown
+          const response = await fetch(CH_DE_OWNER_IMPORT_PATH, {
+            method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error', signal: controller.signal,
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body,
+          })
+          if (response.status === 401 || response.status === 403) {
+            await response.body?.cancel().catch(() => undefined)
+            return controller.signal.aborted ? unknown : { schema: 1, status: 'access_required', published: 0 }
+          }
+          const outcome = readChDeOwnerImportOutcome(await responseBody(response, controller.signal))
+          if (controller.signal.aborted || !outcome
+            || (['queued', 'published', 'complete', 'exhausted'].includes(outcome.status) && response.status !== 200)) return unknown
+          if (phase === 'enqueue') {
+            if (outcome.status === 'exhausted') {
+              try { storage().removeItem(PENDING_REQUEST_KEY) } catch { /* Exact original remains available for verification. */ }
+              pending = null
+              return outcome
+            }
+            if (outcome.status !== 'queued') return ['published', 'complete'].includes(outcome.status) ? unknown : outcome
+            const retained: PendingRequest = Object.freeze({ ...pending, phase: 'work' })
+            // If this durable transition fails, no worker is dispatched.
+            storage().setItem(PENDING_REQUEST_KEY, JSON.stringify(retained))
+            pending = retained; notify()
+            continue
+          }
+          if (outcome.status === 'queued') return unknown
+          if (outcome.status === 'published' || outcome.status === 'complete' || outcome.status === 'exhausted') {
+            finished = outcome.status === 'published'
+            try { storage().removeItem(legacy ? LEGACY_REQUEST_KEY : PENDING_REQUEST_KEY) } catch { /* Original remains safe to verify. */ }
+            pending = null
+          }
+          return outcome
         }
-        const outcome = readChDeOwnerImportOutcome(await responseBody(response, controller.signal))
-        if (controller.signal.aborted || !outcome
-          || (['published', 'complete', 'exhausted'].includes(outcome.status) && response.status !== 200)) return unknown
-        if (outcome.status === 'published' || outcome.status === 'complete' || outcome.status === 'exhausted') {
-          finished = outcome.status === 'published'
-          try { storage().removeItem(PENDING_REQUEST_KEY) } catch { /* A retained original request remains safe to verify. */ }
-          pending = null
-        }
-        return outcome
+        return unknown
       } catch { return unknown }
       finally { active = false; clearTimeout(timer); signal.removeEventListener('abort', stop); controller.abort(); notify() }
     },

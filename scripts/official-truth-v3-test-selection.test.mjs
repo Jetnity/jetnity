@@ -16,6 +16,7 @@ import {
 } from './official-truth-v3-test-selection.mjs'
 
 const hosted = [
+  'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',

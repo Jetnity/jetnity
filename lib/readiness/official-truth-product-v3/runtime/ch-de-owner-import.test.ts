@@ -58,6 +58,7 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
   let tickThrows = false, observedSignal: AbortSignal | null = null
   let observedSelection: ChDeOwnerImportRequest | undefined
   let result = report()
+  let enqueueCalls = 0
   t.mock.method(console, 'warn', () => undefined)
   t.mock.method(console, 'error', () => undefined)
   t.mock.module('@supabase/ssr', { namedExports: {
@@ -110,6 +111,12 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
       return result
     },
   } })
+  t.mock.module(new URL('./ch-de-refresh.ts', import.meta.url), { namedExports: {
+    async enqueueOfficialTruthV3ChDeRefresh(selection: ChDeOwnerImportRequest, signal: AbortSignal): Promise<ChDeOwnerImportOutcome> {
+      enqueueCalls++; observedSelection = selection; observedSignal = signal
+      return { schema: 1, status: 'queued', published: 0 }
+    },
+  } })
   const route = await import('../../../../app/api/internal/readiness/ch-de-owner-import/route')
   const { proxy } = await import('../../../../proxy')
   assert.equal(route.maxDuration, 60); assert.equal(route.runtime, 'nodejs')
@@ -121,6 +128,7 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
     userPresent = true; role = 'owner'; currentAal = nextAal = 'aal2'; aalFailed = false
     target = DEV; approval = 'approved'; result = report(); tickThrows = false
     observedSelection = undefined
+    enqueueCalls = 0
     gateHold = approvalHold = tickHold = tickEntered = null
     Object.assign(process.env, GUARDS)
     process.env.ADMIN_ALLOWED_EMAILS = ''
@@ -303,9 +311,10 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
       result = mode === 'resume' ? { ...report('complete', 1), calls: { started: 1, settled: 1 },
         stages: { discovery: 'skipped', monitor: 'skipped', research: 'processed' } } : report('complete', 1)
       const response = await route.POST(request({ body: text, headers: { 'content-length': String(text.length) } }))
-      assert.equal(response.status, 200); assert.equal((await response.json()).status, 'published')
+      assert.equal(response.status, 200); assert.equal((await response.json()).status, mode === 'start' ? 'queued' : 'published')
       assert.deepEqual(observedSelection, selected)
-      assert.deepEqual(counters(), { clients: 2, identities: 1, profiles: 1, assurances: 1, approvals: 1, ticks: 1 })
+      assert.equal(enqueueCalls, mode === 'start' ? 1 : 0)
+      assert.deepEqual(counters(), { clients: 2, identities: 1, profiles: 1, assurances: 1, approvals: 1, ticks: mode === 'start' ? 0 : 1 })
       reset(); currentAal = 'aal1'
       assert.equal((await route.POST(request({ body: text }))).status, 403)
       assert.equal(ticks, 0); assert.equal(approvals, 0)
@@ -390,6 +399,8 @@ test('manual continuation retains exact original IDs across loss and remount wit
   const storage = { getItem: (key: string) => values.get(key) ?? null,
     setItem: (key: string, value: string) => { values.set(key, value) }, removeItem: (key: string) => { values.delete(key) } }
   let generated = 0, response = deferred<Response>()
+  const workResponse = deferred<Response>()
+  let enqueueAcknowledged = false
   const options = { storage: () => storage, identifier: () => (++generated % 2 ? 'c' : 'd').repeat(32) }
   t.mock.method(globalThis, 'fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
     assert.equal(input, CH_DE_OWNER_IMPORT_PATH); assert.equal(init?.method, 'POST')
@@ -397,6 +408,7 @@ test('manual continuation retains exact original IDs across loss and remount wit
     const parsed = readChDeOwnerImportRequest(String(init?.body)); assert.ok(parsed)
     assert.equal(values.size, 1, 'original identity is retained before the network effect')
     requests.push(parsed)
+    if (enqueueAcknowledged && parsed.mode === 'resume') return workResponse.promise
     return response.promise
   })
   const first = createChDeOwnerImportContinuation(options)
@@ -410,26 +422,79 @@ test('manual continuation retains exact original IDs across loss and remount wit
   assert.equal(remounted.restore(), true); assert.equal(requests.length, 1); assert.equal(generated, 2)
   response = deferred<Response>()
   const continuation = remounted.start(new AbortController().signal)
-  assert.deepEqual(requests[1], { ...requests[0], mode: 'resume' })
-  response.resolve(Response.json({ schema: 1, status: 'published', published: 1 }, { status: 503 }))
+  assert.deepEqual(requests[1], requests[0], 'an unknown enqueue is retried with its original enqueue request')
+  response.resolve(Response.json({ schema: 1, status: 'queued', published: 0 }, { status: 503 }))
   assert.equal((await continuation)?.status, 'unresolved'); assert.equal(values.size, 1)
   response = deferred<Response>()
   const final = remounted.start(new AbortController().signal)
   assert.deepEqual(requests[2], requests[1]); assert.equal(generated, 2)
-  response.resolve(Response.json({ schema: 1, status: 'published', published: 1 }))
+  enqueueAcknowledged = true
+  response.resolve(Response.json({ schema: 1, status: 'queued', published: 0 }))
+  await new Promise(resolve => setImmediate(resolve))
+  assert.deepEqual(requests[3], { ...requests[0], mode: 'resume' })
+  assert.equal((JSON.parse([...values.values()][0]!) as { phase: string }).phase, 'work', 'work phase persists before dispatch')
+  workResponse.resolve(Response.json({ schema: 1, status: 'published', published: 1 }))
   assert.equal((await final)?.status, 'published'); assert.equal(values.size, 0)
-  assert.equal(await remounted.start(new AbortController().signal), null); assert.equal(requests.length, 3)
+  assert.equal(await remounted.start(new AbortController().signal), null); assert.equal(requests.length, 4)
 
   storage.setItem('jetnity.dev.ch-de-import.request.v2', '{"schema":2,"mode":"resume"}')
   const corrupted = createChDeOwnerImportContinuation(options)
   assert.equal(corrupted.restore(), false)
   assert.equal((await corrupted.start(new AbortController().signal))?.status, 'unavailable')
-  assert.equal(requests.length, 3, 'corrupt custody cannot be overwritten by a replacement request')
+  assert.equal(requests.length, 4, 'corrupt custody cannot be overwritten by a replacement request')
   values.clear()
   const inaccessible = createChDeOwnerImportContinuation({ ...options, storage: () => ({ ...storage,
     setItem() { throw Error('offline storage refusal') } }) })
   await inaccessible.start(new AbortController().signal)
-  assert.equal(requests.length, 3, 'failure to retain identity happens before any dispatch')
+  assert.equal(requests.length, 4, 'failure to retain identity happens before any dispatch')
+})
+
+test('legacy and already queued requests retain their original work phase on remount', async t => {
+  const original: ChDeOwnerImportRequest = { schema: 2, mode: 'start', operationId: 'op3_' + 'e'.repeat(32), leaseId: 'lease3_' + 'f'.repeat(32) }
+  const values = new Map<string, string>(), requests: ChDeOwnerImportRequest[] = []
+  const storage = { getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => { values.set(key, value) }, removeItem: (key: string) => { values.delete(key) } }
+  const options = { storage: () => storage, identifier: () => assert.fail('original custody cannot be replaced') }
+  let status: 'published' | 'unresolved' = 'unresolved'
+  t.mock.method(globalThis, 'fetch', async (_input: RequestInfo | URL, init?: RequestInit) => {
+    const body = readChDeOwnerImportRequest(String(init?.body)); assert.ok(body)
+    requests.push(body)
+    return Response.json({ schema: 1, status, published: status === 'published' ? 1 : 0 }, { status: status === 'published' ? 200 : 503 })
+  })
+  for (const key of ['jetnity.dev.ch-de-import.request.v2', 'jetnity.dev.ch-de-import.request.v3']) {
+    values.set(key, key.endsWith('v2') ? JSON.stringify(original) : JSON.stringify({ schema: 1, request: original, phase: 'work' }))
+    const before = requests.length, first = createChDeOwnerImportContinuation(options)
+    assert.equal(first.restore(), true); assert.equal(requests.length, before)
+    status = 'unresolved'; assert.equal((await first.start(new AbortController().signal))?.status, 'unresolved')
+    const remounted = createChDeOwnerImportContinuation(options)
+    assert.equal(remounted.restore(), true); assert.equal(requests.length, before + 1)
+    status = 'published'; assert.equal((await remounted.start(new AbortController().signal))?.status, 'published')
+    assert.deepEqual(requests.slice(before), [{ ...original, mode: 'resume' }, { ...original, mode: 'resume' }])
+    assert.equal(values.size, 0)
+  }
+})
+
+test('a lost durable enqueue-to-work transition cannot dispatch work or manufacture new identity', async t => {
+  const values = new Map<string, string>(), requests: ChDeOwnerImportRequest[] = []
+  const storage = { getItem: (key: string) => values.get(key) ?? null,
+    setItem(key: string, value: string) {
+      if ((JSON.parse(value) as { phase: string }).phase === 'work') throw Error('offline phase write failure')
+      values.set(key, value)
+    }, removeItem: (key: string) => { values.delete(key) } }
+  let generated = 0
+  const options = { storage: () => storage, identifier: () => (++generated % 2 ? 'a' : 'b').repeat(32) }
+  t.mock.method(globalThis, 'fetch', async (_input: RequestInfo | URL, init?: RequestInit) => {
+    const body = readChDeOwnerImportRequest(String(init?.body)); assert.ok(body); requests.push(body)
+    return Response.json({ schema: 1, status: 'queued', published: 0 })
+  })
+  const first = createChDeOwnerImportContinuation(options)
+  assert.equal((await first.start(new AbortController().signal))?.status, 'unresolved')
+  assert.equal(requests.length, 1)
+  const second = createChDeOwnerImportContinuation(options)
+  assert.equal(second.restore(), true); assert.equal(requests.length, 1)
+  assert.equal((await second.start(new AbortController().signal))?.status, 'unresolved')
+  assert.equal(requests.length, 2); assert.deepEqual(requests[1], requests[0]); assert.equal(requests[0]?.mode, 'start')
+  assert.equal(generated, 2)
 })
 
 test('minimal result contract rejects forged success and keeps distinct user states', () => {
@@ -439,7 +504,7 @@ test('minimal result contract rejects forged success and keeps distinct user sta
     { schema: 1, status: 'published', published: 1.5 }, { schema: 1, status: 'published', published: 1, raw: 'private' },
     { schema: 1, status: 'accepted', published: 1 }, null,
   ]) assert.equal(readChDeOwnerImportOutcome(value), null)
-  for (const status of ['published', 'complete', 'exhausted', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved'] as const) {
+  for (const status of ['queued', 'published', 'complete', 'exhausted', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved'] as const) {
     const outcome: ChDeOwnerImportOutcome = { schema: 1, status, published: status === 'published' ? 1 : 0 }
     assert.deepEqual(readChDeOwnerImportOutcome(outcome), outcome)
     assert.ok(chDeOwnerImportMessage(outcome).length > 20)

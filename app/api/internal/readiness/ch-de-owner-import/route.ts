@@ -5,11 +5,12 @@ import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import { HUMAN_METHOD_DEV_URL, humanRequestHeadersAllowed } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
 import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
 import { checkOfficialTruthV3ChDeMethod } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-server'
-import { runOfficialTruthV3ChDeTick, type ChDeTickReport } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
+import { runOfficialTruthV3ChDeTick } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
 import { withDevImportDiagnostics, traceDevDiagnosticStage } from '@/lib/readiness/official-truth-product-v3/runtime/dev-diagnostics'
+import { readChDeImportBody, chDeTickOutcome, chDeImportHttpStatus } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-import-http'
+import { enqueueOfficialTruthV3ChDeRefresh } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-refresh'
 import {
-  CH_DE_OWNER_IMPORT_BODY, CH_DE_OWNER_IMPORT_PATH, CH_DE_OWNER_IMPORT_REQUEST_BYTES,
-  readChDeOwnerImportRequest, type ChDeOwnerImportRequest, type ChDeOwnerImportOutcome,
+  CH_DE_OWNER_IMPORT_PATH, type ChDeOwnerImportOutcome,
 } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-owner-import-contract'
 
 export const runtime = 'nodejs'
@@ -22,66 +23,8 @@ function answer(status: ChDeOwnerImportOutcome['status'], httpStatus: number, pu
   return NextResponse.json(outcome, { status: httpStatus, headers: PRIVATE_HEADERS })
 }
 
-async function fixedBody(request: Request): Promise<Readonly<{ schema: 1 }> | ChDeOwnerImportRequest | null> {
-  const declared = request.headers.get('content-length')
-  if (declared !== null && (!/^(0|[1-9][0-9]{0,4})$/.test(declared)
-    || Number(declared) > CH_DE_OWNER_IMPORT_REQUEST_BYTES)) return null
-  if (!request.body || request.signal.aborted) return null
-  const reader = request.body.getReader(), chunks: Uint8Array[] = []
-  const deadline = performance.now() + 5_000
-  let bytes = 0, complete = false, expired = false, cancellation: Promise<void> | null = null
-  const stop = () => { expired = true; cancellation ??= reader.cancel().catch(() => undefined) }
-  const timer = setTimeout(stop, 5_000)
-  request.signal.addEventListener('abort', stop, { once: true })
-  if (request.signal.aborted) stop()
-  try {
-    for (;;) {
-      if (expired || request.signal.aborted || performance.now() >= deadline) return null
-      const part = await reader.read()
-      if (expired || request.signal.aborted || performance.now() >= deadline) return null
-      if (part.done) { complete = true; break }
-      bytes += part.value.byteLength
-      if (bytes > CH_DE_OWNER_IMPORT_REQUEST_BYTES) return null
-      chunks.push(part.value)
-    }
-    if (declared !== null && Number(declared) !== bytes) return null
-    const body = new Uint8Array(bytes)
-    let offset = 0
-    for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength }
-    const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(body)
-    return text === CH_DE_OWNER_IMPORT_BODY ? Object.freeze({ schema: 1 as const }) : readChDeOwnerImportRequest(text)
-  } catch { return null }
-  finally {
-    clearTimeout(timer); request.signal.removeEventListener('abort', stop)
-    if (!complete && !cancellation) cancellation = reader.cancel().catch(() => undefined)
-    if (cancellation) await cancellation
-    reader.releaseLock()
-  }
-}
-
-function tickAnswer(report: ChDeTickReport, expectedCalls: 1 | 3) {
-  const published = Number.isSafeInteger(report.counts.published) && report.counts.published >= 0 && report.counts.published <= 32
-    ? report.counts.published : null
-  if (published === null || report.schema !== 1 || report.budgetMilliseconds !== 30000
-    || report.calls.started !== report.calls.settled) return answer('unresolved', 503)
-  if (report.status === 'stopped' && report.calls.started === expectedCalls && report.stages.research === 'exhausted'
-    && published === 0 && report.counts.deferred === 1 && report.counts.unconfirmed === 0
-    && report.counts.unavailable === 0 && report.counts.invalid === 0
-    && report.elapsedMilliseconds >= 0 && report.elapsedMilliseconds <= 30000) return answer('exhausted', 200)
-  if (report.status === 'complete' && report.calls.started === expectedCalls && report.elapsedMilliseconds <= 30000
-    && report.elapsedMilliseconds >= 0 && report.counts.unconfirmed === 0 && report.counts.unavailable === 0
-    && report.counts.invalid === 0 && report.counts.deferred === 0) {
-    return answer(published > 0 ? 'published' : 'complete', 200, published)
-  }
-  if (published === 0 && report.calls.started === 0) {
-    if (report.status === 'busy') return answer('busy', 409)
-    if (report.status === 'unavailable') return answer('unavailable', 503)
-  }
-  return answer('unresolved', 503, published)
-}
-
 /** All inert target/request checks precede the existing fresh Owner/AAL2 gate.
- * Only the fixed tick runs; this endpoint cannot choose or approve anything. */
+ * Only a fixed ordinary enqueue/tick runs; no caller chooses or approves scope. */
 export async function POST(request: Request) {
   let tickStarted = false
   try {
@@ -93,7 +36,7 @@ export async function POST(request: Request) {
     if (request.method !== 'POST' || url.pathname !== CH_DE_OWNER_IMPORT_PATH || url.search !== '' || url.hash !== ''
       || url.username !== '' || url.password !== '' || request.headers.has('transfer-encoding') || request.headers.has('content-encoding')
       || !humanRequestHeadersAllowed(request.url, request.headers.get('origin'), request.headers.get('content-type'))) return answer('request_refused', 400)
-    const body = await fixedBody(request)
+    const body = await readChDeImportBody(request)
     if (!body) return answer('request_refused', 400)
     if (request.signal.aborted) return answer('unavailable', 503)
     const gate = await requireAdminApi({ surface: 'official-truth-import', capability: 'official-truth-freigeben' })
@@ -111,9 +54,16 @@ export async function POST(request: Request) {
       if (request.signal.aborted || approval !== 'approved') return answer(approval === 'not_approved' ? 'not_approved' : 'unavailable', approval === 'not_approved' ? 409 : 503)
       tickStarted = true
       const selected = body.schema === 2 ? body : undefined
+      if (selected?.mode === 'start') {
+        const queued = await traceDevDiagnosticStage('refresh_enqueue', request.signal,
+          () => enqueueOfficialTruthV3ChDeRefresh(selected, request.signal))
+        if (request.signal.aborted) return answer('unresolved', 503)
+        return answer(queued.status, chDeImportHttpStatus(queued.status), queued.published)
+      }
       const report = await traceDevDiagnosticStage('tick', request.signal, () => runOfficialTruthV3ChDeTick(request.signal, selected))
       if (request.signal.aborted) return answer('unresolved', 503)
-      return tickAnswer(report, selected?.mode === 'resume' ? 1 : 3)
+      const outcome = chDeTickOutcome(report, selected?.mode === 'resume' ? 1 : 3)
+      return answer(outcome.status, chDeImportHttpStatus(outcome.status), outcome.published)
     })
   } catch { return answer(tickStarted ? 'unresolved' : 'unavailable', 503) }
 }
