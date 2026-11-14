@@ -56,7 +56,7 @@ async function envelope(value: unknown, current: V3ManagedJobRecord | null) {
  * proof resumes at or after its already selected next five-minute due time.
  * No fixture clock, certificate reissue, source issuer or held Dev token exists. */
 async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, allocated: () => void) {
-  async function fixture(jobMilliseconds: number, intakeMilliseconds: number) {
+  async function fixture(jobMilliseconds: number, intakeMilliseconds: number, oldProofCheck: boolean) {
     const cluster = lifetime.startCluster(startLocalProofCluster); allocated()
     const bootstrap = await LocalPgConnection.connect(cluster)
     await bootstrap.query('CREATE ROLE supabase_read_only_user LOGIN NOINHERIT NOSUPERUSER BYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION')
@@ -96,14 +96,52 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       return json<M04NativeReply>(await connection.query(M04_FIXED_SQL, params([hrs1Canonical({...request,phase:'authorized'}),
         binding.methodId,1,binding.methodDigest,binding.packageDigest,1,5000,new Date(Date.now()+5000).toISOString()])))
     }
+    // The used-state upgrade is already proved by the main cluster. Here
+    // install before creating the independently bounded real leases: added
+    // migration work must not consume R01/R04's unchanged expiry windows.
+    for (const entry of base.runtime) { entry.connection.close(); await absent(entry.identity.pid,entry.identity.birth) }
+    await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
+    await creator.query(readFileSync(new URL('./upgrade-candidate.sql',import.meta.url),'utf8'))
+    await creator.query('BEGIN')
+    try {
+      await creator.query(readFileSync(new URL('./status-rpc-provider-migration-body.sql',import.meta.url),'utf8'))
+      await creator.query('COMMIT')
+    } catch(error) { await creator.query('ROLLBACK'); throw error }
+    const recoveryBody = readFileSync(new URL('./recovery-provider-migration-body.sql',import.meta.url),'utf8')
+    if(oldProofCheck) {
+      const originalState=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+      const originalCatalog=json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result'))
+      await creator.query('BEGIN')
+      try {
+        assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
+        await creator.query('SELECT official_v3_guard_private.require_open_v1()')
+        const oldProof=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+        await creator.query(recoveryBody)
+        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),oldProof)
+        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')),{schema:1,status:'unavailable'})
+        await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'),stateError('P7902'))
+      } finally { await creator.query('ROLLBACK') }
+      assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),originalState)
+      assert.deepEqual(json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result')),originalCatalog,
+        'rollback preserves original membership OIDs/options, every ACL and the full Status predecessor graph')
+      assert.equal((await creator.query("SELECT to_regclass('official_v3_guard_private.recovery_baseline_v1') IS NULL AS absent"))[0]!.absent,'t')
+    }
+    await creator.query('BEGIN')
+    try { await creator.query(recoveryBody); await creator.query('COMMIT') }
+    catch(error) { await creator.query('ROLLBACK'); throw error }
+    await creator.query("SET statement_timeout='25s'")
+    assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
+    const runtimeJobs = await LocalPgConnection.connect(cluster,base.bound[0]!.login)
+    const runtimeIntake = await LocalPgConnection.connect(cluster,base.bound[1]!.login)
+    await runtimeJobs.query('SET ROLE ot_v3_jobs_caller'); await runtimeIntake.query('SET ROLE ot_v3_intake_caller')
     const enqueued = await envelope({action:'enqueue',kind:'rule_research',input:{context:program.context,method:program.method,
       factKind:'requirement_effect',researchReason:{status:'missing'},operationId:operation(),jobId:fixtureId('job3','recovery'),attemptLimit:4}},null)
-    assert.equal((await jobs(enqueued,base.runtime[0]!.connection)).status,'committed')
+    assert.equal((await jobs(enqueued,runtimeJobs)).status,'committed')
     const claim = {operationId:operation(),jobKey:enqueued.body.commit.jobKey,leaseId:fixtureId('lease3','recovery-first'),leaseMilliseconds:jobMilliseconds}
     const claimed = await envelope({action:'claim',input:claim},enqueued.body.commit.next)
-    assert.equal((await jobs(claimed,base.runtime[0]!.connection)).status,'committed')
+    assert.equal((await jobs(claimed,runtimeJobs)).status,'committed')
     const leased = claimed.body.commit.next; assert.ok(leased.lease)
-    const startedReply = await jobs({operation:'execution_start',body:{claim,leasedJob:leased,subjectText:claimed.body.subjectText}},base.runtime[0]!.connection)
+    const startedReply = await jobs({operation:'execution_start',body:{claim,leasedJob:leased,subjectText:claimed.body.subjectText}},runtimeJobs)
     assert.ok(startedReply.status === 'reserved')
     const start = startedReply
     const delivery = await AA_CH_DE_DELIVERY_PRODUCER.produce({job:leased,fence:{jobId:leased.jobId,revision:leased.revision,
@@ -111,7 +149,7 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
     assert.ok(delivery.status === 'delivered')
     const item = delivery.deliveries[0]!, uploaded = readV3RetainableProposal(item.text,program.registry); assert.ok(uploaded.ok)
     const upload = uploaded.value
-    const intake = base.runtime[1]!.connection
+    const intake = runtimeIntake
     assert.equal(json<{status:string}>(await intake.query('SELECT official_v3_intake_api.capture_v1($1::jsonb,$2::text,$3::text) AS result',params([JSON.stringify(item.binding),item.text,upload.digest]))).status,'recorded')
     // These independently selected local lease lengths exercise both expiry
     // orders of the existing S1 API. Application I1/S1 remains five seconds.
@@ -131,19 +169,6 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
     const oldFail = await envelope({action:'fail',input:{operationId:operation(),jobKey:claim.jobKey,
       fence:{jobId:leased.jobId,revision:leased.revision,leaseId:leased.lease.leaseId,generation:leased.lease.generation},reason:'verification_unavailable'}},leased)
     const failed: M04Operation = {...oldFail,body:{...oldFail.body,disposition:{kind:'settled_failure',attemptKey:start.attemptKey,token:start.token}}}
-    for (const entry of base.runtime) { entry.connection.close(); await absent(entry.identity.pid,entry.identity.birth) }
-    // No technical transport is still attached when the exact upgrade runs.
-    const until = performance.now()+2000
-    while ((await observer.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE usename='ot_v3_result_verifier'"))[0]!.n !== '0') {
-      assert.ok(performance.now()<until); await lifetime.wait(2)
-    }
-    await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
-    await creator.query(readFileSync(new URL('./upgrade-candidate.sql',import.meta.url),'utf8'))
-    await creator.query("SET statement_timeout='25s'")
-    assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
-    const runtimeJobs = await LocalPgConnection.connect(cluster,base.bound[0]!.login)
-    const runtimeIntake = await LocalPgConnection.connect(cluster,base.bound[1]!.login)
-    await runtimeJobs.query('SET ROLE ot_v3_jobs_caller'); await runtimeIntake.query('SET ROLE ot_v3_intake_caller')
     async function identity(connection: LocalPgConnection) {
       return (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]!
     }
@@ -152,9 +177,10 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       while (Date.now() <= Date.parse(value)) await lifetime.wait(Math.min(100,Math.max(1,Date.parse(value)+5-Date.now())))
     }
     async function state() {
-      return json<{open:boolean;job:string;retired:number;receipts:number;completions:number;results:number;dispositions:number}>(await observer.query(`SELECT jsonb_build_object(
+      return json<{open:boolean;job:string;retired:number;later:number;receipts:number;completions:number;results:number;dispositions:number}>(await observer.query(`SELECT jsonb_build_object(
         'open',s.open_attempt IS NOT NULL,'job',md5(s.current_job::text),
         'retired',(SELECT count(*) FROM official_v3_guard_private.retired_attempts_v1),
+        'later',(SELECT count(*) FROM official_v3_guard_private.retired_later_attempts_v1),
         'receipts',(SELECT count(*) FROM official_v3_guard_private.owner_operations_v1),
         'completions',(SELECT count(*) FROM official_v3_intake_private.completions_v1),
         'results',(SELECT count(*) FROM official_v3_jobs_private.execution_results_v1),
@@ -216,9 +242,125 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       const review = readDevGuardReview(await human('official_v3_guard_review_v1')); assert.ok(review?.retirement.status==='reviewable')
       return review.retirement.selection
     }
-    async function retireRace(kind: 's1'|'m04', first: 'old'|'owner') {
-      await waitUntil(leased.lease!.expiresAt); await waitUntil(reservation.expiresAt)
+    async function resultCall(operationValue:Hrs1Operation,body:Record<string,unknown>,channel:'attest'|'execute'|'read') {
+      const connection=await LocalPgConnection.connect(cluster,channel==='attest'?'ot_v3_result_verifier':'ot_v3_result_writer')
+      const who=await identity(connection)
+      try {
+        const clock=hrs1Clock(new Date().toISOString(),binding.legalTimeZone);assert.ok(clock)
+        return json<Hrs1Reply>(await connection.query(HRS1_SQL[channel],params([hrs1Canonical({schema:1,operation:operationValue,bindingHash:hrs1Hash(binding),body}),
+          hrs1Hash(binding),binding.methodId,1,binding.methodDigest,binding.packageDigest,1,5000,new Date(Date.now()+5000).toISOString(),clock.legalDate])))
+      } finally {connection.close();await absent(who.pid!,who.birth!)}
+    }
+    async function laterAttempt(qualify:boolean) {
+      const previous=json<V3ManagedJobRecord>(await observer.query('SELECT current_job AS result FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1',params([claim.jobKey])))
+      const nextClaim={...claim,operationId:operation(),leaseId:fixtureId('lease3',operation()),leaseMilliseconds:6000}
+      const next=await envelope({action:'claim',input:nextClaim},previous)
+      assert.equal((await jobs(next,runtimeJobs)).status,'committed')
+      const nextJob=next.body.commit.next;assert.ok(nextJob.lease);assert.equal(nextJob.attempt,previous.attempt+1)
+      const nextStart=await jobs({operation:'execution_start',body:{claim:nextClaim,leasedJob:nextJob,subjectText:next.body.subjectText}},runtimeJobs)
+      assert.ok(nextStart.status==='reserved')
+      const {attemptKey:nextAttemptKey,token:nextToken}=nextStart
+      const delivered=await AA_CH_DE_DELIVERY_PRODUCER.produce({job:nextJob,fence:{jobId:nextJob.jobId,revision:nextJob.revision,
+        leaseId:nextJob.lease.leaseId,generation:nextJob.lease.generation}},lifetime.signal)
+      assert.ok(delivered.status==='delivered')
+      const nextItem=delivered.deliveries[0]!,read=readV3RetainableProposal(nextItem.text,program.registry);assert.ok(read.ok)
+      const nextUpload=read.value
+      assert.equal(json<{status:string}>(await runtimeIntake.query('SELECT official_v3_intake_api.capture_v1($1::jsonb,$2::text,$3::text) AS result',
+        params([JSON.stringify(nextItem.binding),nextItem.text,nextUpload.digest]))).status,'recorded')
+      const nextReservation=json<{status:string;generation:number;leaseToken:string;expiresAt:string}>(await runtimeIntake.query(
+        'SELECT official_v3_intake_api.reserve_v1($1::jsonb,$2::text,$3::integer,$4::integer) AS result',
+        params([JSON.stringify(nextItem.binding),nextUpload.digest,nextUpload.bytes,6000])))
+      assert.equal(nextReservation.status,'acquired')
+      const nextVerification=qualify?fixtureVerification(new Date().toISOString(),hrs1Ref('source-decision',{
+        operationId:nextItem.binding.operationId,proposalDigest:nextUpload.digest,contextKey:binding.contextKey,method:program.method,predecessor:null})):null
+      if(nextVerification) assert.equal((await resultCall('attest',{kind:'verification',verification:nextVerification},'attest')).status,'recorded')
+      const retainedPrepared=nextVerification?fixturePrepared(nextUpload,nextVerification):null
+      const nextPrepared=retainedPrepared?.prepared
+      async function nextFinish(connection=runtimeIntake) {
+        const outcome=nextPrepared?{status:'prepared',value:nextPrepared}:{status:'unavailable',reason:'verification_unavailable'}
+        const audit={schema:3,kind:'import_attempt_record',operationId:nextItem.binding.operationId,proposalDigest:nextUpload.digest,
+          jobId:nextJob.jobId,contextKey:binding.contextKey,method:program.method,
+          recordedAt:nextVerification?.decision.evaluatedAt??new Date().toISOString(),result:nextPrepared?'prepared':'unavailable',
+          decisionRef:nextPrepared?.decision.reference??null,escalationKey:null}
+        return json<{status:string}>(await connection.query('SELECT official_v3_intake_api.finish_v1($1::jsonb,$2::text,$3::integer,$4::integer,$5::uuid,$6::jsonb,$7::jsonb) AS result',
+          params([JSON.stringify(nextItem.binding),nextUpload.digest,nextUpload.bytes,nextReservation.generation,nextReservation.leaseToken,JSON.stringify(outcome),JSON.stringify(audit)])))
+      }
+      async function nextPrepare(connection=runtimeJobs) {
+        assert.ok(nextPrepared&&nextVerification)
+        return jobs({operation:'execution_prepare',body:{claim:nextClaim,attemptKey:nextAttemptKey,token:nextToken,
+          result:{kind:'rule_research',jobId:nextJob.jobId,operationId:nextJob.operationId,jobKey:nextClaim.jobKey,
+            preparedAt:nextVerification.decision.evaluatedAt,decisionRef:nextPrepared.decision.reference},
+          references:[{binding:nextItem.binding,proposalDigest:nextUpload.digest,bytes:nextUpload.bytes}]}},connection)
+      }
+      async function reserveRetired() {
+        const retained=async()=>json<{generation:number;operationDigest:string;reservationCount:number;reservationsDigest:string}>(await observer.query(`
+          SELECT jsonb_build_object('generation',o.generation,'operationDigest',md5(to_jsonb(o)::text),
+            'reservationCount',(SELECT count(*) FROM official_v3_intake_private.reservations_v1),
+            'reservationsDigest',(SELECT md5(COALESCE(jsonb_agg(to_jsonb(r) ORDER BY operation_id,generation),'[]'::jsonb)::text)
+              FROM official_v3_intake_private.reservations_v1 r)) AS result
+          FROM official_v3_intake_private.operations_v1 o WHERE operation_id=$1`,params([nextItem.binding.operationId])))
+        const before=await retained();assert.equal(before.generation,nextReservation.generation)
+        // An expired non-retired reservation would be acquired again. This
+        // actual API call isolates the permanent later-intake tombstone.
+        assert.equal(json<{status:string}>(await runtimeIntake.query(
+          'SELECT official_v3_intake_api.reserve_v1($1::jsonb,$2::text,$3::integer,$4::integer) AS result',
+          params([JSON.stringify(nextItem.binding),nextUpload.digest,nextUpload.bytes,6000]))).status,'unconfirmed')
+        assert.deepEqual(await retained(),before,'retired later intake cannot advance its generation or change the reservation history')
+      }
+      const failure=await envelope({action:'fail',input:{operationId:operation(),jobKey:nextClaim.jobKey,
+        fence:{jobId:nextJob.jobId,revision:nextJob.revision,leaseId:nextJob.lease.leaseId,generation:nextJob.lease.generation},reason:'verification_unavailable'}},nextJob)
+      const nextFailed:M04Operation={...failure,body:{...failure.body,disposition:{kind:'settled_failure',attemptKey:nextAttemptKey,token:nextToken}}}
+      async function genuineTerminalRefusal(kind:'s1'|'m04') {
+        const before=await state()
+        assert.equal((await observer.query('SELECT clock_timestamp()<$1::timestamptz AS active',params([nextJob.lease!.expiresAt])))[0]!.active,'t')
+        await assert.rejects(owner.query('SELECT official_v3_guard_private.recovery_snapshot_v1() AS result'),stateError('P7906'))
+        // Actual existing APIs produce the negative state inside an isolated
+        // transaction. No fabricated completion/result row or token is used.
+        await owner.query('BEGIN; SET LOCAL ROLE ot_v3_intake_caller')
+        try {
+          assert.equal((await nextFinish(owner)).status,'recorded')
+          if(kind==='m04') {
+            await owner.query('SET LOCAL ROLE ot_v3_jobs_caller')
+            assert.equal((await nextPrepare(owner)).status,'prepared')
+          }
+          await owner.query('RESET ROLE')
+          await waitUntil(nextJob.lease!.expiresAt);await waitUntil(nextReservation.expiresAt)
+          if(kind==='m04') await assert.rejects(owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'),stateError('P7906'))
+          else {
+            const actualJob=json(await owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'))
+            await assert.rejects(owner.query('SELECT official_v3_guard_private.recovery_intake_v1($1::jsonb) AS result',params([JSON.stringify(actualJob)])),stateError('P7906'))
+          }
+        } finally {await owner.query('ROLLBACK')}
+        assert.deepEqual(await state(),before,'genuine terminal negative transaction rolls back without replacing any evidence')
+      }
+      async function publish() {
+        assert.ok(retainedPrepared&&nextPrepared&&nextVerification)
+        assert.equal((await nextFinish()).status,'recorded')
+        const key=createV3TransitionIdempotencyKey(nextPrepared.transition);assert.ok(key.ok)
+        const intakeReference={binding:nextItem.binding,proposalDigest:nextUpload.digest,bytes:nextUpload.bytes}
+        const transition={operationKey:hrs1Ref('version-commit',{planKey:key.value,prepared:nextPrepared}),prepared:nextPrepared,
+          expectedHead:{pointer:nextPrepared.transition.expected,sourceDecisionRef:null,historyArchive:null},verificationRef:nextVerification.reference,intake:intakeReference}
+        assert.equal((await resultCall('transition',transition,'execute')).status,'committed')
+        const publication={operationId:nextPrepared.transition.operationId,
+          operationKey:hrs1Ref('projection-publish',{operationId:nextPrepared.transition.operationId,prepared:nextPrepared,projection:retainedPrepared.projection}),
+          prepared:nextPrepared,projection:retainedPrepared.projection,verificationRef:nextVerification.reference,intake:intakeReference}
+        assert.equal((await resultCall('publication',publication,'execute')).status,'reported')
+        assert.equal((await resultCall('publication_confirm',publication,'read')).status,'confirmed')
+        await creator.query('SELECT official_v3_guard_private.check_retirements_v1(); SELECT official_v3_guard_private.check_certificates_v1()')
+      }
+      return {leased:nextJob,reservation:nextReservation,finish:nextFinish,prepare:nextPrepare,failed:nextFailed,
+        genuineTerminalRefusal,reserveRetired,publish,intake:nextItem.binding.operationId,attempt:nextAttemptKey}
+    }
+    async function retireRace(kind: 's1'|'m04', first: 'old'|'owner',later?:Awaited<ReturnType<typeof laterAttempt>>) {
+      const selected=later??{leased,reservation,finish,failed}
+      await waitUntil(selected.leased.lease!.expiresAt); await waitUntil(selected.reservation.expiresAt)
       const selection = await reviewed(), id = operation(), before = await state()
+      if(later) {
+        const review=readDevGuardReview(await human('official_v3_guard_review_v1'));assert.ok(review?.retirement.status==='reviewable')
+        assert.equal(review.retirement.attempt,selected.leased.attempt)
+        await assert.rejects(human('official_v3_guard_retire_v1',[operation(),'0'.repeat(64)]),stateError('P7906'))
+        assert.deepEqual(await state(),before)
+      }
       const actor = await base.humanAs(1)
       let old: Promise<unknown> | undefined, retirement: Promise<unknown> | undefined
       let receipt: unknown
@@ -228,7 +370,7 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       const cleanup = async (action:()=>unknown|Promise<unknown>) => { try { await action() } catch(error) { retain(error) } }
       const closeActor = () => { actorClosed=true; actor.connection.close() }
       const writer = kind==='s1' ? intakeIdentity : jobsIdentity
-      const runOld = () => kind==='s1' ? finish() : jobs(failed,runtimeJobs)
+      const runOld = () => kind==='s1' ? selected.finish() : jobs(selected.failed,runtimeJobs)
       try {
         if (first==='old') {
           // This relation is first needed by check_certificate, after the
@@ -286,18 +428,19 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       assert.ok(old)
       assert.equal((receipt as {result:string}).result,'unknown_retired')
       assert.deepEqual(await human('official_v3_guard_confirm_v1',[id,'retire_unknown',selection]),receipt)
-      assert.deepEqual(await state(),{...before,open:false,retired:1,receipts:1})
+      assert.deepEqual(await state(),{...before,open:false,retired:before.retired+(later?0:1),later:before.later+(later?1:0),receipts:before.receipts+1})
       await creator.query('SELECT official_v3_guard_private.check_certificates_v1(); SELECT official_v3_guard_private.check_retirements_v1()')
+      return {id,selection,receipt}
     }
     return {cluster,base,owner,creator,observer,human,jobs,runtimeJobs,claim,claimed,leased,start,failed,item,upload,
-      prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,waitUntil,jobsIdentity}
+      prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,laterAttempt,waitUntil,jobsIdentity}
   }
   type Fixture = Awaited<ReturnType<typeof fixture>>
-  async function run(name: string,jobMs: number,intakeMs: number,body: (f:Fixture)=>Promise<void>) {
+  async function run(name: string,jobMs: number,intakeMs: number,body: (f:Fixture)=>Promise<void>,oldProofCheck=false) {
     let actual: Promise<void> | undefined
     await t.test(name,async()=>{
       actual=lifetime.run(async()=>{
-        const f=await fixture(jobMs,intakeMs)
+        const f=await fixture(jobMs,intakeMs,oldProofCheck)
         try { await body(f) } finally { lifetime.stopCluster(f.cluster) }
       })
       await actual
@@ -320,7 +463,7 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
     assert.deepEqual(json(await f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result')),job)
     await assert.rejects(f.owner.query('SELECT official_v3_guard_private.recovery_intake_v1($1::jsonb) AS result',params([JSON.stringify(job)])),stateError('P7906'))
     await f.refused('P7906')
-  })
+  },true)
   await run('R02 a real PREPARED result refuses recovery after both leases expire',12000,10000,async f=>{
     assert.equal((await f.finish()).status,'recorded'); assert.equal((await f.prepare()).status,'prepared')
     await f.waitUntil(f.leased.lease!.expiresAt); await f.waitUntil(f.reservation.expiresAt)
@@ -380,7 +523,23 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
         assert.equal((await f.observer.query('SELECT md5(jsonb_agg(to_jsonb(c) ORDER BY component)::text) AS digest FROM official_v3_guard_private.certificates_v1 c'))[0]!.digest,certificates)
         await f.creator.query('SELECT official_v3_guard_private.check_certificates_v1()')
       }
-      await f.retireRace(kind,first)
+      const original=await f.retireRace(kind,first)
+      const firstEvidence=json(await f.observer.query('SELECT jsonb_build_object(\'retirement\',to_jsonb(r),\'operation\',to_jsonb(o)) AS result FROM official_v3_guard_private.retired_attempts_v1 r JOIN official_v3_guard_private.owner_operations_v1 o ON o.operation_id=r.owner_operation_id'))
+      // Both a real early interruption without another qualification and the
+      // qualified interruption are recoverable; no 2*attempt count is assumed.
+      const second=await f.laterAttempt(!(kind==='s1'&&first==='old'))
+      await second.genuineTerminalRefusal(kind)
+      await f.retireRace(kind,first,second)
+      assert.deepEqual(await f.human('official_v3_guard_confirm_v1',[original.id,'retire_unknown',original.selection]),original.receipt)
+      assert.deepEqual(json(await f.observer.query('SELECT jsonb_build_object(\'retirement\',to_jsonb(r),\'operation\',to_jsonb(o)) AS result FROM official_v3_guard_private.retired_attempts_v1 r JOIN official_v3_guard_private.owner_operations_v1 o ON o.operation_id=r.owner_operation_id')),firstEvidence)
+      await second.reserveRetired()
+      assert.equal((await second.finish()).status,'unconfirmed')
+      if(kind==='m04') assert.equal((await second.prepare()).status,'blocked')
+      if(kind==='m04'&&first==='owner') {
+        const third=await f.laterAttempt(true)
+        await third.publish()
+        assert.equal((await f.state()).later,1,'a new genuine intake can publish without replacing either retired attempt')
+      }
     })
   }
 }
@@ -471,7 +630,7 @@ export async function runBg1Native(t: TestContext) {
       return values
     }
     async function oldStatusData(connection = owner) {
-      const tables = await connection.query("SELECT n.nspname||'.'||c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND n.nspname IN ('official_v3_method_private','official_v3_intake_private','official_v3_jobs_private','official_v3_result_private','official_v3_guard_private') AND c.relname<>'status_baseline_v1' ORDER BY 1")
+      const tables = await connection.query("SELECT n.nspname||'.'||c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND n.nspname IN ('official_v3_method_private','official_v3_intake_private','official_v3_jobs_private','official_v3_result_private','official_v3_guard_private') AND c.relname NOT IN ('status_baseline_v1','recovery_baseline_v1','retired_later_attempts_v1') ORDER BY 1")
       assert.equal(tables.length, 33, 'all 25 old business tables plus all eight old Guard tables')
       const values: Record<string, PgRows> = {}
       for (const { name } of tables) {
@@ -880,6 +1039,58 @@ export async function runBg1Native(t: TestContext) {
       }
       assert.deepEqual(await oldStatusData(), oldData, 'public reads and isolated catalog negatives never alter old data or heartbeat')
     })
+    async function recoveryInstallation() {
+      const recoveryBody = readFileSync(new URL('./recovery-provider-migration-body.sql', import.meta.url), 'utf8')
+      const recoveryHash = createHash('sha256').update(recoveryBody).digest('hex')
+      const oldData = await oldStatusData(), originalInstallation = await installationState(base.observer.connection)
+      const oldCatalog = json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result'))
+      const oldStatus = json(await creator.query('SELECT to_jsonb(b) AS result FROM official_v3_guard_private.status_baseline_v1 b'))
+      async function objects(connection = base.observer.connection) {
+        return connection.query("SELECT to_regclass('official_v3_guard_private.recovery_baseline_v1') IS NOT NULL AS baseline,to_regclass('official_v3_guard_private.retired_later_attempts_v1') IS NOT NULL AS retirements,to_regprocedure('official_v3_guard_private.recovery_canonical_v1(jsonb,integer)') IS NOT NULL AS helper")
+      }
+      const absentObjects = [{ baseline: 'f', retirements: 'f', helper: 'f' }]
+      async function rolledBack() {
+        assert.deepEqual(await objects(), absentObjects)
+        assert.deepEqual(await installationState(base.observer.connection), originalInstallation)
+        assert.deepEqual(await oldStatusData(), oldData)
+        assert.deepEqual(json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result')), oldCatalog)
+        assert.deepEqual(json(await creator.query('SELECT to_jsonb(b) AS result FROM official_v3_guard_private.status_baseline_v1 b')), oldStatus)
+      }
+      assert.deepEqual(await objects(), absentObjects)
+      // Failure after the exact body also rolls back its provider marker.
+      await creator.query('BEGIN')
+      try {
+        await creator.query(recoveryBody)
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([recoveryHash]))
+        assert.deepEqual(await objects(), absentObjects)
+        await assert.rejects(creator.query('SELECT 1/0'), stateError('22012'))
+      } finally { await creator.query('ROLLBACK') }
+      await rolledBack()
+      await creator.query('BEGIN')
+      try {
+        await creator.query(recoveryBody)
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([recoveryHash]))
+        await creator.query('COMMIT')
+      } catch(error) { await creator.query('ROLLBACK'); throw error }
+      assert.deepEqual(await objects(), [{ baseline: 't', retirements: 't', helper: 't' }])
+      assert.deepEqual(await oldStatusData(), oldData)
+      assert.deepEqual(json(await creator.query('SELECT to_jsonb(b) AS result FROM official_v3_guard_private.status_baseline_v1 b')), oldStatus)
+      assert.deepEqual(await installationState(base.observer.connection), { ...originalInstallation, markers: [...originalInstallation.markers, recoveryHash].sort() })
+      await anonymousStatus('unavailable')
+      await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'), stateError('P7902'))
+      await creator.query("BEGIN; SET LOCAL TIME ZONE 'Europe/Zurich'; SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK")
+      for (const table of ['recovery_baseline_v1', 'retired_later_attempts_v1']) {
+        await assert.rejects(creator.query('TRUNCATE official_v3_guard_private.' + table), stateError('P7901'))
+        for (const role of ['anon','authenticated','service_role','supabase_read_only_user','ot_v3_jobs_owner','ot_v3_result_owner','ot_v3_intake_owner']) {
+          await owner.query('BEGIN; SET LOCAL ROLE ' + role)
+          try { await assert.rejects(owner.query('SELECT * FROM official_v3_guard_private.' + table), stateError('42501')) }
+          finally { await owner.query('ROLLBACK') }
+        }
+      }
+      assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_jobs_owner'::regrole,'ot_v3_result_owner'::regrole)"))[0]!.n, '0')
+      assert.equal((await creator.query("SELECT has_schema_privilege('ot_v3_jobs_owner','official_v3_guard_private','CREATE') OR has_schema_privilege('ot_v3_result_owner','official_v3_guard_private','CREATE') AS widened"))[0]!.widened, 'f')
+      // The enclosing B04 full audit covers BOTH additions. No new slot wait.
+    }
     await proof('B02 original checksum, full key history, certificate chain and catalog tamper refuse', async () => {
       const probes = [
         "UPDATE official_v3_jobs_private.subjects_v1 SET current_job=(SELECT envelope_text::jsonb->'next' FROM official_v3_jobs_private.queue_operations_v1 WHERE operation_id='" + secondInput.operationId + "') WHERE job_key='" + otherClaim.jobKey + "'",
@@ -989,6 +1200,7 @@ export async function runBg1Native(t: TestContext) {
       assert.equal(negativeRuns[0]!.outcome, 'expired')
       const due = negativeRuns[0]!.seconds!
       const waitUntil = Number(due) * 1000 + 20
+      await subtest.test('RECOVERY2 preserves used state and exact authority within the existing proof wait',recoveryInstallation)
       await recoveryCases(subtest,lifetime,()=>{clusterCount++})
       while (Date.now() < waitUntil) await lifetime.wait(Math.min(1000, waitUntil - Date.now()))
       await creator.query('SELECT official_v3_guard_private.audit_v1()')
