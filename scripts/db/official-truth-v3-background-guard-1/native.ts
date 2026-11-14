@@ -1,6 +1,7 @@
 // Actual owned PostgreSQL 17 only. All original bytes/accounts below are local
 // fixtures. This is neither a hosted upgrade, an official HTTP import nor cron.
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import type { TestContext } from 'node:test'
 import { performance } from 'node:perf_hooks'
@@ -419,9 +420,9 @@ export async function runBg1Native(t: TestContext) {
       'official_v3_jobs_private.execution_dispositions_v1','official_v3_jobs_private.catalog_binding_v1',
       'official_v3_result_private.originals_v1','official_v3_result_private.extractions_v1',
       'official_v3_result_private.qualifications_v1','official_v3_result_private.binding_v1']
-    async function retained() {
+    async function retained(connection = owner) {
       const values: Record<string, string> = {}
-      for (const table of immutableTables) values[table] = (await owner.query(`SELECT md5(COALESCE(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]')) AS digest FROM ${table} x`))[0]!.digest!
+      for (const table of immutableTables) values[table] = (await connection.query(`SELECT md5(COALESCE(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]')) AS digest FROM ${table} x`))[0]!.digest!
       return values
     }
     async function proof(name: string, body: (subtest: TestContext) => Promise<void>) {
@@ -473,26 +474,84 @@ export async function runBg1Native(t: TestContext) {
     // This separate test producer is synchronously terminal and owns no child.
     assert.equal((await jobs({ ...otherEnd, body: { ...otherEnd.body, disposition: { kind: 'settled_failure', attemptKey: otherStart.attemptKey, token: otherStart.token } } })).status, 'committed')
     for (const entry of base.runtime) { entry.connection.close(); await observedAbsent(entry.identity.pid, entry.identity.birth) }
+    // Only a local stand-in for the provider's migration-history transaction,
+    // outside every protected namespace and owned by the existing postgres.
+    await owner.query('CREATE SCHEMA bg1_provider_fixture AUTHORIZATION postgres; SET ROLE postgres; CREATE TABLE bg1_provider_fixture.history(body_sha256 text PRIMARY KEY); RESET ROLE')
     const before = await retained()
     const sql = readFileSync(new URL('./upgrade-candidate.sql', import.meta.url), 'utf8')
-    await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
-    async function refusedUpgrade(expectedCode: string) {
-      await assert.rejects(creator.query(sql), stateError(expectedCode)); await creator.query('ROLLBACK')
+    const providerBody = readFileSync(new URL('./provider-migration-body.sql', import.meta.url), 'utf8')
+    const providerHash = createHash('sha256').update(providerBody).digest('hex')
+    async function installationState(connection: LocalPgConnection) {
+      return json<{ installed: boolean; markers: string[]; memberships: string }>(await connection.query(`SELECT jsonb_build_object(
+        'installed',to_regnamespace('official_v3_guard_private') IS NOT NULL,
+        'markers',(SELECT COALESCE(jsonb_agg(body_sha256 ORDER BY body_sha256),'[]'::jsonb) FROM bg1_provider_fixture.history),
+        'memberships',(SELECT md5(COALESCE(jsonb_agg(to_jsonb(m) ORDER BY m.oid)::text,'[]')) FROM pg_auth_members m)
+      ) AS result`))
+    }
+    const uninstalled = await installationState(base.observer.connection)
+    assert.equal(uninstalled.installed, false); assert.deepEqual(uninstalled.markers, [])
+    async function rollbackObserved() {
       const fresh = await LocalPgConnection.connect(cluster)
-      try { assert.equal((await fresh.query("SELECT to_regnamespace('official_v3_guard_private') IS NULL AS absent"))[0]!.absent, 't') }
-      finally { fresh.close() }
+      try {
+        assert.deepEqual(await installationState(fresh), uninstalled, 'fresh backend sees no installed schema, marker or changed membership')
+        assert.deepEqual(await retained(fresh), before, 'old approvals, original bytes and journals survive outer rollback')
+      } finally { fresh.close() }
+    }
+    async function providerBegin(isolation: 'READ COMMITTED' | 'REPEATABLE READ' = 'READ COMMITTED') {
+      await creator.query('BEGIN ISOLATION LEVEL ' + isolation)
+      assert.equal((await creator.query('SELECT count(*)::text AS n FROM bg1_provider_fixture.history'))[0]!.n, '0',
+        'provider has already read its migration metadata before receiving the body')
+    }
+    await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
+    async function refusedUpgrade(expectedCode: string, provider = false) {
+      try {
+        if (provider) await providerBegin()
+        await assert.rejects(creator.query(provider ? providerBody : sql), stateError(expectedCode))
+      } finally { await creator.query('ROLLBACK') }
+      await rollbackObserved()
     }
     await proof('B01 used predecessor rollback and exact original journals', async () => {
+      // Standalone still requires the operator's explicit exact target. Its
+      // core must never silently repair a missing or incorrect selection.
+      await creator.query('RESET jetnity.bg1_target'); await refusedUpgrade('P7901')
+      await creator.query("SET jetnity.bg1_target='local-provider-fixture-unselected'"); await refusedUpgrade('P7901')
+      await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
       await owner.query('ALTER TABLE public.profiles DISABLE TRIGGER profiles_autoritaet_integritaet_v1')
-      await refusedUpgrade('P7905')
+      await refusedUpgrade('P7905'); await refusedUpgrade('P7905', true)
       await owner.query('ALTER TABLE public.profiles ENABLE TRIGGER profiles_autoritaet_integritaet_v1')
       // This old mutable-head edit passes the historical single-transition
       // validator; the new full replay must abort the whole unchanged upgrade.
       await owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET current_job=$2::jsonb WHERE job_key=$1', params([otherClaim.jobKey, hrs1Canonical(second.body.commit.next)]))
-      await refusedUpgrade('P7905')
+      await refusedUpgrade('P7905'); await refusedUpgrade('P7905', true)
       await owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET current_job=$2::jsonb WHERE job_key=$1', params([otherClaim.jobKey, hrs1Canonical(otherEnd.body.commit.next)]))
       assert.deepEqual(await retained(), before)
-      await creator.query(sql)
+      // The provider body alone supplies a transaction-local fixed Dev target.
+      // The pre-existing operator setting is restored on rollback and commit.
+      await creator.query("SET jetnity.bg1_target='local-provider-fixture-unselected'")
+      try {
+        await providerBegin('REPEATABLE READ')
+        await assert.rejects(creator.query(providerBody), stateError('P7901'))
+      } finally { await creator.query('ROLLBACK') }
+      await rollbackObserved()
+      try {
+        await providerBegin()
+        await creator.query(providerBody)
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([providerHash]))
+        // These reads deliberately avoid old tables locked by the upgrade.
+        assert.deepEqual(await installationState(base.observer.connection), uninstalled)
+        await assert.rejects(creator.query('SELECT 1/0'), stateError('22012'))
+      } finally { await creator.query('ROLLBACK') }
+      await rollbackObserved()
+      assert.equal((await creator.query("SELECT current_setting('jetnity.bg1_target') AS target"))[0]!.target, 'local-provider-fixture-unselected')
+      try {
+        await providerBegin()
+        await creator.query(providerBody)
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([providerHash]))
+        assert.deepEqual(await installationState(base.observer.connection), uninstalled)
+        await creator.query('COMMIT')
+      } catch (error) { await creator.query('ROLLBACK'); throw error }
+      assert.deepEqual(await installationState(base.observer.connection), { ...uninstalled, installed: true, markers: [providerHash] })
+      assert.equal((await creator.query("SELECT current_setting('jetnity.bg1_target') AS target"))[0]!.target, 'local-provider-fixture-unselected')
       assert.deepEqual(await retained(), before, 'used approvals, source bytes, claims and old baseline rows are byte-identical')
       assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_result_owner'::regrole,'ot_v3_jobs_owner'::regrole,'ot_v3_intake_owner'::regrole)"))[0]!.n, '0')
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'unchecked')

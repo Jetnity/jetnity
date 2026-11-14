@@ -1,5 +1,3 @@
-BEGIN;
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 SET LOCAL search_path=pg_catalog;
 SET LOCAL statement_timeout='30s';
 SET LOCAL lock_timeout='5s';
@@ -11,6 +9,7 @@ DO $context$
 BEGIN
   IF current_user<>'postgres' OR session_user<>current_user OR current_database()<>'postgres'
     OR current_setting('server_version_num')::integer/10000<>17
+    OR current_setting('transaction_isolation') IS DISTINCT FROM 'read committed'
     OR current_setting('jetnity.bg1_target',true) IS DISTINCT FROM 'dev:yfvbxvijcorffwxbxahl:BG1'
     OR current_setting('createrole_self_grant')<>''
     OR NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname='postgres' AND NOT rolsuper AND rolcreaterole AND rolbypassrls)

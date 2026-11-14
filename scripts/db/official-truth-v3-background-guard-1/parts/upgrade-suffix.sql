@@ -138,4 +138,3 @@ BEGIN
         AND role_row.rolname IN ('ot_v3_jobs_caller','ot_v3_intake_caller','ot_v3_method_reader')))) THEN
     RAISE EXCEPTION 'bg1 final quiescence refusal' USING ERRCODE='P7901'; END IF;
 END $certify_existing$;
-COMMIT;

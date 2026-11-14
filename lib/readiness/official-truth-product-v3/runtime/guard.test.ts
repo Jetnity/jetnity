@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { NextRequest } from 'next/server'
 import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../../scripts/db/verwendung.mjs'
-import { compileCandidate, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
+import { assertTransactionBody, compileCandidate, compileMigrationBody, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, devGuardReceipt, readDevGuardRequest,
   readDevGuardReview, readDevGuardResult, readDevGuardText } from './guard-contract'
 
@@ -58,6 +58,43 @@ CREATE FUNCTION public.actual() RETURNS integer LANGUAGE sql AS $body$ SELECT 1 
   assert.equal(generated, readFileSync(new URL('../../../../scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql', import.meta.url), 'utf8'))
   assert.ok(generated.includes("('public.profil_autoritaet_integritaet_pruefen_v1()','b513eca8cc5d7b3981d9b9eb1473428e628410dcb0f4b718290d4cc314756a8d')"))
   assert.equal(generated.includes("('public.aktuelle_rolle()','b513eca8cc5d7b3981d9b9eb1473428e628410dcb0f4b718290d4cc314756a8d')"), false)
+})
+test('BG1 provider body and standalone share exact guarded core with distinct transaction ownership', () => {
+  const standalone = compileCandidate(), provider = compileMigrationBody()
+  const target = "SET LOCAL jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1';\n"
+  assert.ok(provider.startsWith(target))
+  const core = provider.slice(target.length)
+  assert.equal(standalone, 'BEGIN ISOLATION LEVEL READ COMMITTED;\n' + core + 'COMMIT;\n')
+  assert.equal(provider, readFileSync(new URL('../../../../scripts/db/official-truth-v3-background-guard-1/provider-migration-body.sql', import.meta.url), 'utf8'))
+  assertTransactionBody(core); assertTransactionBody(provider)
+  assert.ok(core.includes("current_setting('transaction_isolation') IS DISTINCT FROM 'read committed'"))
+  assert.ok(core.includes("current_setting('jetnity.bg1_target',true) IS DISTINCT FROM 'dev:yfvbxvijcorffwxbxahl:BG1'"))
+  assert.equal(core.includes('SET LOCAL jetnity.bg1_target'), false, 'only the provider wrapper selects Dev')
+  assert.equal(core.includes('SET TRANSACTION'), false, 'the provider may already have queried migration metadata')
+  for (const command of ['BEGIN;', 'START TRANSACTION;', 'COMMIT;', 'END;', 'ROLLBACK;', 'ABORT;',
+    "PREPARE TRANSACTION 'fixture';", 'SAVEPOINT fixture;', 'RELEASE SAVEPOINT fixture;',
+    'SET TRANSACTION ISOLATION LEVEL READ COMMITTED;', 'SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY;',
+    'SET /* nested /* comment */ boundary */ TRANSACTION READ ONLY;', 'SET -- comment\n SESSION CHARACTERISTICS AS TRANSACTION READ ONLY;']) {
+    assert.throws(() => assertTransactionBody('SELECT 1;\n' + command), /BG1 body/)
+  }
+  assertTransactionBody(`-- BEGIN; COMMIT;\n/* ROLLBACK; */ SELECT 'COMMIT;';\nDO $nested$ BEGIN PERFORM 'ROLLBACK;'; END $nested$;`)
+  assert.throws(() => assertTransactionBody('SELECT 1; COMMIT'), /complete terminated/)
+})
+test('BG1 catalog dependency keys and exact function settings match PostgreSQL binder types', () => {
+  const generated = compileCandidate()
+  assert.equal((generated.match(/\|\|d\.deptype::text,to_jsonb\(d\)/g) ?? []).length, 4, 'both dependency classes before and after the upgrade')
+  assert.equal(generated.includes('||d.deptype,to_jsonb(d)'), false)
+  const literal = /DECLARE approved jsonb:='((?:[^']|'')*)'::jsonb;/.exec(generated)?.[1]
+  assert.ok(literal)
+  const approved = JSON.parse(literal.replaceAll("''", "'")) as { functions: { signature: string; config: string[] }[] }
+  const configured = approved.functions.filter(f => f.config.some(value => /^(?:timezone|datestyle)=/i.test(value)))
+  assert.equal(configured.length, 11)
+  for (const f of configured) {
+    assert.ok(f.config.includes('TimeZone=UTC'), f.signature)
+    assert.ok(f.config.includes('DateStyle=ISO, YMD'), f.signature)
+    assert.equal(f.config.some(value => /^(?:timezone|datestyle)=/.test(value)), false, f.signature)
+  }
+  assert.ok(generated.includes('to_jsonb(p.proconfig) IS DISTINCT FROM f.config'), 'actual catalog comparison remains exact')
 })
 test('guard contract keeps exact reviewed selection, original operation and absent outcomes distinct', () => {
   assert.ok(readDevGuardRequest(operation)); assert.ok(readDevGuardReview(review))

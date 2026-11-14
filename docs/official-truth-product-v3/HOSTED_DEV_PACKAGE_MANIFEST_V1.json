@@ -263,8 +263,8 @@
     {
       "path": "lib/readiness/official-truth-bern-g3-rq-fetch-1/research-only.test.ts",
       "bytes": 18575,
-      "blob": "f67ed92cd2a43ed23b574aec266669e61c880740",
-      "sha256": "578ea00226bc62ed7a2dd7a27c9e4c96c5e69574e06eebccb4d264c3904b0b7e"
+      "blob": "30f8ae85adf14953b43a2c05674b616596070d08",
+      "sha256": "98f59992704fc4851925181ea12034009548cd06144e36a0339af6daece61379"
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",

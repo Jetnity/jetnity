@@ -66,6 +66,39 @@ function statementsIn(sql) {
   return statements
 }
 
+export function assertTransactionBody(sql) {
+  for (const statement of statementsIn(sql)) {
+    // Inspect only the command's first words, outside comments. Function/DO
+    // bodies and quoted values remain inside the original statement scanner.
+    const words = []
+    let index = 0
+    while (index < statement.length && words.length < 3) {
+      if (/\s/.test(statement[index])) { index++; continue }
+      if (statement.startsWith('--', index)) {
+        const end = statement.indexOf('\n', index + 2)
+        index = end < 0 ? statement.length : end + 1; continue
+      }
+      if (statement.startsWith('/*', index)) {
+        let depth = 1; index += 2
+        while (depth) {
+          if (statement.startsWith('/*', index)) { depth++; index += 2 }
+          else if (statement.startsWith('*/', index)) { depth--; index += 2 }
+          else index++
+        }
+        continue
+      }
+      const word = /^[a-z_][a-z_0-9]*/i.exec(statement.slice(index))?.[0]
+      if (!word) break
+      words.push(word.toUpperCase()); index += word.length
+    }
+    assert.ok(!['BEGIN','START','COMMIT','END','ROLLBACK','ABORT','PREPARE','SAVEPOINT','RELEASE'].includes(words[0]),
+      'BG1 body has no top-level transaction control')
+    assert.ok(!(words[0] === 'SET' && (words[1] === 'TRANSACTION'
+      || ['LOCAL','SESSION'].includes(words[1]) && ['TRANSACTION','CHARACTERISTICS'].includes(words[2]))),
+    'BG1 body checks the provider isolation instead of changing it')
+  }
+}
+
 export function functionsIn(sql) {
   const result = []
   const re = /^CREATE(?: OR REPLACE)? FUNCTION\s+([a-z_][\w]*\.[a-z_][\w]*)\s*\(([\s\S]*?)\)\s*([\s\S]*?)\bAS\s+(\$[\w]*\$)([\s\S]*?)\4\s*;$/i
@@ -100,7 +133,7 @@ SELECT encode(sha256(convert_to(${quote('bg1-content:' + component + ':v1:')}||s
 $$;`
 }
 
-export function compileCandidate() {
+function compileCore() {
   const source = new Map()
   for (const [name, digest] of Object.entries(pins)) {
     const text = readFileSync(new URL(`scripts/db/${name}/install-candidate.sql`, root), 'utf8')
@@ -213,7 +246,8 @@ LANGUAGE sql VOLATILE SECURITY DEFINER SET search_path=pg_catalog AS $$ SELECT o
   const functionMetadata = f => ({signature:f.signature,name:f.name,owner:ownerOf(f),hash:sha(f.body),
     language:/LANGUAGE\s+(\w+)/i.exec(f.options)[1].toLowerCase(),
     definer:/SECURITY DEFINER/i.test(f.options),volatile:/\bIMMUTABLE\b/.test(f.options)?'i':/\bSTABLE\b/.test(f.options)?'s':'v',
-    config:[...f.options.matchAll(/SET\s+(\w+)\s*=\s*('[^']*'|[^\s]+)/gi)].map(m=>m[1]+'='+m[2].replace(/^'|'$/g,'')),
+    config:[...f.options.matchAll(/SET\s+(\w+)\s*=\s*('[^']*'|[^\s]+)/gi)].map(m=>
+      ({timezone:'TimeZone',datestyle:'DateStyle'}[m[1].toLowerCase()]??m[1])+'='+m[2].replace(/^'|'$/g,'')),
     grantees:[ownerOf(f),...(ownerOf(f)!=='postgres'?['postgres']:[]),
       ...Object.entries(grants).filter(([,names])=>names.includes(f.name.split('.')[1])).map(([role])=>role),
       ...(f.name.startsWith('public.official_v3_guard_')?['authenticated']:[]),
@@ -275,12 +309,30 @@ $$;`
     return f?asOwner(f,sql):sql
   })).concat(newFunctions.filter(f=>ownerOf(f)!=='postgres').map(f=>asOwner(f,`GRANT EXECUTE ON FUNCTION ${f.signature} TO postgres;`))).join('\n')
   const replacementDdl=changes.map(c=>`SET LOCAL ROLE ${c.owner};\n${c.sql}\nRESET ROLE;`).join('\n')
-  return `-- BG1 source candidate. Additive upgrade on reviewed 4fd6dc9e; no historical installer rewrite.\n${header}\n${parts}\n${extras}\n${allowedEdges}\nGRANT USAGE,CREATE ON SCHEMA official_v3_guard_private TO ot_v3_result_owner,ot_v3_jobs_owner,ot_v3_intake_owner;\n${ownership}\n${acl}\n${execute}\n${replacementDdl}\n${suffix.trimEnd()}\n`
+  const core = `-- BG1 source candidate. Additive upgrade on reviewed 4fd6dc9e; no historical installer rewrite.\n${header}\n${parts}\n${extras}\n${allowedEdges}\nGRANT USAGE,CREATE ON SCHEMA official_v3_guard_private TO ot_v3_result_owner,ot_v3_jobs_owner,ot_v3_intake_owner;\n${ownership}\n${acl}\n${execute}\n${replacementDdl}\n${suffix.trimEnd()}\n`
+  assertTransactionBody(core)
+  return core
+}
+
+export function compileCandidate() {
+  // The standalone operator must explicitly select the target before calling
+  // this file. Its common core never overwrites a missing or incorrect target.
+  return 'BEGIN ISOLATION LEVEL READ COMMITTED;\n' + compileCore() + 'COMMIT;\n'
+}
+
+export function compileMigrationBody() {
+  // Only this fixed Dev artifact selects the target within the provider's
+  // existing transaction. The provider retains commit/rollback/history control.
+  const body = "SET LOCAL jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1';\n" + compileCore()
+  assertTransactionBody(body)
+  return body
 }
 
 if (process.argv[1]===fileURLToPath(import.meta.url)) {
-  const output=compileCandidate(), path=new URL('upgrade-candidate.sql',here)
   if (process.argv.slice(2).length!==1 || !['--check','--write'].includes(process.argv[2])) throw Error('bg1_build_mode_required')
-  if (process.argv[2]==='--write') writeFileSync(path,output)
-  else assert.equal(readFileSync(path,'utf8'),output,'BG1 generated SQL matches reviewed sources')
+  for (const [name, output] of [['upgrade-candidate.sql', compileCandidate()], ['provider-migration-body.sql', compileMigrationBody()]]) {
+    const path = new URL(name, here)
+    if (process.argv[2]==='--write') writeFileSync(path,output)
+    else assert.equal(readFileSync(path,'utf8'),output,'BG1 generated SQL matches reviewed sources: ' + name)
+  }
 }
