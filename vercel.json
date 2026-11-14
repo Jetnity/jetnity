@@ -22,5 +22,10 @@
         "fra1"
       ]
     }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "checkpoint/hauptplan-81-20261114-unterbruch": false
+    }
   }
 }
