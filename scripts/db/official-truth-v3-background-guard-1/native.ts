@@ -790,7 +790,8 @@ export async function runBg1Native(t: TestContext) {
       const resultNative = await createBg1LocalHrsExecutors(lifetime, cluster)
       dispose.push(() => native.dispose(), () => methodNative.closeObserver(), () => resultNative.dispose())
       let pauseMethod = false, methodArrived = false, releaseMethod: (() => void) | undefined
-      const facade = createV3PostgresResultJobs({ binding, registry: program.registry, clock: () => hrs1Clock(new Date().toISOString(), binding.legalTimeZone)!,
+      const tuple = { methodId: binding.methodId, revision: 1, methodDigest: binding.methodDigest, packageDigest: binding.packageDigest }
+      const facade = createV3PostgresResultJobs({ binding: tuple, registry: program.registry, clock: () => hrs1Clock(new Date().toISOString(), binding.legalTimeZone)!,
         methodExecutor: { async readCurrent(...args: Parameters<typeof methodNative.executor.readCurrent>) {
           const reply = await methodNative.executor.readCurrent(...args)
           if (pauseMethod) { methodArrived = true; await new Promise<void>(resolve => { releaseMethod = resolve }) }
@@ -801,7 +802,18 @@ export async function runBg1Native(t: TestContext) {
       const previous = await retained(), cap = (await creator.query('SELECT valid_until::text AS cap FROM official_v3_guard_private.state_v1'))[0]!.cap
       const started = performance.now()
       const answer = await facade.query({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] }, lifetime.signal)
-      assert.equal(answer.ok, true)
+      assert.equal(answer.ok, true, answer.ok ? undefined : JSON.stringify({ outcome: answer.reason,
+        elapsedMilliseconds: Math.round(performance.now() - started), callerAborted: lifetime.signal.aborted,
+        method: { admitted: methodNative.evidence.admitted, dispatched: methodNative.evidence.dispatched,
+          drained: methodNative.evidence.drained, completed: methodNative.evidence.calls.length,
+          sqlCodes: methodNative.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(-8) },
+        hrs: { admitted: resultNative.evidence.admitted, dispatched: resultNative.evidence.dispatched,
+          acknowledged: resultNative.evidence.acknowledged, drained: resultNative.evidence.drained,
+          completed: resultNative.evidence.calls.length,
+          sqlCodes: resultNative.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(-8) },
+        m04: { admitted: native.evidence.admitted, dispatched: native.evidence.dispatched,
+          acknowledged: native.evidence.acknowledged, drained: native.evidence.drained, completed: native.evidence.calls.length,
+          sqlCodes: native.evidence.sqlCodes.filter(code => /^[0-9A-Z]{5}$/.test(code)).slice(-8) } }))
       if (!answer.ok) assert.fail('actual 750ms selected reader did not complete')
       assert.equal(answer.answer.response.cells[0]!.results[0]!.status, 'accepted', 'actual accepted head; SQL error or unavailable can never satisfy this proof')
       assert.ok(performance.now() - started < 750)
@@ -846,7 +858,6 @@ export async function runBg1Native(t: TestContext) {
       assert.equal(resultNative.snapshot().active, 0)
       // Genuine standalone MA1 receipt custody and expiry. Neither forged nor
       // another authority instance's receipt performs an extra database call.
-      const tuple = { methodId: binding.methodId, revision: 1, methodDigest: binding.methodDigest, packageDigest: binding.packageDigest }
       const first = createV3PostgresMethodAuthority(tuple, methodNative.executor), second = createV3PostgresMethodAuthority(tuple, methodNative.executor)
       const current = await first.resolveCurrent(program.method, new Date().toISOString()); assert.ok(current.status === 'approved')
       const calls = methodNative.evidence.admitted
