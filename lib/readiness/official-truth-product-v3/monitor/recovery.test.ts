@@ -146,6 +146,72 @@ function nextPrepared(t: ReturnType<typeof harness>, prior: V3PreparedTransition
   return { ...prior, decision, previousDecision: prior.decision, version, transition, archiveAppend: null }
 }
 
+test('HRS reproof uses the actual post-reopen clock and retains date, expiry, abort and authority refusals', async t => {
+  for (const mode of ['reopen', 'transferred', 'backward', 'date-change', 'invalid-clock', 'expired', 'aborted', 'method-denied', 'foreign-decision'] as const) {
+    await t.test(mode, async () => {
+      const f = fixture(), h = queueHarness(), signal = new AbortController(), methodReceipt = Object.freeze({}), sourceReceipt = Object.freeze({})
+      const binding: Hrs1Binding = { ...f.transition.method, schema: 1, qualificationScope: 'global_context',
+        methodDigest: '1'.repeat(64), packageDigest: '2'.repeat(64), context: f.context, contextKey: f.identity.contextKey,
+        factKind: 'requirement_effect', dataMode: 'synthetic_test', legalTimeZone: 'UTC', activeFrom: '2026-11-01T00:00:00.000Z',
+        activeUntilExclusive: '2026-12-01T00:00:00.000Z', sourceMaxAgeMilliseconds: 3600000, projectionMaxAgeMilliseconds: 300000,
+        monitorIntervalMilliseconds: 300000, monitorLeaseMilliseconds: 30000, attemptLimit: 4, sources: [] }
+      let malformed = false, receivedAt = '', reads = 0, transfers = 0
+      const clock = () => {
+        const at = hrs1Clock(h.clock.now(), binding.legalTimeZone); assert.ok(at)
+        return malformed ? { ...at, legalDate: 'invalid' } : at
+      }
+      const before = clock(), expiry = new Date(Date.parse(before.now) + (mode === 'date-change' ? 172800000 : 1000)).toISOString()
+      const verification: Hrs1Verification = { reference: ref('hrs1-verification', mode), decision: f.decision,
+        previousDecision: null, archiveAppend: null, originals: [], stickyDecision: null, suppressionEpoch: 0,
+        validUntilExclusive: expiry, history: { pointer: f.transition.expected, version: null, decision: null,
+          decisionPredecessor: null, decisionArchiveAppend: null, invalidatedProjectionRefs: [] },
+        request: { context: f.context, contextKey: f.identity.contextKey, factKind: 'requirement_effect', references: [],
+          method: f.transition.method, clock: before, previousDecision: null, decisionRef: f.decision.reference } }
+      const issued = Object.freeze({ receipt: sourceReceipt, verification })
+      // Explicit synthetic source contract: a new privately held receipt only
+      // exists after open completes. The real issuer's same rule is tested separately.
+      const source: Hrs1SourceConsumer = { available: true,
+        evidence: { async inspect() { assert.fail('unused') }, async reprove() { assert.fail('unused') } },
+        sources: { async observe() { assert.fail('unused') }, async reprove() { assert.fail('unused') } },
+        async openVerification(_reference, active, method) {
+          assert.equal(active, signal.signal); assert.equal(method, methodReceipt)
+          await Promise.resolve(); h.clock.advance(750); receivedAt = h.clock.now()
+          if (mode === 'backward') h.clock.advance(-751)
+          if (mode === 'date-change') h.clock.advance(86400000)
+          if (mode === 'invalid-clock') malformed = true
+          if (mode === 'expired') h.clock.advance(250)
+          if (mode === 'aborted') signal.abort()
+          return mode === 'foreign-decision'
+            ? { ...issued, verification: { ...verification, decision: { ...f.decision, reference: ref('source-decision', 'foreign') } } }
+            : issued
+        },
+        async takeOpenedVerification(value, at, active) {
+          transfers++; assert.equal(value, issued); assert.equal(active, signal.signal)
+          return mode === 'transferred' ? at.now >= receivedAt && at.now < expiry ? 'current' : 'unavailable' : 'absent'
+        },
+        async reproveVerification(receipt, value, at, active, method) {
+          reads++; assert.equal(receipt, sourceReceipt); assert.equal(value, verification)
+          assert.equal(method, methodReceipt); assert.equal(active, signal.signal)
+          return mode !== 'method-denied' && !active.aborted && at.now >= receivedAt && at.now < expiry
+        },
+        async reproveLocal() { assert.fail('unused') },
+        held(receipt) { return receipt === sourceReceipt ? verification : null }, lastObservation() { return null },
+        exportCustody() { return { status: 'absent' } }, importCustody() { return false },
+      }
+      const ports = createHrs1ResultPorts({ binding, registry: f.registry, source, clock,
+        ids: () => ({ jobId: f.enqueue.jobId, operationId: f.transition.operationId }),
+        fixed: async () => assert.fail('inspection cannot write a version or publish a projection') })
+      const proof = await ports.versionProofs.inspect(f.prepared, before.now, before.legalDate, signal.signal, methodReceipt)
+      const accepted = mode === 'reopen' || mode === 'transferred'
+      assert.equal(proof.status, accepted ? 'verified' : 'unavailable')
+      assert.equal(reads, mode === 'reopen' || mode === 'method-denied' ? 1 : 0)
+      assert.equal(transfers, accepted || mode === 'method-denied' ? 1 : 0)
+      assert.equal(verification.validUntilExclusive, expiry)
+      assert.deepEqual(verification.request.clock, before, 'the genuine later check never restamps the original request')
+    })
+  }
+})
+
 test('HRS discharges a duplicate proof read only from its actual own callback, with one-use and late-negative checks', async () => {
   for (const mode of ['actual', 'current-dto', 'replay', 'foreign-context', 'foreign-prepared', 'late-revoke', 'abort', 'pending-local', 'pending-fallback'] as const) {
     const t = harness(), f = t.f, signal = new AbortController(), sourceReceipt = Object.freeze({}), methodReceipt = Object.freeze({})

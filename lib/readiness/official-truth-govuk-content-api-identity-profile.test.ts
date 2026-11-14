@@ -359,8 +359,8 @@ describe('registry and production dormancy', () => {
   const COMPOSED_GOVUK_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
     bytes: 104296,
-    blob: '5f3752e857fd9b4362609d7823ead047286f0871',
-    sha256: 'e95047c47234df93f97b08480bdee9b651c473915b4008d1d5d29910df249cb8',
+    blob: 'daa0df70bbe303b16062b43e5f7af935f2012b7c',
+    sha256: '542d5a6509e88d1be35d035d662c058e4ccb0cae7cee01c88e8427c009f7f343',
     contextStart: 4556,
     contextEnd: 4802,
     tokenStart: 4587,
@@ -422,8 +422,8 @@ describe('registry and production dormancy', () => {
   const HRS_GOVUK_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
     bytes: 255509,
-    blob: 'beb7c28bb5fdcfb167a52617ce6f3132df39b624',
-    sha256: '0f5760298590fd54ff75ac03a243e8de6d7a14c732b575d6f3fc79db78606a00',
+    blob: 'd78001d248e4f23486b02b7a9999baf066348475',
+    sha256: '8ea6f7d0fe8f3e52e8ad54f9c962294984e1d5fb2bd3f80bf85be78c2a59cfa8',
     contextStart: 29777,
     contextEnd: 30023,
     tokenStart: 29808,

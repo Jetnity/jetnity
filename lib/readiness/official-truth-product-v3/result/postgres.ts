@@ -123,12 +123,17 @@ export function createHrs1ResultPorts(input: Readonly<{
       const at = hrs1Clock(checkedAt, binding.legalTimeZone)
       if (!prepared || !at || at.legalDate !== legalDate) return { status: 'invalid' }
       const issued = await source.openVerification(hrs1Ref('hrs1-decision-custody', prepared.decision), signal, methodReceipt)
-      if (!issued || !hrs1Same(issued.verification.decision, prepared.decision)
+      // Reopening obtains new native receipts. They cannot be reproved at the
+      // caller's earlier instant; use the actual post-open clock without renewing expiry.
+      const current = validClock()
+      if (!issued || !current || current.now < at.now || current.legalDate !== at.legalDate
+        || current.now >= issued.verification.validUntilExclusive || signal.aborted
+        || !hrs1Same(issued.verification.decision, prepared.decision)
         || !hrs1Same(issued.verification.previousDecision, prepared.previousDecision)
         || !hrs1Same(issued.verification.archiveAppend, prepared.archiveAppend)) return { status: 'unavailable' }
-      const transferred = await source.takeOpenedVerification(issued, at, signal)
+      const transferred = await source.takeOpenedVerification(issued, current, signal)
       if (transferred === 'unavailable' || transferred === 'absent'
-        && !await source.reproveVerification(issued.receipt, issued.verification, at, signal, methodReceipt)) return { status: 'unavailable' }
+        && !await source.reproveVerification(issued.receipt, issued.verification, current, signal, methodReceipt)) return { status: 'unavailable' }
       const own = receipt()
       proofs.set(own, { prepared, receipt: issued.receipt, verification: issued.verification })
       return { status: 'verified', receipt: own }

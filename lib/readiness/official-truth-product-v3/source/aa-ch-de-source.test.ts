@@ -150,9 +150,13 @@ test('AA/Bern source: reopen qualifies new native receipts even for identical st
     assert.notEqual(reopened.receipt, inspected.receipt); assert.equal(wire.calls, 4)
     assert.ok(parseStarts > initialParses, 'new native custody must perform its own first qualification')
     assert.deepEqual(reopened.verification, inspected.verification, 'historical timestamps and absolute expiry are unchanged')
+    assert.equal(await issuer.reprove(reopened.receipt, reopened.verification, challenge.request.clock, signal), null,
+      'the real new native receipts cannot be proved at an instant before their HTTP completion')
     const reopenedParses = parseStarts
     const at = hrs1Clock(new Date().toISOString(), challenge.binding.legalTimeZone); assert.ok(at)
     assert.deepEqual(await issuer.reprove(reopened.receipt, reopened.verification, at, signal), reopened.verification)
+    assert.equal(reopened.verification.validUntilExclusive, inspected.verification.validUntilExclusive,
+      'using the later proof clock must not renew the original qualification deadline')
     assert.equal(parseStarts, reopenedParses)
     primary.body = '<html><body>changed actual primary bytes</body></html>'
     t.mock.timers.setTime(start + 2000)

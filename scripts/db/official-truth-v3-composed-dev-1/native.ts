@@ -229,9 +229,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
-    "bytes": 26607,
-    "blob": "752a4c12e1322f4e1ce0f6aba2e9906ab0c99693",
-    "sha256": "e7bc2c2587882eddf7b8b811970168b88cf1f29fd25fc2e274943a6b3e1d4976"
+    "bytes": 26988,
+    "blob": "c083e1a7b535d2a6083e0b894ccffe3fe644b2d6",
+    "sha256": "beae021a10674f436cebb3d2a884cb9cb15c785b1b782bca495f4ef9090bcad9"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
