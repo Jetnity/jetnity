@@ -21,10 +21,24 @@ BEGIN
     OR NOT pg_try_advisory_xact_lock(771105,1) OR NOT pg_try_advisory_xact_lock(771106,1) THEN
     RAISE EXCEPTION 'bg1 package operation already active' USING ERRCODE='P7901';
   END IF;
-  IF EXISTS(SELECT 1 FROM pg_stat_activity a JOIN pg_roles r ON r.oid=a.usesysid
+  -- A login can SET ROLE along SET edges, then use inherited caller rights.
+  -- Walk that exact path backwards: INHERIT* first, then SET*. ADMIN-only
+  -- grants and implicit superuser powers are the existing trusted-admin
+  -- boundary, not runtime membership. Do not exclude any backend by its name.
+  IF EXISTS(WITH RECURSIVE inherited_roles(role_oid) AS (
+      SELECT oid FROM pg_roles WHERE rolname IN ('ot_v3_jobs_caller','ot_v3_intake_caller','ot_v3_method_reader')
+      UNION
+      SELECT m.member FROM pg_auth_members m JOIN inherited_roles p ON p.role_oid=m.roleid
+        WHERE m.inherit_option
+    ), runtime_roles(role_oid) AS (
+      SELECT role_oid FROM inherited_roles
+      UNION
+      SELECT m.member FROM pg_auth_members m JOIN runtime_roles p ON p.role_oid=m.roleid
+        WHERE m.set_option
+    )
+    SELECT 1 FROM pg_stat_activity a JOIN pg_roles r ON r.oid=a.usesysid
     WHERE a.pid<>pg_backend_pid() AND (r.rolname IN ('ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier')
-      OR EXISTS(SELECT 1 FROM pg_auth_members m JOIN pg_roles role_row ON role_row.oid=m.roleid WHERE m.member=r.oid
-        AND role_row.rolname IN ('ot_v3_jobs_caller','ot_v3_intake_caller','ot_v3_method_reader')))) THEN
+      OR EXISTS(SELECT 1 FROM runtime_roles p WHERE p.role_oid=r.oid))) THEN
     RAISE EXCEPTION 'bg1 controlled quiescence required' USING ERRCODE='P7901';
   END IF;
 END $context$;

@@ -526,6 +526,17 @@ export async function runBg1Native(t: TestContext) {
     const sql = readFileSync(new URL('./upgrade-candidate.sql', import.meta.url), 'utf8')
     const providerBody = readFileSync(new URL('./provider-migration-body.sql', import.meta.url), 'utf8')
     const providerHash = createHash('sha256').update(providerBody).digest('hex')
+    const contextParts = readFileSync(new URL('./parts/upgrade-prefix.sql', import.meta.url), 'utf8').split('END $context$;')
+    assert.equal(contextParts.length, 2)
+    const contextSql = contextParts[0]! + 'END $context$;'
+    assert.equal(sql.split(contextSql).length, 2, 'exact original context occurs once in standalone artifact')
+    assert.equal(providerBody.split(contextSql).length, 2, 'exact original context occurs once in provider artifact')
+    const quiescenceStart = contextSql.indexOf('IF EXISTS(WITH RECURSIVE inherited_roles(role_oid) AS (')
+    const quiescenceEnd = contextSql.indexOf(' THEN\n    RAISE EXCEPTION', quiescenceStart)
+    assert.ok(quiescenceStart >= 0 && quiescenceEnd > quiescenceStart)
+    const quiescenceSql = contextSql.slice(quiescenceStart, quiescenceEnd)
+    assert.equal(sql.split(quiescenceSql).length, 3, 'same exact predicate at both standalone gates')
+    assert.equal(providerBody.split(quiescenceSql).length, 3, 'same exact predicate at both provider gates')
     async function installationState(connection: LocalPgConnection) {
       return json<{ installed: boolean; markers: string[]; memberships: string }>(await connection.query(`SELECT jsonb_build_object(
         'installed',to_regnamespace('official_v3_guard_private') IS NOT NULL,
@@ -555,7 +566,90 @@ export async function runBg1Native(t: TestContext) {
       } finally { await creator.query('ROLLBACK') }
       await rollbackObserved()
     }
-    await proof('B01 used predecessor rollback and exact original journals', async () => {
+    async function withQuiescenceLogin(login: string, run: (connection: LocalPgConnection) => Promise<void>) {
+      const connection = await LocalPgConnection.connect(cluster, login)
+      let identity: Readonly<{ pid: string; birth: string }> | undefined
+      const errors: unknown[] = []
+      try {
+        const row = (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth,session_user::text AS login FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]!
+        assert.equal(row.login, login); assert.ok(row.pid && row.birth)
+        identity = { pid: row.pid, birth: row.birth }
+        assert.equal((await base.observer.connection.query('SELECT state FROM pg_stat_activity WHERE pid=$1::integer AND backend_start=$2::timestamptz', params([identity.pid, identity.birth])))[0]!.state, 'idle')
+        await run(connection)
+      } catch (error) { errors.push(error) }
+      try { connection.close() } catch (error) { errors.push(error) }
+      if (identity) {
+        try { await observedAbsent(identity.pid, identity.birth) } catch (error) { errors.push(error) }
+      }
+      if (errors.length === 1) throw errors[0]
+      if (errors.length) throw new AggregateError(errors, 'quiescence fixture and backend drain failed')
+    }
+    async function contextProbe(blocked: boolean) {
+      // This is the exact first block of both artifacts, not a duplicate
+      // predicate. Temporary local role graphs must not get a false refusal
+      // from the later, independently exact predecessor-catalog checks.
+      const previous = await installationState(base.observer.connection)
+      await creator.query('BEGIN ISOLATION LEVEL READ COMMITTED')
+      try {
+        await creator.query("SET LOCAL jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
+        if (blocked) await assert.rejects(creator.query(contextSql), stateError('P7901'))
+        else await creator.query(contextSql)
+      } finally { await creator.query('ROLLBACK') }
+      assert.deepEqual(await installationState(base.observer.connection), previous)
+      assert.deepEqual(await retained(), before)
+    }
+    await proof('B01 used predecessor rollback and exact original journals', () => withQuiescenceLogin('postgres', async admin => {
+      // Real second Creator session, with the same ADMIN-only caller edges as
+      // the provider worker. Do not simulate a worker type/name or kill it.
+      const adminRoles = await admin.query("SELECT rolname,pg_has_role(session_user,oid,'MEMBER WITH ADMIN OPTION')::text AS admin,pg_has_role(session_user,oid,'USAGE')::text AS usage,pg_has_role(session_user,oid,'SET')::text AS can_set FROM pg_roles WHERE rolname IN ('ot_v3_jobs_caller','ot_v3_intake_caller','ot_v3_method_reader')")
+      assert.equal(adminRoles.length, 3)
+      assert.ok(adminRoles.every(row => row.admin === 'true' && row.usage === 'false' && row.can_set === 'false'))
+      await contextProbe(false)
+      for (const login of ['ot_m04_jobs','ot_m04_intake','ot_ma1_reader','ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier']) {
+        // Idle genuine bound LOGINs are refused even before they SET ROLE.
+        // The complete provider body must leave no schema, marker or changed
+        // old journal; only observed backend absence allows the next probe.
+        await withQuiescenceLogin(login, async () => { await refusedUpgrade('P7901', true) })
+        await contextProbe(false)
+      }
+      await owner.query('CREATE ROLE bg1_quiescence_probe LOGIN NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION; CREATE ROLE bg1_quiescence_bridge NOLOGIN NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION; GRANT CONNECT ON DATABASE postgres TO bg1_quiescence_probe')
+      let graphFailure: unknown
+      try {
+        const cases = [
+          { label: 'direct SET', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT FALSE, SET TRUE', usage: 'false', canSet: 'true', setRole: 'ot_v3_method_reader', blocked: true },
+          { label: 'direct INHERIT', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT TRUE, SET FALSE', usage: 'true', canSet: 'false', setRole: null, blocked: true },
+          { label: 'transitive SET', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_bridge WITH ADMIN FALSE, INHERIT FALSE, SET TRUE; GRANT bg1_quiescence_bridge TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT FALSE, SET TRUE', usage: 'false', canSet: 'true', setRole: 'ot_v3_method_reader', blocked: true },
+          { label: 'transitive INHERIT', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_bridge WITH ADMIN FALSE, INHERIT TRUE, SET FALSE; GRANT bg1_quiescence_bridge TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT TRUE, SET FALSE', usage: 'true', canSet: 'false', setRole: null, blocked: true },
+          { label: 'SET then INHERIT', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_bridge WITH ADMIN FALSE, INHERIT TRUE, SET FALSE; GRANT bg1_quiescence_bridge TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT FALSE, SET TRUE', usage: 'false', canSet: 'false', setRole: 'bg1_quiescence_bridge', blocked: true },
+          { label: 'INHERIT then SET is not callable', grants: 'GRANT ot_v3_method_reader TO bg1_quiescence_bridge WITH ADMIN FALSE, INHERIT FALSE, SET TRUE; GRANT bg1_quiescence_bridge TO bg1_quiescence_probe WITH ADMIN FALSE, INHERIT TRUE, SET FALSE', usage: 'false', canSet: 'false', setRole: null, blocked: false },
+        ] as const
+        for (const entry of cases) {
+          await owner.query(entry.grants)
+          await withQuiescenceLogin('bg1_quiescence_probe', async probe => {
+            assert.deepEqual(await probe.query("SELECT pg_has_role(session_user,'ot_v3_method_reader','USAGE')::text AS usage,pg_has_role(session_user,'ot_v3_method_reader','SET')::text AS can_set"),
+              [{ usage: entry.usage, can_set: entry.canSet }], entry.label)
+            if (entry.setRole) await probe.query('SET ROLE ' + entry.setRole)
+            const readCurrent = () => probe.query('SELECT status FROM official_v3_method_api.read_current_v1($1::text,$2::integer,$3::text,$4::text,$5::text)',
+              params([binding.methodId, 1, binding.methodDigest, binding.packageDigest, new Date().toISOString()]))
+            if (entry.blocked) assert.equal((await readCurrent())[0]!.status, 'approved', entry.label)
+            else {
+              await assert.rejects(probe.query('SET ROLE ot_v3_method_reader'), stateError('42501'))
+              await assert.rejects(readCurrent(), stateError('42501'))
+            }
+            await contextProbe(entry.blocked)
+          })
+          await contextProbe(false) // same graph, now genuine backend absence
+          await owner.query('REVOKE ot_v3_method_reader FROM bg1_quiescence_probe,bg1_quiescence_bridge; REVOKE bg1_quiescence_bridge FROM bg1_quiescence_probe')
+        }
+      } catch (error) { graphFailure = error }
+      try {
+        await owner.query('REVOKE CONNECT ON DATABASE postgres FROM bg1_quiescence_probe; DROP ROLE bg1_quiescence_probe; DROP ROLE bg1_quiescence_bridge')
+      } catch (error) {
+        if (graphFailure) throw new AggregateError([graphFailure, error], 'quiescence graph and cleanup failed')
+        throw error
+      }
+      if (graphFailure) throw graphFailure
+      await rollbackObserved()
       // Standalone still requires the operator's explicit exact target. Its
       // core must never silently repair a missing or incorrect selection.
       await creator.query('RESET jetnity.bg1_target'); await refusedUpgrade('P7901')
@@ -600,7 +694,7 @@ export async function runBg1Native(t: TestContext) {
       assert.deepEqual(await retained(), before, 'used approvals, source bytes, claims and old baseline rows are byte-identical')
       assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_result_owner'::regrole,'ot_v3_jobs_owner'::regrole,'ot_v3_intake_owner'::regrole)"))[0]!.n, '0')
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'unchecked')
-    })
+    }))
     await proof('B02 original checksum, full key history, certificate chain and catalog tamper refuse', async () => {
       const probes = [
         "UPDATE official_v3_jobs_private.subjects_v1 SET current_job=(SELECT envelope_text::jsonb->'next' FROM official_v3_jobs_private.queue_operations_v1 WHERE operation_id='" + secondInput.operationId + "') WHERE job_key='" + otherClaim.jobKey + "'",
