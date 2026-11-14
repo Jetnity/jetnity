@@ -1,34 +1,34 @@
 // Fixed Dev-only status read. No scheduler, notification delivery or DB mutation.
-// API contract: https://supabase.com/docs/reference/api/v1-read-only-query
+// Public-key contract: https://supabase.com/docs/guides/getting-started/api-keys
 import { performance } from 'node:perf_hooks'
 import { pathToFileURL } from 'node:url'
 
 const DEV_REF = 'yfvbxvijcorffwxbxahl'
-const ENDPOINT = `https://api.supabase.com/v1/projects/${DEV_REF}/database/query/read-only`
-const QUERY = 'SELECT official_v3_guard_private.alarm_status_v1() AS guard_status'
+const ENDPOINT = `https://${DEV_REF}.supabase.co/rest/v1/rpc/official_v3_guard_alarm_status_v1`
 const LIMIT_BYTES = 8192
 const TIMEOUT_MS = 10000
 const WS = '[ \\t\\r\\n]*'
-const STATUS = '(current|unchecked|clock|incident|stale|unavailable)'
-// Accept exactly one result row with exactly the two fields from the fixed SQL
-// function, in either JSON-object key order. Duplicate/escaped keys, extra rows
-// or fields and free-form strings cannot silently become a healthy response.
-const STATUS_ROW = new RegExp(`^${WS}\\[${WS}\\{${WS}"guard_status"${WS}:${WS}\\{${WS}(?:`
+const STATUS = '(current|unavailable)'
+// Exact two-field public DTO, in either key order. No internal state, duplicate
+// or escaped keys, extra fields, arrays or free-form provider errors accepted.
+const STATUS_ROW = new RegExp(`^${WS}\\{${WS}(?:`
   + `"schema"${WS}:${WS}1${WS},${WS}"status"${WS}:${WS}"${STATUS}"`
   + `|"status"${WS}:${WS}"${STATUS}"${WS},${WS}"schema"${WS}:${WS}1`
-  + `)${WS}\\}${WS}\\}${WS}\\]${WS}$`)
+  + `)${WS}\\}${WS}$`)
 const report = (code) => Object.freeze({ schema: 1, status: code === 'current' ? 'current' : 'alarm', code })
 
 /** The CLI supplies its own environment and native fetch. Injection is only a
  * test seam; neither a URL nor SQL nor a role can be passed through this API. */
 export async function checkDevGuardAlarm({ env = process.env, fetchImpl = globalThis.fetch, signal } = {}) {
-  let token
+  let publicKey
   try {
     const ref = env.SUPABASE_PROJECT_REF
-    token = env.SUPABASE_ACCESS_TOKEN
-    if (!ref || !token) return report('configuration_missing')
+    publicKey = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    if (!ref || !publicKey) return report('configuration_missing')
     if (ref !== DEV_REF) return report('target_refused')
-    if (typeof token !== 'string' || !/^[\x21-\x7e]{1,4096}$/.test(token)) return report('credentials_invalid')
+    // Modern publishable keys only. Never parse/forward a legacy anon JWT,
+    // user session, service-role/secret key or Management PAT.
+    if (typeof publicKey !== 'string' || publicKey.length > 4096 || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(publicKey)) return report('credentials_invalid')
     if (typeof fetchImpl !== 'function') return report('transport_unavailable')
   } catch { return report('configuration_invalid') }
   if (signal?.aborted) return report('aborted')
@@ -52,16 +52,16 @@ export async function checkDevGuardAlarm({ env = process.env, fetchImpl = global
   try {
     if (!stopped()) {
       const response = await fetchImpl(ENDPOINT, {
-        method: 'POST', redirect: 'error', cache: 'no-store', signal: controller.signal,
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ query: QUERY }),
+        method: 'POST', redirect: 'error', cache: 'no-store', credentials: 'omit', signal: controller.signal,
+        headers: { apikey: publicKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: '{}',
       })
       reader = response.body?.getReader() ?? null
       if (stopped()) code = 'timeout'
       else if (response.redirected || response.status >= 300 && response.status < 400) code = 'redirect_refused'
       else if (response.status === 401 || response.status === 403) code = 'access_denied'
       else if (response.status === 429) code = 'rate_limited'
-      else if (response.status !== 201) code = 'http_failure'
+      else if (response.status !== 200) code = 'http_failure'
       else if (!reader || !/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(response.headers.get('content-type') ?? '')) code = 'response_invalid'
       else {
         const length = response.headers.get('content-length')

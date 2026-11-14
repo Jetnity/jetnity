@@ -106,9 +106,9 @@
   "currentRootReceiptPins": [
     {
       "path": ".github/workflows/ci.yml",
-      "bytes": 24148,
-      "blob": "5bc73c91895faedab9ba02130cb58773b1d8da9b",
-      "sha256": "f72ce2b9637734b1a3301ec6447fe83e04a232cdf1ce974c54f3d201513bf9d0"
+      "bytes": 24274,
+      "blob": "dc269412ac86ae1f944bc4e6d0c043007ccb00e1",
+      "sha256": "895c05ac8d6a9db49df77994eb651c12c1a130c4eb77b5f67aad08dcd13a598f"
     },
     {
       "path": "app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx",
@@ -245,8 +245,8 @@
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
       "bytes": 4679,
-      "blob": "da9e38dea83bff0bbfecab901dcc787be36759db",
-      "sha256": "d88d1451495cf0f47041b914cbc51545adae17f07cd778943be2eebfe1e93c4d"
+      "blob": "33fb6cd6b438322d5dd5fc4113dffa77f12b9b75",
+      "sha256": "720aecedc1ce17b8b4bf8ffe8c9620da461d24a389b5736293ca0dca32d74c49"
     },
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
@@ -280,9 +280,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
-      "blob": "6008a0451cd0e165a39e02065d69d91446ffd4ec",
+      "blob": "de707b5df313b5fc1d6a17307e5c648e919cbe01",
       "bytes": 14359,
-      "sha256": "17effe75d3336e1de0c2b95f442e316d6a17d595f75dccf40b97ec3cf51b9cdc"
+      "sha256": "2de929df43fcbefb1f177b927e80da4c13f5da30ca4fee5382157cd673e8f1c0"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",

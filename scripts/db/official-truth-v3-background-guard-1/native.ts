@@ -470,6 +470,42 @@ export async function runBg1Native(t: TestContext) {
       for (const table of immutableTables) values[table] = (await connection.query(`SELECT md5(COALESCE(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]')) AS digest FROM ${table} x`))[0]!.digest!
       return values
     }
+    async function oldStatusData(connection = owner) {
+      const tables = await connection.query("SELECT n.nspname||'.'||c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND n.nspname IN ('official_v3_method_private','official_v3_intake_private','official_v3_jobs_private','official_v3_result_private','official_v3_guard_private') AND c.relname<>'status_baseline_v1' ORDER BY 1")
+      assert.equal(tables.length, 33, 'all 25 old business tables plus all eight old Guard tables')
+      const values: Record<string, PgRows> = {}
+      for (const { name } of tables) {
+        assert.ok(name && /^[a-z0-9_]+\.[a-z0-9_]+$/.test(name))
+        values[name] = await connection.query(`SELECT count(*)::text AS n,encode(sha256(convert_to(COALESCE(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]'),'UTF8')),'hex') AS digest FROM ${name} x`)
+      }
+      values.roles = await connection.query("SELECT encode(sha256(convert_to(jsonb_agg(to_jsonb(r)-'rolpassword' ORDER BY r.oid)::text,'UTF8')),'hex') AS digest FROM pg_roles r")
+      values.memberships = await connection.query("SELECT encode(sha256(convert_to(jsonb_agg(to_jsonb(m) ORDER BY m.oid)::text,'UTF8')),'hex') AS digest FROM pg_auth_members m")
+      return values
+    }
+    async function withAnonymous<T>(run: (connection: LocalPgConnection) => Promise<T>) {
+      // Existing anon role, no new LOGIN or role edge. SET ROLE really removes
+      // bootstrap rights for these statements; the fixed RPC remains a definer.
+      const connection = await LocalPgConnection.connect(cluster)
+      let identity: { pid: string; birth: string } | undefined, result: T | undefined
+      const errors: unknown[] = []
+      try {
+        const row = (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]!
+        assert.ok(row.pid && row.birth); identity = { pid: row.pid, birth: row.birth }
+        await connection.query('SET ROLE anon')
+        assert.equal((await connection.query("SELECT current_user='anon' AND NOT rolsuper AND NOT rolbypassrls AS restricted FROM pg_roles WHERE rolname=current_user"))[0]!.restricted, 't')
+        result = await run(connection)
+      } catch (error) { errors.push(error) }
+      try { connection.close() } catch (error) { errors.push(error) }
+      if (identity) {
+        try { await observedAbsent(identity.pid, identity.birth) } catch (error) { errors.push(error) }
+      }
+      if (errors.length === 1) throw errors[0]
+      if (errors.length) throw new AggregateError(errors, 'anonymous status proof and owned cleanup failed')
+      return result as T
+    }
+    async function anonymousStatus(status: 'current' | 'unavailable') {
+      await withAnonymous(async connection => assert.deepEqual(json(await connection.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status }))
+    }
     async function proof(name: string, body: (subtest: TestContext) => Promise<void>) {
       let actual: Promise<void> | undefined
       await t.test(name, async subtest => { actual = lifetime.run(() => body(subtest)); await actual })
@@ -695,6 +731,134 @@ export async function runBg1Native(t: TestContext) {
       assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_result_owner'::regrole,'ot_v3_jobs_owner'::regrole,'ot_v3_intake_owner'::regrole)"))[0]!.n, '0')
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'unchecked')
     }))
+    await proof('B01 status successor preserves used BG1, provider atomicity and anonymous least privilege', async () => {
+      const statusBody = readFileSync(new URL('./status-rpc-provider-migration-body.sql', import.meta.url), 'utf8')
+      const statusHash = createHash('sha256').update(statusBody).digest('hex')
+      const oldData = await oldStatusData(), oldCatalog = json(await creator.query('SELECT official_v3_guard_private.catalog_v1() AS result'))
+      const previousInstallation = await installationState(base.observer.connection)
+      async function statusObjects(connection = base.observer.connection) {
+        return connection.query("SELECT to_regclass('official_v3_guard_private.status_baseline_v1') IS NOT NULL AS baseline,to_regprocedure('official_v3_guard_private.catalog_status_v1()') IS NOT NULL AS catalog,to_regprocedure('public.official_v3_guard_alarm_status_v1()') IS NOT NULL AS rpc")
+      }
+      const absentObjects = [{ baseline: 'f', catalog: 'f', rpc: 'f' }]
+      assert.deepEqual(await statusObjects(), absentObjects)
+      await creator.query("SET jetnity.bg1_status_target='local-status-unselected'")
+      async function statusProviderBegin(isolation: 'READ COMMITTED' | 'REPEATABLE READ' = 'READ COMMITTED') {
+        await creator.query('BEGIN ISOLATION LEVEL ' + isolation)
+        try {
+          assert.deepEqual(await creator.query('SELECT body_sha256 FROM bg1_provider_fixture.history ORDER BY body_sha256'),
+            [{ body_sha256: providerHash }], 'provider sees the one genuine installed predecessor history marker')
+        } catch (error) {
+          try { await creator.query('ROLLBACK') }
+          catch (cleanup) { throw new AggregateError([error, cleanup], 'status provider metadata and rollback failed') }
+          throw error
+        }
+      }
+      async function rolledBack() {
+        assert.deepEqual(await statusObjects(), absentObjects)
+        assert.deepEqual(await installationState(base.observer.connection), previousInstallation)
+        assert.deepEqual(await oldStatusData(base.observer.connection), oldData)
+        assert.deepEqual(json(await creator.query('SELECT official_v3_guard_private.catalog_v1() AS result')), oldCatalog)
+        assert.equal((await creator.query("SELECT current_setting('jetnity.bg1_status_target') AS target"))[0]!.target, 'local-status-unselected')
+      }
+      // Same provider transaction owns metadata, DDL and its history marker.
+      // Neither an altered old helper nor a broader old grant is relearned.
+      for (const [beforeSql, code] of [
+        ["CREATE OR REPLACE FUNCTION official_v3_guard_private.catalog_v1() RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path=pg_catalog SET jit=off AS $$ SELECT '{}'::jsonb $$", 'P7901'],
+        ['GRANT EXECUTE ON FUNCTION official_v3_guard_private.alarm_status_v1() TO anon', 'P7905'],
+      ] as const) {
+        await statusProviderBegin()
+        try { await creator.query(beforeSql); await assert.rejects(creator.query(statusBody), stateError(code)) }
+        finally { await creator.query('ROLLBACK') }
+        await rolledBack()
+      }
+      await statusProviderBegin('REPEATABLE READ')
+      try { await assert.rejects(creator.query(statusBody), stateError('P7901')) }
+      finally { await creator.query('ROLLBACK') }
+      await rolledBack()
+      // Keep both real audit calls in one genuine five-minute slot. Only a
+      // short end-of-slot remainder can require waiting; no new deadline or
+      // test clock is introduced, and the existing Lifetime owns the wait.
+      async function slotRemaining() {
+        return Number((await creator.query("SELECT extract(epoch FROM date_bin(interval '5 minutes',clock_timestamp(),'2000-01-01'::timestamptz)+interval '5 minutes'-clock_timestamp())*1000 AS milliseconds"))[0]!.milliseconds)
+      }
+      const remaining = await slotRemaining()
+      if (remaining < 65000) await lifetime.wait(Math.max(1, remaining + 25))
+      assert.ok(await slotRemaining() > 60000, 'enough real slot time for two bounded queries and the same-slot retry')
+      await statusProviderBegin()
+      try {
+        // Actual old full audit, never fabricated proof rows. Its fresh success
+        // must be insufficient after the newly bound object graph is installed.
+        assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status, 'current')
+        const oldProof = json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+        await creator.query(statusBody)
+        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof)
+        assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'current')
+        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
+        await creator.query('SELECT official_v3_guard_private.audit_v1()')
+        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof,
+          'same-slot retry is not a post-successor proof')
+        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([statusHash]))
+        assert.deepEqual(await statusObjects(), absentObjects)
+        assert.deepEqual(await installationState(base.observer.connection), previousInstallation)
+        await assert.rejects(creator.query('SELECT 1/0'), stateError('22012'))
+      } finally { await creator.query('ROLLBACK') }
+      await rolledBack()
+      // Commit the same exact provider body on the unchanged generation-zero
+      // predecessor. The later B04 real audit supplies its first valid proof.
+      await statusProviderBegin()
+      try {
+        await creator.query(statusBody)
+        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([statusHash]))
+        assert.deepEqual(await statusObjects(), absentObjects)
+        await creator.query('COMMIT')
+      } catch (error) { await creator.query('ROLLBACK'); throw error }
+      assert.deepEqual(await statusObjects(), [{ baseline: 't', catalog: 't', rpc: 't' }])
+      assert.deepEqual(await installationState(base.observer.connection), { ...previousInstallation, markers: [providerHash, statusHash].sort() })
+      assert.deepEqual(await oldStatusData(), oldData)
+      assert.equal((await creator.query("SELECT current_setting('jetnity.bg1_status_target') AS target"))[0]!.target, 'local-status-unselected')
+      await creator.query("BEGIN; SET LOCAL TIME ZONE 'Europe/Zurich'; SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK")
+      await assert.rejects(creator.query('UPDATE official_v3_guard_private.status_baseline_v1 SET required_generation=required_generation+1'), stateError('P7901'))
+      await anonymousStatus('unavailable')
+      await withAnonymous(async connection => {
+        for (const query of [
+          'SELECT * FROM official_v3_guard_private.status_baseline_v1',
+          'SELECT * FROM official_v3_guard_private.state_v1',
+          'SELECT * FROM official_v3_result_private.originals_v1',
+          'SELECT official_v3_guard_private.alarm_status_v1()',
+          'SELECT official_v3_guard_private.audit_v1()',
+          'SELECT public.official_v3_guard_review_v1()',
+          "SELECT public.official_v3_guard_retire_v1('op3_" + 'a'.repeat(32) + "','" + '0'.repeat(64) + "')",
+          "SELECT public.official_v3_guard_resume_v1('op3_" + 'a'.repeat(32) + "','" + '0'.repeat(64) + "')",
+        ]) await assert.rejects(connection.query(query), stateError('42501'))
+        await assert.rejects(connection.query("SELECT public.official_v3_guard_alarm_status_v1('extra')"), stateError('42883'))
+      })
+      for (const role of ['authenticated', 'service_role', 'supabase_read_only_user']) {
+        await owner.query('BEGIN; SET LOCAL ROLE ' + role)
+        try { await assert.rejects(owner.query('SELECT public.official_v3_guard_alarm_status_v1()'), stateError('42501')) }
+        finally { await owner.query('ROLLBACK') }
+      }
+      // Each genuine catalog deviation reaches the actual complete checker.
+      // These isolated negative transactions roll back, so the existing B02
+      // committed incident and subsequent Owner history stay exactly the same.
+      for (const mutation of [
+        'GRANT EXECUTE ON FUNCTION public.official_v3_guard_alarm_status_v1() TO authenticated',
+        'REVOKE EXECUTE ON FUNCTION public.official_v3_guard_alarm_status_v1() FROM anon',
+        'GRANT EXECUTE ON FUNCTION public.official_v3_guard_alarm_status_v1() TO anon WITH GRANT OPTION',
+        "ALTER FUNCTION public.official_v3_guard_alarm_status_v1() SET search_path='pg_catalog,public'",
+        "CREATE OR REPLACE FUNCTION public.official_v3_guard_alarm_status_v1() RETURNS jsonb LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path=pg_catalog AS $$ BEGIN RETURN jsonb_build_object('schema',1,'status','unavailable'); END $$",
+      ]) {
+        await creator.query('BEGIN')
+        try {
+          await creator.query(mutation)
+          assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status, 'incident')
+          assert.equal((await creator.query('SELECT outcome FROM official_v3_guard_private.runs_v1'))[0]!.outcome, 'refused')
+          assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
+          await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'), stateError('P7902'))
+        } finally { await creator.query('ROLLBACK') }
+      }
+      assert.deepEqual(await oldStatusData(), oldData, 'public reads and isolated catalog negatives never alter old data or heartbeat')
+    })
     await proof('B02 original checksum, full key history, certificate chain and catalog tamper refuse', async () => {
       const probes = [
         "UPDATE official_v3_jobs_private.subjects_v1 SET current_job=(SELECT envelope_text::jsonb->'next' FROM official_v3_jobs_private.queue_operations_v1 WHERE operation_id='" + secondInput.operationId + "') WHERE job_key='" + otherClaim.jobKey + "'",
@@ -731,6 +895,7 @@ export async function runBg1Native(t: TestContext) {
       const negative = json<Record<string, unknown>>(await base.observer.connection.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
       assert.equal(negative.generation, 0); assert.equal(negative.incident_generation, 1)
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'incident')
+      await anonymousStatus('unavailable')
       assert.equal((await creator.query("SELECT outcome FROM official_v3_guard_private.runs_v1"))[0]!.outcome, 'expired')
       // Same due slot is idempotent, including refused/late retries.
       await creator.query('SELECT official_v3_guard_private.audit_v1()')
@@ -812,6 +977,14 @@ export async function runBg1Native(t: TestContext) {
       const receipt = await human('official_v3_guard_resume_v1', [operation, selection])
       assert.deepEqual(await human('official_v3_guard_confirm_v1', [operation, 'resume', selection]), receipt)
       await creator.query('SELECT official_v3_guard_private.require_open_v1()')
+      const beforePublicRead = await oldStatusData()
+      await anonymousStatus('current')
+      // A public status read does not wait on any source/history table: it
+      // reads only the small baseline/state/current-proof rows, without writes.
+      await owner.query('BEGIN; LOCK TABLE official_v3_method_private.revisions_v1 IN ACCESS EXCLUSIVE MODE')
+      try { await anonymousStatus('current') }
+      finally { await owner.query('ROLLBACK') }
+      assert.deepEqual(await oldStatusData(), beforePublicRead)
     })
     await proof('B05 old operation tombstones, new normal claim and unchanged heartbeat', async () => {
       const beforeState = (await creator.query('SELECT valid_until::text AS cap FROM official_v3_guard_private.state_v1'))[0]!.cap
@@ -973,12 +1146,14 @@ export async function runBg1Native(t: TestContext) {
       // Real database time, no p_now/GUC/fixture-clock bypass. No cron is mocked.
       while (Date.now() <= cap) await lifetime.wait(Math.min(1000, Math.max(1, cap + 5 - Date.now())))
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'stale')
+      await anonymousStatus('unavailable')
       await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'), stateError('P7902'))
       await creator.query('SELECT official_v3_guard_private.audit_v1()')
       const repaired = json<Record<string, unknown>>(await base.observer.connection.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
       assert.equal(repaired.generation, 2)
       assert.ok(Number(repaired.incident_generation) > Number(repaired.resumed_generation))
       assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'incident')
+      await anonymousStatus('unavailable')
       await creator.query('SELECT official_v3_guard_private.audit_v1()')
       assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), repaired)
       await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'), stateError('P7902'))

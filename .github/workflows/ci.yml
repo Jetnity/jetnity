@@ -529,4 +529,6 @@ jobs:
         if: steps.zugang.outputs.vorhanden == 'ja'
         env:
           SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
+          SUPABASE_ACCESS_TOKEN: ''
         run: node scripts/official-truth-dev-guard-alarm.mjs

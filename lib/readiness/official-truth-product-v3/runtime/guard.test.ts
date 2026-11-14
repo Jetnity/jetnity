@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { NextRequest } from 'next/server'
 import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../../scripts/db/verwendung.mjs'
 import { assertTransactionBody, compileCandidate, compileMigrationBody, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
+import { compileStatusMigrationBody } from '../../../../scripts/db/official-truth-v3-background-guard-1/status-rpc-build.mjs'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, devGuardReceipt, readDevGuardRequest,
   readDevGuardReview, readDevGuardResult, readDevGuardText } from './guard-contract'
 
@@ -95,6 +97,36 @@ test('BG1 catalog dependency keys and exact function settings match PostgreSQL b
     assert.equal(f.config.some(value => /^(?:timezone|datestyle)=/.test(value)), false, f.signature)
   }
   assert.ok(generated.includes('to_jsonb(checked_function_row.proconfig) IS DISTINCT FROM f.config'), 'actual catalog comparison remains exact')
+})
+test('the anonymous status successor binds the installed BG1 and complete catalog without replacing historical baselines', () => {
+  const predecessor = compileMigrationBody(), generated = compileStatusMigrationBody()
+  assert.equal(createHash('sha256').update(predecessor).digest('hex'), 'a3a0be9c4eb1e2c61be428d0b825ee8a3b6780f3f8d154c0ccc2b1317181f950')
+  assert.equal(generated, readFileSync(new URL('../../../../scripts/db/official-truth-v3-background-guard-1/status-rpc-provider-migration-body.sql', import.meta.url), 'utf8'))
+  assertTransactionBody(generated)
+  assert.ok(generated.includes("SET LOCAL jetnity.bg1_status_target='dev:yfvbxvijcorffwxbxahl:BG1-STATUS1'"))
+  assert.ok(generated.includes("current_setting('transaction_isolation') IS DISTINCT FROM 'read committed'"))
+  const oldFunctions = functionsIn(predecessor), nextFunctions = functionsIn(generated)
+  assert.deepEqual(nextFunctions.map(f => f.signature), ['official_v3_guard_private.catalog_status_v1()',
+    'official_v3_guard_private.assert_catalog_v1()', 'public.official_v3_guard_alarm_status_v1()'])
+  const oldCatalog = oldFunctions.find(f => f.signature === 'official_v3_guard_private.catalog_v1()')!.body.trim()
+  assert.equal(generated.split(oldCatalog).length, 2, 'unchanged catalog query independently checks the installed predecessor')
+  assert.equal(nextFunctions[0]!.body.trim().replace(
+    ",'official_v3_guard_alarm_status_v1'", ''), oldCatalog, 'complete finite graph gains exactly the one public RPC name')
+  for (const old of oldFunctions) {
+    assert.ok(generated.includes("('" + old.signature + "','" + createHash('sha256').update(old.body).digest('hex') + "')"))
+  }
+  assert.equal((generated.match(/CREATE OR REPLACE FUNCTION /g) ?? []).length, 1)
+  assert.equal(/(?:UPDATE|INSERT INTO|DELETE FROM|ALTER TABLE) official_v3_guard_private\.(?:baselines_v1|state_v1|runs_v1|incidents_v1)\b/.test(generated), false)
+  const publicBody = nextFunctions[2]!.body
+  assert.ok(publicBody.includes('current_state.generation<required_proof'))
+  assert.ok(publicBody.includes('current_state.last_proof_started<earliest_proof'))
+  assert.ok(publicBody.includes("run.outcome='complete'"))
+  for (const excluded of ['audit_v1(', 'assert_catalog_v1(', 'catalog_status_v1(', 'check_', 'INSERT ', 'UPDATE ', 'DELETE ']) {
+    assert.equal(publicBody.includes(excluded), false, 'public read cannot run a full proof or mutate: ' + excluded)
+  }
+  assert.ok(generated.includes('GRANT EXECUTE ON FUNCTION public.official_v3_guard_alarm_status_v1() TO anon;'))
+  assert.equal(/GRANT (?:USAGE|SELECT|ALL)\b/.test(generated), false)
+  assert.equal((generated.match(/extract\(epoch FROM b\.installed_at\)/g) ?? []).length, 2, 'old-baseline hash is session-time-zone independent')
 })
 test('guard contract keeps exact reviewed selection, original operation and absent outcomes distinct', () => {
   assert.ok(readDevGuardRequest(operation)); assert.ok(readDevGuardReview(review))
