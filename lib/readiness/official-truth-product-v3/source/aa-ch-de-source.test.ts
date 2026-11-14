@@ -5,9 +5,16 @@ import type { ClientRequest, IncomingMessage } from 'node:http'
 import https from 'node:https'
 import { performance } from 'node:perf_hooks'
 import { test, mock } from 'node:test'
+import { Parser, type DefaultTreeAdapterMap } from 'parse5'
 import { sha256Hex } from '@/lib/readiness/digest'
-import { hrs1Clock, hrs1OriginalEvidence, type Hrs1Binding } from '../result/contract'
-import { createHrs1SourceConsumer } from '../result/source-proof'
+import { hrs1Canonical, hrs1Clock, hrs1Hash, hrs1OriginalEvidence, hrs1Ref, type Hrs1Binding, type Hrs1FixedOperation } from '../result/contract'
+import { createHrs1SourceConsumer, type Hrs1SourceChallenge } from '../result/source-proof'
+import { composeHrs1Invocation } from '../result/composition'
+import { createM04InvocationScope, createM04LanePool } from '../jobs/owned-scope'
+import { readM04Command, type M04Authority, type M04Config, type M04FixedOperation } from '../jobs/contract'
+import type { V3ManagedJobRecord, V3QueueCommit } from '../monitor/queue'
+import { readV3RetainableProposal } from '../storage/proposal-bytes'
+import { AA_CH_DE_DELIVERY_PRODUCER } from './aa-ch-de-delivery-producer'
 import { AA_CH_DE_PUBLICATION, BERN_CH_DE_PUBLICATION, selectedAaChDeQualification,
   type AaChDeSourceRole } from './aa-ch-de-definition'
 import { readAaChDeOwnedSource, readBernChDeOwnedSource, readAaChDeOwnedSources,
@@ -67,6 +74,229 @@ function syntheticWire(options: WireOptions = {}, counterOptions: WireOptions = 
 const tick = () => new Promise<void>(resolve => setImmediate(resolve))
 const readerFor = (role: AaChDeSourceRole) => role === 'primary' ? readAaChDeOwnedSource : readBernChDeOwnedSource
 const publicationFor = (role: AaChDeSourceRole) => role === 'primary' ? AA_CH_DE_PUBLICATION : BERN_CH_DE_PUBLICATION
+function sourceChallenge(at: string): Hrs1SourceChallenge {
+  const program = selectedAaChDeQualification(); assert.ok(program)
+  const clock = hrs1Clock(at, program.legalTimeZone); assert.ok(clock)
+  const history = { pointer: { revision: 0, state: 'missing' as const, versionRef: null }, version: null,
+    decision: null, decisionPredecessor: null, decisionArchiveAppend: null, invalidatedProjectionRefs: [] }
+  return { binding: program.binding, history, stickyDecision: null, suppressionEpoch: 0,
+    request: { context: program.context, contextKey: program.contextKey, factKind: 'requirement_effect',
+      references: [program.source, program.counter.source].map(source => ({ sourceId: source.sourceId,
+        contentItemId: source.contentItemId, representationId: source.representationId })),
+      method: program.method, clock, previousDecision: null, decisionRef: hrs1Ref('source-decision', { test: 'private-custody', at }) } }
+}
+
+test('AA/Bern source: finalized private custody reuses only its immutable original qualification', async t => {
+  const start = Date.parse('2026-11-14T10:00:00.000Z')
+  t.mock.timers.enable({ apis: ['Date'], now: start })
+  const wire = syntheticWire()
+  let parseStarts = 0
+  const onStartTag = Parser.prototype.onStartTag
+  mock.method(Parser.prototype, 'onStartTag', function(this: Parser<DefaultTreeAdapterMap>, token: Parameters<typeof onStartTag>[0]) {
+    parseStarts++; return onStartTag.call(this, token)
+  })
+  try {
+    const signal = new AbortController().signal, challenge = sourceChallenge(new Date().toISOString())
+    const inspected = await issuer.inspect(challenge, signal); assert.ok(inspected)
+    assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
+    const initialParses = parseStarts; assert.ok(initialParses > 0, 'real selected parser must qualify the owned fixture bytes first')
+    assert.equal(inspected.verification.decision.conclusion, 'primary_unclear', 'invented wire bytes are never an official clear rule')
+    t.mock.timers.setTime(start + 10)
+    const at = hrs1Clock(new Date().toISOString(), challenge.binding.legalTimeZone); assert.ok(at)
+    const decision = { ...inspected.verification.decision, evaluatedAt: at.now, legalAsOfDate: at.legalDate }
+    const finalized = await issuer.finalize(inspected.receipt, inspected.verification, decision, null, at, signal); assert.ok(finalized)
+    for (let index = 0; index < 3; index++) assert.deepEqual(await issuer.reprove(finalized.receipt, finalized.verification, at, signal), finalized.verification)
+    assert.equal(parseStarts, initialParses, 'unchanged private qualification must not parse the same original again')
+    assert.equal(wire.calls, 2, 'reproof does not invent a new source read')
+
+    assert.equal(await issuer.reprove({ ...finalized.receipt }, finalized.verification, at, signal), null)
+    const alteredOriginal = { ...finalized.verification, originals: finalized.verification.originals.map((original, index) => index
+      ? original : { ...original, bodyText: '<html>foreign original</html>' }) }
+    assert.equal(await issuer.reprove(finalized.receipt, alteredOriginal, at, signal), null)
+    const alteredClock = { ...finalized.verification, originals: finalized.verification.originals.map((original, index) => index
+      ? original : { ...original, qualification: { ...original.qualification, checkedAt: at.now } }) }
+    assert.equal(await issuer.reprove(finalized.receipt, alteredClock, at, signal), null)
+    assert.equal(await issuer.finalize(inspected.receipt, inspected.verification,
+      { ...decision, evaluatedAt: new Date(start + 11).toISOString() }, null, at, signal), null)
+    const aborted = new AbortController(); aborted.abort()
+    assert.equal(await issuer.reprove(finalized.receipt, finalized.verification, at, aborted.signal), null)
+
+    t.mock.timers.setTime(Date.parse('2026-11-15T00:00:00.000Z'))
+    assert.equal(await issuer.reprove(finalized.receipt, finalized.verification, at, signal), null, 'old legal date cannot survive a current-day change')
+    t.mock.timers.setTime(Date.parse(finalized.verification.validUntilExclusive))
+    const expired = hrs1Clock(new Date().toISOString(), challenge.binding.legalTimeZone); assert.ok(expired)
+    assert.equal(await issuer.reprove(finalized.receipt, finalized.verification, expired, signal), null, 'the original expiry never renews')
+    assert.equal(parseStarts, initialParses)
+  } finally { wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
+})
+
+test('AA/Bern source: reopen qualifies new native receipts even for identical stored bytes', async t => {
+  const start = Date.parse('2026-11-14T10:00:00.000Z')
+  t.mock.timers.enable({ apis: ['Date'], now: start })
+  const primary = { body: '<html><body>synthetic primary ambiguity</body></html>' }
+  const wire = syntheticWire(primary, { body: '<html><body>synthetic counter ambiguity</body></html>' })
+  let parseStarts = 0
+  const onStartTag = Parser.prototype.onStartTag
+  mock.method(Parser.prototype, 'onStartTag', function(this: Parser<DefaultTreeAdapterMap>, token: Parameters<typeof onStartTag>[0]) {
+    parseStarts++; return onStartTag.call(this, token)
+  })
+  try {
+    const signal = new AbortController().signal, challenge = sourceChallenge(new Date().toISOString())
+    const inspected = await issuer.inspect(challenge, signal); assert.ok(inspected)
+    const initialParses = parseStarts; assert.ok(initialParses > 0)
+    t.mock.timers.setTime(start + 1000)
+    const reopened = await issuer.reopen(inspected.verification, signal); assert.ok(reopened)
+    assert.notEqual(reopened.receipt, inspected.receipt); assert.equal(wire.calls, 4)
+    assert.ok(parseStarts > initialParses, 'new native custody must perform its own first qualification')
+    assert.deepEqual(reopened.verification, inspected.verification, 'historical timestamps and absolute expiry are unchanged')
+    const reopenedParses = parseStarts
+    const at = hrs1Clock(new Date().toISOString(), challenge.binding.legalTimeZone); assert.ok(at)
+    assert.deepEqual(await issuer.reprove(reopened.receipt, reopened.verification, at, signal), reopened.verification)
+    assert.equal(parseStarts, reopenedParses)
+    primary.body = '<html><body>changed actual primary bytes</body></html>'
+    t.mock.timers.setTime(start + 2000)
+    assert.equal(await issuer.reopen(inspected.verification, signal), null, 'a matching DTO cannot reuse old custody across a changed read')
+    assert.equal(wire.calls, 6); assert.equal(wire.active, 0)
+  } finally { wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
+})
+
+test('AA/Bern source: selected snapshot transfer has no fallback while the generic consumer still reads history', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-14T10:00:00.000Z') })
+  try {
+    for (const mode of ['generic', 'selected', 'missing', 'foreign', 'aborted'] as const) {
+      const wire = syntheticWire(), challenge = sourceChallenge(new Date().toISOString())
+      const program = selectedAaChDeQualification(); assert.ok(program)
+      let reads = 0, transfers = 0
+      const snapshot = { history: challenge.history,
+        head: { pointer: challenge.history.pointer, sourceDecisionRef: null, historyArchive: null },
+        stickyDecision: null, suppressionEpoch: 0, generation: 0, suppression: null }
+      const controller = new AbortController()
+      const consumer = createHrs1SourceConsumer({ binding: program.binding, registry: program.registry,
+        clock: () => challenge.request.clock,
+        fixed: async command => { reads++; assert.equal(command.operation, 'history'); return { status: 'snapshot', value: snapshot } },
+        ...(mode === 'generic' ? {} : { takeInitialHistory(request, signal) {
+          transfers++; assert.equal(signal, controller.signal); assert.deepEqual(request, challenge.request)
+          if (mode === 'aborted') controller.abort()
+          if (mode === 'missing') return null
+          return mode === 'foreign' ? { ...snapshot, history: { ...snapshot.history, decision: {} as never } } : snapshot
+        } }),
+      })
+      try {
+        const result = await consumer.evidence.inspect(challenge.request, controller.signal)
+        assert.equal(result.status, mode === 'generic' || mode === 'selected' ? 'inspected' : 'unavailable', mode)
+        assert.equal(reads, mode === 'generic' ? 1 : 0, 'selected failure must never start a replacement history read')
+        assert.equal(transfers, mode === 'generic' ? 0 : 1)
+        assert.equal(wire.calls, mode === 'generic' || mode === 'selected' ? 2 : 0)
+        assert.equal(wire.active, 0)
+      } finally { wire.releaseAll(); mock.restoreAll() }
+    }
+  } finally { t.mock.timers.reset() }
+})
+
+test('selected I1 composition binds its original signal before distinct owned history and source callbacks', async t => {
+  // Actual HRS/jobs/I1/issuer composition over finite SQL and HTTP doubles.
+  // The fixture deliberately remains ambiguous and stops before result commit.
+  const at = '2026-11-14T10:00:00.000Z'
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse(at) })
+  const program = selectedAaChDeQualification(); assert.ok(program)
+  const clock = hrs1Clock(at, program.legalTimeZone); assert.ok(clock)
+  const wire = syntheticWire(), outer = new AbortController()
+  const owned = createM04InvocationScope(createM04LanePool(), 30000, outer.signal); assert.ok(owned)
+  const callbacks: { parent: AbortSignal | undefined; child: AbortSignal }[] = []
+  const scope = { ...owned, callback: ((group, run, signal) => owned.callback(group, child => {
+    callbacks.push({ parent: signal, child }); return run(child)
+  }, signal)) as typeof owned.callback }
+  const events: string[] = [], historySignals: AbortSignal[] = []
+  const operations = new Map<string, V3QueueCommit>()
+  const records = new Map<string, { reference: unknown; text: string; outcome: unknown; audit: unknown }>()
+  let job: V3ManagedJobRecord | null = null, verification: unknown = null
+  const authority: M04Authority = {
+    async resolveCurrent() { events.push('method'); return { status: 'approved', receipt: Object.freeze({}) } },
+    async reproveAtCommit() { events.push('method'); return { status: 'current' } },
+  }
+  const fixed: M04FixedOperation = async operation => {
+    const q = JSON.parse(hrs1Canonical(operation)), b = q.body
+    let reply: unknown
+    if (q.operation === 'queue_confirm') {
+      const command = readM04Command(b.command); assert.ok(command)
+      const prior = operations.get(command.operationId)
+      reply = !prior ? { status: 'not_attempted' } : { status: 'committed', operationId: command.operationId,
+        commandKey: command.commandKey, commandText: command.commandText, envelopeText: hrs1Canonical(prior), record: prior.next }
+    } else if (q.operation === 'queue_read') reply = job ? { status: 'present', record: job } : { status: 'absent' }
+    else if (q.operation === 'queue_cas') {
+      const commit = b.commit as V3QueueCommit; job = commit.next; operations.set(commit.operationId, commit)
+      reply = { status: 'committed', record: job }
+    } else if (q.operation === 'execution_read') reply = { status: 'absent' }
+    else if (q.operation === 'execution_start') reply = { status: 'reserved', claim: b.claim, leasedJob: b.leasedJob,
+      attemptKey: 'execution-attempt:v3:' + 'e'.repeat(64), token: 'f'.repeat(64) }
+    else { assert.equal(q.operation, 'execution_prepare'); reply = { status: 'unavailable' } }
+    return reply as Awaited<ReturnType<M04FixedOperation>>
+  }
+  const config: M04Config = { binding: { ...program.method, methodDigest: program.binding.methodDigest, packageDigest: program.binding.packageDigest },
+    registry: program.registry, clock: () => clock, producer: AA_CH_DE_DELIVERY_PRODUCER,
+    methodExecutor: { async readCurrent() { assert.fail('standalone composition uses its supplied authority') } },
+    jobsExecutor: { async executeFixed() { assert.fail('standalone composition uses its supplied fixed port') } },
+    evidence: { async inspect() { assert.fail('selected source must be composed') }, async reprove() { assert.fail('selected source must be composed') } },
+    history: { async read() { assert.fail('selected history must be composed') }, async reprove() { assert.fail('selected history must be composed') } },
+    intakeExecutor: { async execute(statement, params) {
+      const binding = JSON.parse(String(params[0])), old = records.get(binding.operationId)
+      let reply: unknown
+      if (statement.includes('.capture_v1(')) {
+        const text = String(params[1]), parsed = readV3RetainableProposal(text, program.registry); assert.ok(parsed.ok)
+        const record = { reference: { binding, proposalDigest: parsed.value.digest, bytes: parsed.value.bytes }, text, outcome: null, audit: null }
+        records.set(binding.operationId, record); reply = { status: 'recorded', record }
+      } else if (statement.includes('.read_v1(')) { events.push('intake_read'); reply = old ? { status: 'recorded', record: old } : { status: 'not_attempted' } }
+      else if (statement.includes('.reserve_v1(')) {
+        events.push('reserve'); assert.ok(old)
+        reply = { status: 'acquired', generation: 1, leaseToken: '11111111-1111-4111-8111-111111111111',
+          acquiredAt: at, expiresAt: new Date(Date.parse(at) + Number(params[3])).toISOString(), record: old }
+      } else {
+        assert.ok(statement.includes('.finish_v1(') && old); events.push('finish')
+        old.outcome = JSON.parse(String(params[5])); old.audit = JSON.parse(String(params[6])); reply = { status: 'recorded' }
+      }
+      return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
+    } },
+  }
+  const challenge = sourceChallenge(at)
+  const snapshot = { history: challenge.history, head: { pointer: challenge.history.pointer, sourceDecisionRef: null, historyArchive: null },
+    stickyDecision: null, suppressionEpoch: 0, generation: 0, suppression: null }
+  const resultFixed: Hrs1FixedOperation = async (command, signal) => {
+    events.push(command.operation)
+    if (command.operation === 'history') { historySignals.push(signal); return { status: 'snapshot', value: snapshot } }
+    if (command.operation === 'attest') {
+      verification = command.body.verification
+      return { status: 'recorded', value: { reference: (verification as { reference: string }).reference, digest: hrs1Hash(verification) } }
+    }
+    assert.equal(command.operation, 'evidence'); assert.ok(verification)
+    return { status: 'inspected', value: verification }
+  }
+  const closed = { async executeFixed() { assert.fail('standalone composition uses its supplied HRS fixed port') } }
+  let assembly: ReturnType<typeof composeHrs1Invocation> | null = null
+  try {
+    assembly = composeHrs1Invocation({ config, binding: program.binding, scope, callDeadline: owned.deadline, authority, processingAuthority: authority,
+      fixed, processingFixed: fixed, resultFixed, processingResultFixed: resultFixed,
+      result: { binding: program.binding, writerExecutor: closed, readerExecutor: closed, verifierExecutor: closed,
+        ids: () => ({ jobId: 'job3_' + '4'.repeat(32), operationId: 'op3_' + '5'.repeat(32) }) } })
+    const queued = await assembly.enqueueRule({ context: program.context, method: program.method, factKind: 'requirement_effect',
+      researchReason: { status: 'missing' }, operationId: 'op3_' + '1'.repeat(32), jobId: 'job3_' + '2'.repeat(32), attemptLimit: 4 }, outer.signal)
+    assert.equal(queued.status, 'confirmed'); assert.ok(job)
+    const result = await assembly.workOnce({ operationId: 'op3_' + '3'.repeat(32), jobKey: (job as V3ManagedJobRecord & { jobKey: string }).jobKey,
+      leaseId: 'lease3_' + '4'.repeat(32), leaseMilliseconds: 30000 }, outer.signal)
+    await assembly.drain(); assert.notEqual(result.status, 'processed')
+    const reserveAt = events.indexOf('reserve'), finishAt = events.indexOf('finish'); assert.ok(reserveAt > 0 && finishAt > reserveAt)
+    assert.deepEqual(events.slice(reserveAt - 1, finishAt + 1),
+      ['intake_read', 'reserve', 'method', 'history', 'attest', 'evidence', 'history', 'method', 'finish'])
+    assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
+    assert.equal((records.values().next().value?.outcome as { status: string }).status, 'escalation')
+    const first = callbacks.findIndex(entry => entry.child === historySignals[0]); assert.ok(first >= 0)
+    const read = callbacks[first]!, inspect = callbacks[first + 1]!
+    assert.equal(read.parent, inspect.parent, 'actual I1 identity must survive both admission wrappers')
+    assert.notEqual(read.child, inspect.child, 'each real scope.callback creates its own child')
+    assert.notEqual(read.child, read.parent); assert.notEqual(inspect.child, inspect.parent)
+    assert.ok(read.parent?.aborted, 'the completed I1 coordinator closes its original signal')
+    assert.notEqual(historySignals[0], historySignals[1], 'final history remains its own fresh callback/read')
+  } finally { outer.abort(); await assembly?.drain(); await owned.finish(); wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
+})
 
 test('AA/Bern source: malformed requests and copied issuer receipts cannot create authority or perform I/O', async () => {
   const fail = () => { assert.fail('invalid issuer input attempted DNS/HTTP') }

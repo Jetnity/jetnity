@@ -87,6 +87,24 @@ test('job observations retain only the fixed actual importer/confirmation outcom
   assert.doesNotMatch(lines.join('\n'), /private-/)
 })
 
+test('monitor observations expose only finite statuses, never claim or queue custody', async () => {
+  const lines: string[] = []
+  let getters = 0
+  const custody = { get receipt() { getters++; throw Error('private-receipt') }, operationId: 'private-operation' }
+  await observe(async () => {
+    for (const [stage, status] of [['monitor_claim', 'claimed'], ['monitor_reconfirm', 'not_current'],
+      ['monitor_enqueue', 'confirmed'], ['monitor_enqueue', 'contended'], ['monitor_finish', 'finished']] as const) {
+      const value = { status, value: custody, record: custody }
+      assert.equal(await trace(stage, signal(), async () => value), value)
+    }
+  }, line => { lines.push(line) })
+  assert.equal(getters, 0)
+  assert.deepEqual(parsed(lines).filter(event => event.phase === 'settled').map(event => [event.stage, event.returnedStatus, event.returnedDetail]),
+    [['monitor_claim', 'claimed', null], ['monitor_reconfirm', 'not_current', null], ['monitor_enqueue', 'confirmed', null],
+      ['monitor_enqueue', 'contended', null], ['monitor_finish', 'finished', null]])
+  assert.doesNotMatch(lines.join('\n'), /private-|operationId|receipt|record/)
+})
+
 test('event count, line bytes and numeric counters stay bounded without limiting the work', async () => {
   const lines: string[] = []
   let work = 0

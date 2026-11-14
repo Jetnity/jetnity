@@ -6,6 +6,7 @@ import { performance } from 'node:perf_hooks'
 
 const STAGES = new Set([
   'method_precheck', 'tick', 'tick_discovery', 'tick_monitor', 'tick_research',
+  'monitor_claim', 'monitor_reconfirm', 'monitor_enqueue', 'monitor_finish',
   'i1_reserve', 'i1_prepare', 'i1_method_resolve', 'i1_history_read', 'i1_evidence_inspect',
   'i1_evidence_reproof', 'i1_history_reproof', 'i1_method_reproof', 'i1_finish',
   'source_attest', 'source_evidence_read', 'job_import', 'job_import_confirm', 'job_prepare',
@@ -16,6 +17,7 @@ const STATUSES = new Set([
   'snapshot', 'inspected', 'current', 'changed', 'prepared', 'escalation', 'quarantined',
   'recorded', 'unconfirmed', 'outcome_unknown', 'rejected', 'processed', 'worker_only',
   'complete', 'stopped', 'interrupted', 'invalid', 'not_due', 'backoff', 'exhausted', 'superseded',
+  'claimed', 'not_current', 'confirmed', 'finished', 'contended',
 ])
 // VERCEL_REGION is the function's actual region, never an edge-log inference.
 const REGIONS = new Set([
