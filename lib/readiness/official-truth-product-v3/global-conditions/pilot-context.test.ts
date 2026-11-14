@@ -143,7 +143,7 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       reviewed: { bytes: 11117, sha256: 'e4b9fa59e6b92e3c1f4ad8b395495e19c5227c3c47702547da17e8148d5a4df3' } },
     { path: '.github/workflows/ci.yml',
       previousReviewed: { bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' },
-      reviewed: { bytes: 23939, sha256: '7ebcde1fa3c9717ed7fbf555d0bace34a4da1457563de6fea2296437520400ae' } },
+      reviewed: { bytes: 24148, sha256: 'f72ce2b9637734b1a3301ec6447fe83e04a232cdf1ce974c54f3d201513bf9d0' } },
     { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts',
       previousReviewed: { bytes: 23971, sha256: '2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09' },
       reviewed: { bytes: 24762, sha256: '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08' } },

@@ -524,3 +524,9 @@ jobs:
       - name: Abgleich
         if: steps.zugang.outputs.vorhanden == 'ja'
         run: npm run auth:pruefen
+
+      - name: Dev-Guardstatus
+        if: steps.zugang.outputs.vorhanden == 'ja'
+        env:
+          SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
+        run: node scripts/official-truth-dev-guard-alarm.mjs
