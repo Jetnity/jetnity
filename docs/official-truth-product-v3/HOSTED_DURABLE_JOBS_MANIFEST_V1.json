@@ -143,9 +143,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-      "blob": "a00cd00d43c96cbf395f4a9be0206e84327d2074",
-      "bytes": 26001,
-      "sha256": "fd12704f2f32eb8764b1398568ad05721847e329d6f73d439c1bf0fd7a7707ef",
+      "blob": "9a94baa9d4eacf580d7db74270fd566dd088c749",
+      "bytes": 26575,
+      "sha256": "4c850932730693981e5038d2267c110f3e4c710714f950bfa4379f93c9735a66",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
