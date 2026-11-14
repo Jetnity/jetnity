@@ -185,6 +185,7 @@ export const HRS1_FIELDS = Object.freeze({
   projection: ['key'],
   projection_current: ['binding'],
   projection_batch: ['bindings'],
+  ch_de_snapshot: [],
   plan: [],
   plan_reprove: ['generation','target'],
   suppress: ['effect','generation','observationRef'],

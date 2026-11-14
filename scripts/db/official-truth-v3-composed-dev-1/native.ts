@@ -66,6 +66,12 @@ const PINS = [
     "sha256": "1bdf271bf078d1c46fbc0f510789129e361bfdabce7cdd6e03a27a21071f323b"
   },
   {
+    "path": "lib/readiness/official-truth-bounded-response-body.ts",
+    "bytes": 1278,
+    "blob": "783d802fff48a2969b86945515b159a513df76e9",
+    "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2"
+  },
+  {
     "path": "lib/readiness/official-truth-ch-de-application-pilot-1/context.ts",
     "bytes": 4402,
     "blob": "25dafee0f06353785972efafe0fc2db90183372b",
@@ -109,9 +115,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
-    "bytes": 23971,
-    "blob": "43036718191c3a733aaeaca1fde9f499174cee53",
-    "sha256": "2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09"
+    "bytes": 24762,
+    "blob": "5659291eb3534cb71f492253ec4c9ea9e5f75563",
+    "sha256": "9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
@@ -139,9 +145,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "bytes": 25086,
-    "blob": "4c84ecdec8cd82dedf21d3decb7cae6d791fedc5",
-    "sha256": "f9edce307a52cca4860c820adbc8c356fa3637e209dc6de4fe743070fbc69b34"
+    "bytes": 26001,
+    "blob": "a00cd00d43c96cbf395f4a9be0206e84327d2074",
+    "sha256": "fd12704f2f32eb8764b1398568ad05721847e329d6f73d439c1bf0fd7a7707ef"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
@@ -163,9 +169,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "bytes": 34329,
-    "blob": "5a92e60cec3587fdd3f18fb37f87a17e247b7305",
-    "sha256": "e94a73a55a5a1c64441874a64e60e50ac9daf2f4ded243d9ae9f59ab435d1b2c"
+    "bytes": 34548,
+    "blob": "20b3044fd54d3b2eda7d8d7a7bc4538e52b6d43e",
+    "sha256": "1c2bd3dbc7acb4fd1562f006e393aefc3d786de9b18fe947fcaf9fec0baf60f0"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -204,6 +210,78 @@ const PINS = [
     "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e"
   },
   {
+    "path": "lib/readiness/official-truth-product-v3/result/ch-de-import-frame.ts",
+    "bytes": 3558,
+    "blob": "96dc9385d64c25be6903a2aee067d145fcc9900b",
+    "sha256": "e7ff4bb664a6c505929009764a15f0863e6af5beaf4342ae18a0c179d60b8949"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
+    "bytes": 12460,
+    "blob": "e0dc387ec561294aabe00e3cc96e498e5b682906",
+    "sha256": "3357e94c43e44eef8d4b502ac5d11431eee72375cd6f87ca530a0fe26b963b4c"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
+    "bytes": 17401,
+    "blob": "01baa81e3d37631a7153a1ca7d50c2ebd7015473",
+    "sha256": "70748ee96fb76f96a44e01d8680a384c1580c9b48bf579c674507b3feb606689"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
+    "bytes": 23896,
+    "blob": "7a11fc86cf8553f6ec792065a8a19a201237377c",
+    "sha256": "80958da5e5cacfc74f88c176b9e99266354efd9f3d68464afed02edfa163da8c"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
+    "bytes": 24452,
+    "blob": "36a7860575572e18fb2cc427518ee931370373b6",
+    "sha256": "a8a994e8c7033162f940eeac16396e4796f1605ab8278cdcf745162bcbc9ca42"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
+    "bytes": 7112,
+    "blob": "6942ca2a99b2a89deb03c570d0672083bece9e8e",
+    "sha256": "6a15a6327d745b677979ceb30752066e871094f0a84a51027b00c0cfc74cb772"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
+    "bytes": 19120,
+    "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
+    "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-definition.ts",
+    "bytes": 3109,
+    "blob": "840f21c99b9f4a35e78c21281046e5743835842a",
+    "sha256": "f70dc95feabec51553faffdb517c96d36ac87e4154fc1d41a6741a3654a8ce94"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts",
+    "bytes": 25409,
+    "blob": "5b4ec00a5c863a689d01598ee4a05b90e3b61628",
+    "sha256": "4b750c5370ec53b5a44d218c149309ed715846032965916b67309e69cf20f442"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts",
+    "bytes": 13633,
+    "blob": "d816e3b3c6168936d8f84f579207b87514ed834f",
+    "sha256": "1522707c63b62ca2f50e4de60c3751ce4eef166fffd93e7bcf37424c8bf04c26"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
+    "bytes": 8412,
+    "blob": "2335a1c2a7f0a5114ec5c467f5d4700d5e85c69e",
+    "sha256": "b634cf95892c6209d974b0adf4c778c889313c5130c8eec4bc921611951b0c26"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+    "bytes": 11290,
+    "blob": "3460c7a0bd5744ceabc8dcda7e1c7108e79b13f2",
+    "sha256": "e56733466881e26a0368838d7c69419479b2122322d72d144c727f124654a8a5"
+  },
+  {
     "path": "lib/readiness/official-truth-product-v3/storage/intake-contract.ts",
     "bytes": 3840,
     "blob": "0e2e4947b03f4f444691ed8177dcc3ca98a71b69",
@@ -240,6 +318,12 @@ const PINS = [
     "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596"
   },
   {
+    "path": "lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts",
+    "bytes": 6529,
+    "blob": "777e7f65b2ccaf0ea0c41f5e5623725cf9b1c93b",
+    "sha256": "df4feb379c62cc36f95d14ff759dfc7d114f09903e5eb76ed2ef3ea3cb73d00b"
+  },
+  {
     "path": "lib/readiness/official-truth-product-v3/visitor/query.ts",
     "bytes": 20341,
     "blob": "010691537ad00c217a2599a5878a6dc4c3bb9b6f",
@@ -252,6 +336,12 @@ const PINS = [
     "sha256": "988a958416d494dc8b29a098e390269650f8a78afcd222b8f288b81cc4b554ce"
   },
   {
+    "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
+    "bytes": 17726,
+    "blob": "bd995580bee6adb6b1a213b17a6001caa8f0aeff",
+    "sha256": "aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f"
+  },
+  {
     "path": "lib/readiness/official-truth-source-fingerprint-v2.ts",
     "bytes": 5156,
     "blob": "72d324d019625c5028be8f47763fdd0f6ffe38e5",
@@ -262,6 +352,12 @@ const PINS = [
     "bytes": 51757,
     "blob": "9f407dca147f8ba41280133dd64c7198c82c10a7",
     "sha256": "a8ef77dc8f0fb25a7bcf437c586683783c6c19c0510b1f6c8d07009a470cbb62"
+  },
+  {
+    "path": "lib/readiness/official-truth-v3-composed-dev-1.test.ts",
+    "bytes": 347,
+    "blob": "655f8e5e1dbbf745b1304888bd6e1196f9edd9d4",
+    "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352"
   },
   {
     "path": "lib/readiness/official.ts",
@@ -318,6 +414,12 @@ const PINS = [
     "sha256": "02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d"
   },
   {
+    "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
+    "bytes": 10807,
+    "blob": "4de6082b084cc24538733e7232a59778edb36a1f",
+    "sha256": "e0cba309cff43eb44faf0ec88b61c3ab6bba38db7270f22004917bf248bb96a2"
+  },
+  {
     "path": "scripts/db/official-truth-v3-durable-jobs-1/fixtures.ts",
     "bytes": 6321,
     "blob": "5280246b707f506c5d9d83929562965faea9279c",
@@ -328,78 +430,6 @@ const PINS = [
     "bytes": 13389,
     "blob": "66e7dd443c51b7db8d90d99c8b6422d1226ff237",
     "sha256": "5c34ce52023d7840e09d004d9c577a2bd4dc78efb3171e7e7b8aff07b0cf7b57"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
-    "bytes": 6536,
-    "blob": "eaa35fd57eee7b7c86de91dd77e96ef263f61d8b",
-    "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
-    "bytes": 13880,
-    "blob": "30a4731214a6bc7e4508ee0183027903d550d51d",
-    "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc"
-  },
-  {
-    "path": "types/trips.ts",
-    "bytes": 17666,
-    "blob": "15b8506a5c005bb7a5afcc466bc26881e3083d6d",
-    "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4"
-  },
-  {
-    "path": "scripts/db/profile-authority-integrity-1/install-candidate.sql",
-    "bytes": 36608,
-    "blob": "1b7e36b8100e5425a833d7c44189ab6632611308",
-    "sha256": "2dda7f1bd523e5046bcc72f352a876133d1c7ed01994eb7687c6d1c9d3218774"
-  },
-  {
-    "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
-    "bytes": 38527,
-    "blob": "bd32f072ae7d8edaee67297a26adab9c3a886d73",
-    "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
-    "bytes": 10945,
-    "blob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
-    "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
-    "bytes": 69705,
-    "blob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
-    "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
-    "bytes": 37227,
-    "blob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
-    "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
-    "bytes": 124354,
-    "blob": "faac74e6ab56072f01d941d24a8be28aa7895d94",
-    "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
-    "bytes": 43309,
-    "blob": "fc902540cea4c34783bdedbcde2be8a77a9fe672",
-    "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
-    "bytes": 53457,
-    "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716",
-    "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c"
-  },
-  {
-    "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
-    "bytes": 82633,
-    "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
-    "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
   },
   {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
@@ -414,88 +444,76 @@ const PINS = [
     "sha256": "c296c722bccaa3083e74a9300bd09aa75541188a5a9fd03c46b487a6367263af"
   },
   {
-    "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",
-    "bytes": 10807,
-    "blob": "4de6082b084cc24538733e7232a59778edb36a1f",
-    "sha256": "e0cba309cff43eb44faf0ec88b61c3ab6bba38db7270f22004917bf248bb96a2"
+    "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+    "bytes": 124354,
+    "blob": "faac74e6ab56072f01d941d24a8be28aa7895d94",
+    "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"
   },
   {
-    "path": "lib/readiness/official-truth-v3-composed-dev-1.test.ts",
-    "bytes": 347,
-    "blob": "655f8e5e1dbbf745b1304888bd6e1196f9edd9d4",
-    "sha256": "dec04dcd65b21fa2c60ced3f99f16006580fbb5f00285914e554feb5d396f352"
+    "path": "scripts/db/official-truth-v3-hosted-intake-store-1/recovery-candidate.sql",
+    "bytes": 43309,
+    "blob": "fc902540cea4c34783bdedbcde2be8a77a9fe672",
+    "sha256": "ce7159cb345285b6f9877d36acc8d3f3b321f11852eb373163498524da3941db"
   },
   {
-    "path": "lib/readiness/official-truth-bounded-response-body.ts",
-    "bytes": 1278,
-    "blob": "783d802fff48a2969b86945515b159a513df76e9",
-    "sha256": "186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2"
+    "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+    "bytes": 69705,
+    "blob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+    "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
-    "bytes": 19120,
-    "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
-    "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+    "path": "scripts/db/official-truth-v3-hosted-method-authority-1/recovery-candidate.sql",
+    "bytes": 37227,
+    "blob": "477c646b4c886f4532d1f938cdf9ce2ba95711a9",
+    "sha256": "c8f6a40f72b5f36d0a0808e6fe0c7444bdb93fce3cbb6c5f580b14daeb19d13d"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-definition.ts",
-    "bytes": 3109,
-    "blob": "840f21c99b9f4a35e78c21281046e5743835842a",
-    "sha256": "f70dc95feabec51553faffdb517c96d36ac87e4154fc1d41a6741a3654a8ce94"
+    "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+    "bytes": 53457,
+    "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716",
+    "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts",
-    "bytes": 25409,
-    "blob": "5b4ec00a5c863a689d01598ee4a05b90e3b61628",
-    "sha256": "4b750c5370ec53b5a44d218c149309ed715846032965916b67309e69cf20f442"
+    "path": "scripts/db/official-truth-v3-human-method-transport-1/recovery-candidate.sql",
+    "bytes": 82633,
+    "sha256": "c81bc8f70b55353f6f5ed974cf387c07cf807a0ccbadbcb0fcaa8374606ea459",
+    "blob": "e65d8438a798a33ff5ea193b168e5b1b4710618a"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts",
-    "bytes": 13633,
-    "blob": "d816e3b3c6168936d8f84f579207b87514ed834f",
-    "sha256": "1522707c63b62ca2f50e4de60c3751ce4eef166fffd93e7bcf37424c8bf04c26"
+    "path": "scripts/db/official-truth-v3-method-authority-1/auth-fixture.ts",
+    "bytes": 6536,
+    "blob": "eaa35fd57eee7b7c86de91dd77e96ef263f61d8b",
+    "sha256": "cb54b668c206c5b7d26f423ca679701070bb39a7fbe43771a9c04ad232322a58"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts",
-    "bytes": 8412,
-    "blob": "2335a1c2a7f0a5114ec5c467f5d4700d5e85c69e",
-    "sha256": "b634cf95892c6209d974b0adf4c778c889313c5130c8eec4bc921611951b0c26"
+    "path": "scripts/db/official-truth-v3-method-authority-1/native-adapter.ts",
+    "bytes": 13880,
+    "blob": "30a4731214a6bc7e4508ee0183027903d550d51d",
+    "sha256": "9175bc8a52b79dc40783467949f6fb8f5f81d2eb90894af89ddf3bb77d321dcc"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
-    "bytes": 11290,
-    "blob": "3460c7a0bd5744ceabc8dcda7e1c7108e79b13f2",
-    "sha256": "e56733466881e26a0368838d7c69419479b2122322d72d144c727f124654a8a5"
+    "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+    "bytes": 10945,
+    "blob": "9a8144e27405f93b9c0e5d003923efe8883bb4b4",
+    "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
   },
   {
-    "path": "lib/readiness/official-truth-retrieval-physical-internal.ts",
-    "bytes": 17726,
-    "blob": "bd995580bee6adb6b1a213b17a6001caa8f0aeff",
-    "sha256": "aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f"
+    "path": "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+    "bytes": 36608,
+    "blob": "1b7e36b8100e5425a833d7c44189ab6632611308",
+    "sha256": "2dda7f1bd523e5046bcc72f352a876133d1c7ed01994eb7687c6d1c9d3218774"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-    "bytes": 11424,
-    "blob": "45b3a6f934ce73122f09d65aad6ee29cef6bd837",
-    "sha256": "4cbfd123a92d70422f5706ef3a36778662d58b90bb8ae8c10f03b87ebf37b7b0"
+    "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+    "bytes": 38527,
+    "blob": "bd32f072ae7d8edaee67297a26adab9c3a886d73",
+    "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8"
   },
   {
-    "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
-    "bytes": 17379,
-    "blob": "aa9d423625c58207e65448e5d1aa5e12bbd78092",
-    "sha256": "352d3fed1723f7148e07d68f07e809ade680bf2c47e4019791b7924853b1d576"
-  },
-  {
-    "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
-    "bytes": 23896,
-    "blob": "7a11fc86cf8553f6ec792065a8a19a201237377c",
-    "sha256": "80958da5e5cacfc74f88c176b9e99266354efd9f3d68464afed02edfa163da8c"
-  },
-  {
-    "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "bytes": 24113,
-    "blob": "268743bdd378583a0745fac5b0c5defe096a4138",
-    "sha256": "d17f92ece2feec486a6a82988977d8a0d60efa0c201effca82377235c40fd038"
+    "path": "types/trips.ts",
+    "bytes": 17666,
+    "blob": "15b8506a5c005bb7a5afcc466bc26881e3083d6d",
+    "sha256": "cdf7a10fa6060cc732e923c7e7239dafe58f26e1e79cd057e62ea14ebefcf3d4"
   }
 ] as const
 function pinnedFiles(): ReadonlyMap<string, string> {

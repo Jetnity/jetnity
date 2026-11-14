@@ -23,7 +23,7 @@ const M04_SQL = `SELECT official_v3_jobs_api.execute_v1(
   $1::text,$2::text,$3::integer,$4::text,
   $5::text,NULLIF($6::text,'')::integer,$7::integer,$8::text) AS result`
 const M04_OPERATIONS = ['queue_read','queue_confirm','queue_cas','execution_read','execution_start','execution_prepare'] as const
-const PUBLIC_READS = ['coverage','projection','projection_current','projection_batch'] as const
+const PUBLIC_READS = ['coverage','projection','projection_current','projection_batch','ch_de_snapshot'] as const
 const IDENTITY_SQL = `SELECT a.pid::text AS pid,a.backend_start::text AS birth,
  session_user::text AS login,current_user::text AS role,a.datid::text AS db_oid,a.usesysid::text AS login_oid,
  a.application_name::text AS application_name,(s.ssl IS TRUE)::text AS backend_tls,

@@ -15,7 +15,7 @@ test('S1 SQL retention shape pins actual canonical reader sources, not just its 
   const hashes: Record<string, string> = {
     'lib/readiness/official-truth-product-v3/contract.ts': '7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c',
     'lib/readiness/official-truth-product-v3/import/interface.ts': 'd98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6',
-    'lib/readiness/official-truth-product-v3/import/service-server.ts': '2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09',
+    'lib/readiness/official-truth-product-v3/import/service-server.ts': '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08',
     'lib/readiness/rule-claims.ts': '52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a',
     'lib/readiness/regulierungs-anwendbarkeit.ts': '5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f',
     'lib/readiness/temporal.ts': '768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8',

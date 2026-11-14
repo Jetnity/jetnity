@@ -16,6 +16,11 @@
       "regions": [
         "fra1"
       ]
+    },
+    "app/api/internal/readiness/ch-de-owner-guard/route.ts": {
+      "regions": [
+        "fra1"
+      ]
     }
   }
 }

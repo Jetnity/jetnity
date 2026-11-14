@@ -6,6 +6,8 @@ import type { M04Config, M04Facade, M04Authority, M04FixedOperation } from '../j
 import { composeM04ResultInvocation } from '../jobs/composition'
 import type { createM04InvocationScope } from '../jobs/owned-scope'
 import { createV3VisitorQuery, type V3VisitorQueryResult } from '../visitor/query'
+import { createChDeSnapshotQuery } from '../visitor/ch-de-snapshot'
+import { createChDeImportFrame } from './ch-de-import-frame'
 import { runV3SourceMonitorOnce, type V3MonitorOutcome } from '../monitor/monitor'
 import { createHrs1SourceConsumer, type Hrs1SourceConsumer } from './source-proof'
 import { createHrs1ResultPorts, type Hrs1ResultPorts } from './postgres'
@@ -75,6 +77,14 @@ export function composeHrs1Invocation(input: Readonly<{
     authority: input.authority, processingAuthority: input.processingAuthority,
     fixed: input.fixed, processingFixed: input.processingFixed,
     result: { outer, processing, projectionMaxAgeMilliseconds: input.binding.projectionMaxAgeMilliseconds,
+      openProcessingImport(job, signal) {
+        const frame = createChDeImportFrame({ binding: input.binding, job, signal,
+          authority: input.processingAuthority, fixed: input.processingResultFixed })
+        if (!frame) return null
+        const local = ports(frame.fixed)
+        return Object.freeze({ methodAuthority: frame.authority, evidence: local.evidence,
+          history: local.history, close: frame.close })
+      },
       callDeadline: Math.min(input.scope.deadline, input.callDeadline) } })
   const ruleQueue = ownMethods(jobs.ruleQueue), discoveryQueue = ownMethods(jobs.discoveryQueue)
   function visitorQueue(selected: typeof ruleQueue) {
@@ -88,6 +98,9 @@ export function composeHrs1Invocation(input: Readonly<{
   const query = createV3VisitorQuery({ ...outer.visitor, registry: input.config.registry,
     method: { methodId: input.binding.methodId, revision: input.binding.revision },
     methodAuthority: input.authority, clock: input.config.clock, queue: visitorQueue(ruleQueue), discoveryQueue: visitorQueue(discoveryQueue) })
+  const selectedQuery = createChDeSnapshotQuery({ binding: input.binding, registry: input.config.registry,
+    clock: input.config.clock, authority: input.authority, fixed: input.resultFixed })
+  let usedSelectedQuery = false
   function identifiers() {
     try {
       const v = ownRecord(input.result.ids(), ['jobId','operationId'])
@@ -98,7 +111,11 @@ export function composeHrs1Invocation(input: Readonly<{
   }
   return Object.freeze({
     ...jobs.facade,
-    query: (raw: unknown, signal?: AbortSignal) => owned(() => query(raw, signal)),
+    query: (raw: unknown, signal?: AbortSignal) => owned(() => {
+      usedSelectedQuery = selectedQuery.matches(raw)
+      return usedSelectedQuery ? selectedQuery.query(raw, signal ?? input.scope.signal) : query(raw, signal)
+    }),
+    queryCurrent: (value: unknown) => !usedSelectedQuery || selectedQuery.current(value),
     async monitorOnce(signal?: AbortSignal): Promise<Hrs1MonitorResult> {
       const activeSignal = signal ?? input.scope.signal, initial = identifiers()
       if (!initial || activeSignal.aborted) return { status: 'unavailable', outcomes: [] }

@@ -180,6 +180,8 @@ test('PG transport offline contracts and reserved terminal ownership', { timeout
     assert.deepEqual(await port.verifier.executeFixed(hrs('history', { contextKey: 'x', factKind: 'requirement_effect' }, 'read'), signal()), { status: 'unavailable' })
     assert.deepEqual(await port.reader.executeFixed(hrs('head', { contextKey: 'x', factKind: 'requirement_effect' }, 'read'), signal()), { status: 'unavailable' })
     assert.deepEqual(await port.writer.executeFixed(hrs('coverage', { destinationCountryCode: 'DE', citizenshipCountryCode: 'CH' }, 'read'), signal()), { status: 'unavailable' })
+    assert.deepEqual(await port.writer.executeFixed(hrs('ch_de_snapshot', {}, 'read'), signal()), { status: 'unavailable' })
+    assert.deepEqual(await port.verifier.executeFixed(hrs('ch_de_snapshot', {}, 'read'), signal()), { status: 'unavailable' })
     assert.equal(count, 0)
   })
   await t.test('MA1/S1 require the shared cap before physical acquisition', async () => {
@@ -205,6 +207,12 @@ test('PG transport offline contracts and reserved terminal ownership', { timeout
     assert.deepEqual(await port.intake.execute(intakeStatement, intakeParameters, signal(), expired), { status: 'unavailable' })
     assert.deepEqual(await port.method.readCurrent(request, signal(), expired), { status: 'unavailable' })
     assert.equal(count, before)
+  })
+  await t.test('fixed CH→DE snapshot uses only the existing reader physical pair and joins it', async () => {
+    const before = count
+    assert.equal((await port.reader.executeFixed(hrs('ch_de_snapshot', {}, 'read'), signal())).status, 'acknowledged')
+    assert.equal(count, before + 1); assert.equal(acquired.at(-1)!.kind, 'reader')
+    assert.equal(state().reader, 'idle'); assert.equal(last!.stats().effectCalls, 1)
   })
   await t.test('S1 cannot renew the shared cap while COMMIT is awaiting its real reply', async () => {
     const commitGate = deferred(); options = { commitGate }

@@ -62,9 +62,10 @@ const beanstandungen = []
 // Der feste Dev-Import muss Ziel/Request vor Auth-I/O prüfen. Er liegt deshalb
 // ausserhalb des Proxy-Admin-Scopes, benutzt aber denselben zentralen Gate.
 const ownerImportRoute = 'app/api/internal/readiness/ch-de-owner-import/route.ts'
-const ownerImportPfad = join(WURZEL, ownerImportRoute)
+const ownerGuardRoute = 'app/api/internal/readiness/ch-de-owner-guard/route.ts'
+const festeOwnerPfade = [ownerImportRoute, ownerGuardRoute].map(path => join(WURZEL, path))
 
-for (const datei of [...routenDateien(API_ADMIN), ownerImportPfad]) {
+for (const datei of [...routenDateien(API_ADMIN), ...festeOwnerPfade]) {
   const anzeige = relative(WURZEL, datei)
   let quelle
   try { quelle = readFileSync(datei, 'utf8') }
@@ -77,7 +78,7 @@ for (const datei of [...routenDateien(API_ADMIN), ownerImportPfad]) {
 
   const vorhandene = HTTP_METHODEN.filter(methode => handlerKörper(quelle, methode) !== null)
 
-  if (datei === ownerImportPfad && (vorhandene.length !== 1 || vorhandene[0] !== 'POST')) {
+  if (festeOwnerPfade.includes(datei) && (vorhandene.length !== 1 || vorhandene[0] !== 'POST')) {
     beanstandungen.push(`${anzeige}: ausschliesslich der geschützte POST ist erlaubt`)
     continue
   }

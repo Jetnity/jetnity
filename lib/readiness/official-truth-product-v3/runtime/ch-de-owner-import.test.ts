@@ -375,6 +375,10 @@ test('existing API inventory fails closed for the exact manual import route', ()
   try {
     mkdirSync(dirname(routePath), { recursive: true }); mkdirSync(dirname(acceptedPath), { recursive: true })
     writeFileSync(acceptedPath, readFileSync(new URL('../../../../' + acceptedRelative, import.meta.url)))
+    const guardRelative = 'app/api/internal/readiness/ch-de-owner-guard/route.ts'
+    const guardPath = join(root, guardRelative)
+    const guardSource = readFileSync(new URL('../../../../' + guardRelative, import.meta.url), 'utf8')
+    mkdirSync(dirname(guardPath), { recursive: true }); writeFileSync(guardPath, guardSource)
     function run() { return spawnSync(process.execPath, [script], { cwd: root, encoding: 'utf8', timeout: 5_000 }) }
     writeFileSync(routePath, original)
     const allowed = run(); assert.equal(allowed.status, 0, allowed.stderr)
@@ -386,6 +390,19 @@ test('existing API inventory fails closed for the exact manual import route', ()
     ] as const) {
       if (source === null) rmSync(routePath)
       else { assert.notEqual(source, original); writeFileSync(routePath, source) }
+      const denied = run()
+      assert.equal(denied.status, 1, denied.stderr)
+      assert.ok(denied.stderr.includes(expected), denied.stderr)
+    }
+    writeFileSync(routePath, original)
+    for (const [source, expected] of [
+      [null, 'geschützte Route fehlt'],
+      [guardSource.replace('await requireAdminApi(', 'await missingGate('), 'ruft requireAdminApi() nicht auf'],
+      [guardSource.replace('if (!gate.ok)', 'if (gate.ok)'), 'wertet das Ergebnis von requireAdminApi() nicht aus'],
+      [guardSource.replace('export async function POST(', 'export async function GET('), 'ausschliesslich der geschützte POST'],
+    ] as const) {
+      if (source === null) rmSync(guardPath)
+      else { assert.notEqual(source, guardSource); writeFileSync(guardPath, source) }
       const denied = run()
       assert.equal(denied.status, 1, denied.stderr)
       assert.ok(denied.stderr.includes(expected), denied.stderr)

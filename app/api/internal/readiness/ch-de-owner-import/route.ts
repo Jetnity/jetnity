@@ -6,6 +6,7 @@ import { HUMAN_METHOD_DEV_URL, humanRequestHeadersAllowed } from '@/lib/readines
 import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
 import { checkOfficialTruthV3ChDeMethod } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-server'
 import { runOfficialTruthV3ChDeTick, type ChDeTickReport } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
+import { withDevImportDiagnostics, traceDevDiagnosticStage } from '@/lib/readiness/official-truth-product-v3/runtime/dev-diagnostics'
 import {
   CH_DE_OWNER_IMPORT_BODY, CH_DE_OWNER_IMPORT_PATH, CH_DE_OWNER_IMPORT_REQUEST_BYTES,
   type ChDeOwnerImportOutcome,
@@ -98,11 +99,14 @@ export async function POST(request: Request) {
       return answer('access_required', 403)
     }
     if (request.signal.aborted) return answer('unavailable', 503)
-    const approval = await checkOfficialTruthV3ChDeMethod(request.signal)
-    if (request.signal.aborted || approval !== 'approved') return answer(approval === 'not_approved' ? 'not_approved' : 'unavailable', approval === 'not_approved' ? 409 : 503)
-    tickStarted = true
-    const report = await runOfficialTruthV3ChDeTick(request.signal)
-    if (request.signal.aborted) return answer('unresolved', 503)
-    return tickAnswer(report)
+    return await withDevImportDiagnostics(async () => {
+      const approval = await traceDevDiagnosticStage('method_precheck', request.signal,
+        () => checkOfficialTruthV3ChDeMethod(request.signal))
+      if (request.signal.aborted || approval !== 'approved') return answer(approval === 'not_approved' ? 'not_approved' : 'unavailable', approval === 'not_approved' ? 409 : 503)
+      tickStarted = true
+      const report = await traceDevDiagnosticStage('tick', request.signal, () => runOfficialTruthV3ChDeTick(request.signal))
+      if (request.signal.aborted) return answer('unresolved', 503)
+      return tickAnswer(report)
+    })
   } catch { return answer(tickStarted ? 'unresolved' : 'unavailable', 503) }
 }

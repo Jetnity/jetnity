@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 
 // Temporary Dev acceptance only; remove this hook and its exact importer permit
 // in the protection package before Production. Each matching build runs it again.
@@ -150,7 +151,7 @@ async function main() {
 
   stage = 'jobs_queue_read_probe';
   if (blocked || !pairPassed.jobs) {
-    record({ check: stage, status: blocked ? 'SKIPPED_REMOTE_UNKNOWN' : 'SKIPPED_JOBS_LOGIN_NOT_PROVED' });
+    record({ check: stage, scope: 'TRANSPORT_CATALOG_CHECK_ONLY', status: blocked ? 'SKIPPED_REMOTE_UNKNOWN' : 'SKIPPED_JOBS_LOGIN_NOT_PROVED' });
   } else {
     const deadline = performance.now() + 5000, abort = new AbortController();
     const timer = setTimeout(() => abort.abort(), Math.max(0, deadline - performance.now()));
@@ -159,9 +160,16 @@ async function main() {
       const identity = createV3WorkIdentity({ context: program.context, method: program.method,
         factKind: 'requirement_effect', researchReason: { status: 'missing' } });
       need(identity.ok);
+      // Reserved read-only diagnostic identity. This checks the existing
+      // transport/catalog contract; it says nothing about the actual CH→DE
+      // job, guard freshness or whether a source import may start. The checker
+      // has no enqueue path. Any non-absent response still fails closed.
+      const diagnosticKey = 'research-job:v3:' + createHash('sha256')
+        .update('jetnity:official-truth:dev:transport-catalog-check-only:v1').digest('hex');
+      need(diagnosticKey !== identity.value.jobKey);
       const { methodId, revision, methodDigest, packageDigest } = program.binding;
       const reply = await V3_NODE_POSTGRES_EXECUTORS.jobs.executeFixed({
-        operationText: hrs1Canonical({ operation: 'queue_read', body: { jobKey: identity.value.jobKey, continuation: null }, phase: 'probe' }),
+        operationText: hrs1Canonical({ operation: 'queue_read', body: { jobKey: diagnosticKey, continuation: null }, phase: 'probe' }),
         methodId, revision, methodDigest, packageDigest, epoch: null, budget: { deadline },
         notAfter: new Date(Date.now() + Math.max(0, Math.floor(deadline - performance.now()))).toISOString(),
       }, abort.signal);
@@ -176,7 +184,7 @@ async function main() {
     const terminal = readV3NodePostgresTerminalState();
     const terminalIdle = Object.values(terminal).every(phase => phase === 'idle');
     blocked ||= remoteUnknown || !terminalIdle || !returned;
-    record({ check: stage, status: acknowledged && absent && terminalIdle ? 'PASS' : 'FAIL',
+    record({ check: stage, scope: 'TRANSPORT_CATALOG_CHECK_ONLY', status: acknowledged && absent && terminalIdle ? 'PASS' : 'FAIL',
       acknowledged, absent, terminalIdle, blockedRemoteUnknown: blocked, terminal });
   }
 

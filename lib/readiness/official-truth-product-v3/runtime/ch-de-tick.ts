@@ -4,6 +4,7 @@ import { performance } from 'node:perf_hooks'
 import type { Hrs1Facade, Hrs1MonitorResult } from '../result/composition'
 import { HRS1_LIMITS } from '../result/contract'
 import { officialTruthV3ChDeRuntime } from './ch-de-server'
+import { traceDevDiagnosticStage, withDevDiagnosticBudget } from './dev-diagnostics'
 
 type WorkResult = Awaited<ReturnType<Hrs1Facade['workSelectedOnce']>>
 type WorkStatus = 'skipped' | 'processed' | 'not_due' | 'backoff' | 'exhausted' | 'superseded'
@@ -110,7 +111,9 @@ export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<C
     if (interrupted()) return report('interrupted')
     calls.started++
     let discovery: WorkResult
-    try { discovery = await facade.workSelectedOnce('combination_discovery', controller.signal, budget) }
+    try { discovery = await withDevDiagnosticBudget('tick', start, deadline, () =>
+      traceDevDiagnosticStage('tick_discovery', controller.signal,
+        () => facade.workSelectedOnce('combination_discovery', controller.signal, budget))) }
     finally { calls.settled++ }
     const discovered = countWork(discovery, counts); stages.discovery = discovered.status
     if (interrupted()) return report('interrupted')
@@ -118,7 +121,8 @@ export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<C
 
     calls.started++
     let monitored: Hrs1MonitorResult
-    try { monitored = await facade.monitorOnce(controller.signal, budget) }
+    try { monitored = await withDevDiagnosticBudget('tick', start, deadline, () =>
+      traceDevDiagnosticStage('tick_monitor', controller.signal, () => facade.monitorOnce(controller.signal, budget))) }
     finally { calls.settled++ }
     stages.monitor = monitored.status
     const proceed = countMonitor(monitored, counts)
@@ -127,7 +131,9 @@ export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<C
 
     calls.started++
     let research: WorkResult
-    try { research = await facade.workSelectedOnce('rule_research', controller.signal, budget) }
+    try { research = await withDevDiagnosticBudget('tick', start, deadline, () =>
+      traceDevDiagnosticStage('tick_research', controller.signal,
+        () => facade.workSelectedOnce('rule_research', controller.signal, budget))) }
     finally { calls.settled++ }
     const researched = countWork(research, counts); stages.research = researched.status
     if (interrupted()) return report('interrupted')

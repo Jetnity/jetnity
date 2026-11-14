@@ -331,6 +331,7 @@ const reviewedFoundationImports = new Map<string, readonly string[]>([
   // HRS/A3 and the reviewed AA/Bern program: exact data-shape/freeze helpers only.
   // These imports do not issue custody, approval, live entry or source authority.
   ['lib/readiness/official-truth-product-v3/result/composition.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  ['lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
   ['lib/readiness/official-truth-product-v3/result/contract.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
   ['lib/readiness/official-truth-product-v3/result/postgres.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
   ['lib/readiness/official-truth-product-v3/result/source-proof.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
@@ -513,6 +514,7 @@ test('HRS/A3 exact pure consumers retain path, module and complete-name-set deni
   const reviewed: readonly (readonly [string, readonly string[]])[] = [
     ['lib/readiness/official-truth-product-v3/source/aa-ch-de-delivery-producer.ts', ['immutable', 'ownRecord']],
     ['lib/readiness/official-truth-product-v3/result/composition.ts', ['ownRecord']],
+    ['lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts', ['ownRecord']],
     ['lib/readiness/official-truth-product-v3/result/contract.ts', ['ownRecord', 'immutable']],
     ['lib/readiness/official-truth-product-v3/result/postgres.ts', ['ownRecord', 'immutable']],
     ['lib/readiness/official-truth-product-v3/result/source-proof.ts', ['ownRecord', 'immutable']],

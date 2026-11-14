@@ -16,6 +16,7 @@ import { readM04Command, M04_LIMITS, type M04Config, type M04Facade, type M04Fix
   type M04Authority, type M04Claim, type M04Continuation, type M04Disposition, type M04Command } from './contract'
 import type { createM04InvocationScope } from './owned-scope'
 import { createM04QueueStorage, createM04ExecutionIndex, createM04ArtifactCustody } from './postgres'
+import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
 
 type Scope = NonNullable<ReturnType<typeof createM04InvocationScope>>
 type Group = 'processing' | 'outer'
@@ -38,7 +39,11 @@ function fenceOf(j: V3ManagedJobRecord): V3JobFence | null {
 
 type M04InvocationOptions = Readonly<{ config: M04Config; scope: Scope;
   authority: M04Authority; processingAuthority: M04Authority; fixed: M04FixedOperation; processingFixed: M04FixedOperation }>
-type M04ResultParts = Readonly<{ outer: Hrs1ResultPorts; processing: Hrs1ResultPorts; projectionMaxAgeMilliseconds: number; callDeadline: number }>
+type M04ResultParts = Readonly<{ outer: Hrs1ResultPorts; processing: Hrs1ResultPorts; projectionMaxAgeMilliseconds: number; callDeadline: number;
+  openProcessingImport?(job: V3ManagedJobRecord, signal: AbortSignal): Readonly<{
+    methodAuthority: M04Authority; evidence: V3ImportEvidencePort<object>; history: V3ImportHistoryPort<object>; close(): void;
+  }> | null;
+}>
 
 /** The accepted dormant M04 entry keeps its original closed result ports. */
 export function composeM04Invocation(options: M04InvocationOptions): M04Facade {
@@ -50,6 +55,7 @@ export function composeM04ResultInvocation(options: M04InvocationOptions & Reado
 }
 function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) {
   const { config, scope } = options
+  const openProcessingImport = result?.openProcessingImport
   // Four exact predecessor paths, with closed arity/scalar validation below.
   const statements = [
     'SELECT official_v3_intake_api.read_v1($1::jsonb,$2::text,$3::integer) AS result',
@@ -81,26 +87,26 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
   }
   const store = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('outer'), leaseMilliseconds: 5000 })
   const processingStore = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('processing'), leaseMilliseconds: 5000 })
-  function evidence(group: Group): V3ImportEvidencePort<object> {
+  function evidence(group: Group, selected?: V3ImportEvidencePort<object>): V3ImportEvidencePort<object> {
     return Object.freeze<V3ImportEvidencePort<object>>({
       async inspect(request, signal) {
-        const r = await scope.callback(group, s => (result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).inspect(request, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).inspect(request, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, request, decision, archive, clock, signal) {
-        const r = await scope.callback(group, s => (result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).reprove(receipt, request, decision, archive, clock, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).reprove(receipt, request, decision, archive, clock, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
     })
   }
-  function history(group: Group): V3ImportHistoryPort<object> {
+  function history(group: Group, selected?: V3ImportHistoryPort<object>): V3ImportHistoryPort<object> {
     return Object.freeze<V3ImportHistoryPort<object>>({
       async read(contextKey, kind, signal) {
-        const r = await scope.callback(group, s => (result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).read(contextKey, kind, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).read(contextKey, kind, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, value, signal) {
-        const r = await scope.callback(group, s => (result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).reprove(receipt, value, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).reprove(receipt, value, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
     })
@@ -237,12 +243,18 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
         let result: V3WorkerResultRecord
         if (job.kind === 'research_job_record') {
           const item = admitted[0]
+          const frame = openProcessingImport?.(job, childSignal)
           const importer = createV3ImportCoordinator({ registry: config.registry, method: methodOf(job), clock: config.clock,
-            methodAuthority: options.processingAuthority, evidence: evidence('processing'), history: history('processing'),
+            methodAuthority: frame?.methodAuthority ?? options.processingAuthority,
+            evidence: evidence('processing', frame?.evidence), history: history('processing', frame?.history),
             quarantine: processingStore.forImport(item.reference.binding) }, { budgetMilliseconds: 5000 })
-          const outcome = await importer.submit(item.text, childSignal)
+          const outcome = await traceDevDiagnosticStage('job_import', childSignal, async () => {
+            try { return await importer.submit(item.text, childSignal) }
+            finally { frame?.close() }
+          })
           if (outcome.status !== 'completed') { scope.markAmbiguous(); scope.sealProcessing(); return { status: 'unconfirmed' } }
-          const confirmed = await processingStore.confirmImport(item.reference, childSignal)
+          const confirmed = await traceDevDiagnosticStage('job_import_confirm', childSignal,
+            () => processingStore.confirmImport(item.reference, childSignal))
           if (confirmed.status !== 'completed' || !same(confirmed.outcome, outcome.outcome)) { scope.markAmbiguous(); scope.sealProcessing(); return { status: 'unconfirmed' } }
           const decision = outcome.outcome.status === 'prepared' ? outcome.outcome.value.decision
             : outcome.outcome.status === 'escalation' ? outcome.outcome.decision : null
@@ -255,7 +267,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
             discoveryRef: key('combination-discovery-result', { jobId: job.jobId, operationId: job.operationId,
               jobKey: job.identity.jobKey, claim, fence, proposalDigests }), proposalDigests }
         }
-        const receipt = await index.prepare(job, winner.attemptKey, winner.token, result, admitted.map(x => x.reference), childSignal)
+        const receipt = await traceDevDiagnosticStage('job_prepare', childSignal,
+          () => index.prepare(job, winner.attemptKey, winner.token, result, admitted.map(x => x.reference), childSignal))
         scope.sealProcessing()
         if (!receipt) { scope.markAmbiguous(); return { status: 'unconfirmed' } }
         return { status: 'prepared', receipt }

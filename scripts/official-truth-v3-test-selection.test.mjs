@@ -16,6 +16,7 @@ import {
 } from './official-truth-v3-test-selection.mjs'
 
 const hosted = [
+  'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
@@ -32,7 +33,9 @@ const transport = [
 ]
 const transportCore = transport.slice(0, 2)
 const contract = 'scripts/official-truth-v3-test-selection.test.mjs'
+const alarm = 'scripts/official-truth-dev-guard-alarm.test.mjs'
 const scriptTests = [
+  alarm,
   'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts',
   'scripts/dev-reference-local-pg-prep-1/nativ.test.ts',
   'scripts/dev-reference-local-pg-prep-1/sql.test.ts',
@@ -100,7 +103,10 @@ test('discovery includes every family and new nested tests without a frozen orig
       assert.throws(() => discoverOriginalTestFiles(root), /ENOENT|regular file/, path)
       create(path)
     }
-    rmSync(join(root, scriptTests[0]))
+    rmSync(join(root, alarm))
+    assert.throws(() => discoverOriginalTestFiles(root), /ENOENT|regular file/)
+    create(alarm)
+    rmSync(join(root, 'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts'))
     assert.throws(() => discoverOriginalTestFiles(root), /Missing required Script test/)
   } finally {
     rmSync(root, { recursive: true, force: true })
@@ -108,7 +114,7 @@ test('discovery includes every family and new nested tests without a frozen orig
 })
 
 test('missing, duplicate, invalid and unauthorized hosted membership cannot remove a required proof', () => {
-  const original = [...hosted, ...transportCore, 'lib/ordinary.test.ts']
+  const original = [...hosted, ...transportCore, alarm, 'lib/ordinary.test.ts']
   assert.throws(() => partitionRequiredTests(['lib/ordinary.test.ts']), /Missing hosted test/)
   for (const path of hosted) {
     assert.throws(() => partitionRequiredTests(original.filter((candidate) => candidate !== path)), /Missing hosted test/, path)
@@ -123,6 +129,8 @@ test('missing, duplicate, invalid and unauthorized hosted membership cannot remo
     assert.throws(() => partitionRequiredTests([...original, path]), /Duplicate original/, path)
     assert.throws(() => partitionRequiredTests(original, [...hosted, path]), /explicit reviewed amendment/, path)
   }
+  assert.throws(() => partitionRequiredTests(original.filter(path => path !== alarm)), /Missing required guard alarm test/)
+  assert.throws(() => partitionRequiredTests([...original, alarm]), /Duplicate original/)
   assert.throws(() => partitionRequiredTests(original, []), /hosted must not be empty/)
   assert.throws(() => partitionRequiredTests(original, ['lib/missing.test.ts']), /Missing hosted test/)
   assert.throws(() => partitionRequiredTests(original, [...hosted, 'lib/ordinary.test.ts']), /explicit reviewed amendment/)
@@ -147,7 +155,7 @@ test('only the two explicit modes are accepted and extra arguments are refused',
 })
 
 test('Node arguments retain imports and Core concurrency while the hosted family is explicit', () => {
-  const split = partitionRequiredTests([...hosted, ...transportCore, 'lib/ordinary.test.ts'])
+  const split = partitionRequiredTests([...hosted, ...transportCore, alarm, 'lib/ordinary.test.ts'])
   const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
   assert.deepEqual(nodeTestArguments('core', split), [...prefix, ...split.core])
   assert.deepEqual(nodeTestArguments('hosted-pg17', split), [...prefix, '--test-concurrency=1', ...hosted])

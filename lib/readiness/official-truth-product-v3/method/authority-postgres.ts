@@ -200,6 +200,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       selected.calls++
       const command = readHrs1Command(input, selected.binding)
       if (!command || requestedNotAfter !== undefined && !hrs1Time(requestedNotAfter)) return { status: 'unavailable' }
+      if (command.operation === 'ch_de_snapshot' && !providedReceipt) return { status: 'unavailable' }
       let clock: ReturnType<M04Config['clock']>
       try { clock = joint.config.clock() } catch { return { status: 'unavailable' } }
       if (!hrs1Same(clock, hrs1Clock(clock.now, selected.binding.legalTimeZone))) return { status: 'unavailable' }
@@ -229,7 +230,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       if (!Number.isFinite(cap) || Date.parse(currentClock.now) >= cap
         || currentClock.now < selected.binding.activeFrom) return { status: 'unavailable' }
       const channel = hrs1Channel(command.operation)
-      const publicRead = ['coverage','projection','projection_current','projection_batch'].includes(command.operation)
+      const publicRead = ['coverage','projection','projection_current','projection_batch','ch_de_snapshot'].includes(command.operation)
       const executor = channel === 'attest' ? selected.config.verifierExecutor
         : channel === 'read' && publicRead ? selected.config.readerExecutor : selected.config.writerExecutor
       const request = Object.freeze({ ...configured.value, channel, operationText: hrs1Canonical(command),
@@ -447,6 +448,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
         return kind === 'enqueueRule' || kind === 'enqueueDiscovery' || kind === 'workOnce'
           ? { status: 'unconfirmed' as const } : failure(kind, signal?.aborted)
       }
+      if (kind === 'query' && !assembly.queryCurrent(value)) return failure(kind, signal?.aborted)
       return value
     } catch {
       return kind === 'enqueueRule' || kind === 'enqueueDiscovery' || kind === 'workOnce'

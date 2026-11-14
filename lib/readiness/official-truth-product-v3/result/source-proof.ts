@@ -11,6 +11,7 @@ import type { V3ImportEvidencePort, V3ImportVerificationRequest, V3ImportHistory
 import type { V3SourceObservationPort, V3MonitorTarget } from '../monitor/monitor'
 import { AA_CH_DE_SOURCE_CUSTODY_ISSUER } from '../source/aa-ch-de-issuer'
 import { selectedAaChDeProgramForBinding } from '../source/aa-ch-de-qualification'
+import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
 import {
   HRS1_LIMITS, hrs1Canonical, hrs1Data, hrs1Hash, hrs1Ref, hrs1Same, hrs1Time, hrs1Clock, hrs1Method, hrs1OriginalEvidence,
   type Hrs1Binding, type Hrs1Verification, type Hrs1FixedOperation, type Hrs1Original,
@@ -189,7 +190,8 @@ export function createHrs1SourceConsumer(input: Readonly<{
     const actual = await issuer.reprove(h.issuerReceipt, verification, at, signal)
     const parsed = readVerification(actual, binding, registry)
     if (!parsed || !hrs1Same(parsed, verification) || signal.aborted) return false
-    const stored = await fixed(command('evidence', { reference: verification.reference }), signal)
+    const stored = await traceDevDiagnosticStage('source_evidence_read', signal,
+      () => fixed(command('evidence', { reference: verification.reference }), signal))
     const end = clock()
     return stored.status === 'inspected' && hrs1Same(stored.value, verification) && !signal.aborted
       && hrs1Same(end, hrs1Clock(end.now, binding.legalTimeZone)) && end.now >= at.now
@@ -248,7 +250,8 @@ export function createHrs1SourceConsumer(input: Readonly<{
         const actual = readVerification(finalized.verification, binding, registry)
         if (!actual || !hrs1Same(actual, expected)
           || !hrs1Same(await issuer.reprove(finalized.receipt, actual, at, signal), actual) || signal.aborted) return { status: 'unavailable' }
-        const stored = await fixed(command('attest', { kind: 'verification', verification: actual }), signal)
+        const stored = await traceDevDiagnosticStage('source_attest', signal,
+          () => fixed(command('attest', { kind: 'verification', verification: actual }), signal))
         if (stored.status !== 'recorded' || !hrs1Same(stored.value, { reference: actual.reference, digest: hrs1Hash(actual) }) || signal.aborted) return { status: 'unavailable' }
         h.issuerReceipt = finalized.receipt; h.verification = actual; h.finalized = true
       }
@@ -274,7 +277,8 @@ export function createHrs1SourceConsumer(input: Readonly<{
         || (value.status === 'unclear' && value.original.observation !== null)
         || !hrs1Time(value.checkedAt) || !['observed','unclear'].includes(value.status)
         || !hrs1Same(await issuer.reproveObservation(result.receipt, value, clock(), signal), value) || signal.aborted) return { status: 'unavailable' }
-      const stored = await fixed(command('attest', { kind: 'observation', verification: value }), signal)
+      const stored = await traceDevDiagnosticStage('source_attest', signal,
+        () => fixed(command('attest', { kind: 'observation', verification: value }), signal))
       if (stored.status !== 'recorded' || !hrs1Same(stored.value, { reference: value.reference, digest: hrs1Hash(value) }) || signal.aborted) return { status: 'unavailable' }
       const receipt = Object.freeze(Object.create(null) as object)
       observed.set(receipt, { issuerReceipt: result.receipt, value: immutable(value) })
@@ -293,7 +297,8 @@ export function createHrs1SourceConsumer(input: Readonly<{
     lastObservation(target) { return last.get(hrs1Hash(target)) ?? null },
     async openVerification(reference, signal) {
       if (!issuer || signal.aborted) return null
-      const stored = await fixed(command('evidence', { reference }), signal)
+      const stored = await traceDevDiagnosticStage('source_evidence_read', signal,
+        () => fixed(command('evidence', { reference }), signal))
       const v = stored.status === 'inspected' ? readVerification(stored.value, binding, registry) : null
       if (!v) return null
       const issued = await issuer.reopen(v, signal)

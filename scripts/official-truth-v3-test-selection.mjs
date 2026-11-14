@@ -16,6 +16,7 @@ export const TRANSPORT_TEST_FILES = Object.freeze([
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
@@ -27,6 +28,7 @@ export const HOSTED_PG17_FILES = Object.freeze([
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
+  'scripts/official-truth-dev-guard-alarm.test.mjs',
   'scripts/operating-mode-guard.test.mjs',
   'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts',
   'scripts/dev-reference-local-pg-prep-1/nativ.test.ts',
@@ -47,6 +49,7 @@ function isOriginalTest(path) {
     || path === 'scripts/operating-mode-guard.test.mjs'
     || /^scripts\/dev-reference-local-pg-prep-1\/[^/]+\.test\.ts$/.test(path)
     || TRANSPORT_TEST_FILES.includes(path)
+    || path === 'scripts/official-truth-dev-guard-alarm.test.mjs'
 }
 
 function checkedPaths(paths, label) {
@@ -82,7 +85,7 @@ export function discoverOriginalTestFiles(root = repositoryRoot) {
     if (family.length === 0) throw new Error('Missing required test family: ' + pattern)
     found.push(...family)
   }
-  for (const path of TRANSPORT_TEST_FILES) {
+  for (const path of [...TRANSPORT_TEST_FILES, 'scripts/official-truth-dev-guard-alarm.test.mjs']) {
     requireRegularFile(root, path)
     found.push(path)
   }
@@ -104,6 +107,7 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
   for (const path of TRANSPORT_TEST_FILES) {
     if (!universe.has(path)) throw new Error('Missing required transport test: ' + path)
   }
+  if (!universe.has('scripts/official-truth-dev-guard-alarm.test.mjs')) throw new Error('Missing required guard alarm test')
   if (hostedPg17.length !== HOSTED_PG17_FILES.length
     || hostedPg17.some((path, index) => path !== HOSTED_PG17_FILES[index])) {
     throw new Error('Hosted test membership requires an explicit reviewed amendment')
