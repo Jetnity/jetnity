@@ -14,6 +14,9 @@ const key = 'synthetic-dev-scheduler-key-not-a-live-secret-123456789'
 const previewCookie = '_vercel_jwt=eyJhbGciOiJIUzI1NiJ9.eyJmaXh0dXJlIjp0cnVlfQ.c3ludGhldGljX3ZlcmNlbF9jb29raWVfc2lnbmF0dXJl'
 const path = '/api/internal/readiness/ch-de-dev-refresh'
 const core = readFileSync(new URL('../../scripts/db/official-truth-v3-dev-import-schedule-1/core.sql', import.meta.url), 'utf8')
+const activation = readFileSync(new URL('../../scripts/db/official-truth-v3-dev-import-schedule-1/activate.sql', import.meta.url), 'utf8')
+const renewal = readFileSync(new URL('../../scripts/db/official-truth-v3-dev-import-schedule-1/preview-renewal.sql', import.meta.url), 'utf8')
+const renewalActivation = readFileSync(new URL('../../scripts/db/official-truth-v3-dev-import-schedule-1/activate-preview-renewal.sql', import.meta.url), 'utf8')
 const golden = { time: '1794690000123', operation: 'op3_' + '1'.repeat(32), lease: 'lease3_' + '2'.repeat(32) }
 const goldenResponse = createHmac('sha256', key).update(['jetnity-dev-import-response-v1', 'POST', path,
   golden.time, '2', 'resume', golden.operation, golden.lease, '1', '200', 'published', '1'].join('\n'), 'utf8').digest('hex')
@@ -68,6 +71,46 @@ BEGIN
       jsonb_build_object('schema',1,'status',status,'published',published)::text,false);
 END $$;
 `
+
+// Explicit synthetic providers in this exclusively owned disposable cluster.
+// Actual PG17 parses/executes the complete activation files. These catalog rows
+// and cron APIs do not constitute a real pg_cron/pg_net installation or worker.
+// The separate Dev rollback proof must cover the actual installed providers.
+const activationProviders = `
+CREATE VIEW vault.secrets AS SELECT name FROM vault.decrypted_secrets;
+INSERT INTO vault.decrypted_secrets VALUES('jetnity_dev_import_preview_share_v1','synthetic-preview-share');
+CREATE SCHEMA cron;
+CREATE TABLE cron.job(jobid bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,jobname text UNIQUE NOT NULL,
+  schedule text NOT NULL,command text NOT NULL,username text NOT NULL DEFAULT 'postgres',
+  database text NOT NULL DEFAULT 'postgres',active boolean NOT NULL DEFAULT true);
+CREATE FUNCTION cron.schedule(job_name text,schedule text,command text) RETURNS bigint LANGUAGE sql AS $$
+  INSERT INTO cron.job(jobname,schedule,command) VALUES($1,$2,$3) RETURNING jobid $$;
+CREATE FUNCTION cron.alter_job(job_id bigint,command text) RETURNS void LANGUAGE sql AS $$
+  UPDATE cron.job SET command=$2 WHERE jobid=$1 $$;
+INSERT INTO pg_catalog.pg_extension(oid,extname,extowner,extnamespace,extrelocatable,extversion,extconfig,extcondition)
+  VALUES(9999001,'pg_cron','postgres'::regrole,'cron'::regnamespace,false,'1.6.4',NULL,NULL),
+        (9999002,'pg_net','postgres'::regrole,'net'::regnamespace,false,'0.20.4',NULL,NULL);
+`
+
+// Only transaction boundaries are changed to compose both complete files into
+// one rollback probe; no target, extension, quota, expiry or role guard is removed.
+function withoutCommit(source: string): string {
+  assert.match(source, /\nCOMMIT;\s*$/)
+  return source.replace(/\nCOMMIT;\s*$/, '\n')
+}
+function activationPrefix(target = 'dev:yfvbxvijcorffwxbxahl:refresh1', seconds = 172800): string {
+  return `SET jetnity.dev_import_target='${target}';
+    SET jetnity.dev_import_preview_expires='${Math.floor(Date.now() / 1000) + seconds}';
+    SET log_error_verbosity='verbose';\n`
+}
+const activationRollbackReadback = `DO $readback$ BEGIN
+  PERFORM proof.check_ok((SELECT count(*)=0 FROM cron.job),'activation rollback retained cron');
+  PERFORM proof.check_ok((SELECT NOT enabled AND status='disabled' AND transport_expires_at IS NULL
+    FROM jetnity_dev_import_scheduler.state_v1),'activation rollback retained enabled state');
+  PERFORM proof.check_ok((SELECT count(*)=0 FROM jetnity_dev_import_scheduler.cycles_v1),'activation created cycle');
+  PERFORM proof.check_ok((SELECT count(*)=0 FROM jetnity_dev_import_scheduler.dispatches_v1),'activation created dispatch');
+  PERFORM proof.check_ok((SELECT count(*)=0 FROM net.http_request_queue),'activation sent HTTP');
+END $readback$;`
 
 type Case = Readonly<{ name: string; declarations?: string; sql: string; expectedError?: RegExp; inspect?: (output: string) => void }>
 const cases: readonly Case[] = [
@@ -317,6 +360,47 @@ test('Dev scheduler native PG17 state and authenticated transport, without socke
         item.inspect?.(output)
       })
     }
+    run(activationProviders + "\nBEGIN; SET LOCAL jetnity.dev_import_target='dev:yfvbxvijcorffwxbxahl:refresh1';\n" + renewal + '\nCOMMIT;')
+    await t.test('original unaliased job variable reproduces 42702 and rolls back all activation effects', () => {
+      // Negative control retains the old ambiguous whole-row identifier.
+      const old = activation.replaceAll('scheduled_job_id', 'job')
+        .replace('FROM cron.job AS scheduled', 'FROM cron.job').replaceAll('scheduled.', '')
+      run(activationPrefix() + old, /FATAL: +42702: +column reference "job" is ambiguous/)
+      run(activationRollbackReadback)
+    })
+    await t.test('both complete activation files preserve the one cron identity and roll back without dispatch', () => {
+      assert.match(renewalActivation, /^BEGIN;$/m)
+      const combined = withoutCommit(activation) + `
+        CREATE TEMP TABLE activation_identity ON COMMIT DROP AS SELECT jobid FROM cron.job;
+        DO $first$ BEGIN
+          PERFORM proof.check_ok((SELECT count(*)=1 AND bool_and(command='SELECT jetnity_dev_import_scheduler.tick_v1();')
+            FROM cron.job),'initial exact tick cron');
+        END $first$;\n` + withoutCommit(renewalActivation).replace(/^BEGIN;$/m, '') + `
+        DO $final$ BEGIN
+          PERFORM proof.check_ok((SELECT count(*)=1 AND bool_and(j.jobid=i.jobid
+            AND j.jobname='jetnity-ch-de-dev-import-v1' AND j.schedule='* * * * *'
+            AND j.command='SELECT jetnity_dev_import_scheduler.run_v1();'
+            AND j.username='postgres' AND j.database='postgres' AND j.active)
+            FROM cron.job j CROSS JOIN activation_identity i),'exact one unchanged cron identity');
+          PERFORM proof.check_ok((SELECT enabled AND status='armed' AND next_due_at<=clock_timestamp()
+            AND transport_expires_at=to_timestamp(current_setting('jetnity.dev_import_preview_expires')::bigint)
+            FROM jetnity_dev_import_scheduler.state_v1),'enabled state or exact use horizon');
+          PERFORM proof.check_ok((SELECT count(*)=0 FROM jetnity_dev_import_scheduler.cycles_v1),'activation started source work');
+          PERFORM proof.check_ok((SELECT count(*)=0 FROM jetnity_dev_import_scheduler.dispatches_v1),'activation created dispatch');
+          PERFORM proof.check_ok((SELECT count(*)=0 FROM net.http_request_queue),'activation sent HTTP');
+        END $final$;
+        SELECT 'JETNITY_COMPLETE_ACTIVATION_ROLLBACK_PROOF';
+        ROLLBACK;`
+      const output = run(activationPrefix() + combined)
+      assert.ok(output.includes('JETNITY_COMPLETE_ACTIVATION_ROLLBACK_PROOF'))
+      run(activationRollbackReadback)
+    })
+    await t.test('complete activation still rejects another target and a short preview use horizon', () => {
+      for (const prefix of [activationPrefix('production:not-dev'), activationPrefix(undefined, 1800)]) {
+        run(prefix + activation, /FATAL: +P0001: +exact Dev scheduler prerequisites required/)
+        run(activationRollbackReadback)
+      }
+    })
   } finally {
     // No server process is started. Every synchronous backend has exited before
     // cleanup; the generated cluster is solely owned by this proof.

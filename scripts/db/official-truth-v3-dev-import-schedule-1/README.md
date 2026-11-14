@@ -180,3 +180,12 @@ preserved, and the selector includes these files in its mandatory PG17 group.
 The renewal proof executes the actual additive SQL with explicit synthetic
 Vault/net providers, including malformed JWT payloads, exact scope and expiry,
 retained IDs and counters, retry bounds, ACLs, and isolated provider failures.
+
+The activation regression executes both complete activation files with explicit
+synthetic cron APIs and extension-catalog prerequisites in the owned PG17 cluster.
+It reproduces the former `job`/`cron.job` ambiguity (SQLSTATE 42702), verifies the
+qualified readback, preserves the same cron identity through renewal activation,
+and proves rollback leaves no enabled schedule, cycle, dispatch or HTTP request.
+Wrong targets and short preview horizons remain refused. These fixtures prove
+SQL behavior; the real installed extensions require the separate Dev transaction
+probe and actual cron/publication readbacks recorded in PR #1197.

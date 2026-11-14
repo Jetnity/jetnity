@@ -6,7 +6,7 @@ SET LOCAL search_path=pg_catalog;
 SET LOCAL statement_timeout='10s';
 SET LOCAL lock_timeout='2s';
 DO $activate$
-DECLARE job bigint; expiry_text text:=current_setting('jetnity.dev_import_preview_expires',true);
+DECLARE scheduled_job_id bigint; expiry_text text:=current_setting('jetnity.dev_import_preview_expires',true);
   preview_expiry timestamptz;
   command_value constant text:='SELECT jetnity_dev_import_scheduler.tick_v1();';
 BEGIN
@@ -34,9 +34,10 @@ BEGIN
   IF EXISTS(SELECT 1 FROM cron.job WHERE jobname='jetnity-ch-de-dev-import-v1') THEN
     RAISE EXCEPTION 'existing import schedule requires readback, not replacement';
   END IF;
-  job:=cron.schedule('jetnity-ch-de-dev-import-v1','* * * * *',command_value);
-  IF (SELECT count(*) FROM cron.job WHERE jobid=job AND jobname='jetnity-ch-de-dev-import-v1'
-    AND schedule='* * * * *' AND command=command_value AND username='postgres' AND database='postgres' AND active)<>1 THEN
+  scheduled_job_id:=cron.schedule('jetnity-ch-de-dev-import-v1','* * * * *',command_value);
+  IF (SELECT count(*) FROM cron.job AS scheduled WHERE scheduled.jobid=scheduled_job_id AND scheduled.jobname='jetnity-ch-de-dev-import-v1'
+    AND scheduled.schedule='* * * * *' AND scheduled.command=command_value
+    AND scheduled.username='postgres' AND scheduled.database='postgres' AND scheduled.active)<>1 THEN
     RAISE EXCEPTION 'import schedule readback refused';
   END IF;
   UPDATE jetnity_dev_import_scheduler.state_v1 SET enabled=true,status='armed',next_due_at=clock_timestamp(),
