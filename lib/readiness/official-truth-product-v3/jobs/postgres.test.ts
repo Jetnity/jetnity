@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import { createV3QueueCoordinator, type V3ManagedJobRecord } from '../monitor/queue'
 import { queueHarness, fixture, ids, METHOD } from '../monitor/test-support'
 import { createV3PostgresMethodAuthority } from '../method/authority-postgres'
-import { createM04QueueStorage } from './postgres'
+import { createM04ExecutionIndex, createM04QueueStorage } from './postgres'
 import { createM04LanePool, createM04InvocationScope } from './owned-scope'
 import { readM04Command, readM04NativeReply, type M04FixedOperation, type M04Continuation, type M04NativeReply } from './contract'
 
@@ -29,6 +29,50 @@ test('post-CAS receipt crosses only the actual queue-read adapter and never supp
   reply = { status: 'present', record: seeded.record }
   assert.deepEqual(await storage.read('research-job:v3:' + 'f'.repeat(64), signal, receipt), { status: 'unavailable' })
   assert.equal(recorded, 1, 'readback still belongs to the requested job key')
+})
+
+test('terminal index custody needs its own successful exact confirm and transfers that actual ACK once', async () => {
+  const h = queueHarness(), f = fixture(), signal = new AbortController().signal
+  assert.equal((await h.queue.enqueue(f.enqueue)).status, 'confirmed')
+  const claim = { operationId: ids('op3', 'index-terminal-claim'), jobKey: f.identity.jobKey,
+    leaseId: ids('lease3', 'index-terminal-claim'), leaseMilliseconds: 4000 }
+  const claimed = await h.queue.claim(claim)
+  assert.equal(claimed.status, 'confirmed'); if (claimed.status !== 'confirmed') return
+  const job = claimed.record, methodReceipt = Object.freeze({})
+  const value = { status: 'prepared' as const, claim, leasedJob: job, attemptKey: 'execution-attempt:v3:' + 'e'.repeat(64),
+    result: { kind: 'rule_research' as const, jobId: job.jobId, operationId: job.operationId,
+      jobKey: claim.jobKey, preparedAt: h.clock.now(), decisionRef: 'source-decision:v3:' + 'a'.repeat(64) }, references: [] }
+  let available = true, calls = 0, actualAck: M04NativeReply | undefined
+  const fixed: M04FixedOperation = async request => {
+    assert.equal(request.operation, 'execution_read')
+    actualAck = available ? structuredClone(value) : { status: 'unconfirmed' }
+    return actualAck
+  }
+  const index = createM04ExecutionIndex({ claim, fixed, processingFixed: fixed, preparedOnly: () => false,
+    onPrepared() {}, async acquireTerminalAuthority(anchor, confirmed, at, s) {
+      calls++; assert.equal(anchor, methodReceipt); assert.equal(confirmed, actualAck)
+      assert.equal(at, h.clock.now()); assert.equal(s, signal)
+      return { status: 'current' }
+    } })
+  const found = await index.results.lookup(job, signal)
+  assert.equal(found.status, 'prepared'); if (found.status !== 'prepared') return
+  const terminal = index.results.acquireTerminalAuthority!
+  assert.equal((await terminal(found.receipt, methodReceipt, job, h.clock.now(), signal)).status, 'unavailable')
+  assert.equal((await index.results.confirm({}, job, h.clock.now(), signal)).status, 'unconfirmed')
+  assert.equal((await terminal({}, methodReceipt, job, h.clock.now(), signal)).status, 'unavailable')
+  assert.equal(calls, 0)
+  assert.equal((await index.results.confirm(found.receipt, job, h.clock.now(), signal)).status, 'confirmed')
+  assert.equal((await terminal(found.receipt, methodReceipt, { ...job, revision: job.revision + 1 }, h.clock.now(), signal)).status, 'unavailable')
+  assert.equal((await terminal(found.receipt, methodReceipt, job, h.clock.now(), signal)).status, 'unavailable', 'a failed consumption cannot be replayed')
+  assert.equal((await index.results.confirm(found.receipt, job, h.clock.now(), signal)).status, 'confirmed')
+  assert.equal((await terminal(found.receipt, methodReceipt, job, h.clock.now(), signal)).status, 'current')
+  assert.equal((await terminal(found.receipt, methodReceipt, job, h.clock.now(), signal)).status, 'unavailable')
+  assert.equal(calls, 1)
+  assert.equal((await index.results.confirm(found.receipt, job, h.clock.now(), signal)).status, 'confirmed')
+  available = false
+  assert.equal((await index.results.confirm(found.receipt, job, h.clock.now(), signal)).status, 'unconfirmed')
+  assert.equal((await terminal(found.receipt, methodReceipt, job, h.clock.now(), signal)).status, 'unavailable', 'later failed read revokes prior local confirm custody')
+  assert.equal(calls, 1)
 })
 
 // Actual queue confirmation/authority/post-CAS control flow, scoped protocol

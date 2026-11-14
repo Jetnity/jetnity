@@ -1,6 +1,7 @@
 // Protocol doubles exercise actual coordinator control flow, not persistence/native proof.
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { performance } from 'node:perf_hooks'
 import { createV3PostgresDurableJobs, createV3PostgresMethodAuthority } from '../method/authority-postgres'
 import { readM04Command, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation, type M04FixedRequest } from './contract'
 import { composeM04Invocation } from './composition'
@@ -114,7 +115,17 @@ type RaceHooks = {
   ready(api: M04Facade, input: unknown, abort: AbortController): void
   work?(config: M04Config, claim: unknown, signal: AbortSignal): ReturnType<M04Facade['workOnce']>
 }
-async function fullBatchHarness(count: number, corruptLast = false, context?: V3GlobalRuleContext, importFault?: ImportFault, race?: RaceHooks) {
+type WorkerHooks = {
+  epoch?: () => number;
+  produce?: () => void;
+  prepared?: () => void;
+  confirmed?: () => void;
+  method?: (signal: AbortSignal, budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
+  ready?: (abort: AbortController) => void;
+  lostStart?: boolean;
+  lostConfirm?: boolean;
+}
+async function fullBatchHarness(count: number, corruptLast = false, context?: V3GlobalRuleContext, importFault?: ImportFault, race?: RaceHooks, worker?: WorkerHooks) {
   const { m04Fixture, M04_TEST_BINDING } = await import('../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures')
   const { readV3RetainableProposal } = await import('../storage/proposal-bytes')
   const unresolved: V3GlobalRuleContext | undefined = importFault === 'quarantined'
@@ -125,23 +136,27 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
   let job: V3ManagedJobRecord | null = null, execution: { claim: unknown; leasedJob: V3ManagedJobRecord;
     attemptKey: string; result?: unknown; references?: unknown; completed?: boolean } | null = null
   const counts = { method: 0, jobs: 0, intake: 0, capture: 0, read: 0, reserve: 0, finish: 0, artifactRead: 0 }
+  const trace: string[] = [], nativeRequests: M04FixedRequest[] = []
   const terminal = new AbortController()
   const config: M04Config = { binding: M04_TEST_BINDING, registry: f.originals.registry, clock: f.clock,
-    methodExecutor: { async readCurrent(_request, signal) { counts.method++
+    methodExecutor: { async readCurrent(_request, signal, budget) { counts.method++; trace.push('method')
+      await worker?.method?.(signal, budget)
       if (race && !await race.method(signal)) return { status: 'unavailable' }
       return { status: 'rows', rows: [{ status: 'approved',
       method_id: M04_TEST_BINDING.methodId, revision: '1', method_digest: M04_TEST_BINDING.methodDigest,
-      package_digest: M04_TEST_BINDING.packageDigest, epoch: '1', approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] } } },
+      package_digest: M04_TEST_BINDING.packageDigest, epoch: String(worker?.epoch?.() ?? 1), approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] } } },
     intakeExecutor: { async execute(statement, params, signal) {
       counts.intake++; assert.equal(signal.aborted, false)
       const binding = JSON.parse(String(params[0])), old = bindings.get(binding.operationId)
       let reply: unknown
       if (statement.includes('.capture_v1(')) {
+        trace.push('intake:capture')
         counts.capture++; const text = String(params[1]), parsed = readV3RetainableProposal(text, f.originals.registry); assert.ok(parsed.ok)
         if (!parsed.ok) throw Error('unreachable')
         const record = { reference: { binding, proposalDigest: parsed.value.digest, bytes: parsed.value.bytes }, text, outcome: null, audit: null }
         bindings.set(binding.operationId, record); reply = { status: 'recorded', record }
       } else if (statement.includes('.read_v1(')) {
+        trace.push('intake:read')
         counts.read++
         if (importFault === 'read_unavailable' || importFault === 'completion_read_unknown' && counts.finish > 0) return { status: 'unavailable' }
         reply = old ? { status: 'recorded', record: old } : { status: 'not_attempted' }
@@ -166,6 +181,7 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       counts.jobs++; assert.equal(signal.aborted, false)
       race?.request(request)
       const q = JSON.parse(request.operationText), b = q.body
+      nativeRequests.push(request); trace.push(`${q.operation}:${q.phase}${b.purpose ? ':' + b.purpose : ''}`)
       let reply: unknown
       if (q.operation === 'queue_confirm') {
         const c = readM04Command(b.command)!; const old = operations.get(c.operationId)
@@ -180,9 +196,11 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
         assert.equal(execution, null)
         execution = { claim: b.claim, leasedJob: b.leasedJob, attemptKey: 'execution-attempt:v3:' + 'e'.repeat(64) }
         reply = { status: 'reserved', ...execution, token: 'f'.repeat(64) }
+        if (worker?.lostStart) return { status: 'unconfirmed' }
       } else if (q.operation === 'execution_prepare') {
         assert.ok(execution); execution.result = b.result; execution.references = b.references
         reply = { status: 'prepared', attemptKey: execution.attemptKey, result: b.result, references: b.references }
+        worker?.prepared?.()
       } else {
         assert.equal(q.operation, 'execution_read')
         if (b.purpose === 'artifact') counts.artifactRead++
@@ -191,10 +209,15 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
             job, result: execution.result, references: execution.references }
             : { status: 'prepared', claim: execution.claim, leasedJob: execution.leasedJob, attemptKey: execution.attemptKey,
               result: execution.result, references: execution.references }
+        if (b.purpose === 'confirm' && q.phase === 'authorized') {
+          worker?.confirmed?.()
+          if (worker?.lostConfirm) return { status: 'unconfirmed' }
+        }
       }
       return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
     } },
     producer: { async produce(value, signal) {
+      worker?.produce?.()
       const result = await f.producer.produce(value, signal)
       if (!corruptLast || result.status !== 'delivered') return result
       return { status: 'delivered', deliveries: result.deliveries.map((d, i) => i === result.deliveries.length - 1 ? { ...d, text: '{"broken":true}' } : d) }
@@ -203,14 +226,16 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
   assert.equal((await (importFault || race ? api.enqueueRule(f.ruleInput) : api.enqueueDiscovery(f.discoveryInput))).status, 'confirmed')
   for (const k of Object.keys(counts) as (keyof typeof counts)[]) counts[k] = 0
   race?.ready(api, f.ruleInput, terminal)
+  worker?.ready?.(terminal)
   const claim = f.claim(importFault || race ? 'rule_research' : 'combination_discovery')
   const result = await (race?.work ? race.work(config, claim, terminal.signal) : api.workOnce(claim, terminal.signal))
-  return { result, counts, f, bindings, operations }
+  return { result, counts, f, bindings, operations, trace, nativeRequests, api, claim }
 }
 
 test('M04-B2-01: actual S1/I1/E1 complete all sixteen originals within the 256-call invocation cap', async () => {
   const h = await fullBatchHarness(16)
-  assert.equal(h.result.status, 'processed', JSON.stringify(h.result))
+  assert.equal(h.result.status, 'processed', JSON.stringify({ result: h.result, counts: h.counts,
+    actions: [...h.operations.values()].map(value => value.audit.kind) }))
   if (h.result.status !== 'processed') return
   assert.equal(h.result.worker.acceptedRule, false)
   assert.equal(h.result.results.length, 16)
@@ -219,6 +244,132 @@ test('M04-B2-01: actual S1/I1/E1 complete all sixteen originals within the 256-c
   assert.equal(h.bindings.size, 16); assert.equal(h.f.producerCalls(), 1)
   assert.ok(h.counts.method + h.counts.jobs + h.counts.intake <= 256, JSON.stringify(h.counts))
   for (const delivered of h.f.delivered) assert.equal(h.bindings.get(delivered.binding.operationId)?.text, delivered.text)
+})
+
+test('worker preflight uses six actual dispatches through first S1 read and exactly one atomic START', async () => {
+  const h = await fullBatchHarness(1)
+  assert.equal(h.result.status, 'processed', JSON.stringify(h.result))
+  const lookup = h.trace.indexOf('execution_read:probe:lookup')
+  const opened = h.trace.indexOf('intake:read', lookup)
+  assert.deepEqual(h.trace.slice(lookup - 1, opened + 1), ['method', 'execution_read:probe:lookup', 'method',
+    'execution_start:authorized', 'intake:capture', 'intake:read'])
+  const starts = h.nativeRequests.filter(request => JSON.parse(request.operationText).operation === 'execution_start')
+  assert.equal(starts.length, 1)
+  const claimed = h.nativeRequests.find(request => {
+    const q = JSON.parse(request.operationText)
+    return q.operation === 'queue_cas' && q.body.command.action === 'claim'
+  })!
+  assert.equal(starts[0].epoch, claimed.epoch)
+  assert.ok(starts[0].budget.deadline > 0)
+})
+
+test('genuine prepared and confirm ACK acquire separate terminal authority after the original five seconds', async t => {
+  let now = 0, confirmed = false
+  const terminalDeadlines: number[] = []
+  t.mock.method(performance, 'now', () => now)
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    produce() { now = 6000 },
+    confirmed() { confirmed = true },
+    method(_signal, budget) { if (confirmed) terminalDeadlines.push(budget!.deadline) },
+  })
+  assert.equal(h.result.status, 'processed', JSON.stringify(h.result))
+  const start = h.nativeRequests.find(request => JSON.parse(request.operationText).operation === 'execution_start')!
+  assert.equal(start.budget.deadline, 5000, 'the original preflight authority was not extended')
+  assert.ok(terminalDeadlines.length > 0)
+  assert.equal(terminalDeadlines[0], 11000, 'new acquisition has its own unchanged five-second cap')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 1)
+})
+
+test('ABA after genuine confirm ACK cannot acquire terminal authority or complete the job', async t => {
+  let now = 0, epoch = 1
+  t.mock.method(performance, 'now', () => now)
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    produce() { now = 6000 }, epoch: () => epoch, confirmed() { epoch = 3 },
+  })
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, 1)
+})
+
+test('a new worker approval epoch cannot cross the actual earlier claim ACK into START', async () => {
+  let epoch = 1, active = false, observations = 0
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    ready() { active = true }, epoch: () => epoch,
+    method() { if (active && ++observations === 5) epoch = 2 },
+  })
+  assert.equal(epoch, 2, 'the initial worker resolve sees the changed epoch after the completed claim path')
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, 0)
+  assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0)
+})
+
+test('a positive confirmation double with a changed authorization epoch cannot replace the real START anchor', async () => {
+  let epoch = 1
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    epoch: () => epoch, prepared() { epoch = 3 },
+  })
+  assert.notEqual(h.result.status, 'processed')
+  assert.ok(h.trace.includes('execution_read:authorized:confirm'))
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+})
+
+test('the separate terminal receipt still refuses an ACK at its original five-second deadline', async t => {
+  let now = 0, confirmed = false, consumed = false
+  t.mock.method(performance, 'now', () => now)
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    produce() { now = 6000 }, confirmed() { confirmed = true },
+    method(_signal, budget) {
+      if (confirmed && !consumed) { consumed = true; assert.equal(budget?.deadline, 11000); now = 11000 }
+    },
+  })
+  assert.equal(consumed, true)
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+})
+
+for (const fault of ['lostStart', 'lostConfirm'] as const) test(`${fault} does not mint preflight or terminal custody`, async () => {
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, { [fault]: true })
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+  if (fault === 'lostStart') { assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0) }
+})
+
+test('the same original claim resumes real PREPARED custody without another START or producer', async () => {
+  const hooks: WorkerHooks = { lostConfirm: true }
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, hooks)
+  assert.notEqual(h.result.status, 'processed')
+  const starts = h.trace.filter(value => value === 'execution_start:authorized').length
+  const produced = h.f.producerCalls(), captures = h.counts.capture
+  hooks.lostConfirm = false
+  const resumed = await h.api.workOnce(h.claim)
+  assert.equal(resumed.status, 'processed', JSON.stringify(resumed))
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, starts)
+  assert.equal(h.f.producerCalls(), produced); assert.equal(h.counts.capture, captures)
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 1)
+})
+
+test('caller abort during terminal acquisition retains actual native ownership until its read settles', async () => {
+  let confirmed = false, abort: AbortController | undefined, nativeSignal: AbortSignal | undefined
+  let release!: () => void, entered!: () => void
+  const pending = new Promise<void>(resolve => { release = resolve })
+  const atTerminal = new Promise<void>(resolve => { entered = resolve })
+  let joined = false
+  const result = fullBatchHarness(1, false, undefined, undefined, undefined, {
+    ready(value) { abort = value }, confirmed() { confirmed = true },
+    async method(signal) { if (confirmed) { nativeSignal = signal; entered(); await pending; joined = true } },
+  })
+  let settled = false
+  void result.then(() => { settled = true })
+  try {
+    await Promise.race([atTerminal, result.then(() => assert.fail('the harness ended before terminal acquisition'))])
+    abort!.abort()
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(nativeSignal?.aborted, true)
+    assert.equal(joined, false); assert.equal(settled, false, 'outward factory still owns the real MA1 read')
+  } finally { release(); await result }
+  const h = await result
+  assert.equal(joined, true); assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
 })
 
 test('whole sixteen-item batch is validated before the first S1 effect', async () => {

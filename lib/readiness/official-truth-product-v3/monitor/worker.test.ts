@@ -79,6 +79,52 @@ describe('M1 bounded research and discovery worker', () => {
     assert.equal(result.status, 'completed'); if (result.status !== 'completed') assert.fail()
     assert.equal(result.result.kind, 'rule_research'); assert.equal(result.acceptedRule, false)
   })
+  test('optional atomic preflight and terminal acquisition keep exact receipts and actual confirm ordering', async () => {
+    const t = workerHarness(), key = await t.enqueue(), events: string[] = []
+    let initial: object | undefined, preparedReceipt: object | undefined
+    const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+      const value = await t.h.method.port.resolveCurrent(...args)
+      if (value.status === 'approved') initial = value.receipt
+      return value
+    } }
+    const work: V3ResearchWorkPort<object> = { ...t.work, async prepare(job, fence, receipt, signal) {
+      events.push('atomic-start'); assert.equal(receipt, initial); assert.equal(signal.aborted, false)
+      assert.equal(fence.jobId, job.jobId); assert.equal(fence.generation, job.lease?.generation)
+      return { status: 'ready' }
+    } }
+    const results: V3ResearchResultCustodyPort<object> = { ...t.results,
+      async confirm(receipt, job, checkedAt, signal) {
+        const value = await t.results.confirm(receipt, job, checkedAt, signal)
+        if (value.status === 'confirmed') { preparedReceipt = receipt; events.push('actual-confirm') }
+        return value
+      },
+      async acquireTerminalAuthority(receipt, anchor, job, checkedAt, signal) {
+        events.push('terminal-acquire'); assert.equal(receipt, preparedReceipt); assert.equal(anchor, initial)
+        assert.equal(job.state, 'leased'); assert.equal(checkedAt, t.h.clock.now()); assert.equal(signal.aborted, false)
+        return { status: 'current' }
+      },
+    }
+    const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, methodAuthority, work, results })
+    assert.equal(result.status, 'completed')
+    assert.deepEqual(events, ['atomic-start', 'actual-confirm', 'terminal-acquire'])
+    assert.equal(t.control.executeCount, 1)
+  })
+  test('unknown atomic preflight cannot run the producer, retry the start or settle a fabricated failure', async () => {
+    const t = workerHarness(), key = await t.enqueue()
+    let starts = 0
+    const work: V3ResearchWorkPort<object> = { ...t.work, async prepare() { starts++; return { status: 'unconfirmed' } } }
+    const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, work })
+    assert.equal(result.status, 'unconfirmed'); assert.equal(starts, 1); assert.equal(t.control.executeCount, 0)
+    assert.equal(t.h.storage.records.get(key)?.state, 'leased')
+  })
+  test('invalid confirmed record never reaches optional terminal authority', async () => {
+    const t = workerHarness(), key = await t.enqueue(); t.control.corrupt = true
+    let acquired = 0
+    const results: V3ResearchResultCustodyPort<object> = { ...t.results,
+      async acquireTerminalAuthority() { acquired++; return { status: 'current' } } }
+    assert.notEqual((await runV3ResearchWorkerOnce(claim(key), { ...t.deps, results })).status, 'completed')
+    assert.equal(acquired, 0)
+  })
   test('two concurrent worker ticks execute one owner; the other sees non-due work', async () => {
     const t = workerHarness(), key = await t.enqueue()
     const results = await Promise.all([runV3ResearchWorkerOnce(claim(key, 'one'), t.deps), runV3ResearchWorkerOnce(claim(key, 'two'), t.deps)])

@@ -5,10 +5,13 @@ import { AA_BERN_CH_DE_REVIEWED_PROGRAM as program } from '../source/aa-ch-de-re
 import { createChDeImportFrame } from './ch-de-import-frame'
 import { createHrs1ResultPorts } from './postgres'
 import { createHrs1SourceConsumer } from './source-proof'
-import { hrs1Clock, hrs1Hash, hrs1Ref, type Hrs1Operation } from './contract'
+import { hrs1Clock, hrs1Hash, hrs1Ref, type Hrs1Operation, type Hrs1Verification } from './contract'
 
 const at = '2026-11-14T01:00:00.000Z'
-const sequence: Hrs1Operation[] = ['history', 'attest', 'evidence', 'history']
+const sequence: Hrs1Operation[] = ['history', 'attest', 'history']
+// This frame test models only the exact bytes/ACK pair. Source-semantic tests
+// independently obtain the full genuine issuer verification.
+const attested = Object.freeze({ reference: hrs1Ref('hrs1-verification', 'frame-ack') }) as Hrs1Verification
 const initialSnapshot = () => ({
   history: { pointer: { revision: 0, state: 'missing' as const, versionRef: null }, version: null,
     decision: null, decisionPredecessor: null, decisionArchiveAppend: null, invalidatedProjectionRefs: [] },
@@ -34,27 +37,31 @@ function fixture() {
     fixed: async (command, signal, candidate) => {
       assert.equal(candidate, receipt); effects.push(command.operation)
       if (hold) await new Promise<void>(resolve => { release = resolve })
-      return signal.aborted || !current ? { status: 'unavailable' } : { status: 'snapshot', value: snapshot }
+      return signal.aborted || !current ? { status: 'unavailable' } : command.operation === 'attest'
+        ? { status: 'recorded', value: { reference: attested.reference, digest: hrs1Hash(attested) } }
+        : { status: 'snapshot', value: snapshot }
     } })
   assert.ok(frame)
   const call = (operation: Hrs1Operation, candidate?: object, signal = i1.signal) => frame.fixed({ schema: 1, operation,
-    bindingHash: hrs1Hash(program.binding), body: operation === 'history' ? { contextKey: program.contextKey, factKind: program.binding.factKind } : {} }, signal, candidate)
+    bindingHash: hrs1Hash(program.binding), body: operation === 'history' ? { contextKey: program.contextKey, factKind: program.binding.factKind }
+      : operation === 'attest' ? { kind: 'verification', verification: attested } : {} }, signal, candidate)
   const start = async () => {
     const result = await frame.authority.resolveCurrent(program.method, at)
     assert.deepEqual(result, { status: 'approved', receipt })
     assert.equal(frame.admitImportSignal(i1.signal, true), true)
   }
   const take = (signal = i1.signal) => frame.takeInitialHistory(request(), signal)
-  const steps = async () => { await call('history'); assert.ok(take()); for (const operation of sequence.slice(1)) await call(operation) }
-  return { frame, stop, i1, receipt, effects, call, start, take, steps,
+  const takeAttest = () => frame.takeAttestedVerification(attested, i1.signal)
+  const steps = async () => { await call('history'); assert.ok(take()); await call('attest'); assert.equal(takeAttest(), true); await call('history') }
+  return { frame, stop, i1, receipt, effects, call, start, take, takeAttest, steps,
     setSnapshot(value: unknown) { snapshot = value }, changed() { current = false }, hold() { hold = true },
     holdReproof() { holdReproof = true }, release() { assert.ok(release); release() } }
 }
-test('one private I1 receipt and one explicit snapshot handoff retain four real HRS calls and final reproof', async () => {
+test('one private I1 receipt and explicit snapshot/attest handoffs retain three real HRS calls and final reproof', async () => {
   const f = fixture(); await f.start(); await f.steps()
   assert.deepEqual(await f.frame.authority.reproveAtCommit(f.receipt, program.method, at), { status: 'current' })
   assert.deepEqual(f.effects, ['method_read', ...sequence, 'method_reproof'])
-  assert.equal(f.effects.length + 3, 9, 'three unchanged S1 effects plus six actual forwarded effects; no claim of native timing')
+  assert.equal(f.effects.length + 2, 7, 'two genuine S1 effects plus five forwarded effects after the original handoff; no native timing claim')
   assert.equal((await f.call('history')).status, 'unavailable')
   assert.equal((await f.frame.authority.resolveCurrent(program.method, at)).status, 'unavailable')
 })
@@ -124,6 +131,28 @@ test('initial history is complete, detached and transferable exactly once before
   assert.equal((await missing.frame.authority.reproveAtCommit(missing.receipt, program.method, at)).status, 'unavailable')
 })
 
+test('only the exact completed attest ACK transfers once, before final history and while the I1 signal lives', async () => {
+  for (const mode of ['missing', 'foreign', 'replay', 'abort', 'pending'] as const) {
+    const f = fixture(); await f.start(); await f.call('history'); assert.ok(f.take())
+    if (mode === 'pending') {
+      f.hold()
+      const pending = f.call('attest')
+      try {
+        await Promise.resolve()
+        assert.equal(f.takeAttest(), false, 'no transfer before the real operation settles')
+      } finally { f.release(); await pending }
+    } else {
+      await f.call('attest')
+      if (mode === 'foreign') assert.equal(f.frame.takeAttestedVerification({ ...attested, reference: 'foreign' }, f.i1.signal), false)
+      if (mode === 'replay') { assert.equal(f.takeAttest(), true); assert.equal(f.takeAttest(), false) }
+      if (mode === 'abort') { f.i1.abort(); assert.equal(f.takeAttest(), false) }
+    }
+    assert.equal((await f.call('history')).status, 'unavailable')
+    assert.equal((await f.frame.authority.reproveAtCommit(f.receipt, program.method, at)).status, 'unavailable')
+    assert.equal(f.effects.filter(x => x === 'history').length, 1)
+  }
+})
+
 test('only the original I1 signal binds the first history, independently of its live worker parent', async () => {
   const premature = fixture(); await premature.frame.authority.resolveCurrent(program.method, at)
   assert.equal(premature.frame.admitImportSignal(premature.i1.signal, false), false)
@@ -177,7 +206,7 @@ test('the final genuine history reproof still rejects full-snapshot drift and su
       ids: () => ({ jobId: 'job3_' + '1'.repeat(32), operationId: 'op3_' + '2'.repeat(32) }) })
     const first = await ports.history.read(program.contextKey, program.binding.factKind, f.i1.signal)
     assert.equal(first.status, 'snapshot'); if (first.status !== 'snapshot') assert.fail('initial history')
-    assert.ok(f.take()); await f.call('attest'); await f.call('evidence')
+    assert.ok(f.take()); await f.call('attest'); assert.equal(f.takeAttest(), true)
     f.setSnapshot({ ...initialSnapshot(), ...change })
     assert.deepEqual(await ports.history.reprove(first.receipt, first.history, f.i1.signal), { status: 'changed' })
     assert.deepEqual(f.effects, ['method_read', ...sequence], 'final history is a real new call, not the transferred snapshot')

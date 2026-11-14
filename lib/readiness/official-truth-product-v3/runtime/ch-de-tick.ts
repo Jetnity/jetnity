@@ -5,6 +5,7 @@ import type { Hrs1Facade, Hrs1MonitorResult } from '../result/composition'
 import { HRS1_LIMITS } from '../result/contract'
 import { officialTruthV3ChDeRuntime } from './ch-de-server'
 import { traceDevDiagnosticStage, withDevDiagnosticBudget } from './dev-diagnostics'
+import { readChDeOwnerImportRequest, type ChDeOwnerImportRequest } from './ch-de-owner-import-contract'
 
 type WorkResult = Awaited<ReturnType<Hrs1Facade['workSelectedOnce']>>
 type WorkStatus = 'skipped' | 'processed' | 'not_due' | 'backoff' | 'exhausted' | 'superseded'
@@ -80,9 +81,10 @@ function countMonitor(value: Hrs1MonitorResult, counts: Counters): boolean {
 }
 
 /** No caller input chooses a context, job key, source, method, executor or cap.
- * Three sequential existing entrances share one immutable 30-second deadline.
+ * The three initial entrances share one immutable 30-second deadline. A manual
+ * continuation enters only research with its exact original claim identifiers.
  * Completion counters describe this tick, never a new public travel decision. */
-export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<ChDeTickReport> {
+export async function runOfficialTruthV3ChDeTick(signal: AbortSignal, selectedRequest?: ChDeOwnerImportRequest): Promise<ChDeTickReport> {
   const start = performance.now(), deadline = start + HRS1_LIMITS.workerMilliseconds
   const calls = { started: 0, settled: 0 }
   const stages: { discovery: WorkStatus; monitor: 'skipped' | Hrs1MonitorResult['status']; research: WorkStatus } = {
@@ -94,6 +96,12 @@ export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<C
     calls: Object.freeze({ ...calls }), stages: Object.freeze({ ...stages }), counts: Object.freeze({ ...counts }),
     elapsedMilliseconds: Math.max(0, Math.ceil(performance.now() - start)), budgetMilliseconds: 30000 })
   if (signal.aborted) return report('interrupted')
+  // A manual continuation retains the exact original request identifiers.
+  // It neither selects a new context nor creates a replacement claim.
+  let selected: ChDeOwnerImportRequest | null | undefined
+  try { selected = selectedRequest === undefined ? undefined : readChDeOwnerImportRequest(JSON.stringify(selectedRequest)) }
+  catch { return report('unavailable') }
+  if (selectedRequest !== undefined && !selected) return report('unavailable')
   if (active) return report('busy')
   active = true
   const controller = new AbortController(), stop = () => controller.abort()
@@ -109,31 +117,36 @@ export async function runOfficialTruthV3ChDeTick(signal: AbortSignal): Promise<C
     const facade = officialTruthV3ChDeRuntime()
     if (!facade) { counts.unavailable++; return report('unavailable') }
     if (interrupted()) return report('interrupted')
-    calls.started++
-    let discovery: WorkResult
-    try { discovery = await withDevDiagnosticBudget('tick', start, deadline, () =>
-      traceDevDiagnosticStage('tick_discovery', controller.signal,
-        () => facade.workSelectedOnce('combination_discovery', controller.signal, budget))) }
-    finally { calls.settled++ }
-    const discovered = countWork(discovery, counts); stages.discovery = discovered.status
-    if (interrupted()) return report('interrupted')
-    if (!discovered.proceed) return report('stopped')
+    if (selected?.mode !== 'resume') {
+      calls.started++
+      let discovery: WorkResult
+      try { discovery = await withDevDiagnosticBudget('tick', start, deadline, () =>
+        traceDevDiagnosticStage('tick_discovery', controller.signal,
+          () => facade.workSelectedOnce('combination_discovery', controller.signal, budget))) }
+      finally { calls.settled++ }
+      const discovered = countWork(discovery, counts); stages.discovery = discovered.status
+      if (interrupted()) return report('interrupted')
+      if (!discovered.proceed) return report('stopped')
 
-    calls.started++
-    let monitored: Hrs1MonitorResult
-    try { monitored = await withDevDiagnosticBudget('tick', start, deadline, () =>
-      traceDevDiagnosticStage('tick_monitor', controller.signal, () => facade.monitorOnce(controller.signal, budget))) }
-    finally { calls.settled++ }
-    stages.monitor = monitored.status
-    const proceed = countMonitor(monitored, counts)
-    if (interrupted()) return report('interrupted')
-    if (!proceed) return report('stopped')
+      calls.started++
+      let monitored: Hrs1MonitorResult
+      try { monitored = await withDevDiagnosticBudget('tick', start, deadline, () =>
+        traceDevDiagnosticStage('tick_monitor', controller.signal, () => facade.monitorOnce(controller.signal, budget))) }
+      finally { calls.settled++ }
+      stages.monitor = monitored.status
+      const proceed = countMonitor(monitored, counts)
+      if (interrupted()) return report('interrupted')
+      if (!proceed) return report('stopped')
+    }
 
     calls.started++
     let research: WorkResult
     try { research = await withDevDiagnosticBudget('tick', start, deadline, () =>
       traceDevDiagnosticStage('tick_research', controller.signal,
-        () => facade.workSelectedOnce('rule_research', controller.signal, budget))) }
+        () => selected
+          ? facade.workSelectedOnce('rule_research', controller.signal, budget,
+            Object.freeze({ operationId: selected.operationId, leaseId: selected.leaseId }))
+          : facade.workSelectedOnce('rule_research', controller.signal, budget))) }
     finally { calls.settled++ }
     const researched = countWork(research, counts); stages.research = researched.status
     if (interrupted()) return report('interrupted')

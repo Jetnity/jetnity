@@ -157,6 +157,21 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     'lib/readiness/official-truth-product-v3/import/service-server.ts',
   ])
   assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 8)
+  // Exact reviewed I1/S1 operation successors; every earlier amendment remains intact.
+  const operationSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+      previousReviewed: { bytes: 12562, sha256: 'a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6' },
+      reviewed: { bytes: 13780, sha256: 'd21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009' } },
+    { path: 'lib/readiness/official-truth-product-v3/storage/intake-server.ts',
+      previousReviewed: { bytes: 2934, sha256: 'fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082' },
+      reviewed: { bytes: 2980, sha256: '67b4ad9d08e341bc551e265cfbd0ef9ddc6561308d559ca81e863ea65ad15628' } },
+  ] as const
+  assert.deepEqual(operationSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+    'lib/readiness/official-truth-product-v3/storage/intake-server.ts',
+  ])
+  assert.equal(new Set(operationSourceAmendment.map(row => row.path)).size, 2)
+  let reviewedOperationRows = 0
   let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
@@ -201,7 +216,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousExpected.bytes, sha256: previousExpected.sha256 }, currentChanged.previousReviewed, row.path)
       reviewedCurrentRows++
     }
-    const expected = currentChanged?.reviewed ?? previousExpected
+    const previousCurrent = currentChanged?.reviewed ?? previousExpected
+    const operationChanged = operationSourceAmendment.find(file => file.path === row.path)
+    if (operationChanged) {
+      assert.deepEqual({ bytes: previousCurrent.bytes, sha256: previousCurrent.sha256 }, operationChanged.previousReviewed, row.path)
+      reviewedOperationRows++
+    }
+    const expected = operationChanged?.reviewed ?? previousCurrent
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -212,4 +233,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
   assert.equal(reviewedCurrentRows, 8)
+  assert.equal(reviewedOperationRows, 2)
 })

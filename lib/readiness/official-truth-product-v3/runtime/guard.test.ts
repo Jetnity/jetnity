@@ -7,6 +7,7 @@ import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../../scripts/db/verwendung.
 import { assertTransactionBody, compileCandidate, compileMigrationBody, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
 import { compileStatusMigrationBody } from '../../../../scripts/db/official-truth-v3-background-guard-1/status-rpc-build.mjs'
 import { compileRecoveryMigrationBody, RECOVERY_PREDECESSORS, RECOVERY_REPLACEMENTS } from '../../../../scripts/db/official-truth-v3-background-guard-1/recovery-build.mjs'
+import { compileGapRecoveryMigrationBody, GAP_RECOVERY_PREDECESSORS, GAP_RECOVERY_REPLACEMENTS } from '../../../../scripts/db/official-truth-v3-background-guard-1/recovery-gap-build.mjs'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, devGuardReceipt, readDevGuardRequest,
   readDevGuardReview, readDevGuardResult, readDevGuardText } from './guard-contract'
 
@@ -175,6 +176,93 @@ test('later retirement gates current history, preserved source entries and lower
     for (const required of ['recovery_baseline_v1', 'status_baseline_v1', 'required_generation', 'proof_not_before', "run.outcome='complete'", 'last_proof_started<earliest_proof']) assert.ok(gate.includes(required), name + ' ' + required)
     for (const forbidden of ['audit_v1(', 'UPDATE ', 'INSERT ', 'DELETE ']) assert.equal(gate.includes(forbidden), false, forbidden)
   }
+})
+test('gap recovery preserves the installed Recovery2 and replaces exactly nine existing function bodies with exact metadata', () => {
+  const sha = (value: string) => createHash('sha256').update(value).digest('hex')
+  const dir = new URL('../../../../scripts/db/official-truth-v3-background-guard-1/', import.meta.url)
+  for (const [file, digest] of [
+    ['provider-migration-body.sql', GAP_RECOVERY_PREDECESSORS.bg1],
+    ['status-rpc-provider-migration-body.sql', GAP_RECOVERY_PREDECESSORS.status],
+    ['recovery-provider-migration-body.sql', GAP_RECOVERY_PREDECESSORS.recovery2],
+    ['recovery-build.mjs', GAP_RECOVERY_PREDECESSORS.recovery2Builder],
+    ['parts/recovery.sql', GAP_RECOVERY_PREDECESSORS.recovery2Part],
+  ]) assert.equal(sha(readFileSync(new URL(file!, dir), 'utf8')), digest)
+  const generated = compileGapRecoveryMigrationBody()
+  assert.equal(generated, readFileSync(new URL('recovery-gap-provider-migration-body.sql', dir), 'utf8'))
+  assertTransactionBody(generated)
+  const prior = new Map([compileMigrationBody(), compileStatusMigrationBody(), compileRecoveryMigrationBody()]
+    .flatMap(sql => functionsIn(sql)).map(f => [f.signature, f]))
+  const next = functionsIn(generated)
+  assert.deepEqual(next.map(f => f.signature), GAP_RECOVERY_REPLACEMENTS)
+  const literal = /DECLARE approved jsonb:='((?:[^']|'')*)'::jsonb;/.exec(generated)?.[1]
+  assert.ok(literal)
+  const metadata = JSON.parse(literal.replaceAll("''", "'")) as { signature: string; hash: string }[]
+  assert.deepEqual(metadata.map(row => row.signature), GAP_RECOVERY_REPLACEMENTS)
+  for (const f of next) {
+    assert.ok(prior.has(f.signature), 'no new function or authority edge')
+    assert.equal(f.options, prior.get(f.signature)!.options)
+    assert.equal(metadata.find(row => row.signature === f.signature)!.hash, sha(f.body), 'real final body, including installed predecessor digest')
+    assert.ok(generated.includes("('" + f.signature + "','" + sha(prior.get(f.signature)!.body) + "')"))
+  }
+  for (const name of ['check_retired_jobs_v1(jsonb)', 'recovery_intake_v1(jsonb)', 'check_retired_s1_v1(jsonb)']) {
+    assert.ok(generated.includes(prior.get('official_v3_guard_private.' + name)!.body.trim() + ';'), name + ' retains the entire original validator')
+  }
+  assert.equal((generated.match(/CREATE TABLE official_v3_guard_private\./g) ?? []).length, 1)
+  assert.ok(generated.includes('CREATE TABLE official_v3_guard_private.gap_recovery_baseline_v1'))
+  assert.ok(generated.includes('cardinality(replacement_ids)<>9'))
+  for (const name of ['jobs', 'intake']) {
+    assert.ok(generated.includes(`GRANT ot_v3_${name}_owner TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE GRANTED BY postgres;`))
+    assert.ok(generated.includes(`REVOKE ot_v3_${name}_owner FROM postgres GRANTED BY postgres;`))
+  }
+  assert.equal(/(?:GRANT|REVOKE) ot_v3_result_owner\b/.test(generated), false)
+  assert.equal(/GRANT (?:EXECUTE|SELECT|UPDATE|INSERT|DELETE|ALL)\b/.test(generated), false)
+  assert.equal(/(?:CREATE|ALTER|DROP) ROLE\b/.test(generated), false)
+  assert.ok(generated.includes("kind='memberships'")); assert.ok(generated.includes("kind='schema_acl'"))
+  assert.ok(generated.includes('bg1 recovery exact authority restoration required'))
+  assert.ok(generated.includes("(after_catalog->entry.key)-'definition' IS NOT DISTINCT FROM entry.value-'definition'"))
+  assert.equal(generated.includes('bg1 recovery installer cannot retire an attempt'), false, 'real earlier Recovery2 retirement may already exist')
+  assert.ok(generated.includes("'official_v3_guard_private.recovery_baseline_v1','official_v3_guard_private.retired_later_attempts_v1'"), 'all existing later retirement rows are snapshotted and compared exactly')
+  assert.equal(/(?:UPDATE|INSERT INTO|DELETE FROM|ALTER TABLE) official_v3_(?:jobs|intake|result|method)_private\./.test(generated), false)
+  assert.equal(/(?:UPDATE|DELETE FROM|ALTER TABLE) official_v3_guard_private\.(?:baselines_v1|status_baseline_v1|recovery_baseline_v1|retired_attempts_v1|retired_later_attempts_v1|state_v1|runs_v1|incidents_v1)\b/.test(generated), false)
+})
+test('gap proof uses four genuine claims, exactly three starts and actual S1 absence without a fictitious third retirement', () => {
+  const next = new Map(functionsIn(compileGapRecoveryMigrationBody()).map(f => [f.signature, f.body]))
+  const body = (name: string) => { const value = next.get('official_v3_guard_private.' + name); assert.ok(value); return value }
+  const jobs = body('recovery_jobs_v1()'), retired = body('check_retired_jobs_v1(jsonb)')
+  const block = (value: string) => value.slice(value.indexOf('DECLARE gap_claim '), value.indexOf('\nEND;', value.indexOf('DECLARE gap_claim ')) + 5)
+  assert.equal(block(jobs), block(retired), 'review and retrospective audit bind the same actual immutable journal')
+  for (const required of ['s.start_count=3', 'n=4', 'expected=3', "'operationCount',s.operation_count"]) assert.ok(jobs.includes(required))
+  for (const required of ['gap_number<>5', 'gap_number=3', 'gap_previous', 'gap_row.authority', 'gap_start.claim_text',
+    'gap_retired', 'gap_start.attempt_key', 'clock_timestamp()', 'execution_results_v1', 'execution_dispositions_v1',
+    'claim_without_execution_start', 'extract(epoch FROM gap_claim.recorded_at)', "candidate->'skippedClaims' IS DISTINCT FROM gap_value"]) assert.ok(block(jobs).includes(required), required)
+  assert.ok(block(jobs).includes("x.leased_job->'jobId'=candidate#>'{leasedJob,jobId}'"), 'later real cycles do not rewrite the retired job prefix')
+  for (const name of ['recovery_intake_v1(jsonb)', 'check_retired_s1_v1(jsonb)']) {
+    const value = body(name)
+    assert.ok(value.includes('IN SHARE MODE'))
+    for (const table of ['operations_v1', 'reservations_v1', 'completions_v1']) {
+      assert.ok(value.includes('FROM official_v3_intake_private.' + table + ' WHERE operation_id=gap_operation'))
+    }
+  }
+  const guard = body('intake_retired_v1(text)')
+  assert.ok(guard.includes('attempt_number=4')); assert.ok(guard.includes("'{job,skippedClaims,0,attempt}'='3'::jsonb"))
+  assert.ok(guard.includes("'{job,skippedClaims,0,intakeOperationId}'=operation_value"))
+  const audit = body('check_retirements_v1()')
+  for (const required of ['gap_case AND current_number=3', 'CASE WHEN gap_case THEN 3 ELSE retired.attempt_number END',
+    'CASE WHEN gap_case THEN 2 ELSE retired.attempt_number-1 END', 'check_retired_jobs_v1', 'check_retired_s1_v1', 'check_retired_hrs_v1']) assert.ok(audit.includes(required), required)
+})
+test('gap installation chains all old baselines and requires a genuine subsequent full proof in both status gates', () => {
+  const generated = compileGapRecoveryMigrationBody(), fs = functionsIn(generated)
+  for (const name of ['official_v3_guard_private.require_open_v1', 'public.official_v3_guard_alarm_status_v1']) {
+    const value = fs.find(f => f.name === name)!.body
+    for (const required of ['gap_recovery_baseline_v1', 'recovery_baseline_v1', 'status_baseline_v1',
+      'g.required_generation', 'g.proof_not_before', "run.outcome='complete'", 'last_proof_started<earliest_proof']) assert.ok(value.includes(required), name + ' ' + required)
+    assert.equal(/audit_v1\(|(?:INSERT|UPDATE|DELETE) /.test(value), false)
+  }
+  assert.ok(generated.includes('s.generation+1,clock_timestamp(),after_catalog'))
+  assert.ok(generated.includes('gap_baseline.predecessor_catalog_digest'))
+  assert.ok(generated.includes('gap_baseline.predecessor_recovery_digest'))
+  assert.ok(generated.includes('extract(epoch FROM successor.proof_not_before)'))
+  assert.equal(/(?:PERFORM|SELECT) official_v3_guard_private.audit_v1\(/.test(generated), false)
 })
 test('later review shows actual bounded attempts and evidence counts without widening the first-attempt contract', () => {
   const candidate = { ...review, retirement: { status: 'reviewable', selection: 'b'.repeat(64), attempt: 2,

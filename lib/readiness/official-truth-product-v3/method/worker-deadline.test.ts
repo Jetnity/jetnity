@@ -196,6 +196,49 @@ test('optional worker and monitor caps only shorten the real HRS factory', { tim
   })
 })
 
+test('manual selected worker retains genuine request identifiers without caller-selected scope or new IDs', async t => {
+  const requests: Record<string, unknown>[] = []
+  let allocations = 0, getters = 0
+  const h = fixture({ ids() { allocations++; throw Error('manual continuation must retain its original IDs') },
+    async jobs(request) { requests.push(JSON.parse(request.operationText)); return { status: 'unavailable' } } })
+  const selection = Object.freeze({ operationId: 'op3_' + 'a'.repeat(32), leaseId: 'lease3_' + 'b'.repeat(32) })
+  const accessor = Object.defineProperty({ leaseId: selection.leaseId }, 'operationId', {
+    enumerable: true, get() { getters++; return selection.operationId },
+  })
+  for (const invalid of [null, [], {}, { ...selection, target: 'other' }, { ...selection, leaseId: 'wrong' },
+    Object.create(selection), accessor]) {
+    assert.equal((await h.facade.workSelectedOnce('rule_research', signal(), undefined,
+      invalid as unknown as typeof selection)).status, 'invalid')
+  }
+  assert.equal((await h.facade.workSelectedOnce('combination_discovery', signal(), undefined, selection)).status, 'invalid')
+  assert.equal(getters, 0); assert.equal(requests.length, 0); assert.equal(allocations, 0)
+  const identity = createV3WorkIdentity({ context: h.binding.context,
+    method: { methodId: method.methodId, revision: method.revision }, factKind: 'requirement_effect', researchReason: { status: 'missing' } })
+  assert.ok(identity.ok)
+  for (let index = 0; index < 2; index++) await h.facade.workSelectedOnce('rule_research', signal(), undefined, selection)
+  assert.equal(requests.length, 2); assert.deepEqual(requests[1], requests[0]); assert.equal(allocations, 0)
+  assert.deepEqual(requests[0], { operation: 'execution_read', phase: 'probe', body: { purpose: 'resume', claim: {
+    ...selection, jobKey: identity.value.jobKey, leaseMilliseconds: 30000,
+  } } })
+
+  await t.test('input mutation and abort cannot replace the in-flight original request or escape drain', async () => {
+    const entered = deferred<void>(), gate = deferred<void>(), controller = new AbortController()
+    let captured: unknown, settled = false
+    const held = fixture({ ids() { assert.fail('no replacement IDs') }, async jobs(request) {
+      captured = JSON.parse(request.operationText); entered.resolve(); await gate.promise; return { status: 'unavailable' }
+    } })
+    const mutable = { ...selection }
+    const pending = held.facade.workSelectedOnce('rule_research', controller.signal, undefined, mutable)
+      .then(result => { settled = true; return result })
+    try {
+      await entered.promise; mutable.operationId = 'op3_' + 'c'.repeat(32); mutable.leaseId = 'lease3_' + 'd'.repeat(32)
+      controller.abort(); await Promise.resolve(); assert.equal(settled, false)
+      assert.deepEqual(captured, requests[0])
+    } finally { gate.resolve(); await pending }
+    assert.equal(held.state.settled, 1); assert.equal(held.calls.length, 1); assert.equal(held.state.unexpected, 0)
+  })
+})
+
 test('monitor finish cannot overtake a queue timeout with an actually unsettled MA1 call', { timeout: 15000 }, async t => {
   for (const abortOuter of [false, true]) await t.test(abortOuter ? 'outer abort during drain forbids finish' : 'settlement permits only the original negative finish', async t => {
     // Protocol doubles exercise the real HRS factory, queue and scope. They do

@@ -2,7 +2,7 @@
 import 'server-only'
 import { ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
 import { createV3WorkIdentity } from '../contract'
-import type { M04Config, M04Facade, M04Authority, M04FixedOperation } from '../jobs/contract'
+import type { M04Config, M04Facade, M04Authority, M04FixedOperation, M04OperationAuthority, M04WorkerTerminalAuthority } from '../jobs/contract'
 import { composeM04ResultInvocation } from '../jobs/composition'
 import type { createM04InvocationScope } from '../jobs/owned-scope'
 import { createV3VisitorQuery, type V3VisitorQueryResult } from '../visitor/query'
@@ -10,7 +10,7 @@ import { createChDeSnapshotQuery } from '../visitor/ch-de-snapshot'
 import { createChDeImportFrame } from './ch-de-import-frame'
 import { runV3SourceMonitorOnce, type V3MonitorOutcome } from '../monitor/monitor'
 import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
-import { createHrs1SourceConsumer, type Hrs1SourceConsumer, type Hrs1InitialHistoryTransfer } from './source-proof'
+import { createHrs1SourceConsumer, type Hrs1SourceConsumer, type Hrs1InitialHistoryTransfer, type Hrs1AttestedVerificationTransfer } from './source-proof'
 import { createHrs1ResultPorts, type Hrs1ResultPorts } from './postgres'
 import { HRS1_LIMITS, hrs1Hash, hrs1Same, hrs1Time, type Hrs1Binding, type Hrs1Config, type Hrs1FixedOperation } from './contract'
 
@@ -22,7 +22,7 @@ export type Hrs1Facade = M04Facade & Readonly<{
   query(raw: unknown, signal?: AbortSignal): Promise<V3VisitorQueryResult>;
   monitorOnce(signal?: AbortSignal, budget?: Readonly<{ deadline: number }>): Promise<Hrs1MonitorResult>;
   workSelectedOnce(kind: 'rule_research' | 'combination_discovery', signal?: AbortSignal,
-    budget?: Readonly<{ deadline: number }>): ReturnType<M04Facade['workOnce']>;
+    budget?: Readonly<{ deadline: number }>, selection?: Readonly<{ operationId: string; leaseId: string }>): ReturnType<M04Facade['workOnce']>;
 }>
 
 /** Internal only. Neither a connection nor a proof receipt is returned by the
@@ -32,8 +32,11 @@ export function composeHrs1Invocation(input: Readonly<{
   authority: M04Authority; processingAuthority: M04Authority;
   fixed: M04FixedOperation; processingFixed: M04FixedOperation;
   resultFixed: Hrs1FixedOperation; processingResultFixed: Hrs1FixedOperation;
+  acquireOperationAuthority?: M04OperationAuthority;
+  acquireWorkerTerminalAuthority?: M04WorkerTerminalAuthority;
 }>) {
   const pending = new Set<Promise<unknown>>()
+  const custodyScope = Object.freeze({ key: Object.freeze({}), signal: input.scope.signal })
   function owned<T>(run: () => Promise<T>): Promise<T> {
     const actual = Promise.resolve().then(run)
     pending.add(actual)
@@ -49,17 +52,20 @@ export function composeHrs1Invocation(input: Readonly<{
     }
     return Object.freeze(copy)
   }
-  function source(fixed: Hrs1FixedOperation, takeInitialHistory?: Hrs1InitialHistoryTransfer): Hrs1SourceConsumer {
+  function source(fixed: Hrs1FixedOperation, takeInitialHistory?: Hrs1InitialHistoryTransfer,
+    takeAttestedVerification?: Hrs1AttestedVerificationTransfer): Hrs1SourceConsumer {
     const raw = createHrs1SourceConsumer({ binding: input.binding, registry: input.config.registry,
-      fixed, clock: input.config.clock, fixtureIssuer: input.result.fixtureIssuer, takeInitialHistory })
+      fixed, clock: input.config.clock, fixtureIssuer: input.result.fixtureIssuer, takeInitialHistory, takeAttestedVerification, custodyScope })
     return Object.freeze({ ...raw, evidence: ownMethods(raw.evidence), sources: ownMethods(raw.sources),
       openVerification: (...args: Parameters<typeof raw.openVerification>) => owned(() => raw.openVerification(...args)),
       reproveVerification: (...args: Parameters<typeof raw.reproveVerification>) => owned(() => raw.reproveVerification(...args)),
+      reproveLocal: (...args: Parameters<typeof raw.reproveLocal>) => owned(() => raw.reproveLocal(...args)),
+      takeOpenedVerification: (...args: Parameters<typeof raw.takeOpenedVerification>) => owned(() => raw.takeOpenedVerification(...args)),
     })
   }
-  function ports(fixed: Hrs1FixedOperation, takeInitialHistory?: Hrs1InitialHistoryTransfer): Hrs1ResultPorts {
+  function ports(fixed: Hrs1FixedOperation, consumer = source(fixed)): Hrs1ResultPorts {
     const raw = createHrs1ResultPorts({ binding: input.binding, registry: input.config.registry,
-      fixed, clock: input.config.clock, source: source(fixed, takeInitialHistory), ids: input.result.ids })
+      fixed, clock: input.config.clock, source: consumer, ids: input.result.ids })
     return Object.freeze({ ...raw, history: ownMethods(raw.history), evidence: ownMethods(raw.evidence),
       versionStore: Object.freeze({ ...ownMethods(raw.versionStore),
         atomicBoundary: raw.versionStore.atomicBoundary ? ownMethods(raw.versionStore.atomicBoundary) : null }),
@@ -73,18 +79,27 @@ export function composeHrs1Invocation(input: Readonly<{
       finishMonitor: (...args: Parameters<typeof raw.finishMonitor>) => owned(() => raw.finishMonitor(...args)),
     })
   }
-  const outer = ports(input.resultFixed), processing = ports(input.processingResultFixed)
+  const outerSource = source(input.resultFixed)
+  const outer = ports(input.resultFixed, outerSource), processing = ports(input.processingResultFixed)
   const jobs = composeM04ResultInvocation({ config: { ...input.config, producer: ownMethods(input.config.producer) }, scope: input.scope,
     authority: input.authority, processingAuthority: input.processingAuthority,
+    acquireOperationAuthority: input.acquireOperationAuthority,
+    acquireWorkerTerminalAuthority: input.acquireWorkerTerminalAuthority,
     fixed: input.fixed, processingFixed: input.processingFixed,
     result: { outer, processing, projectionMaxAgeMilliseconds: input.binding.projectionMaxAgeMilliseconds,
       openProcessingImport(job, signal) {
         const frame = createChDeImportFrame({ binding: input.binding, job, signal,
           authority: input.processingAuthority, fixed: input.processingResultFixed })
         if (!frame) return null
-        const local = ports(frame.fixed, frame.takeInitialHistory)
+        const localSource = source(frame.fixed, frame.takeInitialHistory, frame.takeAttestedVerification)
+        const local = ports(frame.fixed, localSource)
         return Object.freeze({ methodAuthority: frame.authority, evidence: local.evidence,
-          history: local.history, close: frame.close, admitImportSignal: frame.admitImportSignal })
+          history: local.history, close: frame.close, admitImportSignal: frame.admitImportSignal,
+          confirmSource(decision: Parameters<typeof localSource.exportCustody>[0], active: AbortSignal) {
+            const transferred = localSource.exportCustody(decision, active)
+            return transferred.status === 'absent' || transferred.status === 'issued'
+              && outerSource.importCustody(transferred.receipt, active)
+          } })
       },
       callDeadline: Math.min(input.scope.deadline, input.callDeadline) } })
   const ruleQueue = ownMethods(jobs.ruleQueue), discoveryQueue = ownMethods(jobs.discoveryQueue)

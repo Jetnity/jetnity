@@ -3,8 +3,10 @@ import 'server-only'
 import { performance } from 'node:perf_hooks'
 import { ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
 import { createV3WorkIdentity, createV3CombinationDiscoveryIdentity, type V3MethodAuthorityPort, type V3MethodRef } from '../contract'
-import { M04_LIMITS, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation,
-  type M04FixedRequest, type M04NativeReply } from '../jobs/contract'
+import { M04_LIMITS, readM04Command, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation,
+  type M04FixedRequest, type M04NativeReply, type M04Claim, type M04Operation,
+  type M04OperationAuthority, type M04WorkerTerminalAuthority } from '../jobs/contract'
+import type { V3ManagedJobRecord } from '../monitor/queue'
 import { createM04LanePool, createM04InvocationScope } from '../jobs/owned-scope'
 import { composeM04Invocation } from '../jobs/composition'
 import { composeHrs1Invocation, type Hrs1Facade } from '../result/composition'
@@ -44,6 +46,12 @@ type Observation = Readonly<{ row: Ma1CurrentRow | null; aborted: boolean }>
 function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExecutor | null, joint?: Joint) {
   const configured = readMa1FixedBinding(bindingInput)
   const receipts = new WeakMap<Ma1MethodReceipt, Held>()
+  // One exact worker invocation. Only validated, terminal native ACKs below can
+  // populate this identity; no request/DTO or Boolean can create the proof.
+  type WorkerAnchor = { claimText: string; jobText: string; claimEpoch: number | null;
+    startEpoch: number | null; attemptKey: string | null; preparedText: string | null }
+  let workerAnchor: WorkerAnchor | null = null
+  const confirmations = new WeakMap<object, { anchor: WorkerAnchor; epoch: number }>()
   let active = 0
   let read: Ma1MethodSqlExecutor['readCurrent'] | null = null
   try {
@@ -61,12 +69,15 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
     } catch { return null }
   }
 
-  async function observe(request: Ma1CurrentRequest, deadline: number, group: Group): Promise<Observation> {
+  async function observe(request: Ma1CurrentRequest, deadline: number, group: Group, signal?: AbortSignal): Promise<Observation> {
     deadline = Math.min(deadline, joint?.scope.deadline ?? Infinity, joint?.callCap ?? Infinity)
     const budget = Object.freeze({ deadline })
-    if (!configured.ok || !read || active >= MA1_LIMITS.activeReads || performance.now() >= deadline) return { row: null, aborted: false }
+    if (!configured.ok || !read || active >= MA1_LIMITS.activeReads || performance.now() >= deadline || signal?.aborted) return { row: null, aborted: signal?.aborted ?? false }
     active++
     const controller = new AbortController()
+    const abort = () => controller.abort()
+    signal?.addEventListener('abort', abort, { once: true })
+    if (signal?.aborted) controller.abort()
     const timer = setTimeout(() => controller.abort(), Math.max(0, deadline - performance.now()))
     try {
       // Deliberately no race: a timeout cannot detach the executor or release its slot.
@@ -85,6 +96,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
     } catch { return { row: null, aborted: controller.signal.aborted } }
     finally {
       clearTimeout(timer)
+      signal?.removeEventListener('abort', abort)
       active-- // The real executor promise and its strict result decoding have settled.
     }
   }
@@ -142,6 +154,96 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   }
 
   const port = portFor('outer'), processingAuthority = portFor('processing')
+  const acquireOperationAuthority: M04OperationAuthority = async (anchorReceipt, method, checkedAt, signal) => {
+    const start = performance.now(), request = requestFor(method, checkedAt)
+    const anchor = anchorReceipt && typeof anchorReceipt === 'object' ? receipts.get(anchorReceipt as Ma1MethodReceipt) : undefined
+    if (!joint || !configured.ok || !request || !anchor || anchor.busy || signal.aborted
+      || !joint.scope.admits('outer') || joint.scope.isAmbiguous()) return { status: 'unavailable' }
+    // This is a distinct operation acquisition, never reproof/renewal of the old
+    // receipt. Its expired deadline/dbCap remain untouched and non-authorizing.
+    anchor.busy = 'observation'
+    try {
+      const observed = await observe(request, start + MA1_LIMITS.receiptMs, 'outer', signal), row = observed.row
+      if (!row || observed.aborted || signal.aborted || !joint.scope.admits('outer')
+        || joint.scope.isAmbiguous() || performance.now() >= start + MA1_LIMITS.receiptMs) return { status: 'unavailable' }
+      if (row.status === 'binding_mismatch') return { status: 'unavailable' }
+      if (row.status === 'different_revision' || row.status === 'revoked'
+        || ((row.status === 'approved' || row.status === 'expired') && row.epoch !== anchor.epoch)) return { status: 'revoked' }
+      if (row.status !== 'approved') return { status: 'not_approved' }
+      const deadline = Math.min(start + MA1_LIMITS.receiptMs, start + row.remainingMs,
+        joint.scope.deadline, joint.callCap ?? Infinity)
+      if (performance.now() >= deadline) return { status: 'unavailable' }
+      const receipt = Object.freeze({}) as Ma1MethodReceipt
+      const held: Held = { binding: configured.value, epoch: row.epoch, observedAt: row.observedAt, deadline }
+      if (!shrinkCap(held, row)) return { status: 'unavailable' }
+      receipts.set(receipt, held)
+      return { status: 'approved', receipt }
+    } finally { anchor.busy = null }
+  }
+
+  function workerIdentity(claim: M04Claim, job: V3ManagedJobRecord): WorkerAnchor | null {
+    const claimText = canonical(claim), jobText = canonical(job)
+    if (workerAnchor && (workerAnchor.claimText !== claimText || workerAnchor.jobText !== jobText)) return null
+    workerAnchor ??= { claimText, jobText, claimEpoch: null, startEpoch: null, attemptKey: null, preparedText: null }
+    return workerAnchor
+  }
+  function rememberWorkerAck(request: M04Operation, reply: M04NativeReply, held: Held): boolean {
+    if (request.operation === 'queue_cas' || request.operation === 'queue_confirm') {
+      const command = readM04Command(request.body.command)
+      if (command?.action !== 'claim' || reply.status !== 'committed' || reply.record.state !== 'leased') return true
+      if (request.operation === 'queue_cas' && canonical(reply.record) !== canonical(request.body.commit.next)) return false
+      if (request.operation === 'queue_confirm' && (reply.commandText !== command.commandText
+        || reply.commandKey !== command.commandKey || reply.operationId !== command.operationId)) return false
+      const anchor = workerIdentity(command.value.input as M04Claim, reply.record)
+      if (!anchor || (anchor.claimEpoch !== null && anchor.claimEpoch !== held.epoch)
+        || (anchor.startEpoch !== null && anchor.startEpoch !== held.epoch)) return false
+      // For replay this is the epoch of the real current claim ACK, not a claim
+      // that the historical queue row exposes its original stored epoch.
+      anchor.claimEpoch = held.epoch
+    }
+    if (request.operation === 'execution_start' && reply.status === 'reserved') {
+      if (canonical(reply.claim) !== canonical(request.body.claim)
+        || canonical(reply.leasedJob) !== canonical(request.body.leasedJob)) return false
+      const anchor = workerIdentity(reply.claim, reply.leasedJob)
+      if (!anchor || anchor.claimEpoch !== held.epoch || anchor.attemptKey !== null) return false
+      anchor.startEpoch = held.epoch; anchor.attemptKey = reply.attemptKey
+    }
+    if (request.operation === 'execution_prepare' && reply.status === 'prepared') {
+      const anchor = workerAnchor
+      if (!anchor || anchor.startEpoch !== held.epoch || anchor.claimText !== canonical(request.body.claim)
+        || anchor.attemptKey !== reply.attemptKey || reply.attemptKey !== request.body.attemptKey
+        || canonical(reply.result) !== canonical(request.body.result)
+        || canonical(reply.references) !== canonical(request.body.references)) return false
+      anchor.preparedText = canonical({ attemptKey: reply.attemptKey, result: reply.result, references: reply.references })
+    }
+    if (request.operation === 'execution_read' && reply.status === 'prepared') {
+      if (!reply.claim || !reply.leasedJob || canonical(reply.claim) !== canonical(request.body.claim)) return false
+      const anchor = workerIdentity(reply.claim, reply.leasedJob)
+      const preparedText = canonical({ attemptKey: reply.attemptKey, result: reply.result, references: reply.references })
+      if (!anchor || (anchor.startEpoch !== null && anchor.startEpoch !== held.epoch)
+        || (anchor.claimEpoch !== null && anchor.claimEpoch !== held.epoch)
+        || (anchor.attemptKey !== null && anchor.attemptKey !== reply.attemptKey)
+        || (anchor.preparedText !== null && anchor.preparedText !== preparedText)) return false
+      // Authorized SQL has compared this epoch with the immutable stored START.
+      anchor.startEpoch = held.epoch; anchor.attemptKey = reply.attemptKey; anchor.preparedText = preparedText
+      if (request.body.purpose === 'confirm' && joint?.scope.processingTerminal() && joint.scope.terminalObservation()) {
+        confirmations.set(reply, { anchor, epoch: held.epoch })
+      }
+    }
+    return true
+  }
+  const acquireWorkerTerminalAuthority: M04WorkerTerminalAuthority = async (anchorReceipt, confirmed, checkedAt, signal) => {
+    const proof = confirmations.get(confirmed), held = receipts.get(anchorReceipt as Ma1MethodReceipt)
+    confirmations.delete(confirmed) // one actual confirm ACK cannot authorize concurrent/repeated acquisitions
+    if (!joint || !configured.ok || !proof || !held || proof.anchor !== workerAnchor
+      || proof.anchor.claimEpoch !== held.epoch || proof.anchor.startEpoch !== held.epoch || proof.epoch !== held.epoch
+      || !joint.scope.processingTerminal() || !joint.scope.terminalObservation() || joint.scope.isAmbiguous() || signal.aborted) return { status: 'unavailable' }
+    const acquired = await acquireOperationAuthority(anchorReceipt,
+      { methodId: configured.value.methodId, revision: configured.value.revision }, checkedAt, signal)
+    return acquired.status === 'approved' && joint.scope.processingTerminal() && joint.scope.terminalObservation()
+      && !joint.scope.isAmbiguous() && !signal.aborted ? { status: 'current' } : { status: 'unavailable' }
+  }
+
   function fixedFor(group: Group): M04FixedOperation {
     return async (request, signal, providedReceipt): Promise<M04NativeReply> => {
       if (!joint || !configured.ok || signal.aborted || !joint.scope.admits(group)) return { status: 'unavailable' }
@@ -150,6 +252,10 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
         if (!joint || !configured.ok || !joint.scope.admits(group) || signal.aborted) return { status: 'unavailable' }
         const held = receipt ? receipts.get(receipt as Ma1MethodReceipt) : undefined
         if (phase === 'authorized' && (!held || held.busy || !held.dbCap)) return { status: 'unavailable' }
+        if (phase === 'authorized' && request.operation === 'execution_start'
+          && (!held || !workerAnchor || workerAnchor.claimEpoch !== held.epoch || workerAnchor.startEpoch !== null
+            || workerAnchor.claimText !== canonical(request.body.claim)
+            || workerAnchor.jobText !== canonical(request.body.leasedJob))) return { status: 'unavailable' }
         const deadline = Math.min(joint.scope.deadline, joint.callCap ?? Infinity, held?.deadline ?? performance.now() + M04_LIMITS.effectMs)
         if (Math.floor(deadline - performance.now()) <= 0) return { status: 'unavailable' }
         if (held) held.busy = 'effect'
@@ -175,6 +281,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
           const reply = readM04NativeReply(executed.value.rows, request.operation)
           if (!reply || (phase === 'probe' && !['absent', 'not_attempted', 'collision', 'blocked', 'requires_authority'].includes(reply.status)) || signal.aborted || joint.scope.signal.aborted || performance.now() >= deadline
             || (held && performance.now() >= held.deadline)) { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
+          if (held && !rememberWorkerAck(request, reply, held)) { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
           return reply
         } catch { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
         finally { if (held) held.busy = null }
@@ -261,7 +368,8 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       finally { held.busy = null; selected.shared.active-- }
     }
   }
-  return { port, processingAuthority, fixed: fixedFor('outer'), processingFixed: fixedFor('processing'),
+  return { port, processingAuthority, acquireOperationAuthority, acquireWorkerTerminalAuthority,
+    fixed: fixedFor('outer'), processingFixed: fixedFor('processing'),
     resultFixed: resultFixedFor('outer'), processingResultFixed: resultFixedFor('processing') }
 }
 
@@ -310,7 +418,7 @@ export function createV3PostgresDurableJobs(input: M04Config): M04Facade {
     try {
       const core = authorityCore(config.binding, config.methodExecutor, { scope, config })
       const composition = composeM04Invocation({ config, scope, authority: core.port, processingAuthority: core.processingAuthority,
-        fixed: core.fixed, processingFixed: core.processingFixed })
+        fixed: core.fixed, processingFixed: core.processingFixed, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority })
       const result = await composition[kind](raw, scope.signal)
       await scope.drainNative()
       return scope.signal.aborted || performance.now() >= scope.deadline || scope.snapshot().activeCallbacks > 0 ? { status: 'unconfirmed' as const } : result
@@ -444,7 +552,8 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
         result: { config: result, binding: selected, shared, calls: 0 } })
       assembly = composeHrs1Invocation({ config, result, binding: selected, scope, callDeadline: deadline, authority: core.port,
         processingAuthority: core.processingAuthority, fixed: core.fixed, processingFixed: core.processingFixed,
-        resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed })
+        resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed,
+        acquireOperationAuthority: core.acquireOperationAuthority, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority })
       const value = kind === 'monitorOnce' ? await assembly.monitorOnce(scope.signal)
         : await assembly[kind](raw, scope.signal)
       await assembly.drain()
@@ -467,7 +576,7 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
     enqueueRule: (raw, signal) => invoke('enqueueRule',raw,signal) as ReturnType<Hrs1Facade['enqueueRule']>,
     enqueueDiscovery: (raw, signal) => invoke('enqueueDiscovery',raw,signal) as ReturnType<Hrs1Facade['enqueueDiscovery']>,
     workOnce: (raw, signal) => invoke('workOnce',raw,signal) as ReturnType<Hrs1Facade['workOnce']>,
-    async workSelectedOnce(kind, signal, budget) {
+    async workSelectedOnce(kind, signal, budget, selection) {
       if (transportBlocked || !selected || !result || signal?.aborted) return { status: 'unavailable' }
       if (kind !== 'rule_research' && kind !== 'combination_discovery') return { status: 'invalid' }
       const method = { methodId: selected.methodId, revision: selected.revision }
@@ -475,6 +584,17 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
         ? createV3WorkIdentity({ context: selected.context, method, factKind: selected.factKind, researchReason: { status: 'missing' } })
         : createV3CombinationDiscoveryIdentity({ destinationCountryCode: selected.context.scope.destinationCountryCode,
           citizenshipCountryCode: selected.context.scope.citizenship.countryCodes[0], method })
+      if (selection !== undefined) {
+        // Exact identifiers retained by the authorized manual caller. They grant
+        // no custody: existing durable resume/claim/epoch checks remain decisive.
+        const held = ownRecord(selection, ['operationId','leaseId'])
+        if (kind !== 'rule_research' || !identity.ok || !held
+          || typeof held.operationId !== 'string' || !/^op3_[a-f0-9]{32}$/.test(held.operationId)
+          || typeof held.leaseId !== 'string' || !/^lease3_[a-f0-9]{32}$/.test(held.leaseId)) return { status: 'invalid' }
+        const claim = Object.freeze({ operationId: held.operationId, jobKey: identity.value.jobKey,
+          leaseId: held.leaseId, leaseMilliseconds: 30000 })
+        return invoke('workOnce',claim,signal,budget) as ReturnType<Hrs1Facade['workSelectedOnce']>
+      }
       let ids: Record<string, unknown> | null = null
       try { ids = ownRecord(result.ids(), ['jobId','operationId']) } catch { return { status: 'unavailable' } }
       if (!identity.ok || !ids || typeof ids.jobId !== 'string' || !/^job3_[a-f0-9]{32}$/.test(ids.jobId)

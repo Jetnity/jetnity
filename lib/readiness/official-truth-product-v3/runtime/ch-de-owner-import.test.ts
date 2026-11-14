@@ -12,9 +12,10 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import DevOwnerImportPanel from '../../../../app/(admin)/admin/official-truth/import/DevOwnerImportPanel'
 import type { ChDeTickReport } from './ch-de-tick'
 import {
-  CH_DE_OWNER_IMPORT_BODY, CH_DE_OWNER_IMPORT_PATH, CH_DE_OWNER_IMPORT_RESPONSE_BYTES,
-  chDeOwnerImportMessage, createChDeOwnerImportStarter, readChDeOwnerImportOutcome,
-  type ChDeOwnerImportOutcome,
+  CH_DE_OWNER_IMPORT_BODY, CH_DE_OWNER_IMPORT_PATH, CH_DE_OWNER_IMPORT_REQUEST_BYTES, CH_DE_OWNER_IMPORT_RESPONSE_BYTES,
+  chDeOwnerImportMessage, createChDeOwnerImportStarter, createChDeOwnerImportContinuation,
+  readChDeOwnerImportRequest, readChDeOwnerImportOutcome,
+  type ChDeOwnerImportRequest, type ChDeOwnerImportOutcome,
 } from './ch-de-owner-import-contract'
 
 const DEV = 'https://yfvbxvijcorffwxbxahl.supabase.co'
@@ -55,6 +56,7 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
   let tickHold: ReturnType<typeof deferred<void>> | null = null
   let tickEntered: ReturnType<typeof deferred<void>> | null = null
   let tickThrows = false, observedSignal: AbortSignal | null = null
+  let observedSelection: ChDeOwnerImportRequest | undefined
   let result = report()
   t.mock.method(console, 'warn', () => undefined)
   t.mock.method(console, 'error', () => undefined)
@@ -100,7 +102,8 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
     },
   } })
   t.mock.module(new URL('./ch-de-tick.ts', import.meta.url), { namedExports: {
-    async runOfficialTruthV3ChDeTick(signal: AbortSignal) {
+    async runOfficialTruthV3ChDeTick(signal: AbortSignal, selection?: ChDeOwnerImportRequest) {
+      observedSelection = selection
       ticks++; observedSignal = signal; tickEntered?.resolve()
       if (tickHold) await tickHold.promise
       if (tickThrows) throw Error('private failure must not escape')
@@ -117,6 +120,7 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
     proxyClients = proxyIdentities = 0
     userPresent = true; role = 'owner'; currentAal = nextAal = 'aal2'; aalFailed = false
     target = DEV; approval = 'approved'; result = report(); tickThrows = false
+    observedSelection = undefined
     gateHold = approvalHold = tickHold = tickEntered = null
     Object.assign(process.env, GUARDS)
     process.env.ADMIN_ALLOWED_EMAILS = ''
@@ -210,7 +214,7 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
   })
   await t.test('stream overflow and abort await body cancellation before any Auth', async () => {
     let cancelled = false
-    const oversized = new ReadableStream<Uint8Array>({ start(stream) { stream.enqueue(new Uint8Array(65)) }, cancel() { cancelled = true } })
+    const oversized = new ReadableStream<Uint8Array>({ start(stream) { stream.enqueue(new Uint8Array(CH_DE_OWNER_IMPORT_REQUEST_BYTES + 1)) }, cancel() { cancelled = true } })
     await rejected(request({ body: oversized }), 400); assert.equal(cancelled, true)
     cancelled = false
     const entered = deferred<void>(), controller = new AbortController()
@@ -291,6 +295,38 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
     assert.equal((await response.json()).status, 'unresolved')
     reset()
   })
+  await t.test('original request continuation still crosses fresh Owner/AAL2 and method gates', async () => {
+    const ids = { operationId: 'op3_' + 'a'.repeat(32), leaseId: 'lease3_' + 'b'.repeat(32) }
+    for (const mode of ['start', 'resume'] as const) {
+      reset()
+      const selected = { schema: 2 as const, mode, ...ids }, text = JSON.stringify(selected)
+      result = mode === 'resume' ? { ...report('complete', 1), calls: { started: 1, settled: 1 },
+        stages: { discovery: 'skipped', monitor: 'skipped', research: 'processed' } } : report('complete', 1)
+      const response = await route.POST(request({ body: text, headers: { 'content-length': String(text.length) } }))
+      assert.equal(response.status, 200); assert.equal((await response.json()).status, 'published')
+      assert.deepEqual(observedSelection, selected)
+      assert.deepEqual(counters(), { clients: 2, identities: 1, profiles: 1, assurances: 1, approvals: 1, ticks: 1 })
+      reset(); currentAal = 'aal1'
+      assert.equal((await route.POST(request({ body: text }))).status, 403)
+      assert.equal(ticks, 0); assert.equal(approvals, 0)
+    }
+    reset()
+    const valid = JSON.stringify({ schema: 2, mode: 'resume', ...ids })
+    for (const body of [valid.replace('"mode":"resume"', '"mode":"resume","mode":"resume"'),
+      valid.replace('"schema":2', '"schema":2,"target":"other"'),
+      valid.replace('lease3_', 'token_'), valid.replace('"resume"', '"restart"'), valid + ' ']) {
+      await rejected(request({ body }), 400)
+    }
+    result = { ...report('complete', 1), calls: { started: 3, settled: 3 } }
+    assert.equal((await (await route.POST(request({ body: valid }))).json()).status, 'unresolved',
+      'a resume cannot claim success from another stage shape')
+    reset(); result = { ...report('stopped'), stages: { discovery: 'not_due', monitor: 'complete', research: 'exhausted' },
+      counts: { ...report().counts, deferred: 1 } }
+    assert.equal((await (await route.POST(request())).json()).status, 'exhausted')
+    result = { ...result, counts: { ...result.counts, unconfirmed: 1 } }
+    assert.equal((await (await route.POST(request())).json()).status, 'unresolved')
+    reset()
+  })
 })
 
 test('manual caller is inert until clicked, one-shot, bounded and honest about lost responses', async t => {
@@ -349,6 +385,53 @@ test('manual caller is inert until clicked, one-shot, bounded and honest about l
   assert.equal(await createChDeOwnerImportStarter().start(preAborted.signal), null); assert.equal(calls, unchanged)
 })
 
+test('manual continuation retains exact original IDs across loss and remount without automatic dispatch', async t => {
+  const values = new Map<string, string>(), requests: ChDeOwnerImportRequest[] = []
+  const storage = { getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => { values.set(key, value) }, removeItem: (key: string) => { values.delete(key) } }
+  let generated = 0, response = deferred<Response>()
+  const options = { storage: () => storage, identifier: () => (++generated % 2 ? 'c' : 'd').repeat(32) }
+  t.mock.method(globalThis, 'fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+    assert.equal(input, CH_DE_OWNER_IMPORT_PATH); assert.equal(init?.method, 'POST')
+    assert.equal(init?.credentials, 'same-origin'); assert.equal(init?.cache, 'no-store'); assert.equal(init?.redirect, 'error')
+    const parsed = readChDeOwnerImportRequest(String(init?.body)); assert.ok(parsed)
+    assert.equal(values.size, 1, 'original identity is retained before the network effect')
+    requests.push(parsed)
+    return response.promise
+  })
+  const first = createChDeOwnerImportContinuation(options)
+  assert.equal(first.restore(), false); assert.equal(generated, 0); assert.equal(requests.length, 0)
+  const pending = first.start(new AbortController().signal)
+  assert.equal(requests.length, 1); assert.equal(requests[0]!.mode, 'start')
+  assert.equal(await first.start(new AbortController().signal), null)
+  response.resolve(Response.json({ schema: 1, status: 'unresolved', published: 0 }, { status: 503 }))
+  assert.equal((await pending)?.status, 'unresolved'); assert.equal(first.restore(), true)
+  const remounted = createChDeOwnerImportContinuation(options)
+  assert.equal(remounted.restore(), true); assert.equal(requests.length, 1); assert.equal(generated, 2)
+  response = deferred<Response>()
+  const continuation = remounted.start(new AbortController().signal)
+  assert.deepEqual(requests[1], { ...requests[0], mode: 'resume' })
+  response.resolve(Response.json({ schema: 1, status: 'published', published: 1 }, { status: 503 }))
+  assert.equal((await continuation)?.status, 'unresolved'); assert.equal(values.size, 1)
+  response = deferred<Response>()
+  const final = remounted.start(new AbortController().signal)
+  assert.deepEqual(requests[2], requests[1]); assert.equal(generated, 2)
+  response.resolve(Response.json({ schema: 1, status: 'published', published: 1 }))
+  assert.equal((await final)?.status, 'published'); assert.equal(values.size, 0)
+  assert.equal(await remounted.start(new AbortController().signal), null); assert.equal(requests.length, 3)
+
+  storage.setItem('jetnity.dev.ch-de-import.request.v2', '{"schema":2,"mode":"resume"}')
+  const corrupted = createChDeOwnerImportContinuation(options)
+  assert.equal(corrupted.restore(), false)
+  assert.equal((await corrupted.start(new AbortController().signal))?.status, 'unavailable')
+  assert.equal(requests.length, 3, 'corrupt custody cannot be overwritten by a replacement request')
+  values.clear()
+  const inaccessible = createChDeOwnerImportContinuation({ ...options, storage: () => ({ ...storage,
+    setItem() { throw Error('offline storage refusal') } }) })
+  await inaccessible.start(new AbortController().signal)
+  assert.equal(requests.length, 3, 'failure to retain identity happens before any dispatch')
+})
+
 test('minimal result contract rejects forged success and keeps distinct user states', () => {
   for (const value of [
     { schema: 1, status: 'published', published: 0 }, { schema: 1, status: 'complete', published: 1 },
@@ -356,7 +439,7 @@ test('minimal result contract rejects forged success and keeps distinct user sta
     { schema: 1, status: 'published', published: 1.5 }, { schema: 1, status: 'published', published: 1, raw: 'private' },
     { schema: 1, status: 'accepted', published: 1 }, null,
   ]) assert.equal(readChDeOwnerImportOutcome(value), null)
-  for (const status of ['published', 'complete', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved'] as const) {
+  for (const status of ['published', 'complete', 'exhausted', 'busy', 'not_approved', 'unavailable', 'access_required', 'request_refused', 'unresolved'] as const) {
     const outcome: ChDeOwnerImportOutcome = { schema: 1, status, published: status === 'published' ? 1 : 0 }
     assert.deepEqual(readChDeOwnerImportOutcome(outcome), outcome)
     assert.ok(chDeOwnerImportMessage(outcome).length > 20)

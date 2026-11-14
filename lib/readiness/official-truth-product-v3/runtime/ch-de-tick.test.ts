@@ -8,6 +8,7 @@ import { HRS1_LIMITS } from '../result/contract'
 type Work = Awaited<ReturnType<Hrs1Facade['workSelectedOnce']>>
 type Budget = Readonly<{ deadline: number }>
 type Kind = 'rule_research' | 'combination_discovery'
+type Selection = Readonly<{ operationId: string; leaseId: string }>
 const notDue = (): Work => ({ status: 'worker_only', worker: { status: 'not_due' } })
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -19,12 +20,12 @@ const signal = () => new AbortController().signal
 test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingress', { timeout: 15000 }, async t => {
   let now = 1_000, lookups = 0
   t.mock.method(performance, 'now', () => now)
-  let work: (kind: Kind, signal: AbortSignal, budget: Budget) => Promise<Work> = async () => notDue()
+  let work: (kind: Kind, signal: AbortSignal, budget: Budget, selection?: Selection) => Promise<Work> = async () => notDue()
   let monitor: (signal: AbortSignal, budget: Budget) => Promise<Hrs1MonitorResult> = async () => ({ status: 'complete', outcomes: [] })
   const unexpected = async (): Promise<never> => { throw Error('unselected facade entrance') }
   const facade = Object.freeze<Hrs1Facade>({
     enqueueRule: unexpected, enqueueDiscovery: unexpected, workOnce: unexpected, query: unexpected,
-    workSelectedOnce(kind, signal, budget) { assert.ok(signal); assert.ok(budget); return work(kind, signal, budget) },
+    workSelectedOnce(kind, signal, budget, selection) { assert.ok(signal); assert.ok(budget); return work(kind, signal, budget, selection) },
     monitorOnce(signal, budget) { assert.ok(signal); assert.ok(budget); return monitor(signal, budget) },
   })
   let selected: Hrs1Facade | null = facade
@@ -71,6 +72,30 @@ test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingres
     assert.equal(result.status, 'stopped'); assert.equal(calls, 1)
     assert.deepEqual(result.calls, { started: 1, settled: 1 }); assert.equal(result.counts.unconfirmed, 1)
     assert.equal(result.stages.monitor, 'skipped'); assert.equal(result.stages.research, 'skipped')
+    reset()
+  })
+  await t.test('manual continuation retains the original IDs and skips fresh discovery or monitor work', async () => {
+    const ids = { operationId: 'op3_' + 'e'.repeat(32), leaseId: 'lease3_' + 'f'.repeat(32) }
+    const calls: { kind: Kind; selection: Selection | undefined; deadline: number }[] = []
+    const start = now
+    work = async (kind, child, budget, selection) => {
+      assert.equal(child.aborted, false); assert.ok(Object.isFrozen(selection))
+      calls.push({ kind, selection, deadline: budget.deadline }); now += 1_000; return notDue()
+    }
+    monitor = unexpected
+    const outcome = await run(signal(), { schema: 2, mode: 'resume', ...ids })
+    assert.equal(outcome.status, 'complete'); assert.deepEqual(outcome.calls, { started: 1, settled: 1 })
+    assert.deepEqual(outcome.stages, { discovery: 'skipped', monitor: 'skipped', research: 'not_due' })
+    assert.deepEqual(calls, [{ kind: 'rule_research', selection: ids, deadline: start + 30_000 }])
+    assert.doesNotMatch(JSON.stringify(outcome), /op3_|lease3_/, 'display report does not expose request identifiers')
+    const before = lookups
+    assert.equal((await run(signal(), { schema: 2, mode: 'resume', ...ids, leaseId: 'invalid' })).status, 'unavailable')
+    assert.equal(lookups, before)
+    reset()
+    const first: { kind: Kind; selection?: Selection }[] = []
+    work = async (kind, _s, _b, selection) => { first.push({ kind, selection }); return notDue() }
+    assert.equal((await run(signal(), { schema: 2, mode: 'start', ...ids })).status, 'complete')
+    assert.deepEqual(first, [{ kind: 'combination_discovery', selection: undefined }, { kind: 'rule_research', selection: ids }])
     reset()
   })
   await t.test('partial monitor reports retain only counters and stop on unknown outcome', async () => {

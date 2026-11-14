@@ -2,7 +2,8 @@
 import 'server-only'
 import { same } from '../monitor/internal'
 import { createM04SubjectIdentity,
-  type M04Claim, type M04Command, type M04Continuation, type M04Disposition, type M04FixedOperation, type M04NativeReply } from './contract'
+  type M04Claim, type M04Command, type M04Continuation, type M04Disposition, type M04FixedOperation, type M04NativeReply,
+  type M04WorkerTerminalAuthority } from './contract'
 import type { V3ManagedJobRecord, V3QueueStoragePort, V3JobFence } from '../monitor/queue'
 import type { V3ResearchResultCustodyPort, V3WorkerResultRecord } from '../monitor/worker'
 import type { V3ResearchArtifactPort, V3ResearchArtifact } from '../integration/ports'
@@ -74,8 +75,10 @@ export function createM04QueueStorage(options: Readonly<{
 export function createM04ExecutionIndex(options: Readonly<{
   claim: M04Claim; fixed: M04FixedOperation; processingFixed: M04FixedOperation;
   onPrepared: (value: ReadPrepared) => void; preparedOnly: () => boolean;
+  acquireTerminalAuthority?: M04WorkerTerminalAuthority;
 }>) {
   const receipts = new WeakMap<object, ReadPrepared>()
+  const confirmed = new WeakMap<object, ReadPrepared>()
   function remember(value: ReadPrepared) {
     const receipt = Object.freeze({}); receipts.set(receipt, value); options.onPrepared(value)
     return receipt
@@ -95,20 +98,32 @@ export function createM04ExecutionIndex(options: Readonly<{
       return { status: 'prepared' as const, receipt: remember(value) }
     },
     async confirm(receipt, job, checkedAt, signal) {
+      confirmed.delete(receipt)
       const held = receipts.get(receipt)
       if (!held || !same(held.leasedJob, job)) return { status: 'unconfirmed' as const }
       const value = await read('confirm', signal)
-      if (!bound(value) || value.status !== 'prepared' || !same(value, held) || value.result.preparedAt > checkedAt) return { status: 'unconfirmed' as const }
+      if (!bound(value) || value.status !== 'prepared' || !same(value, held) || value.result.preparedAt > checkedAt || signal.aborted) return { status: 'unconfirmed' as const }
+      confirmed.set(receipt, value)
       return { status: 'confirmed' as const, record: value.result }
     },
+    ...(options.acquireTerminalAuthority ? {
+      async acquireTerminalAuthority(receipt: object, methodReceipt: object, job: V3ManagedJobRecord, checkedAt: string, signal: AbortSignal) {
+        const value = confirmed.get(receipt), held = receipts.get(receipt)
+        confirmed.delete(receipt)
+        if (!value || !held || !same(value, held) || !same(value.leasedJob, job) || job.state !== 'leased'
+          || !job.lease || job.lease.expiresAt <= checkedAt || value.result.preparedAt > checkedAt || signal.aborted) return { status: 'unavailable' as const }
+        return options.acquireTerminalAuthority!(methodReceipt, value, checkedAt, signal)
+      },
+    } : {}),
   })
   return Object.freeze({ results, read, bound,
-    async reserve(job: V3ManagedJobRecord, signal: AbortSignal) {
+    async reserve(job: V3ManagedJobRecord, signal: AbortSignal, methodReceipt?: object) {
       if (options.preparedOnly()) return { status: 'blocked' as const }
       const identity = subject(job)
       if (!identity) return { status: 'blocked' as const }
-      const value = await options.processingFixed({ operation: 'execution_start', body: { claim: options.claim,
-        leasedJob: job, subjectText: identity.subjectText } }, signal)
+      const request = { operation: 'execution_start' as const, body: { claim: options.claim, leasedJob: job, subjectText: identity.subjectText } }
+      const value = methodReceipt === undefined ? await options.processingFixed(request, signal)
+        : await options.processingFixed(request, signal, methodReceipt)
       return value.status === 'reserved' && same(value.claim, options.claim) && same(value.leasedJob, job) ? value : { status: 'blocked' as const }
     },
     async prepare(job: V3ManagedJobRecord, attemptKey: string, token: string, result: V3WorkerResultRecord,

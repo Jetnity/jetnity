@@ -8,6 +8,9 @@ import { commitV3PreparedTransition, type V3PreparedTransition, type V3VersionCo
   type V3TransitionProofPort, type V3VersionHead, type V3TransitionConfirmation,
   type V3AtomicVersionBoundaryPort, type V3TransitionAtomicCommand, type V3TransitionProofState } from './recovery'
 import { fixture, queueHarness, ref, ids, must } from './test-support'
+import { createHrs1ResultPorts } from '../result/postgres'
+import { hrs1Clock, type Hrs1Binding, type Hrs1Verification } from '../result/contract'
+import type { Hrs1SourceConsumer } from '../result/source-proof'
 
 function harness() {
   const f = fixture(), h = queueHarness()
@@ -142,6 +145,122 @@ function nextPrepared(t: ReturnType<typeof harness>, prior: V3PreparedTransition
     invalidatedProjectionRefs: [ref('rule-projection', `prior-${serial - 1}`)] }))
   return { ...prior, decision, previousDecision: prior.decision, version, transition, archiveAppend: null }
 }
+
+test('HRS discharges a duplicate proof read only from its actual own callback, with one-use and late-negative checks', async () => {
+  for (const mode of ['actual', 'current-dto', 'replay', 'foreign-context', 'foreign-prepared', 'late-revoke', 'abort', 'pending-local', 'pending-fallback'] as const) {
+    const t = harness(), f = t.f, signal = new AbortController(), sourceReceipt = Object.freeze({}), methodReceipt = Object.freeze({})
+    const binding: Hrs1Binding = { ...f.transition.method, schema: 1, qualificationScope: 'global_context',
+      methodDigest: '1'.repeat(64), packageDigest: '2'.repeat(64), context: f.context, contextKey: f.identity.contextKey,
+      factKind: 'requirement_effect', dataMode: 'synthetic_test', legalTimeZone: 'UTC', activeFrom: '2026-11-01T00:00:00.000Z',
+      activeUntilExclusive: '2026-12-01T00:00:00.000Z', sourceMaxAgeMilliseconds: 3600000, projectionMaxAgeMilliseconds: 300000,
+      monitorIntervalMilliseconds: 300000, monitorLeaseMilliseconds: 30000, attemptLimit: 4, sources: [] }
+    const clock = () => { const value = hrs1Clock(t.h.clock.now(), 'UTC'); assert.ok(value); return value }
+    const verification: Hrs1Verification = { reference: ref('hrs1-verification', mode), decision: f.decision,
+      previousDecision: null, archiveAppend: null, originals: [], stickyDecision: null, suppressionEpoch: 0,
+      validUntilExclusive: t.control.freshness, history: { pointer: f.transition.expected, version: null, decision: null,
+        decisionPredecessor: null, decisionArchiveAppend: null, invalidatedProjectionRefs: [] },
+      request: { context: f.context, contextKey: f.identity.contextKey, factKind: 'requirement_effect', references: [],
+        method: f.transition.method, clock: clock(), previousDecision: null, decisionRef: f.decision.reference } }
+    let reads = 0, finals = 0, local = true, hold = false, contextSeen: object | undefined
+    let release: () => void = () => {}, started: () => void = () => {}
+    const waiting = new Promise<void>(resolve => { release = resolve }), reached = new Promise<void>(resolve => { started = resolve })
+    // Explicit synthetic source port: the test observes real adapter call order,
+    // not travel-source qualification or a native SQL pass.
+    const source: Hrs1SourceConsumer = { available: true,
+      evidence: { async inspect() { assert.fail('unused') }, async reprove() { assert.fail('unused') } },
+      sources: { async observe() { assert.fail('unused') }, async reprove() { assert.fail('unused') } },
+      async openVerification() { return { receipt: sourceReceipt, verification } },
+      async reproveVerification(receipt, value, _at, active, method) {
+        reads++; assert.equal(method, methodReceipt)
+        if (hold && mode === 'pending-fallback') { started(); await waiting }
+        return local && receipt === sourceReceipt && value === verification && !active.aborted
+      },
+      async reproveLocal(receipt, value, _at, active) {
+        if (hold && mode === 'pending-local') { started(); await waiting }
+        return local && receipt === sourceReceipt && value === verification && !active.aborted
+      },
+      async takeOpenedVerification() { return 'absent' },
+      held(receipt) { return receipt === sourceReceipt ? verification : null }, lastObservation() { return null },
+      exportCustody() { return { status: 'absent' } }, importCustody() { return false },
+    }
+    const ports = createHrs1ResultPorts({ binding, registry: f.registry, source, clock,
+      ids: () => ({ jobId: ids('job3', mode), operationId: f.transition.operationId }),
+      fixed: async (command, active, method) => {
+        assert.equal(command.operation, 'transition'); assert.equal(method, methodReceipt); assert.equal(active.aborted, false)
+        finals++; return { status: 'committed', value: null }
+      } })
+    ports.bindIntake([{ binding: { schema: 3, kind: 'proposal_intake_binding', runnerId: 'runner3_' + '1'.repeat(32),
+      deliveryId: 'delivery3_' + '2'.repeat(32), inputRevision: 'snapshot:' + '3'.repeat(64), operationId: f.transition.operationId, jobId: f.enqueue.jobId,
+      contextKey: f.identity.contextKey, method: f.transition.method }, proposalDigest: f.prepared.proposalDigest, bytes: 1 }])
+    const proof = await ports.versionProofs.inspect(f.prepared, clock().now, clock().legalDate, signal.signal, methodReceipt)
+    assert.equal(proof.status, 'verified'); if (proof.status !== 'verified') assert.fail('actual private proof')
+    reads = 0; hold = true
+    const command: V3TransitionAtomicCommand = { operationKey: ref('version-operation', mode), prepared: f.prepared,
+      expectedHead: t.control.head, authority: { method: f.transition.method, methodReceipt, proofReceipt: proof.receipt },
+      notAfter: verification.validUntilExclusive,
+      async reprove(active, context) {
+        assert.ok(context)
+        contextSeen = context
+        if (mode !== 'current-dto' && mode !== 'pending-fallback') {
+          assert.equal((await ports.versionProofs.reprove(proof.receipt, f.prepared, clock().now, clock().legalDate,
+            active, methodReceipt, context)).status, 'current')
+        }
+        if (mode === 'replay' || mode === 'foreign-context' || mode === 'foreign-prepared') {
+          const again = await ports.versionProofs.reprove(proof.receipt,
+            mode === 'foreign-prepared' ? { ...f.prepared, proposalDigest: 'e'.repeat(64) } : f.prepared,
+            clock().now, clock().legalDate, active, methodReceipt, mode === 'foreign-context' ? {} : context)
+          assert.equal(again.status, 'unavailable')
+        }
+        if (mode === 'late-revoke') local = false
+        if (mode === 'abort') signal.abort()
+        return { status: 'current', freshUntil: verification.validUntilExclusive }
+      } }
+    assert.ok(ports.versionStore.atomicBoundary)
+    const pending = ports.versionStore.atomicBoundary.commit(command, signal.signal)
+    if (mode === 'pending-local' || mode === 'pending-fallback') {
+      try {
+        await Promise.race([reached, pending.then(() => assert.fail('boundary ended before the deliberately held reproof'))])
+        assert.ok(contextSeen)
+        assert.equal((await ports.versionProofs.reprove(proof.receipt, f.prepared, clock().now, clock().legalDate,
+          signal.signal, methodReceipt, contextSeen)).status, 'unavailable')
+      } finally { release(); await pending }
+    }
+    const outcome = await pending
+    const success = mode === 'actual' || mode === 'current-dto'
+    assert.equal(outcome.status, success ? 'commit_reported' : 'unavailable', mode)
+    assert.equal(reads, 1, 'real evidence check once: inside the callback, or mandatory fallback for a bare current DTO')
+    assert.equal(finals, success ? 1 : 0, mode)
+  }
+})
+
+test('E1 obtains a separate actual operation receipt for commit and confirmation; denial prevents the next boundary', async () => {
+  for (const deny of [0, 1, 2]) {
+    const t = harness(), fresh: object[] = [], anchors: object[] = [], used: object[] = []
+    const wrap = (name: 'commit' | 'confirmCurrent') => {
+      const original = t.boundary[name]
+      return async (command: V3TransitionAtomicCommand, signal: AbortSignal) => {
+        used.push(command.authority.methodReceipt)
+        assert.equal(command.authority.methodReceipt, fresh[fresh.length - 1])
+        return original(command, signal)
+      }
+    }
+    const boundary = { commit: wrap('commit'), confirmCurrent: wrap('confirmCurrent') } as V3AtomicVersionBoundaryPort
+    const result = await commitV3PreparedTransition(t.f.prepared, { ...t.deps, store: { ...t.store, atomicBoundary: boundary },
+      async acquireOperationAuthority(anchor, method, at, signal) {
+        anchors.push(anchor); assert.equal(signal.aborted, false)
+        assert.equal(anchor, anchors[0]); assert.ok(t.h.method.isCurrent(anchor, method))
+        if (anchors.length === deny) return { status: 'revoked' }
+        const current = await t.h.method.port.resolveCurrent(method, at)
+        assert.equal(current.status, 'approved'); if (current.status !== 'approved') assert.fail('fresh authority')
+        assert.notEqual(current.receipt, anchor); fresh.push(current.receipt)
+        return current
+      } })
+    assert.equal(result.status, deny ? 'unavailable' : 'confirmed')
+    assert.equal(used.length, deny ? deny - 1 : 2)
+    if (!deny) assert.notEqual(used[0], used[1])
+    assert.equal(t.control.commitCount, deny === 1 ? 0 : 1)
+  }
+})
 
 describe('M1 exact version transitions and actual commit confirmation', () => {
   test('prepared records require separate proof and actual commit plus canonical current-head confirmation', async () => {

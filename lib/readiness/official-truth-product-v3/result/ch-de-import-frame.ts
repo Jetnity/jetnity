@@ -3,8 +3,8 @@ import { immutable, ownRecord } from '@/lib/readiness/official-truth-autonomous-
 import type { V3ManagedJobRecord } from '../monitor/queue'
 import type { M04Authority } from '../jobs/contract'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
-import { hrs1Canonical, hrs1Clock, hrs1Data, hrs1Hash, hrs1Same, type Hrs1Binding, type Hrs1FixedOperation } from './contract'
-import type { Hrs1InitialHistory, Hrs1InitialHistoryTransfer } from './source-proof'
+import { hrs1Canonical, hrs1Clock, hrs1Data, hrs1Hash, hrs1Same, type Hrs1Binding, type Hrs1FixedOperation, type Hrs1Verification } from './contract'
+import type { Hrs1InitialHistory, Hrs1InitialHistoryTransfer, Hrs1AttestedVerificationTransfer } from './source-proof'
 
 /** One explicit I1 frame, constructed inside one selected research import.
  * Its receipt never leaves this closure. The original authority still owns its
@@ -20,9 +20,10 @@ export function createChDeImportFrame(input: Readonly<{
   let closed = false, resolving = false, receipt: object | null = null, calls = 0, busy = false
   let importSignal: AbortSignal | null = null, initialHistory: Hrs1InitialHistory | null = null
   let historyTaken = false, resolvedAt: string | null = null
-  const operations = ['history', 'attest', 'evidence', 'history'] as const
+  let attested: Hrs1Verification | null = null, attestationTaken = false
+  const operations = ['history', 'attest', 'history'] as const
   function close() {
-    closed = true; receipt = null; initialHistory = null
+    closed = true; receipt = null; initialHistory = null; attested = null
     input.signal.removeEventListener('abort', close)
     importSignal?.removeEventListener('abort', close)
   }
@@ -65,7 +66,7 @@ export function createChDeImportFrame(input: Readonly<{
       } catch { close(); return { status: 'unavailable' } }
     },
     async reproveAtCommit(candidate, method, checkedAt) {
-      if (closed || !receipt || candidate !== receipt || busy || calls !== operations.length || !historyTaken
+      if (closed || !receipt || candidate !== receipt || busy || calls !== operations.length || !historyTaken || !attestationTaken
         || !importSignal || importSignal.aborted
         || !hrs1Same(method, program.method)) { close(); return { status: 'unavailable' } }
       const held = receipt
@@ -81,6 +82,7 @@ export function createChDeImportFrame(input: Readonly<{
     if (closed || input.signal.aborted || signal.aborted || !importSignal || importSignal.aborted || !receipt || busy
       || calls >= operations.length || command.operation !== operations[calls]
       || calls > 0 && !historyTaken
+      || calls === 2 && !attestationTaken
       || provided !== undefined && provided !== receipt) return { status: 'unavailable' }
     if (calls === 0 && (command.schema !== 1 || command.bindingHash !== hrs1Hash(input.binding)
       || !hrs1Same(command.body, { contextKey: program.contextKey, factKind: program.binding.factKind }))) {
@@ -105,9 +107,28 @@ export function createChDeImportFrame(input: Readonly<{
         }
         initialHistory = immutable(JSON.parse(hrs1Canonical(snapshot)) as Hrs1InitialHistory)
       }
+      if (calls === 2 && !closed) {
+        const body = ownRecord(command.body, ['kind', 'verification'])
+        const verification = body?.kind === 'verification' && hrs1Data(body.verification)
+          ? body.verification as Hrs1Verification : null
+        if (!verification || reply.status !== 'recorded'
+          || !hrs1Same(reply.value, { reference: verification.reference, digest: hrs1Hash(verification) })) {
+          close(); return { status: 'unavailable' }
+        }
+        // The underlying executor has already committed and drained. This is
+        // an explicit ACK handoff, never a synthetic inspected SQL reply.
+        attested = immutable(JSON.parse(hrs1Canonical(verification)) as Hrs1Verification)
+      }
       return reply
     } catch { close(); return { status: 'unavailable' } }
     finally { busy = false }
   }
-  return Object.freeze({ authority, fixed, close, admitImportSignal, takeInitialHistory })
+  const takeAttestedVerification: Hrs1AttestedVerificationTransfer = (verification, signal) => {
+    if (closed || input.signal.aborted || signal.aborted || !importSignal || importSignal.aborted
+      || !receipt || busy || calls !== 2 || !historyTaken || attestationTaken || !attested
+      || !hrs1Same(attested, verification)) { close(); return false }
+    attestationTaken = true; attested = null
+    return true
+  }
+  return Object.freeze({ authority, fixed, close, admitImportSignal, takeInitialHistory, takeAttestedVerification })
 }

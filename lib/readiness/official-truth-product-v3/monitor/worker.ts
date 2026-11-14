@@ -13,6 +13,11 @@ const resultSchema = z.discriminatedUnion('kind', [
 ])
 export type V3WorkerResultRecord = z.infer<typeof resultSchema>
 export interface V3ResearchWorkPort<Receipt extends object> {
+  /** Optional code-owned atomic start. It must check the actual current claim,
+   * job/lease and supplied genuine authority before reserving execution. A
+   * positive result is private reservation custody, never a cached queue read. */
+  prepare?(job: V3ManagedJobRecord, fence: V3JobFence, methodReceipt: object, signal: AbortSignal): Promise<
+    { status: 'ready' } | { status: 'superseded' | 'unconfirmed' }>
   /** Must bind result custody to jobId, stable operationId and this exact lease.
    * Discovery receives only its neutral identity; no inferred rule context.
    * Work may be attempted again only after authoritative not_attempted. */
@@ -26,6 +31,11 @@ export interface V3ResearchResultCustodyPort<Receipt extends object> {
   /** Confirms actual stored untrusted proposals/decision custody, never acceptance. */
   confirm(receipt: Receipt, job: V3ManagedJobRecord, checkedAt: string, signal: AbortSignal): Promise<
     { status: 'confirmed'; record: unknown } | { status: 'unconfirmed' | 'unavailable' }>
+  /** Only a genuine, freshly confirmed PREPARED receipt plus joined processing
+   * may acquire separate terminal authority. The old method receipt supplies
+   * immutable epoch identity; its deadline and authorization are never renewed. */
+  acquireTerminalAuthority?(receipt: Receipt, methodReceipt: object, job: V3ManagedJobRecord,
+    checkedAt: string, signal: AbortSignal): Promise<{ status: 'current' | 'unavailable' }>
 }
 export type V3WorkerOutcome =
   | { status: 'completed'; job: V3ManagedJobRecord; result: V3WorkerResultRecord; acceptedRule: false }
@@ -87,12 +97,19 @@ export async function runV3ResearchWorkerOnce<Receipt extends object>(
     let receipt: Receipt
     if (retained.value.status === 'prepared') receipt = retained.value.receipt
     else {
-      const current = await budget.call((s) => queue.read(keyOf(job), s))
-      if (!current.ok || current.value.status !== 'confirmed' || !same(current.value.record, job)) return { status: 'superseded' }
+      if (!work.prepare) {
+        const current = await budget.call((s) => queue.read(keyOf(job), s))
+        if (!current.ok || current.value.status !== 'confirmed' || !same(current.value.record, job)) return { status: 'superseded' }
+      }
       const at = readNow(dependencies.now)
       if (!at || job.lease.expiresAt <= at) return { status: 'superseded' }
       const valid = await budget.call(() => methodAuthority.reproveAtCommit(methodReceipt, method, at))
       if (!valid.ok || valid.value.status !== 'current') return await fail('verification_unavailable')
+      if (work.prepare) {
+        const prepared = await budget.call((s) => work.prepare!(job, fence, methodReceipt, s))
+        if (!prepared.ok) return { status: 'unconfirmed' }
+        if (prepared.value.status !== 'ready') return prepared.value
+      }
       const produced = await budget.call((s) => work.execute(job, fence, s))
       if (!produced.ok) return await fail('commit_unconfirmed')
       if (produced.value.status === 'failed') return await fail(produced.value.reason)
@@ -109,7 +126,9 @@ export async function runV3ResearchWorkerOnce<Receipt extends object>(
       || record.jobKey !== keyOf(job) || record.preparedAt > checkedAt || record.preparedAt < job.createdAt) return await fail('invalid_proposal')
     const commitTime = readNow(dependencies.now)
     if (!commitTime || job.lease.expiresAt <= commitTime) return { status: 'superseded' }
-    const stillApproved = await budget.call(() => methodAuthority.reproveAtCommit(methodReceipt, method, commitTime))
+    const stillApproved = await budget.call((s) => results.acquireTerminalAuthority
+      ? results.acquireTerminalAuthority(receipt, methodReceipt, job, commitTime, s)
+      : methodAuthority.reproveAtCommit(methodReceipt, method, commitTime))
     if (!stillApproved.ok || stillApproved.value.status !== 'current') return await fail('verification_unavailable')
     const completion = { operationId: op('complete', job, fence), jobKey: keyOf(job), fence,
       ...(record.kind === 'rule_research' ? { decisionRef: record.decisionRef } : { discoveryRef: record.discoveryRef }) }

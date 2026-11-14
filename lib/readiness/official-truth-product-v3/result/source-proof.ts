@@ -29,7 +29,12 @@ export type Hrs1InitialHistory = Readonly<{
   suppressionEpoch: number; generation: number; suppression: unknown;
 }>
 export type Hrs1InitialHistoryTransfer = (request: V3ImportVerificationRequest, signal: AbortSignal) => Hrs1InitialHistory | null
+export type Hrs1AttestedVerificationTransfer = (verification: Hrs1Verification, signal: AbortSignal) => boolean
 export type Hrs1SourceIssued = Readonly<{ receipt: object; verification: Hrs1Verification }>
+type CustodyScope = Readonly<{ key: object; signal: AbortSignal }>
+type Custody = Readonly<{ scope: CustodyScope; issuer: Hrs1SourceCustodyIssuer; binding: Hrs1Binding;
+  issuerReceipt: object; verification: Hrs1Verification }>
+const custodyTransfers = new WeakMap<object, Custody>()
 export type Hrs1ObservedSource = Readonly<{
   reference: string; target: V3MonitorTarget; method: ReturnType<typeof hrs1Method>;
   observation: Readonly<{ source: V3SourceObservationRecord['evidence']['source'];
@@ -61,8 +66,12 @@ export type Hrs1SourceConsumer = Readonly<{
   available: boolean;
   evidence: V3ImportEvidencePort<object>;
   sources: V3SourceObservationPort<object>;
-  openVerification(reference: string, signal: AbortSignal): Promise<{ receipt: object; verification: Hrs1Verification } | null>;
-  reproveVerification(receipt: object, verification: Hrs1Verification, clock: V3ReadClock, signal: AbortSignal): Promise<boolean>;
+  openVerification(reference: string, signal: AbortSignal, methodReceipt?: object): Promise<Hrs1SourceIssued | null>;
+  reproveVerification(receipt: object, verification: Hrs1Verification, clock: V3ReadClock, signal: AbortSignal, methodReceipt?: object): Promise<boolean>;
+  reproveLocal(receipt: object, verification: Hrs1Verification, clock: V3ReadClock, signal: AbortSignal): Promise<boolean>;
+  takeOpenedVerification(issued: Hrs1SourceIssued, clock: V3ReadClock, signal: AbortSignal): Promise<'current' | 'unavailable' | 'absent'>;
+  exportCustody(decision: V3SourceDecisionRecord, signal: AbortSignal): { status: 'issued'; receipt: object } | { status: 'absent' | 'unavailable' };
+  importCustody(receipt: object, signal: AbortSignal): boolean;
   held(receipt: object): Hrs1Verification | null;
   lastObservation(target: V3MonitorTarget): Hrs1ObservedSource | null;
 }>
@@ -179,11 +188,16 @@ export function createHrs1SourceConsumer(input: Readonly<{
   binding: Hrs1Binding; registry: QuellenRegistry; fixed: Hrs1FixedOperation; clock: () => V3ReadClock;
   fixtureIssuer?: Hrs1SourceCustodyIssuer | null;
   takeInitialHistory?: Hrs1InitialHistoryTransfer;
+  takeAttestedVerification?: Hrs1AttestedVerificationTransfer;
+  custodyScope?: CustodyScope;
 }>): Hrs1SourceConsumer {
   const { binding, registry, fixed, clock, takeInitialHistory } = input
   const issuer = binding.dataMode === 'official_projection' ? selectedProductionIssuer(binding)
     : binding.sources.every(s => new URL(s.canonicalUrl).hostname.endsWith('.example')) ? input.fixtureIssuer ?? null : null
   const held = new WeakMap<object, { issuerReceipt: object; verification: Hrs1Verification; finalized: boolean }>()
+  const openedProofs = new WeakMap<Hrs1SourceIssued, AbortSignal>()
+  const consumedOpens = new WeakSet<Hrs1SourceIssued>()
+  let transferable: object | null = null, adopted: Hrs1SourceIssued | null = null, custodyTaken = false, custodyRejected = false
   const observed = new WeakMap<object, { issuerReceipt: object; value: Hrs1ObservedSource }>()
   const last = new Map<string, Hrs1ObservedSource>() // one invocation, <=8 exact selected sources
   const command = (operation: 'history' | 'evidence' | 'attest', body: Record<string, unknown>) =>
@@ -192,19 +206,26 @@ export function createHrs1SourceConsumer(input: Readonly<{
     const receipt = Object.freeze(Object.create(null) as object)
     held.set(receipt, { issuerReceipt, verification, finalized }); return receipt
   }
-  async function reprove(receipt: object, verification: Hrs1Verification, at: V3ReadClock, signal: AbortSignal): Promise<boolean> {
+  function endCurrent(at: V3ReadClock, verification: Hrs1Verification, signal: AbortSignal): boolean {
+    const end = clock()
+    return !signal.aborted && !input.custodyScope?.signal.aborted
+      && hrs1Same(end, hrs1Clock(end.now, binding.legalTimeZone)) && end.now >= at.now
+      && end.legalDate === at.legalDate && end.now < verification.validUntilExclusive
+  }
+  async function reproveLocal(receipt: object, verification: Hrs1Verification, at: V3ReadClock, signal: AbortSignal): Promise<boolean> {
     const h = receipt && held.get(receipt)
-    if (!issuer || !h || !h.finalized || !hrs1Same(h.verification, verification) || signal.aborted
+    if (!issuer || !h || !h.finalized || custodyRejected || !hrs1Same(h.verification, verification) || signal.aborted
       || !hrs1Same(at, hrs1Clock(at.now, binding.legalTimeZone)) || at.now >= verification.validUntilExclusive) return false
     const actual = await issuer.reprove(h.issuerReceipt, verification, at, signal)
     const parsed = readVerification(actual, binding, registry)
-    if (!parsed || !hrs1Same(parsed, verification) || signal.aborted) return false
+    return !!parsed && hrs1Same(parsed, verification) && endCurrent(at, verification, signal)
+  }
+  async function reprove(receipt: object, verification: Hrs1Verification, at: V3ReadClock, signal: AbortSignal,
+    methodReceipt?: object): Promise<boolean> {
+    if (!await reproveLocal(receipt, verification, at, signal)) return false
     const stored = await traceDevDiagnosticStage('source_evidence_read', signal,
-      () => fixed(command('evidence', { reference: verification.reference }), signal))
-    const end = clock()
-    return stored.status === 'inspected' && hrs1Same(stored.value, verification) && !signal.aborted
-      && hrs1Same(end, hrs1Clock(end.now, binding.legalTimeZone)) && end.now >= at.now
-      && end.legalDate === at.legalDate && end.now < verification.validUntilExclusive
+      () => fixed(command('evidence', { reference: verification.reference }), signal, methodReceipt))
+    return stored.status === 'inspected' && hrs1Same(stored.value, verification) && endCurrent(at, verification, signal)
   }
   const evidence: V3ImportEvidencePort<object> = Object.freeze<V3ImportEvidencePort<object>>({
     async inspect(request, signal) {
@@ -268,6 +289,11 @@ export function createHrs1SourceConsumer(input: Readonly<{
           () => fixed(command('attest', { kind: 'verification', verification: actual }), signal))
         if (stored.status !== 'recorded' || !hrs1Same(stored.value, { reference: actual.reference, digest: hrs1Hash(actual) }) || signal.aborted) return { status: 'unavailable' }
         h.issuerReceipt = finalized.receipt; h.verification = actual; h.finalized = true
+        if (input.takeAttestedVerification) {
+          if (!input.takeAttestedVerification(actual, signal) || !await reproveLocal(receipt, actual, at, signal)) return { status: 'unavailable' }
+          transferable = receipt
+          return { status: 'current' }
+        }
       }
       if (!hrs1Same(h.verification.decision, decision)) return { status: 'changed' }
       return await reprove(receipt, h.verification, at, signal) ? { status: 'current' } : { status: 'unavailable' }
@@ -306,19 +332,56 @@ export function createHrs1SourceConsumer(input: Readonly<{
     },
   })
   return Object.freeze({
-    available: issuer !== null, evidence, sources, reproveVerification: reprove,
+    available: issuer !== null, evidence, sources, reproveVerification: reprove, reproveLocal,
+    async takeOpenedVerification(issued, at, signal) {
+      const actualSignal = openedProofs.get(issued)
+      if (!actualSignal) return consumedOpens.has(issued) ? 'unavailable' : 'absent'
+      openedProofs.delete(issued)
+      consumedOpens.add(issued)
+      return actualSignal === signal && await reproveLocal(issued.receipt, issued.verification, at, signal) ? 'current' : 'unavailable'
+    },
+    exportCustody(decision, signal) {
+      const candidate = transferable
+      transferable = null
+      const h = candidate ? held.get(candidate) : null, scope = input.custodyScope
+      if (!issuer || !scope || scope.signal.aborted || signal.aborted || custodyTaken) return { status: 'unavailable' }
+      custodyTaken = true
+      if (!candidate) return { status: 'absent' }
+      if (!h?.finalized || !hrs1Same(h.verification.decision, decision)) return { status: 'unavailable' }
+      const token = Object.freeze(Object.create(null) as object)
+      custodyTransfers.set(token, { scope, issuer, binding, issuerReceipt: h.issuerReceipt, verification: h.verification })
+      return { status: 'issued', receipt: token }
+    },
+    importCustody(token, signal) {
+      const h = custodyTransfers.get(token)
+      custodyTransfers.delete(token)
+      if (!h || !issuer || !input.custodyScope || adopted || custodyRejected || signal.aborted || h.scope.signal.aborted
+        || input.custodyScope.signal.aborted || h.scope.key !== input.custodyScope.key
+        || h.scope.signal !== input.custodyScope.signal || h.issuer !== issuer || !hrs1Same(h.binding, binding)) {
+        custodyRejected = true; return false
+      }
+      adopted = Object.freeze({ receipt: ownReceipt(h.issuerReceipt, h.verification), verification: h.verification })
+      return true
+    },
     held(receipt) { const h = held.get(receipt); return h?.finalized ? h.verification : null },
     lastObservation(target) { return last.get(hrs1Hash(target)) ?? null },
-    async openVerification(reference, signal) {
-      if (!issuer || signal.aborted) return null
+    async openVerification(reference, signal, methodReceipt) {
+      if (!issuer || signal.aborted || custodyRejected || input.custodyScope?.signal.aborted) return null
+      if (adopted && reference === hrs1Ref('hrs1-decision-custody', adopted.verification.decision)) {
+        if (!await reprove(adopted.receipt, adopted.verification, clock(), signal, methodReceipt)) return null
+        const issued = Object.freeze({ ...adopted })
+        openedProofs.set(issued, signal)
+        return issued
+      }
+      if (adopted) return null // A selected but foreign binding never falls back to new custody.
       const stored = await traceDevDiagnosticStage('source_evidence_read', signal,
-        () => fixed(command('evidence', { reference }), signal))
+        () => fixed(command('evidence', { reference }), signal, methodReceipt))
       const v = stored.status === 'inspected' ? readVerification(stored.value, binding, registry) : null
       if (!v) return null
       const issued = await issuer.reopen(v, signal)
       if (!issued || !hrs1Same(issued.verification, v) || !issued.receipt || typeof issued.receipt !== 'object') return null
       const receipt = ownReceipt(issued.receipt, v)
-      return await reprove(receipt, v, clock(), signal) ? { receipt, verification: v } : null
+      return await reprove(receipt, v, clock(), signal, methodReceipt) ? { receipt, verification: v } : null
     },
   })
 }

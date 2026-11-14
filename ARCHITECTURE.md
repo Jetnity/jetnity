@@ -1,5 +1,13 @@
 # Jetnity – Architektur
 
+## CH→DE in Dev: begrenzte Fortsetzung und echte Nachweisübergaben — 14.11.2026
+
+Der aktuelle Dev-Auftrag läuft in [#1197](https://github.com/Jetnity/jetnity/pull/1197); die folgenden datierten R41-Einträge bleiben Historie. BG1, sein öffentlicher Status und Recovery2 sind in `yfvbxvijcorffwxbxahl` installiert. CI4243 bestand am bisherigen PR-Head alle neun Jobs. Der anschließende echte Import speicherte amtliche Quellen, erreichte jedoch noch keine S1-Fertigstellung oder veröffentlichte Ergebnisversion. [Genaue Belege und aktueller Übergabestand](docs/OFFICIAL_TRUTH_DEV_GUARD_RECOVERY_1_HANDOFF_2026-11-14.md).
+
+Der folgende Korrekturstand übergibt echte S1-Lese-, Attest-ACK-, Quellen- und Proof-Nachweise innerhalb derselben privaten Laufzeit einmalig weiter. Separate Abschluss- und Veröffentlichungsschritte erwerben jeweils eine neue tatsächliche MA1-Beobachtung derselben Epoche. Ein abgelaufener Fünf-Sekunden-Beleg wird dadurch weder verlängert noch wieder gültig. Die bestehende Dreißig-Sekunden-Gesamtgrenze und die Datenbankprüfungen bleiben erhalten.
+
+Die Dev-Owner-Seite bewahrt gewöhnliche Auftrags-/Lease-Kennungen vor dem ersten Versand im Sitzungsspeicher auf. Eine ausdrücklich ausgelöste Fortsetzung verwendet genau diese Kennungen unter erneuter Owner-/AAL2-/Dev-Prüfung und liest den tatsächlichen Datenbankzustand. Der Browser erhält keinen Ausführungstoken und entscheidet nicht über einen Abschluss. Recovery3 ergänzt separat ausschließlich den realen Verlauf mit Claim3 ohne START und dem unklaren START4; Installation und anschließender echter Cron-Nachweis bleiben eigene Gates. Production bleibt ausgeschlossen.
+
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
 
 **12. November 2026 — M04 R41: tatsächlicher Main-Lauf fehlgeschlagen; unmittelbarer Review-Fix in derselben Generation4-Sitzung.** Main ist `4313049c2a8c276f2a63101dda8df996327230e0`, Tree `5a331f1a8846e8dc07a3e0a6de033fcf8da7400f`. #1190 ist gemergt, sein eigener [Push-Lauf 43150141948 / #4117 / Versuch 1](https://github.com/Jetnity/jetnity/actions/runs/43150141948) ist **FAILURE**. M04 erreicht 24 vollständige Prüfgruppen; Gruppe 25 überschreitet das feste 240-Sekunden-Budget beim 64. Start, sechs weitere Gruppen werden nicht ausgeführt. Die übrigen sechs CI-Jobs sind erfolgreich; Core und Aggregate schlagen fehl. Sauberes Cleanup ersetzt die fehlenden Prüfungen nicht. [Vollständige Root-Fehlerevidence](https://github.com/Jetnity/jetnity/pull/1190#issuecomment-6814174877).

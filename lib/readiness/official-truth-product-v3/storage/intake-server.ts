@@ -36,5 +36,6 @@ export function createV3ProposalIntakeStore(options: Readonly<{
       return result.status === 'recorded' ? { status: 'recorded', reference: result.record.reference } : { status: result.status }
     },
   })
-  return Object.freeze({ intake, open: backend.read, forImport: backend.quarantine, confirmImport: backend.confirmImport })
+  return Object.freeze({ intake, open: backend.read, forImport: backend.quarantine,
+    forOpenedImport: backend.forOpenedImport, confirmImport: backend.confirmImport })
 }

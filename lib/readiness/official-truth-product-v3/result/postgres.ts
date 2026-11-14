@@ -18,6 +18,7 @@ import type { Hrs1SourceConsumer } from './source-proof'
 type HistoryState = Readonly<{ history: V3ImportHistory; head: V3VersionHead;
   stickyDecision: unknown; suppressionEpoch: number; generation: number; suppression: unknown }>
 type Proof = Readonly<{ prepared: V3ImportPrepared; receipt: object; verification: Hrs1Verification }>
+type ProofCallback = { own: object; prepared: V3ImportPrepared; signal: AbortSignal; proved: Proof | null; used: boolean; failed: boolean }
 type Plan = Readonly<{ generation: number; plan: Readonly<{ method: V3MethodRef; targets: readonly V3MonitorTarget[]; attemptLimit: number }> }>
 export type Hrs1ResultPorts = Readonly<{
   evidence: Hrs1SourceConsumer['evidence']; history: V3ImportHistoryPort<object>;
@@ -64,6 +65,7 @@ export function createHrs1ResultPorts(input: Readonly<{
 }>): Hrs1ResultPorts {
   const { binding, registry, fixed, clock, source } = input
   const histories = new WeakMap<object, HistoryState>(), proofs = new WeakMap<object, Proof>()
+  const proofCallbacks = new WeakMap<object, ProofCallback>(), activeProofCallbacks = new WeakMap<object, ProofCallback>()
   const projections = new WeakMap<object, V3ProjectionBinding>(), plans = new WeakMap<object, Plan>()
   const intakes = new Map<string, V3IntakeReference>()
   let badIntakes = false, lastPlan: Plan | null = null
@@ -107,34 +109,75 @@ export function createHrs1ResultPorts(input: Readonly<{
       return current ? { status: hrs1Same(current, old) ? 'current' : 'changed' } : { status: 'unavailable' }
     },
   })
-  async function reproveProof(own: object, prepared: V3ImportPrepared, at: V3ReadClock, signal: AbortSignal): Promise<Proof | null> {
+  async function reproveProof(own: object, prepared: V3ImportPrepared, at: V3ReadClock, signal: AbortSignal,
+    methodReceipt?: object): Promise<Proof | null> {
     const h = proofs.get(own)
     if (!h || !hrs1Same(h.prepared, prepared) || !hrs1Same(at, hrs1Clock(at.now, binding.legalTimeZone))
       || at.now >= h.verification.validUntilExclusive
-      || !await source.reproveVerification(h.receipt, h.verification, at, signal) || signal.aborted) return null
+      || !await source.reproveVerification(h.receipt, h.verification, at, signal, methodReceipt) || signal.aborted) return null
     return source.held(h.receipt) === h.verification ? h : null
   }
   const versionProofs: V3TransitionProofPort<object> = Object.freeze<V3TransitionProofPort<object>>({
-    async inspect(raw, checkedAt, legalDate, signal) {
+    async inspect(raw, checkedAt, legalDate, signal, methodReceipt) {
       const prepared = preparedRead(raw, registry, binding)
       const at = hrs1Clock(checkedAt, binding.legalTimeZone)
       if (!prepared || !at || at.legalDate !== legalDate) return { status: 'invalid' }
-      const issued = await source.openVerification(hrs1Ref('hrs1-decision-custody', prepared.decision), signal)
+      const issued = await source.openVerification(hrs1Ref('hrs1-decision-custody', prepared.decision), signal, methodReceipt)
       if (!issued || !hrs1Same(issued.verification.decision, prepared.decision)
         || !hrs1Same(issued.verification.previousDecision, prepared.previousDecision)
-        || !hrs1Same(issued.verification.archiveAppend, prepared.archiveAppend)
-        || !await source.reproveVerification(issued.receipt, issued.verification, at, signal)) return { status: 'unavailable' }
+        || !hrs1Same(issued.verification.archiveAppend, prepared.archiveAppend)) return { status: 'unavailable' }
+      const transferred = await source.takeOpenedVerification(issued, at, signal)
+      if (transferred === 'unavailable' || transferred === 'absent'
+        && !await source.reproveVerification(issued.receipt, issued.verification, at, signal, methodReceipt)) return { status: 'unavailable' }
       const own = receipt()
       proofs.set(own, { prepared, receipt: issued.receipt, verification: issued.verification })
       return { status: 'verified', receipt: own }
     },
-    async reprove(own, raw, checkedAt, legalDate, signal) {
+    async reprove(own, raw, checkedAt, legalDate, signal, methodReceipt, proofContext) {
       const prepared = preparedRead(raw, registry, binding), at = hrs1Clock(checkedAt, binding.legalTimeZone)
-      if (!prepared || !at || at.legalDate !== legalDate) return { status: 'invalid' }
-      const h = await reproveProof(own, prepared, at, signal)
+      const callback = proofContext === undefined ? null : proofCallbacks.get(proofContext)
+      if (!prepared || !at || at.legalDate !== legalDate) {
+        if (callback) callback.failed = true
+        return { status: 'invalid' }
+      }
+      if (proofContext !== undefined && (!callback || callback.used || callback.failed || callback.signal.aborted
+        || callback.own !== own || !hrs1Same(callback.prepared, prepared))) {
+        if (callback) callback.failed = true
+        const active = activeProofCallbacks.get(own)
+        if (active) active.failed = true
+        return { status: 'unavailable' }
+      }
+      if (callback) callback.used = true
+      const h = await reproveProof(own, prepared, at, signal, methodReceipt)
+      if (callback && h && !callback.failed && !callback.signal.aborted) callback.proved = h
       return h ? { status: 'current', freshUntil: h.verification.validUntilExclusive } : { status: 'unavailable' }
     },
   })
+  async function callbackProof(own: object, prepared: V3ImportPrepared, methodReceipt: object,
+    reprove: V3TransitionAtomicCommand['reprove'], signal: AbortSignal): Promise<Proof | null> {
+    const active = activeProofCallbacks.get(own)
+    if (active) { active.failed = true; return null }
+    const context = receipt(), callback: ProofCallback = { own, prepared, signal, proved: null, used: false, failed: false }
+    proofCallbacks.set(context, callback)
+    activeProofCallbacks.set(own, callback)
+    try {
+      const result = await reprove(signal, context)
+      proofCallbacks.delete(context) // This capability exists only during that callback.
+      if (result.status !== 'current' || signal.aborted || callback.failed) return null
+      const at = validClock()
+      if (!at) return null
+      if (!callback.used) {
+        const h = await reproveProof(own, prepared, at, signal, methodReceipt)
+        return !callback.failed && !signal.aborted ? h : null
+      }
+      // Only our own actual reprove/evidence read during this exact callback
+      // can discharge the duplicate read. A current DTO cannot mint this state.
+      const h = callback.proved
+      return h && proofs.get(own) === h && hrs1Same(h.prepared, prepared)
+        && await source.reproveLocal(h.receipt, h.verification, at, signal)
+        && source.held(h.receipt) === h.verification && !signal.aborted && !callback.failed ? h : null
+    } finally { proofCallbacks.delete(context); activeProofCallbacks.delete(own) }
+  }
   async function transition(command: V3TransitionAtomicCommand, current: boolean, signal: AbortSignal): Promise<Hrs1Reply> {
     const prepared = preparedRead(command.prepared, registry, binding), cap = command.notAfter
     const methodReceipt = command.authority.methodReceipt, proofReceipt = command.authority.proofReceipt
@@ -142,8 +185,8 @@ export function createHrs1ResultPorts(input: Readonly<{
       || !hrs1Same(command.authority.method, hrs1Method(binding)) || !methodReceipt || !proofReceipt) return closed()
     const expectedHead = immutable(JSON.parse(hrs1Canonical(command.expectedHead)) as V3VersionHead)
     const original = intake(prepared.transition.operationId, prepared.proposalDigest)
-    if (!original || (await command.reprove(signal)).status !== 'current') return closed()
-    const at = validClock(), h = at ? await reproveProof(proofReceipt, prepared, at, signal) : null
+    if (!original) return closed()
+    const h = await callbackProof(proofReceipt, prepared, methodReceipt, command.reprove, signal), at = validClock()
     if (!h || !at || at.now >= cap) return closed()
     return call(current ? 'transition_current' : 'transition', { operationKey: command.operationKey, prepared, expectedHead,
       verificationRef: h.verification.reference, intake: original }, signal, methodReceipt,
@@ -156,9 +199,9 @@ export function createHrs1ResultPorts(input: Readonly<{
         : ['not_attempted','collision','unconfirmed'].includes(r.status)
           ? { status: r.status as 'not_attempted' | 'collision' | 'unconfirmed' } : { status: 'unavailable' }
     },
-    async readHead(contextKey, factKind, signal) {
+    async readHead(contextKey, factKind, signal, methodReceipt) {
       if (contextKey !== binding.contextKey || factKind !== binding.factKind) return { status: 'unavailable' }
-      const r = await call('head', { contextKey, factKind }, signal)
+      const r = await call('head', { contextKey, factKind }, signal, methodReceipt)
       return r.status === 'current' && ownRecord(r.value, ['pointer','sourceDecisionRef','historyArchive'])
         ? { status: 'current', head: r.value as V3VersionHead } : { status: 'unavailable' }
     },
@@ -183,8 +226,8 @@ export function createHrs1ResultPorts(input: Readonly<{
     if (!projection.ok || !hrs1Same(projection.value, command.projection) || !hrs1Same(projection.value.rule, prepared.version)) return closed()
     const original = intake(prepared.transition.operationId, prepared.proposalDigest)
     const proofReceipt = command.proofReceipt, methodReceipt = command.methodReceipt
-    if (!original || (await command.reprove(signal)).status !== 'current') return closed()
-    const at = validClock(), h = at ? await reproveProof(proofReceipt, prepared, at, signal) : null
+    if (!original) return closed()
+    const h = await callbackProof(proofReceipt, prepared, methodReceipt, command.reprove, signal), at = validClock()
     if (!h || !at || at.now >= cap) return closed()
     return call(confirm ? 'publication_confirm' : 'publication', { operationId: command.operationId, operationKey: command.operationKey,
       prepared, projection: projection.value, verificationRef: h.verification.reference, intake: original }, signal,

@@ -107,28 +107,33 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       await creator.query(readFileSync(new URL('./status-rpc-provider-migration-body.sql',import.meta.url),'utf8'))
       await creator.query('COMMIT')
     } catch(error) { await creator.query('ROLLBACK'); throw error }
-    const recoveryBody = readFileSync(new URL('./recovery-provider-migration-body.sql',import.meta.url),'utf8')
-    if(oldProofCheck) {
-      const originalState=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
-      const originalCatalog=json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result'))
+    for (const [file,baseline] of [
+      ['recovery-provider-migration-body.sql','recovery_baseline_v1'],
+      ['recovery-gap-provider-migration-body.sql','gap_recovery_baseline_v1'],
+    ] as const) {
+      const recoveryBody = readFileSync(new URL('./'+file,import.meta.url),'utf8')
+      if(oldProofCheck) {
+        const originalState=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+        const originalCatalog=json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result'))
+        await creator.query('BEGIN')
+        try {
+          assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
+          await creator.query('SELECT official_v3_guard_private.require_open_v1()')
+          const oldProof=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+          await creator.query(recoveryBody)
+          assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),oldProof)
+          assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')),{schema:1,status:'unavailable'})
+          await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'),stateError('P7902'))
+        } finally { await creator.query('ROLLBACK') }
+        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),originalState)
+        assert.deepEqual(json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result')),originalCatalog,
+          'rollback preserves original membership OIDs/options, every ACL and the full installed predecessor graph')
+        assert.equal((await creator.query("SELECT to_regclass('official_v3_guard_private."+baseline+"') IS NULL AS absent"))[0]!.absent,'t')
+      }
       await creator.query('BEGIN')
-      try {
-        assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
-        await creator.query('SELECT official_v3_guard_private.require_open_v1()')
-        const oldProof=json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
-        await creator.query(recoveryBody)
-        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),oldProof)
-        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')),{schema:1,status:'unavailable'})
-        await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'),stateError('P7902'))
-      } finally { await creator.query('ROLLBACK') }
-      assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')),originalState)
-      assert.deepEqual(json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result')),originalCatalog,
-        'rollback preserves original membership OIDs/options, every ACL and the full Status predecessor graph')
-      assert.equal((await creator.query("SELECT to_regclass('official_v3_guard_private.recovery_baseline_v1') IS NULL AS absent"))[0]!.absent,'t')
+      try { await creator.query(recoveryBody); await creator.query('COMMIT') }
+      catch(error) { await creator.query('ROLLBACK'); throw error }
     }
-    await creator.query('BEGIN')
-    try { await creator.query(recoveryBody); await creator.query('COMMIT') }
-    catch(error) { await creator.query('ROLLBACK'); throw error }
     await creator.query("SET statement_timeout='25s'")
     assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
     const runtimeJobs = await LocalPgConnection.connect(cluster,base.bound[0]!.login)
@@ -250,6 +255,64 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
         return json<Hrs1Reply>(await connection.query(HRS1_SQL[channel],params([hrs1Canonical({schema:1,operation:operationValue,bindingHash:hrs1Hash(binding),body}),
           hrs1Hash(binding),binding.methodId,1,binding.methodDigest,binding.packageDigest,1,5000,new Date(Date.now()+5000).toISOString(),clock.legalDate])))
       } finally {connection.close();await absent(who.pid!,who.birth!)}
+    }
+    async function skippedThirdClaim() {
+      const previous=json<V3ManagedJobRecord>(await observer.query('SELECT current_job AS result FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1',params([claim.jobKey])))
+      assert.equal(previous.attempt,2)
+      const skippedClaim={...claim,operationId:operation(),leaseId:fixtureId('lease3',operation()),leaseMilliseconds:6000}
+      const skipped=await envelope({action:'claim',input:skippedClaim},previous)
+      assert.equal((await jobs(skipped,runtimeJobs)).status,'committed')
+      const job=skipped.body.commit.next;assert.equal(job.attempt,3);assert.ok(job.lease)
+      // This claim intentionally never calls execution_start. The native
+      // journal, not a manufactured start/retirement, is the negative proof.
+      const delivered=await AA_CH_DE_DELIVERY_PRODUCER.produce({job,fence:{jobId:job.jobId,revision:job.revision,
+        leaseId:job.lease.leaseId,generation:job.lease.generation}},lifetime.signal)
+      assert.ok(delivered.status==='delivered')
+      const skippedItem=delivered.deliveries[0]!,read=readV3RetainableProposal(skippedItem.text,program.registry);assert.ok(read.ok)
+      const retained=read.value
+      const startRequest:M04Operation={operation:'execution_start',body:{claim:skippedClaim,leasedJob:job,subjectText:skipped.body.subjectText}}
+      const capture=(connection:LocalPgConnection)=>connection.query('SELECT official_v3_intake_api.capture_v1($1::jsonb,$2::text,$3::text) AS result',
+        params([JSON.stringify(skippedItem.binding),skippedItem.text,retained.digest]))
+      async function absence() {
+        return json(await observer.query(`SELECT jsonb_build_object(
+          'starts',(SELECT count(*) FROM official_v3_jobs_private.execution_starts_v1 WHERE claim_operation_id=$1),
+          'operations',(SELECT count(*) FROM official_v3_intake_private.operations_v1 WHERE operation_id=$2),
+          'reservations',(SELECT count(*) FROM official_v3_intake_private.reservations_v1 WHERE operation_id=$2),
+          'completions',(SELECT count(*) FROM official_v3_intake_private.completions_v1 WHERE operation_id=$2)) AS result`,params([skippedClaim.operationId,skippedItem.binding.operationId])))
+      }
+      async function capturedGapRefuses(actualJob:unknown) {
+        await owner.query('BEGIN; SET LOCAL ROLE ot_v3_intake_caller')
+        try {
+          assert.equal(json<{status:string}>(await capture(owner)).status,'recorded')
+          await owner.query('RESET ROLE')
+          await assert.rejects(owner.query('SELECT official_v3_guard_private.recovery_intake_v1($1::jsonb) AS result',params([JSON.stringify(actualJob)])),stateError('P7906'))
+        } finally {await owner.query('ROLLBACK')}
+        assert.deepEqual(await absence(),{starts:0,operations:0,reservations:0,completions:0})
+      }
+      async function lateAdmissionRefuses() {
+        assert.equal((await jobs(startRequest,runtimeJobs)).status,'blocked')
+        assert.equal(json<{status:string}>(await capture(runtimeIntake)).status,'unconfirmed')
+        assert.equal(json<{status:string}>(await runtimeIntake.query('SELECT official_v3_intake_api.reserve_v1($1::jsonb,$2::text,$3::integer,$4::integer) AS result',
+          params([JSON.stringify(skippedItem.binding),retained.digest,retained.bytes,6000]))).status,'unconfirmed')
+        assert.deepEqual(await absence(),{starts:0,operations:0,reservations:0,completions:0})
+      }
+      async function normalNextCycle() {
+        const current=json<V3ManagedJobRecord>(await observer.query('SELECT current_job AS result FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1',params([claim.jobKey])))
+        assert.equal(current.attempt,4)
+        const exhaust=await envelope({action:'claim',input:{...claim,operationId:operation(),leaseId:fixtureId('lease3',operation()),leaseMilliseconds:6000}},current)
+        assert.equal(exhaust.body.commit.next.state,'exhausted')
+        assert.equal((await jobs(exhaust,runtimeJobs)).status,'committed')
+        await creator.query('SELECT official_v3_guard_private.check_retirements_v1(); SELECT official_v3_guard_private.check_certificates_v1()')
+        const nextCycle=await envelope({action:'enqueue',kind:'rule_research',input:{context:program.context,method:program.method,
+          factKind:'requirement_effect',researchReason:{status:'missing'},operationId:operation(),jobId:fixtureId('job3','recovery-following-cycle'),attemptLimit:4}},exhaust.body.commit.next)
+        assert.equal(nextCycle.body.commit.next.attempt,0);assert.notEqual(nextCycle.body.commit.next.jobId,current.jobId)
+        assert.equal((await jobs(nextCycle,runtimeJobs)).status,'committed')
+        await creator.query('SELECT official_v3_guard_private.check_retirements_v1(); SELECT official_v3_guard_private.check_certificates_v1()')
+        assert.deepEqual(await absence(),{starts:0,operations:0,reservations:0,completions:0})
+      }
+      assert.deepEqual(await absence(),{starts:0,operations:0,reservations:0,completions:0})
+      await waitUntil(job.lease.expiresAt)
+      return {capturedGapRefuses,lateAdmissionRefuses,normalNextCycle,intake:skippedItem.binding.operationId}
     }
     async function laterAttempt(qualify:boolean) {
       const previous=json<V3ManagedJobRecord>(await observer.query('SELECT current_job AS result FROM official_v3_jobs_private.subjects_v1 WHERE job_key=$1',params([claim.jobKey])))
@@ -433,7 +496,7 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       return {id,selection,receipt}
     }
     return {cluster,base,owner,creator,observer,human,jobs,runtimeJobs,claim,claimed,leased,start,failed,item,upload,
-      prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,laterAttempt,waitUntil,jobsIdentity}
+      prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,laterAttempt,skippedThirdClaim,waitUntil,jobsIdentity}
   }
   type Fixture = Awaited<ReturnType<typeof fixture>>
   async function run(name: string,jobMs: number,intakeMs: number,body: (f:Fixture)=>Promise<void>,oldProofCheck=false) {
@@ -540,6 +603,32 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
         await third.publish()
         assert.equal((await f.state()).later,1,'a new genuine intake can publish without replacing either retired attempt')
       }
+      if(kind==='s1'&&first==='owner') {
+        const retainedHistory=json(await f.observer.query("SELECT jsonb_build_object('first',(SELECT to_jsonb(r) FROM official_v3_guard_private.retired_attempts_v1 r),'second',(SELECT to_jsonb(r) FROM official_v3_guard_private.retired_later_attempts_v1 r WHERE attempt_number=2)) AS result"))
+        const gap=await f.skippedThirdClaim(), fourth=await f.laterAttempt(true)
+        assert.equal(fourth.leased.attempt,4)
+        await f.waitUntil(fourth.leased.lease!.expiresAt);await f.waitUntil(fourth.reservation.expiresAt)
+        const actualJob=json<{startCount:number;preceding:unknown[];skippedClaims:{intakeOperationId:string}[]}>(await f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'))
+        assert.equal(actualJob.startCount,3);assert.equal(actualJob.preceding.length,2)
+        assert.equal(actualJob.skippedClaims.length,1);assert.equal(actualJob.skippedClaims[0]!.intakeOperationId,gap.intake)
+        await gap.capturedGapRefuses(actualJob)
+        await f.retireRace(kind,first,fourth)
+        const retired=json<{before_state:{job:typeof actualJob}}>(await f.observer.query('SELECT to_jsonb(r) AS result FROM official_v3_guard_private.retired_later_attempts_v1 r WHERE attempt_number=4'))
+        assert.deepEqual(retired.before_state.job,actualJob)
+        for(const changed of [
+          {...actualJob,startCount:4},
+          {...actualJob,skippedClaims:[]},
+          {...actualJob,skippedClaims:[{...actualJob.skippedClaims[0],intakeOperationId:fourth.intake}]},
+          {...actualJob,preceding:actualJob.preceding.slice(1)},
+        ]) await assert.rejects(f.owner.query('SELECT official_v3_guard_private.check_retired_jobs_v1($1::jsonb)',
+          params([JSON.stringify({...retired.before_state,job:changed})])),stateError('P7906'))
+        await gap.lateAdmissionRefuses();await fourth.reserveRetired()
+        assert.deepEqual(json(await f.observer.query("SELECT jsonb_build_object('first',(SELECT to_jsonb(r) FROM official_v3_guard_private.retired_attempts_v1 r),'second',(SELECT to_jsonb(r) FROM official_v3_guard_private.retired_later_attempts_v1 r WHERE attempt_number=2)) AS result")),retainedHistory)
+        assert.equal((await f.observer.query('SELECT count(*)::text AS n FROM official_v3_guard_private.retired_later_attempts_v1 WHERE attempt_number=3'))[0]!.n,'0')
+        assert.equal((await f.observer.query('SELECT count(*)::text AS n FROM official_v3_jobs_private.execution_starts_v1'))[0]!.n,'3')
+        await f.creator.query('SELECT official_v3_guard_private.check_retirements_v1(); SELECT official_v3_guard_private.check_certificates_v1()')
+        await gap.normalNextCycle()
+      }
     })
   }
 }
@@ -630,7 +719,7 @@ export async function runBg1Native(t: TestContext) {
       return values
     }
     async function oldStatusData(connection = owner) {
-      const tables = await connection.query("SELECT n.nspname||'.'||c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND n.nspname IN ('official_v3_method_private','official_v3_intake_private','official_v3_jobs_private','official_v3_result_private','official_v3_guard_private') AND c.relname NOT IN ('status_baseline_v1','recovery_baseline_v1','retired_later_attempts_v1') ORDER BY 1")
+      const tables = await connection.query("SELECT n.nspname||'.'||c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND n.nspname IN ('official_v3_method_private','official_v3_intake_private','official_v3_jobs_private','official_v3_result_private','official_v3_guard_private') AND c.relname NOT IN ('status_baseline_v1','recovery_baseline_v1','retired_later_attempts_v1','gap_recovery_baseline_v1') ORDER BY 1")
       assert.equal(tables.length, 33, 'all 25 old business tables plus all eight old Guard tables')
       const values: Record<string, PgRows> = {}
       for (const { name } of tables) {
@@ -1039,16 +1128,18 @@ export async function runBg1Native(t: TestContext) {
       }
       assert.deepEqual(await oldStatusData(), oldData, 'public reads and isolated catalog negatives never alter old data or heartbeat')
     })
-    async function recoveryInstallation() {
-      const recoveryBody = readFileSync(new URL('./recovery-provider-migration-body.sql', import.meta.url), 'utf8')
+    async function recoveryInstallation(gap=false) {
+      const recoveryBody = readFileSync(new URL(gap?'./recovery-gap-provider-migration-body.sql':'./recovery-provider-migration-body.sql', import.meta.url), 'utf8')
       const recoveryHash = createHash('sha256').update(recoveryBody).digest('hex')
       const oldData = await oldStatusData(), originalInstallation = await installationState(base.observer.connection)
       const oldCatalog = json(await creator.query('SELECT official_v3_guard_private.catalog_status_v1() AS result'))
       const oldStatus = json(await creator.query('SELECT to_jsonb(b) AS result FROM official_v3_guard_private.status_baseline_v1 b'))
+      const priorRecovery=gap?json(await creator.query("SELECT jsonb_build_object('baseline',(SELECT to_jsonb(b) FROM official_v3_guard_private.recovery_baseline_v1 b),'retirements',(SELECT COALESCE(jsonb_agg(to_jsonb(r) ORDER BY attempt_number),'[]'::jsonb) FROM official_v3_guard_private.retired_later_attempts_v1 r)) AS result")):null
       async function objects(connection = base.observer.connection) {
+        if(gap) return connection.query("SELECT to_regclass('official_v3_guard_private.gap_recovery_baseline_v1') IS NOT NULL AS baseline")
         return connection.query("SELECT to_regclass('official_v3_guard_private.recovery_baseline_v1') IS NOT NULL AS baseline,to_regclass('official_v3_guard_private.retired_later_attempts_v1') IS NOT NULL AS retirements,to_regprocedure('official_v3_guard_private.recovery_canonical_v1(jsonb,integer)') IS NOT NULL AS helper")
       }
-      const absentObjects = [{ baseline: 'f', retirements: 'f', helper: 'f' }]
+      const absentObjects = gap?[{baseline:'f'}]:[{ baseline: 'f', retirements: 'f', helper: 'f' }]
       async function rolledBack() {
         assert.deepEqual(await objects(), absentObjects)
         assert.deepEqual(await installationState(base.observer.connection), originalInstallation)
@@ -1072,14 +1163,15 @@ export async function runBg1Native(t: TestContext) {
         await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([recoveryHash]))
         await creator.query('COMMIT')
       } catch(error) { await creator.query('ROLLBACK'); throw error }
-      assert.deepEqual(await objects(), [{ baseline: 't', retirements: 't', helper: 't' }])
+      assert.deepEqual(await objects(), gap?[{baseline:'t'}]:[{ baseline: 't', retirements: 't', helper: 't' }])
       assert.deepEqual(await oldStatusData(), oldData)
       assert.deepEqual(json(await creator.query('SELECT to_jsonb(b) AS result FROM official_v3_guard_private.status_baseline_v1 b')), oldStatus)
+      if(gap) assert.deepEqual(json(await creator.query("SELECT jsonb_build_object('baseline',(SELECT to_jsonb(b) FROM official_v3_guard_private.recovery_baseline_v1 b),'retirements',(SELECT COALESCE(jsonb_agg(to_jsonb(r) ORDER BY attempt_number),'[]'::jsonb) FROM official_v3_guard_private.retired_later_attempts_v1 r)) AS result")),priorRecovery)
       assert.deepEqual(await installationState(base.observer.connection), { ...originalInstallation, markers: [...originalInstallation.markers, recoveryHash].sort() })
       await anonymousStatus('unavailable')
       await assert.rejects(creator.query('SELECT official_v3_guard_private.require_open_v1()'), stateError('P7902'))
       await creator.query("BEGIN; SET LOCAL TIME ZONE 'Europe/Zurich'; SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK")
-      for (const table of ['recovery_baseline_v1', 'retired_later_attempts_v1']) {
+      for (const table of gap?['gap_recovery_baseline_v1']:['recovery_baseline_v1', 'retired_later_attempts_v1']) {
         await assert.rejects(creator.query('TRUNCATE official_v3_guard_private.' + table), stateError('P7901'))
         for (const role of ['anon','authenticated','service_role','supabase_read_only_user','ot_v3_jobs_owner','ot_v3_result_owner','ot_v3_intake_owner']) {
           await owner.query('BEGIN; SET LOCAL ROLE ' + role)
@@ -1087,9 +1179,9 @@ export async function runBg1Native(t: TestContext) {
           finally { await owner.query('ROLLBACK') }
         }
       }
-      assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_jobs_owner'::regrole,'ot_v3_result_owner'::regrole)"))[0]!.n, '0')
-      assert.equal((await creator.query("SELECT has_schema_privilege('ot_v3_jobs_owner','official_v3_guard_private','CREATE') OR has_schema_privilege('ot_v3_result_owner','official_v3_guard_private','CREATE') AS widened"))[0]!.widened, 'f')
-      // The enclosing B04 full audit covers BOTH additions. No new slot wait.
+      assert.equal((await creator.query("SELECT count(*)::text AS n FROM pg_auth_members WHERE member='postgres'::regrole AND grantor='postgres'::regrole AND roleid IN ('ot_v3_jobs_owner'::regrole,'ot_v3_result_owner'::regrole,'ot_v3_intake_owner'::regrole)"))[0]!.n, '0')
+      assert.equal((await creator.query("SELECT has_schema_privilege('ot_v3_jobs_owner','official_v3_guard_private','CREATE') OR has_schema_privilege('ot_v3_result_owner','official_v3_guard_private','CREATE') OR has_schema_privilege('ot_v3_intake_owner','official_v3_guard_private','CREATE') AS widened"))[0]!.widened, 'f')
+      // The enclosing B04 full audit covers every addition. No new slot wait.
     }
     await proof('B02 original checksum, full key history, certificate chain and catalog tamper refuse', async () => {
       const probes = [
@@ -1200,7 +1292,8 @@ export async function runBg1Native(t: TestContext) {
       assert.equal(negativeRuns[0]!.outcome, 'expired')
       const due = negativeRuns[0]!.seconds!
       const waitUntil = Number(due) * 1000 + 20
-      await subtest.test('RECOVERY2 preserves used state and exact authority within the existing proof wait',recoveryInstallation)
+      await subtest.test('RECOVERY2 preserves used state and exact authority within the existing proof wait',()=>recoveryInstallation())
+      await subtest.test('RECOVERY3 preserves the installed predecessors within the same proof wait',()=>recoveryInstallation(true))
       await recoveryCases(subtest,lifetime,()=>{clusterCount++})
       while (Date.now() < waitUntil) await lifetime.wait(Math.min(1000, waitUntil - Date.now()))
       await creator.query('SELECT official_v3_guard_private.audit_v1()')

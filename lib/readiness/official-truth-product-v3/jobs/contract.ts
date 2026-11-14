@@ -6,7 +6,7 @@ import { regelScopeAusEvidenceScope, REGEL_FAKT_ARTEN } from '@/lib/readiness/ru
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 import { createV3WorkIdentity, createV3CombinationDiscoveryIdentity,
   readV3GlobalRuleContext, readV3ResearchJobRecord, readV3CombinationDiscoveryJobRecord,
-  type V3GlobalRuleContext, type V3ReadClock, type V3MethodAuthorityPort } from '../contract'
+  type V3GlobalRuleContext, type V3ReadClock, type V3MethodAuthorityPort, type V3MethodRef } from '../contract'
 import { readData, same, key, timestamp, operationId, jobId, leaseId, jobKey, discoveryJobKey,
   decisionRef, discoveryRef } from '../monitor/internal'
 import type { V3QueueResult, V3QueueCommit, V3ManagedJobRecord, V3JobFence } from '../monitor/queue'
@@ -82,6 +82,13 @@ export type M04Facade = Readonly<{
   workOnce(rawClaim: unknown, signal?: AbortSignal): Promise<V3IntegratedWorkerResult>;
 }>
 export type M04Authority = V3MethodAuthorityPort<object>
+/** Internal composition seams only. Neither is configurable on M04Config or
+ * exposed by a facade. A phase owns the original genuine epoch anchor. */
+export type M04OperationAuthority = (anchorReceipt: object, method: V3MethodRef, checkedAt: string,
+  signal: AbortSignal) => Promise<{ status: 'approved'; receipt: object }
+    | { status: 'unavailable' | 'not_approved' | 'revoked' }>
+export type M04WorkerTerminalAuthority = (anchorReceipt: object, confirmed: M04NativeReply,
+  checkedAt: string, signal: AbortSignal) => Promise<{ status: 'current' | 'unavailable' }>
 
 // Local closed metadata codec. No protected foundation/normalizer re-export.
 function canonical(value: unknown): string {

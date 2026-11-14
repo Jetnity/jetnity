@@ -477,3 +477,83 @@ Root hat den vollständigen Pindiff gelesen und den separaten statischen Prüfer
 Endidentitäten: HRS Native `8ba107714a9979e5a574a1eeebb244fdcd47989199837e9451a08a08aa60a16b` (255508 Bytes); COMPOSED Native `8ce7d9c3bf9c1ecf16e77dcc2abc0e3888c5dbb3e84d05906a078330654e4443` (104295 Bytes); HDP `15501635050b1d4251b832a5bce5005beb5c477b13b1a2f4218be7735aeed97e` (202650 Bytes). Gesamter neuer Kandidat: sieben Source-/Testdateien,13 reine Pinfolgen und dieser Handoff, genau21 Dateien. Die drei mit #1198 koordinierten Schutzdateien bleiben unverändert.
 
 Nach Commit und Operating-Mode-Gate folgt ausschließlich der normale Neun-Job-CI auf dem kompletten Kandidaten. Dieser Abschnitt behauptet noch keinen neuen Native-/CI-/Live-Import-PASS. Installation, Cron, Ownerabschluss und CI4242 oben bleiben tatsächliche historische Erfolge. Der nächste Dev-Claim bleibt bis zum neuen vollständigen Gate ausgesetzt; es wird keine zusätzliche Nativekampagne oder Dev-Neuinstallation gestartet. Weitere Liveergebnisse werden direkt in #1197 dokumentiert.
+
+## Fortsetzung: CI 4243 bestanden, neuer I1-Engpass tatsächlich belegt
+
+Stand: 14.11.2026, 17:14 UTC / 18:14 Zürich. Neuer normaler #1197-Head `680aeab32b76a5ed3474fdb292138bd8c75bc719`, Tree `a07bd1b0972a858932e1b982f71a499cd1afa104`, lokal `e0290b4162f87adf07a6e7c14bb20ba1e70d94d0`. Keine Sicherungshülle wurde übernommen.
+
+### Vollständiger regulärer CI-Nachweis
+
+[CI 4243 / Run 43617883672](https://github.com/Jetnity/jetnity/actions/runs/43617883672) wurde im ersten Versuch am 14.11.2026 um 17:07:07 UTC abgeschlossen. Root hat Run, alle neun einzelnen Jobabschlüsse, aktuellen PR-Head, exakte READY-Vorschau und kritischen Hosted-Abschluss selbst gelesen. Ein unabhängiger Reviewer hat sämtliche Abschlusslogs vollständig ausgewertet. Alle acht ausführenden Fachjobs verwenden denselben tatsächlichen PR-Mergecheckout `db9300f9ec79a9b3edb683ca2fe8107e18ea1c08`.
+
+| Job | ID | Tatsächliches Ergebnis |
+|---|---:|---|
+| Repository verification | 132516831594 | SUCCESS; 9.015 Tests = 9.013 PASS, 0 Fehler, 2 bestehende Skips; alle fünf Guards und Build 29/29 |
+| Hosted V3 — native PostgreSQL 17 | 132516831641 | SUCCESS; 130/130, keine Skips/Abbrüche, 873,894 s |
+| Atomic version refresh — native | 132516831619 | SUCCESS; 1/1, 718,402 s |
+| Persisted canonical read — native | 132516831625 | SUCCESS; 1/1, 218,730 s |
+| Accepted store lifecycle | 132516831645 | SUCCESS; 4/4, 482,458 s |
+| Accepted store store | 132516831764 | SUCCESS; 4/4, 226,942 s |
+| Isolated UI | 132516831434 | SUCCESS; 71/71, 12 Layouts, 11 Interaktionen, 10 Screenshots |
+| Auth-Konfiguration | 132516831656 | SUCCESS; 56 Werte / 244 Branchschlüssel; öffentlicher Dev-Guard current |
+| Typecheck, Lint & Build Aggregator | 132521193387 | SUCCESS; 17:07:04–17:07:06 UTC; Auth zusätzlich separat bestätigt |
+
+BG1 dauerte tatsächlich 483.382,623 ms innerhalb der unveränderten 675.000-ms-Lifetime und 700.000-ms-Testgrenze. B04 endete um 16:56:46.913 UTC, B07 um 17:00:30.692 UTC; alle R01/R02/R03/R04-Gegenproben bestanden. BG1-Endzustand: 6.463/6.463 Effekte beendet, pending=0, 332/332 Verbindungen geschlossen, neun Cluster beendet. Atomic: 9.848/9.848 beendet, pending=0, 248/248 geschlossen, elf Cluster. HRS: 24.423/24.423 beendet, pending=0, 2.117/2.117 geschlossen, zwei Cluster; sämtliche Budget-, Drain- und Hook-Flags wahr. Keine zusätzliche lokale Nativekampagne. Die ältere Owner-session-Diagnose bleibt ausdrücklich RELEASE NO-GO; dieser Dev-CI-Nachweis ist keine Production-Freigabe.
+
+Die exakte Preview `dpl_2WgQqa9tiecZwnhmx6LpR3HRv9NE` ist READY, target=null, Commit680aeab3, stabile Aliasbindung unverändert. Tatsächlicher Function-Standort ist fra1. Queuefix erfordert keine weitere Dev-Migration; bestehende BG1-/Status-/Recovery2-Installationen bleiben erhalten.
+
+### Ein normaler Owner-Import nach allen neun Gates
+
+Read-only-Preflight 17:09:27 UTC: Guard current, Generation140 mit vollständiger passender Proof, keine Incidents oder Runtime-Verbindungen; Claim3 abgelaufen, start_count2, open_attemptNULL. Die vorhandene signierte Owner-Sitzung war weiterhin nutzbar. Genau ein normaler UI-Klick löste den Import um 17:09:56.800 UTC aus.
+
+Der Queuefix funktioniert tatsächlich: Claim4 wurde um 17:10:03.779234 UTC committed, der dritte echte execution_start um 17:10:08.737729 UTC. Job danach Attempt4/revision5/leasegen5, start_count3, open_attempt4, operation_count8; Lease bis 17:10:32.704 UTC. Der ausgelassene Claim3 hatte keinen execution_start und wurde nicht künstlich ergänzt.
+
+Die Quellen AA und Bern wurden tatsächlich neu gelesen und erneut qualifiziert. Readback 17:11:12 UTC: sechs Originale, sechs Extractions, drei gültige Qualifikationen; alle früheren Originale und Qualifikationen erhalten. Neue Abrufe 17:10:11.424 UTC (Bern) und 17:10:11.606 UTC (AA), Bytehashes identisch mit den früheren amtlichen Originalen. Jüngste Qualifikation bis 15.11.2026, 17:10:11.424 UTC gültig. Keine manuelle Verlängerung oder Änderung alter Nachweise.
+
+Der tatsächliche I1-Ablauf erschöpft jedoch sein unverändertes 5.000-ms-Fenster:
+
+| Schritt | Dauer |
+|---|---:|
+| Reserve | 664 ms |
+| Methodenauflösung | 305 ms |
+| Anfangs-History | 477 ms |
+| Quellenprüfung | 1.068 ms |
+| Evidence-Reproof | 1.610 ms, darunter Attest767 und Evidence-Read582 |
+| Finale History | 476 ms |
+| Finale Methode | 290 ms |
+
+Prepare liefert nach 4.905 ms tatsächlich `prepared`; Finish beginnt mit 94 ms Rest und wird nach 100 ms abgebrochen. Die UI meldet deshalb korrekt `outcome_unknown`. Tick endet nach 17.973 ms mit noch 12.027 ms Rest; alle 36 Diagnoseereignisse / 18 Spans sind abgeschlossen. Readback 17:10:28 und 17:11:12 UTC: null S1-Completions, null Executionresults/Dispositions, null Decisions/Versionen/Projections; acceptedHead Generation0/coveragefalse. **Noch kein vollständiger Dev-Import- oder Publikations-PASS.** GuardGeneration141 und der echte Cron17:10 sind current/vollständig; keine Incidents, null Runtime-Verbindungen.
+
+### Tatsächliche Claim-Lücke und nächste gebündelte Arbeit
+
+Separate READ ONLY / REPEATABLE READ-Auswertung 17:13:26 UTC bestätigt vier echte Queue-Claims im selben Jobzyklus und derselben Authority, expectedAttempt0/1/2/3 und revision2/3/4/5. Executionstarts existieren ausschließlich für1,2,4; alle drei binden exakt ihren echten Claim.1 und2 sind bereits retired,4 ist offen. Für keinen Start besteht ein Ergebnis oder eine Disposition. Alle Claims sind abgelaufen; tatsächliche Anzahl3 stimmt mit start_count3 überein und open_attempt4/terminal_credit_claim sind exakt gebunden. Unveränderlicher Claim3-Envelope-SHA256: `945c3eb0a8fc97715e60134c58ddcfcdcf1185e62524c9999fd819f1838b2ecb`.
+
+Installierte Recovery2 verlangt noch start_count==attempt und lückenlos gestartete/retired Vorgänger. Sie kann diese echte Claim3-ohne-Start/UNKNOWN4-Kombination nicht schließen. Kein weiterer UI-Import wurde gestartet; kein Token, Start, Ergebnis oder Abschluss wurde rekonstruiert oder erfunden.
+
+Nächste Arbeit: engster sicherer I1-Latenzfix bei unveränderten Zeitlimits, Quellencustody und finalen Frische-/Authority-Prüfungen; separat additiv belegte Recovery für den echten Queue-Claim ohne Executionstart. Beide Änderungen benötigen unabhängigen Review und den normalen vollständigen Neun-Job-CI. Alte Migrationen, Daten, Ownerabschlüsse und Nachweise bleiben erhalten. Production, Merge, #1198 und Kosten bleiben außerhalb dieser Arbeit.
+
+## Neuer gebündelter Korrekturstand — 14.11.2026, 17:47 UTC
+
+Der tatsächliche I1-Abbruch aus dem Abschnitt unten bleibt unverändert dokumentiert. Der jetzt zusammengeführte Folgefix hat **236/236 gemeinsame Funktions-/Abbruchtests, TypeScript und Scoped ESLint (32 Dateien, 0 Fehler/0 Warnungen)** bestanden. Auch alle fünf statischen Hygienegates sind PASS. Das ist noch kein neuer CI-, Native-, Installations- oder vollständiger Import-PASS.
+
+Die Änderungen bleiben auf den Dev-Piloten begrenzt:
+
+- Der Worker verwendet den echten atomaren START als Vorprüfung und übergibt dessen private Reservation einmalig. Die alte Methodenreceipt bleibt unverändert; ein Abschluss erhält eine getrennte echte MA1-Beobachtung derselben Epoche nach bestätigtem PREPARED-Zustand und beendetem Processing.
+- I1 übergibt sein tatsächliches S1-Original und den bestätigten Attest-ACK einmalig. Die echten Reservierungs-/Abschlussprüfungen, finale History und Methodenprüfung bleiben. Ein echter Quellenholder kann innerhalb derselben Invocation an E1/Publication übergehen; fremde oder verbrauchte Übergaben und verlorene ACKs bleiben negativ.
+- E1 und Veröffentlichung erwerben für ihre tatsächlichen Commit-/Confirm-Schritte jeweils einen eigenen frischen Methodenbeleg. Eine doppelte Proof-Abfrage entfällt ausschließlich bei privatem Nachweis des tatsächlich ausgeführten eigenen Callbacks. Alle bisherigen 5s-/30s-Grenzen bleiben.
+- Die Owner-Seite speichert gewöhnliche ursprüngliche Auftrags-/Lease-Kennungen vor dem ersten Versand. Eine ausdrückliche Fortsetzung prüft Owner/AAL2/Dev/Methodenfreigabe erneut und verwendet dieselben IDs über den bestehenden Datenbankpfad. Kein Ausführungstoken wird gespeichert oder rekonstruiert, kein automatischer Ersatzauftrag erzeugt.
+- Additive Recovery3 ist ausschließlich für den echten Verlauf Claims1/2/3/4 mit tatsächlichen STARTs1/2/4 vorbereitet. Sie erfindet keinen START3 und keine dritte Stilllegung. Ein neues privates unveränderliches Baseline-Objekt, neun bestehende Funktionskörper; ursprüngliche Daten, Rollen-/Grantor-OIDs und ACLs bleiben exakt. Transaktionsweise SET-/CREATE-Rechte werden vor COMMIT vollständig zurückgenommen. Nach Installation ist ein neuer echter vollständiger Cron-Beleg zwingend.
+
+Recovery3-Provider SHA256: `96f86b8d5432508a3172ea483c8804cf405027f1bb565422df683615f061f5d7` (84.331 Bytes). Statischer unabhängiger SQL-/Native-Review und 14 Guard-Units bestanden; weiterhin neun Cluster sowie 675s/700s. **Noch nicht installiert.**
+
+Read-only Dev-Abgleich 17:40:19 UTC: Generation147 current, letzter echter Cron vollständig erfolgreich, keine Incidents oder Runtime-Verbindungen; sechs Originale, drei aktuelle Qualifikationen und weiterhin null S1-Fertigstellungen/Ergebnisversionen/Projektionen. Methodenfreigabe epoch1 approved/until_revoked. Security-/Health-Advisors 17:45:58 ohne Health-Befund; bestehende öffentliche Status-/Owner-RPC-Hinweise sind unverändert und durch die feste Ausgabe beziehungsweise tatsächliche Owner-Prüfung begrenzt.
+
+Nächster Schritt: aktuelle Prüfsummen vollständig schließen, normalen CI mit allen neun Jobs auswerten und erst danach Recovery3 additiv in Dev installieren, echten Cron abwarten, den offenen vierten Versuch über die normale Owner-Oberfläche behandeln und den tatsächlichen Import bis zur öffentlichen Dev-Projektion fortsetzen. Keine zusätzliche lokale Native-Kampagne, kein Merge, keine Production- oder #1198-Änderung.
+
+### Gemeinsamer Quell- und Pinabschluss vor dem nächsten CI
+
+Alle 34 geänderten Quell-/Test-/Recovery-Dateien sind eingefroren. Der zusammengeführte Runtime-/Source-Stand, die Owner-Fortsetzung und Recovery3 wurden jeweils unabhängig geprüft. Gemeinsame Funktions-/Abbruchrunde: 236/236 PASS ohne Skip oder Abbruch; TypeScript PASS; Scoped ESLint für 32 Quell-/Testdateien: null Fehler oder Warnungen. Alle fünf statischen Hygienegates bestanden. Die anschließenden sieben bestehenden Architektur-/Pilot-Prüfdateien bestanden 524/524 Tests in 13 Suites ohne Skip oder Abbruch.
+
+Der endliche Pinabschluss umfasst 14 Dateien und 104 aktuelle Pinobjekte, 300 geänderte Identitätsskalare sowie sechs exakt um eins versetzte Regulatory-Metadatenoffsets. Die geschlossenen Native-Inventare behalten 83/81 Mitglieder; beide Harnesses sind außerhalb der PINS-Arrays bytegleich und wachsen jeweils nur um ein Byte durch eine fünfstellige Quellgröße. Die zusätzliche Pilot-S1-Kette bindet genau zwei bereits geprüfte Nachfolger an ihre alten Bytes/SHA; alle 40 geschützten Quellen und sämtliche früheren Stufen bleiben geprüft. 303 aktuelle Manifestpins und 164 Native-Pins sind exakt. 165 verbleibende alte Identitätstreffer wurden als historische Belege, ursprüngliche Manifestnachweise, Handoff-Verweise oder ausdrücklich verkettete Vorbindungen klassifiziert; 29 historische Dokumente bleiben bytegleich.
+
+Gesamter Änderungsscope: 34 Quell-/Test-/Recovery-Dateien, 14 Pin-/Bindungsdateien und vier gebündelte Architektur-/Roadmap-/Entscheidungs-/Handoff-Dokumente. Die drei geschützten Koordinationsdateien bleiben bytegleich. Es wurde keine weitere lokale Native-/Clusterkampagne gestartet. Die neuen Native-Prüfungen, Installation und vollständige Dev-Publikation sind vor dem anschließenden regulären CI ausdrücklich noch offen; aktueller Status wird ohne künstlichen Selbstattestations-Commit in #1197 nachgeführt.

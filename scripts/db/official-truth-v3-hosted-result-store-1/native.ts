@@ -396,15 +396,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
-    "bytes": 22886,
-    "blob": "bcdbfedc6e702185f270520a9685ab5700eaed92",
-    "sha256": "98568e19e16206b3c97d7f13d442428a7c314f8b67de7633a2d3f38619184a11"
+    "bytes": 24165,
+    "blob": "539296026a960c93bb1ec6fe337645edbc44a7f3",
+    "sha256": "0eeb12153416ef19834c8dee0b7d7ee29c8a7b0a811339cddf01d41356e9fc4c"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/integration/ports.ts",
-    "bytes": 5699,
-    "blob": "3a66e8e44ea06061dbfdc1d9a341bd2c61c5866d",
-    "sha256": "6000fda06783ef7e644d9ed65bfd7ca069e9de49af579fc17f4dff11585fe299"
+    "bytes": 5795,
+    "blob": "9a2fa20a5e978ad73471c6cd002f46e1cac8758b",
+    "sha256": "ee425689f2e9c5435d61e623f485e94a94309b4ddbe5cbc93c8ebeeaa5b19613"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/integration/test-support/originals.ts",
@@ -420,15 +420,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "blob": "9a94baa9d4eacf580d7db74270fd566dd088c749",
-    "bytes": 26575,
-    "sha256": "4c850932730693981e5038d2267c110f3e4c710714f950bfa4379f93c9735a66"
+    "blob": "fc74bca829596057837f6b11b64a55817c75b62d",
+    "bytes": 28925,
+    "sha256": "4b062000335cde7ae812eab623d0abd6df0c7af857ec58d46b566fe96d63c3bc"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-    "blob": "e54779dfa4cd65372f0f375182beafd4a1d155c1",
-    "bytes": 27465,
-    "sha256": "95e8233bd0fdbaa41fbb5cea03ec8a5a415161116cbdb44871d25f6c12661f06"
+    "blob": "6438c4ca8a31252ae60279037d5c29489b52953a",
+    "bytes": 28055,
+    "sha256": "f3af959ac216f8448e9614483394beed207d0efad23dec3e787e01efe65e1d97"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
@@ -438,15 +438,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-    "bytes": 12698,
-    "blob": "5b2fd629da204159ab9d8e8d9d460a2114288ec4",
-    "sha256": "6bbd3b67409a6481e1c2f362e3f78b5a2d52b94bf29bf107d4c466fd8b17b995"
+    "bytes": 13766,
+    "blob": "f4f50b389e3a66f4aa54bf862a86942661032d7f",
+    "sha256": "3cdc8646f82e7b9c9134232cceaeaf424cd3b2454a40c64d8d13f0830940f96c"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "blob": "ffafe72b96282ef0436ae9fa37ac623cbcc470af",
-    "bytes": 34910,
-    "sha256": "4d3e542bbf591d417f7cdd42a5978ff9cf0e5bd90a9b69c4809ae2a6db277417"
+    "blob": "521dff54f6597eb1d9ade2a5b7add71b545a3ef6",
+    "bytes": 44287,
+    "sha256": "965ad24c74182126752b9a9c64419358d45ef99a4897cdcb7d78fbd19be5ef0e"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -474,27 +474,27 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
-    "bytes": 18379,
-    "blob": "467904b945b53b84ab916b3f40cf67dfe47942c1",
-    "sha256": "767aa7465281c7f38d8bf3b748f41d94f4204b26867b11719b77f833d259c899"
+    "bytes": 20143,
+    "blob": "0ee2d47d1b13007e71978f3b25d31b8f7745e4ef",
+    "sha256": "a99f0210b28a948361b1ddd0f60277a3b94b02eb258eeffc5d4d97b002c86a97"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
-    "bytes": 8739,
-    "blob": "b411123af2baa3aee1fcd3bc4a836bd93897ccf6",
-    "sha256": "72cc22348f3d740ad761d33f84c191de04e997a0bea368449d96ba256454b99e"
+    "bytes": 10006,
+    "blob": "70974a1e10d4bd4691bc172d469275dff308ad66",
+    "sha256": "8c16b9c8eed1a2f4c36930f8ca74eb218a2f5a59e95ecd3222304f2b7b4f3cea"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/ch-de-import-frame.ts",
-    "bytes": 6873,
-    "blob": "378628e98266303a043ee0ec609cdfb45c71c8ff",
-    "sha256": "3cb25a677788efcaf09c364136d940a0c2b3bc2430baac1b0be85f28e02f6017"
+    "bytes": 8252,
+    "blob": "c15ce7ddb5c86bfd948669ce5ab148e9be70f3f7",
+    "sha256": "9ae7a442267cb3626bdb0549835d640ef7db2c522891ad69b0bbaf41c3efb7ad"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-    "blob": "d0c3ac69d00642da09114243819a91fefa238d63",
-    "bytes": 13247,
-    "sha256": "87aeb205fb7985d973c6a7879e93cf076474ef3e3e9f0dc37d6baf3d67b1c6ec"
+    "blob": "6ed8944411c3dac0bbd5fa34e5adaf1f41db4673",
+    "bytes": 14562,
+    "sha256": "aeca3081dd5491535791e2a7ff647b4331cc8e097fa84b93e8331ec70707fd83"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
@@ -504,15 +504,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/postgres.ts",
-    "blob": "7a11fc86cf8553f6ec792065a8a19a201237377c",
-    "bytes": 23896,
-    "sha256": "80958da5e5cacfc74f88c176b9e99266354efd9f3d68464afed02edfa163da8c"
+    "blob": "752a4c12e1322f4e1ce0f6aba2e9906ab0c99693",
+    "bytes": 26607,
+    "sha256": "e7bc2c2587882eddf7b8b811970168b88cf1f29fd25fc2e274943a6b3e1d4976"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "blob": "901da0603f712043095e92b59e547599f7833531",
-    "bytes": 25368,
-    "sha256": "1afdd9e75574a0a816e833b3721235f1fb367fde4767acaf5782e6647fa5024c"
+    "blob": "26434dff48fa42387bd6c83926028c48148437a3",
+    "bytes": 29682,
+    "sha256": "40f2b359744872a80b7db25b94a90a3a5e7226abab03efbd15e2f81d26417ad3"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
@@ -564,9 +564,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/intake-server.ts",
-    "bytes": 2934,
-    "blob": "0605decae43995be0fd0a5183a501067e8a03685",
-    "sha256": "fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082"
+    "bytes": 2980,
+    "blob": "0a34b8f741638a50b134709f212f1e3375abc7c8",
+    "sha256": "67b4ad9d08e341bc551e265cfbd0ef9ddc6561308d559ca81e863ea65ad15628"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/proposal-bytes.ts",
@@ -582,9 +582,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-    "blob": "8082bada0dad76c657b3c7a0367e56b4d634e5ce",
-    "bytes": 12562,
-    "sha256": "a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6"
+    "blob": "906819c1f473f04abc7541766fcebd663564a099",
+    "bytes": 13780,
+    "sha256": "d21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",

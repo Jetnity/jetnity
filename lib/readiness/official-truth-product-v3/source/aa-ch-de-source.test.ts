@@ -7,7 +7,8 @@ import { performance } from 'node:perf_hooks'
 import { test, mock } from 'node:test'
 import { Parser, type DefaultTreeAdapterMap } from 'parse5'
 import { sha256Hex } from '@/lib/readiness/digest'
-import { hrs1Canonical, hrs1Clock, hrs1Hash, hrs1OriginalEvidence, hrs1Ref, type Hrs1Binding, type Hrs1FixedOperation } from '../result/contract'
+import { hrs1Canonical, hrs1Clock, hrs1Hash, hrs1OriginalEvidence, hrs1Ref, type Hrs1Binding, type Hrs1FixedOperation, type Hrs1Verification } from '../result/contract'
+import { readV3SourceDecisionRecord } from '../contract'
 import { createHrs1SourceConsumer, type Hrs1SourceChallenge } from '../result/source-proof'
 import { composeHrs1Invocation } from '../result/composition'
 import { createM04InvocationScope, createM04LanePool } from '../jobs/owned-scope'
@@ -285,7 +286,7 @@ test('selected I1 composition binds its original signal before distinct owned hi
     await assembly.drain(); assert.notEqual(result.status, 'processed')
     const reserveAt = events.indexOf('reserve'), finishAt = events.indexOf('finish'); assert.ok(reserveAt > 0 && finishAt > reserveAt)
     assert.deepEqual(events.slice(reserveAt - 1, finishAt + 1),
-      ['intake_read', 'reserve', 'method', 'history', 'attest', 'evidence', 'history', 'method', 'finish'])
+      ['intake_read', 'reserve', 'method', 'history', 'attest', 'history', 'method', 'finish'])
     assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
     assert.equal((records.values().next().value?.outcome as { status: string }).status, 'escalation')
     const first = callbacks.findIndex(entry => entry.child === historySignals[0]); assert.ok(first >= 0)
@@ -296,6 +297,104 @@ test('selected I1 composition binds its original signal before distinct owned hi
     assert.ok(read.parent?.aborted, 'the completed I1 coordinator closes its original signal')
     assert.notEqual(historySignals[0], historySignals[1], 'final history remains its own fresh callback/read')
   } finally { outer.abort(); await assembly?.drain(); await owned.finish(); wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
+})
+
+test('genuine finalized source custody transfers once within its invocation without renewing originals or skipping fresh SQL', async t => {
+  const start = Date.parse('2026-11-14T10:00:00.000Z')
+  t.mock.timers.enable({ apis: ['Date'], now: start })
+  const wire = syntheticWire(), owner = new AbortController(), i1 = new AbortController()
+  const program = selectedAaChDeQualification(); assert.ok(program)
+  const challenge = sourceChallenge(new Date().toISOString()), scope = Object.freeze({ key: Object.freeze({}), signal: owner.signal })
+  const clock = () => { const value = hrs1Clock(new Date().toISOString(), program.legalTimeZone); assert.ok(value); return value }
+  let stored: Hrs1Verification | null = null, evidenceReads = 0, attests = 0, transferredAck = false
+  const methodReceipt = Object.freeze({}), methods: Array<object | undefined> = []
+  const fixed: Hrs1FixedOperation = async (command, signal, method) => {
+    assert.equal(signal.aborted, false)
+    if (command.operation === 'attest') {
+      attests++; stored = command.body.verification as Hrs1Verification
+      return { status: 'recorded', value: { reference: stored.reference, digest: hrs1Hash(stored) } }
+    }
+    assert.equal(command.operation, 'evidence'); evidenceReads++; methods.push(method); assert.ok(stored)
+    return { status: 'inspected', value: stored }
+  }
+  const local = createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, fixed, clock, custodyScope: scope,
+    takeInitialHistory: () => ({ history: challenge.history, head: { pointer: challenge.history.pointer, sourceDecisionRef: null, historyArchive: null },
+      stickyDecision: null, suppressionEpoch: 0, generation: 0, suppression: null }),
+    takeAttestedVerification(value) { assert.ok(stored); assert.deepEqual(value, stored); assert.equal(transferredAck, false); transferredAck = true; return true } })
+  const consumer = (custodyScope = scope) => createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, fixed, clock, custodyScope })
+  try {
+    const inspected = await local.evidence.inspect(challenge.request, i1.signal)
+    assert.equal(inspected.status, 'inspected'); if (inspected.status !== 'inspected') assert.fail('actual source custody')
+    const decision = readV3SourceDecisionRecord({ schema: 3, kind: 'source_decision_record', reference: challenge.request.decisionRef,
+      predecessor: null, method: program.method, context: program.context, contextKey: program.contextKey,
+      factKind: program.binding.factKind, evaluatedAt: clock().now, legalAsOfDate: clock().legalDate,
+      ...inspected.parts, conclusion: 'primary_unclear' }, program.registry, null, null)
+    assert.ok(decision.ok)
+    assert.deepEqual(await local.evidence.reprove(inspected.receipt, challenge.request, decision.value, null, clock(), i1.signal), { status: 'current' })
+    assert.equal(attests, 1); assert.equal(evidenceReads, 0); assert.equal(wire.calls, 2)
+    i1.abort() // I1 success always closes its short-lived signal; the real owner remains alive.
+    const transferred = local.exportCustody(decision.value, owner.signal); assert.equal(transferred.status, 'issued')
+    if (transferred.status !== 'issued') assert.fail('custody transfer')
+    assert.equal(consumer().importCustody({ ...transferred.receipt }, owner.signal), false)
+    const outer = consumer(); assert.equal(outer.importCustody(transferred.receipt, owner.signal), true)
+    assert.equal(consumer().importCustody(transferred.receipt, owner.signal), false, 'one-use handoff')
+    assert.equal(local.exportCustody(decision.value, owner.signal).status, 'unavailable')
+    const before = stored as Hrs1Verification | null; assert.ok(before)
+    for (let n = 0; n < 2; n++) {
+      const opened = await outer.openVerification(hrs1Ref('hrs1-decision-custody', decision.value), owner.signal, methodReceipt)
+      assert.ok(opened); assert.equal(await outer.takeOpenedVerification(opened, clock(), owner.signal), 'current')
+      assert.equal(await outer.takeOpenedVerification(opened, clock(), owner.signal), 'unavailable')
+      assert.deepEqual(opened.verification, before)
+    }
+    assert.equal(wire.calls, 2, 'both later phases retain the genuine native originals')
+    assert.equal(evidenceReads, 2, 'each phase still obtains one actual fresh evidence SQL reply')
+    assert.deepEqual(methods, [methodReceipt, methodReceipt])
+    t.mock.timers.setTime(Date.parse(before.validUntilExclusive))
+    assert.equal(await outer.openVerification(hrs1Ref('hrs1-decision-custody', decision.value), owner.signal, methodReceipt), null)
+    assert.equal(evidenceReads, 2, 'absolute expiry does not restart qualification or SQL')
+    assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
+  } finally { owner.abort(); wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
+})
+
+test('explicit source handoff refuses a foreign owner/key, owner abort and foreign reference without SQL or HTTP fallback', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-14T10:00:00.000Z') })
+  try {
+    for (const mode of ['foreign-key', 'foreign-owner', 'owner-abort', 'reference'] as const) {
+      const wire = syntheticWire(), owner = new AbortController(), foreign = new AbortController()
+      const scope = Object.freeze({ key: Object.freeze({}), signal: owner.signal }), challenge = sourceChallenge(new Date().toISOString())
+      const program = selectedAaChDeQualification(); assert.ok(program)
+      let reads = 0
+      const fixed: Hrs1FixedOperation = async command => {
+        reads++; assert.equal(command.operation, 'attest')
+        const value = command.body.verification as Hrs1Verification
+        return { status: 'recorded', value: { reference: value.reference, digest: hrs1Hash(value) } }
+      }
+      const local = createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, clock: () => challenge.request.clock,
+        fixed, custodyScope: scope, takeAttestedVerification: () => true,
+        takeInitialHistory: () => ({ history: challenge.history, head: null, stickyDecision: null, suppressionEpoch: 0, generation: 0, suppression: null }) })
+      try {
+        const inspection = await local.evidence.inspect(challenge.request, owner.signal)
+        assert.equal(inspection.status, 'inspected'); if (inspection.status !== 'inspected') assert.fail('source')
+        const decision = readV3SourceDecisionRecord({ schema: 3, kind: 'source_decision_record', reference: challenge.request.decisionRef,
+          predecessor: null, method: program.method, context: program.context, contextKey: program.contextKey, factKind: program.binding.factKind,
+          evaluatedAt: challenge.request.clock.now, legalAsOfDate: challenge.request.clock.legalDate, ...inspection.parts, conclusion: 'primary_unclear' },
+        program.registry, null, null); assert.ok(decision.ok)
+        assert.equal((await local.evidence.reprove(inspection.receipt, challenge.request, decision.value, null, challenge.request.clock, owner.signal)).status, 'current')
+        const token = local.exportCustody(decision.value, owner.signal); assert.equal(token.status, 'issued')
+        if (token.status !== 'issued') assert.fail('transfer')
+        const outer = createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, clock: () => challenge.request.clock, fixed,
+          custodyScope: mode === 'foreign-key' ? { ...scope, key: Object.freeze({}) }
+            : mode === 'foreign-owner' ? { ...scope, signal: foreign.signal } : scope })
+        assert.equal(outer.importCustody(token.receipt, foreign.signal), mode === 'owner-abort' || mode === 'reference')
+        if (mode === 'owner-abort') owner.abort()
+        const reference = mode === 'reference' ? hrs1Ref('hrs1-decision-custody', 'foreign') : hrs1Ref('hrs1-decision-custody', decision.value)
+        assert.equal(await outer.openVerification(reference, foreign.signal), null)
+        assert.equal(reads, 1, 'only the original committed attest; no replacement evidence read')
+        assert.equal(wire.calls, 2, 'no new source retrieval after a failed explicit handoff')
+        assert.equal(wire.active, 0)
+      } finally { owner.abort(); foreign.abort(); wire.releaseAll(); mock.restoreAll() }
+    }
+  } finally { t.mock.timers.reset() }
 })
 
 test('AA/Bern source: malformed requests and copied issuer receipts cannot create authority or perform I/O', async () => {
