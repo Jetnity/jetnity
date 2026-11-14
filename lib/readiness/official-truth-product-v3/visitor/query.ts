@@ -1,4 +1,5 @@
 import 'server-only'
+import { hrs1PublicReadMilliseconds } from '../result/contract'
 
 import type { Lesung } from '@/lib/api/datenbank-lesen'
 import { sha256Hex } from '@/lib/readiness/digest'
@@ -164,7 +165,7 @@ export function createV3VisitorQuery<MethodReceipt extends object, ProjectionRec
     const aborted = () => abort.abort()
     callerSignal?.addEventListener('abort', aborted, { once: true })
     // Bounded read/queue coordination, not a source-fetch or scheduler deadline.
-    const timer = setTimeout(aborted, 750)
+    const timer = setTimeout(aborted, hrs1PublicReadMilliseconds(ports.dataMode))
     let clock: V3ReadClock
     const sources: Record<string, V3PublicSourceDisplay> = {}
     const receipts: Array<{ result: Extract<Result, { status: 'accepted' }>; receipt: ProjectionReceipt; binding: V3ProjectionBinding }> = []

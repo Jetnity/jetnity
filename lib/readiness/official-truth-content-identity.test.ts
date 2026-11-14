@@ -482,6 +482,133 @@ describe('dormancy and architectural boundaries', () => {
     assert.match(source, /import \{ evidenceScopeLesen \} from/)
     assert.doesNotMatch(source, /supabase|node:|source-catalog|retrieval-server|store-server|KandidatAkzeptieren|\bF8\b/)
   })
+  // #1196: one reviewed literal PINS row, never permission for a runtime import.
+  const COMPOSED_CONTENT_METADATA_PIN = {
+    path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
+    bytes: 104295,
+    blob: 'f0d6969f558083a0d76b2c05e10f62574a0f374a',
+    sha256: '694c7a164fa3fa27e2167c7cf31ebe1fcce8749e6e42fff55873856380ddd42b',
+    contextStart: 4104,
+    contextEnd: 4332,
+    tokenStart: 4135,
+  } as const
+  const COMPOSED_CONTENT_METADATA_TOKEN = 'official-truth-content-identity'
+  const COMPOSED_CONTENT_METADATA_CONTEXT = `  {
+    "path": "lib/readiness/official-truth-content-identity.ts",
+    "bytes": 27496,
+    "blob": "4a4c3eea77b6e634fd83525849a4aaa6e6e50c18",
+    "sha256": "f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6"
+  }`
+
+  function isPinnedComposedContentMetadata(path: string, bytes: Buffer): boolean {
+    if (path !== COMPOSED_CONTENT_METADATA_PIN.path || bytes.length !== COMPOSED_CONTENT_METADATA_PIN.bytes) return false
+    if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== COMPOSED_CONTENT_METADATA_PIN.blob
+      || createHash('sha256').update(bytes).digest('hex') !== COMPOSED_CONTENT_METADATA_PIN.sha256) return false
+    const token = Buffer.from(COMPOSED_CONTENT_METADATA_TOKEN, 'utf8')
+    const first = bytes.indexOf(token)
+    if (first !== COMPOSED_CONTENT_METADATA_PIN.tokenStart || bytes.indexOf(token, first + token.length) !== -1) return false
+    return bytes.subarray(COMPOSED_CONTENT_METADATA_PIN.contextStart, COMPOSED_CONTENT_METADATA_PIN.contextEnd)
+      .equals(Buffer.from(COMPOSED_CONTENT_METADATA_CONTEXT, 'utf8'))
+  }
+
+  test('COMPOSED official-truth-content-identity pin metadata rejects changed sources and actual imports', () => {
+    const bytes = readFileSync(COMPOSED_CONTENT_METADATA_PIN.path)
+    assert.equal(isPinnedComposedContentMetadata(COMPOSED_CONTENT_METADATA_PIN.path, bytes), true)
+    for (const path of [
+      './' + COMPOSED_CONTENT_METADATA_PIN.path,
+      COMPOSED_CONTENT_METADATA_PIN.path + '.evil.ts',
+      'scripts/db/official-truth-v3-composed-dev-1/native-other.ts',
+      'scripts/db/official-truth-v3-composed-dev-1/../official-truth-v3-composed-dev-1/native.ts',
+      'app/api/official-truth-v3-composed-dev-1/native.ts',
+    ]) assert.equal(isPinnedComposedContentMetadata(path, bytes), false, path)
+    const token = Buffer.from(COMPOSED_CONTENT_METADATA_TOKEN, 'utf8')
+    const start = COMPOSED_CONTENT_METADATA_PIN.tokenStart
+    const withoutToken = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + token.length)])
+    const changedByte = Buffer.from(bytes)
+    changedByte[bytes.length - 2] = changedByte[bytes.length - 2]! ^ 1
+    const changedContext = Buffer.from(bytes)
+    changedContext[COMPOSED_CONTENT_METADATA_PIN.contextStart] = changedContext[COMPOSED_CONTENT_METADATA_PIN.contextStart]! ^ 1
+    const sourceWithImport = "\nimport { createContentIdentityGraph } from '../../../lib/readiness/official-truth-content-identity'\n"
+    const sourceWithDynamicImport = "\nvoid import('../../../lib/readiness/official-truth-content-identity')\n"
+    const cases: readonly [string, Buffer][] = [
+      ['changed complete bytes at same length', changedByte],
+      ['changed literal context at same length', changedContext],
+      ['appended unrelated byte', Buffer.concat([bytes, Buffer.from([10])])],
+      ['missing token', withoutToken],
+      ['duplicated token', Buffer.concat([bytes, token])],
+      ['moved unique token at same length', Buffer.concat([withoutToken, token])],
+      ['appended actual static import text', Buffer.concat([bytes, Buffer.from(sourceWithImport, 'utf8')])],
+      ['appended actual dynamic import text', Buffer.concat([bytes, Buffer.from(sourceWithDynamicImport, 'utf8')])],
+    ]
+    for (const [name, candidate] of cases) {
+      assert.equal(isPinnedComposedContentMetadata(COMPOSED_CONTENT_METADATA_PIN.path, candidate), false, name)
+    }
+  })
+
+  // These three complete synthetic proof files are reviewed separately from production importers.
+  // A3 remains a .test.ts file and does not widen the non-test repository scan below.
+  const REVIEWED_CONTENT_FIXTURE_PINS = [
+    {
+      path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
+      bytes: 255508,
+      blob: 'd204bfb7a93f814a468a6df3bbed1cf8e8c91e56',
+      sha256: '15017333108b4986a388c1187772dad154fcc0c70b8297a836836631a517e8d6',
+      importText: "import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
+    },
+    {
+      path: 'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+      bytes: 26421,
+      blob: 'ab10b397d97371ec1826c20329708107668d66ff',
+      sha256: '94b3cd855ba68c6b40f71159d62d31d019616f48ba7629602ceedd2047601ea2',
+      importText: "import { createContentIdentityGraph } from '../../../lib/readiness/official-truth-content-identity'",
+    },
+    {
+      path: 'scripts/db/official-truth-v3-background-guard-1/fixtures.ts',
+      bytes: 8675,
+      blob: '1dddd87440b6ea043ee6414b4c62db3928166d75',
+      sha256: '55a2ec956b31e577240f89d0b1982cc7c114d492c45ad82831c9dae76c85fce1',
+      importText: "import { contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
+    },
+  ] as const
+
+  function isPinnedContentFixture(path: string, bytes: Buffer): boolean {
+    const pin = REVIEWED_CONTENT_FIXTURE_PINS.find((candidate) => candidate.path === path)
+    if (!pin || bytes.length !== pin.bytes) return false
+    if (createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex') !== pin.blob
+      || createHash('sha256').update(bytes).digest('hex') !== pin.sha256) return false
+    const expected = Buffer.from(pin.importText, 'utf8'), start = bytes.indexOf(expected)
+    return start >= 0 && bytes.indexOf(expected, start + expected.length) === -1
+  }
+
+  test('HRS, A3 and BG1 fixture imports require their complete reviewed source and exact path', () => {
+    for (const pin of REVIEWED_CONTENT_FIXTURE_PINS) {
+      const bytes = readFileSync(pin.path)
+      assert.equal(isPinnedContentFixture(pin.path, bytes), true, pin.path)
+      for (const path of ['./' + pin.path, pin.path + '.evil.ts', pin.path + '/../unreviewed.ts',
+        'app/' + pin.path, pin.path.replace(/\/(?:native|fixtures)/, '/unreviewed')]) {
+        assert.equal(isPinnedContentFixture(path, bytes), false, path)
+      }
+      const changed = Buffer.from(bytes)
+      changed[changed.length - 2] = changed[changed.length - 2]! ^ 1
+      const expected = Buffer.from(pin.importText, 'utf8'), start = bytes.indexOf(expected)
+      const withoutImport = Buffer.concat([bytes.subarray(0, start), bytes.subarray(start + expected.length)])
+      for (const candidate of [changed, withoutImport, Buffer.concat([bytes, expected]),
+        Buffer.concat([withoutImport, expected]),
+        Buffer.concat([bytes, Buffer.from("\nvoid import('../../../lib/readiness/official-truth-content-identity')\n")])]) {
+        assert.equal(isPinnedContentFixture(pin.path, candidate), false, pin.path)
+      }
+    }
+  })
+
+  const reviewedV3ContentImporters = [
+    'lib/readiness/official-truth-product-v3/result/contract.ts',
+    'lib/readiness/official-truth-product-v3/source/aa-ch-de-definition.ts',
+    'lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts',
+    'lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts',
+    'lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts',
+    'lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts',
+    'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
+  ]
   const reviewedContentIdentityImporters = [
     // #1155 R1/R2: exact dormant canonical producer and historical reproof.
     'lib/readiness/official-truth-accepted-store-trip-integration-1/canonical-server.ts',
@@ -511,6 +638,10 @@ describe('dormancy and architectural boundaries', () => {
     'lib/readiness/official-truth-product-v3/monitor/test-support.ts',
     // #1167 E1 Guard G1: exact isolated synthetic originals, no production binding.
     'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts',
+    // Selected HRS binding, closed AA/Bern profiles/program and the pinned synthetic HRS proof.
+    ...reviewedV3ContentImporters,
+    // Exact local BG1 database fixture; no live source issuer or runtime receipt.
+    'scripts/db/official-truth-v3-background-guard-1/fixtures.ts',
     'lib/readiness/official-truth-refresh-diff.ts',
     'lib/readiness/official-truth-retrieved-candidate-evidence.ts',
     'lib/readiness/official-truth-retrieved-material.ts',
@@ -553,6 +684,18 @@ describe('dormancy and architectural boundaries', () => {
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
+    for (const path of [...reviewedV3ContentImporters, REVIEWED_CONTENT_FIXTURE_PINS[2].path]) {
+      assert.equal(contentIdentityImporterAllowed(path), true, path)
+      for (const spelling of ['./' + path, path + '.evil.ts', path + '/../unreviewed.ts',
+        'app/' + path, path.replace('.ts', '-copy.ts')]) {
+        assert.equal(contentIdentityImporterAllowed(spelling), false, spelling)
+      }
+    }
+    assert.equal(contentIdentityImporterAllowed(REVIEWED_CONTENT_FIXTURE_PINS[1].path), false)
+    for (const path of ['scripts/db/official-truth-v3-background-guard-1/native.ts',
+      'scripts/db/official-truth-v3-background-guard-1/fixtures-copy.ts']) {
+      assert.equal(contentIdentityImporterAllowed(path), false, path)
+    }
     for (const path of [
       'lib/readiness/official-truth-source-discovery-v1/coordinator.ts.evil.ts',
       'app/api/official-truth-source-discovery-v1/coordinator.ts',
@@ -660,6 +803,7 @@ describe('dormancy and architectural boundaries', () => {
   })
   test('repository search pins the finite R3 application and isolated developer importers', () => {
     const root = process.cwd(), importers: string[] = []
+    const metadataReferences: string[] = []
     const walk = (dir: string): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
         if (entry.name.startsWith('.') || ['node_modules', 'dist', 'out'].includes(entry.name)) continue
@@ -667,11 +811,19 @@ describe('dormancy and architectural boundaries', () => {
         if (entry.isDirectory()) walk(path)
         else if (/\.(?:[cm]?[jt]sx?)$/.test(entry.name) && !/\.test\.[^.]+$/.test(entry.name)
           && entry.name !== 'official-truth-content-identity.ts') {
-          if (/['"][^'"]*official-truth-content-identity(?:\.ts)?['"]/.test(readFileSync(path, 'utf8'))) importers.push(relative(root, path))
+          const bytes = readFileSync(path), name = relative(root, path)
+          if (/['"][^'"]*official-truth-content-identity(?:\.ts)?['"]/.test(bytes.toString('utf8'))) {
+            if (name === COMPOSED_CONTENT_METADATA_PIN.path) {
+              assert.equal(isPinnedComposedContentMetadata(name, bytes), true, 'COMPOSED content pin must match its complete reviewed revision')
+              metadataReferences.push(name)
+            } else importers.push(name)
+          }
         }
       }
     }
     walk(root)
+    assert.deepEqual(metadataReferences, [COMPOSED_CONTENT_METADATA_PIN.path])
+    assert.equal(contentIdentityImporterAllowed(COMPOSED_CONTENT_METADATA_PIN.path), false)
     for (const path of importers) assert.ok(contentIdentityImporterAllowed(path), `unreviewed content-identity importer ${path}`)
     assert.deepEqual(importers.sort(), [...reviewedContentIdentityImporters].sort())
   })

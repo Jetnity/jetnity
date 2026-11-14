@@ -9,11 +9,26 @@ export const ORIGINAL_TEST_FAMILIES = Object.freeze([
   'scripts/operating-mode-guard.test.mjs',
   'scripts/dev-reference-local-pg-prep-1/*.test.ts',
 ])
+// Root-selected A3 proofs: these three complete paths do not open a scripts/db glob.
+export const TRANSPORT_TEST_FILES = Object.freeze([
+  'scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-v3-background-guard-1.test.ts',
+  'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-result-store-1.test.ts',
+  'lib/readiness/official-truth-v3-human-method-transport-1.test.ts',
+  'lib/readiness/profile-authority-integrity-1.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
+  'scripts/official-truth-dev-guard-alarm.test.mjs',
   'scripts/operating-mode-guard.test.mjs',
   'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts',
   'scripts/dev-reference-local-pg-prep-1/nativ.test.ts',
@@ -33,6 +48,8 @@ function isOriginalTest(path) {
   return /^lib\/.+\.test\.ts$/.test(path)
     || path === 'scripts/operating-mode-guard.test.mjs'
     || /^scripts\/dev-reference-local-pg-prep-1\/[^/]+\.test\.ts$/.test(path)
+    || TRANSPORT_TEST_FILES.includes(path)
+    || path === 'scripts/official-truth-dev-guard-alarm.test.mjs'
 }
 
 function checkedPaths(paths, label) {
@@ -68,6 +85,10 @@ export function discoverOriginalTestFiles(root = repositoryRoot) {
     if (family.length === 0) throw new Error('Missing required test family: ' + pattern)
     found.push(...family)
   }
+  for (const path of [...TRANSPORT_TEST_FILES, 'scripts/official-truth-dev-guard-alarm.test.mjs']) {
+    requireRegularFile(root, path)
+    found.push(path)
+  }
   const original = checkedPaths(found, 'original')
   for (const path of requiredScriptTests) {
     if (!original.includes(path)) throw new Error('Missing required Script test: ' + path)
@@ -83,6 +104,10 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
   for (const path of hostedPg17) {
     if (!universe.has(path)) throw new Error('Missing hosted test in the original universe: ' + path)
   }
+  for (const path of TRANSPORT_TEST_FILES) {
+    if (!universe.has(path)) throw new Error('Missing required transport test: ' + path)
+  }
+  if (!universe.has('scripts/official-truth-dev-guard-alarm.test.mjs')) throw new Error('Missing required guard alarm test')
   if (hostedPg17.length !== HOSTED_PG17_FILES.length
     || hostedPg17.some((path, index) => path !== HOSTED_PG17_FILES[index])) {
     throw new Error('Hosted test membership requires an explicit reviewed amendment')
@@ -108,7 +133,8 @@ export function selectedMode(args) {
 
 export function nodeTestArguments(mode, partition) {
   selectedMode([mode])
-  const prefix = ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
+  // Both selected groups contain one A3 t.mock.module consumer, in separate test processes.
+  const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
   return mode === 'core'
     ? [...prefix, ...partition.core]
     : [...prefix, '--test-concurrency=1', ...partition.hostedPg17]

@@ -2,11 +2,16 @@
 import 'server-only'
 import { performance } from 'node:perf_hooks'
 import { ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
-import type { V3MethodAuthorityPort, V3MethodRef } from '../contract'
+import { createV3WorkIdentity, createV3CombinationDiscoveryIdentity, type V3MethodAuthorityPort, type V3MethodRef } from '../contract'
 import { M04_LIMITS, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation,
   type M04FixedRequest, type M04NativeReply } from '../jobs/contract'
 import { createM04LanePool, createM04InvocationScope } from '../jobs/owned-scope'
 import { composeM04Invocation } from '../jobs/composition'
+import { composeHrs1Invocation, type Hrs1Facade } from '../result/composition'
+import { HRS1_LIMITS, hrs1PublicReadMilliseconds, hrs1Canonical, hrs1Clock, hrs1Hash, hrs1Same, hrs1Time, hrs1Channel,
+  readHrs1Binding, readHrs1Command, readHrs1Reply, type Hrs1Binding, type Hrs1Config,
+  type Hrs1FixedOperation, type Hrs1FixedRequest, type Hrs1TerminalExecutor } from '../result/contract'
+import type { Hrs1SourceCustodyIssuer } from '../result/source-proof'
 import { MA1_LIMITS, readMa1CurrentRequest, readMa1CurrentRows, readMa1FixedBinding,
   type Ma1CurrentRequest, type Ma1CurrentRow, type Ma1MethodBinding } from './contract'
 
@@ -16,11 +21,14 @@ FROM official_v3_method_api.read_current_v1(
   $1::text,$2::integer,$3::text,$4::text,$5::text)`
 
 /** readCurrent must own and join acquisition, SQL, abort and all per-call cleanup.
- * A resolved/rejected promise means terminal settlement, never merely abort requested.
+ * Existing rows/unavailable outcomes retain terminal settlement, never merely abort requested.
+ * blocked_remote_unknown is the sole explicit exception: all local children are
+ * joined/closed, remote completion is unproved and the physical pair stays poisoned.
  * No arbitrary SQL, target, connection or product-selected role crosses this seam. */
 export interface Ma1MethodSqlExecutor {
-  readCurrent(request: Ma1CurrentRequest, signal: AbortSignal): Promise<
-    Readonly<{ status: 'rows'; rows: unknown }> | Readonly<{ status: 'unavailable' }>>
+  readCurrent(request: Ma1CurrentRequest, signal: AbortSignal, budget?: Readonly<{ deadline: number }>): Promise<
+    Readonly<{ status: 'rows'; rows: unknown }> | Readonly<{ status: 'unavailable' }>
+    | Readonly<{ status: 'blocked_remote_unknown' }>>
 }
 declare const opaqueReceipt: unique symbol
 export type Ma1MethodReceipt = Readonly<{ [opaqueReceipt]: true }>
@@ -28,7 +36,8 @@ type Held = { binding: Ma1MethodBinding; epoch: number; observedAt: string; dead
   dbCap?: number; busy?: 'observation' | 'effect' | null }
 type Scope = NonNullable<ReturnType<typeof createM04InvocationScope>>
 type Group = 'processing' | 'outer'
-type Joint = { scope: Scope; config: M04Config }
+type ResultJoint = { config: Hrs1Config; binding: Hrs1Binding; shared: { active: number }; calls: number }
+type Joint = { scope: Scope; config: M04Config; result?: ResultJoint; callCap?: number }
 type Observation = Readonly<{ row: Ma1CurrentRow | null; aborted: boolean }>
 
 /** One finite immutable tuple, same-instance custody and four actual in-flight reads. */
@@ -39,7 +48,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   let read: Ma1MethodSqlExecutor['readCurrent'] | null = null
   try {
     const candidate = executor?.readCurrent
-    if (typeof candidate === 'function') read = (request, signal) => Reflect.apply(candidate, executor, [request, signal])
+    if (typeof candidate === 'function') read = (request, signal, budget) => Reflect.apply(candidate, executor, [request, signal, budget])
   } catch { /* Invalid code-owned configuration has no positive path. */ }
 
   function requestFor(methodInput: V3MethodRef, checkedAt: string): Ma1CurrentRequest | null {
@@ -53,15 +62,21 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   }
 
   async function observe(request: Ma1CurrentRequest, deadline: number, group: Group): Promise<Observation> {
+    deadline = Math.min(deadline, joint?.scope.deadline ?? Infinity, joint?.callCap ?? Infinity)
+    const budget = Object.freeze({ deadline })
     if (!configured.ok || !read || active >= MA1_LIMITS.activeReads || performance.now() >= deadline) return { row: null, aborted: false }
     active++
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), Math.max(0, deadline - performance.now()))
     try {
       // Deliberately no race: a timeout cannot detach the executor or release its slot.
-      const owned = joint ? await joint.scope.native('method', group, s => read!(request, s), controller.signal, group === 'outer' && joint.scope.terminalObservation()) : null
-      const raw: unknown = joint ? (owned?.ok ? owned.value : { status: 'unavailable' }) : await read(request, controller.signal)
+      const owned = joint ? await joint.scope.native('method', group, s => read!(request, s, budget), controller.signal, group === 'outer' && joint.scope.terminalObservation()) : null
+      const raw: unknown = joint ? (owned?.ok ? owned.value : { status: 'unavailable' }) : await read(request, controller.signal, budget)
       const unavailable = ownRecord(raw, ['status'])
+      if (unavailable?.status === 'blocked_remote_unknown') {
+        joint?.scope.markAmbiguous()
+        return { row: null, aborted: controller.signal.aborted }
+      }
       if (unavailable?.status === 'unavailable') return { row: null, aborted: controller.signal.aborted }
       const envelope = ownRecord(raw, ['status', 'rows'])
       if (!envelope || envelope.status !== 'rows') return { row: null, aborted: controller.signal.aborted }
@@ -135,7 +150,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
         if (!joint || !configured.ok || !joint.scope.admits(group) || signal.aborted) return { status: 'unavailable' }
         const held = receipt ? receipts.get(receipt as Ma1MethodReceipt) : undefined
         if (phase === 'authorized' && (!held || held.busy || !held.dbCap)) return { status: 'unavailable' }
-        const deadline = Math.min(joint.scope.deadline, held?.deadline ?? performance.now() + M04_LIMITS.effectMs)
+        const deadline = Math.min(joint.scope.deadline, joint.callCap ?? Infinity, held?.deadline ?? performance.now() + M04_LIMITS.effectMs)
         if (Math.floor(deadline - performance.now()) <= 0) return { status: 'unavailable' }
         if (held) held.busy = 'effect'
         try {
@@ -154,7 +169,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
             return joint.config.jobsExecutor.executeFixed(fixed, s)
           }, signal, group === 'outer' && joint.scope.terminalOperation(request))
           if (!executed.ok || executed.value.status !== 'acknowledged') {
-            if (!executed.ok || executed.value.status === 'unconfirmed') joint.scope.markAmbiguous()
+            if (!executed.ok || executed.value.status === 'unconfirmed' || executed.value.status === 'blocked_remote_unknown') joint.scope.markAmbiguous()
             return { status: executed.ok && executed.value.status === 'unavailable' ? 'unavailable' : 'unconfirmed' }
           }
           const reply = readM04NativeReply(executed.value.rows, request.operation)
@@ -176,7 +191,74 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       return execute('authorized', receipt)
     }
   }
-  return { port, processingAuthority, fixed: fixedFor('outer'), processingFixed: fixedFor('processing') }
+
+  function resultFixedFor(group: Group): Hrs1FixedOperation {
+    return async (input, signal, providedReceipt, requestedNotAfter) => {
+      const selected = joint?.result
+      if (!joint || !selected || !configured.ok || signal.aborted || !joint.scope.admits(group)
+        || selected.calls >= HRS1_LIMITS.fixedCalls) return { status: 'unavailable' }
+      selected.calls++
+      const command = readHrs1Command(input, selected.binding)
+      if (!command || requestedNotAfter !== undefined && !hrs1Time(requestedNotAfter)) return { status: 'unavailable' }
+      if (command.operation === 'ch_de_snapshot' && !providedReceipt) return { status: 'unavailable' }
+      let clock: ReturnType<M04Config['clock']>
+      try { clock = joint.config.clock() } catch { return { status: 'unavailable' } }
+      if (!hrs1Same(clock, hrs1Clock(clock.now, selected.binding.legalTimeZone))) return { status: 'unavailable' }
+      let receipt = providedReceipt
+      if (!receipt) {
+        const current = await (group === 'processing' ? processingAuthority : port).resolveCurrent(
+          { methodId: configured.value.methodId, revision: configured.value.revision }, clock.now)
+        if (current.status !== 'approved') return { status: 'unavailable' }
+        receipt = current.receipt
+      }
+      const held = receipts.get(receipt as Ma1MethodReceipt)
+      if (!held || held.busy || !held.dbCap || selected.shared.active >= HRS1_LIMITS.concurrentEffects
+        || signal.aborted || !joint.scope.admits(group)) return { status: 'unavailable' }
+      const deadline = Math.min(joint.scope.deadline, joint.callCap ?? Infinity, held.deadline,
+        performance.now() + HRS1_LIMITS.effectMilliseconds)
+      if (Math.floor(deadline - performance.now()) <= 0) return { status: 'unavailable' }
+      // The current civil date is selected by the binding, including DST. This
+      // absolute cap also reaches the executor's actual commit-before guard.
+      let currentClock: ReturnType<M04Config['clock']>
+      try { currentClock = joint.config.clock() } catch { return { status: 'unavailable' } }
+      const calendarEnd = selectedCalendarEnd(currentClock.now, selected.binding.legalTimeZone)
+      if (!calendarEnd || !hrs1Same(currentClock, hrs1Clock(currentClock.now, selected.binding.legalTimeZone))
+        || currentClock.legalDate !== clock.legalDate) return { status: 'unavailable' }
+      const cap = Math.min(held.dbCap, Date.parse(selected.binding.activeUntilExclusive), calendarEnd,
+        Date.parse(currentClock.now) + Math.floor(deadline - performance.now()),
+        requestedNotAfter ? Date.parse(requestedNotAfter) : Infinity)
+      if (!Number.isFinite(cap) || Date.parse(currentClock.now) >= cap
+        || currentClock.now < selected.binding.activeFrom) return { status: 'unavailable' }
+      const channel = hrs1Channel(command.operation)
+      const publicRead = ['coverage','projection','projection_current','projection_batch','ch_de_snapshot'].includes(command.operation)
+      const executor = channel === 'attest' ? selected.config.verifierExecutor
+        : channel === 'read' && publicRead ? selected.config.readerExecutor : selected.config.writerExecutor
+      const request = Object.freeze({ ...configured.value, channel, operationText: hrs1Canonical(command),
+        bindingHash: command.bindingHash, epoch: held.epoch, budget: Object.freeze({ deadline }),
+        notAfter: new Date(cap).toISOString(), legalDate: currentClock.legalDate }) as Hrs1FixedRequest
+      held.busy = 'effect'; selected.shared.active++
+      try {
+        // Result calls consume the original shared jobs lane/call budgets;
+        // they cannot spend M04's reserved terminal custody.
+        const executed = await joint.scope.native('jobs', group, s => executor.executeFixed(request, s), signal, false)
+        if (!executed.ok || executed.value.status !== 'acknowledged') {
+          if (!executed.ok || executed.value.status === 'unconfirmed' || executed.value.status === 'blocked_remote_unknown') joint.scope.markAmbiguous()
+          return { status: executed.ok && executed.value.status === 'unavailable' ? 'unavailable' : 'unconfirmed' }
+        }
+        const reply = readHrs1Reply(executed.value.rows)
+        const end = joint.config.clock()
+        if (!reply || signal.aborted || joint.scope.signal.aborted || performance.now() >= deadline
+          || performance.now() >= held.deadline || !hrs1Same(end, hrs1Clock(end.now, selected.binding.legalTimeZone))
+          || end.legalDate !== currentClock.legalDate || end.now < currentClock.now || Date.parse(end.now) >= cap) {
+          joint.scope.markAmbiguous(); return { status: 'unconfirmed' }
+        }
+        return reply
+      } catch { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
+      finally { held.busy = null; selected.shared.active-- }
+    }
+  }
+  return { port, processingAuthority, fixed: fixedFor('outer'), processingFixed: fixedFor('processing'),
+    resultFixed: resultFixedFor('outer'), processingResultFixed: resultFixedFor('processing') }
 }
 
 function canonical(value: unknown): string {
@@ -234,5 +316,171 @@ export function createV3PostgresDurableJobs(input: M04Config): M04Facade {
     enqueueRule: (raw, signal) => invoke('enqueueRule', raw, signal) as ReturnType<M04Facade['enqueueRule']>,
     enqueueDiscovery: (raw, signal) => invoke('enqueueDiscovery', raw, signal) as ReturnType<M04Facade['enqueueDiscovery']>,
     workOnce: (raw, signal) => invoke('workOnce', raw, signal) as ReturnType<M04Facade['workOnce']>,
+  })
+}
+
+
+/** Exact next civil-day boundary; only code-selected time zones enter here. */
+function selectedCalendarEnd(now: string, zone: string): number | null {
+  const clock = hrs1Clock(now, zone), start = Date.parse(now)
+  if (!clock || !Number.isFinite(start)) return null
+  let low = start, high = start + 172800000
+  const last = hrs1Clock(new Date(high).toISOString(), zone)
+  if (!last || last.legalDate === clock.legalDate) return null
+  while (high - low > 1) {
+    const middle = Math.floor((low + high) / 2), at = hrs1Clock(new Date(middle).toISOString(), zone)
+    if (!at) return null
+    if (at.legalDate === clock.legalDate) low = middle
+    else high = middle
+  }
+  return high
+}
+
+/** HRS uses the same private MA1 receipt WeakMap and M04 scope. The old factories
+ * keep their original unbound behavior; this new one constructs no transport. */
+export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | 'history'> & Readonly<{ result: Hrs1Config }>): Hrs1Facade {
+  const pool = createM04LanePool(), shared = { active: 0 }
+  const activeControllers = new Set<AbortController>()
+  let transportBlocked = false
+  let config: M04Config | null = null, result: Hrs1Config | null = null, selected: Hrs1Binding | null = null
+  try {
+    const value = ownRecord(input, ['binding','registry','clock','methodExecutor','intakeExecutor','jobsExecutor','producer','result'])
+    const raw = value && (ownRecord(value.result, ['binding','writerExecutor','readerExecutor','verifierExecutor','ids'])
+      ?? ownRecord(value.result, ['binding','writerExecutor','readerExecutor','verifierExecutor','ids','fixtureIssuer']))
+    function capture<T>(object: unknown, name: string): T {
+      if (!object || typeof object !== 'object') throw Error('invalid_config')
+      const property = Object.getOwnPropertyDescriptor(object, name)
+      if (!property || !('value' in property) || typeof property.value !== 'function') throw Error('invalid_config')
+      const fn = property.value
+      return ((...args: unknown[]) => Reflect.apply(fn, object, args)) as T
+    }
+    function captureNative<T>(object: unknown, name: string): T {
+      const run = capture<(...args: unknown[]) => Promise<unknown>>(object, name)
+      return (async (...args: unknown[]) => {
+        if (transportBlocked) return { status: 'blocked_remote_unknown' as const }
+        const reply = await run(...args)
+        if (ownRecord(reply, ['status'])?.status === 'blocked_remote_unknown') {
+          transportBlocked = true
+          for (const controller of activeControllers) controller.abort()
+        }
+        return reply
+      }) as T
+    }
+    if (value && raw && typeof value.clock === 'function') {
+      const binding = readMa1FixedBinding(value.binding)
+      const hrs = readHrs1Binding(raw.binding, value.registry as M04Config['registry'])
+      if (binding.ok && hrs && hrs1Same(binding.value, { methodId: hrs.methodId, revision: hrs.revision,
+        methodDigest: hrs.methodDigest, packageDigest: hrs.packageDigest })) {
+        const ownExecutor = (v: unknown) => Object.freeze({ executeFixed: captureNative<Hrs1TerminalExecutor['executeFixed']>(v, 'executeFixed') })
+        let fixtureIssuer: Hrs1SourceCustodyIssuer | null = null
+        if (raw.fixtureIssuer != null) {
+          if (hrs.dataMode !== 'synthetic_test') throw Error('invalid_config')
+          const issuer = raw.fixtureIssuer
+          fixtureIssuer = Object.freeze({
+            inspect: capture<Hrs1SourceCustodyIssuer['inspect']>(issuer,'inspect'),
+            finalize: capture<Hrs1SourceCustodyIssuer['finalize']>(issuer,'finalize'),
+            reprove: capture<Hrs1SourceCustodyIssuer['reprove']>(issuer,'reprove'),
+            reopen: capture<Hrs1SourceCustodyIssuer['reopen']>(issuer,'reopen'),
+            observe: capture<Hrs1SourceCustodyIssuer['observe']>(issuer,'observe'),
+            reproveObservation: capture<Hrs1SourceCustodyIssuer['reproveObservation']>(issuer,'reproveObservation'),
+          })
+        }
+        result = Object.freeze({ binding: hrs, writerExecutor: ownExecutor(raw.writerExecutor),
+          readerExecutor: ownExecutor(raw.readerExecutor), verifierExecutor: ownExecutor(raw.verifierExecutor),
+          ids: capture<Hrs1Config['ids']>(value.result,'ids'), ...(fixtureIssuer ? { fixtureIssuer } : {}) })
+        // These closed placeholders are never the HRS evidence/history ports.
+        // The result-aware composition binds its own genuine invocation ports.
+        config = Object.freeze({ binding: binding.value, registry: value.registry as M04Config['registry'],
+          clock: value.clock as M04Config['clock'],
+          methodExecutor: Object.freeze({ readCurrent: captureNative<Ma1MethodSqlExecutor['readCurrent']>(value.methodExecutor,'readCurrent') }),
+          intakeExecutor: Object.freeze({ execute: captureNative<M04Config['intakeExecutor']['execute']>(value.intakeExecutor,'execute') }),
+          jobsExecutor: Object.freeze({ executeFixed: captureNative<M04Config['jobsExecutor']['executeFixed']>(value.jobsExecutor,'executeFixed') }),
+          producer: Object.freeze({ produce: capture<M04Config['producer']['produce']>(value.producer,'produce') }),
+          evidence: Object.freeze({ async inspect() { return { status: 'unavailable' as const } }, async reprove() { return { status: 'unavailable' as const } } }),
+          history: Object.freeze({ async read() { return { status: 'unavailable' as const } }, async reprove() { return { status: 'unavailable' as const } } }),
+        })
+        selected = hrs
+      }
+    }
+  } catch { config = null; result = null; selected = null }
+  type Kind = 'enqueueRule' | 'enqueueDiscovery' | 'workOnce' | 'query' | 'monitorOnce'
+  function failure(kind: Kind, interrupted = false) {
+    return kind === 'query' ? { ok: false as const, reason: interrupted ? 'aborted' as const : 'temporary_failure' as const }
+      : kind === 'monitorOnce' ? { status: interrupted ? 'interrupted' as const : 'unavailable' as const, outcomes: [] }
+        : { status: 'unavailable' as const }
+  }
+  async function invoke(kind: Kind, raw: unknown, signal?: AbortSignal, budget?: Readonly<{ deadline: number }>) {
+    if (transportBlocked || !config || !result || !selected || signal?.aborted) return failure(kind, signal?.aborted)
+    const publicRead = kind === 'query', worker = kind === 'workOnce' || kind === 'monitorOnce'
+    const milliseconds = publicRead ? hrs1PublicReadMilliseconds(selected.dataMode) : worker ? HRS1_LIMITS.workerMilliseconds : HRS1_LIMITS.effectMilliseconds
+    // Additive worker/monitor cap only. Capture once before allocation or await;
+    // a caller cannot extend it by mutating the input while an effect is active.
+    let outerDeadline = Infinity
+    if (budget !== undefined) {
+      try {
+        const cap = ownRecord(budget, ['deadline'])
+        if (!worker || !cap || typeof cap.deadline !== 'number' || !Number.isFinite(cap.deadline)
+          || cap.deadline <= performance.now()) return failure(kind, signal?.aborted)
+        outerDeadline = cap.deadline
+      } catch { return failure(kind, signal?.aborted) }
+    }
+    const controller = new AbortController(), stop = () => controller.abort()
+    signal?.addEventListener('abort', stop, { once: true })
+    const start = performance.now(), deadline = Math.min(start + milliseconds, outerDeadline)
+    const timer = setTimeout(stop, budget === undefined ? milliseconds : Math.max(0, deadline - performance.now()))
+    if (budget !== undefined && performance.now() >= deadline) {
+      controller.abort(); clearTimeout(timer); signal?.removeEventListener('abort', stop); return failure(kind, signal?.aborted)
+    }
+    const scope = createM04InvocationScope(pool, worker ? 30000 : 5000, controller.signal)
+    if (!scope) { clearTimeout(timer); signal?.removeEventListener('abort', stop); return failure(kind) }
+    activeControllers.add(controller)
+    let assembly: ReturnType<typeof composeHrs1Invocation> | null = null
+    try {
+      const core = authorityCore(config.binding, config.methodExecutor, { scope, config, callCap: deadline,
+        result: { config: result, binding: selected, shared, calls: 0 } })
+      assembly = composeHrs1Invocation({ config, result, binding: selected, scope, callDeadline: deadline, authority: core.port,
+        processingAuthority: core.processingAuthority, fixed: core.fixed, processingFixed: core.processingFixed,
+        resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed })
+      const value = kind === 'monitorOnce' ? await assembly.monitorOnce(scope.signal)
+        : await assembly[kind](raw, scope.signal)
+      await assembly.drain()
+      if (scope.signal.aborted || performance.now() >= deadline || scope.snapshot().activeCallbacks > 0) {
+        return kind === 'enqueueRule' || kind === 'enqueueDiscovery' || kind === 'workOnce'
+          ? { status: 'unconfirmed' as const } : failure(kind, signal?.aborted)
+      }
+      if (kind === 'query' && !assembly.queryCurrent(value)) return failure(kind, signal?.aborted)
+      return value
+    } catch {
+      return kind === 'enqueueRule' || kind === 'enqueueDiscovery' || kind === 'workOnce'
+        ? { status: 'unconfirmed' as const } : failure(kind, signal?.aborted)
+    } finally {
+      controller.abort(); clearTimeout(timer); signal?.removeEventListener('abort', stop)
+      try { await scope.finish(); await assembly?.drain() }
+      finally { activeControllers.delete(controller) }
+    }
+  }
+  return Object.freeze<Hrs1Facade>({
+    enqueueRule: (raw, signal) => invoke('enqueueRule',raw,signal) as ReturnType<Hrs1Facade['enqueueRule']>,
+    enqueueDiscovery: (raw, signal) => invoke('enqueueDiscovery',raw,signal) as ReturnType<Hrs1Facade['enqueueDiscovery']>,
+    workOnce: (raw, signal) => invoke('workOnce',raw,signal) as ReturnType<Hrs1Facade['workOnce']>,
+    async workSelectedOnce(kind, signal, budget) {
+      if (transportBlocked || !selected || !result || signal?.aborted) return { status: 'unavailable' }
+      if (kind !== 'rule_research' && kind !== 'combination_discovery') return { status: 'invalid' }
+      const method = { methodId: selected.methodId, revision: selected.revision }
+      const identity = kind === 'rule_research'
+        ? createV3WorkIdentity({ context: selected.context, method, factKind: selected.factKind, researchReason: { status: 'missing' } })
+        : createV3CombinationDiscoveryIdentity({ destinationCountryCode: selected.context.scope.destinationCountryCode,
+          citizenshipCountryCode: selected.context.scope.citizenship.countryCodes[0], method })
+      let ids: Record<string, unknown> | null = null
+      try { ids = ownRecord(result.ids(), ['jobId','operationId']) } catch { return { status: 'unavailable' } }
+      if (!identity.ok || !ids || typeof ids.jobId !== 'string' || !/^job3_[a-f0-9]{32}$/.test(ids.jobId)
+        || typeof ids.operationId !== 'string' || !/^op3_[a-f0-9]{32}$/.test(ids.operationId)) return { status: 'unavailable' }
+      const claim = { operationId: ids.operationId, jobKey: identity.value.jobKey,
+        leaseId: 'lease3_' + hrs1Hash({ kind: 'hrs1-selected-worker', jobKey: identity.value.jobKey, ...ids }).slice(0, 32),
+        leaseMilliseconds: 30000 }
+      return invoke('workOnce',claim,signal,budget) as ReturnType<Hrs1Facade['workSelectedOnce']>
+    },
+    query: (raw, signal) => invoke('query',raw,signal) as ReturnType<Hrs1Facade['query']>,
+    monitorOnce: (signal, budget) => invoke('monitorOnce',undefined,signal,budget) as ReturnType<Hrs1Facade['monitorOnce']>,
   })
 }

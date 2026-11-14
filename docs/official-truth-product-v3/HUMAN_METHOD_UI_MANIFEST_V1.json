@@ -1,0 +1,585 @@
+{
+  "schema": 1,
+  "package": "HUMAN-METHOD-UI1",
+  "status": "SOURCE_ONLY_UNREVIEWED",
+  "authorSession": "/root/source_and_schema",
+  "replacementOf": "unreachable original Human Method Transport Generation1",
+  "soleParent": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+  "parentTree": "5b2b7541b2404931ce3f7f0fa47f163384864624",
+  "parentLeaves": 9538,
+  "release": {
+    "schema": 1,
+    "selectionId": "hmr1_fad09ef526aeea7eeeb3fb1f22c894f1",
+    "targetUrl": "https://yfvbxvijcorffwxbxahl.supabase.co",
+    "methodId": "jetnity-destination-primary-ch-de-visa",
+    "revision": 1,
+    "methodDigest": "44ce02752da05796bef98c55b5099b81f915fe6b0975472e163721a06793bdb3",
+    "packageDigest": "0beb25db2e1f6e4c2c96d61ded30b59a8e06a32ed94498903fbeecc3b6f267e9",
+    "predecessorRevision": null,
+    "expectedHead": null,
+    "approval": {
+      "mode": "until_revoked",
+      "until": null
+    },
+    "packageVersion": "AA und Deutsche Botschaft Bern \u00b7 CH\u2192DE Visum \u00b7 Revision 1",
+    "packageHref": "https://github.com/Jetnity/jetnity/blob/6435c4e691b9cbc8d1c25b3167506b16914bcfae/lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+    "scope": {
+      "citizenship": "CH",
+      "destination": "DE",
+      "requirement": "visa",
+      "document": "swiss_passport",
+      "route": "direct_entry",
+      "conditions": "unconditional",
+      "activeFrom": "2026-11-12T19:41:09.241Z",
+      "activeUntilExclusive": "2027-11-13T00:00:00.000Z",
+      "reviewedScope": "Gepr\u00fcft wird die Visumpflicht f\u00fcr Schweizer Reisep\u00e4sse bei direkter Einreise nach Deutschland. Der gepr\u00fcfte Visumfakt enth\u00e4lt keine Bedingung zu Reisezweck oder Aufenthaltsdauer. Aufenthaltsrecht, Erwerbst\u00e4tigkeit und die vollst\u00e4ndige Einreiseberechtigung werden damit nicht best\u00e4tigt."
+    }
+  },
+  "releaseState": "SELECTED_DEV_DESCRIPTOR_OWNER_NOT_APPROVED",
+  "allowedTarget": "https://yfvbxvijcorffwxbxahl.supabase.co",
+  "taskReferences": [
+    {
+      "commentId": "6828646633",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6828646633",
+      "observedUpdatedAt": "2026-11-12T15:58:43Z",
+      "bodyUtf8Bytes": 12456,
+      "bodySha256": "57e58cdc631dfda43d5610cc8ec2eb13ef6cbb19359c64c0be3ade496dc5184a"
+    },
+    {
+      "commentId": "6829354482",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6829354482",
+      "observedUpdatedAt": "2026-11-12T16:25:13Z",
+      "bodyUtf8Bytes": 3553,
+      "bodySha256": "4422a8818c174a50fd6fe888744fc02aa486c00041fe79a172a4f19006639205"
+    },
+    {
+      "commentId": "6829466460",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6829466460",
+      "observedUpdatedAt": "2026-11-12T16:29:39Z",
+      "bodyUtf8Bytes": 1674,
+      "bodySha256": "f2a4cc982da7299828f8baa877abd29ba40067815a37ff627d413003ec1f4cb3"
+    },
+    {
+      "commentId": "6829378016",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6829378016",
+      "observedUpdatedAt": "2026-11-12T16:26:06Z",
+      "bodyUtf8Bytes": 1794,
+      "bodySha256": "5258da8c0a735405964e8b56bb38b499db2e5698c16531248c8a7d4077a90912"
+    },
+    {
+      "commentId": "6830134617",
+      "url": "https://github.com/Jetnity/jetnity/pull/1169#issuecomment-6830134617",
+      "observedUpdatedAt": "2026-11-12T16:55:55Z",
+      "bodyUtf8Bytes": 1059,
+      "bodySha256": "5f3cd026d32917277827e938fbd17cde92c1f5d726f03842c8bdef7b0eef33d6"
+    }
+  ],
+  "scope": {
+    "newPaths": [
+      "app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx",
+      "app/(admin)/admin/official-truth/method/page.tsx",
+      "app/api/admin/official-truth/method/route.ts",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
+      "lib/readiness/official-truth-product-v3/method/human-contract.ts",
+      "lib/readiness/official-truth-product-v3/method/human-release.ts",
+      "lib/readiness/official-truth-product-v3/method/human-server.ts",
+      "lib/readiness/official-truth-v3-human-method-ui-1.test.ts"
+    ],
+    "modifiedPaths": [
+      "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "scripts/db/verwendung.mjs"
+    ],
+    "deletedPaths": [],
+    "candidateLeaves": 9548,
+    "unchangedParentLeaves": 9536,
+    "parentLeafInventorySha256": "f8f0b66314442848d941828a85563f4534310ee2df56850ca5a2f6440a500924",
+    "comparison": "Complete immutable leaf maps compared externally; exactly these 12 paths change. All other path/mode/type/blob values remain identical."
+  },
+  "authoredSourcePins": [
+    {
+      "path": "app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx",
+      "bytes": 13280,
+      "blob": "bcfe6c1d2beebc97c21001675875f22fabce57d5",
+      "sha256": "2880a1beb3faeaac7ed98cd558106fb166e8aacedd329264509d5e308b56b8f2"
+    },
+    {
+      "path": "app/(admin)/admin/official-truth/method/page.tsx",
+      "bytes": 1072,
+      "blob": "42afc06330574310e297326b1bd9917cf6d30934",
+      "sha256": "5319b65fbf7fbf5b79c20d210efa65f85faff6312c067f2d44328547e211ddb3"
+    },
+    {
+      "path": "app/api/admin/official-truth/method/route.ts",
+      "bytes": 3557,
+      "blob": "3d2dfa5311e524ec8fedfd229ee35b5dd1bfd21d",
+      "sha256": "f139f2ad00660d812eae07b5727b2ee74d37de0a324d3899cefc157485601327"
+    },
+    {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
+      "bytes": 6396,
+      "blob": "0992c7574467463aa45f7c735bdafc0f1d8d3eec",
+      "sha256": "f82a5504d1e6ce3b1aea930339ea7fa64450a3e980fa48decb9b150b0bbb45c1"
+    },
+    {
+      "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
+      "bytes": 5534,
+      "blob": "2ae66d10cb46df0733bbbefc0d373cc7640ccce7",
+      "sha256": "2f46762a5668df98c29c0af7c1cfe5b81cdd73255e370435c043b02dc3403a73"
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "bytes": 10305,
+      "blob": "61d6ff9031e87645313b99a57f418183f0161d77",
+      "sha256": "bd1677b403f27c582273f1a6640bd5076d67eb290ec3665b036647945ad35da3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/human-contract.ts",
+      "bytes": 22177,
+      "blob": "009cf5541674fb365382c8262f89b02beff95fdc",
+      "sha256": "ee254806579d4ee606181ea92879159708a810785acc9cdcec5dbb55ae5da1de"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/human-release.ts",
+      "bytes": 2875,
+      "blob": "f6dca5495ad213a82165f67b70e5fb644ce6bad3",
+      "sha256": "baf0ab753a069cebcb684eec064f4d4f1ac7df2b3a476dfa71b18730e49d5944"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/human-server.ts",
+      "bytes": 4684,
+      "blob": "12ffaf74de2a6147bdd93ec96d6aa2c21d713eee",
+      "sha256": "6ffbc85fae94db6f8000083bd429d85e1582b397e40d28b7438d4289d028becf"
+    },
+    {
+      "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
+      "bytes": 26694,
+      "blob": "6ad04b77a3c2ec9e1af5204741b51a8f90757407",
+      "sha256": "0261222fc8bf74bfd25169c677a04fe52c46c619377b95a10757ec187117ad13"
+    },
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "bytes": 10765,
+      "blob": "a1c6e16d9e8d288076178a871c021be4a40b9c3c",
+      "sha256": "e0b637f798c76f2fe9802a6b2bfb6a6b804fa652a622d850724b936d0a7d7040"
+    }
+  ],
+  "consumedParentSourcePins": [
+    {
+      "path": "app/(admin)/admin/provider-ops/page.tsx",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 867,
+      "blob": "8f689e92f963cc0f634220254b0278aa4dc0d94f",
+      "sha256": "113b28581b520aa1a89c28ba0eed1a6e2e9ee43b7e4efe67da0002b2d5b4afcf"
+    },
+    {
+      "path": "app/api/admin/payments/refund/route.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 2612,
+      "blob": "b6cbe0b4dfe5d24b9ba7b79d478ca59334445557",
+      "sha256": "6fb2f3d6da15df70fbe31069f8180545d55a3ef0260af7f68a8c9d00438468b0"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 1405,
+      "blob": "e4ba44fd504ef3dae6d290983f2447d974a07c73",
+      "sha256": "99cf37cb4653c7de081cbb6ee1bb1de0346d21c82f146a4c32091cd49b94add1"
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 9268,
+      "blob": "f1704f8fe17389626b1640c49bc45637dbd40d46",
+      "sha256": "448d61ff5450a764f5b20ea4910eb1e396e196bdc9a058416a35959ab8166c19"
+    },
+    {
+      "path": "lib/auth/admin-aal.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 5003,
+      "blob": "4617a2951cffd58be45b06d95bb42953a9650548",
+      "sha256": "34b858446b79fa4d9f4f9d0c350390d177a2d3b110999b44e760baf140b4e534"
+    },
+    {
+      "path": "lib/auth/admin-access.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 6475,
+      "blob": "777edac72b8637192379fa8d0afc04a1ba0e7278",
+      "sha256": "5be06c52ef6d1974a84ac321ee4680594e67629845e40f772527dd0e08cec664"
+    },
+    {
+      "path": "lib/auth/admin-guard.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 10482,
+      "blob": "b650a5e25a4db6572bbb7267e3735a746649497b",
+      "sha256": "97849724285b2c3763c2a89d4cb0f0288a40baf23c4594d818f168360140528e"
+    },
+    {
+      "path": "lib/auth/admin-write-gate.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 999,
+      "blob": "6958c72822d7b8ea686503f05744e3f40446c396",
+      "sha256": "b06f0ed4e138244989a58585523caf2dfc3c548d51c1db7c49db3d132e078e90"
+    },
+    {
+      "path": "lib/auth/roles.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 6689,
+      "blob": "01b8290bab658bb7a8b5a2ade491e4d31737ae7d",
+      "sha256": "d3c4d08a1f8d2b772ce73c7c236c5c6f70c81a074c31d97a0eb54809001c4c15"
+    },
+    {
+      "path": "lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 8568,
+      "blob": "c06ce58c154c382b0e1296e13214c4836c8aa8d1",
+      "sha256": "040f43c12aacb7f947bd274b115a75207a6168f3d6376bb3179e2eabdb0a0910"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 16656,
+      "blob": "19be9e9b914e37d115828edebdd71d14033fbfb1",
+      "sha256": "c06a222cdebbfa74f10bf222bf9a8df32fb488fab8939b3ea56f194c657eca3d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 10485,
+      "blob": "da6c4bd4ab930b9c2ff7c0e387fc310e9eec643b",
+      "sha256": "77d88e2063bf12ee4c1ca385bb4d65b9b5fd14845da62a25556877a0329ed05e"
+    },
+    {
+      "path": "lib/supabase/server.ts",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 5704,
+      "blob": "b8b6b92e1e93ccad2ee8a51226737be49b01db44",
+      "sha256": "d6dd60009a8622bceb1bb5cc64698df750f72612408e83add4572a84e1142f76"
+    },
+    {
+      "path": "package-lock.json",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 320689,
+      "blob": "7b5394006458d34c833cdb5438b06f9f6af28353",
+      "sha256": "71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e"
+    },
+    {
+      "path": "package.json",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 6460,
+      "blob": "2a8d677d575b5762a5dd7091d161ea0da6edcea9",
+      "sha256": "46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0"
+    },
+    {
+      "path": "scripts/api-schutz.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 4831,
+      "blob": "e3b474ae8c0cfeb85689544271c70a21a268e0a4",
+      "sha256": "0fb97358453ec31dccac585788786075789c14e941a44b3632fb454c34808d53"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 69705,
+      "blob": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+      "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 53457,
+      "blob": "35032f238248155338c0a8d379b32e514acb699c",
+      "sha256": "a7ae17ffe0b70a24bee337b36ba1e271141fb8d196935e0567b5b8637a0a307e"
+    },
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 9788,
+      "blob": "192a2f9002515cccc2d67db4782bfedbff6748b1",
+      "sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403"
+    },
+    {
+      "path": "scripts/erreichbarkeit.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 5267,
+      "blob": "748bcdd718445e6ec5cd94cda6feabea0a705068",
+      "sha256": "7fd38c4ddce5608f2c74ed1db035e3a4ba6663753a14f5e66046fcc7b6fd0f7b"
+    },
+    {
+      "path": "scripts/exporte.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 4449,
+      "blob": "96e00ba4f0dbca8a6d13ec809c58c89d7de08e7a",
+      "sha256": "da90b3758f2232e95c066d647efec9cabe9ea3b17a465935c31b2b4c3809c0b9"
+    },
+    {
+      "path": "scripts/official-truth-v3-test-selection.mjs",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 6291,
+      "blob": "ad357451f986302364e900829fa5a5284e5f70c8",
+      "sha256": "9eef3044f887ccf483e194cb86d68eef7f6b28aadc7e33cf2141992e49be3944"
+    },
+    {
+      "path": "tsconfig.json",
+      "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
+      "bytes": 957,
+      "blob": "31a2193441b76fee15db2e7c28760206bb638a2c",
+      "sha256": "8d39327495199c6dc6441a72940b95cc5ad4a019e15cdcd17ab8027ba233ef1a"
+    }
+  ],
+  "insertionReceipts": [
+    {
+      "path": "scripts/db/verwendung.mjs",
+      "insertion": "  Object.freeze({\n    name: 'official_v3_method_stage_draft_v1',\n    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n  }),\n  Object.freeze({\n    name: 'official_v3_method_approve_v1',\n    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n  }),\n  Object.freeze({\n    name: 'official_v3_method_revoke_v1',\n    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n  }),\n  Object.freeze({\n    name: 'official_v3_method_confirm_operation_v1',\n    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n  }),\n",
+      "inverse_exact": true,
+      "before": {
+        "bytes": 9788,
+        "blob": "192a2f9002515cccc2d67db4782bfedbff6748b1",
+        "sha256": "51356cb3e1359166f54a9d4064a08132a0fdb4f6cbdf30481f1734a7f84c6403"
+      },
+      "after": {
+        "bytes": 10765,
+        "blob": "a1c6e16d9e8d288076178a871c021be4a40b9c3c",
+        "sha256": "e0b637f798c76f2fe9802a6b2bfb6a6b804fa652a622d850724b936d0a7d7040"
+      }
+    },
+    {
+      "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
+      "insertion": "        {\n          name: 'official_v3_method_stage_draft_v1',\n          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n        },\n        {\n          name: 'official_v3_method_approve_v1',\n          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n        },\n        {\n          name: 'official_v3_method_revoke_v1',\n          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n        },\n        {\n          name: 'official_v3_method_confirm_operation_v1',\n          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',\n          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',\n        },\n",
+      "inverse_exact": true,
+      "before": {
+        "bytes": 9268,
+        "blob": "f1704f8fe17389626b1640c49bc45637dbd40d46",
+        "sha256": "448d61ff5450a764f5b20ea4910eb1e396e196bdc9a058416a35959ab8166c19"
+      },
+      "after": {
+        "bytes": 10305,
+        "blob": "61d6ff9031e87645313b99a57f418183f0161d77",
+        "sha256": "bd1677b403f27c582273f1a6640bd5076d67eb290ec3665b036647945ad35da3"
+      }
+    }
+  ],
+  "selfBinding": {
+    "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json",
+    "method": "Raw bytes/blob/SHA256 and final commit/tree bound by external immutable delivery receipt, avoiding a self-reference cycle."
+  },
+  "validation": {
+    "manualSourceInspection": "AUTHOR_ONLY",
+    "dataHashAndTreeComparison": "COMPLETE",
+    "projectTests": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "build": "NOT_RUN",
+    "nativeSql": "NOT_RUN",
+    "realOwnerAal2Browser": "NOT_RUN",
+    "ci": "NOT_RUN",
+    "rootIndependentSourceReview": "PENDING_FOR_ACTIVATION_PREPARATION"
+  },
+  "openGates": [
+    "Root reconciliation onto actually accepted coherent Dev source and any later HMT identity pins",
+    "Runtime CI/Preview and genuine Owner/AAL2 flow",
+    "Root genuine release tuple selection and branch-scoped ENV-V1 configuration"
+  ],
+  "effects": {
+    "refOrPrPublished": false,
+    "installed": false,
+    "humanApproval": false,
+    "d1Completed": false,
+    "publicChDeLive": false
+  },
+  "rootIntegration": {
+    "status": "SOURCE_REVIEWED_RUNTIME_PENDING",
+    "sourceCandidate": "5a702579155f96dcc68a440225a9a6d55f030ec9",
+    "soleParent": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+    "parentTree": "20c8d9371db53e54099a4ed55caa6c9fb73bfb46",
+    "parentLeaves": 9538,
+    "candidateLeaves": 9548,
+    "unchangedParentLeaves": 9536,
+    "changedConsumedSources": [
+      {
+        "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+        "sourceCommit": "4afd9543d953fba974750854ba7f1defb7bcfce2",
+        "bytes": 53457,
+        "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c",
+        "blob": "6c5c36009e70468e96c8ecfe188cc4109b434716"
+      }
+    ],
+    "runtimeStatus": "NOT_RUN",
+    "dependencyRuntimeStatus": "CI4143_FAILED",
+    "release": null
+  },
+  "activationPreparation": {
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "authorSession": "/root/hmt_diagnosis",
+    "soleParent": "13037c0a72126512a58d654a72813dfd1210d56e",
+    "parentTree": "5f8c79c78def091437fb32264ef19a30757ba1f8",
+    "programCommit": "20ceabc4329cc3a3ca4fa5a638a72eaa1b80bf22",
+    "programSources": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+        "bytes": 11233,
+        "blob": "3dc10240dd976a073465fc286170c0b5240be3db",
+        "sha256": "d0b131387434a7d9289fa5e9db32711591c24a4f607ed7d9991e3f0df991c97b"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
+        "bytes": 19120,
+        "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
+        "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+      }
+    ],
+    "changedSourcePins": [
+      {
+        "path": "app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx",
+        "bytes": 13280,
+        "blob": "bcfe6c1d2beebc97c21001675875f22fabce57d5",
+        "sha256": "2880a1beb3faeaac7ed98cd558106fb166e8aacedd329264509d5e308b56b8f2"
+      },
+      {
+        "path": "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
+        "bytes": 4158,
+        "blob": "c65f492ae9d01b609856c6f2c316f626e16a8f56",
+        "sha256": "2134ff68b185619a558bda22bda2a79203e29bbddade273d1ba8c7ffdd413459"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/human-contract.ts",
+        "bytes": 22177,
+        "blob": "009cf5541674fb365382c8262f89b02beff95fdc",
+        "sha256": "ee254806579d4ee606181ea92879159708a810785acc9cdcec5dbb55ae5da1de"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/human-release.ts",
+        "bytes": 2626,
+        "blob": "a28db94927c473fa386a0772844127ae717a7059",
+        "sha256": "1b62c99b9313fc41b89ddc25d6da1c14c45262d1f3ccc0ef54145151bafb975e"
+      },
+      {
+        "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
+        "bytes": 23334,
+        "blob": "885f23ba10a50e4cee9e5bfd98153db96fc4fdc5",
+        "sha256": "d7e4f07bd757b1b52a40cb9b963a0ae54689233e4d6d26c8cf2a5a827376ce2f"
+      }
+    ],
+    "release": null,
+    "approvalPolicy": {
+      "mode": "until_revoked",
+      "until": null,
+      "selection": "Root explicitly selected original once-only #1169 method approval followed by automatic operation; no individual-rule gates",
+      "reference": "https://github.com/Jetnity/jetnity/issues/1169#issuecomment-6810794730"
+    },
+    "actualPriorHead": "NOT_READ; no assumption of absence",
+    "target": "https://yfvbxvijcorffwxbxahl.supabase.co",
+    "runtime": "NOT_RUN",
+    "unchanged": [
+      "Owner/AAL2 gates",
+      "four HMT RPC calls",
+      "Dev-only target check",
+      "canonical command/receipt/operation confirmation rules",
+      "all SQL/grants",
+      "all existing admin auth routes"
+    ]
+  },
+  "currentDevSelection": {
+    "status": "LOCAL_SOURCE_CANDIDATE_NOT_PUBLISHED",
+    "author": "Jetnity CH-DE Hosted Batch Fix \u2014 Codex Generation4",
+    "actualSession": "/root/hosted_batch_fix_g4",
+    "replacesUnreachableSessions": [
+      "/root/source_and_schema",
+      "/root/hmt_diagnosis"
+    ],
+    "sameOriginalSession": false,
+    "soleParent": "6435c4e691b9cbc8d1c25b3167506b16914bcfae",
+    "parentTree": "369f2c0bf0cea767ff126b4bf23ac93ef0c508a9",
+    "scope": "Exactly the seven paths below. Earlier source-origin parent/scope and null-release preparation receipts remain historical.",
+    "modifiedPaths": [
+      "lib/readiness/official-truth-product-v3/method/human-release.ts",
+      "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
+      "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_TASK_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_HANDOFF_V1.md",
+      "docs/official-truth-product-v3/HUMAN_METHOD_UI_MANIFEST_V1.json",
+      "docs/official-truth-product-v3/HOSTED_DEV_PACKAGE_MANIFEST_V1.json"
+    ],
+    "selectionId": "hmr1_fad09ef526aeea7eeeb3fb1f22c894f1",
+    "predecessorRevision": null,
+    "expectedHead": null,
+    "methodApproved": false,
+    "actualOwnerAAL2": "NOT_RUN",
+    "rootObservedDevBeforeDispatch": {
+      "evidence": "Fresh READ ONLY readback reported by Root; no SQL performed by this author",
+      "transactionReadOnly": true,
+      "overall": {
+        "revisions": 0,
+        "heads": 0,
+        "operations": 0
+      },
+      "selectedMethod": {
+        "revisions": 0,
+        "heads": 0,
+        "operations": 0
+      }
+    },
+    "guard": {
+      "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
+      "namedExport": "selectedV3PgTarget",
+      "unchanged": true,
+      "fiveExistingPreviewFields": true,
+      "credentialsRead": false,
+      "clientOrTransportConstructed": false,
+      "productionEvenWithDevUrl": "REFUSED",
+      "serverExactSupabaseTargetCheck": "UNCHANGED_BEFORE_CLIENT"
+    },
+    "additionalSourcePins": [
+      {
+        "path": "scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts",
+        "bytes": 7947,
+        "blob": "fdc7fbc7454455428cb5b49031c21ca2e4e10791",
+        "sha256": "8713ef44dc8a990f851b998bf587ebfe82ec116bf00966ed4f119a9fea8e04ef"
+      }
+    ],
+    "consumedSourcePins": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts",
+        "bytes": 4765,
+        "blob": "3dbd8a3227c6349f2a34e4d830577c37c1c49bd2",
+        "sha256": "a3a5547b3b13c103b10f305204ad637704fea9a1797036529582e5429880d0e6"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts",
+        "bytes": 11290,
+        "blob": "3460c7a0bd5744ceabc8dcda7e1c7108e79b13f2",
+        "sha256": "e56733466881e26a0368838d7c69419479b2122322d72d144c727f124654a8a5"
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",
+        "bytes": 19120,
+        "blob": "2dde246f2d3c549ad0f530fd2ec2b8e921c158d8",
+        "sha256": "a6e4eeac83e0b9ee03b35ebd3ccbab887097d2572abd318526faa2fa6358067e"
+      }
+    ],
+    "localTests": {
+      "node": "v24.22.1",
+      "tests": 27,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "families": [
+        "Human Method UI contract",
+        "PG boundary",
+        "PG offline"
+      ],
+      "refusalCasesClientCalls": 0,
+      "refusalCasesRpcCalls": 0,
+      "actualHostedOrAuthCalls": 0
+    },
+    "parentCi4224": "FULL_PASS_9_JOBS_REPORTED_BY_ROOT",
+    "remainingGates": [
+      "Independent Root review",
+      "Fresh exact-head complete CI and Preview",
+      "Real Owner/AAL2 staging and approval with PO"
+    ],
+    "noRemotePublication": true,
+    "noSqlOrAuthAction": true,
+    "noProductionAuthority": true
+  }
+}

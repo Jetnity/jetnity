@@ -328,6 +328,19 @@ const reviewedFoundationImports = new Map<string, readonly string[]>([
   // MA1: exact descriptor-aware shape readers; no historical or live authority.
   ['lib/readiness/official-truth-product-v3/method/authority-postgres.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
   ['lib/readiness/official-truth-product-v3/method/contract.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  // HRS/A3 and the reviewed AA/Bern program: exact data-shape/freeze helpers only.
+  // These imports do not issue custody, approval, live entry or source authority.
+  ['lib/readiness/official-truth-product-v3/result/composition.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  ['lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  ['lib/readiness/official-truth-product-v3/result/contract.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
+  ['lib/readiness/official-truth-product-v3/result/postgres.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
+  ['lib/readiness/official-truth-product-v3/result/source-proof.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord', 'immutable']],
+  ['lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts\0official-truth-autonomous-provenance-artifact', ['immutable', 'ownRecord']],
+  ['lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts\0official-truth-autonomous-provenance-artifact', ['immutable', 'ownRecord']],
+  ['lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts\0official-truth-autonomous-provenance-artifact', ['immutable']],
+  ['lib/readiness/official-truth-product-v3/transport/node-postgres-executors.ts\0official-truth-autonomous-provenance-artifact', ['ownRecord']],
+  // UI1197: untrusted proposal data only; the Producer issues no accepted evidence.
+  ['lib/readiness/official-truth-product-v3/source/aa-ch-de-delivery-producer.ts\0official-truth-autonomous-provenance-artifact', ['immutable', 'ownRecord']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-artifact',
     ['decodeProvenanceBytes', 'historicalValuesEqual', 'ownRecord', 'pinsEqual', 'provenanceCanonical', 'provenanceHash', 'readPin', 'Pin']],
   ['lib/readiness/official-truth-integrated-pilot-bundle.ts\0official-truth-autonomous-provenance-record',
@@ -493,6 +506,38 @@ test('MA1 exact shape-reader consumers retain raw path, module and single-name g
       ['ownRecord', '*'], ['ownRecord', 'default'], ['ownRecord', 'immutable'],
       ['ownRecord', 'readPin'], ['ownRecord', 'historicalPinFor'], ['ownRecord', 'runOfficialTruthGlobalProduction']]) {
       assert.equal(foundationImporterAllowed(path, artifactModule, names), false)
+    }
+  }
+})
+test('HRS/A3 exact pure consumers retain path, module and complete-name-set denials', () => {
+  const artifactModule = 'official-truth-autonomous-provenance-artifact'
+  const reviewed: readonly (readonly [string, readonly string[]])[] = [
+    ['lib/readiness/official-truth-product-v3/source/aa-ch-de-delivery-producer.ts', ['immutable', 'ownRecord']],
+    ['lib/readiness/official-truth-product-v3/result/composition.ts', ['ownRecord']],
+    ['lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts', ['ownRecord']],
+    ['lib/readiness/official-truth-product-v3/result/contract.ts', ['ownRecord', 'immutable']],
+    ['lib/readiness/official-truth-product-v3/result/postgres.ts', ['ownRecord', 'immutable']],
+    ['lib/readiness/official-truth-product-v3/result/source-proof.ts', ['ownRecord', 'immutable']],
+    ['lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts', ['immutable', 'ownRecord']],
+    ['lib/readiness/official-truth-product-v3/source/aa-ch-de-qualification.ts', ['immutable', 'ownRecord']],
+    ['lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program.ts', ['immutable']],
+    ['lib/readiness/official-truth-product-v3/transport/node-postgres-executors.ts', ['ownRecord']],
+  ]
+  for (const [path, names] of reviewed) {
+    assert.equal(foundationImporterAllowed(path, artifactModule, names), true)
+    assert.equal(foundationImporterAllowed(path, artifactModule, [...names].reverse()), true)
+    for (const wrongPath of ['./' + path, path + '.evil.ts', path.replace('.ts', '-copy.ts'),
+      path.replace('/official-truth-product-v3/', '/official-truth-product-v3/../official-truth-product-v3/'),
+      path.replace(/\.ts$/, '.test.ts'), 'app/api/readiness/ch-de-visa/route.ts']) {
+      assert.equal(foundationImporterAllowed(wrongPath, artifactModule, names), false)
+    }
+    for (const wrongModule of [artifactModule + '.ts', 'official-truth-autonomous-provenance-record',
+      'official-truth-autonomous-provenance-record-server', 'official-truth-global-representation-qualification']) {
+      assert.equal(foundationImporterAllowed(path, wrongModule, names), false)
+    }
+    for (const wrongNames of [[], ['*'], ['default'], names.slice(1), [...names, names[0]!],
+      [...names, 'historicalPinFor'], [...names, 'readPin'], [...names, 'runOfficialTruthGlobalProduction']]) {
+      assert.equal(foundationImporterAllowed(path, artifactModule, wrongNames), false)
     }
   }
 })

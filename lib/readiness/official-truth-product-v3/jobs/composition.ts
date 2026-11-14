@@ -1,10 +1,12 @@
 // Dormant composition. Pure delivery is not authority; actual S1 and MA1 own proof.
 import 'server-only'
+import { performance } from 'node:perf_hooks'
 import { same, key, readNow } from '../monitor/internal'
 import { createV3QueueCoordinator, createV3DiscoveryQueueCoordinator, type V3ManagedJobRecord, type V3JobFence } from '../monitor/queue'
 import { createV3ImportCoordinator, type V3ImportQuarantinePort, type V3ImportEvidencePort, type V3ImportHistoryPort } from '../import/service-server'
 import { createV3IntegrationCoordinator } from '../integration/coordinator'
 import type { V3IntegrationPorts } from '../integration/ports'
+import type { Hrs1ResultPorts } from '../result/postgres'
 import type { V3WorkerResultRecord, V3ResearchWorkPort } from '../monitor/worker'
 import { readV3RetainableProposal } from '../storage/proposal-bytes'
 import { readV3IntakeBinding, type V3IntakeReference } from '../storage/intake-contract'
@@ -14,6 +16,7 @@ import { readM04Command, M04_LIMITS, type M04Config, type M04Facade, type M04Fix
   type M04Authority, type M04Claim, type M04Continuation, type M04Disposition, type M04Command } from './contract'
 import type { createM04InvocationScope } from './owned-scope'
 import { createM04QueueStorage, createM04ExecutionIndex, createM04ArtifactCustody } from './postgres'
+import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
 
 type Scope = NonNullable<ReturnType<typeof createM04InvocationScope>>
 type Group = 'processing' | 'outer'
@@ -34,9 +37,25 @@ function fenceOf(j: V3ManagedJobRecord): V3JobFence | null {
   return j.state === 'leased' && j.lease ? { jobId: j.jobId, revision: j.revision, leaseId: j.lease.leaseId, generation: j.lease.generation } : null
 }
 
-export function composeM04Invocation(options: Readonly<{ config: M04Config; scope: Scope;
-  authority: M04Authority; processingAuthority: M04Authority; fixed: M04FixedOperation; processingFixed: M04FixedOperation }>): M04Facade {
+type M04InvocationOptions = Readonly<{ config: M04Config; scope: Scope;
+  authority: M04Authority; processingAuthority: M04Authority; fixed: M04FixedOperation; processingFixed: M04FixedOperation }>
+type M04ResultParts = Readonly<{ outer: Hrs1ResultPorts; processing: Hrs1ResultPorts; projectionMaxAgeMilliseconds: number; callDeadline: number;
+  openProcessingImport?(job: V3ManagedJobRecord, signal: AbortSignal): Readonly<{
+    methodAuthority: M04Authority; evidence: V3ImportEvidencePort<object>; history: V3ImportHistoryPort<object>; close(): void;
+  }> | null;
+}>
+
+/** The accepted dormant M04 entry keeps its original closed result ports. */
+export function composeM04Invocation(options: M04InvocationOptions): M04Facade {
+  return composeM04Core(options).facade
+}
+/** Internal HRS assembly; the outer factory owns and joins the same invocation. */
+export function composeM04ResultInvocation(options: M04InvocationOptions & Readonly<{ result: M04ResultParts }>) {
+  return composeM04Core(options, options.result)
+}
+function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) {
   const { config, scope } = options
+  const openProcessingImport = result?.openProcessingImport
   // Four exact predecessor paths, with closed arity/scalar validation below.
   const statements = [
     'SELECT official_v3_intake_api.read_v1($1::jsonb,$2::text,$3::integer) AS result',
@@ -46,6 +65,7 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
   ]
   function executor(group: Group): V3IntakeSqlExecutor {
     return Object.freeze<V3IntakeSqlExecutor>({ async execute(statement, params, signal) {
+      const effectStart = performance.now()
       const index = statements.indexOf(statement)
       if (index < 0 || !Array.isArray(params) || params.length !== [3, 3, 4, 7][index]
         || params.some(p => typeof p !== 'string' && (typeof p !== 'number' || !Number.isInteger(p) || p < 1 || p > 2_147_483_647))
@@ -58,33 +78,35 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
           || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(params[4]) || typeof params[5] !== 'string' || typeof params[6] !== 'string'))) return { status: 'unavailable' }
       try { if (!readV3IntakeBinding(JSON.parse(params[0])).ok) return { status: 'unavailable' } } catch { return { status: 'unavailable' } }
       const detached = Object.freeze([...params])
-      const reply = await scope.native('intake', group, s => config.intakeExecutor.execute(statement, detached, s), signal)
-      if (!reply.ok || reply.value.status === 'unconfirmed' || signal.aborted) { scope.markAmbiguous(); return { status: 'unconfirmed' } }
+      const budget = Object.freeze({ deadline: Math.min(scope.deadline, result?.callDeadline ?? Infinity, effectStart + M04_LIMITS.effectMs) })
+      if (!Number.isFinite(budget.deadline) || performance.now() >= budget.deadline) return { status: 'unavailable' }
+      const reply = await scope.native('intake', group, s => config.intakeExecutor.execute(statement, detached, s, budget), signal)
+      if (!reply.ok || reply.value.status === 'unconfirmed' || reply.value.status === 'blocked_remote_unknown' || signal.aborted) { scope.markAmbiguous(); return { status: 'unconfirmed' } }
       return reply.value
     } })
   }
   const store = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('outer'), leaseMilliseconds: 5000 })
   const processingStore = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('processing'), leaseMilliseconds: 5000 })
-  function evidence(group: Group): V3ImportEvidencePort<object> {
+  function evidence(group: Group, selected?: V3ImportEvidencePort<object>): V3ImportEvidencePort<object> {
     return Object.freeze<V3ImportEvidencePort<object>>({
       async inspect(request, signal) {
-        const r = await scope.callback(group, s => config.evidence.inspect(request, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).inspect(request, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, request, decision, archive, clock, signal) {
-        const r = await scope.callback(group, s => config.evidence.reprove(receipt, request, decision, archive, clock, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).reprove(receipt, request, decision, archive, clock, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
     })
   }
-  function history(group: Group): V3ImportHistoryPort<object> {
+  function history(group: Group, selected?: V3ImportHistoryPort<object>): V3ImportHistoryPort<object> {
     return Object.freeze<V3ImportHistoryPort<object>>({
       async read(contextKey, kind, signal) {
-        const r = await scope.callback(group, s => config.history.read(contextKey, kind, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).read(contextKey, kind, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, value, signal) {
-        const r = await scope.callback(group, s => config.history.reprove(receipt, value, s), signal)
+        const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).reprove(receipt, value, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
     })
@@ -102,7 +124,7 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
       continuation: () => null, disposition: () => ({ kind: 'regular' }), onRecord() {}, settled() {} })
     return queue(storage, kind === 'combination_discovery').enqueue(command.value.input, signal)
   }
-  return Object.freeze<M04Facade>({
+  const facade = Object.freeze<M04Facade>({
     enqueueRule: (raw, signal) => enqueue('rule_research', raw, signal),
     enqueueDiscovery: (raw, signal) => enqueue('combination_discovery', raw, signal),
     async workOnce(rawClaim, signal) {
@@ -115,7 +137,10 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
       let failureReason: 'unreachable' | 'invalid_proposal' | 'verification_unavailable' | null = null
       const bindings = new Map<string, V3IntakeReference>() // bounded to this batch, <=16; not a persistence substitute
       const startTickets = new WeakMap<object, { attemptKey: string; token: string }>()
-      function bindRefs(refs: readonly V3IntakeReference[]) { for (const ref of refs) bindings.set(ref.binding.operationId, ref) }
+      function bindRefs(refs: readonly V3IntakeReference[]) {
+        for (const ref of refs) bindings.set(ref.binding.operationId, ref)
+        result?.outer.bindIntake(refs); result?.processing.bindIntake(refs)
+      }
       function onPrepared(value: { claim: M04Claim; leasedJob: V3ManagedJobRecord; attemptKey: string;
         result: V3WorkerResultRecord; references: readonly V3IntakeReference[] }) {
         leasedJob = value.leasedJob; preparedResult = value.result; bindRefs(value.references)
@@ -218,12 +243,18 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
         let result: V3WorkerResultRecord
         if (job.kind === 'research_job_record') {
           const item = admitted[0]
+          const frame = openProcessingImport?.(job, childSignal)
           const importer = createV3ImportCoordinator({ registry: config.registry, method: methodOf(job), clock: config.clock,
-            methodAuthority: options.processingAuthority, evidence: evidence('processing'), history: history('processing'),
+            methodAuthority: frame?.methodAuthority ?? options.processingAuthority,
+            evidence: evidence('processing', frame?.evidence), history: history('processing', frame?.history),
             quarantine: processingStore.forImport(item.reference.binding) }, { budgetMilliseconds: 5000 })
-          const outcome = await importer.submit(item.text, childSignal)
+          const outcome = await traceDevDiagnosticStage('job_import', childSignal, async () => {
+            try { return await importer.submit(item.text, childSignal) }
+            finally { frame?.close() }
+          })
           if (outcome.status !== 'completed') { scope.markAmbiguous(); scope.sealProcessing(); return { status: 'unconfirmed' } }
-          const confirmed = await processingStore.confirmImport(item.reference, childSignal)
+          const confirmed = await traceDevDiagnosticStage('job_import_confirm', childSignal,
+            () => processingStore.confirmImport(item.reference, childSignal))
           if (confirmed.status !== 'completed' || !same(confirmed.outcome, outcome.outcome)) { scope.markAmbiguous(); scope.sealProcessing(); return { status: 'unconfirmed' } }
           const decision = outcome.outcome.status === 'prepared' ? outcome.outcome.value.decision
             : outcome.outcome.status === 'escalation' ? outcome.outcome.decision : null
@@ -236,7 +267,8 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
             discoveryRef: key('combination-discovery-result', { jobId: job.jobId, operationId: job.operationId,
               jobKey: job.identity.jobKey, claim, fence, proposalDigests }), proposalDigests }
         }
-        const receipt = await index.prepare(job, winner.attemptKey, winner.token, result, admitted.map(x => x.reference), childSignal)
+        const receipt = await traceDevDiagnosticStage('job_prepare', childSignal,
+          () => index.prepare(job, winner.attemptKey, winner.token, result, admitted.map(x => x.reference), childSignal))
         scope.sealProcessing()
         if (!receipt) { scope.markAmbiguous(); return { status: 'unconfirmed' } }
         return { status: 'prepared', receipt }
@@ -260,15 +292,35 @@ export function composeM04Invocation(options: Readonly<{ config: M04Config; scop
         import: { registry: config.registry, method: { methodId: config.binding.methodId, revision: config.binding.revision }, clock: config.clock, methodAuthority: options.authority,
           evidence: evidence('outer'), history: history('outer'), quarantine },
         queue: { storage, invocationMilliseconds: 5000, backoffBaseMilliseconds: 1000, backoffMaxMilliseconds: 60000 },
-        versionStore: null, versionProofs: null, publication: null, escalations: null,
+        versionStore: result?.outer.versionStore ?? null, versionProofs: result?.outer.versionProofs ?? null,
+        publication: result?.outer.publication ?? null, escalations: result?.outer.escalations ?? null,
         research: { work, results: index.results, artifacts },
-        visitor: { dataMode: 'official_projection', coverage: { async targets() { return { zeilen: null, problem: { status: 503, message: 'Unbound' } } } },
+        visitor: result?.outer.visitor ?? { dataMode: 'official_projection', coverage: { async targets() { return { zeilen: null, problem: { status: 503, message: 'Unbound' } } } },
           cache: { async read() { return { zeilen: null, problem: { status: 503, message: 'Unbound' } } } },
           current: { async reprove() { return { status: 'unavailable' } }, async confirmBatch() { return { status: 'unavailable' } } },
           ids: () => { throw Error('unbound_visitor') } },
-        monitor: { plans: null, sources: null, suppressions: null }, invocationMilliseconds: 30000, projectionMaxAgeMilliseconds: 1,
+        monitor: result?.outer.monitor ?? { plans: null, sources: null, suppressions: null }, invocationMilliseconds: 30000,
+        projectionMaxAgeMilliseconds: result?.projectionMaxAgeMilliseconds ?? 1,
       }
       return createV3IntegrationCoordinator(ports).workOnce(claim, signal)
     },
   })
+  function ownedEnqueueQueue(discovery: boolean) {
+    const commands = new Map<string, M04Command>()
+    const storage = createM04QueueStorage({ fixed: options.fixed,
+      commandFor: (operationId, commandKey) => {
+        const command = commands.get(operationId)
+        return command?.commandKey === commandKey ? command : null
+      }, continuation: () => null, disposition: () => ({ kind: 'regular' }), onRecord() {}, settled() {} })
+    const coordinator = queue(storage, discovery)
+    return Object.freeze({ ...coordinator, async enqueue(raw: unknown, signal?: AbortSignal) {
+      const command = readM04Command({ action: 'enqueue', kind: discovery ? 'combination_discovery' : 'rule_research', input: raw })
+      if (!result || !command || commands.size >= 32 && !commands.has(command.operationId)) return { status: 'unavailable' as const }
+      const previous = commands.get(command.operationId)
+      if (previous && previous.commandKey !== command.commandKey) return { status: 'collision' as const }
+      commands.set(command.operationId, command)
+      return coordinator.enqueue(command.value.input, signal)
+    } })
+  }
+  return Object.freeze({ facade, ruleQueue: ownedEnqueueQueue(false), discoveryQueue: ownedEnqueueQueue(true) })
 }

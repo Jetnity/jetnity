@@ -1,0 +1,1041 @@
+{
+  "schema": "jetnity.profile-authority-integrity.observed-baseline.v1",
+  "target": {
+    "project": "yfvbxvijcorffwxbxahl",
+    "branch": "develop",
+    "parent": "qscbgcdmivbbnzrcyegn",
+    "observedDate": "2026-11-12",
+    "serverVersionNum": 170006
+  },
+  "claims": {
+    "metadataOnly": true,
+    "personRowsRead": false,
+    "exploitPerformed": false,
+    "productionEquality": false,
+    "nativePassed": false,
+    "hostedApplied": false
+  },
+  "provenance": [
+    {
+      "id": 6825177327,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825177327",
+      "commentUtf8Bytes": 14358,
+      "commentSha256": "6d92ce6c0bcd4a4bfc760cb74a20f2b6e0d97d53cc0e24aec0fdbde55573ca1d"
+    },
+    {
+      "id": 6825374617,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825374617",
+      "commentUtf8Bytes": 7067,
+      "commentSha256": "db71cda78f851c9fb748c85837a94335abd7a301d6df361a66265b27b301445f"
+    },
+    {
+      "id": 6825438601,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6825438601",
+      "commentUtf8Bytes": 10445,
+      "commentSha256": "67da823deadd306ffef579bb59f2d1d35cfe09f3f78e5943ea912f1600274a81"
+    },
+    {
+      "id": 6824905662,
+      "url": "https://github.com/Jetnity/jetnity/issues/1139#issuecomment-6824905662",
+      "commentUtf8Bytes": 5065,
+      "commentSha256": "a97b2f5f020c21dd21ba8bcf6fc276eae83ba06c6ba5d3a490cd8bbcf612dbc1"
+    }
+  ],
+  "e10b": {
+    "columns": [
+      {
+        "name": "user_id",
+        "type": "uuid",
+        "number": 2,
+        "default": null,
+        "raw_acl": null,
+        "not_null": true
+      },
+      {
+        "name": "role",
+        "type": "text",
+        "number": 3,
+        "default": "'user'::text",
+        "raw_acl": null,
+        "not_null": true
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "number": 16,
+        "default": "'active'::text",
+        "raw_acl": null,
+        "not_null": true
+      }
+    ],
+    "receipt": "E10B_PRIVATE_GUARD_PROFILE_WRITER_METADATA_V1",
+    "database": "postgres",
+    "policies": [
+      {
+        "name": "profiles_aendern",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "w",
+        "permissive": true,
+        "with_check": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())"
+      },
+      {
+        "name": "profiles_anlegen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": null,
+        "command": "a",
+        "permissive": true,
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "name": "profiles_lesen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "r",
+        "permissive": true,
+        "with_check": null
+      },
+      {
+        "name": "profiles_loeschen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "d",
+        "permissive": true,
+        "with_check": null
+      }
+    ],
+    "relation": {
+      "oid": "71476",
+      "rls": true,
+      "owner": "postgres",
+      "raw_acl": "{postgres=arwdDxtm/postgres,service_role=arwdDxtm/postgres,authenticated=arwd/postgres}",
+      "force_rls": false
+    },
+    "constraints": [
+      {
+        "kind": "p",
+        "name": "profiles_pkey",
+        "validated": true,
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "kind": "c",
+        "name": "profiles_role_check",
+        "validated": true,
+        "definition": "CHECK (rollenrang(role) IS NOT NULL)"
+      },
+      {
+        "kind": "c",
+        "name": "profiles_status_check",
+        "validated": true,
+        "definition": "CHECK (status = ANY (ARRAY['active'::text, 'pending'::text, 'disabled'::text, 'banned'::text]))"
+      },
+      {
+        "kind": "f",
+        "name": "profiles_user_id_fkey",
+        "validated": true,
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "kind": "u",
+        "name": "profiles_user_id_key",
+        "validated": true,
+        "definition": "UNIQUE (user_id)"
+      }
+    ],
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "server_version_num": "170006",
+    "bound_user_triggers": [
+      {
+        "oid": "71919",
+        "name": "profiles_kerndaten_aus_auth",
+        "type": 5,
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "enabled": "O",
+        "attributes": "",
+        "definition": "CREATE TRIGGER profiles_kerndaten_aus_auth AFTER INSERT ON profiles FOR EACH ROW EXECUTE FUNCTION profil_kerndaten_aus_auth()",
+        "function_oid": "71396",
+        "function_owner": "postgres",
+        "security_definer": true,
+        "function_definition": "CREATE OR REPLACE FUNCTION public.profil_kerndaten_aus_auth()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\nbegin\n  update public.profiles p\n  set\n    email = coalesce(u.email, p.email),\n    display_name = coalesce(\n      p.display_name,\n      (u.raw_user_meta_data ->> 'full_name'),\n      (u.raw_user_meta_data ->> 'name'),\n      split_part(u.email, '@', 1)\n    )\n  from auth.users u\n  where p.user_id = new.user_id and u.id = new.user_id;\n  return new;\nend\n$function$\n",
+        "function_body_sha256": "05f4673d2bd0e2236a8b6047c29b2105d787e4f55792d0f1b8251547cc8f8422"
+      },
+      {
+        "oid": "72440",
+        "name": "profiles_rollenwechsel",
+        "type": 23,
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "enabled": "O",
+        "attributes": "",
+        "definition": "CREATE TRIGGER profiles_rollenwechsel BEFORE INSERT OR UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION profil_rollenwechsel_pruefen()",
+        "function_oid": "72416",
+        "function_owner": "postgres",
+        "security_definer": true,
+        "function_definition": "CREATE OR REPLACE FUNCTION public.profil_rollenwechsel_pruefen()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare\n  handelnder uuid := (select auth.uid());\n  rang_handelnder integer;\nbegin\n  if handelnder is null then\n    return new;\n  end if;\n\n  rang_handelnder := public.rollenrang(public.aktuelle_rolle());\n\n  if tg_op = 'INSERT' then\n    if new.user_id = handelnder then\n      if new.role is distinct from 'user' then\n        raise exception 'Ein neues eigenes Profil erhält immer die Rolle user.'\n          using errcode = 'check_violation';\n      end if;\n      if new.status is distinct from 'active' then\n        raise exception 'Ein neues eigenes Profil erhält immer den Status active.'\n          using errcode = 'check_violation';\n      end if;\n      return new;\n    end if;\n\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, Profile für andere Konten anzulegen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n    if rang_handelnder < public.rollenrang('owner')\n       and rang_handelnder <= coalesce(public.rollenrang(new.role), -1) then\n      raise exception 'Diese Rolle liegt nicht unterhalb der eigenen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n\n    return new;\n  end if;\n\n  if new.role is distinct from old.role then\n    if old.user_id = handelnder then\n      raise exception 'Die eigene Rolle lässt sich nicht ändern.'\n        using errcode = 'check_violation';\n    end if;\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, Rollen zu vergeben.'\n        using errcode = 'insufficient_privilege';\n    end if;\n    if rang_handelnder < public.rollenrang('owner')\n       and (rang_handelnder <= coalesce(public.rollenrang(old.role), -1)\n            or rang_handelnder <= coalesce(public.rollenrang(new.role), -1)) then\n      raise exception 'Diese Rolle liegt nicht unterhalb der eigenen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n  end if;\n\n  if new.status is distinct from old.status then\n    if old.user_id = handelnder then\n      raise exception 'Der eigene Kontostatus lässt sich nicht ändern.'\n        using errcode = 'check_violation';\n    end if;\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, den Kontostatus zu ändern.'\n        using errcode = 'insufficient_privilege';\n    end if;\n  end if;\n\n  return new;\nend\n$function$\n",
+        "function_body_sha256": "382d8bc00583596ef719b4185d47645baec410f71c2a7ebfb8e1c4df08ba8351"
+      }
+    ],
+    "runtime_column_privileges": [
+      {
+        "role": "anon",
+        "column": "role",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "anon",
+        "column": "status",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "anon",
+        "column": "user_id",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "authenticated",
+        "column": "role",
+        "insert": true,
+        "select": true,
+        "update": true
+      },
+      {
+        "role": "authenticated",
+        "column": "status",
+        "insert": true,
+        "select": true,
+        "update": true
+      },
+      {
+        "role": "authenticated",
+        "column": "user_id",
+        "insert": true,
+        "select": true,
+        "update": true
+      },
+      {
+        "role": "authenticator",
+        "column": "role",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "authenticator",
+        "column": "status",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "authenticator",
+        "column": "user_id",
+        "insert": false,
+        "select": false,
+        "update": false
+      },
+      {
+        "role": "service_role",
+        "column": "role",
+        "insert": true,
+        "select": true,
+        "update": true
+      },
+      {
+        "role": "service_role",
+        "column": "status",
+        "insert": true,
+        "select": true,
+        "update": true
+      },
+      {
+        "role": "service_role",
+        "column": "user_id",
+        "insert": true,
+        "select": true,
+        "update": true
+      }
+    ]
+  },
+  "e10c": {
+    "receipt": "E10C_PROFILE_AUTHORITY_PREDICATES_AND_INCOMING_FK_V1",
+    "database": "postgres",
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "profile_predicates": [
+      {
+        "oid": "72352",
+        "name": "aktuelle_rolle",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION public.aktuelle_rolle()\n RETURNS text\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n  select p.role\n  from public.profiles p\n  where p.user_id = (select auth.uid())\n  limit 1\n$function$\n",
+        "body_sha256": "41b223309c2228d87a0ac273ac31cc9ffcaa7e3ac406059d00818b947b09cbd0",
+        "security_definer": true
+      },
+      {
+        "oid": "73031",
+        "name": "aktuelles_admin_aal2",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION public.aktuelles_admin_aal2()\n RETURNS boolean\n LANGUAGE sql\n STABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)\n$function$\n",
+        "body_sha256": "d3cf53b48caba5d05eef08d940f1199b7ad58a8a78acefd1e899fda0c502ff1a",
+        "security_definer": false
+      },
+      {
+        "oid": "72472",
+        "name": "darf_konten_verwalten",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION public.darf_konten_verwalten()\n RETURNS boolean\n LANGUAGE sql\n STABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select public.hat_rolle_mindestens('moderator')\n     and public.aktuelles_admin_aal2()\n$function$\n",
+        "body_sha256": "35e41fdae08f4663ffd9f58b3e7912b7faf13661ab0159c67067ad43f43498ab",
+        "security_definer": false
+      },
+      {
+        "oid": "72353",
+        "name": "hat_rolle_mindestens",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "arguments": "minimum text",
+        "definition": "CREATE OR REPLACE FUNCTION public.hat_rolle_mindestens(minimum text)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n  select coalesce(\n           public.rollenrang(public.aktuelle_rolle()) >= public.rollenrang(minimum),\n           false)\n$function$\n",
+        "body_sha256": "367f630edefe6788750c6cabe7f5cb1b32d7c01ee4e3246d60632bf5ccd77f10",
+        "security_definer": true
+      },
+      {
+        "oid": "72351",
+        "name": "rollenrang",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "arguments": "rolle text",
+        "definition": "CREATE OR REPLACE FUNCTION public.rollenrang(rolle text)\n RETURNS integer\n LANGUAGE sql\n IMMUTABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select case rolle\n           when 'user'      then 0\n           when 'creator'   then 10\n           when 'moderator' then 20\n           when 'operator'  then 30\n           when 'admin'     then 40\n           when 'owner'     then 50\n         end\n$function$\n",
+        "body_sha256": "56d5753e4ccb189c2472c02a2737b6662c182381d03bf4de1954d069829fe850",
+        "security_definer": false
+      }
+    ],
+    "incoming_profile_foreign_keys": []
+  },
+  "e10d": {
+    "receipt": "E10D_PROFILE_INTEGRITY_INSTALL_SHAPE_V1",
+    "database": "postgres",
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "profile_columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "number": 1,
+        "default": "uuid_generate_v4()",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "user_id",
+        "type": "uuid",
+        "number": 2,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "role",
+        "type": "text",
+        "number": 3,
+        "default": "'user'::text",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "number": 4,
+        "default": "timezone('utc'::text, now())",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "avatar_url",
+        "type": "text",
+        "number": 6,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "number": 15,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "number": 16,
+        "default": "'active'::text",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "last_seen_at",
+        "type": "timestamp with time zone",
+        "number": 17,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "display_name",
+        "type": "text",
+        "number": 18,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      }
+    ],
+    "profile_functions": [
+      {
+        "oid": "72352",
+        "set": false,
+        "kind": "f",
+        "name": "aktuelle_rolle",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "returns": "text",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "41b223309c2228d87a0ac273ac31cc9ffcaa7e3ac406059d00818b947b09cbd0",
+        "security_definer": true
+      },
+      {
+        "oid": "73031",
+        "set": false,
+        "kind": "f",
+        "name": "aktuelles_admin_aal2",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "d3cf53b48caba5d05eef08d940f1199b7ad58a8a78acefd1e899fda0c502ff1a",
+        "security_definer": false
+      },
+      {
+        "oid": "72472",
+        "set": false,
+        "kind": "f",
+        "name": "darf_konten_verwalten",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "35e41fdae08f4663ffd9f58b3e7912b7faf13661ab0159c67067ad43f43498ab",
+        "security_definer": false
+      },
+      {
+        "oid": "72353",
+        "set": false,
+        "kind": "f",
+        "name": "hat_rolle_mindestens",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "u",
+        "arguments": "minimum text",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "367f630edefe6788750c6cabe7f5cb1b32d7c01ee4e3246d60632bf5ccd77f10",
+        "security_definer": true
+      },
+      {
+        "oid": "71396",
+        "set": false,
+        "kind": "f",
+        "name": "profil_kerndaten_aus_auth",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "trigger",
+        "defaults": 0,
+        "language": "plpgsql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "v",
+        "body_sha256": "05f4673d2bd0e2236a8b6047c29b2105d787e4f55792d0f1b8251547cc8f8422",
+        "security_definer": true
+      },
+      {
+        "oid": "72416",
+        "set": false,
+        "kind": "f",
+        "name": "profil_rollenwechsel_pruefen",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "trigger",
+        "defaults": 0,
+        "language": "plpgsql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "v",
+        "body_sha256": "382d8bc00583596ef719b4185d47645baec410f71c2a7ebfb8e1c4df08ba8351",
+        "security_definer": true
+      },
+      {
+        "oid": "72351",
+        "set": false,
+        "kind": "f",
+        "name": "rollenrang",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "returns": "integer",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "rolle text",
+        "leakproof": false,
+        "volatility": "i",
+        "body_sha256": "56d5753e4ccb189c2472c02a2737b6662c182381d03bf4de1954d069829fe850",
+        "security_definer": false
+      }
+    ],
+    "new_trigger_collisions": [],
+    "new_function_collisions": []
+  },
+  "e18b": {
+    "normalization": "transcribed from Root's complete prose receipt, not a raw SQL-result object",
+    "publicOwner": "pg_database_owner",
+    "publicAcl": [
+      "=U/pg_database_owner",
+      "anon=U/pg_database_owner",
+      "authenticated=U/pg_database_owner",
+      "pg_database_owner=UC/pg_database_owner",
+      "postgres=U/pg_database_owner",
+      "service_role=U/pg_database_owner"
+    ],
+    "effectiveNonSuperCreate": [
+      "pg_database_owner",
+      "postgres"
+    ],
+    "globalCreatorFunctionDefaultRows": 0,
+    "publicCreatorFunctionDefaultAcl": [
+      "postgres=X/postgres",
+      "service_role=X/postgres"
+    ]
+  },
+  "portableExpectedShape": {
+    "relation": {
+      "owner": "postgres",
+      "rls": true,
+      "force_rls": false,
+      "kind": "r",
+      "acl": [
+        "authenticated=arwd/postgres",
+        "postgres=arwdDxtm/postgres",
+        "service_role=arwdDxtm/postgres"
+      ]
+    },
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "number": 1,
+        "default": "uuid_generate_v4()",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "user_id",
+        "type": "uuid",
+        "number": 2,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "role",
+        "type": "text",
+        "number": 3,
+        "default": "'user'::text",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "number": 4,
+        "default": "timezone('utc'::text, now())",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "avatar_url",
+        "type": "text",
+        "number": 6,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "number": 15,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "number": 16,
+        "default": "'active'::text",
+        "raw_acl": null,
+        "identity": "",
+        "not_null": true,
+        "collation": "\"default\"",
+        "generated": ""
+      },
+      {
+        "name": "last_seen_at",
+        "type": "timestamp with time zone",
+        "number": 17,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": null,
+        "generated": ""
+      },
+      {
+        "name": "display_name",
+        "type": "text",
+        "number": 18,
+        "default": null,
+        "raw_acl": null,
+        "identity": "",
+        "not_null": false,
+        "collation": "\"default\"",
+        "generated": ""
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "p",
+        "name": "profiles_pkey",
+        "validated": true,
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "kind": "c",
+        "name": "profiles_role_check",
+        "validated": true,
+        "definition": "CHECK (rollenrang(role) IS NOT NULL)"
+      },
+      {
+        "kind": "c",
+        "name": "profiles_status_check",
+        "validated": true,
+        "definition": "CHECK (status = ANY (ARRAY['active'::text, 'pending'::text, 'disabled'::text, 'banned'::text]))"
+      },
+      {
+        "kind": "f",
+        "name": "profiles_user_id_fkey",
+        "validated": true,
+        "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "kind": "u",
+        "name": "profiles_user_id_key",
+        "validated": true,
+        "definition": "UNIQUE (user_id)"
+      }
+    ],
+    "policies": [
+      {
+        "name": "profiles_aendern",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "w",
+        "permissive": true,
+        "with_check": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())"
+      },
+      {
+        "name": "profiles_anlegen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": null,
+        "command": "a",
+        "permissive": true,
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "name": "profiles_lesen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "r",
+        "permissive": true,
+        "with_check": null
+      },
+      {
+        "name": "profiles_loeschen",
+        "roles": [
+          "authenticated"
+        ],
+        "using": "((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())",
+        "command": "d",
+        "permissive": true,
+        "with_check": null
+      }
+    ],
+    "functions": [
+      {
+        "set": false,
+        "kind": "f",
+        "name": "aktuelle_rolle",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "text",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "41b223309c2228d87a0ac273ac31cc9ffcaa7e3ac406059d00818b947b09cbd0",
+        "security_definer": true,
+        "definition": "CREATE OR REPLACE FUNCTION public.aktuelle_rolle()\n RETURNS text\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n  select p.role\n  from public.profiles p\n  where p.user_id = (select auth.uid())\n  limit 1\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "aktuelles_admin_aal2",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "d3cf53b48caba5d05eef08d940f1199b7ad58a8a78acefd1e899fda0c502ff1a",
+        "security_definer": false,
+        "definition": "CREATE OR REPLACE FUNCTION public.aktuelles_admin_aal2()\n RETURNS boolean\n LANGUAGE sql\n STABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select coalesce((select auth.jwt() ->> 'aal') = 'aal2', false)\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "darf_konten_verwalten",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "35e41fdae08f4663ffd9f58b3e7912b7faf13661ab0159c67067ad43f43498ab",
+        "security_definer": false,
+        "definition": "CREATE OR REPLACE FUNCTION public.darf_konten_verwalten()\n RETURNS boolean\n LANGUAGE sql\n STABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select public.hat_rolle_mindestens('moderator')\n     and public.aktuelles_admin_aal2()\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "hat_rolle_mindestens",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "boolean",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "u",
+        "arguments": "minimum text",
+        "leakproof": false,
+        "volatility": "s",
+        "body_sha256": "367f630edefe6788750c6cabe7f5cb1b32d7c01ee4e3246d60632bf5ccd77f10",
+        "security_definer": true,
+        "definition": "CREATE OR REPLACE FUNCTION public.hat_rolle_mindestens(minimum text)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n  select coalesce(\n           public.rollenrang(public.aktuelle_rolle()) >= public.rollenrang(minimum),\n           false)\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "profil_kerndaten_aus_auth",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "trigger",
+        "defaults": 0,
+        "language": "plpgsql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "v",
+        "body_sha256": "05f4673d2bd0e2236a8b6047c29b2105d787e4f55792d0f1b8251547cc8f8422",
+        "security_definer": true,
+        "definition": "CREATE OR REPLACE FUNCTION public.profil_kerndaten_aus_auth()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\nbegin\n  update public.profiles p\n  set\n    email = coalesce(u.email, p.email),\n    display_name = coalesce(\n      p.display_name,\n      (u.raw_user_meta_data ->> 'full_name'),\n      (u.raw_user_meta_data ->> 'name'),\n      split_part(u.email, '@', 1)\n    )\n  from auth.users u\n  where p.user_id = new.user_id and u.id = new.user_id;\n  return new;\nend\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "profil_rollenwechsel_pruefen",
+        "owner": "postgres",
+        "config": [
+          "search_path=public, pg_temp"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "trigger",
+        "defaults": 0,
+        "language": "plpgsql",
+        "parallel": "u",
+        "arguments": "",
+        "leakproof": false,
+        "volatility": "v",
+        "body_sha256": "382d8bc00583596ef719b4185d47645baec410f71c2a7ebfb8e1c4df08ba8351",
+        "security_definer": true,
+        "definition": "CREATE OR REPLACE FUNCTION public.profil_rollenwechsel_pruefen()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare\n  handelnder uuid := (select auth.uid());\n  rang_handelnder integer;\nbegin\n  if handelnder is null then\n    return new;\n  end if;\n\n  rang_handelnder := public.rollenrang(public.aktuelle_rolle());\n\n  if tg_op = 'INSERT' then\n    if new.user_id = handelnder then\n      if new.role is distinct from 'user' then\n        raise exception 'Ein neues eigenes Profil erhält immer die Rolle user.'\n          using errcode = 'check_violation';\n      end if;\n      if new.status is distinct from 'active' then\n        raise exception 'Ein neues eigenes Profil erhält immer den Status active.'\n          using errcode = 'check_violation';\n      end if;\n      return new;\n    end if;\n\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, Profile für andere Konten anzulegen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n    if rang_handelnder < public.rollenrang('owner')\n       and rang_handelnder <= coalesce(public.rollenrang(new.role), -1) then\n      raise exception 'Diese Rolle liegt nicht unterhalb der eigenen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n\n    return new;\n  end if;\n\n  if new.role is distinct from old.role then\n    if old.user_id = handelnder then\n      raise exception 'Die eigene Rolle lässt sich nicht ändern.'\n        using errcode = 'check_violation';\n    end if;\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, Rollen zu vergeben.'\n        using errcode = 'insufficient_privilege';\n    end if;\n    if rang_handelnder < public.rollenrang('owner')\n       and (rang_handelnder <= coalesce(public.rollenrang(old.role), -1)\n            or rang_handelnder <= coalesce(public.rollenrang(new.role), -1)) then\n      raise exception 'Diese Rolle liegt nicht unterhalb der eigenen.'\n        using errcode = 'insufficient_privilege';\n    end if;\n  end if;\n\n  if new.status is distinct from old.status then\n    if old.user_id = handelnder then\n      raise exception 'Der eigene Kontostatus lässt sich nicht ändern.'\n        using errcode = 'check_violation';\n    end if;\n    if rang_handelnder is null or rang_handelnder < public.rollenrang('moderator') then\n      raise exception 'Keine Berechtigung, den Kontostatus zu ändern.'\n        using errcode = 'insufficient_privilege';\n    end if;\n  end if;\n\n  return new;\nend\n$function$\n"
+      },
+      {
+        "set": false,
+        "kind": "f",
+        "name": "rollenrang",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog"
+        ],
+        "strict": false,
+        "raw_acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "returns": "integer",
+        "defaults": 0,
+        "language": "sql",
+        "parallel": "s",
+        "arguments": "rolle text",
+        "leakproof": false,
+        "volatility": "i",
+        "body_sha256": "56d5753e4ccb189c2472c02a2737b6662c182381d03bf4de1954d069829fe850",
+        "security_definer": false,
+        "definition": "CREATE OR REPLACE FUNCTION public.rollenrang(rolle text)\n RETURNS integer\n LANGUAGE sql\n IMMUTABLE PARALLEL SAFE\n SET search_path TO 'pg_catalog'\nAS $function$\n  select case rolle\n           when 'user'      then 0\n           when 'creator'   then 10\n           when 'moderator' then 20\n           when 'operator'  then 30\n           when 'admin'     then 40\n           when 'owner'     then 50\n         end\n$function$\n"
+      }
+    ],
+    "triggers": [
+      {
+        "name": "profiles_kerndaten_aus_auth",
+        "type": 5,
+        "enabled": "O",
+        "attributes": "",
+        "definition": "CREATE TRIGGER profiles_kerndaten_aus_auth AFTER INSERT ON profiles FOR EACH ROW EXECUTE FUNCTION profil_kerndaten_aus_auth()",
+        "function_name": "profil_kerndaten_aus_auth"
+      },
+      {
+        "name": "profiles_rollenwechsel",
+        "type": 23,
+        "enabled": "O",
+        "attributes": "",
+        "definition": "CREATE TRIGGER profiles_rollenwechsel BEFORE INSERT OR UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION profil_rollenwechsel_pruefen()",
+        "function_name": "profil_rollenwechsel_pruefen"
+      }
+    ],
+    "incoming_profile_foreign_keys": []
+  },
+  "fixtureDistinctions": {
+    "numericOids": "Actual Dev numeric OIDs are retained in evidence only; fixture and installer resolve real local relationships.",
+    "uuidDefault": "Receipt records only uuid_generate_v4() expression; its schema, implementation and extension membership were not observed. Native uses an explicitly synthetic public.uuid_generate_v4 -> pg_catalog.gen_random_uuid adapter solely to reproduce this name/default.",
+    "authHelpers": "Native uses unchanged E09 auth.uid/auth.jwt body pins already preserved by accepted PG1. All users, sessions and claims in Native are synthetic.",
+    "additionalShapeGates": "Installer additionally refuses inheritance and incoming postgres-role membership; these are gates, not newly claimed observations.",
+    "indexCoverage": "Existing profile index/catalog rows are captured and preserved during apply, without claiming an earlier full index-definition observation."
+  }
+}

@@ -131,13 +131,14 @@ enabled = true
 # Ziel jeder Bestätigungs- und Rücksetz-E-Mail, wenn die Anwendung kein
 # `redirectTo` mitgibt. site_url bleibt der lokale Entwicklungsserver.
 site_url = "http://localhost:3000"
-# Genau ein zusätzliches Ziel. Es ist der bereits freigegebene und gespeicherte
-# Development-Preview-Callback aus #626: Freigabe 5893108838, Readback 5893640399.
+# Genau zwei zusätzliche Ziele: der bestehende Development-Preview-Callback
+# aus #626 (Freigabe 5893108838, Readback 5893640399) und die am 13.11.2026 vom
+# PO freigegebene exakte Rücksetzadresse für den bestehenden Dev-Owner-Zugang.
 # `\\` in dieser Zeichenkette ist ein literaler Backslash vor `?`, das persistierte
-# Glob. Der Browser-Callback enthält keinen Backslash. Kein zweites Ziel, kein
-# Wildcard und keine Production-URL. Die frühere leere Liste bleibt historische
-# Beobachtung in docs/AUTH.md.
-additional_redirect_urls = ["https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen"]
+# Glob des ersten Eintrags. Der Browser-Callback enthält keinen Backslash.
+# Kein Wildcard und keine Production-URL. Die frühere leere Liste bleibt
+# historische Beobachtung in docs/AUTH.md.
+additional_redirect_urls = ["https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen", "https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password"]
 # Gültigkeitsdauer des Access-Tokens in Sekunden.
 jwt_expiry = 3600
 # Ein benutztes Refresh-Token wird ersetzt; ein zweiter Gebrauch entwertet die

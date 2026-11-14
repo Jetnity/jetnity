@@ -89,6 +89,32 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sourcePath: 'lib/readiness/official-truth-fact-entry-authority-server.ts',
     sqlPath: 'supabase/migrations/20261002154952_official_truth_owner_reviewer_capability_1.sql',
   }),
+  Object.freeze({
+    name: 'official_v3_method_stage_draft_v1',
+    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+  }),
+  Object.freeze({
+    name: 'official_v3_method_approve_v1',
+    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+  }),
+  Object.freeze({
+    name: 'official_v3_method_revoke_v1',
+    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+  }),
+  Object.freeze({
+    name: 'official_v3_method_confirm_operation_v1',
+    sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+    sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+  }),
+  ...['official_v3_guard_review_v1', 'official_v3_guard_retire_v1',
+    'official_v3_guard_resume_v1', 'official_v3_guard_confirm_v1'].map(name => Object.freeze({
+    name,
+    sourcePath: 'lib/readiness/official-truth-product-v3/runtime/guard-server.ts',
+    sqlPath: 'scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql',
+  })),
 ])
 
 function lokaleRpcRegel(name) {

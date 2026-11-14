@@ -50,7 +50,22 @@ export async function runR2SemanticProof(primary: LocalIntegratedPilotEnvelope):
       } finally { writer.close() }
       checks.push(`r2_native_rehashed_${name}_refused_commit_empty_fresh_absent`)
     }
-    const positive = await persistVerifiedIntegratedBundleLocally(cluster, oids, r2RepresentationFixture(primary, 16))
+    const originalConnect = LocalPgConnection.connect
+    const sixteenWriter: { connection?: LocalPgConnection } = {}
+    LocalPgConnection.connect = async (...args: Parameters<typeof LocalPgConnection.connect>) => {
+      const connection = await originalConnect.call(LocalPgConnection, ...args)
+      if (args[0] === cluster && args[1] === 'ot_provenance_writer') sixteenWriter.connection = connection
+      return connection
+    }
+    let positive: Awaited<ReturnType<typeof persistVerifiedIntegratedBundleLocally>>
+    try { positive = await persistVerifiedIntegratedBundleLocally(cluster, oids, r2RepresentationFixture(primary, 16)) }
+    finally { LocalPgConnection.connect = originalConnect }
+    if (!positive.ok) console.error(JSON.stringify({
+      schema: 'jetnity.native.r2-sixteen-failure.v1',
+      reason: positive.reason === 'commit_outcome_unknown' ? 'commit_outcome_unknown' : 'bundle_verification_rejected',
+      commitProtectionFailure: positive.reason === 'commit_outcome_unknown' ? positive.commitProtectionFailure ?? null : null,
+      operationDiagnostics: positive.reason === 'commit_outcome_unknown' ? sixteenWriter.connection?.operationDiagnostics ?? [] : [],
+    }))
     assert.ok(positive.ok); assert.equal(positive.outcome, 'inserted')
     checks.push('r2_sixteen_representations_commit_independent_complete_verified_readback')
     return checks

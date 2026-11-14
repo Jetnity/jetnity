@@ -1,3 +1,26 @@
 {
-  "version": 2
+  "version": 2,
+  "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.mjs && npm run build",
+  "functions": {
+    "app/api/readiness/ch-de-visa/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-visa-tick/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-owner-import/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-owner-guard/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    }
+  }
 }
