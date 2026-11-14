@@ -285,7 +285,7 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
   })
   await run('R02 a regular M04 complete winning the common lock refuses recovery',30000,20000,async f=>{
     assert.equal((await f.finish()).status,'recorded'); assert.equal((await f.prepare()).status,'prepared')
-    const ended=await envelope({action:'complete',input:{operationId:f.operation(),jobKey:f.claim.jobKey,
+    const ended=await envelope({action:'complete',kind:'rule_research',input:{operationId:f.operation(),jobKey:f.claim.jobKey,
       fence:{jobId:f.leased.jobId,revision:f.leased.revision,leaseId:f.leased.lease!.leaseId,generation:f.leased.lease!.generation},decisionRef:f.prepared.decision.reference}},f.leased)
     const request:M04Operation={...ended,body:{...ended.body,disposition:{kind:'completed',attemptKey:f.start.attemptKey}}}
     const actor=await f.base.humanAs(1)
