@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { NextRequest } from 'next/server'
+import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../../scripts/db/verwendung.mjs'
+import { compileCandidate, functionsIn } from '../../../../scripts/db/official-truth-v3-background-guard-1/build.mjs'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, devGuardReceipt, readDevGuardRequest,
   readDevGuardReview, readDevGuardResult, readDevGuardText } from './guard-contract'
 
@@ -10,6 +13,52 @@ const ENV = { VERCEL_ENV: 'preview', VERCEL_PROJECT_ID: 'prj_wTTVawPItEO7a4HihEm
 const operation = { schema: 1, intent: 'mutate', action: 'retire_unknown', operationId: 'op3_' + 'a'.repeat(32), selection: 'b'.repeat(64) } as const
 const review = { schema: 1, status: 'reviewed', retirement: { status: 'unavailable' }, incident: { status: 'clear',
   selection: 'a'.repeat(64), generation: 0, methodEpoch: 1, proofFinished: null, validUntil: null, canResume: false } } as const
+test('four local Guard RPCs require the exact caller and SQL artifact without changing the generated live schema', () => {
+  const sourcePath = 'lib/readiness/official-truth-product-v3/runtime/guard-server.ts'
+  const sqlPath = 'scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql'
+  const names = ['official_v3_guard_review_v1', 'official_v3_guard_retire_v1',
+    'official_v3_guard_resume_v1', 'official_v3_guard_confirm_v1']
+  assert.deepEqual(LOCAL_UNAPPLIED_RPCS.filter(rule => rule.sourcePath === sourcePath), names.map(name => ({ name, sourcePath, sqlPath })))
+  const actualSource = readFileSync(sourcePath, 'utf8'), actualSql = readFileSync(sqlPath, 'utf8')
+  const check = (path: string, source: string, sql: string | null) => pruefe({
+    dateien: [path], lese: () => source,
+    typenInhalt: '    Tables: {\n    }\n    Views: {\n    }\n    Functions: {\n    }',
+    sqlVorhanden: (path: string) => path === sqlPath && sql !== null,
+    sqlInhalt: () => sql ?? '',
+  })
+  const actual = check(sourcePath, actualSource, actualSql)
+  assert.equal(actual.befunde.length, 0)
+  assert.deepEqual(actual.lokaleUnapplied.map(row => row.name).sort(), [...names].sort())
+  for (const name of names) {
+    assert.ok(actualSql.includes('CREATE FUNCTION public.' + name + '('))
+    const call = `.rpc(${JSON.stringify(name)})`
+    for (const path of ['lib/wrong-caller.ts', sourcePath + '.evil.ts', sourcePath.replace('guard-server', 'guard-server-copy')]) {
+      assert.equal(check(path, call, actualSql).befunde[0]?.grund, 'wrong-source')
+    }
+    assert.equal(check(sourcePath, call, null).befunde[0]?.grund, 'missing-sql')
+    assert.equal(check(sourcePath, call, 'CREATE FUNCTION public.unrelated()').befunde[0]?.grund, 'missing-sql')
+  }
+  const unknown = 'official_v3_guard_unreviewed_v1'
+  assert.equal(check(sourcePath, `.rpc(${JSON.stringify(unknown)})`, actualSql).befunde[0]?.name, unknown)
+})
+test('BG1 assembler selects actual function statements and the fixed PAI EXECUTE block, never catalog text', () => {
+  const source = `
+-- CREATE FUNCTION public.comment() RETURNS void AS $$ BEGIN END $$ LANGUAGE plpgsql;
+/* nested /* catalog */ CREATE FUNCTION public.comment2() RETURNS void AS $$ BEGIN END $$ LANGUAGE plpgsql; */
+SELECT 'CREATE FUNCTION public.string() RETURNS void AS $$ BEGIN END $$ LANGUAGE plpgsql;'::text;
+DO $inventory$ DECLARE evidence jsonb := $json$ {"definition":"CREATE FUNCTION public.catalog() RETURNS void AS $$ BEGIN END $$ LANGUAGE plpgsql;"}$json$; BEGIN NULL; END $inventory$;
+CREATE FUNCTION public.return_wrapper() RETURNS integer LANGUAGE sql RETURN 1;
+CREATE FUNCTION public.actual() RETURNS integer LANGUAGE sql AS $body$ SELECT 1 $body$;
+`
+  const actual = functionsIn(source)
+  assert.deepEqual(actual.map(f => f.signature), ['public.actual()'])
+  assert.equal(actual[0]!.body, ' SELECT 1 ')
+  assert.throws(() => functionsIn("SELECT 'unterminated"))
+  const generated = compileCandidate()
+  assert.equal(generated, readFileSync(new URL('../../../../scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql', import.meta.url), 'utf8'))
+  assert.ok(generated.includes("('public.profil_autoritaet_integritaet_pruefen_v1()','b513eca8cc5d7b3981d9b9eb1473428e628410dcb0f4b718290d4cc314756a8d')"))
+  assert.equal(generated.includes("('public.aktuelle_rolle()','b513eca8cc5d7b3981d9b9eb1473428e628410dcb0f4b718290d4cc314756a8d')"), false)
+})
 test('guard contract keeps exact reviewed selection, original operation and absent outcomes distinct', () => {
   assert.ok(readDevGuardRequest(operation)); assert.ok(readDevGuardReview(review))
   for (const extra of [{ sql: 'SELECT 1' }, { ownerId: 'private' }, { target: DEV }, { unknown: true }]) {

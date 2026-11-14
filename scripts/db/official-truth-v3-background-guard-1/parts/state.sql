@@ -44,7 +44,7 @@ CREATE TABLE official_v3_guard_private.state_v1 (
       AND isfinite(last_due) AND isfinite(last_started) AND isfinite(last_proof_started) AND isfinite(last_finished)
       AND last_due <= last_started AND last_started <= last_proof_started AND last_proof_started <= last_finished
       AND last_finished <= last_started + interval '30 seconds'
-      AND valid_until = last_due + interval '5 minutes 30 seconds')))
+      AND valid_until = last_due + interval '5 minutes 30 seconds'))
 );
 CREATE TABLE official_v3_guard_private.runs_v1 (
   due_at timestamptz PRIMARY KEY,

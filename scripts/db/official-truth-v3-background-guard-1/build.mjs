@@ -20,10 +20,58 @@ const sha = value => createHash('sha256').update(value).digest('hex')
 const quote = value => "'" + String(value).replaceAll("'", "''") + "'"
 const read = name => readFileSync(new URL(name, here), 'utf8')
 
+function statementsIn(sql) {
+  const statements = []
+  let start = null, index = 0
+  while (index < sql.length) {
+    if (/\s/.test(sql[index])) { index++; continue }
+    if (sql.startsWith('--', index)) {
+      const end = sql.indexOf('\n', index + 2)
+      index = end < 0 ? sql.length : end + 1
+      continue
+    }
+    if (sql.startsWith('/*', index)) {
+      let depth = 1; index += 2
+      while (depth && index < sql.length) {
+        if (sql.startsWith('/*', index)) { depth++; index += 2 }
+        else if (sql.startsWith('*/', index)) { depth--; index += 2 }
+        else index++
+      }
+      assert.equal(depth, 0, 'closed SQL comment')
+      continue
+    }
+    start ??= index
+    if (sql[index] === "'" || sql[index] === '"') {
+      const quote = sql[index++], escaped = quote === "'" && /[eE]/.test(sql[index - 2] ?? '')
+      let closed = false
+      while (index < sql.length) {
+        if (escaped && sql[index] === '\\') { index += 2; continue }
+        if (sql[index++] !== quote) continue
+        if (sql[index] === quote) { index++; continue }
+        closed = true; break
+      }
+      assert.ok(closed, 'closed SQL quoted literal or identifier')
+      continue
+    }
+    const delimiter = /^\$(?:[a-z_]\w*)?\$/i.exec(sql.slice(index))?.[0]
+    if (delimiter) {
+      const end = sql.indexOf(delimiter, index + delimiter.length)
+      assert.ok(end >= 0, 'closed SQL dollar literal')
+      index = end + delimiter.length
+      continue
+    }
+    if (sql[index++] === ';') { statements.push(sql.slice(start, index)); start = null }
+  }
+  assert.equal(start, null, 'complete terminated SQL statements')
+  return statements
+}
+
 export function functionsIn(sql) {
   const result = []
-  const re = /CREATE(?: OR REPLACE)? FUNCTION\s+([a-z_][\w]*\.[a-z_][\w]*)\s*\(([\s\S]*?)\)\s*([\s\S]*?)\bAS\s+(\$[\w]*\$)([\s\S]*?)\4\s*;/gi
-  for (const match of sql.matchAll(re)) {
+  const re = /^CREATE(?: OR REPLACE)? FUNCTION\s+([a-z_][\w]*\.[a-z_][\w]*)\s*\(([\s\S]*?)\)\s*([\s\S]*?)\bAS\s+(\$[\w]*\$)([\s\S]*?)\4\s*;$/i
+  for (const statement of statementsIn(sql)) {
+    const match = re.exec(statement)
+    if (!match) continue // SQL RETURN wrappers have their independent exact HMT inventory.
     const args = match[2].split(',').map(x => x.trim()).filter(Boolean)
     const signature = match[1] + '(' + args.map(x => x.replace(/\s+DEFAULT[\s\S]*/i, '').split(/\s+/).slice(1).join(' ')).join(',') + ')'
     result.push({ name: match[1], args: match[2], options: match[3], body: match[5], signature, sql: match[0] })
@@ -59,7 +107,16 @@ export function compileCandidate() {
     assert.equal(sha(text), digest, 'immutable predecessor: ' + name)
     source.set(name, text)
   }
-  const all = [...source.values()].flatMap(functionsIn)
+  const all = [...source].flatMap(([name, sql]) => {
+    if (name !== 'profile-authority-integrity-1') return functionsIn(sql)
+    // PAI creates exactly one function through this fixed EXECUTE literal.
+    // Its separate catalog JSON is evidence, never executable DDL input.
+    const blocks = [...sql.matchAll(/^  EXECUTE \$pai1_create_function\$([\s\S]*?)\$pai1_create_function\$;/gm)]
+    assert.equal(blocks.length, 1, 'one reviewed executable PAI function block')
+    const actual = functionsIn(blocks[0][1])
+    assert.deepEqual(actual.map(f => f.signature), ['public.profil_autoritaet_integritaet_pruefen_v1()'])
+    return actual
+  })
   const get = name => { const matches = all.filter(x => x.name === name); assert.equal(matches.length, 1, name); return matches[0] }
   const changes = []
   const change = (name, owner, transform) => {
@@ -100,6 +157,8 @@ export function compileCandidate() {
     "  WHEN 'projection_batch' THEN ARRAY['bindings']\n  WHEN 'ch_de_snapshot' THEN ARRAY[]::text[]"))
   change('official_v3_jobs_private.assert_catalog_v1','ot_v3_jobs_owner', b => {
     b=b.replaceAll('official_v3_jobs_private.catalog_binding_v1','official_v3_guard_private.jobs_catalog_v1()')
+    // Normalize inherited blank-line indentation before computing the new body pin.
+    b=b.replaceAll(/^[ \t]+$/gm,'')
     b=replaceOnce(b, '      AND d.refobjid IN (owner_id,caller_id)\n      AND NOT(',
       '      AND d.refobjid IN (owner_id,caller_id)\n      AND NOT official_v3_guard_private.allowed_owner_edge_v1(d.classid,d.objid,d.refobjid,d.deptype)\n      AND NOT(')
     return replaceOnce(b, "    AND d.refobjid=intake_id AND d.deptype='o'\n    AND NOT(",
@@ -216,7 +275,7 @@ $$;`
     return f?asOwner(f,sql):sql
   })).concat(newFunctions.filter(f=>ownerOf(f)!=='postgres').map(f=>asOwner(f,`GRANT EXECUTE ON FUNCTION ${f.signature} TO postgres;`))).join('\n')
   const replacementDdl=changes.map(c=>`SET LOCAL ROLE ${c.owner};\n${c.sql}\nRESET ROLE;`).join('\n')
-  return `-- BG1 source candidate. Additive upgrade on reviewed 4fd6dc9e; no historical installer rewrite.\n${header}\n${parts}\n${extras}\n${allowedEdges}\nGRANT USAGE,CREATE ON SCHEMA official_v3_guard_private TO ot_v3_result_owner,ot_v3_jobs_owner,ot_v3_intake_owner;\n${ownership}\n${acl}\n${execute}\n${replacementDdl}\n${suffix}\n`
+  return `-- BG1 source candidate. Additive upgrade on reviewed 4fd6dc9e; no historical installer rewrite.\n${header}\n${parts}\n${extras}\n${allowedEdges}\nGRANT USAGE,CREATE ON SCHEMA official_v3_guard_private TO ot_v3_result_owner,ot_v3_jobs_owner,ot_v3_intake_owner;\n${ownership}\n${acl}\n${execute}\n${replacementDdl}\n${suffix.trimEnd()}\n`
 }
 
 if (process.argv[1]===fileURLToPath(import.meta.url)) {

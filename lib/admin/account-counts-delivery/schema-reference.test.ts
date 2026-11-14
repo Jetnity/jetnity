@@ -123,6 +123,12 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
           sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
         },
+        ...['official_v3_guard_review_v1', 'official_v3_guard_retire_v1',
+          'official_v3_guard_resume_v1', 'official_v3_guard_confirm_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/readiness/official-truth-product-v3/runtime/guard-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql',
+        })),
       ],
     )
 

@@ -119,7 +119,7 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   }
   assert.deepEqual(hostedAmendment.files.map(row => row.path), ['.github/workflows/ci.yml', 'package.json'])
   assert.equal(new Set(hostedAmendment.files.map(row => row.path)).size, 2)
-  // Exact Root-selected A3 and HRS diagnostic successors. The historical
+  // Exact Root-selected A3, HRS and I1 diagnostic successors. The historical
   // C1/MI1/R28/HMA1 evidence above remains byte-identical and independently checked.
   // No working-tree-derived pins, skipped rows, live source or activation change.
   const currentSourceAmendment = [
@@ -144,6 +144,9 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     { path: '.github/workflows/ci.yml',
       previousReviewed: { bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' },
       reviewed: { bytes: 23939, sha256: '7ebcde1fa3c9717ed7fbf555d0bace34a4da1457563de6fea2296437520400ae' } },
+    { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts',
+      previousReviewed: { bytes: 23971, sha256: '2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09' },
+      reviewed: { bytes: 24762, sha256: '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08' } },
   ] as const
   assert.deepEqual(currentSourceAmendment.map(row => row.path), [
     'lib/readiness/official-truth-product-v3/visitor/query.ts',
@@ -151,8 +154,9 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     'package-lock.json', 'package.json', 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
     'components/readiness/OfficialTruthVisitorV3.tsx',
     '.github/workflows/ci.yml',
+    'lib/readiness/official-truth-product-v3/import/service-server.ts',
   ])
-  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 7)
+  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 8)
   let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
@@ -207,5 +211,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
-  assert.equal(reviewedCurrentRows, 7)
+  assert.equal(reviewedCurrentRows, 8)
 })

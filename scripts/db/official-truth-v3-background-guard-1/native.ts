@@ -51,6 +51,294 @@ async function envelope(value: unknown, current: V3ManagedJobRecord | null) {
   return { operation: 'queue_cas' as const, body: { command: command.value, commit, subjectText: subject.subjectText, disposition: { kind: 'regular' as const } } }
 }
 
+/** Additional real SQL cases use separate owned databases. They run while the
+ * main proof is waiting for its already selected next five-minute due time.
+ * No fixture clock, certificate reissue, source issuer or held Dev token exists. */
+async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, allocated: () => void) {
+  const started = performance.now()
+  async function fixture(jobMilliseconds: number, intakeMilliseconds: number) {
+    const cluster = lifetime.startCluster(startLocalProofCluster); allocated()
+    const bootstrap = await LocalPgConnection.connect(cluster)
+    await bootstrap.query('CREATE ROLE supabase_read_only_user LOGIN NOINHERIT NOSUPERUSER BYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION')
+    bootstrap.close()
+    const base = await createBg1LocalPredecessor(lifetime, cluster, binding)
+    const owner = base.bootstrap.connection, creator = base.creator.connection, observer = base.observer.connection
+    let serial = 0
+    const operation = () => fixtureId('op3', 'recovery-case-' + (++serial))
+    async function absent(pid: string, birth: string) {
+      const until = performance.now() + 2000
+      for (;;) {
+        if ((await observer.query('SELECT NOT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid=$1::integer AND backend_start=$2::timestamptz) AS absent', params([pid,birth])))[0]!.absent === 't') return
+        assert.ok(performance.now() < until, 'real recovery fixture backend drains'); await lifetime.wait(2)
+      }
+    }
+    async function human(name: string, values: readonly unknown[] = [], actor?: Awaited<ReturnType<typeof base.humanAs>>) {
+      const selected = actor ?? await base.humanAs(1)
+      const casts = name === 'official_v3_method_stage_draft_v1' ? ['text','text','integer','text','text','integer']
+        : name === 'official_v3_method_approve_v1' ? ['text','text','integer','text','text','integer','text','text','integer','text','text','text']
+          : name === 'official_v3_method_confirm_operation_v1' ? ['text','text','text','integer','text','text','integer','integer','text','text','integer','text','text','text']
+            : values.map(() => 'text')
+      try {
+        return json(await selected.connection.query('SELECT public.' + name + '(' + casts.map((type,i) => `NULLIF($${i+1}::text,'')::${type}`).join(',') + ') AS result', params(values)))
+      } finally { if (!actor) { selected.connection.close(); await absent(selected.identity.pid,selected.identity.birth) } }
+    }
+    for (const action of ['stage','approve'] as const) {
+      const id = 'maop1_' + hrs1Hash({ localRecovery: action }).slice(0,32)
+      const tuple = [id,binding.methodId,1,binding.methodDigest,binding.packageDigest]
+      const before = [null,null,null,0,null]
+      const receipt = await human('official_v3_method_' + (action === 'stage' ? 'stage_draft' : action) + '_v1',
+        action === 'stage' ? [...tuple,null] : [...tuple,...before,'until_revoked',null])
+      assert.equal((receipt as { status: string }).status,'recorded')
+      assert.deepEqual(await human('official_v3_method_confirm_operation_v1', [id,action,binding.methodId,1,binding.methodDigest,binding.packageDigest,null,
+        ...(action === 'stage' ? [null,null,null,null,null] : before),action === 'approve' ? 'until_revoked' : null,null]),receipt)
+    }
+    async function jobs(request: M04Operation, connection: LocalPgConnection) {
+      return json<M04NativeReply>(await connection.query(M04_FIXED_SQL, params([hrs1Canonical({...request,phase:'authorized'}),
+        binding.methodId,1,binding.methodDigest,binding.packageDigest,1,5000,new Date(Date.now()+5000).toISOString()])))
+    }
+    const enqueued = await envelope({action:'enqueue',kind:'rule_research',input:{context:program.context,method:program.method,
+      factKind:'requirement_effect',researchReason:{status:'missing'},operationId:operation(),jobId:fixtureId('job3','recovery'),attemptLimit:4}},null)
+    assert.equal((await jobs(enqueued,base.runtime[0]!.connection)).status,'committed')
+    const claim = {operationId:operation(),jobKey:enqueued.body.commit.jobKey,leaseId:fixtureId('lease3','recovery-first'),leaseMilliseconds:jobMilliseconds}
+    const claimed = await envelope({action:'claim',input:claim},enqueued.body.commit.next)
+    assert.equal((await jobs(claimed,base.runtime[0]!.connection)).status,'committed')
+    const leased = claimed.body.commit.next; assert.ok(leased.lease)
+    const startedReply = await jobs({operation:'execution_start',body:{claim,leasedJob:leased,subjectText:claimed.body.subjectText}},base.runtime[0]!.connection)
+    assert.ok(startedReply.status === 'reserved')
+    const start = startedReply
+    const delivery = await AA_CH_DE_DELIVERY_PRODUCER.produce({job:leased,fence:{jobId:leased.jobId,revision:leased.revision,
+      leaseId:leased.lease.leaseId,generation:leased.lease.generation}},lifetime.signal)
+    assert.ok(delivery.status === 'delivered')
+    const item = delivery.deliveries[0]!, uploaded = readV3RetainableProposal(item.text,program.registry); assert.ok(uploaded.ok)
+    const upload = uploaded.value
+    const intake = base.runtime[1]!.connection
+    assert.equal(json<{status:string}>(await intake.query('SELECT official_v3_intake_api.capture_v1($1::jsonb,$2::text,$3::text) AS result',params([JSON.stringify(item.binding),item.text,upload.digest]))).status,'recorded')
+    // These independently selected local lease lengths exercise both expiry
+    // orders of the existing S1 API. Application I1/S1 remains five seconds.
+    const reservation = json<{status:string;generation:number;leaseToken:string;expiresAt:string}>(await intake.query(
+      'SELECT official_v3_intake_api.reserve_v1($1::jsonb,$2::text,$3::integer,$4::integer) AS result',
+      params([JSON.stringify(item.binding),upload.digest,upload.bytes,intakeMilliseconds])))
+    assert.equal(reservation.status,'acquired')
+    const verification = fixtureVerification(new Date().toISOString(),hrs1Ref('source-decision',{operationId:item.binding.operationId,
+      proposalDigest:upload.digest,contextKey:binding.contextKey,method:program.method,predecessor:null}))
+    const verifier = await LocalPgConnection.connect(cluster,'ot_v3_result_verifier')
+    try {
+      const clock = hrs1Clock(new Date().toISOString(),binding.legalTimeZone); assert.ok(clock)
+      assert.equal(json<{status:string}>(await verifier.query(HRS1_SQL.attest,params([hrs1Canonical({schema:1,operation:'attest',bindingHash:hrs1Hash(binding),body:{kind:'verification',verification}}),
+        hrs1Hash(binding),binding.methodId,1,binding.methodDigest,binding.packageDigest,1,5000,new Date(Date.now()+5000).toISOString(),clock.legalDate]))).status,'recorded')
+    } finally { verifier.close() }
+    const prepared = fixturePrepared(upload,verification).prepared
+    const oldFail = await envelope({action:'fail',input:{operationId:operation(),jobKey:claim.jobKey,
+      fence:{jobId:leased.jobId,revision:leased.revision,leaseId:leased.lease.leaseId,generation:leased.lease.generation},reason:'verification_unavailable'}},leased)
+    const failed: M04Operation = {...oldFail,body:{...oldFail.body,disposition:{kind:'settled_failure',attemptKey:start.attemptKey,token:start.token}}}
+    for (const entry of base.runtime) { entry.connection.close(); await absent(entry.identity.pid,entry.identity.birth) }
+    // No technical transport is still attached when the exact upgrade runs.
+    const until = performance.now()+2000
+    while ((await observer.query("SELECT count(*)::text AS n FROM pg_stat_activity WHERE usename='ot_v3_result_verifier'"))[0]!.n !== '0') {
+      assert.ok(performance.now()<until); await lifetime.wait(2)
+    }
+    await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
+    await creator.query(readFileSync(new URL('./upgrade-candidate.sql',import.meta.url),'utf8'))
+    await creator.query("SET statement_timeout='25s'")
+    assert.equal(json<{status:string}>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status,'current')
+    const runtimeJobs = await LocalPgConnection.connect(cluster,base.bound[0]!.login)
+    const runtimeIntake = await LocalPgConnection.connect(cluster,base.bound[1]!.login)
+    await runtimeJobs.query('SET ROLE ot_v3_jobs_caller'); await runtimeIntake.query('SET ROLE ot_v3_intake_caller')
+    async function identity(connection: LocalPgConnection) {
+      return (await connection.query('SELECT pg_backend_pid()::text AS pid,backend_start::text AS birth FROM pg_stat_activity WHERE pid=pg_backend_pid()'))[0]!
+    }
+    const jobsIdentity = await identity(runtimeJobs), intakeIdentity = await identity(runtimeIntake)
+    async function waitUntil(value: string) {
+      while (Date.now() <= Date.parse(value)) await lifetime.wait(Math.min(100,Math.max(1,Date.parse(value)+5-Date.now())))
+    }
+    async function state() {
+      return json<{open:boolean;job:string;retired:number;receipts:number;completions:number;results:number;dispositions:number}>(await observer.query(`SELECT jsonb_build_object(
+        'open',s.open_attempt IS NOT NULL,'job',md5(s.current_job::text),
+        'retired',(SELECT count(*) FROM official_v3_guard_private.retired_attempts_v1),
+        'receipts',(SELECT count(*) FROM official_v3_guard_private.owner_operations_v1),
+        'completions',(SELECT count(*) FROM official_v3_intake_private.completions_v1),
+        'results',(SELECT count(*) FROM official_v3_jobs_private.execution_results_v1),
+        'dispositions',(SELECT count(*) FROM official_v3_jobs_private.execution_dispositions_v1)) AS result
+        FROM official_v3_jobs_private.subjects_v1 s WHERE job_key=$1`,params([claim.jobKey])))
+    }
+    async function refused(code: string) {
+      const before = await state()
+      // A deliberately nonmatching selection is not the negative oracle:
+      // the real prerequisite/read path must itself refuse this exact state.
+      if (code === 'P7905') {
+        await assert.rejects(human('official_v3_guard_review_v1'),stateError(code))
+      } else {
+        await assert.rejects(owner.query('SELECT official_v3_guard_private.recovery_snapshot_v1() AS result'),stateError(code))
+        const review = readDevGuardReview(await human('official_v3_guard_review_v1'))
+        assert.ok(review); assert.equal(review.retirement.status,'unavailable')
+      }
+      await assert.rejects(human('official_v3_guard_retire_v1',[operation(),'0'.repeat(64)]),stateError(code))
+      assert.deepEqual(await state(),before,'refused recovery creates no receipt/retirement and does not change the retained open attempt')
+      assert.equal(before.retired,0); assert.equal(before.receipts,0)
+    }
+    async function finish() {
+      const audit = {schema:3,kind:'import_attempt_record',operationId:item.binding.operationId,proposalDigest:upload.digest,
+        jobId:leased.jobId,contextKey:binding.contextKey,method:program.method,recordedAt:verification.decision.evaluatedAt,
+        result:'prepared',decisionRef:prepared.decision.reference,escalationKey:null}
+      return json<{status:string}>(await runtimeIntake.query('SELECT official_v3_intake_api.finish_v1($1::jsonb,$2::text,$3::integer,$4::integer,$5::uuid,$6::jsonb,$7::jsonb) AS result',
+        params([JSON.stringify(item.binding),upload.digest,upload.bytes,reservation.generation,reservation.leaseToken,
+          JSON.stringify({status:'prepared',value:prepared}),JSON.stringify(audit)])))
+    }
+    async function prepare() {
+      return jobs({operation:'execution_prepare',body:{claim,attemptKey:start.attemptKey,token:start.token,
+        result:{kind:'rule_research',jobId:leased.jobId,operationId:leased.operationId,jobKey:claim.jobKey,
+          preparedAt:verification.decision.evaluatedAt,decisionRef:prepared.decision.reference},
+        references:[{binding:item.binding,proposalDigest:upload.digest,bytes:upload.bytes}]}},runtimeJobs)
+    }
+    async function blocked(pid: string, blocker: string) {
+      const until = performance.now()+1000
+      for (;;) {
+        if ((await observer.query('SELECT ($2::integer=ANY(pg_blocking_pids($1::integer))) AS blocked',params([pid,blocker])))[0]!.blocked === 't') return
+        assert.ok(performance.now()<until,'actual common-lock acquisition order must be observed'); await lifetime.wait(2)
+      }
+    }
+    async function reviewed() {
+      const review = readDevGuardReview(await human('official_v3_guard_review_v1')); assert.ok(review?.retirement.status==='reviewable')
+      return review.retirement.selection
+    }
+    async function retireRace(kind: 's1'|'m04', first: 'old'|'owner') {
+      await waitUntil(leased.lease!.expiresAt); await waitUntil(reservation.expiresAt)
+      const selection = await reviewed(), id = operation(), before = await state()
+      const actor = await base.humanAs(1)
+      let old: Promise<unknown> | undefined, retirement: Promise<unknown> | undefined
+      let receipt: unknown
+      const writer = kind==='s1' ? intakeIdentity : jobsIdentity
+      const runOld = () => kind==='s1' ? finish() : jobs(failed,runtimeJobs)
+      try {
+        if (first==='old') {
+          // Block the actual certificate read after the old API has acquired
+          // the common write lock. The Owner must then wait behind that API.
+          await owner.query('BEGIN; LOCK TABLE ' + (kind==='s1'?'official_v3_intake_private.operations_v1':'official_v3_jobs_private.subjects_v1') + ' IN ACCESS EXCLUSIVE MODE')
+          old=runOld(); void Promise.allSettled([old])
+          await blocked(writer.pid!,base.bootstrap.identity.pid)
+          retirement=human('official_v3_guard_retire_v1',[id,selection],actor); void Promise.allSettled([retirement])
+          await blocked(actor.identity.pid,writer.pid!)
+          await owner.query('ROLLBACK')
+          receipt=await retirement
+        } else {
+          await actor.connection.query('BEGIN')
+          receipt=await human('official_v3_guard_retire_v1',[id,selection],actor)
+          old=runOld(); void Promise.allSettled([old])
+          await blocked(writer.pid!,actor.identity.pid)
+          assert.deepEqual(await state(),before,'uncommitted retirement is not visible to the independent observer')
+          await actor.connection.query('COMMIT')
+        }
+        assert.ok(old)
+        const [settled]=await lifetime.drain([old])
+        if(kind==='s1') { assert.equal(settled.status,'fulfilled'); if(settled.status==='fulfilled') assert.deepEqual(settled.value,{status:'unconfirmed'}) }
+        else { assert.equal(settled.status,'rejected'); if(settled.status==='rejected') assert.ok(stateError('P7605')(settled.reason),'the actual expired old M04 request cannot record settled_failure') }
+        assert.equal((receipt as {result:string}).result,'unknown_retired')
+        assert.deepEqual(await human('official_v3_guard_confirm_v1',[id,'retire_unknown',selection]),receipt)
+        assert.deepEqual(await state(),{...before,open:false,retired:1,receipts:1})
+        await creator.query('SELECT official_v3_guard_private.check_certificates_v1(); SELECT official_v3_guard_private.check_retirements_v1()')
+      } finally {
+        await owner.query('ROLLBACK'); await actor.connection.query('ROLLBACK')
+        await lifetime.drain([...(old?[old]:[]),...(retirement?[retirement]:[])])
+        actor.connection.close(); await absent(actor.identity.pid,actor.identity.birth)
+      }
+    }
+    return {cluster,base,owner,creator,observer,human,jobs,runtimeJobs,claim,claimed,leased,start,failed,item,upload,
+      prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,waitUntil,jobsIdentity}
+  }
+  type Fixture = Awaited<ReturnType<typeof fixture>>
+  async function run(name: string,jobMs: number,intakeMs: number,body: (f:Fixture)=>Promise<void>) {
+    assert.ok(performance.now()-started<120000,'finite additional recovery cases stay within the existing due wait')
+    let actual: Promise<void> | undefined
+    await t.test(name,async()=>{
+      actual=lifetime.run(async()=>{
+        const f=await fixture(jobMs,intakeMs)
+        try { await body(f) } finally { lifetime.stopCluster(f.cluster) }
+      })
+      await actual
+    })
+    assert.ok(actual); const [settled]=await lifetime.drain([actual]); if(settled.status==='rejected') throw settled.reason
+  }
+  await run('R01 actual active job/S1 leases and a real S1 completion refuse Owner recovery',10000,15000,async f=>{
+    assert.equal((await f.observer.query('SELECT clock_timestamp()<$1::timestamptz AS active',params([f.leased.lease!.expiresAt])))[0]!.active,'t')
+    await assert.rejects(f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'),stateError('P7906'))
+    await f.refused('P7906')
+    await f.waitUntil(f.leased.lease!.expiresAt)
+    assert.equal((await f.observer.query('SELECT clock_timestamp()<$1::timestamptz AS active',params([f.reservation.expiresAt])))[0]!.active,'t')
+    const job = json<{attemptKey:string}>(await f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'))
+    assert.equal(job.attemptKey,f.start.attemptKey)
+    await assert.rejects(f.owner.query('SELECT official_v3_guard_private.recovery_intake_v1($1::jsonb) AS result',params([JSON.stringify(job)])),stateError('P7906'))
+    await f.refused('P7906')
+    assert.equal((await f.finish()).status,'recorded')
+    await f.waitUntil(f.reservation.expiresAt)
+    assert.equal((await f.state()).completions,1); assert.equal((await f.state()).results,0)
+    assert.deepEqual(json(await f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result')),job)
+    await assert.rejects(f.owner.query('SELECT official_v3_guard_private.recovery_intake_v1($1::jsonb) AS result',params([JSON.stringify(job)])),stateError('P7906'))
+    await f.refused('P7906')
+  })
+  await run('R02 a real PREPARED result refuses recovery after both leases expire',12000,10000,async f=>{
+    assert.equal((await f.finish()).status,'recorded'); assert.equal((await f.prepare()).status,'prepared')
+    await f.waitUntil(f.leased.lease!.expiresAt); await f.waitUntil(f.reservation.expiresAt)
+    const state = await f.state(); assert.equal(state.results,1); assert.equal(state.dispositions,0)
+    await assert.rejects(f.owner.query('SELECT official_v3_guard_private.recovery_jobs_v1() AS result'),stateError('P7906'))
+    await f.refused('P7906')
+  })
+  await run('R02 a regular M04 complete winning the common lock refuses recovery',30000,20000,async f=>{
+    assert.equal((await f.finish()).status,'recorded'); assert.equal((await f.prepare()).status,'prepared')
+    const ended=await envelope({action:'complete',input:{operationId:f.operation(),jobKey:f.claim.jobKey,
+      fence:{jobId:f.leased.jobId,revision:f.leased.revision,leaseId:f.leased.lease!.leaseId,generation:f.leased.lease!.generation},decisionRef:f.prepared.decision.reference}},f.leased)
+    const request:M04Operation={...ended,body:{...ended.body,disposition:{kind:'completed',attemptKey:f.start.attemptKey}}}
+    const actor=await f.base.humanAs(1)
+    let refused: Promise<unknown> | undefined
+    try {
+      await f.runtimeJobs.query('BEGIN'); assert.equal((await f.jobs(request,f.runtimeJobs)).status,'committed')
+      refused=f.human('official_v3_guard_retire_v1',[f.operation(),'0'.repeat(64)],actor); void Promise.allSettled([refused])
+      await f.blocked(actor.identity.pid,f.jobsIdentity.pid!)
+      await f.runtimeJobs.query('COMMIT')
+      await assert.rejects(refused,stateError('P0002'))
+      const after=await f.state(); assert.equal(after.retired,0); assert.equal(after.receipts,0)
+      assert.equal(after.open,false); assert.equal(after.results,1); assert.equal(after.dispositions,1)
+      await f.refused('P0002')
+    } finally { await f.runtimeJobs.query('ROLLBACK'); if(refused) await lifetime.drain([refused]); actor.connection.close() }
+  })
+  await run('R03 an actual terminal failure and a different normal claim/attempt refuse recovery',30000,5000,async f=>{
+    // The local producer above has actually returned and owns no child work.
+    // This known terminal fixture is distinct from the ambiguous Dev attempt.
+    const fresh = await envelope({action:'fail',input:{operationId:f.operation(),jobKey:f.claim.jobKey,
+      fence:{jobId:f.leased.jobId,revision:f.leased.revision,leaseId:f.leased.lease!.leaseId,generation:f.leased.lease!.generation},reason:'verification_unavailable'}},f.leased)
+    const failed:M04Operation = {...fresh,body:{...fresh.body,disposition:{kind:'settled_failure',attemptKey:f.start.attemptKey,token:f.start.token}}}
+    assert.equal((await f.jobs(failed,f.runtimeJobs)).status,'committed'); await f.refused('P0002')
+    const prior=failed.body.commit.next; assert.ok(prior.nextAttemptAt)
+    await f.waitUntil(prior.nextAttemptAt)
+    const claim={...f.claim,operationId:f.operation(),leaseId:fixtureId('lease3','actual-second'),leaseMilliseconds:1500}
+    const next=await envelope({action:'claim',input:claim},prior)
+    assert.equal((await f.jobs(next,f.runtimeJobs)).status,'committed'); assert.equal(next.body.commit.next.attempt,2)
+    const second=await f.jobs({operation:'execution_start',body:{claim,leasedJob:next.body.commit.next,subjectText:next.body.subjectText}},f.runtimeJobs)
+    assert.ok(second.status==='reserved'); assert.notEqual(second.attemptKey,f.start.attemptKey)
+    assert.ok(next.body.commit.next.lease); await f.waitUntil(next.body.commit.next.lease.expiresAt)
+    await f.refused('P7906'); assert.equal((await f.state()).open,true)
+  })
+  for(const kind of ['s1','m04'] as const) for(const first of ['old','owner'] as const) {
+    await run(`R04 ${kind} ${first}-first real lock race leaves only the confirmed retirement`,6000,6000,async f=>{
+      if(kind==='s1'&&first==='old') {
+        const before=await f.state(), certificates=(await f.observer.query('SELECT md5(jsonb_agg(to_jsonb(c) ORDER BY component)::text) AS digest FROM official_v3_guard_private.certificates_v1 c'))[0]!.digest
+        await f.owner.query("BEGIN; SET LOCAL session_replication_role='replica'")
+        await f.owner.query("UPDATE official_v3_intake_private.operations_v1 SET original_bytes=original_bytes||decode('20','hex'),proposal_digest=encode(sha256(original_bytes||decode('20','hex')),'hex')")
+        await f.owner.query('COMMIT')
+        try { await f.refused('P7905') }
+        finally {
+          await f.owner.query("BEGIN; SET LOCAL session_replication_role='replica'")
+          await f.owner.query('UPDATE official_v3_intake_private.operations_v1 SET original_bytes=convert_to($1::text,\'UTF8\'),proposal_digest=$2::text',params([f.item.text,f.upload.digest]))
+          await f.owner.query('COMMIT')
+        }
+        assert.deepEqual(await f.state(),before)
+        assert.equal((await f.observer.query('SELECT md5(jsonb_agg(to_jsonb(c) ORDER BY component)::text) AS digest FROM official_v3_guard_private.certificates_v1 c'))[0]!.digest,certificates)
+        await f.creator.query('SELECT official_v3_guard_private.check_certificates_v1()')
+      }
+      await f.retireRace(kind,first)
+    })
+  }
+}
+
 export async function runBg1Native(t: TestContext) {
   const deadline = new AbortController(), timer = setTimeout(() => deadline.abort(), 675000)
   const lifetime = new OwnedTestLifetime(AbortSignal.any([t.signal, deadline.signal]))
@@ -136,9 +424,9 @@ export async function runBg1Native(t: TestContext) {
       for (const table of immutableTables) values[table] = (await owner.query(`SELECT md5(COALESCE(jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text)::text,'[]')) AS digest FROM ${table} x`))[0]!.digest!
       return values
     }
-    async function proof(name: string, body: () => Promise<void>) {
+    async function proof(name: string, body: (subtest: TestContext) => Promise<void>) {
       let actual: Promise<void> | undefined
-      await t.test(name, async () => { actual = lifetime.run(body); await actual })
+      await t.test(name, async subtest => { actual = lifetime.run(() => body(subtest)); await actual })
       assert.ok(actual); const [settled] = await lifetime.drain([actual])
       if (settled.status === 'rejected') throw settled.reason
       completed.push(name); t.diagnostic('BG1 ' + name + ' complete')
@@ -188,20 +476,20 @@ export async function runBg1Native(t: TestContext) {
     const before = await retained()
     const sql = readFileSync(new URL('./upgrade-candidate.sql', import.meta.url), 'utf8')
     await creator.query("SET jetnity.bg1_target='dev:yfvbxvijcorffwxbxahl:BG1'")
-    async function refusedUpgrade() {
-      await assert.rejects(creator.query(sql)); await creator.query('ROLLBACK')
+    async function refusedUpgrade(expectedCode: string) {
+      await assert.rejects(creator.query(sql), stateError(expectedCode)); await creator.query('ROLLBACK')
       const fresh = await LocalPgConnection.connect(cluster)
       try { assert.equal((await fresh.query("SELECT to_regnamespace('official_v3_guard_private') IS NULL AS absent"))[0]!.absent, 't') }
       finally { fresh.close() }
     }
     await proof('B01 used predecessor rollback and exact original journals', async () => {
       await owner.query('ALTER TABLE public.profiles DISABLE TRIGGER profiles_autoritaet_integritaet_v1')
-      await refusedUpgrade()
+      await refusedUpgrade('P7905')
       await owner.query('ALTER TABLE public.profiles ENABLE TRIGGER profiles_autoritaet_integritaet_v1')
       // This old mutable-head edit passes the historical single-transition
       // validator; the new full replay must abort the whole unchanged upgrade.
       await owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET current_job=$2::jsonb WHERE job_key=$1', params([otherClaim.jobKey, hrs1Canonical(second.body.commit.next)]))
-      await refusedUpgrade()
+      await refusedUpgrade('P7905')
       await owner.query('UPDATE official_v3_jobs_private.subjects_v1 SET current_job=$2::jsonb WHERE job_key=$1', params([otherClaim.jobKey, hrs1Canonical(otherEnd.body.commit.next)]))
       assert.deepEqual(await retained(), before)
       await creator.query(sql)
@@ -309,9 +597,10 @@ export async function runBg1Native(t: TestContext) {
       const changed = readDevGuardReview(await human('official_v3_guard_review_v1')); assert.ok(changed)
       assert.equal(changed.incident.methodEpoch, 3); assert.equal(changed.incident.canResume, false)
     })
-    await proof('B04 genuine next due proof stays sticky until exact Owner resume', async () => {
+    await proof('B04 genuine next due proof stays sticky until exact Owner resume', async subtest => {
       const due = (await creator.query("SELECT extract(epoch FROM date_bin(interval '5 minutes',clock_timestamp(),'2000-01-01'::timestamptz)+interval '5 minutes')::text AS seconds"))[0]!.seconds!
       const waitUntil = Number(due) * 1000 + 20
+      await recoveryCases(subtest,lifetime,()=>{clusterCount++})
       while (Date.now() < waitUntil) await lifetime.wait(Math.min(1000, waitUntil - Date.now()))
       await creator.query('SELECT official_v3_guard_private.audit_v1()')
       const state = json<{ generation: number; incident_generation: number; resumed_generation: number }>(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))

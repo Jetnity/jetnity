@@ -232,9 +232,9 @@
     },
     {
       "path": "lib/admin/account-counts-delivery/schema-reference.test.ts",
-      "blob": "61d6ff9031e87645313b99a57f418183f0161d77",
-      "bytes": 10305,
-      "sha256": "bd1677b403f27c582273f1a6640bd5076d67eb290ec3665b036647945ad35da3"
+      "blob": "ae1796d7dc4454d45f7bd77909a30ea0ef04a9c5",
+      "bytes": 10677,
+      "sha256": "fc754c60813d5ef2cb57227cf16a9cc8756b20f56ca8b5f4f1378a425cab6460"
     },
     {
       "path": "lib/readiness/anfrage.ts",
@@ -245,14 +245,14 @@
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
       "bytes": 4679,
-      "blob": "d56132e1be36bbdbd27381f447e4f195eeeaf445",
-      "sha256": "bda41e4314bec60f25b9f30e7da5a52f824f4459bc6b1ac731e684a27c9fa565"
+      "blob": "129c23d85e50d2217f3395ddcf5c8ba8d8e371a0",
+      "sha256": "07eb53a375a4666446d8a96af326cd8f9c457fead142c1c27ac5f62b8188ceb6"
     },
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
-      "blob": "47dab7867288186b47f05ac1e65a1862cc75981a",
+      "blob": "1356803c5470acd37d9708e157c142c663cd0e07",
       "bytes": 63059,
-      "sha256": "0a8c1af5fad7ffeb9db62c2183770a552e318259a5336c3cf4b3e7d0b53c77ef"
+      "sha256": "317f6af6d7c8a5fd3b1483ce51e01693ef643238e41649e160f5431ddc5c8e8e"
     },
     {
       "path": "lib/readiness/official-truth-autonomous-producer-custody-foundation.test.ts",
@@ -268,21 +268,21 @@
     },
     {
       "path": "lib/readiness/official-truth-content-identity.test.ts",
-      "blob": "988376452ae8af0b4eefcd846652a2ccdcd80220",
-      "bytes": 59026,
-      "sha256": "3848ec1b38bdb007a44acdd710ef4c1aa7d259f9519b0746324905c2e5bcac05"
+      "blob": "a57568f40348772aeb0dd81e2b6bad6a1d26e72f",
+      "bytes": 59841,
+      "sha256": "134d586abeb80ed21bdfeda5d19f46a184f0a23852247e72c887209a74cd3130"
     },
     {
       "path": "lib/readiness/official-truth-govuk-content-api-identity-profile.test.ts",
-      "blob": "ffeda490e1e88ab7d10106d2ebb91099d6ccb0ce",
+      "blob": "92236ebd40e27ce6429eeec45f7885aca32e6bf0",
       "bytes": 37016,
-      "sha256": "7cf54182e2e971f77225b8733ab20914280c23d3394385c4ebb04ae04ceb0e51"
+      "sha256": "f187312049e32f8dd8fc1fcd06822165ec9f5735065a4a15578533f45f94bb99"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/global-conditions/pilot-context.test.ts",
-      "blob": "a8eddc5be36786fa3e88d394566d9b85f7ba4412",
-      "bytes": 13973,
-      "sha256": "0ed1a645306404a738482979c1b08e6cd6f939665791d9983500e08f6ae590d6"
+      "blob": "a403821ad16226cbea8d8ab7fc42b1dc96a7f65b",
+      "bytes": 14359,
+      "sha256": "e14b55f98f25ea1e6c24778452a4ffcd5b6315fdc87057c9cfac0f50da7c11e4"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
@@ -430,9 +430,9 @@
     },
     {
       "path": "lib/readiness/official-truth-trusted-fact-extractor-registry.test.ts",
-      "blob": "1f52bd0e8981b2e8fc95f72a26882562dfc10aae",
+      "blob": "6a97ba4208a9013e0bfa6f2bcf5fec8cc71c5111",
       "bytes": 60064,
-      "sha256": "28a256a68e58bfcf95dca94d27eaf9e0e8126a3dbf9f6d9107d1e009b4cbc8ce"
+      "sha256": "f99931317f20440228aaaf4f09006e446dbcf66e669cdc515684e667f16d3c14"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
@@ -442,9 +442,9 @@
     },
     {
       "path": "lib/readiness/regulierungs-anwendbarkeit.test.ts",
-      "blob": "9fd819dcd72e1c4cbf452f127e4b9f3be49302b4",
+      "blob": "3150509801b32188a808c7caca8cfae75377e2ba",
       "bytes": 90727,
-      "sha256": "1df86e99aca7d976ec2461662a5328f12972862a30f01eea2cbf1d6bd9c25c96"
+      "sha256": "1b00fa04cc95e1534b6912787bd4129cf787934c795b70c4c732b123e16184ea"
     },
     {
       "path": "lib/seo/oeffentlicher-origin.ts",
@@ -538,9 +538,9 @@
     },
     {
       "path": "scripts/db/verwendung.mjs",
-      "blob": "a1c6e16d9e8d288076178a871c021be4a40b9c3c",
-      "bytes": 10765,
-      "sha256": "e0b637f798c76f2fe9802a6b2bfb6a6b804fa652a622d850724b936d0a7d7040"
+      "blob": "cbb76b460540033825396ec72b0ee4246a304be3",
+      "bytes": 11114,
+      "sha256": "a1ab54d8dd2809c1e7157fd023297a1249347f47b26e32257c385003bad65a69"
     },
     {
       "path": "scripts/next-16-4-1-security-patch-p1/audit.mjs",
