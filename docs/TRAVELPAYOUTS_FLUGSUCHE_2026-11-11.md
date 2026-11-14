@@ -95,3 +95,15 @@ Gesamt-CI 43024295820 auf `87cf42e` scheiterte an zwei Ursachen: neue CSS-Import
 Die neuen Kalender-/Auswahl- und Flugstile werden jetzt wie die übrigen Reisebereich-Stile im vorhandenen `app/(public)/reisen/[tripId]/layout.tsx` geladen. Keine Testausnahmen oder CSS-Mocks hinzugefügt. Alle 97 Tests der fünf zuvor betroffenen Workspace-Testdateien bestehen. Die unabhängige M04-Recovery bleibt unverändert; erforderliche Prüfungen werden weder umgangen noch abgeschwächt.
 
 Nach der Korrektur bestehen Production-Build, Typecheck, gezielter ESLint, Diff-Check und alle fünf Hygieneprüfungen. Der neu gebaute Kalender wurde in sichtbarem Chrome erneut geöffnet: Gestaltung wird über das Layout geladen, weisser Dialog mit 760 px Desktopbreite und fester Bildschirmposition. Keine Abhängigkeiten oder Testbedingungen geändert.
+
+## Veröffentlichung bestätigt — 11.11.2026
+
+Die oben protokollierten lokalen und blockierten Zwischenstände sind durch folgende Release-Nachweise überholt:
+
+- [CI 43028202412](https://github.com/Jetnity/jetnity/actions/runs/43028202412) auf `c5092d7adcbf5720eda8852a2539fc3051850621`: sämtliche Pflichtprüfungen grün. Repository verification meldet 8’728 Tests, davon 8’726 bestanden, 0 fehlgeschlagen und 2 bestehende übersprungen. Typecheck, Lint, Production-Build und Hygiene erfolgreich. Der bestehende M04-Test bestand ebenfalls; seine zuvor beobachtete Laufzeitüberschreitung ist damit nicht als grundsätzlich behoben dargestellt.
+- [PR #1187](https://github.com/Jetnity/jetnity/pull/1187) nach CLEAN-Status und mit erwartetem Head zusammengeführt. Merge-Commit `883c2a023b323a4b8072230285483a70eb2f5ed1`. Keine Pflichtprüfung umgangen, kein M04-Code und keine fremde Recovery übernommen.
+- Vercel Production `dpl_AjkNES4SzVChqK2B1mumrLN8pxJJ` ist READY und trägt den Alias `jetnity.com`. Der separate Widget-Ursprung bleibt `https://jetnity-flight-widget.vercel.app`.
+- Direkte Chrome-Prüfung auf `https://jetnity.com` mit eigenem, getrenntem Gast-Testentwurf: neue Flugsuche vorhanden, Kalender als gestalteter 760-px-Dialog, Reiseartmenü am Auslöser. Suche ZRH–BKK 15.11.2026 / HKT–ZRH 06.12.2026 mit 2 Erwachsenen liefert echte CHF-Angebote. Sortieroptionen vorhanden und „Am günstigsten zuerst“ ausgewählt. Gespeicherter Testentwurf bleibt bytegleich. Keine angemeldete Reise verändert und keine Buchung durchgeführt.
+- Der nach dem Merge automatisch gestartete Main-Lauf [43030598551](https://github.com/Jetnity/jetnity/actions/runs/43030598551) war bei dieser Veröffentlichungskontrolle noch aktiv; er wird nicht mit dem bereits grünen Freigabelauf gleichgesetzt.
+
+Screenshot und lesbare Browsernachweise liegen ausserhalb des Repositorys unter `work/travelpayouts-release/`. Unverändert offene Punkte: physischer Safari/iPhone-Test und nicht nachgewiesene Tarifwirkung des anbieterseitigen `citizenship: RU`. Keine Migration, keine neue Abhängigkeit und kein zusätzliches kostenpflichtiges Produkt; übliche Vercel-Nutzung bleibt bestehen.
