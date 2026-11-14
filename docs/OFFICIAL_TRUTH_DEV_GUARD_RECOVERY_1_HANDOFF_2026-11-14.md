@@ -8,6 +8,8 @@ Dieser Nachlauf setzt auf dem von Root veröffentlichten Draft `30bd36698504536c
 
 Die gemeinsame Folgekorrektur nach CI 4231 setzt auf lokal `45fd0da13d223f7ea0bb89fdf04564d3f14a70c8` auf, von Root als `3bd7c8e` mit identischem Baum veröffentlicht. Alle neun abgeschlossenen Jobs wurden vor dieser Korrektur ausgewertet. Der aktuelle Nachlauf ergänzt auch die von Root festgelegte Provider-Transaktionshülle; keine Live-Installation.
 
+Der anschließende enge Binderfix nach vollständig ausgewerteter CI 4232 setzt auf lokal `f8c7415bf3d46b8fd28c46da3cfa666b462031d0` auf, von Root als `d49fe5895ce09beba2cf05ab9f582b8c45ad303f` mit identischem Baum veröffentlicht. Die beiden Transaktionsvarianten bleiben erhalten.
+
 ## Enthalten
 
 - `scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql` enthält den deterministisch aus `build.mjs` und `parts/` zusammengesetzten additiven SQL-Kern in einer eigenen READ-COMMITTED-Transaktion. Er verlangt weiterhin die ausdrücklich vorher gesetzte exakte Dev-Zielbindung. `provider-migration-body.sql` bindet dagegen das feste Dev-Ziel mit `SET LOCAL` vor demselben bytegleichen Kern und überlässt BEGIN/COMMIT/ROLLBACK dem Provider. Der Kern prüft Ziel und Isolation, den benutzten Vorgänger, erhält alte Journale/Originale/Baselines und ergänzt getrennte Folgebaselines, Inhaltszertifikate, vollständige Historienprüfungen, feste Prüffälligkeit und dauerhafte Incident-Sperre. Das Auditbudget bleibt 30 Sekunden einschließlich Sperrwartezeit; normale Writes verlängern den Heartbeat nicht. Gefangene Prüffehler werden außerhalb ihrer Untertransaktion gespeichert; Prozess-/Datenbankausfälle bleiben durch Frischeablauf geschlossen.
@@ -74,8 +76,8 @@ Aktuelle erzeugte Artefakte unter `scripts/db/official-truth-v3-background-guard
 
 | Datei | Bytes | Git-Blob | SHA256 |
 | --- | ---: | --- | --- |
-| `upgrade-candidate.sql` | 409561 | `ec4f5df05bb5232978bf00872d17d2df390d3e28` | `9c3caf73f4fbddcddfd0a77de514a0b0001fa0e140a0680e0c17ee98c6f06cb8` |
-| `provider-migration-body.sql` | 409576 | `1247c75a63b52cbfd59fe29a46b6e9cb3d685e7c` | `1d259f44ef08d4272d644092b90e0c58667a185e12263f35259cbbe5e60dd4de` |
+| `upgrade-candidate.sql` | 410059 | `88c2af5bc80ad43a334caaada973c3872b0670bf` | `75cc69e8281a9eca183a24b2a3174d2db399bc83c75c7d6b47f6415c3807422c` |
+| `provider-migration-body.sql` | 410074 | `f308aff281348bbc5f2ee705dd716527e5327f0d` | `a933d6f174fe29eccaf36978e4356c1abb1a0ffca32fc9ab109b0a91af394040` |
 
 | Tatsächlich lokal geprüft in diesem Nachlauf | Ergebnis |
 | --- | --- |
@@ -89,6 +91,14 @@ Aktuelle erzeugte Artefakte unter `scripts/db/official-truth-v3-background-guard
 Root und der unabhängige SQL-Reviewer haben den stabilen Kern-/Wrapper-/Native-Diff ohne Befund gelesen. Der unabhängige Pin-Reviewer bestätigt sämtliche 214/83/81 Bindungen, die geordnete Gleichheit der Native-PINS mit ihren Manifestarrays, den unveränderten AA-Kontext und beide neuen SQL-Dateistände. Diese Reviews sind Quellprüfungen, kein Native- oder Provider-Ausführungsnachweis.
 
 Kein erneuter Source-Catalog-/PG16-Aufruf und kein Node-24-Audit als PASS. Kein lokaler Native-Start und kein Production-Build. Der eingefrorene Folgecommit erhält nochmals Generator-, Diff- und Operating-Mode-Prüfung mit regulären Base-/Head-Eingaben; Root erhält SHA/Tree und Ergebnisse separat. Die vollständige CI muss auch die nach dem Core-Fehler noch nicht erreichten Guards und den Build neu nachweisen. Der tatsächliche Supabase-Migrationstransport und dessen History sind weiterhin ein Root-Live-Gate; die lokale Markerprobe behauptet keinen bereits ausgeführten Provider-Aufruf.
+
+## Enger Binderfix nach CI 4232
+
+Root hat den vollständigen Lauf ausgewertet: sieben Jobs SUCCESS. Core meldet 8964 PASS, keine Fehler und zwei bekannte Skips; die übrigen Guards und Build sind grün. Der einzige echte Fehler liegt im Hosted-Job: B01 liefert bei der HM04-Headprobe `42702` statt `P7905` (114 Tests, 112 PASS, ein Fehler plus Parent-Folge). Das rote Aggregat ist ebenfalls eine Folge; ein erfolgreicher BG1-Upgrade ist damit weiterhin nicht belegt.
+
+Die statische Diagnose findet zwei kollidierende Namen in den eingebetteten Katalogen: Der PAI-Record `g` bleibt bisher im Präfix sichtbar, wo historische Abfragen ebenfalls `pg_trigger g` benutzen. Im Suffix kollidiert die manuelle `p pg_proc%ROWTYPE`-Variable mit historischen SQL-Aliassen `p`. Der Fix kapselt nur die vier PAI-lokalen Variablen `f/g/owner_oid/public_oid` in einen Unterblock und benennt die manuelle Suffix-Variable samt ihren Verweisen in `checked_function_row` um. Eingebettete PAI-/HRS-/alle 15 HM04-Katalogabfragen, Generator, Nativefälle, Wrapper, `variable_conflict` und sämtliche Prüfoperatoren bleiben unverändert. Beide erzeugten Artefakte sind oben aktuell gebunden.
+
+Der vollständige erste gezielte Guardlauf meldete 6/7 PASS; einzig die bestehende Text-Assertion zur strengen `proconfig`-Prüfung enthielt noch den alten lokalen Namen. Nach genau dieser Literalnachführung: **7/7 PASS, keine Fehler/Skips**, gezielter Lint ohne Befund. Generator `--check` und PG17.7-Parser sind grün (Standalone 313 Statements mit BEGIN/COMMIT, Provider 312 ohne Transaktionskommando). Die 214 aktuellen Manifestzeilen sowie HRS 83 / COMPOSED 81 stimmen weiter; alle vier Manifestdateien bleiben vollständig bytegleich zum Vorgänger. Kein aktueller Manifest-Pin muss geändert werden. Root hat den vollständigen erzeugten Diff mechanisch auf genau diese Scope-/Namensänderungen begrenzt. Keine neue Native-Ausführung, kein lokaler Serverstart und keine Live-Aktion; frische vollständige CI bleibt erforderlich.
 
 ## Native- und Live-Gates bleiben offen
 

@@ -34,9 +34,11 @@ END $context$;
 CREATE TEMP TABLE bg1_before(kind text PRIMARY KEY,value jsonb NOT NULL) ON COMMIT DROP;
 DO $predecessor$
 DECLARE expected record; actual record; current_value jsonb; result_value jsonb:='{}';
-  f record; g record; owner_oid oid:='postgres'::regrole; public_oid oid:='public'::regnamespace;
 BEGIN
+  DECLARE f record; g record; owner_oid oid:='postgres'::regrole; public_oid oid:='public'::regnamespace;
+  BEGIN
   /* PAI_PREDECESSOR */
+  END;
   FOR expected IN SELECT * FROM (VALUES
     /* EXPECTED_FUNCTIONS */
   ) e(signature,body_hash) LOOP

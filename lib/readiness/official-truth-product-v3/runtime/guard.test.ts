@@ -94,7 +94,7 @@ test('BG1 catalog dependency keys and exact function settings match PostgreSQL b
     assert.ok(f.config.includes('DateStyle=ISO, YMD'), f.signature)
     assert.equal(f.config.some(value => /^(?:timezone|datestyle)=/.test(value)), false, f.signature)
   }
-  assert.ok(generated.includes('to_jsonb(p.proconfig) IS DISTINCT FROM f.config'), 'actual catalog comparison remains exact')
+  assert.ok(generated.includes('to_jsonb(checked_function_row.proconfig) IS DISTINCT FROM f.config'), 'actual catalog comparison remains exact')
 })
 test('guard contract keeps exact reviewed selection, original operation and absent outcomes distinct', () => {
   assert.ok(readDevGuardRequest(operation)); assert.ok(readDevGuardReview(review))

@@ -14,7 +14,7 @@ REVOKE ot_v3_intake_owner FROM postgres GRANTED BY postgres;
 CREATE TEMP TABLE bg1_new_objects(classid oid,objid oid,PRIMARY KEY(classid,objid)) ON COMMIT DROP;
 DO $exact_delta$
 DECLARE approved jsonb:=/* APPROVED_DELTA */; before_value jsonb; after_value jsonb;
-  entry record; f record; p pg_proc%ROWTYPE; actual_acl jsonb; current_value jsonb; result_value jsonb:='{}';
+  entry record; f record; checked_function_row pg_proc%ROWTYPE; actual_acl jsonb; current_value jsonb; result_value jsonb:='{}';
   schema_oid oid:='official_v3_guard_private'::regnamespace; function_oid oid; object_class oid; object_id oid;
 BEGIN
   SELECT value INTO STRICT before_value FROM pg_temp.bg1_before WHERE kind='all';
@@ -23,21 +23,21 @@ BEGIN
   -- minimal grant set. No existing function gains privileges during replacement.
   FOR f IN SELECT * FROM jsonb_to_recordset(approved->'functions')
     AS x(signature text,name text,owner text,hash text,language text,definer boolean,volatile text,config jsonb,grantees jsonb) LOOP
-    SELECT * INTO STRICT p FROM pg_proc WHERE oid=to_regprocedure(f.signature);
+    SELECT * INTO STRICT checked_function_row FROM pg_proc WHERE oid=to_regprocedure(f.signature);
     SELECT jsonb_agg(role_name ORDER BY role_name) INTO actual_acl FROM (
       SELECT DISTINCT CASE a.grantee WHEN 0 THEN 'PUBLIC' ELSE pg_get_userbyid(a.grantee) END AS role_name
-      FROM aclexplode(COALESCE(p.proacl,acldefault('f',p.proowner))) a
-      WHERE a.privilege_type='EXECUTE' AND NOT a.is_grantable AND a.grantor=p.proowner
+      FROM aclexplode(COALESCE(checked_function_row.proacl,acldefault('f',checked_function_row.proowner))) a
+      WHERE a.privilege_type='EXECUTE' AND NOT a.is_grantable AND a.grantor=checked_function_row.proowner
     ) acl;
-    IF p.proowner<>to_regrole(f.owner) OR encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')<>f.hash
-      OR p.prokind<>'f' OR p.proleakproof OR p.proisstrict OR p.pronargdefaults<>0 OR p.proparallel<>'u'
-      OR p.prosecdef<>f.definer OR p.provolatile::text<>f.volatile
-      OR (SELECT lanname FROM pg_language WHERE oid=p.prolang)<>f.language
-      OR to_jsonb(p.proconfig) IS DISTINCT FROM f.config OR actual_acl IS DISTINCT FROM f.grantees
-      OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(p.proacl,acldefault('f',p.proowner))) a
-        WHERE a.privilege_type<>'EXECUTE' OR a.is_grantable OR a.grantor<>p.proowner) THEN
+    IF checked_function_row.proowner<>to_regrole(f.owner) OR encode(sha256(convert_to(checked_function_row.prosrc,'UTF8')),'hex')<>f.hash
+      OR checked_function_row.prokind<>'f' OR checked_function_row.proleakproof OR checked_function_row.proisstrict OR checked_function_row.pronargdefaults<>0 OR checked_function_row.proparallel<>'u'
+      OR checked_function_row.prosecdef<>f.definer OR checked_function_row.provolatile::text<>f.volatile
+      OR (SELECT lanname FROM pg_language WHERE oid=checked_function_row.prolang)<>f.language
+      OR to_jsonb(checked_function_row.proconfig) IS DISTINCT FROM f.config OR actual_acl IS DISTINCT FROM f.grantees
+      OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(checked_function_row.proacl,acldefault('f',checked_function_row.proowner))) a
+        WHERE a.privilege_type<>'EXECUTE' OR a.is_grantable OR a.grantor<>checked_function_row.proowner) THEN
       RAISE EXCEPTION 'bg1 new function contract' USING ERRCODE='P7901'; END IF;
-    INSERT INTO pg_temp.bg1_new_objects VALUES('pg_proc'::regclass,p.oid);
+    INSERT INTO pg_temp.bg1_new_objects VALUES('pg_proc'::regclass,checked_function_row.oid);
   END LOOP;
   IF EXISTS(SELECT 1 FROM pg_proc p2 WHERE p2.pronamespace=schema_oid
     AND NOT EXISTS(SELECT 1 FROM pg_temp.bg1_new_objects o WHERE o.classid='pg_proc'::regclass AND o.objid=p2.oid)) THEN
@@ -68,10 +68,10 @@ BEGIN
     UNION SELECT 'pg_attrdef'::regclass,d.oid FROM pg_attrdef d WHERE d.adrelid IN (SELECT objid FROM pg_temp.bg1_new_objects WHERE classid='pg_class'::regclass);
 
   FOR f IN SELECT * FROM jsonb_to_recordset(approved->'replacements') AS x(signature text,hash text) LOOP
-    SELECT * INTO STRICT p FROM pg_proc WHERE oid=to_regprocedure(f.signature);
-    IF encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')<>f.hash
-      OR NOT before_value ? ('function:'||p.oid)
-      OR (after_value->('function:'||p.oid))-'definition' IS DISTINCT FROM (before_value->('function:'||p.oid))-'definition' THEN
+    SELECT * INTO STRICT checked_function_row FROM pg_proc WHERE oid=to_regprocedure(f.signature);
+    IF encode(sha256(convert_to(checked_function_row.prosrc,'UTF8')),'hex')<>f.hash
+      OR NOT before_value ? ('function:'||checked_function_row.oid)
+      OR (after_value->('function:'||checked_function_row.oid))-'definition' IS DISTINCT FROM (before_value->('function:'||checked_function_row.oid))-'definition' THEN
       RAISE EXCEPTION 'bg1 replacement exceeds approved body' USING ERRCODE='P7901'; END IF;
   END LOOP;
   -- Every predecessor key remains byte-identical except the explicitly hashed
