@@ -1,28 +1,39 @@
-# Hauptplan 81: interruption checkpoint — do not merge this wrapper
+# Hauptplan 81 → 82: checkpoint only — never merge this wrapper
 
-Saved at the PO's explicit request on 2026-11-14. Work was paused, not released.
+Updated on 2026-11-14 after the authorized continuation. The code-level Native timing fix and local gates are complete; new Native/CI evidence and installation remain open. No normal PR head has moved.
 
-## Restore the exact unfinished source
+## Restore the reviewed source
 
 - Repository: Jetnity/jetnity
-- Exact restorable source commit: `dff88df98c5bce5f082c23d3509e9c009c3a47cd`
-- Exact source tree: `8f9c89003d5b0ead54950baf925610a392b1cf25`
-- Its remote parent (unchanged PR #1197 head when captured): `9677f9e526f729402cdaeb2a1b087ec376437db1`
-- Equivalent local commit: `771ba1c5da5b49b29f716b5c6b18d7c449dbc532`
-- Local parent: `dc9aeefeab309d5687803ac67ac82a4d42a87d94`
-- Twelve files are preserved, including the existing recovery handoff.
-- Read `docs/OFFICIAL_TRUTH_DEV_GUARD_RECOVERY_1_HANDOFF_2026-11-14.md` at the **source commit**.
+- Exact source commit: `0ecc0da5c415a3b6dfe2a0d2155abe80b0f1d421`
+- Exact source tree: `5a18b6d49e2861c25f558a543876e4e6e0d2f314`
+- Source parent: `dff88df98c5bce5f082c23d3509e9c009c3a47cd`
+- Equivalent local source commit: `88494f6aa51f67bcd5aee6241b74800ac9487100`
+- The local and remote source trees and both changed file blobs are identical.
+- Worktree: `/workspace/scratch/32057f651ad7/jetnity-hauptplan82`
+- Local branch: `work/hauptplan82-native-fix-20261114`
+- Read `docs/OFFICIAL_TRUTH_DEV_GUARD_RECOVERY_1_HANDOFF_2026-11-14.md` at the source commit.
+- Relative to the original WIP, only the Native harness and its existing handoff changed.
 
-This checkpoint branch adds this note and a branch-specific Vercel auto-deployment exclusion in a separate wrapper commit. CI only runs on main pushes or PRs; no checkpoint PR is opened. Do not cherry-pick or merge the wrapper. Restore only the source commit above, then resolve its known finding before normal CI publication.
+This existing checkpoint branch retains its exact branch-specific Vercel deployment exclusion. Its wrapper keeps the reviewed source reachable in Git, without adding the wrapper to the source history. Never cherry-pick or merge a wrapper into #1197. Use the exact source commit above. No checkpoint PR is opened. The regular workflow runs only on main pushes or pull requests.
 
-## Still open
+## Completed preparation
 
-1. The new native Same-Slot pre-wait can require 64 + 300 + 330 = 694 seconds plus earlier setup, beyond the unchanged 675-second lifetime. It is still present. No native run or complete approval for this candidate exists.
-2. The single-command idea was rejected: the second audit would use an entered timestamp earlier than last_observed; the clock check precedes idempotency. Do not implement that idea.
-3. GitHub Actions configuration `JETNITY_DEV_PUBLIC_APP_KEY` is prepared but **not saved**. The automatic approval review rejected the final Add secret action because it requires current explicit confirmation for storing the existing public Dev key in GitHub. Do not use another storage path to bypass the rejection.
-4. The additive status RPC is not installed in Dev. Existing installed BG1 and its exact five-minute cron remain active.
-5. New Owner actions, actual source retry and Production remain joint steps with the PO. Research stays RESEARCH_ONLY, unimported.
+The extra B01 pre-wait is removed. Two separate real commands preserve statement timestamps. Only one actually observed immediately next slot can restart the fully rolled-back provider attempt; all other failures remain terminal. B04 follows the genuine B02 negative run. All previous assertions, real rollback/commit proofs, SQL artifacts, privileges, cluster limits and 675/700-second budgets remain intact.
 
-## Last completed CI
+Independent Native source review and independent scope/pin review found no issue. Local 13/13 AA/pilot/selection contracts, TypeScript, scoped ESLint, both generator checks and diff checks passed. The frozen local source commit also passed the Operating-Mode guard using main `63544e820e912bd275556588c956a09b99b1cf90` as the enforcement base. All 214 current bindings, HRS83/COMPOSED81, 145 SQL files and 35 manifest files were independently verified. No new Native, build, CI, preview or installation PASS is claimed.
 
-CI 4238, run 43562679953, head 9677f9e5: all nine jobs complete; eight succeeded, Auth/Dev-Guardstatus failed access_denied. No new CI was started for this checkpoint.
+## Required next steps and authority
+
+1. Obtain the specific outstanding PO confirmation for storing the existing public Dev publishable key as `JETNITY_DEV_PUBLIC_APP_KEY` in GitHub Actions repository secrets for Jetnity/jetnity. Automatic approval review previously rejected the final Add secret action; no entry has been saved and no alternate storage route may bypass that decision.
+2. Complete that confirmed configuration, then publish the reviewed source through the regular #1197 integration path. Read all nine completed jobs; aggregate SUCCESS alone is insufficient.
+3. After the relevant Native/code gates pass, install only the additive status migration, prove a genuinely new complete audit, and complete the real Data API/CI status gate. Existing installed BG1 and cron must not be reset or reinstalled.
+4. Continue the existing source/Owner recovery with the PO. New Owner/AAL2 actions and Production remain joint steps. Research stays RESEARCH_ONLY.
+
+## Last live readbacks
+
+PR #1196 remains `8cf2b71863c34ee48e7d1a4bac6d3e3a0a001587`; #1197 remains `9677f9e526f729402cdaeb2a1b087ec376437db1`; #1198 remains `bae95fb27062d5e041ad38755bd05fe7f00fe312`. All are open Drafts. Last complete #1197 CI is still 4238 /43562679953: eight successes, Auth Dev guard status failure `access_denied`.
+
+Dev at 12:05:50 UTC: current, generation80, no incidents/Owner operations/retirements; the last five cron runs succeeded and each matched a complete audit. One exact active five-minute job. At 12:08:47 UTC, the existing migration remained one statement,411108 bytes,SHA256 `a3a0be9c4eb1e2c61be428d0b825ee8a3b6780f3f8d154c0ccc2b1317181f950`. Source counts remain 2 originals,1 qualification,0 versions,0 projections,0 S1 completions,1 execution start,0 execution results/dispositions. The qualification remains valid until 2026-11-14T23:26:45.034Z. New status RPC/baseline remain absent.
+
+No Supabase, Owner, key, source-import, Production, Ready or merge action was performed during this preparation. Code is preserved; the specific CI key confirmation is the next required PO input.

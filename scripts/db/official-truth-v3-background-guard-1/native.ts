@@ -775,35 +775,56 @@ export async function runBg1Native(t: TestContext) {
       try { await assert.rejects(creator.query(statusBody), stateError('P7901')) }
       finally { await creator.query('ROLLBACK') }
       await rolledBack()
-      // Keep both real audit calls in one genuine five-minute slot. Only a
-      // short end-of-slot remainder can require waiting; no new deadline or
-      // test clock is introduced, and the existing Lifetime owns the wait.
-      async function slotRemaining() {
-        return Number((await creator.query("SELECT extract(epoch FROM date_bin(interval '5 minutes',clock_timestamp(),'2000-01-01'::timestamptz)+interval '5 minutes'-clock_timestamp())*1000 AS milliseconds"))[0]!.milliseconds)
+      // Separate client commands give both audits their own real statement
+      // time. No pre-wait may add another slot to B04/B07's existing waits.
+      // Only one observed next-slot crossing may restart the whole rolled-back
+      // provider attempt; SQL, assertion and cleanup failures remain terminal.
+      let sameSlotRollbackProved = false
+      for (let attempt = 0; attempt < 2; attempt++) {
+        await statusProviderBegin()
+        try {
+          // Actual old full audit, never fabricated proof rows. Its fresh
+          // success cannot attest the newly bound object graph.
+          assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status, 'current')
+          const oldProof = json<Record<string, unknown>>(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
+          const oldDue = oldProof.last_due; assert.ok(typeof oldDue === 'string')
+          await creator.query(statusBody)
+          assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof)
+          assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'current')
+          assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
+          // CASE and the audit share this command's statement_timestamp. A
+          // separate prior clock read would have a slot-boundary race.
+          const observed = json<{ due_at: string; same_slot: boolean; next_slot: boolean; audit: { status: string } | null }>(await creator.query(`
+            WITH observed AS (SELECT date_bin(interval '5 minutes',statement_timestamp(),timestamptz '2000-01-01 00:00:00+00') AS due_at)
+            SELECT jsonb_build_object('due_at',due_at,'same_slot',due_at=$1::timestamptz,
+              'next_slot',due_at=$1::timestamptz+interval '5 minutes',
+              'audit',CASE WHEN due_at=$1::timestamptz THEN official_v3_guard_private.audit_v1() ELSE NULL END) AS result
+            FROM observed`, params([oldDue])))
+          if (observed.same_slot) {
+            assert.equal(observed.due_at, oldDue)
+            assert.equal(observed.next_slot, false)
+            assert.equal(observed.audit?.status, 'current')
+            assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof,
+              'same-slot retry is not a post-successor proof')
+            assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
+            await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([statusHash]))
+            assert.deepEqual(await statusObjects(), absentObjects)
+            assert.deepEqual(await installationState(base.observer.connection), previousInstallation)
+            await assert.rejects(creator.query('SELECT 1/0'), stateError('22012'))
+            sameSlotRollbackProved = true
+          } else {
+            assert.equal(observed.audit, null, 'a different slot must not execute the second audit')
+            assert.equal(observed.next_slot, true, 'backward clocks and multiple missed slots are not retryable')
+            assert.equal(Date.parse(observed.due_at), Date.parse(oldDue) + 300000)
+            assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof,
+              'observing the next slot cannot create or refresh proof rows')
+          }
+        } finally { await creator.query('ROLLBACK') }
+        await rolledBack()
+        if (sameSlotRollbackProved) break
+        assert.equal(attempt, 0, 'a second slot crossing is terminal; the same-slot proof cannot be skipped')
       }
-      const remaining = await slotRemaining()
-      if (remaining < 65000) await lifetime.wait(Math.max(1, remaining + 25))
-      assert.ok(await slotRemaining() > 60000, 'enough real slot time for two bounded queries and the same-slot retry')
-      await statusProviderBegin()
-      try {
-        // Actual old full audit, never fabricated proof rows. Its fresh success
-        // must be insufficient after the newly bound object graph is installed.
-        assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.audit_v1() AS result')).status, 'current')
-        const oldProof = json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s'))
-        await creator.query(statusBody)
-        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof)
-        assert.equal(json<{ status: string }>(await creator.query('SELECT official_v3_guard_private.alarm_status_v1() AS result')).status, 'current')
-        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
-        await creator.query('SELECT official_v3_guard_private.audit_v1()')
-        assert.deepEqual(json(await creator.query('SELECT to_jsonb(s) AS result FROM official_v3_guard_private.state_v1 s')), oldProof,
-          'same-slot retry is not a post-successor proof')
-        assert.deepEqual(json(await creator.query('SELECT public.official_v3_guard_alarm_status_v1() AS result')), { schema: 1, status: 'unavailable' })
-        await creator.query('INSERT INTO bg1_provider_fixture.history VALUES($1::text)', params([statusHash]))
-        assert.deepEqual(await statusObjects(), absentObjects)
-        assert.deepEqual(await installationState(base.observer.connection), previousInstallation)
-        await assert.rejects(creator.query('SELECT 1/0'), stateError('22012'))
-      } finally { await creator.query('ROLLBACK') }
-      await rolledBack()
+      assert.equal(sameSlotRollbackProved, true)
       // Commit the same exact provider body on the unchanged generation-zero
       // predecessor. The later B04 real audit supplies its first valid proof.
       await statusProviderBegin()
@@ -961,7 +982,12 @@ export async function runBg1Native(t: TestContext) {
       assert.equal(changed.incident.methodEpoch, 3); assert.equal(changed.incident.canResume, false)
     })
     await proof('B04 genuine next due proof stays sticky until exact Owner resume', async subtest => {
-      const due = (await creator.query("SELECT extract(epoch FROM date_bin(interval '5 minutes',clock_timestamp(),'2000-01-01'::timestamptz)+interval '5 minutes')::text AS seconds"))[0]!.seconds!
+      // Anchor to B02's committed negative slot. Crossing that boundary during
+      // B03 must not schedule a needless additional five-minute wait.
+      const negativeRuns = await creator.query("SELECT outcome,extract(epoch FROM due_at+interval '5 minutes')::text AS seconds FROM official_v3_guard_private.runs_v1 ORDER BY due_at")
+      assert.equal(negativeRuns.length, 1)
+      assert.equal(negativeRuns[0]!.outcome, 'expired')
+      const due = negativeRuns[0]!.seconds!
       const waitUntil = Number(due) * 1000 + 20
       await recoveryCases(subtest,lifetime,()=>{clusterCount++})
       while (Date.now() < waitUntil) await lifetime.wait(Math.min(1000, waitUntil - Date.now()))
