@@ -179,6 +179,10 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
         } catch { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
         finally { if (held) held.busy = null }
       }
+      // A fresh Queue CAS may retain its same-instance receipt for the real
+      // post-CAS read. SQL still checks history, epoch and expiry at its end.
+      // Explicit invalid receipts fail here; they never fall back to a new one.
+      if (request.operation === 'queue_read' && providedReceipt !== undefined) return execute('authorized', providedReceipt)
       if (isRead) { const probe = await execute('probe'); if (probe.status !== 'requires_authority') return probe }
       let receipt = providedReceipt
       if (!receipt) {

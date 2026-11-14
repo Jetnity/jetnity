@@ -163,15 +163,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-    "bytes": 12578,
-    "blob": "3c519e73fc440146bafe168983ae96d765b4a66f",
-    "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8"
+    "bytes": 12698,
+    "blob": "5b2fd629da204159ab9d8e8d9d460a2114288ec4",
+    "sha256": "6bbd3b67409a6481e1c2f362e3f78b5a2d52b94bf29bf107d4c466fd8b17b995"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "bytes": 34548,
-    "blob": "20b3044fd54d3b2eda7d8d7a7bc4538e52b6d43e",
-    "sha256": "1c2bd3dbc7acb4fd1562f006e393aefc3d786de9b18fe947fcaf9fec0baf60f0"
+    "bytes": 34910,
+    "blob": "ffafe72b96282ef0436ae9fa37ac623cbcc470af",
+    "sha256": "4d3e542bbf591d417f7cdd42a5978ff9cf0e5bd90a9b69c4809ae2a6db277417"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -193,9 +193,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
-    "bytes": 19888,
-    "blob": "a6b0215def84931cddd96248cf4dbf347ce5a621",
-    "sha256": "7d3930b9f24975b6a2f42fe1a486914a201650f5b8f51dc3fd17813c74de3985"
+    "bytes": 21241,
+    "blob": "980c846c88892727d42cb64b53ce88f310fa78e8",
+    "sha256": "d25ecdfc3342a83dc306ad7278ad513200f9994e9da98e754d46b2ef9b8014fd"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",

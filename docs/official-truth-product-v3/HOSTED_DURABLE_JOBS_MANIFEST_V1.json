@@ -136,9 +136,9 @@
   "reused": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
-      "blob": "2909b02861c4fef06edf8d1c4adf7109df0db97b",
-      "bytes": 27466,
-      "sha256": "4b8cc4d40cda71d07a4a99c38a103634d194d24bf288fd6a73cfe0f87014820c",
+      "blob": "f890896ce360dee4d0349db25558d4928b6ddee5",
+      "bytes": 27828,
+      "sha256": "7cd3bd56bf91e374b88c75810da954e80098cf4318c6f749e6b755db63f1c082",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -185,23 +185,23 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
-      "blob": "e2caa902072b421f8b5ed00bbad72eadf995cdce",
-      "bytes": 5985,
-      "sha256": "8ad5cd9a0ba887f5dd0ff767a9f478f7dbcf67f232b39d254fad515f00372183",
+      "blob": "cf5f9e67f043d89f12ef52d7d5c1755d0f246972",
+      "bytes": 8096,
+      "sha256": "33e7d17e4aa918e5be76975218fb284872626b865cdf2f301e61e1e1dcca84d0",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-      "blob": "3c519e73fc440146bafe168983ae96d765b4a66f",
-      "bytes": 12578,
-      "sha256": "e906165fcb33a9a4c84d6445d1f2d6ae61c829c8e8127afae307dfa94b0509a8",
+      "blob": "5b2fd629da204159ab9d8e8d9d460a2114288ec4",
+      "bytes": 12698,
+      "sha256": "6bbd3b67409a6481e1c2f362e3f78b5a2d52b94bf29bf107d4c466fd8b17b995",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "20b3044fd54d3b2eda7d8d7a7bc4538e52b6d43e",
-      "bytes": 34548,
-      "sha256": "1c2bd3dbc7acb4fd1562f006e393aefc3d786de9b18fe947fcaf9fec0baf60f0",
+      "blob": "ffafe72b96282ef0436ae9fa37ac623cbcc470af",
+      "bytes": 34910,
+      "sha256": "4d3e542bbf591d417f7cdd42a5978ff9cf0e5bd90a9b69c4809ae2a6db277417",
       "historicalRef": "07f1bba169767588df030c5c5deaf7a55591bd6a",
       "currentSourceSelection": {
         "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6851586927",
@@ -210,9 +210,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
-      "blob": "4986199904f8e2b0fb8ab83b04f7f585e651f364",
-      "bytes": 37608,
-      "sha256": "2363b7283d7ba484d8df561bfb99c125f4f256ac0edb047db8684497c7c4f661",
+      "blob": "c143f727f8b166e8dd7eb19e40f60a0835a154d7",
+      "bytes": 47963,
+      "sha256": "352bb5896bae32f7bce58ad92b741d0246869ca435ea830ca3b126767987adbc",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {

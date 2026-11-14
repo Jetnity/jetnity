@@ -56,7 +56,7 @@ function harness(options: { positiveProbe?: boolean; clock?: () => { now: string
 
 test('positive joint enqueue reaches actual strict MA1 with exactly two method fields and post-CAS authority read', async () => {
   const h = harness(), result = await h.api.enqueueRule(h.input)
-  assert.equal(result.status, 'confirmed'); assert.ok(h.counts().reads >= 4)
+  assert.equal(result.status, 'confirmed'); assert.equal(h.counts().reads, 3, 'resolve, pre-CAS reproof and fresh post-read reproof')
   assert.ok(h.requests.some(r => JSON.parse(r.operationText).operation === 'queue_read' && r.epoch === 1))
   assert.ok(h.requests.every(r => typeof r.notAfter === 'string' && r.budget.deadline > 0))
   assert.deepEqual(Object.keys(h.api).sort(), ['enqueueDiscovery', 'enqueueRule', 'workOnce'])
@@ -77,8 +77,12 @@ test('original START winner known failure completes generic post-CAS read with r
 
 test('a syntactically valid positive probe reply never escapes the phase boundary', async () => {
   const h = harness({ positiveProbe: true })
+  assert.equal((await h.api.enqueueRule(h.input)).status, 'confirmed', 'fresh final read is authorized directly')
+  const beforeReplay = h.requests.length
   assert.notEqual((await h.api.enqueueRule(h.input)).status, 'confirmed')
-  const authoritativeReads = h.requests.filter(r => JSON.parse(r.operationText).operation === 'queue_read' && r.epoch !== null)
+  const replay = h.requests.slice(beforeReplay)
+  assert.ok(replay.some(r => JSON.parse(r.operationText).operation === 'queue_read' && r.epoch === null))
+  const authoritativeReads = replay.filter(r => JSON.parse(r.operationText).operation === 'queue_read' && r.epoch !== null)
   assert.equal(authoritativeReads.length, 0)
 })
 

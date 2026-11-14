@@ -34,8 +34,9 @@ export function createM04QueueStorage(options: Readonly<{
   onRecord: (job: V3ManagedJobRecord) => void; settled: () => void;
 }>): V3QueueStoragePort {
   return Object.freeze<V3QueueStoragePort>({
-    async read(keyValue, signal) {
-      const reply = await options.fixed({ operation: 'queue_read', body: { jobKey: keyValue, continuation: options.continuation() } }, signal)
+    async read(keyValue, signal, receipt) {
+      const request = { operation: 'queue_read' as const, body: { jobKey: keyValue, continuation: options.continuation() } }
+      const reply = receipt === undefined ? await options.fixed(request, signal) : await options.fixed(request, signal, receipt)
       if (reply.status === 'absent') return { status: 'ok' as const, record: null }
       if (reply.status !== 'present' || jobKey(reply.record) !== keyValue) return { status: 'unavailable' as const }
       options.onRecord(reply.record)

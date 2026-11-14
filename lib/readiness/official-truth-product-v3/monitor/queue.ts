@@ -38,7 +38,9 @@ export type V3QueueCommitAuthority = Readonly<{
   reprove(signal: AbortSignal): Promise<boolean>;
 }>
 export interface V3QueueStoragePort {
-  read(jobKey: string, signal: AbortSignal): Promise<{ status: 'ok'; record: unknown | null } | { status: 'unavailable' }>
+  /** The optional receipt is retained only across this invocation's fresh CAS.
+   * It authorizes an actual read; it never substitutes its record or freshness. */
+  read(jobKey: string, signal: AbortSignal, receipt?: object): Promise<{ status: 'ok'; record: unknown | null } | { status: 'unavailable' }>
   confirm(operationId: string, commandKey: string, signal: AbortSignal): Promise<V3QueueConfirmation>
   compareAndSwap(commit: V3QueueCommit, authority: V3QueueCommitAuthority, signal: AbortSignal): Promise<
     { status: 'committed'; operationId: string; commandKey: string; record: unknown }
@@ -103,18 +105,26 @@ function ownsLease(record: V3ManagedJobRecord, fence: V3JobFence, now: string): 
 /** Composition seam for later reviewed server adapters; not a public endpoint. */
 function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
   const storage = options.storage
+  type FreshCommitAuthority = Readonly<{
+    operationId: string; commandKey: string; jobKey: string; signal: AbortSignal; authority: V3QueueCommitAuthority;
+  }>
   const configValid = Number.isInteger(options.invocationMilliseconds) && options.invocationMilliseconds >= 1
     && options.invocationMilliseconds <= 10_000 && Number.isInteger(options.backoffBaseMilliseconds)
     && options.backoffBaseMilliseconds >= 1 && Number.isInteger(options.backoffMaxMilliseconds)
     && options.backoffMaxMilliseconds >= options.backoffBaseMilliseconds && options.backoffMaxMilliseconds <= 86_400_000
 
-  async function authorize(record: V3ManagedJobRecord, budget: InvocationBudget): Promise<V3QueueCommitAuthority | null> {
+  async function authorize(record: V3ManagedJobRecord, budget: InvocationBudget,
+    retained?: V3QueueCommitAuthority): Promise<V3QueueCommitAuthority | null> {
     const methodPort = options.methodAuthority, methodRef = jobMethod(record), now = readNow(options.now)
     if (!methodPort || !now || record.updatedAt > now) return null
+    if (retained !== undefined) {
+      if (!same(retained.method, methodRef)) return null
+      return await retained.reprove(budget.signal) ? retained : null
+    }
     const result = await budget.call(() => methodPort.resolveCurrent(methodRef, now))
     if (!result.ok || result.value.status !== 'approved') return null
     const receipt = result.value.receipt
-    const authority: V3QueueCommitAuthority = {
+    const authority: V3QueueCommitAuthority = Object.freeze({
       method: methodRef, receipt,
       async reprove(signal) {
         const at = readNow(options.now)
@@ -122,13 +132,14 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
         const checked = await budget.call(() => methodPort.reproveAtCommit(receipt, methodRef, at))
         return checked.ok && checked.value.status === 'current' && !signal.aborted
       },
-    }
+    })
     return await authority.reprove(budget.signal) ? authority : null
   }
 
-  async function load(keyValue: string, budget: InvocationBudget) {
+  async function load(keyValue: string, budget: InvocationBudget, receipt?: object) {
     if (!storage) return { status: 'unavailable' as const }
-    const result = await budget.call((signal) => storage.read(keyValue, signal))
+    const result = await budget.call((signal) => receipt === undefined
+      ? storage.read(keyValue, signal) : storage.read(keyValue, signal, receipt))
     if (!result.ok || result.value.status !== 'ok') return { status: 'unavailable' as const }
     if (result.value.record === null) return { status: 'ok' as const, record: null }
     const record = parsedRecord(result.value.record, keyValue)
@@ -136,18 +147,23 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
   }
 
   async function confirmed(value: Extract<V3QueueConfirmation, { status: 'committed' }>, op: string,
-    command: string, keyValue: string, budget: InvocationBudget, replayed: boolean, mode: ConfirmationMode): Promise<V3QueueResult> {
+    command: string, keyValue: string, budget: InvocationBudget, replayed: boolean, mode: ConfirmationMode,
+    fresh?: FreshCommitAuthority): Promise<V3QueueResult> {
     if (value.operationId !== op || value.commandKey !== command) return { status: 'collision' }
     const result = parsedRecord(value.record, keyValue)
     if (!result) return { status: 'invalid' }
-    const current = await load(keyValue, budget)
+    if (fresh !== undefined && (replayed || fresh.operationId !== op || fresh.commandKey !== command
+      || fresh.jobKey !== keyValue || fresh.signal !== budget.signal || fresh.signal.aborted
+      || !same(fresh.authority.method, jobMethod(result)))) return { status: 'unavailable' }
+    const current = await load(keyValue, budget, fresh?.authority.receipt)
     if (current.status !== 'ok') return current
     if (current.record === null || current.record.jobId !== result.jobId) return { status: 'superseded' }
     // A Claim receipt owns its original acquisition, never a later generation
     // that happens to reuse the lease ID. Enqueue still returns current ACKs.
     if (mode === 'exact_operation' && !same(result, current.record)) return { status: 'superseded' }
     const acknowledged = mode === 'exact_operation' ? result : current.record
-    return await authorize(acknowledged, budget) ? { status: 'confirmed', record: acknowledged, replayed } : { status: 'unavailable' }
+    return await authorize(acknowledged, budget, fresh?.authority)
+      ? { status: 'confirmed', record: acknowledged, replayed } : { status: 'unavailable' }
   }
 
   async function perform(op: string, keyValue: string, command: string, signal: AbortSignal | undefined,
@@ -183,7 +199,12 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
         if (!authority) return { status: 'unavailable' }
         const written = await budget.call((s) => storage.compareAndSwap(commit, authority, s))
         if (!written.ok) return { status: 'unconfirmed' }
-        if (written.value.status === 'committed') return await confirmed(written.value, op, command, keyValue, budget, false, confirmationMode)
+        if (written.value.status === 'committed') {
+          // Only this acknowledged CAS can lend its unchanged private receipt to
+          // the actual final read. Replay and uncertain outcomes never enter here.
+          const fresh = Object.freeze({ operationId: op, commandKey: command, jobKey: keyValue, signal: budget.signal, authority })
+          return await confirmed(written.value, op, command, keyValue, budget, false, confirmationMode, fresh)
+        }
         if (written.value.status !== 'mismatch') return { status: written.value.status }
         // mismatch is authoritative non-commit, so a bounded fresh read is safe.
       }

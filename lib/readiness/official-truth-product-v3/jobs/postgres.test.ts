@@ -5,7 +5,31 @@ import { queueHarness, fixture, ids, METHOD } from '../monitor/test-support'
 import { createV3PostgresMethodAuthority } from '../method/authority-postgres'
 import { createM04QueueStorage } from './postgres'
 import { createM04LanePool, createM04InvocationScope } from './owned-scope'
-import { readM04Command, readM04NativeReply, type M04FixedOperation, type M04Continuation } from './contract'
+import { readM04Command, readM04NativeReply, type M04FixedOperation, type M04Continuation, type M04NativeReply } from './contract'
+
+test('post-CAS receipt crosses only the actual queue-read adapter and never supplies its record', async () => {
+  const h = queueHarness(), f = fixture(), seeded = await h.queue.enqueue(f.enqueue)
+  assert.equal(seeded.status, 'confirmed'); if (seeded.status !== 'confirmed') return
+  const calls: Parameters<M04FixedOperation>[] = [], receipt = Object.freeze({}), signal = new AbortController().signal
+  let reply: M04NativeReply = { status: 'present', record: seeded.record }, recorded = 0
+  const fixed: M04FixedOperation = async (...args) => { calls.push(args); return reply }
+  const storage = createM04QueueStorage({ fixed, commandFor: () => null, continuation: () => null,
+    disposition: () => null, onRecord() { recorded++ }, settled() { assert.fail('a read cannot retire continuation') } })
+  assert.deepEqual(await storage.read(f.identity.jobKey, signal, receipt), { status: 'ok', record: seeded.record })
+  assert.deepEqual(calls[0][0], { operation: 'queue_read', body: { jobKey: f.identity.jobKey, continuation: null } })
+  assert.equal(calls[0][1], signal); assert.equal(calls[0][2], receipt); assert.equal(recorded, 1)
+  reply = { status: 'unavailable' }
+  assert.deepEqual(await storage.read(f.identity.jobKey, signal, receipt), { status: 'unavailable' })
+  assert.equal(recorded, 1, 'the CAS record is not a substitute for a failed actual read')
+  assert.deepEqual(await storage.read(f.identity.jobKey, signal, null as unknown as object), { status: 'unavailable' })
+  assert.equal(calls[2].length, 3); assert.equal(calls[2][2], null, 'explicit invalid custody is not converted to omission')
+  reply = { status: 'absent' }
+  assert.deepEqual(await storage.read(f.identity.jobKey, signal), { status: 'ok', record: null })
+  assert.equal(calls[3].length, 2, 'initial and replay reads keep the original default path')
+  reply = { status: 'present', record: seeded.record }
+  assert.deepEqual(await storage.read('research-job:v3:' + 'f'.repeat(64), signal, receipt), { status: 'unavailable' })
+  assert.equal(recorded, 1, 'readback still belongs to the requested job key')
+})
 
 // Actual queue confirmation/authority/post-CAS control flow, scoped protocol
 // doubles only; native transaction/epoch proof belongs to mandatory native CI.
