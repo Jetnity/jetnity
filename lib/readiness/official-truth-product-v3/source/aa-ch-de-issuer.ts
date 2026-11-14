@@ -15,9 +15,15 @@ import { readAaChDeOwnedSources, readAaChDeOwnedSource, readBernChDeOwnedSource,
 import { qualifyAaChDeOriginal, selectedAaChDeProgramForBinding, type AaChDeQualifiedData } from './aa-ch-de-qualification'
 
 type NativePair = Readonly<{ primary: object; counter: object }>
+type HeldQualification = Readonly<{
+  native: object; raw: AaChDeOwnedOriginal; attempt: AaChDeOwnedAttempt;
+  binding: Hrs1Binding; historical: boolean; value: AaChDeQualifiedData;
+}>
+type HeldQualifications = Readonly<{ primary: HeldQualification; counter: HeldQualification | null }>
 type Held = {
   program: AaChDeQualificationProgram; binding: Hrs1Binding; native: NativePair;
   verification: Hrs1Verification; historical: boolean; finalized: Hrs1SourceIssued | null;
+  qualifications: HeldQualifications | null;
 }
 type HeldObservation = Readonly<{ program: AaChDeQualificationProgram; binding: Hrs1Binding;
   native: object; value: Hrs1ObservedSource }>
@@ -57,20 +63,39 @@ function unavailableCounter(attempt: AaChDeOwnedAttempt): boolean {
   return attempt.status === 'unavailable' && ['dns_failed','http_failed','deadline'].includes(attempt.reason ?? '')
 }
 function qualifyHeldOriginal(receipt: object, role: AaChDeSourceRole, binding: Hrs1Binding,
-  at: V3ReadClock, expected: Hrs1Original | null = null, historical = false): AaChDeQualifiedData | null {
+  at: V3ReadClock, expected: Hrs1Original | null = null, historical = false,
+  held: HeldQualification | null = null): AaChDeQualifiedData | null {
   const raw = inspectAaChDeOwnedOriginal(receipt), attempt = validAttempt(receipt, role)
   if (!raw || !attempt || attempt.status !== 'read' || attempt.reason !== null || raw.role !== role
     || raw.startedAt !== attempt.startedAt || raw.retrievedAt !== attempt.completedAt
     || raw.retrievedAt > at.now || raw.requestUrl !== attempt.requestUrl || (expected && (raw.bodyText !== expected.bodyText
       || raw.rawDigest !== expected.rawDigest || expected.qualification.role !== role))) return null
-  if (!expected) return qualifyAaChDeOriginal(raw, binding, at)
+  if (!expected) return held ? null : qualifyAaChDeOriginal(raw, binding, at)
   const evidence = hrs1OriginalEvidence(expected), checked = hrs1Clock(expected.qualification.checkedAt, binding.legalTimeZone)
   if (!checked || (!historical && evidence.retrievedAt !== raw.retrievedAt)
     || (historical && (evidence.retrievedAt > raw.startedAt || checked.now > raw.startedAt))) return null
   const input: AaChDeOwnedOriginal = historical
     ? { ...raw, retrievedAt: evidence.retrievedAt, startedAt: evidence.retrievedAt } : raw
-  const qualified = qualifyAaChDeOriginal(input, binding, checked)
+  // Only the deterministic qualification of these immutable, genuinely owned
+  // bytes is retained. The receipt/attempt and all caller clock checks above,
+  // plus validHeld's current program, expiry and legal validity, remain fresh.
+  if (held && (held.native !== receipt || held.raw !== raw || held.attempt !== attempt
+    || held.historical !== historical || !hrs1Same(held.binding, binding))) return null
+  const qualified = held ? held.value : qualifyAaChDeOriginal(input, binding, checked)
   return qualified && hrs1Same(qualified.original, expected) ? qualified : null
+}
+
+function retainQualifications(binding: Hrs1Binding, native: NativePair, pair: CheckedPair,
+  historical: boolean): HeldQualifications | null {
+  function retain(receipt: object, value: AaChDeQualifiedData): HeldQualification | null {
+    const raw = inspectAaChDeOwnedOriginal(receipt), attempt = inspectAaChDeOwnedAttempt(receipt)
+    if (!raw || !attempt || !Object.isFrozen(raw) || !Object.isFrozen(attempt)
+      || !Object.isFrozen(value)) return null
+    return Object.freeze({ native: receipt, raw, attempt, binding, historical, value })
+  }
+  const primary = retain(native.primary, pair.primary)
+  const counter = pair.counter ? retain(native.counter, pair.counter) : null
+  return primary && (!pair.counter || counter) ? Object.freeze({ primary, counter }) : null
 }
 
 function retainedConflicts(challenge: Pick<Hrs1SourceChallenge, 'history' | 'stickyDecision'>): V3SourceDecisionRecord['knownConflicts'] | null {
@@ -157,10 +182,10 @@ function requestMatches(challenge: Hrs1SourceChallenge, program: AaChDeQualifica
 }
 
 function seal(binding: Hrs1Binding, native: NativePair, program: AaChDeQualificationProgram,
-  verification: Hrs1Verification, historical = false): Hrs1SourceIssued {
+  verification: Hrs1Verification, historical = false, qualifications: HeldQualifications | null = null): Hrs1SourceIssued {
   const receipt = Object.freeze(Object.create(null) as object)
   const value = immutable(copy(verification))
-  issued.set(receipt, { program, binding: immutable(copy(binding)), native, verification: value, historical, finalized: null })
+  issued.set(receipt, { program, binding: immutable(copy(binding)), native, verification: value, historical, finalized: null, qualifications })
   return Object.freeze({ receipt, verification: value })
 }
 
@@ -171,9 +196,9 @@ function requalify(h: Held, at: V3ReadClock): CheckedPair | null {
   const attemptedAt = verification.decision.counterCheck.attempts[0]!.attemptedAt
   if (!hrs1Time(attemptedAt) || (h.historical ? attemptedAt > attempt.startedAt : attemptedAt !== attempt.completedAt)
     || attemptedAt > at.now) return null
-  const primary = qualifyHeldOriginal(h.native.primary, 'primary', h.binding, at, original, h.historical)
+  const primary = qualifyHeldOriginal(h.native.primary, 'primary', h.binding, at, original, h.historical, h.qualifications?.primary)
   const counter = attempt.status === 'read'
-    ? qualifyHeldOriginal(h.native.counter, 'counter', h.binding, at, verification.originals[1]!, h.historical) : null
+    ? qualifyHeldOriginal(h.native.counter, 'counter', h.binding, at, verification.originals[1]!, h.historical, h.qualifications?.counter) : null
   if (!primary || (attempt.status === 'read' ? !counter : !unavailableCounter(attempt))
     || (counter && counter.original.qualification.checkedAt !== attemptedAt)) return null
   return { primary, counter, attempt, attemptedAt }
@@ -201,6 +226,10 @@ function validHeld(h: Held, verification: Hrs1Verification, at: V3ReadClock, sig
     if (validity.status !== 'specified' || (validity.validFrom !== null && validity.validFrom > at.legalDate)
       || (validity.validUntil !== null && validity.validUntil < at.legalDate)) return false
   }
+  // Reopen enters with new native receipts and no retained qualification. Its
+  // first complete check must qualify those new originals before retaining it.
+  h.qualifications ??= retainQualifications(h.binding, h.native, pair, h.historical)
+  if (!h.qualifications) return false
   return true
 }
 
@@ -240,7 +269,8 @@ export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.fr
         suppressionEpoch: heldChallenge.suppressionEpoch, validUntilExclusive: freshUntil(heldChallenge.binding, originals, pair.attemptedAt) }
       const verification: Hrs1Verification = { reference: hrs1Ref('hrs1-verification', fields), ...fields }
       if (at.now >= verification.validUntilExclusive) return null
-      return seal(heldChallenge.binding, native, program, verification)
+      const qualifications = retainQualifications(heldChallenge.binding, native, pair, false)
+      return qualifications ? seal(heldChallenge.binding, native, program, verification, false, qualifications) : null
     } catch { return null }
   },
 
@@ -256,7 +286,7 @@ export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.fr
       const fields = { ...previousFields, decision: parsed.value }
       const verification = { ...fields, reference: hrs1Ref('hrs1-verification', fields) }
       if (h.finalized) return hrs1Same(h.finalized.verification, verification) ? h.finalized : null
-      const finalized = seal(h.binding, h.native, h.program, verification, h.historical)
+      const finalized = seal(h.binding, h.native, h.program, verification, h.historical, h.qualifications)
       h.finalized = finalized
       return finalized
     } catch { return null }

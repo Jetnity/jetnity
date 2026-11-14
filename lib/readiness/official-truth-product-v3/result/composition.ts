@@ -10,7 +10,7 @@ import { createChDeSnapshotQuery } from '../visitor/ch-de-snapshot'
 import { createChDeImportFrame } from './ch-de-import-frame'
 import { runV3SourceMonitorOnce, type V3MonitorOutcome } from '../monitor/monitor'
 import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
-import { createHrs1SourceConsumer, type Hrs1SourceConsumer } from './source-proof'
+import { createHrs1SourceConsumer, type Hrs1SourceConsumer, type Hrs1InitialHistoryTransfer } from './source-proof'
 import { createHrs1ResultPorts, type Hrs1ResultPorts } from './postgres'
 import { HRS1_LIMITS, hrs1Hash, hrs1Same, hrs1Time, type Hrs1Binding, type Hrs1Config, type Hrs1FixedOperation } from './contract'
 
@@ -49,17 +49,17 @@ export function composeHrs1Invocation(input: Readonly<{
     }
     return Object.freeze(copy)
   }
-  function source(fixed: Hrs1FixedOperation): Hrs1SourceConsumer {
+  function source(fixed: Hrs1FixedOperation, takeInitialHistory?: Hrs1InitialHistoryTransfer): Hrs1SourceConsumer {
     const raw = createHrs1SourceConsumer({ binding: input.binding, registry: input.config.registry,
-      fixed, clock: input.config.clock, fixtureIssuer: input.result.fixtureIssuer })
+      fixed, clock: input.config.clock, fixtureIssuer: input.result.fixtureIssuer, takeInitialHistory })
     return Object.freeze({ ...raw, evidence: ownMethods(raw.evidence), sources: ownMethods(raw.sources),
       openVerification: (...args: Parameters<typeof raw.openVerification>) => owned(() => raw.openVerification(...args)),
       reproveVerification: (...args: Parameters<typeof raw.reproveVerification>) => owned(() => raw.reproveVerification(...args)),
     })
   }
-  function ports(fixed: Hrs1FixedOperation): Hrs1ResultPorts {
+  function ports(fixed: Hrs1FixedOperation, takeInitialHistory?: Hrs1InitialHistoryTransfer): Hrs1ResultPorts {
     const raw = createHrs1ResultPorts({ binding: input.binding, registry: input.config.registry,
-      fixed, clock: input.config.clock, source: source(fixed), ids: input.result.ids })
+      fixed, clock: input.config.clock, source: source(fixed, takeInitialHistory), ids: input.result.ids })
     return Object.freeze({ ...raw, history: ownMethods(raw.history), evidence: ownMethods(raw.evidence),
       versionStore: Object.freeze({ ...ownMethods(raw.versionStore),
         atomicBoundary: raw.versionStore.atomicBoundary ? ownMethods(raw.versionStore.atomicBoundary) : null }),
@@ -82,9 +82,9 @@ export function composeHrs1Invocation(input: Readonly<{
         const frame = createChDeImportFrame({ binding: input.binding, job, signal,
           authority: input.processingAuthority, fixed: input.processingResultFixed })
         if (!frame) return null
-        const local = ports(frame.fixed)
+        const local = ports(frame.fixed, frame.takeInitialHistory)
         return Object.freeze({ methodAuthority: frame.authority, evidence: local.evidence,
-          history: local.history, close: frame.close })
+          history: local.history, close: frame.close, admitImportSignal: frame.admitImportSignal })
       },
       callDeadline: Math.min(input.scope.deadline, input.callDeadline) } })
   const ruleQueue = ownMethods(jobs.ruleQueue), discoveryQueue = ownMethods(jobs.discoveryQueue)

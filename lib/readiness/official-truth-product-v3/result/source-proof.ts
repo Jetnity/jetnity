@@ -21,6 +21,14 @@ export type Hrs1SourceChallenge = Readonly<{
   binding: Hrs1Binding; request: V3ImportVerificationRequest; history: V3ImportHistory;
   stickyDecision: V3SourceDecisionRecord | null; suppressionEpoch: number;
 }>
+/** Internal selected-import handoff of the complete, already acknowledged first
+ * history snapshot. This is data in the same invocation, never a SQL reply or a
+ * new source receipt. A failed selected handoff must not fall back to a read. */
+export type Hrs1InitialHistory = Readonly<{
+  history: V3ImportHistory; head: unknown; stickyDecision: V3SourceDecisionRecord | null;
+  suppressionEpoch: number; generation: number; suppression: unknown;
+}>
+export type Hrs1InitialHistoryTransfer = (request: V3ImportVerificationRequest, signal: AbortSignal) => Hrs1InitialHistory | null
 export type Hrs1SourceIssued = Readonly<{ receipt: object; verification: Hrs1Verification }>
 export type Hrs1ObservedSource = Readonly<{
   reference: string; target: V3MonitorTarget; method: ReturnType<typeof hrs1Method>;
@@ -170,8 +178,9 @@ function readVerification(raw: unknown, binding: Hrs1Binding, registry: QuellenR
 export function createHrs1SourceConsumer(input: Readonly<{
   binding: Hrs1Binding; registry: QuellenRegistry; fixed: Hrs1FixedOperation; clock: () => V3ReadClock;
   fixtureIssuer?: Hrs1SourceCustodyIssuer | null;
+  takeInitialHistory?: Hrs1InitialHistoryTransfer;
 }>): Hrs1SourceConsumer {
-  const { binding, registry, fixed, clock } = input
+  const { binding, registry, fixed, clock, takeInitialHistory } = input
   const issuer = binding.dataMode === 'official_projection' ? selectedProductionIssuer(binding)
     : binding.sources.every(s => new URL(s.canonicalUrl).hostname.endsWith('.example')) ? input.fixtureIssuer ?? null : null
   const held = new WeakMap<object, { issuerReceipt: object; verification: Hrs1Verification; finalized: boolean }>()
@@ -201,8 +210,13 @@ export function createHrs1SourceConsumer(input: Readonly<{
     async inspect(request, signal) {
       if (!issuer || signal.aborted || !hrs1Same(request.context, binding.context) || request.contextKey !== binding.contextKey
         || request.factKind !== binding.factKind || !hrs1Same(request.method, hrs1Method(binding))) return { status: 'unavailable' }
-      const history = await fixed(command('history', { contextKey: binding.contextKey, factKind: binding.factKind }), signal)
-      const snapshot = history.status === 'snapshot' && ownRecord(history.value, ['history','head','stickyDecision','suppressionEpoch','generation','suppression'])
+      let snapshot: ReturnType<typeof ownRecord> | null
+      if (takeInitialHistory) {
+        snapshot = ownRecord(takeInitialHistory(request, signal), ['history','head','stickyDecision','suppressionEpoch','generation','suppression'])
+      } else {
+        const history = await fixed(command('history', { contextKey: binding.contextKey, factKind: binding.factKind }), signal)
+        snapshot = history.status === 'snapshot' ? ownRecord(history.value, ['history','head','stickyDecision','suppressionEpoch','generation','suppression']) : null
+      }
       if (!snapshot || !hrs1Same((snapshot.history as V3ImportHistory).decision, request.previousDecision) || signal.aborted) return { status: 'unavailable' }
       const challenge: Hrs1SourceChallenge = immutable({ binding, request, history: snapshot.history as V3ImportHistory,
         stickyDecision: snapshot.stickyDecision as V3SourceDecisionRecord | null, suppressionEpoch: snapshot.suppressionEpoch as number })

@@ -42,6 +42,7 @@ type M04InvocationOptions = Readonly<{ config: M04Config; scope: Scope;
 type M04ResultParts = Readonly<{ outer: Hrs1ResultPorts; processing: Hrs1ResultPorts; projectionMaxAgeMilliseconds: number; callDeadline: number;
   openProcessingImport?(job: V3ManagedJobRecord, signal: AbortSignal): Readonly<{
     methodAuthority: M04Authority; evidence: V3ImportEvidencePort<object>; history: V3ImportHistoryPort<object>; close(): void;
+    admitImportSignal(signal: AbortSignal, initialRead: boolean): boolean;
   }> | null;
 }>
 
@@ -87,25 +88,29 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
   }
   const store = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('outer'), leaseMilliseconds: 5000 })
   const processingStore = createV3ProposalIntakeStore({ registry: config.registry, executor: executor('processing'), leaseMilliseconds: 5000 })
-  function evidence(group: Group, selected?: V3ImportEvidencePort<object>): V3ImportEvidencePort<object> {
+  function evidence(group: Group, selected?: V3ImportEvidencePort<object>, admit?: (signal: AbortSignal, initialRead: boolean) => boolean): V3ImportEvidencePort<object> {
     return Object.freeze<V3ImportEvidencePort<object>>({
       async inspect(request, signal) {
+        if (admit && !admit(signal, false)) return { status: 'unavailable' }
         const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).inspect(request, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, request, decision, archive, clock, signal) {
+        if (admit && !admit(signal, false)) return { status: 'unavailable' }
         const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].evidence ?? config.evidence).reprove(receipt, request, decision, archive, clock, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
     })
   }
-  function history(group: Group, selected?: V3ImportHistoryPort<object>): V3ImportHistoryPort<object> {
+  function history(group: Group, selected?: V3ImportHistoryPort<object>, admit?: (signal: AbortSignal, initialRead: boolean) => boolean): V3ImportHistoryPort<object> {
     return Object.freeze<V3ImportHistoryPort<object>>({
       async read(contextKey, kind, signal) {
+        if (admit && !admit(signal, true)) return { status: 'unavailable' }
         const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).read(contextKey, kind, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
       async reprove(receipt, value, signal) {
+        if (admit && !admit(signal, false)) return { status: 'unavailable' }
         const r = await scope.callback(group, s => (selected ?? result?.[group === 'outer' ? 'outer' : 'processing'].history ?? config.history).reprove(receipt, value, s), signal)
         return r.ok ? r.value : { status: 'unavailable' }
       },
@@ -246,7 +251,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
           const frame = openProcessingImport?.(job, childSignal)
           const importer = createV3ImportCoordinator({ registry: config.registry, method: methodOf(job), clock: config.clock,
             methodAuthority: frame?.methodAuthority ?? options.processingAuthority,
-            evidence: evidence('processing', frame?.evidence), history: history('processing', frame?.history),
+            evidence: evidence('processing', frame?.evidence, frame?.admitImportSignal),
+            history: history('processing', frame?.history, frame?.admitImportSignal),
             quarantine: processingStore.forImport(item.reference.binding) }, { budgetMilliseconds: 5000 })
           const outcome = await traceDevDiagnosticStage('job_import', childSignal, async () => {
             try { return await importer.submit(item.text, childSignal) }
