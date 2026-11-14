@@ -8,6 +8,7 @@ import { createV3ContextIdentity, createV3WorkIdentity, readV3GlobalRuleContext 
 import type { M04TerminalExecutor } from '../jobs/contract'
 import { hrs1Clock, readHrs1Binding, type Hrs1TerminalExecutor } from '../result/contract'
 import type { Hrs1SourceCustodyIssuer } from '../result/source-proof'
+import { withDevImportDiagnostics } from '../runtime/dev-diagnostics'
 import { createV3PostgresResultJobs, type Ma1MethodSqlExecutor } from './authority-postgres'
 
 type Budget = Readonly<{ deadline: number }>
@@ -23,6 +24,8 @@ function deferred<T>() {
  * A real native-port call is required below, so invalid_config cannot pass. */
 function fixture(options: {
   method?: Ma1MethodSqlExecutor['readCurrent']; jobs?: M04TerminalExecutor['executeFixed'];
+  writer?: Hrs1TerminalExecutor['executeFixed']; clockNow?: () => string; monitorLeaseMilliseconds?: number;
+  ids?: () => Readonly<{ jobId: string; operationId: string }>;
 } = {}) {
   const roles = ['primary', 'counter'] as const
   const source = (role: typeof roles[number]) => ({ sourceId: 'deadline-' + role,
@@ -54,7 +57,7 @@ function fixture(options: {
     contextKey: identity.value.contextKey, factKind: 'requirement_effect', dataMode: 'synthetic_test', legalTimeZone: 'Europe/Berlin',
     activeFrom: '2000-01-01T00:00:00.000Z', activeUntilExclusive: '2099-12-31T00:00:00.000Z',
     sourceMaxAgeMilliseconds: 300000, projectionMaxAgeMilliseconds: 60000, monitorIntervalMilliseconds: 100,
-    monitorLeaseMilliseconds: 5000, attemptLimit: 3, sources: roles.map(role => ({ source: source(role), canonicalUrl: url(role),
+    monitorLeaseMilliseconds: options.monitorLeaseMilliseconds ?? 5000, attemptLimit: 3, sources: roles.map(role => ({ source: source(role), canonicalUrl: url(role),
       contentType: 'application/json', executableDigest: 'c'.repeat(64), qualificationDigest: 'd'.repeat(64), role })) }, registry)
   assert.ok(binding)
   const calls: { channel: 'method' | 'jobs'; budget: Budget; signal: AbortSignal }[] = []
@@ -66,7 +69,7 @@ function fixture(options: {
     async observe() { state.unexpected++; return { status: 'unavailable' } }, async reproveObservation() { state.unexpected++; return null },
   })
   const facade = createV3PostgresResultJobs({ binding: method, registry,
-    clock() { const clock = hrs1Clock('2026-11-12T20:00:00.000Z', binding.legalTimeZone); assert.ok(clock); return clock },
+    clock() { const clock = hrs1Clock(options.clockNow?.() ?? '2026-11-12T20:00:00.000Z', binding.legalTimeZone); assert.ok(clock); return clock },
     methodExecutor: Object.freeze<Ma1MethodSqlExecutor>({ async readCurrent(request, signal, budget) {
       assert.ok(budget); calls.push({ channel: 'method', budget, signal })
       try { return options.method ? await options.method(request, signal, budget) : { status: 'unavailable' } }
@@ -79,8 +82,9 @@ function fixture(options: {
     } }),
     intakeExecutor: { async execute() { state.unexpected++; return { status: 'unavailable' } } },
     producer: { async produce() { state.unexpected++; return { status: 'failed', reason: 'unreachable' } } },
-    result: { binding, writerExecutor: closed, readerExecutor: closed, verifierExecutor: closed, fixtureIssuer: issuer,
-      ids: () => ({ jobId: 'job3_' + '1'.repeat(32), operationId: 'op3_' + '2'.repeat(32) }) },
+    result: { binding, writerExecutor: options.writer ? { executeFixed: options.writer } : closed,
+      readerExecutor: closed, verifierExecutor: closed, fixtureIssuer: issuer,
+      ids: options.ids ?? (() => ({ jobId: 'job3_' + '1'.repeat(32), operationId: 'op3_' + '2'.repeat(32) })) },
   })
   return { facade, binding, calls, state }
 }
@@ -189,5 +193,92 @@ test('optional worker and monitor caps only shorten the real HRS factory', { tim
       if (original === undefined) delete process.env.GITHUB_ACTIONS
       else process.env.GITHUB_ACTIONS = original
     }
+  })
+})
+
+test('monitor finish cannot overtake a queue timeout with an actually unsettled MA1 call', { timeout: 15000 }, async t => {
+  for (const abortOuter of [false, true]) await t.test(abortOuter ? 'outer abort during drain forbids finish' : 'settlement permits only the original negative finish', async t => {
+    // Protocol doubles exercise the real HRS factory, queue and scope. They do
+    // not create an accepted source, native SQL proof or durable publication.
+    const initial = 100_000, instant = Date.parse('2026-11-12T20:00:00.000Z')
+    let now = initial
+    t.mock.method(performance, 'now', () => now)
+    t.mock.timers.enable({ apis: ['setTimeout'] })
+    const clockNow = () => new Date(instant + now - initial).toISOString()
+    const entered = deferred<void>(), release = deferred<void>(), queueEnded = deferred<void>()
+    const controller = new AbortController()
+    let current: unknown = null, claimed: unknown = null, writes = 0, claims = 0, finishes = 0, identifiers = 0
+    let postCommitMethodCalls = 0, held = false, answered = false
+    let heldSignal: AbortSignal | null = null
+    const acknowledged = (result: unknown) => ({ status: 'acknowledged' as const, rows: [{ result: JSON.stringify(result) }] })
+    const h = fixture({ clockNow, monitorLeaseMilliseconds: 30000,
+      ids() { const value = (++identifiers).toString(16).padStart(32, '0'); return { jobId: 'job3_' + value, operationId: 'op3_' + value } },
+      async method(request, signal) {
+        if (writes > 0) {
+          postCommitMethodCalls++
+          if (postCommitMethodCalls === 1) {
+            held = true; heldSignal = signal; entered.resolve()
+            try { await release.promise; return { status: 'unavailable' } }
+            finally { held = false }
+          }
+          // The selected transport admits no second physical method pair while
+          // the first is still settling. Count an attempted overlap as well.
+          if (held) return { status: 'unavailable' }
+        }
+        return { status: 'rows', rows: [{ status: 'approved', method_id: method.methodId, revision: String(method.revision),
+          method_digest: method.methodDigest, package_digest: method.packageDigest, epoch: '1', approval_mode: 'until_revoked',
+          approval_until: null, observed_at: request.checkedAt, remaining_ms: '5000' }] }
+      },
+      async jobs(request) {
+        const command = JSON.parse(request.operationText)
+        if (command.operation === 'queue_confirm') return acknowledged({ status: 'not_attempted' })
+        if (command.operation === 'queue_read') return acknowledged(current === null ? { status: 'absent' }
+          : command.phase === 'probe' ? { status: 'requires_authority' } : { status: 'present', record: current })
+        assert.equal(command.operation, 'queue_cas'); assert.equal(command.body.command.action, 'enqueue')
+        assert.equal(writes, 0, 'the existing enqueue is never replayed')
+        current = command.body.commit.next; writes++
+        now += 1000; t.mock.timers.tick(1000)
+        return acknowledged({ status: 'committed', record: current })
+      },
+      async writer(request) {
+        const command = JSON.parse(request.operationText)
+        if (command.operation === 'monitor_claim') {
+          claims++
+          claimed ??= { claimId: command.body.claimId, generation: 1,
+            leaseUntil: new Date(instant + 30000).toISOString(), planGeneration: 0, initialResearch: true,
+            plan: { method: { methodId: method.methodId, revision: method.revision }, targets: [], attemptLimit: 3 } }
+          return acknowledged({ status: 'claimed', value: claimed })
+        }
+        assert.equal(command.operation, 'monitor_finish'); assert.equal(held, false)
+        assert.equal(command.body.generation, 1); assert.equal(command.body.outcomes.length, 1)
+        assert.equal(command.body.outcomes[0].status, 'unavailable')
+        assert.ok(now < initial + 30000, 'finish still consumes the original live lease and monitor deadline')
+        finishes++
+        return acknowledged({ status: 'finished', value: { generation: 1, nextCheckAt: new Date(Date.parse(clockNow()) + 100).toISOString() } })
+      },
+    })
+    const pending = withDevImportDiagnostics(() => h.facade.monitorOnce(controller.signal, { deadline: initial + 30000 }), line => {
+      const event = JSON.parse(line)
+      if (event.stage === 'monitor_enqueue' && event.phase === 'settled') {
+        assert.equal(event.returnedStatus, 'unavailable'); queueEnded.resolve()
+      }
+    }).then(value => { answered = true; return value })
+    try {
+      await entered.promise
+      assert.equal(writes, 1); assert.equal(claims, 2); assert.equal(finishes, 0)
+      now += 4000; t.mock.timers.tick(4000)
+      await queueEnded.promise
+      await new Promise<void>(resolve => setImmediate(resolve))
+      assert.equal(answered, false, 'a queue timeout is not settlement of its admitted native promise')
+      assert.equal(postCommitMethodCalls, 1, 'finish cannot even request a new method pair before actual settlement')
+      assert.equal(finishes, 0)
+      if (abortOuter) { controller.abort(); assert.equal((heldSignal as AbortSignal | null)?.aborted, true) }
+    } finally { release.resolve(); await pending }
+    const result = await pending
+    assert.equal(result.status, abortOuter ? 'interrupted' : 'unavailable')
+    assert.equal(writes, 1); assert.equal(finishes, abortOuter ? 0 : 1)
+    assert.equal(postCommitMethodCalls, abortOuter ? 1 : 2)
+    assert.equal(h.state.unexpected, 0)
+    if (!abortOuter) assert.equal(result.outcomes[0]?.status, 'unavailable', 'a confirmed negative finish cannot promote the timed-out enqueue')
   })
 })

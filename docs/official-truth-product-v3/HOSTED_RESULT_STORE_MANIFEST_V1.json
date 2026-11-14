@@ -63,9 +63,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-      "blob": "e0dc387ec561294aabe00e3cc96e498e5b682906",
-      "bytes": 12460,
-      "sha256": "3357e94c43e44eef8d4b502ac5d11431eee72375cd6f87ca530a0fe26b963b4c"
+      "blob": "14a21eb46a102a2a3f7c9d5cee7b7af96c7c5444",
+      "bytes": 13006,
+      "sha256": "e5a6f1a29f269283e68d4e36c02ef4ef45a4bbd44650434397a3a77b5434417c"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
@@ -99,9 +99,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/native.ts",
-      "blob": "d204bfb7a93f814a468a6df3bbed1cf8e8c91e56",
+      "blob": "7b98eff57bef330d354ed5c4f86896d378524f7f",
       "bytes": 255508,
-      "sha256": "15017333108b4986a388c1187772dad154fcc0c70b8297a836836631a517e8d6"
+      "sha256": "7dfacfbbde51762ce70b20b7e71bae8d2f9a5dcbbf174be54255238239b6a81f"
     },
     {
       "path": "scripts/db/official-truth-v3-hosted-result-store-1/recovery-candidate.sql",
@@ -168,8 +168,8 @@
   "sourceClosure": {
     "native": {
       "bytes": 255508,
-      "blob": "d204bfb7a93f814a468a6df3bbed1cf8e8c91e56",
-      "sha256": "15017333108b4986a388c1187772dad154fcc0c70b8297a836836631a517e8d6"
+      "blob": "7b98eff57bef330d354ed5c4f86896d378524f7f",
+      "sha256": "7dfacfbbde51762ce70b20b7e71bae8d2f9a5dcbbf174be54255238239b6a81f"
     },
     "literalCount": 83,
     "pins": [
@@ -361,9 +361,9 @@
       },
       {
         "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-        "blob": "e0dc387ec561294aabe00e3cc96e498e5b682906",
-        "bytes": 12460,
-        "sha256": "3357e94c43e44eef8d4b502ac5d11431eee72375cd6f87ca530a0fe26b963b4c"
+        "blob": "14a21eb46a102a2a3f7c9d5cee7b7af96c7c5444",
+        "bytes": 13006,
+        "sha256": "e5a6f1a29f269283e68d4e36c02ef4ef45a4bbd44650434397a3a77b5434417c"
       },
       {
         "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
@@ -385,9 +385,9 @@
       },
       {
         "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
-        "bytes": 7112,
-        "blob": "6942ca2a99b2a89deb03c570d0672083bece9e8e",
-        "sha256": "6a15a6327d745b677979ceb30752066e871094f0a84a51027b00c0cfc74cb772"
+        "bytes": 7255,
+        "blob": "af0dcf7c449949972ade2e2334418ce6584fdf39",
+        "sha256": "3270f63b47537e7e7786b094011bc7c4e4d8333452d78611da9b9d9d87bda083"
       },
       {
         "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",

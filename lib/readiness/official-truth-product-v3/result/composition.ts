@@ -9,6 +9,7 @@ import { createV3VisitorQuery, type V3VisitorQueryResult } from '../visitor/quer
 import { createChDeSnapshotQuery } from '../visitor/ch-de-snapshot'
 import { createChDeImportFrame } from './ch-de-import-frame'
 import { runV3SourceMonitorOnce, type V3MonitorOutcome } from '../monitor/monitor'
+import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
 import { createHrs1SourceConsumer, type Hrs1SourceConsumer } from './source-proof'
 import { createHrs1ResultPorts, type Hrs1ResultPorts } from './postgres'
 import { HRS1_LIMITS, hrs1Hash, hrs1Same, hrs1Time, type Hrs1Binding, type Hrs1Config, type Hrs1FixedOperation } from './contract'
@@ -120,7 +121,8 @@ export function composeHrs1Invocation(input: Readonly<{
       const activeSignal = signal ?? input.scope.signal, initial = identifiers()
       if (!initial || activeSignal.aborted) return { status: 'unavailable', outcomes: [] }
       const claimId = 'hrsclaim1_' + hrs1Hash(initial).slice(0, 32)
-      const claimed = await outer.claimMonitor(initial.operationId, claimId, activeSignal)
+      const claimed = await traceDevDiagnosticStage('monitor_claim', activeSignal,
+        () => outer.claimMonitor(initial.operationId, claimId, activeSignal))
       if (claimed.status === 'busy') return { status: 'complete', outcomes: [] }
       const claim = claimed.status === 'claimed' && ownRecord(claimed.value, ['claimId','generation','leaseUntil','planGeneration','plan','initialResearch'])
       if (!claim || claim.claimId !== claimId || !Number.isSafeInteger(claim.generation) || (claim.generation as number) < 1
@@ -140,7 +142,8 @@ export function composeHrs1Invocation(input: Readonly<{
       if (claim.initialResearch) {
         // A missing accepted head has no M1 version target. Reconfirm the actual
         // same durable claim/head before enqueueing the existing Research queue.
-        const current = await outer.claimMonitor(initial.operationId, claimId, activeSignal)
+        const current = await traceDevDiagnosticStage('monitor_reconfirm', activeSignal,
+          () => outer.claimMonitor(initial.operationId, claimId, activeSignal))
         const primary = input.binding.sources.find(s => s.role === 'primary')
         const research = { context: input.binding.context,
           method: { methodId: input.binding.methodId, revision: input.binding.revision },
@@ -150,9 +153,9 @@ export function composeHrs1Invocation(input: Readonly<{
           return { status: activeSignal.aborted ? 'interrupted' : 'unavailable', outcomes: [] }
         }
         const seed = { binding: hrs1Hash(input.binding), claimId, generation: claim.generation, jobKey: identity.value.jobKey }
-        const enqueued = await ruleQueue.enqueue({ ...research, attemptLimit: input.binding.attemptLimit,
+        const enqueued = await traceDevDiagnosticStage('monitor_enqueue', activeSignal, () => ruleQueue.enqueue({ ...research, attemptLimit: input.binding.attemptLimit,
           jobId: 'job3_' + hrs1Hash({ kind: 'hrs1-initial-research-cycle', ...seed }).slice(0, 32),
-          operationId: 'op3_' + hrs1Hash({ kind: 'hrs1-initial-research-enqueue', ...seed }).slice(0, 32) }, activeSignal)
+          operationId: 'op3_' + hrs1Hash({ kind: 'hrs1-initial-research-enqueue', ...seed }).slice(0, 32) }, activeSignal))
         const confirmed = enqueued.status === 'confirmed' && enqueued.record.kind === 'research_job_record'
           && enqueued.record.jobKey === identity.value.jobKey
         result = { status: confirmed ? 'complete' : activeSignal.aborted ? 'interrupted' : 'unavailable',
@@ -164,10 +167,14 @@ export function composeHrs1Invocation(input: Readonly<{
           queue: ruleQueue, methodAuthority: input.authority, now: () => input.config.clock().now,
           invocationMilliseconds: HRS1_LIMITS.workerMilliseconds }, activeSignal))
       }
+      // A queue timeout can precede its actual MA1/SQL cleanup. Do not start
+      // the finish effect while that original native work still owns its lane.
+      await input.scope.drainNative()
       if (activeSignal.aborted) return { status: 'interrupted', outcomes: result.outcomes }
       const final = identifiers()
       if (!final) return { status: 'unavailable', outcomes: result.outcomes }
-      const finished = await outer.finishMonitor(final.operationId, claimId, claim.generation as number, result.outcomes, activeSignal)
+      const finished = await traceDevDiagnosticStage('monitor_finish', activeSignal,
+        () => outer.finishMonitor(final.operationId, claimId, claim.generation as number, result.outcomes, activeSignal))
       const completion = finished.status === 'finished' && ownRecord(finished.value, ['generation','nextCheckAt'])
       if (!completion || completion.generation !== claim.generation || !hrs1Time(completion.nextCheckAt)) {
         return { status: 'unavailable', outcomes: result.outcomes }
