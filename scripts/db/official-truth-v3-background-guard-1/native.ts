@@ -52,11 +52,10 @@ async function envelope(value: unknown, current: V3ManagedJobRecord | null) {
   return { operation: 'queue_cas' as const, body: { command: command.value, commit, subjectText: subject.subjectText, disposition: { kind: 'regular' as const } } }
 }
 
-/** Additional real SQL cases use separate owned databases. They run while the
- * main proof is waiting for its already selected next five-minute due time.
+/** Additional real SQL cases use separate owned databases before the main
+ * proof resumes at or after its already selected next five-minute due time.
  * No fixture clock, certificate reissue, source issuer or held Dev token exists. */
 async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, allocated: () => void) {
-  const started = performance.now()
   async function fixture(jobMilliseconds: number, intakeMilliseconds: number) {
     const cluster = lifetime.startCluster(startLocalProofCluster); allocated()
     const bootstrap = await LocalPgConnection.connect(cluster)
@@ -198,6 +197,21 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
         assert.ok(performance.now()<until,'actual common-lock acquisition order must be observed'); await lifetime.wait(2)
       }
     }
+    async function commonLock(holder: string, waiter?: string) {
+      const until = performance.now()+1000
+      for (;;) {
+        const observed = await observer.query(`WITH locks AS (
+          SELECT pid,granted FROM pg_locks WHERE locktype='advisory'
+            AND database=(SELECT oid FROM pg_database WHERE datname=current_database())
+            AND classid=771106::oid AND objid=1::oid AND objsubid=2 AND mode='ExclusiveLock'
+        ) SELECT EXISTS(SELECT 1 FROM locks WHERE pid=$1::integer AND granted)
+          AND (NULLIF($2::text,'') IS NULL OR (
+            EXISTS(SELECT 1 FROM locks WHERE pid=NULLIF($2::text,'')::integer AND NOT granted)
+            AND $1::integer=ANY(pg_blocking_pids(NULLIF($2::text,'')::integer)))) AS observed`,params([holder,waiter]))
+        if (observed[0]!.observed==='t') return
+        assert.ok(performance.now()<until,'actual common advisory-lock holder and waiter must be observed'); await lifetime.wait(2)
+      }
+    }
     async function reviewed() {
       const review = readDevGuardReview(await human('official_v3_guard_review_v1')); assert.ok(review?.retirement.status==='reviewable')
       return review.retirement.selection
@@ -208,47 +222,78 @@ async function recoveryCases(t: TestContext, lifetime: OwnedTestLifetime, alloca
       const actor = await base.humanAs(1)
       let old: Promise<unknown> | undefined, retirement: Promise<unknown> | undefined
       let receipt: unknown
+      let barrierTransaction=false, actorTransaction=false, actorClosed=false
+      const failures: unknown[]=[]
+      const retain = (error: unknown) => { if(!failures.includes(error)) failures.push(error) }
+      const cleanup = async (action:()=>unknown|Promise<unknown>) => { try { await action() } catch(error) { retain(error) } }
+      const closeActor = () => { actorClosed=true; actor.connection.close() }
       const writer = kind==='s1' ? intakeIdentity : jobsIdentity
       const runOld = () => kind==='s1' ? finish() : jobs(failed,runtimeJobs)
       try {
         if (first==='old') {
-          // Block the actual certificate read after the old API has acquired
-          // the common write lock. The Owner must then wait behind that API.
-          await owner.query('BEGIN; LOCK TABLE ' + (kind==='s1'?'official_v3_intake_private.operations_v1':'official_v3_jobs_private.subjects_v1') + ' IN ACCESS EXCLUSIVE MODE')
+          // This relation is first needed by check_certificate, after the
+          // common lock. Entry-API rowtype compilation cannot reach it early.
+          await owner.query('BEGIN'); barrierTransaction=true
+          await owner.query('LOCK TABLE official_v3_guard_private.certificates_v1 IN ACCESS EXCLUSIVE MODE')
           old=runOld(); void Promise.allSettled([old])
           await blocked(writer.pid!,base.bootstrap.identity.pid)
+          await commonLock(writer.pid!)
           retirement=human('official_v3_guard_retire_v1',[id,selection],actor); void Promise.allSettled([retirement])
-          await blocked(actor.identity.pid,writer.pid!)
-          await owner.query('ROLLBACK')
-          receipt=await retirement
+          await commonLock(writer.pid!,actor.identity.pid)
+          await owner.query('ROLLBACK'); barrierTransaction=false
         } else {
-          await actor.connection.query('BEGIN')
-          receipt=await human('official_v3_guard_retire_v1',[id,selection],actor)
+          await actor.connection.query('BEGIN'); actorTransaction=true
+          retirement=human('official_v3_guard_retire_v1',[id,selection],actor); void Promise.allSettled([retirement])
+          receipt=await retirement
+          await commonLock(actor.identity.pid)
           old=runOld(); void Promise.allSettled([old])
-          await blocked(writer.pid!,actor.identity.pid)
+          await commonLock(actor.identity.pid,writer.pid!)
           assert.deepEqual(await state(),before,'uncommitted retirement is not visible to the independent observer')
-          await actor.connection.query('COMMIT')
+          await actor.connection.query('COMMIT'); actorTransaction=false
         }
-        assert.ok(old)
-        const [settled]=await lifetime.drain([old])
-        if(kind==='s1') { assert.equal(settled.status,'fulfilled'); if(settled.status==='fulfilled') assert.deepEqual(settled.value,{status:'unconfirmed'}) }
-        else { assert.equal(settled.status,'rejected'); if(settled.status==='rejected') assert.ok(stateError('P7605')(settled.reason),'the actual expired old M04 request cannot record settled_failure') }
-        assert.equal((receipt as {result:string}).result,'unknown_retired')
-        assert.deepEqual(await human('official_v3_guard_confirm_v1',[id,'retire_unknown',selection]),receipt)
-        assert.deepEqual(await state(),{...before,open:false,retired:1,receipts:1})
-        await creator.query('SELECT official_v3_guard_private.check_certificates_v1(); SELECT official_v3_guard_private.check_retirements_v1()')
+      } catch(error) { retain(error)
       } finally {
-        await owner.query('ROLLBACK'); await actor.connection.query('ROLLBACK')
-        await lifetime.drain([...(old?[old]:[]),...(retirement?[retirement]:[])])
-        actor.connection.close(); await absent(actor.identity.pid,actor.identity.birth)
+        // Release only transactions this race owns, before joining their
+        // dependants. The old-first Owner request is autocommit and may be busy.
+        if(barrierTransaction) {
+          try { await owner.query('ROLLBACK') } catch(error) { retain(error); await cleanup(()=>owner.close()) }
+        }
+        if(actorTransaction) {
+          try { await actor.connection.query('ROLLBACK') } catch(error) { retain(error); await cleanup(closeActor) }
+        }
+        await cleanup(async()=>{
+          const settled=await lifetime.drain([...(old?[old]:[]),...(retirement?[retirement]:[])])
+          if(old) await cleanup(()=>{
+            const result=settled[0]!
+            if(result.status==='rejected') {
+              if(kind==='m04'&&stateError('P7605')(result.reason)) return
+              throw result.reason
+            }
+            assert.equal(kind,'s1','the actual expired old M04 request cannot record settled_failure')
+            assert.deepEqual(result.value,{status:'unconfirmed'})
+          })
+          if(retirement) {
+            const result=settled[old?1:0]!
+            if(result.status==='rejected') retain(result.reason)
+            else receipt=result.value
+          }
+        })
+        if(!actorClosed) await cleanup(closeActor)
+        await cleanup(()=>absent(actor.identity.pid,actor.identity.birth))
       }
+      if(failures.length===1) throw failures[0]
+      if(failures.length) throw new AggregateError(failures,'recovery race and cleanup failed')
+      assert.ok(old)
+      assert.equal((receipt as {result:string}).result,'unknown_retired')
+      assert.deepEqual(await human('official_v3_guard_confirm_v1',[id,'retire_unknown',selection]),receipt)
+      assert.deepEqual(await state(),{...before,open:false,retired:1,receipts:1})
+      await creator.query('SELECT official_v3_guard_private.check_certificates_v1(); SELECT official_v3_guard_private.check_retirements_v1()')
     }
     return {cluster,base,owner,creator,observer,human,jobs,runtimeJobs,claim,claimed,leased,start,failed,item,upload,
       prepared,reservation,operation,state,refused,finish,prepare,blocked,reviewed,retireRace,waitUntil,jobsIdentity}
   }
   type Fixture = Awaited<ReturnType<typeof fixture>>
   async function run(name: string,jobMs: number,intakeMs: number,body: (f:Fixture)=>Promise<void>) {
-    assert.ok(performance.now()-started<120000,'finite additional recovery cases stay within the existing due wait')
     let actual: Promise<void> | undefined
     await t.test(name,async()=>{
       actual=lifetime.run(async()=>{
