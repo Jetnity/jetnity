@@ -17,6 +17,7 @@ export default function ContentInventory({ inventory, observedAt }: {
         <p className="text-sm font-medium text-muted-foreground">Content · Jetnity</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Content-Inventar</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Prüfe die vorhandenen Reiseideen, ihre Originaltexte und Bilder. Die Vorschau zeigt, wie Kunden die Inspiration finden.</p>
+        <a href="/admin/content/editor" className={`${actionClass} mt-4`}>CMS-Editor öffnen</a>
       </header>
 
       <AdminSnapshotRefresh observedAt={observedAt} />
