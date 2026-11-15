@@ -16,7 +16,8 @@ test('all Marketing messages are complete namespaced plain text in both language
 })
 
 test('combined catalog preserves every Settings key and both original values without collisions', () => {
-  assert.equal(ADMIN_SPRACHKATALOG.length, EINSTELLUNGEN_SCHLUESSEL.length + MARKETING_SCHLUESSEL.length)
+  const existingKeys = new Set<string>([...EINSTELLUNGEN_SCHLUESSEL, ...MARKETING_SCHLUESSEL])
+  assert.equal(ADMIN_SPRACHKATALOG.filter(({ key }) => existingKeys.has(key)).length, existingKeys.size)
   assert.equal(new Set(ADMIN_SPRACHKATALOG.map((row) => row.key)).size, ADMIN_SPRACHKATALOG.length)
   for (const key of EINSTELLUNGEN_SCHLUESSEL) assert.deepEqual(ADMIN_SPRACHKATALOG.find((row) => row.key === key), { key, de: EINSTELLUNGEN_TEXTE.de[key], en: EINSTELLUNGEN_TEXTE.en[key] })
   for (const key of MARKETING_SCHLUESSEL) assert.deepEqual(ADMIN_SPRACHKATALOG.find((row) => row.key === key), { key, de: MARKETING_TEXTE.de[key], en: MARKETING_TEXTE.en[key] })

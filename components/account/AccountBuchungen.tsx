@@ -3,9 +3,11 @@ import Link from 'next/link'
 import { AlertCircle, ArrowRight, Ticket } from 'lucide-react'
 
 import BuchungenFilter from '@/components/account/BuchungenFilter'
-import { BUCHUNGEN_COPY, buchungPlanpunktPfad, buchungZeittext, type KontoBuchung } from '@/lib/account/buchungen'
+import { buchungPlanpunktPfad, type KontoBuchung } from '@/lib/account/buchungen'
 import { buchungenAnsichtAus, type BuchungenAnsicht } from '@/lib/account/buchungen-abfrage'
 import type { Problem } from '@/lib/api/datenbank-lesen'
+import { BUCHUNGEN_TEXTE, buchungenZeitAnzeigen } from '@/lib/localization/buchungen-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
 
 type BuchungenAlt = {
   problem: Problem | null
@@ -39,17 +41,38 @@ function ansichtAusAlt(alt: BuchungenAlt): BuchungenAnsicht {
 const textLink =
   'inline-flex min-h-11 w-full min-w-0 max-w-full flex-wrap items-center justify-center gap-2 whitespace-normal rounded-full px-5 text-center text-sm font-semibold [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto'
 
-function BuchungsKarte({ buchung }: { buchung: KontoBuchung }) {
-  const zeit = buchungZeittext(buchung)
+/** The route's loading presentation, without a second locale read. */
+export function BuchungenLadeanzeige({ sprache }: { sprache: UiSprache }) {
+  const texte = BUCHUNGEN_TEXTE[sprache]
+  return (
+    <main lang={sprache} className="min-w-0 px-4 py-10 [overflow-wrap:anywhere] sm:px-6 sm:py-14">
+      <div className="mx-auto min-w-0 max-w-3xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">{texte.seitenEyebrow}</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">{texte.seitenTitel}</h1>
+        <section aria-busy="true" aria-live="polite" className="mt-10 rounded-[30px] border border-black/5 bg-white px-6 py-14 text-center sm:px-10">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+            <Ticket className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">{texte.ladenTitel}</h2>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">{texte.ladenText}</p>
+        </section>
+      </div>
+    </main>
+  )
+}
+
+function BuchungsKarte({ buchung, sprache }: { buchung: KontoBuchung; sprache: UiSprache }) {
+  const texte = BUCHUNGEN_TEXTE[sprache]
+  const zeit = buchungenZeitAnzeigen(buchung, sprache)
   const planpunkt = buchungPlanpunktPfad(buchung.tripId, buchung.id)
 
   return (
     <article className="min-w-0 max-w-full rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] [overflow-wrap:anywhere] sm:p-6">
       <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-        <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 [overflow-wrap:anywhere]">{buchung.artBezeichnung}</p>
+        <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 [overflow-wrap:anywhere]">{sprache === 'de' ? buchung.artBezeichnung : texte[`art.${buchung.kind}`]}</p>
         {buchung.tripArchived ? (
           <p className="rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
-            {BUCHUNGEN_COPY.archivKennzeichen}
+            {texte.archivKennzeichen}
           </p>
         ) : null}
       </div>
@@ -57,7 +80,7 @@ function BuchungsKarte({ buchung }: { buchung: KontoBuchung }) {
       {zeit ? <p className="mt-2 text-sm text-ink-800">{zeit}</p> : null}
       {buchung.tripTitle ? (
         <p className="mt-2 break-words text-sm text-ink-700">
-          {BUCHUNGEN_COPY.reiseBezug}: {buchung.tripTitle}
+          {texte.reiseBezug}: {buchung.tripTitle}
         </p>
       ) : null}
       {planpunkt ? (
@@ -65,7 +88,7 @@ function BuchungsKarte({ buchung }: { buchung: KontoBuchung }) {
           href={planpunkt as Route}
           className={`${textLink} mt-5 gap-2 bg-brand-800 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
         >
-          {BUCHUNGEN_COPY.planpunktOeffnen}
+          {texte.planpunktOeffnen}
           <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
         </Link>
       ) : null}
@@ -119,17 +142,19 @@ function Hinweis({
   )
 }
 
-export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | BuchungenAlt) {
+export default function AccountBuchungen(props: ({ ansicht: BuchungenAnsicht } | BuchungenAlt) & { sprache?: UiSprache }) {
+  const sprache = props.sprache ?? 'de'
+  const texte = BUCHUNGEN_TEXTE[sprache]
   const ansicht = 'ansicht' in props ? props.ansicht : ansichtAusAlt(props)
-  const fehlerText = ansicht.fehlerStatus === 503 ? BUCHUNGEN_COPY.fehler503 : BUCHUNGEN_COPY.fehler500
+  const fehlerText = ansicht.fehlerStatus === 503 ? texte.fehler503 : texte.fehler500
 
   return (
-    <div className="min-w-0 max-w-full [overflow-wrap:anywhere]" data-buchungen={ansicht.zustand}>
-      <p className="max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 [overflow-wrap:anywhere]">{BUCHUNGEN_COPY.seitenEyebrow}</p>
-      <h1 className="mt-2 min-w-0 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 [overflow-wrap:anywhere] sm:text-5xl">{BUCHUNGEN_COPY.seitenTitel}</h1>
-      <p className="mt-3 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.seitenLead}</p>
-      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.hinweis}</p>
-      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{BUCHUNGEN_COPY.ordnungHinweis}</p>
+    <div lang={sprache} className="min-w-0 max-w-full [overflow-wrap:anywhere]" data-buchungen={ansicht.zustand}>
+      <p className="max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 [overflow-wrap:anywhere]">{texte.seitenEyebrow}</p>
+      <h1 className="mt-2 min-w-0 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 [overflow-wrap:anywhere] sm:text-5xl">{texte.seitenTitel}</h1>
+      <p className="mt-3 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.seitenLead}</p>
+      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.hinweis}</p>
+      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.ordnungHinweis}</p>
 
       <BuchungenFilter
         titel={ansicht.titel}
@@ -137,40 +162,41 @@ export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | 
         archiv={ansicht.archiv}
         zurueckHref={ansicht.zurueckHref}
         standHref={ansicht.wiederholenHref}
+        sprache={sprache}
       />
 
       {ansicht.zustand === 'ungueltig' ? (
         <Hinweis
           rolle="alert"
-          titel={BUCHUNGEN_COPY.ungueltigTitel}
-          text={BUCHUNGEN_COPY.ungueltigText}
+          titel={texte.ungueltigTitel}
+          text={texte.ungueltigText}
           href={ansicht.ersteSeiteHref}
-          aktion={BUCHUNGEN_COPY.ersteSeite}
+          aktion={texte.ersteSeite}
         />
       ) : null}
       {ansicht.zustand === 'fehler' ? (
-        <Hinweis rolle="alert" titel={BUCHUNGEN_COPY.fehlerTitel} text={fehlerText} href={ansicht.wiederholenHref} aktion={BUCHUNGEN_COPY.wiederholen} />
+        <Hinweis rolle="alert" titel={texte.fehlerTitel} text={fehlerText} href={ansicht.wiederholenHref} aktion={texte.wiederholen} />
       ) : null}
       {ansicht.zustand === 'leer' ? (
-        <Hinweis rolle="status" titel={BUCHUNGEN_COPY.leerTitel} text={BUCHUNGEN_COPY.leerText} />
+        <Hinweis rolle="status" titel={texte.leerTitel} text={texte.leerText} />
       ) : null}
       {ansicht.zustand === 'keine' ? (
-        <Hinweis rolle="status" titel={BUCHUNGEN_COPY.keineTrefferTitel} text={BUCHUNGEN_COPY.keineTrefferText} />
+        <Hinweis rolle="status" titel={texte.keineTrefferTitel} text={texte.keineTrefferText} />
       ) : null}
       {ansicht.zustand === 'fortsetzungLeer' ? (
         <Hinweis
           rolle="status"
-          titel={BUCHUNGEN_COPY.fortsetzungEndeTitel}
-          text={BUCHUNGEN_COPY.fortsetzungEndeText}
+          titel={texte.fortsetzungEndeTitel}
+          text={texte.fortsetzungEndeText}
           href={ansicht.ersteSeiteHref}
-          aktion={BUCHUNGEN_COPY.ersteSeite}
+          aktion={texte.ersteSeite}
         />
       ) : null}
 
       {ansicht.zustand === 'ungueltig' && ansicht.wiederholenZeigen ? (
         <p className="mt-4">
           <Link href={ansicht.wiederholenHref as Route} className={`${textLink} border border-line-200 bg-white text-brand-800`}>
-            {BUCHUNGEN_COPY.wiederholen}
+            {texte.wiederholen}
           </Link>
         </p>
       ) : null}
@@ -179,7 +205,7 @@ export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | 
         <ul className="mt-8 space-y-4">
           {ansicht.buchungen.map((buchung) => (
             <li key={buchung.id}>
-              <BuchungsKarte buchung={buchung} />
+              <BuchungsKarte buchung={buchung} sprache={sprache} />
             </li>
           ))}
         </ul>
@@ -191,21 +217,21 @@ export default function AccountBuchungen(props: { ansicht: BuchungenAnsicht } | 
             href={ansicht.weiterHref as Route}
             className={`${textLink} bg-brand-800 text-white transition hover:-translate-y-0.5 hover:bg-brand-900 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
           >
-            {BUCHUNGEN_COPY.weitere}
+            {texte.weitere}
           </Link>
         </p>
       ) : null}
 
       {ansicht.endeZeigen ? (
         <p role="status" className="mt-6 text-sm leading-6 text-ink-700">
-          {BUCHUNGEN_COPY.seitenEnde}
+          {texte.seitenEnde}
         </p>
       ) : null}
 
       {ansicht.ersteSeiteZeigen && ansicht.zustand === 'liste' ? (
         <p className="mt-4">
           <Link href={ansicht.ersteSeiteHref as Route} className={`${textLink} border border-line-200 bg-white text-brand-800`}>
-            {BUCHUNGEN_COPY.ersteSeite}
+            {texte.ersteSeite}
           </Link>
         </p>
       ) : null}
