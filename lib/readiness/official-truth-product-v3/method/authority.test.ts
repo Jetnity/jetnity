@@ -599,7 +599,7 @@ describe('M04 private joint factory retains MA1 authority and original budgets',
     assert.deepEqual(x.trace.slice(1, 8), ['queue_confirm:probe', 'method', 'queue_read:authorized',
       'method', 'queue_cas:authorized', 'queue_read:authorized', 'method'],
     'the fixed-method claim retains both actual reads and all real reproofs in seven owned calls')
-    assert.deepEqual(x.trace.slice(8, 10), ['method', 'execution_read:probe'], 'worker authority and lookup remain additional actual work')
+    assert.deepEqual(x.trace.slice(8, 10), ['execution_read:probe', 'method'], 'the actual custody lookup precedes the first worker authority acquisition')
     assert.equal(x.trace.filter(s => s === 'queue_cas:authorized').length, 1, 'unknown lookup cannot settle a failure without an execution start')
     assert.equal(x.operations.size, 3)
     assert.equal(x.record()?.attempt, 1); assert.equal(x.record()?.state, 'leased')

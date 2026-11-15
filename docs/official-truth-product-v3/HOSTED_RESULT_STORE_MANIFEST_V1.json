@@ -119,9 +119,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "d71cff8f4dc4f2fc667187c876c3e9ba82322df5",
+      "blob": "fa1f41536290b0c93c2968723f85e459f2952a55",
       "bytes": 658626,
-      "sha256": "86ce00f06e3dd3689d3eab4a45b9b95a20e0ff252a36941838ec994b41e2af2c"
+      "sha256": "3a2130abd0b0c71b3f1d6c643c680bcdf5dff27ab30617cb462150aba045289d"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_RECOVERY_V1.md",

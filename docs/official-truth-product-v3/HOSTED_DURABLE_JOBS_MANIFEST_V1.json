@@ -216,9 +216,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
-      "blob": "139b012b8dd104d24381fed03eacb2cc04298100",
-      "bytes": 48118,
-      "sha256": "21720a9cfea79deabe7553899966a0b4a206ea6e3a1a4686e59e981f44a3ecda",
+      "blob": "389c47ee44a5da0ff9df1c5ab976d1e5f024fd7c",
+      "bytes": 48134,
+      "sha256": "86eeb4151381645c7f865b427ab27287c3c154c3c52c7ca94ac8629307d6988e",
       "ref": "b195e83c6763334290120d7cf3005335a86da050"
     },
     {
