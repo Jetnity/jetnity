@@ -81,6 +81,20 @@ test('Dev account-count installer native contract on the reported local engine',
       }
     })
 
+    for (const populated of [false, true]) {
+      await t.test(`an ${populated ? 'installed' : 'incomplete'} entry guard blocks installation unchanged`, () => {
+        const database = fresh()
+        execute(database, 'create schema official_v3_guard_private;')
+        if (populated) execute(database, 'create table official_v3_guard_private.sentinel(n integer); insert into official_v3_guard_private.sentinel values(42);')
+        const identity = "select oid::text||':'||nspowner::text||':'||coalesce(nspacl::text,'NULL') from pg_namespace where nspname='official_v3_guard_private';"
+        const before = execute(database, identity)
+        refused(database, installation, /counts_dev_entry_guard_integration_required/)
+        absent(database)
+        assert.equal(execute(database, identity), before)
+        if (populated) assert.equal(execute(database, 'select n from official_v3_guard_private.sentinel;'), '42')
+      })
+    }
+
     await t.test('temporary catalog shadows cannot change installer identity checks', () => {
       const database = fresh()
       execute(database, `create temp table pg_roles (untrusted integer);

@@ -10,6 +10,11 @@ DECLARE
   reporting oid;
 BEGIN
   perform pg_catalog.set_config('search_path','pg_catalog,pg_temp',true);
+  -- The entry lane snapshots authenticated role dependencies globally. Its
+  -- installed guard must be integrated by that lane before any new grants.
+  if pg_catalog.to_regnamespace('official_v3_guard_private') is not null then
+    raise exception 'counts_dev_entry_guard_integration_required' using errcode='55000';
+  end if;
   security_before := (select jsonb_build_object(
   'tables', (select jsonb_agg(jsonb_build_object('oid',c.oid,'owner',c.relowner,'acl',c.relacl,
     'rls',c.relrowsecurity,'force_rls',c.relforcerowsecurity) order by c.oid) from pg_class c
