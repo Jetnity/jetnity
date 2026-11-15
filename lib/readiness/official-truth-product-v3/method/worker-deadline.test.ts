@@ -64,7 +64,7 @@ function fixture(options: {
       contentType: 'application/json', executableDigest: 'c'.repeat(64), qualificationDigest: 'd'.repeat(64), role })) }, registry)
   assert.ok(binding)
   const calls: { channel: 'method' | 'jobs'; budget: Budget; signal: AbortSignal }[] = []
-  const state = { unexpected: 0, settled: 0 }
+  const state = { unexpected: 0, settled: 0, intakes: 0 }
   const closed = Object.freeze<Hrs1TerminalExecutor>({ async executeFixed() { state.unexpected++; return { status: 'unavailable' } } })
   const issuer = Object.freeze<Hrs1SourceCustodyIssuer>({
     async inspect() { state.unexpected++; return null }, async finalize() { state.unexpected++; return null },
@@ -83,7 +83,7 @@ function fixture(options: {
       try { return options.jobs ? await options.jobs(request, signal) : { status: 'unavailable' } }
       finally { state.settled++ }
     } }),
-    intakeExecutor: { async execute() { state.unexpected++; return { status: 'unavailable' } } },
+    intakeExecutor: { async execute() { state.intakes++; state.unexpected++; return { status: 'unavailable' } } },
     producer: { async produce() { state.unexpected++; return { status: 'failed', reason: 'unreachable' } } },
     result: { binding, writerExecutor: options.writer ? { executeFixed: options.writer } : closed,
       readerExecutor: closed, verifierExecutor: closed, fixtureIssuer: issuer,
@@ -200,14 +200,20 @@ test('retained HRS factory reclaims one expired unstarted job under separate gen
 test('retained HRS factory finds following PREPARED/COMPLETED after blocked ordinary reads without a replacement claim', async t => {
   for (const execution of ['prepared', 'completed'] as const) await t.test(execution, async () => {
     const h = retainedFactory({ generation: 1, execution })
-    await h.run()
+    const result = await h.run()
     const reads = h.requests.filter(q => q.operation === 'execution_read') as { phase: string; body: { claim: M04Claim; purpose: string } }[]
     const actual = reads.filter(q => q.phase === 'authorized' && q.body.claim.operationId === h.claim.operationId)
     assert.ok(actual.length >= 2, 'both independent private selection and actual worker consume the same genuine result')
     assert.equal(h.writes(), 0)
     assert.ok(h.requests.every(q => q.operation !== 'execution_start'))
     if (execution === 'prepared') assert.ok(h.requests.some(q => q.operation === 'queue_confirm'), 'blocked initial queue read did not seal actual worker execution')
-    else assert.ok(actual.some(q => q.body.purpose === 'artifact'))
+    else {
+      assert.deepEqual(actual.map(q => q.body.purpose), ['resume', 'resume'],
+        'selection and worker each consume the real completed original before private ACK custody opens S1')
+      assert.equal(h.state.intakes, 1, 'the actual S1 original is opened once before artifact reproof')
+      assert.equal(h.state.unexpected, 1, 'only the deliberately unavailable S1 open occurs; no producer or HRS effect')
+      assert.equal(result.status, 'unconfirmed', 'unavailable original bytes cannot become a positive artifact')
+    }
     assert.equal(h.state.settled, h.calls.length)
   })
 })
