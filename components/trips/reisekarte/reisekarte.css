@@ -35,3 +35,4 @@
 .rk-wege [aria-live]{font-size:.86rem}
 .rk-revoke{align-self:flex-start;margin:0 20px;font-size:.82rem;font-weight:400}
 @media(max-width:700px){.rk-dialog{width:100%;height:100dvh;border:0;border-radius:0;max-height:100dvh}.rk-layout{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}.rk-head{position:sticky;top:0;background:white;z-index:1;padding:10px 16px;order:0}.rk-main{order:1;overflow:visible;scrollbar-gutter:auto}.rk-list{order:2;overflow:visible;scrollbar-gutter:auto;border:0;border-top:1px solid var(--rk-line)}.rk-canvas{flex:none;height:clamp(255px,46dvh,430px)}.rk-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.rk-fields label:last-child{grid-column:1/-1}.rk-consent{padding:14px;gap:8px}.rk-consent svg{width:22px;height:22px}.rk-wege{padding:6px 16px}}
+.rk-suche{display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;margin:0 20px;padding:5px 0;border-top:1px solid var(--rk-line)}

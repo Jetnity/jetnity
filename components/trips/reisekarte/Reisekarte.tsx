@@ -6,20 +6,26 @@ import { istPosition, reiseKarteninhalt, type Position, type Reiseort } from '@/
 import type { Trip } from '@/types/trips'
 import Kartenwege from './Kartenwege'
 
-type Aufruf = { reise: Trip; ort?: Reiseort; tag?: string }
+type Suchziel = 'fluege' | 'unterkunft' | 'aktivitaeten'
+type Suchnavigation = (kategorie: Suchziel, etappeId: string) => void
+export const KartensucheKontext = createContext<Suchnavigation | undefined>(undefined)
+type Aufruf = { reise: Trip; ort?: Reiseort; tag?: string; zurSuche?: Suchnavigation }
 const KartenKontext = createContext<((aufruf: Aufruf) => void) | null>(null)
 const symbole = { Hotel: BedDouble, Besuch: Landmark, Flughafen: PlaneLanding, Etappe: MapPin }
 
-export function Kartenknopf({ reise, ort, tag, children }: Aufruf & { children?: ReactNode }) {
+export function Kartenknopf({ reise, ort, tag, zurSuche, children }: Aufruf & { children?: ReactNode }) {
   const oeffnen = useContext(KartenKontext)
+  const navigation = useContext(KartensucheKontext)
   if (!oeffnen) return null
-  return <button type="button" className="rk-link" onClick={() => oeffnen({ reise, ort, tag })}>
+  return <button type="button" className="rk-link" aria-label={ort ? ort.name + ' auf Karte ansehen' : undefined}
+    onClick={() => oeffnen({ reise, ort, tag, zurSuche: zurSuche ?? navigation })}>
     <MapIcon size={17} aria-hidden />{children ?? 'Reisekarte öffnen'}
   </button>
 }
 
 export function FlughafenKartenknopf({ reise, iata }: { reise: Trip; iata?: string }) {
   const oeffnen = useContext(KartenKontext)
+  const navigation = useContext(KartensucheKontext)
   const [meldung, setMeldung] = useState('')
   const lauf = useRef<AbortController | null>(null)
   useEffect(() => () => lauf.current?.abort(), [iata])
@@ -34,7 +40,7 @@ export function FlughafenKartenknopf({ reise, iata }: { reise: Trip; iata?: stri
       if (!res.ok) throw new Error()
       const ort = await res.json()
       if (!istPosition(ort.position) || typeof ort.name !== 'string') throw new Error()
-      if (!ctrl.signal.aborted) oeffnen({ reise, ort: { id: 'airport-' + iata, name: ort.name + ' · ' + iata,
+      if (!ctrl.signal.aborted) oeffnen({ reise, zurSuche: navigation, ort: { id: 'airport-' + iata, name: ort.name + ' · ' + iata,
         art: 'Flughafen', position: ort.position, tage: [] } })
     } catch { if (!ctrl.signal.aborted) setMeldung('Für ' + iata + ' ist gerade kein Standort verfügbar.') }
   }
@@ -103,6 +109,9 @@ export default function ReisekartenRahmen({ children, expiresAt }: { children: R
     return () => window.clearTimeout(timer)
   }, [granted, bereit, stop])
   const gewaehlt = orte.find(o => o.id === auswahl)
+  const etappe = gewaehlt?.etappeId ?? (aufruf?.reise.stages.length === 1 ? aufruf.reise.stages[0].id : undefined)
+  const ziel = gewaehlt && gewaehlt.art !== 'Etappe'
+    ? ({ Flughafen: 'fluege', Hotel: 'unterkunft', Besuch: 'aktivitaeten' } as const)[gewaehlt.art] : undefined
   const aktivierbar = Boolean(expiresAt && !abgelaufen && !gesperrt && pins.length)
   return <KartenKontext.Provider value={context}>
     {children}
@@ -136,6 +145,11 @@ export default function ReisekartenRahmen({ children, expiresAt }: { children: R
         </div>
         {granted && !bereit && <p role="status">Die Karte wird geladen …</p>}
         <Kartenwege key={tag + '|' + (aufruf.ort?.id ?? '')} orte={orte} fokus={aufruf.ort?.id} aktiv={granted && bereit && offen && aktivierbar} post={post} />
+        {gewaehlt && etappe && ziel && aufruf.zurSuche && <div className="rk-suche">
+          <strong>{gewaehlt.name}</strong>
+          <button type="button" className="rk-link" onClick={() => { dialog.current?.close(); aufruf.zurSuche?.(ziel, etappe) }}>
+            {{ fluege: 'Flugvergleich öffnen', unterkunft: 'Hotels vergleichen', aktivitaeten: 'Aktivitäten entdecken' }[ziel]}
+          </button></div>}
         {granted && <button type="button" className="rk-link rk-revoke" onClick={() => stop('Die Karte ist ausgeschaltet.')}>Kartenzustimmung widerrufen</button>}
         </div>
       </div>}

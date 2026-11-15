@@ -6,6 +6,7 @@ export type Reiseort = {
   id: string
   name: string
   art: 'Etappe' | 'Hotel' | 'Besuch' | 'Flughafen'
+  etappeId?: string
   detail?: string
   position: Position | null
   tage: string[]
@@ -27,7 +28,7 @@ export function reiseKarteninhalt(reise: Trip) {
     { id: 'ankunft', name: 'Tag 1 · Ankunft' }, { id: 'museen', name: 'Tag 2 · Museen' },
   ] }
   const orte: Reiseort[] = tripMapStops(reise).map(s => ({
-    id: 'etappe-' + s.stageId, name: s.name, art: 'Etappe', position: s.position, tage: s.dayIds,
+    id: 'etappe-' + s.stageId, etappeId: s.stageId, name: s.name, art: 'Etappe', position: s.position, tage: s.dayIds,
   }))
   const seen = new Set<string>()
   for (const item of [...reise.days.flatMap(d => d.items), ...reise.ohneTag]) {
@@ -35,7 +36,7 @@ export function reiseKarteninhalt(reise: Trip) {
     seen.add(item.id)
     const tage = reise.days.filter(d => d.id === item.dayId || (item.kind === 'stay' && item.stageId === d.stageId
       && d.dayDate && item.startsOn && item.endsOn && d.dayDate >= item.startsOn && d.dayDate <= item.endsOn))
-    orte.push({ id: 'ort-' + item.id, name: item.title, art: item.kind === 'stay' ? 'Hotel' : 'Besuch',
+    orte.push({ id: 'ort-' + item.id, etappeId: item.stageId ?? tage[0]?.stageId ?? undefined, name: item.title, art: item.kind === 'stay' ? 'Hotel' : 'Besuch',
       position: null, tage: tage.map(d => d.id) })
   }
   return { orte, tage: reise.days.map(d => ({ id: d.id, name: 'Tag ' + d.dayIndex + (d.title ? ' · ' + d.title : '') })) }
