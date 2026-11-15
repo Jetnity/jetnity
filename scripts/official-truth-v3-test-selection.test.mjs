@@ -18,6 +18,7 @@ import {
 } from './official-truth-v3-test-selection.mjs'
 
 const hosted = [
+  'lib/readiness/official-truth-customer-information-migration.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',

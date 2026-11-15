@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import { sha256Hex } from '@/lib/readiness/digest'
 import { readV3ProposalUpload } from '../import/interface'
 import { readV3RetainableProposal } from './proposal-bytes'
-import { S1_RETENTION_SHAPE, s1RetentionShapeAllows } from './retention-shape'
+import { S1_RETENTION_SHAPE_V2, s1RetentionShapeAllows } from './retention-shape'
 import { retentionFixtures, unknownMemberMutations } from '../../../../scripts/db/official-truth-v3-intake-store-1/retention-fixtures'
 import { shapeSql } from '../../../../scripts/db/official-truth-v3-intake-store-1/generate-retention-shape'
 import { s1Fixture } from '../../../../scripts/db/official-truth-v3-intake-store-1/fixtures'
@@ -13,10 +13,14 @@ import { readV3GlobalRuleContext } from '../contract'
 
 test('S1 SQL retention shape pins actual canonical reader sources, not just its own generator', () => {
   const hashes: Record<string, string> = {
-    'lib/readiness/official-truth-product-v3/contract.ts': '7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c',
+    'lib/readiness/official-truth-product-v3/customer-information/topics.ts': '451148225b4b5ab356b0b5fcca2eedd48f21c9438afb99b849bfc5b581fbdeb9',
+    'lib/readiness/official-truth-product-v3/customer-information/details.ts': '4a432734e6247da2afb43100960ca5a64e89d7071b00c344e0c827aed0a7257b',
+    'lib/readiness/official-truth-product-v3/customer-information/detail-topic.ts': 'bf5be6ad3a276adf751692c366d881eecf3e7d66a907be3667d9fb19ad269d33',
+    'lib/readiness/official-truth-product-v3/customer-information/detail-retention-shape.ts': 'f391228f774f7c61ea7ab5bd5d9e85dd09f28fb5153ff0485d6b9256c0fab1e4',
+    'lib/readiness/official-truth-product-v3/contract.ts': '06a1e6a8d1b50e87cc939f099877330ddda07fae5da68f5cf0fd70bda29f6d2b',
     'lib/readiness/official-truth-product-v3/import/interface.ts': 'd98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6',
     'lib/readiness/official-truth-product-v3/import/service-server.ts': '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08',
-    'lib/readiness/rule-claims.ts': '52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a',
+    'lib/readiness/rule-claims.ts': '4a3686ff6186bdefc2c8ae7f5e0bb96169366f02dfdc2f0b61c1b5511d9d852f',
     'lib/readiness/regulierungs-anwendbarkeit.ts': '5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f',
     'lib/readiness/temporal.ts': '768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8',
     'lib/readiness/official-truth-content-identity.ts': 'f48c5e31ab5e4ec0f8f3a5dae2bd769869b37396aae8e36ccb6964d2798d3df6',
@@ -59,7 +63,7 @@ test('complete actual I1 outcomes and audits are closed at every nested object b
 })
 
 test('C1 descriptor revision preserves both context forms and changes only the generated SQL block', () => {
-  assert.equal(S1_RETENTION_SHAPE.revision, 2)
+  assert.equal(S1_RETENTION_SHAPE_V2.revision, 2)
   assert.equal(s1RetentionShapeAllows(s1Fixture('c1-legacy-retention').proposal), true)
   const f = c1Fixture('c1-revision2-retention')
   assert.equal(s1RetentionShapeAllows(f.proposal), true)

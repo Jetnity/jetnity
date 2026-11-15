@@ -35,6 +35,9 @@ import {
 } from '@/lib/readiness/rule-claims'
 import { quellenUrlAufloesen, type QuellenRegistry } from '@/lib/readiness/source-registry'
 import { OFFICIAL_REQUIREMENT_TYPES, TRAVELLER_DOCUMENT_TYPES } from '@/types/trips'
+import { V3_CUSTOMER_INFORMATION_TOPIC_IDS, v3InformationItemValid, v3InformationTopicRequirementMatches,
+  type V3CustomerInformationTopic } from './customer-information/topics'
+import { v3CustomerDetailTopic } from './customer-information/detail-topic'
 
 const OFFICIAL_TRUTH_V3_SCHEMA = 3 as const
 /** Technical input bounds, not an approved operating method or freshness SLO. */
@@ -43,12 +46,25 @@ export const OFFICIAL_TRUTH_V3_LIMITS = Object.freeze({
   sourceReferences: 8,
   crossChecks: 8,
   conflicts: 8,
-  resultsPerCitizenship: 16,
+  resultsPerCitizenship: 64,
   payloadBytes: 65_536,
   payloadDepth: 16,
   payloadNodes: 8192,
   jobAttempts: 16,
   leaseMilliseconds: 900_000,
+})
+
+// A visitor response is a bounded collection, not one intake record. Each
+// projection keeps the original 64 KiB / 8192-node / 16-level data preflight.
+// Also reserve one equally bounded frame per citizenship and one outer frame.
+// The five extra bytes cover cell-array separators; no source content is cut.
+const visitorResponseParts = OFFICIAL_TRUTH_V3_LIMITS.citizenships
+  * (OFFICIAL_TRUTH_V3_LIMITS.resultsPerCitizenship + 1) + 1
+export const OFFICIAL_TRUTH_V3_VISITOR_RESPONSE_LIMITS = Object.freeze({
+  payloadBytes: visitorResponseParts * OFFICIAL_TRUTH_V3_LIMITS.payloadBytes + OFFICIAL_TRUTH_V3_LIMITS.citizenships,
+  payloadNodes: visitorResponseParts * OFFICIAL_TRUTH_V3_LIMITS.payloadNodes,
+  // response -> cells -> cell -> results -> result -> standalone projection
+  payloadDepth: OFFICIAL_TRUTH_V3_LIMITS.payloadDepth + 5,
 })
 
 export type V3ContractFailure =
@@ -87,8 +103,10 @@ function invalid(context: z.RefinementCtx): void {
 }
 
 /** Preflight precedes field reads; no getters, exotic objects, cycles or huge JSON. */
-function read<T>(value: unknown, schema: Schema<T>): V3ReadResult<T> {
-  const preflight = schema2DatenPruefen(value)
+function read<T>(value: unknown, schema: Schema<T>,
+  checkData: (input: unknown) => ReturnType<typeof schema2DatenPruefen> = schema2DatenPruefen,
+): V3ReadResult<T> {
+  const preflight = checkData(value)
   if (preflight) return Object.freeze({ ok: false, reason:
     preflight === 'bound_exceeded' ? 'bound_exceeded'
       : preflight === 'personal_identifier_forbidden' ? 'personal_data_forbidden' : 'invalid_data' })
@@ -104,6 +122,77 @@ function read<T>(value: unknown, schema: Schema<T>): V3ReadResult<T> {
     return freeze({ ok: true, value: parsed.data })
   } catch {
     return Object.freeze({ ok: false, reason: 'invalid_data' })
+  }
+}
+
+/** Only the public collection reader uses this partitioned preflight. Strict
+ * schema/identity/time checks still receive the entire original response. All
+ * privacy, provenance, scalar, descriptor and individual record bounds remain
+ * the shared canonical checks; this adds no alternate fact or intake parser.
+ */
+function visitorResponseDataPreflight(value: unknown): ReturnType<typeof schema2DatenPruefen> {
+  try {
+    function record(input: unknown): Record<string, unknown> | null {
+      if (!input || typeof input !== 'object' || Array.isArray(input) || Object.getPrototypeOf(input) !== Object.prototype) return null
+      const keys = Reflect.ownKeys(input)
+      if (keys.length > OFFICIAL_TRUTH_V3_LIMITS.payloadNodes) throw Error('bound_exceeded')
+      const entries: Array<[string, unknown]> = []
+      for (const key of keys) {
+        if (typeof key !== 'string') return null
+        const descriptor = Object.getOwnPropertyDescriptor(input, key)
+        if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return null
+        entries.push([key, descriptor.value])
+      }
+      return Object.fromEntries(entries)
+    }
+    function array(input: unknown, maximum: number): unknown[] | null {
+      if (!Array.isArray(input) || Object.getPrototypeOf(input) !== Array.prototype) return null
+      if (input.length > maximum) throw Error('bound_exceeded')
+      if (Reflect.ownKeys(input).length !== input.length + 1) return null
+      const result: unknown[] = []
+      for (let index = 0; index < input.length; index++) {
+        const descriptor = Object.getOwnPropertyDescriptor(input, String(index))
+        if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) return null
+        result.push(descriptor.value)
+      }
+      return result
+    }
+    let bytes = OFFICIAL_TRUTH_V3_LIMITS.citizenships, nodes = 0
+    function countNodes(input: unknown): number {
+      return 1 + (input && typeof input === 'object'
+        ? Object.values(input).reduce<number>((sum, child) => sum + countNodes(child), 0) : 0)
+    }
+    function part(input: unknown): ReturnType<typeof schema2DatenPruefen> {
+      const checked = schema2DatenPruefen(input)
+      if (checked) return checked
+      bytes += new TextEncoder().encode(JSON.stringify(input)).length
+      nodes += countNodes(input)
+      return bytes > OFFICIAL_TRUTH_V3_VISITOR_RESPONSE_LIMITS.payloadBytes
+        || nodes > OFFICIAL_TRUTH_V3_VISITOR_RESPONSE_LIMITS.payloadNodes ? 'bound_exceeded' : null
+    }
+    const root = record(value), cells = root && array(root.cells, OFFICIAL_TRUTH_V3_LIMITS.citizenships)
+    if (!root || !cells) return 'invalid_fact'
+    const outer = part({ ...root, cells: [] })
+    if (outer) return outer
+    for (const inputCell of cells) {
+      const cell = record(inputCell), results = cell && array(cell.results, OFFICIAL_TRUTH_V3_LIMITS.resultsPerCitizenship)
+      if (!cell || !results) return 'invalid_fact'
+      const frames: Record<string, unknown>[] = []
+      for (const inputResult of results) {
+        const result = record(inputResult)
+        if (!result) return 'invalid_fact'
+        if (Object.hasOwn(result, 'projection')) {
+          const projection = part(result.projection)
+          if (projection) return projection
+          frames.push({ ...result, projection: null })
+        } else frames.push(result)
+      }
+      const frame = part({ ...cell, results: frames })
+      if (frame) return frame
+    }
+    return null
+  } catch (error) {
+    return error instanceof Error && error.message === 'bound_exceeded' ? 'bound_exceeded' : 'invalid_fact'
   }
 }
 
@@ -228,12 +317,21 @@ const applicationSchema = z.object({
 const revision2ContextSchema = contextBaseSchema.extend({
   contextRevision: z.literal(2), application: applicationSchema,
 }).strict().superRefine(refineContextRoute)
-export type V3GlobalRuleContext = z.infer<typeof legacyContextSchema> | z.infer<typeof revision2ContextSchema>
+const revision3ContextSchema = contextBaseSchema.extend({
+  contextRevision: z.literal(3),
+  informationTopic: z.custom<V3CustomerInformationTopic>(value => typeof value === 'string'
+    && V3_CUSTOMER_INFORMATION_TOPIC_IDS.includes(value as V3CustomerInformationTopic)),
+  informationItem: z.string().refine(v3InformationItemValid),
+}).strict().superRefine((value, context) => {
+  refineContextRoute(value, context)
+  if (!v3InformationTopicRequirementMatches(value.informationTopic, value.scope.requirementType)) invalid(context)
+})
+export type V3GlobalRuleContext = z.infer<typeof legacyContextSchema> | z.infer<typeof revision2ContextSchema> | z.infer<typeof revision3ContextSchema>
 const contextSchema = z.unknown().transform<V3GlobalRuleContext>((value, context) => {
   // Select by tag presence, never by successful fallback. Untagged failures keep
   // the legacy reader's exact issues; tagged data cannot lose its restrictions.
   const parser = value && typeof value === 'object' && 'contextRevision' in value
-    ? revision2ContextSchema : legacyContextSchema
+    ? value.contextRevision === 3 ? revision3ContextSchema : revision2ContextSchema : legacyContextSchema
   const result = parser.safeParse(value)
   if (result.success) return result.data
   for (const issue of result.error.issues) context.addIssue(issue)
@@ -250,8 +348,9 @@ function contextIdentity(value: V3GlobalRuleContext): { contextKey: string; rule
     ? { status: 'specified', expression: regulierungsAusdruckV2StrukturSchluessel(value.conditions.expression) }
     : value.conditions
   const legacy = { scope: scope.scope, route: value.route, conditions }
-  const identity = 'contextRevision' in value
-    ? { contextRevision: value.contextRevision, ...legacy, application: value.application } : legacy
+  const identity = !('contextRevision' in value) ? legacy : value.contextRevision === 2
+    ? { contextRevision: value.contextRevision, ...legacy, application: value.application }
+    : { contextRevision: value.contextRevision, ...legacy, informationTopic: value.informationTopic, informationItem: value.informationItem }
   return {
     ruleScopeKey: scope.key,
     contextKey: `official-truth-context:v3:${sha256Hex(schema2Kanonisch(identity))}`,
@@ -284,11 +383,18 @@ const researchIdentitySchema = z.object({
 }).strict()
 export type V3ResearchIdentity = Pick<OfficialTruthRechercheAnfrage, 'key' | 'ruleScopeKey' | 'factKind' | 'researchReason'>
 
+function contextFactKindMatches(context: V3GlobalRuleContext, factKind: string): boolean {
+  return ('contextRevision' in context && context.contextRevision === 3) === (factKind === 'entry_information')
+}
+
 const workInputSchema = z.object({
   context: contextSchema, method: methodRefSchema,
   factKind: z.enum(REGEL_FAKT_ARTEN), researchReason: researchReasonSchema,
-}).strict()
+}).strict().superRefine((value, context) => {
+  if (!contextFactKindMatches(value.context, value.factKind)) invalid(context)
+})
 function workIdentity(value: z.infer<typeof workInputSchema>) {
+  if (!contextFactKindMatches(value.context, value.factKind)) throw new Error('invalid_contract')
   const identity = contextIdentity(value.context)
   const result = officialTruthRechercheEntscheiden({
     ...value.researchReason, ruleScopeKey: identity.ruleScopeKey, factKind: value.factKind,
@@ -363,6 +469,8 @@ function factRead(value: z.infer<typeof rawFactSchema>, context: V3GlobalRuleCon
   if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return null
   const kind = z.enum(REGEL_FAKT_ARTEN).safeParse(Reflect.get(candidate, 'kind'))
   if (!kind.success) return null
+  const detailContext = 'contextRevision' in context && context.contextRevision === 3
+  if (detailContext !== (kind.data === 'entry_information')) return null
   if (value.schema === 2) {
     const result = regelFaktKanonischLesen(kind.data, context.scope.requirementType, candidate, registry,
       { schema: 2, jurisdictionCountryCode: context.scope.destinationCountryCode })
@@ -370,6 +478,8 @@ function factRead(value: z.infer<typeof rawFactSchema>, context: V3GlobalRuleCon
   }
   const result = regelFaktKanonischLesen(kind.data, context.scope.requirementType, candidate, registry)
   if (!result.ok || !countriesInConditionsValid(result.fact)) return null
+  if (result.fact.kind === 'entry_information' && (!detailContext
+    || v3CustomerDetailTopic(result.fact.detail) !== context.informationTopic)) return null
   // An official host alone must not turn an arbitrary personal URL path/query
   // into a retained global action. Only exact registered publication URLs pass.
   if (result.fact.kind === 'official_actions' && result.fact.actions.some((action) => {
@@ -669,7 +779,8 @@ function sourceDecisionSchema(registry: QuellenRegistry) {
     historyArchive: archivePointerSchema.nullable(),
     conclusion: z.enum(['clear_primary', 'primary_unclear', 'conditions_unresolved', 'comparable_conflict']),
   }).strict().superRefine((value, context) => {
-    if (value.contextKey !== contextIdentity(value.context).contextKey
+    if (!contextFactKindMatches(value.context, value.factKind)
+      || value.contextKey !== contextIdentity(value.context).contextKey
       || value.reference === value.predecessor
       || new Set(value.knownConflicts.map((item) => item.reference)).size !== value.knownConflicts.length) invalid(context)
     const clear = value.primary.status === 'clear' ? value.primary : null
@@ -899,6 +1010,7 @@ const jobSchema = jobLifecycleSchema.extend({
   jobKey: jobKeySchema, context: contextSchema, contextKey: contextKeySchema,
   research: researchIdentitySchema, method: methodRefSchema, resultDecisionRef: decisionRefSchema.nullable(),
 }).strict().superRefine((value, context) => {
+  if (!contextFactKindMatches(value.context, value.research.factKind)) { invalid(context); return }
   const expected = workIdentity({ context: value.context, method: value.method,
     factKind: value.research.factKind, researchReason: value.research.researchReason })
   if (!same(expected.research, value.research) || expected.contextKey !== value.contextKey || expected.jobKey !== value.jobKey) invalid(context)
@@ -1046,7 +1158,7 @@ export function readV3PublicResponseRecord(
 ): V3ReadResult<V3PublicResponseRecord> {
   const time = read(clock, clockSchema)
   if (!time.ok) return time
-  const result = read(value, responseSchema(registry))
+  const result = read(value, responseSchema(registry), visitorResponseDataPreflight)
   if (!result.ok) return result
   if (result.value.generatedAt > time.value.now || result.value.cells.some((cell) =>
     cell.results.some((item) => item.status === 'accepted' && !projectionCurrent(item.projection, time.value)))) {

@@ -42,6 +42,14 @@ const MIGRATION_DIR = join(ROOT, 'supabase/migrations')
 const MIGRATION_SUFFIX = '_official_truth_accepted_rule_claim_persistence_schema_1.sql'
 const API_ROLES = ['public', 'anon', 'authenticated', 'service_role'] as const
 
+// This immutable flat-table migration predates the V3 JSONB detail carrier.
+// The current writer refuses entry_information before any client/clock/RPC;
+// the additive V3 retention validators own its complete structured payload.
+const LEGACY_FLAT_FACT_KINDS = [
+  'requirement_effect', 'visa_options', 'stay_limit', 'passport_validity',
+  'blank_passport_pages', 'transit_conditions', 'official_actions', 'temporal_rule',
+] as const
+
 const INTEGRITY_FUNCTIONS = [
   'private.official_rule_claim_transit_airports_ok(text[])',
   'private.official_rule_claim_fact_payload_present(bigint, text)',
@@ -295,7 +303,7 @@ describe('accepted rule claim persistence schema', () => {
     assert.match(evidenceSql, /lookup_key ~ '\^evidence-key:v2:\[a-f0-9\]\{64\}\$'/)
   })
 
-  test('accepted claims use the closed fact and quality lists', () => {
+  test('legacy accepted claims retain their closed fact and quality lists', () => {
     const claims = extractParen(sql, 'create table private.official_rule_claims')
     assert.match(claims, /claim_id bigint generated always as identity/i)
     assert.match(claims, /accepted_at timestamptz not null/i)
@@ -304,7 +312,8 @@ describe('accepted rule claim persistence schema', () => {
     assert.match(extractParen(sql, 'constraint official_rule_claims_validation_state check'), /validation_state = 'valid'/)
 
     const facts = extractParen(sql, 'constraint official_rule_claims_fact_kind check')
-    assert.deepEqual(quotedIn(facts, 'fact_kind'), [...REGEL_FAKT_ARTEN])
+    assert.deepEqual(quotedIn(facts, 'fact_kind'), [...LEGACY_FLAT_FACT_KINDS])
+    assert.deepEqual([...REGEL_FAKT_ARTEN], [...LEGACY_FLAT_FACT_KINDS, 'entry_information'])
 
     const accepted = annehmbareQualitaet()
     assert.deepEqual(accepted, ['explicit_primary_statement', 'composed_from_multiple_primary_sources'])
@@ -531,7 +540,7 @@ describe('accepted rule claim persistence schema', () => {
     assert.match(present, /set search_path = pg_catalog/i)
     assert.deepEqual(
       [...present.matchAll(/when '([^']+)'/g)].map((item) => item[1]),
-      [...REGEL_FAKT_ARTEN],
+      [...LEGACY_FLAT_FACT_KINDS],
     )
     for (const table of FACT_TABLES) {
       assert.match(present, new RegExp(`from private\\.${table} where claim_id = claim`, 'i'))

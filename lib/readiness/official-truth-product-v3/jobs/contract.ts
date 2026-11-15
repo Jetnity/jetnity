@@ -222,7 +222,8 @@ export function createM04SubjectIdentity(kind: M04Kind, raw: unknown): M04Subjec
     const semantic = { ...('contextRevision' in c ? { contextRevision: c.contextRevision } : {}), scope: scope.scope,
       route: c.route, conditions: c.conditions.status === 'specified'
         ? { status: 'specified', expression: `rule-applicability-structure:v2:${canonical(c.conditions.expression)}` } : c.conditions,
-      ...('application' in c ? { application: c.application } : {}) }
+      ...('application' in c ? { application: c.application } : {}),
+      ...('informationTopic' in c ? { informationTopic: c.informationTopic, informationItem: c.informationItem } : {}) }
     // A derivation bug is closed, never a second escape bucket beside S0's locator.
     const contextKey = `official-truth-context:v3:${sha256Hex(canonical(semantic))}`
     if (contextKey !== identity.value.contextKey) return null

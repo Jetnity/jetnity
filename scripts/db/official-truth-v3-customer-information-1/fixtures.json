@@ -1,0 +1,21 @@
+{
+  "kind": "owned-local-synthetic-customer-identity-only",
+  "context": {
+    "contextRevision": 3,
+    "informationTopic": "customs",
+    "informationItem": "cash_allowance",
+    "scope": {
+      "destinationCountryCode": "DE",
+      "transitCountryCode": null,
+      "citizenship": { "mode": "required", "countryCodes": ["CH"] },
+      "credentialOption": { "mode": "not_applicable" },
+      "residence": { "mode": "not_applicable" },
+      "requirementType": "other_entry_requirement",
+      "validity": { "mode": "not_applicable" }
+    },
+    "route": "direct_entry",
+    "conditions": { "status": "unconditional" }
+  },
+  "secondItem": "alcohol_allowance",
+  "invalidTopic": "required_vaccinations"
+}

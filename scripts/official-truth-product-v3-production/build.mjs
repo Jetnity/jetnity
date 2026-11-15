@@ -12,6 +12,15 @@ const own = 'scripts/db/official-truth-v3-production-install-1/'
 const bg = 'scripts/db/official-truth-v3-background-guard-1/'
 const quota = 'scripts/db/official-truth-v3-rolling-jobs-quota-1/'
 const schedule = 'scripts/db/official-truth-v3-production-import-schedule-1/'
+const customerDefinitionsPath = 'scripts/db/official-truth-v3-customer-information-1/definitions.sql'
+const historyDefinitionPath = 'scripts/db/official-truth-v3-customer-information-1/history-definition.sql'
+const customerFunctions = Object.freeze([
+  'official_v3_intake_private.proposal_shape_v1()',
+  'official_v3_jobs_private.context_v1(jsonb)', 'official_v3_jobs_private.subject_v1(text,jsonb)',
+  'official_v3_result_private.context_v1(jsonb)', 'official_v3_result_private.subject_v1(text,jsonb)',
+  'official_v3_result_private.proposal_shape_v1()',
+])
+const customerOwners = ['ot_v3_intake_owner', 'ot_v3_jobs_owner', 'ot_v3_result_owner']
 const packagePath = 'scripts/official-truth-product-v3-production/'
 const read = path => readFileSync(new URL(path, root), 'utf8')
 export const sha256 = value => createHash('sha256').update(value).digest('hex')
@@ -96,7 +105,10 @@ function getFunction(source, signature) {
   return selected[0]
 }
 function functionMetadata(f) {
-  return { signature: f.signature, name: f.name, owner: f.name.startsWith('official_v3_jobs_private.') ? 'ot_v3_jobs_owner' : 'postgres',
+  const owner = f.name.startsWith('official_v3_jobs_private.') ? 'ot_v3_jobs_owner'
+    : f.name.startsWith('official_v3_intake_private.') ? 'ot_v3_intake_owner'
+      : f.name.startsWith('official_v3_result_private.') ? 'ot_v3_result_owner' : 'postgres'
+  return { signature: f.signature, name: f.name, owner,
     hash: sha256(f.body), language: /LANGUAGE\s+(\w+)/i.exec(f.options)[1].toLowerCase(),
     definer: /SECURITY DEFINER/i.test(f.options), volatile: /\bIMMUTABLE\b/.test(f.options) ? 'i' : /\bSTABLE\b/.test(f.options) ? 's' : 'v',
     config: [...f.options.matchAll(/SET\s+(\w+)\s*=\s*('[^']*'|[^\s]+)/gi)].map(m =>
@@ -155,13 +167,25 @@ function compileRolling(productionBg, productionStatus, binding) {
   const oldRolling = read(quota + 'provider-migration-body.sql')
   const current = new Map([...functionsIn(read('scripts/db/' + foundation.HM04 + '/install-candidate.sql')),
     ...functionsIn(productionBg), ...functionsIn(productionStatus)].map(f => [f.signature, f]))
+  // This fresh, still-unused installation captures its own complete baseline.
+  // Retain every historical input byte; replace only the same six reviewed
+  // validator bodies used by the additive Dev successor before that capture.
+  const customerSource = read(customerDefinitionsPath)
+  const customer = customerFunctions.map(signature => getFunction(customerSource, signature))
+  assert.equal(functionsIn(customerSource).length, customerFunctions.length)
+  const oldCustomer = [...functionsIn(read('scripts/db/' + foundation.HS1 + '/install-candidate.sql')),
+    ...functionsIn(read('scripts/db/' + foundation.HRS1 + '/install-candidate.sql'))]
+  for (const f of oldCustomer) if (customerFunctions.includes(f.signature)) current.set(f.signature, f)
   const replacementNames = ['official_v3_jobs_private.assert_history_v1(text)',
     'official_v3_jobs_private.tx_execution_start_v1(jsonb,jsonb,integer,integer,timestamptz)',
     'official_v3_jobs_private.tx_queue_cas_v1(jsonb,jsonb,integer,integer,timestamptz)',
     'official_v3_guard_private.jobs_catalog_v1()', 'official_v3_guard_private.hrs_catalog_v1()',
     'official_v3_guard_private.assert_catalog_v1()', 'official_v3_guard_private.require_open_v1()',
     'public.official_v3_guard_alarm_status_v1()']
-  const replacements = replacementNames.slice(0, 5).map(signature => definition(getFunction(oldRolling, signature)))
+  const historySource = read(historyDefinitionPath)
+  assert.equal(functionsIn(historySource).length, 1, 'one separately reviewed bounded history-memo successor')
+  const replacements = replacementNames.slice(0, 5).map(signature => definition(getFunction(
+    signature === 'official_v3_jobs_private.assert_history_v1(text)' ? historySource : oldRolling, signature)))
   let catalog = read(own + 'parts/rolling-catalog.sql')
   catalog = token(catalog, 'PRODUCTION_BG_SHA256', sha256(productionBg), 1)
   catalog = token(catalog, 'PRODUCTION_STATUS_SHA256', sha256(productionStatus), 1)
@@ -172,13 +196,15 @@ function compileRolling(productionBg, productionStatus, binding) {
     const f = getFunction(oldRolling, signature)
     replacements.push(definition(f, once(f.body, oldProof, newProof)))
   }
-  const definitions = replacements.map((sql, index) => index < 3 ? 'SET LOCAL ROLE ot_v3_jobs_owner;\n' + sql + '\nRESET ROLE;' : sql).join('\n\n')
+  const definitions = [...replacements.map((sql, index) => index < 3 ? 'SET LOCAL ROLE ot_v3_jobs_owner;\n' + sql + '\nRESET ROLE;' : sql),
+    ...customer.map(f => 'SET LOCAL ROLE ' + functionMetadata(f).owner + ';\n' + definition(f) + '\nRESET ROLE;')].join('\n\n')
   const successors = functionsIn(definitions)
-  assert.deepEqual(successors.map(f => f.signature), replacementNames)
+  assert.deepEqual(successors.map(f => f.signature), [...replacementNames, ...customerFunctions])
   for (const f of successors) {
     assert.ok(current.has(f.signature), 'replacement belongs to the actual fresh predecessor')
     const before = functionMetadata(current.get(f.signature)), after = functionMetadata(f)
     assert.deepEqual({ ...before, hash: null }, { ...after, hash: null }, 'same native signature/owner/options')
+    assert.equal(f.args, current.get(f.signature).args, 'same complete argument contract')
   }
   let policy = read(own + 'parts/rolling-policy.sql')
   policy = token(policy, 'PRODUCTION_METHOD_BINDING', quote(JSON.stringify({ methodId: binding.methodId, revision: binding.revision,
@@ -191,6 +217,7 @@ function compileRolling(productionBg, productionStatus, binding) {
   constraints = once(constraints, " IF (SELECT count(*) FROM official_v3_jobs_private.subjects_v1\n     WHERE job_key='ROLLING_JOB_KEY' AND kind='rule_research')<>1 THEN\n   RAISE EXCEPTION 'rolling quota requires exact existing CH DE subject' USING ERRCODE='P7911'; END IF;",
     " IF EXISTS(SELECT 1 FROM official_v3_jobs_private.subjects_v1) THEN\n   RAISE EXCEPTION 'production rolling quota requires an unused job store' USING ERRCODE='P7911'; END IF;")
   let delta = read(quota + 'delta.sql')
+  delta = once(delta, 'cardinality(replacement_ids)<>8', 'cardinality(replacement_ids)<>14')
   delta = token(delta, 'predecessor_gap_digest', 'predecessor_status_digest', 1)
   delta = token(delta, 'official_v3_guard_private.gap_recovery_baseline_v1', 'official_v3_guard_private.status_baseline_v1', 1)
   delta = token(delta, 'GAP_PROVIDER_SHA256', sha256(productionStatus), 1)
@@ -205,17 +232,21 @@ function compileRolling(productionBg, productionStatus, binding) {
   const hrsQuery = getFunction(hrs, 'official_v3_result_private.catalog_v1()').body.trim().replace(/^BEGIN\s+RETURN\s*\(/, '').replace(/\);\s*END\s*$/, '')
   delta = token(delta, '/* CAPTURE_HRS */', hrsQuery, 1)
   const output = [prefix, constraints,
-    'GRANT ot_v3_jobs_owner TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE GRANTED BY postgres;',
+    ...customerOwners.map(owner => 'GRANT ' + owner + ' TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE GRANTED BY postgres;'),
     policy, definitions, read(quota + 'constraints.sql'),
-    'REVOKE ot_v3_jobs_owner FROM postgres GRANTED BY postgres;', delta, read(own + 'parts/rolling-postcheck.sql')].join('\n\n')
+    ...customerOwners.map(owner => 'REVOKE ' + owner + ' FROM postgres GRANTED BY postgres;'), delta, read(own + 'parts/rolling-postcheck.sql')].join('\n\n')
     .replaceAll('ROLLING_JOB_KEY', PRODUCTION.subject)
   assertTransactionBody(output)
-  assert.equal(functionsIn(output).length, 10)
+  assert.equal(functionsIn(output).length, 16)
   assert.ok(!/(?:FROM |JOIN |CREATE TABLE )official_v3_guard_private\.(?:recovery_baseline_v1|gap_recovery_baseline_v1|retired_later_attempts_v1)|dev:yfvbx/.test(output), 'no Dev repair chain in fresh Production quota')
   return output
 }
 export function compileProductionArtifacts() {
   const pins = verifySourcePins()
+  assert.equal(pins.filter(pin => pin.path === customerDefinitionsPath).length, 1,
+    'fresh Production customer definitions require their own exact source pin')
+  assert.equal(pins.filter(pin => pin.path === historyDefinitionPath).length, 1,
+    'fresh Production history definition requires its own exact source pin')
   const bindingText = readFileSync(new URL('binding.json', here), 'utf8').trim()
   const binding = JSON.parse(bindingText)
   assert.equal(binding.methodId, 'jetnity-destination-primary-ch-de-visa')
@@ -255,6 +286,13 @@ export function compileProductionArtifacts() {
     ['scripts/official-truth-product-v3-production/preflight.sql', 'BEGIN;\nSET TRANSACTION READ ONLY;\n' + preflight + '\n' + read(own + 'parts/provider-preflight.sql') + '\nROLLBACK;\n'],
     ['scripts/official-truth-product-v3-production/verify.sql', 'BEGIN;\nSET TRANSACTION READ ONLY;\n' + read(own + 'parts/verify-installed.sql') + '\nROLLBACK;\n']])
   const manifest = { schema: 1, status: 'UNAPPLIED', target: PRODUCTION, installOrder: INSTALL_ORDER,
+    customerInformation: { contextRevision: 3, retentionRevision: 3, definitions: customerDefinitionsPath,
+      definitionsSha256: sha256(read(customerDefinitionsPath)), replacedFunctions: customerFunctions,
+      baseline: 'fresh rolling baseline before the first genuine audit', publicationAuthority: 'unchanged' },
+    historyValidation: { definition: historyDefinitionPath, definitionSha256: sha256(read(historyDefinitionPath)),
+      function: 'official_v3_jobs_private.assert_history_v1(text)',
+      scope: 'invocation-local bounded memo; every retained historical row remains validated',
+      apiDeadlineMs: 5000, quotas: 'unchanged' },
     bindingSha256: sha256(bindingText), runtimeEnvironment: LOGINS.map(([login, role, key]) => ({ key, login, role })),
     sources: pins, compilerInputs: compilerInputs.map(identity), operationalInputs: operationalInputs.map(identity),
     artifacts: [...artifacts].map(([path, value]) => ({ path, bytes: Buffer.byteLength(value), sha256: sha256(value) })),

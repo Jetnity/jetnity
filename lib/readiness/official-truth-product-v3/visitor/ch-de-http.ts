@@ -23,6 +23,7 @@ const officialHref = z.enum([
   'https://bern.diplo.de/ch-de/service/visumundeinreise/2611474-2611474',
 ])
 const accepted = z.object({ status: z.literal('accepted'), title: text(200),
+  informationTopic: z.literal('visa').optional(),
   conditions: z.array(text(2000)).min(1).max(32),
   statements: z.array(z.object({ text: text(2000), when: text(2000).nullable(), href: officialHref.nullable() }).strict()).min(1).max(16),
   source: z.object({ label: text(200), href: officialHref }).strict(),

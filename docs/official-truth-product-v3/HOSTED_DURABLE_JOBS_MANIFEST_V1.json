@@ -2,7 +2,7 @@
   "schema": "jetnity.hm04.source.v2",
   "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED_HM04_HRS_A3",
   "author": {
-    "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
+    "display": "Jetnity HS1/HM04 Review Fix \u2014 Codex replacement session",
     "session": "/root/hs1_hm04_fix",
     "replacementFor": [
       "HS1 Generation1 /root/hosted_intake_writer_g1",
@@ -131,7 +131,7 @@
     "blob": "EXTERNAL_FINAL_RECEIPT",
     "bytes": "EXTERNAL_FINAL_RECEIPT",
     "sha256": "EXTERNAL_FINAL_RECEIPT",
-    "reason": "A manifest cannot include its own raw-byte hash/blob or containing commit/tree. External immutable delivery receipt binds all eight full-file pins, final tree/sole parent, and the complete V1→V2 manifest inverse."
+    "reason": "A manifest cannot include its own raw-byte hash/blob or containing commit/tree. External immutable delivery receipt binds all eight full-file pins, final tree/sole parent, and the complete V1\u2192V2 manifest inverse."
   },
   "reused": [
     {
@@ -157,9 +157,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-      "blob": "6438c4ca8a31252ae60279037d5c29489b52953a",
-      "bytes": 28055,
-      "sha256": "f3af959ac216f8448e9614483394beed207d0efad23dec3e787e01efe65e1d97",
+      "blob": "fdae1a88d29ff98203baef062e5f139a424b24f7",
+      "bytes": 28214,
+      "sha256": "28046404d236e8552b67e55917b13a54bc952dcb9f1ac28be2f9e61b7a9a7799",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -185,29 +185,29 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
-      "blob": "b563c2add6d8bbe1d9a2f6ca6bead6ddc78af524",
-      "bytes": 11517,
-      "sha256": "77d8b34b79f4f760ecb4228ebe3e4be07a10d49305c092a6913cb88f7fb42ddb",
+      "blob": "e18254fe8f27fe8415497c7ed16733fd06810a9c",
+      "bytes": 12774,
+      "sha256": "f20b71d291ce0263ac878b4676844ee3aa9085c41786a91d63d61101f8cf33c7",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-      "blob": "f4f50b389e3a66f4aa54bf862a86942661032d7f",
-      "bytes": 13766,
-      "sha256": "3cdc8646f82e7b9c9134232cceaeaf424cd3b2454a40c64d8d13f0830940f96c",
+      "blob": "90f5e10aa199bf72f8df56c9a1b00cbf2a8ce30c",
+      "bytes": 13800,
+      "sha256": "56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
-      "bytes": 14218,
-      "blob": "f878b2d19ed6b603375fe38d6b62467ac11ed47e",
-      "sha256": "f891862b12c7fc2f0d2ef6ffa5faa190f04dd604762e13cad7e626d999e40776"
+      "bytes": 14252,
+      "blob": "4bc6c358ab4db5f1cf25187698aa1607ce3e81fd",
+      "sha256": "171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "0e17413577d0e667c8c3d848df584a4809632566",
-      "bytes": 46008,
-      "sha256": "3ffe09aff83549d5bc3efa3e1297abb6419c4a20f20885d689d9602804d6ab42",
+      "blob": "0599fa409c7b3dd5e25e45f23f255d928e2efa01",
+      "bytes": 46718,
+      "sha256": "56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97",
       "historicalRef": "07f1bba169767588df030c5c5deaf7a55591bd6a",
       "currentSourceSelection": {
         "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6851586927",
@@ -1592,7 +1592,7 @@
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
       "composition": {
-        "operation": "For every retained R41→V1 and V1→V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
+        "operation": "For every retained R41\u2192V1 and V1\u2192V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
         "intermediateSha256": "eac887ab9c1acd6988543a4ffb022f9e00af238b3ff7751ae6b8f6a715b127b4",
         "intermediateBytes": 341956,
         "currentRevision": {
@@ -1823,7 +1823,7 @@
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
       "composition": {
-        "operation": "For every retained R41→V1 and V1→V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
+        "operation": "For every retained R41\u2192V1 and V1\u2192V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
         "intermediateSha256": "9a42862f86ad6c9432309d181138b44eb1df495eddbc5b85c4da73d08addf1b1",
         "intermediateBytes": 118333,
         "currentRevision": {
@@ -3515,7 +3515,7 @@
       ],
       "inverseVerifiedBy": "Pure in-memory UTF-8 byte reconstruction and complete nonoverlapping partitions in both directions; no project/parser/compiler/SQL/native/test execution.",
       "composition": {
-        "operation": "For every retained R41→V1 and V1→V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
+        "operation": "For every retained R41\u2192V1 and V1\u2192V2 pair, intersect their V1 byte intervals and transfer the equal raw overlap into R41/V2; rebuild and verify complete original and current partitions.",
         "intermediateSha256": "2feb7e311c46b27457ffa9a5a6deb5ab0e05841a7683e04f7a6d211044c7bed0",
         "intermediateBytes": 224061,
         "currentRevision": {
@@ -6117,7 +6117,7 @@
       "schema": "jetnity.hm04.source.v1",
       "status": "SOURCE_CANDIDATE_NOT_RUN_UNAPPLIED",
       "author": {
-        "display": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4",
+        "display": "Jetnity Official Truth V3 Durable Jobs1 \u2014 Codex Generation4",
         "session": "/root/m04_durable_jobs_writer_g4",
         "continuity": "same original reachable Generation4 session; no successor",
         "selfReviewIsTlPass": false
@@ -12358,7 +12358,7 @@
     "id": "HS1/HM04-FIX1",
     "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
     "author": {
-      "display": "Jetnity HS1/HM04 Review Fix — Codex replacement session",
+      "display": "Jetnity HS1/HM04 Review Fix \u2014 Codex replacement session",
       "session": "/root/hs1_hm04_fix",
       "replacementFor": [
         "HS1 Generation1 /root/hosted_intake_writer_g1",
@@ -12744,7 +12744,7 @@
   },
   "historicalA2Identity": {
     "author": {
-      "display": "Jetnity Official Truth V3 Durable Jobs1 — Codex Generation4",
+      "display": "Jetnity Official Truth V3 Durable Jobs1 \u2014 Codex Generation4",
       "session": "/root/m04_durable_jobs_writer_g4",
       "continuity": "same original reachable Generation4 session; no successor",
       "selfReviewIsTlPass": false
@@ -12839,7 +12839,7 @@
       "runtimeAcceptance": "Not implied by source selection; Root must separately verify accepted main/prerequisite identities before integration."
     }
   },
-  "revisionPreservationScope": "Historical V1/A2/FIX1/FIX2 mappings remain as recorded; exact current a473→PG17.12-FIX3 changes are reviewFix3.codeChanges and diagnosticCleanup. Current H4014 metadata correction composes over the exact SQL maps; the completed failure-only diagnostic is removed and Native restored byte-exact to 777c0adf. Current HRS A3 includes the selected standalone function-local JIT configuration fix; current 28 original headers and all 31 groups are explicitly bound.",
+  "revisionPreservationScope": "Historical V1/A2/FIX1/FIX2 mappings remain as recorded; exact current a473\u2192PG17.12-FIX3 changes are reviewFix3.codeChanges and diagnosticCleanup. Current H4014 metadata correction composes over the exact SQL maps; the completed failure-only diagnostic is removed and Native restored byte-exact to 777c0adf. Current HRS A3 includes the selected standalone function-local JIT configuration fix; current 28 original headers and all 31 groups are explicitly bound.",
   "reviewFix2": {
     "id": "HS1/HM04-FIX2",
     "status": "SOURCE_ONLY_NOT_RUN_UNAPPLIED",
@@ -14650,7 +14650,7 @@
         "execution": 820,
         "jit": 814
       },
-      "remainingTwelveComponentsMilliseconds": "1–9 each",
+      "remainingTwelveComponentsMilliseconds": "1\u20139 each",
       "threeActualCallsMilliseconds": 5406,
       "unchangedBusinessDeadlineMilliseconds": 5000
     },

@@ -8,12 +8,15 @@ import type { RegulierungsAusdruckV2, RegulierungsPraedikatV2 } from '@/lib/read
 import type { StayOutcomeV2 } from '@/lib/readiness/rule-claims'
 import { officialTemporalTexte, type EventDeadlineV2 } from '@/lib/readiness/temporal'
 import type { V3GlobalRuleContext, V3RuleFact, V3VisitorInput } from '../contract'
+import type { V3CustomerInformationTopic } from '../customer-information/topics'
+import { v3CanonicalInformationTopic, v3CanonicalRelatedInformationTopics } from '../customer-information/canonical-topic'
 import type { V3VisitorAnswer } from './query'
+import { presentV3CustomerDetail, type V3VisitorStatement as Statement } from './customer-detail-presentation'
 
-type Statement = Readonly<{ text: string; when: string | null; href: string | null }>
 export type V3VisitorViewResult =
   | Readonly<{ status: 'accepted'; title: string; conditions: readonly string[]; statements: readonly Statement[];
-      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string }>
+      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string;
+      informationTopic?: V3CustomerInformationTopic; relatedInformationTopics?: readonly V3CustomerInformationTopic[] }>
   | Readonly<{ status: 'pending' | 'conflict' | 'unavailable' | 'error'; title: string; message: string }>
 export type V3VisitorView = Readonly<{
   input: V3VisitorInput; generatedAt: string; synthetic: boolean;
@@ -71,8 +74,8 @@ function contextText(context: V3GlobalRuleContext): string[] {
   if (context.scope.residence.mode === 'required') output.push(`Wohnsitz: ${landAnzeigeText(context.scope.residence.countryCode)}`)
   if (context.conditions.status === 'specified') output.push(v3ConditionText(context.conditions.expression))
   else if (context.conditions.status === 'unresolved') output.push('Weitere Regelbedingungen sind noch ungeklärt')
-  else if (!('contextRevision' in context)) output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
-  if ('contextRevision' in context) {
+  else if (!('contextRevision' in context) || context.contextRevision !== 2) output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
+  if ('contextRevision' in context && context.contextRevision === 2) {
     const window = context.application.tripStartAndEndWindow
     output.push('Reisezweck: Tourismus',
       `Reisebeginn und Reiseende müssen zwischen ${window.from} und ${window.through} liegen (beide Grenzen eingeschlossen).`)
@@ -81,6 +84,7 @@ function contextText(context: V3GlobalRuleContext): string[] {
 }
 
 const statement = (text: string, when: string | null = null, href: string | null = null): Statement => ({ text, when, href })
+
 const visaOutcome = (eligibility: string, mandate: string) =>
   `${eligibility === 'allowed' ? 'Zulässig' : eligibility === 'not_allowed' ? 'Nicht zulässig' : 'Zulässigkeit ungeklärt'}; ${mandate === 'mandatory' ? 'verpflichtend' : mandate === 'not_mandatory' ? 'nicht verpflichtend' : 'Pflichtstatus ungeklärt'}`
 const effectText = (effect: 'required' | 'not_required', visaMode: keyof typeof OFFICIAL_VISA_MODUS_BEZEICHNUNG | null) =>
@@ -102,8 +106,9 @@ function stayV2Text(outcome: StayOutcomeV2): string[] {
   return lines
 }
 
-function factText(container: V3RuleFact): Statement[] {
+function factText(container: V3RuleFact): readonly Statement[] {
   const fact = container.fact
+  if (fact.kind === 'entry_information') return presentV3CustomerDetail(fact.detail)
   if (fact.kind === 'requirement_effect') {
     if ('applicability' in fact && fact.applicability.kind === 'branches') return fact.applicability.branches.map((branch) =>
       statement(effectText(branch.outcome.effect, branch.outcome.visaMode), branch.when.kind === 'otherwise'
@@ -172,7 +177,11 @@ export function presentV3VisitorAnswer(answer: V3VisitorAnswer): V3VisitorView {
           const projection = result.projection, source = answer.sources[projection.reference]
           if (!source) return { status: 'unavailable', title: 'Derzeit nicht verfügbar', message: 'Der amtliche Quellenverweis konnte nicht bestätigt werden.' }
           const validity = projection.rule.subject.evidence.legalValidity
+          const topic = v3CanonicalInformationTopic(projection.rule.subject.context, projection.rule.subject.fact)
+          const related = v3CanonicalRelatedInformationTopics(projection.rule.subject.context, projection.rule.subject.fact)
           return { status: 'accepted', title: OFFICIAL_ANFORDERUNG_BEZEICHNUNG[projection.rule.subject.context.scope.requirementType],
+            ...(topic ? { informationTopic: topic } : {}),
+            ...(related.length > 0 ? { relatedInformationTopics: related } : {}),
             conditions: contextText(projection.rule.subject.context), statements: factText(projection.rule.subject.fact),
             source: { label: source.authorityName, href: source.href },
             checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),

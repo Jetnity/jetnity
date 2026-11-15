@@ -70,6 +70,11 @@
     "sha256": "71e2f9f080b8af0b7100d49b70520f8c34dffdc1bc84f3912b20aff413adf97c"
   },
   {
+    "path": "scripts/db/official-truth-v3-customer-information-1/definitions.sql",
+    "bytes": 794857,
+    "sha256": "6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f"
+  },
+  {
     "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
     "bytes": 446847,
     "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
@@ -168,5 +173,10 @@
     "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
     "bytes": 38527,
     "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/history-definition.sql",
+    "bytes": 20878,
+    "sha256": "719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355"
   }
 ]

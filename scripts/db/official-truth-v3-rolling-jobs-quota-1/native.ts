@@ -109,6 +109,9 @@ export async function runRollingQuotaNative(t: TestContext) {
     // quotas and immutable v1 anchors remain exactly those of the predecessor.
     await proof.run(creator + '\nBEGIN;\n' + upgrade + '\nCOMMIT;', 'exact rolling quota upgrade');
     assert.deepEqual((await proof.value('(' + history + ')')), before)
+    await proof.run(creator + '\nBEGIN;\n' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + '\nCOMMIT;',
+      'explicit additive customer/history successor; immutable rolling predecessor retained');
+    assert.deepEqual((await proof.value('(' + history + ')')), before)
     await t.test('fresh complete BG1 proof admits the successor; history spans 24h and preserves 64 lifetime STARTs', async () => {
       assert.deepEqual((await proof.value('public.official_v3_guard_alarm_status_v1()', creator)), { schema: 1, status: 'unavailable' })
       assert.equal((await proof.value<{ status: string }>('official_v3_guard_private.audit_v1()', creator)).status, 'current')
@@ -273,6 +276,8 @@ export async function runRollingStartBoundary(t: TestContext) {
       await proof.run(creator + '\nBEGIN;\n' + readSql('official-truth-v3-background-guard-1/' + file) + '\nCOMMIT;', 'START boundary predecessor ' + file);
     }
     await proof.run(creator + '\nBEGIN;\n' + readFileSync(new URL('./provider-migration-body.sql', import.meta.url), 'utf8') + '\nCOMMIT;', 'START boundary successor');
+    await proof.run(creator + '\nBEGIN;\n' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + '\nCOMMIT;',
+      'START boundary additive customer/history successor');
     assert.equal((await proof.value<{ status: string }>('official_v3_guard_private.audit_v1()', creator)).status, 'current')
     const before = (await proof.value<{ starts: number; operations: number; remaining_starts: number; remaining_operations: number }>(
       'official_v3_guard_private.ch_de_quota_v2()', creator))

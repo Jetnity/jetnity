@@ -23,6 +23,7 @@ export const PRODUCTION_TEST_FILES = Object.freeze([
   'scripts/official-truth-production-import-monitor.test.mjs',
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-customer-information-migration.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',

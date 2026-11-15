@@ -5,6 +5,10 @@ import type { EventDeadlineV2 } from '@/lib/readiness/temporal'
 import { createV3VisitorQuery } from './query'
 import { presentV3VisitorAnswer } from './presentation'
 import { syntheticV3Fixture } from './test-fixtures'
+import type { V3CustomerInformationDetail } from '../customer-information/details'
+import type { V3CustomerInformationTopic } from '../customer-information/topics'
+import { readV3GlobalRuleContext, type V3GlobalRuleContext } from '../contract'
+import { v3CustomerInformationCoverage } from './coverage-presentation'
 
 for (const unconditional of [false, true]) test(`C1 real query/reproof displays all application restrictions with unconditional expression=${unconditional}`, async () => {
   const f = syntheticV3Fixture(), item = unconditional ? f.applicationUnconditional : f.application
@@ -17,6 +21,7 @@ for (const unconditional of [false, true]) test(`C1 real query/reproof displays 
   const view = presentV3VisitorAnswer(result.answer), displayed = view.cells[0].results[0]
   if (displayed.status !== 'accepted') assert.fail(`expected synthetic proof, received ${displayed.status}`)
   assert.equal(view.synthetic, true)
+  assert.equal(displayed.informationTopic, 'blank_passport_pages')
   assert.equal(f.counts.reproof, 1); assert.equal(f.counts.confirm, 1)
   const text = displayed.conditions.join('\n')
   assert.match(text, /Reisezweck: Tourismus/)
@@ -110,4 +115,60 @@ describe('U1 full schema-2 display conformance', () => {
     assert.match(options.statements[1].text, /Nicht zulässig/)
     assert.equal(options.statements[2].when, null)
   })
+})
+
+/** Presentation conformance, not a fabricated publication/proof. The new context
+ * and fact are canonically read, then rendered with a synthetic display envelope.
+ * Backend tests own qualification, persistence and commit evidence.
+ */
+async function renderCustomerInformation(detail: V3CustomerInformationDetail,
+  informationTopic: V3CustomerInformationTopic, requirementType: V3GlobalRuleContext['scope']['requirementType']) {
+  const fixture = syntheticV3Fixture()
+  const context = readV3GlobalRuleContext({ ...fixture.context(), contextRevision: 3, informationTopic,
+    informationItem: 'synthetic_stable_item', scope: { ...fixture.context().scope, requirementType } })
+  assert.ok(context.ok)
+  const fact = { kind: 'entry_information' as const, detail }
+  assert.ok(regelFaktKanonischLesen('entry_information', requirementType, fact, fixture.ports.registry).ok)
+  const query = await createV3VisitorQuery(fixture.ports)({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
+  assert.ok(query.ok)
+  const original = fixture.accepted.projection
+  const projection = { ...original, rule: { ...original.rule, subject: { ...original.rule.subject,
+    context: context.value, fact: { schema: 1 as const, fact } } } }
+  const result = presentV3VisitorAnswer({ ...query.answer, response: { ...query.answer.response,
+    cells: [{ citizenshipCountryCode: 'CH', results: [{ status: 'accepted', projection }] }] } }).cells[0].results[0]
+  assert.equal(result.status, 'accepted')
+  if (result.status !== 'accepted') assert.fail('Expected a synthetic display')
+  return result
+}
+
+test('revision-3 form details reach the visitor with full conditions, cost, source/version and no invented tourism window', async () => {
+  const source = { sourceId: 'synthetic-destination', contentItemId: 'synthetic-publication', representationId: 'synthetic-original' }
+  const result = await renderCustomerInformation({ kind: 'entry_form_details', formTitle: 'Synthetisches Einreiseformular',
+    completion: 'required', cost: { status: 'specified', amount: { value: '12.3400', currency: 'CHF', basis: 'per_application' } },
+    due: null, action: { source, purpose: 'form', href: 'https://destination.example/synthetic-test-publication' },
+  }, 'entry_forms', 'entry_form')
+  assert.equal(result.informationTopic, 'entry_forms')
+  assert.match(result.statements.map(row => row.text).join('\n'), /12\.3400 CHF pro Antrag/)
+  assert.match(result.statements.map(row => row.text).join('\n'), /Zeitpunkt: Derzeit nicht verfügbar/)
+  assert.match(result.conditions.join('\n'), /Reisezweck: Besuch/)
+  assert.doesNotMatch(result.conditions.join('\n'), /Tourismus|Reisebeginn und Reiseende müssen zwischen|synthetic_stable_item/)
+  assert.equal(result.source.href, 'https://destination.example/synthetic-test-publication')
+  assert.equal(result.ruleVersion, 1)
+  const coverage = v3CustomerInformationCoverage([result]).groups.flatMap(group => group.topics)
+  assert.equal(coverage.find(topic => topic.id === 'entry_forms')?.results[0], result)
+  assert.equal(coverage.find(topic => topic.id === 'form_costs')?.related.length, 1)
+  assert.equal(coverage.find(topic => topic.id === 'official_actions')?.related.length, 1)
+})
+
+test('unconfirmed form cost and missing action remain unavailable despite a confirmed form name', async () => {
+  const result = await renderCustomerInformation({ kind: 'entry_form_details', formTitle: 'Synthetisches Einreiseformular',
+    completion: 'required', cost: { status: 'unavailable' }, due: null, action: null,
+  }, 'entry_forms', 'entry_form')
+  const coverage = v3CustomerInformationCoverage([result]).groups.flatMap(group => group.topics)
+  for (const id of ['form_costs', 'official_actions'] as const) {
+    const topic = coverage.find(row => row.id === id)
+    assert.equal(topic?.results.length, 0)
+    assert.equal(topic?.related.length, 0)
+  }
+  assert.match(result.statements.map(row => row.text).join('\n'), /Formularkosten: Derzeit nicht verfügbar/)
 })

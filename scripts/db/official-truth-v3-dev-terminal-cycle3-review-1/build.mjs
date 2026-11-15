@@ -16,7 +16,7 @@ export const REVIEW = Object.freeze({
   job: 'job3_6caeafbd2bcb1fed2121984e98c3c3e7',
   terminal: 'op3_0ab5b766f0d954b88a7481b0d531881f',
   queueFix: '7ce17c68319d9dc2931de06c25062453f5ab12753a98cb1ef06345c415d79576',
-  jobContractFix: 'd28d6e272cb6d8cf480192285f91c79e5459c44efcfb058760db913410d450f8',
+  jobContractFix: '28046404d236e8552b67e55917b13a54bc952dcb9f1ac28be2f9e61b7a9a7799',
   jobStorageFix: '56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14',
   selectedClaimFix: '171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa',
   methodAuthorityFix: '56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97',

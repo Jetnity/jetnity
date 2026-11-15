@@ -5,7 +5,7 @@ SET LOCAL timezone='UTC';
 SET LOCAL datestyle='ISO, YMD';
 CREATE TEMP TABLE rolling_before(kind text PRIMARY KEY,value jsonb NOT NULL) ON COMMIT DROP;
 DO $production_rolling_predecessor$
-DECLARE expected record; actual record; before_catalog jsonb; table_name text; row_count bigint; row_digest text;
+DECLARE expected record; actual record; before_catalog jsonb; table_name text; row_count bigint; row_digest text; owner_name text;
 BEGIN
   IF session_user<>'postgres' OR current_user<>session_user OR current_database()<>'postgres'
     OR current_setting('jetnity.rolling_quota_target',true) IS DISTINCT FROM 'production:qscbgcdmivbbnzrcyegn:ROLLING-QUOTA1'
@@ -47,12 +47,14 @@ BEGIN
     ('content',jsonb_build_object('hma',official_v3_guard_private.content_digest_v1('hma'),
       's1',official_v3_guard_private.content_digest_v1('s1'),'jobs',official_v3_guard_private.content_digest_v1('jobs'),
       'hrs',official_v3_guard_private.hrs_certificate_v1()));
-  IF (SELECT count(*) FROM pg_auth_members WHERE roleid='ot_v3_jobs_owner'::regrole AND member='postgres'::regrole)<>1
-    OR NOT EXISTS(SELECT 1 FROM pg_auth_members WHERE roleid='ot_v3_jobs_owner'::regrole AND member='postgres'::regrole
-      AND grantor<>'postgres'::regrole AND admin_option AND NOT inherit_option AND NOT set_option)
-    OR pg_has_role('postgres','ot_v3_jobs_owner','SET') OR pg_has_role('postgres','ot_v3_jobs_owner','USAGE')
-    OR has_schema_privilege('ot_v3_jobs_owner','official_v3_guard_private','CREATE') THEN
-    RAISE EXCEPTION 'production rolling original owner authority required' USING ERRCODE='P7911'; END IF;
+  FOREACH owner_name IN ARRAY ARRAY['ot_v3_intake_owner','ot_v3_jobs_owner','ot_v3_result_owner'] LOOP
+    IF (SELECT count(*) FROM pg_auth_members WHERE roleid=to_regrole(owner_name) AND member='postgres'::regrole)<>1
+      OR NOT EXISTS(SELECT 1 FROM pg_auth_members WHERE roleid=to_regrole(owner_name) AND member='postgres'::regrole
+        AND grantor<>'postgres'::regrole AND admin_option AND NOT inherit_option AND NOT set_option)
+      OR pg_has_role('postgres',to_regrole(owner_name),'SET') OR pg_has_role('postgres',to_regrole(owner_name),'USAGE')
+      OR has_schema_privilege(to_regrole(owner_name),'official_v3_guard_private','CREATE') THEN
+      RAISE EXCEPTION 'production rolling original owner authority required' USING ERRCODE='P7911'; END IF;
+  END LOOP;
   FOREACH table_name IN ARRAY ARRAY[
     'official_v3_method_private.revisions_v1','official_v3_method_private.heads_v1','official_v3_method_private.operations_v1',
     'official_v3_intake_private.operations_v1','official_v3_intake_private.reservations_v1','official_v3_intake_private.completions_v1',

@@ -29,6 +29,30 @@
     "BG1_STATUS_PRODUCTION",
     "ROLLING_FRESH_PRODUCTION"
   ],
+  "customerInformation": {
+    "contextRevision": 3,
+    "retentionRevision": 3,
+    "definitions": "scripts/db/official-truth-v3-customer-information-1/definitions.sql",
+    "definitionsSha256": "6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f",
+    "replacedFunctions": [
+      "official_v3_intake_private.proposal_shape_v1()",
+      "official_v3_jobs_private.context_v1(jsonb)",
+      "official_v3_jobs_private.subject_v1(text,jsonb)",
+      "official_v3_result_private.context_v1(jsonb)",
+      "official_v3_result_private.subject_v1(text,jsonb)",
+      "official_v3_result_private.proposal_shape_v1()"
+    ],
+    "baseline": "fresh rolling baseline before the first genuine audit",
+    "publicationAuthority": "unchanged"
+  },
+  "historyValidation": {
+    "definition": "scripts/db/official-truth-v3-customer-information-1/history-definition.sql",
+    "definitionSha256": "719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355",
+    "function": "official_v3_jobs_private.assert_history_v1(text)",
+    "scope": "invocation-local bounded memo; every retained historical row remains validated",
+    "apiDeadlineMs": 5000,
+    "quotas": "unchanged"
+  },
   "bindingSha256": "3e10cee1c23aa4d771fd620814664d42011efee7eaeab73d57b37b145424ae03",
   "runtimeEnvironment": [
     {
@@ -134,6 +158,11 @@
       "sha256": "71e2f9f080b8af0b7100d49b70520f8c34dffdc1bc84f3912b20aff413adf97c"
     },
     {
+      "path": "scripts/db/official-truth-v3-customer-information-1/definitions.sql",
+      "bytes": 794857,
+      "sha256": "6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f"
+    },
+    {
       "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
       "bytes": 446847,
       "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
@@ -232,18 +261,23 @@
       "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
       "bytes": 38527,
       "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/history-definition.sql",
+      "bytes": 20878,
+      "sha256": "719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355"
     }
   ],
   "compilerInputs": [
     {
       "path": "scripts/official-truth-product-v3-production/build.mjs",
-      "bytes": 22922,
-      "sha256": "e6c90e7a56e267b51843ef5c34f433d4f72d96963dfc60721ab835c382bc69e8"
+      "bytes": 26104,
+      "sha256": "9bde0379189abbc2295ef12beac4bba11b6b9c668980ba39a7b9d63242e57aab"
     },
     {
       "path": "scripts/official-truth-product-v3-production/source-pins.json",
-      "bytes": 6629,
-      "sha256": "c49d5f5f8d07b84735377940850e62b86bfd4b916df2302f9cc4a1212bc1d69b"
+      "bytes": 7023,
+      "sha256": "411a5b741735a733fff4ad70784e2a6d7ada7c1ab7fe62be71917e89973ab6d4"
     },
     {
       "path": "scripts/official-truth-product-v3-production/binding.json",
@@ -282,8 +316,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-production-install-1/parts/rolling-prefix.sql",
-      "bytes": 6389,
-      "sha256": "d87e7f20c760a7af408723f4872ffa232fda0225dc0f31c0b481e8cc0819d0bf"
+      "bytes": 6535,
+      "sha256": "559a5af13aa9b94637aff4536f7d94fffdb712cc40f9c9cb825584264c88064a"
     },
     {
       "path": "scripts/db/official-truth-v3-production-install-1/parts/rolling-policy.sql",
@@ -366,13 +400,13 @@
   "artifacts": [
     {
       "path": "scripts/db/official-truth-v3-production-install-1/install.sql",
-      "bytes": 1730899,
-      "sha256": "fc18ea615606c9fb547055f26fcb97bceec80479ca9f2dd842947e17ead59bb2"
+      "bytes": 2529365,
+      "sha256": "6b6579590fc8bde3505d0010c0fa3ea82ff9e717cc2cae8b01671d41edb28292"
     },
     {
       "path": "scripts/db/official-truth-v3-production-install-1/install-and-start-guard.sql",
-      "bytes": 1733983,
-      "sha256": "97963275330b6b0e4fdeed0b23869af867354d966fa8d5be767efd25b3a9e3a5"
+      "bytes": 2532449,
+      "sha256": "f870907804687ae882f9cc5fde1808e140b8bd5d029ece7634b8df9cd8eb5c0b"
     },
     {
       "path": "scripts/db/official-truth-v3-production-install-1/hmt-production.sql",
@@ -391,8 +425,8 @@
     },
     {
       "path": "scripts/db/official-truth-v3-production-install-1/rolling-production.sql",
-      "bytes": 128394,
-      "sha256": "23a3c1b379f5ecab3780e18d7734353f92c5482891969e9d78d179b8a29f350a"
+      "bytes": 926860,
+      "sha256": "d897b1b5504634d08060d106b82aded1893d4be3f2d79b4252ae4bf4c0be65b2"
     },
     {
       "path": "scripts/official-truth-product-v3-production/preflight.sql",

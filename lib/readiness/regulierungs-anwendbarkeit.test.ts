@@ -61,9 +61,9 @@ const wurzel = join(hier, '../..')
 // #1196: one reviewed literal PINS row, never permission for a runtime import.
 const COMPOSED_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
-  bytes: 104540,
-  blob: 'b968b9f465f71073cf13802da4984ffc520dee3b',
-  sha256: 'ce0a1e269a6a656b5f16b95a9fe9aea6df5af1d0838e934bae669108cc82c863',
+  bytes: 105567,
+  blob: '1740d044516290e3d2e51ee95ed487ea75c954cb',
+  sha256: '83d99bb0870e7f82a58b73bd966389ca889764d0c1e6c938b92a86f8d8357eb4',
   contextStart: 15758,
   contextEnd: 15982,
   tokenStart: 15789,
@@ -124,9 +124,9 @@ test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources a
 // HRS: one reviewed literal PINS row, never permission for a runtime import.
 const HRS_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
-  bytes: 255753,
-  blob: '1b0120765dc4ab09485c7e52e31a9bb78974fce8',
-  sha256: 'da6bf6ebc452484864513f2c3a099a382d405116f2dbc6b1357b94cd406e1117',
+  bytes: 256780,
+  blob: '0aa10b10611aefb370d1266e3fdfcbe333b9026c',
+  sha256: 'c84248f6daaf17104c8458f45a1f322a538fd82d13e45fd75b7548cf80d5bf2a',
   contextStart: 40986,
   contextEnd: 41210,
   tokenStart: 41017,

@@ -60,6 +60,24 @@ Der Merge allein installiert und genehmigt nichts. Die normalen Original-IDs
 bleiben bei Resume/unklarer Antwort erhalten; kein Ersatzlauf, Counterreset oder
 Fristpatch. Ohne Installation/Freigabe bzw. bei Widerruf bleibt Production geschlossen.
 
+### Vollständige Kundenangaben im vorbereiteten Installer
+
+Das weiterhin **UNAPPLIED** frische Production-Paket enthält dieselben sechs
+geschlossenen Kundenvalidatoren wie der neue Dev-Nachfolger sowie dessen separat
+gepinnten, begrenzten History-Memo. Kontextrevision 3 unterscheidet fachliche
+Themen und stabile Items; die bestehende V3-JSONB-Kette behält die vollständigen
+Details. Der eigene frische Rolling-Baseline-Capture bindet diese Definitionen
+vor dem ersten echten Audit. Er importiert keine Dev-Baseline oder Review.
+Signaturen, Besitzer und Rechte bleiben erhalten; temporäre SET-Kanten für die
+drei tatsächlichen Funktionsbesitzer werden in derselben Transaktion entfernt.
+
+Die Besucheransicht zeigt alle 26 Themen samt Quelle/Stand und Reiseprüfhinweis.
+Unbestätigte Angaben bleiben „Derzeit nicht verfügbar“. Die neuen Felder und
+der reproduzierbare Quellenplan erteilen keine zusätzliche fachliche Freigabe:
+die aktuelle amtliche Veröffentlichung bleibt an die geprüfte CH→DE-Visa-Methode
+gebunden. Weitere Länder und Themen folgen ihrem eigenen Qualification-/Binding-
+und Quellenlauf. Fristen und Quotas werden durch diese Erweiterung nicht erhöht.
+
 ## Erster Production-Owner als Teil derselben Freigabe
 
 Die reine Production-Metadatenprüfung vom 15.11.2026 ergab kein Ownerprofil,

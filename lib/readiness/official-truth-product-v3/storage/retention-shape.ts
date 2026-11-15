@@ -1,4 +1,6 @@
-// S1 retention ONLY. This finite shape excludes URL-bearing official_actions.
+// S1 retention ONLY. Legacy official_actions remains excluded. New details carry
+// bounded structured links which the canonical reader checks against exact
+// registered representations before custody/acceptance; a shape is not authority.
 // It does not approve methods, registry membership, source facts or context hashes.
 import { ISO_3166_1_ALPHA2 } from '@/lib/country/katalog'
 import { OFFICIAL_REQUIREMENT_TYPES, TRAVELLER_DOCUMENT_TYPES } from '@/types/trips'
@@ -8,6 +10,8 @@ import { provenanceCanonical } from '@/lib/readiness/official-truth-autonomous-p
 import { schema2DatenPruefen, civilDateOrdinalLesen, REISEZWECKE, DOKUMENT_KLASSEN, ZIEL_ERLAUBNIS_KLASSEN,
   NATIONALITAETS_STATUS_KLASSEN, INSTITUTIONS_STATUS, REGULIERUNGS_REGIONEN } from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { OFFICIAL_TEMPORAL_ANCHORS, OFFICIAL_TEMPORAL_DUE_SEMANTICS } from '@/lib/readiness/temporal'
+import { V3_CUSTOMER_DETAIL_BINDINGS, V3_INFORMATION_ITEM_PATTERN } from '../customer-information/topics'
+import { V3_CUSTOMER_DETAIL_RETENTION_SHAPE } from '../customer-information/detail-retention-shape'
 
 export type S1Shape =
   | Readonly<{ ref: string }>
@@ -99,6 +103,7 @@ const contextFields = {
     object({ status: lit('unresolved'), missing: array(enumeration(['document_class', 'travel_purpose', 'planned_stay_duration', 'transit', 'other_rule_conditions']), 1, 5, true) }),
   ),
 }
+const legacyFactKinds = REGEL_FAKT_ARTEN.filter(value => value !== 'entry_information')
 const definitions: Record<string, S1Shape> = {
   predicate1: union(...legacyPredicates),
   predicate2: union(...legacyPredicates,
@@ -112,7 +117,7 @@ const definitions: Record<string, S1Shape> = {
   context: union(object(contextFields), object({ contextRevision: lit(2), ...contextFields,
     application: object({ purpose: lit('tourism'), tripStartAndEndWindow: object({ from: { type: 'date' }, through: { type: 'date' } }) }),
   })),
-  research: object({ key: hashRef('research-request:v1'), ruleScopeKey: hashRef('rule-scope:v1'), factKind: enumeration(REGEL_FAKT_ARTEN),
+  research: object({ key: hashRef('research-request:v1'), ruleScopeKey: hashRef('rule-scope:v1'), factKind: enumeration(legacyFactKinds),
     researchReason: union(object({ status: lit('missing') }), object({ status: lit('recheck_needed'), reason: enumeration(['valid_from_in_future', 'valid_until_elapsed', 'max_age_exceeded']) })) }),
   fact1: union(kind('requirement_effect', { effect, visaMode: visa }), ...effectFacts(1),
     kind('visa_options', { options: array(object({ visaMode: concreteVisa, eligibility, mandate }), 1, 4) }), visaFact(1),
@@ -140,7 +145,7 @@ const revision = integer(1, 2_147_483_647), timestamp: S1Shape = { type: 'timest
 const method = object({ methodId: id, revision }), checksum = text('^[a-f0-9]{64}$', 64)
 const operationId = text('^op3_[a-f0-9]{32}$', 36), contextKey = hashRef('official-truth-context:v3')
 const decisionRef = hashRef('source-decision:v3'), versionRef = hashRef('rule-version:v3'), resolutionRef = hashRef('conflict-resolution:v3')
-const evidenceId = text('^ev2_[a-f0-9]{32}$', 36), facts = enumeration(REGEL_FAKT_ARTEN.filter(value => value !== 'official_actions'))
+const evidenceId = text('^ev2_[a-f0-9]{32}$', 36), facts = enumeration(legacyFactKinds.filter(value => value !== 'official_actions'))
 const source = object({ sourceId: id, contentItemId: id, representationId: id })
 const fact = union(object({ schema: lit(1), fact: ref('fact1') }), object({ schema: lit(2), fact: ref('fact2') }))
 const archivePointer = object({ reference: hashRef('conflict-archive:v3'), revision, totalConflicts: revision })
@@ -198,8 +203,54 @@ function freeze<T>(value: T): T {
   if (value && typeof value === 'object') { for (const child of Object.values(value)) freeze(child); Object.freeze(value) }
   return value
 }
+/** Historical descriptor remains byte-for-byte reproducible for the original
+ * S1/HS1/HRS installers. Only the explicit additive overlay installs revision 3.
+ */
+export const S1_RETENTION_SHAPE_V2 = freeze({ revision: 2, root: 'proposal', countries: [...ISO_3166_1_ALPHA2],
+  definitions: JSON.parse(JSON.stringify(definitions)) as Record<string, S1Shape> })
+
+// Structural pairing is essential: accepting context and detail independently
+// would allow a fee to be stored as vaccination or two items to alias. Both the
+// original proposal and every retained source observation use this finite union.
+const properties = (shape: S1Shape) => {
+  if (!('type' in shape) || shape.type !== 'object') throw Error('customer_information_object_shape')
+  return shape.properties
+}
+const old = S1_RETENTION_SHAPE_V2.definitions
+const detailChoices = 'type' in V3_CUSTOMER_DETAIL_RETENTION_SHAPE && V3_CUSTOMER_DETAIL_RETENTION_SHAPE.type === 'union'
+  ? V3_CUSTOMER_DETAIL_RETENTION_SHAPE.choices : []
+const detailPairs = V3_CUSTOMER_DETAIL_BINDINGS.map(binding => {
+  const candidate = detailChoices.find(shape => {
+    const tag = properties(shape).kind
+    return tag && 'type' in tag && tag.type === 'literal' && tag.value === binding.detailKind
+  })
+  if (!candidate) throw Error('customer_information_detail_shape')
+  const discriminator = 'discriminator' in binding ? { [binding.discriminator.key]: enumeration(binding.discriminator.values) } : {}
+  const detail = object({ ...properties(candidate), ...discriminator })
+  const context = object({ contextRevision: lit(3), ...contextFields,
+    scope: object({ ...properties(contextFields.scope), requirementType: lit(binding.requirement) }),
+    informationTopic: lit(binding.topic), informationItem: text(V3_INFORMATION_ITEM_PATTERN, 64) })
+  return { context, fact: object({ schema: lit(1), fact: kind('entry_information', { detail }) }) }
+})
+definitions.contextLegacy = old.context!
+definitions.fact1Legacy = old.fact1!
+definitions.researchLegacy = old.research!
+definitions.context = union(ref('contextLegacy'), ...detailPairs.map(pair => pair.context))
+definitions.fact1 = union(ref('fact1Legacy'), kind('entry_information', { detail: V3_CUSTOMER_DETAIL_RETENTION_SHAPE }))
+definitions.research = object({ ...properties(old.research!), factKind: enumeration(REGEL_FAKT_ARTEN) })
+const legacyFact = union(object({ schema: lit(1), fact: ref('fact1Legacy') }), object({ schema: lit(2), fact: ref('fact2') }))
+const entryResearch = object({ ...properties(old.research!), factKind: lit('entry_information') })
+definitions.proposal = union(object({ ...properties(old.proposal!), context: ref('contextLegacy'), research: ref('researchLegacy'), proposedFact: legacyFact }),
+  ...detailPairs.map(pair => object({ ...properties(old.proposal!), context: pair.context, research: entryResearch, proposedFact: pair.fact })))
+definitions.observation = union(object({ ...properties(old.observation!), context: ref('contextLegacy'), fact: legacyFact }),
+  ...detailPairs.map(pair => object({ ...properties(old.observation!), context: pair.context, fact: pair.fact })))
+for (const tag of ['archive', 'transition'] as const) definitions[tag] = object({ ...properties(old[tag]!),
+  factKind: enumeration(REGEL_FAKT_ARTEN.filter(value => value !== 'official_actions')) })
+definitions.decision = union(object({ ...properties(old.decision!), context: ref('contextLegacy') }),
+  ...detailPairs.map(pair => object({ ...properties(old.decision!), context: pair.context, factKind: lit('entry_information') })))
+
 /** Embedded in SQL by a reviewed source generator; never supplied by the caller. */
-export const S1_RETENTION_SHAPE = freeze({ revision: 2, root: 'proposal', countries: [...ISO_3166_1_ALPHA2], definitions })
+export const S1_RETENTION_SHAPE = freeze({ revision: 3, root: 'proposal', countries: [...ISO_3166_1_ALPHA2], definitions })
 
 /** Mandatory before ORIGINAL retention, in addition to the canonical S0 parser. */
 export function s1RetentionShapeAllows(input: unknown, root: 'proposal' | 'outcome' | 'audit' = 'proposal'): boolean {

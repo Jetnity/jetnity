@@ -6,7 +6,8 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { OwnedPersistentProof } from '../official-truth-v3-rolling-jobs-quota-1/persistent-backend'
 import { literal } from '../official-truth-v3-rolling-jobs-quota-1/local-proof'
-import { compileProductionArtifacts, PRODUCTION, LOGINS } from '../../official-truth-product-v3-production/build.mjs'
+import { compileProductionArtifacts, PRODUCTION, LOGINS, sha256 } from '../../official-truth-product-v3-production/build.mjs'
+import { functionsIn } from '../official-truth-v3-background-guard-1/build.mjs'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM as program } from '../../../lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program'
 import { hrs1Canonical } from '../../../lib/readiness/official-truth-product-v3/result/contract'
 import { createV3QueueCoordinator, type V3ManagedJobRecord, type V3QueueCommit, type V3QueueStoragePort } from '../../../lib/readiness/official-truth-product-v3/monitor/queue'
@@ -194,6 +195,21 @@ test('Production installer executes complete original SQL atomically on fresh PG
     })
     await t.test('all six installed logins meet the independent live transport role contract', async () => {
       assertTransportRoles(await proof.value(transportRoleReadback, creator))
+    })
+    await t.test('fresh installation binds six customer validators and the bounded history memo without importing Dev history', async () => {
+      const expected = [...functionsIn(read('../official-truth-v3-customer-information-1/definitions.sql')),
+        ...functionsIn(read('../official-truth-v3-customer-information-1/history-definition.sql'))]
+        .map((f: { signature: string; body: string }) => ({ signature: f.signature, hash: sha256(f.body) }))
+        .sort((a: { signature: string }, b: { signature: string }) => a.signature.localeCompare(b.signature))
+      assert.equal(expected.length, 7)
+      const actual = await proof.value(`(SELECT jsonb_agg(jsonb_build_object('signature',v.signature,
+        'hash',encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')) ORDER BY v.signature COLLATE "C")
+        FROM (VALUES ${expected.map((f: { signature: string }) => '(' + literal(f.signature) + ')').join(',')}) v(signature)
+        JOIN pg_proc p ON p.oid=to_regprocedure(v.signature))`, creator)
+      assert.deepEqual(actual, expected)
+      assert.equal(await proof.value("to_jsonb(to_regclass('official_v3_guard_private.customer_information_baseline_v1') IS NULL)", creator), true,
+        'Production has its own fresh baseline and never adopts the Dev successor receipt')
+      await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1();', 'customer definitions belong to the full fresh Production baseline')
     })
     await t.test('the independent transport check rejects each old unlimited login profile without retaining changes', async () => {
       for (const login of ['ot_v3_method_transport_login', 'ot_v3_intake_transport_login', 'ot_v3_jobs_transport_login']) {

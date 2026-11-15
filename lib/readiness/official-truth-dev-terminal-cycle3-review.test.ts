@@ -103,7 +103,7 @@ CREATE FUNCTION net.http_post(url text,body jsonb,params jsonb,headers jsonb,tim
 LANGUAGE sql AS $$ INSERT INTO net.http_request_queue(url,body,headers) VALUES($1,$2,$4) RETURNING id $$;
 `
 
-async function installFixture(proof: OwnedPersistentProof, newerTerminal: boolean) {
+async function installFixture(proof: OwnedPersistentProof, newerTerminal: boolean, customerSuccessor = false) {
   const fixture = await buildCycle3ReviewFixture({ newerTerminal })
   await proof.run('CREATE SCHEMA extensions; CREATE EXTENSION pgcrypto WITH SCHEMA extensions;', 'real local pgcrypto provider')
   await baseSetup(proof)
@@ -114,10 +114,16 @@ async function installFixture(proof: OwnedPersistentProof, newerTerminal: boolea
     await proof.run(creator + '\nBEGIN;\n' + readSql('official-truth-v3-background-guard-1/' + file) + '\nCOMMIT;', 'real BG1 predecessor ' + file)
   }
   await proof.run(creator + '\nBEGIN;\n' + readSql('official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql') + '\nCOMMIT;', 'unchanged real rolling quota successor')
-  await proof.run(creator + 'SELECT official_v3_guard_private.audit_v1(); SELECT official_v3_guard_private.require_open_v1();', 'normal full fixture audit, before migration')
   await proof.run(creator + providerFixture + "BEGIN; SET LOCAL jetnity.dev_import_target='dev:yfvbxvijcorffwxbxahl:refresh1';\n"
     + readSql('official-truth-v3-dev-import-schedule-1/core.sql') + readSql('official-truth-v3-dev-import-schedule-1/preview-renewal.sql') + '\nCOMMIT;',
   'unchanged Dev sender plus synthetic local HTTP provider')
+  if (customerSuccessor) {
+    await proof.run(creator + 'BEGIN;\n' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + '\nCOMMIT;',
+      'complete additive customer and history successor before the first genuine fixture audit')
+    assert.deepEqual(await proof.value('public.official_v3_guard_alarm_status_v1()', creator), { schema: 1, status: 'unavailable' })
+  }
+  await proof.run(creator + 'SELECT official_v3_guard_private.audit_v1(); SELECT official_v3_guard_private.require_open_v1();',
+    'normal complete first fixture audit, before either terminal review')
   const seedCycle = async (evidence: typeof originalEvidence) => {
     await proof.run(creator + `
       INSERT INTO jetnity_dev_import_scheduler.cycles_v1(id,created_at,operation_id,lease_id,phase,state,phase_attempts,last_status,finished_at,published)
@@ -297,5 +303,26 @@ test('the same exact review also accepts the original terminal Head35 under real
     const before = await proof.value(oldRows, creator)
     await proof.run(ack + original, 'original terminal head review')
     assert.deepEqual(await proof.value(oldRows, creator), before)
+  } finally { await proof.close() }
+})
+
+test('Cycle3 review preserves the complete customer/history successor after its actual fresh BG1 proof', { timeout: 120000 }, async t => {
+  const proof = new OwnedPersistentProof(t.signal)
+  try {
+    const fixture = await installFixture(proof, true, true)
+    assert.equal(fixture.subjectRow.current_job.revision, 38)
+    const customerBaseline = '(SELECT to_jsonb(b) FROM official_v3_guard_private.customer_information_baseline_v1 b)'
+    const before = await proof.value(oldRows, creator)
+    const baselineBefore = await proof.value(customerBaseline, creator)
+    assert.ok(baselineBefore)
+    assert.deepEqual(await proof.value('public.official_v3_guard_alarm_status_v1()', creator), { schema: 1, status: 'current' })
+    await proof.run(ack + original, 'exact Cycle3 review on the complete additive Dev successor')
+    assert.deepEqual(await proof.value(oldRows, creator), before)
+    assert.deepEqual(await proof.value(customerBaseline, creator), baselineBefore)
+    await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1(); SELECT official_v3_guard_private.require_open_v1();',
+      'customer/history body chain and actual successor proof remain valid')
+    const confirmation = await proof.value<{ original_cycle3_evidence_unchanged: boolean; exact_reviewed_sender: boolean }>(readbackExpression, creator)
+    assert.equal(confirmation.original_cycle3_evidence_unchanged, true)
+    assert.equal(confirmation.exact_reviewed_sender, true)
   } finally { await proof.close() }
 })

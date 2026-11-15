@@ -23,6 +23,8 @@ test('public CH-to-DE input has exactly one country pair and no caller authority
 
 test('public decoder retains the full display DTO and all existing negative states', () => {
   assert.deepEqual(readChDeVisaView(withResult(displayShape())), withResult(displayShape()))
+  const topical = withResult({ ...displayShape(), informationTopic: 'visa' })
+  assert.deepEqual(readChDeVisaView(topical), topical)
   for (const status of ['pending', 'conflict', 'unavailable', 'error']) {
     const value = withResult({ status, title: 'Testzustand', message: 'Testmeldung' })
     assert.deepEqual(readChDeVisaView(value), value)
@@ -38,6 +40,12 @@ test('public decoder rejects foreign cells, synthetic data, extra fields, missin
     { ...unavailableView(), cells: [{ country: 'CH', label: 'Schweiz', results: [good, good] }] },
     withResult({ ...good, conditions: [] }), withResult({ ...good, expiresAt: generatedAt }),
     withResult({ ...good, expiresAt: 'not-a-time' }), withResult({ ...good, methodApproved: true }),
+    withResult({ ...good, informationTopic: 'electronic_travel_authorization' }),
+    withResult({ ...good, informationTopic: 'passport' }),
+    withResult({ ...good, informationTopic: 'recent_changes' }),
+    withResult({ ...good, informationTopic: 'unknown' }),
+    withResult({ ...good, informationTopic: ['visa'] }),
+    withResult({ ...good, informationTopic: 'visa', informationComplete: true }),
     withResult({ ...good, source: { label: 'Fremd', href: 'https://unselected.example/' } }),
     withResult({ ...good, statements: [{ text: 'Test', when: null, href: 'javascript:alert(1)' }] }),
   ]) assert.equal(readChDeVisaView(value), null)

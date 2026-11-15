@@ -103,9 +103,33 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/contract.ts",
-    "bytes": 61555,
-    "blob": "354c18e153f90a7febb7ea8f14558626202c187e",
-    "sha256": "7a7abc307b3bd9cf5bf80a85da91c5ecdb7ef7146546fe0d15fc3f25f768859c"
+    "bytes": 68106,
+    "blob": "16258b14804947123c4d5ba2cc9c1c9ad77d74fc",
+    "sha256": "06a1e6a8d1b50e87cc939f099877330ddda07fae5da68f5cf0fd70bda29f6d2b"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/customer-information/detail-retention-shape.ts",
+    "bytes": 5720,
+    "blob": "858c7a450ba1c78de27dd2793ad0e6744489b450",
+    "sha256": "f391228f774f7c61ea7ab5bd5d9e85dd09f28fb5153ff0485d6b9256c0fab1e4"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/customer-information/detail-topic.ts",
+    "bytes": 965,
+    "blob": "69e61224ac8f611cf993d1e2d879395aae8d20b2",
+    "sha256": "bf5be6ad3a276adf751692c366d881eecf3e7d66a907be3667d9fb19ad269d33"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/customer-information/details.ts",
+    "bytes": 10129,
+    "blob": "8f2f15f75d5835c837e0c664cdaad19f0261b1bf",
+    "sha256": "4a432734e6247da2afb43100960ca5a64e89d7071b00c344e0c827aed0a7257b"
+  },
+  {
+    "path": "lib/readiness/official-truth-product-v3/customer-information/topics.ts",
+    "bytes": 7216,
+    "blob": "30fee10c4fcb2da7605ec0256559cd4a1117db60",
+    "sha256": "451148225b4b5ab356b0b5fcca2eedd48f21c9438afb99b849bfc5b581fbdeb9"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/import/interface.ts",
@@ -151,9 +175,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-    "bytes": 28094,
-    "blob": "d3862dda3cbc35a579f538e8d372c4f36b45668c",
-    "sha256": "d28d6e272cb6d8cf480192285f91c79e5459c44efcfb058760db913410d450f8"
+    "bytes": 28214,
+    "blob": "fdae1a88d29ff98203baef062e5f139a424b24f7",
+    "sha256": "28046404d236e8552b67e55917b13a54bc952dcb9f1ac28be2f9e61b7a9a7799"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
@@ -319,9 +343,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",
-    "bytes": 22054,
-    "blob": "7b47357190f0d7dddc1dfca2f2c2330af6ccfb63",
-    "sha256": "663867695a4a4412f8f65b384324df09b1f82aa5de2a3526dfcdb74aa99de596"
+    "bytes": 26048,
+    "blob": "25691c83c296b32d947b0ea2117c0bae8e5f52dc",
+    "sha256": "7f93274e0f932cf63405f7a588fedfee82a4c886292ab2c81aa99183b291bbe5"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/visitor/ch-de-snapshot.ts",
@@ -379,9 +403,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/rule-claims.ts",
-    "bytes": 46056,
-    "blob": "c61d06ca67d87e8c9b6435c23c8ac62965a251f6",
-    "sha256": "52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a"
+    "bytes": 48010,
+    "blob": "79e120117bb96ab967fa9410ba53c93f4efe7d5e",
+    "sha256": "4a3686ff6186bdefc2c8ae7f5e0bb96169366f02dfdc2f0b61c1b5511d9d852f"
   },
   {
     "path": "lib/readiness/source-registry.ts",
