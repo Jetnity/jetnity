@@ -24,8 +24,8 @@ export const ADMIN_NAV_ITEMS: readonly AdminNavItem[] = [
   { href: '/admin/analytics', label: 'Reiseauswertung', kind: 'ready', capability: 'betrieb-lesen' },
   { href: '/admin/content', label: 'Content-Inventar', kind: 'ready', capability: 'inhalte-moderieren' },
   { href: '/admin/marketing', label: 'Marketing', kind: 'later', capability: null },
-  { href: '/admin/settings', label: 'Einstellungen', kind: 'later', capability: null },
-  { href: '/admin/localization', label: 'Lokalisierung', kind: 'later', capability: null },
+  { href: '/admin/settings', label: 'Einstellungen', kind: 'ready', capability: null },
+  { href: '/admin/localization', label: 'Sprachkatalog', kind: 'ready', capability: null },
 ] as const
 
 export type AdminNavFilterInput = {

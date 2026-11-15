@@ -4,6 +4,9 @@
 // Diese Datei importiert das Servermodul nicht, damit der Client es nicht
 // in den Browser zieht.
 
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
+
 export const EXPORT_SCHEMA_VERSION = 'jetnity.account-export.v1' as const
 export const EXPORT_VOLLSTAENDIGKEIT = 'jetnity-owned-account-travel-rows' as const
 export const EXPORT_TABELLEN = [
@@ -80,29 +83,32 @@ export function exportGeneratedAt(wert: unknown): string | null {
   return (wert as { generatedAt: string }).generatedAt
 }
 
-export function exportFehlertext(status: number | 'unlesbar' | 'frist' | 'abbruch'): string {
+export function exportFehlertext(status: number | 'unlesbar' | 'frist' | 'abbruch', sprache: UiSprache = 'de'): string {
   if (status === 401) {
-    return 'Du bist für den Export nicht angemeldet. Es wurde nichts heruntergeladen. Du bleibst in den Einstellungen.'
+    return einstellungenText(sprache, 'export.unauthenticated')
   }
   if (status === 503) {
-    return 'Der Export ist gerade nicht erreichbar. Es wurde nichts heruntergeladen.'
+    return einstellungenText(sprache, 'export.unavailable')
   }
   if (status === 500) {
-    return 'Der Export konnte nicht gelesen werden. Es wurde nichts heruntergeladen.'
+    return einstellungenText(sprache, 'export.failed')
   }
   if (status === 'frist') {
-    return 'Der Export hat zu lange gedauert und wurde abgebrochen. Es wurde nichts heruntergeladen. Ein neuer Versuch startet nur, wenn du ihn ausdrücklich auslöst.'
+    return einstellungenText(sprache, 'export.timeout')
   }
   if (status === 'abbruch') {
-    return 'Der Export wurde abgebrochen. Es wurde nichts heruntergeladen.'
+    return einstellungenText(sprache, 'export.cancelled')
   }
   if (typeof status === 'number') {
-    return 'Der Export hat keine verwendbare Datei geliefert. Es wurde nichts heruntergeladen.'
+    return einstellungenText(sprache, 'export.httpError')
   }
-  return 'Die Antwort war keine gültige Exportdatei. Es wurde nichts heruntergeladen.'
+  return einstellungenText(sprache, 'export.invalid')
 }
 
-export const EXPORT_ERFOLG_TEXT =
-  'Die Datei wurde dem Browser zum Speichern übergeben. Jetnity prüft nicht, ob das Betriebssystem sie gespeichert hat. Die Tabellen wurden nacheinander gelesen und sind keine einzelne atomare Momentaufnahme. Das ist kein vollständiger rechtlicher Datenauszug und keine Kontolöschung.'
+export const EXPORT_ERFOLG_TEXT = einstellungenText('de', 'export.success')
+
+export function exportErfolgtext(sprache: UiSprache): string {
+  return sprache === 'de' ? EXPORT_ERFOLG_TEXT : einstellungenText(sprache, 'export.success')
+}
 
 export const EXPORT_FRIST_MS = 30_000

@@ -36,11 +36,11 @@ describe('Admin-Navigation (UX, keine Autorisierung)', () => {
     )
     assert.deepEqual(
       sichtbar.filter((item) => item.kind === 'ready').map((item) => item.label),
-      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten', 'Reiseauswertung', 'Content-Inventar'],
+      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten', 'Reiseauswertung', 'Content-Inventar', 'Einstellungen', 'Sprachkatalog'],
     )
-    assert.equal(
-      sichtbar.filter((item) => item.kind === 'later').every((item) => item.kind === 'later'),
-      true,
+    assert.deepEqual(
+      sichtbar.filter((item) => item.kind === 'later').map((item) => item.href),
+      ['/admin/marketing'],
     )
   })
 
