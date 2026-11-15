@@ -1,5 +1,4 @@
-// A separate reviewed pilot decision is required. Environment variables alone
-// cannot open this source gate. Production is intentionally excluded from V1.
+// The general release stays closed. The separately approved branch pilot has an exact origin and expiry.
 export const TRIP_MAP_PILOT_RELEASED = false
 
 // This same source lock also hides the guest-facing map CTA. An eventual
@@ -10,7 +9,9 @@ export function tripMapEntryVisible(mapsActive: boolean, routeHidden: boolean): 
 }
 
 export type MapEnvironment = {
+  [name: string]: string | undefined
   VERCEL_ENV?: string
+  VERCEL_GIT_COMMIT_REF?: string
   JETNITY_MAPS_ENABLED?: string
   JETNITY_MAPS_ALLOWED_ORIGIN?: string
   JETNITY_MAPS_PILOT_EXPIRES_AT?: string
@@ -18,7 +19,13 @@ export type MapEnvironment = {
   GOOGLE_MAPS_MAP_ID?: string
 }
 
-export function mapPilotConfig(env: MapEnvironment, origin: string, now = Date.now(), released = TRIP_MAP_PILOT_RELEASED) {
+export const APP_MAP_ORIGIN = 'https://jetnity-app-git-feat-private-travel-ux-3aad50-jetnity-e1b93c82.vercel.app'
+
+export function isAppMapPreview(env: MapEnvironment) {
+  return env.VERCEL_ENV === 'preview' && env.VERCEL_GIT_COMMIT_REF === 'feat/private-travel-ux-20261113'
+}
+
+export function mapPilotConfig(env: MapEnvironment, origin: string, now = Date.now(), released = isAppMapPreview(env) && origin === APP_MAP_ORIGIN) {
   if (!released || env.VERCEL_ENV !== 'preview' || env.JETNITY_MAPS_ENABLED !== 'true') return null
   let url: URL
   try { url = new URL(origin) } catch { return null }

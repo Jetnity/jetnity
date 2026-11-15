@@ -14,6 +14,8 @@
   let stopped = false
   let started = false
   let map = null
+  let line = null
+  let routeVersion = 0
   let stops = []
   let selected = null
   let markers = []
@@ -139,7 +141,7 @@
       })
     } catch { fail() }
   }
-  window.addEventListener('message', (event) => {
+  window.addEventListener('message', async (event) => {
     if (stopped || event.source !== parent || event.origin !== config.origin || config.expiresAt <= Date.now()) return
     const data = event.data
     if (!data || data.source !== 'jetnity-trip-map-parent') return
@@ -154,7 +156,22 @@
       script.onerror = fail
       document.head.append(script)
       send('loading', { expiresAt: config.expiresAt })
-    } else if (data.type === 'stops' && map && validStops(data.stops)) {
+    } else if (data.type === 'clear-path' && map) {
+      routeVersion++
+      line?.setMap(null)
+      line = null
+    } else if (data.type === 'path' && map && typeof data.path === 'string' && data.path.length <= 250000) {
+      const version = ++routeVersion
+      let geometry
+      try { geometry = await window.google.maps.importLibrary('geometry') } catch { send('route-error'); return }
+      if (version !== routeVersion || stopped || config.expiresAt <= Date.now()) return
+      const path = geometry.encoding.decodePath(data.path)
+      line?.setMap(null)
+      line = new window.google.maps.Polyline({ map, path, strokeColor: '#205945', strokeOpacity: 0.95, strokeWeight: 5 })
+      const bounds = new window.google.maps.LatLngBounds()
+      path.forEach(point => bounds.extend(point))
+      if (!bounds.isEmpty()) map.fitBounds(bounds, 48)
+    } else if (data.type === 'stops' && map && (validStops(data.stops) || (Array.isArray(data.stops) && !data.stops.length))) {
       stops = data.stops.map(({ index, label, lat, lng }) => ({ index, label, lat, lng }))
       cluster.hidden = true
       renderMarkers()

@@ -103,13 +103,14 @@ function ortIdsAus(reise: Trip): string[] {
 }
 
 function BeobachteteKarte({
-  option,
+  reise, option,
   verweis,
   laeuft,
   onUebernehmen,
   onPruefen,
   onUebernahmeBeobachten,
 }: {
+  reise: Trip
   option: ActivityOptionSichtbar
   verweis?: { productUrl: string } | null
   laeuft: boolean
@@ -121,7 +122,7 @@ function BeobachteteKarte({
     if (!onUebernehmen || !onUebernahmeBeobachten) return
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
-  return <AktivitaetKarte option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
+  return <AktivitaetKarte reise={reise} option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
 }
 
 type Lokal = {
@@ -611,7 +612,7 @@ export default function AktivitaetenBereich({
                     onUebernehmen && etappe && adoptTag ? () => uebernehmen(option, erfasst) : undefined
                   return (
                     <li key={`${angezeigt.generation ?? 0}:${inhalt}:${etappe?.id ?? ''}`} className="min-w-0">
-                      <BeobachteteKarte
+                      <BeobachteteKarte reise={reise}
                         option={option}
                         verweis={antwort.viatorVerweise?.find((eintrag) => eintrag.externalRef === option.externalRef) ?? null}
                         laeuft={gesperrt}
