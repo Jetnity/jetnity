@@ -19,7 +19,9 @@ export function istPosition(p: unknown): p is Position {
 export const PARIS_ORTE: Reiseort[] = [
   { id: 'cdg-t2', art: 'Flughafen', name: 'Paris Charles de Gaulle', detail: 'Bahnhof CDG 2 TGV · Terminal 2', position: { lat: 49.004233, lng: 2.570917 }, tage: ['ankunft'] },
   { id: 'normandy', art: 'Hotel', name: 'Normandy Hotel', detail: '7 rue de l’Échelle, Paris', position: { lat: 48.8641052, lng: 2.334119 }, tage: ['ankunft', 'museen'] },
-  { id: 'louvre', art: 'Besuch', name: 'Pyramide du Louvre', detail: 'Cour Napoléon, Paris', position: { lat: 48.86101, lng: 2.335857 }, tage: ['museen'] },
+  // The Louvre's visitor directions link identifies the Cour Napoléon entrance.
+  // https://www.louvre.fr/en/visit/map-entrances-directions
+  { id: 'louvre', art: 'Besuch', name: 'Pyramide du Louvre', detail: 'Cour Napoléon, Paris', position: { lat: 48.8606111, lng: 2.337644 }, tage: ['museen'] },
   { id: 'orsay', art: 'Besuch', name: 'Musée d’Orsay', detail: 'Esplanade Valéry Giscard d’Estaing, Paris', position: { lat: 48.860128, lng: 2.32675 }, tage: ['museen'] },
 ]
 
