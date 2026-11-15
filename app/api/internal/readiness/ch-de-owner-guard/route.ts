@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { adminWriteErlaubt } from '@/lib/auth/admin-write-gate'
-import { getServerSupabaseUrl } from '@/lib/supabase/server'
-import { HUMAN_METHOD_DEV_URL, humanRequestHeadersAllowed } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
-import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
+import { humanRequestHeadersAllowed } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
 import { DEV_GUARD_PATH, DEV_GUARD_REQUEST_BYTES, readDevGuardRequest, readDevGuardText } from '@/lib/readiness/official-truth-product-v3/runtime/guard-contract'
 import { runDevGuardRequest } from '@/lib/readiness/official-truth-product-v3/runtime/guard-server'
+import { guardRequestAllowed, selectedGuardEnvironment } from '@/lib/readiness/official-truth-product-v3/runtime/guard-target'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -16,8 +15,8 @@ const refuse = (status: number) => NextResponse.json({ schema: 1, status: 'unres
 
 export async function POST(request: Request) {
   try {
-    const release = getHumanRelease()
-    if (release?.targetUrl !== HUMAN_METHOD_DEV_URL || getServerSupabaseUrl() !== HUMAN_METHOD_DEV_URL) return refuse(503)
+    const environment = selectedGuardEnvironment()
+    if (environment === null) return refuse(503)
     const url = new URL(request.url), declared = request.headers.get('content-length')
     if (request.method !== 'POST' || url.pathname !== DEV_GUARD_PATH || url.search || url.hash || url.username || url.password
       || request.headers.has('transfer-encoding') || request.headers.has('content-encoding')
@@ -28,6 +27,7 @@ export async function POST(request: Request) {
     try { parsed = text === null ? null : JSON.parse(text) } catch { return refuse(400) }
     const input = readDevGuardRequest(parsed)
     if (!input || JSON.stringify(input) !== text || (declared !== null && Number(declared) !== new TextEncoder().encode(text!).byteLength)) return refuse(400)
+    if (!guardRequestAllowed(environment, input)) return refuse(403)
     if (request.signal.aborted) return refuse(503)
     const gate = await requireAdminApi({ surface: 'official-truth-guard', capability: 'official-truth-freigeben' })
     if (!gate.ok) { for (const [name, value] of Object.entries(HEADERS)) gate.response.headers.set(name, value); return gate.response }

@@ -1,10 +1,9 @@
 import 'server-only'
 import { problemAus, type Problem } from '@/lib/api/datenbank-lesen'
-import { createServerComponentClient, getServerSupabaseUrl } from '@/lib/supabase/server'
+import { createServerComponentClient } from '@/lib/supabase/server'
 import { AcceptedStoreLifetime } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server'
-import { HUMAN_METHOD_DEV_URL } from '../method/human-contract'
-import { getHumanRelease } from '../method/human-release'
 import { devGuardReceipt, readDevGuardReview, type DevGuardRequest, type DevGuardResult } from './guard-contract'
+import { guardRequestAllowed, selectedGuardEnvironment } from './guard-target'
 
 type Args = { p_operation_id: string; p_selection: string }
 type GuardDatabase = { public: { Tables: Record<string, never>; Views: Record<string, never>;
@@ -21,8 +20,7 @@ const unresolved = (): { value: null; problem: Problem } => ({ value: null,
  * enforces PG1 at every lowest mutation. No direct table or service-role use. */
 export async function runDevGuardRequest(request: DevGuardRequest, signal: AbortSignal): Promise<
   { value: DevGuardResult; problem: null } | { value: null; problem: Problem }> {
-  const release = getHumanRelease()
-  if (release?.targetUrl !== HUMAN_METHOD_DEV_URL || getServerSupabaseUrl() !== HUMAN_METHOD_DEV_URL) return unresolved()
+  if (!guardRequestAllowed(selectedGuardEnvironment(), request)) return unresolved()
   const lifetime = new AcceptedStoreLifetime(signal, 10000)
   let answer: Awaited<ReturnType<typeof runDevGuardRequest>> = unresolved()
   try {
@@ -36,7 +34,7 @@ export async function runDevGuardRequest(request: DevGuardRequest, signal: Abort
     })
     lifetime.assertCurrent()
     if (result.error) {
-      const safe = { message: 'Der Dev-Zustand konnte nicht bestätigt werden.', code: /^\w{5}$/.test(result.error.code) ? result.error.code : null }
+      const safe = { message: 'Der gespeicherte Schutzstatus konnte nicht bestätigt werden.', code: /^\w{5}$/.test(result.error.code) ? result.error.code : null }
       answer = { value: null, problem: problemAus({ data: null, error: safe, status: result.status }, safe) }
     } else {
       const value = request.intent === 'review' ? readDevGuardReview(result.data) : devGuardReceipt(result.data, request)
