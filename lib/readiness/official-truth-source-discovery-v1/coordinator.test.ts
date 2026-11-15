@@ -287,6 +287,7 @@ test('T07: actual cold import and scenario calls have network traps armed before
 
 test('T07: finite runtime import closure excludes server/provider/acceptance/IO entrypoints; no hosted importer', () => {
   const root = process.cwd(), seen = new Set<string>()
+  const schemaImports = new Set<string>()
   function visit(path: string) {
     if (seen.has(path)) return
     seen.add(path)
@@ -300,11 +301,20 @@ test('T07: finite runtime import closure excludes server/provider/acceptance/IO 
       const spec = node.moduleSpecifier.text
       if (spec === 'node:util') continue
       assert.doesNotMatch(spec, /server|supabase|provider|store|retriev|node:|openai|undici/)
+      if (spec === 'zod') {
+        // Existing locked schema dependency at this one pure detail validator.
+        // The cold-import test above exercises it with every network trap armed.
+        assert.equal(path, 'lib/readiness/official-truth-product-v3/customer-information/details.ts')
+        schemaImports.add(path)
+        continue
+      }
+      assert.ok(spec.startsWith('@/') || spec.startsWith('.'), `unreviewed external dependency ${spec}`)
       const target = spec.startsWith('@/') ? spec.slice(2) : join(path.slice(0, path.lastIndexOf('/')), spec)
       visit(`${target}.ts`)
     }
   }
   visit('lib/readiness/official-truth-source-discovery-v1/coordinator.ts')
+  assert.deepEqual([...schemaImports], ['lib/readiness/official-truth-product-v3/customer-information/details.ts'])
   assert.ok(seen.has('lib/readiness/official-truth-research-request.ts'))
   assert.ok(seen.has('lib/readiness/official-truth-content-identity.ts'))
   assert.ok(seen.has('lib/readiness/official-truth-discovered-url-candidates.ts'))

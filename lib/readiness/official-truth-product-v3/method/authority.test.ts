@@ -7,8 +7,9 @@ import { MA1_LIMITS, readMa1MethodBinding, readMa1FixedBinding, readMa1CurrentRe
   type Ma1MethodBinding, type Ma1CurrentRequest, type Ma1ReadResult } from './contract'
 import { createV3PostgresMethodAuthority, createV3PostgresDurableJobs, MA1_READ_CURRENT_SQL,
   type Ma1MethodReceipt, type Ma1MethodSqlExecutor } from './authority-postgres'
-import type { M04Config, M04FixedRequest } from '../jobs/contract'
-import { m04Fixture, M04_TEST_BINDING } from '../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures'
+import { readM04Command, type M04Config, type M04FixedRequest } from '../jobs/contract'
+import type { V3ManagedJobRecord, V3QueueCommit } from '../monitor/queue'
+import { m04Canonical, m04Fixture, M04_TEST_BINDING } from '../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures'
 
 // Literal expectations belong to Root's preimplementation artifact, not this adapter.
 const referenceBytes = readFileSync(new URL('../../../../docs/official-truth-product-v3/MA1_SYNTHETIC_BINDING_REFERENCE_V1.json', import.meta.url))
@@ -518,7 +519,165 @@ function jointFixture(overrides: Partial<M04Config> = {}) {
     producer: f.producer, evidence: f.evidence, history: f.history, ...overrides }
   return { f, config, api: createV3PostgresDurableJobs(config) }
 }
+
+// Real private factory/coordinator/decoder path; these two executor doubles do
+// not establish PostgreSQL transaction or epoch enforcement (mandatory native CI).
+function jointQueueFixture(hooks: {
+  method?: (request: Ma1CurrentRequest, ordinal: number) => Reply | Promise<Reply>;
+  afterCas?: (request: M04FixedRequest, signal: AbortSignal) => void | Promise<void>;
+  afterRead?: (request: M04FixedRequest, signal: AbortSignal) => void | Promise<void>;
+  lostAck?: boolean;
+} = {}) {
+  const trace: string[] = [], requests: M04FixedRequest[] = [], operations = new Map<string, V3QueueCommit>()
+  let current: V3ManagedJobRecord | null = null, methods = 0
+  const x = jointFixture({
+    methodExecutor: { async readCurrent(request) {
+      trace.push('method'); methods++
+      return hooks.method ? hooks.method(request, methods) : rows(approved({ method_id: request.methodId,
+        revision: String(request.revision), method_digest: request.methodDigest, package_digest: request.packageDigest,
+        observed_at: request.checkedAt }))
+    } },
+    jobsExecutor: { async executeFixed(request, signal) {
+      const q = JSON.parse(request.operationText) as { operation: string; phase: string;
+        body: { command?: unknown; commit?: V3QueueCommit; purpose?: string } }
+      trace.push(`${q.operation}:${q.phase}`); requests.push(request)
+      let reply: unknown
+      if (q.operation === 'queue_confirm') {
+        const command = readM04Command(q.body.command); assert.ok(command)
+        const old = operations.get(command.operationId)
+        reply = old ? q.phase === 'probe' ? { status: 'requires_authority' } : { status: 'committed',
+          operationId: old.operationId, commandKey: command.commandKey, commandText: command.commandText,
+          envelopeText: m04Canonical(old), record: old.next } : { status: 'not_attempted' }
+      } else if (q.operation === 'queue_read') {
+        reply = current ? q.phase === 'probe' ? { status: 'requires_authority' } : { status: 'present', record: structuredClone(current) }
+          : { status: 'absent' }
+        if (q.phase === 'authorized') await hooks.afterRead?.(request, signal)
+      } else if (q.operation === 'queue_cas') {
+        const commit = q.body.commit; assert.ok(commit)
+        assert.equal(m04Canonical(commit.expected), m04Canonical(current), 'the test CAS compares the actual prior record')
+        current = structuredClone(commit.next); operations.set(commit.operationId, commit)
+        await hooks.afterCas?.(request, signal)
+        if (hooks.lostAck) return { status: 'unconfirmed' }
+        reply = { status: 'committed', record: current }
+      } else {
+        assert.equal(q.operation, 'execution_read', 'no I1/S1 work belongs to this queue regression')
+        assert.ok(q.body.purpose === 'resume' || q.body.purpose === 'lookup')
+        if (q.body.purpose === 'lookup') return { status: 'unconfirmed' }
+        reply = { status: 'absent' }
+      }
+      return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
+    } },
+  })
+  return { ...x, trace, requests, record: () => current, operations }
+}
+
 describe('M04 private joint factory retains MA1 authority and original budgets', () => {
+  test('fresh CAS uses seven real calls for absent enqueue or fixed-method claim and nine for existing enqueue; replay keeps its probes', async () => {
+    const x = jointQueueFixture()
+    assert.equal((await x.api.enqueueRule(x.f.ruleInput)).status, 'confirmed')
+    assert.deepEqual(x.trace, ['queue_confirm:probe', 'queue_read:probe', 'method', 'method',
+      'queue_cas:authorized', 'queue_read:authorized', 'method'])
+    const cas = x.requests.find(r => JSON.parse(r.operationText).operation === 'queue_cas')!
+    const final = x.requests.at(-1)!
+    assert.equal(final.epoch, cas.epoch); assert.ok(final.budget.deadline <= cas.budget.deadline)
+    assert.ok(final.notAfter <= cas.notAfter, 'retained custody never renews the original SQL cap')
+    x.trace.length = 0
+    const replay = await x.api.enqueueRule(x.f.ruleInput)
+    assert.equal(replay.status, 'confirmed'); if (replay.status === 'confirmed') assert.equal(replay.replayed, true)
+    assert.deepEqual(x.trace, ['queue_confirm:probe', 'method', 'queue_confirm:authorized',
+      'queue_read:probe', 'method', 'queue_read:authorized', 'method', 'method'])
+    assert.equal(x.operations.size, 1)
+    x.trace.length = 0
+    const nextOperation = 'op3_' + '9'.repeat(32)
+    assert.equal((await x.api.enqueueRule({ ...x.f.ruleInput, operationId: nextOperation })).status, 'confirmed')
+    const freshExisting = ['queue_confirm:probe', 'queue_read:probe', 'method', 'queue_read:authorized',
+      'method', 'method', 'queue_cas:authorized', 'queue_read:authorized', 'method']
+    assert.deepEqual(x.trace, freshExisting); assert.equal(x.operations.size, 2)
+    x.trace.length = 0
+    assert.notEqual((await x.api.workOnce(x.f.claim())).status, 'processed')
+    assert.equal(x.trace[0], 'execution_read:probe', 'actual initial resume precedes the queue')
+    assert.deepEqual(x.trace.slice(1, 8), ['queue_confirm:probe', 'method', 'queue_read:authorized',
+      'method', 'queue_cas:authorized', 'queue_read:authorized', 'method'],
+    'the fixed-method claim retains both actual reads and all real reproofs in seven owned calls')
+    assert.deepEqual(x.trace.slice(8, 10), ['execution_read:probe', 'method'], 'the actual custody lookup precedes the first worker authority acquisition')
+    assert.equal(x.trace.filter(s => s === 'queue_cas:authorized').length, 1, 'unknown lookup cannot settle a failure without an execution start')
+    assert.equal(x.operations.size, 3)
+    assert.equal(x.record()?.attempt, 1); assert.equal(x.record()?.state, 'leased')
+    assert.equal(x.f.producerCalls(), 0, 'the intentionally uncertain execution lookup cannot fabricate a start')
+  })
+
+  for (const at of ['cas', 'read'] as const) for (const change of ['revoked', 'reapproved'] as const) {
+    test(`same private CAS receipt rejects ${change} epoch after actual ${at}, despite a positive readback double`, async () => {
+      let changed = false
+      const mutate = () => { changed = true }
+      const x = jointQueueFixture({ ...(at === 'cas' ? { afterCas: mutate } : { afterRead: mutate }),
+        method(request) {
+          return rows(approved({ method_id: request.methodId, revision: String(request.revision),
+            method_digest: request.methodDigest, package_digest: request.packageDigest, observed_at: request.checkedAt,
+            ...(changed ? change === 'reapproved' ? { epoch: '2' }
+              : { status: 'revoked', epoch: '2', approval_mode: null, remaining_ms: '0' } : {}) }))
+        } })
+      assert.equal((await x.api.enqueueRule(x.f.ruleInput)).status, 'unavailable')
+      assert.equal(x.operations.size, 1, 'negative result does not erase the actual committed operation')
+      assert.deepEqual(x.trace.slice(-3), ['queue_cas:authorized', 'queue_read:authorized', 'method'])
+      assert.equal(x.trace.filter(s => s === 'method').length, 3, 'no fresh resolve can conceal revoke/reapprove ABA')
+    })
+  }
+
+  test('retained finite receipt expires during real read settlement without another probe or renewed acquisition', async t => {
+    const setNow = monotonic(t)
+    const x = jointQueueFixture({
+      method(request) { return rows(finite('100', { method_id: request.methodId, revision: String(request.revision),
+        method_digest: request.methodDigest, package_digest: request.packageDigest, observed_at: request.checkedAt })) },
+      afterRead() { setNow(100) },
+    })
+    assert.notEqual((await x.api.enqueueRule(x.f.ruleInput)).status, 'confirmed')
+    assert.equal(x.operations.size, 1)
+    assert.deepEqual(x.trace, ['queue_confirm:probe', 'queue_read:probe', 'method', 'method',
+      'queue_cas:authorized', 'queue_read:authorized'])
+    const last = x.requests.at(-1)!
+    assert.equal(last.budget.deadline, 100); assert.equal(last.notAfter, '2026-11-09T12:00:00.100Z')
+  })
+
+  test('lost actual CAS acknowledgement cannot activate retained-authority readback', async () => {
+    const x = jointQueueFixture({ lostAck: true })
+    assert.equal((await x.api.enqueueRule(x.f.ruleInput)).status, 'unconfirmed')
+    assert.equal(x.operations.size, 1)
+    assert.deepEqual(x.trace, ['queue_confirm:probe', 'queue_read:probe', 'method', 'method', 'queue_cas:authorized'])
+    x.trace.length = 0
+    const replay = await x.api.enqueueRule(x.f.ruleInput)
+    assert.equal(replay.status, 'confirmed'); if (replay.status === 'confirmed') assert.equal(replay.replayed, true)
+    assert.deepEqual(x.trace, ['queue_confirm:probe', 'method', 'queue_confirm:authorized',
+      'queue_read:probe', 'method', 'queue_read:authorized', 'method', 'method'])
+    assert.equal(x.operations.size, 1)
+  })
+
+  for (const heldStage of ['readback', 'reproof'] as const) {
+    test(`outer abort cannot detach actual retained-authority ${heldStage} or allow a fallback effect`, async () => {
+      const entered = deferred<void>(), settle = deferred<void>(), abort = new AbortController()
+      let terminal = false, activeSignal: AbortSignal | undefined
+      const x = jointQueueFixture({
+        async afterRead(_request, signal) {
+          if (heldStage === 'readback') { activeSignal = signal; entered.resolve(); await settle.promise }
+        },
+        async method(request, ordinal) {
+          if (heldStage === 'reproof' && ordinal === 3) { entered.resolve(); await settle.promise }
+          return rows(approved({ method_id: request.methodId, revision: String(request.revision),
+            method_digest: request.methodDigest, package_digest: request.packageDigest, observed_at: request.checkedAt }))
+        },
+      })
+      const pending = x.api.enqueueRule(x.f.ruleInput, abort.signal).then(value => { terminal = true; return value })
+      try {
+        await entered.promise; abort.abort(); await new Promise<void>(resolve => setImmediate(resolve))
+        assert.equal(terminal, false, 'owned native executor must actually settle before the facade releases its lane')
+        if (heldStage === 'readback') assert.equal(activeSignal?.aborted, true)
+      } finally { settle.resolve(); await pending }
+      assert.notEqual((await pending).status, 'confirmed'); assert.equal(x.operations.size, 1)
+      assert.deepEqual(x.trace.slice(4), heldStage === 'readback'
+        ? ['queue_cas:authorized', 'queue_read:authorized'] : ['queue_cas:authorized', 'queue_read:authorized', 'method'])
+    })
+  }
+
   test('outward surface is exactly three methods, with no receipt, epoch or native constructor escape', async () => {
     const { api } = jointFixture()
     assert.deepEqual(Reflect.ownKeys(api).sort(), ['enqueueDiscovery', 'enqueueRule', 'workOnce'])

@@ -43,6 +43,8 @@ import { quellenUrlAufloesen, type QuellenRegistry, type QuellenUrlFehler } from
 import { eventDeadlineV2Lesen, type EventDeadlineV2, temporalRuleLesen, type OfficialTemporalRule } from '@/lib/readiness/temporal'
 import { landescodeLesen } from '@/lib/readiness/domain'
 import type { OfficialRequirementType } from '@/types/trips'
+import { readV3CustomerInformationDetail, v3CustomerDetailActions, v3CustomerDetailRequirementMatches,
+  type V3CustomerInformationDetail } from '@/lib/readiness/official-truth-product-v3/customer-information/details'
 
 export const REGEL_FAKT_ARTEN = [
   'requirement_effect',
@@ -53,6 +55,7 @@ export const REGEL_FAKT_ARTEN = [
   'transit_conditions',
   'official_actions',
   'temporal_rule',
+  'entry_information',
 ] as const
 export type RegelFaktArt = (typeof REGEL_FAKT_ARTEN)[number]
 
@@ -226,6 +229,13 @@ export type RegelZeitregel = {
   rule: OfficialTemporalRule
 }
 
+/** Source-qualified detail values use the existing evidence/method/version
+ * envelope; this type never implies acceptance or authorizes a method. */
+export type RegelEinreiseInformation = {
+  kind: 'entry_information'
+  detail: V3CustomerInformationDetail
+}
+
 export type RegelFakt =
   | RegelAnforderungswirkung
   | RegelVisaOptionen
@@ -235,6 +245,7 @@ export type RegelFakt =
   | RegelTransitBedingungen
   | RegelAmtshandlungen
   | RegelZeitregel
+  | RegelEinreiseInformation
 
 export type RegelKandidat = {
   lifecycle: 'candidate'
@@ -764,6 +775,25 @@ function regelFaktLesen(
   if (art === 'blank_passport_pages') return leereSeitenLesen(requirementType, wert)
   if (art === 'transit_conditions') return transitLesen(requirementType, wert)
   if (art === 'official_actions') return amtshandlungenLesen(requirementType, wert, registry)
+  if (art === 'entry_information') {
+    if (!hatGenau(satz, ['kind', 'detail'])) return { ok: false, reason: 'unexpected_fields' }
+    const detail = readV3CustomerInformationDetail(satz.detail)
+    if (!detail.ok) return { ok: false, reason: 'invalid_fact' }
+    if (!v3CustomerDetailRequirementMatches(detail.value, requirementType)) return { ok: false, reason: 'requirement_type_mismatch' }
+    for (const action of v3CustomerDetailActions(detail.value)) {
+      const source = quellenUrlAufloesen(registry, action.href)
+      if (!source.ok) return source
+      if (source.source.sourceClass !== 'official_authority') return { ok: false, reason: 'provider_action_forbidden' }
+      if (source.source.sourceId !== action.source.sourceId) return { ok: false, reason: 'action_source_mismatch' }
+      // Exact current publication identity, never just an allowed parent host.
+      const matches = registry.contentIdentity?.representations.filter(item => item.current
+        && item.sourceId === action.source.sourceId && item.contentItemId === action.source.contentItemId
+        && item.representationId === action.source.representationId
+        && (item.expectedFinalUrl === action.href || item.requestUrls.includes(action.href))) ?? []
+      if (matches.length !== 1) return { ok: false, reason: 'action_source_mismatch' }
+    }
+    return { ok: true, fact: { kind: 'entry_information', detail: detail.value } }
+  }
   return zeitregelLesen(wert)
 }
 

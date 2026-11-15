@@ -105,7 +105,7 @@ function scopeSpalten(scope: EvidenceAtom): Record<string, unknown> {
 type PersistierbarerRegelFakt =
   | Exclude<Extract<RegelFakt, { kind: 'requirement_effect' }>, { schema: 1 } | { applicability: unknown }>
   | Exclude<Extract<RegelFakt, { kind: 'visa_options' }>, { schema: 1 }>
-  | Exclude<RegelFakt, { kind: 'requirement_effect' | 'visa_options' }>
+  | Exclude<RegelFakt, { kind: 'requirement_effect' | 'visa_options' | 'entry_information' }>
 
 type PersistierbarerRegelClaim = Omit<AkzeptierteRegelClaim, 'fact'> & {
   fact: PersistierbarerRegelFakt
@@ -113,6 +113,9 @@ type PersistierbarerRegelClaim = Omit<AkzeptierteRegelClaim, 'fact'> & {
 
 function istPersistierbarerRegelFakt(fact: RegelFakt): fact is PersistierbarerRegelFakt {
   if (schema2Traeger(fact)) return false
+  // The legacy flat tables cannot store complete entry-information details.
+  // Only the ordinary V3 HRS JSONB path supports this fact; never drop fields.
+  if (fact.kind === 'entry_information') return false
   if (fact.kind === 'requirement_effect') {
     return !('schema' in fact) && !('applicability' in fact) && 'effect' in fact
   }
@@ -429,6 +432,9 @@ export async function akzeptierteRegelClaimSpeichern(
   // Vor Acceptance, Payload, Dependencies/Env, Client, Uhr und jeglichem RPC.
   const trusted = eigenesDatenfeld(eingabe, 'trustedRuleFact')
   const proposal = eigenesDatenfeld(eigenesDatenfeld(eingabe, 'kandidat'), 'proposal')
+  if (eigenesDatenfeld(trusted, 'kind') === 'entry_information' || eigenesDatenfeld(proposal, 'kind') === 'entry_information') {
+    return { ok: false, reason: 'applicability_not_persistable' }
+  }
   if (schema2Traeger(eingabe) || schema2Traeger(trusted) || schema2Traeger(proposal)) {
     return { ok: false, reason: 'schema2_not_persistable' }
   }

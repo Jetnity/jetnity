@@ -1,0 +1,38 @@
+import { timingSafeEqual } from 'node:crypto'
+import { HUMAN_METHOD_DEV_URL } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
+import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
+import { runOfficialTruthV3ChDeTick } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
+import { chDeSourceAdmissionOpen, chDeSourceUtcNow } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+// New business work is refused at the shared 30-second cap; remaining hosting time
+// permits actual cancellation/drain, never a longer work or freshness budget.
+export const maxDuration = 60
+const HEADERS = { 'Cache-Control': 'private, no-store', Vary: 'Authorization', 'X-Content-Type-Options': 'nosniff' }
+function refusal(status: number, result: 'unauthorized' | 'unavailable' | 'request_refused') {
+  return Response.json({ schema: 1, status: result }, { status, headers: HEADERS })
+}
+
+/** Legacy Dev scheduler ingress only. Production uses its distinct fixed HMAC
+ * POST, so the general CRON_SECRET never opens an additional Production path. */
+export async function GET(request: Request): Promise<Response> {
+  try {
+    if (getHumanRelease()?.targetUrl !== HUMAN_METHOD_DEV_URL) return refusal(503, 'unavailable')
+    const secret = process.env.CRON_SECRET
+    if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret)) return refusal(503, 'unavailable')
+    const authorization = request.headers.get('authorization')
+    const expected = Buffer.from('Bearer ' + secret, 'utf8')
+    if (!authorization || authorization.length !== expected.length) return refusal(401, 'unauthorized')
+    const supplied = Buffer.from(authorization, 'utf8')
+    if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return refusal(401, 'unauthorized')
+    if (request.method !== 'GET' || new URL(request.url).search !== '' || request.body !== null
+      || request.headers.has('transfer-encoding')
+      || (request.headers.get('content-length') !== null && request.headers.get('content-length') !== '0')) {
+      return refusal(400, 'request_refused')
+    }
+    if (!chDeSourceAdmissionOpen(chDeSourceUtcNow())) return refusal(503, 'unavailable')
+    const report = await runOfficialTruthV3ChDeTick(request.signal)
+    return Response.json(report, { status: report.status === 'complete' || report.status === 'busy' ? 200 : 503, headers: HEADERS })
+  } catch { return refusal(503, 'unavailable') }
+}

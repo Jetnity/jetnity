@@ -1,0 +1,70 @@
+{
+  "predecessors": {
+    "../official-truth-v3-hosted-intake-store-1/install-candidate.sql": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+    "../official-truth-v3-hosted-result-store-1/install-candidate.sql": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16",
+    "../official-truth-v3-hosted-durable-jobs-1/install-candidate.sql": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818",
+    "../official-truth-v3-background-guard-1/provider-migration-body.sql": "a3a0be9c4eb1e2c61be428d0b825ee8a3b6780f3f8d154c0ccc2b1317181f950",
+    "../official-truth-v3-background-guard-1/status-rpc-provider-migration-body.sql": "71e2f9f080b8af0b7100d49b70520f8c34dffdc1bc84f3912b20aff413adf97c",
+    "../official-truth-v3-background-guard-1/recovery-provider-migration-body.sql": "b7cc8c0d061bef261a0d9ab3824672b7759502ab0d26c68139e5cfcf6525eaf7",
+    "../official-truth-v3-background-guard-1/recovery-gap-provider-migration-body.sql": "96f86b8d5432508a3172ea483c8804cf405027f1bb565422df683615f061f5d7",
+    "../official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql": "7324c5e87d18de2a692e7e61123a44565ca440ecc9f8e9afddf379ede2aac32a"
+  },
+  "definitionsDigest": "6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f",
+  "functions": {
+    "official_v3_intake_private.proposal_shape_v1()": {
+      "before": "4ba4184c3733a3849ebf450822f37b46187931f916635c905ca5a3e3704231a9",
+      "after": "18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9"
+    },
+    "official_v3_result_private.proposal_shape_v1()": {
+      "before": "4ba4184c3733a3849ebf450822f37b46187931f916635c905ca5a3e3704231a9",
+      "after": "18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9"
+    },
+    "official_v3_jobs_private.context_v1(jsonb)": {
+      "before": "ba1a29e05daca9ba4bc539ec98a2428a6beb4ca34072ea670977ff14d869d538",
+      "after": "d13ef1168f3fd032298fdd563e6045acd85d3a948de45d9eae16bb352f22379e"
+    },
+    "official_v3_jobs_private.subject_v1(text,jsonb)": {
+      "before": "9164ce950d552a47ddcf396b99432be9bffa12bb8e3e705afd83c32cb34d1225",
+      "after": "ba126e5d789cbc5ef470f98fd8c33de0b0cb548688110037d43e48baaee4f922"
+    },
+    "official_v3_result_private.context_v1(jsonb)": {
+      "before": "2468eee17b3168220355a5e5b73e6e06517d97ddab05922b5c7cf9377d511033",
+      "after": "d17e2c5e8e8c34561a47215ae9091ecf541e68035eebc8d4a444663b3e8cc845"
+    },
+    "official_v3_result_private.subject_v1(text,jsonb)": {
+      "before": "33f82eebaf249fb6943b8487c7dd29adfcb0c36be12e185255b3b884e4482548",
+      "after": "608b0d0d62fd54f5ea0032bca8df46e71924e7c565e7000f5181c32029f90828"
+    },
+    "official_v3_jobs_private.assert_history_v1(text)": {
+      "before": "b23d018a05fd96cd779993ba0be510a9d9feafdf94b5b598883e724f097f9399",
+      "after": "33515f642611e5a0788e30f5a8744b91a6c7f14d374a613e53d2051836a72b4c"
+    },
+    "official_v3_guard_private.check_jobs_v1()": {
+      "before": "12560e25fc355e9fd903be2bc565b92a78d97f8601b1207f9204bfb8552125d0",
+      "after": "a5e9fca902cbc69cb1504467b743670c78a0f0f08e32dc512c8160d65fd2c7cc"
+    },
+    "official_v3_jobs_private.wire_v1(text)": {
+      "before": "98eb7a975288f3c9afdebc50131dd367a5f0459b3e0230ce2cd7cb88ea83c655",
+      "after": "8f8e72bc6487cb7885440aa2163fdb6bb2d2f352a5986e3ae5860570ea85930a"
+    },
+    "official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)": {
+      "before": "ebf97604360e16d31bff8b34e7fb6380a643d207198e9b0af2ea95821650ece5",
+      "after": "7c7889672fbafc7d69bb32a655a93f419354fe0c49fc1b9b1f1d549b09545ad5"
+    },
+    "official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)": {
+      "before": null,
+      "after": "12b60c32ccf4a69b43f2bf788b1ee583aab978be01ea5099714dcc98cd3aedad"
+    },
+    "official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)": {
+      "before": null,
+      "after": "a1d38701d18e99e9ceee8369385a6bd637436ef52ee8e11688d110d3f32a2721"
+    }
+  },
+  "historyDefinitionsDigest": "061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692",
+  "historyJobValidatorDigest": "a34628ad65ba73caa89308cc819b8d1913d7b7e557bddf3b0a42cfef205cf800",
+  "historyNodesValidatorDigest": "e28941594d643413964d19010b7ee9627bfee7bff904f76c28ddc246627ef6a9",
+  "historyKeysValidatorDigest": "ee7cf54b133b5ba633b55372c6f98b06058d3fbc4ffe8bda08813fc77865cc33",
+  "historyCanonicalValidatorDigest": "f4a258c71cf8115a8ea5697e8b9c1735ebd1bc685170567dec5bc1aee89200ce",
+  "historyGuardDefinitionsDigest": "f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b",
+  "atomicClaimDefinitionsDigest": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a"
+}

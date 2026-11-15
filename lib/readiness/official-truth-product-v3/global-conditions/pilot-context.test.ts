@@ -119,6 +119,90 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   }
   assert.deepEqual(hostedAmendment.files.map(row => row.path), ['.github/workflows/ci.yml', 'package.json'])
   assert.equal(new Set(hostedAmendment.files.map(row => row.path)).size, 2)
+  // Exact Root-selected A3, HRS and I1 diagnostic successors. The historical
+  // C1/MI1/R28/HMA1 evidence above remains byte-identical and independently checked.
+  // No working-tree-derived pins, skipped rows, live source or activation change.
+  const currentSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/visitor/query.ts',
+      previousReviewed: { bytes: 20238, sha256: '89fc7206e5bcfaf6b6aaf5152f17df0a2fbe0e79ee7045104048e4695c9d6ec6' },
+      reviewed: { bytes: 20341, sha256: 'dcdd2c352f770d3ea3ec70bf0a1c3f85b471347ddfb519c7ec8632a8fc818b37' } },
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+      previousReviewed: { bytes: 12288, sha256: 'ef390e3c001fa34adb6b2d1437a32e88aa7fe2fe43e94ee7522f0e5e47cca127' },
+      reviewed: { bytes: 12562, sha256: 'a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6' } },
+    { path: 'package-lock.json',
+      previousReviewed: { bytes: 320689, sha256: '71f4f32185dc9acd56b5dcfaec8162f317f7e370f32bdefe9264adbb7fd05b1e' },
+      reviewed: { bytes: 326553, sha256: 'f763a124825aab57fcbed14c4913a18503dd3f3b03773c9877a340870695e37f' } },
+    { path: 'package.json',
+      previousReviewed: { bytes: 6460, sha256: '46c317656c81030397681d1d0c67e54a5c7d65b0aa66d15d2051c76503584da0' },
+      reviewed: { bytes: 6717, sha256: 'd0cc039b2dc2aa20b066c9421edc8df1ab03455caefcfa41396d504b6237df8f' } },
+    { path: 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
+      previousReviewed: { bytes: 22433, sha256: '57f3b01f5624889a41e8e8832cbebf49da9100fbb4dec6ffe25f769a44a4aaf8' },
+      reviewed: { bytes: 32943, sha256: '02ff596de9ce4fe89bc3d441a8c79bb9443bafc35d487ccadf828f04e0255d1d' } },
+    { path: 'components/readiness/OfficialTruthVisitorV3.tsx',
+      previousReviewed: { bytes: 9935, sha256: '62d18b4e2b2e7425f54c3a0626fac8df42849f6e3ab24e6f6144b04ea12f8b35' },
+      reviewed: { bytes: 11117, sha256: 'e4b9fa59e6b92e3c1f4ad8b395495e19c5227c3c47702547da17e8148d5a4df3' } },
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 23906, sha256: '371e8467441727d1fc72f1f524f4b0f7bafd2338eb3b706f0c9f32f8a662b7ba' },
+      reviewed: { bytes: 24418, sha256: '9592a0c093ef63f74c9e1688502f00cf663b8deda18d1721d8daf38f1ed0356b' } },
+    { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts',
+      previousReviewed: { bytes: 23971, sha256: '2f88077023c0215ebfd246b0dd50b3216e45e7bc342e72eae2cac10c72758b09' },
+      reviewed: { bytes: 24762, sha256: '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08' } },
+  ] as const
+  assert.deepEqual(currentSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/visitor/query.ts',
+    'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+    'package-lock.json', 'package.json', 'scripts/db/official-truth-integrated-pilot-1/pg-wire.ts',
+    'components/readiness/OfficialTruthVisitorV3.tsx',
+    '.github/workflows/ci.yml',
+    'lib/readiness/official-truth-product-v3/import/service-server.ts',
+  ])
+  assert.equal(new Set(currentSourceAmendment.map(row => row.path)).size, 8)
+  // Exact reviewed I1/S1 operation successors; every earlier amendment remains intact.
+  const operationSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+      previousReviewed: { bytes: 12562, sha256: 'a809ec68c0f6b125bfc9f66737c4895f16099a5162c44be220cfbf5f0234c7c6' },
+      reviewed: { bytes: 13780, sha256: 'd21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009' } },
+    { path: 'lib/readiness/official-truth-product-v3/storage/intake-server.ts',
+      previousReviewed: { bytes: 2934, sha256: 'fe83419c0709fa753aea63d538f12720027a85a3a933c7390378883784260082' },
+      reviewed: { bytes: 2980, sha256: '67b4ad9d08e341bc551e265cfbd0ef9ddc6561308d559ca81e863ea65ad15628' } },
+  ] as const
+  assert.deepEqual(operationSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+    'lib/readiness/official-truth-product-v3/storage/intake-server.ts',
+  ])
+  assert.equal(new Set(operationSourceAmendment.map(row => row.path)).size, 2)
+  // CUSTOMER-INFORMATION1 adds structured entry details and the complete visitor
+  // inventory. Every historical source identity above remains independently bound.
+  const customerSourceAmendment = [
+    { path: 'components/readiness/OfficialTruthVisitorV3.tsx',
+      previousReviewed: { bytes: 11117, sha256: 'e4b9fa59e6b92e3c1f4ad8b395495e19c5227c3c47702547da17e8148d5a4df3' },
+      reviewed: { bytes: 15298, sha256: 'c5e5c3844e425dfdb44417d5022837da7d827ee66e1675c391c7d98783cad518' } },
+    { path: 'lib/readiness/rule-claims.ts',
+      previousReviewed: { bytes: 46056, sha256: '52f9395ad21cd2331c986d4e767611a5f0454cd1bf1e08e73666525c0612ab3a' },
+      reviewed: { bytes: 48010, sha256: '4a3686ff6186bdefc2c8ae7f5e0bb96169366f02dfdc2f0b61c1b5511d9d852f' } },
+  ] as const
+  assert.deepEqual(customerSourceAmendment.map(row => row.path), [
+    'components/readiness/OfficialTruthVisitorV3.tsx', 'lib/readiness/rule-claims.ts',
+  ])
+  assert.equal(new Set(customerSourceAmendment.map(row => row.path)).size, 2)
+  // Reviewed I1 overlap and original-deadline forwarding; old amendments stay exact.
+  const importDeadlineSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts',
+      previousReviewed: { bytes: 24762, sha256: '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08' },
+      reviewed: { bytes: 27279, sha256: '8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33' } },
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+      previousReviewed: { bytes: 13780, sha256: 'd21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009' },
+      reviewed: { bytes: 13960, sha256: 'aa7fe8e22dd1368f99528232f6f573ca0c37f38f3bc35a36c5c1a0b02480bca2' } },
+  ] as const
+  assert.deepEqual(importDeadlineSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/import/service-server.ts',
+    'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+  ])
+  assert.equal(new Set(importDeadlineSourceAmendment.map(row => row.path)).size, 2)
+  let reviewedImportDeadlineRows = 0
+  let reviewedCustomerRows = 0
+  let reviewedOperationRows = 0
+  let reviewedCurrentRows = 0
   const protectedRows = manifest.baselineFiles.filter(row => row.changePolicy === 'unchanged')
   assert.equal(protectedRows.length, 40)
   assert.equal(new Set(protectedRows.map(row => row.path)).size, 40)
@@ -156,7 +240,31 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.match(hostedChanged.reviewed.gitBlob, /^[0-9a-f]{40}$/, row.path)
       reviewedHostedRows++
     }
-    const expected = hostedChanged?.reviewed ?? changed?.reviewed ?? runnerChanged?.reviewed ?? row
+    const previousExpected = hostedChanged?.reviewed ?? changed?.reviewed ?? runnerChanged?.reviewed ?? row
+    const currentChanged = currentSourceAmendment.find(file => file.path === row.path)
+    if (currentChanged) {
+      assert.deepEqual({ bytes: previousExpected.bytes, sha256: previousExpected.sha256 }, currentChanged.previousReviewed, row.path)
+      reviewedCurrentRows++
+    }
+    const previousCurrent = currentChanged?.reviewed ?? previousExpected
+    const operationChanged = operationSourceAmendment.find(file => file.path === row.path)
+    if (operationChanged) {
+      assert.deepEqual({ bytes: previousCurrent.bytes, sha256: previousCurrent.sha256 }, operationChanged.previousReviewed, row.path)
+      reviewedOperationRows++
+    }
+    const previousOperation = operationChanged?.reviewed ?? previousCurrent
+    const customerChanged = customerSourceAmendment.find(file => file.path === row.path)
+    if (customerChanged) {
+      assert.deepEqual({ bytes: previousOperation.bytes, sha256: previousOperation.sha256 }, customerChanged.previousReviewed, row.path)
+      reviewedCustomerRows++
+    }
+    const previousCustomer = customerChanged?.reviewed ?? previousOperation
+    const importDeadlineChanged = importDeadlineSourceAmendment.find(file => file.path === row.path)
+    if (importDeadlineChanged) {
+      assert.deepEqual({ bytes: previousCustomer.bytes, sha256: previousCustomer.sha256 }, importDeadlineChanged.previousReviewed, row.path)
+      reviewedImportDeadlineRows++
+    }
+    const expected = importDeadlineChanged?.reviewed ?? previousCustomer
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -166,4 +274,8 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedMainRows, 2)
   assert.equal(reviewedRunnerRows, 1)
   assert.equal(reviewedHostedRows, 2)
+  assert.equal(reviewedCurrentRows, 8)
+  assert.equal(reviewedOperationRows, 2)
+  assert.equal(reviewedCustomerRows, 2)
+  assert.equal(reviewedImportDeadlineRows, 2)
 })

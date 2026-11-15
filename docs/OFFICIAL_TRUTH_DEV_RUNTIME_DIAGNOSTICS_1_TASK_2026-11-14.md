@@ -1,0 +1,25 @@
+# Dev-Laufdiagnose 1 — disjunkter Teil des Guard-Pakets
+
+14.11.2026 · Technical Lead `/root` · Hauptpaket: `OFFICIAL_TRUTH_DEV_GUARD_RECOVERY_1_TASK_2026-11-13.md` auf `c6435ab64`; Remote #1197 weiterhin `4fd6dc9e50972233288a9552f9331b915a85847f`. Der PO hat Dev und das Schutzpaket freigegeben. Production und neue Owner-Abschlüsse bleiben eigene gemeinsame PO-Schritte.
+
+## Auftrag und Ownership
+
+MULTI_AGENT, ausdrücklich getrennter Branch `work/official-truth-dev-diagnostics-20261114`, Worktree `/workspace/scratch/75e9695b841d/jetnity-dev-diagnostics`. Genau ein Writer: `/root/laufdiagnose`. G4 schreibt ausschließlich sein SQL-/Guard-/Owner-UI-/Besucherpaket auf dem anderen Branch. Root prüft zuerst diese Diagnose, integriert sie dann in G4 und prüft anschließend das vollständige Paket mit frischer CI/Preview. Keine eigenständige Veröffentlichung oder Live-Aktion.
+
+Schreibrecht ausschließlich für die bestehenden Dateien `app/api/internal/readiness/ch-de-owner-import/route.ts`, `lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts`, `lib/readiness/official-truth-product-v3/jobs/composition.ts`, `lib/readiness/official-truth-product-v3/import/service-server.ts`, `lib/readiness/official-truth-product-v3/result/source-proof.ts` sowie neue private Diagnose-/Testmodule unter `lib/readiness/official-truth-product-v3/runtime/dev-diagnostics*`. Falls ein bestehender unmittelbar zugehöriger Test wegen einer Änderung angepasst werden muss: zuerst konkret an Root melden. `authority-postgres.ts`, `result/postgres.ts`, `result/composition.ts`, Besucherpfad, SQL, Owner-Recovery-UI, CI-/Manifest-/Auditpins und sonstige Dateien gehören G4 und bleiben hier unberührt. Kein Commit von node_modules oder temporären Dateien.
+
+## Verhalten
+
+- Kleine strukturierte Serverdiagnose ausschließlich für den bereits mit allen fünf Dev-Zielguards und aktuellem Owner/AAL2 geschützten manuellen Import. Keine neue Route, kein öffentliches Diagnoseangebot, keine neuen ENV-Werte/Secrets, keine Diagnosedaten im Produkt-DTO. Außerhalb dieses ausdrücklich eröffneten Aufrufs kein Logging und kein gemeinsam veränderlicher globaler Aufrufzustand. Ein privater begrenzter AsyncLocalStorage-Kontext ist möglich.
+- Feste erlaubte Stufen, Ergebnisse und numerische Zähler; elapsed/remaining-budget jeweils um die tatsächlichen Await-Grenzen. Tick: Discovery/Monitor/Research. I1: Reserve, Methodenauflösung, History, Evidence-Inspect, Evidence-Reproof, History-Reproof, Methoden-Reproof, Prepare/Finish. Source-Custody: Attest und anschließender gespeicherter Evidence-Read getrennt. Jobs: tatsächliche Importausgabe und Bestätigungs-/Prepare-Stufen. Den passenden unveränderten 30s-/5s-Budgetkontext verwenden; verbrauchtes Budget nie neu beginnen.
+- Tatsächliches `VERCEL_REGION` nur gegen eine feste endliche Liste bekannter Kennungen ausgeben; sonst neutrales `unlisted`/`unavailable`. Kein Rückschluss aus Edge-Logregion. Keine Namen/E-Mails/IDs von Menschen, JWTs, Cookies, Tokens, Tickets, SQL, Quellenbytes, rohe Commands/Claims, URLs mit Parametern, freien Exceptions oder beliebigen Statusstrings loggen. Keine Werte durch Objektspreads aus Fremddaten übernehmen. Ereignisanzahl und Ausgabegröße hart begrenzen.
+- Logging bleibt nachrangig: fehlender oder werfender Sink darf Autorität, Rückgabe, Abort, Drain, Fehlerklasse und Ressourcenfreigabe nicht ändern. Keine zusätzliche Promise-Race- oder detached-cleanup-Konstruktion. Der reale vorhandene Drain wird vollständig abgewartet; Stufen nach einem Abort dürfen nicht als Erfolg erscheinen. Die Diagnose behauptet keinen Commit, Rollback oder sicheren Neustart.
+- Keine Änderung von Zeitbudgets, Leases, Versuchsgrenzen, Regionen, Quellenqualifikation, DB-Rechten, Methodenprüfung oder Ein-/Ausgabeverträgen. Keine neue Quellenabfrage und kein Wiederholungsversuch. Der offene reale Erstimport bleibt unverändert.
+
+## Ausgangsevidenz und Abnahme
+
+Realer Import: I1-Start `2026-11-13T23:26:42.283Z`, nominale 5s-Grenze `47.283Z`; Quellenentscheidung `45.880Z`; HRS attest wurde gespeichert. Insgesamt genau zwei HRS-History-Reads und ein Attest, kein folgender Evidence-Read und kein S1-Finish. Verifier-Guard wurde `47.166Z`, nächster Methoden-Guard `47.640Z` beendet. Das grenzt den Engpass auf den Vorlauf des Evidence-Reproof ein; eine vollständige Span-Messung fehlt noch. Keine stärkere Ursachenbehauptung ohne neuen Nachweis.
+
+Gezielte Tests für erlaubte Felder, Ausgabelimits, parallele isolierte Aufrufe, keine Logs außerhalb des Dev-Imports, verweigerte Guards, unbekannte Region, Fehler/Abort und fehlenden/werfenden Sink. Bestehende Import-/Tick-/Source-/Jobs-Tests auf reale Verhaltensgleichheit prüfen. Typecheck, gezielter Lint; alle Fehler eines Laufs zusammen beheben. Echte PG17-/Gesamt-CI-Gates bleiben beim Hauptpaket; lokale Socket-Sperre nicht umgehen und keinen Native-PASS erfinden.
+
+Kurzer Handoff an Root mit vollständiger Dateiliste, tatsächlich gelaufenen Tests und offenen Gates, sauberem lokalen Commit. Keine weitere Handoff-Datei nötig. Kein Push, PR-Kommentar, Ready/Merge, Live-DDL, Owner-Klick, Mail, Secret-/Kosten-/Scheduleränderung. Danach STOP.

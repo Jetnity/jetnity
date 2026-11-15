@@ -79,6 +79,142 @@ describe('M1 bounded research and discovery worker', () => {
     assert.equal(result.status, 'completed'); if (result.status !== 'completed') assert.fail()
     assert.equal(result.result.kind, 'rule_research'); assert.equal(result.acceptedRule, false)
   })
+  test('optional atomic preflight and terminal acquisition keep exact receipts and actual confirm ordering', async () => {
+    const t = workerHarness(), key = await t.enqueue(), events: string[] = []
+    let initial: object | undefined, preparedReceipt: object | undefined
+    const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+      const value = await t.h.method.port.resolveCurrent(...args)
+      if (value.status === 'approved') initial = value.receipt
+      return value
+    } }
+    const work: V3ResearchWorkPort<object> = { ...t.work, async prepare(job, fence, receipt, signal) {
+      events.push('atomic-start'); assert.equal(receipt, initial); assert.equal(signal.aborted, false)
+      assert.equal(fence.jobId, job.jobId); assert.equal(fence.generation, job.lease?.generation)
+      return { status: 'ready' }
+    } }
+    const results: V3ResearchResultCustodyPort<object> = { ...t.results,
+      async confirm(receipt, job, checkedAt, signal) {
+        const value = await t.results.confirm(receipt, job, checkedAt, signal)
+        if (value.status === 'confirmed') { preparedReceipt = receipt; events.push('actual-confirm') }
+        return value
+      },
+      async acquireTerminalAuthority(receipt, anchor, job, checkedAt, signal) {
+        events.push('terminal-acquire'); assert.equal(receipt, preparedReceipt); assert.equal(anchor, initial)
+        assert.equal(job.state, 'leased'); assert.equal(checkedAt, t.h.clock.now()); assert.equal(signal.aborted, false)
+        return { status: 'current' }
+      },
+    }
+    const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, methodAuthority, work, results })
+    assert.equal(result.status, 'completed')
+    assert.deepEqual(events, ['atomic-start', 'actual-confirm', 'terminal-acquire'])
+    assert.equal(t.control.executeCount, 1)
+  })
+  for (const [opted, atomic] of [[true, true], [false, true], [true, false]] as const)
+    test(`custody-first ordering requires explicit opt-in ${opted} and actual atomic prepare ${atomic}`, async () => {
+      const t = workerHarness(), key = await t.enqueue(), events: string[] = []
+      const before = t.h.clock.now()
+      let observedAt: string | undefined, initial: object | undefined
+      const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+        events.push('method'); observedAt = args[1]
+        const value = await t.h.method.port.resolveCurrent(...args)
+        if (value.status === 'approved') initial = value.receipt
+        return value
+      } }
+      const results: V3ResearchResultCustodyPort<object> = { ...t.results,
+        ...(opted ? { lookupBeforeWorkerAuthority: true as const } : {}),
+        async lookup(job, signal) { events.push('lookup'); t.h.clock.advance(100); return t.results.lookup(job, signal) },
+      }
+      const work: V3ResearchWorkPort<object> = { ...t.work, ...(atomic ? {
+        async prepare(_job, _fence, receipt, signal) {
+          assert.equal(receipt, initial); assert.equal(signal.aborted, false); return { status: 'ready' as const }
+        },
+      } : {}) }
+      assert.equal((await runV3ResearchWorkerOnce(claim(key), { ...t.deps, methodAuthority, results, work })).status, 'completed')
+      assert.deepEqual(events, opted && atomic ? ['lookup', 'method'] : ['method', 'lookup'])
+      assert.equal(observedAt, opted && atomic ? t.h.clock.now() : before)
+      assert.equal(t.control.executeCount, 1)
+    })
+  for (const failure of ['unconfirmed', 'unavailable', 'throw'] as const)
+    test(`custody-first ${failure} preserves the original negative queue audit without positive work`, async () => {
+      const t = workerHarness(), key = await t.enqueue()
+      let lookups = 0, approvals = 0, failures = 0, starts = 0
+      const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+        approvals++; return t.h.method.port.resolveCurrent(...args)
+      } }
+      const results: V3ResearchResultCustodyPort<object> = { ...t.results, lookupBeforeWorkerAuthority: true,
+        async lookup() { lookups++; if (failure === 'throw') throw Error('unavailable read'); return { status: failure } },
+      }
+      const work: V3ResearchWorkPort<object> = { ...t.work, async prepare() { starts++; return { status: 'ready' } } }
+      const queue = { ...t.queue, async fail(...args: Parameters<typeof t.queue.fail>) { failures++; return t.queue.fail(...args) } }
+      const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, queue, methodAuthority, results, work })
+      assert.equal(result.status, 'backoff'); assert.ok(result.status === 'backoff')
+      assert.equal(result.job.lastFailure, failure === 'unavailable' ? 'verification_unavailable' : 'commit_unconfirmed')
+      assert.deepEqual([lookups, approvals, failures, starts, t.control.executeCount], [1, 1, 1, 0, 0])
+    })
+  for (const expiredAt of ['claim', 'lookup'] as const)
+    test(`custody-first refuses the lease boundary after ${expiredAt} before acquiring worker authority`, async () => {
+      const t = workerHarness(), key = await t.enqueue()
+      let lookups = 0, approvals = 0, starts = 0
+      const queue = { ...t.queue, async claim(...args: Parameters<typeof t.queue.claim>) {
+        const result = await t.queue.claim(...args); if (expiredAt === 'claim') t.h.clock.advance(1000); return result
+      } }
+      const results: V3ResearchResultCustodyPort<object> = { ...t.results, lookupBeforeWorkerAuthority: true,
+        async lookup(job, signal) { lookups++; t.h.clock.advance(1000); return t.results.lookup(job, signal) },
+      }
+      const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+        approvals++; return t.h.method.port.resolveCurrent(...args)
+      } }
+      const work: V3ResearchWorkPort<object> = { ...t.work, async prepare() { starts++; return { status: 'ready' } } }
+      const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, queue, results, methodAuthority, work })
+      assert.equal(result.status, 'superseded')
+      assert.deepEqual([lookups, approvals, starts, t.control.executeCount], [expiredAt === 'claim' ? 0 : 1, 0, 0, 0])
+    })
+  for (const stop of ['abort', 'timeout'] as const)
+    test(`custody-first ${stop} joins the late read and never acquires worker authority afterwards`, async () => {
+      const t = workerHarness(), key = await t.enqueue(), controller = new AbortController()
+      let entered!: () => void, release!: () => void, aborted!: () => void
+      const reading = new Promise<void>(resolve => { entered = resolve })
+      const held = new Promise<void>(resolve => { release = resolve })
+      const stopped = new Promise<void>(resolve => { aborted = resolve })
+      let lookups = 0, approvals = 0, starts = 0, settled = false, returned = false
+      const results: V3ResearchResultCustodyPort<object> = { ...t.results, lookupBeforeWorkerAuthority: true,
+        async lookup(_job, signal) {
+          lookups++; signal.addEventListener('abort', aborted, { once: true }); entered()
+          await held; settled = true; return { status: 'not_attempted' }
+        },
+      }
+      const methodAuthority = { ...t.h.method.port, async resolveCurrent(...args: Parameters<typeof t.h.method.port.resolveCurrent>) {
+        approvals++; return t.h.method.port.resolveCurrent(...args)
+      } }
+      const work: V3ResearchWorkPort<object> = { ...t.work, async prepare() { starts++; return { status: 'ready' } } }
+      const pending = runV3ResearchWorkerOnce(claim(key), { ...t.deps, results, methodAuthority, work,
+        invocationMilliseconds: stop === 'timeout' ? 250 : 1000 }, controller.signal)
+        .then(value => { returned = true; return value })
+      try {
+        await reading; if (stop === 'abort') controller.abort(); await stopped
+        await new Promise<void>(resolve => setImmediate(resolve))
+        assert.equal(settled, false); assert.equal(returned, false)
+        assert.deepEqual([lookups, approvals, starts, t.control.executeCount], [1, 0, 0, 0])
+        release(); assert.equal((await pending).status, 'unconfirmed'); assert.equal(settled, true)
+        assert.deepEqual([lookups, approvals, starts, t.control.executeCount], [1, 0, 0, 0])
+      } finally { controller.abort(); release(); await pending }
+    })
+  test('unknown atomic preflight cannot run the producer, retry the start or settle a fabricated failure', async () => {
+    const t = workerHarness(), key = await t.enqueue()
+    let starts = 0
+    const work: V3ResearchWorkPort<object> = { ...t.work, async prepare() { starts++; return { status: 'unconfirmed' } } }
+    const result = await runV3ResearchWorkerOnce(claim(key), { ...t.deps, work })
+    assert.equal(result.status, 'unconfirmed'); assert.equal(starts, 1); assert.equal(t.control.executeCount, 0)
+    assert.equal(t.h.storage.records.get(key)?.state, 'leased')
+  })
+  test('invalid confirmed record never reaches optional terminal authority', async () => {
+    const t = workerHarness(), key = await t.enqueue(); t.control.corrupt = true
+    let acquired = 0
+    const results: V3ResearchResultCustodyPort<object> = { ...t.results,
+      async acquireTerminalAuthority() { acquired++; return { status: 'current' } } }
+    assert.notEqual((await runV3ResearchWorkerOnce(claim(key), { ...t.deps, results })).status, 'completed')
+    assert.equal(acquired, 0)
+  })
   test('two concurrent worker ticks execute one owner; the other sees non-due work', async () => {
     const t = workerHarness(), key = await t.enqueue()
     const results = await Promise.all([runV3ResearchWorkerOnce(claim(key, 'one'), t.deps), runV3ResearchWorkerOnce(claim(key, 'two'), t.deps)])

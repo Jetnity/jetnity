@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { createV3CombinationDiscoveryIdentity } from '../contract'
-import { createV3QueueCoordinator, createV3DiscoveryQueueCoordinator, type V3QueueResult, type V3JobFence } from './queue'
+import { createV3QueueCoordinator, createV3DiscoveryQueueCoordinator, type V3QueueResult, type V3JobFence,
+  type V3QueueStoragePort, type V3QueueCommitAuthority } from './queue'
 import { officialTruthV3MonitoringRuntime } from './runtime'
 import { fixture, queueHarness, ids, ref, must, METHOD } from './test-support'
 
@@ -101,6 +102,101 @@ describe('M1 atomic queue and separate discovery identity', () => {
     assert.equal((await h.queue.enqueue(f.enqueue)).status, 'unavailable')
     assert.equal(h.storage.writes, 1)
   })
+  for (const namespace of ['rule', 'discovery'] as const) {
+    test(`fresh ${namespace} CAS retains only its immutable authority through the actual read and final reproof`, async () => {
+      const f = fixture(), h = queueHarness()
+      const reads: { receipt: object | undefined; signal: AbortSignal }[] = []
+      const writes: { authority: V3QueueCommitAuthority; signal: AbortSignal }[] = []
+      let resolves = 0
+      const storage: V3QueueStoragePort = {
+        async read(key, signal, receipt) { reads.push({ receipt, signal }); return h.storage.read(key) },
+        confirm: h.storage.confirm.bind(h.storage),
+        async compareAndSwap(commit, authority, signal) {
+          assert.ok(Object.isFrozen(authority)); assert.ok(Object.isFrozen(authority.method))
+          assert.equal(Reflect.set(authority, 'receipt', {}), false)
+          assert.equal(Reflect.set(authority, 'reprove', async () => true), false)
+          assert.equal(Reflect.set(authority.method, 'methodId', 'changed'), false)
+          assert.equal(Reflect.set(authority.method, 'revision', 99), false)
+          writes.push({ authority, signal })
+          return h.storage.compareAndSwap(commit, authority, signal)
+        },
+      }
+      const options = { ...h.options, storage, methodAuthority: {
+        async resolveCurrent(...args: Parameters<typeof h.method.port.resolveCurrent>) {
+          resolves++; return h.method.port.resolveCurrent(...args)
+        },
+        reproveAtCommit: h.method.port.reproveAtCommit.bind(h.method.port),
+      } }
+      const queue = namespace === 'rule' ? createV3QueueCoordinator(options) : createV3DiscoveryQueueCoordinator(options)
+      const input = namespace === 'rule' ? f.enqueue : f.discoveryEnqueue
+      confirmed(await queue.enqueue(input))
+      assert.equal(resolves, 1); assert.equal(h.method.control.checks, 3, 'before CAS, atomic adapter and after real read')
+      assert.deepEqual(reads.map(r => r.receipt), [undefined, writes[0].authority.receipt])
+      assert.ok(reads.every(r => r.signal === writes[0].signal))
+      reads.length = 0
+      assert.equal((await queue.enqueue(input)).status, 'confirmed')
+      assert.equal(resolves, 2); assert.equal(writes.length, 1)
+      assert.deepEqual(reads.map(r => r.receipt), [undefined], 'a replay cannot inherit another invocation receipt')
+      reads.length = 0; h.storage.loseNextResponse = true
+      const uncertain = { ...input, operationId: ids('op3', `retained-${namespace}-lost`) }
+      assert.equal((await queue.enqueue(uncertain)).status, 'unconfirmed')
+      assert.deepEqual(reads.map(r => r.receipt), [undefined], 'lost CAS ACK never lends authority to a read')
+      reads.length = 0
+      assert.equal((await queue.enqueue(uncertain)).status, 'confirmed')
+      assert.deepEqual(reads.map(r => r.receipt), [undefined]); assert.equal(writes.length, 2)
+      assert.notEqual(writes[0].authority.receipt, writes[1].authority.receipt)
+    })
+  }
+  test('a CAS mismatch cannot lend its receipt to the next initial read or a different successful CAS', async () => {
+    const f = fixture(), h = queueHarness(), receipts: object[] = [], reads: (object | undefined)[] = []
+    const storage: V3QueueStoragePort = {
+      async read(key, _signal, receipt) { reads.push(receipt); return h.storage.read(key) },
+      confirm: h.storage.confirm.bind(h.storage),
+      async compareAndSwap(commit, authority, signal) {
+        receipts.push(authority.receipt)
+        return receipts.length === 1 ? { status: 'mismatch' } : h.storage.compareAndSwap(commit, authority, signal)
+      },
+    }
+    confirmed(await createV3QueueCoordinator({ ...h.options, storage }).enqueue(f.enqueue))
+    assert.equal(receipts.length, 2); assert.notEqual(receipts[0], receipts[1])
+    assert.deepEqual(reads, [undefined, undefined, receipts[1]]); assert.equal(h.storage.writes, 1)
+  })
+  for (const fault of ['revoke_after_cas', 'revoke_after_read', 'future_updated_at', 'invalid_clock',
+    'changed_method', 'read_unavailable', 'abort_after_cas', 'abort_after_read'] as const) {
+    test(`fresh CAS authority does not turn ${fault} into a positive acknowledgement`, async () => {
+      const f = fixture(), h = queueHarness(), abort = new AbortController()
+      let committed = false, finalReads = 0
+      const storage: V3QueueStoragePort = {
+        async read(key, _signal, receipt) {
+          const reply = await h.storage.read(key)
+          if (!committed) { assert.equal(receipt, undefined); return reply }
+          finalReads++; assert.ok(receipt)
+          if (fault === 'revoke_after_read') h.method.control.enabled = false
+          if (fault === 'abort_after_read') abort.abort()
+          if (fault === 'read_unavailable') return { status: 'unavailable' }
+          if (reply.status === 'ok' && reply.record?.kind === 'research_job_record') {
+            if (fault === 'future_updated_at') return { status: 'ok', record: { ...reply.record, updatedAt: '2026-11-09T08:04:00.001Z' } }
+            if (fault === 'changed_method') return { status: 'ok', record: { ...reply.record, method: { ...METHOD, revision: 2 } } }
+          }
+          return reply
+        },
+        confirm: h.storage.confirm.bind(h.storage),
+        async compareAndSwap(commit, authority, signal) {
+          const reply = await h.storage.compareAndSwap(commit, authority, signal)
+          assert.equal(reply.status, 'committed'); committed = true
+          if (fault === 'revoke_after_cas') h.method.control.enabled = false
+          if (fault === 'abort_after_cas') abort.abort()
+          return reply
+        },
+      }
+      const queue = createV3QueueCoordinator({ ...h.options, storage,
+        now: () => committed && fault === 'invalid_clock' ? 'invalid' : h.clock.now() })
+      assert.notEqual((await queue.enqueue(f.enqueue, abort.signal)).status, 'confirmed')
+      assert.equal(h.storage.writes, 1, 'negative acknowledgement does not claim rollback of the actual CAS')
+      assert.equal(finalReads, fault === 'abort_after_cas' ? 0 : 1)
+      if (fault.startsWith('revoke')) assert.equal(h.method.control.checks, 3, 'the retained receipt still receives fresh final reproof')
+    })
+  }
   test('concurrent identical rule misses commit one active job and consume both idempotent operations', async () => {
     const f = fixture(), h = queueHarness()
     const [first, second] = await Promise.all([h.queue.enqueue(f.enqueue), h.queue.enqueue({ ...f.enqueue,

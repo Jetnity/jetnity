@@ -258,6 +258,44 @@ describe('U1 current authority, method, expiry, source and abort boundaries', ()
     assert.notEqual(result.response.cells[0].results[0].status, 'accepted')
     assert.equal(Object.keys(result.sources).length, 0)
   })
+  test('public query uses 750ms for real data even in CI and 2000ms only for synthetic GitHub CI', async t => {
+    const original = process.env.GITHUB_ACTIONS
+    const cases = [
+      { dataMode: 'official_projection', github: 'true', milliseconds: 750 },
+      { dataMode: 'official_projection', github: undefined, milliseconds: 750 },
+      { dataMode: 'synthetic_test', github: undefined, milliseconds: 750 },
+      { dataMode: 'synthetic_test', github: 'false', milliseconds: 750 },
+      { dataMode: 'synthetic_test', github: 'TRUE', milliseconds: 750 },
+      { dataMode: 'synthetic_test', github: 'true', milliseconds: 2000 },
+    ] as const
+    try {
+      for (const item of cases) await t.test(item.dataMode + '/' + String(item.github), async sub => {
+        if (item.github === undefined) delete process.env.GITHUB_ACTIONS
+        else process.env.GITHUB_ACTIONS = item.github
+        sub.mock.timers.enable({ apis: ['setTimeout'] })
+        const f = syntheticV3Fixture(), started = deferred<void>()
+        let heldSignal: AbortSignal | undefined
+        const query = createV3VisitorQuery({ ...f.ports, dataMode: item.dataMode,
+          coverage: { targets: async (_pair, signal) => { heldSignal = signal; started.resolve(); return new Promise(() => {}) } } })
+        let answered = false
+        const pending = query(oneInput).then(result => { answered = true; return result })
+        await started.promise
+        assert.ok(heldSignal)
+        sub.mock.timers.tick(item.milliseconds - 1)
+        assert.equal(heldSignal.aborted, false, 'the actual port signal still owns the complete selected interval')
+        await Promise.resolve()
+        assert.equal(answered, false, 'the original selected deadline has not elapsed')
+        sub.mock.timers.tick(1)
+        assert.equal(heldSignal.aborted, true, 'the actual port signal aborts exactly at the original selected deadline')
+        assert.deepEqual(await pending, { ok: false, reason: 'temporary_failure' })
+        assert.equal(f.jobs.size, 0, 'a deadline cannot manufacture a research receipt')
+      })
+    } finally {
+      if (original === undefined) delete process.env.GITHUB_ACTIONS
+      else process.env.GITHUB_ACTIONS = original
+    }
+  })
+
   test('caller cancellation ends a stuck read without a successful answer or a research job', async () => {
     const f = syntheticV3Fixture(), started = deferred<void>(), controller = new AbortController()
     const query = createV3VisitorQuery({ ...f.ports, cache: { read: async () => { started.resolve(); return new Promise(() => {}) } } })

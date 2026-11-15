@@ -50,7 +50,7 @@ export interface V3SourceObservationPort<Receipt extends object> {
 }
 export type V3ProjectionSuppression = Readonly<{
   operationId: string; auditRef: string; contextKey: string; expectedVersionRef: string; sourceDecisionRef: string;
-  reason: 'known_conflict' | 'primary_unclear' | 'expired'; projectionRefs: readonly string[];
+  reason: 'known_conflict' | 'primary_unclear' | 'expired' | 'source_changed'; projectionRefs: readonly string[];
   escalationKey: string | null; observedAt: string;
 }>
 export interface V3ProjectionSuppressionPort {
@@ -128,7 +128,7 @@ export async function runV3SourceMonitorOnce<PlanReceipt extends object, SourceR
         const auditRef = key('projection-suppression', seed), operationId = `op3_${auditRef.split(':').at(-1)!.slice(0, 32)}`
         const effect: V3ProjectionSuppression = { operationId, auditRef, contextKey, expectedVersionRef: target.expectedVersionRef,
           sourceDecisionRef: target.sourceDecisionRef, reason: reasonToApply, projectionRefs: target.projectionRefs,
-          escalationKey: reasonToApply === 'expired' ? null : key('source-escalation', escalationSeed), observedAt: at }
+          escalationKey: reasonToApply === 'expired' || reasonToApply === 'source_changed' ? null : key('source-escalation', escalationSeed), observedAt: at }
         const previous = await budget.call((s) => suppressions!.confirm(operationId, auditRef, s))
         if (!previous.ok || previous.value.status === 'unconfirmed') { outcomes.push({ ...base, status: 'unconfirmed' }); return false }
         if (previous.value.status === 'unavailable') { outcomes.push({ ...base, status: 'unavailable' }); return false }
@@ -186,6 +186,16 @@ export async function runV3SourceMonitorOnce<PlanReceipt extends object, SourceR
         observationSeed = { source: item.source, fingerprint: item.fingerprint }
       }
       if (!changed && !reason) { outcomes.push({ ...base, status: 'unchanged' }); continue }
+      // A genuinely observed new primary version awaits a new I1 acceptance.
+      // Preserve its clear original; do not relabel it ambiguous or claim that
+      // law changed. The durable adapter binds this distinct effect to the
+      // actual attested original and a fingerprint unequal to this plan baseline.
+      if (changed && observed.status === 'observed' && target.role === 'primary' && reason === null) {
+        const at = readNow(dependencies.now)
+        if (!at) return { status: 'unavailable', outcomes }
+        if (!await suppress('source_changed', at)) continue
+        reason = 'source_changed'
+      }
       if (!await reprove(budget.signal)) { outcomes.push({ ...base, status: 'unavailable' }); continue }
       const opSeed = { contextKey, factKind: target.factKind, method: plan.method, previous: target.expectedVersionRef, observationSeed, reason }
       const operation = key('monitor-research', opSeed).split(':').at(-1)!

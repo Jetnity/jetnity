@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "purpose": "Pinned public webpage byte fixtures for owned-local PostgreSQL publication capacity tests. These historical bytes are not a live source read, current evidence, method approval or publication permission.",
+  "sourceReview": {
+    "run": "43292509169",
+    "commit": "03702a4d9e8a3100be44a28f6fc7536bdb3fb91f"
+  },
+  "contentBoundary": "Only the exact public HTML response bodies are retained. No request headers, response cookies, session data, credentials, custody tokens or operational receipts.",
+  "fixtures": [
+    {
+      "role": "primary",
+      "file": "primary.html.gz",
+      "gzipSha256": "c88850ff0630a614c2d1dbe4e052e6a5f00ecc0decece4473fc0025a765f60e1",
+      "bytes": 93353,
+      "sha256": "a8e8849afc6df85c551fadb820a37c3245f1f9192007f5b5d02a3ce49b30c05a",
+      "reviewedMainSha256": "8f2eb46fa8e0d0a1b8eeac2cfa98f7d43691f48b41a3eae2d10b29edb6f1f3df",
+      "requestUrl": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "finalUrl": "https://www.auswaertiges-amt.de/de/service/visa-und-aufenthalt/staatenliste-zur-visumpflicht-207820",
+      "httpMethod": "GET",
+      "httpStatus": 200,
+      "redirectCount": 0,
+      "contentType": "text/html",
+      "originalStartedAt": "2026-11-12T19:41:09.241Z",
+      "originalRetrievedAt": "2026-11-12T19:41:10.522Z"
+    },
+    {
+      "role": "counter",
+      "file": "counter.html.gz",
+      "gzipSha256": "b85a39e567ac3dcd8dc3b89ee053067cacb46d0ad33271d80f25cd2c6b2c6f6e",
+      "bytes": 71532,
+      "sha256": "4b9412ae72fb4b870f45451b69f8e00401eaebe6393b1a7aa22ef06f460a0bad",
+      "reviewedMainSha256": "0e06d5fbd0a09b5c5fa61c4ee26f8432dcb7d1310a8b7383b174b5cae03c3956",
+      "requestUrl": "https://bern.diplo.de/ch-de/service/visumundeinreise/2611474-2611474",
+      "finalUrl": "https://bern.diplo.de/ch-de/service/visumundeinreise/2611474-2611474",
+      "httpMethod": "GET",
+      "httpStatus": 200,
+      "redirectCount": 0,
+      "contentType": "text/html",
+      "originalStartedAt": "2026-11-12T19:41:09.241Z",
+      "originalRetrievedAt": "2026-11-12T19:41:11.907Z"
+    }
+  ]
+}
