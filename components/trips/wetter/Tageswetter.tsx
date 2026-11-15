@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import Image from 'next/image'
 import { CloudSun, Sunset } from 'lucide-react'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { istPosition } from '@/lib/maps/reisekarte'
@@ -96,7 +95,8 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
           </li>)}</ul>
         </details>
         <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs text-ink-700">
-          <Image src="/brand/openweather.png" alt="" width={48} height={27} unoptimized />Weather data provided by OpenWeather</a>
+          <span aria-hidden className="h-[27px] w-12 shrink-0 bg-contain bg-center bg-no-repeat" style={{ backgroundImage: 'url(/brand/openweather.png)' }} />
+          Weather data provided by OpenWeather</a>
       </>}
   </section>
 }
