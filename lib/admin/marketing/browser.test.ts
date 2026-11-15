@@ -167,7 +167,7 @@ async function open(t: TestContext, options: Partial<MarketingFixtureBoot> & { w
   await page.exposeFunction('__recordMarketingViolation', (message: string) => { fixture.violations.push(message) })
   // Installed before every document's bundle, including reload. Node retains
   // attempted IO even when the document and its local buffer are replaced.
-  await page.addInitScript(() => {
+  const installIsolation = () => {
     const buffer: string[] = []
     window.__marketingBlockedOperations = buffer
     const record = (kind: string) => {
@@ -191,7 +191,11 @@ async function open(t: TestContext, options: Partial<MarketingFixtureBoot> & { w
     }
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: () => { record('Network: sendBeacon'); return false } })
     window.open = () => { record('Navigation: window.open'); return null }
-  })
+  }
+  // tsx preserves callback names with a module-scoped __name helper. Install
+  // its identity shim and the serialized callback in one ordered script before
+  // each document's bundle; separate init scripts have no guaranteed order.
+  await page.addInitScript({ content: `globalThis.__name=(target)=>target;(${installIsolation.toString()})();` })
   t.after(async () => {
     try {
       if (!page.isClosed()) {
