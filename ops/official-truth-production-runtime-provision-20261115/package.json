@@ -1,0 +1,12 @@
+{
+  "name": "jetnity-production-runtime-provision-20261115",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node runner.mjs --prepare"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  }
+}
