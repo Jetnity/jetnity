@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "scope": "owned-local-pg17-redacted-dev-history-delta",
+  "file": "local-history-delta.json.gz",
+  "bytes": 1538492,
+  "sha256": "dfe259926bf6c6e263ab30b3a283fa42b223e92d47bb681d0df2adfddcb528af",
+  "gzipBytes": 264221,
+  "gzipSha256": "1d71222abef6b082b4ae08193cf23c0d7e41398251f969675218af9eeefb4039"
+}

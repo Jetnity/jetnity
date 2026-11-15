@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "file": "local-history-delta.json.gz",
+  "bytes": 1071788,
+  "sha256": "7a9de563a69982b2b2d3c02242ebe2fc766e2168c229386620a501598906ffe4",
+  "gzipBytes": 179116,
+  "gzipSha256": "db707bb7b529a6823b0a398bb2ecb12a7cfcf6ad88fcbdd869fc108145b491b7",
+  "scope": "Owned local PG17 fixture only. Actual new business rows; live tokens, token hashes and actors omitted before export; explicit SQL-null columns preserved. Existing original fixture remains immutable."
+}

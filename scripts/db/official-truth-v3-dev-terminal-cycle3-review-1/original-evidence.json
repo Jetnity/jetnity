@@ -1,0 +1,122 @@
+{
+  "cycle": {
+    "id": 3,
+    "phase": "resume",
+    "state": "blocked",
+    "lease_id": "lease3_25df4f53834d4b75a49e3b0148dddd89",
+    "published": 0,
+    "created_at": "2026-11-15T02:12:00.092831Z",
+    "finished_at": "2026-11-15T02:22:00.089589Z",
+    "last_status": "exhausted",
+    "operation_id": "op3_de1e2cb5be4d45f3a1da054d2111d21e",
+    "phase_attempts": 6
+  },
+  "dispatches": [
+    {
+      "id": 13,
+      "phase": "start",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:13:00.059108Z",
+      "signed_at_ms": "1794708720093",
+      "dispatched_at": "2026-11-15T02:12:00.106803Z",
+      "net_request_id": 17
+    },
+    {
+      "id": 14,
+      "phase": "start",
+      "outcome": "queued",
+      "cycle_id": 3,
+      "http_status": 200,
+      "processed_at": "2026-11-15T02:14:00.024973Z",
+      "signed_at_ms": "1794708780076",
+      "dispatched_at": "2026-11-15T02:13:00.078472Z",
+      "net_request_id": 18
+    },
+    {
+      "id": 15,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:16:00.043501Z",
+      "signed_at_ms": "1794708840044",
+      "dispatched_at": "2026-11-15T02:14:00.046244Z",
+      "net_request_id": 19
+    },
+    {
+      "id": 16,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:17:00.089466Z",
+      "signed_at_ms": "1794708960061",
+      "dispatched_at": "2026-11-15T02:16:00.064391Z",
+      "net_request_id": 20
+    },
+    {
+      "id": 17,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:18:00.080750Z",
+      "signed_at_ms": "1794709020098",
+      "dispatched_at": "2026-11-15T02:17:00.100202Z",
+      "net_request_id": 21
+    },
+    {
+      "id": 18,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:19:00.084865Z",
+      "signed_at_ms": "1794709080092",
+      "dispatched_at": "2026-11-15T02:18:00.094016Z",
+      "net_request_id": 22
+    },
+    {
+      "id": 19,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 3,
+      "http_status": 503,
+      "processed_at": "2026-11-15T02:21:00.040061Z",
+      "signed_at_ms": "1794709140096",
+      "dispatched_at": "2026-11-15T02:19:00.098066Z",
+      "net_request_id": 23
+    },
+    {
+      "id": 20,
+      "phase": "resume",
+      "outcome": "exhausted",
+      "cycle_id": 3,
+      "http_status": 200,
+      "processed_at": "2026-11-15T02:22:00.089589Z",
+      "signed_at_ms": "1794709260058",
+      "dispatched_at": "2026-11-15T02:21:00.061949Z",
+      "net_request_id": 24
+    }
+  ],
+  "terminal_operation": {
+    "action": "claim",
+    "job_key": "research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513",
+    "authority": {
+      "epoch": 1,
+      "methodId": "jetnity-destination-primary-ch-de-visa",
+      "revision": 1,
+      "methodDigest": "44ce02752da05796bef98c55b5099b81f915fe6b0975472e163721a06793bdb3",
+      "packageDigest": "0beb25db2e1f6e4c2c96d61ded30b59a8e06a32ed94498903fbeecc3b6f267e9"
+    },
+    "command_key": "queue-command:v3:ea857d389f481a4da2cb0c6fc34a6db362f4c2aa9d7bc6edaa500080761730f5",
+    "recorded_at": "2026-11-15T02:19:09.899825Z",
+    "command_text": "{\"action\":\"claim\",\"input\":{\"jobKey\":\"research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513\",\"leaseId\":\"lease3_4815bed36de8d476a9520061493e0b75\",\"leaseMilliseconds\":30000,\"operationId\":\"op3_0ab5b766f0d954b88a7481b0d531881f\"}}",
+    "operation_id": "op3_0ab5b766f0d954b88a7481b0d531881f",
+    "envelope_text": "{\"audit\":{\"kind\":\"exhausted\",\"nextRevision\":35,\"observedAt\":\"2026-11-15T02:19:08.990Z\",\"priorRevision\":34,\"reference\":\"queue-event:v3:4b69ed0e7e04cc416829e62b26e38a78b8794060e05fba392e35eb1c6c8b1c4f\"},\"commandKey\":\"queue-command:v3:ea857d389f481a4da2cb0c6fc34a6db362f4c2aa9d7bc6edaa500080761730f5\",\"expected\":{\"attempt\":4,\"attemptLimit\":4,\"context\":{\"conditions\":{\"status\":\"unconditional\"},\"route\":\"direct_entry\",\"scope\":{\"citizenship\":{\"countryCodes\":[\"CH\"],\"mode\":\"required\"},\"credentialOption\":{\"documentType\":\"passport\",\"issuingCountryCode\":\"CH\",\"mode\":\"option\",\"relatedCitizenshipCountryCode\":\"CH\"},\"destinationCountryCode\":\"DE\",\"requirementType\":\"visa\",\"residence\":{\"mode\":\"not_applicable\"},\"transitCountryCode\":null,\"validity\":{\"mode\":\"not_applicable\"}}},\"contextKey\":\"official-truth-context:v3:bfce3bc64dbd7c670441e05033c31f339e03a2c488ab54937320508333c252c2\",\"createdAt\":\"2026-11-15T02:12:03.794Z\",\"jobId\":\"job3_6caeafbd2bcb1fed2121984e98c3c3e7\",\"jobKey\":\"research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513\",\"kind\":\"research_job_record\",\"lastFailure\":null,\"lease\":{\"acquiredAt\":\"2026-11-15T02:18:09.307Z\",\"expiresAt\":\"2026-11-15T02:18:39.307Z\",\"generation\":34,\"leaseId\":\"lease3_a388f524d63eff3e4f44786a730d145b\"},\"method\":{\"methodId\":\"jetnity-destination-primary-ch-de-visa\",\"revision\":1},\"nextAttemptAt\":null,\"operationId\":\"op3_fd77e53aa618612283535e6c97020198\",\"predecessorRevision\":33,\"research\":{\"factKind\":\"requirement_effect\",\"key\":\"research-request:v1:b682f1de48389c7d5a3ac0d39fa4406d0e3796be91fb6e253bfd5a45cf7f945a\",\"researchReason\":{\"status\":\"missing\"},\"ruleScopeKey\":\"rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f\"},\"resultDecisionRef\":null,\"revision\":34,\"schema\":3,\"state\":\"leased\",\"updatedAt\":\"2026-11-15T02:18:09.307Z\"},\"jobKey\":\"research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513\",\"next\":{\"attempt\":4,\"attemptLimit\":4,\"context\":{\"conditions\":{\"status\":\"unconditional\"},\"route\":\"direct_entry\",\"scope\":{\"citizenship\":{\"countryCodes\":[\"CH\"],\"mode\":\"required\"},\"credentialOption\":{\"documentType\":\"passport\",\"issuingCountryCode\":\"CH\",\"mode\":\"option\",\"relatedCitizenshipCountryCode\":\"CH\"},\"destinationCountryCode\":\"DE\",\"requirementType\":\"visa\",\"residence\":{\"mode\":\"not_applicable\"},\"transitCountryCode\":null,\"validity\":{\"mode\":\"not_applicable\"}}},\"contextKey\":\"official-truth-context:v3:bfce3bc64dbd7c670441e05033c31f339e03a2c488ab54937320508333c252c2\",\"createdAt\":\"2026-11-15T02:12:03.794Z\",\"jobId\":\"job3_6caeafbd2bcb1fed2121984e98c3c3e7\",\"jobKey\":\"research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513\",\"kind\":\"research_job_record\",\"lastFailure\":\"verification_unavailable\",\"lease\":null,\"method\":{\"methodId\":\"jetnity-destination-primary-ch-de-visa\",\"revision\":1},\"nextAttemptAt\":null,\"operationId\":\"op3_fd77e53aa618612283535e6c97020198\",\"predecessorRevision\":34,\"research\":{\"factKind\":\"requirement_effect\",\"key\":\"research-request:v1:b682f1de48389c7d5a3ac0d39fa4406d0e3796be91fb6e253bfd5a45cf7f945a\",\"researchReason\":{\"status\":\"missing\"},\"ruleScopeKey\":\"rule-scope:v1:3a24b4bc807a384b6d08e105f1107cc45d6d83c07c75eff01bc0ffc43f61477f\"},\"resultDecisionRef\":null,\"revision\":35,\"schema\":3,\"state\":\"exhausted\",\"updatedAt\":\"2026-11-15T02:19:08.990Z\"},\"notAfter\":\"2026-11-15T02:19:13.990Z\",\"operationId\":\"op3_0ab5b766f0d954b88a7481b0d531881f\"}",
+    "audit_reference": "queue-event:v3:4b69ed0e7e04cc416829e62b26e38a78b8794060e05fba392e35eb1c6c8b1c4f",
+    "new_cycle_job_id": null
+  }
+}

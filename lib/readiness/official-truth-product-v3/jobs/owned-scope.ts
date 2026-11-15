@@ -137,10 +137,18 @@ export function createM04InvocationScope(pool: LanePool, milliseconds: 5000 | 30
       if (!held || !unresolved || ambiguous || !available('outer')) return false
       if (request.operation === 'queue_read') return request.body.jobKey === held.claim.jobKey
       if (request.operation === 'execution_read') return request.body.purpose === 'confirm' && same(request.body.claim, held.claim)
-      if (request.operation !== 'queue_confirm' && request.operation !== 'queue_cas') return false
+      if (request.operation !== 'queue_confirm' && request.operation !== 'queue_cas' && request.operation !== 'queue_mutate') return false
       const c = readM04Command(request.body.command)
       if (!c || c.commandKey !== held.commandKey || c.jobKey !== held.claim.jobKey) return false
       if (request.operation === 'queue_cas') return request.body.disposition.kind !== 'regular' && request.body.disposition.attemptKey === held.attemptKey
+      if (request.operation === 'queue_mutate') {
+        const continuation = request.body.continuation, disposition = request.body.disposition
+        return !!continuation && same(continuation.claim, held.claim) && continuation.attemptKey === held.attemptKey
+          && disposition.kind !== 'regular' && disposition.attemptKey === held.attemptKey
+          && (c.action === 'complete' ? continuation.kind === 'prepared' && disposition.kind === 'completed'
+            : c.action === 'fail' && continuation.kind === 'owned_failure' && disposition.kind === 'settled_failure'
+              && disposition.token === continuation.token)
+      }
       return true
     },
     retain(bytes: number) {

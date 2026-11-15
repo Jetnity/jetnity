@@ -2,7 +2,9 @@
 import 'server-only'
 import { same } from '../monitor/internal'
 import { createM04SubjectIdentity,
-  type M04Claim, type M04Command, type M04Continuation, type M04Disposition, type M04FixedOperation, type M04NativeReply } from './contract'
+  type M04Claim, type M04Command, type M04Continuation, type M04Disposition, type M04FixedOperation, type M04NativeReply,
+  type M04WorkerTerminalAuthority, type M04AcknowledgedCustody, type M04PreparedOriginal,
+  type M04CompletedOriginal } from './contract'
 import type { V3ManagedJobRecord, V3QueueStoragePort, V3JobFence } from '../monitor/queue'
 import type { V3ResearchResultCustodyPort, V3WorkerResultRecord } from '../monitor/worker'
 import type { V3ResearchArtifactPort, V3ResearchArtifact } from '../integration/ports'
@@ -11,10 +13,13 @@ import type { V3StoredProposal } from '../storage/quarantine-postgres'
 import type { createV3ProposalIntakeStore } from '../storage/intake-server'
 
 type Store = ReturnType<typeof createV3ProposalIntakeStore>
-type Prepared = Extract<M04NativeReply, { status: 'prepared' }>
-type ReadPrepared = Prepared & { claim: M04Claim; leasedJob: V3ManagedJobRecord }
+type ReadPrepared = M04PreparedOriginal
 type Completed = Extract<M04NativeReply, { status: 'completed' }>
-type Retained = ReadPrepared | Completed
+type Retained = ReadPrepared | M04CompletedOriginal
+function completedOriginal(value: Completed): M04CompletedOriginal {
+  return { attemptKey: value.attemptKey, claim: value.claim, leasedJob: value.leasedJob,
+    job: value.job, result: value.result, references: value.references }
+}
 function jobKey(job: V3ManagedJobRecord) { return job.kind === 'research_job_record' ? job.jobKey : job.identity.jobKey }
 function method(job: V3ManagedJobRecord) { return job.kind === 'research_job_record' ? job.method : job.identity.method }
 function fence(job: V3ManagedJobRecord): V3JobFence | null {
@@ -30,21 +35,75 @@ function subject(job: V3ManagedJobRecord) {
 
 export function createM04QueueStorage(options: Readonly<{
   fixed: M04FixedOperation; commandFor: (operationId: string, commandKey: string) => M04Command | null;
+  atomicFixed?: M04FixedOperation;
+  atomicMutationFixed?: M04FixedOperation;
   continuation: () => M04Continuation; disposition: (command: M04Command) => M04Disposition | null;
   onRecord: (job: V3ManagedJobRecord) => void; settled: () => void;
 }>): V3QueueStoragePort {
+  const atomicFixed = options.atomicFixed
+  const atomic: Pick<V3QueueStoragePort, 'claimAtomic'> = atomicFixed ? {
+    async claimAtomic(operationId, commandKey, authority, signal) {
+      const command = options.commandFor(operationId, commandKey)
+      if (!command || command.action !== 'claim' || !authority || !authority.receipt || signal.aborted)
+        return { status: 'unconfirmed' as const }
+      const disposition = options.disposition(command)
+      if (!disposition || disposition.kind !== 'regular') return { status: 'unavailable' as const }
+      const reply = await atomicFixed({ operation: 'queue_claim', body: { command: command.value,
+        continuation: options.continuation(), expected: null, replayOnly: false } }, signal, authority.receipt)
+      if (reply.status === 'collision' || reply.status === 'mismatch' || reply.status === 'not_due'
+        || reply.status === 'superseded') return { status: reply.status }
+      if (reply.status === 'blocked' || reply.status === 'quota' || reply.status === 'unavailable') return { status: 'unavailable' as const }
+      if (reply.status !== 'committed' || signal.aborted || typeof reply.replayed !== 'boolean'
+        || reply.commandText !== command.commandText || reply.commandKey !== commandKey || reply.operationId !== operationId
+        || jobKey(reply.record) !== command.jobKey || !same(authority.method, method(reply.record)))
+        return { status: 'unconfirmed' as const }
+      options.onRecord(reply.record)
+      return { status: 'committed' as const, operationId, commandKey, record: reply.record, replayed: reply.replayed }
+    },
+  } : {}
+  const atomicMutationFixed = options.atomicMutationFixed
+  const mutations: Pick<V3QueueStoragePort, 'mutateAtomic'> = atomicMutationFixed ? {
+    async mutateAtomic(operationId, commandKey, authority, signal) {
+      const command = options.commandFor(operationId, commandKey)
+      if (!command || command.action === 'claim' || command.operationId !== operationId || command.commandKey !== commandKey
+        || !authority || !authority.receipt || signal.aborted) return { status: 'unconfirmed' as const }
+      const disposition = options.disposition(command)
+      if (!disposition || (command.action === 'enqueue' && disposition.kind !== 'regular')
+        || (command.action === 'complete' && disposition.kind !== 'completed')
+        || (command.action === 'fail' && disposition.kind !== 'settled_failure')) return { status: 'unavailable' as const }
+      const reply = await atomicMutationFixed({ operation: 'queue_mutate', body: { command: command.value,
+        continuation: options.continuation(), disposition, expected: null } }, signal, authority.receipt,
+      command.action === 'complete' || command.action === 'fail')
+      if (reply.status === 'collision' || reply.status === 'mismatch' || reply.status === 'superseded') return { status: reply.status }
+      if (reply.status === 'blocked' || reply.status === 'quota' || reply.status === 'unavailable') return { status: 'unavailable' as const }
+      if (reply.status !== 'committed' || signal.aborted || typeof reply.replayed !== 'boolean' || !reply.currentRecord
+        || reply.commandText !== command.commandText || reply.commandKey !== commandKey || reply.operationId !== operationId
+        || jobKey(reply.record) !== command.jobKey || jobKey(reply.currentRecord) !== command.jobKey
+        || reply.currentRecord.jobId !== reply.record.jobId || !same(authority.method, method(reply.record))
+        || !same(authority.method, method(reply.currentRecord)) || (!reply.replayed && !same(reply.currentRecord, reply.record)))
+        return { status: 'unconfirmed' as const }
+      // The native codec has bound the complete original receipt and real final
+      // read. Only its terminal COMMIT ACK may retire private continuation.
+      if (command.action === 'complete' || command.action === 'fail') options.settled()
+      options.onRecord(reply.currentRecord)
+      return { status: 'committed' as const, operationId, commandKey, record: reply.currentRecord, replayed: reply.replayed }
+    },
+  } : {}
   return Object.freeze<V3QueueStoragePort>({
-    async read(keyValue, signal) {
-      const reply = await options.fixed({ operation: 'queue_read', body: { jobKey: keyValue, continuation: options.continuation() } }, signal)
+    ...atomic,
+    ...mutations,
+    async read(keyValue, signal, receipt) {
+      const request = { operation: 'queue_read' as const, body: { jobKey: keyValue, continuation: options.continuation() } }
+      const reply = receipt === undefined ? await options.fixed(request, signal) : await options.fixed(request, signal, receipt)
       if (reply.status === 'absent') return { status: 'ok' as const, record: null }
       if (reply.status !== 'present' || jobKey(reply.record) !== keyValue) return { status: 'unavailable' as const }
       options.onRecord(reply.record)
       return { status: 'ok' as const, record: reply.record }
     },
-    async confirm(operationId, commandKey, signal) {
+    async confirm(operationId, commandKey, signal, beforeAuthority) {
       const command = options.commandFor(operationId, commandKey)
       if (!command) return { status: 'unconfirmed' as const }
-      const reply = await options.fixed({ operation: 'queue_confirm', body: { command: command.value, continuation: options.continuation() } }, signal, undefined, true)
+      const reply = await options.fixed({ operation: 'queue_confirm', body: { command: command.value, continuation: options.continuation() } }, signal, undefined, true, beforeAuthority)
       if (reply.status === 'not_attempted' || reply.status === 'collision') return { status: reply.status }
       if (reply.status !== 'committed' || reply.commandText !== command.commandText || reply.commandKey !== commandKey
         || reply.operationId !== operationId || jobKey(reply.record) !== command.jobKey) return { status: 'unconfirmed' as const }
@@ -73,10 +132,17 @@ export function createM04QueueStorage(options: Readonly<{
 export function createM04ExecutionIndex(options: Readonly<{
   claim: M04Claim; fixed: M04FixedOperation; processingFixed: M04FixedOperation;
   onPrepared: (value: ReadPrepared) => void; preparedOnly: () => boolean;
+  acquireTerminalAuthority?: M04WorkerTerminalAuthority;
+  acknowledgedCustody?: M04AcknowledgedCustody;
 }>) {
+  const acknowledgedCustody = options.acquireTerminalAuthority ? options.acknowledgedCustody : undefined
   const receipts = new WeakMap<object, ReadPrepared>()
-  function remember(value: ReadPrepared) {
+  const acknowledged = new WeakMap<object, M04NativeReply>()
+  const acknowledgedReceipts = new WeakSet<object>()
+  const confirmed = new WeakMap<object, { original: ReadPrepared; ack: M04NativeReply }>()
+  function remember(value: ReadPrepared, ack?: M04NativeReply) {
     const receipt = Object.freeze({}); receipts.set(receipt, value); options.onPrepared(value)
+    if (acknowledgedCustody && ack) { acknowledged.set(receipt, ack); acknowledgedReceipts.add(receipt) }
     return receipt
   }
   async function read(purpose: 'resume' | 'lookup' | 'confirm' | 'artifact', signal: AbortSignal) {
@@ -87,27 +153,57 @@ export function createM04ExecutionIndex(options: Readonly<{
       && same(raw.claim, options.claim) && jobKey(raw.leasedJob) === options.claim.jobKey
   }
   const results: V3ResearchResultCustodyPort<object> = Object.freeze<V3ResearchResultCustodyPort<object>>({
+    ...(options.acquireTerminalAuthority ? { lookupBeforeWorkerAuthority: true as const } : {}),
     async lookup(job, signal) {
+      if (acknowledgedCustody) {
+        const retained = acknowledgedCustody.lookup(options.claim, job, signal)
+        if (retained.status === 'not_attempted' && !options.preparedOnly()) return { status: 'not_attempted' }
+        if (retained.status === 'prepared') {
+          if (!bound(retained.original) || !same(retained.original.leasedJob, job) || signal.aborted) return { status: 'unconfirmed' }
+          return { status: 'prepared', receipt: remember(retained.original, retained.ack) }
+        }
+        if (retained.status !== 'read_required') return { status: 'unconfirmed' }
+      }
       const value = await read('lookup', signal)
       if (value.status === 'absent' && !options.preparedOnly()) return { status: 'not_attempted' as const }
       if (!bound(value) || value.status !== 'prepared' || !same(value.leasedJob, job)) return { status: 'unconfirmed' as const }
-      return { status: 'prepared' as const, receipt: remember(value) }
+      return { status: 'prepared' as const, receipt: remember(value, value) }
     },
     async confirm(receipt, job, checkedAt, signal) {
+      confirmed.delete(receipt)
       const held = receipts.get(receipt)
       if (!held || !same(held.leasedJob, job)) return { status: 'unconfirmed' as const }
+      if (acknowledgedReceipts.has(receipt)) {
+        const ack = acknowledged.get(receipt); acknowledged.delete(receipt)
+        if (!ack || !acknowledgedCustody || signal.aborted
+          || !await acknowledgedCustody.confirm(ack, options.claim, job, checkedAt, signal)
+          || held.result.preparedAt > checkedAt || signal.aborted) return { status: 'unconfirmed' }
+        confirmed.set(receipt, { original: held, ack })
+        return { status: 'confirmed', record: held.result }
+      }
       const value = await read('confirm', signal)
-      if (!bound(value) || value.status !== 'prepared' || !same(value, held) || value.result.preparedAt > checkedAt) return { status: 'unconfirmed' as const }
+      if (!bound(value) || value.status !== 'prepared' || !same(value, held) || value.result.preparedAt > checkedAt || signal.aborted) return { status: 'unconfirmed' as const }
+      confirmed.set(receipt, { original: value, ack: value })
       return { status: 'confirmed' as const, record: value.result }
     },
+    ...(options.acquireTerminalAuthority ? {
+      async acquireTerminalAuthority(receipt: object, methodReceipt: object, job: V3ManagedJobRecord, checkedAt: string, signal: AbortSignal) {
+        const confirmation = confirmed.get(receipt), held = receipts.get(receipt), value = confirmation?.original
+        confirmed.delete(receipt)
+        if (!confirmation || !value || !held || !same(value, held) || !same(value.leasedJob, job) || job.state !== 'leased'
+          || !job.lease || job.lease.expiresAt <= checkedAt || value.result.preparedAt > checkedAt || signal.aborted) return { status: 'unavailable' as const }
+        return options.acquireTerminalAuthority!(methodReceipt, confirmation.ack, checkedAt, signal)
+      },
+    } : {}),
   })
-  return Object.freeze({ results, read, bound,
-    async reserve(job: V3ManagedJobRecord, signal: AbortSignal) {
+  return Object.freeze({ results, read, bound, acknowledgedCustody,
+    async reserve(job: V3ManagedJobRecord, signal: AbortSignal, methodReceipt?: object) {
       if (options.preparedOnly()) return { status: 'blocked' as const }
       const identity = subject(job)
       if (!identity) return { status: 'blocked' as const }
-      const value = await options.processingFixed({ operation: 'execution_start', body: { claim: options.claim,
-        leasedJob: job, subjectText: identity.subjectText } }, signal)
+      const request = { operation: 'execution_start' as const, body: { claim: options.claim, leasedJob: job, subjectText: identity.subjectText } }
+      const value = methodReceipt === undefined ? await options.processingFixed(request, signal)
+        : await options.processingFixed(request, signal, methodReceipt)
       return value.status === 'reserved' && same(value.claim, options.claim) && same(value.leasedJob, job) ? value : { status: 'blocked' as const }
     },
     async prepare(job: V3ManagedJobRecord, attemptKey: string, token: string, result: V3WorkerResultRecord,
@@ -116,17 +212,17 @@ export function createM04ExecutionIndex(options: Readonly<{
         attemptKey, token, result, references } }, signal, undefined, true)
       if (value.status !== 'prepared' || value.attemptKey !== attemptKey || !same(value.result, result)
         || !same(value.references, references)) return null
-      return remember({ ...value, claim: options.claim, leasedJob: job })
+      return remember({ ...value, claim: options.claim, leasedJob: job }, value)
     },
   })
 }
 
 export function createM04ArtifactCustody(options: Readonly<{
   claim: M04Claim; index: ReturnType<typeof createM04ExecutionIndex>; store: Store;
-  onPreparedOnly: (value: ReadPrepared) => void; onCompleted: (value: Completed) => void;
+  onPreparedOnly: (value: ReadPrepared) => void; onCompleted: (value: M04CompletedOriginal) => void;
   retain: (bytes: number) => boolean;
 }>): V3ResearchArtifactPort {
-  const receipts = new WeakMap<object, { artifact: V3ResearchArtifact; value: Completed }>()
+  const receipts = new WeakMap<object, { artifact: V3ResearchArtifact; value: M04CompletedOriginal; acknowledged?: object }>()
   async function originals(value: Retained, signal: AbortSignal): Promise<readonly V3StoredProposal[] | null> {
     const out: V3StoredProposal[] = []
     for (const reference of value.references) {
@@ -158,21 +254,32 @@ export function createM04ArtifactCustody(options: Readonly<{
       return { status: 'completed' as const, worker: { status: 'completed' as const, job: value.job, result: value.result, acceptedRule: false as const } }
     },
     async open(job, result, signal) {
-      const value = await options.index.read('artifact', signal)
-      if (!options.index.bound(value) || value.status !== 'completed' || !same(value.job, job) || !same(value.result, result)) return { status: 'unconfirmed' as const }
+      let value: M04CompletedOriginal, acknowledged: object | undefined
+      if (options.index.acknowledgedCustody) {
+        const held = options.index.acknowledgedCustody.takeCompleted(options.claim, job, result, signal)
+        if (!held) return { status: 'unconfirmed' }
+        value = held.original; acknowledged = held.receipt
+      } else {
+        const read = await options.index.read('artifact', signal)
+        if (!options.index.bound(read) || read.status !== 'completed') return { status: 'unconfirmed' }
+        value = completedOriginal(read)
+      }
+      if (!same(value.claim, options.claim) || !same(value.job, job) || !same(value.result, result) || signal.aborted) return { status: 'unconfirmed' as const }
       const loaded = await originals(value, signal), f = fence(value.leasedJob)
       if (!loaded || !f) return { status: 'unconfirmed' as const }
       const artifact: V3ResearchArtifact = Object.freeze({ jobId: job.jobId, jobOperationId: job.operationId,
         jobKey: jobKey(job), resultRef: result.kind === 'rule_research' ? result.decisionRef : result.discoveryRef,
         fence: f, method: method(job), uploads: Object.freeze(loaded.map(x => x.text)) })
-      const receipt = Object.freeze({}); receipts.set(receipt, { artifact, value }); options.onCompleted(value)
+      const receipt = Object.freeze({}); receipts.set(receipt, { artifact, value, acknowledged }); options.onCompleted(value)
       return { status: 'available' as const, receipt, artifact }
     },
     async reprove(receipt, artifact, job, clock, signal) {
       const held = receipts.get(receipt)
       if (!held || !same(held.artifact, artifact) || !same(held.value.job, job)) return false
-      const value = await options.index.read('artifact', signal)
-      return options.index.bound(value) && value.status === 'completed' && same(value, held.value)
+      const value = held.acknowledged && options.index.acknowledgedCustody
+        ? await options.index.acknowledgedCustody.reproveCompleted(held.acknowledged, options.claim, signal)
+        : await options.index.read('artifact', signal)
+      return options.index.bound(value) && value.status === 'completed' && same(completedOriginal(value), held.value)
         && value.result.preparedAt <= clock.now && !signal.aborted
       // execution_read consumes EVERY actual S1 original/outcome under final MA1.
       // Held original strings are immutable custody, not cached source authority.

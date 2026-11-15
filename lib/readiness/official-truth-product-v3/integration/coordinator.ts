@@ -107,15 +107,20 @@ export function createV3IntegrationCoordinator(ports: V3IntegrationPorts) {
     const method = await budget.call(() => common.methodAuthority.resolveCurrent(prepared.version.method, start.now))
     if (!method.ok || method.value.status !== 'approved') return { status: 'not_current' }
     const methodReceipt = method.value.receipt
-    const proof = await budget.call((signal) => proofs.inspect(prepared, start.now, start.legalDate, signal))
+    const proof = await budget.call((signal) => proofs.inspect(prepared, start.now, start.legalDate, signal,
+      ports.acquireOperationAuthority ? methodReceipt : undefined))
     if (!proof.ok || proof.value.status !== 'verified') return { status: 'not_current' }
     const proofReceipt = proof.value.receipt
-    async function reprove(signal: AbortSignal): Promise<V3TransitionProofState> {
+    async function reprove(signal: AbortSignal, proofContext?: object, operationReceipt = methodReceipt,
+      acquired = false): Promise<V3TransitionProofState> {
       const time = common.clock()
       if (signal.aborted) return { status: 'unavailable' }
-      const current = await budget.call(() => common.methodAuthority.reproveAtCommit(methodReceipt, prepared.version.method, time.now))
-      if (!current.ok || current.value.status !== 'current') return { status: 'unavailable' }
-      const source = await budget.call((child) => proofs!.reprove(proofReceipt, prepared, time.now, time.legalDate, child))
+      if (!acquired) {
+        const current = await budget.call(() => common.methodAuthority.reproveAtCommit(operationReceipt, prepared.version.method, time.now))
+        if (!current.ok || current.value.status !== 'current') return { status: 'unavailable' }
+      }
+      const source = await budget.call((child) => proofs!.reprove(proofReceipt, prepared, time.now, time.legalDate, child,
+        ports.acquireOperationAuthority ? operationReceipt : undefined, proofContext))
       const end = common.clock()
       if (!source.ok || source.value.status !== 'current' || end.now < time.now || end.legalDate !== time.legalDate
         || !readData(source.value.freshUntil, timestamp) || source.value.freshUntil <= end.now || signal.aborted) return { status: 'invalid' }
@@ -135,15 +140,33 @@ export function createV3IntegrationCoordinator(ports: V3IntegrationPorts) {
     const operationKey = key('projection-publish', { operationId, prepared, projection: projection.projection })
     const command: V3PublicationCommand = { operationId, operationKey, prepared, projection: projection.projection,
       methodReceipt, proofReceipt, notAfter: projection.projection.expiresAt, reprove }
-    const prior = await budget.call((signal) => publisher.confirm(command, signal))
+    async function operation(signal: AbortSignal): Promise<V3PublicationCommand | null> {
+      if (!ports.acquireOperationAuthority) return command
+      const time = common.clock()
+      if (signal.aborted || time.now >= command.notAfter) return null
+      const fresh = await ports.acquireOperationAuthority(methodReceipt, prepared.version.method, time.now, signal)
+      if (fresh.status !== 'approved' || signal.aborted) return null
+      return { ...command, methodReceipt: fresh.receipt,
+        reprove: (active, context) => reprove(active, context, fresh.receipt, true) }
+    }
+    const prior = await budget.call(async (signal) => {
+      const phase = await operation(signal)
+      return phase ? publisher.confirm(phase, signal) : { status: 'unavailable' as const }
+    })
     if (!prior.ok) return { status: 'unconfirmed' }
     const replayed = prior.value.status === 'confirmed'
     let confirmation: V3PublicationState = prior.value
     if (prior.value.status === 'not_attempted') {
-      const write = await budget.call((signal) => publisher.publish(command, signal))
+      const write = await budget.call(async (signal) => {
+        const phase = await operation(signal)
+        return phase ? publisher.publish(phase, signal) : { status: 'unavailable' as const }
+      })
       if (!write.ok) return { status: 'unconfirmed' }
       if (write.value.status !== 'reported') return { status: write.value.status }
-      const current = await budget.call((signal) => publisher.confirm(command, signal))
+      const current = await budget.call(async (signal) => {
+        const phase = await operation(signal)
+        return phase ? publisher.confirm(phase, signal) : { status: 'unavailable' as const }
+      })
       if (!current.ok) return { status: 'unconfirmed' }
       confirmation = current.value
     }
@@ -164,6 +187,7 @@ export function createV3IntegrationCoordinator(ports: V3IntegrationPorts) {
       registry: common.registry, store: ports.versionStore, proofs: ports.versionProofs,
       methodAuthority: common.methodAuthority, now: () => common.clock().now, legalDate: () => common.clock().legalDate,
       invocationMilliseconds: ports.invocationMilliseconds,
+      acquireOperationAuthority: ports.acquireOperationAuthority,
     }, signal))
     if (!committed.ok) return { status: 'unconfirmed' }
     if (committed.value.status !== 'confirmed') return { status: 'version_only', result: committed.value }

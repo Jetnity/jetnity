@@ -38,11 +38,13 @@ test('CI aggregate requires success from all six families including isolated UI 
   }
 })
 
-test('hosted PG17 is a mandatory isolated family with the original setup and operating guards', () => {
+test('hosted PG17 has two mandatory isolated runners with complete serial proofs and unchanged guards', () => {
   const job = workflow.jobs.hosted_v3_native_pg17
   assert.ok(job)
+  assert.equal(job.name, 'Hosted V3 — native PostgreSQL 17 (${{ matrix.group }})')
   assert.equal(job['runs-on'], 'ubuntu-24.04')
   assert.equal(job['timeout-minutes'], 30)
+  assert.deepEqual(job.strategy, { 'fail-fast': false, 'max-parallel': 2, matrix: { group: ['main', 'quota'] } })
   assert.equal('if' in job, false)
   assert.equal('continue-on-error' in job, false)
   assert.ok(job.steps.every((step) => !('if' in step) && !('continue-on-error' in step)))
@@ -66,8 +68,14 @@ test('hosted PG17 is a mandatory isolated family with the original setup and ope
   assert.equal(provision.shell, 'bash')
   assert.equal(job.steps.filter((step) => step.name === provisionName).length, 1)
   assert.ok(job.steps.indexOf(operating) < job.steps.indexOf(provision))
-  assert.equal(job.steps.at(-1).run, 'npm run test:hosted-v3-native')
-  assert.equal(job.steps.filter((step) => step.run === 'npm run test:hosted-v3-native').length, 1)
+  const selectedCommand = 'npm run test:hosted-v3-native:${{ matrix.group }}'
+  assert.equal(job.steps.at(-1).run, selectedCommand)
+  assert.equal(job.steps.filter((step) => step.run === selectedCommand).length, 1)
+  const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'))
+  for (const group of ['main', 'quota']) {
+    assert.equal(pkg.scripts['test:hosted-v3-native:' + group],
+      'node scripts/official-truth-v3-test-selection.mjs hosted-pg17-' + group)
+  }
   assert.equal(workflow.jobs.verify.steps.some((step) => step.name === provisionName), false)
   assert.equal(workflow.jobs.verify.steps.filter((step) => step.run === 'npm run test:core').length, 1)
   assert.equal(JSON.stringify(job).includes('secrets.'), false)

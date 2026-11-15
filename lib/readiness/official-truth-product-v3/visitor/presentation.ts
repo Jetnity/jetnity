@@ -8,12 +8,15 @@ import type { RegulierungsAusdruckV2, RegulierungsPraedikatV2 } from '@/lib/read
 import type { StayOutcomeV2 } from '@/lib/readiness/rule-claims'
 import { officialTemporalTexte, type EventDeadlineV2 } from '@/lib/readiness/temporal'
 import type { V3GlobalRuleContext, V3RuleFact, V3VisitorInput } from '../contract'
+import type { V3CustomerInformationTopic } from '../customer-information/topics'
+import { v3CanonicalInformationTopic, v3CanonicalRelatedInformationTopics } from '../customer-information/canonical-topic'
 import type { V3VisitorAnswer } from './query'
+import { presentV3CustomerDetail, type V3VisitorStatement as Statement } from './customer-detail-presentation'
 
-type Statement = Readonly<{ text: string; when: string | null; href: string | null }>
 export type V3VisitorViewResult =
   | Readonly<{ status: 'accepted'; title: string; conditions: readonly string[]; statements: readonly Statement[];
-      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string }>
+      source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string;
+      informationTopic?: V3CustomerInformationTopic; relatedInformationTopics?: readonly V3CustomerInformationTopic[] }>
   | Readonly<{ status: 'pending' | 'conflict' | 'unavailable' | 'error'; title: string; message: string }>
 export type V3VisitorView = Readonly<{
   input: V3VisitorInput; generatedAt: string; synthetic: boolean;
@@ -71,8 +74,8 @@ function contextText(context: V3GlobalRuleContext): string[] {
   if (context.scope.residence.mode === 'required') output.push(`Wohnsitz: ${landAnzeigeText(context.scope.residence.countryCode)}`)
   if (context.conditions.status === 'specified') output.push(v3ConditionText(context.conditions.expression))
   else if (context.conditions.status === 'unresolved') output.push('Weitere Regelbedingungen sind noch ungeklärt')
-  else if (!('contextRevision' in context)) output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
-  if ('contextRevision' in context) {
+  else if (!('contextRevision' in context) || context.contextRevision !== 2) output.push('Keine weiteren Bedingungen im geprüften Regelkontext')
+  if ('contextRevision' in context && context.contextRevision === 2) {
     const window = context.application.tripStartAndEndWindow
     output.push('Reisezweck: Tourismus',
       `Reisebeginn und Reiseende müssen zwischen ${window.from} und ${window.through} liegen (beide Grenzen eingeschlossen).`)
@@ -81,6 +84,7 @@ function contextText(context: V3GlobalRuleContext): string[] {
 }
 
 const statement = (text: string, when: string | null = null, href: string | null = null): Statement => ({ text, when, href })
+
 const visaOutcome = (eligibility: string, mandate: string) =>
   `${eligibility === 'allowed' ? 'Zulässig' : eligibility === 'not_allowed' ? 'Nicht zulässig' : 'Zulässigkeit ungeklärt'}; ${mandate === 'mandatory' ? 'verpflichtend' : mandate === 'not_mandatory' ? 'nicht verpflichtend' : 'Pflichtstatus ungeklärt'}`
 const effectText = (effect: 'required' | 'not_required', visaMode: keyof typeof OFFICIAL_VISA_MODUS_BEZEICHNUNG | null) =>
@@ -102,8 +106,9 @@ function stayV2Text(outcome: StayOutcomeV2): string[] {
   return lines
 }
 
-function factText(container: V3RuleFact): Statement[] {
+function factText(container: V3RuleFact): readonly Statement[] {
   const fact = container.fact
+  if (fact.kind === 'entry_information') return presentV3CustomerDetail(fact.detail)
   if (fact.kind === 'requirement_effect') {
     if ('applicability' in fact && fact.applicability.kind === 'branches') return fact.applicability.branches.map((branch) =>
       statement(effectText(branch.outcome.effect, branch.outcome.visaMode), branch.when.kind === 'otherwise'
@@ -151,14 +156,14 @@ function factText(container: V3RuleFact): Statement[] {
   return fact.paths.map((path, index) => {
     const parts = [`Transitoption ${index + 1}`]
     const boolean = (value: boolean | null, yes: string, no: string, unknown: string) => parts.push(value === null ? unknown : value ? yes : no)
-    boolean(path.crossesBorderControl, 'Grenzkontrolle wird passiert', 'Grenzkontrolle wird nicht passiert', 'Grenzkontrolle ungeklärt')
-    boolean(path.leavesTransitArea, 'Transitbereich wird verlassen', 'Transitbereich wird nicht verlassen', 'Verlassen des Transitbereichs ungeklärt')
-    boolean(path.thirdCountryRequired, 'Weiterreise in ein Drittland erforderlich', 'Kein Drittland erforderlich', 'Drittlandvoraussetzung ungeklärt')
-    boolean(path.sameFlightRequired, 'Derselbe Flug erforderlich', 'Flugwechsel möglich', 'Flugwechsel ungeklärt')
-    boolean(path.onwardTicketRequired, 'Weiterflug-/Weiterreiseticket erforderlich', 'Kein Weiterreiseticket erforderlich', 'Weiterreiseticketvoraussetzung ungeklärt')
-    parts.push(path.transitAirportCodes ? `Flughäfen: ${path.transitAirportCodes.join(', ')}` : 'Flughafenbindung nicht bestimmt')
-    parts.push(path.maxTransitDurationMinutes === null ? 'Maximale Transitdauer nicht bestimmt' : `Höchstens ${path.maxTransitDurationMinutes} Minuten Transit`)
-    parts.push(`Ankunft: ${path.arrivalMode ? transport[path.arrivalMode] : 'nicht bestimmt'}; Abreise: ${path.departureMode ? transport[path.departureMode] : 'nicht bestimmt'}`)
+    boolean(path.crossesBorderControl, 'Grenzkontrolle wird passiert', 'Grenzkontrolle wird nicht passiert', 'Grenzkontrolle: Derzeit nicht verfügbar')
+    boolean(path.leavesTransitArea, 'Transitbereich wird verlassen', 'Transitbereich wird nicht verlassen', 'Verlassen des Transitbereichs: Derzeit nicht verfügbar')
+    boolean(path.thirdCountryRequired, 'Weiterreise in ein Drittland erforderlich', 'Kein Drittland erforderlich', 'Drittlandvoraussetzung: Derzeit nicht verfügbar')
+    boolean(path.sameFlightRequired, 'Derselbe Flug erforderlich', 'Flugwechsel möglich', 'Flugwechsel: Derzeit nicht verfügbar')
+    boolean(path.onwardTicketRequired, 'Weiterflug-/Weiterreiseticket erforderlich', 'Kein Weiterreiseticket erforderlich', 'Weiterreiseticketvoraussetzung: Derzeit nicht verfügbar')
+    parts.push(path.transitAirportCodes ? `Flughäfen: ${path.transitAirportCodes.join(', ')}` : 'Flughafenbindung: Derzeit nicht verfügbar')
+    parts.push(path.maxTransitDurationMinutes === null ? 'Maximale Transitdauer: Derzeit nicht verfügbar' : `Höchstens ${path.maxTransitDurationMinutes} Minuten Transit`)
+    parts.push(`Ankunft: ${path.arrivalMode ? transport[path.arrivalMode] : 'Derzeit nicht verfügbar'}; Abreise: ${path.departureMode ? transport[path.departureMode] : 'Derzeit nicht verfügbar'}`)
     return statement(parts.join(' · '))
   })
 }
@@ -172,11 +177,15 @@ export function presentV3VisitorAnswer(answer: V3VisitorAnswer): V3VisitorView {
           const projection = result.projection, source = answer.sources[projection.reference]
           if (!source) return { status: 'unavailable', title: 'Derzeit nicht verfügbar', message: 'Der amtliche Quellenverweis konnte nicht bestätigt werden.' }
           const validity = projection.rule.subject.evidence.legalValidity
+          const topic = v3CanonicalInformationTopic(projection.rule.subject.context, projection.rule.subject.fact)
+          const related = v3CanonicalRelatedInformationTopics(projection.rule.subject.context, projection.rule.subject.fact)
           return { status: 'accepted', title: OFFICIAL_ANFORDERUNG_BEZEICHNUNG[projection.rule.subject.context.scope.requirementType],
+            ...(topic ? { informationTopic: topic } : {}),
+            ...(related.length > 0 ? { relatedInformationTopics: related } : {}),
             conditions: contextText(projection.rule.subject.context), statements: factText(projection.rule.subject.fact),
             source: { label: source.authorityName, href: source.href },
-            checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),
-            validityText: validity.status === 'specified' ? `Gültigkeit: ${validity.validFrom ? `ab ${validity.validFrom}` : 'kein Beginn angegeben'} · ${validity.validUntil ? `bis ${validity.validUntil}` : 'kein Ende angegeben'}` : 'Gültigkeit noch ungeklärt',
+            checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand: Derzeit nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),
+            validityText: validity.status === 'specified' ? `Gültigkeit: ${validity.validFrom ? `ab ${validity.validFrom}` : 'Beginn: Derzeit nicht verfügbar'} · ${validity.validUntil ? `bis ${validity.validUntil}` : 'Ende: Derzeit nicht verfügbar'}` : 'Gültigkeit: Derzeit nicht verfügbar',
             ruleVersion: projection.rule.revision, expiresAt: projection.expiresAt }
         }
         if (result.status === 'pending') return { status: 'pending', title: 'Wird geprüft', message: 'Die Recherche zu amtlichen Angaben wurde angenommen. Ein Ergebnis liegt noch nicht vor.' }

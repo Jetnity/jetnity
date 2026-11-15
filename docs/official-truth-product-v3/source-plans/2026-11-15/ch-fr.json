@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "kind": "official_source_onboarding_plan",
+  "classification": "RESEARCH_ONLY",
+  "destinationCountryCode": "FR",
+  "citizenshipCountryCodes": [
+    "CH"
+  ],
+  "primary": null,
+  "counterSources": [],
+  "knownConflicts": [],
+  "coverage": [
+    {
+      "topic": "visa",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "method_not_qualified"
+    },
+    {
+      "topic": "electronic_travel_authorization",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "stay_limit",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "passport",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "method_not_qualified"
+    },
+    {
+      "topic": "identity_document",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "method_not_qualified"
+    },
+    {
+      "topic": "passport_validity",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "blank_passport_pages",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "required_vaccinations",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "recommended_vaccinations",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "health_measures",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "health_documents",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "insurance",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "entry_forms",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "form_costs",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "fraud_warnings",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "entry_fees",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "onward_return_ticket",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "financial_means",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "booking_or_travel_document",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "transit",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "minors",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "parental_consent",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "customs",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "dual_nationals",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "recent_changes",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    },
+    {
+      "topic": "official_actions",
+      "citizenshipCountryCode": "CH",
+      "status": "unavailable",
+      "reason": "not_researched"
+    }
+  ]
+}

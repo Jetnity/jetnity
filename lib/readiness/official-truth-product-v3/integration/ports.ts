@@ -4,7 +4,7 @@ import type { V3ImportOutcome, V3ImportPorts, V3ImportPrepared } from '../import
 import type { V3ProposalUpload } from '../import/interface'
 import type { V3JobFence, V3ManagedJobRecord, V3QueueOptions } from '../monitor/queue'
 import type { V3ResearchWorkPort, V3ResearchResultCustodyPort, V3WorkerResultRecord, V3WorkerOutcome } from '../monitor/worker'
-import type { V3TransitionProofPort, V3TransitionProofState, V3VersionCommitPort } from '../monitor/recovery'
+import type { V3TransitionProofPort, V3TransitionProofState, V3VersionCommitPort, V3OperationAuthority } from '../monitor/recovery'
 import type { V3MonitorPlanPort, V3ProjectionSuppressionPort, V3SourceObservationPort } from '../monitor/monitor'
 import type { V3VisitorPorts } from '../visitor/query'
 
@@ -31,7 +31,7 @@ export type V3PublicationCommand = Readonly<{
   operationId: string; operationKey: string; prepared: V3ImportPrepared;
   projection: V3PublicProjectionRecord; methodReceipt: object; proofReceipt: object; notAfter: string;
   /** Preliminary proof only. The adapter must inspect actual receipt state AFTER it. */
-  reprove(signal: AbortSignal): Promise<V3TransitionProofState>;
+  reprove(signal: AbortSignal, proofContext?: object): Promise<V3TransitionProofState>;
 }>
 export type V3PublicationConfirmation = Readonly<{
   operationId: string; operationKey: string; projectionRef: string; versionRef: string;
@@ -80,6 +80,7 @@ export interface V3IntegrationPorts {
   queue: Omit<V3QueueOptions, 'methodAuthority' | 'now'>
   versionStore: V3VersionCommitPort | null
   versionProofs: V3TransitionProofPort<object> | null
+  acquireOperationAuthority?: V3OperationAuthority
   publication: V3ProjectionPublicationPort | null
   escalations: V3EscalationPublicationPort | null
   research: {

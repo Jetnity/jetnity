@@ -8,6 +8,23 @@ import { spawnSync } from 'node:child_process'
 import { isDeepStrictEqual } from 'node:util'
 
 const control = JSON.parse(readFileSync(new URL('./historical-control.json', import.meta.url), 'utf8'))
+// Root-selected CH-DE deployment successor; the original historical control stays exact.
+const reviewedDeployment = Object.freeze({
+  predecessorBlob: '85deee8e24190cf03ff339b4273b2a3295847073',
+  reviewedBlob: '5550e00aae94db8bd40cb3aaa82ec76be3e4448b',
+  value: {
+    version: 2,
+    buildCommand: 'npm run build',
+    functions: {
+      'app/api/readiness/ch-de-visa/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-visa-tick/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-owner-import/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-owner-guard/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-dev-refresh/route.ts': { regions: ['fra1'] },
+      'app/api/internal/readiness/ch-de-prod-refresh/route.ts': { regions: ['fra1'] },
+    },
+  },
+})
 const historicalPath = 'scripts/next-16-3-8-security-upgrade-1-audit.mjs'
 const expectedHistoricalFailures = [
   'next pin is 16.4.1, expected 16.3.8',
@@ -88,7 +105,11 @@ export function validate(snapshot) {
   const check = (ok, message) => { if (!ok) failures.push(message) }
   try {
     const { pkg, lock, installLock, installed, historical, runtime } = snapshot
-    check(isDeepStrictEqual(snapshot.protectedBlobs, control.protectedBlobs), 'historical audit/config/deployment blob drift')
+    check(control.protectedBlobs['vercel.json'] === reviewedDeployment.predecessorBlob
+      && blob(Buffer.from(JSON.stringify(reviewedDeployment.value, null, 2) + '\n')) === reviewedDeployment.reviewedBlob,
+      'reviewed deployment successor witness drift')
+    check(isDeepStrictEqual(snapshot.protectedBlobs, { ...control.protectedBlobs, 'vercel.json': reviewedDeployment.reviewedBlob }),
+      'historical audit/config/deployment blob drift')
     check(isDeepStrictEqual(snapshot.serverActions, control.serverActions), 'server action source inventory drift')
     check(historical.status === 1 && historical.signal === null && !historical.error && historical.stderrEmpty, 'historical audit unexpected process result')
     check(historical.report.slice === 'next-16-3-8-security-upgrade-1', 'historical audit identity drift')
