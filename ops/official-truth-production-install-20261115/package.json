@@ -1,0 +1,7 @@
+{
+  "name": "jetnity-production-install-20261115",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": { "build": "node runner.mjs --prepare" }
+}
