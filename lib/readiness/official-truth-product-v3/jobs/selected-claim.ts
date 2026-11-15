@@ -123,6 +123,27 @@ export async function selectRetainedChDeClaim(options: Readonly<{
       const found = retained(reply, claim, generation)
       return found && reply.status === 'completed' && same(reply.job, job) ? found : unknown
     }
+    if (job.state === 'backoff') {
+      if (job.attempt < 1 || job.attempt >= attemptLimit || job.predecessorRevision === null
+        || job.nextAttemptAt === null || job.nextAttemptAt > now || job.nextAttemptAt <= job.updatedAt
+        || job.lastFailure === null) return unknown
+      const generation = job.attempt - 1, claim = retainedChDeClaim(root, generation)!
+      const command = readM04Command({ action: 'claim', input: claim })!
+      const confirmation = await read({ operation: 'queue_confirm', body: { command: command.value, continuation: null } })
+      if (confirmation.status !== 'committed' || confirmation.operationId !== claim.operationId
+        || confirmation.commandKey !== command.commandKey || confirmation.commandText !== command.commandText) return unknown
+      const prior = confirmation.record, held = selected(claim, generation, job.predecessorRevision, null)
+      if (!acquisition(prior, held) || prior.updatedAt > job.updatedAt || prior.lease!.expiresAt <= job.updatedAt
+        || !same(job, { ...prior, revision: prior.revision + 1, predecessorRevision: prior.revision,
+          state: 'backoff', updatedAt: job.updatedAt, lease: null, nextAttemptAt: job.nextAttemptAt,
+          lastFailure: job.lastFailure })) return unknown
+      const checkedAt = readNow(options.now)
+      if (!checkedAt || job.nextAttemptAt > checkedAt || stopped()) return unknown
+      // The native current read proves closed custody; the original receipt binds
+      // its direct failed successor to this root family. The next claim still
+      // compares the complete backoff row and traverses the ordinary START gate.
+      return selected(retainedChDeClaim(root, generation + 1)!, generation + 1, job.revision + 1, job)
+    }
     if (job.state !== 'leased' || !job.lease || job.attempt < 1 || job.attempt > attemptLimit) return unknown
     const generation = job.attempt - 1, claim = retainedChDeClaim(root, generation)!
     const held = selected(claim, generation, job.revision, null)
@@ -148,6 +169,7 @@ export async function selectRetainedChDeClaim(options: Readonly<{
 /** Additional private binding around the unchanged fixed API. It cannot grant
  * authority: every accepted call still traverses MA1, native decoding and SQL CAS. */
 export function guardRetainedChDeClaim(selected: Selection, fixed: M04FixedOperation): M04FixedOperation {
+  let acquiredRecord: V3ManagedJobRecord | null = null
   function fenceMatches(value: unknown): boolean {
     return same(value, { jobId: selected.cycle.jobId, revision: selected.acquiredRevision,
       leaseId: selected.claim.leaseId, generation: selected.acquiredRevision })
@@ -165,9 +187,30 @@ export function guardRetainedChDeClaim(selected: Selection, fixed: M04FixedOpera
   }
   return async (request, signal, receipt, terminal, beforeAuthority) => {
     if (signal.aborted) return { status: 'unconfirmed' }
+    let dispatched = request
     if (request.operation === 'queue_read') {
       if (request.body.jobKey !== selected.claim.jobKey
         || (request.body.continuation && !same(request.body.continuation.claim, selected.claim))) return { status: 'blocked' }
+    } else if (request.operation === 'queue_claim') {
+      const command = readM04Command(request.body.command)
+      if (!command || command.action !== 'claim' || command.kind !== 'rule_research'
+        || command.jobKey !== selected.claim.jobKey || !same(command.value.input, selected.claim)
+        || request.body.expected !== null || request.body.replayOnly !== false
+        || (request.body.continuation && !same(request.body.continuation.claim, selected.claim))) return { status: 'blocked' }
+      // A retained selection constrains the actual SQL mutation, not merely its
+      // returned record. Existing acquisitions can only replay their own ACK.
+      dispatched = { ...request, body: { ...request.body, expected: selected.predecessor,
+        replayOnly: selected.predecessor === null } }
+    } else if (request.operation === 'queue_mutate') {
+      const command = readM04Command(request.body.command)
+      if (!command || command.kind !== 'rule_research' || command.jobKey !== selected.claim.jobKey
+        || (command.action !== 'complete' && command.action !== 'fail')
+        || !fenceMatches((command.value.input as Record<string, unknown>).fence)
+        || request.body.expected !== null || !acquiredRecord
+        || (request.body.continuation && !same(request.body.continuation.claim, selected.claim))) return { status: 'blocked' }
+      // Only a complete acquisition actually observed by this guard constrains
+      // the terminal mutation. A plausible fence alone is not a selected cycle.
+      dispatched = { ...request, body: { ...request.body, expected: acquiredRecord } }
     } else if (request.operation === 'queue_confirm' || request.operation === 'queue_cas') {
       const command = readM04Command(request.body.command)
       if (!command || command.kind !== 'rule_research' || command.jobKey !== selected.claim.jobKey
@@ -190,12 +233,20 @@ export function guardRetainedChDeClaim(selected: Selection, fixed: M04FixedOpera
       if (request.operation === 'execution_prepare' && (request.body.result.jobId !== selected.cycle.jobId
         || request.body.result.operationId !== selected.cycle.operationId || request.body.result.jobKey !== selected.claim.jobKey)) return { status: 'blocked' }
     }
-    const reply = await fixed(request, signal, receipt, terminal, beforeAuthority)
+    const reply = await fixed(dispatched, signal, receipt, terminal, beforeAuthority)
     if ((reply.status === 'present' || reply.status === 'committed') && !recordMatches(reply.record)) return { status: 'blocked' }
+    if (request.operation === 'queue_mutate' && reply.status === 'committed'
+      && (!reply.currentRecord || !recordMatches(reply.currentRecord))) return { status: 'blocked' }
     if (reply.status === 'reserved' || reply.status === 'prepared' || reply.status === 'completed') {
       if (reply.claim && !same(reply.claim, selected.claim)) return { status: 'blocked' }
       if (reply.leasedJob && !acquisition(reply.leasedJob, selected)) return { status: 'blocked' }
       if (reply.status === 'completed' && !recordMatches(reply.job)) return { status: 'blocked' }
+    }
+    const observed = reply.status === 'present' || reply.status === 'committed' ? reply.record
+      : reply.status === 'reserved' || reply.status === 'prepared' || reply.status === 'completed' ? reply.leasedJob : null
+    if (observed && acquisition(observed, selected)) {
+      if (acquiredRecord && !same(acquiredRecord, observed)) return { status: 'blocked' }
+      acquiredRecord = JSON.parse(JSON.stringify(observed)) as V3ManagedJobRecord
     }
     return reply
   }

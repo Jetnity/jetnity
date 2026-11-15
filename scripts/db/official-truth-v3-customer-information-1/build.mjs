@@ -1,11 +1,16 @@
-// Deterministic offline compiler. Six additive validators, one bounded history
-// memo and five BG1 successor bodies are the only permitted replacements.
+// Deterministic offline compiler. Six additive validators, two bounded pure
+// history/checker optimizations, the closed atomic claim and five BG1 successor
+// bodies are permitted. Both new helpers have owner-only execution authority.
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { assertTransactionBody, functionsIn } from '../official-truth-v3-background-guard-1/build.mjs'
 import { compileHistoryDefinition, HISTORY_SIGNATURE } from './history-build.mjs'
+import { compileHistoryGuardDefinition, HISTORY_GUARD_SIGNATURE } from './history-guard-build.mjs'
+import { compileAtomicClaimDefinitions, ATOMIC_CLAIM_REPLACEMENTS, ATOMIC_QUEUE_HELPER_SIGNATURES } from './atomic-claim-build.mjs'
+
+export { ATOMIC_CLAIM_REPLACEMENTS, ATOMIC_QUEUE_HELPER_SIGNATURES }
 
 const here = new URL('./', import.meta.url)
 const read = (name, base = here) => readFileSync(new URL(name, base), 'utf8')
@@ -21,7 +26,7 @@ export const BUSINESS_REPLACEMENTS = Object.freeze([
   'official_v3_result_private.subject_v1(text,jsonb)',
   'official_v3_result_private.proposal_shape_v1()',
 ])
-export const PERFORMANCE_REPLACEMENTS = Object.freeze([HISTORY_SIGNATURE])
+export const PERFORMANCE_REPLACEMENTS = Object.freeze([HISTORY_SIGNATURE, HISTORY_GUARD_SIGNATURE])
 export const GUARD_REPLACEMENTS = Object.freeze([
   'official_v3_guard_private.jobs_catalog_v1()',
   'official_v3_guard_private.hrs_catalog_v1()',
@@ -31,24 +36,35 @@ export const GUARD_REPLACEMENTS = Object.freeze([
 ])
 const owners = ['ot_v3_intake_owner', 'ot_v3_jobs_owner', 'ot_v3_result_owner']
 const ownerOf = signature => signature.startsWith('official_v3_intake_private.') ? owners[0]
-  : signature.startsWith('official_v3_jobs_private.') ? owners[1]
+  : signature.startsWith('official_v3_jobs_private.') || signature.startsWith('official_v3_jobs_api.')
+    || signature === HISTORY_GUARD_SIGNATURE ? owners[1]
     : signature.startsWith('official_v3_result_private.') ? owners[2] : 'postgres'
 function once(value, marker, replacement) {
   assert.equal(value.split(marker).length, 2, 'exact customer source anchor: ' + marker.slice(0, 100))
   return value.replace(marker, () => replacement)
 }
-function metadata(f) {
+function metadata(f, created = false) {
   return { signature: f.signature, name: f.name, owner: ownerOf(f.signature), hash: sha(f.body),
+    created,
     language: /LANGUAGE\s+(\w+)/i.exec(f.options)[1].toLowerCase(), definer: /SECURITY DEFINER/i.test(f.options),
     volatile: /\bIMMUTABLE\b/.test(f.options) ? 'i' : /\bSTABLE\b/.test(f.options) ? 's' : 'v',
     config: [...f.options.matchAll(/SET\s+(\w+)\s*=\s*('[^']*'|[^\s]+)/gi)].map(m =>
       ({ timezone: 'TimeZone', datestyle: 'DateStyle' }[m[1].toLowerCase()] ?? m[1]) + '='
       + (m[1].toLowerCase() === 'search_path' && !m[2].startsWith("'") ? m[2].replaceAll(',', ', ') : m[2].replace(/^'|'$/g, ''))) }
 }
-function definition(f, body) {
-  const sql = 'CREATE OR REPLACE FUNCTION ' + f.name + '(' + f.args + ') ' + f.options + 'AS $customer_body$' + body + '$customer_body$;'
+function definition(f, body, created = false) {
+  const sql = 'CREATE ' + (created ? '' : 'OR REPLACE ') + 'FUNCTION ' + f.name + '(' + f.args + ') ' + f.options
+    + 'AS $customer_body$' + body + '$customer_body$;'
   const owner = ownerOf(f.signature)
-  return owner === 'postgres' ? sql : 'SET LOCAL ROLE ' + owner + ';\n' + sql + '\nRESET ROLE;'
+  const privateAcl = created ? '\nREVOKE ALL ON FUNCTION ' + f.signature
+    + ' FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user,ot_v3_jobs_caller;' : ''
+  const owned = owner === 'postgres' ? sql + privateAcl : 'SET LOCAL ROLE ' + owner + ';\n' + sql + privateAcl + '\nRESET ROLE;'
+  // The original BG1 checker is jobs-owned inside the postgres-owned guard
+  // schema. Restore this one temporary DDL permission before any catalog seal.
+  return f.signature === HISTORY_GUARD_SIGNATURE
+    ? 'GRANT CREATE ON SCHEMA official_v3_guard_private TO ot_v3_jobs_owner;\n' + owned
+      + '\nREVOKE CREATE ON SCHEMA official_v3_guard_private FROM ot_v3_jobs_owner;'
+    : owned
 }
 
 export function compileCustomerInformationMigration() {
@@ -59,6 +75,8 @@ export function compileCustomerInformationMigration() {
     return sql
   })
   const current = new Map(predecessorFiles.flatMap(functionsIn).map(f => [f.signature, f]))
+  assert.equal(predecessorFiles.join('\n').split('ALTER FUNCTION ' + HISTORY_GUARD_SIGNATURE + ' OWNER TO ot_v3_jobs_owner;').length, 2,
+    'the existing BG1 checker retains its exact historical jobs owner')
   const old = name => { const f = current.get(name); assert.ok(f, 'known predecessor: ' + name); return f }
   const supplied = read('definitions.sql')
   assert.equal(sha(supplied), pins.definitionsDigest, 'exact reviewed six-definition artifact')
@@ -66,9 +84,25 @@ export function compileCustomerInformationMigration() {
   assert.deepEqual(dataDefinitions.map(f => f.signature).sort(), [...BUSINESS_REPLACEMENTS].sort())
   const history = read('history-definition.sql')
   assert.equal(history, compileHistoryDefinition().sql, 'exact reviewed independent history definition')
-  const historyDefinitions = functionsIn(history)
+  const historyGuard = read('history-guard-definition.sql'), compiledGuard = compileHistoryGuardDefinition()
+  assert.equal(historyGuard, compiledGuard.sql, 'exact reviewed independent BG1 membership definition')
+  assert.equal(sha(historyGuard), pins.historyGuardDefinitionsDigest, 'exact separate membership artifact pin')
+  const historyDefinitions = [...functionsIn(history), ...functionsIn(historyGuard)]
   assert.deepEqual(historyDefinitions.map(f => f.signature), [...PERFORMANCE_REPLACEMENTS])
-  const business = [...dataDefinitions, ...historyDefinitions]
+  const atomic = read('atomic-claim-definitions.sql'), compiledAtomic = compileAtomicClaimDefinitions()
+  assert.equal(atomic, compiledAtomic.sql, 'exact independently reviewed closed atomic claim definitions')
+  assert.equal(sha(atomic), pins.atomicClaimDefinitionsDigest, 'exact separate atomic artifact pin')
+  const atomicDefinitions = functionsIn(atomic)
+  assert.equal(ATOMIC_QUEUE_HELPER_SIGNATURES.length, 2)
+  assert.deepEqual(atomicDefinitions.map(f => f.signature).sort(), [...ATOMIC_CLAIM_REPLACEMENTS, ...ATOMIC_QUEUE_HELPER_SIGNATURES].sort())
+  const helpers = ATOMIC_QUEUE_HELPER_SIGNATURES.map(signature => {
+    const helper = atomicDefinitions.find(f => f.signature === signature)
+    assert.ok(helper && !current.has(signature), 'each exact new private helper has no predecessor overload')
+    assert.equal(sha(helper.body), pins.functions[signature].after, 'new owner-only helper body pin')
+    assert.equal(pins.functions[signature].before, null, 'new helper is not an existing function replacement')
+    return helper
+  })
+  const business = [...dataDefinitions, ...historyDefinitions, ...atomicDefinitions.filter(f => !ATOMIC_QUEUE_HELPER_SIGNATURES.includes(f.signature))]
   for (const f of business) {
     assert.equal(sha(old(f.signature).body), pins.functions[f.signature].before, 'original function pin: ' + f.signature)
     assert.equal(sha(f.body), pins.functions[f.signature].after, 'reviewed successor pin: ' + f.signature)
@@ -77,7 +111,7 @@ export function compileCustomerInformationMigration() {
     assert.deepEqual({ ...before, hash: null }, { ...after, hash: null }, 'validator authority/signature/options are unchanged')
     assert.equal(f.args, old(f.signature).args, 'argument names and types remain exact')
   }
-  const definitions = business.map(f => definition(old(f.signature), f.body))
+  const definitions = [...helpers.map(f => definition(f, f.body, true)), ...business.map(f => definition(old(f.signature), f.body))]
   const rollingDigest = pins.predecessors['../official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql']
   assert.match(rollingDigest, /^[a-f0-9]{64}$/)
   for (const signature of GUARD_REPLACEMENTS) {
@@ -93,6 +127,8 @@ export function compileCustomerInformationMigration() {
         "OR customer.predecessor_provider_digest<>" + quote(rollingDigest)
         + "\n    OR customer.definitions_digest<>" + quote(pins.definitionsDigest)
         + "\n    OR customer.history_definition_digest<>" + quote(pins.historyDefinitionsDigest)
+        + "\n    OR customer.history_guard_definition_digest<>" + quote(pins.historyGuardDefinitionsDigest)
+        + "\n    OR customer.atomic_claim_definition_digest<>" + quote(pins.atomicClaimDefinitionsDigest)
         + "\n    OR customer.predecessor_catalog_digest IS DISTINCT FROM encode(sha256(convert_to(rolling.catalog::text,'UTF8')),'hex')"
         + "\n    OR customer.predecessor_rolling_digest IS DISTINCT FROM encode(sha256(convert_to((to_jsonb(rolling)||jsonb_build_object('proof_not_before',extract(epoch FROM rolling.proof_not_before)))::text,'UTF8')),'hex')"
         + '\n    OR customer.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1()')
@@ -105,8 +141,9 @@ export function compileCustomerInformationMigration() {
   }
   const successorDefinitions = definitions.join('\n\n')
   const successors = functionsIn(successorDefinitions)
-  assert.equal(successors.length, 12)
-  const approved = JSON.stringify(successors.map(metadata))
+  assert.equal(successors.length, 17)
+  assert.equal(new Set(successors.map(f => f.signature)).size, 17)
+  const approved = JSON.stringify(successors.map(f => metadata(f, ATOMIC_QUEUE_HELPER_SIGNATURES.includes(f.signature))))
   const catalogQuery = old('official_v3_guard_private.catalog_status_v1()').body.trim()
   let prefix = read('preflight.sql')
   prefix = once(prefix, '/* PREDECESSOR_FUNCTIONS */', [...current.values()].map(f => '(' + quote(f.signature) + ',' + quote(sha(f.body)) + ')').join(',\n    '))
@@ -138,14 +175,19 @@ export function compileCustomerInformationMigration() {
     delta, read('postcheck.sql'),
   ].join('\n\n').replaceAll('ROLLING_PROVIDER_SHA256', rollingDigest).replaceAll('DEFINITIONS_SHA256', pins.definitionsDigest)
     .replaceAll('HISTORY_DEFINITION_SHA256', pins.historyDefinitionsDigest).trimEnd() + '\n'
-  assertTransactionBody(output)
-  assert.equal(functionsIn(output).length, 12)
-  const inventory = successors.map(f => ({ signature: f.signature, before: sha(old(f.signature).body), after: sha(f.body) }))
+  const completeOutput = output.replaceAll('HISTORY_GUARD_DEFINITION_SHA256', pins.historyGuardDefinitionsDigest)
+    .replaceAll('ATOMIC_CLAIM_DEFINITION_SHA256', pins.atomicClaimDefinitionsDigest)
+  assertTransactionBody(completeOutput)
+  assert.equal(functionsIn(completeOutput).length, 17)
+  const inventory = successors.map(f => ({ signature: f.signature,
+    before: current.has(f.signature) ? sha(old(f.signature).body) : null, after: sha(f.body) }))
   const readback = read('readback-template.sql').replace('/* APPROVED_FUNCTIONS */', quote(JSON.stringify(inventory)) + '::jsonb')
     .replaceAll('ROLLING_PROVIDER_SHA256', rollingDigest).replaceAll('DEFINITIONS_SHA256', pins.definitionsDigest)
     .replaceAll('HISTORY_DEFINITION_SHA256', pins.historyDefinitionsDigest)
-    .replaceAll('MIGRATION_SHA256', sha(output))
-  return { migration: output, readback, inventory, digest: sha(output) }
+    .replaceAll('HISTORY_GUARD_DEFINITION_SHA256', pins.historyGuardDefinitionsDigest)
+    .replaceAll('ATOMIC_CLAIM_DEFINITION_SHA256', pins.atomicClaimDefinitionsDigest)
+    .replaceAll('MIGRATION_SHA256', sha(completeOutput))
+  return { migration: completeOutput, readback, inventory, digest: sha(completeOutput) }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

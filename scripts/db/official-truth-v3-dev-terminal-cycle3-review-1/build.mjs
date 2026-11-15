@@ -15,14 +15,15 @@ export const REVIEW = Object.freeze({
   subject: 'research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513',
   job: 'job3_6caeafbd2bcb1fed2121984e98c3c3e7',
   terminal: 'op3_0ab5b766f0d954b88a7481b0d531881f',
-  queueFix: '7ce17c68319d9dc2931de06c25062453f5ab12753a98cb1ef06345c415d79576',
-  jobContractFix: '28046404d236e8552b67e55917b13a54bc952dcb9f1ac28be2f9e61b7a9a7799',
-  jobStorageFix: '56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14',
-  selectedClaimFix: '171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa',
-  methodAuthorityFix: '56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97',
+  queueFix: '1ac59c6db4e32ad14b57ffef050c833ccd71c4260218b433e90a58fcc8b56a45',
+  jobContractFix: 'd5077d9f21033c3e5bb5eff1e74b6dde1379225b3c9cee59caacd67b38e1c299',
+  jobStorageFix: '85347b3ca98f07c81d77a24bcd2d36acd57a020f4d18c4f3aee9e470609e6fe8',
+  selectedClaimFix: '29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1',
+  methodAuthorityFix: 'd7c22972b6427d2169aafa56e70b037cf6babefb50469d527b48f122d104da79',
   ownedSessionFix: '0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c',
-  executorsFix: '8003eb87d2ddd96a790e56c8cb783692dd9d8bab14d794ceb88f726484832912',
-  compositionFix: '667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89',
+  executorsFix: 'f1fcc6a0e762104c117e771207e266a3d7eac58492bb573b7aa1be1802c7ce3b',
+  compositionFix: 'a4f02a0a043382b160e988eb0a48a79191e1806979dcf1926c8b26f930c85c76',
+  ownedScopeFix: '89a22b2a2de00365505258a301614a0ac2870af79bd3ced40a66c8794c6fe280',
 })
 
 // PostgreSQL JSONB's textual key order. The native test independently hashes
@@ -69,6 +70,7 @@ export function compileDevTerminalCycle3Review() {
     ['jobs/selected-claim.ts', REVIEW.selectedClaimFix], ['method/authority-postgres.ts', REVIEW.methodAuthorityFix],
     ['transport/node-postgres-owned-session.ts', REVIEW.ownedSessionFix],
     ['transport/node-postgres-executors.ts', REVIEW.executorsFix],
+    ['jobs/owned-scope.ts', REVIEW.ownedScopeFix],
   ]) {
     assert.match(expected, /^[a-f0-9]{64}$/, 'all independently reviewed runtime fixes must be frozen first')
     assert.equal(hash(read('../../../lib/readiness/official-truth-product-v3/' + relative)), expected,
@@ -206,6 +208,7 @@ CREATE TABLE jetnity_dev_import_scheduler.terminal_cycle3_review_v1(
   job_storage_fix_sha256 text NOT NULL CHECK(job_storage_fix_sha256='${REVIEW.jobStorageFix}'),
   selected_claim_fix_sha256 text NOT NULL CHECK(selected_claim_fix_sha256='${REVIEW.selectedClaimFix}'),
   method_authority_fix_sha256 text NOT NULL CHECK(method_authority_fix_sha256='${REVIEW.methodAuthorityFix}'),
+  owned_scope_fix_sha256 text NOT NULL CHECK(owned_scope_fix_sha256='${REVIEW.ownedScopeFix}'),
   runtime_commit text NOT NULL CHECK(runtime_commit ~ '^[a-f0-9]{40}$'),
   ready_deployment text NOT NULL CHECK(ready_deployment ~ '^dpl_[A-Za-z0-9]{20,64}$'),
   ci_run bigint NOT NULL CHECK(ci_run>0), ui_version integer NOT NULL CHECK(ui_version>=6),
@@ -226,6 +229,7 @@ INSERT INTO jetnity_dev_import_scheduler.terminal_cycle3_review_v1
 SELECT 3,${literal(evidenceHash)},${literal(priorDigest)},'${REVIEW.ownedSessionFix}','${REVIEW.executorsFix}',
   '${REVIEW.queueFix}','${REVIEW.compositionFix}',
   '${REVIEW.jobContractFix}','${REVIEW.jobStorageFix}','${REVIEW.selectedClaimFix}','${REVIEW.methodAuthorityFix}',
+  '${REVIEW.ownedScopeFix}',
   current_setting('jetnity.dev_terminal_cycle3_review_commit'),current_setting('jetnity.dev_terminal_cycle3_review_deployment'),
   current_setting('jetnity.dev_terminal_cycle3_review_ci_run')::bigint,current_setting('jetnity.dev_terminal_cycle3_review_ui_version')::integer,
   clock_timestamp(),current_job FROM official_v3_jobs_private.subjects_v1 WHERE job_key='${REVIEW.subject}';

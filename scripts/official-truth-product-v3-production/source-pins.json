@@ -176,7 +176,17 @@
   },
   {
     "path": "scripts/db/official-truth-v3-customer-information-1/history-definition.sql",
-    "bytes": 20878,
-    "sha256": "719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355"
+    "bytes": 304558,
+    "sha256": "061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/history-guard-definition.sql",
+    "bytes": 4767,
+    "sha256": "f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+    "bytes": 43695,
+    "sha256": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a"
   }
 ]

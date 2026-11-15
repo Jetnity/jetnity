@@ -486,8 +486,8 @@ describe('dormancy and architectural boundaries', () => {
   const COMPOSED_CONTENT_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
     bytes: 105567,
-    blob: '1740d044516290e3d2e51ee95ed487ea75c954cb',
-    sha256: '83d99bb0870e7f82a58b73bd966389ca889764d0c1e6c938b92a86f8d8357eb4',
+    blob: '5197462a3022f68301f6218811ac22243cc62755',
+    sha256: '1c077821c36c39183ce35bdecca1813493110b8c993d8c977530f7438fe531b2',
     contextStart: 4104,
     contextEnd: 4332,
     tokenStart: 4135,
@@ -551,8 +551,8 @@ describe('dormancy and architectural boundaries', () => {
     {
       path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
       bytes: 256780,
-      blob: '0aa10b10611aefb370d1266e3fdfcbe333b9026c',
-      sha256: 'c84248f6daaf17104c8458f45a1f322a538fd82d13e45fd75b7548cf80d5bf2a',
+      blob: 'c01426e00d4a309c158a413f0a371e273774893c',
+      sha256: '8dcb2f2f6546ed2636d03e6dc7c9e94e2373b4b72cbfa3aecde083ddfe9a3fa5',
       importText: "import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
     },
     {
@@ -638,6 +638,11 @@ describe('dormancy and architectural boundaries', () => {
     'lib/readiness/official-truth-product-v3/monitor/test-support.ts',
     // #1167 E1 Guard G1: exact isolated synthetic originals, no production binding.
     'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts',
+    // CUSTOMER-INFORMATION1: pure registered-source preparation and two exact
+    // synthetic helpers; none can qualify a source or issue a production receipt.
+    'lib/readiness/official-truth-product-v3/customer-information/source-onboarding.ts',
+    'lib/readiness/official-truth-product-v3/customer-information/test-support/fixture.ts',
+    'lib/readiness/official-truth-product-v3/visitor/public-response-test-fixtures.ts',
     // Selected HRS binding, closed AA/Bern profiles/program and the pinned synthetic HRS proof.
     ...reviewedV3ContentImporters,
     // Exact local BG1 database fixture; no live source issuer or runtime receipt.
@@ -684,7 +689,10 @@ describe('dormancy and architectural boundaries', () => {
   ]
   function contentIdentityImporterAllowed(path: string) { return reviewedContentIdentityImporters.includes(path) }
   test('finite content-identity guard refuses unknown or lookalike application and developer importers', () => {
-    for (const path of [...reviewedV3ContentImporters, REVIEWED_CONTENT_FIXTURE_PINS[2].path]) {
+    for (const path of [...reviewedV3ContentImporters, REVIEWED_CONTENT_FIXTURE_PINS[2].path,
+      'lib/readiness/official-truth-product-v3/customer-information/source-onboarding.ts',
+      'lib/readiness/official-truth-product-v3/customer-information/test-support/fixture.ts',
+      'lib/readiness/official-truth-product-v3/visitor/public-response-test-fixtures.ts']) {
       assert.equal(contentIdentityImporterAllowed(path), true, path)
       for (const spelling of ['./' + path, path + '.evil.ts', path + '/../unreviewed.ts',
         'app/' + path, path.replace('.ts', '-copy.ts')]) {

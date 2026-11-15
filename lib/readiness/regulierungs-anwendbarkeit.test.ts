@@ -62,11 +62,11 @@ const wurzel = join(hier, '../..')
 const COMPOSED_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
   bytes: 105567,
-  blob: '1740d044516290e3d2e51ee95ed487ea75c954cb',
-  sha256: '83d99bb0870e7f82a58b73bd966389ca889764d0c1e6c938b92a86f8d8357eb4',
-  contextStart: 15758,
-  contextEnd: 15982,
-  tokenStart: 15789,
+  blob: '5197462a3022f68301f6218811ac22243cc62755',
+  sha256: '1c077821c36c39183ce35bdecca1813493110b8c993d8c977530f7438fe531b2',
+  contextStart: 16785,
+  contextEnd: 17009,
+  tokenStart: 16816,
 } as const
 const COMPOSED_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
 const COMPOSED_REGULATORY_METADATA_CONTEXT = `  {
@@ -125,11 +125,11 @@ test('COMPOSED regulierungs-anwendbarkeit pin metadata rejects changed sources a
 const HRS_REGULATORY_METADATA_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
   bytes: 256780,
-  blob: '0aa10b10611aefb370d1266e3fdfcbe333b9026c',
-  sha256: 'c84248f6daaf17104c8458f45a1f322a538fd82d13e45fd75b7548cf80d5bf2a',
-  contextStart: 40986,
-  contextEnd: 41210,
-  tokenStart: 41017,
+  blob: 'c01426e00d4a309c158a413f0a371e273774893c',
+  sha256: '8dcb2f2f6546ed2636d03e6dc7c9e94e2373b4b72cbfa3aecde083ddfe9a3fa5',
+  contextStart: 42013,
+  contextEnd: 42237,
+  tokenStart: 42044,
 } as const
 const HRS_REGULATORY_METADATA_TOKEN = 'regulierungs-anwendbarkeit'
 const HRS_REGULATORY_METADATA_CONTEXT = `  {
@@ -1082,7 +1082,26 @@ describe('regulierungs-anwendbarkeit', () => {
       join(hier, 'official-truth-product-v3/storage/quarantine-postgres.ts'),
       join(hier, 'official-truth-product-v3/storage/retention-shape.ts'),
       join(hier, 'official-truth-product-v3/storage/retention-shape.test.ts'),
+      // CUSTOMER-INFORMATION1: exact pure JSON/canonical readers and bounded
+      // synthetic conformance fixtures; no legal applicability evaluation.
+      join(hier, 'official-truth-product-v3/customer-information/details.ts'),
+      join(hier, 'official-truth-product-v3/customer-information/contract.test.ts'),
+      join(hier, 'official-truth-product-v3/customer-information/source-onboarding.ts'),
+      join(hier, 'official-truth-product-v3/customer-information/source-onboarding.test.ts'),
+      join(hier, 'official-truth-product-v3/visitor/public-response-test-fixtures.ts'),
+      join(hier, 'official-truth-product-v3/visitor/public-response-budget.test.ts'),
     ])
+    for (const name of ['customer-information/details.ts', 'customer-information/contract.test.ts',
+      'customer-information/source-onboarding.ts', 'customer-information/source-onboarding.test.ts',
+      'visitor/public-response-test-fixtures.ts', 'visitor/public-response-budget.test.ts']) {
+      const path = `official-truth-product-v3/${name}`
+      assert.equal(eigene.has(join(hier, path)), true)
+      for (const spelling of [`${hier}/${path}.evil.ts`, `${hier}/${path}/../unreviewed.ts`,
+        `${hier}/official-truth-product-v3/../${path}`, `${wurzel}/app/api/${path}`,
+        `${hier}/official-truth-product-v3/${name.replace('.ts', '-copy.ts')}`]) {
+        assert.equal(eigene.has(spelling), false, spelling)
+      }
+    }
     assert.equal(eigene.has(join(hier, 'official-truth-product-v3/contract.ts')), true)
     // Keep raw traversal spellings: join() must not normalize an alias into permission.
     for (const pfad of [
@@ -1255,6 +1274,9 @@ describe('regulierungs-anwendbarkeit', () => {
         join(hier, 'official-truth-product-v3/storage/quarantine-codec.ts'),
         join(hier, 'official-truth-product-v3/storage/quarantine-postgres.ts'),
         join(hier, 'official-truth-product-v3/storage/retention-shape.ts'),
+        join(hier, 'official-truth-product-v3/customer-information/details.ts'),
+        join(hier, 'official-truth-product-v3/customer-information/source-onboarding.ts'),
+        join(hier, 'official-truth-product-v3/visitor/public-response-test-fixtures.ts'),
       ].sort(),
     )
     const claims = readFileSync(join(hier, 'rule-claims.ts'), 'utf8')

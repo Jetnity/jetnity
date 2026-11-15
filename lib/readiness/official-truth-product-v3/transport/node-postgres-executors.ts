@@ -22,7 +22,7 @@ const S1 = Object.freeze([
 const M04_SQL = `SELECT official_v3_jobs_api.execute_v1(
   $1::text,$2::text,$3::integer,$4::text,
   $5::text,NULLIF($6::text,'')::integer,$7::integer,$8::text) AS result`
-const M04_OPERATIONS = ['queue_read','queue_confirm','queue_cas','execution_read','execution_start','execution_prepare'] as const
+const M04_OPERATIONS = ['queue_read','queue_confirm','queue_cas','queue_claim','queue_mutate','execution_read','execution_start','execution_prepare'] as const
 const PUBLIC_READS = ['coverage','projection','projection_current','projection_batch','ch_de_snapshot'] as const
 const IDENTITY_SQL = `SELECT a.pid::text AS pid,a.backend_start::text AS birth,
  session_user::text AS login,current_user::text AS role,a.datid::text AS db_oid,a.usesysid::text AS login_oid,
@@ -321,11 +321,28 @@ const jobs: M04TerminalExecutor = Object.freeze<M04TerminalExecutor>({ async exe
     const command = ownRecord(JSON.parse(parsed.operationText), ['operation','body','phase'])
     if (!command || !M04_OPERATIONS.includes(command.operation as typeof M04_OPERATIONS[number])
       || (command.phase !== 'probe' && command.phase !== 'authorized') || !hrs1Data(command, 262_144)
+      || ((command.operation === 'queue_claim' || command.operation === 'queue_mutate') && command.phase !== 'authorized')
       || (command.phase === 'probe' ? parsed.epoch !== null : parsed.epoch === null)) return { status: 'unavailable' }
     const b = parsed.binding
     return execute('jobs', { statement: M04_SQL, deadline: parsed.deadline, notAfter: parsed.notAfter,
       fields: ['result'], parameters: remaining => [parsed.operationText, b.methodId, b.revision, b.methodDigest,
         b.packageDigest, parsed.epoch === null ? '' : String(parsed.epoch), remaining, parsed.notAfter] }, signal)
+  } catch { return { status: 'unavailable' } }
+}, async executeAtomicClaimFixed(raw, signal) {
+  try {
+    const parsed = requestParts(raw, false)
+    if (!parsed) return { status: 'unavailable' }
+    const operation = ownRecord(JSON.parse(parsed.operationText), ['operation', 'body', 'phase'])
+    if (operation?.operation !== 'queue_claim' || operation.phase !== 'authorized') return { status: 'unavailable' }
+    return jobs.executeFixed(raw, signal)
+  } catch { return { status: 'unavailable' } }
+}, async executeAtomicMutationFixed(raw, signal) {
+  try {
+    const parsed = requestParts(raw, false)
+    if (!parsed) return { status: 'unavailable' }
+    const operation = ownRecord(JSON.parse(parsed.operationText), ['operation', 'body', 'phase'])
+    if (operation?.operation !== 'queue_mutate' || operation.phase !== 'authorized') return { status: 'unavailable' }
+    return jobs.executeFixed(raw, signal)
   } catch { return { status: 'unavailable' } }
 } })
 function hrsExecutor(kind: 'writer' | 'reader' | 'verifier'): Hrs1TerminalExecutor {

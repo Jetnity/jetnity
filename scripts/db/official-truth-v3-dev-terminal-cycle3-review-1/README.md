@@ -68,11 +68,14 @@ its exact private evidence still matches. Every other block, changed original,
 unconfirmed request or missing predecessor remains closed. Both old blocked
 rows remain blocked; neither review is a reset or an alteration of old history.
 
-The new compiler binds the current queue and both transport fix files, the job
-contract/storage/claim forwarding, and method authority, as well as the unchanged
-method composition, to their individually reviewed SHA256s.
-Compilation refuses before those exact files are frozen. New runtime fixes only
-overlap independently read-only observations/transport setup; all real authority
+The new compiler binds nine current files: queue, both transport fixes, job
+contract/storage/claim forwarding, method authority, job composition and owned
+scope, to their individually reviewed SHA256s.
+Compilation refuses before those exact files are frozen. The reviewed runtime
+adds explicit atomic claim and mutation capabilities to the existing M04 API;
+original confirmation, transition, CAS and actual final reads remain inside
+one transaction. Historical adapters keep their original protocol, including
+the independent claim reads and complete drain below. All real authority
 checks, final reads, original IDs, five-second queue and 30-second tick budgets,
 lease deadlines, attempt limits and rolling 64/256 quotas remain required.
 The original-claim replay waits for the actual speculative authority read to drain

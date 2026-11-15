@@ -37,6 +37,10 @@ export type M04Command = Readonly<{ value: Readonly<Record<string, unknown>>; co
 export type M04Operation =
   | Readonly<{ operation: 'queue_read'; body: { jobKey: string; continuation: M04Continuation } }>
   | Readonly<{ operation: 'queue_confirm'; body: { command: M04Command['value']; continuation: M04Continuation } }>
+  | Readonly<{ operation: 'queue_claim'; body: { command: M04Command['value']; continuation: M04Continuation;
+      expected: V3ManagedJobRecord | null; replayOnly: boolean } }>
+  | Readonly<{ operation: 'queue_mutate'; body: { command: M04Command['value']; continuation: M04Continuation;
+      disposition: M04Disposition; expected: V3ManagedJobRecord | null } }>
   | Readonly<{ operation: 'queue_cas'; body: { command: M04Command['value']; commit: V3QueueCommit;
       subjectText: string; disposition: M04Disposition } }>
   | Readonly<{ operation: 'execution_read'; body: { claim: M04Claim; purpose: 'resume' | 'lookup' | 'confirm' | 'artifact' } }>
@@ -44,9 +48,9 @@ export type M04Operation =
   | Readonly<{ operation: 'execution_prepare'; body: { claim: M04Claim; attemptKey: string; token: string;
       result: V3WorkerResultRecord; references: readonly V3IntakeReference[] } }>
 export type M04NativeReply =
-  | Readonly<{ status: 'unavailable' | 'unconfirmed' | 'requires_authority' | 'absent' | 'not_attempted' | 'blocked' | 'collision' | 'mismatch' | 'quota' }>
+  | Readonly<{ status: 'unavailable' | 'unconfirmed' | 'requires_authority' | 'absent' | 'not_attempted' | 'blocked' | 'collision' | 'mismatch' | 'quota' | 'not_due' | 'superseded' }>
   | Readonly<{ status: 'present'; record: V3ManagedJobRecord }>
-  | Readonly<{ status: 'committed'; record: V3ManagedJobRecord; operationId?: string; commandKey?: string; commandText?: string; envelopeText?: string }>
+  | Readonly<{ status: 'committed'; record: V3ManagedJobRecord; operationId?: string; commandKey?: string; commandText?: string; envelopeText?: string; replayed?: boolean; currentRecord?: V3ManagedJobRecord }>
   | Readonly<{ status: 'reserved'; attemptKey: string; token: string; claim: M04Claim; leasedJob: V3ManagedJobRecord }>
   | Readonly<{ status: 'prepared'; attemptKey: string; result: V3WorkerResultRecord; references: readonly V3IntakeReference[];
       claim?: M04Claim; leasedJob?: V3ManagedJobRecord }>
@@ -64,6 +68,14 @@ export interface M04TerminalExecutor {
     /** All owned local children are settled/closed; remote outcome is unproved.
      * The physical pair remains poisoned. No replay, reconnect or slot reuse. */
     | Readonly<{ status: 'blocked_remote_unknown' }>>
+  /** Optional code-owned protocol capability. Older immutable installations
+   * retain their original operation sequence. Once selected, an atomic failure
+   * never falls back to executeFixed or a second claim. This is not authority. */
+  executeAtomicClaimFixed?: M04TerminalExecutor['executeFixed']
+  /** Separate closed capability for enqueue/complete/fail. An acknowledged
+   * result retains both the original ledger receipt and the actual current
+   * record. It cannot be used to claim or acquire START custody. */
+  executeAtomicMutationFixed?: M04TerminalExecutor['executeFixed']
 }
 export type M04FixedOperation = (request: M04Operation, signal: AbortSignal,
   receipt?: object, terminal?: boolean, beforeAuthority?: () => Promise<void>) => Promise<M04NativeReply>
@@ -298,6 +310,8 @@ export function readM04NativeReply(rawRows: unknown, operation: M04Operation['op
     const negatives: Record<M04Operation['operation'], readonly string[]> = {
       queue_read: ['absent', 'blocked', 'requires_authority'],
       queue_confirm: ['not_attempted', 'collision', 'blocked', 'requires_authority'],
+      queue_claim: ['blocked', 'collision', 'quota', 'not_due', 'superseded', 'mismatch'],
+      queue_mutate: ['blocked', 'collision', 'quota', 'superseded', 'mismatch'],
       queue_cas: ['mismatch', 'collision', 'blocked', 'quota'],
       execution_read: ['absent', 'blocked', 'requires_authority'],
       execution_start: ['blocked', 'collision', 'quota'], execution_prepare: ['blocked', 'collision', 'quota'],
@@ -306,12 +320,14 @@ export function readM04NativeReply(rawRows: unknown, operation: M04Operation['op
     if (operation === 'queue_read' && exact(value, ['status', 'record']) && value.status === 'present') {
       const record = managed(value.record); return record ? Object.freeze({ status: 'present', record }) : null
     }
-    if ((operation === 'queue_cas' || operation === 'queue_confirm') && value.status === 'committed') {
-      const keys = operation === 'queue_cas' ? ['status', 'record'] : ['status', 'record', 'operationId', 'commandKey', 'commandText', 'envelopeText']
+    if ((operation === 'queue_cas' || operation === 'queue_confirm' || operation === 'queue_claim' || operation === 'queue_mutate') && value.status === 'committed') {
+      const keys = operation === 'queue_cas' ? ['status', 'record']
+        : ['status', 'record', 'operationId', 'commandKey', 'commandText', 'envelopeText',
+          ...(operation === 'queue_claim' ? ['replayed'] : operation === 'queue_mutate' ? ['replayed', 'currentRecord'] : [])]
       if (!exact(value, keys)) return null
       const record = managed(value.record)
       if (!record) return null
-      if (operation === 'queue_confirm') {
+      if (operation === 'queue_confirm' || operation === 'queue_claim' || operation === 'queue_mutate') {
         if (!boundedText(value.commandText, M04_LIMITS.metadataBytes) || !boundedText(value.envelopeText, M04_LIMITS.envelopeBytes)) return null
         const c = readM04Command(uniqueJson(value.commandText)), envelope = detach(uniqueJson(value.envelopeText), M04_LIMITS.envelopeBytes)
         if (!c || c.commandText !== value.commandText || c.operationId !== value.operationId || c.commandKey !== value.commandKey
@@ -319,6 +335,25 @@ export function readM04NativeReply(rawRows: unknown, operation: M04Operation['op
           || envelope.operationId !== c.operationId || envelope.commandKey !== c.commandKey || envelope.jobKey !== c.jobKey
           || !same(envelope.next, record) || canonical(envelope) !== value.envelopeText
           || !validEnvelope(envelope, c, record)) return null
+        if (operation === 'queue_claim' && (c.action !== 'claim' || typeof value.replayed !== 'boolean'
+          || !validClaimEnvelope(envelope, c, record))) return null
+        if (operation === 'queue_mutate') {
+          const current = managed(value.currentRecord)
+          if (c.action === 'claim' || typeof value.replayed !== 'boolean' || !current
+            || !validMutationEnvelope(envelope, c, record)
+            || current.kind !== record.kind || current.jobId !== record.jobId
+            || current.operationId !== record.operationId || current.revision < record.revision
+            || current.createdAt !== record.createdAt || current.updatedAt < record.updatedAt
+            || current.attempt < record.attempt || current.attemptLimit !== record.attemptLimit
+            || (current.kind === 'research_job_record' ? current.jobKey : current.identity.jobKey) !== c.jobKey
+            || !same(current.kind === 'research_job_record' ? current.method : current.identity.method,
+              record.kind === 'research_job_record' ? record.method : record.identity.method)
+            || !sameCycleFields(current, record)
+            || ((current.revision === record.revision || record.state === 'succeeded' || record.state === 'exhausted')
+              && !same(current, record))
+            || (!value.replayed && !same(current, record))) return null
+          return Object.freeze({ ...value, record, currentRecord: current }) as M04NativeReply
+        }
       }
       return Object.freeze({ ...value, record }) as M04NativeReply
     }
@@ -391,4 +426,82 @@ function validEnvelope(e: Record<string, unknown>, c: M04Command, next: V3Manage
   if (k !== c.jobKey || (expected && (expected.kind === 'research_job_record' ? expected.jobKey : expected.identity.jobKey) !== c.jobKey)) return false
   const limit = new Date(Date.parse(audit.observedAt as string) + M04_LIMITS.effectMs).toISOString()
   return e.notAfter === ((c.action === 'complete' || c.action === 'fail') && expected?.lease && expected.lease.expiresAt < limit ? expected.lease.expiresAt : limit)
+}
+
+/** The atomic ACK owns one complete original claim transition, including the
+ * exact acquisition generation and lease duration. Plausible record shape or
+ * a matching lease ID alone cannot replace that transition. */
+function validClaimEnvelope(e: Record<string, unknown>, c: M04Command, next: V3ManagedJobRecord): boolean {
+  const expected = managed(e.expected), input = readData(c.value.input, claim)
+  const audit = e.audit as Record<string, unknown>, observedAt = audit.observedAt as string
+  if (!expected || !input || !['queued', 'leased', 'backoff'].includes(expected.state)
+    || expected.updatedAt > observedAt || (expected.state === 'backoff' && expected.nextAttemptAt! > observedAt)
+    || (expected.state === 'leased' && expected.lease!.expiresAt > observedAt)) return false
+  const revision = expected.revision + 1
+  const base = { ...expected, revision, predecessorRevision: expected.revision, updatedAt: observedAt, nextAttemptAt: null }
+  if (expected.attempt >= expected.attemptLimit) return audit.kind === 'exhausted'
+    && same(next, { ...base, state: 'exhausted', lease: null,
+      lastFailure: expected.lastFailure ?? 'verification_unavailable' })
+  return audit.kind === (expected.state === 'leased' ? 'reclaimed' : 'leased')
+    && same(next, { ...base, state: 'leased', attempt: expected.attempt + 1,
+      lease: { leaseId: input.leaseId, generation: revision, acquiredAt: observedAt,
+        expiresAt: new Date(Date.parse(observedAt) + input.leaseMilliseconds).toISOString() } })
+}
+
+function sameCycleFields(current: V3ManagedJobRecord, original: V3ManagedJobRecord): boolean {
+  const mutable = new Set(['revision', 'predecessorRevision', 'state', 'updatedAt', 'attempt',
+    'lease', 'nextAttemptAt', 'lastFailure', 'resultDecisionRef', 'resultDiscoveryRef'])
+  const identity = (record: V3ManagedJobRecord) => Object.fromEntries(Object.entries(record).filter(([name]) => !mutable.has(name)))
+  return same(identity(current), identity(original))
+}
+
+/** An atomic mutation retains the exact original transition, separately from
+ * the actual final read. A replay may return a later current generation of the
+ * same cycle, but cannot rewrite the original command or terminal receipt. */
+function validMutationEnvelope(e: Record<string, unknown>, c: M04Command, next: V3ManagedJobRecord): boolean {
+  const expected = e.expected === null ? null : managed(e.expected)
+  const audit = e.audit as Record<string, unknown>, observedAt = audit.observedAt as string
+  if (e.expected !== null && !expected || expected && expected.updatedAt > observedAt) return false
+  if (c.action === 'enqueue') {
+    const input = c.kind === 'rule_research' ? readData(c.value.input, ruleEnqueue) : readData(c.value.input, discoveryEnqueue)
+    if (!input) return false
+    if (expected && ['queued', 'leased', 'backoff'].includes(expected.state))
+      return audit.kind === 'deduplicated' && same(next, expected)
+    if (expected?.jobId === input.jobId || audit.kind !== 'enqueued') return false
+    const lifecycle = { schema: 3, jobId: input.jobId, operationId: input.operationId,
+      revision: (expected?.revision ?? 0) + 1, predecessorRevision: expected?.revision ?? null,
+      state: 'queued', createdAt: observedAt, updatedAt: observedAt, attempt: 0, attemptLimit: input.attemptLimit,
+      lease: null, nextAttemptAt: null, lastFailure: null }
+    if ('context' in input) {
+      const identity = createV3WorkIdentity({ context: input.context, method: input.method,
+        factKind: input.factKind, researchReason: input.researchReason })
+      return identity.ok && same(next, { ...lifecycle, kind: 'research_job_record', jobKey: identity.value.jobKey,
+        context: input.context, contextKey: identity.value.contextKey, research: identity.value.research,
+        method: input.method, resultDecisionRef: null })
+    }
+    const identity = createV3CombinationDiscoveryIdentity({ destinationCountryCode: input.destinationCountryCode,
+      citizenshipCountryCode: input.citizenshipCountryCode, method: input.method })
+    return identity.ok && same(next, { ...lifecycle, kind: 'combination_discovery_job_record',
+      identity: identity.value, resultDiscoveryRef: null })
+  }
+  if (c.action !== 'complete' && c.action !== 'fail') return false
+  const input = c.action === 'fail' ? readData(c.value.input, failure) : c.kind === 'rule_research'
+    ? readData(c.value.input, ruleComplete) : readData(c.value.input, discoveryComplete)
+  if (!input || !expected || expected.state !== 'leased' || !expected.lease
+    || expected.jobId !== input.fence.jobId || expected.revision !== input.fence.revision
+    || expected.lease.leaseId !== input.fence.leaseId || expected.lease.generation !== input.fence.generation
+    || expected.lease.expiresAt <= observedAt) return false
+  const base = { ...expected, revision: expected.revision + 1, predecessorRevision: expected.revision,
+    updatedAt: observedAt, lease: null }
+  if (c.action === 'complete') return audit.kind === 'completed'
+    && (expected.kind === 'research_job_record' && 'decisionRef' in input
+      ? same(next, { ...base, state: 'succeeded', lastFailure: null, resultDecisionRef: input.decisionRef })
+      : expected.kind === 'combination_discovery_job_record' && 'discoveryRef' in input
+        && same(next, { ...base, state: 'succeeded', lastFailure: null, resultDiscoveryRef: input.discoveryRef }))
+  if (!('reason' in input)) return false
+  const exhausted = expected.attempt === expected.attemptLimit
+  const delay = Math.min(M04_LIMITS.backoffMaxMs, M04_LIMITS.backoffBaseMs * 2 ** (expected.attempt - 1))
+  return audit.kind === (exhausted ? 'exhausted' : 'backoff')
+    && same(next, { ...base, state: exhausted ? 'exhausted' : 'backoff', lastFailure: input.reason,
+      nextAttemptAt: exhausted ? null : new Date(Date.parse(observedAt) + delay).toISOString() })
 }

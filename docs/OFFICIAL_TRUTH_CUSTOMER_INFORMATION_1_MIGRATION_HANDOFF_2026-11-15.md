@@ -1,227 +1,356 @@
-# CUSTOMER-INFORMATION1 — Dev migration handoff
+# CUSTOMER-INFORMATION1 — Dev migration and capacity handoff
 
-## Current UNAPPLIED amendment: bounded history memo
+## Subsequent Root verification
 
-The initial prepared revision documented below was never applied. At Root's
-explicit instruction the same atomic successor now includes the separately
-pinned history-validator correction, rather than creating a second baseline.
-The current package replaces **12 existing bodies: six customer validators, one
-history validator, five BG1 functions**. `definitions.sql` remains byte-identical
-and customer-data-owned. Historical installed Rolling/BG1 SQL stays immutable.
+The separate actual selected-tick/HRS gate subsequently passed with the same
+original request and facade: at627 STARTs/2069 operations, M04 completed before
+the original30s budget ended; after the real next-minute interval, publication
+completed in21404ms, with one producer invocation, no new START and one actual
+accepted visitor result. Pinned historical public HTML is the only physical
+source fixture. Commit `4504f3c8` (integrated as `b1ba49f3`) adds this mandatory
+Hosted-selected test. Root's final Cycle3 native gate passes31/31; independent
+active-pin/hygiene review passes588/588. Full final CI and actual Dev installation,
+current source import, automatic cycle, following BG1 and visitor proof remain
+pending. All installation packages remain UNAPPLIED. See the current
+[Root task record](OFFICIAL_TRUTH_CUSTOMER_COMPLETENESS_1_TASK_2026-11-15.md).
 
-Current exact artifacts:
+## Original package handoff decision and state
 
-| Artifact | SHA256 |
-| --- | --- |
-| `history-definition.sql` | `719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355` |
-| Original `assert_history_v1` body | `b23d018a05fd96cd779993ba0be510a9d9feafdf94b5b598883e724f097f9399` |
-| New `assert_history_v1` body | `2459f719ebf1945197a8adce0276200e0075888c5a7f84b0fa89aafce1aab0ec` |
-| Current `provider-migration-body.sql` | `acfd471692524a7e8d895df6c64daf0eee6f368486b97eeb70a320d22b2c76bf` |
-| Current `readback.sql` | `2438e011c5e7e07c85fc576df139187df800409785d17c0e3abb7adefe55d479` |
+**UNAPPLIED. Local M04 worker/S1 capacity is PASS; HRS publication and hosted
+system readiness remain OPEN.** No Dev/Production migration, merge, new cost,
+source publication or scheduler mutation was performed by this agent. The
+original installed predecessor artifacts remain byte-identical.
 
-Only two admission blocks after successful `job_v1` change. Once the memo fills,
-a newly validated, individually cacheable value resets the invocation-local map
-before insertion. It retains the existing 256-entry/1MiB bounds. Oversized
-values never enter or evict the memo. All historical row, command, canonical
-byte, transition, authority, attempt, disposition and quota checks remain. A new
-invocation starts with no cached result. Eviction can add revalidation; it cannot
-make an unvalidated value valid.
+The prepared package replaces **15 existing functions**, adds **two owner-only
+private helpers**, and captures **one immutable private baseline**. It combines
+six customer validators, two pure performance corrections, the closed atomic
+claim/mutation wire/API replacements and five BG1 successor functions. Existing
+schema, row, history, OID, owner and ACL invariants stay exact. Neither new
+private helper has a runtime-caller EXECUTE grant.
 
-The private immutable baseline adds an exact `history_definition_digest`; its
-guard and lost-ACK readback bind that digest and the twelfth body. All original
-owner/role/OID/ACL/data invariants remain. The only pre-existing test driver
-change is `scripts/db/official-truth-v3-rolling-jobs-quota-1/native.ts`: both real
-quota scenarios explicitly install this prepared successor after the unchanged
-Rolling predecessor. Every test, five-second API budget, 64/256 boundary and
-original confirmation remains. Root owns Production integration and final pins.
+The current mandatory M04 factory now executes actual claim, START, failure
+settlement, ordinary enqueue, regular producer/import/S1/prepare/complete and
+separately retained prepared resume within the original5s/30s limits. Its source
+and historical rule observations are explicitly local canonical BG1 fiction;
+every positive method, jobs and S1 effect is the actual API under original
+identities with COMMIT and complete drain. No SQL reply, receipt or timing result
+is doubled. This is not an HRS version-store/publication or hosted HTTP proof.
 
-### Observed cause and bounded proof
+The complete native run passed33/34 tests in224.836s; its sole failure was a new
+oracle's dynamic JSONB::text request, correctly rejected by the original wire
+validator. The grouped oracle fix uses the existing original canonical serializer
+under its existing local owner, restores and asserts the runtime caller before
+every API effect, and changes no installed definition or grant. Its isolated
+follow-up passed1/1 test in50.454s, with all40 actual API vectors (18 claim,
+22 mutation), exact three history scans and zero helper-caller grants.
 
-CI [4258](https://github.com/Jetnity/jetnity/actions/runs/43669434828)
-passed 24/24 quota tests. CI
-[4261](https://github.com/Jetnity/jetnity/actions/runs/43671592881), quota job
-`132682615671`, retained the same quota file but failed at the last CLAIM:
-`observedAt` 03:34:27.121 UTC to PostgreSQL's final-expired-budget error at
-03:34:32.668 UTC. The missing last CLAIM/START/failure then caused the two
-dependent 86/446-versus-87/448 counter assertions. These are not three unrelated
-failures. Different hosted runners showed a broad SQL speed difference:
+The final diagnostic additionally records `processed.results` and explicitly
+requires the M04-only boundary `version_only / unavailable`. These two added
+assertions await the exact Root/CI native rerun; the preceding timings did not
+record that field. The result follows from the actual null HRS ports, but the
+handoff does not label an unrecorded field as measured. HRS and the normal tick
+share the same original30s frame, so the remaining local1.384s after ordinary
+M04 success is not a publication capacity proof. The next HRS/tick or genuine
+original-request-resume gate must establish that separately.
 
-| Cycle86 SQL operation | CI4258 ms | CI4261 ms |
-| --- | ---: | ---: |
-| Enqueue | 1886.688 | 2807.717 |
-| Claim | 1890.146 | 2815.693 |
-| START | 1898.616 | 2824.146 |
-| Failure | 1904.854 | 2837.992 |
-| Original confirmation | 1899.095 | 2822.966 |
-| Sum of these five separate calls | 9479.399 | 14108.514 |
+## Exact work ownership and integration
 
-The old memo kept the first 256 values forever within an invocation. At head
-queued259 its precached head covered the 187 retained deduplicated enqueues.
-When CLAIM changed the head to leased260, queued259 no longer fit in that frozen
-memo and those old rows repeatedly called `job_v1`. Native PostgreSQL17 function
-statistics reproduced the precise discontinuity:
-
-| Complete pure `assert_history_v1` | Old job validations | New job validations | Old SQL ms | New SQL ms |
-| --- | ---: | ---: | ---: | ---: |
-| 64 STARTs / 192 operations / exhausted192 | 192 | 192 | 502.875 | 531.576 |
-| 86 STARTs / 446 operations / queued259 | 262 | 260 | 823.305 | 723.536 |
-| 86 STARTs / 447 operations / leased260 | 451 | 261 | 1002.752 | 886.994 |
-
-These are one complete validator call each, not API calls or five-call groups.
-Timings exclude process/SQL transport and statistics collection. They are local
-samples, not a hosted speed guarantee. Separately instrumented leased260 total
-time was 959.423→847.691 ms; canonical serialization remained the largest cost
-(8786→6886 calls, 612.808→488.924 ms self time).
-
-Actual verification for this amendment:
-
-- Exact 12-body real migration: **12/12 PASS**, 19.22 seconds; genuine new local
-  BG1 audit 565.24 ms. Original data/metadata, old-proof refusal, rollback,
-  readback, sender drain and all customer-shape cases remain covered.
-- Short full-history native differential: **6/6 PASS**, 29.50 seconds. Both old
-  and new complete validators reject a changed invalid job after saturation
-  with the actual `m04 invalid job` error. The extra negative row is inserted
-  before CLAIM with 255 window operations and no credit, so quota cannot mask
-  that check. Temporary diagnostic definitions and rows always roll back.
-- An identical second invocation performs all 261 validations again. The exact
-  admission block separately proves 256-entry reset, 1MiB byte reset, an
-  oversized miss preserving useful entries, and later misses after eviction.
-- The first diagnostic attempt timed out in new fixture transport: nested JSON
-  escaping made the old local SQL splitter scan a giant literal quadratically.
-  The fixture now uses the existing literal-per-column INSERT pattern. The
-  unchanged 180-second diagnostic budget passes; no transport helper or runtime
-  timeout was enlarged. The independent reviewer also caught and closed the
-  initial negative-fixture quota overlay before the passing run.
-- Both deterministic compiler checks and `git diff --check` PASS. Focused
-  ESLint PASS with no warnings; full `tsc --noEmit --incremental false` PASS.
-  Integrated exact-head gates remain Root-owned.
-
-**Capacity limit:** the complete lifetime scan is still linear in retained
-history. At 40-minute cadence, 36 ordinary cycles add at least 108 queue rows per
-day; 15 days add about 540 STARTs and 1620 queue operations, before retries. This
-small memo correction does not prove that growth fits the five-second API
-deadline. The complete new 87/448 API/quota gate still must pass in CI, and Root
-is reviewing a separate measured scaling decision. No unlimited continuous-run
-or 30-November capacity claim is made here. Dev and Production remain UNAPPLIED.
-
-## Earlier prepared revision (superseded before application)
-
-## Exact ownership and state
-
-- Agent: `/root/runtime_review`, generation 1; task/session identity is the parent
-  collaboration tree. External executor session ID is not exposed.
-- Declared model: GPT-6 Astra Pro; exact executor variant is unknown.
-- Observed `origin/main`: `63544e820e912bd275556588c956a09b99b1cf90`.
-- Worktree base: `209b6a1c13e92cab3218a89ebefa96bdc47041fe`.
+- Agent: `/root/runtime_review`; declared model GPT-6 Astra Pro, exact executor
+  variant not exposed. Parent retains GitHub, CI, Dev application and Production
+  compiler ownership. Data owns the six canonical definitions and supplies the
+  reviewed atomic SQL; UI independently reviews the runtime/gates.
+- Worktree: `/workspace/scratch/87fd7242ff2f/jetnity-customer-migration`.
 - Branch: `work/official-truth-customer-migration-20261115`.
-- Implementation head: `e21183f97191e3aa003db9c4883eebfc97e970e9`.
-- Write scope: new `scripts/db/official-truth-v3-customer-information-1/`, new
-  `lib/readiness/official-truth-customer-information-migration.test.ts`, this
-  new handoff. No pre-existing source, admin, UI or SQL installer was changed.
-- The six-definition `definitions.sql` belongs to the separate customer-data
-  commit and is deliberately excluded from this migration commit. Integrate
-  customer-data first, then this commit and the handoff-only follow-up.
-- Verdict: implementation/native proof PASS, **Dev migration UNAPPLIED**.
+- Original base: `209b6a1c13e92cab3218a89ebefa96bdc47041fe`.
+- Last previously delivered package commit: `62fd6a3d79b44e1ec34612f41deb93efe517c56e`.
+- Test underlay only: UI real-factory gate `b069e2fc` cherry-picked as `fb627d55`;
+  parent runtime `17297cee` cherry-picked as `8f1789e5`; `d9e63331` makes all eight
+  Cycle3 runtime files byte-identical to the parent, including replay drain and
+  frozen method binding. Do **not** cherry-pick these three underlay commits back
+  into Root. Root already owns the corresponding changes, including `6b8f5016`.
+- Additional exact test underlay: `f6afe58a` copies the complete productive TypeScript
+  closure from parent `6b8f5016`; `2681b8ad` binds all nine runtime files to
+  parent `7baa5155159b1adfab811a72befc5adca8e30ee1`; `77a09f42` aligns the existing
+  context-revision test assertion. Do not integrate these underlay commits again.
+- The new performance, atomic wrapper, tests and this handoff are the package
+  deliverable; only its final package commit is intended for Root integration. The independent data `definitions.sql`
+  and local dependency link must not be staged in this agent's package commit.
 
-## Implemented boundary
+The selected test file is
+`lib/readiness/official-truth-customer-information-migration.test.ts`. Root has
+already added it to the hosted PG17 main partition. No second selector edit is
+needed in this older worktree. Tests remain sequential; the quota suite retains
+its original 1,000,000 ms limit.
 
-The immutable Rolling-Quota successor pattern now admits exactly six additive
-customer-data function bodies and five necessary BG1 catalog/admission function
-bodies. One new forced-RLS, immutable private baseline binds the entire existing
-rolling row/catalog and the exact new definitions/catalogs. All previous
-baselines, actual function OIDs/options/ACLs, bootstrap grants and old private
-table contents remain exact.
-
-The trusted installer temporarily gains SET-only edges for the three existing
-intake/jobs/result owners, then revokes only those new postgres-grantor edges.
-No runtime grant, owner schema grant, business table definition or data row is
-added/changed. Existing full history/certificate/retirement validators run before
-and after the delta; no checks are replaced by a fresh snapshot alone.
-
-The package requires the existing sender disabled and drained, with no active
-cycle, unprocessed import or preview request, leased claim, open attempt or
-reachable runtime session. Historical blocked Cycle2/3 metadata is permitted and
-preserved. The migration never ticks, audits, sends HTTP, modifies a proof/due
-slot, changes a quota or activates the sender. It closes business admission
-until the next genuine complete BG1 generation after `proof_not_before`.
-
-## Exact artifacts
+## Current exact prepared artifacts
 
 | Artifact | SHA256 |
 | --- | --- |
-| Data-owned `definitions.sql` | `6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f` |
-| `provider-migration-body.sql` | `b30d931b35815934deeb7f315be8c8da4528f46f6f58d359fcdc93f3ec96a66d` |
-| `readback.sql` | `e130746c6a72101dcdbac18e3bdead952b780289a62f2e23fecda913e753f70f` |
-| Fictional `shape-fixtures.json` | `eb3ba8bf45a4afb74fec2a7c98d9fb5050b7f81ff27d1f6f094575053f71c4f9` |
+| Data `definitions.sql` | `6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f` |
+| `history-definition.sql` | `061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692` |
+| `assert_history_v1` body | `33515f642611e5a0788e30f5a8744b91a6c7f14d374a613e53d2051836a72b4c` |
+| `history-guard-definition.sql` | `f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b` |
+| `check_jobs_v1` body | `a5e9fca902cbc69cb1504467b743670c78a0f0f08e32dc512c8160d65fd2c7cc` |
+| `atomic-claim-definitions.sql` | `75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a` |
+| Atomic `wire_v1` body | `8f8e72bc6487cb7885440aa2163fdb6bb2d2f352a5986e3ae5860570ea85930a` |
+| Atomic `execute_v1` body | `7c7889672fbafc7d69bb32a655a93f419354fe0c49fc1b9b1f1d549b09545ad5` |
+| New `tx_queue_claim_v1` body | `12b60c32ccf4a69b43f2bf788b1ee583aab978be01ea5099714dcc98cd3aedad` |
+| New `tx_queue_mutate_v1` body | `a1d38701d18e99e9ceee8369385a6bd637436ef52ee8e11688d110d3f32a2721` |
+| `provider-migration-body.sql` | `cd886ead66b92ec48ee9c5c5a214f310bc6e6645e1fc15f88a78650fcb95b37f` |
+| `readback.sql` | `373054fa4bcd6964b6ceb3755013538c0e6d4db457d6b08b7570e3ab25a001f2` |
 
-`pins.json` additionally binds every predecessor file and every old/new business
-body. The compiler fails if any pin, argument, option, owner or exact replacement
-inventory changes. Its generated readback verifies the complete installed guard
-catalog plus all eleven function bodies; an ACK loss is reconciled by reading
-the baseline, never by blindly rerunning the installer.
+These hashes identify the current17-function grouped atomic candidate. The
+earlier claim-only measurements below belong to its immutable predecessor;
+new aggregate acceptance must identify the exact current hashes. Historical
+installed predecessors remain unchanged.
 
-## Evidence actually checked
+## Current actual M04 worker/S1 result
 
-Node 22.23.5 and the existing PostgreSQL 17 toolchain, owned local databases only:
+The full retained horizon remains626 STARTs/2066 operations with the exact old
+447-operation prefix. The current grouped candidate recorded:
 
-- Complete native pack: **12 tests PASS, 0 fail, 0 skipped**, 20.20 seconds.
-- Real unmodified HMA/S1/HMT/HRS/HM04/BG1/status/recovery/gap/rolling installers.
-- Four coherent synthetic historical failure cycles: 4 STARTs, 12 operations;
-  real sender schema with explicit local copies of blocked Cycle2/3 metadata.
-- Rollback on wrong target, predecessor catalog drift, an un-restored owner edge,
-  an extra runtime EXECUTE privilege, enabled sender, active cycle and open
-  import/preview dispatches. Each expected original refusal is asserted in
-  addition to any subsequent transaction-aborted messages.
-- Exact old table/role/membership digests and original eleven function metadata
-  identities; unchanged legacy context/subject identities.
-- Distinct customs items produce different context/job/subject identities and
-  identical results across jobs and result validators; invalid topic/items fail.
-- All 17 fictional prepared variants, covering all 13 detail forms, pass real S1
-  and HRS proposal/outcome/audit validation and match canonical context identity.
-  A vaccination proposal relabelled as a minor topic fails both validators.
-- Positive old-proof rehearsal rolls back wholly. The committed candidate stays
-  unavailable, lost-ACK readback is exact, duplicate install is refused, the new
-  baseline cannot be updated/deleted/truncated or read by application roles.
-- A subsequent genuine local full BG1 audit opens admission; measured 765.72 ms,
-  with unchanged quotas and complete historical totals. No clock/due-slot edit.
-- Focused ESLint: PASS, no warnings. Full `tsc --noEmit --incremental false`:
-  PASS. `git diff --cached --check`: PASS. Final compiler `--check`: PASS.
-- After the native pack, only trailing blank lines were removed; the provider
-  file/readback digest was regenerated. SQL statements/function bodies are
-  identical. The integrated exact-head CI remains the release gate.
+| Actual boundary | Milliseconds | Result |
+| --- | ---: | --- |
+| Cold fresh-backend authorized queue read | 3200.372 | present; separate probe confirms3 full scans |
+| Whole fresh queue claim, including3 genuine MA1 reads | 3076.294 | committed leased revision1880 |
+| Whole failure worker with real START and producer failure | 11749.570 | exhausted;627 STARTs/2068 operations, no open custody |
+| Ordinary fresh enqueue, complete queue budget | 3157.984 | confirmed |
+| Regular M04 worker through actual S1 and completed artifacts | 28616.098 | processed; succeeded;628 STARTs/2071 operations |
+| Its whole actual complete queue effect | 3381.489 | committed |
+| Second ordinary enqueue | 3288.549 | confirmed |
+| Separately retained prepared-resume M04 worker | 27764.057 | processed; succeeded;629 STARTs/2074 operations |
+| Its whole actual complete queue effect | 3363.604 | committed |
 
-The seventeen vectors were produced from the actual customer-data fixture helper
-in its worktree. The committed `generate-fixtures.mjs --check` must also run after
-that data slice is integrated, because this isolated predecessor worktree does
-not contain the new helper. These are fictional test cases, never source facts.
+Both success branches retain exact original proposal bytes/digest/prepared
+outcome, one START/result and a completed disposition. Original S1 consumption
+accepts the real bytes and rejects wrong byte counts and altered originals
+without any row/certificate change. Prefix, original roles/grants, actual
+catalog, certificates and complete local drain all remain verified. The regular
+branch invokes the producer/source/history ports once; prepared resume invokes
+none of them again and consumes the actual retained result.
 
-Read-only Dev inspection at 2026-11-15 03:12 UTC confirmed the exact old six bodies,
-the current Rolling-Quota guard functions and original three ADMIN-only edges.
-BG1 then had generation 261, proof 03:10 UTC and validity 03:15:30 UTC, with incidents
-resumed. This is historical inspection evidence, not a claim of current state.
-No remote database write or external comment was performed by this agent.
+The asynchronous local SQL bridge is explicitly serialized and its session is
+warm after setup. The separate cold-backend API test has a new fully drained
+backend. Neither is a network, TLS, hosted concurrency or publication claim.
+The local30s reserve is only1383.902ms for the regular M04 path. It includes the
+artifact-read/import replay work but has no bound HRS store; root-level HRS
+capacity remains open. No deadline or quota was increased to produce these
+results.
 
-## Existing publication limit and open gates
+## Historical claim-only candidate and resolved settlement P1
 
-The retained HRS `binding_valid_v1(jsonb)`/selected binding is still the reviewed
-CH→DE visa/`requirement_effect` path. This migration adds safe canonical shapes
-and identities; it does not grant publication for the new topics or other
-countries. Normal official method/qualification/binding work remains necessary.
-Unknown visitor fields must remain “derzeit nicht verfügbar”. The 206 researched
-destinations remain RESEARCH_ONLY.
+The mandatory `history-claim-native.ts` drives
+`createV3PostgresDurableJobs(...).workOnce` through genuine MA1 and M04 SQL, actual
+transport-login/role identities, actual COMMIT and complete asynchronous child
+cleanup. Its owned local PostgreSQL backend serializes calls. It is explicitly
+not a TCP/TLS, parallel-connection or cold-session latency claim.
 
-Not checked by this agent: integrated CI/build, hosted deployment, Dev apply,
-normal scheduled source run/BG1/publication/visitor proof, Production or merge.
-No new paid service or running cost was introduced.
+The fixture retains the original **86 STARTs / 447 operations**, including all
+187 deduplicated rows and their complete stored texts. It closes the already
+claimed cycle87 inside its original lease, pauses 24h+999 ms, appends cycles88
+through626 at 40-minute spacing and queues cycle627. The resulting head has
+**626 STARTs / 2066 operations / revision1879**. Actual stored prefix rows are
+hashed before and after continuation and all negative checks.
 
-## Next owner and STOP
+On the first complete factory run of the earlier16-function claim-only candidate:
 
-Root/TL integrates customer-data then this package, independently reviews and
-adds `lib/readiness/official-truth-customer-information-migration.test.ts` to
-`HOSTED_PG17_FILES` in the **main** partition. It runs the canonical fixture
-reproduction, complete exact-head CI/build, then follows the package README's
-normal Dev disable/drain/install/readback/fresh scheduled BG1/restore sequence.
-The separate Cycle3 review and real visitor/source evidence remain Root-owned.
+| Actual operation | Milliseconds | Observed result |
+| --- | ---: | --- |
+| Resume execution-read probe, outside queue claim | 1091.757 | absent |
+| Initial genuine MA1 acquisition | 2.472 | approved |
+| Genuine MA1 pre-effect reproof | 0.798 | approved |
+| Atomic authorized `queue_claim` | 3267.648 | committed, leased revision1880 |
+| Genuine final MA1 reproof | 1.340 | approved |
+| Complete queue claim, including coordination | **3279.509** | **PASS within original 5000 ms** |
+| Worker lookup probe | 1084.078 | absent |
+| Actual authorized START | 3050.413 | reserved; producer subsequently called once |
+| Terminal failure confirmation probe | 1120.493 | not_attempted |
+| Terminal queue-read probe | 924.229 | requires_authority |
+| Terminal authorized queue-read | 3289.338 | unavailable after original queue deadline |
+| Complete worker invocation | 13864.105 | worker_only / unconfirmed |
 
-**STOP:** this agent does not apply the Dev package, publish a branch, merge,
-touch Production or change another product/admin scope.
+The terminal fail CAS and final read never started. No terminal disposition or
+exhausted head is fabricated. That candidate correctly failed the required real exhaustion, START627,
+operations2068 and settled open-attempt assertions. The grouped17-function
+candidate above now passes those same assertions.
+The original prefix, roles, catalog, certificates and cleanup checks remain
+valid. The narrower cold-backend actual queue-read gate separately passed at
+**3149.284 ms**, with three real history scans. That cannot replace the full
+factory result.
+
+### Original terminal mechanism and minimal correction boundary
+
+`monitor/queue.ts` sends `fail`, `complete` and `enqueue` through the same
+`perform` coordinator in current-record confirmation mode. It creates one
+five-second invocation budget for the complete sequence. Its successful usual
+path has five M04 calls:
+
+1. Negative confirmation probe: one full history check.
+2. Queue-read probe: one full history check.
+3. Authorized queue read: three full checks, including BG1 seal.
+4. Authorized CAS: three full checks.
+5. Final authorized read using the same actual receipt: three full checks.
+
+This is **11 full history checks**, plus four genuine MA1 observations, inside
+one queue budget. The known-failure path already drains processing, binds the
+original START attempt/token in `owned_failure`, and begins the original terminal
+scope before calling fail. Increasing the outer worker window cannot extend the
+inner queue deadline. Returning success early or removing the readback would
+change the contract and is not an accepted correction.
+
+The adopted correction is a closed server-side operation for each remaining
+mutation, using the actual original confirm/read/transition/rolling-CAS/confirm/
+final-read functions in one transaction, with all three original outer history/
+BG1 checks and final MA1. It must preserve complete/fail continuation, original
+one-use token and disposition, S1 reference/consumption gates, lease/fence checks,
+replay distinctions and fail-closed post-write mismatch rollback. This is a
+reviewed extension of the current atomic claim, not a persistent or cross-RPC
+history proof. Root selected and implemented this grouped correction: `queue_mutate` for enqueue,
+complete and fail; Data owns SQL, UI owns queue/storage and Root owns contract/
+factory/scope/retained guards. The complete M04/S1 gate now passes; the separate
+HRS/publication gate remains mandatory.
+
+## Native verification status
+
+The current17-function migration passes all11 native subtests plus its parent
+and deterministic compiler test (13 checks); migration time20.882s. Both new
+private helpers have exact owner-only ACLs and both must be absent before
+installation. History10-subtest parity, cold capacity3-subtest gates and the
+four complete M04 factory subtests all passed in the main run. The sole oracle
+fixture serialization error and its40-vector passing correction are described
+above. These are targeted verified runs, not a claim that a failing aggregate
+was retried unchanged or that the final Root/hosted suite has already passed.
+
+TypeScript no-emit, ESLint for every package TypeScript/JavaScript file and
+the dispatcher, git whitespace checks, and all four deterministic compiler
+`--check` commands pass. The entire productive TypeScript closure is byte-equal
+to parent7baa5155; only the isolated package/test/handoff is delivered.
+
+### Earlier diagnosis and why the oracle cluster is separate
+
+The exact16-function migration passed **13/13 tests** in19.898 seconds. It checks
+old identities/data/history/ACLs, target/authority/drain refusal, temporary owner
+SET/schema-CREATE restoration, immutable baseline, lost ACK, no helper caller
+EXECUTE, duplicate-install refusal and opening only after a genuine fresh audit.
+The initial new-helper install failed because the delta checker omitted the
+allowed `function` to `pg_proc` mapping. That test-only installer defect was
+corrected; no catalog allowance beyond the one exact new helper was introduced.
+
+The next combined history/capacity/factory run completed **20 tests:15 PASS,
+5 FAIL**, including two failed parent aggregates, in107.632 seconds. Its three
+real failing assertions were:
+
+- Queued-head inline-validation count275, while the isolated diagnostic expected
+  259–261.
+- Leased-head inline-validation count276, while the isolated diagnostic expected
+  260–262.
+- The real worker settlement remained unconfirmed after the deadline described
+  above.
+
+The first two followed the18 newly inserted real API oracle cases on the same
+backend. Every case rolled back all logical data/certificate rows and verified
+the full hash, but PostgreSQL retained different physical tuple history after
+UPDATE/ROLLBACK. The unsorted scan then incurred extra conservative cache misses:
+old-validator counts remained262/451; new full checks became275/276. Additional
+full validation is safe; it is not missing history coverage. The atomic oracle
+now has its own owned cluster, keeping physical tuple effects separate from the
+existing fixed-fixture A/B diagnostic. The isolated follow-up passed12/12 tests in56.600 seconds: the original exact
+counts193/260/261 return, and all18 atomic cases plus actual3 assert_history/
+1 execute/1 check_jobs pass. No count threshold was loosened.
+
+The original18 real atomic SQL oracle cases passed in12.188 seconds: original
+complete envelope equality, exact replay without a new row, collisions, active
+and expired leases, exact expected predecessor, replay-only/continuation refusal,
+reclaim/superseded, exhaustion without START, open START refusal, terminal head,
+original rolling credit boundary, malformed/probe input, direct-helper denial,
+expired original deadline and post-CAS fault rollback. The now-expanded40-vector oracle separately counts one execute, three
+assert_history and one check_jobs after the fixture seal; instrumentation is not
+present in the measured626 factory call. Mutation coverage includes truly absent
+subject creation, unchanged-reason-free dedup identity, exact replay/current
+record, supersession after job replacement, genuine START/token settlement,
+foreign/missing custody, missing PREPARED, stale fence, exact helper ACLs and
+post-write rollback. The shared positive runtime preserves every original
+transition and S1/continuation gate.
+
+All actual parity gates in that run passed:
+
+| Oracle | Vectors / scope |
+| --- | --- |
+| Complete original job-validator body, warm subject memo | 33;15 valid,18 matching errors |
+| General canonical bytes/depth/error/byte bounds | 199;108 matching errors |
+| Direct fixed-form hits and depth/memo refusal | 8; actual research/discovery/lease hits |
+| Structured command/attempt canonical paths | 20;9 direct hits,11 misses,4 errors |
+| Original recursive node count/depth/total bounds | 124;15 negative counts |
+| All finite compiler-bound exact-key forms | 625 comparisons |
+| BG1 positive membership and full checker parity | 16 exact-block vectors plus4 full old/new checks |
+
+Default/C/POSIX collations are native-covered. ICU is absent from this local
+PG17 build and has no claimed native PASS. Fixed exact-key optimization is not
+an arbitrary-array/collation replacement. Complete source inversion and every
+allowed site were independently reviewed by Data and UI.
+
+## Why this performance successor exists
+
+[CI4258](https://github.com/Jetnity/jetnity/actions/runs/43669434828) passed24/24
+quota tests. [CI4261](https://github.com/Jetnity/jetnity/actions/runs/43671592881)
+failed the final CLAIM after5.547 seconds, then its two dependent counts. The old
+job-validation memo retained the first256 states forever and missed the187
+retained deduplicated queued states after the head changed to leased260. The
+new map resets conservatively at8 entries inside the unchanged256/1MiB maximum.
+CI4264 later reached the unchanged1,000,000 ms total quota-test ceiling; raising
+that ceiling is not part of this fix.
+
+For comparison, separate cycle86 calls in CI4258 took1886–1905 ms each and the
+same five-operation group summed9479 ms; CI4261 took2808–2838 ms per call and
+14109 ms per group. These are separate operation budgets, not one five-second
+five-operation group. Earlier626/1879 single-RPC passes omitted the retained187
+rows and were explicitly superseded by the2066 horizon. No faster retry was
+accepted as proof for an unchanged failing candidate.
+
+The full original job validator is compiler-inlined at its three existing sites;
+only successful exact kind+subject results reuse a one-entry1MiB local memo.
+Canonical bytes use actual-depth/full-text keys, up to two object levels and
+complete original fallback. Canonical8-slot16KiB, node8-slot16KiB and original
+recent2-slot32KiB memos share the unchanged64KiB aggregate. Fixed finite known
+forms and command/attempt forms only add positive byte-proven fast paths; all
+misses/unknown values reach the original checks. Every retained operation,
+transition, authority, attempt, disposition, lifecycle and bound remains checked.
+The BG1 membership correction caches one successful exact positive witness per
+subject, capped64KiB, after all original row checks; standalone BG1 stays full.
+
+The complete lifetime scan remains linear in retained history. The finite626/
+2066 gate models a single-subject40-minute cadence horizon, not unlimited life,
+all countries, retries or network latency. Full hosted CI, the long unchanged
+quota gate and actual Dev source/BG1/visitor evidence remain required.
+
+## Migration, authority and publication boundary
+
+The existing15 function OIDs, argument/options, owners and ACLs stay unchanged.
+Both new private helpers are jobs-owned, SECURITY INVOKER and owner-executable
+only. All runtime calls still enter the original closed API. Three temporary
+postgres-grantor SET-only owner edges restore exactly. The historical BG1
+`check_jobs_v1` owner is `ot_v3_jobs_owner`; one temporary CREATE privilege on the
+guard schema surrounds only its replacement and is revoked before catalog seal.
+Full old schema ACLs, membership row OIDs and catalog dependency graph are checked.
+
+The new forced-RLS immutable baseline has13 columns and10 CHECK constraints.
+It binds the whole old rolling row/catalog, the exact data/history/guard/atomic
+files, actual new catalogs and required fresh BG1 generation/time. Existing
+private/sender tables and full retained histories are hashed and preserved.
+Unknown catalog edges or additional grants abort the transaction.
+
+Only the parent applies the prepared transaction after exact-head gates:
+disable the normal sender, drain real work, independently select Dev
+`yfvbxvijcorffwxbxahl`, apply one exact transaction, use generated readback after
+ACK or ACK loss, observe the next genuine scheduled full BG1, complete the
+separate Cycle3 review and restore normal sender control. The body contains no
+manual audit, tick, HTTP request, proof timestamp, quota reset or activation.
+Historical blocked cycles2/3 remain unchanged. The generated readback must report
+all identity flags true; rerunning a committed migration is deliberately refused.
+
+The six canonical customer validators do not approve source facts or additional
+publication bindings. The existing reviewed CH→DE visa/requirement_effect path
+remains the active qualified binding; new typed information needs normal source
+qualification. Unknown visitor fields remain “derzeit nicht verfügbar”; all206
+researched destinations stay RESEARCH_ONLY. Production installation, merge,
+IPv4/cost decisions and actual external publication remain outside this package.

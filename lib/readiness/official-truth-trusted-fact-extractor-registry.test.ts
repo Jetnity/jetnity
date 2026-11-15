@@ -27,8 +27,8 @@ const DATEI = 'lib/readiness/official-truth-trusted-fact-extractor-registry.ts'
 const HRS_FIXTURE_PIN = {
   path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
   bytes: 256780,
-  blob: '0aa10b10611aefb370d1266e3fdfcbe333b9026c',
-  sha256: 'c84248f6daaf17104c8458f45a1f322a538fd82d13e45fd75b7548cf80d5bf2a',
+  blob: 'c01426e00d4a309c158a413f0a371e273774893c',
+  sha256: '8dcb2f2f6546ed2636d03e6dc7c9e94e2373b4b72cbfa3aecde083ddfe9a3fa5',
 } as const
 
 function isPinnedHrsFixture(path: string, bytes: Buffer): boolean {
@@ -40,6 +40,8 @@ function isPinnedHrsFixture(path: string, bytes: Buffer): boolean {
 const FIXTURE_IMPORTER = [DATEI, 'scripts/official-truth-integrated-pilot-1/engine.ts', 'scripts/official-truth-ch-de-application-pilot-1/fixtures.ts',
   'scripts/db/official-truth-accepted-store-trip-integration-1/fixtures.ts',
   'lib/readiness/official-truth-product-v3/integration/test-support/originals.ts',
+  // Exact fictional detail corpus; never part of the production extractor registry.
+  'lib/readiness/official-truth-product-v3/customer-information/test-support/fixture.ts',
   'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts',
   // The actual synthetic HRS proof uses only the fixture entry; no production registry selection.
   HRS_FIXTURE_PIN.path]
@@ -868,6 +870,14 @@ describe('deterministischer Vertrauensfakt-Extraktor', () => {
   })
 
   test('die endliche Fixture-Importer-Liste erlaubt weder Routen noch Namensähnlichkeit', () => {
+    const customerFixture = 'lib/readiness/official-truth-product-v3/customer-information/test-support/fixture.ts'
+    assert.equal(fixtureImporterErlaubt(customerFixture), true)
+    for (const path of ['./' + customerFixture, customerFixture + '.evil.ts',
+      customerFixture + '/../unreviewed.ts', 'app/' + customerFixture,
+      customerFixture.replace('fixture.ts', 'fixture-copy.ts'),
+      'lib/readiness/official-truth-product-v3/customer-information/source-onboarding.ts']) {
+      assert.equal(fixtureImporterErlaubt(path), false, path)
+    }
     assert.equal(fixtureImporterErlaubt(HRS_FIXTURE_PIN.path), true)
     const hrsBytes = readFileSync(HRS_FIXTURE_PIN.path)
     assert.equal(isPinnedHrsFixture(HRS_FIXTURE_PIN.path, hrsBytes), true)

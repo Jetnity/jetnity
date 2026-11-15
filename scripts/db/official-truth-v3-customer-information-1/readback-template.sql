@@ -17,6 +17,8 @@ SELECT jsonb_build_object('package','CUSTOMER-INFORMATION1','provider_digest','M
  'predecessor_verified',b.predecessor_provider_digest='ROLLING_PROVIDER_SHA256',
  'definitions_digest_verified',b.definitions_digest='DEFINITIONS_SHA256',
  'history_definition_digest_verified',b.history_definition_digest='HISTORY_DEFINITION_SHA256',
+ 'history_guard_definition_digest_verified',b.history_guard_definition_digest='HISTORY_GUARD_DEFINITION_SHA256',
+ 'atomic_claim_definition_digest_verified',b.atomic_claim_definition_digest='ATOMIC_CLAIM_DEFINITION_SHA256',
  'required_generation',b.required_generation,'proof_not_before',b.proof_not_before,
  'observed_generation',s.generation,'last_proof_started',s.last_proof_started,
  'admission',public.official_v3_guard_alarm_status_v1(),'bodies',d.bodies,

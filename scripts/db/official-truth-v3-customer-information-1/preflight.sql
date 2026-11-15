@@ -7,7 +7,9 @@ BEGIN
     OR current_setting('createrole_self_grant')<>''
     OR NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname='postgres' AND NOT rolsuper AND rolcreaterole AND rolbypassrls)
     OR to_regclass('official_v3_guard_private.rolling_quota_baseline_v1') IS NULL
-    OR to_regclass('official_v3_guard_private.customer_information_baseline_v1') IS NOT NULL THEN
+    OR to_regclass('official_v3_guard_private.customer_information_baseline_v1') IS NOT NULL
+    OR to_regprocedure('official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)') IS NOT NULL
+    OR to_regprocedure('official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)') IS NOT NULL THEN
     RAISE EXCEPTION 'customer exact unused Dev predecessor required' USING ERRCODE='P7921';
   END IF;
   -- Match the sender's first lock, then the existing package/guard lock order.

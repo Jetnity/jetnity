@@ -31,10 +31,63 @@ function subject(job: V3ManagedJobRecord) {
 
 export function createM04QueueStorage(options: Readonly<{
   fixed: M04FixedOperation; commandFor: (operationId: string, commandKey: string) => M04Command | null;
+  atomicFixed?: M04FixedOperation;
+  atomicMutationFixed?: M04FixedOperation;
   continuation: () => M04Continuation; disposition: (command: M04Command) => M04Disposition | null;
   onRecord: (job: V3ManagedJobRecord) => void; settled: () => void;
 }>): V3QueueStoragePort {
+  const atomicFixed = options.atomicFixed
+  const atomic: Pick<V3QueueStoragePort, 'claimAtomic'> = atomicFixed ? {
+    async claimAtomic(operationId, commandKey, authority, signal) {
+      const command = options.commandFor(operationId, commandKey)
+      if (!command || command.action !== 'claim' || !authority || !authority.receipt || signal.aborted)
+        return { status: 'unconfirmed' as const }
+      const disposition = options.disposition(command)
+      if (!disposition || disposition.kind !== 'regular') return { status: 'unavailable' as const }
+      const reply = await atomicFixed({ operation: 'queue_claim', body: { command: command.value,
+        continuation: options.continuation(), expected: null, replayOnly: false } }, signal, authority.receipt)
+      if (reply.status === 'collision' || reply.status === 'mismatch' || reply.status === 'not_due'
+        || reply.status === 'superseded') return { status: reply.status }
+      if (reply.status === 'blocked' || reply.status === 'quota' || reply.status === 'unavailable') return { status: 'unavailable' as const }
+      if (reply.status !== 'committed' || signal.aborted || typeof reply.replayed !== 'boolean'
+        || reply.commandText !== command.commandText || reply.commandKey !== commandKey || reply.operationId !== operationId
+        || jobKey(reply.record) !== command.jobKey || !same(authority.method, method(reply.record)))
+        return { status: 'unconfirmed' as const }
+      options.onRecord(reply.record)
+      return { status: 'committed' as const, operationId, commandKey, record: reply.record, replayed: reply.replayed }
+    },
+  } : {}
+  const atomicMutationFixed = options.atomicMutationFixed
+  const mutations: Pick<V3QueueStoragePort, 'mutateAtomic'> = atomicMutationFixed ? {
+    async mutateAtomic(operationId, commandKey, authority, signal) {
+      const command = options.commandFor(operationId, commandKey)
+      if (!command || command.action === 'claim' || command.operationId !== operationId || command.commandKey !== commandKey
+        || !authority || !authority.receipt || signal.aborted) return { status: 'unconfirmed' as const }
+      const disposition = options.disposition(command)
+      if (!disposition || (command.action === 'enqueue' && disposition.kind !== 'regular')
+        || (command.action === 'complete' && disposition.kind !== 'completed')
+        || (command.action === 'fail' && disposition.kind !== 'settled_failure')) return { status: 'unavailable' as const }
+      const reply = await atomicMutationFixed({ operation: 'queue_mutate', body: { command: command.value,
+        continuation: options.continuation(), disposition, expected: null } }, signal, authority.receipt,
+      command.action === 'complete' || command.action === 'fail')
+      if (reply.status === 'collision' || reply.status === 'mismatch' || reply.status === 'superseded') return { status: reply.status }
+      if (reply.status === 'blocked' || reply.status === 'quota' || reply.status === 'unavailable') return { status: 'unavailable' as const }
+      if (reply.status !== 'committed' || signal.aborted || typeof reply.replayed !== 'boolean' || !reply.currentRecord
+        || reply.commandText !== command.commandText || reply.commandKey !== commandKey || reply.operationId !== operationId
+        || jobKey(reply.record) !== command.jobKey || jobKey(reply.currentRecord) !== command.jobKey
+        || reply.currentRecord.jobId !== reply.record.jobId || !same(authority.method, method(reply.record))
+        || !same(authority.method, method(reply.currentRecord)) || (!reply.replayed && !same(reply.currentRecord, reply.record)))
+        return { status: 'unconfirmed' as const }
+      // The native codec has bound the complete original receipt and real final
+      // read. Only its terminal COMMIT ACK may retire private continuation.
+      if (command.action === 'complete' || command.action === 'fail') options.settled()
+      options.onRecord(reply.currentRecord)
+      return { status: 'committed' as const, operationId, commandKey, record: reply.currentRecord, replayed: reply.replayed }
+    },
+  } : {}
   return Object.freeze<V3QueueStoragePort>({
+    ...atomic,
+    ...mutations,
     async read(keyValue, signal, receipt) {
       const request = { operation: 'queue_read' as const, body: { jobKey: keyValue, continuation: options.continuation() } }
       const reply = receipt === undefined ? await options.fixed(request, signal) : await options.fixed(request, signal, receipt)

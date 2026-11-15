@@ -2,7 +2,7 @@ CREATE TEMP TABLE customer_objects(classid oid,objid oid,PRIMARY KEY(classid,obj
 DO $customer_delta$
 DECLARE approved jsonb:=/* APPROVED_FUNCTIONS */; expected record; actual pg_proc%ROWTYPE;
  before_catalog jsonb; after_catalog jsonb; entry record; relation_id oid;
- class_value oid; object_value oid; replacement_ids oid[]:='{}';
+ class_value oid; object_value oid; replacement_ids oid[]:='{}'; addition_ids oid[]:='{}';
  result_value jsonb; current_value jsonb; jobs_snapshot jsonb; hrs_snapshot jsonb;
 BEGIN
  IF COALESCE((SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_roles r),'[]'::jsonb)
@@ -15,21 +15,33 @@ BEGIN
  END IF;
  SELECT value INTO STRICT before_catalog FROM pg_temp.customer_before WHERE kind='catalog';
  FOR expected IN SELECT * FROM jsonb_to_recordset(approved)
-   AS f(signature text,name text,owner text,hash text,language text,definer boolean,volatile text,config jsonb) LOOP
+   AS f(signature text,name text,owner text,hash text,language text,definer boolean,volatile text,config jsonb,created boolean) LOOP
    SELECT * INTO STRICT actual FROM pg_proc WHERE oid=to_regprocedure(expected.signature);
    IF actual.proowner<>to_regrole(expected.owner) OR actual.prokind<>'f' OR actual.proleakproof OR actual.proisstrict
      OR actual.pronargdefaults<>0 OR actual.provariadic<>0 OR actual.proparallel<>'u'
      OR actual.prosecdef<>expected.definer OR actual.provolatile::text<>expected.volatile
      OR (SELECT lanname FROM pg_language WHERE oid=actual.prolang)<>expected.language
      OR to_jsonb(actual.proconfig) IS DISTINCT FROM expected.config
-     OR encode(sha256(convert_to(actual.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected.hash
-     OR NOT before_catalog ? ('function:'||actual.oid) THEN
+     OR encode(sha256(convert_to(actual.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected.hash THEN
      RAISE EXCEPTION 'customer exact existing function contract: %',expected.signature USING ERRCODE='P7921';
    END IF;
-   replacement_ids:=array_append(replacement_ids,actual.oid);
+   IF expected.created IS TRUE THEN
+     IF expected.signature NOT IN ('official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)',
+       'official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)')
+       OR before_catalog ? ('function:'||actual.oid) OR actual.proowner<>'ot_v3_jobs_owner'::regrole
+       OR actual.prorettype<>'jsonb'::regtype OR actual.proretset
+       OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(actual.proacl,acldefault('f',actual.proowner))) a
+         WHERE a.grantor<>actual.proowner OR a.grantee<>actual.proowner OR a.is_grantable) THEN
+       RAISE EXCEPTION 'customer exact private atomic helper required' USING ERRCODE='P7921';
+     END IF;
+     addition_ids:=array_append(addition_ids,actual.oid);
+   ELSIF expected.created IS FALSE AND before_catalog ? ('function:'||actual.oid) THEN
+     replacement_ids:=array_append(replacement_ids,actual.oid);
+   ELSE RAISE EXCEPTION 'customer original function identity required' USING ERRCODE='P7921';
+   END IF;
  END LOOP;
- IF cardinality(replacement_ids)<>12 THEN
-   RAISE EXCEPTION 'customer exactly twelve existing definitions required' USING ERRCODE='P7921';
+ IF cardinality(replacement_ids)<>15 OR cardinality(addition_ids)<>2 THEN
+   RAISE EXCEPTION 'customer exactly fifteen replacements and two private helpers required' USING ERRCODE='P7921';
  END IF;
  relation_id:='official_v3_guard_private.customer_information_baseline_v1'::regclass;
  IF NOT EXISTS(SELECT 1 FROM pg_class c WHERE c.oid=relation_id AND c.relkind='r'
@@ -38,7 +50,7 @@ BEGIN
      WHERE c.oid=relation_id AND (a.grantor<>c.relowner OR a.grantee<>c.relowner OR a.is_grantable))
    OR (SELECT jsonb_agg(jsonb_build_array(a.attname,a.atttypid::regtype::text,a.attnotnull,a.attisdropped) ORDER BY a.attnum)
      FROM pg_attribute a WHERE a.attrelid=relation_id AND a.attnum>0) IS DISTINCT FROM
-     '[["singleton","boolean",true,false],["predecessor_provider_digest","text",true,false],["predecessor_catalog_digest","text",true,false],["predecessor_rolling_digest","text",true,false],["definitions_digest","text",true,false],["history_definition_digest","text",true,false],["required_generation","bigint",true,false],["proof_not_before","timestamp with time zone",true,false],["jobs_catalog","jsonb",true,false],["hrs_catalog","jsonb",true,false],["catalog","jsonb",true,false]]'::jsonb
+     '[["singleton","boolean",true,false],["predecessor_provider_digest","text",true,false],["predecessor_catalog_digest","text",true,false],["predecessor_rolling_digest","text",true,false],["definitions_digest","text",true,false],["history_definition_digest","text",true,false],["history_guard_definition_digest","text",true,false],["atomic_claim_definition_digest","text",true,false],["required_generation","bigint",true,false],["proof_not_before","timestamp with time zone",true,false],["jobs_catalog","jsonb",true,false],["hrs_catalog","jsonb",true,false],["catalog","jsonb",true,false]]'::jsonb
    OR (SELECT count(*) FROM pg_policy p WHERE p.polrelid=relation_id)<>1
    OR EXISTS(SELECT 1 FROM pg_policy p WHERE p.polrelid=relation_id AND NOT(
      p.polpermissive AND pg_get_expr(p.polqual,p.polrelid)='true' AND p.polroles=ARRAY['postgres'::regrole::oid]
@@ -49,7 +61,7 @@ BEGIN
        OR NOT(t.tgname='immutable_v1' AND t.tgtype=27 OR t.tgname='immutable_truncate_v1' AND t.tgtype=34)))
    OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='p')<>1
    OR EXISTS(SELECT 1 FROM pg_constraint c WHERE c.conrelid=relation_id AND (c.contype NOT IN ('p','c') OR NOT c.convalidated OR c.condeferrable OR c.condeferred))
-   OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='c')<>8 THEN
+   OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='c')<>10 THEN
    RAISE EXCEPTION 'customer exact private immutable baseline required' USING ERRCODE='P7921';
  END IF;
  INSERT INTO pg_temp.customer_objects
@@ -63,6 +75,7 @@ BEGIN
    UNION SELECT 'pg_trigger'::regclass,t.oid FROM pg_trigger t WHERE t.tgrelid=relation_id
    UNION SELECT 'pg_policy'::regclass,p.oid FROM pg_policy p WHERE p.polrelid=relation_id
    UNION SELECT 'pg_attrdef'::regclass,a.oid FROM pg_attrdef a WHERE a.adrelid=relation_id;
+ INSERT INTO pg_temp.customer_objects SELECT 'pg_proc'::regclass,unnest(addition_ids);
  after_catalog:=official_v3_guard_private.catalog_status_v1();
  FOR entry IN SELECT key,value FROM jsonb_each(before_catalog) LOOP
    IF after_catalog->entry.key IS NOT DISTINCT FROM entry.value THEN CONTINUE; END IF;
@@ -72,6 +85,7 @@ BEGIN
  END LOOP;
  FOR entry IN SELECT key,value FROM jsonb_each(after_catalog) WHERE NOT before_catalog ? key LOOP
    class_value:=CASE split_part(entry.key,':',1)
+     WHEN 'function' THEN 'pg_proc'::regclass
      WHEN 'relation' THEN 'pg_class'::regclass WHEN 'attribute' THEN 'pg_class'::regclass WHEN 'index' THEN 'pg_class'::regclass
      WHEN 'type' THEN 'pg_type'::regclass WHEN 'constraint' THEN 'pg_constraint'::regclass
      WHEN 'trigger' THEN 'pg_trigger'::regclass WHEN 'policy' THEN 'pg_policy'::regclass WHEN 'default' THEN 'pg_attrdef'::regclass
@@ -87,7 +101,7 @@ BEGIN
  INSERT INTO official_v3_guard_private.customer_information_baseline_v1
  SELECT true,'ROLLING_PROVIDER_SHA256',encode(sha256(convert_to(before_catalog::text,'UTF8')),'hex'),
    encode(sha256(convert_to((to_jsonb(prior)||jsonb_build_object('proof_not_before',extract(epoch FROM prior.proof_not_before)))::text,'UTF8')),'hex'),
-   'DEFINITIONS_SHA256','HISTORY_DEFINITION_SHA256',s.generation+1,clock_timestamp(),jobs_snapshot,hrs_snapshot,after_catalog
+   'DEFINITIONS_SHA256','HISTORY_DEFINITION_SHA256','HISTORY_GUARD_DEFINITION_SHA256','ATOMIC_CLAIM_DEFINITION_SHA256',s.generation+1,clock_timestamp(),jobs_snapshot,hrs_snapshot,after_catalog
    FROM official_v3_guard_private.state_v1 s CROSS JOIN official_v3_guard_private.rolling_quota_baseline_v1 prior
    WHERE s.singleton AND prior.singleton;
 END $customer_delta$;

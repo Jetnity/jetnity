@@ -15,7 +15,9 @@ BEGIN
     OR current_setting('createrole_self_grant')<>''
     OR NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname='postgres' AND NOT rolsuper AND rolcreaterole AND rolbypassrls)
     OR to_regclass('official_v3_guard_private.rolling_quota_baseline_v1') IS NULL
-    OR to_regclass('official_v3_guard_private.customer_information_baseline_v1') IS NOT NULL THEN
+    OR to_regclass('official_v3_guard_private.customer_information_baseline_v1') IS NOT NULL
+    OR to_regprocedure('official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)') IS NOT NULL
+    OR to_regprocedure('official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)') IS NOT NULL THEN
     RAISE EXCEPTION 'customer exact unused Dev predecessor required' USING ERRCODE='P7921';
   END IF;
   -- Match the sender's first lock, then the existing package/guard lock order.
@@ -357,7 +359,9 @@ CREATE TABLE official_v3_guard_private.customer_information_baseline_v1 (
  predecessor_catalog_digest text NOT NULL CHECK(predecessor_catalog_digest ~ '^[a-f0-9]{64}$'),
  predecessor_rolling_digest text NOT NULL CHECK(predecessor_rolling_digest ~ '^[a-f0-9]{64}$'),
  definitions_digest text NOT NULL CHECK(definitions_digest='6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f'),
- history_definition_digest text NOT NULL CHECK(history_definition_digest='719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355'),
+ history_definition_digest text NOT NULL CHECK(history_definition_digest='061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692'),
+ history_guard_definition_digest text NOT NULL CHECK(history_guard_definition_digest='f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b'),
+ atomic_claim_definition_digest text NOT NULL CHECK(atomic_claim_definition_digest='75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a'),
  required_generation bigint NOT NULL CHECK(required_generation>0),
  proof_not_before timestamptz NOT NULL CHECK(isfinite(proof_not_before)),
  jobs_catalog jsonb NOT NULL,
@@ -374,6 +378,259 @@ CREATE TRIGGER immutable_truncate_v1 BEFORE TRUNCATE ON official_v3_guard_privat
 REVOKE ALL ON official_v3_guard_private.customer_information_baseline_v1
  FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user,ot_v3_jobs_owner,ot_v3_result_owner,ot_v3_intake_owner;
 
+
+SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE FUNCTION official_v3_jobs_private.tx_queue_claim_v1(q jsonb,b jsonb,e integer,remaining integer,deadline timestamptz) RETURNS jsonb
+LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $customer_body$
+DECLARE input jsonb:=q->'body'; c jsonb:=official_v3_jobs_private.command_v1(input->'command');
+  i jsonb:=c#>'{value,input}'; continuation jsonb:=input->'continuation';
+  confirmation jsonb; readback jsonb; written jsonb; receipt jsonb; envelope jsonb;
+  confirm_request jsonb; read_request jsonb; commit_value jsonb; cas_request jsonb;
+  expected jsonb; n jsonb; rev integer; kind text COLLATE "default"; observed text COLLATE "default";
+  at_time timestamptz; subject_text text; replayed boolean:=false;
+BEGIN
+  IF q->>'operation' IS DISTINCT FROM 'queue_claim' OR q->>'phase' IS DISTINCT FROM 'authorized'
+    OR official_v3_jobs_private.exact_keys_v1(input,ARRAY['command','continuation','expected','replayOnly']) IS NOT TRUE
+    OR c->>'action' IS DISTINCT FROM 'claim' OR jsonb_typeof(input->'replayOnly') IS DISTINCT FROM 'boolean' THEN
+    RAISE EXCEPTION 'm04 invalid atomic claim' USING ERRCODE='P7601'; END IF;
+  IF input->'expected'<>'null'::jsonb THEN PERFORM official_v3_jobs_private.job_v1(input->'expected'); END IF;
+  confirm_request:=jsonb_build_object('operation','queue_confirm','phase','authorized',
+    'body',jsonb_build_object('command',c->'value','continuation',continuation));
+  read_request:=jsonb_build_object('operation','queue_read','phase','authorized',
+    'body',jsonb_build_object('jobKey',c->'jobKey','continuation',continuation));
+  confirmation:=official_v3_jobs_private.tx_queue_confirm_v1(confirm_request,b,e,remaining,deadline);
+  IF confirmation#>>'{reply,status}'='collision' THEN RETURN confirmation; END IF;
+  IF confirmation#>>'{reply,status}'='committed' THEN
+    -- This receipt is historical. It never authorizes a new effect or a later
+    -- generation that happens to reuse the same caller-supplied lease ID.
+    replayed:=true; receipt:=confirmation->'reply';
+    readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+    IF readback#>>'{reply,status}' IS DISTINCT FROM 'present'
+      OR readback#>'{reply,record}' IS DISTINCT FROM receipt->'record' THEN
+      RETURN jsonb_build_object('reply',jsonb_build_object('status','superseded'),'authority',false); END IF;
+    n:=receipt->'record'; envelope:=(receipt->>'envelopeText')::jsonb;
+    IF n->>'state'='leased' AND clock_timestamp()>=official_v3_jobs_private.timestamp_v1(n#>>'{lease,expiresAt}') THEN
+      RETURN jsonb_build_object('reply',jsonb_build_object('status','superseded'),'authority',false); END IF;
+    RETURN jsonb_build_object('reply',receipt||jsonb_build_object('replayed',replayed),'authority',true,
+      'lease',CASE WHEN n->>'state'='leased' THEN n#>>'{lease,expiresAt}' END,
+      'observedAt',envelope#>>'{audit,observedAt}',
+      'dueAt',CASE envelope#>>'{expected,state}' WHEN 'backoff' THEN envelope#>>'{expected,nextAttemptAt}'
+        WHEN 'leased' THEN envelope#>>'{expected,lease,expiresAt}' END);
+  END IF;
+  IF confirmation#>>'{reply,status}' IS DISTINCT FROM 'not_attempted' THEN
+    RAISE EXCEPTION 'm04 atomic claim confirmation invariant' USING ERRCODE='P7603'; END IF;
+  IF (input->>'replayOnly')::boolean OR continuation<>'null'::jsonb THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','blocked'),'authority',false); END IF;
+  readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+  IF readback#>>'{reply,status}'='absent' THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','not_due'),'authority',false); END IF;
+  IF readback#>>'{reply,status}' IS DISTINCT FROM 'present' THEN
+    RAISE EXCEPTION 'm04 atomic claim read invariant' USING ERRCODE='P7603'; END IF;
+  expected:=readback#>'{reply,record}';
+  IF input->'expected'<>'null'::jsonb AND input->'expected' IS DISTINCT FROM expected THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','mismatch'),'authority',false); END IF;
+  -- Observe the real database clock after all original locks and pre-history.
+  -- The outer API deadline was fixed before them and is never renewed here.
+  observed:=to_char(date_trunc('milliseconds',clock_timestamp()) AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
+  at_time:=official_v3_jobs_private.timestamp_v1(observed);
+  IF (expected->>'state' IN ('queued','leased','backoff')) IS NOT TRUE
+    OR (expected->>'state'='backoff' AND expected->>'nextAttemptAt'>observed)
+    OR (expected->>'state'='leased' AND expected#>>'{lease,expiresAt}'>observed) THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','not_due'),'authority',false); END IF;
+  rev:=COALESCE((expected->>'revision')::integer,0)+1;
+  -- BEGIN exact original transition_v1 claim branch.
+    IF expected IS NULL OR expected->>'state' NOT IN ('queued','leased','backoff')
+      OR (expected->>'state'='backoff' AND expected->>'nextAttemptAt'>observed)
+      OR (expected->>'state'='leased' AND expected#>>'{lease,expiresAt}'>observed) THEN RAISE EXCEPTION 'm04 not due' USING ERRCODE='P7601'; END IF;
+    n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'nextAttemptAt',NULL);
+    IF (expected->>'attempt')::integer>=(expected->>'attemptLimit')::integer THEN
+      n:=n||jsonb_build_object('state','exhausted','lease',NULL,'lastFailure',COALESCE(NULLIF(expected->'lastFailure','null'::jsonb),'"verification_unavailable"'::jsonb)); kind:='exhausted';
+    ELSE
+      n:=n||jsonb_build_object('state','leased','attempt',(expected->>'attempt')::integer+1,'lease',jsonb_build_object('leaseId',i->'leaseId','generation',rev,
+        'acquiredAt',observed,'expiresAt',to_char((at_time+(i->>'leaseMilliseconds')::integer*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')));
+      kind:=CASE WHEN expected->>'state'='leased' THEN 'reclaimed' ELSE 'leased' END;
+    END IF;
+  -- END exact original transition_v1 claim branch.
+  n:=official_v3_jobs_private.job_v1(n);
+  commit_value:=jsonb_build_object('operationId',i->'operationId','commandKey',c->'commandKey',
+    'jobKey',c->'jobKey','expected',expected,'next',n,
+    'notAfter',to_char((at_time+interval '5 seconds') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+    'audit',jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),
+      'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision'));
+  PERFORM official_v3_jobs_private.transition_v1(c->'value',expected,commit_value);
+  SELECT s.subject_text INTO STRICT subject_text FROM official_v3_jobs_private.subjects_v1 s WHERE s.job_key=c->>'jobKey';
+  cas_request:=jsonb_build_object('operation','queue_cas','phase','authorized',
+    'body',jsonb_build_object('command',c->'value','commit',commit_value,'subjectText',subject_text,
+      'disposition',jsonb_build_object('kind','regular')));
+  written:=official_v3_jobs_private.tx_queue_cas_v1(cas_request,b,e,remaining,deadline);
+  IF written->'authority' IS DISTINCT FROM 'true'::jsonb THEN
+    IF (written#>>'{reply,status}' IN ('blocked','collision','quota','mismatch')) IS NOT TRUE THEN
+      RAISE EXCEPTION 'm04 atomic claim CAS invariant' USING ERRCODE='P7603'; END IF;
+    RETURN written;
+  END IF;
+  -- A failure after the original CAS must roll the whole transaction back.
+  -- Never return an authority=false early exit after possible jobs DML.
+  confirmation:=official_v3_jobs_private.tx_queue_confirm_v1(confirm_request,b,e,remaining,deadline);
+  readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+  receipt:=confirmation->'reply';
+  IF confirmation#>>'{reply,status}' IS DISTINCT FROM 'committed'
+    OR receipt->'record' IS DISTINCT FROM n OR written#>'{reply,record}' IS DISTINCT FROM n
+    OR readback#>>'{reply,status}' IS DISTINCT FROM 'present' OR readback#>'{reply,record}' IS DISTINCT FROM n
+    OR receipt->>'operationId' IS DISTINCT FROM c->>'operationId'
+    OR receipt->>'commandKey' IS DISTINCT FROM c->>'commandKey'
+    OR receipt->>'commandText' IS DISTINCT FROM c->>'commandText'
+    OR receipt->>'envelopeText' IS DISTINCT FROM official_v3_jobs_private.canonical_v1(commit_value,0) THEN
+    RAISE EXCEPTION 'm04 atomic claim final readback invariant' USING ERRCODE='P7603'; END IF;
+  RETURN written||jsonb_build_object('reply',receipt||jsonb_build_object('replayed',false),
+    'lease',CASE WHEN n->>'state'='leased' THEN n#>>'{lease,expiresAt}' END,
+    'observedAt',observed,
+    'dueAt',CASE expected->>'state' WHEN 'backoff' THEN expected->>'nextAttemptAt'
+      WHEN 'leased' THEN expected#>>'{lease,expiresAt}' END);
+END $customer_body$;
+REVOKE ALL ON FUNCTION official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz) FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user,ot_v3_jobs_caller;
+RESET ROLE;
+
+SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE FUNCTION official_v3_jobs_private.tx_queue_mutate_v1(q jsonb,b jsonb,e integer,remaining integer,deadline timestamptz) RETURNS jsonb
+LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $customer_body$
+DECLARE input jsonb:=q->'body'; c jsonb:=official_v3_jobs_private.command_v1(input->'command');
+  command jsonb:=c->'value'; i jsonb:=command->'input'; action text:=c->>'action';
+  f jsonb:=i->'fence'; continuation jsonb:=input->'continuation';
+  confirmation jsonb; readback jsonb; written jsonb; receipt jsonb;
+  confirm_request jsonb; read_request jsonb; commit_value jsonb; cas_request jsonb;
+  expected jsonb; n jsonb; identity jsonb; rev integer; delay_ms integer; result_key text;
+  kind text COLLATE "default"; observed text COLLATE "default"; subject_text text;
+  at_time timestamptz; end_time timestamptz;
+BEGIN
+  IF q->>'operation' IS DISTINCT FROM 'queue_mutate' OR q->>'phase' IS DISTINCT FROM 'authorized'
+    OR official_v3_jobs_private.exact_keys_v1(input,ARRAY['command','continuation','disposition','expected']) IS NOT TRUE
+    OR (action IN ('enqueue','complete','fail')) IS NOT TRUE THEN
+    RAISE EXCEPTION 'm04 invalid atomic mutation' USING ERRCODE='P7601'; END IF;
+  IF input->'expected'<>'null'::jsonb THEN PERFORM official_v3_jobs_private.job_v1(input->'expected'); END IF;
+      IF official_v3_jobs_private.exact_keys_v1(input->'disposition',CASE input#>>'{disposition,kind}' WHEN 'regular' THEN ARRAY['kind'] WHEN 'completed' THEN ARRAY['kind','attemptKey'] WHEN 'settled_failure' THEN ARRAY['kind','attemptKey','token'] ELSE ARRAY[]::text[] END) IS NOT TRUE
+        OR (input#>>'{disposition,kind}' IN ('regular','completed','settled_failure')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid disposition' USING ERRCODE='P7601'; END IF;
+      IF input#>>'{disposition,kind}'<>'regular' AND (input#>>'{disposition,attemptKey}' ~ '^execution-attempt:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid attempt' USING ERRCODE='P7601'; END IF;
+      IF input#>>'{disposition,kind}'='settled_failure' AND (input#>>'{disposition,token}' ~ '^[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid token' USING ERRCODE='P7601'; END IF;
+  confirm_request:=jsonb_build_object('operation','queue_confirm','phase','authorized',
+    'body',jsonb_build_object('command',command,'continuation',continuation));
+  read_request:=jsonb_build_object('operation','queue_read','phase','authorized',
+    'body',jsonb_build_object('jobKey',c->'jobKey','continuation',continuation));
+  confirmation:=official_v3_jobs_private.tx_queue_confirm_v1(confirm_request,b,e,remaining,deadline);
+  IF confirmation#>>'{reply,status}'='collision' THEN RETURN confirmation; END IF;
+  IF confirmation#>>'{reply,status}'='committed' THEN
+    -- Preserve the original immutable receipt and separately read its actual
+    -- current generation. This is the original confirmed(mode=current) rule.
+    receipt:=confirmation->'reply';
+    readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+    IF readback#>>'{reply,status}' IS DISTINCT FROM 'present'
+      OR readback#>'{reply,record,jobId}' IS DISTINCT FROM receipt#>'{record,jobId}' THEN
+      RETURN jsonb_build_object('reply',jsonb_build_object('status','superseded'),'authority',false); END IF;
+    n:=readback#>'{reply,record}';
+    RETURN confirmation||jsonb_build_object('reply',receipt||jsonb_build_object('replayed',true,'currentRecord',n),
+      'observedAt',n->>'updatedAt');
+  END IF;
+  IF confirmation#>>'{reply,status}' IS DISTINCT FROM 'not_attempted' THEN
+    RAISE EXCEPTION 'm04 atomic mutation confirmation invariant' USING ERRCODE='P7603'; END IF;
+  readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+  IF readback#>>'{reply,status}'='present' THEN expected:=readback#>'{reply,record}';
+  ELSIF readback#>>'{reply,status}' IS DISTINCT FROM 'absent' THEN
+    RAISE EXCEPTION 'm04 atomic mutation read invariant' USING ERRCODE='P7603'; END IF;
+  IF input->'expected'<>'null'::jsonb AND input->'expected' IS DISTINCT FROM expected THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','mismatch'),'authority',false); END IF;
+  observed:=to_char(date_trunc('milliseconds',clock_timestamp()) AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
+  at_time:=official_v3_jobs_private.timestamp_v1(observed); end_time:=at_time+interval '5 seconds';
+  IF action='enqueue' AND expected->>'state' NOT IN ('queued','leased','backoff')
+    AND expected->'jobId'=i->'jobId' THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','collision'),'authority',false); END IF;
+  IF action IN ('complete','fail') AND (expected IS NULL OR expected->>'state'<>'leased'
+    OR f IS DISTINCT FROM jsonb_build_object('jobId',expected->'jobId','revision',expected->'revision',
+      'leaseId',expected#>'{lease,leaseId}','generation',expected#>'{lease,generation}')
+    OR expected#>>'{lease,expiresAt}'<=observed) THEN
+    RETURN jsonb_build_object('reply',jsonb_build_object('status','superseded'),'authority',false); END IF;
+  -- BEGIN exact original transition_v1 lifecycle constructor. The validated
+  -- operation above excludes claim; every enqueue/complete/fail byte is kept.
+  rev:=COALESCE((expected->>'revision')::integer,0)+1;
+  IF action='enqueue' THEN
+    IF expected->>'state' IN ('queued','leased','backoff') THEN n:=expected; kind:='deduplicated';
+    ELSE
+      IF expected->'jobId'=i->'jobId' THEN RAISE EXCEPTION 'm04 repeated cycle' USING ERRCODE='P7601'; END IF;
+      n:=jsonb_build_object('schema',3,'jobId',i->'jobId','operationId',i->'operationId','revision',rev,'predecessorRevision',expected->'revision',
+        'state','queued','createdAt',observed,'updatedAt',observed,'attempt',0,'attemptLimit',i->'attemptLimit','lease',NULL,'nextAttemptAt',NULL,'lastFailure',NULL);
+      identity:=official_v3_jobs_private.subject_v1(command->>'kind',i-'operationId'-'jobId'-'attemptLimit');
+      IF command->>'kind'='rule_research' THEN n:=n||jsonb_build_object('kind','research_job_record','jobKey',identity->'jobKey',
+        'context',i->'context','contextKey',identity->'contextKey','research',identity->'research','method',i->'method','resultDecisionRef',NULL);
+      ELSE n:=n||jsonb_build_object('kind','combination_discovery_job_record','identity',(i-'operationId'-'jobId'-'attemptLimit')||jsonb_build_object('kind','combination_discovery','jobKey',identity->'jobKey'),'resultDiscoveryRef',NULL); END IF;
+      kind:='enqueued';
+    END IF;
+  ELSIF action='claim' THEN
+    IF expected IS NULL OR expected->>'state' NOT IN ('queued','leased','backoff')
+      OR (expected->>'state'='backoff' AND expected->>'nextAttemptAt'>observed)
+      OR (expected->>'state'='leased' AND expected#>>'{lease,expiresAt}'>observed) THEN RAISE EXCEPTION 'm04 not due' USING ERRCODE='P7601'; END IF;
+    n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'nextAttemptAt',NULL);
+    IF (expected->>'attempt')::integer>=(expected->>'attemptLimit')::integer THEN
+      n:=n||jsonb_build_object('state','exhausted','lease',NULL,'lastFailure',COALESCE(NULLIF(expected->'lastFailure','null'::jsonb),'"verification_unavailable"'::jsonb)); kind:='exhausted';
+    ELSE
+      n:=n||jsonb_build_object('state','leased','attempt',(expected->>'attempt')::integer+1,'lease',jsonb_build_object('leaseId',i->'leaseId','generation',rev,
+        'acquiredAt',observed,'expiresAt',to_char((at_time+(i->>'leaseMilliseconds')::integer*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')));
+      kind:=CASE WHEN expected->>'state'='leased' THEN 'reclaimed' ELSE 'leased' END;
+    END IF;
+  ELSE
+    IF expected IS NULL OR expected->>'state'<>'leased' OR f IS DISTINCT FROM jsonb_build_object('jobId',expected->'jobId','revision',expected->'revision',
+      'leaseId',expected#>'{lease,leaseId}','generation',expected#>'{lease,generation}') OR expected#>>'{lease,expiresAt}'<=observed THEN RAISE EXCEPTION 'm04 obsolete fence' USING ERRCODE='P7601'; END IF;
+    end_time:=least(end_time,official_v3_jobs_private.timestamp_v1(expected#>>'{lease,expiresAt}'));
+    n:=expected||jsonb_build_object('revision',rev,'predecessorRevision',expected->'revision','updatedAt',observed,'lease',NULL);
+    IF action='complete' THEN
+      result_key:=CASE WHEN expected->>'kind'='research_job_record' THEN 'resultDecisionRef' ELSE 'resultDiscoveryRef' END;
+      n:=n||jsonb_build_object('state','succeeded','lastFailure',NULL,result_key,COALESCE(i->'decisionRef',i->'discoveryRef')); kind:='completed';
+    ELSE
+      IF (expected->>'attempt')::integer=(expected->>'attemptLimit')::integer THEN n:=n||jsonb_build_object('state','exhausted','nextAttemptAt',NULL); kind:='exhausted';
+      ELSE
+        delay_ms:=least(60000,1000*(2^((expected->>'attempt')::integer-1))::integer);
+        n:=n||jsonb_build_object('state','backoff','nextAttemptAt',to_char((at_time+delay_ms*interval '1 millisecond') AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')); kind:='backoff';
+      END IF;
+      n:=n||jsonb_build_object('lastFailure',i->'reason');
+    END IF;
+  END IF;
+  IF kind IS DISTINCT FROM 'deduplicated' THEN n:=official_v3_jobs_private.job_v1(n); END IF;
+  -- END exact original transition_v1 lifecycle constructor.
+  commit_value:=jsonb_build_object('operationId',i->'operationId','commandKey',c->'commandKey',
+    'jobKey',c->'jobKey','expected',expected,'next',n,
+    'notAfter',to_char(end_time AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+    'audit',jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),
+      'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision'));
+  PERFORM official_v3_jobs_private.transition_v1(command,COALESCE(expected,'null'::jsonb),commit_value);
+  IF action='enqueue' THEN
+    subject_text:=c->>'subjectText';
+  ELSE
+    SELECT s.subject_text INTO STRICT subject_text FROM official_v3_jobs_private.subjects_v1 s WHERE s.job_key=c->>'jobKey';
+  END IF;
+  cas_request:=jsonb_build_object('operation','queue_cas','phase','authorized',
+    'body',jsonb_build_object('command',command,'commit',commit_value,'subjectText',subject_text,
+      'disposition',input->'disposition'));
+  written:=official_v3_jobs_private.tx_queue_cas_v1(cas_request,b,e,remaining,deadline);
+  IF written->'authority' IS DISTINCT FROM 'true'::jsonb THEN
+    IF (written#>>'{reply,status}' IN ('blocked','collision','quota','mismatch')) IS NOT TRUE THEN
+      RAISE EXCEPTION 'm04 atomic mutation CAS invariant' USING ERRCODE='P7603'; END IF;
+    RETURN written;
+  END IF;
+  -- Any unexpected read after possible DML aborts the entire transaction.
+  confirmation:=official_v3_jobs_private.tx_queue_confirm_v1(confirm_request,b,e,remaining,deadline);
+  readback:=official_v3_jobs_private.tx_queue_read_v1(read_request,b,e,remaining,deadline);
+  receipt:=confirmation->'reply';
+  IF confirmation#>>'{reply,status}' IS DISTINCT FROM 'committed'
+    OR receipt->'record' IS DISTINCT FROM n OR written#>'{reply,record}' IS DISTINCT FROM n
+    OR readback#>>'{reply,status}' IS DISTINCT FROM 'present' OR readback#>'{reply,record}' IS DISTINCT FROM n
+    OR receipt->>'operationId' IS DISTINCT FROM c->>'operationId'
+    OR receipt->>'commandKey' IS DISTINCT FROM c->>'commandKey'
+    OR receipt->>'commandText' IS DISTINCT FROM c->>'commandText'
+    OR receipt->>'envelopeText' IS DISTINCT FROM official_v3_jobs_private.canonical_v1(commit_value,0) THEN
+    RAISE EXCEPTION 'm04 atomic mutation final readback invariant' USING ERRCODE='P7603'; END IF;
+  -- Retain the original CAS lease, actual PREPARED/S1 references and clock
+  -- fields. The API consumes them under its unchanged outer deadline.
+  RETURN written||jsonb_build_object('reply',receipt||jsonb_build_object('replayed',false,'currentRecord',n));
+END $customer_body$;
+REVOKE ALL ON FUNCTION official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz) FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user,ot_v3_jobs_caller;
+RESET ROLE;
 
 SET LOCAL ROLE ot_v3_intake_owner;
 CREATE OR REPLACE FUNCTION official_v3_intake_private.proposal_shape_v1() RETURNS jsonb
@@ -640,6 +897,9 @@ DECLARE s official_v3_jobs_private.subjects_v1%ROWTYPE; x record; c jsonb; e jso
   canonical_memo_key_one text COLLATE "C"; canonical_memo_key_two text COLLATE "C";
   canonical_memo_value_one text; canonical_memo_value_two text;
   canonical_memo_bytes_one integer:=0; canonical_memo_bytes_two integer:=0;
+  subtree_memo jsonb:='{}'; subtree_memo_count integer:=0; subtree_memo_bytes integer:=0;
+  attempt_canonical text COLLATE "default";
+  nodes_memo jsonb:='{}'; nodes_memo_count integer:=0; nodes_memo_bytes integer:=0; audit_canonical text COLLATE "default"; claim_canonical text COLLATE "default";
 BEGIN
   SELECT * INTO s FROM official_v3_jobs_private.subjects_v1 WHERE job_key=k;
   IF NOT FOUND THEN RETURN; END IF;
@@ -650,7 +910,528 @@ BEGIN
   IF ops<>s.operation_count OR starts<>s.start_count
     OR (quota->>'operations')::integer+(quota->>'credit')::integer>256 OR (quota->>'starts')::integer>64 OR cardinality(unresolved)>1
     OR s.open_attempt IS DISTINCT FROM unresolved[1] THEN RAISE EXCEPTION 'm04 history invariant' USING ERRCODE='P7603'; END IF;
-  PERFORM official_v3_jobs_private.job_v1(s.current_job);
+  DECLARE v jsonb:=s.current_job;
+  job_subject_input jsonb; job_subject_text text COLLATE "C"; job_subject_bytes integer;
+  job_canonical_text text COLLATE "default";
+  job_nodes integer;
+  common text[] COLLATE "default":=ARRAY['schema','kind','jobId','operationId','revision','predecessorRevision','state','createdAt','updatedAt','attempt','attemptLimit','lease','nextAttemptAt','lastFailure'];
+  i jsonb; result_ref jsonb; l jsonb:=v->'lease'; state text COLLATE "default":=v->>'state'; created timestamptz; updated timestamptz;
+  attempt integer; lim integer; revision integer;
+BEGIN
+DECLARE hn_value jsonb:=v; hn_count integer:=1; hn_child record;
+  hn_child_count bigint; hn_child_nodes integer; hn_key text COLLATE "C"; hn_bytes bigint;
+BEGIN
+  IF hn_value IS NULL THEN hn_count:=-1;
+  ELSIF jsonb_typeof(hn_value)<>'object' THEN
+    hn_count:=official_v3_jobs_private.nodes_v1(hn_value,0,16,8192);
+  ELSE
+    SELECT count(*) INTO hn_child_count FROM jsonb_object_keys(hn_value);
+    IF hn_child_count>(8192-1)/2 THEN hn_count:=-1;
+    ELSE
+      hn_count:=1+2*hn_child_count;
+      FOR hn_child IN SELECT j.key,j.value FROM jsonb_each(hn_value) j
+        WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+        IF hn_child.key IN ('context','research','method','identity') THEN
+          -- The full key also binds every original recursive parameter.
+          hn_key:='1:16:8192:'||hn_child.value::text;
+          IF nodes_memo ? hn_key THEN hn_child_nodes:=(nodes_memo->>hn_key)::integer;
+          ELSE
+            hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+            hn_bytes:=octet_length(hn_key)::bigint+octet_length(hn_child_nodes::text)::bigint;
+            IF hn_child_nodes>0 AND hn_bytes<=16384 THEN
+              IF nodes_memo_count>=8 OR hn_bytes>16384-nodes_memo_bytes THEN
+                nodes_memo:='{}'; nodes_memo_count:=0; nodes_memo_bytes:=0;
+              END IF;
+              nodes_memo:=nodes_memo||jsonb_build_object(hn_key,hn_child_nodes);
+              nodes_memo_count:=nodes_memo_count+1; nodes_memo_bytes:=nodes_memo_bytes+hn_bytes::integer;
+            END IF;
+          END IF;
+        ELSE
+          hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+        END IF;
+        IF hn_child_nodes<0 THEN hn_count:=-1; EXIT; END IF;
+        hn_count:=hn_count+hn_child_nodes-1;
+        IF hn_count>8192 THEN hn_count:=-1; EXIT; END IF;
+      END LOOP;
+    END IF;
+  END IF;
+  job_nodes:=hn_count;
+END;
+  IF job_nodes<0 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+DECLARE hc0_value jsonb:=v; hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN job_canonical_text:=hc0_value::text;
+      WHEN 'null' THEN job_canonical_text:='null';
+      ELSE job_canonical_text:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'schema' THEN
+IF hcf_value->'kind'='"research_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"context":'||COALESCE((CASE jsonb_typeof((hcf_value->'context'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'context')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'context')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'context')::numeric=trunc((hcf_value->'context')::numeric)
+        AND (hcf_value->'context')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'context')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'context')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'context')::text)),
+    '"contextKey":'||(CASE jsonb_typeof((hcf_value->'contextKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'contextKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'contextKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'contextKey')::numeric=trunc((hcf_value->'contextKey')::numeric)
+        AND (hcf_value->'contextKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'contextKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'contextKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"method":'||COALESCE((CASE jsonb_typeof((hcf_value->'method'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'method')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'method')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'method')::numeric=trunc((hcf_value->'method')::numeric)
+        AND (hcf_value->'method')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'method')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'method')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'method')::text)),
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"research":'||COALESCE((CASE jsonb_typeof((hcf_value->'research'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'research')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'research')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'research')::numeric=trunc((hcf_value->'research')::numeric)
+        AND (hcf_value->'research')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'research')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'research')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'research')::text)),
+    '"resultDecisionRef":'||(CASE jsonb_typeof((hcf_value->'resultDecisionRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDecisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDecisionRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDecisionRef')::numeric=trunc((hcf_value->'resultDecisionRef')::numeric)
+        AND (hcf_value->'resultDecisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDecisionRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDecisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+ELSIF hcf_value->'kind'='"combination_discovery_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"identity":'||COALESCE((CASE jsonb_typeof((hcf_value->'identity'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'identity')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'identity')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'identity')::numeric=trunc((hcf_value->'identity')::numeric)
+        AND (hcf_value->'identity')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'identity')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'identity')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'identity')::text)),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"resultDiscoveryRef":'||(CASE jsonb_typeof((hcf_value->'resultDiscoveryRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDiscoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDiscoveryRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDiscoveryRef')::numeric=trunc((hcf_value->'resultDiscoveryRef')::numeric)
+        AND (hcf_value->'resultDiscoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDiscoveryRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDiscoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN job_canonical_text:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    job_canonical_text:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+  IF octet_length(job_canonical_text)>65536 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->>'kind'='research_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) AND (v)-(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])='{}'::jsonb
+      THEN (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])=(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=jsonb_build_object('context',v->'context','method',v->'method','factKind',v#>'{research,factKind}','researchReason',v#>'{research,researchReason}'); job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'rule_research' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('rule_research',job_subject_input);
+      job_subject_bytes:=octet_length('rule_research')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='rule_research'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v->'jobKey' OR i->'contextKey' IS DISTINCT FROM v->'contextKey' OR i->'research' IS DISTINCT FROM v->'research' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDecisionRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^source-decision:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSIF v->>'kind'='combination_discovery_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['identity','resultDiscoveryRef']) AND (v)-(common||ARRAY['identity','resultDiscoveryRef'])='{}'::jsonb
+      THEN (common||ARRAY['identity','resultDiscoveryRef'])=(common||ARRAY['identity','resultDiscoveryRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END) IS NOT TRUE
+      OR (CASE WHEN jsonb_typeof(v->'identity')='object' THEN
+    CASE WHEN (v->'identity') ?& (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) AND (v->'identity')-(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])='{}'::jsonb
+      THEN (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])=(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END) IS NOT TRUE
+      OR v#>>'{identity,kind}' IS DISTINCT FROM 'combination_discovery' THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=(v->'identity')-'kind'-'jobKey'; job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'combination_discovery' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('combination_discovery',job_subject_input);
+      job_subject_bytes:=octet_length('combination_discovery')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='combination_discovery'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v#>'{identity,jobKey}' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDiscoveryRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^combination-discovery-result:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSE RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->'schema' IS DISTINCT FROM '3'::jsonb OR (v->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE
+    OR (v->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(v->'revision') IS DISTINCT FROM 'number'
+    OR (v->>'revision' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (v->>'revision')::numeric>2147483647
+    OR jsonb_typeof(v->'attempt') IS DISTINCT FROM 'number' OR (v->>'attempt' ~ '^(0|[1-9][0-9]?)$') IS NOT TRUE
+    OR jsonb_typeof(v->'attemptLimit') IS DISTINCT FROM 'number' OR (v->>'attemptLimit' ~ '^[1-9][0-9]?$') IS NOT TRUE
+    OR (state IN ('queued','leased','backoff','succeeded','exhausted')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  revision:=(v->>'revision')::integer; attempt:=(v->>'attempt')::integer; lim:=(v->>'attemptLimit')::integer;
+  IF lim NOT BETWEEN 1 AND 16 OR attempt NOT BETWEEN 0 AND lim
+    OR (v->'predecessorRevision'='null'::jsonb AND revision<>1)
+    OR (v->'predecessorRevision'<>'null'::jsonb AND (v->'predecessorRevision' IS DISTINCT FROM to_jsonb(revision-1) OR revision<=1)) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  created:=official_v3_jobs_private.timestamp_v1(v->>'createdAt'); updated:=(CASE WHEN (v->>'updatedAt') COLLATE "C" = (v->>'createdAt') COLLATE "C" THEN created ELSE official_v3_jobs_private.timestamp_v1(v->>'updatedAt') END);
+  IF created>updated OR (v->'lastFailure'<>'null'::jsonb AND (v->>'lastFailure' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  IF state='leased' THEN
+    IF (CASE WHEN jsonb_typeof(l)='object' THEN
+    CASE WHEN (l) ?& (ARRAY['leaseId','generation','acquiredAt','expiresAt']) AND (l)-(ARRAY['leaseId','generation','acquiredAt','expiresAt'])='{}'::jsonb
+      THEN (ARRAY['leaseId','generation','acquiredAt','expiresAt'])=(ARRAY['leaseId','generation','acquiredAt','expiresAt']) ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END) IS NOT TRUE
+      OR (l->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(l->'generation') IS DISTINCT FROM 'number'
+      OR (l->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (l->>'generation')::numeric NOT BETWEEN 1 AND revision OR attempt<1
+      OR (CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END) NOT BETWEEN created AND updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')<=updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')>(CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END)+interval '900 seconds' THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  ELSIF l<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  IF state='backoff' THEN
+    IF official_v3_jobs_private.timestamp_v1(v->>'nextAttemptAt')<=updated OR v->'lastFailure'='null'::jsonb OR attempt<1 OR attempt>=lim THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  ELSIF v->'nextAttemptAt'<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  IF (state='queued' AND (attempt<>0 OR v->'lastFailure'<>'null'::jsonb))
+    OR (state='succeeded' AND (result_ref='null'::jsonb OR attempt<1)) OR (state<>'succeeded' AND result_ref<>'null'::jsonb)
+    OR (state='exhausted' AND (attempt<>lim OR v->'lastFailure'='null'::jsonb)) THEN RAISE EXCEPTION 'm04 invalid job state' USING ERRCODE='P7601'; END IF;
+  NULL;
+END;
   job_text:=s.current_job::text; job_bytes:=octet_length(job_text);
   IF job_bytes<=1048576 THEN
     validated_jobs:=jsonb_build_object(job_text,true); validated_job_count:=1; validated_job_bytes:=job_bytes;
@@ -662,15 +1443,406 @@ BEGIN
       subject_input jsonb; subject_input_text text COLLATE "C"; subject_bytes integer;
     BEGIN
       IF v IS NULL THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
-      t:=official_v3_jobs_private.canonical_v1(v,0);
+DECLARE hcc_value jsonb:=(v); hcc_depth integer:=(0);
+  hcc_action jsonb; hcc_input jsonb; hcc_nested jsonb; hcc_has_kind boolean:=false;
+  hcc_parts text[] COLLATE "default"; hcc_input_parts text[] COLLATE "default";
+  hcc_nested_parts text[] COLLATE "default"; hcc_input_text text COLLATE "default";
+  hcc_nested_text text COLLATE "default";
+BEGIN
+  t:=NULL;
+  IF hcc_value IS NOT NULL AND hcc_depth=0 AND jsonb_typeof(hcc_value)='object' THEN
+    hcc_action:=hcc_value->'action'; hcc_input:=hcc_value->'input';
+    IF jsonb_typeof(hcc_input)='object' THEN
+      IF hcc_action='"enqueue"'::jsonb AND (hcc_value ?& ARRAY['action','input','kind']::text[] AND (hcc_value-ARRAY['action','input','kind']::text[])='{}'::jsonb) THEN
+        hcc_has_kind:=true;
+        IF hcc_value->'kind'='"rule_research"'::jsonb AND (hcc_input ?& ARRAY['attemptLimit','context','factKind','jobId','method','operationId','researchReason']::text[] AND (hcc_input-ARRAY['attemptLimit','context','factKind','jobId','method','operationId','researchReason']::text[])='{}'::jsonb) THEN
+          hcc_nested:=hcc_input->'researchReason';
+          IF jsonb_typeof(hcc_nested)='object' THEN
+            IF (hcc_nested ?& ARRAY['status']::text[] AND (hcc_nested-ARRAY['status']::text[])='{}'::jsonb) THEN
+              hcc_nested_parts:=ARRAY[
+      '"status":'||(CASE jsonb_typeof((hcc_nested->'status'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'status')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'status')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'status')::numeric=trunc((hcc_nested->'status')::numeric)
+      AND (hcc_nested->'status')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'status')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'status')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+            ELSIF (hcc_nested ?& ARRAY['reason','status']::text[] AND (hcc_nested-ARRAY['reason','status']::text[])='{}'::jsonb) THEN
+              hcc_nested_parts:=ARRAY[
+      '"reason":'||(CASE jsonb_typeof((hcc_nested->'reason'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'reason')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'reason')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'reason')::numeric=trunc((hcc_nested->'reason')::numeric)
+      AND (hcc_nested->'reason')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'reason')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'reason')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"status":'||(CASE jsonb_typeof((hcc_nested->'status'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'status')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'status')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'status')::numeric=trunc((hcc_nested->'status')::numeric)
+      AND (hcc_nested->'status')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'status')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'status')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+            END IF;
+            IF hcc_nested_parts IS NOT NULL AND array_position(hcc_nested_parts,NULL::text) IS NULL THEN
+              hcc_nested_text:='{'||array_to_string(hcc_nested_parts,',')||'}';
+            END IF;
+          END IF;
+          hcc_input_parts:=ARRAY[
+      '"attemptLimit":'||(CASE jsonb_typeof((hcc_input->'attemptLimit'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'attemptLimit')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'attemptLimit')::numeric=trunc((hcc_input->'attemptLimit')::numeric)
+      AND (hcc_input->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'attemptLimit')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"context":'||(CASE WHEN jsonb_typeof((hcc_input->'context'))='object'
+  THEN subtree_memo->>('2:'||(hcc_input->'context')::text) END),
+      '"factKind":'||(CASE jsonb_typeof((hcc_input->'factKind'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'factKind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'factKind')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'factKind')::numeric=trunc((hcc_input->'factKind')::numeric)
+      AND (hcc_input->'factKind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'factKind')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'factKind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"jobId":'||(CASE jsonb_typeof((hcc_input->'jobId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobId')::numeric=trunc((hcc_input->'jobId')::numeric)
+      AND (hcc_input->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"method":'||(CASE WHEN jsonb_typeof((hcc_input->'method'))='object'
+  THEN subtree_memo->>('2:'||(hcc_input->'method')::text) END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"researchReason":'||hcc_nested_text
+    ]::text[];
+        ELSIF hcc_value->'kind'='"combination_discovery"'::jsonb AND (hcc_input ?& ARRAY['attemptLimit','citizenshipCountryCode','destinationCountryCode','jobId','method','operationId']::text[] AND (hcc_input-ARRAY['attemptLimit','citizenshipCountryCode','destinationCountryCode','jobId','method','operationId']::text[])='{}'::jsonb) THEN
+          hcc_input_parts:=ARRAY[
+      '"attemptLimit":'||(CASE jsonb_typeof((hcc_input->'attemptLimit'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'attemptLimit')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'attemptLimit')::numeric=trunc((hcc_input->'attemptLimit')::numeric)
+      AND (hcc_input->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'attemptLimit')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"citizenshipCountryCode":'||(CASE jsonb_typeof((hcc_input->'citizenshipCountryCode'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'citizenshipCountryCode')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'citizenshipCountryCode')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'citizenshipCountryCode')::numeric=trunc((hcc_input->'citizenshipCountryCode')::numeric)
+      AND (hcc_input->'citizenshipCountryCode')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'citizenshipCountryCode')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'citizenshipCountryCode')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"destinationCountryCode":'||(CASE jsonb_typeof((hcc_input->'destinationCountryCode'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'destinationCountryCode')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'destinationCountryCode')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'destinationCountryCode')::numeric=trunc((hcc_input->'destinationCountryCode')::numeric)
+      AND (hcc_input->'destinationCountryCode')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'destinationCountryCode')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'destinationCountryCode')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"jobId":'||(CASE jsonb_typeof((hcc_input->'jobId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobId')::numeric=trunc((hcc_input->'jobId')::numeric)
+      AND (hcc_input->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"method":'||(CASE WHEN jsonb_typeof((hcc_input->'method'))='object'
+  THEN subtree_memo->>('2:'||(hcc_input->'method')::text) END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+        END IF;
+      ELSIF hcc_action='"claim"'::jsonb AND (hcc_value ?& ARRAY['action','input']::text[] AND (hcc_value-ARRAY['action','input']::text[])='{}'::jsonb)
+        AND (hcc_input ?& ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[] AND (hcc_input-ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[])='{}'::jsonb) THEN
+        hcc_input_parts:=ARRAY[
+      '"jobKey":'||(CASE jsonb_typeof((hcc_input->'jobKey'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobKey')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobKey')::numeric=trunc((hcc_input->'jobKey')::numeric)
+      AND (hcc_input->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobKey')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"leaseId":'||(CASE jsonb_typeof((hcc_input->'leaseId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'leaseId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'leaseId')::numeric=trunc((hcc_input->'leaseId')::numeric)
+      AND (hcc_input->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'leaseId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"leaseMilliseconds":'||(CASE jsonb_typeof((hcc_input->'leaseMilliseconds'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'leaseMilliseconds')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'leaseMilliseconds')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'leaseMilliseconds')::numeric=trunc((hcc_input->'leaseMilliseconds')::numeric)
+      AND (hcc_input->'leaseMilliseconds')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'leaseMilliseconds')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'leaseMilliseconds')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+      ELSIF (hcc_action='"fail"'::jsonb AND (hcc_value ?& ARRAY['action','input']::text[] AND (hcc_value-ARRAY['action','input']::text[])='{}'::jsonb))
+        OR (hcc_action='"complete"'::jsonb AND (hcc_value ?& ARRAY['action','input','kind']::text[] AND (hcc_value-ARRAY['action','input','kind']::text[])='{}'::jsonb)) THEN
+        hcc_has_kind:=hcc_action='"complete"'::jsonb;
+        hcc_nested:=hcc_input->'fence';
+        IF jsonb_typeof(hcc_nested)='object' THEN
+          IF (hcc_nested ?& ARRAY['generation','jobId','leaseId','revision']::text[] AND (hcc_nested-ARRAY['generation','jobId','leaseId','revision']::text[])='{}'::jsonb) THEN
+            hcc_nested_parts:=ARRAY[
+      '"generation":'||(CASE jsonb_typeof((hcc_nested->'generation'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'generation')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'generation')::numeric=trunc((hcc_nested->'generation')::numeric)
+      AND (hcc_nested->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'generation')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"jobId":'||(CASE jsonb_typeof((hcc_nested->'jobId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'jobId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'jobId')::numeric=trunc((hcc_nested->'jobId')::numeric)
+      AND (hcc_nested->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'jobId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"leaseId":'||(CASE jsonb_typeof((hcc_nested->'leaseId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'leaseId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'leaseId')::numeric=trunc((hcc_nested->'leaseId')::numeric)
+      AND (hcc_nested->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'leaseId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"revision":'||(CASE jsonb_typeof((hcc_nested->'revision'))
+    WHEN 'string' THEN CASE WHEN ((hcc_nested->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_nested->'revision')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_nested->'revision')::numeric=trunc((hcc_nested->'revision')::numeric)
+      AND (hcc_nested->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_nested->'revision')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_nested->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+            IF array_position(hcc_nested_parts,NULL::text) IS NULL THEN
+              hcc_nested_text:='{'||array_to_string(hcc_nested_parts,',')||'}';
+            END IF;
+          END IF;
+        END IF;
+        IF hcc_action='"fail"'::jsonb AND (hcc_input ?& ARRAY['fence','jobKey','operationId','reason']::text[] AND (hcc_input-ARRAY['fence','jobKey','operationId','reason']::text[])='{}'::jsonb) THEN
+          hcc_input_parts:=ARRAY[
+      '"fence":'||hcc_nested_text,
+      '"jobKey":'||(CASE jsonb_typeof((hcc_input->'jobKey'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobKey')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobKey')::numeric=trunc((hcc_input->'jobKey')::numeric)
+      AND (hcc_input->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobKey')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"reason":'||(CASE jsonb_typeof((hcc_input->'reason'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'reason')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'reason')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'reason')::numeric=trunc((hcc_input->'reason')::numeric)
+      AND (hcc_input->'reason')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'reason')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'reason')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+        ELSIF hcc_value->'kind'='"rule_research"'::jsonb AND (hcc_input ?& ARRAY['decisionRef','fence','jobKey','operationId']::text[] AND (hcc_input-ARRAY['decisionRef','fence','jobKey','operationId']::text[])='{}'::jsonb) THEN
+          hcc_input_parts:=ARRAY[
+      '"decisionRef":'||(CASE jsonb_typeof((hcc_input->'decisionRef'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'decisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'decisionRef')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'decisionRef')::numeric=trunc((hcc_input->'decisionRef')::numeric)
+      AND (hcc_input->'decisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'decisionRef')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'decisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"fence":'||hcc_nested_text,
+      '"jobKey":'||(CASE jsonb_typeof((hcc_input->'jobKey'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobKey')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobKey')::numeric=trunc((hcc_input->'jobKey')::numeric)
+      AND (hcc_input->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobKey')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+        ELSIF hcc_value->'kind'='"combination_discovery"'::jsonb AND (hcc_input ?& ARRAY['discoveryRef','fence','jobKey','operationId']::text[] AND (hcc_input-ARRAY['discoveryRef','fence','jobKey','operationId']::text[])='{}'::jsonb) THEN
+          hcc_input_parts:=ARRAY[
+      '"discoveryRef":'||(CASE jsonb_typeof((hcc_input->'discoveryRef'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'discoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'discoveryRef')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'discoveryRef')::numeric=trunc((hcc_input->'discoveryRef')::numeric)
+      AND (hcc_input->'discoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'discoveryRef')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'discoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"fence":'||hcc_nested_text,
+      '"jobKey":'||(CASE jsonb_typeof((hcc_input->'jobKey'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'jobKey')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'jobKey')::numeric=trunc((hcc_input->'jobKey')::numeric)
+      AND (hcc_input->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'jobKey')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"operationId":'||(CASE jsonb_typeof((hcc_input->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hcc_input->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_input->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_input->'operationId')::numeric=trunc((hcc_input->'operationId')::numeric)
+      AND (hcc_input->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_input->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_input->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+        END IF;
+      END IF;
+      IF hcc_input_parts IS NOT NULL THEN IF array_position(hcc_input_parts,NULL::text) IS NULL THEN
+      hcc_input_text:='{'||array_to_string(hcc_input_parts,',')||'}';
+    END IF; END IF;
+      IF hcc_input_text IS NOT NULL THEN
+        IF hcc_has_kind THEN
+          hcc_parts:=ARRAY[
+      '"action":'||(CASE jsonb_typeof((hcc_value->'action'))
+    WHEN 'string' THEN CASE WHEN ((hcc_value->'action')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_value->'action')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_value->'action')::numeric=trunc((hcc_value->'action')::numeric)
+      AND (hcc_value->'action')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_value->'action')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_value->'action')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"input":'||hcc_input_text,
+      '"kind":'||(CASE jsonb_typeof((hcc_value->'kind'))
+    WHEN 'string' THEN CASE WHEN ((hcc_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_value->'kind')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_value->'kind')::numeric=trunc((hcc_value->'kind')::numeric)
+      AND (hcc_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_value->'kind')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+        ELSE
+          hcc_parts:=ARRAY[
+      '"action":'||(CASE jsonb_typeof((hcc_value->'action'))
+    WHEN 'string' THEN CASE WHEN ((hcc_value->'action')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcc_value->'action')::text END
+    WHEN 'number' THEN CASE WHEN (hcc_value->'action')::numeric=trunc((hcc_value->'action')::numeric)
+      AND (hcc_value->'action')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcc_value->'action')::numeric)::text END
+    WHEN 'boolean' THEN (hcc_value->'action')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"input":'||hcc_input_text
+    ]::text[];
+        END IF;
+        IF array_position(hcc_parts,NULL::text) IS NULL THEN
+          t:='{'||array_to_string(hcc_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+  END IF;
+END;
+IF t IS NULL THEN
+DECLARE hc0_value jsonb:=v; hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        t:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        t:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN t:=hc0_value::text;
+      WHEN 'null' THEN t:='null';
+      ELSE t:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    hc0_fast:=NULL;
+    IF hc0_fast IS NOT NULL THEN t:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    t:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+END IF;
       IF octet_length(t)>65536
-        OR official_v3_jobs_private.exact_keys_v1(v,CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) IS NOT TRUE
+        OR (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) AND (v)-(CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END)='{}'::jsonb
+      THEN (CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END)=(CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) ELSE official_v3_jobs_private.exact_keys_v1(v,CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,CASE WHEN a IN ('enqueue','complete') THEN ARRAY['action','kind','input'] ELSE ARRAY['action','input'] END) END) IS NOT TRUE
         OR (a IN ('enqueue','claim','complete','fail')) IS NOT TRUE OR (i->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid command' USING ERRCODE='P7601'; END IF;
       IF a='enqueue' THEN
         IF k='rule_research' THEN
-          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+          IF (CASE WHEN jsonb_typeof(i)='object' THEN
+    CASE WHEN (i) ?& (ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) AND (i)-(ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit'])='{}'::jsonb
+      THEN (ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit'])=(ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['context','method','factKind','researchReason','operationId','jobId','attemptLimit']) END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
         ELSIF k='combination_discovery' THEN
-          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
+          IF (CASE WHEN jsonb_typeof(i)='object' THEN
+    CASE WHEN (i) ?& (ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) AND (i)-(ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit'])='{}'::jsonb
+      THEN (ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit'])=(ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['destinationCountryCode','citizenshipCountryCode','method','operationId','jobId','attemptLimit']) END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
         ELSE RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
         IF (i->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(i->'attemptLimit') IS DISTINCT FROM 'number'
           OR (i->>'attemptLimit' ~ '^[1-9][0-9]?$') IS NOT TRUE OR (i->>'attemptLimit')::integer NOT BETWEEN 1 AND 16 THEN RAISE EXCEPTION 'm04 invalid enqueue' USING ERRCODE='P7601'; END IF;
@@ -689,21 +1861,33 @@ BEGIN
         jkey:=i->>'jobKey';
         IF (jkey ~ '^(research-job|combination-discovery-job):v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid locator' USING ERRCODE='P7601'; END IF;
         IF a='claim' THEN
-          IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) IS NOT TRUE
+          IF (CASE WHEN jsonb_typeof(i)='object' THEN
+    CASE WHEN (i) ?& (ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) AND (i)-(ARRAY['operationId','jobKey','leaseId','leaseMilliseconds'])='{}'::jsonb
+      THEN (ARRAY['operationId','jobKey','leaseId','leaseMilliseconds'])=(ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','leaseId','leaseMilliseconds']) END) IS NOT TRUE
             OR (i->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(i->'leaseMilliseconds') IS DISTINCT FROM 'number'
             OR (i->>'leaseMilliseconds' ~ '^[1-9][0-9]{0,5}$') IS NOT TRUE OR (i->>'leaseMilliseconds')::integer>900000 THEN RAISE EXCEPTION 'm04 invalid claim' USING ERRCODE='P7601'; END IF;
         ELSE
           f:=i->'fence';
-          IF official_v3_jobs_private.exact_keys_v1(f,ARRAY['jobId','revision','leaseId','generation']) IS NOT TRUE
+          IF (CASE WHEN jsonb_typeof(f)='object' THEN
+    CASE WHEN (f) ?& (ARRAY['jobId','revision','leaseId','generation']) AND (f)-(ARRAY['jobId','revision','leaseId','generation'])='{}'::jsonb
+      THEN (ARRAY['jobId','revision','leaseId','generation'])=(ARRAY['jobId','revision','leaseId','generation']) ELSE official_v3_jobs_private.exact_keys_v1(f,ARRAY['jobId','revision','leaseId','generation']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(f,ARRAY['jobId','revision','leaseId','generation']) END) IS NOT TRUE
             OR (f->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE OR (f->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE
             OR jsonb_typeof(f->'revision') IS DISTINCT FROM 'number' OR (f->>'revision' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (f->>'revision')::numeric>2147483647
             OR jsonb_typeof(f->'generation') IS DISTINCT FROM 'number' OR (f->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (f->>'generation')::numeric>2147483647 THEN RAISE EXCEPTION 'm04 invalid fence' USING ERRCODE='P7601'; END IF;
           IF a='complete' THEN
             IF (k IN ('rule_research','combination_discovery')) IS NOT TRUE OR (k='rule_research')<>(jkey LIKE 'research-job:%')
-              OR official_v3_jobs_private.exact_keys_v1(i,CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) IS NOT TRUE
+              OR (CASE WHEN jsonb_typeof(i)='object' THEN
+    CASE WHEN (i) ?& (CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) AND (i)-(CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END)='{}'::jsonb
+      THEN (CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END)=(CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) ELSE official_v3_jobs_private.exact_keys_v1(i,CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) END
+    ELSE official_v3_jobs_private.exact_keys_v1(i,CASE WHEN k='rule_research' THEN ARRAY['operationId','jobKey','fence','decisionRef'] ELSE ARRAY['operationId','jobKey','fence','discoveryRef'] END) END) IS NOT TRUE
               OR (COALESCE(i->>'decisionRef',i->>'discoveryRef') ~ CASE WHEN k='rule_research' THEN '^source-decision:v3:[a-f0-9]{64}$' ELSE '^combination-discovery-result:v3:[a-f0-9]{64}$' END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid completion' USING ERRCODE='P7601'; END IF;
           ELSE
-            IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','fence','reason']) IS NOT TRUE
+            IF (CASE WHEN jsonb_typeof(i)='object' THEN
+    CASE WHEN (i) ?& (ARRAY['operationId','jobKey','fence','reason']) AND (i)-(ARRAY['operationId','jobKey','fence','reason'])='{}'::jsonb
+      THEN (ARRAY['operationId','jobKey','fence','reason'])=(ARRAY['operationId','jobKey','fence','reason']) ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','fence','reason']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(i,ARRAY['operationId','jobKey','fence','reason']) END) IS NOT TRUE
               OR (i->>'reason' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid failure' USING ERRCODE='P7601'; END IF;
           END IF;
         END IF;
@@ -716,12 +1900,20 @@ BEGIN
     e:=x.envelope_text::jsonb;
     IF c->>'commandText'<>x.command_text OR c->>'commandKey'<>x.command_key OR c->>'operationId'<>x.operation_id OR c->>'jobKey'<>k THEN RAISE EXCEPTION 'm04 journal invariant' USING ERRCODE='P7603'; END IF;
     -- Reuse only bytes computed at the same canonical depth in this invocation.
-    -- Two exact-text entries share a 64KiB key+value cap. No validation is skipped.
+    -- Two exact-text entries share 32KiB; exact-depth canonical and node subtrees each share 16KiB. No validation is skipped.
     DECLARE member_name text; child_value jsonb; child_key text COLLATE "C";
       child_canonical text; child_bytes bigint; canonical_parts text[]:='{}';
     BEGIN
-      IF official_v3_jobs_private.exact_keys_v1(e,
-        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId']) IS TRUE THEN
+      IF (CASE WHEN jsonb_typeof(e)='object' THEN
+    CASE WHEN (e) ?& (
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId']) AND (e)-(
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId'])='{}'::jsonb
+      THEN (
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId'])=(
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId']) ELSE official_v3_jobs_private.exact_keys_v1(e,
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(e,
+        ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId']) END) IS TRUE THEN
         -- This is the original canonical object's exact ASCII member order.
         FOREACH member_name IN ARRAY ARRAY['audit','commandKey','expected','jobKey','next','notAfter','operationId'] LOOP
           child_value:=e->member_name;
@@ -732,10 +1924,407 @@ BEGIN
             ELSIF child_key COLLATE "C" = canonical_memo_key_two COLLATE "C" THEN
               child_canonical:=canonical_memo_value_two;
             ELSE
-              child_canonical:=official_v3_jobs_private.canonical_v1(child_value,1);
+DECLARE hc0_value jsonb:=child_value; hc0_depth integer:=1;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        child_canonical:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        child_canonical:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN child_canonical:=hc0_value::text;
+      WHEN 'null' THEN child_canonical:='null';
+      ELSE child_canonical:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'schema' THEN
+IF hcf_value->'kind'='"research_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"context":'||COALESCE((CASE jsonb_typeof((hcf_value->'context'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'context')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'context')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'context')::numeric=trunc((hcf_value->'context')::numeric)
+        AND (hcf_value->'context')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'context')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'context')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'context')::text)),
+    '"contextKey":'||(CASE jsonb_typeof((hcf_value->'contextKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'contextKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'contextKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'contextKey')::numeric=trunc((hcf_value->'contextKey')::numeric)
+        AND (hcf_value->'contextKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'contextKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'contextKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"method":'||COALESCE((CASE jsonb_typeof((hcf_value->'method'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'method')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'method')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'method')::numeric=trunc((hcf_value->'method')::numeric)
+        AND (hcf_value->'method')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'method')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'method')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'method')::text)),
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"research":'||COALESCE((CASE jsonb_typeof((hcf_value->'research'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'research')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'research')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'research')::numeric=trunc((hcf_value->'research')::numeric)
+        AND (hcf_value->'research')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'research')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'research')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'research')::text)),
+    '"resultDecisionRef":'||(CASE jsonb_typeof((hcf_value->'resultDecisionRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDecisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDecisionRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDecisionRef')::numeric=trunc((hcf_value->'resultDecisionRef')::numeric)
+        AND (hcf_value->'resultDecisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDecisionRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDecisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+ELSIF hcf_value->'kind'='"combination_discovery_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"identity":'||COALESCE((CASE jsonb_typeof((hcf_value->'identity'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'identity')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'identity')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'identity')::numeric=trunc((hcf_value->'identity')::numeric)
+        AND (hcf_value->'identity')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'identity')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'identity')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'identity')::text)),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"resultDiscoveryRef":'||(CASE jsonb_typeof((hcf_value->'resultDiscoveryRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDiscoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDiscoveryRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDiscoveryRef')::numeric=trunc((hcf_value->'resultDiscoveryRef')::numeric)
+        AND (hcf_value->'resultDiscoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDiscoveryRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDiscoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN child_canonical:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    child_canonical:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
               child_bytes:=octet_length(child_key)::bigint+octet_length(child_canonical)::bigint;
-              IF child_bytes<=65536 THEN
-                IF child_bytes+canonical_memo_bytes_two<=65536 THEN
+              IF child_bytes<=32768 THEN
+                IF child_bytes+canonical_memo_bytes_two<=32768 THEN
                   canonical_memo_key_one:=canonical_memo_key_two;
                   canonical_memo_value_one:=canonical_memo_value_two;
                   canonical_memo_bytes_one:=canonical_memo_bytes_two;
@@ -747,7 +2336,179 @@ BEGIN
               END IF;
             END IF;
           ELSE
-            child_canonical:=official_v3_jobs_private.canonical_v1(child_value,1);
+DECLARE hc0_value jsonb:=child_value; hc0_depth integer:=1;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        child_canonical:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        child_canonical:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN child_canonical:=hc0_value::text;
+      WHEN 'null' THEN child_canonical:='null';
+      ELSE child_canonical:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'reference' THEN
+IF (hcf_value ?& ARRAY['kind','nextRevision','observedAt','priorRevision','reference']::text[] AND (hcf_value-ARRAY['kind','nextRevision','observedAt','priorRevision','reference']::text[])='{}'::jsonb) THEN hcf_parts:=ARRAY[
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"nextRevision":'||(CASE jsonb_typeof((hcf_value->'nextRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextRevision')::numeric=trunc((hcf_value->'nextRevision')::numeric)
+        AND (hcf_value->'nextRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"observedAt":'||(CASE jsonb_typeof((hcf_value->'observedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'observedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'observedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'observedAt')::numeric=trunc((hcf_value->'observedAt')::numeric)
+        AND (hcf_value->'observedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'observedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'observedAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"priorRevision":'||(CASE jsonb_typeof((hcf_value->'priorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'priorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'priorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'priorRevision')::numeric=trunc((hcf_value->'priorRevision')::numeric)
+        AND (hcf_value->'priorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'priorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'priorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"reference":'||(CASE jsonb_typeof((hcf_value->'reference'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'reference')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'reference')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'reference')::numeric=trunc((hcf_value->'reference')::numeric)
+        AND (hcf_value->'reference')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'reference')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'reference')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF; END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN child_canonical:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    child_canonical:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
           END IF;
           canonical_parts:=array_append(canonical_parts,'"'||member_name||'":'||child_canonical);
         END LOOP;
@@ -762,21 +2523,548 @@ BEGIN
       a jsonb:=commit->'audit'; f jsonb:=i->'fence'; kind text COLLATE "default"; action text COLLATE "default":=command->>'action'; at_time timestamptz; end_time timestamptz;
       observed text COLLATE "default":=a->>'observedAt'; rev integer; delay_ms integer; result_key text COLLATE "default";
     BEGIN
-      IF official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) IS NOT TRUE
+      IF (CASE WHEN jsonb_typeof(commit)='object' THEN
+    CASE WHEN (commit) ?& (ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) AND (commit)-(ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit'])='{}'::jsonb
+      THEN (ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit'])=(ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) ELSE official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(commit,ARRAY['operationId','commandKey','jobKey','expected','next','notAfter','audit']) END) IS NOT TRUE
         OR octet_length(envelope_canonical)>196608
-        OR official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) IS NOT TRUE
+        OR (CASE WHEN jsonb_typeof(a)='object' THEN
+    CASE WHEN (a) ?& (ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) AND (a)-(ARRAY['reference','kind','observedAt','priorRevision','nextRevision'])='{}'::jsonb
+      THEN (ARRAY['reference','kind','observedAt','priorRevision','nextRevision'])=(ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) ELSE official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(a,ARRAY['reference','kind','observedAt','priorRevision','nextRevision']) END) IS NOT TRUE
         OR commit->'operationId' IS DISTINCT FROM c->'operationId' OR commit->'commandKey' IS DISTINCT FROM c->'commandKey'
         OR commit->'jobKey' IS DISTINCT FROM c->'jobKey' OR commit->'expected' IS DISTINCT FROM current_record THEN RAISE EXCEPTION 'm04 invalid transition' USING ERRCODE='P7601'; END IF;
       at_time:=official_v3_jobs_private.timestamp_v1(observed); end_time:=at_time+interval '5 seconds';
       IF current_record IS DISTINCT FROM 'null'::jsonb THEN
         job_text:=current_record::text;
         IF job_text IS NULL OR (validated_jobs ? job_text) IS NOT TRUE THEN
-          expected:=official_v3_jobs_private.job_v1(current_record);
+          DECLARE v jsonb:=current_record;
+  job_subject_input jsonb; job_subject_text text COLLATE "C"; job_subject_bytes integer;
+  job_canonical_text text COLLATE "default";
+  job_nodes integer;
+  common text[] COLLATE "default":=ARRAY['schema','kind','jobId','operationId','revision','predecessorRevision','state','createdAt','updatedAt','attempt','attemptLimit','lease','nextAttemptAt','lastFailure'];
+  i jsonb; result_ref jsonb; l jsonb:=v->'lease'; state text COLLATE "default":=v->>'state'; created timestamptz; updated timestamptz;
+  attempt integer; lim integer; revision integer;
+BEGIN
+DECLARE hn_value jsonb:=v; hn_count integer:=1; hn_child record;
+  hn_child_count bigint; hn_child_nodes integer; hn_key text COLLATE "C"; hn_bytes bigint;
+BEGIN
+  IF hn_value IS NULL THEN hn_count:=-1;
+  ELSIF jsonb_typeof(hn_value)<>'object' THEN
+    hn_count:=official_v3_jobs_private.nodes_v1(hn_value,0,16,8192);
+  ELSE
+    SELECT count(*) INTO hn_child_count FROM jsonb_object_keys(hn_value);
+    IF hn_child_count>(8192-1)/2 THEN hn_count:=-1;
+    ELSE
+      hn_count:=1+2*hn_child_count;
+      FOR hn_child IN SELECT j.key,j.value FROM jsonb_each(hn_value) j
+        WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+        IF hn_child.key IN ('context','research','method','identity') THEN
+          -- The full key also binds every original recursive parameter.
+          hn_key:='1:16:8192:'||hn_child.value::text;
+          IF nodes_memo ? hn_key THEN hn_child_nodes:=(nodes_memo->>hn_key)::integer;
+          ELSE
+            hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+            hn_bytes:=octet_length(hn_key)::bigint+octet_length(hn_child_nodes::text)::bigint;
+            IF hn_child_nodes>0 AND hn_bytes<=16384 THEN
+              IF nodes_memo_count>=8 OR hn_bytes>16384-nodes_memo_bytes THEN
+                nodes_memo:='{}'; nodes_memo_count:=0; nodes_memo_bytes:=0;
+              END IF;
+              nodes_memo:=nodes_memo||jsonb_build_object(hn_key,hn_child_nodes);
+              nodes_memo_count:=nodes_memo_count+1; nodes_memo_bytes:=nodes_memo_bytes+hn_bytes::integer;
+            END IF;
+          END IF;
+        ELSE
+          hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+        END IF;
+        IF hn_child_nodes<0 THEN hn_count:=-1; EXIT; END IF;
+        hn_count:=hn_count+hn_child_nodes-1;
+        IF hn_count>8192 THEN hn_count:=-1; EXIT; END IF;
+      END LOOP;
+    END IF;
+  END IF;
+  job_nodes:=hn_count;
+END;
+  IF job_nodes<0 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+DECLARE hc0_value jsonb:=v; hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN job_canonical_text:=hc0_value::text;
+      WHEN 'null' THEN job_canonical_text:='null';
+      ELSE job_canonical_text:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'schema' THEN
+IF hcf_value->'kind'='"research_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"context":'||COALESCE((CASE jsonb_typeof((hcf_value->'context'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'context')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'context')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'context')::numeric=trunc((hcf_value->'context')::numeric)
+        AND (hcf_value->'context')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'context')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'context')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'context')::text)),
+    '"contextKey":'||(CASE jsonb_typeof((hcf_value->'contextKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'contextKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'contextKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'contextKey')::numeric=trunc((hcf_value->'contextKey')::numeric)
+        AND (hcf_value->'contextKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'contextKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'contextKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"method":'||COALESCE((CASE jsonb_typeof((hcf_value->'method'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'method')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'method')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'method')::numeric=trunc((hcf_value->'method')::numeric)
+        AND (hcf_value->'method')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'method')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'method')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'method')::text)),
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"research":'||COALESCE((CASE jsonb_typeof((hcf_value->'research'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'research')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'research')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'research')::numeric=trunc((hcf_value->'research')::numeric)
+        AND (hcf_value->'research')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'research')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'research')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'research')::text)),
+    '"resultDecisionRef":'||(CASE jsonb_typeof((hcf_value->'resultDecisionRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDecisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDecisionRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDecisionRef')::numeric=trunc((hcf_value->'resultDecisionRef')::numeric)
+        AND (hcf_value->'resultDecisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDecisionRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDecisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+ELSIF hcf_value->'kind'='"combination_discovery_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"identity":'||COALESCE((CASE jsonb_typeof((hcf_value->'identity'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'identity')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'identity')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'identity')::numeric=trunc((hcf_value->'identity')::numeric)
+        AND (hcf_value->'identity')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'identity')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'identity')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'identity')::text)),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"resultDiscoveryRef":'||(CASE jsonb_typeof((hcf_value->'resultDiscoveryRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDiscoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDiscoveryRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDiscoveryRef')::numeric=trunc((hcf_value->'resultDiscoveryRef')::numeric)
+        AND (hcf_value->'resultDiscoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDiscoveryRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDiscoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN job_canonical_text:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    job_canonical_text:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+  IF octet_length(job_canonical_text)>65536 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->>'kind'='research_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) AND (v)-(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])='{}'::jsonb
+      THEN (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])=(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=jsonb_build_object('context',v->'context','method',v->'method','factKind',v#>'{research,factKind}','researchReason',v#>'{research,researchReason}'); job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'rule_research' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('rule_research',job_subject_input);
+      job_subject_bytes:=octet_length('rule_research')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='rule_research'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v->'jobKey' OR i->'contextKey' IS DISTINCT FROM v->'contextKey' OR i->'research' IS DISTINCT FROM v->'research' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDecisionRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^source-decision:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSIF v->>'kind'='combination_discovery_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['identity','resultDiscoveryRef']) AND (v)-(common||ARRAY['identity','resultDiscoveryRef'])='{}'::jsonb
+      THEN (common||ARRAY['identity','resultDiscoveryRef'])=(common||ARRAY['identity','resultDiscoveryRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END) IS NOT TRUE
+      OR (CASE WHEN jsonb_typeof(v->'identity')='object' THEN
+    CASE WHEN (v->'identity') ?& (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) AND (v->'identity')-(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])='{}'::jsonb
+      THEN (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])=(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END) IS NOT TRUE
+      OR v#>>'{identity,kind}' IS DISTINCT FROM 'combination_discovery' THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=(v->'identity')-'kind'-'jobKey'; job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'combination_discovery' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('combination_discovery',job_subject_input);
+      job_subject_bytes:=octet_length('combination_discovery')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='combination_discovery'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v#>'{identity,jobKey}' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDiscoveryRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^combination-discovery-result:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSE RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->'schema' IS DISTINCT FROM '3'::jsonb OR (v->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE
+    OR (v->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(v->'revision') IS DISTINCT FROM 'number'
+    OR (v->>'revision' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (v->>'revision')::numeric>2147483647
+    OR jsonb_typeof(v->'attempt') IS DISTINCT FROM 'number' OR (v->>'attempt' ~ '^(0|[1-9][0-9]?)$') IS NOT TRUE
+    OR jsonb_typeof(v->'attemptLimit') IS DISTINCT FROM 'number' OR (v->>'attemptLimit' ~ '^[1-9][0-9]?$') IS NOT TRUE
+    OR (state IN ('queued','leased','backoff','succeeded','exhausted')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  revision:=(v->>'revision')::integer; attempt:=(v->>'attempt')::integer; lim:=(v->>'attemptLimit')::integer;
+  IF lim NOT BETWEEN 1 AND 16 OR attempt NOT BETWEEN 0 AND lim
+    OR (v->'predecessorRevision'='null'::jsonb AND revision<>1)
+    OR (v->'predecessorRevision'<>'null'::jsonb AND (v->'predecessorRevision' IS DISTINCT FROM to_jsonb(revision-1) OR revision<=1)) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  created:=official_v3_jobs_private.timestamp_v1(v->>'createdAt'); updated:=(CASE WHEN (v->>'updatedAt') COLLATE "C" = (v->>'createdAt') COLLATE "C" THEN created ELSE official_v3_jobs_private.timestamp_v1(v->>'updatedAt') END);
+  IF created>updated OR (v->'lastFailure'<>'null'::jsonb AND (v->>'lastFailure' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  IF state='leased' THEN
+    IF (CASE WHEN jsonb_typeof(l)='object' THEN
+    CASE WHEN (l) ?& (ARRAY['leaseId','generation','acquiredAt','expiresAt']) AND (l)-(ARRAY['leaseId','generation','acquiredAt','expiresAt'])='{}'::jsonb
+      THEN (ARRAY['leaseId','generation','acquiredAt','expiresAt'])=(ARRAY['leaseId','generation','acquiredAt','expiresAt']) ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END) IS NOT TRUE
+      OR (l->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(l->'generation') IS DISTINCT FROM 'number'
+      OR (l->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (l->>'generation')::numeric NOT BETWEEN 1 AND revision OR attempt<1
+      OR (CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END) NOT BETWEEN created AND updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')<=updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')>(CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END)+interval '900 seconds' THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  ELSIF l<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  IF state='backoff' THEN
+    IF official_v3_jobs_private.timestamp_v1(v->>'nextAttemptAt')<=updated OR v->'lastFailure'='null'::jsonb OR attempt<1 OR attempt>=lim THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  ELSIF v->'nextAttemptAt'<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  IF (state='queued' AND (attempt<>0 OR v->'lastFailure'<>'null'::jsonb))
+    OR (state='succeeded' AND (result_ref='null'::jsonb OR attempt<1)) OR (state<>'succeeded' AND result_ref<>'null'::jsonb)
+    OR (state='exhausted' AND (attempt<>lim OR v->'lastFailure'='null'::jsonb)) THEN RAISE EXCEPTION 'm04 invalid job state' USING ERRCODE='P7601'; END IF;
+  expected:=v;
+END;
           job_bytes:=octet_length(job_text);
           IF job_bytes<=1048576 THEN
             -- Admit the just-validated exact bytes even after the bounded memo fills.
             -- A reset can cause revalidation, never skip validation of a new value.
-            IF validated_job_count>=256 OR job_bytes>1048576-validated_job_bytes THEN
+            IF validated_job_count>=8 OR job_bytes>1048576-validated_job_bytes THEN
               validated_jobs:='{}'::jsonb; validated_job_count:=0; validated_job_bytes:=0;
             END IF;
             validated_jobs:=validated_jobs||jsonb_build_object(job_text,true);
@@ -831,12 +3119,533 @@ BEGIN
       IF kind IS DISTINCT FROM 'deduplicated' THEN
         job_text:=n::text;
         IF job_text IS NULL OR (validated_jobs ? job_text) IS NOT TRUE THEN
-          n:=official_v3_jobs_private.job_v1(n);
+          DECLARE v jsonb:=n;
+  job_subject_input jsonb; job_subject_text text COLLATE "C"; job_subject_bytes integer;
+  job_canonical_text text COLLATE "default";
+  job_nodes integer;
+  common text[] COLLATE "default":=ARRAY['schema','kind','jobId','operationId','revision','predecessorRevision','state','createdAt','updatedAt','attempt','attemptLimit','lease','nextAttemptAt','lastFailure'];
+  i jsonb; result_ref jsonb; l jsonb:=v->'lease'; state text COLLATE "default":=v->>'state'; created timestamptz; updated timestamptz;
+  attempt integer; lim integer; revision integer;
+BEGIN
+DECLARE hn_value jsonb:=v; hn_count integer:=1; hn_child record;
+  hn_child_count bigint; hn_child_nodes integer; hn_key text COLLATE "C"; hn_bytes bigint;
+BEGIN
+  IF hn_value IS NULL THEN hn_count:=-1;
+  ELSIF jsonb_typeof(hn_value)<>'object' THEN
+    hn_count:=official_v3_jobs_private.nodes_v1(hn_value,0,16,8192);
+  ELSE
+    SELECT count(*) INTO hn_child_count FROM jsonb_object_keys(hn_value);
+    IF hn_child_count>(8192-1)/2 THEN hn_count:=-1;
+    ELSE
+      hn_count:=1+2*hn_child_count;
+      FOR hn_child IN SELECT j.key,j.value FROM jsonb_each(hn_value) j
+        WHERE jsonb_typeof(j.value) IN ('object','array') LOOP
+        IF hn_child.key IN ('context','research','method','identity') THEN
+          -- The full key also binds every original recursive parameter.
+          hn_key:='1:16:8192:'||hn_child.value::text;
+          IF nodes_memo ? hn_key THEN hn_child_nodes:=(nodes_memo->>hn_key)::integer;
+          ELSE
+            hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+            hn_bytes:=octet_length(hn_key)::bigint+octet_length(hn_child_nodes::text)::bigint;
+            IF hn_child_nodes>0 AND hn_bytes<=16384 THEN
+              IF nodes_memo_count>=8 OR hn_bytes>16384-nodes_memo_bytes THEN
+                nodes_memo:='{}'; nodes_memo_count:=0; nodes_memo_bytes:=0;
+              END IF;
+              nodes_memo:=nodes_memo||jsonb_build_object(hn_key,hn_child_nodes);
+              nodes_memo_count:=nodes_memo_count+1; nodes_memo_bytes:=nodes_memo_bytes+hn_bytes::integer;
+            END IF;
+          END IF;
+        ELSE
+          hn_child_nodes:=official_v3_jobs_private.nodes_v1(hn_child.value,1,16,8192);
+        END IF;
+        IF hn_child_nodes<0 THEN hn_count:=-1; EXIT; END IF;
+        hn_count:=hn_count+hn_child_nodes-1;
+        IF hn_count>8192 THEN hn_count:=-1; EXIT; END IF;
+      END LOOP;
+    END IF;
+  END IF;
+  job_nodes:=hn_count;
+END;
+  IF job_nodes<0 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+DECLARE hc0_value jsonb:=v; hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        job_canonical_text:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN job_canonical_text:=hc0_value::text;
+      WHEN 'null' THEN job_canonical_text:='null';
+      ELSE job_canonical_text:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'schema' THEN
+IF hcf_value->'kind'='"research_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"context":'||COALESCE((CASE jsonb_typeof((hcf_value->'context'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'context')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'context')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'context')::numeric=trunc((hcf_value->'context')::numeric)
+        AND (hcf_value->'context')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'context')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'context')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'context')::text)),
+    '"contextKey":'||(CASE jsonb_typeof((hcf_value->'contextKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'contextKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'contextKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'contextKey')::numeric=trunc((hcf_value->'contextKey')::numeric)
+        AND (hcf_value->'contextKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'contextKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'contextKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"method":'||COALESCE((CASE jsonb_typeof((hcf_value->'method'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'method')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'method')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'method')::numeric=trunc((hcf_value->'method')::numeric)
+        AND (hcf_value->'method')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'method')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'method')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'method')::text)),
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"research":'||COALESCE((CASE jsonb_typeof((hcf_value->'research'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'research')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'research')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'research')::numeric=trunc((hcf_value->'research')::numeric)
+        AND (hcf_value->'research')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'research')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'research')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'research')::text)),
+    '"resultDecisionRef":'||(CASE jsonb_typeof((hcf_value->'resultDecisionRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDecisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDecisionRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDecisionRef')::numeric=trunc((hcf_value->'resultDecisionRef')::numeric)
+        AND (hcf_value->'resultDecisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDecisionRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDecisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+ELSIF hcf_value->'kind'='"combination_discovery_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"identity":'||COALESCE((CASE jsonb_typeof((hcf_value->'identity'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'identity')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'identity')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'identity')::numeric=trunc((hcf_value->'identity')::numeric)
+        AND (hcf_value->'identity')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'identity')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'identity')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'identity')::text)),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"resultDiscoveryRef":'||(CASE jsonb_typeof((hcf_value->'resultDiscoveryRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDiscoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDiscoveryRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDiscoveryRef')::numeric=trunc((hcf_value->'resultDiscoveryRef')::numeric)
+        AND (hcf_value->'resultDiscoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDiscoveryRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDiscoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN job_canonical_text:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    job_canonical_text:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+  IF octet_length(job_canonical_text)>65536 THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->>'kind'='research_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) AND (v)-(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])='{}'::jsonb
+      THEN (common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef'])=(common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['jobKey','context','contextKey','research','method','resultDecisionRef']) END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=jsonb_build_object('context',v->'context','method',v->'method','factKind',v#>'{research,factKind}','researchReason',v#>'{research,researchReason}'); job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'rule_research' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('rule_research',job_subject_input);
+      job_subject_bytes:=octet_length('rule_research')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='rule_research'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v->'jobKey' OR i->'contextKey' IS DISTINCT FROM v->'contextKey' OR i->'research' IS DISTINCT FROM v->'research' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDecisionRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^source-decision:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSIF v->>'kind'='combination_discovery_job_record' THEN
+    IF (CASE WHEN jsonb_typeof(v)='object' THEN
+    CASE WHEN (v) ?& (common||ARRAY['identity','resultDiscoveryRef']) AND (v)-(common||ARRAY['identity','resultDiscoveryRef'])='{}'::jsonb
+      THEN (common||ARRAY['identity','resultDiscoveryRef'])=(common||ARRAY['identity','resultDiscoveryRef']) ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v,common||ARRAY['identity','resultDiscoveryRef']) END) IS NOT TRUE
+      OR (CASE WHEN jsonb_typeof(v->'identity')='object' THEN
+    CASE WHEN (v->'identity') ?& (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) AND (v->'identity')-(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])='{}'::jsonb
+      THEN (ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey'])=(ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(v->'identity',ARRAY['kind','destinationCountryCode','citizenshipCountryCode','method','jobKey']) END) IS NOT TRUE
+      OR v#>>'{identity,kind}' IS DISTINCT FROM 'combination_discovery' THEN RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+    job_subject_input:=(v->'identity')-'kind'-'jobKey'; job_subject_text:=job_subject_input::text;
+    IF memo_subject_kind COLLATE "C" = 'combination_discovery' COLLATE "C"
+      AND memo_subject_text COLLATE "C" = job_subject_text COLLATE "C" THEN
+      i:=memo_subject_result;
+    ELSE
+      i:=official_v3_jobs_private.subject_v1('combination_discovery',job_subject_input);
+      job_subject_bytes:=octet_length('combination_discovery')+octet_length(job_subject_text);
+      IF job_subject_bytes<=1048576 AND octet_length(i::text)<=1048576-job_subject_bytes THEN
+        memo_subject_kind:='combination_discovery'; memo_subject_text:=job_subject_text; memo_subject_result:=i;
+      END IF;
+    END IF;
+    IF i->'jobKey' IS DISTINCT FROM v#>'{identity,jobKey}' THEN RAISE EXCEPTION 'm04 invalid job identity' USING ERRCODE='P7601'; END IF;
+    result_ref:=v->'resultDiscoveryRef';
+    IF result_ref<>'null'::jsonb AND (result_ref#>>'{}' ~ '^combination-discovery-result:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result' USING ERRCODE='P7601'; END IF;
+  ELSE RAISE EXCEPTION 'm04 invalid job' USING ERRCODE='P7601'; END IF;
+  IF v->'schema' IS DISTINCT FROM '3'::jsonb OR (v->>'jobId' ~ '^job3_[a-f0-9]{32}$') IS NOT TRUE
+    OR (v->>'operationId' ~ '^op3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(v->'revision') IS DISTINCT FROM 'number'
+    OR (v->>'revision' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (v->>'revision')::numeric>2147483647
+    OR jsonb_typeof(v->'attempt') IS DISTINCT FROM 'number' OR (v->>'attempt' ~ '^(0|[1-9][0-9]?)$') IS NOT TRUE
+    OR jsonb_typeof(v->'attemptLimit') IS DISTINCT FROM 'number' OR (v->>'attemptLimit' ~ '^[1-9][0-9]?$') IS NOT TRUE
+    OR (state IN ('queued','leased','backoff','succeeded','exhausted')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  revision:=(v->>'revision')::integer; attempt:=(v->>'attempt')::integer; lim:=(v->>'attemptLimit')::integer;
+  IF lim NOT BETWEEN 1 AND 16 OR attempt NOT BETWEEN 0 AND lim
+    OR (v->'predecessorRevision'='null'::jsonb AND revision<>1)
+    OR (v->'predecessorRevision'<>'null'::jsonb AND (v->'predecessorRevision' IS DISTINCT FROM to_jsonb(revision-1) OR revision<=1)) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  created:=official_v3_jobs_private.timestamp_v1(v->>'createdAt'); updated:=(CASE WHEN (v->>'updatedAt') COLLATE "C" = (v->>'createdAt') COLLATE "C" THEN created ELSE official_v3_jobs_private.timestamp_v1(v->>'updatedAt') END);
+  IF created>updated OR (v->'lastFailure'<>'null'::jsonb AND (v->>'lastFailure' IN ('unreachable','invalid_proposal','verification_unavailable','commit_unconfirmed')) IS NOT TRUE) THEN RAISE EXCEPTION 'm04 invalid job lifecycle' USING ERRCODE='P7601'; END IF;
+  IF state='leased' THEN
+    IF (CASE WHEN jsonb_typeof(l)='object' THEN
+    CASE WHEN (l) ?& (ARRAY['leaseId','generation','acquiredAt','expiresAt']) AND (l)-(ARRAY['leaseId','generation','acquiredAt','expiresAt'])='{}'::jsonb
+      THEN (ARRAY['leaseId','generation','acquiredAt','expiresAt'])=(ARRAY['leaseId','generation','acquiredAt','expiresAt']) ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END
+    ELSE official_v3_jobs_private.exact_keys_v1(l,ARRAY['leaseId','generation','acquiredAt','expiresAt']) END) IS NOT TRUE
+      OR (l->>'leaseId' ~ '^lease3_[a-f0-9]{32}$') IS NOT TRUE OR jsonb_typeof(l->'generation') IS DISTINCT FROM 'number'
+      OR (l->>'generation' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE OR (l->>'generation')::numeric NOT BETWEEN 1 AND revision OR attempt<1
+      OR (CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END) NOT BETWEEN created AND updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')<=updated
+      OR official_v3_jobs_private.timestamp_v1(l->>'expiresAt')>(CASE WHEN (l->>'acquiredAt') COLLATE "C" = (v->>'updatedAt') COLLATE "C" THEN updated ELSE official_v3_jobs_private.timestamp_v1(l->>'acquiredAt') END)+interval '900 seconds' THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  ELSIF l<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid lease' USING ERRCODE='P7601'; END IF;
+  IF state='backoff' THEN
+    IF official_v3_jobs_private.timestamp_v1(v->>'nextAttemptAt')<=updated OR v->'lastFailure'='null'::jsonb OR attempt<1 OR attempt>=lim THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  ELSIF v->'nextAttemptAt'<>'null'::jsonb THEN RAISE EXCEPTION 'm04 invalid backoff' USING ERRCODE='P7601'; END IF;
+  IF (state='queued' AND (attempt<>0 OR v->'lastFailure'<>'null'::jsonb))
+    OR (state='succeeded' AND (result_ref='null'::jsonb OR attempt<1)) OR (state<>'succeeded' AND result_ref<>'null'::jsonb)
+    OR (state='exhausted' AND (attempt<>lim OR v->'lastFailure'='null'::jsonb)) THEN RAISE EXCEPTION 'm04 invalid job state' USING ERRCODE='P7601'; END IF;
+  n:=v;
+END;
           job_bytes:=octet_length(job_text);
           IF job_bytes<=1048576 THEN
             -- Admit the just-validated exact bytes even after the bounded memo fills.
             -- A reset can cause revalidation, never skip validation of a new value.
-            IF validated_job_count>=256 OR job_bytes>1048576-validated_job_bytes THEN
+            IF validated_job_count>=8 OR job_bytes>1048576-validated_job_bytes THEN
               validated_jobs:='{}'::jsonb; validated_job_count:=0; validated_job_bytes:=0;
             END IF;
             validated_jobs:=validated_jobs||jsonb_build_object(job_text,true);
@@ -844,8 +3653,167 @@ BEGIN
           END IF;
         END IF;
       END IF;
-      IF commit->'next' IS DISTINCT FROM n OR official_v3_jobs_private.timestamp_v1(commit->>'notAfter')<>end_time
-        OR a IS DISTINCT FROM jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',i->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'),
+      IF commit->'next' IS DISTINCT FROM n OR official_v3_jobs_private.timestamp_v1(commit->>'notAfter')<>end_time THEN
+        RAISE EXCEPTION 'm04 transition mismatch' USING ERRCODE='P7601';END IF;
+DECLARE hc0_value jsonb:=jsonb_build_object('op',i->'operationId','command',c->'commandKey'); hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        audit_canonical:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        audit_canonical:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN audit_canonical:=hc0_value::text;
+      WHEN 'null' THEN audit_canonical:='null';
+      ELSE audit_canonical:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'command' THEN
+IF (hcf_value ?& ARRAY['command','op']::text[] AND (hcf_value-ARRAY['command','op']::text[])='{}'::jsonb) THEN hcf_parts:=ARRAY[
+    '"command":'||(CASE jsonb_typeof((hcf_value->'command'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'command')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'command')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'command')::numeric=trunc((hcf_value->'command')::numeric)
+        AND (hcf_value->'command')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'command')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'command')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"op":'||(CASE jsonb_typeof((hcf_value->'op'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'op')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'op')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'op')::numeric=trunc((hcf_value->'op')::numeric)
+        AND (hcf_value->'op')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'op')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'op')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF; END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN audit_canonical:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    audit_canonical:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      IF a IS DISTINCT FROM jsonb_build_object('reference','queue-event:v3:'||encode(sha256(convert_to(audit_canonical,'UTF8')),'hex'),
           'kind',kind,'observedAt',observed,'priorRevision',expected->'revision','nextRevision',n->'revision') THEN RAISE EXCEPTION 'm04 transition mismatch' USING ERRCODE='P7601'; END IF;
     END;
   END LOOP;
@@ -855,10 +3823,642 @@ BEGIN
       LEFT JOIN official_v3_jobs_private.execution_results_v1 r USING(attempt_key) WHERE t.job_key=k LOOP
     IF x.command_text::jsonb->>'action'<>'claim' OR x.command_text::jsonb->'input' IS DISTINCT FROM x.claim_text::jsonb
       OR x.envelope_text::jsonb->'next' IS DISTINCT FROM x.leased_job OR x.leased_job->>'state'<>'leased'
-      OR x.claim_text IS DISTINCT FROM official_v3_jobs_private.canonical_v1(x.claim_text::jsonb,0)
+ THEN RAISE EXCEPTION 'm04 attempt invariant' USING ERRCODE='P7603'; END IF;
+DECLARE hc0_value jsonb:=x.claim_text::jsonb; hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        claim_canonical:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        claim_canonical:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN claim_canonical:=hc0_value::text;
+      WHEN 'null' THEN claim_canonical:='null';
+      ELSE claim_canonical:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    DECLARE hcf_value jsonb:=(hc0_value); hcf_depth integer:=(hc0_depth);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hc0_fast:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'leaseMilliseconds' THEN
+IF (hcf_value ?& ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[] AND (hcf_value-ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[])='{}'::jsonb) THEN hcf_parts:=ARRAY[
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_value->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'leaseId')::numeric=trunc((hcf_value->'leaseId')::numeric)
+        AND (hcf_value->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseMilliseconds":'||(CASE jsonb_typeof((hcf_value->'leaseMilliseconds'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'leaseMilliseconds')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'leaseMilliseconds')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'leaseMilliseconds')::numeric=trunc((hcf_value->'leaseMilliseconds')::numeric)
+        AND (hcf_value->'leaseMilliseconds')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'leaseMilliseconds')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'leaseMilliseconds')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hc0_fast:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF; END IF;
+END IF;
+  END IF;
+END;
+    IF hc0_fast IS NOT NULL THEN claim_canonical:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    claim_canonical:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+    IF x.claim_text IS DISTINCT FROM claim_canonical
       OR (x.authority-'epoch') IS DISTINCT FROM s.method_binding OR (x.authority->>'epoch' ~ '^[1-9][0-9]{0,9}$') IS NOT TRUE
-      OR x.attempt_key IS DISTINCT FROM 'execution-attempt:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object(
-        'subject',s.subject_text::jsonb,'claim',x.claim_text::jsonb,'leasedJob',x.leased_job,'authority',x.authority),0),'UTF8')),'hex')
+ THEN RAISE EXCEPTION 'm04 attempt invariant' USING ERRCODE='P7603'; END IF;
+DECLARE hca_value jsonb:=(jsonb_build_object('subject',s.subject_text::jsonb,'claim',x.claim_text::jsonb,'leasedJob',x.leased_job,'authority',x.authority)); hca_depth integer:=(0);
+  hca_claim jsonb; hca_job jsonb; hca_authority jsonb; hca_subject jsonb;
+  hca_claim_text text COLLATE "default"; hca_job_text text COLLATE "default";
+  hca_authority_text text COLLATE "default"; hca_subject_text text COLLATE "default";
+  hca_parts text[] COLLATE "default"; hca_claim_parts text[] COLLATE "default";
+BEGIN
+  attempt_canonical:=NULL;
+  IF hca_value IS NOT NULL AND hca_depth=0 AND jsonb_typeof(hca_value)='object' THEN
+    IF (hca_value ?& ARRAY['authority','claim','leasedJob','subject']::text[] AND (hca_value-ARRAY['authority','claim','leasedJob','subject']::text[])='{}'::jsonb) THEN
+      hca_authority:=hca_value->'authority'; hca_subject:=hca_value->'subject';
+      IF jsonb_typeof(hca_authority)='object' AND jsonb_typeof(hca_subject)='object' THEN
+        hca_authority_text:=subtree_memo->>('1:'||hca_authority::text);
+        hca_subject_text:=subtree_memo->>('1:'||hca_subject::text);
+        IF hca_authority_text IS NOT NULL AND hca_subject_text IS NOT NULL THEN
+          hca_claim:=hca_value->'claim'; hca_job:=hca_value->'leasedJob';
+          IF jsonb_typeof(hca_claim)='object' THEN
+            IF (hca_claim ?& ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[] AND (hca_claim-ARRAY['jobKey','leaseId','leaseMilliseconds','operationId']::text[])='{}'::jsonb) THEN
+              hca_claim_parts:=ARRAY[
+      '"jobKey":'||(CASE jsonb_typeof((hca_claim->'jobKey'))
+    WHEN 'string' THEN CASE WHEN ((hca_claim->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hca_claim->'jobKey')::text END
+    WHEN 'number' THEN CASE WHEN (hca_claim->'jobKey')::numeric=trunc((hca_claim->'jobKey')::numeric)
+      AND (hca_claim->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hca_claim->'jobKey')::numeric)::text END
+    WHEN 'boolean' THEN (hca_claim->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"leaseId":'||(CASE jsonb_typeof((hca_claim->'leaseId'))
+    WHEN 'string' THEN CASE WHEN ((hca_claim->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hca_claim->'leaseId')::text END
+    WHEN 'number' THEN CASE WHEN (hca_claim->'leaseId')::numeric=trunc((hca_claim->'leaseId')::numeric)
+      AND (hca_claim->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hca_claim->'leaseId')::numeric)::text END
+    WHEN 'boolean' THEN (hca_claim->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"leaseMilliseconds":'||(CASE jsonb_typeof((hca_claim->'leaseMilliseconds'))
+    WHEN 'string' THEN CASE WHEN ((hca_claim->'leaseMilliseconds')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hca_claim->'leaseMilliseconds')::text END
+    WHEN 'number' THEN CASE WHEN (hca_claim->'leaseMilliseconds')::numeric=trunc((hca_claim->'leaseMilliseconds')::numeric)
+      AND (hca_claim->'leaseMilliseconds')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hca_claim->'leaseMilliseconds')::numeric)::text END
+    WHEN 'boolean' THEN (hca_claim->'leaseMilliseconds')::text WHEN 'null' THEN 'null' ELSE NULL END),
+      '"operationId":'||(CASE jsonb_typeof((hca_claim->'operationId'))
+    WHEN 'string' THEN CASE WHEN ((hca_claim->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hca_claim->'operationId')::text END
+    WHEN 'number' THEN CASE WHEN (hca_claim->'operationId')::numeric=trunc((hca_claim->'operationId')::numeric)
+      AND (hca_claim->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hca_claim->'operationId')::numeric)::text END
+    WHEN 'boolean' THEN (hca_claim->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+    ]::text[];
+              IF array_position(hca_claim_parts,NULL::text) IS NULL THEN
+                hca_claim_text:='{'||array_to_string(hca_claim_parts,',')||'}';
+              END IF;
+            END IF;
+          END IF;
+          IF hca_claim_text IS NOT NULL THEN
+            DECLARE hcf_value jsonb:=(hca_job); hcf_depth integer:=(1);
+  hcf_parts text[] COLLATE "default"; hcf_lease_parts text[] COLLATE "default";
+  hcf_lease jsonb; hcf_lease_text text COLLATE "default";
+BEGIN
+  hca_job_text:=NULL;
+  -- All supported shapes have children. The unchanged serializer accepts the
+  -- object at depth24 only when it is empty, which is deliberately a miss here.
+  IF hcf_value IS NOT NULL AND hcf_depth IS NOT NULL AND hcf_depth BETWEEN 0 AND 23
+    AND jsonb_typeof(hcf_value)='object' THEN
+    IF hcf_value ? 'schema' THEN
+IF hcf_value->'kind'='"research_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','context','contextKey','createdAt','jobId','jobKey','kind','lastFailure','lease','method','nextAttemptAt','operationId','predecessorRevision','research','resultDecisionRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"context":'||COALESCE((CASE jsonb_typeof((hcf_value->'context'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'context')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'context')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'context')::numeric=trunc((hcf_value->'context')::numeric)
+        AND (hcf_value->'context')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'context')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'context')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'context')::text)),
+    '"contextKey":'||(CASE jsonb_typeof((hcf_value->'contextKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'contextKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'contextKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'contextKey')::numeric=trunc((hcf_value->'contextKey')::numeric)
+        AND (hcf_value->'contextKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'contextKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'contextKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"jobKey":'||(CASE jsonb_typeof((hcf_value->'jobKey'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobKey')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobKey')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobKey')::numeric=trunc((hcf_value->'jobKey')::numeric)
+        AND (hcf_value->'jobKey')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobKey')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobKey')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"method":'||COALESCE((CASE jsonb_typeof((hcf_value->'method'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'method')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'method')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'method')::numeric=trunc((hcf_value->'method')::numeric)
+        AND (hcf_value->'method')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'method')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'method')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'method')::text)),
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"research":'||COALESCE((CASE jsonb_typeof((hcf_value->'research'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'research')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'research')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'research')::numeric=trunc((hcf_value->'research')::numeric)
+        AND (hcf_value->'research')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'research')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'research')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'research')::text)),
+    '"resultDecisionRef":'||(CASE jsonb_typeof((hcf_value->'resultDecisionRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDecisionRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDecisionRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDecisionRef')::numeric=trunc((hcf_value->'resultDecisionRef')::numeric)
+        AND (hcf_value->'resultDecisionRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDecisionRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDecisionRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hca_job_text:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+ELSIF hcf_value->'kind'='"combination_discovery_job_record"'::jsonb
+      AND (hcf_value ?& ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[] AND (hcf_value-ARRAY['attempt','attemptLimit','createdAt','identity','jobId','kind','lastFailure','lease','nextAttemptAt','operationId','predecessorRevision','resultDiscoveryRef','revision','schema','state','updatedAt']::text[])='{}'::jsonb) THEN hcf_lease:=hcf_value->'lease';
+    hcf_lease_text:=(CASE jsonb_typeof(hcf_lease)
+      WHEN 'string' THEN CASE WHEN (hcf_lease#>>'{}') ~ '[^ -~]' THEN NULL ELSE hcf_lease::text END
+      WHEN 'number' THEN CASE WHEN hcf_lease::numeric=trunc(hcf_lease::numeric)
+        AND hcf_lease::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(hcf_lease::numeric)::text END
+      WHEN 'boolean' THEN hcf_lease::text WHEN 'null' THEN 'null' ELSE NULL END);
+    IF hcf_lease_text IS NULL AND hcf_depth+2<=24 AND jsonb_typeof(hcf_lease)='object' THEN
+      IF (hcf_lease ?& ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[] AND (hcf_lease-ARRAY['acquiredAt','expiresAt','generation','leaseId']::text[])='{}'::jsonb) THEN
+        hcf_lease_parts:=ARRAY[
+    '"acquiredAt":'||(CASE jsonb_typeof((hcf_lease->'acquiredAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'acquiredAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'acquiredAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'acquiredAt')::numeric=trunc((hcf_lease->'acquiredAt')::numeric)
+        AND (hcf_lease->'acquiredAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'acquiredAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'acquiredAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"expiresAt":'||(CASE jsonb_typeof((hcf_lease->'expiresAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'expiresAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'expiresAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'expiresAt')::numeric=trunc((hcf_lease->'expiresAt')::numeric)
+        AND (hcf_lease->'expiresAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'expiresAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'expiresAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"generation":'||(CASE jsonb_typeof((hcf_lease->'generation'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'generation')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'generation')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'generation')::numeric=trunc((hcf_lease->'generation')::numeric)
+        AND (hcf_lease->'generation')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'generation')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'generation')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"leaseId":'||(CASE jsonb_typeof((hcf_lease->'leaseId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_lease->'leaseId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_lease->'leaseId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_lease->'leaseId')::numeric=trunc((hcf_lease->'leaseId')::numeric)
+        AND (hcf_lease->'leaseId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_lease->'leaseId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_lease->'leaseId')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+        IF array_position(hcf_lease_parts,NULL::text) IS NULL THEN
+          hcf_lease_text:='{'||array_to_string(hcf_lease_parts,',')||'}';
+        END IF;
+      END IF;
+    END IF;
+    hcf_parts:=ARRAY[
+    '"attempt":'||(CASE jsonb_typeof((hcf_value->'attempt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attempt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attempt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attempt')::numeric=trunc((hcf_value->'attempt')::numeric)
+        AND (hcf_value->'attempt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attempt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attempt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"attemptLimit":'||(CASE jsonb_typeof((hcf_value->'attemptLimit'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'attemptLimit')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'attemptLimit')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'attemptLimit')::numeric=trunc((hcf_value->'attemptLimit')::numeric)
+        AND (hcf_value->'attemptLimit')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'attemptLimit')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'attemptLimit')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"createdAt":'||(CASE jsonb_typeof((hcf_value->'createdAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'createdAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'createdAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'createdAt')::numeric=trunc((hcf_value->'createdAt')::numeric)
+        AND (hcf_value->'createdAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'createdAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'createdAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"identity":'||COALESCE((CASE jsonb_typeof((hcf_value->'identity'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'identity')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'identity')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'identity')::numeric=trunc((hcf_value->'identity')::numeric)
+        AND (hcf_value->'identity')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'identity')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'identity')::text WHEN 'null' THEN 'null' ELSE NULL END),subtree_memo->>(((hcf_depth)+1)::text||':'||(hcf_value->'identity')::text)),
+    '"jobId":'||(CASE jsonb_typeof((hcf_value->'jobId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'jobId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'jobId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'jobId')::numeric=trunc((hcf_value->'jobId')::numeric)
+        AND (hcf_value->'jobId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'jobId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'jobId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"kind":'||(CASE jsonb_typeof((hcf_value->'kind'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'kind')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'kind')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'kind')::numeric=trunc((hcf_value->'kind')::numeric)
+        AND (hcf_value->'kind')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'kind')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'kind')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lastFailure":'||(CASE jsonb_typeof((hcf_value->'lastFailure'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'lastFailure')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'lastFailure')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'lastFailure')::numeric=trunc((hcf_value->'lastFailure')::numeric)
+        AND (hcf_value->'lastFailure')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'lastFailure')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'lastFailure')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"lease":'||hcf_lease_text,
+    '"nextAttemptAt":'||(CASE jsonb_typeof((hcf_value->'nextAttemptAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'nextAttemptAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'nextAttemptAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'nextAttemptAt')::numeric=trunc((hcf_value->'nextAttemptAt')::numeric)
+        AND (hcf_value->'nextAttemptAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'nextAttemptAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'nextAttemptAt')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"operationId":'||(CASE jsonb_typeof((hcf_value->'operationId'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'operationId')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'operationId')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'operationId')::numeric=trunc((hcf_value->'operationId')::numeric)
+        AND (hcf_value->'operationId')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'operationId')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'operationId')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"predecessorRevision":'||(CASE jsonb_typeof((hcf_value->'predecessorRevision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'predecessorRevision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'predecessorRevision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'predecessorRevision')::numeric=trunc((hcf_value->'predecessorRevision')::numeric)
+        AND (hcf_value->'predecessorRevision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'predecessorRevision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'predecessorRevision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"resultDiscoveryRef":'||(CASE jsonb_typeof((hcf_value->'resultDiscoveryRef'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'resultDiscoveryRef')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'resultDiscoveryRef')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'resultDiscoveryRef')::numeric=trunc((hcf_value->'resultDiscoveryRef')::numeric)
+        AND (hcf_value->'resultDiscoveryRef')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'resultDiscoveryRef')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'resultDiscoveryRef')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"revision":'||(CASE jsonb_typeof((hcf_value->'revision'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'revision')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'revision')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'revision')::numeric=trunc((hcf_value->'revision')::numeric)
+        AND (hcf_value->'revision')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'revision')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'revision')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"schema":'||(CASE jsonb_typeof((hcf_value->'schema'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'schema')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'schema')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'schema')::numeric=trunc((hcf_value->'schema')::numeric)
+        AND (hcf_value->'schema')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'schema')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'schema')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"state":'||(CASE jsonb_typeof((hcf_value->'state'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'state')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'state')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'state')::numeric=trunc((hcf_value->'state')::numeric)
+        AND (hcf_value->'state')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'state')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'state')::text WHEN 'null' THEN 'null' ELSE NULL END),
+    '"updatedAt":'||(CASE jsonb_typeof((hcf_value->'updatedAt'))
+      WHEN 'string' THEN CASE WHEN ((hcf_value->'updatedAt')#>>'{}') ~ '[^ -~]' THEN NULL ELSE (hcf_value->'updatedAt')::text END
+      WHEN 'number' THEN CASE WHEN (hcf_value->'updatedAt')::numeric=trunc((hcf_value->'updatedAt')::numeric)
+        AND (hcf_value->'updatedAt')::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc((hcf_value->'updatedAt')::numeric)::text END
+      WHEN 'boolean' THEN (hcf_value->'updatedAt')::text WHEN 'null' THEN 'null' ELSE NULL END)
+  ]::text[];
+    IF array_position(hcf_parts,NULL::text) IS NULL THEN
+      hca_job_text:='{'||array_to_string(hcf_parts,',')||'}';
+    END IF;
+END IF;
+END IF;
+  END IF;
+END;
+            IF hca_job_text IS NOT NULL THEN
+              hca_parts:=ARRAY[
+      '"authority":'||hca_authority_text,
+      '"claim":'||hca_claim_text,
+      '"leasedJob":'||hca_job_text,
+      '"subject":'||hca_subject_text
+    ]::text[];
+              IF array_position(hca_parts,NULL::text) IS NULL THEN
+                attempt_canonical:='{'||array_to_string(hca_parts,',')||'}';
+              END IF;
+            END IF;
+          END IF;
+        END IF;
+      END IF;
+    END IF;
+  END IF;
+END;
+IF attempt_canonical IS NULL THEN
+DECLARE hc0_value jsonb:=jsonb_build_object('subject',s.subject_text::jsonb,'claim',x.claim_text::jsonb,'leasedJob',x.leased_job,'authority',x.authority); hc0_depth integer:=0;
+  hc0_keys text[] COLLATE "default"; hc0_values jsonb[]; hc0_parts text[] COLLATE "default";
+  hc0_pending integer[]; hc0_at integer; hc0_member text COLLATE "default"; hc0_child jsonb;
+  hc0_text text COLLATE "default"; hc0_key text COLLATE "C"; hc0_bytes bigint; hc0_fast text COLLATE "default";
+BEGIN
+  IF hc0_value IS NULL OR hc0_depth IS NULL OR hc0_depth<0 OR hc0_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc0_value)<>'object' THEN
+    CASE jsonb_typeof(hc0_value)
+      WHEN 'string' THEN
+        IF (hc0_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        attempt_canonical:=hc0_value::text;
+      WHEN 'number' THEN
+        IF hc0_value::numeric<>trunc(hc0_value::numeric) OR hc0_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        attempt_canonical:=trunc(hc0_value::numeric)::text;
+      WHEN 'boolean' THEN attempt_canonical:=hc0_value::text;
+      WHEN 'null' THEN attempt_canonical:='null';
+      ELSE attempt_canonical:=official_v3_jobs_private.canonical_v1(hc0_value,hc0_depth);
+    END CASE;
+  ELSE
+    hc0_fast:=NULL;
+    IF hc0_fast IS NOT NULL THEN attempt_canonical:=hc0_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc0_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc0_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc0_keys,hc0_values,hc0_parts FROM jsonb_each(hc0_value) j;
+    hc0_pending:=array_positions(hc0_parts,NULL::text);
+    FOREACH hc0_at IN ARRAY hc0_pending LOOP
+      hc0_member:=hc0_keys[hc0_at]; hc0_child:=hc0_values[hc0_at];
+      IF hc0_member ~ '[^ -~]' OR hc0_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc0_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc0_key:=(hc0_depth+1)::text||':'||hc0_child::text;
+        IF subtree_memo ? hc0_key THEN hc0_text:=subtree_memo->>hc0_key;
+        ELSE
+          hc0_text:=official_v3_jobs_private.canonical_v1(hc0_child,hc0_depth+1);
+          hc0_bytes:=octet_length(hc0_key)::bigint+octet_length(hc0_text)::bigint;
+          IF hc0_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc0_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc0_key,hc0_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc0_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        DECLARE hc1_value jsonb:=hc0_child; hc1_depth integer:=hc0_depth+1;
+  hc1_keys text[] COLLATE "default"; hc1_values jsonb[]; hc1_parts text[] COLLATE "default";
+  hc1_pending integer[]; hc1_at integer; hc1_member text COLLATE "default"; hc1_child jsonb;
+  hc1_text text COLLATE "default"; hc1_key text COLLATE "C"; hc1_bytes bigint; hc1_fast text COLLATE "default";
+BEGIN
+  IF hc1_value IS NULL OR hc1_depth IS NULL OR hc1_depth<0 OR hc1_depth>24 THEN
+    RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+  IF jsonb_typeof(hc1_value)<>'object' THEN
+    CASE jsonb_typeof(hc1_value)
+      WHEN 'string' THEN
+        IF (hc1_value#>>'{}') ~ '[^ -~]' THEN RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=hc1_value::text;
+      WHEN 'number' THEN
+        IF hc1_value::numeric<>trunc(hc1_value::numeric) OR hc1_value::numeric NOT BETWEEN -9007199254740991 AND 9007199254740991 THEN
+          RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601';END IF;
+        hc0_text:=trunc(hc1_value::numeric)::text;
+      WHEN 'boolean' THEN hc0_text:=hc1_value::text;
+      WHEN 'null' THEN hc0_text:='null';
+      ELSE hc0_text:=official_v3_jobs_private.canonical_v1(hc1_value,hc1_depth);
+    END CASE;
+  ELSE
+    hc1_fast:=NULL;
+    IF hc1_fast IS NOT NULL THEN hc0_text:=hc1_fast;
+    ELSE
+    SELECT array_agg(j.key ORDER BY j.key COLLATE "C"),array_agg(j.value ORDER BY j.key COLLATE "C"),
+      COALESCE(array_agg(CASE WHEN j.key ~ '[^ -~]' OR hc1_depth+1>24 THEN NULL
+        ELSE to_jsonb(j.key)::text||':'||CASE jsonb_typeof(j.value)
+          WHEN 'string' THEN CASE WHEN (j.value#>>'{}') ~ '[^ -~]' THEN NULL ELSE j.value::text END
+          WHEN 'number' THEN CASE WHEN j.value::numeric=trunc(j.value::numeric)
+            AND j.value::numeric BETWEEN -9007199254740991 AND 9007199254740991 THEN trunc(j.value::numeric)::text END
+          WHEN 'boolean' THEN j.value::text WHEN 'null' THEN 'null'
+          ELSE CASE WHEN j.key IN ('context','method','research','identity','subject','authority')
+            THEN subtree_memo->>((hc1_depth+1)::text||':'||j.value::text) END END
+        END ORDER BY j.key COLLATE "C"),ARRAY[]::text[])
+      INTO hc1_keys,hc1_values,hc1_parts FROM jsonb_each(hc1_value) j;
+    hc1_pending:=array_positions(hc1_parts,NULL::text);
+    FOREACH hc1_at IN ARRAY hc1_pending LOOP
+      hc1_member:=hc1_keys[hc1_at]; hc1_child:=hc1_values[hc1_at];
+      IF hc1_member ~ '[^ -~]' OR hc1_depth+1>24 THEN
+        RAISE EXCEPTION 'm04 invalid metadata' USING ERRCODE='P7601'; END IF;
+      IF hc1_member IN ('context','method','research','identity','subject','authority') THEN
+        -- JSONB object lookup compares the complete depth-prefixed text key,
+        -- never JSONB equality of the source value or an abbreviated digest.
+        hc1_key:=(hc1_depth+1)::text||':'||hc1_child::text;
+        IF subtree_memo ? hc1_key THEN hc1_text:=subtree_memo->>hc1_key;
+        ELSE
+          hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+          hc1_bytes:=octet_length(hc1_key)::bigint+octet_length(hc1_text)::bigint;
+          IF hc1_bytes<=16384 THEN
+            IF subtree_memo_count>=8 OR hc1_bytes>16384-subtree_memo_bytes THEN
+              subtree_memo:='{}';
+              subtree_memo_count:=0; subtree_memo_bytes:=0;
+            END IF;
+            subtree_memo:=subtree_memo||jsonb_build_object(hc1_key,hc1_text);
+            subtree_memo_count:=subtree_memo_count+1; subtree_memo_bytes:=subtree_memo_bytes+hc1_bytes::integer;
+          END IF;
+        END IF;
+      ELSE
+        hc1_text:=official_v3_jobs_private.canonical_v1(hc1_child,hc1_depth+1);
+      END IF;
+      hc1_parts[hc1_at]:=to_jsonb(hc1_member)::text||':'||hc1_text;
+    END LOOP;
+    hc0_text:='{'||array_to_string(hc1_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+      END IF;
+      hc0_parts[hc0_at]:=to_jsonb(hc0_member)::text||':'||hc0_text;
+    END LOOP;
+    attempt_canonical:='{'||array_to_string(hc0_parts,',')||'}';
+    END IF;
+  END IF;
+END;
+END IF;
+    IF x.attempt_key IS DISTINCT FROM 'execution-attempt:v3:'||encode(sha256(convert_to(attempt_canonical,'UTF8')),'hex')
       OR (x.disposition_kind='completed' AND x.result IS NULL) OR (x.disposition_kind='settled_failure' AND x.result IS NOT NULL) THEN RAISE EXCEPTION 'm04 attempt invariant' USING ERRCODE='P7603'; END IF;
     IF x.disposition_kind IS NOT NULL AND NOT EXISTS(SELECT 1 FROM official_v3_jobs_private.queue_operations_v1 q WHERE q.operation_id=x.queue_operation_id AND q.job_key=k
       AND q.action=CASE WHEN x.disposition_kind='completed' THEN 'complete' ELSE 'fail' END
@@ -870,6 +4470,309 @@ BEGIN
     IF credit IS DISTINCT FROM s.current_job THEN RAISE EXCEPTION 'm04 terminal credit invariant' USING ERRCODE='P7603'; END IF;
   ELSIF s.terminal_credit_claim IS NOT NULL THEN RAISE EXCEPTION 'm04 terminal credit invariant' USING ERRCODE='P7603'; END IF;
   IF NOT EXISTS(SELECT 1 FROM official_v3_jobs_private.slots_v1 WHERE slot_id=s.slot_id AND job_key=k) THEN RAISE EXCEPTION 'm04 slot_id invariant' USING ERRCODE='P7603'; END IF;
+END $customer_body$;
+RESET ROLE;
+
+GRANT CREATE ON SCHEMA official_v3_guard_private TO ot_v3_jobs_owner;
+SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE OR REPLACE FUNCTION official_v3_guard_private.check_jobs_v1() RETURNS void
+LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path=pg_catalog AS $customer_body$
+DECLARE k text; x record; ref jsonb; opened jsonb; subject_row record;
+  prior jsonb; envelope jsonb; next_revision bigint; head_count bigint;
+  dedup_node_text text COLLATE "C"; dedup_member_text text COLLATE "C";
+BEGIN
+  LOCK TABLE official_v3_jobs_private.subjects_v1,official_v3_jobs_private.queue_operations_v1,
+    official_v3_jobs_private.execution_starts_v1,official_v3_jobs_private.execution_results_v1,
+    official_v3_jobs_private.execution_dispositions_v1,official_v3_jobs_private.slots_v1 IN SHARE MODE;
+  FOR k IN SELECT job_key FROM official_v3_jobs_private.subjects_v1 ORDER BY job_key COLLATE "C" LOOP
+    PERFORM official_v3_jobs_private.assert_history_v1(k);
+    SELECT * INTO STRICT subject_row FROM official_v3_jobs_private.subjects_v1 WHERE job_key=k;
+    prior:='null'::jsonb; next_revision:=1; head_count:=0;
+    dedup_member_text:=NULL;
+    -- The predecessor validates each transition separately. BG1 additionally
+    -- reconstructs the one complete journal chain and its exact retained head.
+    -- Deduplicated enqueues do not advance revisions and are checked below.
+    FOR x IN SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE job_key=k
+      AND envelope_text::jsonb->'expected' IS DISTINCT FROM envelope_text::jsonb->'next'
+      ORDER BY (envelope_text::jsonb#>>'{next,revision}')::bigint LOOP
+      envelope:=x.envelope_text::jsonb;
+      IF envelope->'expected' IS DISTINCT FROM prior OR (envelope#>>'{next,revision}')::bigint<>next_revision
+        OR NOT isfinite(x.recorded_at)
+        OR (x.authority-'epoch') IS DISTINCT FROM subject_row.method_binding THEN
+        RAISE EXCEPTION 'bg1 complete jobs chain' USING ERRCODE='P7905'; END IF;
+      prior:=envelope->'next'; next_revision:=next_revision+1; head_count:=head_count+1;
+    END LOOP;
+    IF head_count=0 OR subject_row.current_job IS DISTINCT FROM prior THEN
+      RAISE EXCEPTION 'bg1 exact jobs journal head' USING ERRCODE='P7905'; END IF;
+    FOR x IN SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE job_key=k
+      AND envelope_text::jsonb->'expected' IS NOT DISTINCT FROM envelope_text::jsonb->'next' LOOP
+      envelope:=x.envelope_text::jsonb;
+      IF x.action<>'enqueue' OR envelope#>>'{audit,kind}' IS DISTINCT FROM 'deduplicated'
+        OR NOT isfinite(x.recorded_at)
+        OR (x.authority-'epoch') IS DISTINCT FROM subject_row.method_binding THEN
+        RAISE EXCEPTION 'bg1 deduplicated jobs chain' USING ERRCODE='P7905'; END IF;
+      dedup_node_text:=(envelope->'expected')::text;
+      IF dedup_member_text IS NOT NULL AND dedup_node_text IS NOT NULL
+        AND dedup_member_text COLLATE "C" = dedup_node_text COLLATE "C" THEN
+        NULL;
+      ELSE
+        IF NOT EXISTS(SELECT 1 FROM official_v3_jobs_private.queue_operations_v1 q WHERE q.job_key=k
+          AND q.envelope_text::jsonb->'expected' IS DISTINCT FROM q.envelope_text::jsonb->'next'
+          AND q.envelope_text::jsonb->'next'=envelope->'expected') THEN
+          RAISE EXCEPTION 'bg1 deduplicated jobs chain' USING ERRCODE='P7905'; END IF;
+        IF dedup_node_text IS NOT NULL AND octet_length(dedup_node_text)<=65536 THEN
+          dedup_member_text:=dedup_node_text;
+        END IF;
+      END IF;
+    END LOOP;
+    -- A same-revision dedup attaches to its exact immutable chain node. Client
+    -- observedAt values are not a global serialization clock; do not order
+    -- otherwise valid concurrent historical requests by their observation time.
+  END LOOP;
+  FOR x IN SELECT authority,recorded_at AS checked_at FROM official_v3_jobs_private.queue_operations_v1
+    UNION ALL SELECT authority,reserved_at FROM official_v3_jobs_private.execution_starts_v1 LOOP
+    PERFORM official_v3_guard_private.check_method_link_v1(x.authority,x.checked_at);
+  END LOOP;
+  FOR x IN SELECT t.*,r.result,r."references" FROM official_v3_jobs_private.execution_starts_v1 t
+    JOIN official_v3_jobs_private.execution_results_v1 r USING(attempt_key) LOOP
+    FOR ref IN SELECT value FROM jsonb_array_elements(x."references") LOOP
+      PERFORM official_v3_jobs_private.reference_v1(ref);
+      opened:=official_v3_jobs_private.s1_read_v1(ref->'binding',ref->>'proposalDigest',(ref->>'bytes')::integer);
+      IF opened#>'{record,reference}' IS DISTINCT FROM ref THEN RAISE EXCEPTION 'bg1 jobs intake reference' USING ERRCODE='P7905'; END IF;
+      PERFORM official_v3_jobs_private.consume_s1_v1(opened,x.leased_job,x.result,'read');
+    END LOOP;
+  END LOOP;
+END $customer_body$;
+RESET ROLE;
+REVOKE CREATE ON SCHEMA official_v3_guard_private FROM ot_v3_jobs_owner;
+
+SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE OR REPLACE FUNCTION official_v3_jobs_private.wire_v1(t text) RETURNS jsonb
+LANGUAGE plpgsql IMMUTABLE PARALLEL UNSAFE SECURITY INVOKER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp AS $customer_body$
+DECLARE j json; v jsonb;
+BEGIN
+  IF t IS NULL OR octet_length(t) NOT BETWEEN 1 AND 262144 THEN RAISE EXCEPTION 'm04 invalid wire' USING ERRCODE='P7601'; END IF;
+  j:=t::json;
+  IF official_v3_jobs_private.unique_json_v1(j,0) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid wire' USING ERRCODE='P7601'; END IF;
+  v:=j::jsonb;
+  IF official_v3_jobs_private.nodes_v1(v,0,24,32768)<0 OR official_v3_jobs_private.canonical_v1(v,0)<>t
+    OR official_v3_jobs_private.exact_keys_v1(v,ARRAY['operation','phase','body']) IS NOT TRUE
+    OR (v->>'operation' IN ('queue_read','queue_confirm','queue_cas','execution_read','execution_start','execution_prepare','queue_claim','queue_mutate')) IS NOT TRUE
+    OR (v->>'operation' IN ('queue_claim','queue_mutate') AND v->>'phase' IS DISTINCT FROM 'authorized')
+    OR (v->>'phase' IN ('probe','authorized')) IS NOT TRUE OR jsonb_typeof(v->'body') IS DISTINCT FROM 'object' THEN
+    RAISE EXCEPTION 'm04 invalid wire' USING ERRCODE='P7601'; END IF;
+  RETURN v;
+END $customer_body$;
+RESET ROLE;
+
+SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE OR REPLACE FUNCTION official_v3_jobs_api.execute_v1(wire text,method_id text,revision integer,method_digest text,package_digest text,epoch integer,remaining_ms integer,absolute_not_after text) RETURNS jsonb
+LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE SECURITY DEFINER CALLED ON NULL INPUT SET search_path=pg_catalog,pg_temp  AS $customer_body$
+DECLARE deadline timestamptz; entry timestamptz:=statement_timestamp(); q jsonb; i jsonb; operation text; phase text; b jsonb; c jsonb; claim jsonb;
+  k text; lock_names text[]; lock_value bigint; relation text; next_identity jsonb; attempt text;
+  s official_v3_jobs_private.subjects_v1%ROWTYPE; t official_v3_jobs_private.execution_starts_v1%ROWTYPE;
+  r official_v3_jobs_private.execution_results_v1%ROWTYPE; continuation jsonb; eligible boolean:=false; bundle jsonb; ref jsonb; opened jsonb; raw_reply jsonb;
+BEGIN
+  PERFORM official_v3_guard_private.begin_jobs_v1();
+  -- Anchor BEFORE any relation/advisory/row wait. Acquisitions cannot restart it.
+  IF remaining_ms IS NULL OR remaining_ms NOT BETWEEN 1 AND 5000 OR absolute_not_after IS NULL THEN RAISE EXCEPTION 'm04 invalid budget' USING ERRCODE='P7601'; END IF;
+  deadline:=least(entry+remaining_ms*interval '1 millisecond',official_v3_jobs_private.timestamp_v1(absolute_not_after));
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired budget' USING ERRCODE='P7605'; END IF;
+  q:=official_v3_jobs_private.wire_v1(wire); i:=q->'body'; operation:=q->>'operation'; phase:=q->>'phase';
+  IF official_v3_jobs_private.ma1_tuple_valid_v1(method_id,revision,method_digest,package_digest) IS NOT TRUE
+    OR (phase='probe' AND (epoch IS NOT NULL OR operation NOT IN ('queue_read','queue_confirm','execution_read')))
+    OR (phase='authorized' AND (epoch IS NULL OR epoch NOT BETWEEN 1 AND 2147483647)) THEN RAISE EXCEPTION 'm04 invalid binding' USING ERRCODE='P7601'; END IF;
+  b:=jsonb_build_object('methodId',method_id,'revision',revision,'methodDigest',method_digest,'packageDigest',package_digest);
+  IF operation='queue_claim' THEN
+    IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['command','continuation','expected','replayOnly']) IS NOT TRUE
+      OR jsonb_typeof(i->'replayOnly') IS DISTINCT FROM 'boolean' THEN
+      RAISE EXCEPTION 'm04 invalid atomic claim' USING ERRCODE='P7601'; END IF;
+    c:=official_v3_jobs_private.command_v1(i->'command');
+    IF c->>'action' IS DISTINCT FROM 'claim' THEN RAISE EXCEPTION 'm04 invalid atomic claim' USING ERRCODE='P7601'; END IF;
+    k:=c->>'jobKey'; claim:=c#>'{value,input}'; continuation:=i->'continuation';
+    IF i->'expected'<>'null'::jsonb THEN PERFORM official_v3_jobs_private.job_v1(i->'expected'); END IF;
+  ELSIF operation='queue_mutate' THEN
+    IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['command','continuation','disposition','expected']) IS NOT TRUE THEN
+      RAISE EXCEPTION 'm04 invalid atomic mutation' USING ERRCODE='P7601'; END IF;
+    c:=official_v3_jobs_private.command_v1(i->'command'); k:=c->>'jobKey'; continuation:=i->'continuation';
+    IF (c->>'action' IN ('enqueue','complete','fail')) IS NOT TRUE THEN
+      RAISE EXCEPTION 'm04 invalid atomic mutation' USING ERRCODE='P7601'; END IF;
+    IF i->'expected'<>'null'::jsonb THEN PERFORM official_v3_jobs_private.job_v1(i->'expected'); END IF;
+      IF official_v3_jobs_private.exact_keys_v1(i->'disposition',CASE i#>>'{disposition,kind}' WHEN 'regular' THEN ARRAY['kind'] WHEN 'completed' THEN ARRAY['kind','attemptKey'] WHEN 'settled_failure' THEN ARRAY['kind','attemptKey','token'] ELSE ARRAY[]::text[] END) IS NOT TRUE
+        OR (i#>>'{disposition,kind}' IN ('regular','completed','settled_failure')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid disposition' USING ERRCODE='P7601'; END IF;
+      IF i#>>'{disposition,kind}'<>'regular' AND (i#>>'{disposition,attemptKey}' ~ '^execution-attempt:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid attempt' USING ERRCODE='P7601'; END IF;
+      IF i#>>'{disposition,kind}'='settled_failure' AND (i#>>'{disposition,token}' ~ '^[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid token' USING ERRCODE='P7601'; END IF;
+  ELSIF operation='queue_read' THEN
+    IF official_v3_jobs_private.exact_keys_v1(i,ARRAY['jobKey','continuation']) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid read' USING ERRCODE='P7601'; END IF;
+    k:=i->>'jobKey'; continuation:=i->'continuation';
+  ELSIF operation IN ('queue_confirm','queue_cas') THEN
+    IF official_v3_jobs_private.exact_keys_v1(i,CASE WHEN operation='queue_confirm' THEN ARRAY['command','continuation'] ELSE ARRAY['command','commit','subjectText','disposition'] END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid command envelope' USING ERRCODE='P7601'; END IF;
+    c:=official_v3_jobs_private.command_v1(i->'command'); k:=c->>'jobKey'; continuation:=i->'continuation';
+    IF operation='queue_cas' THEN
+      -- Validate the complete proposed transition before computing its advisory set;
+      -- actual expected/current equality is checked again under the subject lock.
+      PERFORM official_v3_jobs_private.transition_v1(c->'value',i#>'{commit,expected}',i->'commit');
+      IF official_v3_jobs_private.exact_keys_v1(i->'disposition',CASE i#>>'{disposition,kind}' WHEN 'regular' THEN ARRAY['kind'] WHEN 'completed' THEN ARRAY['kind','attemptKey'] WHEN 'settled_failure' THEN ARRAY['kind','attemptKey','token'] ELSE ARRAY[]::text[] END) IS NOT TRUE
+        OR (i#>>'{disposition,kind}' IN ('regular','completed','settled_failure')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid disposition' USING ERRCODE='P7601'; END IF;
+      IF i#>>'{disposition,kind}'<>'regular' AND (i#>>'{disposition,attemptKey}' ~ '^execution-attempt:v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid attempt' USING ERRCODE='P7601'; END IF;
+      IF i#>>'{disposition,kind}'='settled_failure' AND (i#>>'{disposition,token}' ~ '^[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid token' USING ERRCODE='P7601'; END IF;
+      IF jsonb_typeof(i->'subjectText') IS DISTINCT FROM 'string' OR octet_length(i->>'subjectText')>65536 THEN RAISE EXCEPTION 'm04 invalid subject' USING ERRCODE='P7601'; END IF;
+      deadline:=least(deadline,official_v3_jobs_private.timestamp_v1(i#>>'{commit,notAfter}'));
+    END IF;
+  ELSE
+    IF official_v3_jobs_private.exact_keys_v1(i,CASE operation WHEN 'execution_read' THEN ARRAY['claim','purpose'] WHEN 'execution_start' THEN ARRAY['claim','leasedJob','subjectText'] ELSE ARRAY['claim','attemptKey','token','result','references'] END) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid execution' USING ERRCODE='P7601'; END IF;
+    claim:=i->'claim'; PERFORM official_v3_jobs_private.command_v1(jsonb_build_object('action','claim','input',claim)); k:=claim->>'jobKey';
+    IF operation='execution_read' AND (i->>'purpose' IN ('resume','lookup','confirm','artifact')) IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid read purpose' USING ERRCODE='P7601'; END IF;
+    IF operation='execution_start' THEN
+      PERFORM official_v3_jobs_private.job_v1(i->'leasedJob');
+      next_identity:=CASE WHEN i#>>'{leasedJob,kind}'='research_job_record' THEN official_v3_jobs_private.subject_v1('rule_research',jsonb_build_object(
+        'context',i#>'{leasedJob,context}','method',i#>'{leasedJob,method}','factKind',i#>'{leasedJob,research,factKind}','researchReason',i#>'{leasedJob,research,researchReason}'))
+        ELSE official_v3_jobs_private.subject_v1('combination_discovery',(i#>'{leasedJob,identity}')-'kind'-'jobKey') END;
+      IF next_identity->>'jobKey' IS DISTINCT FROM k OR next_identity->'subjectText' IS DISTINCT FROM i->'subjectText' THEN RAISE EXCEPTION 'm04 subject preimage mismatch' USING ERRCODE='P7601'; END IF;
+      attempt:='execution-attempt:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('subject',(i->>'subjectText')::jsonb,
+        'claim',claim,'leasedJob',i->'leasedJob','authority',b||jsonb_build_object('epoch',epoch)),0),'UTF8')),'hex');
+    ELSIF operation='execution_prepare' THEN
+      IF (i->>'attemptKey' ~ '^execution-attempt:v3:[a-f0-9]{64}$') IS NOT TRUE OR (i->>'token' ~ '^[a-f0-9]{64}$') IS NOT TRUE
+        OR jsonb_typeof(i->'result') IS DISTINCT FROM 'object' OR jsonb_typeof(i->'references') IS DISTINCT FROM 'array' THEN RAISE EXCEPTION 'm04 invalid prepare' USING ERRCODE='P7601'; END IF;
+      attempt:=i->>'attemptKey';
+    END IF;
+  END IF;
+  IF (k ~ '^(research-job|combination-discovery-job):v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid subject locator' USING ERRCODE='P7601'; END IF;
+  IF continuation IS NOT NULL AND continuation<>'null'::jsonb THEN
+    IF official_v3_jobs_private.exact_keys_v1(continuation,CASE continuation->>'kind' WHEN 'prepared' THEN ARRAY['kind','claim','attemptKey'] WHEN 'owned_failure' THEN ARRAY['kind','claim','attemptKey','token'] ELSE ARRAY[]::text[] END) IS NOT TRUE
+      OR (continuation->>'kind' IN ('prepared','owned_failure')) IS NOT TRUE
+      OR (continuation->>'attemptKey' ~ '^execution-attempt:v3:[a-f0-9]{64}$') IS NOT TRUE
+      OR (continuation->>'kind'='owned_failure' AND (continuation->>'token' ~ '^[a-f0-9]{64}$') IS NOT TRUE) THEN RAISE EXCEPTION 'm04 invalid continuation' USING ERRCODE='P7601'; END IF;
+    PERFORM official_v3_jobs_private.command_v1(jsonb_build_object('action','claim','input',continuation->'claim'));
+    IF continuation#>>'{claim,jobKey}' IS DISTINCT FROM k THEN RAISE EXCEPTION 'm04 continuation subject' USING ERRCODE='P7601'; END IF;
+  END IF;
+  -- All keys depend solely on fully validated request data. There are no later keys.
+  lock_names:=ARRAY['subject:'||k];
+  IF c IS NOT NULL THEN
+    lock_names:=array_append(lock_names,'operation:'||(c->>'operationId'));
+    IF c->>'action'='enqueue' THEN lock_names:=array_append(lock_names,'cycle:'||(c#>>'{value,input,jobId}')); END IF;
+  END IF;
+  IF operation IN ('queue_claim','queue_mutate') THEN
+    lock_names:=array_append(lock_names,'audit:'||'queue-event:v3:'||encode(sha256(convert_to(official_v3_jobs_private.canonical_v1(jsonb_build_object('op',c->'operationId','command',c->'commandKey'),0),'UTF8')),'hex'));
+    IF operation='queue_mutate' AND i#>>'{disposition,kind}'<>'regular' THEN
+      lock_names:=array_append(lock_names,'attempt:'||(i#>>'{disposition,attemptKey}')); END IF;
+  END IF;
+  IF operation='queue_cas' THEN
+    lock_names:=array_append(lock_names,'audit:'||(i#>>'{commit,audit,reference}'));
+    IF i#>>'{disposition,kind}'<>'regular' THEN lock_names:=array_append(lock_names,'attempt:'||(i#>>'{disposition,attemptKey}')); END IF;
+  END IF;
+  IF claim IS NOT NULL THEN lock_names:=array_append(lock_names,'operation:'||(claim->>'operationId')); END IF;
+  IF attempt IS NOT NULL THEN lock_names:=array_append(lock_names,'attempt:'||attempt); END IF;
+  IF operation='execution_prepare' THEN
+    IF (COALESCE(i#>>'{result,decisionRef}',i#>>'{result,discoveryRef}') ~ '^(source-decision|combination-discovery-result):v3:[a-f0-9]{64}$') IS NOT TRUE THEN RAISE EXCEPTION 'm04 invalid result key' USING ERRCODE='P7601'; END IF;
+    lock_names:=array_append(lock_names,'result:'||COALESCE(i#>>'{result,decisionRef}',i#>>'{result,discoveryRef}'));
+  END IF;
+  -- Self-compatible relation locks isolate runtime subjects and finish DDL waits early.
+  FOREACH relation IN ARRAY ARRAY['slots_v1','subjects_v1','queue_operations_v1','execution_starts_v1','execution_results_v1','execution_dispositions_v1','catalog_binding_v1'] LOOP
+    IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired before relation' USING ERRCODE='P7605'; END IF;
+    PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+    EXECUTE format('LOCK TABLE official_v3_jobs_private.%I IN ROW EXCLUSIVE MODE',relation);
+  END LOOP;
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired after relations' USING ERRCODE='P7605'; END IF;
+  PERFORM official_v3_jobs_private.assert_catalog_v1();
+  FOR lock_value IN SELECT DISTINCT ('x'||substr(encode(sha256(convert_to('m04-lock:v1:'||v,'UTF8')),'hex'),1,16))::bit(64)::bigint AS token
+      FROM unnest(lock_names) v ORDER BY token LOOP
+    IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired before advisory' USING ERRCODE='P7605'; END IF;
+    PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+    PERFORM pg_advisory_xact_lock(lock_value);
+  END LOOP;
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired before subject' USING ERRCODE='P7605'; END IF;
+  PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+  SELECT * INTO s FROM official_v3_jobs_private.subjects_v1 WHERE job_key=k FOR UPDATE;
+  IF s.job_key IS NOT NULL THEN
+    PERFORM official_v3_jobs_private.assert_history_v1(k);
+    IF s.method_binding IS DISTINCT FROM b THEN RETURN jsonb_build_object('status','blocked'); END IF;
+  END IF;
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired after subject' USING ERRCODE='P7605'; END IF;
+  -- Complete all-older-unknown gate, independent of latest IDs and MA1 availability.
+  IF s.open_attempt IS NOT NULL THEN
+    SELECT * INTO t FROM official_v3_jobs_private.execution_starts_v1 WHERE attempt_key=s.open_attempt;
+    SELECT * INTO r FROM official_v3_jobs_private.execution_results_v1 WHERE attempt_key=s.open_attempt;
+    IF operation='execution_read' THEN
+      eligible:=r.attempt_key IS NOT NULL AND t.claim_text=official_v3_jobs_private.canonical_v1(claim,0) AND s.current_job=t.leased_job;
+    ELSIF operation='execution_prepare' THEN
+      eligible:=i->>'attemptKey'=t.attempt_key AND t.claim_text=official_v3_jobs_private.canonical_v1(claim,0)
+        AND t.token_hash=encode(sha256(convert_to(i->>'token','UTF8')),'hex') AND s.current_job=t.leased_job;
+    ELSIF operation='queue_mutate' THEN
+      -- The bundled confirm/read and CAS each retain their original START
+      -- binding. The actual locked head replaces an external commit.expected.
+      eligible:=i#>>'{disposition,attemptKey}'=t.attempt_key AND s.current_job=t.leased_job
+        AND continuation IS NOT NULL AND continuation<>'null'::jsonb
+        AND continuation->>'attemptKey'=t.attempt_key
+        AND t.claim_text=official_v3_jobs_private.canonical_v1(continuation->'claim',0)
+        AND ((c->>'action'='complete' AND i#>>'{disposition,kind}'='completed'
+          AND continuation->>'kind'='prepared' AND r.attempt_key IS NOT NULL)
+          OR (c->>'action'='fail' AND i#>>'{disposition,kind}'='settled_failure'
+            AND continuation->>'kind'='owned_failure' AND r.attempt_key IS NULL
+            AND t.token_hash=encode(sha256(convert_to(i#>>'{disposition,token}','UTF8')),'hex')
+            AND t.token_hash=encode(sha256(convert_to(continuation->>'token','UTF8')),'hex')));
+    ELSIF operation='queue_cas' THEN
+      eligible:=i#>>'{disposition,attemptKey}'=t.attempt_key AND i#>'{commit,expected}'=t.leased_job
+        AND ((i#>>'{disposition,kind}'='completed' AND r.attempt_key IS NOT NULL)
+          OR (i#>>'{disposition,kind}'='settled_failure' AND r.attempt_key IS NULL AND t.token_hash=encode(sha256(convert_to(i#>>'{disposition,token}','UTF8')),'hex')));
+    ELSIF operation IN ('queue_read','queue_confirm','queue_claim') AND continuation IS NOT NULL AND continuation<>'null'::jsonb THEN
+      eligible:=continuation->>'attemptKey'=t.attempt_key AND t.claim_text=official_v3_jobs_private.canonical_v1(continuation->'claim',0)
+        AND s.current_job=t.leased_job AND ((continuation->>'kind'='prepared' AND r.attempt_key IS NOT NULL)
+          OR (continuation->>'kind'='owned_failure' AND r.attempt_key IS NULL AND t.token_hash=encode(sha256(convert_to(continuation->>'token','UTF8')),'hex')));
+      IF operation IN ('queue_confirm','queue_claim') THEN eligible:=eligible AND ((c->>'action'='claim' AND c#>'{value,input}'=continuation->'claim')
+        OR (c->>'action'='complete' AND continuation->>'kind'='prepared') OR (c->>'action'='fail' AND continuation->>'kind'='owned_failure')); END IF;
+    END IF;
+    IF eligible IS NOT TRUE THEN RETURN jsonb_build_object('status','blocked'); END IF;
+    IF phase='authorized' AND t.authority IS DISTINCT FROM (b||jsonb_build_object('epoch',epoch)) THEN RETURN jsonb_build_object('status','blocked'); END IF;
+  END IF;
+  IF phase='probe' THEN
+    bundle:=CASE operation WHEN 'queue_read' THEN official_v3_jobs_private.tx_queue_read_v1(q,b,epoch,remaining_ms,deadline)
+      WHEN 'queue_confirm' THEN official_v3_jobs_private.tx_queue_confirm_v1(q,b,epoch,remaining_ms,deadline)
+      ELSE official_v3_jobs_private.tx_execution_read_v1(q,b,epoch,remaining_ms,deadline) END;
+    IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired probe' USING ERRCODE='P7605'; END IF;
+    RETURN CASE WHEN bundle->'authority'='true'::jsonb THEN jsonb_build_object('status','requires_authority') ELSE bundle->'reply' END;
+  END IF;
+  PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+  bundle:=CASE operation WHEN 'queue_read' THEN official_v3_jobs_private.tx_queue_read_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'queue_confirm' THEN official_v3_jobs_private.tx_queue_confirm_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'queue_claim' THEN official_v3_jobs_private.tx_queue_claim_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'queue_mutate' THEN official_v3_jobs_private.tx_queue_mutate_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'queue_cas' THEN official_v3_jobs_private.tx_queue_cas_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'execution_read' THEN official_v3_jobs_private.tx_execution_read_v1(q,b,epoch,remaining_ms,deadline)
+    WHEN 'execution_start' THEN official_v3_jobs_private.tx_execution_start_v1(q,b,epoch,remaining_ms,deadline)
+    ELSE official_v3_jobs_private.tx_execution_prepare_v1(q,b,epoch,remaining_ms,deadline) END;
+  IF bundle->'authority' IS DISTINCT FROM 'true'::jsonb THEN
+    IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired negative' USING ERRCODE='P7605'; END IF;
+    RETURN bundle->'reply';
+  END IF;
+  -- Preexisting original PREPARED continuation reads also consume full actual S1.
+  IF (bundle->'references' IS NULL OR bundle->'references'='null'::jsonb) AND r.attempt_key IS NOT NULL THEN
+    bundle:=bundle||jsonb_build_object('references',r."references",'job',t.leased_job,'result',r.result,'lease',t.leased_job#>>'{lease,expiresAt}');
+  END IF;
+  PERFORM official_v3_jobs_private.assert_history_v1(k);
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired after effects' USING ERRCODE='P7605'; END IF;
+  IF jsonb_typeof(bundle->'references')='array' THEN
+    FOR ref IN SELECT value FROM jsonb_array_elements(bundle->'references') ORDER BY value#>>'{binding,operationId}' COLLATE "C" LOOP
+      IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired before S1' USING ERRCODE='P7605'; END IF;
+      PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+      opened:=official_v3_jobs_private.s1_read_v1(ref->'binding',ref->>'proposalDigest',(ref->>'bytes')::integer);
+      IF opened#>'{record,reference}' IS DISTINCT FROM ref THEN RAISE EXCEPTION 'm04 S1 reference mismatch' USING ERRCODE='P7604'; END IF;
+      PERFORM official_v3_jobs_private.consume_s1_v1(opened,bundle->'job',bundle->'result',CASE operation WHEN 'execution_prepare' THEN 'prepare' WHEN 'queue_cas' THEN 'complete' WHEN 'queue_mutate' THEN 'complete' ELSE 'read' END);
+    END LOOP;
+  END IF;
+  IF clock_timestamp()>=deadline THEN RAISE EXCEPTION 'm04 expired before authority' USING ERRCODE='P7605'; END IF;
+  PERFORM set_config('lock_timeout',greatest(1,floor(extract(epoch FROM(deadline-clock_timestamp()))*1000))::text||'ms',true);
+  raw_reply:=bundle->'reply';
+  IF raw_reply IS NULL OR octet_length(official_v3_jobs_private.canonical_v1(raw_reply,0))>262144 THEN RAISE EXCEPTION 'm04 oversized reply' USING ERRCODE='P7601'; END IF;
+  PERFORM official_v3_guard_private.seal_jobs_v1();
+  -- LAST database authority check. It takes actual MA1 head FOR SHARE, then reads
+  -- actual clock/tuple/epoch/expiry. No application DML or new lock follows it.
+  PERFORM official_v3_jobs_private.ma1_require_v1(method_id,revision,method_digest,package_digest,epoch);
+  IF clock_timestamp()>=deadline OR (bundle->>'lease' IS NOT NULL AND clock_timestamp()>=official_v3_jobs_private.timestamp_v1(bundle->>'lease'))
+    OR (bundle->>'observedAt' IS NOT NULL AND clock_timestamp()<official_v3_jobs_private.timestamp_v1(bundle->>'observedAt'))
+    OR (bundle->>'dueAt' IS NOT NULL AND clock_timestamp()<official_v3_jobs_private.timestamp_v1(bundle->>'dueAt')) THEN
+    RAISE EXCEPTION 'm04 final expired budget or lease' USING ERRCODE='P7605'; END IF;
+  RETURN raw_reply;
 END $customer_body$;
 RESET ROLE;
 
@@ -916,7 +4819,9 @@ BEGIN
     OR rolling.policy IS DISTINCT FROM (SELECT to_jsonb(p)||jsonb_build_object('installed_at',extract(epoch FROM p.installed_at)) FROM official_v3_jobs_private.rolling_policy_v2 p)
     OR customer.predecessor_provider_digest<>'7324c5e87d18de2a692e7e61123a44565ca440ecc9f8e9afddf379ede2aac32a'
     OR customer.definitions_digest<>'6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f'
-    OR customer.history_definition_digest<>'719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355'
+    OR customer.history_definition_digest<>'061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692'
+    OR customer.history_guard_definition_digest<>'f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b'
+    OR customer.atomic_claim_definition_digest<>'75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a'
     OR customer.predecessor_catalog_digest IS DISTINCT FROM encode(sha256(convert_to(rolling.catalog::text,'UTF8')),'hex')
     OR customer.predecessor_rolling_digest IS DISTINCT FROM encode(sha256(convert_to((to_jsonb(rolling)||jsonb_build_object('proof_not_before',extract(epoch FROM rolling.proof_not_before)))::text,'UTF8')),'hex')
     OR customer.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
@@ -981,9 +4886,9 @@ REVOKE ot_v3_result_owner FROM postgres GRANTED BY postgres;
 
 CREATE TEMP TABLE customer_objects(classid oid,objid oid,PRIMARY KEY(classid,objid)) ON COMMIT DROP;
 DO $customer_delta$
-DECLARE approved jsonb:='[{"signature":"official_v3_intake_private.proposal_shape_v1()","name":"official_v3_intake_private.proposal_shape_v1","owner":"ot_v3_intake_owner","hash":"18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9","language":"sql","definer":false,"volatile":"i","config":["search_path=pg_catalog"]},{"signature":"official_v3_result_private.proposal_shape_v1()","name":"official_v3_result_private.proposal_shape_v1","owner":"ot_v3_result_owner","hash":"18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9","language":"sql","definer":false,"volatile":"i","config":["search_path=pg_catalog"]},{"signature":"official_v3_jobs_private.context_v1(jsonb)","name":"official_v3_jobs_private.context_v1","owner":"ot_v3_jobs_owner","hash":"d13ef1168f3fd032298fdd563e6045acd85d3a948de45d9eae16bb352f22379e","language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_private.subject_v1(text,jsonb)","name":"official_v3_jobs_private.subject_v1","owner":"ot_v3_jobs_owner","hash":"ba126e5d789cbc5ef470f98fd8c33de0b0cb548688110037d43e48baaee4f922","language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_result_private.context_v1(jsonb)","name":"official_v3_result_private.context_v1","owner":"ot_v3_result_owner","hash":"d17e2c5e8e8c34561a47215ae9091ecf541e68035eebc8d4a444663b3e8cc845","language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_result_private.subject_v1(text,jsonb)","name":"official_v3_result_private.subject_v1","owner":"ot_v3_result_owner","hash":"608b0d0d62fd54f5ea0032bca8df46e71924e7c565e7000f5181c32029f90828","language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_private.assert_history_v1(text)","name":"official_v3_jobs_private.assert_history_v1","owner":"ot_v3_jobs_owner","hash":"2459f719ebf1945197a8adce0276200e0075888c5a7f84b0fa89aafce1aab0ec","language":"plpgsql","definer":false,"volatile":"v","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_guard_private.jobs_catalog_v1()","name":"official_v3_guard_private.jobs_catalog_v1","owner":"postgres","hash":"7cb27a9753f10e052b75801a561b85e7f236fbe6e7698ce15e7249829b995dbf","language":"sql","definer":true,"volatile":"s","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.hrs_catalog_v1()","name":"official_v3_guard_private.hrs_catalog_v1","owner":"postgres","hash":"812a79e8f5b40c6882cc919b1ccabc55b92410b7956f93b79556d31771536835","language":"sql","definer":true,"volatile":"s","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.assert_catalog_v1()","name":"official_v3_guard_private.assert_catalog_v1","owner":"postgres","hash":"58e7fc166e498af7938e3e166e4db2d56fe17b922b6cc9f3760fca0558eeb727","language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.require_open_v1()","name":"official_v3_guard_private.require_open_v1","owner":"postgres","hash":"cc68312c10c30965e82fd84af7d4483c7559e411d4496bf8dbc8b3dcd8ec0163","language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]},{"signature":"public.official_v3_guard_alarm_status_v1()","name":"public.official_v3_guard_alarm_status_v1","owner":"postgres","hash":"f43266886b99032f4ae8e95b2f6624bbbb4bf3ac051e009e9d4286800f45b03f","language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]}]'::jsonb; expected record; actual pg_proc%ROWTYPE;
+DECLARE approved jsonb:='[{"signature":"official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)","name":"official_v3_jobs_private.tx_queue_claim_v1","owner":"ot_v3_jobs_owner","hash":"12b60c32ccf4a69b43f2bf788b1ee583aab978be01ea5099714dcc98cd3aedad","created":true,"language":"plpgsql","definer":false,"volatile":"v","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)","name":"official_v3_jobs_private.tx_queue_mutate_v1","owner":"ot_v3_jobs_owner","hash":"a1d38701d18e99e9ceee8369385a6bd637436ef52ee8e11688d110d3f32a2721","created":true,"language":"plpgsql","definer":false,"volatile":"v","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_intake_private.proposal_shape_v1()","name":"official_v3_intake_private.proposal_shape_v1","owner":"ot_v3_intake_owner","hash":"18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9","created":false,"language":"sql","definer":false,"volatile":"i","config":["search_path=pg_catalog"]},{"signature":"official_v3_result_private.proposal_shape_v1()","name":"official_v3_result_private.proposal_shape_v1","owner":"ot_v3_result_owner","hash":"18259c9664e66a9d953e7ee6cf1a1e3decc7502a71832533eb68eb441a8728b9","created":false,"language":"sql","definer":false,"volatile":"i","config":["search_path=pg_catalog"]},{"signature":"official_v3_jobs_private.context_v1(jsonb)","name":"official_v3_jobs_private.context_v1","owner":"ot_v3_jobs_owner","hash":"d13ef1168f3fd032298fdd563e6045acd85d3a948de45d9eae16bb352f22379e","created":false,"language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_private.subject_v1(text,jsonb)","name":"official_v3_jobs_private.subject_v1","owner":"ot_v3_jobs_owner","hash":"ba126e5d789cbc5ef470f98fd8c33de0b0cb548688110037d43e48baaee4f922","created":false,"language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_result_private.context_v1(jsonb)","name":"official_v3_result_private.context_v1","owner":"ot_v3_result_owner","hash":"d17e2c5e8e8c34561a47215ae9091ecf541e68035eebc8d4a444663b3e8cc845","created":false,"language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_result_private.subject_v1(text,jsonb)","name":"official_v3_result_private.subject_v1","owner":"ot_v3_result_owner","hash":"608b0d0d62fd54f5ea0032bca8df46e71924e7c565e7000f5181c32029f90828","created":false,"language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_private.assert_history_v1(text)","name":"official_v3_jobs_private.assert_history_v1","owner":"ot_v3_jobs_owner","hash":"33515f642611e5a0788e30f5a8744b91a6c7f14d374a613e53d2051836a72b4c","created":false,"language":"plpgsql","definer":false,"volatile":"v","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_guard_private.check_jobs_v1()","name":"official_v3_guard_private.check_jobs_v1","owner":"ot_v3_jobs_owner","hash":"a5e9fca902cbc69cb1504467b743670c78a0f0f08e32dc512c8160d65fd2c7cc","created":false,"language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]},{"signature":"official_v3_jobs_private.wire_v1(text)","name":"official_v3_jobs_private.wire_v1","owner":"ot_v3_jobs_owner","hash":"8f8e72bc6487cb7885440aa2163fdb6bb2d2f352a5986e3ae5860570ea85930a","created":false,"language":"plpgsql","definer":false,"volatile":"i","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)","name":"official_v3_jobs_api.execute_v1","owner":"ot_v3_jobs_owner","hash":"7c7889672fbafc7d69bb32a655a93f419354fe0c49fc1b9b1f1d549b09545ad5","created":false,"language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog, pg_temp"]},{"signature":"official_v3_guard_private.jobs_catalog_v1()","name":"official_v3_guard_private.jobs_catalog_v1","owner":"postgres","hash":"7cb27a9753f10e052b75801a561b85e7f236fbe6e7698ce15e7249829b995dbf","created":false,"language":"sql","definer":true,"volatile":"s","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.hrs_catalog_v1()","name":"official_v3_guard_private.hrs_catalog_v1","owner":"postgres","hash":"812a79e8f5b40c6882cc919b1ccabc55b92410b7956f93b79556d31771536835","created":false,"language":"sql","definer":true,"volatile":"s","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.assert_catalog_v1()","name":"official_v3_guard_private.assert_catalog_v1","owner":"postgres","hash":"fcf56527315987b4d9e7e23af5cc40dda4f6b1ff439b493bd91806b6705c4042","created":false,"language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]},{"signature":"official_v3_guard_private.require_open_v1()","name":"official_v3_guard_private.require_open_v1","owner":"postgres","hash":"cc68312c10c30965e82fd84af7d4483c7559e411d4496bf8dbc8b3dcd8ec0163","created":false,"language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]},{"signature":"public.official_v3_guard_alarm_status_v1()","name":"public.official_v3_guard_alarm_status_v1","owner":"postgres","hash":"f43266886b99032f4ae8e95b2f6624bbbb4bf3ac051e009e9d4286800f45b03f","created":false,"language":"plpgsql","definer":true,"volatile":"v","config":["search_path=pg_catalog"]}]'::jsonb; expected record; actual pg_proc%ROWTYPE;
  before_catalog jsonb; after_catalog jsonb; entry record; relation_id oid;
- class_value oid; object_value oid; replacement_ids oid[]:='{}';
+ class_value oid; object_value oid; replacement_ids oid[]:='{}'; addition_ids oid[]:='{}';
  result_value jsonb; current_value jsonb; jobs_snapshot jsonb; hrs_snapshot jsonb;
 BEGIN
  IF COALESCE((SELECT jsonb_agg(to_jsonb(r) ORDER BY r.oid) FROM pg_roles r),'[]'::jsonb)
@@ -996,21 +4901,33 @@ BEGIN
  END IF;
  SELECT value INTO STRICT before_catalog FROM pg_temp.customer_before WHERE kind='catalog';
  FOR expected IN SELECT * FROM jsonb_to_recordset(approved)
-   AS f(signature text,name text,owner text,hash text,language text,definer boolean,volatile text,config jsonb) LOOP
+   AS f(signature text,name text,owner text,hash text,language text,definer boolean,volatile text,config jsonb,created boolean) LOOP
    SELECT * INTO STRICT actual FROM pg_proc WHERE oid=to_regprocedure(expected.signature);
    IF actual.proowner<>to_regrole(expected.owner) OR actual.prokind<>'f' OR actual.proleakproof OR actual.proisstrict
      OR actual.pronargdefaults<>0 OR actual.provariadic<>0 OR actual.proparallel<>'u'
      OR actual.prosecdef<>expected.definer OR actual.provolatile::text<>expected.volatile
      OR (SELECT lanname FROM pg_language WHERE oid=actual.prolang)<>expected.language
      OR to_jsonb(actual.proconfig) IS DISTINCT FROM expected.config
-     OR encode(sha256(convert_to(actual.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected.hash
-     OR NOT before_catalog ? ('function:'||actual.oid) THEN
+     OR encode(sha256(convert_to(actual.prosrc,'UTF8')),'hex') IS DISTINCT FROM expected.hash THEN
      RAISE EXCEPTION 'customer exact existing function contract: %',expected.signature USING ERRCODE='P7921';
    END IF;
-   replacement_ids:=array_append(replacement_ids,actual.oid);
+   IF expected.created IS TRUE THEN
+     IF expected.signature NOT IN ('official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)',
+       'official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)')
+       OR before_catalog ? ('function:'||actual.oid) OR actual.proowner<>'ot_v3_jobs_owner'::regrole
+       OR actual.prorettype<>'jsonb'::regtype OR actual.proretset
+       OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(actual.proacl,acldefault('f',actual.proowner))) a
+         WHERE a.grantor<>actual.proowner OR a.grantee<>actual.proowner OR a.is_grantable) THEN
+       RAISE EXCEPTION 'customer exact private atomic helper required' USING ERRCODE='P7921';
+     END IF;
+     addition_ids:=array_append(addition_ids,actual.oid);
+   ELSIF expected.created IS FALSE AND before_catalog ? ('function:'||actual.oid) THEN
+     replacement_ids:=array_append(replacement_ids,actual.oid);
+   ELSE RAISE EXCEPTION 'customer original function identity required' USING ERRCODE='P7921';
+   END IF;
  END LOOP;
- IF cardinality(replacement_ids)<>12 THEN
-   RAISE EXCEPTION 'customer exactly twelve existing definitions required' USING ERRCODE='P7921';
+ IF cardinality(replacement_ids)<>15 OR cardinality(addition_ids)<>2 THEN
+   RAISE EXCEPTION 'customer exactly fifteen replacements and two private helpers required' USING ERRCODE='P7921';
  END IF;
  relation_id:='official_v3_guard_private.customer_information_baseline_v1'::regclass;
  IF NOT EXISTS(SELECT 1 FROM pg_class c WHERE c.oid=relation_id AND c.relkind='r'
@@ -1019,7 +4936,7 @@ BEGIN
      WHERE c.oid=relation_id AND (a.grantor<>c.relowner OR a.grantee<>c.relowner OR a.is_grantable))
    OR (SELECT jsonb_agg(jsonb_build_array(a.attname,a.atttypid::regtype::text,a.attnotnull,a.attisdropped) ORDER BY a.attnum)
      FROM pg_attribute a WHERE a.attrelid=relation_id AND a.attnum>0) IS DISTINCT FROM
-     '[["singleton","boolean",true,false],["predecessor_provider_digest","text",true,false],["predecessor_catalog_digest","text",true,false],["predecessor_rolling_digest","text",true,false],["definitions_digest","text",true,false],["history_definition_digest","text",true,false],["required_generation","bigint",true,false],["proof_not_before","timestamp with time zone",true,false],["jobs_catalog","jsonb",true,false],["hrs_catalog","jsonb",true,false],["catalog","jsonb",true,false]]'::jsonb
+     '[["singleton","boolean",true,false],["predecessor_provider_digest","text",true,false],["predecessor_catalog_digest","text",true,false],["predecessor_rolling_digest","text",true,false],["definitions_digest","text",true,false],["history_definition_digest","text",true,false],["history_guard_definition_digest","text",true,false],["atomic_claim_definition_digest","text",true,false],["required_generation","bigint",true,false],["proof_not_before","timestamp with time zone",true,false],["jobs_catalog","jsonb",true,false],["hrs_catalog","jsonb",true,false],["catalog","jsonb",true,false]]'::jsonb
    OR (SELECT count(*) FROM pg_policy p WHERE p.polrelid=relation_id)<>1
    OR EXISTS(SELECT 1 FROM pg_policy p WHERE p.polrelid=relation_id AND NOT(
      p.polpermissive AND pg_get_expr(p.polqual,p.polrelid)='true' AND p.polroles=ARRAY['postgres'::regrole::oid]
@@ -1030,7 +4947,7 @@ BEGIN
        OR NOT(t.tgname='immutable_v1' AND t.tgtype=27 OR t.tgname='immutable_truncate_v1' AND t.tgtype=34)))
    OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='p')<>1
    OR EXISTS(SELECT 1 FROM pg_constraint c WHERE c.conrelid=relation_id AND (c.contype NOT IN ('p','c') OR NOT c.convalidated OR c.condeferrable OR c.condeferred))
-   OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='c')<>8 THEN
+   OR (SELECT count(*) FROM pg_constraint c WHERE c.conrelid=relation_id AND c.contype='c')<>10 THEN
    RAISE EXCEPTION 'customer exact private immutable baseline required' USING ERRCODE='P7921';
  END IF;
  INSERT INTO pg_temp.customer_objects
@@ -1044,6 +4961,7 @@ BEGIN
    UNION SELECT 'pg_trigger'::regclass,t.oid FROM pg_trigger t WHERE t.tgrelid=relation_id
    UNION SELECT 'pg_policy'::regclass,p.oid FROM pg_policy p WHERE p.polrelid=relation_id
    UNION SELECT 'pg_attrdef'::regclass,a.oid FROM pg_attrdef a WHERE a.adrelid=relation_id;
+ INSERT INTO pg_temp.customer_objects SELECT 'pg_proc'::regclass,unnest(addition_ids);
  after_catalog:=official_v3_guard_private.catalog_status_v1();
  FOR entry IN SELECT key,value FROM jsonb_each(before_catalog) LOOP
    IF after_catalog->entry.key IS NOT DISTINCT FROM entry.value THEN CONTINUE; END IF;
@@ -1053,6 +4971,7 @@ BEGIN
  END LOOP;
  FOR entry IN SELECT key,value FROM jsonb_each(after_catalog) WHERE NOT before_catalog ? key LOOP
    class_value:=CASE split_part(entry.key,':',1)
+     WHEN 'function' THEN 'pg_proc'::regclass
      WHEN 'relation' THEN 'pg_class'::regclass WHEN 'attribute' THEN 'pg_class'::regclass WHEN 'index' THEN 'pg_class'::regclass
      WHEN 'type' THEN 'pg_type'::regclass WHEN 'constraint' THEN 'pg_constraint'::regclass
      WHEN 'trigger' THEN 'pg_trigger'::regclass WHEN 'policy' THEN 'pg_policy'::regclass WHEN 'default' THEN 'pg_attrdef'::regclass
@@ -1465,7 +5384,7 @@ SELECT CASE WHEN (SELECT matches_pg17 FROM proc_attribute_inventory) IS TRUE THE
  INSERT INTO official_v3_guard_private.customer_information_baseline_v1
  SELECT true,'7324c5e87d18de2a692e7e61123a44565ca440ecc9f8e9afddf379ede2aac32a',encode(sha256(convert_to(before_catalog::text,'UTF8')),'hex'),
    encode(sha256(convert_to((to_jsonb(prior)||jsonb_build_object('proof_not_before',extract(epoch FROM prior.proof_not_before)))::text,'UTF8')),'hex'),
-   '6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f','719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355',s.generation+1,clock_timestamp(),jobs_snapshot,hrs_snapshot,after_catalog
+   '6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f','061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692','f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b','75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a',s.generation+1,clock_timestamp(),jobs_snapshot,hrs_snapshot,after_catalog
    FROM official_v3_guard_private.state_v1 s CROSS JOIN official_v3_guard_private.rolling_quota_baseline_v1 prior
    WHERE s.singleton AND prior.singleton;
 END $customer_delta$;

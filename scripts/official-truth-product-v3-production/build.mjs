@@ -14,6 +14,15 @@ const quota = 'scripts/db/official-truth-v3-rolling-jobs-quota-1/'
 const schedule = 'scripts/db/official-truth-v3-production-import-schedule-1/'
 const customerDefinitionsPath = 'scripts/db/official-truth-v3-customer-information-1/definitions.sql'
 const historyDefinitionPath = 'scripts/db/official-truth-v3-customer-information-1/history-definition.sql'
+const historyGuardDefinitionPath = 'scripts/db/official-truth-v3-customer-information-1/history-guard-definition.sql'
+const historyGuardSignature = 'official_v3_guard_private.check_jobs_v1()'
+const atomicClaimDefinitionPath = 'scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql'
+const atomicClaimReplacements = ['official_v3_jobs_private.wire_v1(text)',
+  'official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)']
+const atomicQueueHelpers = [
+  'official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)',
+  'official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)',
+]
 const customerFunctions = Object.freeze([
   'official_v3_intake_private.proposal_shape_v1()',
   'official_v3_jobs_private.context_v1(jsonb)', 'official_v3_jobs_private.subject_v1(text,jsonb)',
@@ -105,7 +114,8 @@ function getFunction(source, signature) {
   return selected[0]
 }
 function functionMetadata(f) {
-  const owner = f.name.startsWith('official_v3_jobs_private.') ? 'ot_v3_jobs_owner'
+  const owner = f.name.startsWith('official_v3_jobs_private.') || f.name.startsWith('official_v3_jobs_api.')
+    || f.signature === historyGuardSignature ? 'ot_v3_jobs_owner'
     : f.name.startsWith('official_v3_intake_private.') ? 'ot_v3_intake_owner'
       : f.name.startsWith('official_v3_result_private.') ? 'ot_v3_result_owner' : 'postgres'
   return { signature: f.signature, name: f.name, owner,
@@ -181,7 +191,7 @@ function compileRolling(productionBg, productionStatus, binding) {
     'official_v3_jobs_private.tx_queue_cas_v1(jsonb,jsonb,integer,integer,timestamptz)',
     'official_v3_guard_private.jobs_catalog_v1()', 'official_v3_guard_private.hrs_catalog_v1()',
     'official_v3_guard_private.assert_catalog_v1()', 'official_v3_guard_private.require_open_v1()',
-    'public.official_v3_guard_alarm_status_v1()']
+    'public.official_v3_guard_alarm_status_v1()', historyGuardSignature, ...atomicClaimReplacements]
   const historySource = read(historyDefinitionPath)
   assert.equal(functionsIn(historySource).length, 1, 'one separately reviewed bounded history-memo successor')
   const replacements = replacementNames.slice(0, 5).map(signature => definition(getFunction(
@@ -192,11 +202,22 @@ function compileRolling(productionBg, productionStatus, binding) {
   replacements.push(catalog.trim())
   const oldProof = "SELECT greatest(q.required_generation,g.required_generation,r.required_generation,b.required_generation),greatest(q.proof_not_before,g.proof_not_before,r.proof_not_before,b.proof_not_before)\n    INTO STRICT required_proof,earliest_proof FROM official_v3_guard_private.rolling_quota_baseline_v1 q\n      CROSS JOIN official_v3_guard_private.gap_recovery_baseline_v1 g\n      CROSS JOIN official_v3_guard_private.recovery_baseline_v1 r\n      CROSS JOIN official_v3_guard_private.status_baseline_v1 b WHERE q.singleton AND g.singleton AND r.singleton AND b.singleton;"
   const newProof = "SELECT greatest(q.required_generation,b.required_generation),greatest(q.proof_not_before,b.proof_not_before)\n    INTO STRICT required_proof,earliest_proof FROM official_v3_guard_private.rolling_quota_baseline_v1 q\n      CROSS JOIN official_v3_guard_private.status_baseline_v1 b WHERE q.singleton AND b.singleton;"
-  for (const signature of replacementNames.slice(6)) {
+  for (const signature of replacementNames.slice(6, 8)) {
     const f = getFunction(oldRolling, signature)
     replacements.push(definition(f, once(f.body, oldProof, newProof)))
   }
-  const definitions = [...replacements.map((sql, index) => index < 3 ? 'SET LOCAL ROLE ot_v3_jobs_owner;\n' + sql + '\nRESET ROLE;' : sql),
+  const historyGuardSource = read(historyGuardDefinitionPath)
+  assert.equal(functionsIn(historyGuardSource).length, 1, 'one separately reviewed bounded journal-membership successor')
+  replacements.push(definition(getFunction(historyGuardSource, historyGuardSignature)))
+  const atomicSource = read(atomicClaimDefinitionPath)
+  assert.deepEqual(functionsIn(atomicSource).map(f => f.signature), [...atomicClaimReplacements, ...atomicQueueHelpers],
+    'exact atomic wire/API successors and two private orchestration helpers')
+  for (const signature of atomicClaimReplacements) replacements.push(definition(getFunction(atomicSource, signature)))
+  const definitions = [...replacements.map((sql, index) => replacementNames[index] === historyGuardSignature
+    ? 'GRANT CREATE ON SCHEMA official_v3_guard_private TO ot_v3_jobs_owner;\nSET LOCAL ROLE ot_v3_jobs_owner;\n'
+      + sql + '\nRESET ROLE;\nREVOKE CREATE ON SCHEMA official_v3_guard_private FROM ot_v3_jobs_owner;'
+    : functionMetadata(getFunction(sql, replacementNames[index])).owner === 'ot_v3_jobs_owner'
+      ? 'SET LOCAL ROLE ot_v3_jobs_owner;\n' + sql + '\nRESET ROLE;' : sql),
     ...customer.map(f => 'SET LOCAL ROLE ' + functionMetadata(f).owner + ';\n' + definition(f) + '\nRESET ROLE;')].join('\n\n')
   const successors = functionsIn(definitions)
   assert.deepEqual(successors.map(f => f.signature), [...replacementNames, ...customerFunctions])
@@ -206,6 +227,15 @@ function compileRolling(productionBg, productionStatus, binding) {
     assert.deepEqual({ ...before, hash: null }, { ...after, hash: null }, 'same native signature/owner/options')
     assert.equal(f.args, current.get(f.signature).args, 'same complete argument contract')
   }
+  const queueHelpers = atomicQueueHelpers.map(signature => {
+    const helper = getFunction(atomicSource, signature)
+    assert.ok(!current.has(signature), 'atomic helper is new to the exact unused predecessor')
+    assert.equal(helper.args, 'q jsonb,b jsonb,e integer,remaining integer,deadline timestamptz')
+    return helper
+  })
+  const queueHelpersSql = queueHelpers.map(helper => 'SET LOCAL ROLE ot_v3_jobs_owner;\n' + definition(helper)
+    + '\nREVOKE ALL ON FUNCTION ' + helper.signature
+    + ' FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user;\nRESET ROLE;').join('\n\n')
   let policy = read(own + 'parts/rolling-policy.sql')
   policy = token(policy, 'PRODUCTION_METHOD_BINDING', quote(JSON.stringify({ methodId: binding.methodId, revision: binding.revision,
     methodDigest: binding.methodDigest, packageDigest: binding.packageDigest })) + '::jsonb', 2)
@@ -213,15 +243,25 @@ function compileRolling(productionBg, productionStatus, binding) {
   let prefix = read(own + 'parts/rolling-prefix.sql')
   prefix = token(prefix, '/* PREDECESSOR_FUNCTIONS */', [...current.values()].map(f => '(' + quote(f.signature) + ',' + quote(sha256(f.body)) + ')').join(',\n'), 1)
   prefix = token(prefix, '/* STATUS_CATALOG_QUERY */', getFunction(productionStatus, 'official_v3_guard_private.catalog_status_v1()').body.trim(), 1)
+  prefix = once(prefix, "OR to_regclass('official_v3_guard_private.rolling_quota_baseline_v1') IS NOT NULL",
+    "OR to_regclass('official_v3_guard_private.rolling_quota_baseline_v1') IS NOT NULL"
+      + atomicQueueHelpers.map(signature => '\n    OR to_regprocedure(' + quote(signature) + ') IS NOT NULL').join(''))
   let constraints = read(quota + 'constraints-before.sql')
   constraints = once(constraints, " IF (SELECT count(*) FROM official_v3_jobs_private.subjects_v1\n     WHERE job_key='ROLLING_JOB_KEY' AND kind='rule_research')<>1 THEN\n   RAISE EXCEPTION 'rolling quota requires exact existing CH DE subject' USING ERRCODE='P7911'; END IF;",
     " IF EXISTS(SELECT 1 FROM official_v3_jobs_private.subjects_v1) THEN\n   RAISE EXCEPTION 'production rolling quota requires an unused job store' USING ERRCODE='P7911'; END IF;")
   let delta = read(quota + 'delta.sql')
-  delta = once(delta, 'cardinality(replacement_ids)<>8', 'cardinality(replacement_ids)<>14')
+  delta = once(delta, 'cardinality(replacement_ids)<>8', 'cardinality(replacement_ids)<>17')
+  delta = once(delta, "expected.signature NOT IN ('official_v3_jobs_private.rolling_usage_v2(text)','official_v3_guard_private.ch_de_quota_v2()')",
+    "expected.signature NOT IN ('official_v3_jobs_private.rolling_usage_v2(text)','official_v3_guard_private.ch_de_quota_v2()'," + atomicQueueHelpers.map(quote).join(',') + ')')
+  delta = once(delta, "       OR (expected.signature='official_v3_guard_private.ch_de_quota_v2()' AND (actual.pronargs<>0 OR actual.proargnames IS NOT NULL))",
+    "       OR (expected.signature='official_v3_guard_private.ch_de_quota_v2()' AND (actual.pronargs<>0 OR actual.proargnames IS NOT NULL))\n"
+      + '       OR (expected.signature IN (' + atomicQueueHelpers.map(quote).join(',') + ')'
+      + " AND (actual.pronargs<>5 OR actual.proargnames IS DISTINCT FROM ARRAY['q','b','e','remaining','deadline']::text[]\n"
+      + "         OR EXISTS(SELECT 1 FROM aclexplode(COALESCE(actual.proacl,acldefault('f',actual.proowner))) a WHERE a.grantee<>actual.proowner)))")
   delta = token(delta, 'predecessor_gap_digest', 'predecessor_status_digest', 1)
   delta = token(delta, 'official_v3_guard_private.gap_recovery_baseline_v1', 'official_v3_guard_private.status_baseline_v1', 1)
   delta = token(delta, 'GAP_PROVIDER_SHA256', sha256(productionStatus), 1)
-  delta = token(delta, '/* APPROVED_FUNCTIONS */', quote(JSON.stringify([...successors, ...functionsIn(policy)].map(functionMetadata))) + '::jsonb', 1)
+  delta = token(delta, '/* APPROVED_FUNCTIONS */', quote(JSON.stringify([...successors, ...queueHelpers, ...functionsIn(policy)].map(functionMetadata))) + '::jsonb', 1)
   const jobs = read('scripts/db/' + foundation.HM04 + '/install-candidate.sql')
   const queries = [...getFunction(jobs, 'official_v3_jobs_private.assert_catalog_v1()').body.matchAll(/SELECT q\.value INTO actual_value FROM \(\n([\s\S]*?)\n\s*\) q;\n\s*SELECT fingerprint INTO bound_value FROM official_v3_jobs_private\.catalog_binding_v1 WHERE object_identity='([^']+)'/g)]
   assert.equal(queries.length, 15)
@@ -233,11 +273,11 @@ function compileRolling(productionBg, productionStatus, binding) {
   delta = token(delta, '/* CAPTURE_HRS */', hrsQuery, 1)
   const output = [prefix, constraints,
     ...customerOwners.map(owner => 'GRANT ' + owner + ' TO postgres WITH ADMIN FALSE, INHERIT FALSE, SET TRUE GRANTED BY postgres;'),
-    policy, definitions, read(quota + 'constraints.sql'),
+    policy, definitions, queueHelpersSql, read(quota + 'constraints.sql'),
     ...customerOwners.map(owner => 'REVOKE ' + owner + ' FROM postgres GRANTED BY postgres;'), delta, read(own + 'parts/rolling-postcheck.sql')].join('\n\n')
     .replaceAll('ROLLING_JOB_KEY', PRODUCTION.subject)
   assertTransactionBody(output)
-  assert.equal(functionsIn(output).length, 16)
+  assert.equal(functionsIn(output).length, 21)
   assert.ok(!/(?:FROM |JOIN |CREATE TABLE )official_v3_guard_private\.(?:recovery_baseline_v1|gap_recovery_baseline_v1|retired_later_attempts_v1)|dev:yfvbx/.test(output), 'no Dev repair chain in fresh Production quota')
   return output
 }
@@ -247,6 +287,10 @@ export function compileProductionArtifacts() {
     'fresh Production customer definitions require their own exact source pin')
   assert.equal(pins.filter(pin => pin.path === historyDefinitionPath).length, 1,
     'fresh Production history definition requires its own exact source pin')
+  assert.equal(pins.filter(pin => pin.path === historyGuardDefinitionPath).length, 1,
+    'fresh Production journal-membership definition requires its own exact source pin')
+  assert.equal(pins.filter(pin => pin.path === atomicClaimDefinitionPath).length, 1,
+    'fresh Production atomic claim requires its own exact source pin')
   const bindingText = readFileSync(new URL('binding.json', here), 'utf8').trim()
   const binding = JSON.parse(bindingText)
   assert.equal(binding.methodId, 'jetnity-destination-primary-ch-de-visa')
@@ -291,8 +335,18 @@ export function compileProductionArtifacts() {
       baseline: 'fresh rolling baseline before the first genuine audit', publicationAuthority: 'unchanged' },
     historyValidation: { definition: historyDefinitionPath, definitionSha256: sha256(read(historyDefinitionPath)),
       function: 'official_v3_jobs_private.assert_history_v1(text)',
-      scope: 'invocation-local bounded memo; every retained historical row remains validated',
+      scope: 'complete original job checks with bounded exact-byte reuse and fixed-key success checks; every historical row remains validated',
+      jobMemo: { entries: 8, keyBytes: 1048576 }, subjectMemoBytes: 1048576,
+      canonicalAndNodeMemoBytes: { total: 65536, recentCanonical: 32768, canonicalSubtrees: 16384, nodeCounts: 16384 },
       apiDeadlineMs: 5000, quotas: 'unchanged' },
+    journalMembership: { definition: historyGuardDefinitionPath, definitionSha256: sha256(read(historyGuardDefinitionPath)),
+      function: historyGuardSignature, scope: 'one successful exact-byte witness per subject and invocation; all original rows and checks retained',
+      memo: { entries: 1, keyBytes: 65536 }, authority: 'unchanged' },
+    atomicQueue: { definition: atomicClaimDefinitionPath, definitionSha256: sha256(read(atomicClaimDefinitionPath)),
+      replacements: atomicClaimReplacements, privateHelpers: atomicQueueHelpers, phase: 'authorized',
+      operations: ['queue_claim', 'queue_mutate'], actions: ['enqueue', 'claim', 'complete', 'fail'],
+      singleSubjectFullHistoryChecks: 3, apiDeadlineMs: 5000, mutationBudgetMs: 5000, authority: 'unchanged',
+      fallbackAfterSelection: false, historicalAdapterProtocol: 'unchanged' },
     bindingSha256: sha256(bindingText), runtimeEnvironment: LOGINS.map(([login, role, key]) => ({ key, login, role })),
     sources: pins, compilerInputs: compilerInputs.map(identity), operationalInputs: operationalInputs.map(identity),
     artifacts: [...artifacts].map(([path, value]) => ({ path, bytes: Buffer.byteLength(value), sha256: sha256(value) })),

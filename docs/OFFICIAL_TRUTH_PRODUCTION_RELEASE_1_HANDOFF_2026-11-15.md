@@ -71,6 +71,44 @@ vor dem ersten echten Audit. Er importiert keine Dev-Baseline oder Review.
 Signaturen, Besitzer und Rechte bleiben erhalten; temporäre SET-Kanten für die
 drei tatsächlichen Funktionsbesitzer werden in derselben Transaktion entfernt.
 
+Der History-Nachfolger erhält beide direkten History-Prüfungen und den
+vollständigen BG1-Seal eines autorisierten M04-Aufrufs. Der atomare Queue-Pfad
+bündelt Claim sowie Enqueue/Complete/Fail in jeweils einer Transaktion mit drei
+vollständigen History-Prüfungen im Ein-Subject-Vektor und drei echten
+MA1-Beobachtungen innerhalb derselben ursprünglichen Fünf-Sekunden-Frist.
+Er übernimmt die vollständigen ursprünglichen Jobprüfungen lokal und
+verwendet ausschließlich identische, bereits geprüfte reine Ergebnisse innerhalb
+desselben Aufrufs erneut. Die Jobmemo wird auf acht Einträge begrenzt; die
+gemeinsamen 64 KiB für kanonische Werte und Knotenzählung bleiben erhalten.
+Schnelle erfolgreiche Schlüsselprüfungen gelten nur für die exakt gebundenen
+konstanten Feldlisten, mit ursprünglichem Fallback. Es gibt keinen persistierten
+Freigabecache und keine Änderung von Quoten, fünf Sekunden oder Originalhistorie.
+Der verpflichtende Kapazitätsnachweis gehört zur finalen CI und ersetzt keine
+spätere echte Production-Abnahme nach der gemeinsamen Freigabe.
+
+Der zusätzlich gepinnte BG1-Journalabgleich übernimmt ausschließlich einen
+erfolgreichen Membership-Nachweis derselben vollständigen Bytes innerhalb
+desselben Subjects und Aufrufs. Der einzelne Slot ist auf 64 KiB begrenzt.
+Jeder Subjectwechsel verwirft ihn; die vollständige Chain-Prüfung, sämtliche
+Zeilen, Locks, Methoden- und Intake-Prüfungen bleiben erhalten. Beide
+Definitionen werden vor der frischen Production-Baseline installiert und
+gehören zu deren vollständiger Katalogbindung.
+Der bestehende Checker-Besitzer bleibt `ot_v3_jobs_owner`. Ausschließlich für
+diese Ersetzung erhält er vorübergehend CREATE auf dem Guard-Schema; das Recht
+wird sofort in derselben Transaktion zurückgenommen. Vollständige ursprüngliche
+Schema-ACL und Rollenmitgliedschaften müssen danach exakt wiederhergestellt sein.
+
+Die beiden neuen privaten Queue-Helfer behalten ausschließlich Owner-EXECUTE.
+Wire- und API-Nachfolger behalten ihre bestehenden OIDs, Signaturen und Rechte.
+Original-Confirm, tatsächlicher Read, unveränderte Transitionzweige, Rolling-CAS,
+erneuter Confirm und vollständiger Schluss-Read bleiben erhalten. Jeder
+unerwartete Befund nach CAS rollt die ganze Transaktion zurück. Terminale
+Continuation, Token, S1-Originale, Lease und letzte tatsächliche MA1-Prüfung
+bleiben zwingend. Historische Adapter behalten ihren alten Vertrag; der neue
+Adapter wählt ausdrücklich eigene Executor-Funktionen und wechselt danach bei
+Fehlern nicht auf einen Ersatzpfad. Die vollständigen Worker-/Replay-/Native-
+Gates sind vor einer Freigabe verpflichtend; derzeit kein Production-PASS.
+
 Die Besucheransicht zeigt alle 26 Themen samt Quelle/Stand und Reiseprüfhinweis.
 Unbestätigte Angaben bleiben „Derzeit nicht verfügbar“. Die neuen Felder und
 der reproduzierbare Quellenplan erteilen keine zusätzliche fachliche Freigabe:

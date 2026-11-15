@@ -16,8 +16,9 @@ const id = (kind: string, value: string) => kind + '_' + hash('customer-history-
 const binding = program.binding
 const instant = (value: number) => new Date(value).toISOString()
 
-export async function buildHistoryMemoFixture() {
-  const first = Date.now() - 4 * 86400000
+export async function buildHistoryMemoFixture(asOf = Date.now()) {
+  assert.ok(Number.isSafeInteger(asOf) && asOf > 0, 'explicit finite owned-fixture time anchor')
+  const first = asOf - 4 * 86400000
   const original = await buildHistoricalQuotaFixture({ method: binding, context: binding.context, factKind: 'requirement_effect',
     firstAt: new Date(first), cycleSpacingMs: 40 * 60000, cycles: 64 })
   // Only the fixed method tuple is part of authority, not the source binding.
@@ -26,7 +27,7 @@ export async function buildHistoryMemoFixture() {
   const work = { context: binding.context, method: { methodId: binding.methodId, revision: binding.revision },
     factKind: 'requirement_effect' as const, researchReason: { status: 'missing' as const } }
   let current = original.subjectRow.current_job as V3ResearchJobRecord
-  let clock = Date.now() - 3600000
+  let clock = asOf - 3600000
   const operations: HistoricalQuotaOperation[] = [], starts: HistoricalQuotaStart[] = [], dispositions: HistoricalQuotaDisposition[] = []
   const prospective = async (raw: unknown) => {
     const command = readM04Command(raw); assert.ok(command)
@@ -105,5 +106,6 @@ export async function buildHistoryMemoFixture() {
     + ',operation_count=447,terminal_credit_claim=' + literal(claim.operationId) + ' WHERE job_key=' + literal(original.jobKey) + ' AND operation_count=446;'
   const invalidSql = scope + append('queue_operations_v1', [invalidRow])
     + 'UPDATE official_v3_jobs_private.subjects_v1 SET operation_count=447 WHERE job_key=' + literal(original.jobKey) + ' AND operation_count=446;'
-  return { original, queueSql, claimSql, invalidSql, retainedOperations: 447, retainedStarts: 86 }
+  return { original, queueSql, claimSql, invalidSql, retainedOperations: 447, retainedStarts: 86,
+    leasedJob: current, terminalClaim: claim, terminalClaimRow: claimed.row, afterClaimAt: instant(clock) }
 }

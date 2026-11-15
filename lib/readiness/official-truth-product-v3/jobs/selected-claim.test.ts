@@ -61,6 +61,11 @@ async function setup() {
       continuation: () => null, disposition: () => ({ kind: 'regular' }), onRecord() {}, settled() {} })
     return createV3QueueCoordinator({ ...h.options, storage, invocationMilliseconds: 5000 }).claim(selection.claim)
   }
+  async function fail(job: V3ManagedJobRecord) {
+    return confirmed(await h.queue.fail({ operationId: ids('op3', `retained-backoff-${job.revision}`),
+      jobKey: root.jobKey, fence: { jobId: job.jobId, revision: job.revision,
+        leaseId: job.lease!.leaseId, generation: job.lease!.generation }, reason: 'verification_unavailable' }))
+  }
   function prepared(claim: M04Claim, completed = false) {
     const row = h.storage.records.get(root.jobKey)!
     assert.equal(row.state, 'leased')
@@ -71,7 +76,7 @@ async function setup() {
     executions.set(claim.operationId, value as M04NativeReply)
     return value
   }
-  return { f, h, root, cycle, fixed, select, selected, claim, executions, calls, prepared,
+  return { f, h, root, cycle, fixed, select, selected, claim, fail, executions, calls, prepared,
     setOpen(value: boolean) { open = value } }
 }
 
@@ -115,6 +120,180 @@ test('expired UNSTARTED claim uses one ordinary CAS on the original job and pres
   assert.equal(Date.parse(acquired.lease!.expiresAt) - Date.parse(acquired.lease!.acquiredAt), 30000)
   assert.deepEqual(t.h.storage.operations.get(t.root.operationId), saved)
   assert.ok(t.calls.every(call => !call.startsWith('execution_start')))
+})
+
+test('due confirmed backoff selects the next deterministic claim in the same retained cycle', async () => {
+  const t = await setup(), first = confirmed(await t.claim(await t.selected()))
+  const originalReceipt = structuredClone(t.h.storage.operations.get(t.root.operationId))
+  t.h.clock.advance(1)
+  const backoff = await t.fail(first)
+  assert.equal(backoff.state, 'backoff')
+  // A normal scheduler retry may arrive after the original acquired lease expired.
+  t.h.clock.advance(60000)
+  const writes = t.h.storage.writes, next = await t.selected()
+  assert.equal(t.h.storage.writes, writes)
+  assert.equal(next.generation, 1)
+  assert.equal(next.acquiredRevision, backoff.revision + 1)
+  assert.deepEqual(next.claim, retainedChDeClaim(t.root, 1))
+  assert.deepEqual(next.predecessor, backoff)
+  const acquired = confirmed(await t.claim(next))
+  assert.equal(acquired.jobId, first.jobId)
+  assert.equal(acquired.operationId, first.operationId)
+  assert.equal(acquired.attempt, 2)
+  assert.equal(acquired.predecessorRevision, backoff.revision)
+  assert.equal(t.h.storage.writes, writes + 1)
+  assert.deepEqual(t.h.storage.operations.get(t.root.operationId), originalReceipt)
+  assert.ok(t.calls.every(call => !call.startsWith('execution_start')))
+})
+
+test('backoff remains closed before its exact due instant and exhausts at the original attempt limit', async () => {
+  const t = await setup()
+  for (let generation = 0; generation < 4; generation++) {
+    const selection = await t.selected()
+    assert.equal(selection.generation, generation)
+    assert.deepEqual(selection.claim, retainedChDeClaim(t.root, generation))
+    const leased = confirmed(await t.claim(selection)), failed = await t.fail(leased)
+    if (generation === 3) {
+      assert.equal(failed.state, 'exhausted')
+      assert.deepEqual(await t.select(), { status: 'exhausted', job: failed })
+      break
+    }
+    assert.equal(failed.state, 'backoff')
+    const before = t.calls.length, writes = t.h.storage.writes
+    t.h.clock.advance(Date.parse(failed.nextAttemptAt!) - Date.parse(t.h.clock.now()) - 1)
+    assert.deepEqual(await t.select(), { status: 'unconfirmed' })
+    assert.deepEqual(t.calls.slice(before), ['execution_read', 'queue_read'])
+    assert.equal(t.h.storage.writes, writes)
+    t.h.clock.advance(1)
+  }
+  assert.equal(t.h.storage.events.filter(event => event.kind === 'enqueued').length, 1)
+  assert.equal(t.h.storage.events.filter(event => event.kind === 'leased').length, 4)
+  assert.equal(t.h.storage.events.filter(event => event.kind === 'backoff').length, 3)
+  assert.equal(t.h.storage.events.filter(event => event.kind === 'exhausted').length, 1)
+})
+
+test('a due backoff from another actual claim or job cycle cannot join the retained family', async t => {
+  for (const boundary of ['first_claim', 'following_claim', 'later_cycle'] as const) await t.test(boundary, async () => {
+    const h = await setup()
+    if (boundary !== 'first_claim') {
+      const original = confirmed(await h.claim(await h.selected()))
+      if (boundary === 'later_cycle') {
+        confirmed(await h.h.queue.complete({ operationId: ids('op3', 'previous-complete'), jobKey: h.root.jobKey,
+          fence: { jobId: original.jobId, revision: original.revision, leaseId: original.lease!.leaseId,
+            generation: original.lease!.generation }, decisionRef: ref('source-decision', 'previous-complete') }))
+        confirmed(await h.h.queue.enqueue({ ...h.f.enqueue, operationId: ids('op3', 'backoff-later-enqueue'),
+          jobId: ids('job3', 'backoff-later-cycle'), attemptLimit: 4 }))
+      } else {
+        await h.fail(original); h.h.clock.advance(1000)
+      }
+    }
+    const rival = confirmed(await h.h.queue.claim({ ...h.root, operationId: ids('op3', 'foreign-backoff-claim'),
+      leaseId: ids('lease3', 'foreign-backoff-claim') }))
+    await h.fail(rival); h.h.clock.advance(60000)
+    const writes = h.h.storage.writes
+    assert.deepEqual(await h.select(), { status: 'unconfirmed' })
+    assert.equal(h.h.storage.writes, writes)
+  })
+})
+
+test('backoff requires exact original acquisition evidence, not an unclear confirmation or plausible row', async t => {
+  for (const fault of ['blocked', 'unavailable', 'unconfirmed', 'collision', 'not_attempted',
+    'wrong_operation', 'wrong_command', 'wrong_lease', 'wrong_revision', 'changed_cycle_field'] as const) {
+    await t.test(fault, async () => {
+      const h = await setup(), leased = confirmed(await h.claim(await h.selected()))
+      await h.fail(leased); h.h.clock.advance(60000)
+      const writes = h.h.storage.writes
+      const fixed: M04FixedOperation = async (...args) => {
+        const reply = await h.fixed(...args)
+        if (args[0].operation !== 'queue_confirm' || reply.status !== 'committed') return reply
+        if (fault === 'wrong_operation') return { ...reply, operationId: ids('op3', 'wrong-confirmation') }
+        if (fault === 'wrong_command') return { ...reply, commandText: readM04Command({ action: 'claim',
+          input: retainedChDeClaim(h.root, 1)! })!.commandText }
+        if (fault === 'wrong_lease') return { ...reply, record: { ...reply.record,
+          lease: { ...reply.record.lease!, leaseId: ids('lease3', 'wrong-confirmation') } } }
+        if (fault === 'wrong_revision') return { ...reply, record: { ...reply.record, revision: reply.record.revision + 1 } }
+        if (fault === 'changed_cycle_field') return { ...reply, record: { ...reply.record,
+          createdAt: new Date(Date.parse(reply.record.createdAt) - 1).toISOString() } }
+        return { status: fault }
+      }
+      assert.deepEqual(await h.select({ fixed }), { status: 'unconfirmed' })
+      assert.equal(h.h.storage.writes, writes)
+    })
+  }
+})
+
+test('a real closed backoff proof cannot override an open or uncertain START', async t => {
+  for (const boundary of ['open', 'unknown'] as const) await t.test(boundary, async () => {
+    const h = await setup(), leased = confirmed(await h.claim(await h.selected()))
+    await h.fail(leased); h.h.clock.advance(60000)
+    if (boundary === 'open') h.setOpen(true)
+    else h.executions.set(h.root.operationId, { status: 'unconfirmed' })
+    const writes = h.h.storage.writes
+    assert.deepEqual(await h.select(), { status: 'unconfirmed' })
+    assert.equal(h.h.storage.writes, writes)
+  })
+})
+
+test('backoff selection drains its original confirmation and obeys the same abort or deadline', async t => {
+  for (const boundary of ['abort', 'deadline'] as const) await t.test(boundary, async () => {
+    const h = await setup(), leased = confirmed(await h.claim(await h.selected()))
+    await h.fail(leased); h.h.clock.advance(60000)
+    const controller = new AbortController(), writes = h.h.storage.writes
+    let entered = false, drained = false
+    const fixed: M04FixedOperation = async (...args) => {
+      const reply = await h.fixed(...args)
+      if (args[0].operation === 'queue_confirm') {
+        entered = true
+        if (boundary === 'abort') controller.abort()
+        await new Promise(resolve => setTimeout(resolve, boundary === 'deadline' ? 130 : 1))
+        drained = true
+      }
+      return reply
+    }
+    assert.deepEqual(await h.select({ fixed, signal: controller.signal, deadline: performance.now() + 100 }),
+      { status: 'unconfirmed' })
+    assert.equal(entered, true)
+    assert.equal(drained, true)
+    assert.equal(h.h.storage.writes, writes)
+  })
+})
+
+test('a selected backoff keeps its full private predecessor across atomic dispatch and CAS races', async t => {
+  for (const boundary of ['atomic_expected', 'claim_race', 'start_race'] as const) await t.test(boundary, async () => {
+    const h = await setup(), leased = confirmed(await h.claim(await h.selected()))
+    const backoff = await h.fail(leased); h.h.clock.advance(60000)
+    const selection = await h.selected(), writes = h.h.storage.writes
+    if (boundary === 'atomic_expected') {
+      const command = readM04Command({ action: 'claim', input: selection.claim })!
+      let reached = false
+      const guarded = guardRetainedChDeClaim(selection, async request => {
+        assert.equal(request.operation, 'queue_claim')
+        if (request.operation !== 'queue_claim') assert.fail('unexpected operation')
+        assert.deepEqual(request.body.expected, backoff)
+        assert.equal(request.body.replayOnly, false)
+        reached = true
+        return { status: 'unconfirmed' }
+      })
+      assert.deepEqual(await guarded({ operation: 'queue_claim', body: { command: command.value,
+        continuation: null, expected: null, replayOnly: false } }, signal()), { status: 'unconfirmed' })
+      assert.equal(reached, true)
+    } else {
+      let raced = false
+      const fixed: M04FixedOperation = async (...args) => {
+        if (args[0].operation === 'queue_cas' && !raced) {
+          raced = true
+          if (boundary === 'start_race') h.setOpen(true)
+          else confirmed(await h.h.queue.claim({ ...h.root, operationId: ids('op3', 'backoff-race'),
+            leaseId: ids('lease3', 'backoff-race') }))
+        }
+        return h.fixed(...args)
+      }
+      assert.notEqual((await h.claim(selection, fixed)).status, 'confirmed')
+      assert.equal(raced, true)
+    }
+    assert.equal(h.h.storage.operations.has(selection.claim.operationId), false)
+    assert.equal(h.h.storage.writes, writes + (boundary === 'claim_race' ? 1 : 0))
+  })
 })
 
 test('lost follow-up claim ACK reselects its exact committed IDs and never repeats the CAS', async () => {

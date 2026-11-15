@@ -189,11 +189,11 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
     return workerAnchor
   }
   function rememberWorkerAck(request: M04Operation, reply: M04NativeReply, held: Held): boolean {
-    if (request.operation === 'queue_cas' || request.operation === 'queue_confirm') {
+    if (request.operation === 'queue_cas' || request.operation === 'queue_confirm' || request.operation === 'queue_claim') {
       const command = readM04Command(request.body.command)
       if (command?.action !== 'claim' || reply.status !== 'committed' || reply.record.state !== 'leased') return true
       if (request.operation === 'queue_cas' && canonical(reply.record) !== canonical(request.body.commit.next)) return false
-      if (request.operation === 'queue_confirm' && (reply.commandText !== command.commandText
+      if ((request.operation === 'queue_confirm' || request.operation === 'queue_claim') && (reply.commandText !== command.commandText
         || reply.commandKey !== command.commandKey || reply.operationId !== command.operationId)) return false
       const anchor = workerIdentity(command.value.input as M04Claim, reply.record)
       if (!anchor || (anchor.claimEpoch !== null && anchor.claimEpoch !== held.epoch)
@@ -273,6 +273,14 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
             budget: Object.freeze({ deadline }), notAfter: new Date(cap).toISOString() }) as M04FixedRequest
           const executed = await joint.scope.native('jobs', group, async s => {
             if (s.aborted || performance.now() >= deadline) return { status: 'unavailable' as const }
+            if (request.operation === 'queue_claim') {
+              const atomic = joint.config.jobsExecutor.executeAtomicClaimFixed
+              return atomic ? atomic(fixed, s) : { status: 'unavailable' as const }
+            }
+            if (request.operation === 'queue_mutate') {
+              const atomic = joint.config.jobsExecutor.executeAtomicMutationFixed
+              return atomic ? atomic(fixed, s) : { status: 'unavailable' as const }
+            }
             return joint.config.jobsExecutor.executeFixed(fixed, s)
           }, signal, group === 'outer' && joint.scope.terminalOperation(request))
           if (!executed.ok || executed.value.status !== 'acknowledged') {
@@ -290,7 +298,8 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       // A fresh Queue CAS may retain its same-instance receipt for the real
       // post-CAS read. SQL still checks history, epoch and expiry at its end.
       // Explicit invalid receipts fail here; they never fall back to a new one.
-      if (request.operation === 'queue_read' && providedReceipt !== undefined) return execute('authorized', providedReceipt)
+      if ((request.operation === 'queue_read' || request.operation === 'queue_claim' || request.operation === 'queue_mutate') && providedReceipt !== undefined)
+        return execute('authorized', providedReceipt)
       if (isRead) { const probe = await execute('probe'); if (probe.status !== 'requires_authority') return probe }
       if (request.operation === 'queue_confirm' && beforeAuthority !== undefined) {
         // The physical transport owns one method pair. A replay's actual probe
@@ -413,7 +422,11 @@ export function createV3PostgresDurableJobs(input: M04Config): M04Facade {
         clock: value.clock as M04Config['clock'],
         methodExecutor: Object.freeze({ readCurrent: capture<Ma1MethodSqlExecutor['readCurrent']>(value.methodExecutor, 'readCurrent') }),
         intakeExecutor: Object.freeze({ execute: capture<M04Config['intakeExecutor']['execute']>(value.intakeExecutor, 'execute') }),
-        jobsExecutor: Object.freeze({ executeFixed: capture<M04Config['jobsExecutor']['executeFixed']>(value.jobsExecutor, 'executeFixed') }),
+        jobsExecutor: Object.freeze({ executeFixed: capture<M04Config['jobsExecutor']['executeFixed']>(value.jobsExecutor, 'executeFixed'),
+          ...(Object.getOwnPropertyDescriptor(value.jobsExecutor as object, 'executeAtomicClaimFixed')
+            ? { executeAtomicClaimFixed: capture<NonNullable<M04Config['jobsExecutor']['executeAtomicClaimFixed']>>(value.jobsExecutor, 'executeAtomicClaimFixed') } : {}),
+          ...(Object.getOwnPropertyDescriptor(value.jobsExecutor as object, 'executeAtomicMutationFixed')
+            ? { executeAtomicMutationFixed: capture<NonNullable<M04Config['jobsExecutor']['executeAtomicMutationFixed']>>(value.jobsExecutor, 'executeAtomicMutationFixed') } : {}) }),
         producer: Object.freeze({ produce: capture<M04Config['producer']['produce']>(value.producer, 'produce') }),
         evidence: Object.freeze({ inspect: capture<M04Config['evidence']['inspect']>(value.evidence, 'inspect'),
           reprove: capture<M04Config['evidence']['reprove']>(value.evidence, 'reprove') }),
@@ -516,7 +529,11 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
           clock: value.clock as M04Config['clock'],
           methodExecutor: Object.freeze({ readCurrent: captureNative<Ma1MethodSqlExecutor['readCurrent']>(value.methodExecutor,'readCurrent') }),
           intakeExecutor: Object.freeze({ execute: captureNative<M04Config['intakeExecutor']['execute']>(value.intakeExecutor,'execute') }),
-          jobsExecutor: Object.freeze({ executeFixed: captureNative<M04Config['jobsExecutor']['executeFixed']>(value.jobsExecutor,'executeFixed') }),
+          jobsExecutor: Object.freeze({ executeFixed: captureNative<M04Config['jobsExecutor']['executeFixed']>(value.jobsExecutor,'executeFixed'),
+            ...(Object.getOwnPropertyDescriptor(value.jobsExecutor as object, 'executeAtomicClaimFixed')
+              ? { executeAtomicClaimFixed: captureNative<NonNullable<M04Config['jobsExecutor']['executeAtomicClaimFixed']>>(value.jobsExecutor, 'executeAtomicClaimFixed') } : {}),
+            ...(Object.getOwnPropertyDescriptor(value.jobsExecutor as object, 'executeAtomicMutationFixed')
+              ? { executeAtomicMutationFixed: captureNative<NonNullable<M04Config['jobsExecutor']['executeAtomicMutationFixed']>>(value.jobsExecutor, 'executeAtomicMutationFixed') } : {}) }),
           producer: Object.freeze({ produce: capture<M04Config['producer']['produce']>(value.producer,'produce') }),
           evidence: Object.freeze({ async inspect() { return { status: 'unavailable' as const } }, async reprove() { return { status: 'unavailable' as const } } }),
           history: Object.freeze({ async read() { return { status: 'unavailable' as const } }, async reprove() { return { status: 'unavailable' as const } } }),

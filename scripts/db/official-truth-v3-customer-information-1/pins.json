@@ -37,8 +37,34 @@
     },
     "official_v3_jobs_private.assert_history_v1(text)": {
       "before": "b23d018a05fd96cd779993ba0be510a9d9feafdf94b5b598883e724f097f9399",
-      "after": "2459f719ebf1945197a8adce0276200e0075888c5a7f84b0fa89aafce1aab0ec"
+      "after": "33515f642611e5a0788e30f5a8744b91a6c7f14d374a613e53d2051836a72b4c"
+    },
+    "official_v3_guard_private.check_jobs_v1()": {
+      "before": "12560e25fc355e9fd903be2bc565b92a78d97f8601b1207f9204bfb8552125d0",
+      "after": "a5e9fca902cbc69cb1504467b743670c78a0f0f08e32dc512c8160d65fd2c7cc"
+    },
+    "official_v3_jobs_private.wire_v1(text)": {
+      "before": "98eb7a975288f3c9afdebc50131dd367a5f0459b3e0230ce2cd7cb88ea83c655",
+      "after": "8f8e72bc6487cb7885440aa2163fdb6bb2d2f352a5986e3ae5860570ea85930a"
+    },
+    "official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)": {
+      "before": "ebf97604360e16d31bff8b34e7fb6380a643d207198e9b0af2ea95821650ece5",
+      "after": "7c7889672fbafc7d69bb32a655a93f419354fe0c49fc1b9b1f1d549b09545ad5"
+    },
+    "official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamptz)": {
+      "before": null,
+      "after": "12b60c32ccf4a69b43f2bf788b1ee583aab978be01ea5099714dcc98cd3aedad"
+    },
+    "official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamptz)": {
+      "before": null,
+      "after": "a1d38701d18e99e9ceee8369385a6bd637436ef52ee8e11688d110d3f32a2721"
     }
   },
-  "historyDefinitionsDigest": "719c2671f6d0af1881d21cd6e09f4d2dac2afb239d72759bd1d0d4647b85d355"
+  "historyDefinitionsDigest": "061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692",
+  "historyJobValidatorDigest": "a34628ad65ba73caa89308cc819b8d1913d7b7e557bddf3b0a42cfef205cf800",
+  "historyNodesValidatorDigest": "e28941594d643413964d19010b7ee9627bfee7bff904f76c28ddc246627ef6a9",
+  "historyKeysValidatorDigest": "ee7cf54b133b5ba633b55372c6f98b06058d3fbc4ffe8bda08813fc77865cc33",
+  "historyCanonicalValidatorDigest": "f4a258c71cf8115a8ea5697e8b9c1735ebd1bc685170567dec5bc1aee89200ce",
+  "historyGuardDefinitionsDigest": "f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b",
+  "atomicClaimDefinitionsDigest": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a"
 }

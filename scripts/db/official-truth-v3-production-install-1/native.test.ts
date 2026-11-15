@@ -196,12 +196,14 @@ test('Production installer executes complete original SQL atomically on fresh PG
     await t.test('all six installed logins meet the independent live transport role contract', async () => {
       assertTransportRoles(await proof.value(transportRoleReadback, creator))
     })
-    await t.test('fresh installation binds six customer validators and the bounded history memo without importing Dev history', async () => {
+    await t.test('fresh installation binds customer, history and atomic queue definitions without importing Dev history', async () => {
       const expected = [...functionsIn(read('../official-truth-v3-customer-information-1/definitions.sql')),
-        ...functionsIn(read('../official-truth-v3-customer-information-1/history-definition.sql'))]
+        ...functionsIn(read('../official-truth-v3-customer-information-1/history-definition.sql')),
+        ...functionsIn(read('../official-truth-v3-customer-information-1/history-guard-definition.sql')),
+        ...functionsIn(read('../official-truth-v3-customer-information-1/atomic-claim-definitions.sql'))]
         .map((f: { signature: string; body: string }) => ({ signature: f.signature, hash: sha256(f.body) }))
         .sort((a: { signature: string }, b: { signature: string }) => a.signature.localeCompare(b.signature))
-      assert.equal(expected.length, 7)
+      assert.equal(expected.length, 12)
       const actual = await proof.value(`(SELECT jsonb_agg(jsonb_build_object('signature',v.signature,
         'hash',encode(sha256(convert_to(p.prosrc,'UTF8')),'hex')) ORDER BY v.signature COLLATE "C")
         FROM (VALUES ${expected.map((f: { signature: string }) => '(' + literal(f.signature) + ')').join(',')}) v(signature)

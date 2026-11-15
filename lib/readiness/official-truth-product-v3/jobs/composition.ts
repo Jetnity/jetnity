@@ -121,6 +121,7 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
   }
   function queue(storage: ReturnType<typeof createM04QueueStorage>, discovery = false) {
     const values = { storage, methodAuthority: options.authority, now: () => config.clock().now,
+      claimMethod: { methodId: config.binding.methodId, revision: config.binding.revision },
       invocationMilliseconds: 5000, backoffBaseMilliseconds: 1000, backoffMaxMilliseconds: 60000 }
     return discovery ? createV3DiscoveryQueueCoordinator(values) : createV3QueueCoordinator(values)
   }
@@ -128,6 +129,7 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
     const command = readM04Command({ action: 'enqueue', kind, input: raw })
     if (!command) return { status: 'invalid' as const }
     const storage = createM04QueueStorage({ fixed: options.fixed,
+      ...(config.jobsExecutor.executeAtomicMutationFixed ? { atomicMutationFixed: options.fixed } : {}),
       commandFor: (op, k) => op === command.operationId && k === command.commandKey ? command : null,
       continuation: () => null, disposition: () => ({ kind: 'regular' }), onRecord() {}, settled() {} })
     return queue(storage, kind === 'combination_discovery').enqueue(command.value.input, signal)
@@ -192,6 +194,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
         return reserved ? null : { kind: 'regular' }
       }
       const storage = createM04QueueStorage({ fixed: options.fixed, commandFor, continuation: () => continuation, disposition,
+        ...(config.jobsExecutor.executeAtomicClaimFixed ? { atomicFixed: options.fixed } : {}),
+        ...(config.jobsExecutor.executeAtomicMutationFixed ? { atomicMutationFixed: options.fixed } : {}),
         onRecord(job) { if (job.state === 'leased') leasedJob = job },
         settled() { continuation = null; scope.markSettled() } })
       const artifacts = createM04ArtifactCustody({ claim, index, store, retain: scope.retain,
@@ -345,6 +349,7 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
   function ownedEnqueueQueue(discovery: boolean) {
     const commands = new Map<string, M04Command>()
     const storage = createM04QueueStorage({ fixed: options.fixed,
+      ...(config.jobsExecutor.executeAtomicMutationFixed ? { atomicMutationFixed: options.fixed } : {}),
       commandFor: (operationId, commandKey) => {
         const command = commands.get(operationId)
         return command?.commandKey === commandKey ? command : null

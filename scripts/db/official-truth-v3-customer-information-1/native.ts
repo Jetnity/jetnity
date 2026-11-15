@@ -6,11 +6,11 @@ import { readFileSync } from 'node:fs'
 import { performance } from 'node:perf_hooks'
 import type { TestContext } from 'node:test'
 import { OwnedPersistentProof } from '../official-truth-v3-rolling-jobs-quota-1/persistent-backend'
-import { json, literal, readSql } from '../official-truth-v3-rolling-jobs-quota-1/local-proof'
+import { json, literal, readSql, type OwnedSingleProof } from '../official-truth-v3-rolling-jobs-quota-1/local-proof'
 import { buildHistoricalQuotaFixture } from '../official-truth-v3-rolling-jobs-quota-1/history-fixture'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM as program } from '../../../lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program'
 import { hrs1Canonical } from '../../../lib/readiness/official-truth-product-v3/result/contract'
-import { compileCustomerInformationMigration, BASELINE } from './build.mjs'
+import { compileCustomerInformationMigration, BASELINE, ATOMIC_QUEUE_HELPER_SIGNATURES } from './build.mjs'
 
 const binding = program.binding
 const creator = 'SET SESSION AUTHORIZATION postgres; SET search_path=pg_catalog;'
@@ -43,7 +43,7 @@ const oldRows = `to_jsonb(encode(sha256(convert_to((SELECT jsonb_build_object(
  'sender_preview_dispatches',(SELECT jsonb_agg(to_jsonb(s) ORDER BY id) FROM jetnity_dev_import_scheduler.preview_dispatches_v1 s)
  ))::text,'UTF8')),'hex'))`
 
-export async function baseSetup(proof: OwnedPersistentProof) {
+export async function baseSetup(proof: Pick<OwnedPersistentProof, 'run'> | Pick<OwnedSingleProof, 'run'>) {
   await proof.run("CREATE ROLE supabase_read_only_user LOGIN NOINHERIT NOSUPERUSER BYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION;\n"
     + readSql('official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql')
     + '\nGRANT pg_read_all_data TO postgres WITH ADMIN TRUE, INHERIT TRUE, SET TRUE;\n'
@@ -130,7 +130,7 @@ export async function runCustomerInformationNative(t: TestContext) {
     const legacyJobs = await proof.value(subject('official_v3_jobs_private', legacyWork), jobsOwner)
     const legacyResult = await proof.value(subject('official_v3_result_private', legacyWork), resultOwner)
     const metadata = `to_jsonb(encode(sha256(convert_to((SELECT jsonb_agg(to_jsonb(p)-ARRAY['prosrc','probin','prosqlbody'] ORDER BY p.oid)
-      FROM pg_proc p WHERE p.oid=ANY(ARRAY[${compiled.inventory.map(f => literal(f.signature) + '::regprocedure').join(',')}]))::text,'UTF8')),'hex'))`
+      FROM pg_proc p WHERE p.oid=ANY(ARRAY[${compiled.inventory.filter(f => f.before !== null).map(f => literal(f.signature) + '::regprocedure').join(',')}]))::text,'UTF8')),'hex'))`
     const functionMetadata = await proof.value(metadata, creator)
 
     await t.test('wrong target, predecessor drift and un-restored membership all roll back completely', async () => {
@@ -139,6 +139,7 @@ export async function runCustomerInformationNative(t: TestContext) {
         { before: localOwner + "ALTER FUNCTION official_v3_jobs_private.context_v1(jsonb) SET statement_timeout='1s';" + creator,
           body: migration, error: /predecessor catalog mismatch/ },
         { before: '', body: migration.replace('REVOKE ot_v3_intake_owner FROM postgres GRANTED BY postgres;', ''), error: /exact authority restoration/ },
+        { before: '', body: migration.replace('REVOKE CREATE ON SCHEMA official_v3_guard_private FROM ot_v3_jobs_owner;', ''), error: /exact authority restoration/ },
       ]
       for (const fault of faults) {
         await refuses(creator + 'BEGIN;' + fault.before + fault.body + 'ROLLBACK;', 'refused customer successor', fault.error)
@@ -152,6 +153,13 @@ export async function runCustomerInformationNative(t: TestContext) {
         + 'REVOKE ot_v3_intake_owner FROM postgres GRANTED BY postgres;')
       await refuses(creator + 'BEGIN;' + malicious + 'ROLLBACK;', 'unapproved privilege delta', /predecessor graph changed/)
       assert.equal(await proof.value(oldRows, creator), before)
+      for (const signature of ATOMIC_QUEUE_HELPER_SIGNATURES) {
+        const exposedHelper = migration.replace('REVOKE ot_v3_intake_owner FROM postgres GRANTED BY postgres;',
+          'SET LOCAL ROLE ot_v3_jobs_owner; GRANT EXECUTE ON FUNCTION ' + signature
+          + ' TO ot_v3_jobs_caller; RESET ROLE;\nREVOKE ot_v3_intake_owner FROM postgres GRANTED BY postgres;')
+        await refuses(creator + 'BEGIN;' + exposedHelper + 'ROLLBACK;', 'new private helper cannot acquire runtime authority', /exact private atomic helper/)
+        assert.equal(await proof.value(oldRows, creator), before)
+      }
     })
     await t.test('enabled sender, an active cycle and an unprocessed request each refuse installation', async () => {
       for (const fault of [
@@ -187,6 +195,8 @@ export async function runCustomerInformationNative(t: TestContext) {
       assert.equal(value.definitions_verified, true); assert.equal(value.predecessor_verified, true)
       assert.equal(value.definitions_digest_verified, true); assert.equal(value.provider_digest, compiled.digest)
       assert.equal(value.history_definition_digest_verified, true)
+      assert.equal(value.history_guard_definition_digest_verified, true)
+      assert.equal(value.atomic_claim_definition_digest_verified, true)
       assert.deepEqual(value.admission, { schema: 1, status: 'unavailable' })
       await refuses(creator + 'BEGIN;' + migration + 'ROLLBACK;', 'duplicate successor refused', /exact unused Dev predecessor/)
       assert.deepEqual(await proof.value(readback, creator), value)
@@ -219,6 +229,19 @@ export async function runCustomerInformationNative(t: TestContext) {
         await refuses('SET SESSION AUTHORIZATION ' + role + '; SELECT * FROM ' + BASELINE + ';', 'no runtime baseline privilege', /permission denied/)
       }
       assert.equal(await proof.value(oldRows, creator), before)
+    })
+    await t.test('both new atomic helpers belong only to their original private owner', async () => {
+      for (const signature of ATOMIC_QUEUE_HELPER_SIGNATURES) {
+        const privileges = await proof.value<{ owner: string; invoker: boolean; exposed: string[] | null }>(`(SELECT jsonb_build_object(
+        'owner',pg_get_userbyid(p.proowner),'invoker',NOT p.prosecdef,'exposed',(
+          SELECT jsonb_agg(r.rolname ORDER BY r.rolname) FROM pg_roles r WHERE r.rolname IN
+            ('anon','authenticated','service_role','supabase_read_only_user','ot_v3_jobs_caller','ot_m04_jobs','ot_m04_intake','ot_ma1_reader')
+            AND has_function_privilege(r.oid,p.oid,'EXECUTE')))
+        FROM pg_proc p WHERE p.oid=${literal(signature)}::regprocedure)`, creator)
+        assert.deepEqual(privileges, { owner: 'ot_v3_jobs_owner', invoker: true, exposed: null })
+        await refuses('SET SESSION AUTHORIZATION ot_m04_jobs;SET ROLE ot_v3_jobs_caller;SELECT '
+          + signature.slice(0, signature.indexOf('(')) + '(NULL,NULL,NULL,NULL,NULL);', 'caller cannot supply a private atomic invocation', /permission denied/)
+      }
     })
     await t.test('all 17 fictional detail variants pass real S1/HRS shape and identity validation', async () => {
       const vectors = JSON.parse(readFileSync(new URL('./shape-fixtures.json', import.meta.url), 'utf8')).cases

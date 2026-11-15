@@ -143,9 +143,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-      "blob": "5bcf483858a137c268da5c435921a26c43c32335",
-      "bytes": 29022,
-      "sha256": "667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89",
+      "blob": "64907e3d16d55edcf6a6a9af4f9dab710f5fa8be",
+      "bytes": 29528,
+      "sha256": "a4f02a0a043382b160e988eb0a48a79191e1806979dcf1926c8b26f930c85c76",
       "ref": "b195e83c6763334290120d7cf3005335a86da050"
     },
     {
@@ -157,9 +157,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-      "blob": "fdae1a88d29ff98203baef062e5f139a424b24f7",
-      "bytes": 28214,
-      "sha256": "28046404d236e8552b67e55917b13a54bc952dcb9f1ac28be2f9e61b7a9a7799",
+      "blob": "249abe057be7ffd35ab1a3830d3490b1816e6e60",
+      "bytes": 37028,
+      "sha256": "d5077d9f21033c3e5bb5eff1e74b6dde1379225b3c9cee59caacd67b38e1c299",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -178,9 +178,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
-      "blob": "c80c48cca369cc8ea0c30bc5f620cada639a1e05",
-      "bytes": 8816,
-      "sha256": "f1fe66e3311ddbc5c6209d046188f653e2895ad1857565ad52bc8d777046c94e",
+      "blob": "42fa56869b31b18cdd7844709bf68fb6934027ec",
+      "bytes": 9501,
+      "sha256": "89a22b2a2de00365505258a301614a0ac2870af79bd3ced40a66c8794c6fe280",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -192,22 +192,22 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-      "blob": "90f5e10aa199bf72f8df56c9a1b00cbf2a8ce30c",
-      "bytes": 13800,
-      "sha256": "56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14",
+      "blob": "b5c63c9c2883ca77de51ef72aa3261f54c67b942",
+      "bytes": 18022,
+      "sha256": "85347b3ca98f07c81d77a24bcd2d36acd57a020f4d18c4f3aee9e470609e6fe8",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
-      "bytes": 14252,
-      "blob": "4bc6c358ab4db5f1cf25187698aa1607ce3e81fd",
-      "sha256": "171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa"
+      "bytes": 18328,
+      "blob": "acf37bcf16c1d8479f2b01ce54619a7c189363e5",
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-      "blob": "0599fa409c7b3dd5e25e45f23f255d928e2efa01",
-      "bytes": 46718,
-      "sha256": "56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97",
+      "blob": "9a5cdc905ada2a66bb47529fc8369c9c683dd068",
+      "bytes": 48499,
+      "sha256": "d7c22972b6427d2169aafa56e70b037cf6babefb50469d527b48f122d104da79",
       "historicalRef": "07f1bba169767588df030c5c5deaf7a55591bd6a",
       "currentSourceSelection": {
         "task": "https://github.com/Jetnity/jetnity/pull/1196#issuecomment-6851586927",

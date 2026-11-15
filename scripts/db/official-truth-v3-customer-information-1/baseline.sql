@@ -6,6 +6,8 @@ CREATE TABLE official_v3_guard_private.customer_information_baseline_v1 (
  predecessor_rolling_digest text NOT NULL CHECK(predecessor_rolling_digest ~ '^[a-f0-9]{64}$'),
  definitions_digest text NOT NULL CHECK(definitions_digest='DEFINITIONS_SHA256'),
  history_definition_digest text NOT NULL CHECK(history_definition_digest='HISTORY_DEFINITION_SHA256'),
+ history_guard_definition_digest text NOT NULL CHECK(history_guard_definition_digest='HISTORY_GUARD_DEFINITION_SHA256'),
+ atomic_claim_definition_digest text NOT NULL CHECK(atomic_claim_definition_digest='ATOMIC_CLAIM_DEFINITION_SHA256'),
  required_generation bigint NOT NULL CHECK(required_generation>0),
  proof_not_before timestamptz NOT NULL CHECK(isfinite(proof_not_before)),
  jobs_catalog jsonb NOT NULL,

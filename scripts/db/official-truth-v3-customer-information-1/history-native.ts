@@ -8,6 +8,12 @@ import { literal, readSql } from '../official-truth-v3-rolling-jobs-quota-1/loca
 import { baseSetup, methodSeed } from './native'
 import { compileHistoryDefinition, HISTORY_MEMO_ADMISSION, HISTORY_SIGNATURE } from './history-build.mjs'
 import { buildHistoryMemoFixture } from './history-fixture'
+import { checkHistoryCanonical, checkHistoryFixedCanonical } from './history-canonical-native'
+import { checkHistoryNodes } from './history-nodes-native'
+import { checkHistoryKeys } from './history-keys-native'
+import { checkHistoryJobs } from './history-job-native'
+import { checkHistoryGuardMembership } from './history-guard-native'
+import { checkHistoryStructuredCanonical } from './history-structured-canonical-native'
 
 const creator = 'SET SESSION AUTHORIZATION postgres; SET search_path=pg_catalog;'
 const owner = 'SET SESSION AUTHORIZATION ot_pilot_owner; SET search_path=pg_catalog;'
@@ -38,24 +44,52 @@ export async function runHistoryMemoNative(t: TestContext) {
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql') + 'COMMIT;', 'unchanged rolling predecessor')
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + 'COMMIT;',
       'exact complete additive successor before explicit diagnostic fixture extension')
+    // Only this differential probe counts completed inline validations. Neither
+    // the timing measurement nor the installed/capacity definition contains it.
+    await proof.run(owner + `CREATE FUNCTION public.local_history_job_validated() RETURNS void
+      LANGUAGE plpgsql VOLATILE AS $count$ BEGIN RETURN; END $count$;`, 'owned local completed-job counter')
+    let instrumented = successor.sql
+    for (const assignment of ['NULL;', 'expected:=v;', 'n:=v;']) {
+      const ending = '  ' + assignment + '\nEND;'
+      assert.equal(instrumented.split(ending).length, 2, 'one exact final assignment for each complete copied job validator')
+      instrumented = instrumented.replace(ending, () => '  PERFORM public.local_history_job_validated();\n' + ending)
+    }
     const history = 'official_v3_jobs_private.assert_history_v1(' + literal(fixture.original.jobKey) + ')'
+    await t.test('complete generated job checks retain exact errors and identities after warm memo hits', async () => {
+      t.diagnostic(JSON.stringify(await checkHistoryJobs(proof, successor, fixture.original.subjectRow.current_job, fixture.original.starts[0].leased_job)))
+    })
+    await t.test('canonical bytes, depth failures and cache bounds match the original serializer', async () => {
+      t.diagnostic(JSON.stringify(await checkHistoryCanonical(proof)))
+      t.diagnostic(JSON.stringify(await checkHistoryFixedCanonical(proof, fixture.original.subjectRow.current_job, fixture.original.starts[0].leased_job)))
+      t.diagnostic(JSON.stringify(await checkHistoryStructuredCanonical(proof, fixture.original.subjectRow.current_job, fixture.original.starts[0].leased_job)))
+    })
+    await t.test('complete recursive node counts and depth/count refusals match the original', async () => {
+      t.diagnostic(JSON.stringify(await checkHistoryNodes(proof)))
+    })
+    await t.test('every compiler-bound fixed key alternative matches its original fallback contract', async () => {
+      t.diagnostic(JSON.stringify(await checkHistoryKeys(proof)))
+    })
     // The timing excludes child-process transport and function-statistics work.
     const measure = (definition: string) => proof.value<number>(`(WITH started AS MATERIALIZED (SELECT clock_timestamp() AS at),
       checked AS MATERIALIZED (SELECT ${history},at FROM started)
       SELECT to_jsonb(extract(epoch FROM clock_timestamp()-at)*1000) FROM checked)`, owner + 'BEGIN;' + definition + jobsOwner, 'RESET ROLE;ROLLBACK;')
     const profile = async (definition: string) => {
       await proof.run(owner + 'SELECT pg_stat_reset();', 'owned local statistics reset')
-      await proof.run(owner + 'BEGIN;' + definition + "SET LOCAL track_functions='all';" + jobsOwner
+      const observedDefinition = definition === successor.sql ? instrumented : definition
+      await proof.run(owner + 'BEGIN;' + observedDefinition + "SET LOCAL track_functions='all';" + jobsOwner
         + 'SELECT ' + history + '; RESET ROLE;SELECT pg_stat_force_next_flush();ROLLBACK;', 'pure historical validator differential, rolled back')
       return proof.value<Profile[]>(`(SELECT jsonb_agg(jsonb_build_object('name',funcname,'calls',calls,'total_time',total_time,'self_time',self_time)
-        ORDER BY self_time DESC) FROM pg_stat_user_functions WHERE schemaname='official_v3_jobs_private')`, owner + 'SELECT pg_stat_clear_snapshot();')
+        ORDER BY self_time DESC) FROM pg_stat_user_functions WHERE schemaname='official_v3_jobs_private'
+          OR (schemaname='public' AND funcname='local_history_job_validated'))`, owner + 'SELECT pg_stat_clear_snapshot();')
     }
     const compare = async (label: string) => {
       const before = await proof.value<string>(digest, owner)
       const oldMilliseconds = await measure(oldDefinition), newMilliseconds = await measure(successor.sql)
       const oldProfile = await profile(oldDefinition), newProfile = await profile(successor.sql)
-      const oldCalls = oldProfile.find(f => f.name === 'job_v1')?.calls, newCalls = newProfile.find(f => f.name === 'job_v1')?.calls
+      const oldCalls = oldProfile.find(f => f.name === 'job_v1')?.calls
+      const newCalls = newProfile.find(f => f.name === 'local_history_job_validated')?.calls
       assert.ok(oldCalls && newCalls)
+      assert.equal(newProfile.find(f => f.name === 'job_v1')?.calls ?? 0, 0, 'the new complete checks execute locally without a second job function')
       assert.equal(await proof.value<string>(digest, owner), before, 'differential reads preserve all retained data')
       // Prove that every temporary diagnostic definition was rolled back to the
       // exact installed, catalog-bound body. The A/B calls grant no admission.
@@ -65,15 +99,15 @@ export async function runHistoryMemoNative(t: TestContext) {
         oldJobValidations: oldCalls, newJobValidations: newCalls, oldProfile: oldProfile.slice(0, 5), newProfile: newProfile.slice(0, 5) }))
       return { oldCalls, newCalls }
     }
-    await t.test('before saturation both full validators check all 192 distinct original jobs', async () => {
+    await t.test('both full validators check every original job, including all conservative cache misses', async () => {
       const calls = await compare('64 starts / 192 operations / exhausted revision192')
-      assert.equal(calls.oldCalls, 192); assert.equal(calls.newCalls, 192)
+      assert.equal(calls.oldCalls, 192); assert.ok(calls.newCalls >= 192 && calls.newCalls <= 194)
     })
     await proof.run(owner + 'BEGIN;' + fixtureScope + fixture.queueSql + 'COMMIT;', 'explicit local fixture reaches queued259 and 187 deduplicated rows')
     await t.test('queued high-water head is already memoized in the old and new bodies', async () => {
       const calls = await compare('86 starts / 446 operations / queued revision259')
       assert.ok(calls.newCalls >= 259 && calls.newCalls <= 261)
-      assert.ok(calls.oldCalls - calls.newCalls <= 2)
+      assert.ok(Math.abs(calls.oldCalls - calls.newCalls) <= 2)
     })
     await t.test('a changed invalid historical job after eviction is rejected by both complete validators', async () => {
       const before = await proof.value<string>(digest, owner)
@@ -86,14 +120,18 @@ export async function runHistoryMemoNative(t: TestContext) {
       await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1();', 'negative diagnostic changes all roll back')
     })
     await proof.run(owner + 'BEGIN;' + fixtureScope + fixture.claimSql + 'COMMIT;', 'explicit local fixture changes head to leased260, retaining every dedup row')
+    await t.test('BG1 positive membership reuse preserves every row and complete-chain rejection', async () => {
+      t.diagnostic(JSON.stringify(await checkHistoryGuardMembership(proof, fixture.original.jobKey)))
+      await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1();', 'complete BG1 parity leaves the protected catalog exact')
+    })
     await t.test('leased high-water head no longer revalidates every retained dedup state after 256 entries', async () => {
       const calls = await compare('86 starts / 447 operations / leased revision260')
       assert.ok(calls.newCalls >= 260 && calls.newCalls <= 262)
       assert.ok(calls.oldCalls - calls.newCalls >= 187, 'the specific retained-dedup miss storm is removed, not hidden by a retry')
       const repeated = await profile(successor.sql)
-      assert.equal(repeated.find(f => f.name === 'job_v1')?.calls, calls.newCalls, 'a new invocation performs its full fresh validations')
+      assert.equal(repeated.find(f => f.name === 'local_history_job_validated')?.calls, calls.newCalls, 'a new invocation performs its full fresh validations')
     })
-    await t.test('the exact admission block preserves the 256-entry and 1MiB bounds, including oversize fallback', async () => {
+    await t.test('the earlier eight-entry reset remains inside the original 256-entry and 1MiB bounds', async () => {
       // This separate byte-accounting probe uses arbitrary text keys. It proves
       // the exact memo block, not job validity; the full validator above does that.
       await proof.run(owner + `CREATE FUNCTION public.local_history_memo_bound(items text[]) RETURNS jsonb LANGUAGE plpgsql AS $bound$
@@ -106,16 +144,16 @@ export async function runHistoryMemoNative(t: TestContext) {
 ${HISTORY_MEMO_ADMISSION}
         END IF;
         SELECT count(*),COALESCE(sum(octet_length(key)),0) INTO actual_count,actual_bytes FROM jsonb_object_keys(validated_jobs) AS k(key);
-        IF validated_job_count<>actual_count OR validated_job_bytes<>actual_bytes OR actual_count>256 OR actual_bytes>1048576 THEN
+        IF validated_job_count<>actual_count OR validated_job_bytes<>actual_bytes OR actual_count>8 OR actual_bytes>1048576 THEN
           RAISE EXCEPTION 'memo accounting or bound changed'; END IF;
         result:=result||jsonb_build_array(jsonb_build_object('hit',hit,'count',actual_count,'bytes',actual_bytes));
       END LOOP; RETURN result; END $bound$;`, 'exact admission byte-accounting probe')
-      const small = Array.from({ length: 257 }, (_, n) => String(n))
+      const small = Array.from({ length: 9 }, (_, n) => String(n))
       type Bound = { hit: boolean; count: number; bytes: number }
       const check = (items: string[]) => proof.value<Bound[]>('public.local_history_memo_bound(ARRAY[' + items.map(literal).join(',') + ']::text[])', owner)
-      const counts = await check([...small, '256', '0', '0'])
-      assert.equal(counts[255].count, 256); assert.equal(counts[256].count, 1)
-      assert.equal(counts[257].hit, true); assert.equal(counts[258].hit, false); assert.equal(counts[259].hit, true)
+      const counts = await check([...small, '8', '0', '0'])
+      assert.equal(counts[7].count, 8); assert.equal(counts[8].count, 1)
+      assert.equal(counts[9].hit, true); assert.equal(counts[10].hit, false); assert.equal(counts[11].hit, true)
       const bytes = await check(['small', 'x'.repeat(1048576), 'y'.repeat(1048577), 'x'.repeat(1048576), 'next', 'next'])
       assert.equal(bytes[1].bytes, 1048576); assert.equal(bytes[1].count, 1)
       assert.deepEqual(bytes[2], { hit: false, count: 1, bytes: 1048576 }, 'oversize does not evict a useful valid-size entry')
