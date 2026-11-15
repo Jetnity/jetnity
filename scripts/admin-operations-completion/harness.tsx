@@ -4,14 +4,14 @@ import TravelAnalytics from '@/components/admin/analytics/TravelAnalytics'
 import PaymentsCenter from '@/components/admin/payments/PaymentsCenter'
 import { analyticsRange, type TravelAnalyticsReport } from '@/lib/admin/analytics/report'
 
-type Call = { url: string; signal: AbortSignal | null; resolve: (response: Response) => void; settled: boolean }
+type Call = { url: string; method: string; signal: AbortSignal | null; resolve: (response: Response) => void; settled: boolean }
 const calls: Call[] = []
 
 declare global {
   interface Window {
     __adminCompletion: {
       documentId: string
-      calls: () => { url: string; aborted: boolean; settled: boolean }[]
+      calls: () => { url: string; method: string; aborted: boolean; settled: boolean }[]
       respond: (index: number, status: number, body: unknown, stalledBody?: boolean) => void
     }
   }
@@ -22,11 +22,11 @@ declare global {
 window.fetch = (input, init) => new Promise<Response>((resolve) => {
   const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
   if (!new URL(url, window.location.origin).pathname.startsWith('/api/admin/payments/')) throw new Error('Unexpected fixture request')
-  calls.push({ url, signal: init?.signal ?? null, resolve, settled: false })
+  calls.push({ url, method: init?.method ?? 'GET', signal: init?.signal ?? null, resolve, settled: false })
 })
 window.__adminCompletion = {
   documentId: crypto.randomUUID(),
-  calls: () => calls.map((call) => ({ url: call.url, aborted: call.signal?.aborted ?? false, settled: call.settled })),
+  calls: () => calls.map((call) => ({ url: call.url, method: call.method, aborted: call.signal?.aborted ?? false, settled: call.settled })),
   respond(index, status, body, stalledBody = false) {
     const call = calls[index]
     if (!call || call.settled) throw new Error('Invalid fixture response')

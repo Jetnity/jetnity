@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Fehlerflaeche, Fehlerzeile } from '@/components/admin/Ladezustand'
 import { fortsetzung, liste, type Fehler } from '@/lib/admin/ladezustand'
 import { usePaymentRead } from './usePaymentRead'
+import RefundJournal from './RefundJournal'
 import AdminEvidenceDetails from '@/components/admin/home/AdminEvidenceDetails'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import {
@@ -52,7 +53,7 @@ export default function PaymentsCenter() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6 [overflow-wrap:anywhere]">
       <section className="rounded-2xl border bg-card px-4 py-3 sm:px-5" aria-label="Zahlungsanbindung">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -72,7 +73,7 @@ export default function PaymentsCenter() {
 
       {tab==='overview' && <OverviewCard onDenied={onDenied}/>}
       {tab==='transactions' && <TransactionsCard onDenied={onDenied}/>}
-      {tab==='refunds' && <RefundCard/>}
+      {tab==='refunds' && <><RefundJournal onDenied={onDenied}/><RefundCard/></>}
       {tab==='webhooks' && <WebhooksCard onDenied={onDenied}/>}
     </div>
   )
