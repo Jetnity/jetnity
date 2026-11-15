@@ -272,11 +272,12 @@ export async function openOwnedV3PgPair(kind: V3PgLogin, operationDeadline: numb
   signal.addEventListener('abort', abort, { once: true })
   try {
     control = session(target, address, password, kind, 'control', operationDeadline, cleanupDeadline)
-    if (signal.aborted) abort()
-    await control.connect()
     work = session(target, address, password, kind, 'work', operationDeadline, cleanupDeadline)
     if (signal.aborted) abort()
-    await work.connect()
+    // The already reserved pair shares one original deadline. Join both actual
+    // TLS/SCRAM handshakes, including either failure, before exposing any SQL port.
+    const connected = await Promise.allSettled([control.connect(), work.connect()])
+    if (connected.some(result => result.status !== 'fulfilled')) throw failure()
     if (signal.aborted || performance.now() >= operationDeadline) throw failure()
     const selectedWork = work.owned, selectedControl = control.owned
     return Object.freeze({ work: selectedWork, control: selectedControl,

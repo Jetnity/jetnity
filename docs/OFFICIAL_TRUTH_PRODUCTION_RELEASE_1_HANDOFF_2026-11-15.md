@@ -9,13 +9,14 @@ anschließend im genehmigten Release. Die 206 Ziele bleiben `RESEARCH_ONLY`.
 
 ## Einmalige Freigabe durch Sasa
 
-1. **#1197 zuerst mergen** und den geprüften Stand nach Production deployen.
+1. **#1197 zuerst als Merge-Commit mergen** und den geprüften Stand nach Production deployen.
    Der temporäre Dev-Buildhook und sein Importer-Permit müssen entfernt sein.
    Alle 38 Commits von #1196 sind in #1197 enthalten: #1196 nicht zusätzlich
    mergen, erst nach dem Merge von #1197 als ersetzt schließen.
 2. **Eigenes Production-Paket auf `qscbgcdmivbbnzrcyegn` ausführen:** feste
    Vorprüfung, Provider/Sender/Monitor, atomarer Kern einschließlich echtem
    BG1-Erstaudit, sechs eigene begrenzte Login-Secrets und separater HMAC-Schlüssel.
+   Vor PAI/BG1 gehört der unten gebundene einmalige erste Production-Owner dazu.
    Kein Dev-Receipt und keine Dev-Historie werden übertragen.
 3. **Production-Ownerfreigabe und normalen Erstimport durchführen:** wir bedienen
    den Cloud-Browser; Sasa wird nur für Anmeldung oder 2FA benötigt. Die reale
@@ -43,6 +44,7 @@ sechs tatsächlichen LOGIN-Verträge einschließlich `CONNECTION LIMIT 2` prüfe
 | Reihenfolge | Konkreter Schritt | Abnahmekriterium |
 | --- | --- | --- |
 | 1 | [preflight.sql](../scripts/official-truth-product-v3-production/preflight.sql) nach eigenständigem Projekt-/Host-Readback | Fester unbenutzter Production-Kern, ursprüngliche Rollen/Auth/Profile; bei Abweichung stoppen |
+| 1a | [Ersten Production-Owner gebunden vorbereiten und ausführen](https://github.com/Jetnity/jetnity/pull/1197#issuecomment-6887733836), Originalreadback, unveränderten Preflight wiederholen | Tatsächlich angemeldetes vorhandenes Production-Konto, genau sein aktives Adminprofil und eigener verifizierter MFA-Faktor; einmaliger CAS vor PAI/BG1, keine erzeugten Auth-Claims; gültige AAL2 bleibt separat erforderlich |
 | 2 | Scheduler [provider-prerequisites.sql](../scripts/db/official-truth-v3-production-import-schedule-1/provider-prerequisites.sql) | pg_net 0.19.5; vorhandene pg_cron 1.6.4, Vault 0.3.1 und pgcrypto 1.3 bleiben erhalten |
 | 3 | Scheduler `core.sql` + `monitoring.sql` in einer Transaktion, gemäß [Scheduler-README](../scripts/db/official-truth-v3-production-import-schedule-1/README.md) | Sender deaktiviert, Monitor-ACL **vor** BG1-Baseline installiert |
 | 4 | [install-and-start-guard.sql](../scripts/db/official-truth-v3-production-install-1/install-and-start-guard.sql) | PAI → Logins → PG1/HMA/HS/HMT → **HRS vor HM04** → SET-Kanten → frischer BG1/Status/rollierende Quote; BG-Cron und echter Erstaudit atomar |
@@ -58,6 +60,27 @@ Der Merge allein installiert und genehmigt nichts. Die normalen Original-IDs
 bleiben bei Resume/unklarer Antwort erhalten; kein Ersatzlauf, Counterreset oder
 Fristpatch. Ohne Installation/Freigabe bzw. bei Widerruf bleibt Production geschlossen.
 
+## Erster Production-Owner als Teil derselben Freigabe
+
+Die reine Production-Metadatenprüfung vom 15.11.2026 ergab kein Ownerprofil,
+vier aktive Adminprofile und zwei Konten mit verifizierter MFA. Es wurde kein
+Konto ausgewählt und nichts geschrieben. Die genaue einmalige Betreiberaktion
+ist vollständig in [#1197, Artefakte 1/2](https://github.com/Jetnity/jetnity/pull/1197#issuecomment-6887733836)
+und [Rückweg/Nachweis 2/2](https://github.com/Jetnity/jetnity/pull/1197#issuecomment-6887735479)
+veröffentlicht: `bootstrap.sql`, `readback.sql`, `restore-admin.sql`, Manifest und
+vollständige Bedienfolge. Sie ist separat mit echtem lokalem PostgreSQL17 geprüft:
+26/26 PASS, keine Skips oder Abbrüche; sie ist kein Bestandteil von App-CI4251.
+
+Nach der gemeinsamen Freigabe wird die echte Production-Anmeldung im Cloud-Browser
+verwendet; nur Anmeldung oder 2FA erfordert Sasa. Das ausgewählte bestehende Konto,
+sein tatsächliches Adminprofil und sein verifizierter eigener MFA-Faktor werden
+gebunden. Eine vorhandene gültige AAL2-Sitzung wird weiterverwendet; andernfalls
+wird der bestehende MFA-Weg durchlaufen. Der Wartungs-CAS ändert genau eine Rolle
+von `admin` auf `owner` vor PAI/BG1. Identitäten, Trigger, Rechte, Auth-/MFA-/Sessiondaten
+und alle anderen Profile bleiben unverändert. Der SQL-Readback bestätigt den
+beobachteten Zustand und ersetzt keine aktuelle AAL2-Prüfung oder Methodenfreigabe.
+Ein unbekannter Commitausgang wird zuerst gelesen, niemals automatisch wiederholt.
+
 ## Stop und Rückrollen
 
 Bei unklarem Installations-Commit erst exakt lesen, nicht blind wiederholen.
@@ -68,6 +91,9 @@ stoppt neue Dispatches. Bereits zugelassene Anfragen können noch abschließen.
 Danach normale Production-Owner-/HMT-Widerrufsfunktion verwenden und ihre originale
 Operation bestätigen; öffentlichen Fail-closed-Zustand abnehmen. BG1, originale
 Jobs, offene/unklare Ergebnisse und sämtliche Historie bleiben erhalten.
+Falls auch die einmalige Ownerrolle zurückgenommen werden soll, erst nach
+bestätigtem Stop und Methodenwiderruf die gebundene `restore-admin.sql` verwenden.
+Eine Demotion allein widerruft die Methode nicht; der Rückweg prüft diese Sperren.
 
 Root hat für `jetnity.com` das Rückrollziel `dpl_88LzdqY5DUo8mQT9rLzji6apcZBJ`
 mit Commit `63544e820e912bd275556588c956a09b99b1cf90` und URL

@@ -474,9 +474,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
-    "bytes": 22643,
-    "blob": "401d1304a988790f4ee4c150c5c36a2ad9bcacbe",
-    "sha256": "4205b79b1a22c80823a4965cf911445213e3f99b8daae6365a710a4748a24f3d"
+    "bytes": 24219,
+    "blob": "d33402bbb9c69e82eca8c00a1fa54d61e3ba38ef",
+    "sha256": "19e830deae608dadffc4d65b1e139a0848b0136d9ef6cce551824868f6753e06"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",

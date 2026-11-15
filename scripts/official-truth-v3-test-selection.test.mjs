@@ -7,6 +7,7 @@ import {
   childExitStatus,
   discoverOriginalTestFiles,
   HOSTED_PG17_FILES,
+  HOSTED_PG17_QUOTA_FILES,
   nodeTestArguments,
   ORIGINAL_TEST_FAMILIES,
   PRODUCTION_TEST_FILES,
@@ -20,6 +21,7 @@ const hosted = [
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
   'lib/readiness/official-truth-prod-import-scheduler.test.ts',
   'lib/readiness/official-truth-product-v3/method/claim-read-authority.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
@@ -34,6 +36,8 @@ const hosted = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
   'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ]
+const quota = ['lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts']
+const main = hosted.filter(path => !quota.includes(path))
 const transport = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts',
@@ -70,6 +74,8 @@ test('the actual original universe is partitioned once and its selector contract
     'scripts/dev-reference-local-pg-prep-1/*.test.ts',
   ])
   assert.deepEqual(HOSTED_PG17_FILES, hosted)
+  assert.deepEqual(HOSTED_PG17_QUOTA_FILES, quota)
+  assert.ok(Object.isFrozen(HOSTED_PG17_QUOTA_FILES))
   assert.deepEqual(TRANSPORT_TEST_FILES, transport)
   assert.ok(Object.isFrozen(TRANSPORT_TEST_FILES))
   assert.deepEqual(PRODUCTION_TEST_FILES, production)
@@ -79,6 +85,12 @@ test('the actual original universe is partitioned once and its selector contract
   const partition = partitionRequiredTests(original)
   assert.deepEqual(partition.original, [...original].sort())
   assert.deepEqual(partition.hostedPg17, hosted)
+  assert.deepEqual(partition.hostedPg17Main, main)
+  assert.deepEqual(partition.hostedPg17Quota, quota)
+  const hostedRunners = [...partition.hostedPg17Main, ...partition.hostedPg17Quota]
+  assert.deepEqual(hostedRunners.sort(), hosted)
+  assert.equal(new Set(hostedRunners).size, hosted.length)
+  assert.ok(partition.hostedPg17Main.includes('lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts'))
   assert.equal(partition.core.filter((path) => path === contract).length, 1)
   assert.equal(partition.hostedPg17.includes(contract), false)
   const combined = [...partition.core.filter((path) => path !== contract), ...partition.hostedPg17]
@@ -173,10 +185,13 @@ test('missing, duplicate, invalid and unauthorized hosted membership cannot remo
   }
 })
 
-test('only the two explicit modes are accepted and extra arguments are refused', () => {
-  assert.equal(selectedMode(['core']), 'core')
-  assert.equal(selectedMode(['hosted-pg17']), 'hosted-pg17')
-  for (const args of [[], ['unknown'], ['core', 'extra'], ['hosted-pg17', '--skip'], [''], null]) {
+test('only the complete families and two exact hosted runner modes are accepted', () => {
+  for (const mode of ['core', 'hosted-pg17', 'hosted-pg17-main', 'hosted-pg17-quota']) {
+    assert.equal(selectedMode([mode]), mode)
+    assert.throws(() => selectedMode([mode, '--skip']), /Expected exactly one mode/)
+  }
+  for (const args of [[], ['unknown'], ['core', 'extra'], ['hosted-pg17', '--skip'],
+    ['hosted-pg17-main,hosted-pg17-quota'], ['hosted-pg17-optional'], [''], null]) {
     assert.throws(() => selectedMode(args), /Expected exactly one mode/)
   }
 })
@@ -186,6 +201,8 @@ test('Node arguments retain imports and Core concurrency while the hosted family
   const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
   assert.deepEqual(nodeTestArguments('core', split), [...prefix, ...split.core])
   assert.deepEqual(nodeTestArguments('hosted-pg17', split), [...prefix, '--test-concurrency=1', ...hosted])
+  assert.deepEqual(nodeTestArguments('hosted-pg17-main', split), [...prefix, '--test-concurrency=1', ...main])
+  assert.deepEqual(nodeTestArguments('hosted-pg17-quota', split), [...prefix, '--test-concurrency=1', ...quota])
   assert.throws(() => nodeTestArguments('unknown', split), /Expected exactly one mode/)
 })
 
@@ -206,6 +223,8 @@ test('package commands reach both mandatory families and retain every prior aggr
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   assert.equal(pkg.scripts['test:core'], 'node scripts/official-truth-v3-test-selection.mjs core')
   assert.equal(pkg.scripts['test:hosted-v3-native'], 'node scripts/official-truth-v3-test-selection.mjs hosted-pg17')
+  assert.equal(pkg.scripts['test:hosted-v3-native:main'], 'node scripts/official-truth-v3-test-selection.mjs hosted-pg17-main')
+  assert.equal(pkg.scripts['test:hosted-v3-native:quota'], 'node scripts/official-truth-v3-test-selection.mjs hosted-pg17-quota')
   assert.deepEqual(pkg.scripts.test.split(' && '), [
     'npm run test:core',
     'npm run test:accepted-store-native',
@@ -217,5 +236,7 @@ test('package commands reach both mandatory families and retain every prior aggr
   assert.equal(nodeTestArguments('core', split).filter((path) => path === contract).length, 1)
   for (const path of hosted) {
     assert.equal(nodeTestArguments('hosted-pg17', split).filter((candidate) => candidate === path).length, 1, path)
+    const matrixArguments = [...nodeTestArguments('hosted-pg17-main', split), ...nodeTestArguments('hosted-pg17-quota', split)]
+    assert.equal(matrixArguments.filter((candidate) => candidate === path).length, 1, path)
   }
 })

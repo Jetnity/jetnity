@@ -79,9 +79,14 @@ jobs:
         run: npm run build
 
   hosted_v3_native_pg17:
-    name: Hosted V3 — native PostgreSQL 17
+    name: Hosted V3 — native PostgreSQL 17 (${{ matrix.group }})
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        group: [main, quota]
 
     steps:
       # fetch-depth: 0 is required so the operating-mode guard can compute the
@@ -276,7 +281,7 @@ jobs:
           HMA_NODE
 
       - name: Hosted V3 native proofs
-        run: npm run test:hosted-v3-native
+        run: npm run test:hosted-v3-native:${{ matrix.group }}
 
   persisted_native:
     name: Persisted canonical read — native

@@ -25,10 +25,11 @@ function observeLocalCallbacks(t: TestContext) {
   type Pending = 'connect' | 'auth' | 'query' | 'socket'
   const active: Record<Pending, number> = { connect: 0, auth: 0, query: 0, socket: 0 }
   const calls: Record<Pending, number> = { connect: 0, auth: 0, query: 0, socket: 0 }
-  let callbacks = 0, lastCallbackAt = 0
+  const peak: Record<Pending, number> = { connect: 0, auth: 0, query: 0, socket: 0 }
+  let callbacks = 0, lastCallbackAt = 0, queriesWhileConnecting = 0
   const touch = () => { callbacks++; lastCallbackAt = performance.now() }
   function begin(kind: Pending) {
-    active[kind]++; calls[kind]++; touch(); let finished = false
+    active[kind]++; calls[kind]++; peak[kind] = Math.max(peak[kind], active[kind]); touch(); let finished = false
     return () => { touch(); if (!finished) { finished = true; active[kind]-- } }
   }
   const selected = (client: PinnedClient) => /^otv3:(method|intake|jobs|writer|reader|verifier):[wc]:[a-f0-9]{24}$/.test(client.connectionParameters.application_name ?? '')
@@ -52,13 +53,14 @@ function observeLocalCallbacks(t: TestContext) {
   })
   const querySpy = t.mock.method(Client.prototype, 'query', function (this: Client, ...args: unknown[]) {
     if (selected(this as PinnedClient)) {
+      if (active.connect > 0) queriesWhileConnecting++
       const query = args[0]; assert.ok(query instanceof Query, 'real production adapter owns a concrete Query')
       const finish = begin('query')
       query.on('row', touch); query.once('error', finish); query.once('end', finish)
     }
     return Reflect.apply(originalQuery, this, args)
   } as typeof Client.prototype.query)
-  return { snapshot: () => ({ active: { ...active }, calls: { ...calls }, callbacks, lastCallbackAt }),
+  return { snapshot: () => ({ active: { ...active }, calls: { ...calls }, peak: { ...peak }, queriesWhileConnecting, callbacks, lastCallbackAt }),
     restore() { querySpy.mock.restore(); authSpy.mock.restore(); connectSpy.mock.restore() } }
 }
 function command(binary: string, args: readonly string[], timeout = 15000): string {
@@ -81,6 +83,7 @@ async function ownedProxy(port: number, certificate: string, key: string) {
   const sockets = new Set<Socket>(), closing = new Set<Promise<void>>()
   const sessions = new Set<{ front: TLSSocket; back: TLSSocket; application: string }>()
   let mode: ProxyMode = 'pass', lost = 0, lastLossAt = 0, unexpected = false
+  let rejectStartup: 'work' | 'control' | null = null, rejectedStartups = 0
   function track<T extends Socket>(socket: T): T {
     sockets.add(socket)
     let settled!: () => void
@@ -116,6 +119,11 @@ async function ownedProxy(port: number, certificate: string, key: string) {
             const items = startup.subarray(8, length - 1).toString('utf8').split('\u0000')
             for (let i = 0; i < items.length - 1; i += 2) if (items[i] === 'application_name') state.application = items[i + 1]!
             assert.match(state.application, /^otv3:(method|intake|jobs|writer|reader|verifier):[wc]:[a-f0-9]{24}$/)
+            if (rejectStartup && state.application.includes(rejectStartup === 'work' ? ':w:' : ':c:')) {
+              // Close one genuine TLS channel before its PostgreSQL startup;
+              // the independently connected partner still has to be joined.
+              rejectStartup = null; rejectedStartups++; front.destroy(); back.destroy(); return
+            }
             started = true; back.write(startup); startup = Buffer.alloc(0)
           } else back.write(chunk)
         })
@@ -152,7 +160,8 @@ async function ownedProxy(port: number, certificate: string, key: string) {
   const address = server.address(); assert.ok(address && typeof address !== 'string')
   return { port: address.port,
     loseNextCommit(both = false) { assert.equal(mode, 'pass'); mode = both ? 'lose_both' : 'lose_commit' },
-    snapshot: () => ({ sockets: sockets.size, sessions: sessions.size, lost, lastLossAt, unexpected }),
+    rejectNextStartup(side: 'work' | 'control') { assert.equal(rejectStartup, null); rejectStartup = side },
+    snapshot: () => ({ sockets: sockets.size, sessions: sessions.size, lost, lastLossAt, unexpected, rejectedStartups }),
     async close() {
       const stopped = new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()))
       for (const socket of sockets) socket.destroy()
@@ -261,6 +270,7 @@ export async function startOwnedTlsPgFixture(t: TestContext) {
         }
       },
       loseNextCommit(both = false) { assert.ok(owned.has(fixture) && !disposed); proxy!.loseNextCommit(both) },
+      rejectNextStartup(side: 'work' | 'control') { assert.ok(owned.has(fixture) && !disposed); proxy!.rejectNextStartup(side) },
       async absent() {
         assert.ok(owned.has(fixture) && !disposed)
         const names = Object.values(V3_PG_LOGINS).map(x => x.login)

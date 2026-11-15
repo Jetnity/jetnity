@@ -10,7 +10,8 @@ import { createV3PostgresDurableJobs } from './authority-postgres'
 import { readMa1CurrentRows } from './contract'
 
 type Fault = 'revoked' | 'epoch_changed' | 'expired' | 'unknown' | 'blocked'
-async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
+async function factory(options: { timed?: boolean; fault?: Fault;
+  observation?: (kind: 'method' | 'confirm', signal: AbortSignal) => Promise<void> } = {}) {
   const f = fixture(), h = queueHarness(), seeded = await h.queue.enqueue(f.enqueue)
   assert.equal(seeded.status, 'confirmed'); if (seeded.status !== 'confirmed') assert.fail('fixture')
   let record: V3ManagedJobRecord = seeded.record, epoch = 1, enabled = true, initialReads = 0, writes = 0, starts = 0, active = 0
@@ -18,15 +19,17 @@ async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
   const now = () => new Date(wall + Math.floor(performance.now() - origin)).toISOString()
   const events: { operation: string; phase?: string; deadline: number; started: number; finished: number }[] = []
   const binding = { ...METHOD, methodDigest: 'a'.repeat(64), packageDigest: 'b'.repeat(64) }
+  let firstMethod = true, firstConfirm = true
   async function pause(milliseconds: number) { if (milliseconds) await new Promise<void>(done => setTimeout(done, milliseconds)) }
   const config: M04Config = {
     binding, registry: f.registry, clock: () => ({ now: now(), legalDate: '2026-11-09' }),
-    methodExecutor: { async readCurrent(request, _signal, budget) {
+    methodExecutor: { async readCurrent(request, signal, budget) {
       assert.ok(budget)
       const event = { operation: 'method', deadline: budget.deadline, started: performance.now(), finished: 0 }
       events.push(event); active++
       try {
-        await pause(options.timed ? 280 : 0)
+        if (firstMethod) { firstMethod = false; await options.observation?.('method', signal) }
+        await pause(options.timed ? 600 : 0)
         const observedAt = now(), short = options.fault === 'expired'
         const rows = [{ status: enabled ? 'approved' : 'revoked', method_id: binding.methodId,
           revision: '1', method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: String(epoch),
@@ -37,7 +40,7 @@ async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
         return { status: 'rows', rows }
       } finally { event.finished = performance.now(); active-- }
     } },
-    jobsExecutor: { async executeFixed(request) {
+    jobsExecutor: { async executeFixed(request, signal) {
       const q = JSON.parse(request.operationText), body = q.body
       const event = { operation: q.operation as string, phase: q.phase as string, deadline: request.budget.deadline,
         started: performance.now(), finished: 0 }
@@ -45,13 +48,14 @@ async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
       try {
         let reply: unknown
         if (q.operation === 'queue_confirm') {
-          await pause(options.timed ? 600 : 0)
+          if (firstConfirm) { firstConfirm = false; await options.observation?.('confirm', signal) }
+          await pause(options.timed ? 700 : 0)
           const command = readM04Command(body.command)!, prior = operations.get(command.operationId)
           reply = !prior ? { status: 'not_attempted' } : q.phase === 'probe' ? { status: 'requires_authority' }
             : { status: 'committed', operationId: command.operationId, commandKey: command.commandKey,
               commandText: command.commandText, envelopeText: JSON.stringify(prior), record: prior.next }
         } else if (q.operation === 'queue_read') {
-          await pause(options.timed ? q.phase === 'probe' ? 600 : 980 : options.fault === 'expired' ? 25 : 0)
+          await pause(options.timed ? q.phase === 'probe' ? 600 : 900 : options.fault === 'expired' ? 25 : 0)
           if (q.phase === 'probe') reply = { status: 'requires_authority' }
           else {
             initialReads++
@@ -61,7 +65,7 @@ async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
             if (initialReads === 1 && options.fault === 'epoch_changed') epoch++
           }
         } else if (q.operation === 'queue_cas') {
-          await pause(options.timed ? 1000 : 0)
+          await pause(options.timed ? 900 : 0)
           assert.equal(body.command.action, 'claim'); assert.deepEqual(body.commit.expected, record)
           record = body.commit.next; operations.set(body.commit.operationId, body.commit); writes++
           reply = { status: 'committed', record }
@@ -84,7 +88,7 @@ async function factory(options: { timed?: boolean; fault?: Fault } = {}) {
     jobKey: f.identity.jobKey, leaseMilliseconds: 30000 }
   const api = createV3PostgresDurableJobs(config)
   return { events, claim, record: () => record, writes: () => writes, starts: () => starts, active: () => active,
-    run: () => api.workOnce(claim) }
+    run: (signal?: AbortSignal) => api.workOnce(claim, signal) }
 }
 
 test('real M04 factory removes only the initial claim probe and duplicate resolve, retaining exact original custody', async () => {
@@ -119,15 +123,47 @@ for (const fault of ['revoked', 'epoch_changed', 'expired', 'unknown', 'blocked'
   })
 }
 
-test('real M04 factory keeps the complete claim below 5s with measured Dev-like sequential round-trip delays', { timeout: 15000 }, async t => {
+test('real M04 factory overlaps the two independent reads while a sequential claim would exceed its original 5s', { timeout: 15000 }, async t => {
   const h = await factory({ timed: true })
   await h.run()
   assert.equal(h.writes(), 1); assert.equal(h.starts(), 1); assert.equal(h.active(), 0)
   const begin = h.events.findIndex(e => e.operation === 'queue_confirm'), cas = h.events.findIndex(e => e.operation === 'queue_cas')
   const end = h.events[cas + 2], elapsed = end.finished - h.events[begin].started
   assert.equal(end.operation, 'method'); assert.ok(elapsed < 5000, `original 5s claim deadline: ${elapsed}ms`)
+  const confirmation = h.events[begin], observation = h.events[begin + 1]
+  const overlap = Math.min(confirmation.finished, observation.finished) - Math.max(confirmation.started, observation.started)
+  assert.ok(overlap >= 500, `actual concurrent reads saved only ${overlap}ms`)
+  const serialDuration = h.events.slice(begin, cas + 3).reduce((total, event) => total + event.finished - event.started, 0)
+  assert.ok(serialDuration > 5000, `the unchanged serial operation set would take ${serialDuration}ms`)
   assert.equal(h.events.slice(begin, cas).filter(e => e.operation === 'queue_read' && e.phase === 'probe').length, 0)
   assert.equal(h.events.slice(begin, cas).filter(e => e.operation === 'method').length, 2, 'one new resolve and unchanged actual pre-CAS reproof')
   assert.ok(h.events[cas].deadline <= h.events[begin + 1].deadline)
-  t.diagnostic(`Synthetic joined round trips, not a hosted acceptance: claim ${elapsed.toFixed(1)}ms; 5s/30s unchanged; removed one 600ms probe and one 280ms resolve.`)
+  t.diagnostic(`Synthetic joined round trips, not a hosted acceptance: claim ${elapsed.toFixed(1)}ms; overlap ${overlap.toFixed(1)}ms; serial operation sum ${serialDuration.toFixed(1)}ms; all seven native calls and 5s/30s unchanged.`)
+})
+
+test('real factory owns both parallel native observations until their actual settlement after caller abort', { timeout: 2000 }, async () => {
+  let ready!: () => void
+  const entered = new Promise<void>(done => { ready = done })
+  const holds = new Map<string, { release: () => void; signal: AbortSignal }>()
+  const h = await factory({ async observation(kind, signal) {
+    await new Promise<void>(release => {
+      holds.set(kind, { release, signal })
+      if (holds.size === 2) ready()
+    })
+  } })
+  const controller = new AbortController()
+  let settled = false
+  const running = h.run(controller.signal).finally(() => { settled = true })
+  try {
+    await entered
+    assert.equal(h.active(), 2)
+    controller.abort()
+    assert.ok([...holds.values()].every(held => held.signal.aborted))
+    holds.get('confirm')!.release()
+    await new Promise<void>(done => setImmediate(done))
+    assert.equal(settled, false); assert.equal(h.active(), 1)
+    assert.equal(h.writes(), 0); assert.equal(h.starts(), 0)
+  } finally { for (const held of holds.values()) held.release() }
+  assert.equal((await running).status, 'unconfirmed')
+  assert.equal(h.active(), 0); assert.equal(h.writes(), 0); assert.equal(h.starts(), 0)
 })

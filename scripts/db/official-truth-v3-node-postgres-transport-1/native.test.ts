@@ -102,10 +102,39 @@ test('genuine owned Node-Postgres TLS transport', { timeout: 180000 }, async t =
       await fixture.absent(); assert.equal(await effects(), '0')
     })
     await t.test('TLS hostname failure cannot reach SQL or retain a reusable client', async () => {
+      const before = fixture.snapshot().local
       selected = { ...fixture.target, tlsHostname: 'wrong.invalid' }
       assert.deepEqual(await port.jobs.executeFixed(job(), signal()), { status: 'unavailable' })
       assert.equal(await effects(), '0'); assert.equal(state().jobs, 'idle')
+      assert.equal(fixture.snapshot().local.calls.connect - before.calls.connect, 2)
+      assert.equal(fixture.snapshot().local.calls.query, before.calls.query)
+      assert.deepEqual(fixture.snapshot().local.active, { connect: 0, auth: 0, query: 0, socket: 0 })
+      await fixture.absent()
       selected = fixture.target
+    })
+    for (const side of ['control', 'work'] as const) await t.test(`one failed real ${side} startup joins both channels without SQL or a replacement`, async () => {
+      const before = fixture.snapshot()
+      fixture.rejectNextStartup(side)
+      assert.deepEqual(await port.jobs.executeFixed(job(), signal()), { status: 'unavailable' })
+      const after = fixture.snapshot()
+      assert.equal(after.rejectedStartups, before.rejectedStartups + 1)
+      assert.equal(after.local.calls.connect - before.local.calls.connect, 2)
+      assert.equal(after.local.calls.query, before.local.calls.query)
+      assert.deepEqual(after.local.active, { connect: 0, auth: 0, query: 0, socket: 0 })
+      assert.equal(after.local.queriesWhileConnecting, before.local.queriesWhileConnecting)
+      assert.equal(state().jobs, 'idle'); assert.equal(await effects(), '0'); await fixture.absent()
+    })
+    await t.test('both actual TLS/SCRAM connects overlap and settle before the first SQL identity read', async () => {
+      const before = fixture.snapshot().local
+      const result = await port.method.readCurrent({ ...binding, checkedAt: new Date().toISOString() }, signal(), budget())
+      assert.equal(result.status, 'rows')
+      const after = fixture.snapshot().local
+      assert.equal(after.calls.connect - before.calls.connect, 2)
+      assert.equal(after.calls.auth - before.calls.auth, 2)
+      assert.equal(after.peak.connect, 2)
+      assert.equal(after.queriesWhileConnecting, before.queriesWhileConnecting)
+      assert.deepEqual(after.active, { connect: 0, auth: 0, query: 0, socket: 0 })
+      assert.equal(await effects(), '0'); assert.equal(state().method, 'idle'); await fixture.absent()
     })
     await t.test('all six real LOGIN channels, original text, NULL and microsecond cells', async () => {
       // Dedicated process: hostile PG defaults are synthetic and never read back.

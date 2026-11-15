@@ -125,8 +125,11 @@ async function execute(kind: V3PgLogin, fixed: Fixed, signal: AbortSignal): Prom
     signal.addEventListener('abort', abort, { once: true })
     timer = setTimeout(abort, Math.max(0, fixed.deadline - performance.now()))
     check()
-    controlId = checkedIdentity((await pair.control.query(IDENTITY_SQL)).rows, kind, pair.control)
-    workId = checkedIdentity((await pair.work.query(IDENTITY_SQL)).rows, kind, pair.work)
+    // These reads own different verified sessions. Both must settle before BEGIN
+    // or cleanup; neither a rejection nor cancellation detaches the other read.
+    const identities = await Promise.allSettled([pair.control.query(IDENTITY_SQL), pair.work.query(IDENTITY_SQL)])
+    if (identities[0].status === 'fulfilled') controlId = checkedIdentity(identities[0].value.rows, kind, pair.control)
+    if (identities[1].status === 'fulfilled') workId = checkedIdentity(identities[1].value.rows, kind, pair.work)
     if (!controlId || !workId || controlId.pid === workId.pid || controlId.databaseOid !== workId.databaseOid
       || controlId.loginOid !== workId.loginOid) throw Error('pg_fixed_identity')
     phases[kind] = 'identified'

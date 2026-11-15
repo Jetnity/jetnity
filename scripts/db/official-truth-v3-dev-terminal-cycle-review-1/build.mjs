@@ -55,9 +55,23 @@ const runtimeSessions = `EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid<>pg_bac
     'ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))`
 
 export function compileDevTerminalReview() {
-  assert.equal(hash(read('../../../lib/readiness/official-truth-product-v3/monitor/queue.ts')), REVIEW.queueFix,
-    'review is tied to the exact independently reviewed claim fix')
-  assert.equal(hash(read('../../../lib/readiness/official-truth-product-v3/jobs/composition.ts')), REVIEW.compositionFix)
+  // This exact review was applied on 1c6915bf. Preserve its original runtime
+  // evidence even when a separately reviewed successor changes current source.
+  // Never rewrite the already applied SQL, proof hashes or historical receipt.
+  const runtime = JSON.parse(read('./reviewed-runtime-1c6915bf/manifest.json'))
+  assert.equal(runtime.commit, '1c6915bf0ed661a8b57c5fb3a43c9b71b559a90a')
+  assert.equal(runtime.tree, '9467287fbe9c5fd00b3b2fc6a218eb46a22e0a4f')
+  assert.equal(runtime.ciRun, 43663530549)
+  assert.equal(runtime.appliedReviewAt, '2026-11-15T02:11:51.736081Z')
+  assert.deepEqual(runtime.pins, [
+    { path: 'lib/readiness/official-truth-product-v3/monitor/queue.ts', archive: 'queue.ts.txt', bytes: 22643, sha256: REVIEW.queueFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/composition.ts', archive: 'composition.ts.txt', bytes: 29022, sha256: REVIEW.compositionFix },
+  ])
+  for (const pin of runtime.pins) {
+    const source = read('./reviewed-runtime-1c6915bf/' + pin.archive)
+    assert.equal(Buffer.byteLength(source), pin.bytes)
+    assert.equal(hash(source), pin.sha256, 'exact independently reviewed predecessor runtime required')
+  }
   assert.equal(originalEvidence.cycle.id, 2)
   assert.equal(originalEvidence.cycle.state, 'blocked'); assert.equal(originalEvidence.cycle.last_status, 'exhausted')
   assert.equal(originalEvidence.dispatches.length, 8)

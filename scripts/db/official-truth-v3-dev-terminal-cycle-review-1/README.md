@@ -36,6 +36,18 @@ method lookup after a genuine current method receipt. Its fixed source SHA256s:
 All existing five-second queue deadlines, source/lease deadlines, original IDs,
 method proofs, final reads, rolling 64/256 quotas and attempt limits remain.
 
+## Applied historical evidence
+
+This exact review was applied on 2026-11-15 at 02:11:51.736081 UTC after the
+complete CI4251 (run43663530549), Ready deployment and normal UI publication5
+on commit `1c6915bf0ed661a8b57c5fb3a43c9b71b559a90a`. Do not apply it again.
+The two reviewed runtime files are preserved byte-for-byte under
+`reviewed-runtime-1c6915bf/`, with their exact commit/tree, lengths and hashes.
+The compiler verifies these immutable predecessors; a later runtime candidate
+requires its own separate review. The already applied SQL, original evidence,
+readback and stored receipt remain unchanged. The sequence below documents the
+original completed operation and is not a new action list.
+
 ## Operator sequence — Dev only
 
 1. Verify the complete CI for the candidate commit and an actual Ready Dev
@@ -95,7 +107,7 @@ application roles. A changed historical dispatch immediately closes its exceptio
 
 ## Reproducible local proof
 
-`build.mjs` deterministically emits the migration, verifies the two exact runtime
+`build.mjs` deterministically emits the migration, verifies the two archived exact runtime
 source digests, and binds all original bytes. It performs no database/network work.
 
 `lib/readiness/official-truth-dev-terminal-cycle-review.test.ts` executes the

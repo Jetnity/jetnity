@@ -23,6 +23,8 @@
     "test": "npm run test:core && npm run test:accepted-store-native && npm run test:persisted-native && npm run test:refresh-native && npm run test:hosted-v3-native",
     "test:core": "node scripts/official-truth-v3-test-selection.mjs core",
     "test:hosted-v3-native": "node scripts/official-truth-v3-test-selection.mjs hosted-pg17",
+    "test:hosted-v3-native:main": "node scripts/official-truth-v3-test-selection.mjs hosted-pg17-main",
+    "test:hosted-v3-native:quota": "node scripts/official-truth-v3-test-selection.mjs hosted-pg17-quota",
     "test:accepted-store-native": "npm run test:accepted-store-native:store && npm run test:accepted-store-native:lifecycle",
     "test:accepted-store-native:store": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/acceptance.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/context.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/integrity.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/native.test.ts",
     "test:accepted-store-native:lifecycle": "node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-concurrency=1 scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/boundaries.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/browser.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/recovery.test.ts scripts/db/official-truth-accepted-store-trip-integration-1/required-tests/wait-lifecycle.test.ts",

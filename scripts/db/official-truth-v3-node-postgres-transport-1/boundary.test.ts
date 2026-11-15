@@ -50,7 +50,9 @@ test('private Node-Postgres construction has only the finite reviewed importers'
       assert.ok(allowed[selected]!.includes(path), `${path} may not import the private target ${selected}`)
       if (selected === 'pg') assert.equal(specifier, 'pg', 'no native or unreviewed driver entry point')
       if (selected === sessions && path === PROOF + 'offline.test.ts') {
-        assert.ok(ts.isImportDeclaration(node) && node.importClause?.isTypeOnly, 'offline fixture receives no real connection constructor')
+        assert.ok(ts.isImportDeclaration(node) && node.importClause?.isTypeOnly
+          || ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword,
+        'offline test imports the adapter only after its explicit synthetic driver mocks')
       }
       if (path === composition) assert.ok(ts.isImportDeclaration(node), 'the fixed server composition uses only direct imports')
       if (path === humanRelease) assert.ok(selected === selection && humanSelectorImport(node), 'human release imports only the inert named selector')

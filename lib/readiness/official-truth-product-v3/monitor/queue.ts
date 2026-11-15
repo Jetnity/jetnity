@@ -7,7 +7,7 @@ import {
 } from '../contract'
 import { REGEL_FAKT_ARTEN } from '@/lib/readiness/rule-claims'
 import { invocationBudget, readData, readNow, same, key, operationId, jobId, leaseId, jobKey, decisionRef, discoveryJobKey, discoveryRef,
-  type InvocationBudget } from './internal'
+  type InvocationBudget, type BudgetResult } from './internal'
 
 export type V3ManagedJobRecord = V3ResearchJobRecord | V3CombinationDiscoveryJobRecord
 type QueueKind = 'rule_research' | 'combination_discovery'
@@ -184,8 +184,31 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
     if (!storage || !configValid) return { status: 'unavailable' }
     const budget = invocationBudget(options.invocationMilliseconds, signal)
     try {
-      const checked = await budget.call((s) => storage.confirm(op, command, s))
+      let checked: BudgetResult<V3QueueConfirmation>
+      let initialAcquisition: BudgetResult<Awaited<ReturnType<V3MethodAuthorityPort<object>['resolveCurrent']>>> | undefined
+      const methodPort = options.methodAuthority
+      const checkedAt = confirmationMode === 'exact_operation' && claimMethod ? readNow(options.now) : null
+      if (checkedAt && claimMethod && methodPort) {
+        // These independent reads share the original invocation deadline. Join
+        // their actual promises, including rejection/abort cleanup, before using
+        // either result. A positive method read cannot prove ledger absence.
+        const [confirmation, acquisition] = await Promise.allSettled([
+          Promise.resolve().then(() => {
+            if (budget.signal.aborted) throw new Error('aborted')
+            return storage.confirm(op, command, budget.signal)
+          }),
+          Promise.resolve().then(() => {
+            if (budget.signal.aborted) throw new Error('aborted')
+            return methodPort.resolveCurrent(claimMethod, checkedAt)
+          }),
+        ])
+        checked = !budget.signal.aborted && confirmation.status === 'fulfilled'
+          ? { ok: true, value: confirmation.value } : { ok: false }
+        initialAcquisition = !budget.signal.aborted && acquisition.status === 'fulfilled'
+          ? { ok: true, value: acquisition.value } : { ok: false }
+      } else checked = await budget.call((s) => storage.confirm(op, command, s))
       if (!checked.ok) return { status: 'unconfirmed' }
+      // Historical/uncertain confirmation never receives the speculative receipt.
       if (checked.value.status === 'committed') return await confirmed(checked.value, op, command, keyValue, budget, true, confirmationMode)
       if (checked.value.status !== 'not_attempted') return { status: checked.value.status }
       for (let attempt = 0; attempt < 3; attempt++) {
@@ -193,7 +216,8 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
         if (confirmationMode === 'exact_operation' && claimMethod !== undefined) {
           const methodPort = options.methodAuthority, checkedAt = readNow(options.now)
           if (!claimMethod || !methodPort || !checkedAt) return { status: 'unavailable' }
-          const acquired = await budget.call(() => methodPort.resolveCurrent(claimMethod, checkedAt))
+          const acquired = attempt === 0 && initialAcquisition !== undefined ? initialAcquisition
+            : await budget.call(() => methodPort.resolveCurrent(claimMethod, checkedAt))
           if (!acquired.ok || acquired.value.status !== 'approved') return { status: 'unavailable' }
           initialReadReceipt = acquired.value.receipt
         }

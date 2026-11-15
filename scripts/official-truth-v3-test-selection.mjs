@@ -26,6 +26,7 @@ export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
   'lib/readiness/official-truth-prod-import-scheduler.test.ts',
   // Real 5s wall-clock custody proof needs the existing sequential gate; the
   // parallel Core load must not consume its unchanged product deadline.
@@ -41,6 +42,11 @@ export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/profile-authority-integrity-1.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
   'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+])
+// Run this complete long proof on its own runner. No test/group inside the file
+// is filtered or concurrent; the main runner receives the exact complement.
+export const HOSTED_PG17_QUOTA_FILES = Object.freeze([
+  'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
@@ -141,23 +147,33 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
     throw new Error('Required test partition has omissions or overlaps')
   }
   const core = [...originalCore, SELECTOR_CONTRACT].sort()
-  return { original, core, hostedPg17 }
+  const hostedPg17Quota = checkedPaths(HOSTED_PG17_QUOTA_FILES, 'hosted quota')
+  if (hostedPg17Quota.some((path) => !hosted.has(path))) throw new Error('Missing mandatory quota test in hosted family')
+  const quota = new Set(hostedPg17Quota)
+  const hostedPg17Main = hostedPg17.filter((path) => !quota.has(path))
+  if (hostedPg17Main.length === 0 || hostedPg17Main.length + hostedPg17Quota.length !== hostedPg17.length) {
+    throw new Error('Hosted runner partition has omissions or overlaps')
+  }
+  return { original, core, hostedPg17, hostedPg17Main, hostedPg17Quota }
 }
 
 export function selectedMode(args) {
-  if (!Array.isArray(args) || args.length !== 1 || !['core', 'hosted-pg17'].includes(args[0])) {
-    throw new Error('Expected exactly one mode: core or hosted-pg17')
+  if (!Array.isArray(args) || args.length !== 1
+    || !['core', 'hosted-pg17', 'hosted-pg17-main', 'hosted-pg17-quota'].includes(args[0])) {
+    throw new Error('Expected exactly one mode: core, hosted-pg17, hosted-pg17-main or hosted-pg17-quota')
   }
   return args[0]
 }
 
 export function nodeTestArguments(mode, partition) {
   selectedMode([mode])
-  // Both selected groups contain one A3 t.mock.module consumer, in separate test processes.
+  // A3 mocked-module consumers remain in separate Node test processes.
   const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
+  const hosted = mode === 'hosted-pg17-main' ? partition.hostedPg17Main
+    : mode === 'hosted-pg17-quota' ? partition.hostedPg17Quota : partition.hostedPg17
   return mode === 'core'
     ? [...prefix, ...partition.core]
-    : [...prefix, '--test-concurrency=1', ...partition.hostedPg17]
+    : [...prefix, '--test-concurrency=1', ...hosted]
 }
 
 export function childExitStatus(result) {

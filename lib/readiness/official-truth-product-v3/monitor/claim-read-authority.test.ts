@@ -33,7 +33,7 @@ test('fresh fixed-method claim retains its own original receipt across both real
   reads.length = 0
   assert.equal((await queue.claim(claim)).status, 'confirmed')
   assert.deepEqual(reads, [undefined], 'historical confirmation never inherits the old receipt')
-  assert.equal(writes.length, 1); assert.equal(resolves, 2)
+  assert.equal(writes.length, 1); assert.equal(resolves, 3, 'replay discards its speculative observation and resolves its own authority')
 })
 
 test('fresh claim mismatch gets new current custody within the same unchanged invocation', async () => {
@@ -51,7 +51,7 @@ test('fresh claim mismatch gets new current custody within the same unchanged in
   assert.deepEqual(reads, [receipts[0], receipts[1], receipts[1]])
 })
 
-test('uncertain claim confirmation cannot begin a fresh fixed-method read or effect', async () => {
+test('uncertain claim confirmation discards the parallel observation without a queue read or effect', async () => {
   const { h, claim } = await setup()
   h.storage.obscureConfirm = true
   let resolves = 0, reads = 0
@@ -63,8 +63,86 @@ test('uncertain claim confirmation cannot begin a fresh fixed-method read or eff
     reproveAtCommit: h.method.port.reproveAtCommit.bind(h.method.port),
   } })
   assert.equal((await queue.claim(claim)).status, 'unconfirmed')
-  assert.equal(resolves, 0); assert.equal(reads, 0); assert.equal(h.storage.writes, 1)
+  assert.equal(resolves, 1); assert.equal(reads, 0); assert.equal(h.storage.writes, 1)
 })
+
+function deferred() {
+  let resolve!: () => void
+  const promise = new Promise<void>(done => { resolve = done })
+  return { promise, resolve }
+}
+
+test('the fixed claim joins both independent observations before its actual initial read', { timeout: 2000 }, async () => {
+  const { h, claim } = await setup(), entered = deferred(), release = deferred(), events: string[] = []
+  let observations = 0, completed = 0
+  async function observe(name: string) {
+    events.push(name + ':start')
+    if (++observations === 2) entered.resolve()
+    await release.promise
+    completed++; events.push(name + ':end')
+  }
+  const queue = createV3QueueCoordinator({ ...h.options, claimMethod: METHOD, storage: {
+    async confirm(op, command) { await observe('confirm'); return h.storage.confirm(op, command) },
+    async read(key, signal, receipt) {
+      assert.equal(completed, 2); assert.equal(signal.aborted, false); assert.ok(receipt)
+      events.push('read'); return h.storage.read(key)
+    },
+    compareAndSwap: h.storage.compareAndSwap.bind(h.storage),
+  }, methodAuthority: {
+    async resolveCurrent(...args) { await observe('method'); return h.method.port.resolveCurrent(...args) },
+    reproveAtCommit: h.method.port.reproveAtCommit.bind(h.method.port),
+  } })
+  const running = queue.claim(claim)
+  try {
+    await entered.promise
+    assert.deepEqual(events, ['confirm:start', 'method:start'])
+    assert.equal(h.storage.writes, 1)
+  } finally { release.resolve() }
+  assert.equal((await running).status, 'confirmed')
+  assert.ok(events.indexOf('read') > events.indexOf('confirm:end'))
+  assert.ok(events.indexOf('read') > events.indexOf('method:end'))
+})
+
+for (const fault of ['confirmation_rejected', 'method_rejected', 'deadline'] as const) {
+  test(`parallel claim observations retain both promises through ${fault}`, { timeout: 2000 }, async () => {
+    const { h, claim } = await setup(), entered = deferred(), confirmations = deferred(), methods = deferred()
+    let observations = 0, settled = false, signal: AbortSignal | undefined, reads = 0
+    const enter = () => { if (++observations === 2) entered.resolve() }
+    const queue = createV3QueueCoordinator({ ...h.options, claimMethod: METHOD,
+      invocationMilliseconds: fault === 'deadline' ? 10 : 1000,
+      storage: {
+        async confirm(op, command, observedSignal) {
+          signal = observedSignal; enter(); await confirmations.promise
+          if (fault === 'confirmation_rejected') throw new Error('synthetic confirmation failure')
+          return h.storage.confirm(op, command)
+        },
+        async read() { reads++; assert.fail('unsettled/failed observations cannot enter the queue') },
+        compareAndSwap: h.storage.compareAndSwap.bind(h.storage),
+      }, methodAuthority: {
+        async resolveCurrent(...args) {
+          enter(); await methods.promise
+          if (fault === 'method_rejected') throw new Error('synthetic observation failure')
+          return h.method.port.resolveCurrent(...args)
+        },
+        reproveAtCommit: h.method.port.reproveAtCommit.bind(h.method.port),
+      },
+    })
+    const running = queue.claim(claim).finally(() => { settled = true })
+    try {
+      await entered.promise
+      if (fault === 'deadline') {
+        await new Promise<void>(done => setTimeout(done, 25))
+        assert.equal(signal?.aborted, true)
+      }
+      const first = fault === 'method_rejected' ? methods : confirmations
+      first.resolve(); await new Promise<void>(done => setImmediate(done))
+      assert.equal(settled, false, 'one real observation is still owned after the other fails or the deadline expires')
+      assert.equal(reads, 0); assert.equal(h.storage.writes, 1)
+    } finally { confirmations.resolve(); methods.resolve() }
+    assert.notEqual((await running).status, 'confirmed')
+    assert.equal(reads, 0); assert.equal(h.storage.writes, 1)
+  })
+}
 
 test('lost claim ACK retains only its original operation and never lends old custody on retry', async () => {
   const { h, claim } = await setup(), reads: (object | undefined)[] = []
