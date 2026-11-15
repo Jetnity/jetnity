@@ -2,6 +2,6 @@
   "version": 2,
   "framework": null,
   "installCommand": "node --version",
-  "buildCommand": "node ops/official-truth-production-install-20261115/runner.mjs --install",
+  "buildCommand": "node ops/official-truth-production-install-20261115/runner.mjs --prepare",
   "outputDirectory": "ops/official-truth-production-install-20261115/public"
 }
