@@ -4,6 +4,7 @@ import { performance } from 'node:perf_hooks'
 import { test } from 'node:test'
 import type { Hrs1Facade, Hrs1MonitorResult } from '../result/composition'
 import { HRS1_LIMITS } from '../result/contract'
+import { chDeSourceAdmissionOpen } from './ch-de-source-admission'
 
 type Work = Awaited<ReturnType<Hrs1Facade['workSelectedOnce']>>
 type Budget = Readonly<{ deadline: number }>
@@ -19,7 +20,12 @@ const signal = () => new AbortController().signal
 
 test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingress', { timeout: 15000 }, async t => {
   let now = 1_000, lookups = 0
+  const openTime = Date.parse('2026-11-15T17:56:00.000Z')
+  let sourceTime = openTime
   t.mock.method(performance, 'now', () => now)
+  t.mock.module(new URL('./ch-de-source-admission.ts', import.meta.url), { namedExports: {
+    chDeSourceAdmissionOpen, chDeSourceUtcNow: () => sourceTime,
+  } })
   let work: (kind: Kind, signal: AbortSignal, budget: Budget, selection?: Selection) => Promise<Work> = async () => notDue()
   let monitor: (signal: AbortSignal, budget: Budget) => Promise<Hrs1MonitorResult> = async () => ({ status: 'complete', outcomes: [] })
   const unexpected = async (): Promise<never> => { throw Error('unselected facade entrance') }
@@ -40,6 +46,7 @@ test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingres
   const route = await import('../../../../app/api/internal/readiness/ch-de-visa-tick/route')
   function reset() {
     selected = facade
+    sourceTime = openTime
     work = async () => notDue()
     monitor = async () => ({ status: 'complete', outcomes: [] })
   }
@@ -208,6 +215,19 @@ test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingres
       assert.equal(response.status, 400); assert.deepEqual(await response.json(), { schema: 1, status: 'request_refused' })
     }
     assert.equal(lookups, before)
+  })
+  await t.test('regular BG1 window refuses authenticated HTTP before any child but does not alter direct native ticks', async () => {
+    const before = lookups
+    for (const instant of ['2026-11-15T17:54:25.000Z', '2026-11-15T17:54:59.999Z',
+      '2026-11-15T17:55:00.000Z', '2026-11-15T17:55:34.999Z']) {
+      sourceTime = Date.parse(instant)
+      const response = await route.GET(new Request(url, { headers: authorized() }))
+      assert.equal(response.status, 503)
+      assert.deepEqual(await response.json(), { schema: 1, status: 'unavailable' })
+      assert.equal(lookups, before)
+    }
+    assert.equal((await run(signal())).status, 'complete', 'the pure tick keeps its original native/visitor-independent contract')
+    reset()
   })
   await t.test('authenticated response awaits actual completion and discloses no credential or private identifiers', async () => {
     const entered = deferred<void>(), gate = deferred<Work>()

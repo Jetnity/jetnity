@@ -9,16 +9,20 @@ import { AA_CH_DE_DELIVERY_PRODUCER } from '../source/aa-ch-de-delivery-producer
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
 import { V3_NODE_POSTGRES_EXECUTORS } from '../transport/node-postgres-executors'
 import { selectedV3PgTarget } from '../transport/node-postgres-selection'
+import { chDeSourceAdmissionOpen, chDeSourceUtcNow } from './ch-de-source-admission'
 
 let bound: Hrs1Facade | null = null
 let methodCheck: ReturnType<typeof createV3PostgresMethodAuthority> | null = null
 
-/** Read-only early refusal for the manual Dev entry. Keep the private executor
- * inside its existing finite importer. No receipt leaves this check, and every
- * later worker/commit still performs its unchanged fresh authority checks. */
+/** Shared read-only source admission for the Owner and both scheduler POSTs.
+ * Refuse the regular BG1 window before I/O and again after the joined MA1 read,
+ * before enqueue/tick can create a START. No receipt leaves this check, and
+ * every later worker/commit still performs its unchanged authority checks. */
 export async function checkOfficialTruthV3ChDeMethod(signal: AbortSignal): Promise<'approved' | 'not_approved' | 'unavailable'> {
+  const admittedAt = chDeSourceUtcNow()
   const program = selectedAaChDeQualification()
-  if (signal.aborted || program !== AA_BERN_CH_DE_REVIEWED_PROGRAM || selectedV3PgTarget() === null) return 'unavailable'
+  if (signal.aborted || !chDeSourceAdmissionOpen(admittedAt)
+    || program !== AA_BERN_CH_DE_REVIEWED_PROGRAM || selectedV3PgTarget() === null) return 'unavailable'
   if (!methodCheck) {
     const binding = program.binding
     methodCheck = createV3PostgresMethodAuthority({ methodId: binding.methodId, revision: binding.revision,
@@ -26,7 +30,8 @@ export async function checkOfficialTruthV3ChDeMethod(signal: AbortSignal): Promi
   }
   // This port owns its deadline and actual drain. A request abort never detaches it.
   const current = await methodCheck.resolveCurrent(program.method, new Date().toISOString())
-  return signal.aborted ? 'unavailable' : current.status
+  const dispatchedAt = chDeSourceUtcNow()
+  return signal.aborted || dispatchedAt < admittedAt || !chDeSourceAdmissionOpen(dispatchedAt) ? 'unavailable' : current.status
 }
 
 /** Both existing code-owned selectors must select the reviewed installation.

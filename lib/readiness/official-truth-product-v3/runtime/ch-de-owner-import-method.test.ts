@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
 import type { Ma1MethodSqlExecutor } from '../method/authority-postgres'
+import { chDeSourceAdmissionOpen } from './ch-de-source-admission'
 
 test('manual preflight reuses the existing method authority and never exports its receipt', async t => {
   Object.assign(process.env, {
@@ -12,11 +13,17 @@ test('manual preflight reuses the existing method authority and never exports it
   })
   const binding = AA_BERN_CH_DE_REVIEWED_PROGRAM.binding
   let calls = 0, patch: Record<string, string | null> = {}, unavailable = false
+  const openTime = Date.parse('2026-11-15T17:56:00.000Z')
+  let sourceTime = openTime, afterRead: number | null = null
+  t.mock.module(new URL('./ch-de-source-admission.ts', import.meta.url), { namedExports: {
+    chDeSourceAdmissionOpen, chDeSourceUtcNow: () => sourceTime,
+  } })
   let held: Promise<void> | null = null
   const executor: Ma1MethodSqlExecutor = { async readCurrent(request, _signal, budget) {
     calls++; assert.ok(budget); assert.equal(request.methodId, binding.methodId); assert.equal(request.revision, binding.revision)
     assert.equal(request.methodDigest, binding.methodDigest); assert.equal(request.packageDigest, binding.packageDigest)
     if (held) await held
+    if (afterRead !== null) sourceTime = afterRead
     if (unavailable) return { status: 'unavailable' }
     return { status: 'rows', rows: [{ status: 'approved', method_id: binding.methodId, revision: String(binding.revision),
       method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: '1',
@@ -51,6 +58,17 @@ test('manual preflight reuses the existing method authority and never exports it
   }
   patch = {}; unavailable = true; assert.equal(await check(signal()), 'unavailable')
   unavailable = false
+  const beforeWindow = calls
+  for (const instant of [Date.parse('2026-11-15T17:54:25.000Z'), Date.parse('2026-11-15T17:55:34.999Z'), NaN]) {
+    sourceTime = instant
+    assert.equal(await check(signal()), 'unavailable'); assert.equal(calls, beforeWindow)
+  }
+  sourceTime = Date.parse('2026-11-15T17:54:24.999Z')
+  afterRead = Date.parse('2026-11-15T17:54:25.000Z')
+  assert.equal(await check(signal()), 'unavailable'); assert.equal(calls, beforeWindow + 1)
+  sourceTime = openTime; afterRead = openTime - 1
+  assert.equal(await check(signal()), 'unavailable'); assert.equal(calls, beforeWindow + 2)
+  sourceTime = openTime; afterRead = null
   const before = calls
   process.env.VERCEL_ENV = 'production'
   assert.equal(await check(signal()), 'unavailable'); assert.equal(calls, before)

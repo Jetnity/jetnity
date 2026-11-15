@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import { HUMAN_METHOD_DEV_URL } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
 import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
 import { runOfficialTruthV3ChDeTick } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
+import { chDeSourceAdmissionOpen, chDeSourceUtcNow } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -30,6 +31,7 @@ export async function GET(request: Request): Promise<Response> {
       || (request.headers.get('content-length') !== null && request.headers.get('content-length') !== '0')) {
       return refusal(400, 'request_refused')
     }
+    if (!chDeSourceAdmissionOpen(chDeSourceUtcNow())) return refusal(503, 'unavailable')
     const report = await runOfficialTruthV3ChDeTick(request.signal)
     return Response.json(report, { status: report.status === 'complete' || report.status === 'busy' ? 200 : 503, headers: HEADERS })
   } catch { return refusal(503, 'unavailable') }

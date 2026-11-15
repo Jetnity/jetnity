@@ -19,6 +19,7 @@ import {
 
 const hosted = [
   'lib/readiness/official-truth-customer-information-migration.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
@@ -40,6 +41,7 @@ const hosted = [
   'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ]
 const quota = [
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
@@ -101,6 +103,10 @@ test('the actual original universe is partitioned once and its selector contract
   assert.equal(new Set(hostedRunners).size, hosted.length)
   assert.ok(partition.hostedPg17Quota.includes('lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts'))
   assert.ok(partition.hostedPg17Quota.includes('lib/readiness/official-truth-dev-cycle4-recovery.test.ts'))
+  assert.ok(partition.hostedPg17Quota.includes('lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts'))
+  const sourceAdmission = 'lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.test.ts'
+  assert.equal(partition.core.filter(path => path === sourceAdmission).length, 1)
+  assert.equal(partition.hostedPg17.includes(sourceAdmission), false)
   assert.equal(partition.core.filter((path) => path === contract).length, 1)
   assert.equal(partition.hostedPg17.includes(contract), false)
   const combined = [...partition.core.filter((path) => path !== contract), ...partition.hostedPg17]

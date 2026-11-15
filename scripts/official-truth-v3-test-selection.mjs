@@ -24,6 +24,7 @@ export const PRODUCTION_TEST_FILES = Object.freeze([
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/official-truth-customer-information-migration.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
@@ -49,8 +50,11 @@ export const HOSTED_PG17_FILES = Object.freeze([
 // Keep the quota and Dev recovery proofs sequential on the second existing
 // runner. Main previously used 29:46 of its 30-minute cap; moving these complete
 // independent files leaves room for the new recovery without another runner.
+// The bounded Attempt2 recovery (at most 15 minutes) joins the existing ~11-minute
+// quota group; both unchanged 30-minute runner caps remain in force.
 // No test/group inside a file is filtered or concurrent; main is the complement.
 export const HOSTED_PG17_QUOTA_FILES = Object.freeze([
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',

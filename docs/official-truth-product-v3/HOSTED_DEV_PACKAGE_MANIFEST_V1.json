@@ -136,9 +136,9 @@
     },
     {
       "path": "app/api/internal/readiness/ch-de-visa-tick/route.ts",
-      "blob": "c7071661f117df0f2d6b9ef6a3916212aeda4d3a",
-      "bytes": 2350,
-      "sha256": "ae57a3587525279dbd59e7782a138bfb8dc5ff57cc1b304b92cc5a07070f6c85"
+      "blob": "db73cf35dbcdae6df7babbb9778fdff37f5b836a",
+      "bytes": 2572,
+      "sha256": "91ab59b1fb9091fa8bfc6fb2f68e1847632a0a71684ca0e885c9e41e2810362c"
     },
     {
       "path": "app/api/readiness/ch-de-visa/route.ts",
@@ -387,6 +387,12 @@
       "sha256": "3e6c76d62d103a244f4c792f3f3c7454c9e410fc1f4acdd230eb143d3a5c215f"
     },
     {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-owner-import-method.test.ts",
+      "blob": "df4a43a2d67462ee6af5f8971d0d06199a198318",
+      "bytes": 5143,
+      "sha256": "63578768d9e1f4e2e7fcf79a27f841aa5c4ef7815989b5e2879f69ca534855b9"
+    },
+    {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-refresh.ts",
       "bytes": 3339,
       "blob": "cc7440fb51873990d5d6699a6fca7afae6c8681f",
@@ -394,15 +400,27 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
-      "blob": "f16bd00e2010f0f769c1ca966bd9228f182cf19d",
-      "bytes": 3573,
-      "sha256": "74716a3e8f86f7a339620465a5c50f24deec0210575aa16545a5ededb84a767d"
+      "blob": "8931a5cbc5f25134df3b942102843d64c32453df",
+      "bytes": 3931,
+      "sha256": "f3f69481b1e158a4db5dbe57cbc79c4a458e2bf83c6a8224d9aad126e1ba3176"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.test.ts",
+      "blob": "a19448acbafe472dd63ba365f73a4ecaa0b60eba",
+      "bytes": 10558,
+      "sha256": "90fbe38487cf6839713e4921736354d0398ff57fde0ba3b381d46ca8f01baf7e"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts",
+      "blob": "c1ea539c1be9518489852f2658d7ad7a4037efde",
+      "bytes": 1293,
+      "sha256": "ed61adeaef389f0f946af4d35dc456ef4b3470f46fe1a2377aec94fa83e860ae"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.test.ts",
-      "blob": "56091ed5415fe78c6b0801b2324af1f1478a0d15",
-      "bytes": 14836,
-      "sha256": "e978f83e3b75d4e3bbef3d8980505d0ee477ebbab8a0a788b5b18cfe8556b870"
+      "blob": "f10880e988ea7ded793e044229f0623ae1ba59c5",
+      "bytes": 15925,
+      "sha256": "e7cb75b356026c3a72b4703a53725d8830a0c283f10b8c62d4cdf1d55bc131d1"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
@@ -637,6 +655,18 @@
       "blob": "4a1af1832e2d397d61906b9d5d6ff8adfd0337fa",
       "bytes": 6866,
       "sha256": "bc9b85470d092f242c447444e34c593eac58f293ff57b45046275a8c54035473"
+    },
+    {
+      "path": "scripts/official-truth-v3-test-selection.mjs",
+      "blob": "346d111f9319760f6cb19ae7851d59277fa5a657",
+      "bytes": 10827,
+      "sha256": "562e24feab0c73fe08f38c3f8b6818da2c548ea4d987fb06f02a31c038ee97ff"
+    },
+    {
+      "path": "scripts/official-truth-v3-test-selection.test.mjs",
+      "blob": "511bba7f2d0c26d8d28474ff2822f1dc0edfef24",
+      "bytes": 15125,
+      "sha256": "bbb02fb5c52f6bf491b99be1d623f3939f12439b8d47ed5d32aad68d9fc650b4"
     },
     {
       "path": "vercel.json",
@@ -3076,6 +3106,49 @@
       "allExistingProofsMandatory": true,
       "requiredFamily": "hosted_v3_native_pg17",
       "candidateCiStatus": "requires complete new CI and actual Dev acceptance"
+    },
+    "bg1SourceAdmission20261115": {
+      "status": "SOURCE_PREPARED_NOT_LIVE_ACCEPTANCE",
+      "basisCommit": "8ed4778002f058e9bba6e98c58283140085064f3",
+      "runtimePaths": [
+        "app/api/internal/readiness/ch-de-visa-tick/route.ts",
+        "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+        "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts"
+      ],
+      "behaviorTestPaths": [
+        "lib/readiness/official-truth-product-v3/runtime/ch-de-owner-import-method.test.ts",
+        "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.test.ts",
+        "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.test.ts"
+      ],
+      "selectorPaths": [
+        "scripts/official-truth-v3-test-selection.mjs",
+        "scripts/official-truth-v3-test-selection.test.mjs"
+      ],
+      "currentPins": "Exact current runtime, behavior and selector bytes are bound in currentRootReceiptPins. Earlier selector/matrix receipts remain historical and unchanged.",
+      "admission": "Shared real HTTP Source/MA1 precheck before and after the joined read; legacy authenticated GET uses the same UTC predicate. Direct ticks and visitor queries are unchanged.",
+      "utcPeriodMilliseconds": 300000,
+      "admitPhaseInclusive": 35000,
+      "refusePhaseInclusive": 265000,
+      "existingAuthoritySourceAndBudgetChecksUnchanged": true,
+      "newMandatoryNativeTest": "lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts",
+      "hostedCount": 21,
+      "mainCount": 15,
+      "quotaCount": 6,
+      "quotaFiles": [
+        "lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts",
+        "lib/readiness/official-truth-dev-cycle4-recovery.test.ts",
+        "lib/readiness/official-truth-dev-refresh-retirement.test.ts",
+        "lib/readiness/official-truth-dev-terminal-cycle-review.test.ts",
+        "lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts",
+        "lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts"
+      ],
+      "maxParallelRunners": 2,
+      "nodeTestConcurrencyPerRunner": 1,
+      "timeoutMinutesPerRunner": 30,
+      "completeDisjointPartitionRequired": true,
+      "allExistingProofsMandatory": true,
+      "newCoreTestRequired": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.test.ts",
+      "actualAcceptance": "Requires the bundled exact-head CI and real Dev acceptance; no Production action is asserted."
     }
   },
   "previousIntegrationReference": {
