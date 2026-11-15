@@ -41,3 +41,20 @@ export function reiseKarteninhalt(reise: Trip) {
   }
   return { orte, tage: reise.days.map(d => ({ id: d.id, name: 'Tag ' + d.dayIndex + (d.title ? ' · ' + d.title : '') })) }
 }
+
+/** Prefer the adjacent planned visit. An airport transfer uses a hotel from the same trip context. */
+export function wegauswahl(orte: Reiseort[], fokus?: string) {
+  const pins = orte.filter((o): o is Reiseort & { position: Position } => !!o.position)
+  const ort = pins.find(o => o.id === fokus) ?? pins[0]
+  if (!ort) return { pins, start: undefined, ziel: undefined }
+  const moeglich = pins.filter(o => o.id !== ort.id && (!ort.etappeId || !o.etappeId || ort.etappeId === o.etappeId))
+  const selberTag = moeglich.filter(o => ort.tage.some(t => o.tage.includes(t)))
+  const kontext = selberTag.length ? selberTag : moeglich
+  const index = pins.indexOf(ort)
+  const vorher = pins.slice(0, index).reverse().find(o => kontext.includes(o))
+  const nachher = pins.slice(index + 1).find(o => kontext.includes(o))
+  if (ort.art === 'Flughafen') return { pins, start: ort, ziel: kontext.find(o => o.art === 'Hotel') ?? nachher ?? vorher }
+  if (ort.art === 'Besuch' && vorher) return { pins, start: vorher, ziel: ort }
+  if (nachher) return { pins, start: ort, ziel: nachher }
+  return { pins, start: vorher ?? ort, ziel: vorher ? ort : undefined }
+}

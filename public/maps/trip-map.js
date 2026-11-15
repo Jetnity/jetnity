@@ -181,7 +181,10 @@
       if (map) {
         highlight()
         const stop = stops.find((stop) => stop.index === selected)
-        if (stop) map.panTo(stop)
+        if (stop) {
+          if (data.focus === true && map.getZoom() < 15) map.setZoom(15)
+          map.panTo(stop)
+        }
       }
     } else if (data.type === 'fit' && map) fit()
   })

@@ -102,7 +102,7 @@ export default function ReisekartenRahmen({ children, expiresAt }: { children: R
     return () => window.removeEventListener('message', receive)
   }, [pins, orte, post, stop])
   useEffect(() => { if (bereit && offen) post('stops', { stops: pins }) }, [bereit, pins, offen, post])
-  useEffect(() => { if (bereit && offen) post('select', { index: orte.findIndex(o => o.id === auswahl) }) }, [bereit, offen, auswahl, orte, post])
+  useEffect(() => { if (bereit && offen) post('select', { index: orte.findIndex(o => o.id === auswahl), focus: !!auswahl }) }, [bereit, offen, auswahl, orte, post])
   useEffect(() => {
     if (!granted || bereit) return
     const timer = window.setTimeout(() => stop('Die Karte konnte nicht geladen werden. Bitte versuche es erneut.'), 30000)
