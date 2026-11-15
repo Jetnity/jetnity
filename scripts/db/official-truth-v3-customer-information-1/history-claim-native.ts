@@ -216,6 +216,7 @@ export async function runHistoryClaimNative(t: TestContext) {
       worker: outcome.status === 'worker_only' ? outcome.worker.status : null, milliseconds: elapsed, deliveries,
       calls: bridge.events.map(e => ({ operation: e.operation, phase: e.phase, action: e.action, purpose: e.purpose,
         milliseconds: e.finished - e.entered, queuedMilliseconds: (e.admitted ?? e.entered) - e.entered,
+        remainingAtEntry: e.deadline - e.entered, remainingAtSettlement: e.deadline - e.finished,
         dispatched: e.dispatched, status: e.status, error: e.error })) }))
 
     await t.test('one actual fresh factory claim confirms one atomic M04 transaction and three real MA1 reads inside unchanged5s', () => {
@@ -246,6 +247,20 @@ export async function runHistoryClaimNative(t: TestContext) {
         + '; one atomic M04 RPC with three full history checks and three real MA1 observations; local SQL explicitly serialized')
     })
     await t.test('the real START and unavailable local producer settle through the original terminal path', async () => {
+      const lookupAt = bridge.events.findIndex(e => e.operation === 'execution_read' && e.purpose === 'lookup')
+      assert.ok(lookupAt >= 0)
+      const [lookup, acquired, reproof, start] = bridge.events.slice(lookupAt, lookupAt + 4)
+      assert.deepEqual([lookup.operation, acquired.operation, reproof.operation, start.operation],
+        ['execution_read', 'method', 'method', 'execution_start'])
+      assert.deepEqual([lookup.status, acquired.status, reproof.status, start.status], ['absent', 'approved', 'approved', 'reserved'])
+      assert.ok(lookup.finished <= acquired.entered, 'actual read finishes before the first worker authority acquisition')
+      assert.ok(reproof.deadline <= acquired.deadline && start.deadline <= reproof.deadline,
+        'the original five-second worker receipt is never renewed')
+      assert.ok(start.finished < start.deadline && start.finished - acquired.entered < 5000)
+      t.diagnostic('actual first worker authority through START: ' + JSON.stringify({
+        lookupMilliseconds: lookup.finished - lookup.entered, startMilliseconds: start.finished - start.entered,
+        originalAuthorityMilliseconds: start.finished - acquired.entered,
+        remainingMilliseconds: start.deadline - start.finished }))
       assert.equal(outcome.status, 'worker_only'); assert.ok(outcome.status === 'worker_only')
       assert.equal(outcome.worker.status, 'exhausted'); assert.equal(deliveries, 1)
       const after = await proof.value<Quota>('official_v3_guard_private.ch_de_quota_v2()', creator)

@@ -31,8 +31,8 @@ const aaBernReaderPin = {
 const hrsNativeDecoderPath = 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts'
 const hrsNativeDecoderPin = {
   bytes: 256780,
-  blob: 'a60e1c2f78895c9165ea25c976d1947965c78b5f',
-  sha256: '65e38506ec08e6e305729f88f2471e9d95fc2b1ab166287fb17c704ac17846fc',
+  blob: '25a4fe74100a444c343f5b97c45b235cab539dec',
+  sha256: 'df3d98e81f43d5d82f8d8541ae2e249f211e42b829283a9f0b0453c97bc00ebf',
 } as const
 const probePath = 'lib/readiness/official-truth-aa-revision-probe-1-server.ts'
 const testPath = 'lib/readiness/official-truth-aa-revision-probe-1.test.ts'

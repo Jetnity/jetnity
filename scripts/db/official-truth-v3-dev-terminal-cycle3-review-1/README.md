@@ -68,9 +68,9 @@ its exact private evidence still matches. Every other block, changed original,
 unconfirmed request or missing predecessor remains closed. Both old blocked
 rows remain blocked; neither review is a reset or an alteration of old history.
 
-The new compiler binds eleven current files: queue, both transport fixes, job
+The new compiler binds twelve current files: queue, both transport fixes, job
 contract/storage/claim forwarding, method authority, job composition and owned
-scope, plus the I1 coordinator and S1 quarantine adapter, to their individually
+scope, plus the I1 coordinator, S1 quarantine adapter and worker authority order, to their individually
 reviewed SHA256s.
 Compilation refuses before those exact files are frozen. The reviewed runtime
 adds explicit atomic claim and mutation capabilities to the existing M04 API;
@@ -94,6 +94,15 @@ deadline, and the actual five-second lease is unchanged. The immutable review
 adds `import_service_fix_sha256` and `quarantine_fix_sha256`; the full JSONB
 readback includes both, and the native test checks their exact values. No old
 Cycle2/Cycle3 evidence or already applied receipt is replaced.
+
+The additional worker binding follows the complete CI4277 failure group. Only
+the genuine M04 custody port with atomic prepare opts into the actual read-only
+lookup before the worker's first MA1 acquisition. A fresh clock and lease check
+then precede that first receipt; no earlier receipt is renewed. The complete
+outer budget, per-operation caps, original history and later reproofs remain.
+Normal negative lookups retain their existing justified queue-fail path. The
+immutable `worker_authority_fix_sha256` column and updated job-storage hash bind
+this exact runtime; the native readback checks both. The review remains UNAPPLIED.
 
 ## Required operator sequence — Dev only
 

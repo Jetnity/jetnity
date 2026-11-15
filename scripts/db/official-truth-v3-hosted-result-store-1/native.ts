@@ -462,9 +462,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-    "bytes": 18022,
-    "blob": "b5c63c9c2883ca77de51ef72aa3261f54c67b942",
-    "sha256": "85347b3ca98f07c81d77a24bcd2d36acd57a020f4d18c4f3aee9e470609e6fe8"
+    "bytes": 18119,
+    "blob": "1bab17c23a1b6eaaf48283c6c434e91dbb85b447",
+    "sha256": "6246e2b6b9fb5c48e8170d9aea0ebb797b12d08c55a3bb12dd3fa38089f71ff8"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
@@ -510,9 +510,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
-    "bytes": 10006,
-    "blob": "70974a1e10d4bd4691bc172d469275dff308ad66",
-    "sha256": "8c16b9c8eed1a2f4c36930f8ca74eb218a2f5a59e95ecd3222304f2b7b4f3cea"
+    "bytes": 11375,
+    "blob": "d8efcd43af33b03f2af79bd55b583442f8473d83",
+    "sha256": "e614e23bf62b0d196bb0756d2e131413517d2e9d3c3ef28182534f884a97af28"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/ch-de-import-frame.ts",

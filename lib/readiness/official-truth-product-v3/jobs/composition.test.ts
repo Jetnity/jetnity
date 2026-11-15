@@ -124,6 +124,8 @@ type WorkerHooks = {
   prepared?: () => void;
   confirmed?: () => void;
   method?: (signal: AbortSignal, budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
+  lookup?: (signal: AbortSignal, budget: Readonly<{ deadline: number }>) => Promise<void> | void;
+  start?: (request: M04FixedRequest, signal: AbortSignal) => Promise<void> | void;
   intake?: (statement: string, parameters: readonly (string | number)[], signal: AbortSignal,
     budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
   ready?: (abort: AbortController) => void;
@@ -199,6 +201,7 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
         if (b.disposition.kind === 'completed') { assert.ok(execution); execution.completed = true }
         reply = { status: 'committed', record: job }
       } else if (q.operation === 'execution_start') {
+        await worker?.start?.(request, signal)
         assert.equal(execution, null)
         execution = { claim: b.claim, leasedJob: b.leasedJob, attemptKey: 'execution-attempt:v3:' + 'e'.repeat(64) }
         reply = { status: 'reserved', ...execution, token: 'f'.repeat(64) }
@@ -209,6 +212,7 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
         worker?.prepared?.()
       } else {
         assert.equal(q.operation, 'execution_read')
+        if (b.purpose === 'lookup') await worker?.lookup?.(signal, request.budget)
         if (b.purpose === 'artifact') counts.artifactRead++
         reply = !execution?.result ? { status: 'absent' } : q.phase === 'probe' ? { status: 'requires_authority' }
           : execution.completed ? { status: 'completed', claim: execution.claim, leasedJob: execution.leasedJob, attemptKey: execution.attemptKey,
@@ -257,7 +261,7 @@ test('worker preflight uses six actual dispatches through first S1 read and exac
   assert.equal(h.result.status, 'processed', JSON.stringify(h.result))
   const lookup = h.trace.indexOf('execution_read:probe:lookup')
   const opened = h.trace.indexOf('intake:read', lookup)
-  assert.deepEqual(h.trace.slice(lookup - 1, opened + 1), ['method', 'execution_read:probe:lookup', 'method',
+  assert.deepEqual(h.trace.slice(lookup, opened + 1), ['execution_read:probe:lookup', 'method', 'method',
     'execution_start:authorized', 'intake:capture', 'intake:read'])
   const starts = h.nativeRequests.filter(request => JSON.parse(request.operationText).operation === 'execution_start')
   assert.equal(starts.length, 1)
@@ -267,6 +271,53 @@ test('worker preflight uses six actual dispatches through first S1 read and exac
   })!
   assert.equal(starts[0].epoch, claimed.epoch)
   assert.ok(starts[0].budget.deadline > 0)
+})
+
+for (const expired of [false, true]) test(`actual M04 lookup precedes the first worker receipt and START ${expired ? 'refuses its exact' : 'retains its original'} five-second cap`, async t => {
+  let now = 0, lookupFinished = false
+  const workerDeadlines: number[] = []
+  t.mock.method(performance, 'now', () => now)
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    lookup(_signal, budget) {
+      assert.equal(budget.deadline, 5000, 'the actual read keeps its own unchanged effect cap')
+      now = 1700; lookupFinished = true
+    },
+    method(_signal, budget) { if (lookupFinished && workerDeadlines.length < 2) workerDeadlines.push(budget!.deadline) },
+    start(request) {
+      assert.equal(request.budget.deadline, 6700, 'the first real worker receipt begins after the actual read')
+      now += expired ? 5000 : 3500
+    },
+  })
+  assert.deepEqual(workerDeadlines, [6700, 6700], 'fresh acquisition and actual reproof retain exactly one original deadline')
+  assert.equal(h.trace.filter(value => value === 'execution_read:probe:lookup').length, 1)
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, 1)
+  if (expired) {
+    assert.notEqual(h.result.status, 'processed'); assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0)
+  } else {
+    assert.equal(h.result.status, 'processed', JSON.stringify(h.result)); assert.equal(h.f.producerCalls(), 1)
+  }
+})
+
+test('actual M04 abort during the initial lookup drains the physical read without a later worker receipt or START', async () => {
+  let entered!: () => void, release!: () => void, caller: AbortController | undefined, readSignal: AbortSignal | undefined
+  const reading = new Promise<void>(resolve => { entered = resolve })
+  const held = new Promise<void>(resolve => { release = resolve })
+  let lookupEntered = false, settled = false, returned = false, laterMethods = 0
+  const work = fullBatchHarness(1, false, undefined, undefined, undefined, {
+    ready(value) { caller = value },
+    async lookup(signal) { lookupEntered = true; readSignal = signal; entered(); await held; settled = true },
+    method() { if (lookupEntered) laterMethods++ },
+  }).then(value => { returned = true; return value })
+  try {
+    await reading; assert.ok(caller && readSignal); caller.abort()
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(readSignal.aborted, true); assert.equal(settled, false); assert.equal(returned, false)
+    assert.equal(laterMethods, 0)
+    release(); const h = await work
+    assert.equal(settled, true); assert.equal(laterMethods, 0)
+    assert.notEqual(h.result.status, 'processed'); assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0)
+    assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, 0)
+  } finally { caller?.abort(); release(); await work }
 })
 
 for (const atDeadline of [false, true]) test(`nested I1 ${atDeadline ? 'refuses expired' : 'retains original'} finish cap at the actual S1 executor`, async t => {

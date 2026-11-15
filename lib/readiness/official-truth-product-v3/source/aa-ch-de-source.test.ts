@@ -211,7 +211,7 @@ test('selected I1 composition binds its original signal before distinct owned hi
   const scope = { ...owned, callback: ((group, run, signal) => owned.callback(group, child => {
     callbacks.push({ parent: signal, child }); return run(child)
   }, signal)) as typeof owned.callback }
-  const events: string[] = [], historySignals: AbortSignal[] = []
+  const events: string[] = [], historySignals: AbortSignal[] = [], attestSignals: AbortSignal[] = []
   const operations = new Map<string, V3QueueCommit>()
   const records = new Map<string, { reference: unknown; text: string; outcome: unknown; audit: unknown }>()
   let job: V3ManagedJobRecord | null = null, verification: unknown = null
@@ -269,6 +269,7 @@ test('selected I1 composition binds its original signal before distinct owned hi
     events.push(command.operation)
     if (command.operation === 'history') { historySignals.push(signal); return { status: 'snapshot', value: snapshot } }
     if (command.operation === 'attest') {
+      attestSignals.push(signal)
       verification = command.body.verification
       return { status: 'recorded', value: { reference: (verification as { reference: string }).reference, digest: hrs1Hash(verification) } }
     }
@@ -288,14 +289,26 @@ test('selected I1 composition binds its original signal before distinct owned hi
     const result = await assembly.workOnce({ operationId: 'op3_' + '3'.repeat(32), jobKey: (job as V3ManagedJobRecord & { jobKey: string }).jobKey,
       leaseId: 'lease3_' + '4'.repeat(32), leaseMilliseconds: 30000 }, outer.signal)
     await assembly.drain(); assert.notEqual(result.status, 'processed')
-    const reserveAt = events.indexOf('reserve'), finishAt = events.indexOf('finish'); assert.ok(reserveAt > 0 && finishAt > reserveAt)
-    assert.deepEqual(events.slice(reserveAt - 1, finishAt + 1),
-      ['intake_read', 'reserve', 'method', 'history', 'attest', 'history', 'method', 'finish'])
+    const intakeReadAt = events.indexOf('intake_read'), finishAt = events.indexOf('finish')
+    assert.ok(intakeReadAt >= 0 && finishAt > intakeReadAt)
+    const importing = events.slice(intakeReadAt, finishAt + 1), attestAt = importing.indexOf('attest')
+    assert.ok(attestAt > 0)
+    assert.equal(importing[0], 'intake_read')
+    assert.equal(importing.filter(event => event === 'intake_read').length, 1)
+    // The selected frame overlaps S1 reservation with fresh MA1 -> history.
+    // Both initial branches precede attestation; neither fixes the other's start order.
+    assert.deepEqual(importing.slice(1, attestAt).sort(), ['history', 'method', 'reserve'])
+    assert.ok(importing.indexOf('method') < importing.indexOf('history'))
+    assert.deepEqual(importing.slice(attestAt), ['attest', 'history', 'method', 'finish'])
     assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
     assert.equal((records.values().next().value?.outcome as { status: string }).status, 'escalation')
-    const first = callbacks.findIndex(entry => entry.child === historySignals[0]); assert.ok(first >= 0)
-    const read = callbacks[first]!, inspect = callbacks[first + 1]!
+    assert.equal(historySignals.length, 2); assert.equal(attestSignals.length, 1)
+    const read = callbacks.find(entry => entry.child === historySignals[0])
+    const inspect = callbacks.find(entry => entry.child === attestSignals[0])
+    const reproof = callbacks.find(entry => entry.child === historySignals[1])
+    assert.ok(read); assert.ok(inspect); assert.ok(reproof)
     assert.equal(read.parent, inspect.parent, 'actual I1 identity must survive both admission wrappers')
+    assert.equal(read.parent, reproof.parent, 'the final history callback retains the same original I1 signal')
     assert.notEqual(read.child, inspect.child, 'each real scope.callback creates its own child')
     assert.notEqual(read.child, read.parent); assert.notEqual(inspect.child, inspect.parent)
     assert.ok(read.parent?.aborted, 'the completed I1 coordinator closes its original signal')

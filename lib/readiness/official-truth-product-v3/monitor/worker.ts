@@ -2,7 +2,7 @@ import 'server-only'
 import { z } from 'zod'
 import { type V3MethodAuthorityPort, type V3MethodRef } from '../contract'
 import { type V3QueueCoordinator, type V3ManagedJobRecord, type V3JobFence } from './queue'
-import { invocationBudget, readData, readNow, key, timestamp, decisionRef, discoveryRef, same } from './internal'
+import { invocationBudget, readData, readNow, key, timestamp, decisionRef, discoveryRef, same, type BudgetResult } from './internal'
 
 const resultSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('rule_research'), jobId: z.string(), operationId: z.string(), jobKey: z.string(),
@@ -26,6 +26,10 @@ export interface V3ResearchWorkPort<Receipt extends object> {
     | { status: 'unconfirmed' | 'unavailable' }>
 }
 export interface V3ResearchResultCustodyPort<Receipt extends object> {
+  /** Code-owned read-only custody may precede the worker's first authority
+   * acquisition. The port must enforce its own read authority; this option is
+   * honored only with an actual atomic work.prepare. It never authorizes work. */
+  readonly lookupBeforeWorkerAuthority?: true
   lookup(job: V3ManagedJobRecord, signal: AbortSignal): Promise<
     { status: 'prepared'; receipt: Receipt } | { status: 'not_attempted' | 'unconfirmed' | 'unavailable' }>
   /** Confirms actual stored untrusted proposals/decision custody, never acceptance. */
@@ -78,7 +82,25 @@ export async function runV3ResearchWorkerOnce<Receipt extends object>(
     const fence: V3JobFence = { jobId: job.jobId, revision: job.revision, leaseId: job.lease.leaseId, generation: job.lease.generation }
     const method = methodOf(job), now = readNow(dependencies.now)
     if (!now || job.lease.expiresAt <= now) return { status: 'superseded' }
-    const approval = await budget.call(() => methodAuthority.resolveCurrent(method, now))
+    let methodCheckedAt = now
+    let retainedBeforeAuthority: BudgetResult<Awaited<ReturnType<typeof results.lookup>>> | undefined
+    if (results.lookupBeforeWorkerAuthority === true && work.prepare) {
+      // The real custody read has its own original cap. Do not age the worker's
+      // not-yet-acquired MA1 receipt while waiting for this independent read.
+      // Keep the original outer budget and join the real promise after abort;
+      // a late positive read cannot start another observation or any effect.
+      let pending: ReturnType<typeof results.lookup> | undefined
+      retainedBeforeAuthority = await budget.call((s) => {
+        pending = results.lookup(job, s)
+        return pending
+      })
+      if (pending) await Promise.allSettled([pending])
+      if (budget.signal.aborted) return { status: 'unconfirmed' }
+      const afterLookup = readNow(dependencies.now)
+      if (!afterLookup || job.lease.expiresAt <= afterLookup) return { status: 'superseded' }
+      methodCheckedAt = afterLookup
+    }
+    const approval = await budget.call(() => methodAuthority.resolveCurrent(method, methodCheckedAt))
     if (!approval.ok || approval.value.status !== 'approved') return { status: 'unavailable' }
     const methodReceipt = approval.value.receipt
 
@@ -90,7 +112,7 @@ export async function runV3ResearchWorkerOnce<Receipt extends object>(
       return { status: outcome.value.record.state, job: outcome.value.record }
     }
 
-    const retained = await budget.call((s) => results.lookup(job, s))
+    const retained = retainedBeforeAuthority ?? await budget.call((s) => results.lookup(job, s))
     if (!retained.ok) return await fail('commit_unconfirmed')
     if (retained.value.status === 'unconfirmed') return await fail('commit_unconfirmed')
     if (retained.value.status === 'unavailable') return await fail('verification_unavailable')

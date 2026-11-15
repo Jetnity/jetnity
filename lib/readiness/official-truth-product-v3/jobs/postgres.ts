@@ -144,6 +144,7 @@ export function createM04ExecutionIndex(options: Readonly<{
       && same(raw.claim, options.claim) && jobKey(raw.leasedJob) === options.claim.jobKey
   }
   const results: V3ResearchResultCustodyPort<object> = Object.freeze<V3ResearchResultCustodyPort<object>>({
+    ...(options.acquireTerminalAuthority ? { lookupBeforeWorkerAuthority: true as const } : {}),
     async lookup(job, signal) {
       const value = await read('lookup', signal)
       if (value.status === 'absent' && !options.preparedOnly()) return { status: 'not_attempted' as const }

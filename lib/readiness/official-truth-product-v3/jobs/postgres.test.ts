@@ -70,6 +70,9 @@ test('terminal index custody needs its own successful exact confirm and transfer
       assert.equal(at, h.clock.now()); assert.equal(s, signal)
       return { status: 'current' }
     } })
+  assert.equal(index.results.lookupBeforeWorkerAuthority, true)
+  const ordinary = createM04ExecutionIndex({ claim, fixed, processingFixed: fixed, preparedOnly: () => false, onPrepared() {} })
+  assert.equal(ordinary.results.lookupBeforeWorkerAuthority, undefined, 'ordinary adapters do not opt in without the actual terminal capability')
   const found = await index.results.lookup(job, signal)
   assert.equal(found.status, 'prepared'); if (found.status !== 'prepared') return
   const terminal = index.results.acquireTerminalAuthority!

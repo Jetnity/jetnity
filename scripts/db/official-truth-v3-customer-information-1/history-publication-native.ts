@@ -210,6 +210,7 @@ type PublicationState = { job: V3ManagedJobRecord; starts: number; prepared: num
 function eventSummary(events: HistoryFactoryEvent[]) {
   return events.map(e => ({ operation: e.operation, phase: e.phase, action: e.action, purpose: e.purpose,
     milliseconds: e.finished - e.entered, queuedMilliseconds: (e.admitted ?? e.entered) - e.entered,
+    remainingAtEntry: e.deadline - e.entered, remainingAtSettlement: e.deadline - e.finished,
     dispatched: e.dispatched, status: e.status, error: e.error }))
 }
 
@@ -260,9 +261,14 @@ export async function runHistoryPublicationNative(t: TestContext) {
       producer: { async produce() { return { status: 'failed', reason: 'unreachable' } } },
       evidence: { async inspect() { assert.fail('no source fiction in historical cleanup') }, async reprove() { assert.fail('no source custody fiction') } },
       history: { async read() { assert.fail('no history fiction in historical cleanup') }, async reprove() { assert.fail('no history receipt fiction') } } })
+    const cleanupEntered = performance.now(), cleanupEventsAt = ports.events().length
     const settled = await cleanup.workOnce({ operationId: id('op3', 'settle-old-claim'), leaseId: id('lease3', 'settle-old-claim'),
       jobKey: fixture.original.jobKey, leaseMilliseconds: 30000 }, t.signal)
     await ports.drain()
+    t.diagnostic('actual retained historical cleanup before selected tick: ' + JSON.stringify({
+      milliseconds: performance.now() - cleanupEntered, status: settled.status,
+      worker: settled.status === 'worker_only' ? settled.worker.status : null,
+      calls: eventSummary(ports.events().slice(cleanupEventsAt)) }))
     assert.equal(settled.status, 'worker_only')
     assert.ok(settled.status === 'worker_only'); assert.equal(settled.worker.status, 'exhausted')
     assert.equal(wire.calls.length, 0)

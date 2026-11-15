@@ -136,9 +136,9 @@
   "reused": [
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.test.ts",
-      "blob": "a64d19019568e1ea0ed961db01603fa5d18eb8e9",
-      "bytes": 36200,
-      "sha256": "f13f1bf02ca1905706dc9c07f2f74ca50ee54d4baff4a14b44e713755b209c20",
+      "blob": "052b56803f26e19fdfc27985c6a8643414f4f58d",
+      "bytes": 47220,
+      "sha256": "3f72a73ecf30f5cb5e84b4006b4eabc9c498a71b6da848e2d6075d0c8278d825",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
@@ -185,16 +185,16 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.test.ts",
-      "blob": "e18254fe8f27fe8415497c7ed16733fd06810a9c",
-      "bytes": 12774,
-      "sha256": "f20b71d291ce0263ac878b4676844ee3aa9085c41786a91d63d61101f8cf33c7",
+      "blob": "b0e8b86d61d6c378eb0af227cb0b399afa585869",
+      "bytes": 13113,
+      "sha256": "429244195d96b311b813fd2d927c35e5bd3aec454b994b46a84bf6214371b7f9",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-      "blob": "b5c63c9c2883ca77de51ef72aa3261f54c67b942",
-      "bytes": 18022,
-      "sha256": "85347b3ca98f07c81d77a24bcd2d36acd57a020f4d18c4f3aee9e470609e6fe8",
+      "blob": "1bab17c23a1b6eaaf48283c6c434e91dbb85b447",
+      "bytes": 18119,
+      "sha256": "6246e2b6b9fb5c48e8170d9aea0ebb797b12d08c55a3bb12dd3fa38089f71ff8",
       "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
     },
     {

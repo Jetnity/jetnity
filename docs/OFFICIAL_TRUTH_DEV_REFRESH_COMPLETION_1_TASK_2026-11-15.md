@@ -82,3 +82,25 @@ read-only. A source plan confers no publication authority.
 Agents do not push, mark Ready, merge, change Production, create new costs or
 start unassigned work. Root records results on #1197. The final Owner approval
 list is issued only after actual Dev acceptance; #1196 is not separately merged.
+
+## Complete CI4277 successor group
+
+CI4277 on `5af8f1d018555605005732e4eba44f98334a2f26` ended with seven
+successful jobs and three failures: Repository, Hosted main and their aggregator.
+The complete group is an old serial-order assertion in the actual source
+integration test, an overlooked current HM04 composition-test pin, and the real
+five-second START cap after 626 historical cycles. Lookup consumed 1487 ms of
+the first Worker-MA1 receipt before the START SQL needed another 3525 ms. The
+Selected/HRS test stopped during the same historical cleanup, before its actual
+Selected tick. No new HRS publication proof was reached in that run.
+
+The bounded successor changes only the controlled M04 worker's acquisition
+order: actual read-only custody lookup, fresh now/lease, then the first genuine
+Worker-MA1 receipt. No held receipt is renewed; the original 30-second outer
+budget, per-operation caps, full history and subsequent reproofs remain.
+Generic behavior and normal negative queue-fail semantics remain. Abort joins
+the actual pending read before returning. The source integration test binds
+real callback identities and permits only the intended independent initial
+reservation order. Root includes all changed runtime and test files in the
+current pin review and adds the worker as the twelfth UNAPPLIED Cycle3 binding.
+All historical pins and already installed database artifacts stay unchanged.
