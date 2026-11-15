@@ -17,6 +17,7 @@ Current denial headers must reach the existing denied state without consuming or
 - POST must check mounted/epoch before parsing, process 401/403 immediately, and retain the second mounted/epoch check after parsing all other responses. Denial still advances both the denial epoch and latest-read identity, invalidating older reads and writes.
 - Cancel an unused denied body only on a best-effort basis; never await cancellation before protecting the view. Preserve existing retry, poll, per-IP operation identity, safe copy and local-only blocklist semantics.
 - Mounted synthetic regression cases cover 401 and 403 for GET, block and unblock; current read recovery without replaying a write; delayed accepted read after write denial; stale read denial after newer accepted read; delayed accepted write body after newer denial; and unmount. Use existing dependencies and actual component/CSS. The controlled transport may ignore cancellation so identity checks must carry the protection.
+- The new response-order proof may opt into explicit control of only the existing 15-second polling callback. Normal timers/rAF and the legacy audit's real interval path remain unchanged. Explicit reads select a newly issued request identity, and unmount must remove the controlled callback.
 - Run focused Admin tests, TypeScript, lint and existing CI. Collect the complete prior and next CI result, then bundle any actual failures. The existing #1201 tests remain intact.
 
 ## Boundaries and stop

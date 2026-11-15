@@ -1,4 +1,4 @@
-# Admin native rental configuration and Operations denial — handoff
+# Admin native rental configuration and immediate report denial — handoff
 
 ## Scope and authority
 
@@ -31,11 +31,33 @@ Node 22.23.5 and unchanged locked dependencies were used. No local Chromium or n
 
 All initial local failures were collected: the additive status incorrectly widened the model-usage card enum, one private helper was unnecessarily exported, and a browser stub had an unused parameter warning. They were corrected together by separating subcheck status from card status, making the helper private and typing the stub. Tests and gates were not suppressed or weakened. The reviewer-found Props case now changes the real signature, rather than merely cloning an unchanged object.
 
+## First complete CI, before the Security extension
+
+[Run 43670753741](https://github.com/Jetnity/jetnity/actions/runs/43670753741) completed at **03:18:43 UTC, 15 November**, on implementation head `e49f933ece58076628a186103d526503fa8bcb41`, tree `f8cfc7353ef44987d1795645b2f90b7f14e9f1f1`. The synthetic CI merge `d938c6b8e5bb131ca07363f0a786b61e9f0b1126` has the identical tree. Independent source review and all nine full job logs were read before advancing the branch.
+
+- Core: **8,775 tests; 8,773 pass, zero failures, two pre-existing shared Workspace browser skips**. All six new Operations header/body cases and all three native rental viewport/text cases passed.
+- TypeScript, lint, API/schema checks, all hygiene checks and the production-mode build passed. The separate isolated UI job passed 51/51; hosted PostgreSQL 17 passed 9/9; store and lifecycle jobs each passed 4/4; persisted-read and atomic-refresh each passed 1/1.
+- Eight jobs succeeded. The sole failed job was the existing Auth `uri_allow_list` mismatch. Its truncated log values do not establish a complete live-config comparison. No Auth or reserved file was changed.
+
+This result completes the original scope only. The extension below requires a fresh full run on its own published head, recorded in the Draft PR without creating another evidence-only code revision.
+
 ## Verification limits
 
 The browser harness has only synthetic reports and controlled responses. It intentionally ignores abort so stale-response assertions depend on the actual lifecycle logic. This is not authenticated hosted Admin acceptance, actual provider availability, a live credential test or real-device acceptance. No global green/release claim exists before the published head's full CI is read.
 
 The other Admin branches' Auth comparison reported one `uri_allow_list` difference against the reserved `supabase/config.toml`. That source and live Auth configuration remain untouched. Any inherited Auth failure must be reported separately, not hidden by a workflow/config change.
+
+## Security console extension in the same correction batch
+
+The remaining Admin read-path review found the same header/body defect in `SecurityWidget`, including block/unblock responses. The [extension task](ADMIN_SECURITY_HEADER_DENIAL_TASK_2026-11-15.md) was versioned as Git object `bcbbc84a82905ad33ed6670864cac2086ab77bb8` (tree `3f6937f6642b9b21933f2f375fe51ec131401b29`, parent `e49f933ece58076628a186103d526503fa8bcb41`) before implementation. The branch was deliberately not moved until the original head's entire CI run finished, so GitHub's cancel-in-progress policy could not discard its failure set.
+
+- Current GET 401/403 now reaches the existing denied-state decoder through an immediately resolved empty body. The original body is never read; best-effort cancellation is neither awaited nor allowed to block protection. Mounted and authoritative-read checks remain before applying the transition, and both read slots are released even when denied bodies never settle.
+- Block/unblock 401/403 follows the same immediate denial path. The mounted/denial-epoch check runs after headers and again after parsing other response bodies. Existing epoch/read-identity invalidation, clearing of records/KPIs/operation details, disabled writes, fixed safe messages and explicit write retry remain intact.
+- An older read, write response or denial cannot replace a later authoritative state or settle a new operation for the same IP. No write is automatically repeated. No API, capability, RLS, input-validation or blocklist-enforcement contract changes.
+- Eleven new mounted cases use the existing Security harness with real component/CSS. They cover GET/block/unblock 401 and 403, stalled/rejected cancellation, two unresolved denied bodies, later accepted recovery, stale read/denial bodies, a late accepted write body after a new operation for the same IP, and unmount. Original denied JSON is asserted unread, and the absence of extra writes/reads is checked directly.
+- Independent source review identified two test-proof issues before publication: an old GET body must be demonstrably in progress, and the real 15-second poll could race the explicit-request selection. These were corrected together. The new proof opts into control of only that existing interval callback; other timers/rAF and the old verification script remain unchanged. Explicit reads select a newly issued ID. The real poll callback is exercised after recovery and after unmount; hard assertions remain intact.
+
+Local verification on the extension: **352/352 Admin tests**, TypeScript, API protection, schema reference, dead-file, export and dependency gates passed. Focused lint has **zero errors and one unchanged baseline warning** for `Date.now()` during render in the existing 24-hour KPI calculation. No warning or rule was suppressed. No local Chromium was started. The eleven new browser cases require normal CI on the final published implementation head; the earlier e49 result does not certify the extension.
 
 ## Separate read-only Dev finance preflight
 
