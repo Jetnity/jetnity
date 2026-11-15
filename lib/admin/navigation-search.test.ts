@@ -49,10 +49,11 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
         '/admin/security',
         '/admin/system-health',
         '/admin/provider-ops',
+        '/admin/analytics',
       ],
     )
     assert.equal(operator.every((item) => item.kind === 'ready'), true)
-    assert.equal(operator.some((item) => item.href === '/admin/analytics'), false)
+    assert.equal(operator.some((item) => item.href === '/admin/analytics'), true)
 
     const creator = filterAdminNavSearch(ADMIN_NAV_ITEMS, CREATOR, '')
     assert.deepEqual(creator.map((item) => item.href), ['/admin'])
@@ -84,17 +85,18 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
   })
 
   test('later-Eintraege matchen nie, auch wenn das Label in der Query steht', () => {
-    const later = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/analytics')
+    const later = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/content')
     assert.equal(later !== undefined, true)
-    assert.equal(matchAdminNavSearch(later!, 'analytics'), false)
-    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'analytics').length, 0)
+    assert.equal(matchAdminNavSearch(later!, 'content'), false)
+    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'analytics').length, 1)
     assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'content').length, 0)
   })
 
   test('Ziel kommt nur aus der Allowlist, nie aus der Query', () => {
     const allow = readyAdminNavItems(ADMIN_NAV_ITEMS, OPERATOR)
     assert.equal(resolveAdminNavSearchHref('/admin/users', allow), '/admin/users')
-    assert.equal(resolveAdminNavSearchHref('/admin/analytics', allow), null)
+    assert.equal(resolveAdminNavSearchHref('/admin/analytics', allow), '/admin/analytics')
+    assert.equal(resolveAdminNavSearchHref('/admin/content', allow), null)
     assert.equal(resolveAdminNavSearchHref('https://evil.example/admin/users', allow), null)
     assert.equal(resolveAdminNavSearchHref('javascript:alert(1)', allow), null)
     assert.equal(resolveAdminNavSearchHref('/admin/users?next=https://evil.example', allow), null)

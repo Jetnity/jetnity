@@ -11,6 +11,7 @@ export const ADMIN_NAV_SEARCH_ALIASES: Readonly<Record<string, readonly string[]
   '/admin/security': ['security', 'sicherheit'],
   '/admin/system-health': ['health', 'system', 'lage', 'gesundheit'],
   '/admin/provider-ops': ['kosten', 'provider', 'ops', 'modellnutzung'],
+  '/admin/analytics': ['analytics', 'auswertung', 'reisen', 'reiseaktivität', 'statistik', 'kennzahlen'],
 }
 
 export const ADMIN_NAV_SEARCH_QUERY_MAX = 200

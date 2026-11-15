@@ -36,7 +36,7 @@ describe('Admin-Navigation (UX, keine Autorisierung)', () => {
     )
     assert.deepEqual(
       sichtbar.filter((item) => item.kind === 'ready').map((item) => item.label),
-      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten'],
+      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten', 'Reiseauswertung'],
     )
     assert.equal(
       sichtbar.filter((item) => item.kind === 'later').every((item) => item.kind === 'later'),
@@ -53,6 +53,7 @@ describe('Admin-Navigation (UX, keine Autorisierung)', () => {
     assert.equal(sichtbar.some((item) => item.href === '/admin/payments'), false)
     assert.equal(sichtbar.some((item) => item.href === '/admin/system-health'), false)
     assert.equal(sichtbar.some((item) => item.href === '/admin/provider-ops'), false)
+    assert.equal(sichtbar.some((item) => item.href === '/admin/analytics'), false)
     const users = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/users')
     assert.equal(users !== undefined, true)
     assert.equal(adminNavItemSichtbar(users!, { role: 'creator', grant: 'role' }), false)
