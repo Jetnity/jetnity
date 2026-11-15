@@ -4,7 +4,7 @@ import { schema2Kanonisch } from '@/lib/readiness/regulierungs-anwendbarkeit'
 import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 import { createV3WorkIdentity, readV3ResearchProposal } from '../contract'
 import type { V3ProposalUpload } from '../import/interface'
-import type { V3ImportQuarantinePort, V3ImportOutcome, V3ImportAudit } from '../import/service-server'
+import type { V3ImportQuarantinePort, V3ImportOutcome, V3ImportAudit, V3ImportCallBudget } from '../import/service-server'
 import { readV3IntakeBinding, readV3IntakeReference, type V3IntakeBinding, type V3IntakeReference, type V3IntakeResult } from './intake-contract'
 import { readV3RetainableProposal } from './proposal-bytes'
 import { readV3QuarantineCompletion, type V3DecodedCompletion } from './quarantine-codec'
@@ -52,10 +52,11 @@ function stored(value: unknown, expected: V3IntakeReference, registry: QuellenRe
 export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, executor: V3IntakeSqlExecutor | null, leaseMilliseconds: number) {
   const configured = Number.isInteger(leaseMilliseconds) && leaseMilliseconds >= 1 && leaseMilliseconds <= 900_000
   const opened = new WeakMap<V3StoredProposal, AbortSignal>()
-  async function call(statement: string, parameters: readonly (string | number)[], signal: AbortSignal): Promise<unknown> {
+  async function call(statement: string, parameters: readonly (string | number)[], signal: AbortSignal,
+    budget?: V3ImportCallBudget): Promise<unknown> {
     if (!executor || !configured || signal.aborted) return { status: 'unavailable' }
     try {
-      const reply = await executor.execute(statement, parameters, signal)
+      const reply = await executor.execute(statement, parameters, signal, budget)
       if (signal.aborted) return { status: 'unconfirmed' }
       if (reply.status === 'blocked_remote_unknown') return { status: 'unconfirmed' }
       if (reply.status !== 'acknowledged') return { status: reply.status === 'unavailable' ? 'unavailable' : 'unconfirmed' }
@@ -78,10 +79,10 @@ export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, exe
     const record = stored(success.record, reference, registry)
     return record ? { status: 'recorded', record } : { status: 'unconfirmed' }
   }
-  async function read(referenceInput: V3IntakeReference, signal: AbortSignal): Promise<V3IntakeReadResult> {
+  async function read(referenceInput: V3IntakeReference, signal: AbortSignal, budget?: V3ImportCallBudget): Promise<V3IntakeReadResult> {
     const checked = readV3IntakeReference(referenceInput)
     if (!checked.ok) return { status: 'unavailable' }
-    const raw = await call('SELECT official_v3_intake_api.read_v1($1::jsonb,$2::text,$3::integer) AS result', parameters(checked.value), signal)
+    const raw = await call('SELECT official_v3_intake_api.read_v1($1::jsonb,$2::text,$3::integer) AS result', parameters(checked.value), signal, budget)
     const result = readReply(raw, checked.value)
     if (result.status === 'recorded' && !signal.aborted) opened.set(result.record, signal)
     return result
@@ -111,7 +112,7 @@ export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, exe
     const tickets = new WeakMap<object, { record: V3StoredProposal; generation: number; token: string }>()
     let usedOriginal = false
     return Object.freeze({
-      async reserve(upload: V3ProposalUpload, signal: AbortSignal) {
+      async reserve(upload: V3ProposalUpload, signal: AbortSignal, budget?: V3ImportCallBudget) {
         if (!parsedBinding.ok || signal.aborted || ownerSignal?.aborted) return { status: 'unavailable' as const }
         if (original !== undefined) {
           if (!original || usedOriginal) return { status: 'unavailable' as const }
@@ -127,12 +128,12 @@ export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, exe
         // proposal preflight. reserve_v1 still proves the current durable state.
         const prior = original !== undefined ? original && same(original.reference, ref.value)
           ? { status: 'recorded' as const, record: original } : { status: 'unavailable' as const }
-          : await read(ref.value, signal)
+          : await read(ref.value, signal, budget)
         if (prior.status === 'collision') return { status: 'collision' as const }
         if (prior.status !== 'recorded' || signal.aborted || ownerSignal?.aborted) return { status: 'unavailable' as const }
         if (!same(prior.record.upload.proposal, proposal.value)) return { status: 'collision' as const }
         const raw = await call('SELECT official_v3_intake_api.reserve_v1($1::jsonb,$2::text,$3::integer,$4::integer) AS result',
-          [...parameters(ref.value), leaseMilliseconds], signal)
+          [...parameters(ref.value), leaseMilliseconds], signal, budget)
         const state = ownRecord(raw, ['status'])
         if (state?.status === 'collision') return { status: 'collision' as const }
         if (state?.status === 'busy') return { status: 'busy' as const }
@@ -157,14 +158,14 @@ export function createV3PostgresQuarantineBackend(registry: QuellenRegistry, exe
         tickets.set(ticket, { record, generation: acquired.generation, token: acquired.leaseToken })
         return { status: 'acquired' as const, ticket }
       },
-      async finish(ticket: object, outcome: V3ImportOutcome, audit: V3ImportAudit, signal: AbortSignal) {
+      async finish(ticket: object, outcome: V3ImportOutcome, audit: V3ImportAudit, signal: AbortSignal, budget?: V3ImportCallBudget) {
         const held = tickets.get(ticket)
         if (!held || signal.aborted) return { status: 'unconfirmed' as const }
         tickets.delete(ticket) // One attempt; unknown must use same-operation confirm.
         const completion = readV3QuarantineCompletion(outcome, audit, held.record.upload, held.record.reference.binding, registry)
         if (!completion.ok) return { status: 'unconfirmed' as const }
         const raw = await call('SELECT official_v3_intake_api.finish_v1($1::jsonb,$2::text,$3::integer,$4::integer,$5::uuid,$6::jsonb,$7::jsonb) AS result',
-          [...parameters(held.record.reference), held.generation, held.token, JSON.stringify(completion.value.outcome), JSON.stringify(completion.value.audit)], signal)
+          [...parameters(held.record.reference), held.generation, held.token, JSON.stringify(completion.value.outcome), JSON.stringify(completion.value.audit)], signal, budget)
         const result = ownRecord(raw, ['status'])
         return { status: !signal.aborted && result?.status === 'recorded' ? 'recorded' as const : 'unconfirmed' as const }
       },

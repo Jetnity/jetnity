@@ -19,7 +19,7 @@ test('S1 SQL retention shape pins actual canonical reader sources, not just its 
     'lib/readiness/official-truth-product-v3/customer-information/detail-retention-shape.ts': 'f391228f774f7c61ea7ab5bd5d9e85dd09f28fb5153ff0485d6b9256c0fab1e4',
     'lib/readiness/official-truth-product-v3/contract.ts': '06a1e6a8d1b50e87cc939f099877330ddda07fae5da68f5cf0fd70bda29f6d2b',
     'lib/readiness/official-truth-product-v3/import/interface.ts': 'd98772cb27275aa768541bb670f3ae0effaf866748aea6b3797c03ac49361bb6',
-    'lib/readiness/official-truth-product-v3/import/service-server.ts': '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08',
+    'lib/readiness/official-truth-product-v3/import/service-server.ts': '8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33',
     'lib/readiness/rule-claims.ts': '4a3686ff6186bdefc2c8ae7f5e0bb96169366f02dfdc2f0b61c1b5511d9d852f',
     'lib/readiness/regulierungs-anwendbarkeit.ts': '5e4d84e45f1a41223df722647ef545244ca5ed38b79e3622b4e259ed21b6994f',
     'lib/readiness/temporal.ts': '768d1dd731bb745b3ce3e8b40bb425a4a51b8ce7b757ae4eb5173e9c65dd38d8',

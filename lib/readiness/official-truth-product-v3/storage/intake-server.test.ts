@@ -3,7 +3,7 @@ import { describe, test } from 'node:test'
 import { s1Fixture } from '../../../../scripts/db/official-truth-v3-intake-store-1/fixtures'
 import { sha256Hex } from '@/lib/readiness/digest'
 import { readV3ProposalUpload } from '../import/interface'
-import type { V3ImportAudit, V3ImportOutcome } from '../import/service-server'
+import type { V3ImportAudit, V3ImportOutcome, V3ImportCallBudget } from '../import/service-server'
 import { createV3ProposalIntakeStore, proposalIntakeProduction } from './intake-server'
 import { createV3PostgresQuarantineBackend, type V3IntakeSqlExecutor } from './quarantine-postgres'
 import type { V3IntakeReference } from './intake-contract'
@@ -14,9 +14,9 @@ type Fixture = ReturnType<typeof s1Fixture>
 const originalRow = (f: Fixture) => ({ reference: f.reference, text: f.text, outcome: null, audit: null })
 const reply = (result: unknown) => ({ status: 'acknowledged' as const, rows: [{ result: JSON.stringify(result) }] })
 function scripted(...responses: Array<Awaited<ReturnType<V3IntakeSqlExecutor['execute']>> | Error>) {
-  const calls: Array<{ statement: string; parameters: readonly (string | number)[] }> = []
-  const executor: V3IntakeSqlExecutor = { async execute(statement, parameters) {
-    calls.push({ statement, parameters })
+  const calls: Array<{ statement: string; parameters: readonly (string | number)[]; budget?: V3ImportCallBudget }> = []
+  const executor: V3IntakeSqlExecutor = { async execute(statement, parameters, _signal, budget) {
+    calls.push({ statement, parameters, budget })
     const response = responses.shift()
     if (!response) throw Error('unexpected_test_sql')
     if (response instanceof Error) throw response
@@ -93,6 +93,22 @@ describe('S1 intake rejects unsafe ORIGINAL bytes before any SQL dispatch', () =
 })
 
 describe('S1 fixed SQL boundary and complete replay (scripted transport unit tests only)', () => {
+  test('the same absolute I1 cap reaches optional original preflight, unchanged reservation and finish', async () => {
+    for (const selected of [false, true]) {
+      const f = s1Fixture('original-deadline-' + selected), value = await f.completion(), owner = new AbortController()
+      const io = scripted(reply({ status: 'recorded', record: originalRow(f) }), acquired(f), reply({ status: 'recorded' }))
+      const service = create(f, io.executor), budget = Object.freeze({ deadline: 12345 })
+      const opened = selected ? await service.open(f.reference, owner.signal) : null
+      if (opened && opened.status !== 'recorded') assert.fail('original')
+      const port = opened?.status === 'recorded' ? service.forOpenedImport(opened.record, owner.signal) : service.forImport(f.binding)
+      const reserved = await port.reserve(f.upload, owner.signal, budget)
+      assert.equal(reserved.status, 'acquired'); if (reserved.status !== 'acquired') assert.fail('reservation')
+      assert.deepEqual(await port.finish(reserved.ticket, value.outcome, value.audit, owner.signal, budget), { status: 'recorded' })
+      assert.deepEqual(io.calls.map(call => call.budget), [selected ? undefined : budget, budget, budget])
+      assert.ok(io.calls.slice(1).every(call => call.budget === budget))
+      assert.equal(io.calls[1].parameters[3], 10000, 'the fixed SQL lease is unchanged by the outer invocation cap')
+    }
+  })
   test('an actual original read transfers once in the same work signal; reservation and finish still dispatch', async () => {
     const f = s1Fixture('owned-original'), value = await f.completion(), owner = new AbortController()
     const io = scripted(reply({ status: 'recorded', record: originalRow(f) }), acquired(f), reply({ status: 'recorded' }))

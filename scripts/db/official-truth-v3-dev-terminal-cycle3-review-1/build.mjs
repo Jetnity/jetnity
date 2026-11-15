@@ -22,7 +22,9 @@ export const REVIEW = Object.freeze({
   methodAuthorityFix: 'd7c22972b6427d2169aafa56e70b037cf6babefb50469d527b48f122d104da79',
   ownedSessionFix: '0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c',
   executorsFix: 'f1fcc6a0e762104c117e771207e266a3d7eac58492bb573b7aa1be1802c7ce3b',
-  compositionFix: 'a4f02a0a043382b160e988eb0a48a79191e1806979dcf1926c8b26f930c85c76',
+  compositionFix: '68175c868a39a4a1d0e0e5185be448a026ba27010f830241981cd3c3cbcb10cd',
+  importServiceFix: '8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33',
+  quarantineFix: 'aa7fe8e22dd1368f99528232f6f573ca0c37f38f3bc35a36c5c1a0b02480bca2',
   ownedScopeFix: '89a22b2a2de00365505258a301614a0ac2870af79bd3ced40a66c8794c6fe280',
 })
 
@@ -66,6 +68,7 @@ const runtimeSessions = `EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid<>pg_bac
 export function compileDevTerminalCycle3Review() {
   for (const [relative, expected] of [
     ['monitor/queue.ts', REVIEW.queueFix], ['jobs/composition.ts', REVIEW.compositionFix],
+    ['import/service-server.ts', REVIEW.importServiceFix], ['storage/quarantine-postgres.ts', REVIEW.quarantineFix],
     ['jobs/contract.ts', REVIEW.jobContractFix], ['jobs/postgres.ts', REVIEW.jobStorageFix],
     ['jobs/selected-claim.ts', REVIEW.selectedClaimFix], ['method/authority-postgres.ts', REVIEW.methodAuthorityFix],
     ['transport/node-postgres-owned-session.ts', REVIEW.ownedSessionFix],
@@ -204,6 +207,8 @@ CREATE TABLE jetnity_dev_import_scheduler.terminal_cycle3_review_v1(
   executors_fix_sha256 text NOT NULL CHECK(executors_fix_sha256='${REVIEW.executorsFix}'),
   queue_fix_sha256 text NOT NULL CHECK(queue_fix_sha256='${REVIEW.queueFix}'),
   composition_fix_sha256 text NOT NULL CHECK(composition_fix_sha256='${REVIEW.compositionFix}'),
+  import_service_fix_sha256 text NOT NULL CHECK(import_service_fix_sha256='${REVIEW.importServiceFix}'),
+  quarantine_fix_sha256 text NOT NULL CHECK(quarantine_fix_sha256='${REVIEW.quarantineFix}'),
   job_contract_fix_sha256 text NOT NULL CHECK(job_contract_fix_sha256='${REVIEW.jobContractFix}'),
   job_storage_fix_sha256 text NOT NULL CHECK(job_storage_fix_sha256='${REVIEW.jobStorageFix}'),
   selected_claim_fix_sha256 text NOT NULL CHECK(selected_claim_fix_sha256='${REVIEW.selectedClaimFix}'),
@@ -227,7 +232,7 @@ CREATE TRIGGER immutable_truncate BEFORE TRUNCATE ON jetnity_dev_import_schedule
 FOR EACH STATEMENT EXECUTE FUNCTION jetnity_dev_import_scheduler.immutable_terminal_cycle3_review_v1();
 INSERT INTO jetnity_dev_import_scheduler.terminal_cycle3_review_v1
 SELECT 3,${literal(evidenceHash)},${literal(priorDigest)},'${REVIEW.ownedSessionFix}','${REVIEW.executorsFix}',
-  '${REVIEW.queueFix}','${REVIEW.compositionFix}',
+  '${REVIEW.queueFix}','${REVIEW.compositionFix}','${REVIEW.importServiceFix}','${REVIEW.quarantineFix}',
   '${REVIEW.jobContractFix}','${REVIEW.jobStorageFix}','${REVIEW.selectedClaimFix}','${REVIEW.methodAuthorityFix}',
   '${REVIEW.ownedScopeFix}',
   current_setting('jetnity.dev_terminal_cycle3_review_commit'),current_setting('jetnity.dev_terminal_cycle3_review_deployment'),

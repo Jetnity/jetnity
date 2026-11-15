@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "file": "local-history.json.gz",
+  "bytes": 4810147,
+  "sha256": "dcca7d6f8d14b24992b468a0e4b10eb1aea496bd689296f0db67b871c962dba5",
+  "gzipBytes": 792189,
+  "gzipSha256": "ce3a860e9bdcac1b41f8f4b26b8c216b70493fdaa1153977f0cdd79369b596de",
+  "scope": "Local fixture only; copied fachliche history, no hosted success claim. Tokens and actor identities omitted before export. Native fixture fills synthetic local credentials."
+}

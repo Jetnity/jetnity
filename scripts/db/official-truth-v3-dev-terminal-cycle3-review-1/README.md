@@ -68,9 +68,10 @@ its exact private evidence still matches. Every other block, changed original,
 unconfirmed request or missing predecessor remains closed. Both old blocked
 rows remain blocked; neither review is a reset or an alteration of old history.
 
-The new compiler binds nine current files: queue, both transport fixes, job
+The new compiler binds eleven current files: queue, both transport fixes, job
 contract/storage/claim forwarding, method authority, job composition and owned
-scope, to their individually reviewed SHA256s.
+scope, plus the I1 coordinator and S1 quarantine adapter, to their individually
+reviewed SHA256s.
 Compilation refuses before those exact files are frozen. The reviewed runtime
 adds explicit atomic claim and mutation capabilities to the existing M04 API;
 original confirmation, transition, CAS and actual final reads remain inside
@@ -84,6 +85,15 @@ abort signal remain effective while waiting; no speculative receipt is reused.
 Fresh claims keep their independent parallel reads. This closes the independently
 reproduced single-method-connection-lane collision on head `209b6a1c`.
 This review cannot demonstrate that the new runtime is fast enough in Dev.
+
+The still **UNAPPLIED** review now binds the separately reviewed I1 overlap and
+deadline fix from 15 November. Only an actual Selected frame starts fresh
+MA1/history reads alongside S1 reservation; every original receipt and final
+reproof remains required. S1 reserve and finish share the original absolute I1
+deadline, and the actual five-second lease is unchanged. The immutable review
+adds `import_service_fix_sha256` and `quarantine_fix_sha256`; the full JSONB
+readback includes both, and the native test checks their exact values. No old
+Cycle2/Cycle3 evidence or already applied receipt is replaced.
 
 ## Required operator sequence — Dev only
 
@@ -164,7 +174,7 @@ provider transport, multi-session contention, new CI/Ready, UI and automatic
 publication remain live acceptance gates; local PASS alone does not open them.
 
 
-### Final local result — 15 November 2026
+### Historical local result — before the I1 binding update
 
 The final complete run passed **30/30 tests, zero failures/skips/cancellations**
 in **23.544 seconds**. The same complete native run also evaluates the actual
@@ -176,4 +186,14 @@ gate and the new receipt check passed in that run. The correction hashes the
 same complete ordered JSONB value inside PostgreSQL and transfers its 64-hex
 SHA256; no comparison field, historical driver, migration, fixture or deadline
 was removed or changed. The final 30/30 result includes this correction. The
-migration itself has been unchanged since its first successful 30/30 run.
+migration at that earlier proof had been unchanged since its first successful
+30/30 run. These dated results do not approve the later I1 source-binding update.
+
+### I1 binding verification — 15 November 2026
+
+The complete Cycle3 native group passed **31/31 tests, zero failures/skips/
+cancellations**, in **36.816 seconds** on owned PostgreSQL 17.12 and Node 22.23.5.
+It includes exact readback of both added I1 source pins on the original and
+customer-information successor fixtures. Production compilation `--check` also
+passed with every Production source and SQL file unchanged. No Dev apply or live
+UI/automatic-publication result is asserted by these local checks.

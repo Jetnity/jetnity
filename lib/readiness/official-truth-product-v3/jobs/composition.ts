@@ -68,7 +68,7 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
     'SELECT official_v3_intake_api.finish_v1($1::jsonb,$2::text,$3::integer,$4::integer,$5::uuid,$6::jsonb,$7::jsonb) AS result',
   ]
   function executor(group: Group): V3IntakeSqlExecutor {
-    return Object.freeze<V3IntakeSqlExecutor>({ async execute(statement, params, signal) {
+    return Object.freeze<V3IntakeSqlExecutor>({ async execute(statement, params, signal, callBudget) {
       const effectStart = performance.now()
       const index = statements.indexOf(statement)
       if (index < 0 || !Array.isArray(params) || params.length !== [3, 3, 4, 7][index]
@@ -82,7 +82,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
           || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(params[4]) || typeof params[5] !== 'string' || typeof params[6] !== 'string'))) return { status: 'unavailable' }
       try { if (!readV3IntakeBinding(JSON.parse(params[0])).ok) return { status: 'unavailable' } } catch { return { status: 'unavailable' } }
       const detached = Object.freeze([...params])
-      const budget = Object.freeze({ deadline: Math.min(scope.deadline, result?.callDeadline ?? Infinity, effectStart + M04_LIMITS.effectMs) })
+      const budget = Object.freeze({ deadline: Math.min(scope.deadline, result?.callDeadline ?? Infinity,
+        callBudget?.deadline ?? Infinity, effectStart + M04_LIMITS.effectMs) })
       if (!Number.isFinite(budget.deadline) || performance.now() >= budget.deadline) return { status: 'unavailable' }
       const reply = await scope.native('intake', group, s => config.intakeExecutor.execute(statement, detached, s, budget), signal)
       if (!reply.ok || reply.value.status === 'unconfirmed' || reply.value.status === 'blocked_remote_unknown' || signal.aborted) { scope.markAmbiguous(); return { status: 'unconfirmed' } }
@@ -285,7 +286,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
             evidence: evidence('processing', frame?.evidence, frame?.admitImportSignal),
             history: history('processing', frame?.history, frame?.admitImportSignal),
             quarantine: frame ? processingStore.forOpenedImport(openedOriginal, childSignal)
-              : processingStore.forImport(item.reference.binding) }, { budgetMilliseconds: 5000 })
+              : processingStore.forImport(item.reference.binding) },
+          { budgetMilliseconds: 5000, overlapInitialReadsWithReservation: Boolean(frame) })
           const outcome = await traceDevDiagnosticStage('job_import', childSignal, async () => {
             try { return await importer.submit(item.text, childSignal) }
             finally { frame?.close() }
@@ -314,17 +316,17 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
       } })
       const importTickets = new WeakMap<object, { port: V3ImportQuarantinePort<object>; ticket: object }>()
       const quarantine: V3ImportQuarantinePort<object> = Object.freeze<V3ImportQuarantinePort<object>>({
-        async reserve(upload, s) {
+        async reserve(upload, s, budget) {
           const ref = bindings.get(upload.proposal.operationId)
           if (!ref || ref.proposalDigest !== upload.digest || ref.bytes !== upload.bytes) return { status: 'unavailable' }
-          const port = store.forImport(ref.binding), result = await port.reserve(upload, s)
+          const port = store.forImport(ref.binding), result = await port.reserve(upload, s, budget)
           if (result.status !== 'acquired') return result
           const ticket = Object.freeze({}); importTickets.set(ticket, { port, ticket: result.ticket })
           return { status: 'acquired', ticket }
         },
-        async finish(ticket, outcome, audit, s) {
+        async finish(ticket, outcome, audit, s, budget) {
           const held = importTickets.get(ticket); if (!held) return { status: 'unconfirmed' }
-          importTickets.delete(ticket); return held.port.finish(held.ticket, outcome, audit, s)
+          importTickets.delete(ticket); return held.port.finish(held.ticket, outcome, audit, s, budget)
         },
       })
       const ports: V3IntegrationPorts = {

@@ -156,14 +156,14 @@ function factText(container: V3RuleFact): readonly Statement[] {
   return fact.paths.map((path, index) => {
     const parts = [`Transitoption ${index + 1}`]
     const boolean = (value: boolean | null, yes: string, no: string, unknown: string) => parts.push(value === null ? unknown : value ? yes : no)
-    boolean(path.crossesBorderControl, 'Grenzkontrolle wird passiert', 'Grenzkontrolle wird nicht passiert', 'Grenzkontrolle ungeklärt')
-    boolean(path.leavesTransitArea, 'Transitbereich wird verlassen', 'Transitbereich wird nicht verlassen', 'Verlassen des Transitbereichs ungeklärt')
-    boolean(path.thirdCountryRequired, 'Weiterreise in ein Drittland erforderlich', 'Kein Drittland erforderlich', 'Drittlandvoraussetzung ungeklärt')
-    boolean(path.sameFlightRequired, 'Derselbe Flug erforderlich', 'Flugwechsel möglich', 'Flugwechsel ungeklärt')
-    boolean(path.onwardTicketRequired, 'Weiterflug-/Weiterreiseticket erforderlich', 'Kein Weiterreiseticket erforderlich', 'Weiterreiseticketvoraussetzung ungeklärt')
-    parts.push(path.transitAirportCodes ? `Flughäfen: ${path.transitAirportCodes.join(', ')}` : 'Flughafenbindung nicht bestimmt')
-    parts.push(path.maxTransitDurationMinutes === null ? 'Maximale Transitdauer nicht bestimmt' : `Höchstens ${path.maxTransitDurationMinutes} Minuten Transit`)
-    parts.push(`Ankunft: ${path.arrivalMode ? transport[path.arrivalMode] : 'nicht bestimmt'}; Abreise: ${path.departureMode ? transport[path.departureMode] : 'nicht bestimmt'}`)
+    boolean(path.crossesBorderControl, 'Grenzkontrolle wird passiert', 'Grenzkontrolle wird nicht passiert', 'Grenzkontrolle: Derzeit nicht verfügbar')
+    boolean(path.leavesTransitArea, 'Transitbereich wird verlassen', 'Transitbereich wird nicht verlassen', 'Verlassen des Transitbereichs: Derzeit nicht verfügbar')
+    boolean(path.thirdCountryRequired, 'Weiterreise in ein Drittland erforderlich', 'Kein Drittland erforderlich', 'Drittlandvoraussetzung: Derzeit nicht verfügbar')
+    boolean(path.sameFlightRequired, 'Derselbe Flug erforderlich', 'Flugwechsel möglich', 'Flugwechsel: Derzeit nicht verfügbar')
+    boolean(path.onwardTicketRequired, 'Weiterflug-/Weiterreiseticket erforderlich', 'Kein Weiterreiseticket erforderlich', 'Weiterreiseticketvoraussetzung: Derzeit nicht verfügbar')
+    parts.push(path.transitAirportCodes ? `Flughäfen: ${path.transitAirportCodes.join(', ')}` : 'Flughafenbindung: Derzeit nicht verfügbar')
+    parts.push(path.maxTransitDurationMinutes === null ? 'Maximale Transitdauer: Derzeit nicht verfügbar' : `Höchstens ${path.maxTransitDurationMinutes} Minuten Transit`)
+    parts.push(`Ankunft: ${path.arrivalMode ? transport[path.arrivalMode] : 'Derzeit nicht verfügbar'}; Abreise: ${path.departureMode ? transport[path.departureMode] : 'Derzeit nicht verfügbar'}`)
     return statement(parts.join(' · '))
   })
 }
@@ -184,8 +184,8 @@ export function presentV3VisitorAnswer(answer: V3VisitorAnswer): V3VisitorView {
             ...(related.length > 0 ? { relatedInformationTopics: related } : {}),
             conditions: contextText(projection.rule.subject.context), statements: factText(projection.rule.subject.fact),
             source: { label: source.authorityName, href: source.href },
-            checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),
-            validityText: validity.status === 'specified' ? `Gültigkeit: ${validity.validFrom ? `ab ${validity.validFrom}` : 'kein Beginn angegeben'} · ${validity.validUntil ? `bis ${validity.validUntil}` : 'kein Ende angegeben'}` : 'Gültigkeit noch ungeklärt',
+            checkedAtText: (officialPruefzeitText(projection.sourceCheckedAt) ?? 'Quellenstand: Derzeit nicht verfügbar').replace('Jetnity-Prüfung', 'Stand vom'),
+            validityText: validity.status === 'specified' ? `Gültigkeit: ${validity.validFrom ? `ab ${validity.validFrom}` : 'Beginn: Derzeit nicht verfügbar'} · ${validity.validUntil ? `bis ${validity.validUntil}` : 'Ende: Derzeit nicht verfügbar'}` : 'Gültigkeit: Derzeit nicht verfügbar',
             ruleVersion: projection.rule.revision, expiresAt: projection.expiresAt }
         }
         if (result.status === 'pending') return { status: 'pending', title: 'Wird geprüft', message: 'Die Recherche zu amtlichen Angaben wurde angenommen. Ein Ergebnis liegt noch nicht vor.' }

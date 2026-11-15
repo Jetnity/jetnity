@@ -414,9 +414,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
-    "bytes": 24762,
-    "blob": "5659291eb3534cb71f492253ec4c9ea9e5f75563",
-    "sha256": "9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08"
+    "bytes": 27279,
+    "blob": "221f245294eb8e13d363fdb8bcff16c7f306cec4",
+    "sha256": "8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/integration/coordinator.ts",
@@ -444,9 +444,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "blob": "64907e3d16d55edcf6a6a9af4f9dab710f5fa8be",
-    "bytes": 29528,
-    "sha256": "a4f02a0a043382b160e988eb0a48a79191e1806979dcf1926c8b26f930c85c76"
+    "blob": "7bf618b9449b37cd307df8b037c8579ed94d95cb",
+    "bytes": 29676,
+    "sha256": "68175c868a39a4a1d0e0e5185be448a026ba27010f830241981cd3c3cbcb10cd"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
@@ -612,9 +612,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
-    "blob": "906819c1f473f04abc7541766fcebd663564a099",
-    "bytes": 13780,
-    "sha256": "d21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009"
+    "blob": "74664ec7759d4fa168eb5c5b4b67294f9abe710e",
+    "bytes": 13960,
+    "sha256": "aa7fe8e22dd1368f99528232f6f573ca0c37f38f3bc35a36c5c1a0b02480bca2"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/storage/retention-shape.ts",

@@ -247,7 +247,8 @@ test('Dev Cycle3 review runs exact migration against genuine full PG17 history a
       const confirmation = await proof.value<{
         schema: number; prior_cycle2_review_valid: boolean; original_cycle3_evidence_unchanged: boolean;
         exact_reviewed_sender: boolean; original_dispatch_count: number; unprocessed_dispatch_count: number;
-        other_blocked_count: number; review: { cycle_id: number; reviewed_revision: number };
+        other_blocked_count: number; review: { cycle_id: number; reviewed_revision: number;
+          composition_fix_sha256: string; import_service_fix_sha256: string; quarantine_fix_sha256: string };
         prior_cycle2_review: { cycle_id: number };
       }>(readbackExpression, creator + 'SET default_transaction_read_only=on; BEGIN;', 'COMMIT;')
       assert.equal(confirmation.schema, 1)
@@ -256,6 +257,9 @@ test('Dev Cycle3 review runs exact migration against genuine full PG17 history a
       assert.equal(confirmation.exact_reviewed_sender, true)
       assert.equal(confirmation.review.cycle_id, 3)
       assert.equal(confirmation.review.reviewed_revision, 38)
+      assert.equal(confirmation.review.composition_fix_sha256, REVIEW.compositionFix)
+      assert.equal(confirmation.review.import_service_fix_sha256, REVIEW.importServiceFix)
+      assert.equal(confirmation.review.quarantine_fix_sha256, REVIEW.quarantineFix)
       assert.equal(confirmation.prior_cycle2_review.cycle_id, 2)
       assert.equal(confirmation.original_dispatch_count, 8)
       assert.equal(confirmation.unprocessed_dispatch_count, 0)
@@ -321,8 +325,11 @@ test('Cycle3 review preserves the complete customer/history successor after its 
     assert.deepEqual(await proof.value(customerBaseline, creator), baselineBefore)
     await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1(); SELECT official_v3_guard_private.require_open_v1();',
       'customer/history body chain and actual successor proof remain valid')
-    const confirmation = await proof.value<{ original_cycle3_evidence_unchanged: boolean; exact_reviewed_sender: boolean }>(readbackExpression, creator)
+    const confirmation = await proof.value<{ original_cycle3_evidence_unchanged: boolean; exact_reviewed_sender: boolean;
+      review: { import_service_fix_sha256: string; quarantine_fix_sha256: string } }>(readbackExpression, creator)
     assert.equal(confirmation.original_cycle3_evidence_unchanged, true)
     assert.equal(confirmation.exact_reviewed_sender, true)
+    assert.equal(confirmation.review.import_service_fix_sha256, REVIEW.importServiceFix)
+    assert.equal(confirmation.review.quarantine_fix_sha256, REVIEW.quarantineFix)
   } finally { await proof.close() }
 })

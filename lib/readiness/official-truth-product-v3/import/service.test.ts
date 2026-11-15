@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { readFileSync } from 'node:fs'
+import { performance } from 'node:perf_hooks'
 import { sha256Hex } from '@/lib/readiness/digest'
 import { schema2Kanonisch } from '@/lib/readiness/regulierungs-anwendbarkeit'
 import { evidenceQuellenFingerprint } from '@/lib/readiness/evidence'
@@ -20,7 +21,7 @@ import { readV3ProposalUpload, V3_PROPOSAL_INTERFACE } from './interface'
 import {
   createV3ImportCoordinator, importV3ResearchProposalProduction,
   type V3ImportPorts, type V3ImportHistory, type V3ImportOutcome, type V3ImportAudit,
-  type V3ImportResult, type V3ImportVerificationRequest,
+  type V3ImportResult, type V3ImportVerificationRequest, type V3ImportCallBudget,
 } from './service-server'
 
 // Fictional .example originals. This is an isolated in-process protocol test,
@@ -199,6 +200,161 @@ function outcome(result: V3ImportResult): V3ImportOutcome {
   if (result.status !== 'completed') assert.fail(JSON.stringify(result))
   return result.outcome
 }
+
+describe('I1 selected initial-read overlap (controlled protocol delays, not live timing evidence)', () => {
+  function gate() {
+    let release!: () => void
+    const promise = new Promise<void>(resolve => { release = resolve })
+    return { promise, release }
+  }
+  const turn = () => new Promise<void>(resolve => setImmediate(resolve))
+
+  test('real method and history reads overlap reserve, then retain both original receipts and every final reproof', async t => {
+    const h = harness(), heldReserve = gate(), historyDone = gate(), events: string[] = []
+    const actual = { ...h.ports.quarantine }, method = { ...h.ports.methodAuthority }, history = { ...h.ports.history }
+    let methodReceipt: object | undefined, historyReceipt: object | undefined, reserveSettled = false
+    let pending = 0, settled = 0
+    const started = performance.now()
+    h.ports.quarantine.reserve = async (...args) => {
+      events.push('reserve:start'); pending++
+      try { await heldReserve.promise; const value = await actual.reserve(...args); reserveSettled = true; events.push('reserve:ack'); return value }
+      finally { pending--; settled++ }
+    }
+    h.ports.methodAuthority.resolveCurrent = async (...args) => {
+      events.push('method:start'); pending++
+      try { const value = await method.resolveCurrent(...args); if (value.status === 'approved') methodReceipt = value.receipt
+        events.push('method:ack'); return value }
+      finally { pending--; settled++ }
+    }
+    h.ports.history.read = async (...args) => {
+      events.push('history:start'); pending++
+      try { const value = await history.read(...args); if (value.status === 'snapshot') historyReceipt = value.receipt
+        events.push('history:ack'); historyDone.release(); return value }
+      finally { pending--; settled++ }
+    }
+    h.state.beforeInspect = async () => { assert.equal(reserveSettled, true); assert.equal(pending, 0); events.push('evidence') }
+    const evidenceReprove = h.ports.evidence.reprove
+    h.ports.evidence.reprove = async (...args) => { events.push('evidence:reproof'); return evidenceReprove(...args) }
+    h.ports.history.reprove = async (...args) => { assert.equal(args[0], historyReceipt); events.push('history:reproof'); return history.reprove(...args) }
+    h.ports.methodAuthority.reproveAtCommit = async (...args) => { assert.equal(args[0], methodReceipt); events.push('method:reproof'); return method.reproveAtCommit(...args) }
+    h.ports.quarantine.finish = async (...args) => { events.push('finish'); return actual.finish(...args) }
+    const work = createV3ImportCoordinator(h.ports, { budgetMilliseconds: 5000, overlapInitialReadsWithReservation: true })
+      .submit(JSON.stringify(h.proposal()))
+    try {
+      await historyDone.promise
+      assert.equal(reserveSettled, false, 'the complete real initial history is read while S1 remains pending')
+      assert.equal(h.counters.inspect, 0); assert.equal(h.counters.finish, 0)
+      // An actual, deliberately held reservation; no simulated database speed.
+      await new Promise<void>(resolve => setTimeout(resolve, 25))
+      heldReserve.release()
+      assert.equal(outcome(await work).status, 'prepared')
+      assert.deepEqual(events, ['reserve:start', 'method:start', 'method:ack', 'history:start', 'history:ack',
+        'reserve:ack', 'evidence', 'evidence:reproof', 'history:reproof', 'method:reproof', 'finish'])
+      assert.equal(pending, 0); assert.equal(settled, 3)
+      assert.equal(h.counters.method, 1); assert.equal(h.counters.inspect, 1); assert.equal(h.counters.finish, 1)
+      t.diagnostic(JSON.stringify({ controlledDelayOnly: true, elapsedMilliseconds: Math.round(performance.now() - started),
+        initialStarts: 3, initialSettled: settled, events }))
+    } finally { heldReserve.release(); await work }
+  })
+
+  test('the ordinary coordinator keeps initial reads after the reservation ACK', async () => {
+    const h = harness(), held = gate(), entered = gate(), reserve = h.ports.quarantine.reserve
+    h.ports.quarantine.reserve = async (...args) => { entered.release(); await held.promise; return reserve(...args) }
+    const work = h.run.submit(JSON.stringify(h.proposal()))
+    try {
+      await entered.promise; await turn()
+      assert.equal(h.counters.method, 0); assert.equal(h.counters.inspect, 0)
+      held.release(); assert.equal(outcome(await work).status, 'prepared')
+    } finally { held.release(); await work }
+  })
+
+  test('non-acquired and rejected reservations join the already-started reads without evidence or any finish', async () => {
+    for (const mode of ['busy', 'collision', 'unavailable', 'completed', 'rejected'] as const) {
+      const h = harness(), held = gate(), entered = gate(), method = h.ports.methodAuthority.resolveCurrent
+      let readSettled = false, terminal = false
+      h.ports.quarantine.reserve = async () => {
+        if (mode === 'rejected') throw new Error('reservation_reply_lost')
+        return mode === 'completed' ? { status: 'completed', outcome: { status: 'unavailable', reason: 'method_unavailable' } } : { status: mode }
+      }
+      h.ports.methodAuthority.resolveCurrent = async (...args) => {
+        entered.release(); try { await held.promise; return await method(...args) } finally { readSettled = true }
+      }
+      const work = createV3ImportCoordinator(h.ports, { overlapInitialReadsWithReservation: true })
+        .submit(JSON.stringify(h.proposal())).then(result => { terminal = true; return result })
+      try {
+        await entered.promise; await turn()
+        assert.equal(terminal, false, mode + ' cannot detach its initial reads')
+        held.release(); const result = await work
+        assert.equal(result.status, mode === 'collision' ? 'rejected' : mode === 'rejected' ? 'outcome_unknown' : mode)
+        assert.equal(readSettled, true); assert.equal(h.counters.inspect, 0); assert.equal(h.counters.finish, 0)
+      } finally { held.release(); await work }
+    }
+  })
+
+  test('negative initial reads retain the existing negative audit completion without positive evidence', async () => {
+    for (const mode of ['method', 'history', 'malformed_history', 'throw'] as const) {
+      const h = harness()
+      if (mode === 'method') h.state.method = 'revoked'
+      else if (mode === 'history') h.ports.history.read = async () => ({ status: 'unavailable' })
+      else if (mode === 'malformed_history') h.state.history = { ...h.state.history, invalidatedProjectionRefs: ['invalid'] }
+      else h.ports.history.read = async () => { throw new Error('read_reply_lost') }
+      const value = outcome(await createV3ImportCoordinator(h.ports, { overlapInitialReadsWithReservation: true })
+        .submit(JSON.stringify(h.proposal())))
+      assert.equal(value.status, mode === 'malformed_history' ? 'quarantined' : 'unavailable')
+      assert.equal(h.counters.reserve, 1); assert.equal(h.counters.inspect, 0); assert.equal(h.counters.reprove, 0)
+      assert.equal(h.counters.finish, 1); assert.equal(h.audits[0].result, value.status)
+    }
+  })
+
+  test('reserve and delayed finish receive the exact original five-second cap, never a new deadline', async t => {
+    const h = harness(), actual = { ...h.ports.quarantine }, budgets: V3ImportCallBudget[] = []
+    let now = 1000
+    t.mock.method(performance, 'now', () => now)
+    h.ports.quarantine.reserve = async (upload, signal, budget) => {
+      assert.ok(budget); budgets.push(budget); now = 1600
+      return actual.reserve(upload, signal, budget)
+    }
+    h.state.beforeMethodReprove = async () => { now = 4800 }
+    h.ports.quarantine.finish = async (ticket, value, audit, signal, budget) => {
+      assert.ok(budget); budgets.push(budget); assert.equal(budget.deadline - performance.now(), 1200)
+      return actual.finish(ticket, value, audit, signal, budget)
+    }
+    assert.equal(outcome(await createV3ImportCoordinator(h.ports, { budgetMilliseconds: 5000, overlapInitialReadsWithReservation: true })
+      .submit(JSON.stringify(h.proposal()))).status, 'prepared')
+    assert.equal(budgets.length, 2); assert.equal(budgets[0], budgets[1]); assert.equal(budgets[0].deadline, 6000)
+    assert.ok(Object.isFrozen(budgets[0]))
+  })
+
+  for (const boundary of ['abort', 'timeout'] as const) test(`${boundary} prevents late parallel reads or reservation ACKs from continuing`, async () => {
+    const h = harness(), caller = new AbortController(), enteredReserve = gate(), enteredMethod = gate()
+    const reserveRelease = gate(), methodRelease = gate(), actual = { ...h.ports.quarantine }, method = h.ports.methodAuthority.resolveCurrent
+    let pending = 0, settled = 0, reads = 0
+    const children: Promise<unknown>[] = []
+    h.ports.quarantine.reserve = (...args) => {
+      const child = (async () => { pending++; enteredReserve.release()
+        try { await reserveRelease.promise; return await actual.reserve(...args) } finally { pending--; settled++ } })()
+      children.push(child); return child
+    }
+    h.ports.methodAuthority.resolveCurrent = (...args) => {
+      const child = (async () => { pending++; enteredMethod.release()
+        try { await methodRelease.promise; return await method(...args) } finally { pending--; settled++ } })()
+      children.push(child); return child
+    }
+    h.ports.history.read = async () => { reads++; return { status: 'unavailable' } }
+    const work = createV3ImportCoordinator(h.ports, { budgetMilliseconds: 30, overlapInitialReadsWithReservation: true })
+      .submit(JSON.stringify(h.proposal()), caller.signal)
+    try {
+      await Promise.all([enteredReserve.promise, enteredMethod.promise])
+      assert.equal(pending, 2)
+      if (boundary === 'abort') caller.abort()
+      assert.equal((await work).status, 'outcome_unknown')
+      assert.equal(settled, 0, 'the bounded result is not a claim that these controlled ports have drained')
+      methodRelease.release(); reserveRelease.release(); await Promise.allSettled(children); await turn()
+      assert.equal(settled, 2); assert.equal(pending, 0); assert.equal(reads, 0)
+      assert.equal(h.counters.inspect, 0); assert.equal(h.counters.finish, 0)
+    } finally { methodRelease.release(); reserveRelease.release(); caller.abort(); await Promise.allSettled([work, ...children]) }
+  })
+})
 
 describe('I1 neutral proposal intake and quarantine', () => {
   test('same neutral S0 envelope works for two independent fictional supplier adapters', async () => {

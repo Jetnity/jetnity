@@ -4,12 +4,15 @@ import { test } from 'node:test'
 import { performance } from 'node:perf_hooks'
 import { createV3PostgresDurableJobs, createV3PostgresMethodAuthority } from '../method/authority-postgres'
 import { readM04Command, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation, type M04FixedRequest } from './contract'
-import { composeM04Invocation } from './composition'
+import { composeM04Invocation, composeM04ResultInvocation } from './composition'
 import { createM04LanePool, createM04InvocationScope } from './owned-scope'
 import { fixture, ids, METHOD } from '../monitor/test-support'
 import type { V3QueueCommit, V3ManagedJobRecord } from '../monitor/queue'
 import type { V3GlobalRuleContext } from '../contract'
 import { m04IdentityVectors } from '../../../../scripts/db/official-truth-v3-durable-jobs-1/generate-identity-vectors'
+import { createHrs1ResultPorts } from '../result/postgres'
+import { createHrs1SourceConsumer } from '../result/source-proof'
+import { AA_BERN_CH_DE_REVIEWED_PROGRAM as program } from '../source/aa-ch-de-reviewed-program'
 
 const NOW = '2026-11-09T08:04:00.000Z'
 function canonical(v: unknown): string {
@@ -121,6 +124,8 @@ type WorkerHooks = {
   prepared?: () => void;
   confirmed?: () => void;
   method?: (signal: AbortSignal, budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
+  intake?: (statement: string, parameters: readonly (string | number)[], signal: AbortSignal,
+    budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
   ready?: (abort: AbortController) => void;
   lostStart?: boolean;
   lostConfirm?: boolean;
@@ -145,8 +150,9 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       return { status: 'rows', rows: [{ status: 'approved',
       method_id: M04_TEST_BINDING.methodId, revision: '1', method_digest: M04_TEST_BINDING.methodDigest,
       package_digest: M04_TEST_BINDING.packageDigest, epoch: String(worker?.epoch?.() ?? 1), approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] } } },
-    intakeExecutor: { async execute(statement, params, signal) {
+    intakeExecutor: { async execute(statement, params, signal, budget) {
       counts.intake++; assert.equal(signal.aborted, false)
+      await worker?.intake?.(statement, params, signal, budget)
       const binding = JSON.parse(String(params[0])), old = bindings.get(binding.operationId)
       let reply: unknown
       if (statement.includes('.capture_v1(')) {
@@ -261,6 +267,108 @@ test('worker preflight uses six actual dispatches through first S1 read and exac
   })!
   assert.equal(starts[0].epoch, claimed.epoch)
   assert.ok(starts[0].budget.deadline > 0)
+})
+
+for (const atDeadline of [false, true]) test(`nested I1 ${atDeadline ? 'refuses expired' : 'retains original'} finish cap at the actual S1 executor`, async t => {
+  let now = 1000
+  const deadlines: Array<{ call: string; deadline: number; at: number }> = []
+  t.mock.method(performance, 'now', () => now)
+  const h = await fullBatchHarness(1, false, undefined, 'quarantined', undefined, {
+    intake(statement, parameters, _signal, budget) {
+      if (statement.includes('.reserve_v1(')) {
+        assert.ok(budget); deadlines.push({ call: 'reserve', deadline: budget.deadline, at: now })
+        assert.equal(parameters[3], 5000, 'the actual S1 lease is not extended')
+        now = atDeadline ? 6000 : 5600
+      } else if (statement.includes('.finish_v1(')) {
+        assert.ok(budget); deadlines.push({ call: 'finish', deadline: budget.deadline, at: now })
+      }
+    },
+  })
+  assert.deepEqual(deadlines, atDeadline ? [{ call: 'reserve', deadline: 6000, at: 1000 }]
+    : [{ call: 'reserve', deadline: 6000, at: 1000 }, { call: 'finish', deadline: 6000, at: 5600 }])
+  assert.equal(h.counts.reserve, 1); assert.equal(h.counts.finish, atDeadline ? 0 : 1)
+  if (atDeadline) {
+    assert.notEqual(h.result.status, 'processed')
+    assert.equal([...h.operations.values()].filter(value => ['failed', 'completed'].includes(value.audit.kind)).length, 0)
+    assert.equal([...h.operations.values()].at(-1)?.next.state, 'leased')
+  } else assert.equal([...h.bindings.values()][0].outcome !== null, true, 'known negative audit still completes')
+})
+
+for (const selected of [false, true]) test(`only a present frame overlaps initial reads; ${selected ? 'two' : 'one'} pending native calls remain owned after abort`, async () => {
+  function gate() { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve }); return { promise, release } }
+  const reserveEntered = gate(), historyEntered = gate(), releaseReserve = gate(), releaseHistory = gate(), pool = createM04LanePool()
+  let scope: NonNullable<ReturnType<typeof createM04InvocationScope>> | undefined, caller: AbortController | undefined
+  let historyStarts = 0, historySettled = 0, reserveSettled = 0, finished = false, evidenceCalls = 0
+  const joins: Promise<unknown>[] = []
+  const work = fullBatchHarness(1, false, undefined, undefined, {
+    ready(_api, _input, signal) { caller = signal },
+    async reserve() { reserveEntered.release(); try { await releaseReserve.promise } finally { reserveSettled++ } },
+    async method() { return true }, request() {},
+    async work(config, claim, signal) {
+      const owned = createM04InvocationScope(pool, 30000, signal); assert.ok(owned); scope = owned
+      const authorityFor = (group: 'outer' | 'processing') => createV3PostgresMethodAuthority(config.binding, {
+        async readCurrent(request, child, budget) {
+          const value = await owned.native('method', group, s => config.methodExecutor.readCurrent(request, s, budget), child)
+          return value.ok ? value.value : { status: 'unavailable' }
+        },
+      })
+      // The existing protocol doubles bridge real standalone MA1/composition;
+      // these unit probes do not claim native SQL or selected-source custody.
+      const fixedFor = (group: 'outer' | 'processing'): M04FixedOperation => async (operation, child) => {
+        const reply = await owned.native('jobs', group, s => config.jobsExecutor.executeFixed({
+          ...config.binding, operationText: canonical({ ...operation, phase: 'authorized' }), epoch: 1,
+          budget: { deadline: owned.deadline }, notAfter: new Date(Date.parse(config.clock().now) + 5000).toISOString(),
+        } as M04FixedRequest, s), child)
+        return reply.ok && reply.value.status === 'acknowledged'
+          ? readM04NativeReply(reply.value.rows, operation.operation) ?? { status: 'unconfirmed' } : { status: 'unconfirmed' }
+      }
+      const closedFixed = async () => ({ status: 'unavailable' as const })
+      const closed = createHrs1ResultPorts({ binding: program.binding, registry: program.registry, fixed: closedFixed,
+        clock: config.clock, ids: () => ({ jobId: 'job3_' + '1'.repeat(32), operationId: 'op3_' + '2'.repeat(32) }),
+        source: createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, fixed: closedFixed, clock: config.clock }) })
+      const history = { ...config.history, async read(contextKey: string, factKind: Parameters<typeof config.history.read>[1], child: AbortSignal) {
+        const value = await owned.native('jobs', 'processing', async s => {
+          historyStarts++; historyEntered.release()
+          try { await releaseHistory.promise; return await config.history.read(contextKey, factKind, s) }
+          finally { historySettled++ }
+        }, child)
+        return value.ok ? value.value : { status: 'unavailable' as const }
+      } }
+      const evidence = { ...config.evidence, async inspect() { evidenceCalls++; return { status: 'unavailable' as const } } }
+      const processingAuthority = authorityFor('processing'), parts = { ...closed, history, evidence }
+      const raw = composeM04ResultInvocation({ config, scope: owned, authority: authorityFor('outer'), processingAuthority,
+        fixed: fixedFor('outer'), processingFixed: fixedFor('processing'), result: {
+          outer: parts, processing: parts, callDeadline: owned.deadline, projectionMaxAgeMilliseconds: 1,
+          openProcessingImport: () => selected ? { methodAuthority: processingAuthority, history, evidence,
+            admitImportSignal: () => true, confirmSource: () => false, close() {} } : null,
+        } })
+      return raw.facade.workOnce(claim, owned.signal)
+    },
+  })
+  try {
+    await reserveEntered.promise
+    if (selected) await historyEntered.promise
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.ok(scope && caller)
+    assert.equal(historyStarts, selected ? 1 : 0, 'null frame leaves the ordinary reservation dependency intact')
+    assert.equal(scope.snapshot().activeNative, selected ? 2 : 1)
+    assert.equal(evidenceCalls, 0)
+    caller.abort(); const result = await work
+    assert.notEqual(result.result.status, 'processed'); assert.equal(result.counts.finish, 0)
+    assert.equal(reserveSettled, 0); assert.equal(historySettled, 0)
+    joins.push(scope.finish().then(() => { finished = true }))
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(finished, false); assert.equal(pool.snapshot().occupied, 1)
+    releaseReserve.release()
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(reserveSettled, 1)
+    if (selected) { assert.equal(finished, false); assert.equal(scope.snapshot().activeNative, 1) }
+    releaseHistory.release(); await Promise.all(joins)
+    assert.equal(historySettled, selected ? 1 : 0); assert.equal(scope.snapshot().activeNative, 0)
+    assert.equal(pool.snapshot().occupied, 0); assert.equal(pool.snapshot().intake, 0); assert.equal(pool.snapshot().jobs, 0)
+    assert.equal(evidenceCalls, 0); assert.equal(result.counts.finish, 0)
+    assert.equal([...result.operations.values()].at(-1)?.next.state, 'leased')
+  } finally { releaseReserve.release(); releaseHistory.release(); caller?.abort(); await Promise.allSettled([work, ...joins]); await scope?.finish() }
 })
 
 test('genuine prepared and confirm ACK acquire separate terminal authority after the original five seconds', async t => {

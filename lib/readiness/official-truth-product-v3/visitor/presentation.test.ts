@@ -3,11 +3,11 @@ import { describe, test } from 'node:test'
 import { regelFaktKanonischLesen, type RegelFaktV2, type StayOutcomeV2 } from '@/lib/readiness/rule-claims'
 import type { EventDeadlineV2 } from '@/lib/readiness/temporal'
 import { createV3VisitorQuery } from './query'
-import { presentV3VisitorAnswer } from './presentation'
+import { presentV3VisitorAnswer, type V3VisitorViewResult } from './presentation'
 import { syntheticV3Fixture } from './test-fixtures'
 import type { V3CustomerInformationDetail } from '../customer-information/details'
 import type { V3CustomerInformationTopic } from '../customer-information/topics'
-import { readV3GlobalRuleContext, type V3GlobalRuleContext } from '../contract'
+import { readV3GlobalRuleContext, type V3GlobalRuleContext, type V3LegalValidity } from '../contract'
 import { v3CustomerInformationCoverage } from './coverage-presentation'
 
 for (const unconditional of [false, true]) test(`C1 real query/reproof displays all application restrictions with unconditional expression=${unconditional}`, async () => {
@@ -171,4 +171,67 @@ test('unconfirmed form cost and missing action remain unavailable despite a conf
     assert.equal(topic?.related.length, 0)
   }
   assert.match(result.statements.map(row => row.text).join('\n'), /Formularkosten: Derzeit nicht verfügbar/)
+})
+
+// Pure display conformance, not a new source qualification or accepted-store write.
+test('partial transit facts label every missing subvalue without inventing a negative finding', async () => {
+  const fixture = syntheticV3Fixture()
+  const query = await createV3VisitorQuery(fixture.ports)({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
+  if (!query.ok) assert.fail(query.reason)
+  const original = fixture.accepted.projection
+  const path = { crossesBorderControl: null, leavesTransitArea: null, transitAirportCodes: null,
+    maxTransitDurationMinutes: null, arrivalMode: null, departureMode: null,
+    thirdCountryRequired: null, sameFlightRequired: null, onwardTicketRequired: null }
+  for (const fact of [
+    { kind: 'transit_conditions' as const, paths: [{ ...path, arrivalMode: 'air' as const }] },
+    { kind: 'transit_conditions' as const, paths: [{ ...path, crossesBorderControl: false,
+      leavesTransitArea: true, sameFlightRequired: false, thirdCountryRequired: true, onwardTicketRequired: false }] },
+  ]) {
+    assert.equal(regelFaktKanonischLesen(fact.kind, 'transit', fact, fixture.ports.registry).ok, true)
+    const projection = { ...original, rule: { ...original.rule, subject: { ...original.rule.subject,
+      fact: { schema: 1 as const, fact } } } }
+    const displayed: V3VisitorViewResult = presentV3VisitorAnswer({ ...query.answer, response: { ...query.answer.response,
+      cells: [{ citizenshipCountryCode: 'CH', results: [{ status: 'accepted', projection }] }] } }).cells[0].results[0]
+    if (displayed.status !== 'accepted') assert.fail('Expected a synthetic display')
+    assert.equal(displayed.informationTopic, 'transit')
+    const text = displayed.statements.map(row => row.text).join('\n')
+    assert.doesNotMatch(text, /ungeklärt|nicht bestimmt/)
+    for (const label of ['Flughafenbindung', 'Maximale Transitdauer', 'Abreise']) {
+      assert.ok(text.includes(`${label}: Derzeit nicht verfügbar`))
+    }
+    if (fact.paths[0].arrivalMode === 'air') {
+      for (const label of ['Grenzkontrolle', 'Verlassen des Transitbereichs', 'Drittlandvoraussetzung', 'Flugwechsel', 'Weiterreiseticketvoraussetzung']) {
+        assert.ok(text.includes(`${label}: Derzeit nicht verfügbar`))
+      }
+      assert.match(text, /Ankunft: Flug/)
+      assert.doesNotMatch(text, /wird nicht passiert|Kein Drittland|Kein Weiterreiseticket|Flugwechsel möglich/)
+    } else {
+      for (const confirmed of ['Grenzkontrolle wird nicht passiert', 'Transitbereich wird verlassen', 'Weiterreise in ein Drittland erforderlich',
+        'Flugwechsel möglich', 'Kein Weiterreiseticket erforderlich', 'Ankunft: Derzeit nicht verfügbar']) assert.ok(text.includes(confirmed))
+    }
+  }
+})
+
+test('unknown legal-validity boundaries stay explicit while known dates retain their exact meaning', async () => {
+  const fixture = syntheticV3Fixture()
+  const query = await createV3VisitorQuery(fixture.ports)({ destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
+  if (!query.ok) assert.fail(query.reason)
+  const original = fixture.accepted.projection
+  const cases: readonly [V3LegalValidity, string][] = [
+    [{ status: 'unresolved' }, 'Gültigkeit: Derzeit nicht verfügbar'],
+    [{ status: 'specified', validFrom: null, validUntil: null }, 'Gültigkeit: Beginn: Derzeit nicht verfügbar · Ende: Derzeit nicht verfügbar'],
+    [{ status: 'specified', validFrom: '2026-11-01', validUntil: null }, 'Gültigkeit: ab 2026-11-01 · Ende: Derzeit nicht verfügbar'],
+    [{ status: 'specified', validFrom: null, validUntil: '2026-12-31' }, 'Gültigkeit: Beginn: Derzeit nicht verfügbar · bis 2026-12-31'],
+    [{ status: 'specified', validFrom: '2026-11-01', validUntil: '2026-12-31' }, 'Gültigkeit: ab 2026-11-01 · bis 2026-12-31'],
+  ]
+  for (const [legalValidity, expected] of cases) {
+    const projection = { ...original, rule: { ...original.rule, subject: { ...original.rule.subject,
+      evidence: { ...original.rule.subject.evidence, legalValidity } } } }
+    const displayed: V3VisitorViewResult = presentV3VisitorAnswer({ ...query.answer, response: { ...query.answer.response,
+      cells: [{ citizenshipCountryCode: 'CH', results: [{ status: 'accepted', projection }] }] } }).cells[0].results[0]
+    if (displayed.status !== 'accepted') assert.fail('Expected a synthetic display')
+    assert.equal(displayed.validityText, expected)
+    assert.equal(displayed.source.href, 'https://destination.example/synthetic-test-publication')
+    assert.equal(displayed.ruleVersion, original.rule.revision)
+  }
 })

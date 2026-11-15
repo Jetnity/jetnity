@@ -21,6 +21,7 @@ const hosted = [
   'lib/readiness/official-truth-customer-information-migration.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
+  'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
   'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
   'lib/readiness/official-truth-prod-import-scheduler.test.ts',

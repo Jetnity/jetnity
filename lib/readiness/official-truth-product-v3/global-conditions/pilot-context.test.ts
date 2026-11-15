@@ -185,6 +185,21 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     'components/readiness/OfficialTruthVisitorV3.tsx', 'lib/readiness/rule-claims.ts',
   ])
   assert.equal(new Set(customerSourceAmendment.map(row => row.path)).size, 2)
+  // Reviewed I1 overlap and original-deadline forwarding; old amendments stay exact.
+  const importDeadlineSourceAmendment = [
+    { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts',
+      previousReviewed: { bytes: 24762, sha256: '9dcbe21893c3d98231c0446a62cfa67f486e571a2547884f850808c553291f08' },
+      reviewed: { bytes: 27279, sha256: '8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33' } },
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+      previousReviewed: { bytes: 13780, sha256: 'd21819b688b135199702e7ae1d8e008ba3e238d77010e0362fb88f44a837d009' },
+      reviewed: { bytes: 13960, sha256: 'aa7fe8e22dd1368f99528232f6f573ca0c37f38f3bc35a36c5c1a0b02480bca2' } },
+  ] as const
+  assert.deepEqual(importDeadlineSourceAmendment.map(row => row.path), [
+    'lib/readiness/official-truth-product-v3/import/service-server.ts',
+    'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
+  ])
+  assert.equal(new Set(importDeadlineSourceAmendment.map(row => row.path)).size, 2)
+  let reviewedImportDeadlineRows = 0
   let reviewedCustomerRows = 0
   let reviewedOperationRows = 0
   let reviewedCurrentRows = 0
@@ -243,7 +258,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousOperation.bytes, sha256: previousOperation.sha256 }, customerChanged.previousReviewed, row.path)
       reviewedCustomerRows++
     }
-    const expected = customerChanged?.reviewed ?? previousOperation
+    const previousCustomer = customerChanged?.reviewed ?? previousOperation
+    const importDeadlineChanged = importDeadlineSourceAmendment.find(file => file.path === row.path)
+    if (importDeadlineChanged) {
+      assert.deepEqual({ bytes: previousCustomer.bytes, sha256: previousCustomer.sha256 }, importDeadlineChanged.previousReviewed, row.path)
+      reviewedImportDeadlineRows++
+    }
+    const expected = importDeadlineChanged?.reviewed ?? previousCustomer
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -256,4 +277,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedCurrentRows, 8)
   assert.equal(reviewedOperationRows, 2)
   assert.equal(reviewedCustomerRows, 2)
+  assert.equal(reviewedImportDeadlineRows, 2)
 })
