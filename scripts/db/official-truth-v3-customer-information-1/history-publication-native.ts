@@ -28,6 +28,7 @@ import { literal, readSql } from '../official-truth-v3-rolling-jobs-quota-1/loca
 import { baseSetup, methodSeed } from './native'
 import { buildCapacityFixture626 } from './history-capacity-fixture'
 import { localExecutors, type HistoryFactoryEvent } from './history-claim-native'
+import { historyGuardCadence } from './history-bg1-cadence-native'
 
 const owner = 'SET SESSION AUTHORIZATION ot_pilot_owner;SET search_path=pg_catalog;'
 const creator = 'SET SESSION AUTHORIZATION postgres;SET search_path=pg_catalog;'
@@ -226,6 +227,8 @@ export async function runHistoryPublicationNative(t: TestContext) {
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql') + 'COMMIT;', 'unchanged rolling predecessor')
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + 'COMMIT;', 'exact reviewed customer successor')
     assert.equal((await proof.value<{ status: string }>('official_v3_guard_private.audit_v1()', creator)).status, 'current')
+    const guard = historyGuardCadence(t, proof)
+    await guard.admit('selected complete history seed')
     const cutoff = literal(fixture.prefixCutoff) + '::timestamptz'
     const prefixExpression = `(WITH o AS (SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE recorded_at<=${cutoff}),
       s AS (SELECT * FROM official_v3_jobs_private.execution_starts_v1 WHERE reserved_at<=${cutoff}),
@@ -247,6 +250,7 @@ export async function runHistoryPublicationNative(t: TestContext) {
     const roles = await proof.value<string>(rolesExpression, owner)
     const invariant = async () => {
       await ports.drain(); assert.equal(wire.active(), 0)
+      await guard.admit('selected history invariants', 5000)
       assert.deepEqual(await proof.value<Prefix>(prefixExpression, owner), prefix)
       assert.equal(await proof.value<string>(rolesExpression, owner), roles)
       await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1();SELECT official_v3_guard_private.check_certificates_v1();'
@@ -261,6 +265,7 @@ export async function runHistoryPublicationNative(t: TestContext) {
       producer: { async produce() { return { status: 'failed', reason: 'unreachable' } } },
       evidence: { async inspect() { assert.fail('no source fiction in historical cleanup') }, async reprove() { assert.fail('no source custody fiction') } },
       history: { async read() { assert.fail('no history fiction in historical cleanup') }, async reprove() { assert.fail('no history receipt fiction') } } })
+    await guard.admit('selected historical cleanup')
     const cleanupEntered = performance.now(), cleanupEventsAt = ports.events().length
     const settled = await cleanup.workOnce({ operationId: id('op3', 'settle-old-claim'), leaseId: id('lease3', 'settle-old-claim'),
       jobKey: fixture.original.jobKey, leaseMilliseconds: 30000 }, t.signal)
@@ -287,6 +292,7 @@ export async function runHistoryPublicationNative(t: TestContext) {
     const startRequest: ChDeOwnerImportRequest = Object.freeze({ schema: 2, mode: 'start',
       operationId: id('op3', 'normal-original-request'), leaseId: id('lease3', 'normal-original-request') })
     const resumeRequest: ChDeOwnerImportRequest = Object.freeze({ ...startRequest, mode: 'resume' })
+    await guard.admit('selected original request enqueue', 5000)
     const enqueued = await enqueueOfficialTruthV3ChDeRefresh(startRequest, t.signal)
     await ports.drain(); assert.deepEqual(enqueued, { schema: 1, status: 'queued', published: 0 })
     const selectedQuota = await proof.value<Quota>('official_v3_guard_private.ch_de_quota_v2()', creator)
@@ -307,6 +313,7 @@ export async function runHistoryPublicationNative(t: TestContext) {
     assert.equal(queued.job.jobId, cycle.jobId); assert.equal(queued.job.operationId, cycle.operationId)
     await invariant()
     await proof.run(owner + "DO $off$ BEGIN IF current_setting('track_functions')<>'none' THEN RAISE EXCEPTION 'instrumented publication timing';END IF;END $off$;", 'actual uninstrumented publication')
+    await guard.admit('selected first tick')
     const eventsBefore = ports.events().length, entered = performance.now(), enteredAt = Date.now()
     const first = await runOfficialTruthV3ChDeTick(t.signal, resumeRequest)
     await ports.drain()
@@ -339,13 +346,10 @@ export async function runHistoryPublicationNative(t: TestContext) {
       const producedBefore = produced, startsBefore = firstState.starts, retryEventsBefore = ports.events().length
       const wait = Math.max(0, 60001 - (Date.now() - enteredAt))
       assert.ok(wait <= 60000)
-      if (wait > 0) await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(() => { t.signal.removeEventListener('abort', stop); resolve() }, wait)
-        const stop = () => { clearTimeout(timer); t.signal.removeEventListener('abort', stop); reject(Error('native publication proof aborted')) }
-        t.signal.addEventListener('abort', stop, { once: true }); if (t.signal.aborted) stop()
-      })
+      if (wait > 0) await guard.waitUntil(enteredAt + 60001, 'actual next-minute publication wait')
       assert.ok(Date.now() - enteredAt >= 60000, 'a later normal minute dispatch, after the original lease')
       assert.ok(Date.now() > Date.parse(acquired.lease.expiresAt), 'publication recovery is proved after actual lease expiry')
+      await guard.admit('selected same-request next-minute resume')
       last = await runOfficialTruthV3ChDeTick(t.signal, resumeRequest)
       await ports.drain(); finalState = await state()
       const retryEvents = ports.events().slice(retryEventsBefore)

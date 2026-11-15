@@ -18,6 +18,7 @@ import { buildCapacityFixture626 } from './history-capacity-fixture'
 import { compileHistoryDefinition, HISTORY_SIGNATURE } from './history-build.mjs'
 import { M04_S1_STATEMENTS } from '../official-truth-v3-durable-jobs-1/native-adapter'
 import { checkHistoryFactorySuccess } from './history-success-native'
+import { historyGuardCadence } from './history-bg1-cadence-native'
 
 const owner = 'SET SESSION AUTHORIZATION ot_pilot_owner; SET search_path=pg_catalog;'
 const creator = 'SET SESSION AUTHORIZATION postgres; SET search_path=pg_catalog;'
@@ -164,6 +165,8 @@ export async function runHistoryClaimNative(t: TestContext) {
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql') + 'COMMIT;', 'exact bounded history successor')
     assert.equal((await proof.value<{ status: string }>('official_v3_guard_private.audit_v1()', creator)).status, 'current',
       'the installed successor must pass the genuine complete BG1 audit before historical continuation')
+    const guard = historyGuardCadence(t, proof)
+    await guard.admit('complete history seed')
     const cutoff = literal(fixture.prefixCutoff) + '::timestamptz'
     const prefixExpression = `(WITH o AS (SELECT * FROM official_v3_jobs_private.queue_operations_v1 WHERE recorded_at<=${cutoff}),
       s AS (SELECT * FROM official_v3_jobs_private.execution_starts_v1 WHERE reserved_at<=${cutoff}),
@@ -184,6 +187,7 @@ export async function runHistoryClaimNative(t: TestContext) {
       'memberships',(SELECT jsonb_agg(to_jsonb(r) ORDER BY oid) FROM pg_auth_members r))::text,'UTF8')),'hex')))`
     const roles = await proof.value<string>(rolesExpression, owner)
     const check = async () => {
+      await guard.admit('history invariants', 5000)
       assert.deepEqual(await proof.value<Prefix>(prefixExpression, owner), prefix, 'all447 original journal rows retain their exact stored fields and texts')
       assert.equal(await proof.value<string>(rolesExpression, owner), roles, 'original roles and grants remain unchanged')
       await proof.run(creator + 'SELECT official_v3_guard_private.assert_catalog_v1();SELECT official_v3_guard_private.check_certificates_v1();'
@@ -208,6 +212,7 @@ export async function runHistoryClaimNative(t: TestContext) {
       history: { async read() { assert.fail('no rule history is fabricated') }, async reprove() { assert.fail('no rule history receipt is fabricated') } },
     }
     await proof.run(owner + "DO $off$ BEGIN IF current_setting('track_functions')<>'none' THEN RAISE EXCEPTION 'instrumented factory timing';END IF;END $off$;", 'uninstrumented real factory')
+    await guard.admit('original history factory')
     const started = performance.now()
     const outcome = await createV3PostgresDurableJobs(config).workOnce(claim, t.signal)
     await bridge.drain()
@@ -274,7 +279,7 @@ export async function runHistoryClaimNative(t: TestContext) {
       assert.equal(head.current_job.lastFailure, 'unreachable')
     })
     await t.test('normal enqueue, successful producer and separately prepared resume complete through actual S1 inside original budgets', async () => {
-      await checkHistoryFactorySuccess(t, proof, config, bridge, fixture.original.jobKey)
+      await checkHistoryFactorySuccess(t, proof, config, bridge, fixture.original.jobKey, guard)
     })
     await t.test('factory settlement retains the entire old prefix, original catalog and drained local SQL', async () => {
       assert.equal(bridge.active(), 0); assert.equal(bridge.peak(), 1, 'owned local SQL is explicitly serialized')

@@ -18,6 +18,7 @@ import { AA_CH_DE_DELIVERY_PRODUCER } from '../../../lib/readiness/official-trut
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM as program } from '../../../lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program'
 import { hrs1Canonical, hrs1Ref, hrs1Same } from '../../../lib/readiness/official-truth-product-v3/result/contract'
 import type { HistoryFactoryBridge, HistoryFactoryEvent } from './history-claim-native'
+import type { HistoryGuardCadence } from './history-bg1-cadence-native'
 
 const owner = 'RESET ROLE;SET SESSION AUTHORIZATION ot_pilot_owner;SET search_path=pg_catalog;'
 const creator = 'RESET ROLE;SET SESSION AUTHORIZATION postgres;SET search_path=pg_catalog;'
@@ -104,7 +105,7 @@ function completeWithinOriginalBudget(events: HistoryFactoryEvent[]) {
 }
 
 export async function checkHistoryFactorySuccess(t: TestContext, proof: OwnedPersistentProof, base: M04Config,
-  bridge: HistoryFactoryBridge, jobKey: string) {
+  bridge: HistoryFactoryBridge, jobKey: string, guard: HistoryGuardCadence) {
   const before = await proof.value<Quota>(quotaExpression, creator)
   assert.equal(before.lifetime_starts, 627); assert.equal(before.lifetime_operations, 2068)
   assert.equal(await proof.value<number>('(SELECT to_jsonb(count(*)) FROM official_v3_result_private.versions_v1)', owner), 0,
@@ -118,6 +119,7 @@ export async function checkHistoryFactorySuccess(t: TestContext, proof: OwnedPer
     leaseId: id('lease3', tag), leaseMilliseconds: 30000 })
 
   async function enqueue(tag: string) {
+    await guard.admit(tag + ' enqueue', 5000)
     const input = ruleInput(tag), first = bridge.events.length, started = performance.now()
     const result = await createV3PostgresDurableJobs(config).enqueueRule(input, t.signal)
     await bridge.drain()
@@ -154,6 +156,7 @@ export async function checkHistoryFactorySuccess(t: TestContext, proof: OwnedPer
   }
 
   await enqueue('ordinary-success')
+  await guard.admit('ordinary successful factory')
   const freshClaim = claimInput('ordinary-success'), first = bridge.events.length, started = performance.now()
   const outcome = await createV3PostgresDurableJobs(config).workOnce(freshClaim, t.signal)
   await bridge.drain()
@@ -179,6 +182,9 @@ export async function checkHistoryFactorySuccess(t: TestContext, proof: OwnedPer
   // row. The subsequent fresh factory gets no invented token or positive reply.
   const preparedTag = 'prepared-resume'
   const queued = await enqueue(preparedTag), resumeClaim = claimInput(preparedTag)
+  // Schedule before acquiring the original thirty-second fixture lease. Its
+  // preparation and the following thirty-second factory keep all old limits.
+  await guard.admit('separate prepared original setup and resume', 60000)
   const runtime = (login: string, role: string) => `SET SESSION AUTHORIZATION ${login};SET ROLE ${role};SET search_path=pg_catalog;
     BEGIN;SET LOCAL statement_timeout='5000ms';SET LOCAL lock_timeout='5000ms';`
   const m04 = async (operation: M04Operation): Promise<M04NativeReply> => {
@@ -255,6 +261,9 @@ export async function checkHistoryFactorySuccess(t: TestContext, proof: OwnedPer
     evidence: { async inspect() { assert.fail('prepared resume cannot invent another source check') }, async reprove() { assert.fail('prepared resume cannot invent source custody') } },
     history: { async read() { assert.fail('prepared resume cannot fabricate source history') }, async reprove() { assert.fail('prepared resume cannot fabricate history custody') } },
   }
+  // The prepared original is already retained: observe, but never insert a
+  // scheduler wait or audit into its held lease/authority interval.
+  await guard.observe('separately prepared factory resume', 30000)
   const resumeFirst = bridge.events.length, resumeStarted = performance.now()
   const resumed = await createV3PostgresDurableJobs(resumeConfig).workOnce(resumeClaim, t.signal)
   await bridge.drain()
