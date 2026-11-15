@@ -65,6 +65,31 @@ async function respond(page: Page, id: number, status: number, body: unknown, st
   await page.evaluate(({ id, status, body, stalledBody }) => window.__adminCompletion.respond(id, status, body, stalledBody), { id, status, body, stalledBody })
 }
 
+async function textScale(page: Page, factor: number) {
+  await page.evaluate(async (scale) => {
+    document.documentElement.style.fontSize = `${16 * scale}px`
+    // Wait for font reflow and finite CSS transitions without disabling them.
+    // A stuck transition fails explicitly; infinite loading spinners are excluded.
+    let timeout: number | undefined
+    try {
+      await Promise.race([
+        (async () => {
+          await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+          await Promise.allSettled(document.getAnimations().filter((animation) => {
+            const end = animation.effect?.getComputedTiming().endTime
+            return animation.playState === 'running' && typeof end === 'number' && Number.isFinite(end)
+          }).map((animation) => animation.finished))
+        })(),
+        new Promise<never>((_resolve, reject) => {
+          timeout = window.setTimeout(() => reject(new Error(`Text scale ${scale}: layout transitions did not settle within 3000ms`)), 3000)
+        }),
+      ])
+    } finally {
+      if (timeout !== undefined) window.clearTimeout(timeout)
+    }
+  }, factor)
+}
+
 const payment = (id: string) => ({ id, status: 'paid', amount_chf: 123.5, created_at: '2026-11-15T10:00:00Z', customer_email: 'synthetic@example.test' })
 const webhook = (id: string) => ({ id, type: 'synthetic.event', created_at: '2026-11-15T10:00:00Z' })
 const breakdown = { days: [{ date: '2026-11-15', revenue_chf: 123.5, orders: 1 }] }
@@ -77,7 +102,7 @@ for (const width of [320, 390, 1280]) {
       await page.getByText('Tageswerte anzeigen', { exact: true }).click()
       assert.equal(await page.locator('tbody tr').count(), 90)
       for (const scale of [1, 2]) {
-        await page.evaluate((factor) => { document.documentElement.style.fontSize = `${16 * factor}px` }, scale)
+        await textScale(page, scale)
         const dimensions = await page.evaluate((factor) => ({
           scale: factor, viewport: window.innerWidth, page: document.documentElement.scrollWidth,
           overflowing: document.documentElement.scrollWidth <= innerWidth + 1 ? [] : [...document.querySelectorAll('main *')]
@@ -91,11 +116,29 @@ for (const width of [320, 390, 1280]) {
           assert.ok(box && box.width >= 44 && box.height >= 44 && box.x >= 0 && box.x + box.width <= width + 1)
         }
         const refresh = page.getByRole('button', { name: 'Ansicht aktualisieren' })
-        const bounds = await refresh.boundingBox()
+        // Capture both rectangles in the same browser evaluation: separate
+        // protocol roundtrips can straddle layout/scroll changes.
+        const frame = await refresh.evaluate((button) => {
+          const bounds = button.getBoundingClientRect()
+          const text = button.querySelector(':scope > span:last-child')
+          const label = text?.getBoundingClientRect()
+          const buttonStyle = getComputedStyle(button)
+          const labelStyle = text ? getComputedStyle(text) : null
+          return {
+            button: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height },
+            label: label ? { x: label.x, y: label.y, width: label.width, height: label.height } : null,
+            styles: {
+              button: { fontSize: buttonStyle.fontSize, lineHeight: buttonStyle.lineHeight },
+              label: labelStyle ? { fontSize: labelStyle.fontSize, lineHeight: labelStyle.lineHeight } : null,
+            },
+          }
+        })
+        const bounds = frame.button
         assert.ok(bounds && bounds.x >= 0 && bounds.x + bounds.width <= width + 1 && bounds.height >= 44)
-        const label = await refresh.locator(':scope > span:last-child').boundingBox()
+        const label = frame.label
         assert.ok(label && label.x >= bounds.x && label.x + label.width <= bounds.x + bounds.width + 1
-          && label.y >= bounds.y && label.y + label.height <= bounds.y + bounds.height + 1, 'refresh label leaves its button')
+          && label.y >= bounds.y && label.y + label.height <= bounds.y + bounds.height + 1,
+        `refresh label leaves its button: ${JSON.stringify({ width, scale, ...frame })}`)
       }
       await page.getByRole('link', { name: '7 Tage', exact: true }).focus()
       await page.keyboard.press('Enter')

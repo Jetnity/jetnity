@@ -47,7 +47,7 @@ export default function PaymentsCenter() {
     <section role="alert" className="min-w-0 break-words rounded-2xl border border-border bg-card p-4 sm:p-6">
       <h2 className="text-lg font-semibold">Zugriff auf Zahlungsdaten nicht mehr bestätigt</h2>
       <p className="mt-2 text-sm text-muted-foreground">Die Sitzung ist abgelaufen oder die Berechtigung hat sich geändert. Zuvor geladene Zahlungsdaten wurden ausgeblendet.</p>
-      <Button className="mt-4 h-auto min-h-11 min-w-0 max-w-full whitespace-normal pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" variant="outline" onClick={() => window.location.reload()}>Sitzung erneut prüfen</Button>
+      <Button className="mt-4 h-auto min-h-11 min-w-0 max-w-full whitespace-normal transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" variant="outline" onClick={() => window.location.reload()}>Sitzung erneut prüfen</Button>
     </section>
   )
 
