@@ -64,6 +64,9 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
 
   if (vorbei || stand.status === 'ohne-ort') return null
   const tag = stand.status === 'bereit' ? wetterAmTag(stand.daten, datum) : null
+  const temperaturen = tag?.zeiten.map(z => z.temperatur) ?? []
+  const minimum = Math.min(...temperaturen)
+  const maximum = Math.max(...temperaturen)
   return <section aria-label={'Wetter in ' + ort.name} className="my-3 min-w-0 rounded-2xl border border-line-200 bg-white p-4 text-sm text-ink-900">
     <h3 className="flex items-center gap-2 font-semibold"><CloudSun size={19} aria-hidden />Wetter in {ort.name}</h3>
     {zuFrueh ? <p className="mt-1 text-ink-700">Die Vorhersage erscheint rund fünf Tage vor diesem Reisetag.</p>
@@ -72,9 +75,9 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
       : !tag ? <p role="status">Wetter wird geladen …</p>
       : !tag.zeiten.length ? <p>Für diesen Tag liegt noch keine aktuelle Vorhersage vor.</p>
       : <>
-        <p className="mt-1">{formatTag(tag.tag)} · Ortszeit</p>
-        <p className="mt-2 font-medium">{Math.min(...tag.zeiten.map(z => z.temperatur))} bis {Math.max(...tag.zeiten.map(z => z.temperatur))} °C
-          {' · '}bis {Math.max(...tag.zeiten.map(z => z.regen))} % Niederschlagsrisiko</p>
+        <p className="mt-1">{formatTag(tag.tag)} · {tag.zeiten.length === 1 && tag.zeiten[0].zeit.slice(11) + ' Uhr · '}Ortszeit</p>
+        <p className="mt-2 font-medium">{minimum === maximum ? minimum : minimum + ' bis ' + maximum} °C
+          {' · '}{tag.zeiten.length > 1 && 'bis '}{Math.max(...tag.zeiten.map(z => z.regen))} % Niederschlagsrisiko</p>
         {tag.untergang && <p className="mt-1 flex items-center gap-2"><Sunset size={16} aria-hidden />Sonnenuntergang um {tag.untergang} Uhr</p>}
         {aktivitaeten?.map(punkt => {
           if (punkt.kind !== 'activity' || !punkt.startsAt || (punkt.startsOn && punkt.startsOn !== tag.tag)) return null
