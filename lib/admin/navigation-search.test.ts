@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { ADMIN_NAV_ITEMS } from './navigation'
+import { ADMIN_NAV_ITEMS, type AdminNavItem } from './navigation'
 import {
   ADMIN_NAV_SEARCH_ALIASES,
   ADMIN_NAV_SEARCH_QUERY_MAX,
@@ -51,6 +51,7 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
         '/admin/provider-ops',
         '/admin/analytics',
         '/admin/content',
+        '/admin/marketing',
         '/admin/settings',
         '/admin/localization',
       ],
@@ -59,7 +60,7 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
     assert.equal(operator.some((item) => item.href === '/admin/analytics'), true)
 
     const creator = filterAdminNavSearch(ADMIN_NAV_ITEMS, CREATOR, '')
-    assert.deepEqual(creator.map((item) => item.href), ['/admin', '/admin/settings', '/admin/localization'])
+    assert.deepEqual(creator.map((item) => item.href), ['/admin', '/admin/marketing', '/admin/settings', '/admin/localization'])
 
     const notzugang = filterAdminNavSearch(ADMIN_NAV_ITEMS, BREAK_GLASS, '')
     assert.equal(notzugang.some((item) => item.href === '/admin/users'), false)
@@ -88,13 +89,20 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
   })
 
   test('later-Eintraege matchen nie, auch wenn das Label in der Query steht', () => {
-    const later = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/marketing')
-    assert.equal(later !== undefined, true)
-    assert.equal(matchAdminNavSearch(later!, 'marketing'), false)
+    const later: AdminNavItem = { href: '/admin/future-test', label: 'Marketing später', kind: 'later', capability: null }
+    assert.equal(matchAdminNavSearch(later, 'marketing'), false)
+    assert.deepEqual(filterAdminNavSearch([later], OPERATOR, 'marketing'), [])
+    assert.equal(resolveAdminNavSearchHref(later.href, [later]), null)
     assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'analytics').length, 1)
     assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'content').length, 1)
-    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'marketing').length, 0)
+    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'marketing').length, 1)
     assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, CREATOR, 'content').length, 0)
+  })
+
+  test('Marketing links are discoverable by actual local campaign/channel aliases', () => {
+    for (const query of ['UTM', 'Kampagne', 'Campaign', 'newsletter', 'instagram', 'partner', 'QR']) {
+      assert.deepEqual(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, query).map((item) => item.href), ['/admin/marketing'])
+    }
   })
 
   test('Ziel kommt nur aus der Allowlist, nie aus der Query', () => {
@@ -102,7 +110,7 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
     assert.equal(resolveAdminNavSearchHref('/admin/users', allow), '/admin/users')
     assert.equal(resolveAdminNavSearchHref('/admin/analytics', allow), '/admin/analytics')
     assert.equal(resolveAdminNavSearchHref('/admin/content', allow), '/admin/content')
-    assert.equal(resolveAdminNavSearchHref('/admin/marketing', allow), null)
+    assert.equal(resolveAdminNavSearchHref('/admin/marketing', allow), '/admin/marketing')
     assert.equal(resolveAdminNavSearchHref('https://evil.example/admin/users', allow), null)
     assert.equal(resolveAdminNavSearchHref('javascript:alert(1)', allow), null)
     assert.equal(resolveAdminNavSearchHref('/admin/users?next=https://evil.example', allow), null)

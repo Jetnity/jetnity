@@ -12,6 +12,7 @@ export const ADMIN_NAV_SEARCH_ALIASES: Readonly<Record<string, readonly string[]
   '/admin/system-health': ['health', 'system', 'lage', 'gesundheit'],
   '/admin/provider-ops': ['kosten', 'provider', 'ops', 'modellnutzung'],
   '/admin/analytics': ['analytics', 'auswertung', 'reisen', 'reiseaktivität', 'statistik', 'kennzahlen'],
+  '/admin/marketing': ['marketing', 'utm', 'kampagne', 'campaign', 'newsletter', 'instagram', 'partner', 'qr'],
   '/admin/content': ['content', 'inhalte', 'inventar', 'redaktion', 'inspiration', 'katalog'],
 }
 
