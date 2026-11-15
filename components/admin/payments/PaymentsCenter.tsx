@@ -439,7 +439,7 @@ function RefundCard() {
         <Input containerClassName="[&>div:last-child]:hidden" aria-label="Grund (optional)" placeholder="Grund (optional)" value={reason} onChange={(e)=>setReason(e.target.value)} />
       </div>
       <div className="mt-3">
-        <Button onClick={submit} disabled={!paymentId || !amount || busy}>
+        <Button className="h-auto min-h-11 min-w-0 max-w-full whitespace-normal transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" onClick={submit} disabled={!paymentId || !amount || busy}>
           {ADMIN_EHRLICHE_TEXTE.refundButton}
         </Button>
         {msg && <span className="ml-3 text-sm text-muted-foreground">{msg}</span>}

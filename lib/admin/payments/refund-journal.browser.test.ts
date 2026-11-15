@@ -113,6 +113,21 @@ async function onlyReads(page: Page) {
   assert.ok(calls.every(call => call.method === 'GET'))
 }
 
+async function fitsViewport(page: Page) {
+  const bounds = await page.evaluate(() => ({
+    viewport: innerWidth,
+    page: document.documentElement.scrollWidth,
+    overflow: Array.from(document.querySelectorAll('main *')).flatMap(element => {
+      const rect = element.getBoundingClientRect()
+      return rect.width > 0 && (rect.left < -1 || rect.right > innerWidth + 1)
+        ? [{ tag: element.tagName, classes: element.getAttribute('class'), left: rect.left, right: rect.right,
+          text: element.textContent?.slice(0, 80) }]
+        : []
+    }).slice(0, 12),
+  }))
+  assert.ok(bounds.page <= bounds.viewport + 1, JSON.stringify(bounds))
+}
+
 for (const width of [320, 390, 1280]) {
   test(`Refund journal keeps exact values and controls usable at ${width}px and 200% text`, { timeout: 30_000 }, async () => {
     const page = await journal(width)
@@ -131,9 +146,8 @@ for (const width of [320, 390, 1280]) {
       assert.equal(await list.locator('script').count(), 0)
       for (const factor of [1, 2]) {
         await textScale(page, factor)
-        const bounds = await page.evaluate(() => ({ viewport: innerWidth, page: document.documentElement.scrollWidth }))
-        assert.ok(bounds.page <= bounds.viewport + 1, JSON.stringify({ width, factor, ...bounds }))
-        for (const name of ['Filtern', 'Zurücksetzen', 'Journal aktualisieren', 'Weitere Notizen laden']) {
+        await fitsViewport(page)
+        for (const name of ['Filtern', 'Zurücksetzen', 'Journal aktualisieren', 'Weitere Notizen laden', 'Lokal vermerken']) {
           const control = page.getByRole('button', { name, exact: true })
           const box = await control.boundingBox()
           assert.ok(box && box.x >= 0 && box.x + box.width <= width + 1 && box.height >= 44, `${name}/${width}/${factor}`)
@@ -155,14 +169,14 @@ test('journal distinguishes initial failure, real empty and filtered empty; Ente
     await respond(page, await pending(page, '/refunds'), 503, { message: 'Synthetischer Ausfall' })
     await page.getByText('Synthetischer Ausfall', { exact: true }).waitFor()
     await textScale(page, 2)
-    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true)
+    await fitsViewport(page)
     const retryBox = await page.getByRole('button', { name: 'Erneut versuchen', exact: true }).boundingBox()
     assert.ok(retryBox && retryBox.height >= 44 && retryBox.x >= 0 && retryBox.x + retryBox.width <= 321)
     assert.doesNotMatch(await page.locator('main').innerText(), /Keine Erstattungsnotizen/)
     await page.getByRole('button', { name: 'Erneut versuchen', exact: true }).click()
     await respond(page, await pending(page, '/refunds'), 200, data([]))
     await page.getByText('Keine Erstattungsnotizen vorhanden.', { exact: true }).waitFor()
-    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true)
+    await fitsViewport(page)
     await page.getByLabel('Exakte Zahlungs-ID', { exact: true }).fill('payment-B')
     await page.getByLabel('Exakte Zahlungs-ID', { exact: true }).press('Enter')
     const filtered = await pending(page, '/refunds')

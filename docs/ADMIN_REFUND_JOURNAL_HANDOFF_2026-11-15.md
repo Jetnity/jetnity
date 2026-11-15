@@ -32,6 +32,12 @@ Twelve new mounted cases use real production components and CSS. They cover320/3
 
 The mounted immediate-denial proof begins at this application's API response. The Supabase SDK reads an upstream PostgREST response body before resolving its query. A stalled upstream body can therefore still delay this route, and an aborted body may become status0. This package does not claim immediate denial through that extra SDK boundary. The existing guard and API-header behavior remain as described above; no weaker fallback is introduced.
 
+### First complete CI and collected layout correction
+
+Published head `0eacaaf6f3c4e8d6cd2c10a1851eca3527c65f71`, tree `cf46b915c6963109ab6c8c83c37add2e0b28f08a`, ran [CI 43676540956](https://github.com/Jetnity/jetnity/actions/runs/43676540956), completed 15 November at04:36:12UTC. All nine full logs were collected and reviewed before correction: core8802 tests,8798pass,2fail,2existing Workspace skips. All14 inherited mounted cases and10/12 new cases passed. Two new cases failed the strict page-width assertion at320px/200% text, once with populated rows and once with the initial error state; the populated case measured362px page width. The later interactions of the error-state case were not reached. Typecheck/lint passed; all six separate native/UI jobs passed. Core's five static checks and build were skipped after its test failure; the aggregate was consequently red. Auth separately reported only the known uri_allow_list mismatch.
+
+The bounded correction gives the existing RefundCard submit button local maximum-width, wrapping and44px minimum-height classes, matching the journal's controls. Its inherited nowrap label was the concrete source candidate for the common page overflow; the measured CI log did not identify an element. No submit handler, payload, POST route or writer semantics changes. The existing hard page/label bounds remain, now also explicitly covering this disabled submit control. Future width failures include up to12 overflowing DOM rectangles from the synthetic fixture, so an unresolved cause is visible rather than hidden by a weaker assertion. Actual re-execution of both failed cases and the full suite remains for the next normal CI run.
+
 ## Integration and current execution state
 
 The installed #1197 BG1 guard prevents independent Counts grants (#1202). This journal changes none of those database rights or objects. No guard function, audit, incident latch, scheduler or entry route was invoked or modified.
