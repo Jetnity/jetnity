@@ -55,6 +55,15 @@ before(async () => {
       alias: { '@': process.cwd() },
       define: {
         'process.env.NODE_ENV': '"development"',
+        // Next normally replaces these next/link build constants. This bare
+        // component bundle has no Node `process` global. The values match the
+        // current next.config.js: no base path, locale router or trailing slash.
+        'process.env.__NEXT_ROUTER_BASEPATH': '""',
+        'process.env.__NEXT_I18N_SUPPORT': 'false',
+        'process.env.__NEXT_TRAILING_SLASH': 'false',
+        'process.env.__NEXT_MANUAL_TRAILING_SLASH': 'false',
+        'process.env.__NEXT_MANUAL_CLIENT_BASE_PATH': 'false',
+        'process.env.__NEXT_LINK_NO_TOUCH_START': 'false',
         // The existing deletion presentation accepts this local-only target.
         // No real Supabase URL, token or browser Auth session enters the proof.
         'process.env.NEXT_PUBLIC_SUPABASE_URL': '"http://127.0.0.1:54321"',
@@ -64,6 +73,8 @@ before(async () => {
     }),
     postcss([nesting(), tailwind(require(join(process.cwd(), 'tailwind.config.js'))), autoprefixer()]).process(readFileSync(from, 'utf8'), { from }),
   ])
+  assert.doesNotMatch(bundle.outputFiles[0].text, /\bprocess\s*\.\s*env\b/,
+    'Every browser environment expression must be replaced explicitly; do not hide missing Next build constants behind a process shim')
   const script = bundle.outputFiles[0].text.replaceAll('</script', '<\\/script')
   const style = css.css.replaceAll('</style', '<\\/style')
   server = createServer((request, response) => {
@@ -112,7 +123,44 @@ async function open(t: TestContext, options: {
   const page = await browser!.newPage({ viewport: { width: options.width ?? 1280, height: 900 } })
   page.setDefaultTimeout(7_000)
   const violations: string[] = []
-  page.on('pageerror', (error) => violations.push(`Runtime: ${error.message}`))
+  const consoleErrors: string[] = []
+  let navigation: { status: number; contentType: string | null; contentSecurityPolicy: string | null } | null = null
+  let diagnosed = false
+  const diagnose = async (stage: string) => {
+    diagnosed = true
+    let documentState: unknown
+    try {
+      documentState = page.isClosed() ? { closed: true } : await page.evaluate(() => ({
+        readyState: document.readyState, title: document.title, path: location.pathname,
+        bootPresent: Boolean(window.__languageFixtureBoot), completionPresent: Boolean(window.__settingsCompletion),
+        bindings: {
+          commit: typeof window.__commitLanguageFixture, read: typeof window.__readLanguageFixture,
+          requestViolation: typeof window.__recordSettingsRequestViolation,
+        },
+        harness: window.__settingsCompletion?.diagnostics() ?? null,
+        rootPresent: Boolean(document.getElementById('root')), mainCount: document.querySelectorAll('main').length,
+        headings: [...document.querySelectorAll('h1')].map((heading) => heading.textContent?.slice(0, 200)).slice(0, 6),
+        bodyText: document.body?.innerText.slice(0, 1500) ?? null,
+        rootHtml: document.getElementById('root')?.innerHTML.slice(0, 3500) ?? null,
+      }))
+    } catch (error) {
+      documentState = { unavailable: error instanceof Error ? error.message.slice(0, 1000) : String(error).slice(0, 1000) }
+    }
+    t.diagnostic('SETTINGS_FIXTURE_DIAGNOSTIC ' + JSON.stringify({
+      stage, surface: fixture.surface, navigation, violations: violations.slice(0, 12),
+      consoleErrors, document: documentState,
+    }))
+  }
+  page.on('pageerror', (error) => {
+    const detail = (error.stack ?? error.message).slice(0, 3000)
+    violations.push(`Runtime: ${detail}`)
+    // A failed test can mask its after-hook assertion. Emit the actual browser
+    // error directly as well, so a heading timeout never hides its root cause.
+    t.diagnostic('SETTINGS_PAGE_ERROR ' + detail)
+  })
+  page.on('console', (message) => {
+    if (message.type() === 'error' && consoleErrors.length < 12) consoleErrors.push(message.text().slice(0, 2000))
+  })
   await page.route('**/*', async (route) => {
     const url = new URL(route.request().url())
     if (url.origin === origin && ['/account/settings', '/admin/settings', '/admin/localization'].includes(url.pathname)) await route.continue()
@@ -133,6 +181,7 @@ async function open(t: TestContext, options: {
   t.after(async () => {
     try {
       if (!page.isClosed()) violations.push(...await page.evaluate(() => window.__settingsCompletion?.unexpectedRequests() ?? []))
+      if (violations.length && !diagnosed) await diagnose('teardown')
     } finally {
       await page.close()
       fixtures.delete(id)
@@ -141,10 +190,20 @@ async function open(t: TestContext, options: {
   })
   if (options.clock) await page.clock.install({ time: CLOCK_START })
   const path = fixture.surface === 'catalog' ? '/admin/localization' : fixture.surface === 'admin' ? '/admin/settings' : '/account/settings'
-  await page.goto(`${origin}${path}?fixture=${id}`)
-  await page.locator('main h1').waitFor()
-  if (initial.status === 'bereit' && fixture.surface !== 'catalog') {
-    await page.waitForFunction(() => window.__settingsCompletion.observers().some((observer) => observer.active))
+  try {
+    const response = await page.goto(`${origin}${path}?fixture=${id}`)
+    navigation = response ? {
+      status: response.status(), contentType: response.headers()['content-type'] ?? null,
+      contentSecurityPolicy: response.headers()['content-security-policy'] ?? null,
+    } : null
+    assert.equal(navigation?.status, 200, 'The actual synthetic document must load successfully')
+    await page.locator('main h1').waitFor()
+    if (initial.status === 'bereit' && fixture.surface !== 'catalog') {
+      await page.waitForFunction(() => window.__settingsCompletion.observers().some((observer) => observer.active))
+    }
+  } catch (error) {
+    await diagnose('open')
+    throw error
   }
   return { page, fixture }
 }

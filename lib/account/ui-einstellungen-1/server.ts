@@ -127,8 +127,8 @@ function laufzeitUmgebung(): Umgebung {
 
 const anwendung = uiEinstellungenServerMitPorts({
   umgebung: laufzeitUmgebung,
-  rscClient: () => createServerComponentClient(),
-  actionClient: () => createServerActionClient(),
+  rscClient: async () => await createServerComponentClient(),
+  actionClient: async () => await createServerActionClient(),
 })
 
 export async function uiEinstellungenFuerSeite(): Promise<UiEinstellungenLesen> {

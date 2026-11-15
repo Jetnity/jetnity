@@ -51,13 +51,15 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
         '/admin/provider-ops',
         '/admin/analytics',
         '/admin/content',
+        '/admin/settings',
+        '/admin/localization',
       ],
     )
     assert.equal(operator.every((item) => item.kind === 'ready'), true)
     assert.equal(operator.some((item) => item.href === '/admin/analytics'), true)
 
     const creator = filterAdminNavSearch(ADMIN_NAV_ITEMS, CREATOR, '')
-    assert.deepEqual(creator.map((item) => item.href), ['/admin'])
+    assert.deepEqual(creator.map((item) => item.href), ['/admin', '/admin/settings', '/admin/localization'])
 
     const notzugang = filterAdminNavSearch(ADMIN_NAV_ITEMS, BREAK_GLASS, '')
     assert.equal(notzugang.some((item) => item.href === '/admin/users'), false)

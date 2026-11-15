@@ -48,6 +48,7 @@ declare global {
     __recordSettingsRequestViolation: (message: string) => Promise<void>
     __settingsCompletion: {
       documentId: string
+      diagnostics: () => { surface: LanguageFixtureBoot['surface']; initialStatus: UiEinstellungenLesen['status']; renderRequests: number; mounted: boolean }
       calls: () => { kind: 'save' | 'read'; input: unknown; startedAt: number; settled: boolean; committed: boolean }[]
       reply: (index: number, body: unknown) => void
       reject: (index: number) => void
@@ -66,6 +67,10 @@ declare global {
 }
 
 const boot = window.__languageFixtureBoot
+if (!boot || !['konto', 'admin', 'catalog'].includes(boot.surface)) throw new Error('Missing or invalid synthetic settings boot')
+for (const port of ['__commitLanguageFixture', '__readLanguageFixture', '__recordSettingsRequestViolation'] as const) {
+  if (typeof window[port] !== 'function') throw new Error(`Missing synthetic settings port: ${port}`)
+}
 // Use the real Admin theme selector and tokens from globals.css. The fixture
 // supplies no replacement colors, contrast fixes or component styles.
 document.documentElement.classList.toggle('dark', boot.appearance === 'dark')
@@ -75,6 +80,7 @@ const observers: Observer[] = []
 const unexpectedRequests: string[] = []
 let initial = boot.initial
 let mounted = true
+let renderRequests = 0
 
 function action(kind: ActionCall['kind'], input: unknown): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -118,8 +124,11 @@ function pendingAction(index: number): ActionCall {
   return call
 }
 
-const root = createRoot(document.getElementById('root')!)
+const container = document.getElementById('root')
+if (!container) throw new Error('Missing synthetic settings root element')
+const root = createRoot(container)
 function render() {
+  renderRequests += 1
   root.render(
     <StrictMode>
       <main className="min-w-0 bg-background text-foreground">
@@ -135,6 +144,7 @@ function render() {
 
 window.__settingsCompletion = {
   documentId: crypto.randomUUID(),
+  diagnostics: () => ({ surface: boot.surface, initialStatus: initial.status, renderRequests, mounted }),
   calls: () => actionCalls.map(({ kind, input, startedAt, settled, committed }) => ({ kind, input, startedAt, settled, committed })),
   reply(index, body) {
     const call = pendingAction(index)
