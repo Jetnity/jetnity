@@ -21,8 +21,8 @@ export default function TravelAnalytics({ report, invalidRange = false }: { repo
   const total = rows?.reduce((sum, row) => sum + row.trips, 0)
 
   return (
-    <div className="mx-auto grid min-w-0 max-w-7xl gap-5 break-words">
-      <header>
+    <div className="mx-auto grid min-w-0 max-w-7xl grid-cols-1 gap-5 [overflow-wrap:anywhere]">
+      <header className="min-w-0">
         <p className="text-sm font-medium text-muted-foreground">Analytics · Jetnity</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Reiseaktivität</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Wie viele Reisen in Jetnity angelegt wurden – als Gesamtzahlen, ohne private Reiseinhalte.</p>
@@ -52,7 +52,7 @@ export default function TravelAnalytics({ report, invalidRange = false }: { repo
 
       <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6" aria-labelledby="analytics-series">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0 max-w-full">
             <h2 id="analytics-series" className="text-lg font-semibold">Neue Reisen je Kalendertag</h2>
             <p className="mt-1 text-sm text-muted-foreground">Letzte {report.range} Tage einschliesslich heute</p>
           </div>
@@ -87,7 +87,7 @@ export default function TravelAnalytics({ report, invalidRange = false }: { repo
                   <table className="w-full text-left text-sm tabular-nums">
                     <caption className="sr-only">Alle gelieferten Tageswerte der Reiseauswertung</caption>
                     <thead><tr className="border-b border-border"><th scope="col" className="py-2">Tag</th><th scope="col" className="py-2 text-right">Neue Reisen</th></tr></thead>
-                    <tbody>{rows.map((row) => <tr key={row.date} className="border-b border-border last:border-0"><th scope="row" className="py-2 font-normal">{dayLabel(row.date)}</th><td className="py-2 text-right">{row.trips.toLocaleString('de-CH')}</td></tr>)}</tbody>
+                    <tbody>{rows.map((row) => <tr key={row.date} className="border-b border-border last:border-0"><th scope="row" className="whitespace-nowrap py-2 font-normal">{dayLabel(row.date)}</th><td className="whitespace-nowrap py-2 text-right">{row.trips.toLocaleString('de-CH')}</td></tr>)}</tbody>
                   </table>
                 </div>
               </details>

@@ -78,7 +78,12 @@ for (const width of [320, 390, 1280]) {
       assert.equal(await page.locator('tbody tr').count(), 90)
       for (const scale of [1, 2]) {
         await page.evaluate((factor) => { document.documentElement.style.fontSize = `${16 * factor}px` }, scale)
-        const dimensions = await page.evaluate(() => ({ viewport: window.innerWidth, page: document.documentElement.scrollWidth }))
+        const dimensions = await page.evaluate((factor) => ({
+          scale: factor, viewport: window.innerWidth, page: document.documentElement.scrollWidth,
+          overflowing: document.documentElement.scrollWidth <= innerWidth + 1 ? [] : [...document.querySelectorAll('main *')]
+            .map((element) => ({ tag: element.tagName, className: element.className, text: element.textContent?.slice(0, 60), right: element.getBoundingClientRect().right, width: element.getBoundingClientRect().width }))
+            .filter((element) => element.right > innerWidth + 1).slice(0, 15),
+        }), scale)
         assert.ok(dimensions.page <= dimensions.viewport + 1, `page overflow: ${JSON.stringify(dimensions)}`)
         for (const name of ['7 Tage', '30 Tage', '90 Tage']) {
           const link = page.getByRole('link', { name, exact: true })
@@ -88,6 +93,9 @@ for (const width of [320, 390, 1280]) {
         const refresh = page.getByRole('button', { name: 'Ansicht aktualisieren' })
         const bounds = await refresh.boundingBox()
         assert.ok(bounds && bounds.x >= 0 && bounds.x + bounds.width <= width + 1 && bounds.height >= 44)
+        const label = await refresh.locator(':scope > span:last-child').boundingBox()
+        assert.ok(label && label.x >= bounds.x && label.x + label.width <= bounds.x + bounds.width + 1
+          && label.y >= bounds.y && label.y + label.height <= bounds.y + bounds.height + 1, 'refresh label leaves its button')
       }
       await page.getByRole('link', { name: '7 Tage', exact: true }).focus()
       await page.keyboard.press('Enter')

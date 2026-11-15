@@ -56,6 +56,14 @@ The ordinary `npm run build` prebuild and `npm run check:setup:ci` wrappers fail
 6. Webhook pagination followed by refresh replaces rows and uses the new cursor.
 7. Editing a transaction search field does not silently change the filter of the next page; applying the filter resets pagination.
 
+## First complete CI round and corrective batch
+
+Run [43665524359](https://github.com/Jetnity/jetnity/actions/runs/43665524359) on `b900527261aabb6f525c381b3b123b12571dfb87` completed with 8,777 core tests: 8,773 passed, two failed, two existing Guest Workspace browser scenarios skipped because their separate audit server was not configured. Those skips are not acceptance of the corresponding public journeys.
+
+Both failures were the new Analytics narrow-screen overflow assertions (320px and 390px, each measured a 392px document). The 1280px case, partial-source case, and all ten payment interaction cases passed. The entire failure set was collected before the corrective batch: explicitly shrinkable grid/flex content and Button label spans, word wrapping that also contributes to min-content sizing, and better scale/element diagnostics without relaxing the overflow assertion. Reverification on the corrected head is required.
+
+All six separate native-database/UI jobs passed. The Auth configuration job failed on one `uri_allow_list` difference against `auth.additional_redirect_urls` in `supabase/config.toml`; that reserved source is not changed here. The aggregate check correctly remained failed. Vercel's preview build succeeded. There is no global CI-green or release claim.
+
 ## Database, security and costs
 
 No migration, schema, RLS, service-role access, endpoint, shared authentication, provider configuration, production deployment, scheduler or paid service was added or changed. Existing authenticated aggregate permissions remain the data boundary. Navigation filtering is only a usability feature, not authorization. No real payment processor or new money movement is introduced.
