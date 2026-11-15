@@ -16,6 +16,13 @@ not begin or commit independently. Installation fails on an already existing
 candidate; there is no silent `IF NOT EXISTS`/overwrite upgrade path.
 `readback.sql` reads catalog metadata only, and does not turn absence into PASS.
 
+The unchanged reference seed runs after all schema DDL, owner, RLS and privilege
+statements. Inserting before a later ALTER TABLE leaves deferred FK trigger
+events pending in the same transaction and can fail with SQLSTATE 55006. Seeding
+last preserves the deferred constraints and the single commit boundary; it does
+not disable triggers or force earlier constraint evaluation. The existing
+postgres owner's documented BYPASSRLS permits the seed after FORCE RLS.
+
 No file belongs in `supabase/migrations/`. There is no hosted installer, DSN,
 environment flag, service-role client or dynamic RPC/runtime workaround.
 No new role or change to existing auth helpers/default privileges is required

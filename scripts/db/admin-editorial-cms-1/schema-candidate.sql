@@ -244,13 +244,6 @@ CREATE TRIGGER cms_operation_immutable BEFORE UPDATE OR DELETE ON jetnity_cms_pr
 CREATE TRIGGER cms_operation_truncate BEFORE TRUNCATE ON jetnity_cms_private.inspiration_operations_v1
   FOR EACH STATEMENT EXECUTE FUNCTION jetnity_cms_private.immutable_v1();
 
--- Identity inventory only. These rows have no draft or published content.
-INSERT INTO jetnity_cms_private.inspiration_entries_v1(entry_id, locale, name, country, image, sort_order)
-SELECT id, 'de', r->>'name', r->>'country', r->>'image', ordinal::integer
-FROM unnest(ARRAY['geonames:1650535','geonames:2267057','geonames:2657915','geonames:2759794'])
-  WITH ORDINALITY AS ids(id, ordinal)
-CROSS JOIN LATERAL (SELECT jetnity_cms_private.reference_v1(id) AS r) reference;
-
 ALTER TABLE jetnity_cms_private.inspiration_entries_v1 OWNER TO postgres;
 ALTER TABLE jetnity_cms_private.inspiration_revisions_v1 OWNER TO postgres;
 ALTER TABLE jetnity_cms_private.inspiration_operations_v1 OWNER TO postgres;
@@ -273,3 +266,10 @@ ALTER FUNCTION jetnity_cms_private.receipt_valid_v1(jsonb,jsonb,bigint,timestamp
 ALTER FUNCTION jetnity_cms_private.immutable_v1() OWNER TO postgres;
 ALTER FUNCTION jetnity_cms_private.entry_update_v1() OWNER TO postgres;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA jetnity_cms_private FROM PUBLIC, anon, authenticated, service_role;
+
+-- Identity inventory only. These rows have no draft or published content.
+INSERT INTO jetnity_cms_private.inspiration_entries_v1(entry_id, locale, name, country, image, sort_order)
+SELECT id, 'de', r->>'name', r->>'country', r->>'image', ordinal::integer
+FROM unnest(ARRAY['geonames:1650535','geonames:2267057','geonames:2657915','geonames:2759794'])
+  WITH ORDINALITY AS ids(id, ordinal)
+CROSS JOIN LATERAL (SELECT jetnity_cms_private.reference_v1(id) AS r) reference;

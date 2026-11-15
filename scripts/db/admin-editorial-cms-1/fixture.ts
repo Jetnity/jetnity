@@ -177,9 +177,30 @@ export async function createCmsFixture(lifetime: OwnedTestLifetime) {
     GRANT EXECUTE ON FUNCTION public.rollenrang(text),public.aktuelle_rolle(),public.hat_rolle_mindestens(text),
       public.aktuelles_admin_aal2(),public.darf_inhalte_moderieren() TO authenticated,service_role;`)
   await resetActors(owner)
-  // Both candidate files are actually committed as their production owner;
-  // neither candidate is allowed to hide a second transaction boundary.
-  await owner.query('BEGIN; SET LOCAL ROLE postgres;\n' + sources.map((source) => source.sql).join('\n') + '\nCOMMIT;')
+  // One connection and one transaction, with separate acknowledged phases.
+  // On failure the caller's OwnedTestLifetime closes the transaction/cluster;
+  // no later phase, retry or second installation transaction is started.
+  const installation = [
+    { phase: 'begin_role', sql: 'BEGIN; SET LOCAL ROLE postgres;' },
+    { phase: 'schema', sql: sources[0]!.sql },
+    { phase: 'functions', sql: sources[1]!.sql },
+    { phase: 'commit', sql: 'COMMIT;' },
+  ] as const
+  for (const step of installation) {
+    try {
+      await owner.query(step.sql)
+    } catch (error) {
+      const sqlstate = error instanceof LocalPgError && /^[0-9A-Z]{5}$/.test(error.code) ? error.code : null
+      // Fixed phases, SHA256 digests and a five-character SQLSTATE only. No
+      // raw SQL, server error text, parameter values or connection identity.
+      const diagnostic = 'CMS_NATIVE_INSTALL_FAILED ' + JSON.stringify({
+        phase: step.phase, schemaSha256: sources[0]!.sha256, functionsSha256: sources[1]!.sha256,
+        sqlstate, kind: sqlstate ? 'sql_error' : error instanceof LocalPgError ? 'transport_error' : 'non_sql_failure',
+      })
+      assert.ok(Buffer.byteLength(diagnostic, 'utf8') <= 512, 'bounded CMS installation diagnostic')
+      throw new Error(diagnostic)
+    }
+  }
   for (const definition of authority) {
     const rows = await owner.query('SELECT p.prosrc,r.rolname AS owner FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace JOIN pg_roles r ON r.oid=p.proowner WHERE n.nspname=\'public\' AND p.proname=$1::text', [pgText(definition.name)])
     assert.equal(rows.length, 1)

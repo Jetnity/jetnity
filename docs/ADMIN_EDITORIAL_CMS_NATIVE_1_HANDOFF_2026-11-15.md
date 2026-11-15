@@ -131,7 +131,7 @@ The local working-tree bytes after the collected correction are:
 
 | File | SHA256 |
 | --- | --- |
-| `scripts/db/admin-editorial-cms-1/schema-candidate.sql` | `91be00d0ee8302887632d3f0e283b5a61407bb2be059a44d5cd073d0ab8e72b0` |
+| `scripts/db/admin-editorial-cms-1/schema-candidate.sql` | `6b9a80992e6729aa030f1abf06029c627361f1c20fd2e0f00f03f5eea7ff2b17` |
 | `scripts/db/admin-editorial-cms-1/functions-candidate.sql` | `64c809ec41d5ed1484b555b7f730d347ddf40db019ba3cd707ba267182da4f1f` |
 | `lib/admin/content/cms/contract.ts` | `78e7239e5ff0b375e499a3e883043068d157f90c8764af1e57203398a32f8031` |
 | `lib/admin/content/cms/contract.test.ts` | `f5c46a5e4a5c6ed01c907a33815e9fe73a1492371c4c4ee088b7b1875f55ecc6` |
@@ -171,7 +171,7 @@ native input-parser boundary is separately acknowledged.
 
 | Additional source | SHA256 |
 | --- | --- |
-| `scripts/db/admin-editorial-cms-1/fixture.ts` | `800a28401f35f924cbd1b50d845ea784b4dccb347a143d8478d3976269b64712` |
+| `scripts/db/admin-editorial-cms-1/fixture.ts` | `8f573870127f7e732db7cb123ac138039b39bde7ce5f703bc7a1517b36181420` |
 | `scripts/db/admin-editorial-cms-1/native.test.ts` | `1f1d111ac2c8e82914617b7450ee49e9d771d3bcb4476586b90154bb469ec22a` |
 | `.github/workflows/admin-editorial-cms-native.yml` | `279d4ebbb510d5a8af3b040dd20c64421452ab98562d143a890c6a964a3922a3` |
 
@@ -209,3 +209,58 @@ lane's coordinated integration; this native candidate is not a finished CMS or
 a whole-system release for 30 November. Root's current user authorization
 continues to cover independent Development follow-on work, with merges,
 Production, logins/2FA and new costs remaining with Sasa.
+
+## First full CI and collected installation correction
+
+The first published candidate is `c5c3ffc0c4f2a747f5f7938341f8058948163b5b`,
+tree `c6decd4ee3f14a119a531349bc7f7eb6ac2d49bd`, Draft PR #1206. GitHub's
+synthetic test checkout `0d657f432ecac64defa86e3162f70cf9568ff8e7` has exactly
+the same tree. No merge was performed.
+
+Its complete normal [CI 43712869111](https://github.com/Jetnity/jetnity/actions/runs/43712869111)
+passes all nine jobs: Core **8,828 tests, 8,826 passed, 0 failed, 2 existing
+optional Workspace skips**, full TypeScript, ESLint 0 errors/193 baseline
+warnings, all five static gates and the Production build. Existing native
+families pass persisted 1/1, atomic 1/1, store 4/4, lifecycle 4/4 and hosted PG17
+9/9; the isolated UI passes 51/51 and the Auth check verifies 56 expected values
+among 244 observed keys. These are evidence for the first head only.
+
+The separate mandatory [native CMS run 43712869051](https://github.com/Jetnity/jetnity/actions/runs/43712869051)
+fails all **25 scenario groups plus their parent** with the same SQLSTATE
+`55006` during shared installation. No scenario reached its feature assertions;
+this is not a successful native proof. All groups were allowed to finish and
+their diagnostics were collected. Every cleanup settles its ten operations,
+leaves zero pending work, closes the one connection and stops its one cluster.
+PG17 provisioning, native TypeScript and setup had succeeded. The normal CI
+finished and its complete failure list was also reviewed before this correction
+was published.
+
+Source review finds the seed INSERT before later ALTER TABLE owner/RLS actions,
+after initially deferred foreign keys have been installed. Deferred constraints
+can leave trigger events until commit; this ordering explains the common
+object-in-use error. The original log identifies the installation boundary but
+does not identify the precise failing ALTER statement. The correction moves
+the **byte-identical seed block** after every schema DDL, owner, RLS and REVOKE
+statement. All other SQL bytes, data, constraints and deferrability are retained.
+There is no intermediate commit, forced early constraint evaluation or disabled
+trigger. The documented existing owner retains its BYPASSRLS capability, so the
+seed can execute after FORCE RLS. The functions file performs no later table
+alteration. [PostgreSQL17 constraint timing](https://www.postgresql.org/docs/17/sql-set-constraints.html)
+documents the deferred trigger/commit relationship.
+
+The fixture now acknowledges fixed `begin_role`, `schema`, `functions` and
+`commit` phases sequentially on the **same connection and same transaction**.
+Failure emits at most 512 bytes containing only the fixed phase, the two source
+digests, a validated SQLSTATE or null and a fixed category. No SQL, values,
+server error text or connection identity is printed. A failure starts no later
+phase and no retry; the existing ownership cleanup remains responsible for the
+open transaction and process. Shared PG helpers and all 25 test bodies remain
+byte-identical to the first published candidate.
+
+Root independently read the complete SQL/fixture diff. The corrected local
+source passes 12/12 domain tests, full TypeScript, explicit native TypeScript,
+scoped ESLint and whitespace checks. The source identity tables above now bind
+this corrected candidate; the first-head schema/fixture identities remain in
+the immutable first commit. Both complete CI workflows must run again on the
+new source head. No native success, Hosted installation or working CMS is
+inferred from the prior normal CI or from these local static checks.
