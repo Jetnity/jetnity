@@ -5,17 +5,19 @@ import Flugvergleich from '@/components/trips/organisieren/fluege/Flugvergleich'
 import { flugWidgetOrigin } from '@/lib/providers/travelpayouts/suche'
 import type { Trip, TripStage } from '@/types/trips'
 
-export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Paris · Kartenvorschau', robots: { index: false, follow: false } }
 
+type Suchbereich = 'fluege' | 'unterkunft' | 'aktivitaeten'
+
 // Isolated, read-only search context for the protected Paris map example.
-export default async function KartenSuche({ params }: {
-  params: Promise<{ tripId: string; bereich: string }>
+export default async function KartenSuche({ params, bereich }: {
+  params: Promise<{ tripId: string }>
+  bereich: Suchbereich
 }) {
-  const { tripId, bereich } = await params
+  const { tripId } = await params
   if (process.env.VERCEL_ENV !== 'preview' ||
       process.env.VERCEL_GIT_COMMIT_REF !== 'feat/private-travel-ux-20261113' ||
-      tripId !== 'paris-beispiel' || !['fluege', 'unterkunft', 'aktivitaeten'].includes(bereich)) notFound()
+      tripId !== 'paris-beispiel') notFound()
 
   const stadt: TripStage = {
     id: 'paris', name: 'Paris', position: 1, countryCode: 'FR', placeId: 'geonames:2988507',
