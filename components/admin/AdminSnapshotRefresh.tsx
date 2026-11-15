@@ -16,7 +16,7 @@ export default function AdminSnapshotRefresh({ observedAt }: { observedAt: strin
       </div>
       <Button variant="outline" onClick={() => window.location.reload()}
         leftIcon={<RefreshCw className="h-4 w-4 shrink-0" aria-hidden="true" />}
-        className="h-auto min-h-11 min-w-0 max-w-full whitespace-normal text-left pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words">
+        className="h-auto min-h-11 min-w-0 max-w-full whitespace-normal text-left transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words">
         Ansicht aktualisieren
       </Button>
     </div>

@@ -45,6 +45,14 @@ At the time of this handoff, #1199's Vercel preview build succeeded. Its Auth co
 
 The parent's first complete core run additionally exposed two Analytics narrow-screen failures. Its corrective batch is included in this package's base, and the same explicit grid sizing and inherited word-wrapping rule is applied to Content. Neither viewport assertion is relaxed. See the parent's [CI record](ADMIN_OPERATIONS_HANDOFF_2026-11-15.md) for the complete 8,777-test result and the two existing skipped public-journey scenarios.
 
+## First complete CI round
+
+Run [43667469516](https://github.com/Jetnity/jetnity/actions/runs/43667469516) on `c1a71c4045ab8b09f1fcbda74d45fa17fa54e548` completed with 8,787 core tests: **8,783 passed, two failed, two existing Guest Workspace browser scenarios skipped**. All five new Content browser cases, the ten payment cases and all six separate native database/UI jobs passed. The only test failures were the inherited Analytics Button-label inclusion assertion at 320px and 390px. TypeScript and lint passed; the core job stopped before its later gates/build. Vercel Preview succeeded. Auth comparison independently retained the one reserved `uri_allow_list` difference; the final aggregate failed as a consequence of the core failure.
+
+The full failure set was collected before this shared correction: only the Snapshot and Denied buttons use color-only transitions, while browser measurements wait for finite transitions (with an explicit three-second failure deadline) and capture the Button and label rectangles synchronously. Existing viewport, minimum-target and label-inclusion limits remain intact. Diagnostic output includes width, text scale, both rectangles and computed font/line height. The former separate measurements could cross an in-progress font/size/scroll change; that timing risk is confirmed in source, but is not presented as a proven sole failure cause before the next complete CI run.
+
+The same correction is applied to both #1199 and this branch as ordinary fast-forward commits, without merging or rewriting either branch. Because this stacked branch and its parent receive separate correction commits, GitHub may show identical inherited correction files in this PR's three-dot diff. The Content-specific behavior and all 19 mounted cases remain present. Exact-head follow-up results belong in the PR record.
+
 ## Next Admin work
 
 - Content inventory is now present; editorial editing, approval records and publishing remain a separate future contract.

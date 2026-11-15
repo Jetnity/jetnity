@@ -64,6 +64,10 @@ Both failures were the new Analytics narrow-screen overflow assertions (320px an
 
 All six separate native-database/UI jobs passed. The Auth configuration job failed on one `uri_allow_list` difference against `auth.additional_redirect_urls` in `supabase/config.toml`; that reserved source is not changed here. The aggregate check correctly remained failed. Vercel's preview build succeeded. There is no global CI-green or release claim.
 
+The next complete run [43667374154](https://github.com/Jetnity/jetnity/actions/runs/43667374154) on `58e3c036926f39bcbaf8f7362f1ed966687c16e7` reported no remaining document-overflow failure before the next assertion stopped the 320px case; later scales in that stopped case are not claimed as observed. Core results: 8,777 tests, 8,774 passed, one failed, the same two existing skips. The only failure was the newly added Button-label inclusion measurement at 320px; 390px passed here but failed in the identical inherited check on the Content branch. All ten payment scenarios and all six separate database/UI jobs passed again; Auth drift remained unchanged.
+
+The next bounded correction removes size/font transitions from the two local refresh/recheck buttons while preserving color transitions. The browser proof waits for finite transitions after font reflow and measures button and label together in one browser evaluation, avoiding comparisons across separate layout/scroll moments. A three-second deadline fails explicitly if finite transitions do not settle. No width, height, overflow or label-inclusion threshold is relaxed; a remaining failure now prints viewport width, text scale, both rectangles and computed font/line height. New complete CI evidence is required.
+
 ## Database, security and costs
 
 No migration, schema, RLS, service-role access, endpoint, shared authentication, provider configuration, production deployment, scheduler or paid service was added or changed. Existing authenticated aggregate permissions remain the data boundary. Navigation filtering is only a usability feature, not authorization. No real payment processor or new money movement is introduced.
