@@ -33,3 +33,4 @@ Run all affected Auth/config/target tests together, collect every failure before
 After these packages, prioritize translations and persisted settings, then CMS, then Marketing. Inspect existing storage and protected-path/BG1 contracts first. No claim of full localization, CMS, Marketing or whole-system launch is made by this Auth repair.
 
 The entry display continues to require visa, ETA, passport validity, vaccinations, health, forms with costs and scam warnings, fees, onward ticket, transit, children, customs, special cases, source/date, notice and official link, visible from the start. Unconfirmed information must say “derzeit nicht verfügbar”. Implementation in #1196–#1198 remains with its owner lane.
+
