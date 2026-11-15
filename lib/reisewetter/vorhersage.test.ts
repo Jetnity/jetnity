@@ -42,6 +42,11 @@ test('Vorschaugrenzen, gemeinsame Ortsabfrage und keine Schlüssel in Antworten'
   env.VERCEL_GIT_COMMIT_REF = 'feat/private-travel-ux-20261113'
   env.VERCEL_ENV = 'production'
   assert.equal((await GET(anfrage())).status, 404)
+  env.VERCEL_GIT_COMMIT_REF = 'main'
+  assert.equal((await GET(anfrage('lat=47&lon=8', 'same-origin', 'https://jetnity.com'))).status, 200)
+  assert.equal(adapter.mock.callCount(), 1)
+  adapter.mock.resetCalls()
+  env.VERCEL_GIT_COMMIT_REF = 'feat/private-travel-ux-20261113'
   env.VERCEL_ENV = 'preview'
   assert.equal((await GET(anfrage(undefined, 'same-origin', 'https://jetnity.com'))).status, 404)
   assert.equal((await GET(anfrage(undefined, 'cross-site'))).status, 403)
@@ -57,7 +62,7 @@ test('Vorschaugrenzen, gemeinsame Ortsabfrage und keine Schlüssel in Antworten'
   adapter.mock.mockImplementation(async () => new Response(null, { status: 401 }))
   const wartend = await GET(anfrage('lat=46&lon=7'))
   assert.equal(wartend.status, 503)
-  assert.deepEqual(await wartend.json(), { grund: 'vorschauzugang' })
+  assert.deepEqual(await wartend.json(), { grund: 'anbieterzugang' })
   adapter.mock.mockImplementation(async () => Response.json(wetter))
   assert.equal((await GET(anfrage('lat=46&lon=7'))).status, 200)
 })

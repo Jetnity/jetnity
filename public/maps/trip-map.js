@@ -7,7 +7,8 @@
   const status = document.getElementById('status')
   const send = (type, extra = {}) => parent.postMessage({ source: 'jetnity-trip-map', type, ...extra }, location.origin)
   if (parent === window) return
-  if (!config || config.origin !== location.origin || config.expiresAt <= Date.now()) {
+  const expired = () => config.expiresAt !== null && !(Number.isFinite(config.expiresAt) && config.expiresAt > Date.now())
+  if (!config || config.origin !== location.origin || expired()) {
     send('blocked')
     return
   }
@@ -32,7 +33,7 @@
     send('error')
   }
   const timer = setTimeout(fail, 25000)
-  setTimeout(() => { stopped = true; send('expired') }, Math.max(0, config.expiresAt - Date.now()))
+  if (config.expiresAt !== null) setTimeout(() => { stopped = true; send('expired') }, Math.max(0, config.expiresAt - Date.now()))
   window.gm_authFailure = fail
   const validStops = (value) => Array.isArray(value) && value.length > 0 && value.length <= 1000
     && new Set(value.map((p) => p?.index)).size === value.length
@@ -122,7 +123,7 @@
     highlight()
   }
   window.__jetnityTripMapsReady = () => {
-    if (stopped || config.expiresAt <= Date.now()) return
+    if (stopped || expired()) return
     try {
       map = new window.google.maps.Map(document.getElementById('map'), {
         mapId: config.mapId, center: stops[0], zoom: 10,
@@ -142,7 +143,7 @@
     } catch { fail() }
   }
   window.addEventListener('message', async (event) => {
-    if (stopped || event.source !== parent || event.origin !== config.origin || config.expiresAt <= Date.now()) return
+    if (stopped || event.source !== parent || event.origin !== config.origin || expired()) return
     const data = event.data
     if (!data || data.source !== 'jetnity-trip-map-parent') return
     if (data.type === 'init' && !started && validStops(data.stops)) {
@@ -164,7 +165,7 @@
       const version = ++routeVersion
       let geometry
       try { geometry = await window.google.maps.importLibrary('geometry') } catch { send('route-error'); return }
-      if (version !== routeVersion || stopped || config.expiresAt <= Date.now()) return
+      if (version !== routeVersion || stopped || expired()) return
       const path = geometry.encoding.decodePath(data.path)
       line?.setMap(null)
       line = new window.google.maps.Polyline({ map, path, strokeColor: '#205945', strokeOpacity: 0.95, strokeWeight: 5 })

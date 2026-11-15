@@ -3,7 +3,7 @@
 // Öffentliche Flughafensuche gegen `public.airports`.
 // Kein externer Provider, keine Live-Abfrage, kein Schreibweg.
 
-import { isAppMapPreview } from '@/lib/maps/config'
+import { tripServicesOrigin } from '@/lib/maps/config'
 import { istPosition } from '@/lib/maps/reisekarte'
 import { NextResponse } from 'next/server'
 
@@ -31,7 +31,7 @@ function orFilter(teile: string[]): string {
 export async function GET(req: Request) {
   const code = new URL(req.url).searchParams.get('position')
   if (code !== null) {
-    if (!isAppMapPreview(process.env) || !/^[A-Z]{3}$/.test(code)) return new Response(null, { status: 404 })
+    if (new URL(req.url).origin !== tripServicesOrigin(process.env) || !/^[A-Z]{3}$/.test(code)) return new Response(null, { status: 404 })
     const db = await createRouteHandlerClient()
     const { data, error } = await db.from('airports').select('name,lat,lon').eq('iata', code).maybeSingle()
     const position = data && { lat: data.lat, lng: data.lon }

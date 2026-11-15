@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { mapStopDay, mapWireStops, tripMapStops } from '@/lib/maps/trip-map'
-import { mapPilotConfig, TRIP_MAP_PILOT_RELEASED, tripMapEntryVisible, type MapEnvironment } from '@/lib/maps/config'
+import { APP_MAP_ORIGIN, mapPilotConfig, TRIP_MAP_PILOT_RELEASED, tripMapEntryVisible, type MapEnvironment } from '@/lib/maps/config'
 import { tripMapFrameResponse } from '@/lib/maps/frame'
 import { referenzReise, wiederholteEtappenReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 
@@ -38,29 +38,29 @@ test('repeated visits retain their actual day; ambiguous and unassigned stages d
 })
 
 const now = Date.parse('2026-11-04T08:00:00Z')
-const origin = 'https://maps-pilot.example.vercel.app'
+const origin = APP_MAP_ORIGIN
 const env: MapEnvironment = {
-  VERCEL_ENV: 'preview', JETNITY_MAPS_ENABLED: 'true', JETNITY_MAPS_ALLOWED_ORIGIN: origin,
+  VERCEL_ENV: 'preview', VERCEL_GIT_COMMIT_REF: 'feat/private-travel-ux-20261113', JETNITY_MAPS_ENABLED: 'true', JETNITY_MAPS_ALLOWED_ORIGIN: origin,
   JETNITY_MAPS_PILOT_EXPIRES_AT: '2026-11-04T08:30:00Z',
   GOOGLE_MAPS_BROWSER_KEY: 'test-key-never-sent-to-google', GOOGLE_MAPS_MAP_ID: '12345678abcdef00',
 }
 
 test('release is source-closed, with exact-host, preview, explicit switch, key, map ID and expiry gates', () => {
-  assert.equal(mapPilotConfig(env, origin, now), null)
-  assert.ok(mapPilotConfig(env, origin, now, true))
+  assert.equal(mapPilotConfig({ ...env, VERCEL_GIT_COMMIT_REF: undefined }, origin, now), null)
+  assert.ok(mapPilotConfig(env, origin, now))
   for (const patch of [
     { VERCEL_ENV: 'production' }, { VERCEL_ENV: undefined }, { JETNITY_MAPS_ENABLED: 'false' },
     { JETNITY_MAPS_ALLOWED_ORIGIN: 'https://*.vercel.app' }, { GOOGLE_MAPS_BROWSER_KEY: '' },
     { GOOGLE_MAPS_MAP_ID: 'DEMO_MAP_ID' }, { JETNITY_MAPS_PILOT_EXPIRES_AT: 'invalid' },
     { JETNITY_MAPS_PILOT_EXPIRES_AT: '2026-11-04T08:00:00Z' },
     { JETNITY_MAPS_PILOT_EXPIRES_AT: '2026-11-04T10:00:00Z' },
-  ]) assert.equal(mapPilotConfig({ ...env, ...patch }, origin, now, true), null)
+  ]) assert.equal(mapPilotConfig({ ...env, ...patch }, origin, now), null)
   for (const wrong of ['https://jetnity.com', 'https://maps-pilot.example.vercel.app.evil.test', origin + '/path', origin.replace('https:', 'http:')]) {
-    assert.equal(mapPilotConfig({ ...env, JETNITY_MAPS_ALLOWED_ORIGIN: wrong }, wrong, now, true), null)
+    assert.equal(mapPilotConfig({ ...env, JETNITY_MAPS_ALLOWED_ORIGIN: wrong }, wrong, now), null)
   }
 })
 
-test('real HTTP handler returns no key or external script even with every environment switch set', async () => {
+test('expired preview returns no key or external script even with every environment switch set', async () => {
   const nonces = new Set<string>()
   for (const headers of [new Headers(), new Headers({ 'sec-fetch-dest': 'iframe', 'sec-fetch-site': 'same-origin', 'sec-fetch-mode': 'navigate' })]) {
     const response = tripMapFrameResponse(new Request(origin + '/embed/trip-map', { headers }), env)

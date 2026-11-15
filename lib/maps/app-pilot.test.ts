@@ -18,6 +18,18 @@ test('the app map is limited to its branch, exact host and one-hour interval', (
   assert.equal(mapPilotConfig(env, 'https://jetnity.com', now), null)
 })
 
+test('production serves a non-expiring map only for the main deployment on jetnity.com', () => {
+  const origin = 'https://jetnity.com'
+  const env = { VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main', JETNITY_MAPS_ENABLED: 'true',
+    JETNITY_MAPS_ALLOWED_ORIGIN: origin, GOOGLE_MAPS_MAP_ID: '12345678abcdef00', GOOGLE_MAPS_BROWSER_KEY: 'test-production-browser-key' }
+  assert.equal(mapPilotConfig(env, origin)?.expiresAt, null)
+  assert.equal(mapPilotConfig(env, APP_MAP_ORIGIN), null)
+  assert.equal(mapPilotConfig({ ...env, VERCEL_GIT_COMMIT_REF: 'feature' }, origin), null)
+  assert.equal(mapPilotConfig({ ...env, JETNITY_MAPS_ALLOWED_ORIGIN: APP_MAP_ORIGIN }, origin), null)
+  assert.equal(mapPilotConfig({ ...env, JETNITY_MAPS_ENABLED: 'false' }, origin), null)
+  assert.equal(mapPilotConfig({ ...env, GOOGLE_MAPS_BROWSER_KEY: undefined }, origin), null)
+})
+
 test('sample landmarks remain separate from real hotels whose coordinates are unknown', () => {
   const reise = referenzReise()
   const sample = reiseKarteninhalt({ ...reise, id: 'paris-beispiel' })

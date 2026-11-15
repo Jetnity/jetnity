@@ -15,11 +15,11 @@ class Element {
   querySelector() { return this.children[0] }
   focus() {}
 }
-function runtime(configured = true) {
+function runtime(configured = true, expiresAt: number | null = Date.now() + 1800000) {
   const nodes = new Map<string, Element>()
   for (const id of ['map-config', 'status', 'map', 'cluster', 'cluster-stops', 'cluster-close']) nodes.set(id, new Element())
   nodes.get('map-config')!.textContent = JSON.stringify(configured ? {
-    origin, key: 'test-key-never-sent-to-google', mapId: '12345678abcdef00', expiresAt: Date.now() + 1800000,
+    origin, key: 'test-key-never-sent-to-google', mapId: '12345678abcdef00', expiresAt,
   } : null)
   const messages: Record<string, unknown>[] = []
   const parent = { postMessage: (message: Record<string, unknown>) => messages.push(message) }
@@ -112,4 +112,13 @@ test('disabled configuration, authentication failure and expiry fail closed with
   expired.send({ type: 'init', stops })
   assert.equal(expired.head.children.length, 0)
   assert.equal(expired.messages.at(-1)?.type, 'expired')
+})
+
+
+test('a production map starts after consent and has no pilot expiry timer', () => {
+  const r = runtime(true, null)
+  assert.equal(r.head.children.length, 0)
+  assert.ok(!r.timers.some(timer => timer.delay > 25000))
+  r.send({ type: 'init', stops }); r.ready()
+  assert.equal(r.maps.length, 1)
 })
