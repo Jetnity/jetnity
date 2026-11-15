@@ -7,6 +7,7 @@
 // Keine Fake-Angebote.
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { ArrowRightLeft, Loader2 } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
@@ -571,16 +572,9 @@ export function ManuelleVerbindung({
 
         <OrganisierenFeldgruppe titel="Abfahrt">
           <div className={VERBINDUNG_SPALTEN}>
-            <label className={VERBINDUNG_LABEL}>
-              Abfahrt
-              <input
-                type="date"
-                value={startsOn}
-                disabled={laeuft}
-                onChange={(ereignis) => setStartsOn(ereignis.target.value)}
-                className={VERBINDUNG_FELD}
-              />
-            </label>
+            <Suchkalender start={startsOn} ende="" startLabel="Abfahrt" endeLabel="" einzeln optional
+              min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Deine eigenen Angaben"
+              setzen={wert => setStartsOn(wert)} />
             <label className={VERBINDUNG_LABEL}>
               Uhrzeit
               <input
@@ -596,16 +590,9 @@ export function ManuelleVerbindung({
 
         <OrganisierenFeldgruppe titel="Ankunft">
           <div className={VERBINDUNG_SPALTEN}>
-            <label className={VERBINDUNG_LABEL}>
-              Ankunft
-              <input
-                type="date"
-                value={endsOn}
-                disabled={laeuft}
-                onChange={(ereignis) => setEndsOn(ereignis.target.value)}
-                className={VERBINDUNG_FELD}
-              />
-            </label>
+            <Suchkalender start={endsOn} ende="" startLabel="Ankunft" endeLabel="" einzeln optional
+              min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Deine eigenen Angaben"
+              setzen={wert => setEndsOn(wert)} />
             <label className={VERBINDUNG_LABEL}>
               Uhrzeit
               <input

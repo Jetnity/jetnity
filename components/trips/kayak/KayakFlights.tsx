@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { ArrowRight, Plane } from 'lucide-react'
 import FlughafenSuche from '@/components/airports/FlughafenSuche'
 import { flughafenAusReiseort, type FlughafenAuswahl } from '@/lib/airports/auswahl'
@@ -30,6 +31,7 @@ export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: str
       <PreviewNotice />
       <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
         event.preventDefault()
+        if (!departure || (roundTrip && !returnDate)) { preview.setError('Bitte wähle die Flugdaten.'); return }
         if (!origin || !destination) { preview.setError('Bitte wähle Abflug- und Zielflughafen aus den Vorschlägen.'); return }
         setVisible(12)
         void preview.search({ kind: 'flights', origin: origin.iata, destination: destination.iata, departure, ...(roundTrip ? { returnDate } : {}), adults, cabin })
@@ -40,8 +42,9 @@ export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: str
           <div><label htmlFor={`${id}-destination`} className="mb-2 block text-sm font-medium text-brand-800">Zielflughafen</label><FlughafenSuche inputId={`${id}-destination`} value={destination} onChange={(value) => { setDestination(value); preview.reset() }} placeholder="Stadt oder Flughafen suchen" inputClassName={inputClass} /></div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="grid gap-2 text-sm font-medium text-brand-800">Hinflug<input className={inputClass} type="date" required value={departure} onChange={(e) => setDeparture(e.target.value)} /></label>
-          {roundTrip && <label className="grid gap-2 text-sm font-medium text-brand-800">Rückflug<input className={inputClass} type="date" required min={departure} value={returnDate} onChange={(e) => setReturnDate(e.target.value)} /></label>}
+          <Suchkalender start={departure} ende={returnDate} startLabel="Hinflug" endeLabel="Rückflug"
+            einzeln={!roundTrip} min="1900-01-01" max="9999-12-31" minTage={0} kontext="Deine Flugdaten"
+            setzen={(start, ende) => { setDeparture(start); setReturnDate(ende); preview.reset() }} />
           <label className="grid gap-2 text-sm font-medium text-brand-800">Erwachsene<input type="number" className={inputClass} min={1} max={9} required value={adults} onChange={(e) => setAdults(Number(e.target.value))} /></label>
           <label className="grid gap-2 text-sm font-medium text-brand-800">Reiseklasse<select className={inputClass} value={cabin} onChange={(e) => setCabin(e.target.value as Cabin)}><option value="economy">Economy</option><option value="premium">Premium Economy</option><option value="business">Business</option><option value="first">First Class</option></select></label>
         </div>

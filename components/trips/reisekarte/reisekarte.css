@@ -1,0 +1,38 @@
+.rk-dialog{--rk-ink:#193d33;--rk-line:#d4dfd9;--rk-soft:#f0f5ef;box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(1120px,95vw);max-width:100vw;height:min(810px,92dvh);max-height:100dvh;border:1px solid var(--rk-line);border-radius:20px;background:white;color:var(--rk-ink);padding:0;box-shadow:0 28px 95px #102f2b42;overflow:hidden}
+.rk-dialog::backdrop{background:#112c25a8}
+.rk-layout{height:100%;display:grid;grid-template:"head head" auto "list map" minmax(0,1fr)/minmax(220px,30%) minmax(0,1fr)}
+.rk-head{grid-area:head;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--rk-line)}
+.rk-head p,.rk-list small,.rk-revoke{color:#50665d}
+.rk-head h2{font-size:clamp(1.6rem,3vw,2.25rem);line-height:1.15;font-family:Georgia,serif}
+.rk-close,.rk-link,.rk-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;cursor:pointer}
+.rk-close{width:44px;border-radius:50%;background:var(--rk-soft)}
+.rk-link{font-weight:600;color:#245744;text-decoration:underline;text-underline-offset:4px;padding:4px 3px}
+.rk-dialog button:focus-visible,.rk-dialog select:focus-visible,.rk-link:focus-visible{outline:3px solid #64872e;outline-offset:2px}
+.rk-dialog button:disabled{opacity:.5;cursor:default}
+.rk-list,.rk-main{scrollbar-gutter:stable;overflow:auto;overscroll-behavior:contain}
+.rk-list{grid-area:list;padding:16px;border-right:1px solid var(--rk-line)}
+.rk-dialog label{display:grid;gap:4px;min-width:0;font-size:.84rem;font-weight:600}
+.rk-dialog select,.rk-dialog input{width:100%;max-width:100%;min-height:44px;font:inherit;background:white;border:1px solid #adc2b6;border-radius:8px;padding:7px}
+.rk-list h3,.rk-wege h3{font-size:1.1rem;font-weight:700;margin:.75rem 0}
+.rk-list ol{padding:0;list-style:none}
+.rk-list li+li{border-top:1px solid var(--rk-line)}
+.rk-list li button{display:flex;align-items:flex-start;gap:10px;text-align:left;min-height:52px;width:100%;padding:12px 7px;border-radius:10px}
+.rk-list li button:hover,.rk-list li button[aria-pressed=true]{background:var(--rk-soft)}
+.rk-list strong,.rk-dialog small{display:block;overflow-wrap:anywhere}
+.rk-list small{font-size:.8rem;line-height:1.5}
+.rk-list small svg{display:inline;vertical-align:middle;margin-right:3px}
+.rk-number{flex:0 0 27px;text-align:center;border-radius:50%;background:#245744;color:white;font-size:.8rem;line-height:27px}
+.rk-main{grid-area:map;display:flex;flex-direction:column;min-width:0}
+.rk-canvas{flex:1 0 52%;min-height:240px;position:relative;background:#eff4ed}
+.rk-canvas iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.rk-consent{height:100%;padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.rk-consent h3{font:clamp(1.4rem,3vw,2rem)/1.15 Georgia,serif}
+.rk-consent p{max-width:42ch;color:#455e50;line-height:1.5}
+.rk-consent a,.rk-wege a{text-decoration:underline;text-underline-offset:3px}
+.rk-primary{border-radius:22px;background:#245744;color:white;padding:8px 20px;font-weight:600}
+.rk-wege,.rk-coords{padding:12px 20px}
+.rk-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rk-wege [aria-live]{font-size:.86rem}
+.rk-revoke{align-self:flex-start;margin:0 20px;font-size:.82rem;font-weight:400}
+@media(max-width:700px){.rk-dialog{width:100%;height:100dvh;border:0;border-radius:0;max-height:100dvh}.rk-layout{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}.rk-head{position:sticky;top:0;background:white;z-index:1;padding:10px 16px;order:0}.rk-main{order:1;overflow:visible;scrollbar-gutter:auto}.rk-list{order:2;overflow:visible;scrollbar-gutter:auto;border:0;border-top:1px solid var(--rk-line)}.rk-canvas{flex:none;height:clamp(255px,46dvh,430px)}.rk-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.rk-fields label:last-child{grid-column:1/-1}.rk-consent{padding:14px;gap:8px}.rk-consent svg{width:22px;height:22px}.rk-wege{padding:6px 16px}}
+.rk-suche{display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;margin:0 20px;padding:5px 0;border-top:1px solid var(--rk-line)}

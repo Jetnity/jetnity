@@ -2,6 +2,7 @@
 import '../styles/globals.css'
 /* Homepage and light-workspace presentation only. Green workspace, metadata and providers stay in their own files. */
 import '../styles/white-mint.css'
+import '@/components/trips/organisieren/auswahl/suchauswahl.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 

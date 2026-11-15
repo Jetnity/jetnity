@@ -8,6 +8,8 @@ import { spawnSync } from 'node:child_process'
 import { isDeepStrictEqual } from 'node:util'
 
 const control = JSON.parse(readFileSync(new URL('./historical-control.json', import.meta.url), 'utf8'))
+// Explicitly reviewed additions from PR #1198; historical action hashes stay unchanged.
+const savedOfferActions = JSON.parse(readFileSync(new URL('./saved-offers-actions.json', import.meta.url), 'utf8'))
 // Root-selected CH-DE deployment successor; the original historical control stays exact.
 const reviewedDeployment = Object.freeze({
   predecessorBlob: '85deee8e24190cf03ff339b4273b2a3295847073',
@@ -110,7 +112,7 @@ export function validate(snapshot) {
       'reviewed deployment successor witness drift')
     check(isDeepStrictEqual(snapshot.protectedBlobs, { ...control.protectedBlobs, 'vercel.json': reviewedDeployment.reviewedBlob }),
       'historical audit/config/deployment blob drift')
-    check(isDeepStrictEqual(snapshot.serverActions, control.serverActions), 'server action source inventory drift')
+    check(isDeepStrictEqual(snapshot.serverActions, { ...control.serverActions, ...savedOfferActions }), 'server action source inventory drift')
     check(historical.status === 1 && historical.signal === null && !historical.error && historical.stderrEmpty, 'historical audit unexpected process result')
     check(historical.report.slice === 'next-16-3-8-security-upgrade-1', 'historical audit identity drift')
     check(isDeepStrictEqual(historical.report.failures, expectedHistoricalFailures), 'historical audit unexpected failures')

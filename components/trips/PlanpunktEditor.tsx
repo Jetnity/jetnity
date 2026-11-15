@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { KONFLIKT, allePlanpunkte, manuellBearbeitbar, manuellerInhaltSchema, punktAendern, type PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
@@ -260,9 +261,11 @@ export default function PlanpunktEditor({
     {inhaltErlaubt ? <>
       <p className="text-xs leading-5 text-ink-900">Ortszeiten laut deinem Plan. Leere Felder bleiben unbekannt. Ein vorbelegtes Datum wird erst beim Speichern übernommen; die Tageszuordnung ersetzt kein Datum.</p>
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-1 text-sm">Anfangsdatum, optional<input disabled={laeuft} className={feld} type="date" value={startsOn} onChange={e => setStartsOn(e.target.value)} /></label>
+        <Suchkalender start={startsOn} ende="" startLabel="Anfangsdatum, optional" endeLabel="" einzeln optional
+          min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Dein Planpunkt" setzen={wert => setStartsOn(wert)} />
         <label className="grid min-w-0 gap-1 text-sm">Anfangszeit, optional<input disabled={laeuft} className={feld} type="time" value={startsAt} onChange={e => setStartsAt(e.target.value)} /></label>
-        <label className="grid min-w-0 gap-1 text-sm">Enddatum, optional<input disabled={laeuft} className={feld} type="date" value={endsOn} onChange={e => setEndsOn(e.target.value)} /></label>
+        <Suchkalender start={endsOn} ende="" startLabel="Enddatum, optional" endeLabel="" einzeln optional
+          min="1900-01-01" max="9999-12-31" minTage={0} disabled={laeuft} kontext="Dein Planpunkt" setzen={wert => setEndsOn(wert)} />
         <label className="grid min-w-0 gap-1 text-sm">Endzeit, optional<input disabled={laeuft} className={feld} type="time" value={endsAt} onChange={e => setEndsAt(e.target.value)} /></label>
       </div>
     </> : <p className="text-sm leading-6 text-ink-900">Flugroute, Unterkunftszeitraum und Mobilitätsangaben bearbeitest du in der jeweiligen Detailansicht. Die Tageszuordnung ändert diese Angaben nicht.</p>}

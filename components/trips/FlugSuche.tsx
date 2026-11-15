@@ -5,6 +5,7 @@
 // Flugsuche im Reise-Arbeitsbereich. Kein isoliertes Demo-Tool.
 
 import * as React from 'react'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { AlertCircle, Loader2, Plane, Search } from 'lucide-react'
 
 import FlughafenSuche from '@/components/airports/FlughafenSuche'
@@ -82,6 +83,10 @@ function BestehendeFlugSuche({
   const suchen = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
     if (laeuft) return
+    if (!hin || (mitRueck && !rueck)) {
+      setMeldung('Bitte wähle die Daten für deinen Flug.')
+      return
+    }
 
     const beine = flugSucheBeine({
       herkunft,
@@ -203,29 +208,13 @@ function BestehendeFlugSuche({
         </OrganisierenFeldgruppe>
 
         <OrganisierenFeldgruppe titel="Zeitraum">
+          <label className="mb-3 flex min-h-11 items-center gap-2 text-sm text-brand-800">
+            <input type="checkbox" checked={mitRueck} onChange={e => { setMitRueck(e.target.checked); if (!e.target.checked) setRueck('') }} /> Mit Rückflug
+          </label>
           <div className={ARBEITSFELD_SPALTEN_KLASSE}>
-            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-              Hinflug
-              <input
-                type="date"
-                value={hin}
-                onChange={(e) => setHin(e.target.value)}
-                required
-                className={ORGANISIEREN_EINGABE_KLASSE}
-              />
-            </label>
-            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-              Rückflug, optional
-              <input
-                type="date"
-                value={rueck}
-                onChange={(e) => {
-                  setRueck(e.target.value)
-                  setMitRueck(Boolean(e.target.value))
-                }}
-                className={ORGANISIEREN_EINGABE_KLASSE}
-              />
-            </label>
+            <Suchkalender start={hin} ende={rueck} startLabel="Hinflug" endeLabel="Rückflug"
+              einzeln={!mitRueck} min="1900-01-01" max="9999-12-31" minTage={0} kontext="Deine Flugdaten"
+              setzen={(start, ende) => { setHin(start); setRueck(ende) }} />
           </div>
         </OrganisierenFeldgruppe>
 

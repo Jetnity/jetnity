@@ -82,6 +82,9 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
   const url = new URL('https://www.stay22.com/embed/gm')
   const parameter = {
     aid: 'jetnity', campaign: 'jetnity-unterkunft', address: ort.adresse.trim(),
+    // Keep the already-used hotel source stable: the automatic Hotels.com
+    // variant returned three-star hotels even with minstarrating=4 in live QA.
+    hotelsapi: 'booking',
     checkin: anreise, checkout: abreise, adults: String(erwachsene), children: String(kinder), rooms: String(zimmer),
     currency: waehrung, ljs: 'de', unitsystem: 'metric', priceper: filter.preis,
     maincolor: '153a33', fontcolor: 'ffffff', hotelscolor: '153a33', hotelsfontcolor: 'ffffff',
@@ -91,7 +94,10 @@ export function stay22Suche(eingabe: Stay22Eingabe, heute = heutigesDatum()): { 
   }
   for (const [name, wert] of Object.entries(parameter)) url.searchParams.set(name, wert)
   if (filter.sterne) url.searchParams.set('minstarrating', String(filter.sterne))
-  if (filter.bewertung) url.searchParams.set('minguestrating', String(filter.bewertung))
+  // Maps /embed/gm uses a five-point guest-score scale (3.5/4/4.5),
+  // unlike the ten-point score displayed to travellers and the v3 API.
+  // Passing 7/8/9 directly makes the live widget return an empty list.
+  if (filter.bewertung) url.searchParams.set('minguestrating', String(filter.bewertung / 2))
   const pois = (eingabe.kartenorte ?? []).filter(p => p.name.trim() && Number.isFinite(p.latitude) && Math.abs(p.latitude) <= 90 &&
     Number.isFinite(p.longitude) && Math.abs(p.longitude) <= 180).slice(0, 8).map(p => ({
     lat: p.latitude, lng: p.longitude, name: p.name.replace(/[<>\p{Cc}]/gu, '').slice(0, 80), size: 2,

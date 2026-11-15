@@ -5,6 +5,7 @@ import { Columns2, List, Loader2, Map, Maximize2, Minimize2, RotateCcw, X } from
 import { stay22Rahmen, type Stay22Phase } from '@/lib/providers/stay22/rahmen'
 import { stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
+import { useSuchbereichAktiv } from './SuchbereichKontext'
 
 const ansichten = [
   { wert: 'all', text: 'Karte & Liste', Icon: Columns2 },
@@ -20,6 +21,8 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   const groesseButton = useRef<HTMLButtonElement>(null)
   const scrollPosition = useRef<{ x: number; y: number } | null>(null)
   const [gross, setGross] = useState(false)
+  const aktiv = useSuchbereichAktiv()
+  if (!aktiv && gross) setGross(false)
   const [ansicht, setAnsicht] = useState<Stay22Ansicht>(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches ? 'listview' : 'all')
   const [phase, setPhase] = useState<Stay22Phase>('laedt')
   const [versuch, setVersuch] = useState(0)
@@ -32,6 +35,14 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
   useEffect(() => {
     if (host.current) return stay22Rahmen(host.current, url, setPhase)
   }, [url, versuch])
+  useLayoutEffect(() => {
+    if (!aktiv) {
+      // Closing only the dialog preserves the connected supplier frame.
+      dialog.current?.close()
+      dialog.current?.show()
+      scrollPosition.current = null
+    }
+  }, [aktiv])
   useLayoutEffect(() => {
     if (!gross) {
       const position = scrollPosition.current

@@ -12,6 +12,7 @@ import {
   type GygSuchkonfiguration,
   type GygSuchumfang,
 } from '@/lib/activities/getyourguide/suche'
+import { activityPreviewOrigin } from '@/lib/activities/preview-origin'
 
 export const GYG_PARTNER_ID = '2MQHT6Z'
 export const GYG_ANALYZER_SRC = 'https://widget.getyourguide.com/dist/pa.umd.production.min.js'
@@ -119,7 +120,8 @@ export function embedPfad(suche: GygSuchkonfiguration, anzahl: GygAnzahl = GYG_A
   params.set('code', suche.countryCode)
   if (suche.umfang !== 'land') params.set('name', suche.name)
   params.set('anzahl', String(anzahl))
-  return `/embed/getyourguide?${params.toString()}`
+  const preview = activityPreviewOrigin()
+  return preview ? `${preview}/getyourguide.html?${params.toString()}` : `/embed/getyourguide?${params.toString()}`
 }
 
 export function embedGerahmt(request: { headers: { get(name: string): string | null } }): boolean {

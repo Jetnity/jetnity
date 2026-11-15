@@ -38,6 +38,7 @@ import {
 } from '@/lib/activities/suchlebenszyklus'
 import { aktivitaetsZieleWaehlen, type AktivitaetsTagEntscheidung } from '@/lib/activities/zielauswahl'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import Tageswetter from '@/components/trips/wetter/Tageswetter'
 import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
 import AktivitaetenWidgetFreigabe from '@/components/trips/AktivitaetenWidgetFreigabe'
@@ -103,13 +104,14 @@ function ortIdsAus(reise: Trip): string[] {
 }
 
 function BeobachteteKarte({
-  option,
+  reise, option,
   verweis,
   laeuft,
   onUebernehmen,
   onPruefen,
   onUebernahmeBeobachten,
 }: {
+  reise: Trip
   option: ActivityOptionSichtbar
   verweis?: { productUrl: string } | null
   laeuft: boolean
@@ -121,7 +123,7 @@ function BeobachteteKarte({
     if (!onUebernehmen || !onUebernahmeBeobachten) return
     onUebernahmeBeobachten({ id: option.id, ausloesen: onUebernehmen })
   })
-  return <AktivitaetKarte option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
+  return <AktivitaetKarte reise={reise} option={option} verweis={verweis} laeuft={laeuft} onUebernehmen={onUebernehmen} onPruefen={onPruefen} />
 }
 
 type Lokal = {
@@ -487,9 +489,11 @@ export default function AktivitaetenBereich({
             </div>
           ) : null}
         </div>
-      ) : (
+      ) : null}
+      {wahl.ziele.length === 0 ? (
         <p className="mt-4 text-sm leading-6 text-ink-800">Diese Reise hat noch kein Ziel. Jetnity legt dafür keine Etappe an.</p>
-      )}
+      ) : null}
+      {sichtbar && etappe && gewaehlt?.status === 'bereit' && <Tageswetter ort={etappe} datum={adoptTag?.dayDate ?? null} />}
 
       {gewaehlt?.status === 'ausstehend' ? (
         <p aria-busy="true" className="mt-4 text-sm leading-6 text-ink-800">
@@ -610,7 +614,7 @@ export default function AktivitaetenBereich({
                     onUebernehmen && etappe && adoptTag ? () => uebernehmen(option, erfasst) : undefined
                   return (
                     <li key={`${angezeigt.generation ?? 0}:${inhalt}:${etappe?.id ?? ''}`} className="min-w-0">
-                      <BeobachteteKarte
+                      <BeobachteteKarte reise={reise}
                         option={option}
                         verweis={antwort.viatorVerweise?.find((eintrag) => eintrag.externalRef === option.externalRef) ?? null}
                         laeuft={gesperrt}

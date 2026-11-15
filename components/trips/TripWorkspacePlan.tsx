@@ -118,6 +118,8 @@ function gewaehltenTagSichtbarHalten(tagId: string) {
   window.scrollTo({ top: Math.max(0, window.scrollY + delta), behavior: 'instant' })
 }
 
+import { Kartenknopf } from '@/components/trips/reisekarte/Reisekarte'
+
 export default function TripWorkspacePlan({
   reise,
   ohneTag,
@@ -179,7 +181,7 @@ export default function TripWorkspacePlan({
   kanteUnlesbar?: boolean
   onKanteWaehlen?: (kanteId: string, tagId: string) => void
   onAlleVerbindungen?: () => void
-  onEtappensuche?: (kategorie: 'unterkunft' | 'aktivitaeten', etappeId: string, hotelOrtKey?: string) => void
+  onEtappensuche?: (kategorie: 'fluege' | 'unterkunft' | 'aktivitaeten', etappeId: string, hotelOrtKey?: string) => void
 }) {
   const root = React.useRef<HTMLElement>(null)
   const editorTrigger = React.useRef<HTMLElement | null>(null)
@@ -564,6 +566,7 @@ export default function TripWorkspacePlan({
 
   if (quelle && gemessen && !hinweis && !kanteUnlesbar && !itemSichtbar) {
     return <section ref={root} className="col-span-full min-w-0" aria-label="Reiseplan" data-tagesplan-modul="ein" data-plan-premium="4">
+      {mapsActive && <Kartenknopf reise={reise} tag={kanonischerTagId ?? undefined} zurSuche={onEtappensuche} />}
       <Etappenplan key={reise.id} reise={reise} quelle={quelle} route={route.zeilen} tagId={kanonischerTagId}
         focusRoute={routeBetont} onRoute={onZurRoute} onDay={onTagWechseln} onItem={onPunktOeffnen}
         onEtappensuche={onEtappensuche}
@@ -601,6 +604,7 @@ export default function TripWorkspacePlan({
         !gemessen && (eingebettet ? 'mt-1' : 'mt-5'),
       )}
     >
+      {mapsActive && <Kartenknopf reise={reise} tag={kanonischerTagId ?? undefined} zurSuche={onEtappensuche} />}
       <div
         data-u1b-route
         onPointerDown={(event) => onRouteZeigenVorbereiten?.(event.target)}
