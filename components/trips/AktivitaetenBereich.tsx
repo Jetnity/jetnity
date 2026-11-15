@@ -38,6 +38,7 @@ import {
 } from '@/lib/activities/suchlebenszyklus'
 import { aktivitaetsZieleWaehlen, type AktivitaetsTagEntscheidung } from '@/lib/activities/zielauswahl'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import Tageswetter from '@/components/trips/wetter/Tageswetter'
 import ViatorPruefung from '@/components/trips/ViatorPruefung'
 import GetYourGuideAktivitaeten from '@/components/trips/GetYourGuideAktivitaeten'
 import AktivitaetenWidgetFreigabe from '@/components/trips/AktivitaetenWidgetFreigabe'
@@ -492,6 +493,7 @@ export default function AktivitaetenBereich({
       {wahl.ziele.length === 0 ? (
         <p className="mt-4 text-sm leading-6 text-ink-800">Diese Reise hat noch kein Ziel. Jetnity legt dafür keine Etappe an.</p>
       ) : null}
+      {sichtbar && etappe && gewaehlt?.status === 'bereit' && <Tageswetter ort={etappe} datum={adoptTag?.dayDate ?? null} />}
 
       {gewaehlt?.status === 'ausstehend' ? (
         <p aria-busy="true" className="mt-4 text-sm leading-6 text-ink-800">

@@ -28,6 +28,7 @@ import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/rou
 import Etappenkarte from './Etappenkarte'
 import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import EtappenTage from './EtappenTage'
+import Tageswetter from '@/components/trips/wetter/Tageswetter'
 import StoppForm from './StoppForm'
 
 type Props = {
@@ -359,6 +360,7 @@ export default function Etappenplan({
                     </div>
                     {activeDay && days.some((d) => d.id === activeDay.id) && (
                       <>
+                        {activeStage && activeDay.dayDate && <Tageswetter ort={activeStage} datum={activeDay.dayDate} aktivitaeten={activeDay.items} />}
                         {day}
                       </>
                     )}
