@@ -668,10 +668,13 @@ test('accepted product selectors and copy still match the baseline UI', () => {
   assert.match(login, /Jetnity Admin – Anmeldung/)
   assert.match(stepUp, /Zwei-Faktor-Bestätigung/)
   assert.match(dialog, /id="mfa-totp"|htmlFor="mfa-totp"/)
-  assert.match(security, /Authenticator-App einrichten/)
+  assert.match(security, /sicherheitText\(sprache, "totp.setup"\)/)
+  const securityCatalog = lese('lib/localization/account-security-texte.ts')
+  assert.match(securityCatalog, /"totp.setup": \{ de: "Authenticator-App einrichten", en: "Set up authenticator app" \}/)
   assert.match(security, /id="totp-code"/)
   assert.match(security, /data-security-lage=\{totpLage\}/)
-  assert.match(security, /Eingerichtete Authenticator-Apps/)
+  assert.match(security, /sicherheitText\(sprache, "totp.listTitle"\)/)
+  assert.match(securityCatalog, /"totp.listTitle": \{ de: "Eingerichtete Authenticator-Apps", en: "Configured authenticator apps" \}/)
   assert.match(counts, /admin-account-counts-titel/)
   assert.match(counts, /ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS/)
   assert.match(contract, /ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS = 720/)
@@ -1640,8 +1643,11 @@ test('G8 post-verify observation is pinned to current SecurityMFA source', () =>
   const verifyBody = security.slice(verifyStart, security.indexOf('function stepUpAuth'))
   assert.match(
     verifyBody,
-    /setMessage\(\{ type: "success", text: "Authenticator-App erfolgreich aktiviert\." \}\);[\s\S]*await refreshFactors\(\)/,
+    /setMessage\(\{ type: "success", schluessel: "totp.activated" \}\);[\s\S]*await refreshFactors\(\)/,
   )
+  const securityCatalog = lese('lib/localization/account-security-texte.ts')
+  assert.match(securityCatalog, /"totp.activated": \{ de: "Authenticator-App erfolgreich aktiviert\.", en: "Authenticator app successfully activated\." \}/)
+  assert.match(security, /message \? sicherheitText\(sprache, message.schluessel\) : sicherheitStepUpStatus\(sprache, stepUp\)/)
   assert.match(lage, /ready: 'Eingerichtete Authenticator-Apps\.'/)
   assert.match(lage, /if \(status === 'verified'\) return 'bestätigt'/)
   assert.equal(UI_COPY.enrollConfirmedList, 'Eingerichtete Authenticator-Apps')

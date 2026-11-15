@@ -1,3 +1,6 @@
+import { ANDERE_SITZUNGEN_TEXT } from '@/lib/auth/account-session-view'
+import { LOGOUT_JWT_HINWEIS } from '@/lib/auth/account-logout-scopes'
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -56,21 +59,29 @@ describe('Account Settings + Security Premium UX 1', () => {
   })
 
   test('Passwort, Sitzung, Abmelden, TOTP und Passkeys bleiben ehrlich', () => {
-    assert.match(passwort, /Passwort ändern/)
+    assert.match(passwort, /sicherheitText\(sprache, "password.open"\)/)
+    assert.equal(sicherheitText('de', 'password.open'), 'Passwort ändern')
+    assert.equal(sicherheitText('en', 'password.open'), 'Change password')
     assert.match(passwort, /reauthenticate/)
     assert.equal(passwort.includes('current-password'), false)
     assert.equal(passwort.includes('currentPassword'), false)
-    assert.match(sicherheit, /diese Sitzung/)
-    assert.match(sicherheit, /aria-label="Sicherheitsbereiche"/)
+    assert.match(sicherheit, /sicherheitText\(sprache, 'page.intro'\)/)
+    assert.match(sicherheitText('de', 'page.intro'), /diese Sitzung/)
+    assert.match(sicherheit, /aria-label=\{sicherheitText\(sprache, 'page.navigation'\)\}/)
+    assert.equal(sicherheitText('de', 'page.navigation'), 'Sicherheitsbereiche')
+    assert.equal(sicherheitText('en', 'page.navigation'), 'Security sections')
     assert.match(sicherheit, /passkeysServerAktiviertLesen\(\)/)
     assert.equal(sicherheit.includes('listSessions'), false)
     assert.equal(sicherheit.includes('Sicherheitsbewertung'), false)
-    assert.match(sitzung, /ANDERE_SITZUNGEN_TEXT/)
+    assert.match(sitzung, /sicherheitText\(sprache, "session.otherDescription"\)/)
+    assert.equal(sicherheitText('de', 'session.otherDescription'), ANDERE_SITZUNGEN_TEXT)
     assert.equal(sitzung.includes('0 Geräte'), false)
     assert.equal(sitzung.includes('<ul'), false)
     assert.match(logout, /data-logout-action=\{scope\}/)
-    assert.match(logout, /LOGOUT_JWT_HINWEIS/)
-    assert.match(logout, /Abmeldeoptionen/)
+    assert.match(logout, /sicherheitText\(sprache, "logout.jwtHint"\)/)
+    assert.equal(sicherheitText('de', 'logout.jwtHint'), LOGOUT_JWT_HINWEIS)
+    assert.match(logout, /sicherheitText\(sprache, "logout.options"\)/)
+    assert.equal(sicherheitText('de', 'logout.options'), 'Abmeldeoptionen')
     assert.match(logout, /optionenSichtbar/)
     assert.match(logout, /if \(zustand\.lage !== "idle" \|\| zustand\.bestaetigungFuer !== null\) return/)
     assert.equal(logout.includes('listSessions'), false)

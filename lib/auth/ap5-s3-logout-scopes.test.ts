@@ -1,3 +1,4 @@
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -60,7 +61,9 @@ describe('AP-5-S3 Vertrag und Accessibility', () => {
     assert.equal(komponente.includes('"polite"'), true)
     assert.equal(komponente.includes('min-h-11'), true)
     assert.equal(komponente.includes('variant={aktion.gefaehrlich ? "destructive" : "outline"}'), true)
-    assert.equal(komponente.includes('Ja, überall abmelden'), true)
+    assert.match(komponente, /sicherheitText\(sprache, "logout.confirm"\)/)
+    assert.equal(sicherheitText('de', 'logout.confirm'), 'Ja, überall abmelden')
+    assert.equal(sicherheitText('en', 'logout.confirm'), 'Yes, sign out everywhere')
     assert.equal(komponente.includes('aria-describedby={hinweisId}'), true)
     assert.equal(komponente.includes('window.location.assign(new URL("/", window.location.origin).toString())'), true)
   })

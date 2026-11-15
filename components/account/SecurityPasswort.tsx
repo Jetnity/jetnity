@@ -4,6 +4,9 @@
 "use client";
 
 import * as React from "react";
+import type { UiSprache } from "@/lib/localization/ui-sprache";
+import { sicherheitText } from "@/lib/localization/account-security-texte";
+import { sicherheitPasswortStatus, sicherheitPasswortStaerke, sicherheitPasswortRegeln } from "@/lib/localization/account-security-display-3";
 import { createBrowserClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 import type { SupabaseClient as SbClient } from "@supabase/supabase-js";
@@ -31,7 +34,6 @@ import {
   passwortAenderungLokalPruefen,
   passwortAenderungReauthAusfuehren,
   passwortAenderungSitzungLesen,
-  passwortAenderungStatusText,
   passwortAenderungUpdateAusfuehren,
   passwortAenderungWeiter,
   type PasswortAenderungAuth,
@@ -39,11 +41,9 @@ import {
 } from "@/lib/auth/account-password-aenderung";
 import {
   PASSWORT_RICHTLINIE,
-  RICHTLINIE_PUNKTE,
   erfuelltRichtlinie,
   passwortStaerke,
   staerkeFarbe,
-  staerkeText,
 } from "@/lib/auth/passwort-richtlinie";
 
 type BrowserSupabase = SbClient<Database>;
@@ -63,7 +63,7 @@ function leereFelder() {
   return { nonce: "", passwort: "", wiederholung: "" };
 }
 
-export default function SecurityPasswort() {
+export default function SecurityPasswort({ sprache = "de" }: { sprache?: UiSprache }) {
   const supabase = React.useMemo<BrowserSupabase>(() => createBrowserClient(), []);
   const [zustand, setZustand] = React.useState<PasswortAenderungZustand>(PASSWORT_AENDERUNG_ANFANG);
   const [felder, setFelder] = React.useState(leereFelder);
@@ -96,7 +96,7 @@ export default function SecurityPasswort() {
 
   const beschaeftigt = passwortAenderungIstBeschaeftigt(zustand);
   const formularSichtbar = darfPasswortFormularZeigen(zustand);
-  const status = passwortAenderungStatusText(zustand);
+  const status = sicherheitPasswortStatus(sprache, zustand);
   const detailsSichtbar = geoeffnet || zustand.schritt !== "idle";
   const staerke = passwortStaerke(felder.passwort);
 
@@ -143,18 +143,17 @@ export default function SecurityPasswort() {
       <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <Lock className="h-5 w-5" aria-hidden="true" />
-          <CardTitle as="h2">Passwort</CardTitle>
+          <CardTitle as="h2">{sicherheitText(sprache, "password.title")}</CardTitle>
         </div>
         <CardDescription>
-          Zum Ändern bestätigt Jetnity zuerst deine aktuelle Anmeldung per E-Mail-Code. Das
-          bisherige Passwort wird nicht abgefragt.
+          {sicherheitText(sprache, "password.description")}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4 p-4 pt-3">
         {detailsSichtbar ? null : (
           <Button type="button" onClick={() => setGeoeffnet(true)} className={`${SICHERHEIT_ZIEL_44} w-full sm:w-auto`} aria-expanded={false} aria-controls="account-password-flow">
-            Passwort ändern
+            {sicherheitText(sprache, "password.open")}
           </Button>
         )}
         {detailsSichtbar ? (
@@ -190,17 +189,16 @@ export default function SecurityPasswort() {
             disabled={beschaeftigt || !darfReauthStarten(zustand)}
             className={`${SICHERHEIT_ZIEL_44} w-full`}
           >
-            {zustand.schritt === "requesting_code" ? "Code wird gesendet…" : "Bestätigungscode senden"}
+            {zustand.schritt === "requesting_code" ? sicherheitText(sprache, "password.sending") : sicherheitText(sprache, "password.send")}
           </Button>
         ) : null}
 
         {formularSichtbar ? (
           <form onSubmit={(ereignis) => void passwortSpeichern(ereignis)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="account-password-nonce">Bestätigungscode</Label>
+              <Label htmlFor="account-password-nonce">{sicherheitText(sprache, "password.code")}</Label>
               <p id="account-password-nonce-hint" className="text-xs leading-5 text-ink-700">
-                Der Code kommt an die E-Mail-Adresse dieses Kontos. Er ist nicht der
-                Passwort-Reset-Link.
+                {sicherheitText(sprache, "password.codeHint")}
               </p>
               <Input
                 ref={nonceFeld}
@@ -220,7 +218,7 @@ export default function SecurityPasswort() {
 
             <div className="space-y-2">
               <Label htmlFor="account-password-new" icon={<Lock className="h-4 w-4" />}>
-                Neues Passwort
+                {sicherheitText(sprache, "password.new")}
               </Label>
               <div className="relative">
                 <Input
@@ -230,7 +228,7 @@ export default function SecurityPasswort() {
                   onChange={(e) => setFelder((aktuell) => ({ ...aktuell, passwort: e.target.value }))}
                   disabled={beschaeftigt}
                   autoComplete="new-password"
-                  placeholder={`Mind. ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen`}
+                  placeholder={sicherheitText(sprache, "password.minimum", { minimum: PASSWORT_RICHTLINIE.mindestlaenge })}
                   aria-describedby="account-password-new-hint"
                   aria-invalid={
                     felder.passwort.length > 0 && !erfuelltRichtlinie(felder.passwort) ? true : undefined
@@ -242,7 +240,7 @@ export default function SecurityPasswort() {
                 <button
                   type="button"
                   onClick={() => setZeigePasswort((wert) => !wert)}
-                  aria-label={zeigePasswort ? "Neues Passwort verbergen" : "Neues Passwort anzeigen"}
+                  aria-label={zeigePasswort ? sicherheitText(sprache, "password.hide") : sicherheitText(sprache, "password.show")}
                   className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 >
                   {zeigePasswort ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -255,9 +253,9 @@ export default function SecurityPasswort() {
                     style={{ width: `${(staerke / 5) * 100}%` }}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">{staerkeText(staerke)}</p>
+                <p className="text-xs text-muted-foreground">{sicherheitPasswortStaerke(sprache, staerke)}</p>
                 <ul className="space-y-0.5 text-[11px] text-muted-foreground">
-                  {RICHTLINIE_PUNKTE.map((punkt) => (
+                  {sicherheitPasswortRegeln(sprache).map((punkt) => (
                     <li key={punkt}>• {punkt}</li>
                   ))}
                 </ul>
@@ -265,7 +263,7 @@ export default function SecurityPasswort() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="account-password-confirm">Neues Passwort bestätigen</Label>
+              <Label htmlFor="account-password-confirm">{sicherheitText(sprache, "password.confirm")}</Label>
               <div className="relative">
                 <Input
                   id="account-password-confirm"
@@ -290,8 +288,8 @@ export default function SecurityPasswort() {
                   onClick={() => setZeigeWiederholung((wert) => !wert)}
                   aria-label={
                     zeigeWiederholung
-                      ? "Passwortbestätigung verbergen"
-                      : "Passwortbestätigung anzeigen"
+                      ? sicherheitText(sprache, "password.hideConfirmation")
+                      : sicherheitText(sprache, "password.showConfirmation")
                   }
                   className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 >
@@ -302,7 +300,7 @@ export default function SecurityPasswort() {
 
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button type="submit" disabled={beschaeftigt} className={`${SICHERHEIT_ZIEL_44} flex-1`}>
-                {zustand.schritt === "updating" ? "Passwort wird geändert…" : "Passwort speichern"}
+                {zustand.schritt === "updating" ? sicherheitText(sprache, "password.saving") : sicherheitText(sprache, "password.save")}
               </Button>
               <Button
                 type="button"
@@ -311,7 +309,7 @@ export default function SecurityPasswort() {
                 disabled={beschaeftigt}
                 className={SICHERHEIT_ZIEL_44}
               >
-                Abbrechen
+                {sicherheitText(sprache, "common.cancel")}
               </Button>
             </div>
           </form>

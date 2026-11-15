@@ -1,3 +1,5 @@
+import { ANDERE_SITZUNGEN_TEXT } from '@/lib/auth/account-session-view'
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -29,7 +31,9 @@ describe('AP-5-S5 Vertrag und Accessibility', () => {
     assert.equal(seite.includes('getSessions'), false)
     assert.equal(seite.includes('/account/sessions'), false)
     assert.equal(komponente.includes('data-andere-sitzungen={zustand.andere}'), true)
-    assert.equal(komponente.includes('ANDERE_SITZUNGEN_TEXT'), true)
+    assert.match(komponente, /sicherheitText\(sprache, "session.otherDescription"\)/)
+    assert.equal(sicherheitText('de', 'session.otherDescription'), ANDERE_SITZUNGEN_TEXT)
+    assert.match(sicherheitText('en', 'session.otherDescription'), /neither a device list nor a count, including zero/)
     assert.equal(logik.includes("andere: 'unsupported'") || logik.includes('andere: SITZUNG_ANDERE_LAGE'), true)
     assert.equal(logik.includes('andereSitzungenAnzahl'), true)
     assert.equal(logik.includes('return null'), true)
