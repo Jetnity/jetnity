@@ -48,7 +48,7 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/official-truth-content-identity-r2.test.ts', bytes: 41838, sha256: 'be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16' }),
     Object.freeze({ path: 'lib/readiness/official-truth-retrieval-physical-internal.ts', bytes: 17726, sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),
     Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1-server.ts', bytes: 20156, sha256: 'a2f16bceb4917e3fc6f654fc1bc4fc03b405a3f02b294e9d5a2ddbfa9434190f' }),
-    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.mjs', bytes: 10531, sha256: 'a914b43b043d1224a8619f994ef233e506ba26f4497adc9535c5d9efe82bb360' }),
-    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.test.mjs', bytes: 14607, sha256: '06c37794ab126a0c8f336762113b83f4f6d0e0c62d54c771e4dabedab8060951' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.mjs', bytes: 10827, sha256: '562e24feab0c73fe08f38c3f8b6818da2c548ea4d987fb06f02a31c038ee97ff' }),
+    Object.freeze({ path: 'scripts/official-truth-v3-test-selection.test.mjs', bytes: 15125, sha256: 'bbb02fb5c52f6bf491b99be1d623f3939f12439b8d47ed5d32aad68d9fc650b4' }),
   ]),
 } as const)

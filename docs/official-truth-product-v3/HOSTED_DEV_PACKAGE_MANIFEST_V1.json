@@ -245,8 +245,8 @@
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1-policy.ts",
       "bytes": 4680,
-      "blob": "ce24f75716300c2a2af30f20e406ee6a9126b8be",
-      "sha256": "1fa5b5541119402846f97728b1ca11947fddb5b8c3379c074ed2137fe941e872"
+      "blob": "5426a946a54a1c790e02a35e43cbb9013ea1b2b1",
+      "sha256": "18efd4fb05cbcc66c8ac3f59a2e364f90f7fe5310a6646f4a7d0941a09c7ea16"
     },
     {
       "path": "lib/readiness/official-truth-aa-revision-probe-1.test.ts",
