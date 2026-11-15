@@ -167,6 +167,24 @@ export function createChDeOwnerImportContinuation(options: Readonly<{
     } catch { blocked = true; return false }
   }
   return Object.freeze({ restore,
+    /** An explicit Owner input restores identity only. The separate continuation
+     * click still traverses the existing server gates and original-claim checks. */
+    retainOriginalResume(text: string): boolean {
+      if (active || finished || blocked) return false
+      const original = readChDeOwnerImportRequest(text)
+      if (original?.mode !== 'resume') return false
+      try {
+        restore()
+        if (blocked || pending) return false
+        const retained: PendingRequest = Object.freeze({ schema: 1,
+          request: Object.freeze({ ...original, mode: 'start' as const }), phase: 'work' })
+        // Persist the original work phase before any later explicit dispatch.
+        storage().setItem(PENDING_REQUEST_KEY, JSON.stringify(retained))
+        pending = retained; legacy = false
+        return true
+      } catch { blocked = true; return false }
+      finally { notify() }
+    },
     subscribe(listener: () => void) {
       listeners.add(listener)
       const changed = (event: StorageEvent) => { if (event.key === PENDING_REQUEST_KEY || event.key === LEGACY_REQUEST_KEY || event.key === null) listener() }

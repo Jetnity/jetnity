@@ -382,6 +382,11 @@ test('manual caller is inert until clicked, one-shot, bounded and honest about l
   const html = renderToStaticMarkup(createElement(DevOwnerImportPanel))
   assert.match(html, /<button type="button"/)
   assert.match(html, /Quellenimport für Dev starten/)
+  assert.match(html, /Bestehenden Quellenlauf wiederaufnehmen/)
+  assert.match(html, /Ursprüngliche Vorgangskennung/)
+  assert.match(html, /Ursprüngliche Lease-Kennung/)
+  assert.match(html, /Vorhandenen Vorgang übernehmen/)
+  assert.doesNotMatch(html, /op3_[a-f0-9]{32}|lease3_[a-f0-9]{32}/, 'recovery has no hard-coded original identifiers')
   const productionHtml = renderToStaticMarkup(createElement(DevOwnerImportPanel, { environment: 'Production' }))
   assert.match(productionHtml, /Quellenimport für Production starten/)
   assert.match(productionHtml, /auf jetnity.com/)
@@ -531,6 +536,104 @@ test('a lost durable enqueue-to-work transition cannot dispatch work or manufact
   assert.equal((await second.start(new AbortController().signal))?.status, 'unresolved')
   assert.equal(requests.length, 2); assert.deepEqual(requests[1], requests[0]); assert.equal(requests[0]?.mode, 'start')
   assert.equal(generated, 2)
+})
+
+test('explicit original recovery persists work before a separate resume click and survives remount', async t => {
+  const original: ChDeOwnerImportRequest = { schema: 2, mode: 'resume', operationId: 'op3_' + 'a'.repeat(32), leaseId: 'lease3_' + 'b'.repeat(32) }
+  const text = JSON.stringify(original), key = 'jetnity.dev.ch-de-import.request.v3'
+  const retained = JSON.stringify({ schema: 1, request: { ...original, mode: 'start' }, phase: 'work' })
+  const values = new Map<string, string>(), requests: ChDeOwnerImportRequest[] = []
+  const storage = { getItem: (name: string) => values.get(name) ?? null,
+    setItem: (name: string, value: string) => { values.set(name, value) }, removeItem: (name: string) => { values.delete(name) } }
+  const options = { storage: () => storage, identifier: () => assert.fail('recovery never generates a replacement identity') }
+  let response = deferred<Response>(), notifications = 0
+  t.mock.method(globalThis, 'fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+    assert.equal(input, CH_DE_OWNER_IMPORT_PATH); assert.equal(init?.credentials, 'same-origin')
+    assert.equal(values.get(key), retained, 'original work phase is durable before the request')
+    const body = readChDeOwnerImportRequest(String(init?.body)); assert.ok(body); requests.push(body)
+    return response.promise
+  })
+  const first = createChDeOwnerImportContinuation(options)
+  const unsubscribe = first.subscribe(() => { notifications++ })
+  assert.equal(first.retainOriginalResume(text), true)
+  assert.equal(notifications, 1); assert.equal(values.get(key), retained)
+  assert.equal(first.restore(), true); assert.equal(requests.length, 0, 'retention and restore are inert')
+  unsubscribe()
+  const remounted = createChDeOwnerImportContinuation(options)
+  assert.equal(remounted.restore(), true); assert.equal(requests.length, 0)
+  const active = remounted.start(new AbortController().signal)
+  assert.deepEqual(requests, [original], 'the first dispatch is resume, never enqueue')
+  assert.equal(remounted.retainOriginalResume(text), false, 'active work cannot be replaced')
+  response.resolve(Response.json({ schema: 1, status: 'unresolved', published: 0 }, { status: 503 }))
+  assert.equal((await active)?.status, 'unresolved')
+  assert.equal(remounted.retainOriginalResume(text), false, 'a retained unknown outcome cannot be replaced')
+  assert.equal(values.get(key), retained)
+  response = deferred<Response>()
+  const final = remounted.start(new AbortController().signal)
+  response.resolve(Response.json({ schema: 1, status: 'published', published: 1 }))
+  assert.equal((await final)?.status, 'published'); assert.equal(values.size, 0)
+  assert.equal(remounted.retainOriginalResume(text), false, 'a finished caller cannot be repurposed')
+  assert.deepEqual(requests, [original, original])
+})
+
+test('original recovery preserves every existing legacy, pending, corrupt or conflicting storage state', t => {
+  const original: ChDeOwnerImportRequest = { schema: 2, mode: 'start', operationId: 'op3_' + 'c'.repeat(32), leaseId: 'lease3_' + 'd'.repeat(32) }
+  const resume = JSON.stringify({ ...original, mode: 'resume' })
+  const legacy = 'jetnity.dev.ch-de-import.request.v2', current = 'jetnity.dev.ch-de-import.request.v3'
+  const stored = (phase: 'enqueue' | 'work') => JSON.stringify({ schema: 1, request: original, phase })
+  const cases: ReadonlyArray<ReadonlyArray<readonly [string, string]>> = [
+    [[legacy, JSON.stringify(original)]], [[current, stored('enqueue')]], [[current, stored('work')]],
+    [[legacy, 'broken']], [[current, '']], [[legacy, JSON.stringify(original)], [current, stored('work')]],
+  ]
+  t.mock.method(globalThis, 'fetch', () => assert.fail('rejected recovery cannot dispatch'))
+  for (const entries of cases) {
+    const values = new Map(entries), before = [...values]
+    const continuation = createChDeOwnerImportContinuation({
+      storage: () => ({ getItem: key => values.get(key) ?? null,
+        setItem: () => assert.fail('existing custody cannot be overwritten'),
+        removeItem: () => assert.fail('existing custody cannot be removed') }),
+      identifier: () => assert.fail('recovery cannot generate identity'),
+    })
+    assert.equal(continuation.retainOriginalResume(resume), false)
+    assert.deepEqual([...values], before)
+    values.clear()
+    assert.equal(continuation.retainOriginalResume(resume), false, 'in-memory custody or a blocked state survives missing storage')
+  }
+})
+
+test('original recovery rejects noncanonical inputs and blocks dispatch after storage failure', async t => {
+  const original: ChDeOwnerImportRequest = { schema: 2, mode: 'resume', operationId: 'op3_' + 'e'.repeat(32), leaseId: 'lease3_' + 'f'.repeat(32) }
+  const text = JSON.stringify(original), values = new Map<string, string>()
+  const storage = { getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => { values.set(key, value) }, removeItem: (key: string) => { values.delete(key) } }
+  const continuation = createChDeOwnerImportContinuation({ storage: () => storage,
+    identifier: () => assert.fail('recovery cannot generate identity') })
+  t.mock.method(globalThis, 'fetch', () => assert.fail('input retention or failure cannot dispatch'))
+  for (const invalid of ['not JSON', text + '\n', JSON.stringify({ ...original, mode: 'start' }),
+    text.replace('"schema":2', '"schema":2,"schema":2'), JSON.stringify({ ...original, authority: true }),
+    JSON.stringify({ ...original, operationId: 'wrong' })]) {
+    assert.equal(continuation.retainOriginalResume(invalid), false)
+    assert.equal(values.size, 0)
+  }
+  assert.equal(continuation.retainOriginalResume(text), true, 'invalid input alone can be corrected explicitly')
+  values.clear()
+  for (const failure of ['access', 'read', 'write']) {
+    let failing = true, notifications = 0
+    const refused = createChDeOwnerImportContinuation({ storage: () => {
+      if (failing && failure === 'access') throw Error('storage unavailable')
+      return { ...storage,
+        getItem(key: string) { if (failing && failure === 'read') throw Error('storage read failed'); return storage.getItem(key) },
+        setItem(key: string, value: string) { if (failing && failure === 'write') throw Error('storage write failed'); storage.setItem(key, value) },
+      }
+    }, identifier: () => assert.fail('failed recovery cannot fall back to a fresh start') })
+    const unsubscribe = refused.subscribe(() => { notifications++ })
+    assert.equal(refused.retainOriginalResume(text), false); assert.equal(values.size, 0)
+    assert.equal(notifications, 1)
+    failing = false
+    assert.equal(refused.retainOriginalResume(text), false)
+    assert.equal((await refused.start(new AbortController().signal))?.status, 'unavailable')
+    unsubscribe()
+  }
 })
 
 test('minimal result contract rejects forged success and keeps distinct user states', () => {
