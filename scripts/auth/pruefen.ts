@@ -21,22 +21,35 @@ import { join } from 'node:path'
 
 import { leseToml } from '@/lib/supabase/config-toml'
 import { alsJson, befund, bericht } from '@/lib/supabase/auth-bericht'
+import { devAuthKonfiguration } from '@/lib/supabase/auth-dev-konfiguration'
 
 import { authKonfiguration, ziel } from './ziel'
 
 const CONFIG = join(process.cwd(), 'supabase', 'config.toml')
 
 async function main() {
-  const config = leseToml(readFileSync(CONFIG, 'utf8'))
-
   const z = await ziel()
+  const dev = devAuthKonfiguration(leseToml(readFileSync(CONFIG, 'utf8')), z.ref)
   const live = await authKonfiguration(z)
 
-  const ergebnis = befund(config, live)
+  const ergebnis = befund(dev.config, live)
+  ergebnis.abweichungen = ergebnis.abweichungen.map((abweichung) =>
+    abweichung.api === 'uri_allow_list'
+      ? { ...abweichung, quelle: dev.herkunft.quelle }
+      : abweichung,
+  )
+  const mitHerkunft = {
+    ...ergebnis,
+    devRedirectVertrag: {
+      ...dev.herkunft,
+      roheKonfigurationVollstaendig: dev.roheKonfigurationVollstaendig,
+    },
+  }
 
   if (process.argv.includes('--json')) {
-    process.stdout.write(`${alsJson(ergebnis)}\n`)
+    process.stdout.write(`${alsJson(mitHerkunft)}\n`)
   } else {
+    console.log(`Dev-Redirect-Vertrag: ${dev.herkunft.vertrag}; Ziel ${dev.herkunft.projektRef}; Quelle #${dev.herkunft.sourcePr}@${dev.herkunft.sourceCommit}.`)
     console.log(bericht(ergebnis))
   }
 
