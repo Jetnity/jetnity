@@ -389,7 +389,12 @@ export function createHrs1SourceConsumer(input: Readonly<{
       const issued = await issuer.reopen(v, signal)
       if (!issued || !hrs1Same(issued.verification, v) || !issued.receipt || typeof issued.receipt !== 'object') return null
       const receipt = ownReceipt(issued.receipt, v)
-      return await reprove(receipt, v, clock(), signal, methodReceipt) ? { receipt, verification: v } : null
+      if (!await reprove(receipt, v, clock(), signal, methodReceipt)) return null
+      // The cold open has joined the same actual SQL reproof as the adopted path.
+      // Transfer this observation once; later commit proofs still reread SQL.
+      const opened = Object.freeze({ receipt, verification: v })
+      openedProofs.set(opened, signal)
+      return opened
     },
   })
 }

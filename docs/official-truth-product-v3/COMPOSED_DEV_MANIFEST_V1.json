@@ -366,9 +366,9 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-      "bytes": 30248,
-      "blob": "df988bad9d87d6d2a425c2795e41a0afb2b8fc03",
-      "sha256": "3e6c76d62d103a244f4c792f3f3c7454c9e410fc1f4acdd230eb143d3a5c215f"
+      "bytes": 30507,
+      "blob": "fbbf720898e4f550edf6ad971fbbd7b4d6397cc2",
+      "sha256": "3a463613442d58e3fa11344dfaf5c06677a0e16718d3b22ec587948184702466"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
@@ -1323,9 +1323,9 @@
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/native.ts",
-      "blob": "b30b07d8690be4af25e520dd351c624439621c5d",
+      "blob": "ea7803ceb4d38adcde1629666a6aaaf0ca27452c",
       "bytes": 105567,
-      "sha256": "a4928a23d57f7c2566e6c9d3d96c4f8f03a2d89d70ac3f323e6860b85c9834e7"
+      "sha256": "863f1f9e74ff6c46b2c221941b16a634459020682f728c18848525d63a2d929a"
     },
     {
       "path": "scripts/db/official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql",

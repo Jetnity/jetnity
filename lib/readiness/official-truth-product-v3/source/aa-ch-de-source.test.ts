@@ -484,6 +484,77 @@ test('genuine finalized source custody transfers once within its invocation with
   } finally { owner.abort(); wire.releaseAll(); mock.restoreAll(); t.mock.timers.reset() }
 })
 
+test('cold source opening transfers its actual SQL proof once and preserves later fresh reproofs', async t => {
+  const start = Date.parse('2026-11-14T10:00:00.000Z')
+  t.mock.timers.enable({ apis: ['Date'], now: start })
+  const program = selectedAaChDeQualification(); assert.ok(program)
+  const clock = () => { const value = hrs1Clock(new Date().toISOString(), program.legalTimeZone); assert.ok(value); return value }
+  try {
+    for (const mode of ['current', 'copied', 'foreign-signal', 'signal-abort', 'scope-abort', 'expired', 'unconfirmed-open'] as const) {
+      await t.test(mode, async () => {
+        t.mock.timers.setTime(start)
+        const wire = syntheticWire(), owner = new AbortController(), scopeOwner = new AbortController()
+        const methodReceipt = Object.freeze({}), references: unknown[] = []
+        let unavailable = false
+        try {
+          const challenge = sourceChallenge(clock().now)
+          const original = await issuer.inspect(challenge, owner.signal); assert.ok(original)
+          assert.equal(wire.calls, 2); assert.equal(wire.active, 0)
+          const fixed: Hrs1FixedOperation = async (command, signal, method) => {
+            assert.equal(command.operation, 'evidence'); assert.equal(signal, owner.signal)
+            assert.equal(method, methodReceipt, 'every SQL read keeps the original supplied method receipt')
+            references.push(command.body.reference)
+            return unavailable || mode === 'unconfirmed-open' && references.length === 2
+              ? { status: 'unconfirmed' } : { status: 'inspected', value: original.verification }
+          }
+          const consumer = createHrs1SourceConsumer({ binding: program.binding, registry: program.registry, fixed, clock,
+            custodyScope: Object.freeze({ key: Object.freeze({}), signal: scopeOwner.signal }) })
+          const reference = hrs1Ref('hrs1-decision-custody', original.verification.decision)
+          t.mock.timers.setTime(start + 1000)
+          const opened = await consumer.openVerification(reference, owner.signal, methodReceipt)
+          assert.deepEqual(references, [reference, original.verification.reference], 'cold open must join both actual SQL reads')
+          assert.equal(wire.calls, 4, 'cold open still obtains fresh native AA and Bern receipts')
+          assert.equal(wire.active, 0, 'both actual source operations must be physically settled')
+          if (mode === 'unconfirmed-open') {
+            assert.equal(opened, null, 'an unconfirmed final SQL read cannot issue the one-use proof')
+            return
+          }
+          assert.ok(opened); assert.equal(Object.isFrozen(opened), true)
+          assert.deepEqual(opened.verification, original.verification, 'original timestamps and expiry cannot renew')
+          t.mock.timers.setTime(start + 1100)
+          if (mode === 'current' || mode === 'copied') {
+            if (mode === 'copied') assert.equal(await consumer.takeOpenedVerification({ ...opened }, clock(), owner.signal), 'absent')
+            assert.equal(await consumer.takeOpenedVerification(opened, clock(), owner.signal), 'current')
+            assert.equal(await consumer.takeOpenedVerification(opened, clock(), owner.signal), 'unavailable', 'no replay of the observation')
+            assert.equal(references.length, 2, 'the immediate handoff must not repeat the completed SQL reproof')
+            if (mode === 'current') {
+              t.mock.timers.setTime(start + 1200)
+              assert.equal(await consumer.reproveVerification(opened.receipt, opened.verification, clock(), owner.signal, methodReceipt), true)
+              assert.deepEqual(references, [reference, original.verification.reference, original.verification.reference],
+                'the later commit proof must still perform an actual fresh database read')
+              unavailable = true
+              t.mock.timers.setTime(start + 1300)
+              assert.equal(await consumer.reproveVerification(opened.receipt, opened.verification, clock(), owner.signal, methodReceipt), false,
+                'the consumed opening must not conceal a later unconfirmed database proof')
+              assert.equal(references.length, 4)
+            }
+          } else {
+            if (mode === 'signal-abort') owner.abort()
+            if (mode === 'scope-abort') scopeOwner.abort()
+            if (mode === 'expired') t.mock.timers.setTime(Date.parse(opened.verification.validUntilExclusive))
+            const signal = mode === 'foreign-signal' ? new AbortController().signal : owner.signal
+            assert.equal(await consumer.takeOpenedVerification(opened, clock(), signal), 'unavailable', mode)
+            assert.equal(await consumer.takeOpenedVerification(opened, clock(), owner.signal), 'unavailable', 'a refused handoff is consumed')
+            assert.equal(references.length, 2, 'rejected custody cannot start replacement SQL')
+          }
+          assert.equal(wire.calls, 4, 'handoff and later reproof never replace the freshly opened originals')
+          assert.equal(wire.active, 0)
+        } finally { owner.abort(); scopeOwner.abort(); wire.releaseAll(); mock.restoreAll() }
+      })
+    }
+  } finally { t.mock.timers.reset() }
+})
+
 test('explicit source handoff refuses a foreign owner/key, owner abort and foreign reference without SQL or HTTP fallback', async t => {
   t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-14T10:00:00.000Z') })
   try {

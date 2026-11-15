@@ -36,7 +36,7 @@ export const REVIEW = Object.freeze({
   priorTickSha256: '354a5727d1e7f872e42cdda0e56f3f6411ccdf94993a9b9363429ea247e65dbe',
   runtimePins: Object.freeze([
     Object.freeze({ path: 'lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts', bytes: 31148, sha256: '3f875d2455f11888aaa944086f8a624b2c1c443fd42db73ce0f2778c1ba9e1aa' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-product-v3/result/source-proof.ts', bytes: 30248, sha256: '3e6c76d62d103a244f4c792f3f3c7454c9e410fc1f4acdd230eb143d3a5c215f' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-product-v3/result/source-proof.ts', bytes: 30507, sha256: '3a463613442d58e3fa11344dfaf5c06677a0e16718d3b22ec587948184702466' }),
     Object.freeze({ path: 'lib/readiness/official-truth-product-v3/result/ch-de-import-frame.ts', bytes: 9754, sha256: 'e27dc02031590c9088cfd298037690301fcc273092341c356f882f6eb42c24a4' }),
     Object.freeze({ path: 'lib/readiness/official-truth-product-v3/result/composition.ts', bytes: 14828, sha256: '07410b4795edfd793ec7dd0a1ede00445d29a059da4c43f31db484049aa1e4f2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-product-v3/jobs/selected-claim.ts', bytes: 18328, sha256: '29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1' }),

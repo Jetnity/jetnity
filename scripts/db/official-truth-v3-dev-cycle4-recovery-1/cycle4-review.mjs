@@ -143,9 +143,14 @@ const continuationQuery = `(SELECT jsonb_build_object(
 export function compileDevTerminalCycle4Review() {
   assert.equal(hash(read('./original-evidence.json')), REVIEW.originalEvidenceSha256)
   for (const pin of REVIEW.runtimePins) {
-    const source = read('../../../lib/readiness/official-truth-product-v3/' + pin.path)
-    assert.equal(Buffer.byteLength(source), pin.bytes, 'exact current reviewed source length: ' + pin.path)
-    assert.equal(hash(source), pin.sha256, 'exact current reviewed source: ' + pin.path)
+    // Retain this historical, unapplied Attempt2 review's exact source bytes
+    // from 06137e29737bf6f4d38c1a32d75e23e70150fb56. The new Attempt3 review
+    // binds the current cold-reopen successor; the other four pins stay current.
+    const source = pin.path === 'result/source-proof.ts'
+      ? read('./reviewed-runtime-06137e29/result-source-proof.ts.txt')
+      : read('../../../lib/readiness/official-truth-product-v3/' + pin.path)
+    assert.equal(Buffer.byteLength(source), pin.bytes, 'exact reviewed source length: ' + pin.path)
+    assert.equal(hash(source), pin.sha256, 'exact reviewed source: ' + pin.path)
   }
   assert.equal(originalEvidence.project, 'yfvbxvijcorffwxbxahl')
   assert.equal(originalEvidence.cycle.id, 4); assert.equal(originalEvidence.cycle.state, 'blocked')

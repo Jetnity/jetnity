@@ -540,9 +540,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "blob": "df988bad9d87d6d2a425c2795e41a0afb2b8fc03",
-    "bytes": 30248,
-    "sha256": "3e6c76d62d103a244f4c792f3f3c7454c9e410fc1f4acdd230eb143d3a5c215f"
+    "blob": "fbbf720898e4f550edf6ad971fbbd7b4d6397cc2",
+    "bytes": 30507,
+    "sha256": "3a463613442d58e3fa11344dfaf5c06677a0e16718d3b22ec587948184702466"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
