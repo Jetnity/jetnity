@@ -1,0 +1,39 @@
+{
+  "project_ref": "yfvbxvijcorffwxbxahl",
+  "source_sha256": "626eda801321471285889859e2025165c6032b7b45e67abe3de27164d12fb991",
+  "expected_rows": 294833,
+  "existing_identical": 270,
+  "expected_inserted": 294563,
+  "statement": "Typed jsonb_to_recordset from validated base64 UTF-8 JSON; existing complete source rows must match before INSERT ... ON CONFLICT(id) DO NOTHING. No update or delete. Return input and confirmed counts plus expected/actual content digests; persist record hashes externally for one final complete DB digest.",
+  "limits": {
+    "max_rows": 500,
+    "max_json_utf8_bytes": 180000,
+    "stop_if_database_bytes_at_least": 786432000
+  },
+  "target_evidence": {
+    "parent_project": "qscbgcdmivbbnzrcyegn",
+    "branch": "develop",
+    "default": false,
+    "org_plan": "pro",
+    "existing_database_bytes": 39824531,
+    "max_wal_size": "4GB",
+    "replication_slots": 0,
+    "retained_wal_bytes": 0,
+    "health_advisories": 0
+  },
+  "billing_basis": [
+    "https://supabase.com/docs/guides/platform/manage-your-usage/branching",
+    "https://supabase.com/docs/guides/platform/manage-your-usage/disk-size"
+  ],
+  "cost_boundary": "Existing already running Pro branch; published included gp3 baseline 8 GB. No project, compute, storage or billing settings changed. Conservative DB-size stop below 750 MiB; no retained replication WAL. Dashboard is not signed in, so actual billing-page distribution is not claimed.",
+  "backup_database_digest": "cc9a679ea45b5a66fa82bbcdc5792203",
+  "airports_digest": "90feedd315e598f44b4b1f65b08d0304",
+  "archive": {
+    "filename": "Jetnity-Dev-Ortskatalog-2026-11-15.zip",
+    "bytes": 440693554,
+    "sha256": "eaa5f691e52e0aebad923af363f2532c12fb46f4e232de97d373abdf279e1cb1",
+    "durably_saved": true
+  },
+  "row_digest_order": "id COLLATE C",
+  "batch_count": 611
+}
