@@ -143,10 +143,10 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-      "blob": "fc74bca829596057837f6b11b64a55817c75b62d",
-      "bytes": 28925,
-      "sha256": "4b062000335cde7ae812eab623d0abd6df0c7af857ec58d46b566fe96d63c3bc",
-      "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
+      "blob": "5bcf483858a137c268da5c435921a26c43c32335",
+      "bytes": 29022,
+      "sha256": "667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89",
+      "ref": "b195e83c6763334290120d7cf3005335a86da050"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/jobs/contract.test.ts",
@@ -216,10 +216,10 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/authority.test.ts",
-      "blob": "c143f727f8b166e8dd7eb19e40f60a0835a154d7",
-      "bytes": 47963,
-      "sha256": "352bb5896bae32f7bce58ad92b741d0246869ca435ea830ca3b126767987adbc",
-      "ref": "ee6801e99e86144e60dbe86d72576f9ad7c3e9bb"
+      "blob": "139b012b8dd104d24381fed03eacb2cc04298100",
+      "bytes": 48118,
+      "sha256": "21720a9cfea79deabe7553899966a0b4a206ea6e3a1a4686e59e981f44a3ecda",
+      "ref": "b195e83c6763334290120d7cf3005335a86da050"
     },
     {
       "path": "scripts/db/official-truth-atomic-version-refresh-1/test-lifetime.ts",

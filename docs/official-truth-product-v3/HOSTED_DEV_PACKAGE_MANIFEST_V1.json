@@ -172,9 +172,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_DURABLE_JOBS_MANIFEST_V1.json",
-      "blob": "f51305283998ff941cac8e3377b2661595970d32",
+      "blob": "1e180d5ab05507be1549d303287ec0676af10faf",
       "bytes": 658587,
-      "sha256": "03dfd78db348b8795a8598b53e7ff24ddbefca2d5ec551edbdec961464f29fd9"
+      "sha256": "aa7ba53e20c6d88f15b68ccb74f2501b7717de908a2be7f37fdde3fe6f39b471"
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_INTAKE_STORE_MANIFEST_V1.json",
@@ -190,9 +190,9 @@
     },
     {
       "path": "docs/official-truth-product-v3/HOSTED_RESULT_STORE_MANIFEST_V1.json",
-      "blob": "48f93531c34c2c1a3a5b58714391b66ca0646251",
+      "blob": "905ce082f0695d953cbeacf087f290ea4f7306ae",
       "bytes": 51960,
-      "sha256": "e63612779fad7294313552392f8056cdcf0fb4bfc8bfc8e940aed2febbf8be59"
+      "sha256": "b685a6c0168051311d7b9cbba0b66ff0f611985d1fa175c35539bec9735fc931"
     },
     {
       "path": "docs/official-truth-product-v3/HUMAN_METHOD_TRANSPORT_MANIFEST_V1.json",
