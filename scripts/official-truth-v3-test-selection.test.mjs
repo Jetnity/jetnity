@@ -19,6 +19,7 @@ import {
 
 const hosted = [
   'lib/readiness/official-truth-customer-information-migration.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
@@ -38,7 +39,13 @@ const hosted = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
   'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ]
-const quota = ['lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts']
+const quota = [
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
+  'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
+  'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
+]
 const main = hosted.filter(path => !quota.includes(path))
 const transport = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts',
@@ -92,7 +99,8 @@ test('the actual original universe is partitioned once and its selector contract
   const hostedRunners = [...partition.hostedPg17Main, ...partition.hostedPg17Quota]
   assert.deepEqual(hostedRunners.sort(), hosted)
   assert.equal(new Set(hostedRunners).size, hosted.length)
-  assert.ok(partition.hostedPg17Main.includes('lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts'))
+  assert.ok(partition.hostedPg17Quota.includes('lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts'))
+  assert.ok(partition.hostedPg17Quota.includes('lib/readiness/official-truth-dev-cycle4-recovery.test.ts'))
   assert.equal(partition.core.filter((path) => path === contract).length, 1)
   assert.equal(partition.hostedPg17.includes(contract), false)
   const combined = [...partition.core.filter((path) => path !== contract), ...partition.hostedPg17]

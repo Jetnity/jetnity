@@ -9,7 +9,7 @@ import type { QuellenRegistry } from '@/lib/readiness/source-registry'
 import { readV3SourceDecisionRecord, readV3ConflictArchiveRecord, type V3ReadClock, type V3SourceDecisionRecord, type V3SourceObservationRecord, type V3ConflictArchiveRecord } from '../contract'
 import type { V3ImportEvidencePort, V3ImportVerificationRequest, V3ImportHistory } from '../import/service-server'
 import type { V3SourceObservationPort, V3MonitorTarget } from '../monitor/monitor'
-import { AA_CH_DE_SOURCE_CUSTODY_ISSUER } from '../source/aa-ch-de-issuer'
+import { AA_CH_DE_SOURCE_CUSTODY_ISSUER, inspectAaChDeImportSourceRead } from '../source/aa-ch-de-issuer'
 import { selectedAaChDeProgramForBinding } from '../source/aa-ch-de-qualification'
 import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
 import {
@@ -30,6 +30,7 @@ export type Hrs1InitialHistory = Readonly<{
 }>
 export type Hrs1InitialHistoryTransfer = (request: V3ImportVerificationRequest, signal: AbortSignal) => Hrs1InitialHistory | null
 export type Hrs1AttestedVerificationTransfer = (verification: Hrs1Verification, signal: AbortSignal) => boolean
+export type Hrs1ImportSourceReadTransfer = (request: V3ImportVerificationRequest, signal: AbortSignal) => object | null
 export type Hrs1SourceIssued = Readonly<{ receipt: object; verification: Hrs1Verification }>
 type CustodyScope = Readonly<{ key: object; signal: AbortSignal }>
 type Custody = Readonly<{ scope: CustodyScope; issuer: Hrs1SourceCustodyIssuer; binding: Hrs1Binding;
@@ -189,6 +190,7 @@ export function createHrs1SourceConsumer(input: Readonly<{
   fixtureIssuer?: Hrs1SourceCustodyIssuer | null;
   takeInitialHistory?: Hrs1InitialHistoryTransfer;
   takeAttestedVerification?: Hrs1AttestedVerificationTransfer;
+  takeSourceRead?: Hrs1ImportSourceReadTransfer;
   custodyScope?: CustodyScope;
 }>): Hrs1SourceConsumer {
   const { binding, registry, fixed, clock, takeInitialHistory } = input
@@ -241,7 +243,13 @@ export function createHrs1SourceConsumer(input: Readonly<{
       if (!snapshot || !hrs1Same((snapshot.history as V3ImportHistory).decision, request.previousDecision) || signal.aborted) return { status: 'unavailable' }
       const challenge: Hrs1SourceChallenge = immutable({ binding, request, history: snapshot.history as V3ImportHistory,
         stickyDecision: snapshot.stickyDecision as V3SourceDecisionRecord | null, suppressionEpoch: snapshot.suppressionEpoch as number })
-      const issued = await issuer.inspect(challenge, signal)
+      let issued: Hrs1SourceIssued | null
+      if (input.takeSourceRead) {
+        if (issuer !== AA_CH_DE_SOURCE_CUSTODY_ISSUER) return { status: 'unavailable' }
+        const original = input.takeSourceRead(request, signal)
+        if (!original) return { status: 'unavailable' }
+        issued = await inspectAaChDeImportSourceRead(original, challenge, signal)
+      } else issued = await issuer.inspect(challenge, signal)
       if (!issued || !issued.receipt || typeof issued.receipt !== 'object') return { status: 'unavailable' }
       const v = readVerification(issued.verification, binding, registry)
       if (!v || !hrs1Same(v.request, request) || !hrs1Same(v.history, challenge.history)

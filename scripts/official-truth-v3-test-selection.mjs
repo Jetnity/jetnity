@@ -24,6 +24,7 @@ export const PRODUCTION_TEST_FILES = Object.freeze([
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/official-truth-customer-information-migration.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
   'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
@@ -45,9 +46,15 @@ export const HOSTED_PG17_FILES = Object.freeze([
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
   'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ])
-// Run this complete long proof on its own runner. No test/group inside the file
-// is filtered or concurrent; the main runner receives the exact complement.
+// Keep the quota and Dev recovery proofs sequential on the second existing
+// runner. Main previously used 29:46 of its 30-minute cap; moving these complete
+// independent files leaves room for the new recovery without another runner.
+// No test/group inside a file is filtered or concurrent; main is the complement.
 export const HOSTED_PG17_QUOTA_FILES = Object.freeze([
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
+  'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
   'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'

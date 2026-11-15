@@ -32,6 +32,13 @@ type CheckedPair = Readonly<{ primary: AaChDeQualifiedData; counter: AaChDeQuali
 type DecisionParts = Pick<V3SourceDecisionRecord, 'primary' | 'counterCheck' | 'knownConflicts' | 'historyArchive' | 'conclusion'>
 const issued = new WeakMap<object, Held>()
 const observations = new WeakMap<object, HeldObservation>()
+type OwnedPair = Awaited<ReturnType<typeof readAaChDeOwnedSources>>
+type ImportSourceRead = {
+  binding: Hrs1Binding; signal: AbortSignal | null; inspectionSignal: AbortSignal | null; clock: V3ReadClock | null;
+  request: Hrs1SourceChallenge['request'] | null; reads: Promise<OwnedPair> | null;
+  started: boolean; taken: boolean; closed: boolean; close: () => void;
+}
+const importSourceReads = new WeakMap<object, ImportSourceRead>()
 const copy = <T>(value: T): T => JSON.parse(hrs1Canonical(value)) as T
 const clockNow = (binding: Hrs1Binding) => hrs1Clock(new Date().toISOString(), binding.legalTimeZone)
 const representation = (source: ContentIdentityBinding) => ({ sourceId: source.sourceId,
@@ -233,16 +240,66 @@ function validHeld(h: Held, verification: Hrs1Verification, at: V3ReadClock, sig
   return true
 }
 
-/** The sole production issuer owns both real originals and the real counter
- * attempt. There is no issuer constructor, receipt setter or profile injection. */
-export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.freeze<Hrs1SourceCustodyIssuer>({
-  async inspect(challenge, signal) {
+/** One selected I1 frame may begin only the two real GETs after its first MA1
+ * approval. No qualification, history or method authority is retained here.
+ * The caller owns begin() through physical settlement, including abort/close. */
+export function createAaChDeImportSourceRead(binding: Hrs1Binding) {
+  const receipt = Object.freeze({}), controller = new AbortController()
+  const held: ImportSourceRead = { binding, signal: null, inspectionSignal: null, clock: null, request: null, reads: null,
+    started: false, taken: false, closed: false, close }
+  function close() {
+    held.closed = true; controller.abort()
+    held.signal?.removeEventListener('abort', close)
+    held.inspectionSignal?.removeEventListener('abort', close)
+  }
+  importSourceReads.set(receipt, held)
+  return Object.freeze({ receipt, close,
+    async begin(signal: AbortSignal, at: V3ReadClock): Promise<void> {
+      if (held.closed || held.started || signal.aborted || !selectedAaChDeProgramForBinding(binding)
+        || !currentClock(binding, at)) { close(); return }
+      held.started = true; held.signal = signal; held.clock = Object.freeze({ ...at })
+      signal.addEventListener('abort', close, { once: true })
+      try {
+        held.reads = readAaChDeOwnedSources(controller.signal, performance.now() + AA_CH_DE_PUBLICATION.maximumMilliseconds)
+        await held.reads
+      } catch { close() }
+    },
+    bind(request: Hrs1SourceChallenge['request'], signal: AbortSignal): boolean {
+      if (held.closed || !held.started || !held.reads || held.request || held.taken || held.signal?.aborted
+        || signal.aborted || !hrs1Data(request) || !hrs1Same(request.clock, held.clock)
+        || !hrs1Same(request.context, binding.context) || request.contextKey !== binding.contextKey
+        || request.factKind !== binding.factKind || !hrs1Same(request.method, hrs1Method(binding))) { close(); return false }
+      held.request = immutable(copy(request)); held.inspectionSignal = signal
+      signal.addEventListener('abort', close, { once: true })
+      return true
+    },
+  })
+}
+
+/** A copied/foreign/missing token or a second request never falls back to GETs.
+ * Only the genuinely joined pair enters the unchanged issuer checks below. */
+export async function inspectAaChDeImportSourceRead(receipt: object, challenge: Hrs1SourceChallenge,
+  signal: AbortSignal): Promise<Hrs1SourceIssued | null> {
+  const held = importSourceReads.get(receipt)
+  if (!held || held.closed || held.taken || !held.reads || !held.request || !held.signal || held.signal.aborted
+    || signal.aborted || signal !== held.inspectionSignal || !hrs1Data(challenge) || !hrs1Same(held.binding, challenge.binding)
+    || !hrs1Same(held.request, challenge.request)) {
+    held?.close(); return null
+  }
+  held.taken = true
+  const reads = await held.reads
+  if (held.closed || held.signal.aborted || signal.aborted) return null
+  return inspectOriginals(challenge, signal, reads)
+}
+
+async function inspectOriginals(challenge: Hrs1SourceChallenge, signal: AbortSignal,
+  prefetched?: OwnedPair): Promise<Hrs1SourceIssued | null> {
     try {
       if (!hrs1Data(challenge) || signal.aborted) return null
       const program = selectedAaChDeProgramForBinding(challenge.binding)
       if (!program || !requestMatches(challenge, program)) return null
       const heldChallenge = immutable(copy(challenge))
-      const reads = await readAaChDeOwnedSources(signal, performance.now() + AA_CH_DE_PUBLICATION.maximumMilliseconds)
+      const reads = prefetched ?? await readAaChDeOwnedSources(signal, performance.now() + AA_CH_DE_PUBLICATION.maximumMilliseconds)
       const counterReceipt = nativeReceipt(reads.counter)
       if (reads.primary.status !== 'read' || !counterReceipt || signal.aborted) return null
       const native = Object.freeze({ primary: reads.primary.receipt, counter: counterReceipt })
@@ -272,7 +329,12 @@ export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.fr
       const qualifications = retainQualifications(heldChallenge.binding, native, pair, false)
       return qualifications ? seal(heldChallenge.binding, native, program, verification, false, qualifications) : null
     } catch { return null }
-  },
+}
+
+/** The sole production issuer owns both real originals and the real counter
+ * attempt. There is no issuer constructor, receipt setter or profile injection. */
+export const AA_CH_DE_SOURCE_CUSTODY_ISSUER: Hrs1SourceCustodyIssuer = Object.freeze<Hrs1SourceCustodyIssuer>({
+  inspect(challenge, signal) { return inspectOriginals(challenge, signal) },
 
   async finalize(receipt, inspection, decision, archiveAppend, at, signal) {
     try {

@@ -516,15 +516,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/ch-de-import-frame.ts",
-    "bytes": 8252,
-    "blob": "c15ce7ddb5c86bfd948669ce5ab148e9be70f3f7",
-    "sha256": "9ae7a442267cb3626bdb0549835d640ef7db2c522891ad69b0bbaf41c3efb7ad"
+    "bytes": 9754,
+    "blob": "a5f5b0cc522f5ae897d51931917a057497186f3a",
+    "sha256": "e27dc02031590c9088cfd298037690301fcc273092341c356f882f6eb42c24a4"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-    "blob": "54da9c2b6de0e03b11980c83b5bcc1c92a5efce4",
-    "bytes": 14686,
-    "sha256": "ac82224f1ac8c7f25f17e06eb1e878355a2ee8ea45edb8ffd9a7500d872c79cd"
+    "blob": "61b20d6eb64fa4da0e0e82a85c66e51445af7ecc",
+    "bytes": 14828,
+    "sha256": "07410b4795edfd793ec7dd0a1ede00445d29a059da4c43f31db484049aa1e4f2"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",
@@ -540,9 +540,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/source-proof.ts",
-    "blob": "26434dff48fa42387bd6c83926028c48148437a3",
-    "bytes": 29682,
-    "sha256": "40f2b359744872a80b7db25b94a90a3a5e7226abab03efbd15e2f81d26417ad3"
+    "blob": "df988bad9d87d6d2a425c2795e41a0afb2b8fc03",
+    "bytes": 30248,
+    "sha256": "3e6c76d62d103a244f4c792f3f3c7454c9e410fc1f4acdd230eb143d3a5c215f"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
@@ -564,9 +564,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-issuer.ts",
-    "bytes": 27565,
-    "blob": "d62b85e554a72122c24fff5f24d63e14834372ff",
-    "sha256": "e3a3c4698a64490e07593f3e51ae8c262eed47beb85112dd116bec4f04f27b99"
+    "bytes": 31148,
+    "blob": "465ad29838c9fa89628b133e7ed56d76ec16e961",
+    "sha256": "3f875d2455f11888aaa944086f8a624b2c1c443fd42db73ce0f2778c1ba9e1aa"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-ch-de-owned-read.ts",

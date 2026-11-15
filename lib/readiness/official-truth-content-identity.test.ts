@@ -486,8 +486,8 @@ describe('dormancy and architectural boundaries', () => {
   const COMPOSED_CONTENT_METADATA_PIN = {
     path: 'scripts/db/official-truth-v3-composed-dev-1/native.ts',
     bytes: 105567,
-    blob: 'cc6054f2113cf5c12a8e3d2d045b28de9a1473f2',
-    sha256: '21518e6104b7edea570d5a7930d4ee7027cc521a09f1c3aee3fad282dd8ae061',
+    blob: 'b30b07d8690be4af25e520dd351c624439621c5d',
+    sha256: 'a4928a23d57f7c2566e6c9d3d96c4f8f03a2d89d70ac3f323e6860b85c9834e7',
     contextStart: 4104,
     contextEnd: 4332,
     tokenStart: 4135,
@@ -551,8 +551,8 @@ describe('dormancy and architectural boundaries', () => {
     {
       path: 'scripts/db/official-truth-v3-hosted-result-store-1/native.ts',
       bytes: 256780,
-      blob: '674919709606a52ed74dbef6bd1cd03cff9aed5f',
-      sha256: '3a877db350b18aebe7bb6f173bc3737307d99933bcea6e953d3ebcb0cc97e895',
+      blob: 'f1a0e0bfe9d8a47057d19f045b73c04ee63c6945',
+      sha256: '5eefb628f525f704b3abb1b39c2dd24e178314957d46ecf9f1ea018d363376aa',
       importText: "import { createContentIdentityGraph, contentEvidenceLookupV3 } from '../../../lib/readiness/official-truth-content-identity'",
     },
     {

@@ -65,6 +65,31 @@ test('one private I1 receipt and explicit snapshot/attest handoffs retain three 
   assert.equal((await f.call('history')).status, 'unavailable')
   assert.equal((await f.frame.authority.resolveCurrent(program.method, at)).status, 'unavailable')
 })
+test('early source ownership is never opened before positive MA1 and refuses an ownership-start failure', async () => {
+  for (const status of ['not_approved', 'unavailable', 'approved'] as const) {
+    const owner = new AbortController(), i1 = new AbortController(), receipt = Object.freeze({})
+    let starts = 0, fixedCalls = 0
+    const frame = createChDeImportFrame({ binding: program.binding, job: fixtureLeasedJob(), signal: owner.signal,
+      authority: {
+        async resolveCurrent() { return status === 'approved' ? { status, receipt } : { status } },
+        async reproveAtCommit() { assert.fail('an unowned source start cannot reach final authority') },
+      },
+      fixed: async () => { fixedCalls++; return { status: 'unavailable' } },
+      async ownSourceRead() { starts++; throw new Error('source_ownership_refused') },
+    })
+    assert.ok(frame)
+    assert.equal(starts, 0)
+    await frame.authority.resolveCurrent(program.method, at)
+    assert.equal(starts, 0, 'MA1 approval alone does not choose an import signal')
+    assert.equal(frame.admitImportSignal(i1.signal, true), status === 'approved')
+    await Promise.resolve()
+    assert.equal(starts, status === 'approved' ? 1 : 0)
+    assert.equal((await frame.fixed({ schema: 1, operation: 'history', bindingHash: hrs1Hash(program.binding),
+      body: { contextKey: program.contextKey, factKind: program.binding.factKind } }, i1.signal)).status, 'unavailable')
+    assert.equal(fixedCalls, 0, 'a failed owner cannot leave a source branch detached from this frame')
+    frame.close(); owner.abort(); i1.abort()
+  }
+})
 test('foreign receipts, missing initial read, extra/wrong operations and a different import cannot inherit custody', async () => {
   const first = fixture(), second = fixture()
   assert.equal((await first.call('history')).status, 'unavailable'); assert.equal(first.effects.length, 0)

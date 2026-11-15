@@ -3,8 +3,9 @@ import { immutable, ownRecord } from '@/lib/readiness/official-truth-autonomous-
 import type { V3ManagedJobRecord } from '../monitor/queue'
 import type { M04Authority } from '../jobs/contract'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
+import { createAaChDeImportSourceRead } from '../source/aa-ch-de-issuer'
 import { hrs1Canonical, hrs1Clock, hrs1Data, hrs1Hash, hrs1Same, type Hrs1Binding, type Hrs1FixedOperation, type Hrs1Verification } from './contract'
-import type { Hrs1InitialHistory, Hrs1InitialHistoryTransfer, Hrs1AttestedVerificationTransfer } from './source-proof'
+import type { Hrs1InitialHistory, Hrs1InitialHistoryTransfer, Hrs1AttestedVerificationTransfer, Hrs1ImportSourceReadTransfer } from './source-proof'
 
 /** One explicit I1 frame, constructed inside one selected research import.
  * Its receipt never leaves this closure. The original authority still owns its
@@ -12,6 +13,7 @@ import type { Hrs1InitialHistory, Hrs1InitialHistoryTransfer, Hrs1AttestedVerifi
 export function createChDeImportFrame(input: Readonly<{
   binding: Hrs1Binding; job: V3ManagedJobRecord; signal: AbortSignal;
   authority: M04Authority; fixed: Hrs1FixedOperation;
+  ownSourceRead?: (run: () => Promise<void>) => Promise<void>;
 }>) {
   const program = AA_BERN_CH_DE_REVIEWED_PROGRAM
   if (!hrs1Same(input.binding, program.binding) || input.job.kind !== 'research_job_record'
@@ -21,9 +23,13 @@ export function createChDeImportFrame(input: Readonly<{
   let importSignal: AbortSignal | null = null, initialHistory: Hrs1InitialHistory | null = null
   let historyTaken = false, resolvedAt: string | null = null
   let attested: Hrs1Verification | null = null, attestationTaken = false
+  const ownSourceRead = input.ownSourceRead
+  const sourceRead = ownSourceRead ? createAaChDeImportSourceRead(input.binding) : null
+  let sourceRequest: Hrs1Verification['request'] | null = null, sourceTaken = false
   const operations = ['history', 'attest', 'history'] as const
   function close() {
     closed = true; receipt = null; initialHistory = null; attested = null
+    sourceRead?.close(); sourceRequest = null
     input.signal.removeEventListener('abort', close)
     importSignal?.removeEventListener('abort', close)
   }
@@ -36,7 +42,17 @@ export function createChDeImportFrame(input: Readonly<{
       || (importSignal ? signal !== importSignal || initialRead : !initialRead || calls !== 0 || busy)) {
       close(); return false
     }
-    if (!importSignal) { importSignal = signal; signal.addEventListener('abort', close, { once: true }) }
+    if (!importSignal) {
+      importSignal = signal; signal.addEventListener('abort', close, { once: true })
+      if (sourceRead && ownSourceRead) {
+        const at = resolvedAt && hrs1Clock(resolvedAt, program.binding.legalTimeZone)
+        if (!at) { close(); return false }
+        // The original MA1 is already positive. Only the two public GETs run
+        // beside the first real history call; qualification still waits for it.
+        try { void ownSourceRead(() => sourceRead.begin(signal, at)).catch(close) }
+        catch { close(); return false }
+      }
+    }
     return true
   }
   const takeInitialHistory: Hrs1InitialHistoryTransfer = (request, signal) => {
@@ -50,8 +66,17 @@ export function createChDeImportFrame(input: Readonly<{
       close(); return null
     }
     const snapshot = initialHistory
+    if (sourceRead && !sourceRead.bind(request, signal)) { close(); return null }
+    sourceRequest = immutable(JSON.parse(hrs1Canonical(request)) as Hrs1Verification['request'])
     initialHistory = null; historyTaken = true
     return snapshot
+  }
+  const takeSourceRead: Hrs1ImportSourceReadTransfer = (request, signal) => {
+    if (!sourceRead || closed || input.signal.aborted || signal.aborted || !importSignal || importSignal.aborted
+      || !receipt || busy || calls !== 1 || !historyTaken || sourceTaken || !sourceRequest
+      || !hrs1Same(sourceRequest, request)) { close(); return null }
+    sourceTaken = true
+    return sourceRead.receipt
   }
   const authority: M04Authority = Object.freeze<M04Authority>({
     async resolveCurrent(method, checkedAt) {
@@ -130,5 +155,5 @@ export function createChDeImportFrame(input: Readonly<{
     attestationTaken = true; attested = null
     return true
   }
-  return Object.freeze({ authority, fixed, close, admitImportSignal, takeInitialHistory, takeAttestedVerification })
+  return Object.freeze({ authority, fixed, close, admitImportSignal, takeInitialHistory, takeAttestedVerification, takeSourceRead })
 }

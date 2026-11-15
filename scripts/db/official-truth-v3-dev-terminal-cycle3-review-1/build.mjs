@@ -68,20 +68,33 @@ const runtimeSessions = `EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid<>pg_bac
     'ot_v3_result_writer','ot_v3_result_reader','ot_v3_result_verifier'))`
 
 export function compileDevTerminalCycle3Review() {
-  for (const [relative, expected] of [
-    ['monitor/queue.ts', REVIEW.queueFix], ['jobs/composition.ts', REVIEW.compositionFix],
-    ['result/composition.ts', REVIEW.resultCompositionFix],
-    ['import/service-server.ts', REVIEW.importServiceFix], ['storage/quarantine-postgres.ts', REVIEW.quarantineFix],
-    ['jobs/contract.ts', REVIEW.jobContractFix], ['jobs/postgres.ts', REVIEW.jobStorageFix],
-    ['monitor/worker.ts', REVIEW.workerAuthorityFix],
-    ['jobs/selected-claim.ts', REVIEW.selectedClaimFix], ['method/authority-postgres.ts', REVIEW.methodAuthorityFix],
-    ['transport/node-postgres-owned-session.ts', REVIEW.ownedSessionFix],
-    ['transport/node-postgres-executors.ts', REVIEW.executorsFix],
-    ['jobs/owned-scope.ts', REVIEW.ownedScopeFix],
-  ]) {
-    assert.match(expected, /^[a-f0-9]{64}$/, 'all independently reviewed runtime fixes must be frozen first')
-    assert.equal(hash(read('../../../lib/readiness/official-truth-product-v3/' + relative)), expected,
-      'new review is tied to the exact reviewed runtime fix: ' + relative)
+  // This exact review was applied on 92bc5cc1. Preserve its original runtime
+  // evidence even when a separately reviewed successor changes current source.
+  // Never rewrite the already applied SQL, proof hashes or historical receipt.
+  const runtime = JSON.parse(read('./reviewed-runtime-92bc5cc1/manifest.json'))
+  assert.equal(runtime.commit, '92bc5cc11920d861022ad2823cd45efd808c8904')
+  assert.equal(runtime.tree, '086b72ef002598678b606f0365edc62ab170e219')
+  assert.equal(runtime.ciRun, 43731590653)
+  assert.equal(runtime.appliedReviewAt, '2026-11-15T16:33:47.386817Z')
+  assert.deepEqual(runtime.pins, [
+    { path: 'lib/readiness/official-truth-product-v3/monitor/queue.ts', archive: 'monitor-queue.ts.txt', bytes: 35212, sha256: REVIEW.queueFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/composition.ts', archive: 'jobs-composition.ts.txt', bytes: 29811, sha256: REVIEW.compositionFix },
+    { path: 'lib/readiness/official-truth-product-v3/result/composition.ts', archive: 'result-composition.ts.txt', bytes: 14686, sha256: REVIEW.resultCompositionFix },
+    { path: 'lib/readiness/official-truth-product-v3/import/service-server.ts', archive: 'import-service-server.ts.txt', bytes: 27279, sha256: REVIEW.importServiceFix },
+    { path: 'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts', archive: 'storage-quarantine-postgres.ts.txt', bytes: 13960, sha256: REVIEW.quarantineFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/contract.ts', archive: 'jobs-contract.ts.txt', bytes: 38206, sha256: REVIEW.jobContractFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/postgres.ts', archive: 'jobs-postgres.ts.txt', bytes: 20741, sha256: REVIEW.jobStorageFix },
+    { path: 'lib/readiness/official-truth-product-v3/monitor/worker.ts', archive: 'monitor-worker.ts.txt', bytes: 11375, sha256: REVIEW.workerAuthorityFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/selected-claim.ts', archive: 'jobs-selected-claim.ts.txt', bytes: 18328, sha256: REVIEW.selectedClaimFix },
+    { path: 'lib/readiness/official-truth-product-v3/method/authority-postgres.ts', archive: 'method-authority-postgres.ts.txt', bytes: 57640, sha256: REVIEW.methodAuthorityFix },
+    { path: 'lib/readiness/official-truth-product-v3/transport/node-postgres-owned-session.ts', archive: 'transport-node-postgres-owned-session.ts.txt', bytes: 18027, sha256: REVIEW.ownedSessionFix },
+    { path: 'lib/readiness/official-truth-product-v3/transport/node-postgres-executors.ts', archive: 'transport-node-postgres-executors.ts.txt', bytes: 26781, sha256: REVIEW.executorsFix },
+    { path: 'lib/readiness/official-truth-product-v3/jobs/owned-scope.ts', archive: 'jobs-owned-scope.ts.txt', bytes: 9501, sha256: REVIEW.ownedScopeFix },
+  ])
+  for (const pin of runtime.pins) {
+    const source = read('./reviewed-runtime-92bc5cc1/' + pin.archive)
+    assert.equal(Buffer.byteLength(source), pin.bytes)
+    assert.equal(hash(source), pin.sha256, 'exact independently reviewed predecessor runtime required')
   }
   assert.equal(originalEvidence.cycle.id, 3)
   assert.equal(originalEvidence.cycle.state, 'blocked'); assert.equal(originalEvidence.cycle.last_status, 'exhausted')
