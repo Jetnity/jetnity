@@ -145,9 +145,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "bytes": 28925,
-    "blob": "fc74bca829596057837f6b11b64a55817c75b62d",
-    "sha256": "4b062000335cde7ae812eab623d0abd6df0c7af857ec58d46b566fe96d63c3bc"
+    "bytes": 29022,
+    "blob": "5bcf483858a137c268da5c435921a26c43c32335",
+    "sha256": "667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
@@ -199,9 +199,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
-    "bytes": 21241,
-    "blob": "980c846c88892727d42cb64b53ce88f310fa78e8",
-    "sha256": "d25ecdfc3342a83dc306ad7278ad513200f9994e9da98e754d46b2ef9b8014fd"
+    "bytes": 22643,
+    "blob": "401d1304a988790f4ee4c150c5c36a2ad9bcacbe",
+    "sha256": "4205b79b1a22c80823a4965cf911445213e3f99b8daae6365a710a4748a24f3d"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/monitor/recovery.ts",
@@ -247,9 +247,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
-    "bytes": 7306,
-    "blob": "0ccb8029fcd87798d04de9ed7fe6df3ae030ddba",
-    "sha256": "9c1eb4a194071845f9efe997cba9ba9844b71e0f33c5c2ba4f8b91184a433764"
+    "bytes": 7912,
+    "blob": "6826d8e85d1d4ca262d6d4405c78130e90444256",
+    "sha256": "4ba44187c26aa7f4f7e8785775bec82154e00ba6f97a813d688bf093ef444433"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/source/aa-bern-ch-de-current-article.ts",

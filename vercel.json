@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-dev/verify-installed-dev.mjs && npm run build",
+  "buildCommand": "npm run build",
   "functions": {
     "app/api/readiness/ch-de-visa/route.ts": {
       "regions": [
@@ -23,6 +23,11 @@
       ]
     },
     "app/api/internal/readiness/ch-de-dev-refresh/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-prod-refresh/route.ts": {
       "regions": [
         "fra1"
       ]

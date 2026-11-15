@@ -1,4 +1,6 @@
 import { timingSafeEqual } from 'node:crypto'
+import { HUMAN_METHOD_DEV_URL } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
+import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
 import { runOfficialTruthV3ChDeTick } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
 
 export const runtime = 'nodejs'
@@ -11,10 +13,11 @@ function refusal(status: number, result: 'unauthorized' | 'unavailable' | 'reque
   return Response.json({ schema: 1, status: result }, { status, headers: HEADERS })
 }
 
-/** Fixed scheduler ingress only. A credential cannot select or approve a method.
- * Deployment schedule/secret provisioning is separate; neither is set here. */
+/** Legacy Dev scheduler ingress only. Production uses its distinct fixed HMAC
+ * POST, so the general CRON_SECRET never opens an additional Production path. */
 export async function GET(request: Request): Promise<Response> {
   try {
+    if (getHumanRelease()?.targetUrl !== HUMAN_METHOD_DEV_URL) return refusal(503, 'unavailable')
     const secret = process.env.CRON_SECRET
     if (!secret || !/^[A-Za-z0-9_-]{32,256}$/.test(secret)) return refusal(503, 'unavailable')
     const authorization = request.headers.get('authorization')

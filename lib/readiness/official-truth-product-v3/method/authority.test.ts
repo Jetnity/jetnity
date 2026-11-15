@@ -572,7 +572,7 @@ function jointQueueFixture(hooks: {
 }
 
 describe('M04 private joint factory retains MA1 authority and original budgets', () => {
-  test('fresh CAS uses seven real dispatcher calls for absent enqueue and nine for existing enqueue/claim; replay keeps its own probes', async () => {
+  test('fresh CAS uses seven real calls for absent enqueue or fixed-method claim and nine for existing enqueue; replay keeps its probes', async () => {
     const x = jointQueueFixture()
     assert.equal((await x.api.enqueueRule(x.f.ruleInput)).status, 'confirmed')
     assert.deepEqual(x.trace, ['queue_confirm:probe', 'queue_read:probe', 'method', 'method',
@@ -596,8 +596,10 @@ describe('M04 private joint factory retains MA1 authority and original budgets',
     x.trace.length = 0
     assert.notEqual((await x.api.workOnce(x.f.claim())).status, 'processed')
     assert.equal(x.trace[0], 'execution_read:probe', 'actual initial resume precedes the queue')
-    assert.deepEqual(x.trace.slice(1, 10), freshExisting, 'the claim itself still performs all nine owned native calls')
-    assert.deepEqual(x.trace.slice(10, 12), ['method', 'execution_read:probe'], 'worker authority and lookup remain additional actual work')
+    assert.deepEqual(x.trace.slice(1, 8), ['queue_confirm:probe', 'method', 'queue_read:authorized',
+      'method', 'queue_cas:authorized', 'queue_read:authorized', 'method'],
+    'the fixed-method claim retains both actual reads and all real reproofs in seven owned calls')
+    assert.deepEqual(x.trace.slice(8, 10), ['method', 'execution_read:probe'], 'worker authority and lookup remain additional actual work')
     assert.equal(x.trace.filter(s => s === 'queue_cas:authorized').length, 1, 'unknown lookup cannot settle a failure without an execution start')
     assert.equal(x.operations.size, 3)
     assert.equal(x.record()?.attempt, 1); assert.equal(x.record()?.state, 'leased')

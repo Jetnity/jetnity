@@ -100,15 +100,15 @@
   "authoredSourcePins": [
     {
       "path": "app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx",
-      "bytes": 13280,
-      "blob": "bcfe6c1d2beebc97c21001675875f22fabce57d5",
-      "sha256": "2880a1beb3faeaac7ed98cd558106fb166e8aacedd329264509d5e308b56b8f2"
+      "bytes": 13391,
+      "blob": "d1c560537efa1f71063fb32d4e302452d03dd28a",
+      "sha256": "600be15b7a28c1493de4f6ce4850808989b33fcce16af56822a57e1fa90e9e73"
     },
     {
       "path": "app/(admin)/admin/official-truth/method/page.tsx",
-      "bytes": 1072,
-      "blob": "42afc06330574310e297326b1bd9917cf6d30934",
-      "sha256": "5319b65fbf7fbf5b79c20d210efa65f85faff6312c067f2d44328547e211ddb3"
+      "bytes": 1259,
+      "blob": "5fa102d59c9e42c73b64e7e4bd94599109962040",
+      "sha256": "8cb50d6b9ab3ce73d5dcc9cffc707cb9659bc7e75b4433c50a4db12ba137a3f9"
     },
     {
       "path": "app/api/admin/official-truth/method/route.ts",
@@ -136,27 +136,27 @@
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-contract.ts",
-      "bytes": 22177,
-      "blob": "009cf5541674fb365382c8262f89b02beff95fdc",
-      "sha256": "ee254806579d4ee606181ea92879159708a810785acc9cdcec5dbb55ae5da1de"
+      "bytes": 22350,
+      "blob": "12e8ffd11982f18a335bfa08c64af9bc32231aee",
+      "sha256": "1c6a4b8a2d627986a811e2cc58c1d3e303a7b3f4970d8e26646234103f738d04"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-release.ts",
-      "bytes": 2875,
-      "blob": "f6dca5495ad213a82165f67b70e5fb644ce6bad3",
-      "sha256": "baf0ab753a069cebcb684eec064f4d4f1ac7df2b3a476dfa71b18730e49d5944"
+      "bytes": 3514,
+      "blob": "74fff2ea2be00fe89e3ee98fdfdedc1a76e871ff",
+      "sha256": "0c20701dd8526ff94132a2d63697ebd0c00929b6f4e089be969996828ef181b6"
     },
     {
       "path": "lib/readiness/official-truth-product-v3/method/human-server.ts",
-      "bytes": 4684,
-      "blob": "12ffaf74de2a6147bdd93ec96d6aa2c21d713eee",
-      "sha256": "6ffbc85fae94db6f8000083bd429d85e1582b397e40d28b7438d4289d028becf"
+      "bytes": 4613,
+      "blob": "49e63c098754764c035fc2abbce29f5ec9677859",
+      "sha256": "98890c11a9ab60233b008604cf4d3d28c147721e18f3f4640d496ebdabed6e00"
     },
     {
       "path": "lib/readiness/official-truth-v3-human-method-ui-1.test.ts",
-      "bytes": 26694,
-      "blob": "6ad04b77a3c2ec9e1af5204741b51a8f90757407",
-      "sha256": "0261222fc8bf74bfd25169c677a04fe52c46c619377b95a10757ec187117ad13"
+      "bytes": 28686,
+      "blob": "a4ff490d1117718bf8e20ff381ada4d513b4633e",
+      "sha256": "c0d497ef7e7a774dacae142d71188a8ace2c4c0b91536f1848414c5a218643e0"
     },
     {
       "path": "scripts/db/verwendung.mjs",
@@ -323,9 +323,9 @@
     {
       "path": "tsconfig.json",
       "sourceCommit": "e932aa20d6f2f834c13e3541c5eb25b13deef6d1",
-      "bytes": 957,
-      "blob": "31a2193441b76fee15db2e7c28760206bb638a2c",
-      "sha256": "8d39327495199c6dc6441a72940b95cc5ad4a019e15cdcd17ab8027ba233ef1a"
+      "bytes": 1029,
+      "blob": "a9e74f443a5be7de0f9738c68a69dd5fd8d7babc",
+      "sha256": "320a0225f96271ad915a75fe7d75c092f778ffca5de4d79c2239ee4a2d9bc1ec"
     }
   ],
   "insertionReceipts": [
@@ -581,5 +581,13 @@
     "noRemotePublication": true,
     "noSqlOrAuthAction": true,
     "noProductionAuthority": true
+  },
+  "productionPreparation20261115": {
+    "status": "SOURCE_PREPARED_UNAPPLIED",
+    "task": "docs/OFFICIAL_TRUTH_PRODUCTION_PACKAGE_1_TASK_2026-11-15.md",
+    "productionSelectionId": "hmr1_6820db8992a74c52947bc59cb085a214",
+    "targetUrl": "https://qscbgcdmivbbnzrcyegn.supabase.co",
+    "productionOwnerApprovalPerformed": false,
+    "history": "The prior activationPreparation retains its original Dev-only selection evidence. Current top-level authored source pins now include the separately guarded Production descriptor; no historical approval is transferred."
   }
 }

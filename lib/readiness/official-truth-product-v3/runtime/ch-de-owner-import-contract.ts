@@ -42,12 +42,12 @@ export function readChDeOwnerImportOutcome(value: unknown): ChDeOwnerImportOutco
 export function chDeOwnerImportMessage(outcome: ChDeOwnerImportOutcome): string {
   switch (outcome.status) {
     case 'queued': return 'Die neue Quellenanforderung wurde gespeichert. Der Quellenimport wird mit derselben ursprünglichen Anfrage fortgesetzt.'
-    case 'published': return `${outcome.published} Veröffentlichung${outcome.published === 1 ? '' : 'en'} bestätigt. Prüfe jetzt die Visumauskunft in der Vorschau; dieser Lauf ersetzt nicht deren Prüfung.`
-    case 'complete': return 'Der Lauf ist abgeschlossen. Er hat keine Veröffentlichung bestätigt. Prüfe den aktuellen Stand der Visumauskunft in der Vorschau.'
+    case 'published': return `${outcome.published} Veröffentlichung${outcome.published === 1 ? '' : 'en'} bestätigt. Prüfe jetzt die Visumauskunft in der Besucheransicht dieser Umgebung; dieser Lauf ersetzt nicht deren Prüfung.`
+    case 'complete': return 'Der Lauf ist abgeschlossen. Er hat keine Veröffentlichung bestätigt. Prüfe den aktuellen Stand der Visumauskunft in der Besucheransicht dieser Umgebung.'
     case 'exhausted': return 'Die Versuche dieses Quellenlaufs sind ausgeschöpft und abgeschlossen. Es wurde kein weiterer Quellenversuch begonnen. Ein neuer Lauf benötigt eine neue reguläre Anforderung.'
     case 'busy': return 'Ein Quellenlauf ist bereits aktiv. Dieser Klick startet keinen weiteren Lauf. Prüfe nach dessen Abschluss die Visumauskunft.'
     case 'not_approved': return 'Die ausgewählte Methode ist aktuell nicht freigegeben. Der Quellenimport wurde nicht gestartet.'
-    case 'unavailable': return 'Der Quellenimport konnte nicht gestartet werden. Bitte den Dev-Stand mit der technischen Leitung prüfen.'
+    case 'unavailable': return 'Der Quellenimport konnte nicht gestartet werden. Bitte den Stand dieser Umgebung mit der technischen Leitung prüfen.'
     case 'access_required': return 'Dein aktueller Owner-Zugang mit Zwei-Faktor-Prüfung wurde nicht bestätigt. Der Quellenimport wurde nicht gestartet.'
     case 'request_refused': return 'Die Anfrage wurde abgelehnt. Der Quellenimport wurde nicht gestartet.'
     case 'unresolved': return 'Der Ausgang ist offen. Ein Abbruch oder eine verlorene Antwort beweist keine Rücknahme. Prüfe den gespeicherten Quellen- und Ergebnisstand mit der technischen Leitung, bevor du einen neuen Lauf startest.'

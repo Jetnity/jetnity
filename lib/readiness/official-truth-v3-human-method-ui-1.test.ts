@@ -6,7 +6,7 @@ import { applyAdminAal, parseAalLookup } from '@/lib/auth/admin-aal'
 import { adminWriteErlaubt } from '@/lib/auth/admin-write-gate'
 import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../scripts/db/verwendung.mjs'
 import {
-  HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_DEV_URL, HUMAN_METHOD_STORAGE_KEY,
+  HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY,
   appendHumanOperation, buildHumanCommand, createHumanOperationId, humanRequestHeadersAllowed, humanRpcArguments,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome,
   readHumanReceipt, readHumanRelease, readHumanRequestText,
@@ -61,7 +61,7 @@ function child(value: Record<string, unknown>, key: string): Record<string, unkn
   return nested as Record<string, unknown>
 }
 
-test('fixed Dev selection retains every Preview and target refusal before client construction', async t => {
+test('fixed Dev and Production selections refuse wrong deployments, projects and cross-environment operations before client construction', async t => {
   const guards = { VERCEL_ENV: 'preview', VERCEL_PROJECT_ID: 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM',
     VERCEL_GIT_REPO_OWNER: 'Jetnity', VERCEL_GIT_REPO_SLUG: 'jetnity',
     VERCEL_GIT_COMMIT_REF: 'feat/official-truth-human-method-ui-1-20261112' }
@@ -126,11 +126,42 @@ test('fixed Dev selection retains every Preview and target refusal before client
     await refuse(input as HumanRequest, 'selection_mismatch')
   }
   assert.equal(readHumanRelease(null), null)
+  const productionGuards = { ...guards, VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main' }
+  Object.assign(process.env, productionGuards)
+  const production = getHumanRelease()
+  assert.ok(production)
+  assert.equal(production.targetUrl, HUMAN_METHOD_PRODUCTION_URL)
+  assert.equal(production.selectionId, 'hmr1_6820db8992a74c52947bc59cb085a214')
+  assert.notEqual(production.selectionId, release.selectionId)
+  assert.equal(production.expectedHead, null)
+  assert.equal(production.predecessorRevision, null)
+  assert.equal(production.methodDigest, release.methodDigest)
+  assert.equal(production.packageDigest, release.packageDigest)
+  const productionRequest = { ...request, selectionId: production.selectionId }
+  await refuse(productionRequest, 'target_refused') // The selected Dev Auth client cannot be used in Production.
+  target = HUMAN_METHOD_PRODUCTION_URL
+  await refuse(request, 'selection_mismatch') // A retained Dev operation cannot be adopted in Production.
+  for (const [key, expected] of Object.entries(productionGuards)) {
+    delete process.env[key]
+    assert.equal(getHumanRelease(), null, `missing Production ${key}`)
+    await refuse(productionRequest, 'unselected')
+    process.env[key] = 'unselected-' + expected
+    assert.equal(getHumanRelease(), null, `wrong Production ${key}`)
+    await refuse(productionRequest, 'unselected')
+    process.env[key] = expected
+  }
+  // Only the actual Production selection reaches the same bounded HMT client.
+  // The synthetic unavailable RPC cannot produce an approval or success receipt.
+  const unavailable = await runHumanMethodRequest(productionRequest, ACTOR, new AbortController().signal)
+  assert.equal(unavailable.status, 'unresolved')
+  assert.equal(unavailable.code, 'request_unresolved')
+  assert.equal(clientCalls, 1); assert.equal(rpcCalls, 1)
 })
 
-test('release permits only exact Dev, full reviewed shape and legal finite transitions', () => {
+test('release permits only the two exact targets, full reviewed shape and legal finite transitions', () => {
   assert.ok(readHumanRelease(FIXTURE))
-  for (const targetUrl of ['https://qscbgcdmivbbnzrcyegn.supabase.co', HUMAN_METHOD_DEV_URL + '/', 'https://example.invalid']) {
+  assert.ok(readHumanRelease({ ...FIXTURE, targetUrl: HUMAN_METHOD_PRODUCTION_URL }))
+  for (const targetUrl of [HUMAN_METHOD_PRODUCTION_URL + '/', HUMAN_METHOD_DEV_URL + '/', 'https://example.invalid']) {
     assert.equal(readHumanRelease({ ...FIXTURE, targetUrl }), null)
   }
   for (const patch of [

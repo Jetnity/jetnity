@@ -9,6 +9,7 @@ import {
   HOSTED_PG17_FILES,
   nodeTestArguments,
   ORIGINAL_TEST_FAMILIES,
+  PRODUCTION_TEST_FILES,
   partitionRequiredTests,
   selectedMode,
   SELECTOR_CONTRACT,
@@ -18,6 +19,9 @@ import {
 const hosted = [
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-prod-import-scheduler.test.ts',
+  'lib/readiness/official-truth-product-v3/method/claim-read-authority.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
@@ -28,6 +32,7 @@ const hosted = [
   'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
   'lib/readiness/profile-authority-integrity-1.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ]
 const transport = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts',
@@ -35,6 +40,12 @@ const transport = [
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ]
 const transportCore = transport.slice(0, 2)
+const production = [
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+  'scripts/official-truth-product-v3-production/build.test.mjs',
+  'scripts/official-truth-production-import-monitor.test.mjs',
+]
+const productionCore = production.slice(1)
 const contract = 'scripts/official-truth-v3-test-selection.test.mjs'
 const alarm = 'scripts/official-truth-dev-guard-alarm.test.mjs'
 const scriptTests = [
@@ -61,6 +72,8 @@ test('the actual original universe is partitioned once and its selector contract
   assert.deepEqual(HOSTED_PG17_FILES, hosted)
   assert.deepEqual(TRANSPORT_TEST_FILES, transport)
   assert.ok(Object.isFrozen(TRANSPORT_TEST_FILES))
+  assert.deepEqual(PRODUCTION_TEST_FILES, production)
+  assert.ok(Object.isFrozen(PRODUCTION_TEST_FILES))
   assert.equal(SELECTOR_CONTRACT, contract)
   const original = discoverOriginalTestFiles()
   const partition = partitionRequiredTests(original)
@@ -72,7 +85,7 @@ test('the actual original universe is partitioned once and its selector contract
   assert.deepEqual([...combined].sort(), [...original].sort())
   assert.equal(new Set(combined).size, original.length)
   assert.equal(partition.core.some((path) => partition.hostedPg17.includes(path)), false)
-  for (const path of [...scriptTests, ...transportCore, ...oldPg16AndPg1Tests]) {
+  for (const path of [...scriptTests, ...transportCore, ...productionCore, ...oldPg16AndPg1Tests]) {
     assert.equal(partition.core.filter((candidate) => candidate === path).length, 1, path)
     assert.equal(partition.hostedPg17.includes(path), false, path)
   }
@@ -87,12 +100,14 @@ test('discovery includes every family and new nested tests without a frozen orig
     writeFileSync(file, '// inert discovery fixture; never imported\n')
   }
   try {
-    const expected = [...scriptTests, ...hosted, ...transportCore, 'lib/top.test.ts', 'lib/new/nested.test.ts'].sort()
+    const expected = [...scriptTests, ...hosted, ...transportCore, ...productionCore, 'lib/top.test.ts', 'lib/new/nested.test.ts'].sort()
     for (const path of expected) create(path)
     create('lib/new/not-a-test.ts')
     create('scripts/outside-the-three-families.test.ts')
     create('scripts/db/official-truth-v3-node-postgres-transport-1/unreviewed.test.ts')
     create('scripts/db/official-truth-v3-node-postgres-transport-2/native.test.ts')
+    create('scripts/db/official-truth-v3-production-install-1/unreviewed.test.ts')
+    create('scripts/official-truth-product-v3-production/unreviewed.test.mjs')
     create('scripts/aa-bern-reviewed-program-proof/run.ts')
     assert.deepEqual(discoverOriginalTestFiles(root), expected)
     const added = 'lib/future/unrelated.test.ts'
@@ -101,7 +116,7 @@ test('discovery includes every family and new nested tests without a frozen orig
     const split = partitionRequiredTests(discoverOriginalTestFiles(root))
     assert.ok(split.core.includes(added))
     assert.deepEqual(split.hostedPg17, hosted)
-    for (const path of transport) {
+    for (const path of [...transport, ...production]) {
       rmSync(join(root, path))
       assert.throws(() => discoverOriginalTestFiles(root), /ENOENT|regular file/, path)
       create(path)
@@ -117,7 +132,7 @@ test('discovery includes every family and new nested tests without a frozen orig
 })
 
 test('missing, duplicate, invalid and unauthorized hosted membership cannot remove a required proof', () => {
-  const original = [...hosted, ...transportCore, alarm, 'lib/ordinary.test.ts']
+  const original = [...hosted, ...transportCore, ...productionCore, alarm, 'lib/ordinary.test.ts']
   assert.throws(() => partitionRequiredTests(['lib/ordinary.test.ts']), /Missing hosted test/)
   for (const path of hosted) {
     assert.throws(() => partitionRequiredTests(original.filter((candidate) => candidate !== path)), /Missing hosted test/, path)
@@ -129,6 +144,11 @@ test('missing, duplicate, invalid and unauthorized hosted membership cannot remo
   }
   for (const path of transportCore) {
     assert.throws(() => partitionRequiredTests(original.filter((candidate) => candidate !== path)), /Missing required transport test/, path)
+    assert.throws(() => partitionRequiredTests([...original, path]), /Duplicate original/, path)
+    assert.throws(() => partitionRequiredTests(original, [...hosted, path]), /explicit reviewed amendment/, path)
+  }
+  for (const path of productionCore) {
+    assert.throws(() => partitionRequiredTests(original.filter((candidate) => candidate !== path)), /Missing required Production test/, path)
     assert.throws(() => partitionRequiredTests([...original, path]), /Duplicate original/, path)
     assert.throws(() => partitionRequiredTests(original, [...hosted, path]), /explicit reviewed amendment/, path)
   }
@@ -144,6 +164,10 @@ test('missing, duplicate, invalid and unauthorized hosted membership cannot remo
     'scripts/db/official-truth-v3-node-postgres-transport-1/unreviewed.test.ts',
     'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts.evil.ts',
     'scripts/db/official-truth-v3-node-postgres-transport-2/native.test.ts',
+    'scripts/db/official-truth-v3-production-install-1/unreviewed.test.ts',
+    'scripts/db/official-truth-v3-production-install-2/native.test.ts',
+    'scripts/official-truth-product-v3-production/build.test.mjs.evil.ts',
+    'scripts/official-truth-product-v3-production/unreviewed.test.mjs',
     'scripts/aa-bern-reviewed-program-proof/run.ts', null]) {
     assert.throws(() => partitionRequiredTests([...original, invalid]), /Invalid required test path|outside the original test families/)
   }
@@ -158,7 +182,7 @@ test('only the two explicit modes are accepted and extra arguments are refused',
 })
 
 test('Node arguments retain imports and Core concurrency while the hosted family is explicit', () => {
-  const split = partitionRequiredTests([...hosted, ...transportCore, alarm, 'lib/ordinary.test.ts'])
+  const split = partitionRequiredTests([...hosted, ...transportCore, ...productionCore, alarm, 'lib/ordinary.test.ts'])
   const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
   assert.deepEqual(nodeTestArguments('core', split), [...prefix, ...split.core])
   assert.deepEqual(nodeTestArguments('hosted-pg17', split), [...prefix, '--test-concurrency=1', ...hosted])

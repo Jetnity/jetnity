@@ -40,6 +40,7 @@ const cases = [
   ['previous deployment omits the manual import region', s => { s.protectedBlobs['vercel.json'] = '62aeabfcc0123e4592b05820ca2798a661a4d28c' }, 'historical audit/config/deployment blob drift'],
   ['previous deployment omits the Dev guard region', s => { s.protectedBlobs['vercel.json'] = '6c74719acbe8b3f4552b669f7a2836ec3acfe210' }, 'historical audit/config/deployment blob drift'],
   ['previous deployment omits the Dev scheduler region', s => { s.protectedBlobs['vercel.json'] = 'ded48d8cb3c1cbce5ae6d0b9bb5cbf426a2c5100' }, 'historical audit/config/deployment blob drift'],
+  ['previous deployment still runs the temporary Dev build probe', s => { s.protectedBlobs['vercel.json'] = '9218721ef49b47fad5e94d5663ba7e03cba5f1fd' }, 'historical audit/config/deployment blob drift'],
   ['changed deployment bytes', s => { s.protectedBlobs['vercel.json'] = 'altered' }, 'historical audit/config/deployment blob drift'],
   ['widened host', s => { s.historical.report.remotePatterns[0].hostname = '*' }, 'historical remotePatterns drift'],
   ['cache enabled', s => { s.historical.report.deployment.cacheComponents = true }, 'historical deployment drift'],

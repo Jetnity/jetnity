@@ -38,8 +38,9 @@ export type V3QueueCommitAuthority = Readonly<{
   reprove(signal: AbortSignal): Promise<boolean>;
 }>
 export interface V3QueueStoragePort {
-  /** The optional receipt is retained only across this invocation's fresh CAS.
-   * It authorizes an actual read; it never substitutes its record or freshness. */
+  /** The optional same-invocation receipt authorizes an actual read; it never
+   * substitutes its record or freshness. It may cover a fresh claim's initial
+   * read under its code-owned method, or the read after an acknowledged CAS. */
   read(jobKey: string, signal: AbortSignal, receipt?: object): Promise<{ status: 'ok'; record: unknown | null } | { status: 'unavailable' }>
   confirm(operationId: string, commandKey: string, signal: AbortSignal): Promise<V3QueueConfirmation>
   compareAndSwap(commit: V3QueueCommit, authority: V3QueueCommitAuthority, signal: AbortSignal): Promise<
@@ -52,6 +53,9 @@ export type V3QueueResult =
   | { status: 'invalid' | 'unavailable' | 'unconfirmed' | 'collision' | 'contended' | 'not_due' | 'superseded' }
 export type V3QueueOptions = Readonly<{
   storage: V3QueueStoragePort | null; methodAuthority: V3MethodAuthorityPort<object> | null; now: () => string;
+  /** Optional fixed server binding, never claim input or selector custody. A
+   * fresh claim obtains its own current receipt before its actual initial read. */
+  claimMethod?: V3MethodRef;
   invocationMilliseconds: number; backoffBaseMilliseconds: number; backoffMaxMilliseconds: number;
 }>
 
@@ -105,6 +109,7 @@ function ownsLease(record: V3ManagedJobRecord, fence: V3JobFence, now: string): 
 /** Composition seam for later reviewed server adapters; not a public endpoint. */
 function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
   const storage = options.storage
+  const claimMethod = options.claimMethod === undefined ? undefined : readData(options.claimMethod, method)
   type FreshCommitAuthority = Readonly<{
     operationId: string; commandKey: string; jobKey: string; signal: AbortSignal; authority: V3QueueCommitAuthority;
   }>
@@ -114,16 +119,20 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
     && options.backoffMaxMilliseconds >= options.backoffBaseMilliseconds && options.backoffMaxMilliseconds <= 86_400_000
 
   async function authorize(record: V3ManagedJobRecord, budget: InvocationBudget,
-    retained?: V3QueueCommitAuthority): Promise<V3QueueCommitAuthority | null> {
+    retained?: V3QueueCommitAuthority, initialReadReceipt?: object): Promise<V3QueueCommitAuthority | null> {
     const methodPort = options.methodAuthority, methodRef = jobMethod(record), now = readNow(options.now)
     if (!methodPort || !now || record.updatedAt > now) return null
     if (retained !== undefined) {
       if (!same(retained.method, methodRef)) return null
       return await retained.reprove(budget.signal) ? retained : null
     }
-    const result = await budget.call(() => methodPort.resolveCurrent(methodRef, now))
-    if (!result.ok || result.value.status !== 'approved') return null
-    const receipt = result.value.receipt
+    let acquired = initialReadReceipt
+    if (acquired === undefined) {
+      const result = await budget.call(() => methodPort.resolveCurrent(methodRef, now))
+      if (!result.ok || result.value.status !== 'approved') return null
+      acquired = result.value.receipt
+    }
+    const receipt = acquired
     const authority: V3QueueCommitAuthority = Object.freeze({
       method: methodRef, receipt,
       async reprove(signal) {
@@ -180,8 +189,17 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
       if (checked.value.status === 'committed') return await confirmed(checked.value, op, command, keyValue, budget, true, confirmationMode)
       if (checked.value.status !== 'not_attempted') return { status: checked.value.status }
       for (let attempt = 0; attempt < 3; attempt++) {
-        const before = await load(keyValue, budget)
+        let initialReadReceipt: object | undefined
+        if (confirmationMode === 'exact_operation' && claimMethod !== undefined) {
+          const methodPort = options.methodAuthority, checkedAt = readNow(options.now)
+          if (!claimMethod || !methodPort || !checkedAt) return { status: 'unavailable' }
+          const acquired = await budget.call(() => methodPort.resolveCurrent(claimMethod, checkedAt))
+          if (!acquired.ok || acquired.value.status !== 'approved') return { status: 'unavailable' }
+          initialReadReceipt = acquired.value.receipt
+        }
+        const before = await load(keyValue, budget, initialReadReceipt)
         if (before.status !== 'ok') return before
+        if (initialReadReceipt !== undefined && before.record && !same(jobMethod(before.record), claimMethod)) return { status: 'unavailable' }
         const now = readNow(options.now)
         if (!now || (before.record && before.record.updatedAt > now)) return { status: 'invalid' }
         const change = prepare(before.record, now)
@@ -195,7 +213,8 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
           audit: { reference: key('queue-event', { op, command }), kind: change.kind, observedAt: now,
             priorRevision: before.record?.revision ?? null, nextRevision: next.revision },
         }
-        const authority = await authorize(next, budget)
+        if (initialReadReceipt !== undefined && !same(jobMethod(next), claimMethod)) return { status: 'unavailable' }
+        const authority = await authorize(next, budget, undefined, initialReadReceipt)
         if (!authority) return { status: 'unavailable' }
         const written = await budget.call((s) => storage.compareAndSwap(commit, authority, s))
         if (!written.ok) return { status: 'unconfirmed' }

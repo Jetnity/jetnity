@@ -14,11 +14,10 @@ const selection = RUNTIME + 'node-postgres-selection.ts'
 const executors = RUNTIME + 'node-postgres-executors.ts'
 const composition = 'lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts'
 const humanRelease = 'lib/readiness/official-truth-product-v3/method/human-release.ts'
-const devVerification = 'scripts/official-truth-product-v3-dev/verify-installed-dev.mjs'
 const allowed: Readonly<Record<string, readonly string[]>> = {
-  [sessions]: [executors, PROOF + 'offline.test.ts', devVerification],
-  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition, humanRelease, devVerification],
-  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition, devVerification],
+  [sessions]: [executors, PROOF + 'offline.test.ts'],
+  [selection]: [sessions, executors, PROOF + 'offline.test.ts', PROOF + 'native.test.ts', PROOF + 'owned-tls-fixture.ts', composition, humanRelease],
+  [executors]: [PROOF + 'offline.test.ts', PROOF + 'native.test.ts', composition],
   pg: [sessions, PROOF + 'owned-tls-fixture.ts'],
 }
 function files(directory: string): string[] {
@@ -54,7 +53,7 @@ test('private Node-Postgres construction has only the finite reviewed importers'
         assert.ok(ts.isImportDeclaration(node) && node.importClause?.isTypeOnly, 'offline fixture receives no real connection constructor')
       }
       if (path === composition) assert.ok(ts.isImportDeclaration(node), 'the fixed server composition uses only direct imports')
-      if (path === humanRelease) assert.ok(selected === selection && humanSelectorImport(node), 'human release imports only the inert named Dev selector')
+      if (path === humanRelease) assert.ok(selected === selection && humanSelectorImport(node), 'human release imports only the inert named selector')
       assert.ok(!ts.isExportDeclaration(node), 'private transport has no re-export entry point')
       const importers = seen.get(selected) ?? new Set<string>(); importers.add(path); seen.set(selected, importers)
     }

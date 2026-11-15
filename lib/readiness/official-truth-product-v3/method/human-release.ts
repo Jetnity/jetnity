@@ -1,10 +1,10 @@
 import 'server-only'
 
-import { HUMAN_METHOD_DEV_URL, readHumanRelease, type HumanRelease } from './human-contract'
+import { HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL, readHumanRelease, type HumanRelease } from './human-contract'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../source/aa-ch-de-reviewed-program'
 import { selectedV3PgTarget } from '../transport/node-postgres-selection'
 
-// Reviewed data and the inert Dev selector; no connection, credentials or source read.
+// Reviewed data and inert fixed selectors; no connection, credentials or source read.
 // Method/package digests come from the actual Root program's canonical package.
 const binding = AA_BERN_CH_DE_REVIEWED_PROGRAM.binding
 export const HUMAN_METHOD_REVIEWED_DATA: Omit<HumanRelease,
@@ -33,15 +33,22 @@ type HumanReleaseSelection = Pick<HumanRelease, 'selectionId' | 'predecessorRevi
 const SELECTED_RELEASE: HumanReleaseSelection = Object.freeze({
   selectionId: 'hmr1_fad09ef526aeea7eeeb3fb1f22c894f1', predecessorRevision: null, expectedHead: null,
 })
+// A distinct empty Production ledger is a precondition of the prepared installer.
+// This descriptor is not the Dev selection and carries no Dev Owner receipt.
+const PRODUCTION_RELEASE: HumanReleaseSelection = Object.freeze({
+  selectionId: 'hmr1_6820db8992a74c52947bc59cb085a214', predecessorRevision: null, expectedHead: null,
+})
 
-function materialize(selection: HumanReleaseSelection | null): HumanRelease | null {
+function materialize(selection: HumanReleaseSelection | null, targetUrl: HumanRelease['targetUrl']): HumanRelease | null {
   if (!selection) return null
-  return readHumanRelease({ ...HUMAN_METHOD_REVIEWED_DATA,
+  return readHumanRelease({ ...HUMAN_METHOD_REVIEWED_DATA, targetUrl,
     selectionId: selection.selectionId, predecessorRevision: selection.predecessorRevision,
     expectedHead: selection.expectedHead })
 }
 
 export function getHumanRelease(): HumanRelease | null {
-  if (selectedV3PgTarget() === null) return null
-  return materialize(SELECTED_RELEASE)
+  const target = selectedV3PgTarget()
+  if (target?.connectHost === 'db.yfvbxvijcorffwxbxahl.supabase.co') return materialize(SELECTED_RELEASE, HUMAN_METHOD_DEV_URL)
+  if (target?.connectHost === 'db.qscbgcdmivbbnzrcyegn.supabase.co') return materialize(PRODUCTION_RELEASE, HUMAN_METHOD_PRODUCTION_URL)
+  return null
 }

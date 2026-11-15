@@ -105,6 +105,26 @@ for (const datei of [...routenDateien(API_ADMIN), ...festeOwnerPfade]) {
 
 const anzahl = routenDateien(API_ADMIN).length
 
+// Exact machine ingress. Functional route tests prove the HMAC/target gates;
+// this inventory additionally refuses an accidental second HTTP method or a
+// missing environment-specific key on either reviewed scheduler route.
+for (const [path, secret, domain] of [
+  ['app/api/internal/readiness/ch-de-dev-refresh/route.ts', 'JETNITY_DEV_IMPORT_CRON_SECRET', 'jetnity-dev-import-v1'],
+  ['app/api/internal/readiness/ch-de-prod-refresh/route.ts', 'JETNITY_PROD_IMPORT_CRON_SECRET', 'jetnity-prod-import-v1'],
+]) {
+  try {
+    const source = readFileSync(join(WURZEL, path), 'utf8')
+    const methods = HTTP_METHODEN.filter(method => handlerKörper(source, method) !== null)
+    const body = handlerKörper(source, 'POST') ?? ''
+    if (methods.length !== 1 || methods[0] !== 'POST'
+      || !source.includes("from 'node:crypto'") || !body.includes('timingSafeEqual(')
+      || !body.includes(`process.env.${secret}`) || !body.includes(domain)
+      || !body.includes('checkOfficialTruthV3ChDeMethod(')) {
+      beanstandungen.push(`${path}: ausschliesslich der feste HMAC-geschützte Quellen-POST ist erlaubt`)
+    }
+  } catch { beanstandungen.push(`${path}: fester Scheduler-Einstieg fehlt`) }
+}
+
 // #1155: exact dormant explicit-read route. Its package handler owns the
 // default-closed deployment, same-origin, body, Auth, rate and own-Trip gates.
 // The native entry executes that handler; this check pins thin delegation.

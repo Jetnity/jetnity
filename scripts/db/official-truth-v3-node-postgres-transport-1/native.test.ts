@@ -78,7 +78,7 @@ function publicFailureFixture() {
 }
 
 test('genuine owned Node-Postgres TLS transport', { timeout: 180000 }, async t => {
-  assert.equal(selectedV3PgTarget(), null, 'production has no selected target or runtime fixture override')
+  assert.equal(selectedV3PgTarget(), null, 'missing deployment metadata selects no target or runtime fixture override')
   const fixture = await startOwnedTlsPgFixture(t)
   let selected: V3PgTarget | null = fixture.target
   t.mock.module(new URL('../../../lib/readiness/official-truth-product-v3/transport/node-postgres-selection.ts', import.meta.url), {

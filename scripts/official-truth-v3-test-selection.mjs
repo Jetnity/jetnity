@@ -15,9 +15,21 @@ export const TRANSPORT_TEST_FILES = Object.freeze([
   'scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
 ])
+// The prepared Production package adds only these reviewed scripts, never a
+// broad scripts/db or scripts/** test glob. Each proof is mandatory once.
+export const PRODUCTION_TEST_FILES = Object.freeze([
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+  'scripts/official-truth-product-v3-production/build.test.mjs',
+  'scripts/official-truth-production-import-monitor.test.mjs',
+])
 export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/official-truth-dev-import-scheduler.test.ts',
   'lib/readiness/official-truth-dev-preview-renewal.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-prod-import-scheduler.test.ts',
+  // Real 5s wall-clock custody proof needs the existing sequential gate; the
+  // parallel Core load must not consume its unchanged product deadline.
+  'lib/readiness/official-truth-product-v3/method/claim-read-authority.test.ts',
   'lib/readiness/official-truth-v3-background-guard-1.test.ts',
   'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
@@ -28,6 +40,7 @@ export const HOSTED_PG17_FILES = Object.freeze([
   'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
   'lib/readiness/profile-authority-integrity-1.test.ts',
   'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
@@ -52,6 +65,7 @@ function isOriginalTest(path) {
     || path === 'scripts/operating-mode-guard.test.mjs'
     || /^scripts\/dev-reference-local-pg-prep-1\/[^/]+\.test\.ts$/.test(path)
     || TRANSPORT_TEST_FILES.includes(path)
+    || PRODUCTION_TEST_FILES.includes(path)
     || path === 'scripts/official-truth-dev-guard-alarm.test.mjs'
 }
 
@@ -88,7 +102,7 @@ export function discoverOriginalTestFiles(root = repositoryRoot) {
     if (family.length === 0) throw new Error('Missing required test family: ' + pattern)
     found.push(...family)
   }
-  for (const path of [...TRANSPORT_TEST_FILES, 'scripts/official-truth-dev-guard-alarm.test.mjs']) {
+  for (const path of [...TRANSPORT_TEST_FILES, ...PRODUCTION_TEST_FILES, 'scripts/official-truth-dev-guard-alarm.test.mjs']) {
     requireRegularFile(root, path)
     found.push(path)
   }
@@ -109,6 +123,9 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
   }
   for (const path of TRANSPORT_TEST_FILES) {
     if (!universe.has(path)) throw new Error('Missing required transport test: ' + path)
+  }
+  for (const path of PRODUCTION_TEST_FILES) {
+    if (!universe.has(path)) throw new Error('Missing required Production test: ' + path)
   }
   if (!universe.has('scripts/official-truth-dev-guard-alarm.test.mjs')) throw new Error('Missing required guard alarm test')
   if (hostedPg17.length !== HOSTED_PG17_FILES.length

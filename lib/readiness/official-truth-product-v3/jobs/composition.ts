@@ -326,7 +326,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
       const ports: V3IntegrationPorts = {
         import: { registry: config.registry, method: { methodId: config.binding.methodId, revision: config.binding.revision }, clock: config.clock, methodAuthority: options.authority,
           evidence: evidence('outer'), history: history('outer'), quarantine },
-        queue: { storage, invocationMilliseconds: 5000, backoffBaseMilliseconds: 1000, backoffMaxMilliseconds: 60000 },
+        queue: { storage, claimMethod: { methodId: config.binding.methodId, revision: config.binding.revision },
+          invocationMilliseconds: 5000, backoffBaseMilliseconds: 1000, backoffMaxMilliseconds: 60000 },
         versionStore: result?.outer.versionStore ?? null, versionProofs: result?.outer.versionProofs ?? null,
         acquireOperationAuthority: result ? options.acquireOperationAuthority : undefined,
         publication: result?.outer.publication ?? null, escalations: result?.outer.escalations ?? null,

@@ -128,7 +128,8 @@ test('CI keeps complete native proofs mandatory with unchanged existing test com
   assert.equal(digest(read('lib/readiness/official-truth-accepted-store-trip-integration-1.implementation.test.ts')), "fa9ae836fe164ca9630d4e30b84eeb8444adfa609f3703709a8cdd2f48db13d2")
   const tsconfig = JSON.parse(read('tsconfig.json')) as { include: string[] }
   assert.deepEqual(tsconfig.include, ['next-env.d.ts', 'app', 'components', 'lib', 'types',
-    acceptedRoot + 'required-tests/*.test.ts', '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])
+    acceptedRoot + 'required-tests/*.test.ts', 'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+    '.next/types/**/*.ts', '.next/dev/types/**/*.ts'])
   const workflow = read('.github/workflows/ci.yml')
   assert.equal((workflow.match(/name: Typecheck, Lint & Build/g) ?? []).length, 1)
   assert.match(workflow, /needs: \[verify, persisted_native, refresh_native, accepted_store_native, official_truth_v3_ui, hosted_v3_native_pg17\]/)

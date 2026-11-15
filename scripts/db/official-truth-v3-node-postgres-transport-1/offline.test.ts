@@ -151,6 +151,28 @@ test('PG transport offline contracts and reserved terminal ownership', { timeout
       process.env.VERCEL_ENV = guards.VERCEL_ENV
       Object.assign(process.env, overrides)
       assert.equal(selectedV3PgTarget(), target, 'environment target/URL/TLS overrides cannot replace the literal selection')
+      const productionGuards = { ...guards, VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main' }
+      Object.assign(process.env, productionGuards)
+      const production = selectedV3PgTarget(); assert.ok(production)
+      assert.notEqual(production, target)
+      assert.deepEqual(production, { ...target, connectHost: 'db.qscbgcdmivbbnzrcyegn.supabase.co',
+        tlsHostname: 'db.qscbgcdmivbbnzrcyegn.supabase.co' })
+      assert.equal(Object.isFrozen(production), true)
+      assert.equal(createHash('sha256').update(production.certificateAuthorityPem, 'utf8').digest('hex'), production.certificateAuthoritySha256)
+      for (const [key, value] of Object.entries(productionGuards)) {
+        delete process.env[key]
+        assert.equal(selectedV3PgTarget(), null, key + ' missing refuses Production')
+        process.env[key] = value + '-unselected'
+        assert.equal(selectedV3PgTarget(), null, key + ' mismatch refuses Production')
+        process.env[key] = value
+      }
+      process.env.VERCEL_ENV = 'preview'
+      assert.equal(selectedV3PgTarget(), null, 'Preview main never selects Production')
+      process.env.VERCEL_ENV = 'production'
+      process.env.VERCEL_GIT_COMMIT_REF = guards.VERCEL_GIT_COMMIT_REF
+      assert.equal(selectedV3PgTarget(), null, 'Production metadata on the Dev branch cannot select either target')
+      Object.assign(process.env, productionGuards, overrides)
+      assert.equal(selectedV3PgTarget(), production, 'PG variables cannot redirect Production or weaken TLS')
       delete process.env.VERCEL_PROJECT_ID
       assert.equal(selectedV3PgTarget(), null, 'overrides cannot bypass a missing guard')
     } finally {

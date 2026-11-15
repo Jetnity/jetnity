@@ -1,0 +1,48 @@
+name: Production CH-DE import monitor
+
+on:
+  schedule:
+    - cron: '2-57/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      alarm_delivery_probe:
+        description: 'After Production approval only: intentionally fail to verify the existing Actions alarm channel'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: official-truth-production-import-monitor
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    # Absence of this separately approved variable means UNARMED/skipped,
+    # never a current Production health signal. A private-repository move also
+    # requires a new cost decision before this schedule can consume runner use.
+    if: >-
+      github.repository == 'Jetnity/jetnity' && github.ref == 'refs/heads/main' &&
+      github.event.repository.private == false &&
+      vars.JETNITY_PRODUCTION_IMPORT_MONITOR == 'production:qscbgcdmivbbnzrcyegn:enabled-v1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Read the fixed schedule and actual public CH-DE projection
+        env:
+          JETNITY_PRODUCTION_IMPORT_MONITOR: ${{ vars.JETNITY_PRODUCTION_IMPORT_MONITOR }}
+          SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/official-truth-production-import-monitor.mjs
+      - name: Verify alarm delivery only when explicitly requested
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.alarm_delivery_probe }}
+        run: |
+          node -e 'process.stdout.write("Intentional Production monitor delivery probe; no database or source mutation.\n"); process.exitCode=1'

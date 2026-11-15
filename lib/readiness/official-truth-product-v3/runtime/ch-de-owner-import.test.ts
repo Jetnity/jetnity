@@ -163,6 +163,38 @@ test('manual Dev POST refuses before I/O and uses the existing current Owner/AAL
     }
     reset()
   })
+  await t.test('Production uses its own exact target and the same fresh Owner, AAL2 and method gates', async () => {
+    const production = 'https://qscbgcdmivbbnzrcyegn.supabase.co'
+    const selectProduction = () => {
+      Object.assign(process.env, { VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main' })
+      target = production
+    }
+    const productionRequest = () => request({ url: 'https://jetnity.com' + CH_DE_OWNER_IMPORT_PATH,
+      headers: { origin: 'https://jetnity.com' }, body: JSON.stringify({ schema: 2, mode: 'start',
+        operationId: 'op3_' + '3'.repeat(32), leaseId: 'lease3_' + '4'.repeat(32) }) })
+    selectProduction()
+    target = DEV
+    await rejected(productionRequest(), 503)
+    for (const fail of [() => { userPresent = false }, () => { role = 'manager' },
+      () => { currentAal = 'aal1' }, () => { aalFailed = true }]) {
+      reset(); selectProduction(); fail()
+      const response = await route.POST(productionRequest())
+      assert.ok([401, 403, 503].includes(response.status))
+      assert.equal(approvals, 0); assert.equal(enqueueCalls, 0); assert.equal(ticks, 0)
+    }
+    reset(); selectProduction(); approval = 'not_approved'
+    assert.equal((await route.POST(productionRequest())).status, 409)
+    assert.equal(enqueueCalls, 0); assert.equal(ticks, 0)
+    reset(); selectProduction()
+    const accepted = await route.POST(productionRequest())
+    assert.equal(accepted.status, 200)
+    assert.deepEqual(await accepted.json(), { schema: 1, status: 'queued', published: 0 })
+    assert.equal(identities, 1); assert.equal(assurances, 1); assert.equal(approvals, 1)
+    assert.equal(enqueueCalls, 1); assert.equal(ticks, 0)
+    assert.equal(observedSelection?.operationId, 'op3_' + '3'.repeat(32))
+    assert.equal(observedSelection?.leaseId, 'lease3_' + '4'.repeat(32))
+    reset()
+  })
   await t.test('real Proxy plus fixed POST refuses target/origin/body before all Auth I/O', async () => {
     // Public synthetic fixtures only. A protected-path control proves the mock
     // observes the real Proxy's client/identity I/O; no account is contacted.
@@ -350,6 +382,10 @@ test('manual caller is inert until clicked, one-shot, bounded and honest about l
   const html = renderToStaticMarkup(createElement(DevOwnerImportPanel))
   assert.match(html, /<button type="button"/)
   assert.match(html, /Quellenimport für Dev starten/)
+  const productionHtml = renderToStaticMarkup(createElement(DevOwnerImportPanel, { environment: 'Production' }))
+  assert.match(productionHtml, /Quellenimport für Production starten/)
+  assert.match(productionHtml, /auf jetnity.com/)
+  assert.doesNotMatch(productionHtml, /in Dev veröffentlichen/)
   assert.match(html, /aria-live="polite"/)
   assert.equal(calls, 0, 'rendering the real panel cannot start a source import')
   const starter = createChDeOwnerImportStarter()
@@ -527,6 +563,13 @@ test('existing API inventory fails closed for the exact manual import route', ()
     const guardPath = join(root, guardRelative)
     const guardSource = readFileSync(new URL('../../../../' + guardRelative, import.meta.url), 'utf8')
     mkdirSync(dirname(guardPath), { recursive: true }); writeFileSync(guardPath, guardSource)
+    const machineRoutes = ['dev', 'prod'].map(environment => {
+      const relative = `app/api/internal/readiness/ch-de-${environment}-refresh/route.ts`
+      const path = join(root, relative)
+      const source = readFileSync(new URL('../../../../' + relative, import.meta.url), 'utf8')
+      mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, source)
+      return { environment, path, source }
+    })
     function run() { return spawnSync(process.execPath, [script], { cwd: root, encoding: 'utf8', timeout: 5_000 }) }
     writeFileSync(routePath, original)
     const allowed = run(); assert.equal(allowed.status, 0, allowed.stderr)
@@ -554,6 +597,20 @@ test('existing API inventory fails closed for the exact manual import route', ()
       const denied = run()
       assert.equal(denied.status, 1, denied.stderr)
       assert.ok(denied.stderr.includes(expected), denied.stderr)
+    }
+    writeFileSync(guardPath, guardSource)
+    for (const machine of machineRoutes) {
+      for (const source of [null,
+        machine.source.replace('export async function POST(', 'export async function GET('),
+        machine.source.replace(`process.env.JETNITY_${machine.environment.toUpperCase()}_IMPORT_CRON_SECRET`, 'process.env.UNRELATED_SECRET'),
+      ]) {
+        if (source === null) rmSync(machine.path)
+        else { assert.notEqual(source, machine.source); writeFileSync(machine.path, source) }
+        const denied = run()
+        assert.equal(denied.status, 1, denied.stderr)
+        assert.match(denied.stderr, /fester Scheduler-Einstieg fehlt|feste HMAC-geschützte Quellen-POST/)
+      }
+      writeFileSync(machine.path, machine.source)
     }
   } finally { rmSync(root, { recursive: true, force: true }) }
 })

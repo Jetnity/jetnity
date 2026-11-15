@@ -5,7 +5,7 @@ import {
   chDeOwnerImportMessage, createChDeOwnerImportContinuation, type ChDeOwnerImportOutcome,
 } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-owner-import-contract'
 
-export default function DevOwnerImportPanel() {
+export default function DevOwnerImportPanel({ environment = 'Dev' }: { environment?: 'Dev' | 'Production' }) {
   const [starter] = useState(createChDeOwnerImportContinuation)
   const [outcome, setOutcome] = useState<ChDeOwnerImportOutcome | null>(null)
   const [busy, setBusy] = useState(false)
@@ -36,10 +36,10 @@ export default function DevOwnerImportPanel() {
   return (
     <section className="space-y-4 rounded-lg border p-4" aria-labelledby="dev-import-title" aria-busy={busy}>
       <h2 id="dev-import-title" className="text-lg font-semibold">Amtliche Quellen jetzt prüfen</h2>
-      <p>Der Lauf speichert zuerst eine neue Quellenanforderung und liest danach die ausgewählten amtlichen Quellen. Er kann eine geprüfte Visumauskunft in Dev veröffentlichen. Die Methode muss weiterhin freigegeben sein; dein aktueller Owner-Zugang und die Zwei-Faktor-Prüfung werden erneut geprüft.</p>
+      <p>Der Lauf speichert zuerst eine neue Quellenanforderung und liest danach die ausgewählten amtlichen Quellen. Er kann eine geprüfte Visumauskunft {environment === 'Production' ? 'auf jetnity.com' : 'in Dev'} veröffentlichen. Die Methode muss weiterhin freigegeben sein; dein aktueller Owner-Zugang und die Zwei-Faktor-Prüfung werden erneut geprüft.</p>
       <button type="button" disabled={busy || outcome?.status === 'published'} onClick={() => void start()}
         className="min-h-11 rounded-md border px-4 py-2 text-left font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-        {busy ? 'Quellenimport läuft …' : attempted ? 'Gespeicherten Vorgang prüfen und fortsetzen' : 'Quellenimport für Dev starten'}
+        {busy ? 'Quellenimport läuft …' : attempted ? 'Gespeicherten Vorgang prüfen und fortsetzen' : `Quellenimport für ${environment} starten`}
       </button>
       <div ref={status} tabIndex={-1} role="status" aria-live="polite" aria-atomic="true" className="rounded-lg border p-4 focus:outline focus:outline-2">
         {busy ? 'Der Quellenlauf wird ausgeführt. Warte auf das Ergebnis.' : outcome ? chDeOwnerImportMessage(outcome)

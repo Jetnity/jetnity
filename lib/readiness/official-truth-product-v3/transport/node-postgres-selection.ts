@@ -1,4 +1,5 @@
-// Server-owned literal Dev selection. Environment guards can only refuse this target.
+// Server-owned literal selections. Environment metadata can only select the
+// reviewed Dev branch or Production main; no caller supplies a host or credential.
 import 'server-only'
 
 /** Root selection #1139/6832438377. These are not the native-fixture LOGINs. */
@@ -19,8 +20,8 @@ export const V3_PG_LOGINS = Object.freeze({
 export type V3PgLogin = keyof typeof V3_PG_LOGINS
 
 /** Internal literal configuration only. No constructor, URL or caller override.
- * The unpublished direct Dev candidate binds the observed direct endpoint and
- * unchanged public CA bytes. IPv4 activation and direct acceptance remain pending.
+ * Both direct endpoints bind their exact hostname and the public Supabase CA.
+ * Actual Production TLS/install/Owner acceptance remains a separate release gate.
  * The separate native test mocks this module only inside an owned local fixture;
  * there is no runtime test flag or runtime fixture branch. */
 export type V3PgTarget = Readonly<{
@@ -29,8 +30,7 @@ export type V3PgTarget = Readonly<{
   expectedServerMajor: 17; requireBackendTls: true;
 }>
 
-// Prepared from Root-observed direct Dev Connect values; the public CA stays exact.
-// IPv4 add-on approval/activation and direct connection evidence remain separate.
+// The already accepted Dev endpoint and public CA remain byte-for-byte unchanged.
 const DEV_DIRECT_TARGET: V3PgTarget = Object.freeze({
   connectHost: 'db.yfvbxvijcorffwxbxahl.supabase.co',
   tlsHostname: 'db.yfvbxvijcorffwxbxahl.supabase.co',
@@ -63,13 +63,24 @@ o/bKiIz+Fq8=
   expectedServerMajor: 17, requireBackendTls: true,
 })
 
+// Separate literal Production target. The shared public CA is not a credential.
+// This does not install a role, provide a password or approve a method. A missing
+// installation, missing own Production secret or TLS mismatch still fails closed.
+const PRODUCTION_DIRECT_TARGET: V3PgTarget = Object.freeze({
+  ...DEV_DIRECT_TARGET,
+  connectHost: 'db.qscbgcdmivbbnzrcyegn.supabase.co',
+  tlsHostname: 'db.qscbgcdmivbbnzrcyegn.supabase.co',
+})
+
 export function selectedV3PgTarget(): V3PgTarget | null {
-  if (process.env.VERCEL_ENV !== 'preview'
-    || process.env.VERCEL_PROJECT_ID !== 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
+  if (process.env.VERCEL_PROJECT_ID !== 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
     || process.env.VERCEL_GIT_REPO_OWNER !== 'Jetnity'
-    || process.env.VERCEL_GIT_REPO_SLUG !== 'jetnity'
-    || process.env.VERCEL_GIT_COMMIT_REF !== 'feat/official-truth-human-method-ui-1-20261112') return null
-  return DEV_DIRECT_TARGET
+    || process.env.VERCEL_GIT_REPO_SLUG !== 'jetnity') return null
+  if (process.env.VERCEL_ENV === 'preview'
+    && process.env.VERCEL_GIT_COMMIT_REF === 'feat/official-truth-human-method-ui-1-20261112') return DEV_DIRECT_TARGET
+  if (process.env.VERCEL_ENV === 'production'
+    && process.env.VERCEL_GIT_COMMIT_REF === 'main') return PRODUCTION_DIRECT_TARGET
+  return null
 }
 
 /** Called only after a literal target has been selected. No PG* / DATABASE_URL /

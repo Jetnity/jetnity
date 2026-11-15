@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { createServerComponentClient, getServerSupabaseUrl } from '@/lib/supabase/server'
 import { AcceptedStoreLifetime } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/lifetime-server'
 import {
-  HUMAN_METHOD_DEV_URL, buildHumanCommand, humanRpcArguments, readHumanReceipt,
+  buildHumanCommand, humanRpcArguments, readHumanReceipt,
   type HumanApproveArgs, type HumanCommand, type HumanConfirmArgs, type HumanOperation,
   type HumanOutcome, type HumanOutcomeCode, type HumanRequest, type HumanRevokeArgs, type HumanStageArgs,
 } from './human-contract'
@@ -44,7 +44,7 @@ export async function runHumanMethodRequest(request: HumanRequest, actorId: stri
     operation, status: 'unresolved', recordedAt: null, code })
   const release = getHumanRelease()
   if (!release) return unresolved('unselected')
-  if (release.targetUrl !== HUMAN_METHOD_DEV_URL || getServerSupabaseUrl() !== HUMAN_METHOD_DEV_URL) return unresolved('target_refused')
+  if (getServerSupabaseUrl() !== release.targetUrl) return unresolved('target_refused')
   const command = buildHumanCommand(release, operation)
   if (!command) return unresolved('selection_mismatch')
   // Historical confirmations still use the original approval deadline even

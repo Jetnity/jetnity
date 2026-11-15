@@ -1,4 +1,4 @@
-// Private, bounded observation only. Dev routes open this context only after
+// Private, bounded observation only. Fixed routes open this context only after
 // exact target/request checks and current Owner/AAL2 or scheduler MAC admission.
 import 'server-only'
 import { AsyncLocalStorage } from 'node:async_hooks'
@@ -26,8 +26,9 @@ const REGIONS = new Set([
 ])
 const MAX_EVENTS = 128, MAX_LINE_BYTES = 1024, MAX_MILLISECONDS = 600_000
 type Sink = (line: string) => void
+type DiagnosticKind = 'official_truth_dev_import_diagnostic' | 'official_truth_production_import_diagnostic'
 type Budget = Readonly<{ kind: 'tick' | 'i1'; start: number; deadline: number; effectiveDeadline: number }>
-type Recorder = { sink: Sink | null; region: string; start: number; events: number;
+type Recorder = { kind: DiagnosticKind; sink: Sink | null; region: string; start: number; events: number;
   started: number; settled: number; closed: boolean }
 type Context = Readonly<{ recorder: Recorder; budget: Budget | null }>
 const context = new AsyncLocalStorage<Context>()
@@ -62,7 +63,7 @@ function emit(current: Context, stage: Stage, phase: 'started' | 'settled' | 'th
     const outcome = signal.aborted ? 'aborted' : budget && now >= budget.effectiveDeadline ? 'budget_ended'
       : phase === 'threw' ? 'threw' : phase === 'started' ? 'pending' : 'returned'
     const line = JSON.stringify({
-      schema: 1, kind: 'official_truth_dev_import_diagnostic', sequence: ++recorder.events,
+      schema: 1, kind: recorder.kind, sequence: ++recorder.events,
       stage, phase, outcome, returnedStatus: outcome === 'returned' ? returnedStatus(value) : null,
       returnedDetail: outcome === 'returned' ? returnedDetail(stage, value) : null,
       region: recorder.region, span, callsStarted: recorder.started, callsSettled: recorder.settled,
@@ -78,15 +79,23 @@ function emit(current: Context, stage: Stage, phase: 'started' | 'settled' | 'th
   }
 }
 
-/** Only already authorized fixed Dev routes call this in application code.
- * sink is an isolated test seam, never request/ENV configuration or a transport. */
-export async function withDevImportDiagnostics<T>(run: () => Promise<T>, sink: Sink | null = line => console.info(line)): Promise<T> {
+async function withImportDiagnostics<T>(kind: DiagnosticKind, run: () => Promise<T>, sink: Sink | null): Promise<T> {
   const rawRegion = process.env.VERCEL_REGION
-  const recorder: Recorder = { sink, region: rawRegion === undefined || rawRegion === '' ? 'unavailable'
+  const recorder: Recorder = { kind, sink, region: rawRegion === undefined || rawRegion === '' ? 'unavailable'
     : REGIONS.has(rawRegion) ? rawRegion : 'unlisted', start: performance.now(), events: 0,
     started: 0, settled: 0, closed: false }
   try { return await context.run({ recorder, budget: null }, run) }
   finally { recorder.closed = true }
+}
+
+/** Only already authorized fixed routes call these in application code.
+ * Neither caller input nor ENV can supply a diagnostic kind. The optional sink
+ * is an isolated test seam, never request configuration or a transport. */
+export function withDevImportDiagnostics<T>(run: () => Promise<T>, sink: Sink | null = line => console.info(line)): Promise<T> {
+  return withImportDiagnostics('official_truth_dev_import_diagnostic', run, sink)
+}
+export function withProductionImportDiagnostics<T>(run: () => Promise<T>, sink: Sink | null = line => console.info(line)): Promise<T> {
+  return withImportDiagnostics('official_truth_production_import_diagnostic', run, sink)
 }
 
 /** Observe the existing absolute budget; never start a new timer or extend it. */

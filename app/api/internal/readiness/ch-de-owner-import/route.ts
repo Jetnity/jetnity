@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { adminWriteErlaubt } from '@/lib/auth/admin-write-gate'
 import { getServerSupabaseUrl } from '@/lib/supabase/server'
-import { HUMAN_METHOD_DEV_URL, humanRequestHeadersAllowed } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
+import { HUMAN_METHOD_PRODUCTION_URL, humanRequestHeadersAllowed } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
 import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
 import { checkOfficialTruthV3ChDeMethod } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-server'
 import { runOfficialTruthV3ChDeTick } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-tick'
-import { withDevImportDiagnostics, traceDevDiagnosticStage } from '@/lib/readiness/official-truth-product-v3/runtime/dev-diagnostics'
+import { withDevImportDiagnostics, withProductionImportDiagnostics, traceDevDiagnosticStage } from '@/lib/readiness/official-truth-product-v3/runtime/dev-diagnostics'
 import { readChDeImportBody, chDeTickOutcome, chDeImportHttpStatus } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-import-http'
 import { enqueueOfficialTruthV3ChDeRefresh } from '@/lib/readiness/official-truth-product-v3/runtime/ch-de-refresh'
 import {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   let tickStarted = false
   try {
     const release = getHumanRelease()
-    if (!release || release.targetUrl !== HUMAN_METHOD_DEV_URL || getServerSupabaseUrl() !== HUMAN_METHOD_DEV_URL) {
+    if (!release || getServerSupabaseUrl() !== release.targetUrl) {
       return answer('unavailable', 503)
     }
     const url = new URL(request.url)
@@ -48,7 +48,8 @@ export async function POST(request: Request) {
       return answer('access_required', 403)
     }
     if (request.signal.aborted) return answer('unavailable', 503)
-    return await withDevImportDiagnostics(async () => {
+    const observe = release.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? withProductionImportDiagnostics : withDevImportDiagnostics
+    return await observe(async () => {
       const approval = await traceDevDiagnosticStage('method_precheck', request.signal,
         () => checkOfficialTruthV3ChDeMethod(request.signal))
       if (request.signal.aborted || approval !== 'approved') return answer(approval === 'not_approved' ? 'not_approved' : 'unavailable', approval === 'not_approved' ? 409 : 503)

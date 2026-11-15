@@ -5,7 +5,8 @@ import { test, type TestContext } from 'node:test'
 import { createV3ImportCoordinator } from '../import/service-server'
 import { makeSyntheticOriginals } from '../integration/test-support/originals'
 import { makeSyntheticStore } from '../integration/test-support/store'
-import { traceDevDiagnosticStage as trace, withDevDiagnosticBudget as budget, withDevImportDiagnostics as observe } from './dev-diagnostics'
+import { traceDevDiagnosticStage as trace, withDevDiagnosticBudget as budget, withDevImportDiagnostics as observe,
+  withProductionImportDiagnostics as observeProduction } from './dev-diagnostics'
 
 type Event = Record<string, string | number | null>
 const signal = () => new AbortController().signal
@@ -21,6 +22,30 @@ function region(t: TestContext, value: string | undefined) {
   else process.env.VERCEL_REGION = value
   t.after(() => { if (before === undefined) delete process.env.VERCEL_REGION; else process.env.VERCEL_REGION = before })
 }
+
+test('concurrent Dev and Production diagnostics retain separate fixed kinds, budgets and settlement counts', async t => {
+  region(t, 'fra1')
+  const dev: string[] = [], production: string[] = [], held = deferred<void>()
+  const start = performance.now()
+  const one = observe(() => budget('tick', start, start + 30000,
+    () => trace('refresh_enqueue', signal(), async () => { await held.promise; return { status: 'queued' } })), line => { dev.push(line) })
+  const two = observeProduction(() => budget('tick', start, start + 30000,
+    () => trace('refresh_enqueue', signal(), async () => { await held.promise; return { status: 'unresolved' } })), line => { production.push(line) })
+  assert.equal(dev.length, 1); assert.equal(production.length, 1)
+  held.resolve()
+  assert.deepEqual(await Promise.all([one, two]), [{ status: 'queued' }, { status: 'unresolved' }])
+  for (const [lines, kind, outcome] of [[dev, 'official_truth_dev_import_diagnostic', 'queued'],
+    [production, 'official_truth_production_import_diagnostic', 'unresolved']] as const) {
+    const events = parsed(lines)
+    assert.deepEqual(events.map(event => event.kind), [kind, kind])
+    assert.deepEqual(events.map(event => event.sequence), [1, 2])
+    assert.deepEqual(events.map(event => event.phase), ['started', 'settled'])
+    assert.equal(events.at(-1)!.returnedStatus, outcome)
+    assert.equal(events.at(-1)!.callsStarted, 1); assert.equal(events.at(-1)!.callsSettled, 1)
+    assert.equal(events.at(-1)!.budgetMilliseconds, 30000)
+    assert.ok(lines.every(line => Buffer.byteLength(line) <= 1024))
+  }
+})
 
 test('diagnostics remain absent outside the opened context and after its awaited closure', async t => {
   const lines: string[] = []

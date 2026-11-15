@@ -115,6 +115,11 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sourcePath: 'lib/readiness/official-truth-product-v3/runtime/guard-server.ts',
     sqlPath: 'scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql',
   })),
+  Object.freeze({
+    name: 'jetnity_production_import_status_v1',
+    sourcePath: 'scripts/official-truth-production-import-monitor.mjs',
+    sqlPath: 'scripts/db/official-truth-v3-production-import-schedule-1/monitoring.sql',
+  }),
 ])
 
 function lokaleRpcRegel(name) {

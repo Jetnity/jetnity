@@ -32,6 +32,10 @@ test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingres
   t.mock.module(new URL('./ch-de-server.ts', import.meta.url), { cache: true, namedExports: {
     officialTruthV3ChDeRuntime() { lookups++; return selected },
   } })
+  let ingressTarget: string | null = 'https://yfvbxvijcorffwxbxahl.supabase.co'
+  t.mock.module(new URL('../method/human-release.ts', import.meta.url), { namedExports: {
+    getHumanRelease() { return ingressTarget === null ? null : { targetUrl: ingressTarget } },
+  } })
   const { runOfficialTruthV3ChDeTick: run } = await import('./ch-de-tick')
   const route = await import('../../../../app/api/internal/readiness/ch-de-visa-tick/route')
   function reset() {
@@ -164,6 +168,18 @@ test('fixed CH→DE tick owns dispatch, shared deadline and authenticated ingres
   t.after(() => { if (saved === undefined) delete process.env.CRON_SECRET; else process.env.CRON_SECRET = saved })
   const url = 'https://tick.example/api/internal/readiness/ch-de-visa-tick'
   const authorized = () => ({ authorization: 'Bearer ' + secret })
+  await t.test('the general cron credential never admits Production or an unselected target', async () => {
+    process.env.CRON_SECRET = secret
+    const before = lookups
+    for (const target of [null, 'https://qscbgcdmivbbnzrcyegn.supabase.co', 'https://wrong.invalid']) {
+      ingressTarget = target
+      const response = await route.GET(new Request(url, { headers: authorized() }))
+      assert.equal(response.status, 503)
+      assert.deepEqual(await response.json(), { schema: 1, status: 'unavailable' })
+    }
+    assert.equal(lookups, before)
+    ingressTarget = 'https://yfvbxvijcorffwxbxahl.supabase.co'
+  })
   await t.test('missing or malformed server credential leaves the ingress closed', async () => {
     const before = lookups
     for (const value of [undefined, '', 'short', ' '.repeat(40), 'a'.repeat(257)]) {

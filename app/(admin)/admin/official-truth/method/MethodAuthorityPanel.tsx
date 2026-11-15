@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
-  HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_STORAGE_KEY, appendHumanOperation, createHumanOperationId,
+  HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY, appendHumanOperation, createHumanOperationId,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome, readHumanRelease,
   type HumanAction, type HumanIntent, type HumanJournal, type HumanOperation, type HumanRelease,
 } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
@@ -154,8 +154,8 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
 
   if (!selected) return (
     <div className="space-y-3 rounded-lg border p-4" role="status">
-      <h2 className="text-lg font-semibold">Dev-Aktivierung noch nicht bereit</h2>
-      <p>Die Methode mit ihrem Paket und Betriebszeitraum ist vorbereitet. Der konkrete Dev-Stand und die Aktivierungsauswahl sind noch nicht bestätigt. Hier ist deshalb derzeit keine Aktion möglich.</p>
+      <h2 className="text-lg font-semibold">Aktivierung noch nicht bereit</h2>
+      <p>Die Methode mit ihrem Paket und Betriebszeitraum ist vorbereitet. Die konkrete Umgebung und die Aktivierungsauswahl sind noch nicht bestätigt. Hier ist deshalb derzeit keine Aktion möglich.</p>
       <p>Nach der technischen Auswahl kannst du den Umfang prüfen, den Entwurf hinterlegen und die Freigabe gesondert bestätigen.</p>
     </div>
   )
@@ -166,7 +166,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
     <div className="space-y-5" aria-busy={busy}>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="method-scope">
         <h2 id="method-scope" className="text-lg font-semibold">Schweizer Pass → Deutschland · Visum</h2>
-        <p>Entwicklungsumgebung · Schweizer Reisepass · direkte Einreise</p>
+        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · Schweizer Reisepass · direkte Einreise</p>
         <p>{selected.scope.reviewedScope}</p>
         <dl className="grid gap-2 sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium">Betriebszeitraum</dt><dd>{selected.scope.activeFrom} bis {selected.scope.activeUntilExclusive} (Ende ausgeschlossen, UTC)</dd>

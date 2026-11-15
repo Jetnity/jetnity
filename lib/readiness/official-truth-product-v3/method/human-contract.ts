@@ -1,5 +1,6 @@
 // Browser-safe shape and transition rules. These do not confer Owner/MFA or SQL authority.
 export const HUMAN_METHOD_DEV_URL = 'https://yfvbxvijcorffwxbxahl.supabase.co'
+export const HUMAN_METHOD_PRODUCTION_URL = 'https://qscbgcdmivbbnzrcyegn.supabase.co'
 export const HUMAN_METHOD_BODY_BYTES = 8192
 export const HUMAN_METHOD_STORAGE_KEY = 'jetnity:official-truth:human-method:v1'
 const MAX_INT = 2_147_483_647
@@ -17,7 +18,7 @@ export type HumanSnapshot = Readonly<HumanBinding & {
   approvalMode: 'until' | 'until_revoked' | null; approvalUntil: string | null
 }>
 export type HumanRelease = Readonly<HumanBinding & {
-  schema: 1; selectionId: string; targetUrl: typeof HUMAN_METHOD_DEV_URL
+  schema: 1; selectionId: string; targetUrl: typeof HUMAN_METHOD_DEV_URL | typeof HUMAN_METHOD_PRODUCTION_URL
   predecessorRevision: number | null; expectedHead: HumanSnapshot | null
   approval: HumanApproval; packageVersion: string; packageHref: string
   scope: Readonly<{
@@ -163,7 +164,8 @@ export function readHumanRelease(value: unknown): HumanRelease | null {
     const row = record(value, ['schema', 'selectionId', 'targetUrl', 'methodId', 'revision', 'methodDigest', 'packageDigest',
       'predecessorRevision', 'expectedHead', 'approval', 'packageVersion', 'packageHref', 'scope'])
     const tuple = row && binding(row)
-    if (!row || !tuple || row.schema !== 1 || !selectionId(row.selectionId) || row.targetUrl !== HUMAN_METHOD_DEV_URL) return null
+    if (!row || !tuple || row.schema !== 1 || !selectionId(row.selectionId)
+      || (row.targetUrl !== HUMAN_METHOD_DEV_URL && row.targetUrl !== HUMAN_METHOD_PRODUCTION_URL)) return null
     if (tuple.revision === 1 ? row.predecessorRevision !== null : row.predecessorRevision !== tuple.revision - 1) return null
     const head = row.expectedHead === null ? null : snapshot(row.expectedHead)
     if (row.expectedHead !== null && !head) return null
@@ -179,7 +181,7 @@ export function readHumanRelease(value: unknown): HumanRelease | null {
       || scope.document !== 'swiss_passport' || scope.route !== 'direct_entry' || scope.conditions !== 'unconditional'
       || !utcMilliseconds(scope.activeFrom) || !utcMilliseconds(scope.activeUntilExclusive) || scope.activeFrom >= scope.activeUntilExclusive
       || !text(scope.reviewedScope, 1600)) return null
-    return freeze({ schema: 1, selectionId: row.selectionId, targetUrl: HUMAN_METHOD_DEV_URL, ...tuple,
+    return freeze({ schema: 1, selectionId: row.selectionId, targetUrl: row.targetUrl, ...tuple,
       predecessorRevision: row.predecessorRevision as number | null, expectedHead: head, approval: selectedApproval,
       packageVersion: row.packageVersion, packageHref: row.packageHref, scope: {
         citizenship: 'CH', destination: 'DE', requirement: 'visa', document: 'swiss_passport', route: 'direct_entry', conditions: 'unconditional',
