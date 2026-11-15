@@ -21,17 +21,17 @@ function Inhalt({ initial, bereich, loeschungAngeboten = false, ...aktionen }: E
   const loeschBereich = loeschungAngeboten ? <KontoLoeschen sprache={sprache} /> : null
   const titelPraefix = bereich === 'admin' ? 'admin' : 'account'
   const titelFarbe = bereich === 'admin' ? 'text-foreground' : 'text-brand-800'
-  const textFarbe = bereich === 'admin' ? 'text-muted-foreground' : 'text-ink-700'
+  const textFarbe = bereich === 'admin' ? 'text-foreground/80' : 'text-ink-700'
   return (
     <div lang={sprache} data-einstellungen-hub="" className="min-w-0 px-4 py-6 [overflow-wrap:anywhere] sm:px-6 sm:py-8">
       <div className="mx-auto max-w-5xl">
         <header className="max-w-2xl">
-          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${bereich === 'admin' ? 'text-muted-foreground' : 'text-brand-600'}`}>{einstellungenText(sprache, `${titelPraefix}.eyebrow`)}</p>
+          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${bereich === 'admin' ? 'text-foreground/80' : 'text-brand-600'}`}>{einstellungenText(sprache, `${titelPraefix}.eyebrow`)}</p>
           <h1 className={`mt-1 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl ${titelFarbe}`}>{einstellungenText(sprache, `${titelPraefix}.title`)}</h1>
           <p className={`mt-2 max-w-xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, `${titelPraefix}.intro`)}</p>
         </header>
         <Kontosprache initial={initial} sprache={sprache} waehlen={setSprache} bereich={bereich} {...aktionen} />
-        {bereich === 'admin' ? <p className="mt-4 text-sm leading-6 text-muted-foreground">{einstellungenText(sprache, 'admin.scope')}</p> : (
+        {bereich === 'admin' ? <p className="mt-4 text-sm leading-6 text-foreground/80">{einstellungenText(sprache, 'admin.scope')}</p> : (
           <>
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Link href="/account/security" className="flex min-h-11 flex-col gap-4 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:flex-row sm:items-start">
