@@ -8,12 +8,14 @@ import AdminModellnutzungHinweis from '@/components/admin/home/AdminModellnutzun
 import AdminNaechsteSchritte from '@/components/admin/home/AdminNaechsteSchritte'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
 import { isAdminAccountCountsRuntimeEnabled } from '@/lib/admin/account-counts-delivery/activation'
+import AdminSnapshotRefresh from '@/components/admin/AdminSnapshotRefresh'
 
 export default async function AdminHomePage() {
   const accountCountsLocal = isAdminAccountCountsRuntimeEnabled()
 
   return (
     <div className="grid min-w-0 gap-5">
+      <AdminSnapshotRefresh observedAt={new Date().toISOString()} />
       <section aria-labelledby="admin-operative-lage" className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
         <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div>

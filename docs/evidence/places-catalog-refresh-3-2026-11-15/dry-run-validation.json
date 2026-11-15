@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "task": "Jetnity places catalog refresh 3",
+  "status": "pass",
+  "checkedAt": "2026-11-15T17:00:13.730110+00:00",
+  "mode": "offline-source-and-export-validation",
+  "databaseWrites": false,
+  "export": {
+    "path": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/places-geonames.jsonl",
+    "bytes": 97653414,
+    "sha256": "da5d7531dbce106993a60453b5f216e0f6e7de1fc7fa97702b75405ad6ffe415",
+    "rows": 289501,
+    "uniqueIds": 289501,
+    "uniqueSourceKeys": 289501,
+    "types": {
+      "city": 100864,
+      "country": 250,
+      "island": 175036,
+      "region": 13351
+    },
+    "sources": {
+      "geonames": 289501
+    },
+    "nullCountryCodes": 92,
+    "nonReferenceCountryCodes": []
+  },
+  "checks": {
+    "duplicateIdsOrSourceKeys": 0,
+    "invalidCoordinates": 0,
+    "invalidIdentityOrType": 0,
+    "lengthViolations": 0,
+    "invalidPopulation": 0,
+    "invalidDatabaseText": 0,
+    "outOfOrderIds": 0
+  },
+  "countryInfo": {
+    "referencedIdentities": 252,
+    "exportedCurrentIdentities": 250,
+    "notExportedIdentities": [
+      {
+        "code": "CS",
+        "name": "Serbia and Montenegro",
+        "geonameId": "8505033"
+      },
+      {
+        "code": "AN",
+        "name": "Netherlands Antilles",
+        "geonameId": "8505032"
+      }
+    ],
+    "note": "Normal importer rejects missing nonhistorical IDs and explicitly excludes PCLH. Excluded identities below are derived from pinned countryInfo and export."
+  },
+  "lisbonCandidates": [
+    {
+      "source_record_omitted": true,
+      "reason": "No geodata rows in this script-only PR; original evidence remains in the external data package."
+    }
+  ],
+  "sourceIntegrity": [
+    {
+      "name": "allCountries.zip",
+      "bytes": 422550841,
+      "sha256": "1bb5c62d025a66f47d64eee201e92016937d96870089f58b133662b8e300df9d",
+      "matchesManifest": true
+    },
+    {
+      "name": "countryInfo.txt",
+      "bytes": 32112,
+      "sha256": "79f8f59ea01cbb40438bf1856dd6c2ff201f03f8fc72d0530b2646aaf603ef04",
+      "matchesManifest": true
+    },
+    {
+      "name": "admin1CodesASCII.txt",
+      "bytes": 151571,
+      "sha256": "2e4867f5397acb056ea26377601b57af37cb4c81399770225018e9e439e91ad3",
+      "matchesManifest": true
+    },
+    {
+      "name": "admin2Codes.txt",
+      "bytes": 2371387,
+      "sha256": "67492a022984623460aaaec97f4d1d49e74356c8b5730be9fe23e736223b71dc",
+      "matchesManifest": true
+    }
+  ],
+  "parserIntegrity": {
+    "scripts/places/importieren.ts": {
+      "sha256": "07500bf67d5f21628a3e27fc5d61625815d6b8ccff06d3feaa130099aeb288c6",
+      "matchesBaseline": true
+    },
+    "lib/places/importieren.ts": {
+      "sha256": "ea1e1807e565ab9829b722624f5833a60e23b6db61b67f5c2a454a77ec6f49b0",
+      "matchesBaseline": true
+    },
+    "lib/places/domain.ts": {
+      "sha256": "882e50324699f9b93794b08e71076b7c20ef56f176f48cc59819a28011d7bd6d",
+      "matchesBaseline": true
+    },
+    "lib/rollout/schreibauftrag.ts": {
+      "sha256": "d01da681f1df80aa9a0ce6aa24082411e54c38682b7675bea617e75ec925f297",
+      "matchesBaseline": true
+    }
+  },
+  "errors": [],
+  "diagnosticExamples": {
+    "duplicates": [],
+    "invalidCoordinates": [],
+    "invalidIdentityOrType": [],
+    "lengthViolations": [],
+    "invalidPopulation": [],
+    "invalidDatabaseText": [],
+    "outOfOrderIds": []
+  },
+  "limitations": [
+    "GeoNames main-dump aliases have no language tag; no claim of per-language worldwide coverage.",
+    "The existing importer drops whole alias tokens above its 800-character limit; stdout records the actual dropped-token count.",
+    "This is an offline source/export proof, not a database import, source CI, Hosted UI acceptance, Production change, or cost-capacity approval."
+  ],
+  "publication_redaction": {
+    "date": "2026-11-15",
+    "source_record_objects_omitted": 1,
+    "original_evidence_sha256": "9d97dd9698cdf1f5ac97771fcfe898b12a43ad9cbae049e6dc1d3bb62e8ba690",
+    "validation_rerun": false
+  }
+}

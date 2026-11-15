@@ -6,6 +6,9 @@
 "use client";
 
 import * as React from "react";
+import type { UiSprache } from "@/lib/localization/ui-sprache";
+import { sicherheitText, type SicherheitTextSchluessel } from "@/lib/localization/account-security-texte";
+import { sicherheitStepUpStatus, sicherheitFaktorStatus } from "@/lib/localization/account-security-display-3";
 import { createBrowserClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 import type { SupabaseClient as SbClient } from "@supabase/supabase-js";
@@ -45,25 +48,20 @@ import {
   darfTotpEinrichten,
   passkeyBrowserHinweis,
   passkeyLage,
-  PASSKEY_LAGE_TEXTE,
   totpFaktorAnzeigename,
-  totpFaktorStatusText,
   totpListeLage,
-  TOTP_LAGE_TEXTE,
   type PasskeyLage,
   type TotpListeLage,
 } from "@/lib/auth/account-security-lage";
 import { accountLogoutScopeAction } from "@/app/account/security/logout-action";
 import {
   MFA_STEP_UP_ANFANG,
-  MFA_STEP_UP_ERFOLG_TEXT,
   darfMfaStepUpStarten,
   mfaStepUpFehler,
   mfaStepUpDialogOffen,
   mfaStepUpErfolgBehaupten,
   mfaStepUpIstBeschaeftigt,
   mfaStepUpSollLokalenAuthVerlassen,
-  mfaStepUpStatusText,
   mfaStepUpUndUnenroll,
   mfaStepUpWeiter,
   mfaUnenrollDirekt,
@@ -118,20 +116,22 @@ function mfaClient(auth: { mfa?: MfaClient }): MfaClient | null {
   return auth.mfa ?? null;
 }
 
-function nutzerFehler(vorgang: SecurityFehlerVorgang, fehler: unknown): string {
+function nutzerFehler(vorgang: SecurityFehlerVorgang, fehler: unknown): SicherheitTextSchluessel {
   const gelesen = securityFehlerAusUnbekannt(fehler);
-  return securityFehlerEinordnen({
+  return `security.error.${securityFehlerEinordnen({
     vorgang,
     meldung: gelesen.meldung,
     code: gelesen.code,
     status: gelesen.status,
-  }).text;
+  }).code}`;
 }
 
 export default function SecurityMFA({
   passkeysServerAktiviert,
+  sprache = "de",
 }: {
   passkeysServerAktiviert: boolean;
+  sprache?: UiSprache;
 }) {
   const supabase = React.useMemo<BrowserSupabase>(() => createBrowserClient(), []);
   const [loading, setLoading] = React.useState(true);
@@ -142,7 +142,7 @@ export default function SecurityMFA({
   const [enrollQr, setEnrollQr] = React.useState<string | null>(null);
   const [factorId, setFactorId] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
-  const [message, setMessage] = React.useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = React.useState<{ type: "success" | "error"; schluessel: SicherheitTextSchluessel } | null>(null);
   const [stepUp, setStepUp] = React.useState<MfaStepUpZustand>(MFA_STEP_UP_ANFANG);
   const unenrollLaufend = React.useRef(false);
 
@@ -193,7 +193,7 @@ export default function SecurityMFA({
     } catch (err: unknown) {
       setListFehler(true);
       setTotpFactors([]);
-      setMessage({ type: "error", text: nutzerFehler("list", err) });
+      setMessage({ type: "error", schluessel: nutzerFehler("list", err) });
     } finally {
       setLoading(false);
     }
@@ -209,10 +209,10 @@ export default function SecurityMFA({
       if (!mfa?.enroll) {
         setMessage({
           type: "error",
-          text: securityFehlerEinordnen({
+          schluessel: `security.error.${securityFehlerEinordnen({
             vorgang: "enroll",
             meldung: "not available",
-          }).text,
+          }).code}`,
         });
         return;
       }
@@ -225,14 +225,14 @@ export default function SecurityMFA({
       if (!fid) {
         setMessage({
           type: "error",
-          text: securityFehlerEinordnen({ vorgang: "enroll" }).text,
+          schluessel: `security.error.${securityFehlerEinordnen({ vorgang: "enroll" }).code}`,
         });
         return;
       }
       setFactorId(fid);
       if (qr?.startsWith("data:")) setEnrollQr(qr);
     } catch (err: unknown) {
-      setMessage({ type: "error", text: nutzerFehler("enroll", err) });
+      setMessage({ type: "error", schluessel: nutzerFehler("enroll", err) });
     } finally {
       setLoading(false);
     }
@@ -242,12 +242,12 @@ export default function SecurityMFA({
     if (!factorId) {
       setMessage({
         type: "error",
-        text: "Keine Authenticator-Einrichtung läuft. Starte zuerst die Einrichtung.",
+        schluessel: "totp.notStarted",
       });
       return;
     }
     if (!code || code.length !== 6) {
-      setMessage({ type: "error", text: "Bitte 6-stelligen Code eingeben." });
+      setMessage({ type: "error", schluessel: "totp.codeInvalid" });
       return;
     }
     setLoading(true);
@@ -257,10 +257,10 @@ export default function SecurityMFA({
       if (!mfa?.challenge || !mfa.verify) {
         setMessage({
           type: "error",
-          text: securityFehlerEinordnen({
+          schluessel: `security.error.${securityFehlerEinordnen({
             vorgang: "verify",
             meldung: "not available",
-          }).text,
+          }).code}`,
         });
         return;
       }
@@ -270,7 +270,7 @@ export default function SecurityMFA({
       if (!challengeId) {
         setMessage({
           type: "error",
-          text: securityFehlerEinordnen({ vorgang: "verify" }).text,
+          schluessel: `security.error.${securityFehlerEinordnen({ vorgang: "verify" }).code}`,
         });
         return;
       }
@@ -278,13 +278,13 @@ export default function SecurityMFA({
       const { error: verErr } = await mfa.verify({ factorId, challengeId, code });
       if (verErr) throw verErr;
 
-      setMessage({ type: "success", text: "Authenticator-App erfolgreich aktiviert." });
+      setMessage({ type: "success", schluessel: "totp.activated" });
       setEnrollQr(null);
       setFactorId(null);
       setCode("");
       await refreshFactors();
     } catch (err: unknown) {
-      setMessage({ type: "error", text: nutzerFehler("verify", err) });
+      setMessage({ type: "error", schluessel: nutzerFehler("verify", err) });
     } finally {
       setLoading(false);
     }
@@ -314,7 +314,7 @@ export default function SecurityMFA({
     if (fertig.typ === "ausfuehren_ok") {
       enrollZustandNachUnenroll(id);
       await refreshFactors();
-      setMessage({ type: "success", text: MFA_STEP_UP_ERFOLG_TEXT });
+      setMessage({ type: "success", schluessel: "step.status.success" });
       setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "zuruecksetzen" }));
       return;
     }
@@ -324,11 +324,11 @@ export default function SecurityMFA({
     await refreshFactors();
     setMessage({
       type: "error",
-      text: mfaStepUpFehler(
+      schluessel: `step.error.${mfaStepUpFehler(
         fertig.lokalBeendet
           ? "sitzung_unbestaetigt_nach_unenroll"
           : "sitzung_unbestaetigt_abmelden_fehlgeschlagen",
-      ).text,
+      ).code}`,
     });
     const lokal = await accountLogoutScopeAction("local");
     if (
@@ -399,10 +399,10 @@ export default function SecurityMFA({
         <CardHeader withDivider className="p-4">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" aria-hidden="true" />
-            <CardTitle as="h2">Authenticator-App (TOTP)</CardTitle>
+            <CardTitle as="h2">{sicherheitText(sprache, "totp.title")}</CardTitle>
           </div>
           <CardDescription>
-            Eine Authenticator-App erzeugt den zweiten Code. Der QR-Code erscheint erst, wenn du die Einrichtung startest.
+            {sicherheitText(sprache, "totp.description")}
           </CardDescription>
         </CardHeader>
 
@@ -412,7 +412,7 @@ export default function SecurityMFA({
             className="mb-4 text-sm text-ink-700"
             role="status"
           >
-            {TOTP_LAGE_TEXTE[totpLage]}
+            {sicherheitText(sprache, `totp.status.${totpLage}`)}
           </p>
 
           {totpLage === "error" && (
@@ -423,17 +423,19 @@ export default function SecurityMFA({
               disabled={aktionenGesperrt}
               className={`${SICHERHEIT_ZIEL_44} mb-4 min-h-11`}
             >
-              Erneut laden
+              {sicherheitText(sprache, "common.reload")}
             </Button>
           )}
 
           {totpLage === "ready" && totpFactors.length > 0 && (
             <div className="mb-4 rounded-xl border bg-muted/30 p-3">
-              <div className="text-sm font-medium mb-2">Eingerichtete Authenticator-Apps</div>
+              <div className="text-sm font-medium mb-2">{sicherheitText(sprache, "totp.listTitle")}</div>
               <ul className="space-y-2">
                 {totpFactors.map((faktor) => {
-                  const name = totpFaktorAnzeigename(faktor.friendly_name);
-                  const status = totpFaktorStatusText(faktor.status);
+                  const sichererName = totpFaktorAnzeigename(faktor.friendly_name);
+                  const name = sichererName === faktor.friendly_name?.trim()
+                    ? sichererName : sicherheitText(sprache, "totp.fallbackName");
+                  const status = sicherheitFaktorStatus(sprache, faktor.status);
                   return (
                     <li
                       key={faktor.id}
@@ -445,7 +447,7 @@ export default function SecurityMFA({
                           {[
                             status,
                             faktor.created_at
-                              ? `seit ${new Date(faktor.created_at).toLocaleString()}`
+                              ? sicherheitText(sprache, "totp.since", { date: new Date(faktor.created_at).toLocaleString(sprache === "en" ? "en-GB" : "de-CH") })
                               : null,
                           ]
                             .filter(Boolean)
@@ -459,7 +461,7 @@ export default function SecurityMFA({
                         onClick={() => void handleRemove(faktor.id, faktor.status)}
                         disabled={aktionenGesperrt}
                       >
-                        {name} entfernen
+                        {sicherheitText(sprache, "totp.remove", { name })}
                       </Button>
                     </li>
                   );
@@ -473,7 +475,7 @@ export default function SecurityMFA({
               <div className="rounded-xl border p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <QrCode className="h-5 w-5" aria-hidden="true" />
-                  <div className="font-medium">Schritt 1: QR-Code scannen</div>
+                  <div className="font-medium">{sicherheitText(sprache, "totp.scan")}</div>
                 </div>
                 {enrollQr?.startsWith("data:") ? (
                   // Der QR-Code kommt als Data-URL aus der Anmeldung bei
@@ -481,24 +483,24 @@ export default function SecurityMFA({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={enrollQr}
-                    alt="QR-Code zum Einrichten der Zwei-Faktor-Anmeldung"
+                    alt={sicherheitText(sprache, "totp.qrAlt")}
                     className="mx-auto h-40 w-40 rounded-lg border bg-white p-2"
                   />
                 ) : (
                   <div className="flex items-center gap-2 text-sm">
                     <AlertTriangle className="h-5 w-5 text-amber-500" aria-hidden="true" />
                     <span>
-                      Der QR-Code fehlt. Die Geheimnis-URI wird nicht angezeigt. Brich ab und starte die Einrichtung neu.
+                      {sicherheitText(sprache, "totp.qrMissing")}
                     </span>
                   </div>
                 )}
               </div>
 
               <div className="rounded-xl border p-4">
-                <div className="font-medium mb-2">Schritt 2: 6-stelligen Code eingeben</div>
+                <div className="font-medium mb-2">{sicherheitText(sprache, "totp.enter")}</div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Label htmlFor="totp-code" srOnly>
-                    6-stelliger Code
+                    {sicherheitText(sprache, "common.code")}
                   </Label>
                   <Input
                     id="totp-code"
@@ -520,7 +522,7 @@ export default function SecurityMFA({
                     disabled={aktionenGesperrt || code.length !== 6}
                     className={`${SICHERHEIT_ZIEL_44} min-h-11`}
                   >
-                    Bestätigen
+                    {sicherheitText(sprache, "common.confirm")}
                   </Button>
                 </div>
               </div>
@@ -532,7 +534,7 @@ export default function SecurityMFA({
                 disabled={aktionenGesperrt}
                 onClick={() => void handleRemove(factorId, "unverified")}
               >
-                Einrichtung abbrechen
+                {sicherheitText(sprache, "totp.cancelSetup")}
               </Button>
             </div>
           ) : darfTotpEinrichten(totpLage) ? (
@@ -542,7 +544,7 @@ export default function SecurityMFA({
               variant={totpFactors.length > 0 ? "outline" : "default"}
               className={cn(SICHERHEIT_ZIEL_44, "min-h-11", totpFactors.length > 0 ? "w-full sm:w-auto" : "w-full")}
             >
-              {!loading && !stepUpBeschaeftigt ? "Authenticator-App einrichten" : "Bitte warten…"}
+              {!loading && !stepUpBeschaeftigt ? sicherheitText(sprache, "totp.setup") : sicherheitText(sprache, "common.wait")}
             </Button>
           ) : null}
         </CardContent>
@@ -561,27 +563,23 @@ export default function SecurityMFA({
         <div className="flex items-center gap-2">
           <KeyRound className="h-5 w-5" aria-hidden="true" />
           <h2 id="account-passkeys-title" className="text-lg font-semibold tracking-tight text-brand-800">
-            Passkeys
+            {sicherheitText(sprache, "passkey.title")}
           </h2>
         </div>
         <p className="mt-2 text-sm leading-6 text-ink-700">
-          Passkeys richten sich nach der Server-Konfiguration, nicht nach dem Browser allein.
+          {sicherheitText(sprache, "passkey.description")}
         </p>
         <p role="status" className="mt-3 text-sm leading-6 text-ink-700">
           <span className="font-medium">
-            {aktuellePasskeyLage === "unsupported"
-              ? "Nicht unterstützt"
-              : aktuellePasskeyLage === "unavailable"
-                ? "Nicht verfügbar"
-                : "Noch nicht eingerichtet"}
+            {sicherheitText(sprache, `passkey.label.${aktuellePasskeyLage}`)}
             .{" "}
           </span>
-          {PASSKEY_LAGE_TEXTE[aktuellePasskeyLage]}
-          {browserHinweis ? ` ${browserHinweis}` : null}
+          {sicherheitText(sprache, `passkey.status.${aktuellePasskeyLage}`)}
+          {browserHinweis ? ` ${sicherheitText(sprache, "passkey.browserHint")}` : null}
         </p>
         {darfPasskeyHinzufuegen(aktuellePasskeyLage) ? (
           <p className="mt-3 text-sm leading-6 text-ink-700">
-            Das Hinzufügen eines Passkeys ist in dieser Umgebung noch nicht angebunden.
+            {sicherheitText(sprache, "passkey.notConnected")}
           </p>
         ) : null}
       </section>
@@ -590,6 +588,7 @@ export default function SecurityMFA({
       {mfaStepUpDialogOffen(stepUp) ? (
         <SecurityMfaStepUp
           zustand={stepUp}
+          sprache={sprache}
           onBestaetigen={(otp) => void handleStepUpBestaetigen(otp)}
           onAbbrechen={() => setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "abbrechen" }))}
         />
@@ -624,7 +623,7 @@ export default function SecurityMFA({
           ) : (
             <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           )}
-          <span>{message?.text ?? mfaStepUpStatusText(stepUp)}</span>
+          <span>{message ? sicherheitText(sprache, message.schluessel) : sicherheitStepUpStatus(sprache, stepUp)}</span>
         </div>
       )}
     </div>

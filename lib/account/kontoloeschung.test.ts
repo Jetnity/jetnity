@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
 
 import { SCHLUESSEL } from '@/lib/trips/gastspeicher'
 import { kontoLoeschungAusfuehren, type LoeschAbhaengigkeiten } from '@/lib/account/kontoloeschung-ausfuehrung'
@@ -659,24 +660,31 @@ describe('Kontolöschung – Browser', () => {
 
     const oberflaeche = quelle('../../components/account/KontoLoeschen.tsx')
     const einstellungen = quelle('../../app/account/settings/page.tsx')
+    const einstellungenInhalt = quelle('../../components/account/ui-einstellungen-1/EinstellungenInhalt.tsx')
     const seite = quelle('../../app/(public)/konto-geloescht/page.tsx')
     const funktion = quelle('../../supabase/functions/account-delete-v1/index.ts')
     for (const text of [oberflaeche, seite]) {
       assert.equal(/DSGVO|GDPR|CH-DSG|30 Tage|wiederherstellen/i.test(text), false)
     }
-    assert.match(oberflaeche, /Daten zuerst exportieren/)
+    assert.match(einstellungenText('de', 'delete.export'), /Daten zuerst exportieren/)
+    assert.match(oberflaeche, /einstellungenText\(sprache, 'delete.export'\)/)
     assert.match(oberflaeche, /href="\/api\/account\/export"/)
-    assert.match(oberflaeche, /Konto löschen/)
-    assert.match(oberflaeche, /dazu gespeicherten Reisen, Reisenden/)
+    assert.match(einstellungenText('de', 'delete.title'), /Konto löschen/)
+    assert.match(einstellungenText('de', 'delete.description'), /dazu gespeicherten Reisen, Reisenden/)
+    assert.match(oberflaeche, /einstellungenText\(sprache, 'delete.title'\)/)
+    assert.match(oberflaeche, /einstellungenText\(sprache, 'delete.description'\)/)
     assert.equal(oberflaeche.includes('übrigen'), false)
     assert.equal(oberflaeche.includes('unwiderruflich'), false)
     assert.match(oberflaeche, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
     assert.match(einstellungen, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
-    assert.match(einstellungen, /loeschungAngeboten \? <KontoLoeschen \/> : null/)
+    assert.match(einstellungen, /loeschungAngeboten=\{loeschungAngeboten\}/)
+    assert.match(einstellungenInhalt, /loeschungAngeboten \? <KontoLoeschen sprache=\{sprache\} \/> : null/)
     assert.equal(einstellungen.includes('headers('), false)
     assert.equal(einstellungen.includes('next/headers'), false)
-    assert.match(oberflaeche, /KONTO LÖSCHEN/)
-    assert.match(oberflaeche, /Aktuelles Passwort/)
+    assert.match(einstellungenText('de', 'delete.confirmLabel'), /KONTO LÖSCHEN/)
+    assert.match(einstellungenText('de', 'delete.passwordLabel'), /Aktuelles Passwort/)
+    assert.match(oberflaeche, /einstellungenText\(sprache, 'delete.confirmLabel'\)/)
+    assert.match(oberflaeche, /einstellungenText\(sprache, 'delete.passwordLabel'\)/)
     assert.match(oberflaeche, /aria-live="polite"/)
     assert.match(oberflaeche, /variant="destructive"/)
     assert.equal(oberflaeche.includes('unenroll'), false)

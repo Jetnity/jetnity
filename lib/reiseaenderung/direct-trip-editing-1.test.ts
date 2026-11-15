@@ -8,7 +8,9 @@ import { auswirkungen } from './direct/auswirkungen'
 import { bedeutung, fingerprint } from './direct/bestaetigung'
 import { manuellVorschau, manuellSpeichern } from './direct/speichern'
 import { gastManuellSpeichern } from './direct/gast'
-import { gastreiseAendern, gastreiseSpeichern, gastPlanpunktAnlegen, gastspeicherLaden, VeralteteFassungFehler } from '@/lib/trips/gastspeicher'
+import { gastreiseAendern, gastreiseAnlegen, gastreiseSpeichern, gastPlanpunktAnlegen, gastspeicherLaden, VeralteteFassungFehler } from '@/lib/trips/gastspeicher'
+import type { Ort } from '@/lib/places/domain'
+import { aenderungAlsNutzlast } from './nutzlast'
 import { reiseLesen } from '@/lib/trips/schema'
 import { readinessItemLesen } from '@/lib/readiness/schema'
 import { itineraryAirportChange } from '@/lib/route/fixtures'
@@ -114,6 +116,116 @@ function storage() {
   Object.assign(globalThis, { window: { localStorage: { getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => { if (broken) throw Error('full'); map.set(k, v) }, removeItem: (k: string) => map.delete(k) } } })
   return { map, fail: () => { broken = true } }
 }
+
+function neuErstellteMehrzielreise() {
+  storage()
+  const ort = (id: string, name: string, countryCode: string, lat: number, lon: number): Ort => ({
+    id, name, source: 'geonames', sourceId: id.slice('geonames:'.length), typ: 'city',
+    country: countryCode, countryCode, region: null, lat, lon, iata: null, keywords: null,
+  })
+  const paris = ort('geonames:2988507', 'Paris', 'FR', 48.85, 2.35)
+  const rom = ort('geonames:3169070', 'Rom', 'IT', 41.89, 12.51)
+  const zuerich = ort('geonames:2657896', 'Zürich', 'CH', 47.37, 8.55)
+  return gastreiseAnlegen({
+    clientRef: '417a7ff5-1359-48d8-952c-893932c2b741', title: 'Paris und Rom',
+    destination: paris.name, destinationPlaceId: paris.id, weitereDestinationPlaceIds: [rom.id],
+    origin: zuerich.name, originPlaceId: zuerich.id,
+    startDate: '2026-10-07', endDate: '2026-10-12', travellers: 2,
+    currency: 'CHF', budgetAmount: 1200, pace: 'balanced', interests: [], travelWish: null,
+  }, { ziel: paris, abreise: zuerich, weitereZiele: [rom] })
+}
+
+for (const duration of [5, 7]) {
+  test(`Guest create → Dauer ${duration} → speichern → reload bewahrt offene Ziele und Tageszuordnung`, async () => {
+    const before = neuErstellteMehrzielreise()
+    assert.equal(before.days.length, 6)
+    assert.equal(before.dayStageAssignmentMode, 'unassigned')
+    const proposed = await manuellVorschau(before, { duration }, seed)
+    assert(proposed.ok)
+    assert.deepEqual(proposed.vorschau.nachher.stages, before.stages)
+    assert(proposed.vorschau.nachher.days.every(d => d.stageId === null))
+    const result = await gastManuellSpeichern(proposed.vorschau.anfrage)
+    assert(result.ok)
+    const readback = gastspeicherLaden().aktiv
+    assert(readback)
+    assert.deepEqual(readback.stages, before.stages)
+    assert.equal(readback.days.length, duration)
+    assert(readback.days.every(d => d.stageId === null))
+    assert.equal(readback.dayStageAssignmentMode, 'unassigned')
+    assert.equal(readback.revision, before.revision + 1)
+    assert((await gastManuellSpeichern(proposed.vorschau.anfrage)).ok)
+    assert.deepEqual(gastspeicherLaden().aktiv, readback)
+  })
+
+  test(`Account-Vorschau und echte RPC-Nutzlast erhalten offene Ziele bei Dauer ${duration}`, async () => {
+    const before = neuErstellteMehrzielreise()
+    let current = before, writes = 0
+    const proposed = await manuellVorschau(before, { duration }, seed, 'account')
+    assert(proposed.ok)
+    const originalPayload = aenderungAlsNutzlast(before, seed, before.revision)
+    assert(originalPayload && typeof originalPayload === 'object' && !Array.isArray(originalPayload))
+    const ports = {
+      quelle: 'account' as const,
+      lesen: async () => current,
+      schreiben: async (trip: Trip, mutation: string, revision: number) => {
+        const payload = aenderungAlsNutzlast(trip, mutation, revision)
+        assert(payload && typeof payload === 'object' && !Array.isArray(payload))
+        assert.deepEqual(payload.stages, originalPayload.stages)
+        assert(Array.isArray(payload.days))
+        assert.equal(payload.days.length, duration)
+        for (const day of payload.days) {
+          assert(day && typeof day === 'object' && !Array.isArray(day))
+          assert.equal(day.stage_id, null)
+        }
+        writes++
+        current = { ...trip, lastMutationId: mutation, revision: revision + 1 }
+        return { konflikt: false }
+      },
+    }
+    assert((await manuellSpeichern(proposed.vorschau.anfrage, ports)).ok)
+    assert.deepEqual(current.stages, before.stages)
+    assert.equal(current.dayStageAssignmentMode, before.dayStageAssignmentMode)
+    assert((await manuellSpeichern(proposed.vorschau.anfrage, ports)).ok)
+    assert.equal(writes, 1)
+  })
+}
+
+for (const quelle of ['guest', 'account'] as const) {
+  for (const eingabe of [{ title: 'Neuer Titel' }, { startDate: '2026-10-09' }]) {
+    test(`${quelle}: taglose geschützte Unterkunft bleibt bei ${Object.keys(eingabe)[0]} durch Vorschau und Readback unverändert`, async () => {
+      storage()
+      const trip = fixture(), protectedItem = { ...trip.days[3].items[0], dayId: null, stageId: trip.stages[0].id }
+      trip.days[3].items = []
+      trip.ohneTag = [protectedItem]
+      const before = gastreiseSpeichern(trip)
+      let current = before
+      const proposed = await manuellVorschau(before, eingabe, seed, quelle)
+      assert(proposed.ok)
+      assert.deepEqual(proposed.vorschau.nachher.ohneTag, [protectedItem])
+      const result = quelle === 'guest'
+        ? await gastManuellSpeichern(proposed.vorschau.anfrage)
+        : await manuellSpeichern(proposed.vorschau.anfrage, {
+          quelle,
+          lesen: async () => current,
+          schreiben: async (graph, mutation, revision) => {
+            const payload = aenderungAlsNutzlast(graph, mutation, revision)
+            assert(payload && typeof payload === 'object' && !Array.isArray(payload))
+            assert(Array.isArray(payload.ungeplante))
+            const point = payload.ungeplante[0]
+            assert(point && typeof point === 'object' && !Array.isArray(point))
+            assert.equal(point.day_id, null)
+            assert.equal(point.stage_id, protectedItem.stageId)
+            current = { ...graph, lastMutationId: mutation, revision: revision + 1 }
+            return { konflikt: false }
+          },
+        })
+      assert(result.ok)
+      assert.deepEqual(result.reise.ohneTag, [protectedItem])
+      assert.deepEqual(quelle === 'guest' ? gastspeicherLaden().aktiv?.ohneTag : current.ohneTag, [protectedItem])
+    })
+  }
+}
+
 test('Guest same-trip real storage, reload, identity equal-revision switch and stale #903 write', async () => {
   storage(); const before = gastreiseSpeichern(fixture()), p = await manuellVorschau(before, { duration: 6 }, seed); assert(p.ok)
   assert((await gastManuellSpeichern(p.vorschau.anfrage)).ok); assert.equal(gastspeicherLaden().aktiv?.days.length, 6)

@@ -27,6 +27,7 @@ import { join } from 'node:path'
 
 import { leseToml } from '@/lib/supabase/config-toml'
 import { OHNE_TOML_SCHLUESSEL, erwarteteAuthKonfiguration } from '@/lib/supabase/auth-erwartung'
+import { devAuthPushKonfiguration } from '@/lib/supabase/auth-dev-konfiguration'
 
 import { authKonfiguration, authKonfigurationSetzen, ziel } from './ziel'
 
@@ -35,6 +36,9 @@ const CONFIG = join(process.cwd(), 'supabase', 'config.toml')
 async function main() {
   const nurZeigen = process.argv.includes('--zeigen')
   const z = await ziel()
+  // The CLI reads the raw TOML below. Check it before any subprocess/PATCH:
+  // older branches must not remove the active password-reset URL from #1197.
+  const dev = devAuthPushKonfiguration(leseToml(readFileSync(CONFIG, 'utf8')), z.ref)
 
   // Erst lesen: Ohne den Stand davor wäre nicht zu sagen, was der Lauf bewirkt
   // hat und was schon vorher stimmte.
@@ -87,8 +91,7 @@ async function main() {
 
   // Die Gegenprobe gehört zum Anwenden: Ein Lauf, der nicht sagt, ob er
   // gewirkt hat, ist keine Zusage.
-  const config = leseToml(readFileSync(CONFIG, 'utf8'))
-  const erwartungen = erwarteteAuthKonfiguration(config)
+  const erwartungen = erwarteteAuthKonfiguration(dev.config)
   const jetzt = await authKonfiguration(z)
   const rest = erwartungen.filter((e) => jetzt[e.api] !== e.wert)
 

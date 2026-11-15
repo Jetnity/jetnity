@@ -1,3 +1,6 @@
+import { ANDERE_SITZUNGEN_TEXT } from '@/lib/auth/account-session-view'
+import { LOGOUT_JWT_HINWEIS } from '@/lib/auth/account-logout-scopes'
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -5,12 +8,13 @@ import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 
 import { SICHERHEIT_EINGABE_16, SICHERHEIT_ZIEL_44 } from '@/lib/auth/account-security-premium-ux-1'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const wurzel = join(hier, '../..')
 const lese = (pfad: string) => readFileSync(join(wurzel, pfad), 'utf8')
 
-const einstellungen = lese('app/account/settings/page.tsx')
+const einstellungen = lese('components/account/ui-einstellungen-1/EinstellungenInhalt.tsx')
 const sicherheit = lese('app/account/security/page.tsx')
 const loeschen = lese('components/account/KontoLoeschen.tsx')
 const passwort = lese('components/account/SecurityPasswort.tsx')
@@ -31,11 +35,15 @@ describe('Account Settings + Security Premium UX 1', () => {
   })
 
   test('Lösch-Zugangsdaten stehen hinter ausdrücklicher Vorbereitung', () => {
-    assert.match(loeschen, /Kontolöschung vorbereiten/)
+    assert.match(loeschen, /einstellungenText\(sprache, 'delete.prepare'\)/)
+    assert.match(einstellungenText('de', 'delete.prepare'), /Kontolöschung vorbereiten/)
     assert.match(loeschen, /formularSichtbar/)
-    assert.match(loeschen, /KONTO LÖSCHEN/)
-    assert.match(loeschen, /Aktuelles Passwort/)
-    assert.match(loeschen, /Daten zuerst exportieren/)
+    assert.match(einstellungenText('de', 'delete.confirmLabel'), /KONTO LÖSCHEN/)
+    assert.match(einstellungenText('de', 'delete.passwordLabel'), /Aktuelles Passwort/)
+    assert.match(einstellungenText('de', 'delete.export'), /Daten zuerst exportieren/)
+    assert.match(loeschen, /einstellungenText\(sprache, 'delete.confirmLabel'\)/)
+    assert.match(loeschen, /einstellungenText\(sprache, 'delete.passwordLabel'\)/)
+    assert.match(loeschen, /einstellungenText\(sprache, 'delete.export'\)/)
     assert.match(loeschen, /href="\/api\/account\/export"/)
     assert.match(loeschen, /variant="destructive"/)
     assert.equal(loeschen.includes('autoFocus'), false)
@@ -43,28 +51,37 @@ describe('Account Settings + Security Premium UX 1', () => {
     const formular = loeschen.slice(loeschen.indexOf('formularSichtbar ?'))
     assert.match(formular, /id="konto-loeschen-passwort"/)
     assert.match(formular, /id="konto-loeschen-bestaetigung"/)
-    assert.match(einstellungen, /loeschungAngeboten \? <KontoLoeschen \/> : null/)
+    assert.match(einstellungen, /loeschungAngeboten \? <KontoLoeschen sprache=\{sprache\} \/> : null/)
     assert.match(einstellungen, /href="\/account\/security"/)
-    assert.match(einstellungen, /Gefahrenbereich/)
+    assert.match(einstellungen, /einstellungenText\(sprache, 'delete.danger'\)/)
+    assert.equal(einstellungenText('de', 'delete.danger'), 'Gefahrenbereich')
     assert.equal(einstellungen.includes('Sicherheitsbewertung'), false)
   })
 
   test('Passwort, Sitzung, Abmelden, TOTP und Passkeys bleiben ehrlich', () => {
-    assert.match(passwort, /Passwort ändern/)
+    assert.match(passwort, /sicherheitText\(sprache, "password.open"\)/)
+    assert.equal(sicherheitText('de', 'password.open'), 'Passwort ändern')
+    assert.equal(sicherheitText('en', 'password.open'), 'Change password')
     assert.match(passwort, /reauthenticate/)
     assert.equal(passwort.includes('current-password'), false)
     assert.equal(passwort.includes('currentPassword'), false)
-    assert.match(sicherheit, /diese Sitzung/)
-    assert.match(sicherheit, /aria-label="Sicherheitsbereiche"/)
+    assert.match(sicherheit, /sicherheitText\(sprache, 'page.intro'\)/)
+    assert.match(sicherheitText('de', 'page.intro'), /diese Sitzung/)
+    assert.match(sicherheit, /aria-label=\{sicherheitText\(sprache, 'page.navigation'\)\}/)
+    assert.equal(sicherheitText('de', 'page.navigation'), 'Sicherheitsbereiche')
+    assert.equal(sicherheitText('en', 'page.navigation'), 'Security sections')
     assert.match(sicherheit, /passkeysServerAktiviertLesen\(\)/)
     assert.equal(sicherheit.includes('listSessions'), false)
     assert.equal(sicherheit.includes('Sicherheitsbewertung'), false)
-    assert.match(sitzung, /ANDERE_SITZUNGEN_TEXT/)
+    assert.match(sitzung, /sicherheitText\(sprache, "session.otherDescription"\)/)
+    assert.equal(sicherheitText('de', 'session.otherDescription'), ANDERE_SITZUNGEN_TEXT)
     assert.equal(sitzung.includes('0 Geräte'), false)
     assert.equal(sitzung.includes('<ul'), false)
     assert.match(logout, /data-logout-action=\{scope\}/)
-    assert.match(logout, /LOGOUT_JWT_HINWEIS/)
-    assert.match(logout, /Abmeldeoptionen/)
+    assert.match(logout, /sicherheitText\(sprache, "logout.jwtHint"\)/)
+    assert.equal(sicherheitText('de', 'logout.jwtHint'), LOGOUT_JWT_HINWEIS)
+    assert.match(logout, /sicherheitText\(sprache, "logout.options"\)/)
+    assert.equal(sicherheitText('de', 'logout.options'), 'Abmeldeoptionen')
     assert.match(logout, /optionenSichtbar/)
     assert.match(logout, /if \(zustand\.lage !== "idle" \|\| zustand\.bestaetigungFuer !== null\) return/)
     assert.equal(logout.includes('listSessions'), false)

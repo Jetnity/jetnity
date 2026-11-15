@@ -14,7 +14,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Fehlerflaeche, Fehlerzeile } from '@/components/admin/Ladezustand'
-import { fortsetzung, lade, liste, type Fehler } from '@/lib/admin/ladezustand'
+import { fortsetzung, liste, type Fehler } from '@/lib/admin/ladezustand'
+import { usePaymentRead } from './usePaymentRead'
+import RefundJournal from './RefundJournal'
 import AdminEvidenceDetails from '@/components/admin/home/AdminEvidenceDetails'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import {
@@ -39,8 +41,19 @@ type WebhookRow = { id: string; type: string; created_at: string }
 
 export default function PaymentsCenter() {
   const [tab, setTab] = React.useState<'overview'|'transactions'|'refunds'|'webhooks'>('overview')
+  const [denied, setDenied] = React.useState(false)
+  const onDenied = React.useCallback(() => setDenied(true), [])
+
+  if (denied) return (
+    <section role="alert" className="min-w-0 break-words rounded-2xl border border-border bg-card p-4 sm:p-6">
+      <h2 className="text-lg font-semibold">Zugriff auf Zahlungsdaten nicht mehr bestätigt</h2>
+      <p className="mt-2 text-sm text-muted-foreground">Die Sitzung ist abgelaufen oder die Berechtigung hat sich geändert. Zuvor geladene Zahlungsdaten wurden ausgeblendet.</p>
+      <Button className="mt-4 h-auto min-h-11 min-w-0 max-w-full whitespace-normal transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" variant="outline" onClick={() => window.location.reload()}>Sitzung erneut prüfen</Button>
+    </section>
+  )
+
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6 [overflow-wrap:anywhere]">
       <section className="rounded-2xl border bg-card px-4 py-3 sm:px-5" aria-label="Zahlungsanbindung">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -58,10 +71,10 @@ export default function PaymentsCenter() {
         <TabBtn active={tab==='webhooks'} onClick={()=>setTab('webhooks')}>Webhooks</TabBtn>
       </div>
 
-      {tab==='overview' && <OverviewCard/>}
-      {tab==='transactions' && <TransactionsCard/>}
-      {tab==='refunds' && <RefundCard/>}
-      {tab==='webhooks' && <WebhooksCard/>}
+      {tab==='overview' && <OverviewCard onDenied={onDenied}/>}
+      {tab==='transactions' && <TransactionsCard onDenied={onDenied}/>}
+      {tab==='refunds' && <><RefundJournal onDenied={onDenied}/><RefundCard/></>}
+      {tab==='webhooks' && <WebhooksCard onDenied={onDenied}/>}
     </div>
   )
 }
@@ -76,23 +89,29 @@ function TabBtn({ active, children, ...rest }: React.ButtonHTMLAttributes<HTMLBu
 
 /* ── Overview (Revenue Breakdown) ─────────────────────── */
 
-function OverviewCard() {
+function OverviewCard({ onDenied }: { onDenied: () => void }) {
   const [days, setDays] = React.useState<BreakdownDay[] | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [fehler, setFehler] = React.useState<Fehler | null>(null)
+  const read = usePaymentRead(onDenied)
 
-  const load = async () => {
+  const load = React.useCallback(async () => {
     setLoading(true); setFehler(null)
-    const ergebnis = await lade(
-      () => fetch('/api/admin/payments/breakdown?range=30d', { cache: 'no-store' }),
+    const ergebnis = await read(
+      '/api/admin/payments/breakdown?range=30d',
       (koerper) => liste<BreakdownDay>(koerper, 'days'),
     )
+    if (!ergebnis) return
     setLoading(false)
     if (ergebnis.fehler) { setFehler(ergebnis.fehler); return }
     setDays(ergebnis.daten)
-  }
+  }, [read])
 
-  React.useEffect(()=>{ load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    // The initial request starts after mount; later refreshes are explicit.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load()
+  }, [load])
 
   // Ohne Daten keine Kennzahlen: Eine 0 wäre hier die Aussage „kein Umsatz“.
   const totals = React.useMemo(() => {
@@ -182,7 +201,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 /* ── Transactions (Liste) ─────────────────────────────── */
 
-function TransactionsCard() {
+function TransactionsCard({ onDenied }: { onDenied: () => void }) {
   // `null` heisst „noch keine Antwort“ und ist nicht dasselbe wie `[]`. Genau
   // diese Unterscheidung fehlte: `data.rows ?? []` schrieb im Fehlerfall eine
   // leere Liste, und die Tabelle meldete „Keine Transaktionen“.
@@ -193,6 +212,7 @@ function TransactionsCard() {
   const [loading, setLoading] = React.useState(false)
   const [q, setQ] = React.useState('')
   const [status, setStatus] = React.useState<TransactionStatus>('all')
+  const read = usePaymentRead(onDenied)
 
   // Der Filter, zu dem die gerade gezeigte Liste gehört. Ein Entwurf im Suchfeld
   // gilt erst nach Filtern, Enter oder einer Statuswahl. „Mehr laden“ liest
@@ -228,12 +248,12 @@ function TransactionsCard() {
     setFehler(null)
 
     const url = new URL(transactionListQuery(filter, pageCursor), window.location.origin)
-    const ergebnis = await lade(
-      () => fetch(url.toString(), { cache: 'no-store' }),
+    const ergebnis = await read(
+      url.toString(),
       (koerper) => ({ rows: liste<PaymentRow>(koerper, 'rows'), weiter: fortsetzung(koerper) }),
     )
 
-    if (!transactionReadIsCurrent(clock.current, requestId)) return
+    if (!ergebnis || !transactionReadIsCurrent(clock.current, requestId)) return
 
     loadingRef.current = false
     setLoading(false)
@@ -249,7 +269,7 @@ function TransactionsCard() {
     setCursor(ergebnis.daten.weiter)
     doneRef.current = !ergebnis.daten.weiter
     setDone(doneRef.current)
-  }, [])
+  }, [read])
 
   const commitVisible = (nextQ: string, nextStatus: TransactionStatus) => {
     void requestPage('replace', transactionFilterSnapshot(nextQ, nextStatus))
@@ -419,7 +439,7 @@ function RefundCard() {
         <Input containerClassName="[&>div:last-child]:hidden" aria-label="Grund (optional)" placeholder="Grund (optional)" value={reason} onChange={(e)=>setReason(e.target.value)} />
       </div>
       <div className="mt-3">
-        <Button onClick={submit} disabled={!paymentId || !amount || busy}>
+        <Button className="h-auto min-h-11 min-w-0 max-w-full whitespace-normal transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" onClick={submit} disabled={!paymentId || !amount || busy}>
           {ADMIN_EHRLICHE_TEXTE.refundButton}
         </Button>
         {msg && <span className="ml-3 text-sm text-muted-foreground">{msg}</span>}
@@ -436,43 +456,55 @@ function RefundCard() {
 
 /* ── Webhooks Monitor ────────────────────────────────── */
 
-function WebhooksCard() {
+function WebhooksCard({ onDenied }: { onDenied: () => void }) {
   // Diese Karte hat den Fall vorgeführt: `stripe_webhooks` hatte bis
   // `20260817100800` weder Recht noch Policy. Die Route antwortete mit 500, die
   // Karte zeigte „Keine Events“ – also „Stripe hat nichts geschickt“.
   const [rows, setRows] = React.useState<WebhookRow[] | null>(null)
   const [fehler, setFehler] = React.useState<Fehler | null>(null)
-  const [cursor, setCursor] = React.useState<string | null>(null)
   const [done, setDone] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  const cursor = React.useRef<string | null>(null)
+  const loadingRef = React.useRef(false)
+  const read = usePaymentRead(onDenied)
 
-  const load = async () => {
-    if (loading) return
+  const load = React.useCallback(async (mode: 'replace' | 'append' = 'append') => {
+    if (loadingRef.current) return
+    loadingRef.current = true
     setLoading(true); setFehler(null)
 
     const url = new URL('/api/admin/payments/webhooks', window.location.origin)
-    if (cursor) url.searchParams.set('cursor', cursor)
+    if (mode === 'append' && cursor.current) url.searchParams.set('cursor', cursor.current)
 
-    const ergebnis = await lade(
-      () => fetch(url.toString(), { cache: 'no-store' }),
+    const ergebnis = await read(
+      url.toString(),
       (koerper) => ({ rows: liste<WebhookRow>(koerper, 'rows'), weiter: fortsetzung(koerper) }),
     )
 
+    if (!ergebnis) return
+    loadingRef.current = false
     setLoading(false)
     if (ergebnis.fehler) { setFehler(ergebnis.fehler); return }
 
-    setRows([...(rows ?? []), ...ergebnis.daten.rows])
-    setCursor(ergebnis.daten.weiter)
-    if (!ergebnis.daten.weiter) setDone(true)
-  }
+    setRows((previous) => mode === 'replace' ? ergebnis.daten.rows : [...(previous ?? []), ...ergebnis.daten.rows])
+    cursor.current = ergebnis.daten.weiter
+    setDone(!ergebnis.daten.weiter)
+  }, [read])
 
-  React.useEffect(()=>{ load() }, []) // eslint-disable-line
+  React.useEffect(() => {
+    loadingRef.current = false
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load('replace')
+  }, [load])
 
   return (
     <section className="rounded-2xl border bg-card p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <Webhook className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">Aufgezeichnete Webhooks</h3>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Webhook className="h-4 w-4" />
+          <h3 className="text-sm font-semibold">Aufgezeichnete Webhooks</h3>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => void load('replace')} disabled={loading}>Aktualisieren</Button>
       </div>
       <div className="overflow-x-auto rounded-xl border">
         <table className="min-w-full text-sm">
@@ -495,7 +527,7 @@ function WebhooksCard() {
               <Fehlerzeile
                 spalten={3}
                 fehler={fehler}
-                onWiederholen={load}
+                onWiederholen={() => void load('replace')}
                 laeuft={loading}
                 veraltet={Boolean(rows?.length)}
               />

@@ -1,0 +1,53 @@
+import type { UiSprache } from './ui-sprache'
+
+const de = {
+  title: 'Reiseideen bearbeiten', intro: 'Pflege Texte und Themen einer Reiseidee. Entwurf und Veröffentlichung sind getrennte Schritte.',
+  back: 'Zum Content-Inventar', choose: 'Reiseidee auswählen', language: 'Die Bedienoberfläche verwendet deine gespeicherte Kontosprache. Die redaktionellen Inhalte bleiben deutsch.',
+  unavailable: 'CMS derzeit nicht verfügbar', unavailableDetail: 'Der Redaktionsspeicher ist noch nicht verbunden. Änderungen können hier derzeit weder gespeichert noch veröffentlicht werden.',
+  loading: 'Reiseidee wird geladen …', busy: 'Aktion wird geprüft. Bitte warte auf die Bestätigung.',
+  empty: 'Für diese Reiseidee gibt es noch keinen gespeicherten Entwurf.', archivedState: 'Archiviert', draftState: 'Entwurf vorhanden', publishedState: 'Veröffentlicht', unpublishedState: 'Nicht veröffentlicht',
+  identity: 'Feste Zuordnung', contentLanguage: 'Inhaltssprache: Deutsch', reference: 'Name, Land und Katalogbild sind hier nicht änderbar. Die Zuordnung belegt keine Bildrechte oder amtlichen Reiseinformationen.',
+  description: 'Beschreibung', idea: 'Reiseidee für die Planung', descriptionHint: '1–800 Zeichen, ohne HTML, Zeilenumbrüche oder Leerzeichen am Anfang und Ende.', ideaHint: '1–300 Zeichen, ohne HTML, Zeilenumbrüche oder Leerzeichen am Anfang und Ende.',
+  themes: 'Themen', themesHint: 'Wähle mindestens ein Thema.', themeCity: 'Stadt und Kultur', themeNature: 'Natur', themeBeach: 'Strand', themeRelax: 'Erholung',
+  save: 'Entwurf speichern', publish: 'Gespeicherten Entwurf veröffentlichen', archive: 'Archivieren', archiveQuestion: 'Beim Archivieren wird die veröffentlichte Reiseidee aus dem CMS entfernt. Die Revisionen bleiben erhalten.', archiveConfirm: 'Archivierung bestätigen', cancel: 'Abbrechen',
+  preview: 'Ungespeicherte Vorschau', savedPreview: 'Gespeicherter Entwurf', previewEmpty: 'Trage die Beschreibung und Reiseidee ein, um sie hier zu prüfen.', previewHint: 'Diese Textvorschau ist keine öffentliche Seite und keine Speicherung.',
+  history: 'Revisionen dieses Eintrags', historyEmpty: 'Noch keine Revision gespeichert.', revision: 'Revision', chooseRevision: 'Revision ansehen', historical: 'Historische Textvorschau', restore: 'Als neuen Entwurf wiederherstellen', restoreHint: 'Die ausgewählte Revision wird kopiert. Sie wird dadurch nicht veröffentlicht.', more: 'Weitere Revisionen laden', moreBusy: 'Revisionen werden geladen …',
+  reload: 'Erneut laden', discard: 'Änderungen verwerfen und neu laden', discardQuestion: 'Ungespeicherte Texte gehen beim Neuladen verloren. Möchtest du sie verwerfen?', discardConfirm: 'Verwerfen und neu laden',
+  pending: 'Der Schreibversuch ist noch nicht bestätigt. Prüfe den Status, bevor du weiterarbeitest. Eine Wiederholung verwendet genau denselben Auftrag.', confirm: 'Speicherstatus prüfen', retry: 'Denselben Auftrag erneut senden', transportOpen: 'Die ursprüngliche Anfrage läuft möglicherweise noch. Eine Wiederholung ist bis zu ihrem Abschluss gesperrt.',
+  leave: 'Bleibe hier, bis der offene Schreibversuch geklärt ist. Ungespeicherte Änderungen kannst du ausdrücklich verwerfen.',
+  saved: 'Der Entwurf ist gespeichert und bestätigt.', published: 'Die CMS-Veröffentlichung ist bestätigt. Die öffentliche Anzeige ist noch nicht angeschlossen.', archived: 'Die Archivierung ist bestätigt.', restored: 'Die Revision ist als neuer Entwurf gespeichert und bestätigt.', recordedChanged: 'Deine Aktion ist bestätigt. Inzwischen gibt es einen neueren Stand; angezeigt wird dieser aktuelle Stand.',
+  invalid: 'Prüfe beide Textfelder und die Themen. Erlaubt sind nur vollständig ausgefüllte, einfache Texte innerhalb der angegebenen Grenzen.',
+  conflict: 'Der Eintrag wurde inzwischen geändert. Deine Eingabe bleibt erhalten. Lade den aktuellen Stand erst nach ausdrücklichem Verwerfen neu.',
+  requestConflict: 'Dieser Auftrag kann nicht wiederverwendet werden. Prüfe den aktuellen Stand, bevor du eine neue Aktion beginnst.',
+  state: 'Diese Aktion ist für den aktuellen Eintrag nicht möglich. Lade den aktuellen Stand neu.', missing: 'Der Eintrag oder die ausgewählte Revision ist derzeit nicht verfügbar.',
+  forbidden: 'Deine aktuelle Berechtigung oder Sicherheitsbestätigung reicht nicht aus. Melde dich über den bestehenden Admin-Zugang erneut an.', unauthenticated: 'Deine Anmeldung ist nicht mehr gültig. Melde dich über den bestehenden Admin-Zugang erneut an.',
+  rateLimit: 'Zu viele Anfragen. Warte kurz und versuche die Aktion anschließend erneut.', timeout: 'Die Anfrage wurde nicht rechtzeitig bestätigt. Das bedeutet nicht, dass eine Änderung fehlgeschlagen ist.', invalidResponse: 'Der Serverstand konnte nicht zuverlässig bestätigt werden. Es wird kein Erfolg angenommen.',
+  unconfirmed: 'Noch keine dauerhafte Bestätigung vorhanden. Das Ergebnis ist offen.', unsaved: 'Es gibt ungespeicherte Änderungen. Speichere sie zuerst oder verwirf sie ausdrücklich.', random: 'Es konnte keine sichere Auftragskennung erstellt werden. Es wurde keine Änderung gesendet.',
+} as const
+export type CmsTextKey = keyof typeof de
+const en: Record<CmsTextKey, string> = {
+  title: 'Edit travel ideas', intro: 'Edit a travel idea’s text and topics. Saving a draft and publishing are separate steps.',
+  back: 'Back to content inventory', choose: 'Choose travel idea', language: 'Controls use your saved account language. Editorial content remains in German.',
+  unavailable: 'CMS currently unavailable', unavailableDetail: 'The editorial store is not connected yet. Changes cannot currently be saved or published here.',
+  loading: 'Loading travel idea …', busy: 'Checking the action. Please wait for confirmation.',
+  empty: 'This travel idea has no saved draft yet.', archivedState: 'Archived', draftState: 'Draft available', publishedState: 'Published', unpublishedState: 'Not published',
+  identity: 'Fixed reference', contentLanguage: 'Content language: German', reference: 'Name, country and catalog image cannot be changed here. This reference does not establish image rights or official travel information.',
+  description: 'Description', idea: 'Travel planning idea', descriptionHint: '1–800 characters; no HTML, line breaks, or leading or trailing spaces.', ideaHint: '1–300 characters; no HTML, line breaks, or leading or trailing spaces.',
+  themes: 'Topics', themesHint: 'Choose at least one topic.', themeCity: 'City and culture', themeNature: 'Nature', themeBeach: 'Beach', themeRelax: 'Relaxation',
+  save: 'Save draft', publish: 'Publish saved draft', archive: 'Archive', archiveQuestion: 'Archiving removes the published travel idea from the CMS. Its revisions are retained.', archiveConfirm: 'Confirm archive', cancel: 'Cancel',
+  preview: 'Unsaved preview', savedPreview: 'Saved draft', previewEmpty: 'Enter the description and travel idea to review them here.', previewHint: 'This text preview is not a public page and does not save anything.',
+  history: 'Revisions of this entry', historyEmpty: 'No saved revision yet.', revision: 'Revision', chooseRevision: 'View revision', historical: 'Historical text preview', restore: 'Restore as a new draft', restoreHint: 'The selected revision is copied. This does not publish it.', more: 'Load more revisions', moreBusy: 'Loading revisions …',
+  reload: 'Reload', discard: 'Discard changes and reload', discardQuestion: 'Reloading loses your unsaved text. Do you want to discard it?', discardConfirm: 'Discard and reload',
+  pending: 'This write has not been confirmed yet. Check its status before continuing. Retrying sends the exact same request.', confirm: 'Check save status', retry: 'Retry the same request', transportOpen: 'The original request may still be running. Retrying is blocked until it settles.',
+  leave: 'Stay here until the outstanding write is resolved. You can explicitly discard unsaved changes.',
+  saved: 'The draft is saved and confirmed.', published: 'CMS publication is confirmed. The public display is not connected yet.', archived: 'Archiving is confirmed.', restored: 'The revision is saved and confirmed as a new draft.', recordedChanged: 'Your action is confirmed. The entry has since changed again; the current state is shown.',
+  invalid: 'Check both text fields and the topics. Complete plain text within the stated limits is required.',
+  conflict: 'The entry has changed. Your input is retained. Explicitly discard it before loading the current state.',
+  requestConflict: 'This request cannot be reused. Check the current state before starting a new action.',
+  state: 'This action is not available for the current entry. Reload its current state.', missing: 'The entry or selected revision is currently unavailable.',
+  forbidden: 'Your current permission or security confirmation is insufficient. Sign in again through the existing Admin access.', unauthenticated: 'Your sign-in is no longer valid. Sign in again through the existing Admin access.',
+  rateLimit: 'Too many requests. Wait briefly, then try the action again.', timeout: 'The request was not confirmed in time. This does not mean a change failed.', invalidResponse: 'The server state could not be reliably confirmed. Success is not assumed.',
+  unconfirmed: 'There is no durable confirmation yet. The outcome is unresolved.', unsaved: 'There are unsaved changes. Save them first or explicitly discard them.', random: 'A secure request ID could not be created. No change was sent.',
+}
+export const CMS_EDITOR_TEXT: Readonly<Record<UiSprache, Readonly<Record<CmsTextKey, string>>>> = { de, en }
+export function cmsText(language: UiSprache, key: CmsTextKey): string { return CMS_EDITOR_TEXT[language][key] }

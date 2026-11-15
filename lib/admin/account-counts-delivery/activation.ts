@@ -4,12 +4,20 @@ import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import {
   ADMIN_ACCOUNT_COUNTS_LOCAL_FLAG,
 } from '@/lib/admin/account-counts-delivery/contract'
+import {
+  ADMIN_ACCOUNT_COUNTS_DEV_FLAG,
+  isAdminAccountCountsDevEnabled,
+  type AdminAccountCountsDevEnv,
+} from '@/lib/admin/account-counts-delivery/dev-activation'
 
 const LOCAL_RUNTIMES = new Set(['development', 'test'])
 
 const HOSTED_MARKERS = [
   'VERCEL',
   'VERCEL_ENV',
+  'VERCEL_TARGET_ENV',
+  'VERCEL_GIT_COMMIT_REF',
+  'VERCEL_PROJECT_ID',
   'VERCEL_URL',
   'VERCEL_REGION',
   'VERCEL_DEPLOYMENT_ID',
@@ -17,7 +25,7 @@ const HOSTED_MARKERS = [
   'GITHUB_ACTIONS',
 ] as const
 
-export type AdminAccountCountsActivationEnv = {
+export type AdminAccountCountsActivationEnv = AdminAccountCountsDevEnv & {
   NODE_ENV?: string
   JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED?: string
   NEXT_PUBLIC_SUPABASE_URL?: string
@@ -36,9 +44,13 @@ export function adminAccountCountsActivationEnvFromProcess(
   return {
     NODE_ENV: env.NODE_ENV,
     JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED: env[ADMIN_ACCOUNT_COUNTS_LOCAL_FLAG],
+    JETNITY_ADMIN_ACCOUNT_COUNTS_DEV_ENABLED: env[ADMIN_ACCOUNT_COUNTS_DEV_FLAG],
     NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL,
     VERCEL: env.VERCEL,
     VERCEL_ENV: env.VERCEL_ENV,
+    VERCEL_TARGET_ENV: env.VERCEL_TARGET_ENV,
+    VERCEL_GIT_COMMIT_REF: env.VERCEL_GIT_COMMIT_REF,
+    VERCEL_PROJECT_ID: env.VERCEL_PROJECT_ID,
     VERCEL_URL: env.VERCEL_URL,
     VERCEL_REGION: env.VERCEL_REGION,
     VERCEL_DEPLOYMENT_ID: env.VERCEL_DEPLOYMENT_ID,
@@ -90,8 +102,8 @@ export function isAdminAccountCountsLocallyEnabled(
  * remote or empty client target.
  */
 export function isAdminAccountCountsRuntimeEnabled(): boolean {
-  if (!isAdminAccountCountsLocallyEnabled(adminAccountCountsActivationEnvFromProcess())) {
-    return false
-  }
-  return isLoopbackSupabaseUrl(getServerSupabaseUrl())
+  const env = adminAccountCountsActivationEnvFromProcess()
+  const captured = getServerSupabaseUrl()
+  if (isAdminAccountCountsLocallyEnabled(env) && isLoopbackSupabaseUrl(captured)) return true
+  return isAdminAccountCountsDevEnabled(env, captured)
 }

@@ -1,12 +1,9 @@
 export const dynamic = 'force-dynamic'
 
-import AdminFolgtSeite from '@/components/admin/AdminFolgtSeite'
+import MarketingLinks from '@/components/admin/marketing/MarketingLinks'
+import { uiEinstellungenFuerSeite } from '@/lib/account/ui-einstellungen-1/server'
 
 export default async function MarketingPage() {
-  return (
-    <AdminFolgtSeite
-      titel="Marketing"
-      satz="Keine Kampagnensteuerung und keine Ads-Anbindung. Diese Fläche ist ein Platzhalter."
-    />
-  )
+  const initial = await uiEinstellungenFuerSeite()
+  return <MarketingLinks sprache={initial.status === 'bereit' ? initial.sprache : 'de'} />
 }

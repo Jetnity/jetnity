@@ -16,6 +16,11 @@ import { GRENZEN, reiseLesen } from '@/lib/trips/schema'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import { datumVerschieben } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
+import {
+  darfEinzelzielZuordnen,
+  darfProportionalZuordnen,
+  dayStageAssignmentModeLesenDb,
+} from '@/lib/trips/day-stage-assignment'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
 import { kommerziellErhalten, istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
@@ -190,12 +195,18 @@ function tageEinfuegen(
 ) {
   const start = reise.days[nachIndex - 1]
   const basisDatum = start?.dayDate ?? reise.startDate
+  const mode = dayStageAssignmentModeLesenDb(reise.dayStageAssignmentMode)
+  const fallbackErlaubt = darfProportionalZuordnen(mode)
+    || (reise.stages.length === 1 && darfEinzelzielZuordnen(mode))
+  // Ein offener Abschnitt ist keine Behauptung über die letzte Reiseetappe.
+  const neueEtappe = stageId ?? start?.stageId
+    ?? (fallbackErlaubt ? reise.stages.at(-1)?.id ?? null : null)
   const neue: TripDay[] = []
   for (let i = 1; i <= anzahl; i += 1) {
     neue.push(
       leererTag(
         kennung('day'),
-        stageId ?? start?.stageId ?? reise.stages[reise.stages.length - 1]?.id ?? null,
+        neueEtappe,
         nachIndex + i,
         datumVerschieben(basisDatum, i),
         null,
@@ -215,8 +226,10 @@ function tageEinfuegen(
 
 function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
   const entfernt: TripItem[] = []
+  const betroffeneEtappen = new Set<string>()
   reise.days = reise.days.filter((tag) => {
     if (!ids.has(tag.id)) return true
+    if (tag.stageId) betroffeneEtappen.add(tag.stageId)
     for (const punkt of tag.items) {
       if (istKommerziell(punkt)) {
         entfernt.push({ ...punkt, dayId: null, stageId: null })
@@ -227,6 +240,16 @@ function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
   reise.ohneTag = [...reise.ohneTag, ...entfernt]
   reindex(reise)
   tagePruefen(reise)
+  return betroffeneEtappen
+}
+
+function leereBetroffeneEtappenEntfernen(reise: Reisegraph, betroffeneEtappen: Set<string>) {
+  const verbleibende = reise.stages.filter(
+    etappe => !betroffeneEtappen.has(etappe.id) || tageDerEtappe(reise, etappe.id).length > 0,
+  )
+  // Tagesentfernung darf weder vorher taglose Ziele noch die gesamte Zielliste
+  // implizit löschen. Im letzten Fall bleiben alle Ziele ohne Tagesbezug.
+  if (verbleibende.length > 0) reise.stages = verbleibende
 }
 
 function dauerAendern(reise: Reisegraph, op: Modelloperation, kennung: KennungFn) {
@@ -239,8 +262,8 @@ function dauerAendern(reise: Reisegraph, op: Modelloperation, kennung: KennungFn
   }
   const entfernen = Math.min(-delta, reise.days.length - 1)
   const ids = new Set(reise.days.slice(-entfernen).map((tag) => tag.id))
-  tageEntfernenAb(reise, ids)
-  reise.stages = reise.stages.filter((etappe) => tageDerEtappe(reise, etappe.id).length > 0)
+  const betroffeneEtappen = tageEntfernenAb(reise, ids)
+  leereBetroffeneEtappenEntfernen(reise, betroffeneEtappen)
   reindex(reise)
 }
 
@@ -311,8 +334,8 @@ function tagEntfernen(reise: Reisegraph, op: Modelloperation) {
   if (reise.days.length <= 1) {
     throw new ApplyError('ungueltig', 'Der letzte Tag einer Reise lässt sich nicht entfernen.')
   }
-  tageEntfernenAb(reise, new Set([tag.id]))
-  reise.stages = reise.stages.filter((etappe) => tageDerEtappe(reise, etappe.id).length > 0 || reise.stages.length === 1)
+  const betroffeneEtappen = tageEntfernenAb(reise, new Set([tag.id]))
+  leereBetroffeneEtappenEntfernen(reise, betroffeneEtappen)
   reindex(reise)
 }
 
