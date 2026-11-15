@@ -88,6 +88,7 @@ describe('Operationsbericht-Validierung', () => {
       nowMs: () => JETZT,
       vercelEnv: () => null,
       domainZustaende: () => [],
+      nativeRentalConfiguration: () => ({ kind: 'configured' as const }),
       liesModelUsage: async () => ({ ok: true as const, zeilen: 0, kostenMikroUsd: 0, juengsteCreatedAt: null }),
     }
     await sammleProviderOpsBoard(opsDeps)

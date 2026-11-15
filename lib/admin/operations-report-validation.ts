@@ -1,7 +1,9 @@
 import {
   PROVIDER_OPS_BOARD_IDS,
   PROVIDER_OPS_BOARD_STATUSES,
+  PROVIDER_OPS_BOARD_CHECK_STATUSES,
   PROVIDER_OPS_BOARD_TTL_MS,
+  NATIVE_RENTAL_CHECK_ID,
   type ProviderOpsBoardBericht,
   type ProviderOpsBoardId,
 } from '@/lib/admin/provider-ops-board/typen'
@@ -16,6 +18,8 @@ import {
 const FRISCHE = new Set(['fresh', 'stale', 'unknown'])
 const HEALTH_STATUS = new Set<string>(HEALTH_STATUSES)
 const OPS_STATUS = new Set<string>(PROVIDER_OPS_BOARD_STATUSES)
+const OPS_CHECK_STATUS = new Set<string>(PROVIDER_OPS_BOARD_CHECK_STATUSES)
+const NATIVE_RENTAL_STATUS = new Set(['disabled', 'not_configured', 'configured', 'unknown'])
 const HEALTH_BERICHT = new Set(['checkedAt', 'items', 'writeActions'])
 const HEALTH_KARTE = new Set([
   'id',
@@ -96,11 +100,14 @@ function pruefeCheck(
   status: Set<string>,
   deckelMs: number,
   gesehen: Set<string>,
+  parentId: string,
 ): boolean {
   if (!istDatensatz(wert) || !schluesselErlaubt(wert, CHECK)) return false
   if (!text(wert.id) || !text(wert.name) || !text(wert.source) || !text(wert.summary)) return false
   if (!text(wert.proves) || !text(wert.doesNotProve)) return false
   if (typeof wert.status !== 'string' || !status.has(wert.status)) return false
+  if (wert.id === NATIVE_RENTAL_CHECK_ID && (parentId !== 'provider-ops' || !NATIVE_RENTAL_STATUS.has(wert.status))) return false
+  if (wert.status === 'configured' && (wert.id !== NATIVE_RENTAL_CHECK_ID || parentId !== 'provider-ops')) return false
   if (gesehen.has(wert.id)) return false
   gesehen.add(wert.id)
   return frische(wert.freshness, deckelMs)
@@ -119,6 +126,7 @@ function pruefeKarte(
   if (!text(wert.name) || !text(wert.source) || !text(wert.summary)) return false
   if (!text(wert.proves) || !text(wert.doesNotProve) || !zeit(wert.checkedAt)) return false
   if (typeof wert.status !== 'string' || !status.has(wert.status)) return false
+  if (wert.status === 'configured') return false
   if (!optionalText(wert.detail)) return false
   if (!metadaten(wert.metadata)) return false
   if (!frische(wert.freshness, deckel(wert.id))) return false
@@ -129,7 +137,7 @@ function pruefeKarte(
     if (!Array.isArray(wert.checks)) return false
     const gesehen = new Set<string>()
     for (const check of wert.checks) {
-      if (!pruefeCheck(check, status, deckel(wert.id), gesehen)) return false
+      if (!pruefeCheck(check, quelle === 'ops' ? OPS_CHECK_STATUS : status, deckel(wert.id), gesehen, wert.id)) return false
     }
   }
   return true
