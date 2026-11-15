@@ -222,3 +222,79 @@ test('transaction pagination keeps the committed filter while the search field i
     assert.equal(await page.getByRole('cell', { name: 'initial-row', exact: true }).count(), 0)
   } finally { await page.close() }
 })
+
+for (const width of [320, 390, 1280]) {
+  test(`Content inventory retains usable actions at ${width}px and 200% text`, { timeout: 30_000 }, async () => {
+    const page = await open('/admin/content', width)
+    try {
+      await page.getByRole('heading', { name: 'Content-Inventar', exact: true }).waitFor()
+      assert.equal(await page.getByRole('article').count(), 4)
+      await page.getByRole('heading', { name: 'Quelle und offene Nachweise' }).waitFor()
+      for (const scale of [1, 2]) {
+        await page.evaluate((factor) => { document.documentElement.style.fontSize = `${16 * factor}px` }, scale)
+        const dimensions = await page.evaluate(() => ({ viewport: innerWidth, page: document.documentElement.scrollWidth }))
+        assert.ok(dimensions.page <= dimensions.viewport + 1, `content overflow: ${JSON.stringify(dimensions)}`)
+        const actions = page.locator('article a').all()
+        for (const action of await actions) {
+          const box = await action.boundingBox()
+          assert.ok(box && box.height >= 44 && box.x >= 0 && box.x + box.width <= width + 1)
+        }
+      }
+      const preview = page.getByRole('link', { name: 'Bali: Öffentliche Vorschau (neuer Tab)', exact: true })
+      assert.equal(await preview.getAttribute('href'), '/entdecken?q=Bali')
+      assert.equal(await preview.getAttribute('target'), '_blank')
+      assert.equal(await page.getByRole('link', { name: 'Bali: Katalogbild öffnen (neuer Tab)', exact: true }).getAttribute('href'), '/images/bali.jpg')
+      const planning = new URL((await page.getByRole('link', { name: 'Bali: Planung öffnen (neuer Tab)', exact: true }).getAttribute('href'))!, origin)
+      assert.equal(planning.searchParams.get('zielId'), 'geonames:1650535')
+    } finally { await page.close() }
+  })
+}
+
+test('Content filters persist through native submission and reload, and reset a real empty result', { timeout: 30_000 }, async () => {
+  const page = await open('/admin/content', 390)
+  try {
+    await page.getByRole('searchbox', { name: 'Suche im Katalog' }).fill('strand')
+    await page.getByRole('combobox', { name: 'Thema', exact: true }).selectOption('natur')
+    await page.getByRole('button', { name: 'Katalog filtern', exact: true }).focus()
+    await Promise.all([page.waitForURL('**/admin/content?q=strand&thema=natur'), page.keyboard.press('Enter')])
+    await page.getByText('1 von 4 Reiseideen im aktuellen Katalog', { exact: true }).waitFor()
+    assert.equal(await page.getByRole('article').count(), 1)
+    await page.getByRole('heading', { name: 'Bali', exact: true }).waitFor()
+    const documentBeforeRefresh = await page.evaluate(() => window.__adminCompletion.documentId)
+    await Promise.all([
+      page.waitForFunction((previous) => Boolean(window.__adminCompletion?.documentId && window.__adminCompletion.documentId !== previous), documentBeforeRefresh),
+      page.getByRole('button', { name: 'Ansicht aktualisieren' }).click(),
+    ])
+    await page.getByText('1 von 4 Reiseideen im aktuellen Katalog', { exact: true }).waitFor()
+    assert.equal(await page.getByRole('searchbox', { name: 'Suche im Katalog' }).inputValue(), 'strand')
+    assert.equal(await page.getByRole('combobox', { name: 'Thema', exact: true }).inputValue(), 'natur')
+    await page.getByRole('searchbox', { name: 'Suche im Katalog' }).fill('no-such-destination')
+    await page.getByRole('button', { name: 'Katalog filtern', exact: true }).click()
+    await page.getByRole('heading', { name: 'Keine passende Reiseidee', exact: true }).waitFor()
+    assert.equal(await page.getByRole('article').count(), 0)
+    await page.getByRole('link', { name: 'Filter zurücksetzen', exact: true }).click()
+    await page.getByText('4 von 4 Reiseideen im aktuellen Katalog', { exact: true }).waitFor()
+    assert.equal(await page.getByRole('article').count(), 4)
+    assert.equal(await page.getByRole('searchbox', { name: 'Suche im Katalog' }).inputValue(), '')
+    assert.equal(await page.getByRole('combobox', { name: 'Thema', exact: true }).inputValue(), 'alle')
+  } finally { await page.close() }
+})
+
+test('Content keeps first repeated query values and follows new server props instead of obsolete local drafts', { timeout: 30_000 }, async () => {
+  const page = await open('/admin/content?q=Bali&q=Zermatt&thema=natur&thema=strand')
+  try {
+    await page.getByText('1 von 4 Reiseideen im aktuellen Katalog', { exact: true }).waitFor()
+    assert.equal(await page.getByRole('searchbox', { name: 'Suche im Katalog' }).inputValue(), 'Bali')
+    assert.equal(await page.getByRole('combobox', { name: 'Thema', exact: true }).inputValue(), 'natur')
+    await page.getByRole('searchbox', { name: 'Suche im Katalog' }).fill('unsubmitted draft')
+    await page.getByRole('combobox', { name: 'Thema', exact: true }).selectOption('strand')
+    // Model the props update from an internal Next navigation without reloading
+    // the document. The real component must reset its uncontrolled controls.
+    const documentBefore = await page.evaluate(() => window.__adminCompletion.documentId)
+    await page.evaluate(() => window.__adminCompletion.replaceContentQuery({ q: '', thema: 'alle' }))
+    await page.getByText('4 von 4 Reiseideen im aktuellen Katalog', { exact: true }).waitFor()
+    assert.equal(await page.getByRole('searchbox', { name: 'Suche im Katalog' }).inputValue(), '')
+    assert.equal(await page.getByRole('combobox', { name: 'Thema', exact: true }).inputValue(), 'alle')
+    assert.equal(await page.evaluate(() => window.__adminCompletion.documentId), documentBefore)
+  } finally { await page.close() }
+})

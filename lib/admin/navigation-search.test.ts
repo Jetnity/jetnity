@@ -50,6 +50,7 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
         '/admin/system-health',
         '/admin/provider-ops',
         '/admin/analytics',
+        '/admin/content',
       ],
     )
     assert.equal(operator.every((item) => item.kind === 'ready'), true)
@@ -85,18 +86,21 @@ describe('Admin-Navigationssuche (lokal, allowlist)', () => {
   })
 
   test('later-Eintraege matchen nie, auch wenn das Label in der Query steht', () => {
-    const later = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/content')
+    const later = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/marketing')
     assert.equal(later !== undefined, true)
-    assert.equal(matchAdminNavSearch(later!, 'content'), false)
+    assert.equal(matchAdminNavSearch(later!, 'marketing'), false)
     assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'analytics').length, 1)
-    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'content').length, 0)
+    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'content').length, 1)
+    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, OPERATOR, 'marketing').length, 0)
+    assert.equal(filterAdminNavSearch(ADMIN_NAV_ITEMS, CREATOR, 'content').length, 0)
   })
 
   test('Ziel kommt nur aus der Allowlist, nie aus der Query', () => {
     const allow = readyAdminNavItems(ADMIN_NAV_ITEMS, OPERATOR)
     assert.equal(resolveAdminNavSearchHref('/admin/users', allow), '/admin/users')
     assert.equal(resolveAdminNavSearchHref('/admin/analytics', allow), '/admin/analytics')
-    assert.equal(resolveAdminNavSearchHref('/admin/content', allow), null)
+    assert.equal(resolveAdminNavSearchHref('/admin/content', allow), '/admin/content')
+    assert.equal(resolveAdminNavSearchHref('/admin/marketing', allow), null)
     assert.equal(resolveAdminNavSearchHref('https://evil.example/admin/users', allow), null)
     assert.equal(resolveAdminNavSearchHref('javascript:alert(1)', allow), null)
     assert.equal(resolveAdminNavSearchHref('/admin/users?next=https://evil.example', allow), null)

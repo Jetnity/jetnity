@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import TravelAnalytics from '@/components/admin/analytics/TravelAnalytics'
 import PaymentsCenter from '@/components/admin/payments/PaymentsCenter'
+import ContentInventory from '@/components/admin/content/ContentInventory'
+import { readContentInventory } from '@/lib/admin/content/inventory'
 import { analyticsRange, type TravelAnalyticsReport } from '@/lib/admin/analytics/report'
 
 type Call = { url: string; signal: AbortSignal | null; resolve: (response: Response) => void; settled: boolean }
@@ -11,6 +13,7 @@ declare global {
   interface Window {
     __adminCompletion: {
       documentId: string
+      replaceContentQuery: (query: Record<string, string>) => void
       calls: () => { url: string; aborted: boolean; settled: boolean }[]
       respond: (index: number, status: number, body: unknown, stalledBody?: boolean) => void
     }
@@ -26,6 +29,11 @@ window.fetch = (input, init) => new Promise<Response>((resolve) => {
 })
 window.__adminCompletion = {
   documentId: crypto.randomUUID(),
+  replaceContentQuery(query) {
+    if (window.location.pathname !== '/admin/content') throw new Error('Content props proof requires its own page')
+    contentQuery = query
+    render()
+  },
   calls: () => calls.map((call) => ({ url: call.url, aborted: call.signal?.aborted ?? false, settled: call.settled })),
   respond(index, status, body, stalledBody = false) {
     const call = calls[index]
@@ -53,11 +61,20 @@ if (params.get('state') === 'large' && report.metrics.kind === 'ready' && report
   report.series.data = report.series.data.map((row, index) => ({ ...row, trips: index === 0 ? Number.MAX_SAFE_INTEGER : 0 }))
 }
 
-createRoot(document.getElementById('root')!).render(
+// Preserve repeated query values just as Next searchParams does; the shared
+// catalogue parser deliberately keeps the first value.
+let contentQuery: Record<string, string | string[]> = Object.fromEntries(
+  [...new Set(params.keys())].map((key) => [key, params.getAll(key)]),
+)
+const root = createRoot(document.getElementById('root')!)
+function render() { root.render(
   <StrictMode>
     <main className="min-w-0 bg-background p-4 text-foreground">
       <p className="mb-3 text-xs text-muted-foreground">Synthetische Oberflächenprüfung · keine echte Sitzung</p>
-      {window.location.pathname === '/admin/payments' ? <PaymentsCenter /> : <TravelAnalytics report={report} invalidRange={!selection.valid} />}
+      {window.location.pathname === '/admin/payments' ? <PaymentsCenter />
+        : window.location.pathname === '/admin/content' ? <ContentInventory inventory={readContentInventory(contentQuery)} observedAt={report.observedAt} />
+          : <TravelAnalytics report={report} invalidRange={!selection.valid} />}
     </main>
   </StrictMode>,
-)
+) }
+render()
