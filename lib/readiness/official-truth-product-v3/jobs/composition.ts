@@ -14,7 +14,7 @@ import { createV3ProposalIntakeStore } from '../storage/intake-server'
 import type { V3IntakeSqlExecutor } from '../storage/quarantine-postgres'
 import { readM04Command, M04_LIMITS, type M04Config, type M04Facade, type M04FixedOperation,
   type M04Authority, type M04Claim, type M04Continuation, type M04Disposition, type M04Command,
-  type M04OperationAuthority, type M04WorkerTerminalAuthority } from './contract'
+  type M04OperationAuthority, type M04WorkerTerminalAuthority, type M04AcknowledgedCustody } from './contract'
 import type { createM04InvocationScope } from './owned-scope'
 import { createM04QueueStorage, createM04ExecutionIndex, createM04ArtifactCustody } from './postgres'
 import { traceDevDiagnosticStage } from '../runtime/dev-diagnostics'
@@ -40,7 +40,8 @@ function fenceOf(j: V3ManagedJobRecord): V3JobFence | null {
 
 type M04InvocationOptions = Readonly<{ config: M04Config; scope: Scope;
   authority: M04Authority; processingAuthority: M04Authority; fixed: M04FixedOperation; processingFixed: M04FixedOperation;
-  acquireOperationAuthority?: M04OperationAuthority; acquireWorkerTerminalAuthority?: M04WorkerTerminalAuthority }>
+  acquireOperationAuthority?: M04OperationAuthority; acquireWorkerTerminalAuthority?: M04WorkerTerminalAuthority;
+  acknowledgedCustody?: M04AcknowledgedCustody }>
 type M04ResultParts = Readonly<{ outer: Hrs1ResultPorts; processing: Hrs1ResultPorts; projectionMaxAgeMilliseconds: number; callDeadline: number;
   openProcessingImport?(job: V3ManagedJobRecord, signal: AbortSignal): Readonly<{
     methodAuthority: M04Authority; evidence: V3ImportEvidencePort<object>; history: V3ImportHistoryPort<object>; close(): void;
@@ -159,7 +160,8 @@ function composeM04Core(options: M04InvocationOptions, result?: M04ResultParts) 
         scope.sealProcessing(); beginTerminal('complete', value.attemptKey)
       }
       const index = createM04ExecutionIndex({ claim, fixed: options.fixed, processingFixed: options.processingFixed,
-        onPrepared, preparedOnly: () => preparedOnly, acquireTerminalAuthority: options.acquireWorkerTerminalAuthority })
+        onPrepared, preparedOnly: () => preparedOnly, acquireTerminalAuthority: options.acquireWorkerTerminalAuthority,
+        acknowledgedCustody: options.acknowledgedCustody })
       function commandFor(op: string, commandKey: string): M04Command | null {
         if (op === claimCommand.operationId && commandKey === claimCommand.commandKey) return claimCommand
         const job = leasedJob, fence = job && fenceOf(job)

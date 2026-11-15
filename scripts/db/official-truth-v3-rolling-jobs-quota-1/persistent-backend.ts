@@ -3,7 +3,7 @@
 // session cleanup. No runtime SQL, method deadline or admission limit changes.
 import assert from 'node:assert/strict'
 import { execFileSync, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -12,7 +12,50 @@ import { wire } from './local-proof'
 
 const outputLimit = 6 * 1024 * 1024
 const callMilliseconds = 90000
+const valueChunkBytes = 1536
 const errorLines = (text: string) => text.split('\n').filter(line => /\b(?:ERROR|FATAL|PANIC):/.test(line))
+const sqlString = (value: string) => "E'" + value.replaceAll('\\', '\\\\').replaceAll("'", "''")
+  .replaceAll('\r', '\\r').replaceAll('\n', '\\n') + "'"
+
+/** Complete lines on both pipes are required. A prompt, partial nonce, or an
+ * unterminated stderr warning cannot settle a call. Cleanup emits this final
+ * warning with terse logging, so no following context remains on stderr. */
+export function ownedProofOutputComplete(stdout: string, stderr: string, marker: string): boolean {
+  assert.match(marker, /^ROLLING_COMPLETE_[a-f0-9]{48}$/)
+  return new RegExp('= "' + marker + '"[^\\r\\n]*\\r?\\n').test(stdout)
+    && new RegExp('WARNING:[ \\t]+' + marker + '\\r?\\n').test(stderr)
+}
+
+/** The actual database value is assembled only after run() joined its two
+ * output barriers. Frames are bounded and tied to this one read, with exact
+ * order, length and digest checks. Errors never include the retained payload. */
+export function readOwnedProofValue<T>(output: string, marker: string): T {
+  assert.match(marker, /^ROLLING_VALUE_[a-f0-9]{48}$/)
+  const frames = [...output.matchAll(new RegExp('WARNING:[ \\t]+' + marker + ' ([^\\r\\n]*)\\r?\\n', 'g'))]
+    .map(match => match[1])
+  const header = /^BEGIN ([1-9][0-9]*) ([a-f0-9]{64})$/.exec(frames[0] ?? '')
+  assert.ok(header, 'owned native value header is missing or incomplete')
+  const bytes = Number(header[1]), count = Math.ceil(bytes / valueChunkBytes)
+  assert.ok(Number.isSafeInteger(bytes) && bytes <= outputLimit, 'owned native value length exceeds the existing output bound')
+  assert.equal(frames.length, count + 2, 'owned native value frames are incomplete or duplicated')
+  assert.ok(frames.at(-1) === 'END ' + count, 'owned native value footer is missing or inconsistent')
+  const chunks: Buffer[] = []
+  for (let index = 0; index < count; index++) {
+    const frame = /^DATA (0|[1-9][0-9]*) ([A-Za-z0-9+/]+={0,2})$/.exec(frames[index + 1])
+    assert.ok(frame && Number(frame[1]) === index, 'owned native value chunk is missing or out of order')
+    const chunk = Buffer.from(frame[2], 'base64')
+    assert.ok(chunk.toString('base64') === frame[2], 'owned native value chunk encoding is invalid')
+    assert.equal(chunk.length, Math.min(valueChunkBytes, bytes - index * valueChunkBytes),
+      'owned native value chunk is truncated')
+    chunks.push(chunk)
+  }
+  const payload = Buffer.concat(chunks)
+  assert.equal(payload.length, bytes, 'owned native value byte count differs')
+  assert.equal(createHash('sha256').update(payload).digest('hex'), header[2], 'owned native value digest differs')
+  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(payload)) as T }
+  catch { throw new Error('owned native value is not complete UTF-8 JSON') }
+}
+
 type ActiveCall = {
   marker: string
   context: string
@@ -100,17 +143,36 @@ export class OwnedPersistentProof {
   }
 
   run(sql: string, context = 'native rolling proof', expected?: RegExp): Promise<string> {
-    const result = this.queue.then(() => this.execute(sql, context, expected))
+    return this.runWire(() => wire(sql), context, expected)
+  }
+
+  private runWire(encoded: () => string, context: string, expected?: RegExp): Promise<string> {
+    const result = this.queue.then(() => this.execute(encoded, context, expected))
     this.queue = result.then(() => undefined, () => undefined)
     return result
   }
 
   async value<T>(expression: string, prefix = '', suffix = ''): Promise<T> {
-    const out = await this.run(prefix + '\nDO $value$ BEGIN RAISE WARNING \'ROLLING_VALUE %\',('
-      + expression + ')::jsonb; END $value$;\n' + suffix)
-    const matches = [...out.matchAll(/WARNING:\s+ROLLING_VALUE ([^\r\n]+)/g)]
-    assert.equal(matches.length, 1, 'one actual native value')
-    return JSON.parse(matches[0][1]) as T
+    const marker = 'ROLLING_VALUE_' + randomBytes(24).toString('hex')
+    // One evaluation in the original role/transaction, then bounded transport.
+    // A directly encoded DO avoids repeating the whole expression in the error
+    // context of every chunk. Its E-string preserves all original source bytes
+    // and contains no physical newline that could split single-user -j input.
+    const body = `DECLARE value_text text; payload bytea; position_value integer; part integer:=0;
+BEGIN
+  EXECUTE ${sqlString('SELECT (' + expression + ')::jsonb::text')} INTO value_text;
+  IF value_text IS NULL THEN RAISE EXCEPTION 'owned native value is SQL NULL'; END IF;
+  payload:=convert_to(value_text,'UTF8');
+  RAISE WARNING '${marker} BEGIN % %',octet_length(payload),encode(sha256(payload),'hex');
+  FOR position_value IN 1..octet_length(payload) BY ${valueChunkBytes} LOOP
+    RAISE WARNING '${marker} DATA % %',part,
+      replace(encode(substring(payload FROM position_value FOR ${valueChunkBytes}),'base64'),E'\\n','');
+    part:=part+1;
+  END LOOP;
+  RAISE WARNING '${marker} END %',part;
+END`
+    const out = await this.runWire(() => wire(prefix) + 'DO ' + sqlString(body) + ';\n\n' + wire(suffix), 'native rolling value')
+    return readOwnedProofValue<T>(out, marker)
   }
 
   async close(): Promise<void> {
@@ -129,10 +191,10 @@ export class OwnedPersistentProof {
     if (unassigned.length) throw new Error('unassigned native PG17 errors at close:\n' + unassigned.join('\n'))
   }
 
-  private execute(sql: string, context: string, expected?: RegExp): Promise<string> {
+  private execute(encoded: () => string, context: string, expected?: RegExp): Promise<string> {
     if (this.stopping || this.exited) return Promise.reject(this.stopReason ?? new Error('owned PG17 proof is closed'))
     assert.equal(this.active, undefined, 'native calls are serialized')
-    const original = wire(sql)
+    const original = encoded()
     const marker = 'ROLLING_COMPLETE_' + randomBytes(24).toString('hex')
     // An error inside BEGIN prevents every ordinary DO/SELECT until ROLLBACK.
     // Single-user mode starts with an empty session_authorization GUC; RESET
@@ -141,7 +203,8 @@ export class OwnedPersistentProof {
     // These two output barriers carry one per-call nonce. Waiting for both
     // pipes avoids treating a fast stdout chunk as proof that stderr drained.
     const finish = 'ROLLBACK;\n\nSET SESSION AUTHORIZATION ot_pilot_owner;\n\nRESET ROLE;\n\nRESET ALL;\n\n'
-      + "DO $completion$ BEGIN RAISE WARNING '" + marker + "'; END $completion$;\n\n"
+      + "DO $completion$ BEGIN PERFORM pg_catalog.set_config('log_error_verbosity','terse',true); RAISE WARNING '"
+      + marker + "'; END $completion$;\n\n"
       + "SELECT '" + marker + "'::text AS proof_completion;\n\n"
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => this.stop(new Error(context + ': native call timed out')), callMilliseconds)
@@ -160,8 +223,7 @@ export class OwnedPersistentProof {
     }
     const pending = this.active
     if (!pending || this.stopping) return
-    if (!pending.stdout.includes(pending.marker)
-      || !new RegExp('WARNING:\\s+' + pending.marker + '(?:\\r?\\n|$)').test(pending.stderr)) return
+    if (!ownedProofOutputComplete(pending.stdout, pending.stderr, pending.marker)) return
     clearTimeout(pending.timer)
     this.active = undefined
     const output = pending.stdout + '\n' + pending.stderr
@@ -187,8 +249,10 @@ export class OwnedPersistentProof {
 
   private failure(pending: ActiveCall, reason: string): Error {
     const output = pending.stdout + '\n' + pending.stderr
+    const diagnostic = pending.stderr.replace(/(WARNING:[ \t]+ROLLING_VALUE_[a-f0-9]{48} DATA [0-9]+ )[^\r\n]*/g,
+      '$1[retained payload omitted]')
     return new Error(pending.context + ': ' + reason + '\n' + errorLines(output).join('\n')
-      + '\n' + pending.stderr.slice(0, 2500))
+      + '\n' + diagnostic.slice(0, 2500))
   }
 
   private stop(reason: Error): void {

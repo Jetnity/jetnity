@@ -2,7 +2,7 @@
 import 'server-only'
 import { ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-artifact'
 import { createV3WorkIdentity } from '../contract'
-import type { M04Config, M04Facade, M04Authority, M04FixedOperation, M04OperationAuthority, M04WorkerTerminalAuthority } from '../jobs/contract'
+import type { M04Config, M04Facade, M04Authority, M04FixedOperation, M04OperationAuthority, M04WorkerTerminalAuthority, M04AcknowledgedCustody } from '../jobs/contract'
 import { composeM04ResultInvocation } from '../jobs/composition'
 import type { createM04InvocationScope } from '../jobs/owned-scope'
 import { createV3VisitorQuery, type V3VisitorQueryResult } from '../visitor/query'
@@ -34,6 +34,7 @@ export function composeHrs1Invocation(input: Readonly<{
   resultFixed: Hrs1FixedOperation; processingResultFixed: Hrs1FixedOperation;
   acquireOperationAuthority?: M04OperationAuthority;
   acquireWorkerTerminalAuthority?: M04WorkerTerminalAuthority;
+  acknowledgedCustody?: M04AcknowledgedCustody;
 }>) {
   const pending = new Set<Promise<unknown>>()
   const custodyScope = Object.freeze({ key: Object.freeze({}), signal: input.scope.signal })
@@ -85,6 +86,7 @@ export function composeHrs1Invocation(input: Readonly<{
     authority: input.authority, processingAuthority: input.processingAuthority,
     acquireOperationAuthority: input.acquireOperationAuthority,
     acquireWorkerTerminalAuthority: input.acquireWorkerTerminalAuthority,
+    acknowledgedCustody: input.acknowledgedCustody,
     fixed: input.fixed, processingFixed: input.processingFixed,
     result: { outer, processing, projectionMaxAgeMilliseconds: input.binding.projectionMaxAgeMilliseconds,
       openProcessingImport(job, signal) {

@@ -5,7 +5,8 @@ import { ownRecord } from '@/lib/readiness/official-truth-autonomous-provenance-
 import { createV3WorkIdentity, createV3CombinationDiscoveryIdentity, type V3MethodAuthorityPort, type V3MethodRef } from '../contract'
 import { M04_LIMITS, readM04Command, readM04NativeReply, type M04Config, type M04Facade, type M04FixedOperation,
   type M04FixedRequest, type M04NativeReply, type M04Claim, type M04Operation,
-  type M04OperationAuthority, type M04WorkerTerminalAuthority } from '../jobs/contract'
+  type M04OperationAuthority, type M04WorkerTerminalAuthority, type M04AcknowledgedCustody,
+  type M04PreparedOriginal, type M04CompletedOriginal } from '../jobs/contract'
 import type { V3ManagedJobRecord } from '../monitor/queue'
 import { createM04LanePool, createM04InvocationScope } from '../jobs/owned-scope'
 import { composeM04Invocation } from '../jobs/composition'
@@ -49,10 +50,17 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   const receipts = new WeakMap<Ma1MethodReceipt, Held>()
   // One exact worker invocation. Only validated, terminal native ACKs below can
   // populate this identity; no request/DTO or Boolean can create the proof.
-  type WorkerAnchor = { claimText: string; jobText: string; claimEpoch: number | null;
+  type WorkerAnchor = { claim: M04Claim; job: V3ManagedJobRecord; claimText: string; jobText: string; claimEpoch: number | null;
     startEpoch: number | null; attemptKey: string | null; preparedText: string | null }
   let workerAnchor: WorkerAnchor | null = null
   const confirmations = new WeakMap<object, { anchor: WorkerAnchor; epoch: number }>()
+  type PreparedAck = { anchor: WorkerAnchor; epoch: number; receipt: object; original: M04PreparedOriginal }
+  const preparedAcks = new WeakMap<object, PreparedAck>()
+  let unstartedClaim: WorkerAnchor | null = null
+  let resumedPrepared: { ack: M04NativeReply; proof: PreparedAck } | null = null
+  let preparedOriginal: PreparedAck | null = null
+  let completedAck: { original: M04CompletedOriginal; epoch: number } | null = null
+  const completedOriginals = new WeakMap<object, { original: M04CompletedOriginal; epoch: number }>()
   let active = 0
   let read: Ma1MethodSqlExecutor['readCurrent'] | null = null
   try {
@@ -185,22 +193,27 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   function workerIdentity(claim: M04Claim, job: V3ManagedJobRecord): WorkerAnchor | null {
     const claimText = canonical(claim), jobText = canonical(job)
     if (workerAnchor && (workerAnchor.claimText !== claimText || workerAnchor.jobText !== jobText)) return null
-    workerAnchor ??= { claimText, jobText, claimEpoch: null, startEpoch: null, attemptKey: null, preparedText: null }
+    workerAnchor ??= { claim, job, claimText, jobText, claimEpoch: null, startEpoch: null, attemptKey: null, preparedText: null }
     return workerAnchor
   }
-  function rememberWorkerAck(request: M04Operation, reply: M04NativeReply, held: Held): boolean {
+  function rememberWorkerAck(request: M04Operation, reply: M04NativeReply, held: Held, receipt: object): boolean {
     if (request.operation === 'queue_cas' || request.operation === 'queue_confirm' || request.operation === 'queue_claim') {
       const command = readM04Command(request.body.command)
-      if (command?.action !== 'claim' || reply.status !== 'committed' || reply.record.state !== 'leased') return true
-      if (request.operation === 'queue_cas' && canonical(reply.record) !== canonical(request.body.commit.next)) return false
-      if ((request.operation === 'queue_confirm' || request.operation === 'queue_claim') && (reply.commandText !== command.commandText
-        || reply.commandKey !== command.commandKey || reply.operationId !== command.operationId)) return false
-      const anchor = workerIdentity(command.value.input as M04Claim, reply.record)
-      if (!anchor || (anchor.claimEpoch !== null && anchor.claimEpoch !== held.epoch)
-        || (anchor.startEpoch !== null && anchor.startEpoch !== held.epoch)) return false
-      // For replay this is the epoch of the real current claim ACK, not a claim
-      // that the historical queue row exposes its original stored epoch.
-      anchor.claimEpoch = held.epoch
+      if (command?.action === 'claim' && reply.status === 'committed' && reply.record.state === 'leased') {
+        if (request.operation === 'queue_cas' && canonical(reply.record) !== canonical(request.body.commit.next)) return false
+        if ((request.operation === 'queue_confirm' || request.operation === 'queue_claim') && (reply.commandText !== command.commandText
+          || reply.commandKey !== command.commandKey || reply.operationId !== command.operationId)) return false
+        const anchor = workerIdentity(command.value.input as M04Claim, reply.record)
+        if (!anchor || (anchor.claimEpoch !== null && anchor.claimEpoch !== held.epoch)
+          || (anchor.startEpoch !== null && anchor.startEpoch !== held.epoch)) return false
+        // For replay this is the epoch of the real current claim ACK, not a claim
+        // that the historical queue row exposes its original stored epoch.
+        anchor.claimEpoch = held.epoch
+        // Only the fresh atomic Claim ACK proves that this claim did not already
+        // own START at its commit. This one-use hint never substitutes for START.
+        unstartedClaim = request.operation === 'queue_claim' && reply.replayed === false
+          && anchor.startEpoch === null && anchor.attemptKey === null ? anchor : null
+      }
     }
     if (request.operation === 'execution_start' && reply.status === 'reserved') {
       if (canonical(reply.claim) !== canonical(request.body.claim)
@@ -208,6 +221,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       const anchor = workerIdentity(reply.claim, reply.leasedJob)
       if (!anchor || anchor.claimEpoch !== held.epoch || anchor.attemptKey !== null) return false
       anchor.startEpoch = held.epoch; anchor.attemptKey = reply.attemptKey
+      unstartedClaim = null
     }
     if (request.operation === 'execution_prepare' && reply.status === 'prepared') {
       const anchor = workerAnchor
@@ -216,6 +230,9 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
         || canonical(reply.result) !== canonical(request.body.result)
         || canonical(reply.references) !== canonical(request.body.references)) return false
       anchor.preparedText = canonical({ attemptKey: reply.attemptKey, result: reply.result, references: reply.references })
+      const proof = { anchor, epoch: held.epoch, receipt,
+        original: Object.freeze({ ...reply, claim: anchor.claim, leasedJob: anchor.job }) }
+      preparedAcks.set(reply, proof); preparedOriginal = proof
     }
     if (request.operation === 'execution_read' && reply.status === 'prepared') {
       if (!reply.claim || !reply.leasedJob || canonical(reply.claim) !== canonical(request.body.claim)) return false
@@ -227,8 +244,46 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
         || (anchor.preparedText !== null && anchor.preparedText !== preparedText)) return false
       // Authorized SQL has compared this epoch with the immutable stored START.
       anchor.startEpoch = held.epoch; anchor.attemptKey = reply.attemptKey; anchor.preparedText = preparedText
+      const proof = { anchor, epoch: held.epoch, receipt,
+        original: Object.freeze({ ...reply, claim: reply.claim, leasedJob: reply.leasedJob }) }
+      preparedAcks.set(reply, proof); preparedOriginal = proof
+      if (request.body.purpose === 'resume') resumedPrepared = { ack: reply, proof }
       if (request.body.purpose === 'confirm' && joint?.scope.processingTerminal() && joint.scope.terminalObservation()) {
         confirmations.set(reply, { anchor, epoch: held.epoch })
+      }
+    }
+    if (request.operation === 'execution_read' && reply.status === 'completed') {
+      if (canonical(reply.claim) !== canonical(request.body.claim)) return false
+      if (request.body.purpose === 'resume') completedAck = { original: Object.freeze({ attemptKey: reply.attemptKey, claim: reply.claim,
+        leasedJob: reply.leasedJob, job: reply.job, result: reply.result, references: reply.references }), epoch: held.epoch }
+    }
+    if ((request.operation === 'queue_cas' || request.operation === 'queue_mutate') && reply.status === 'committed') {
+      const command = readM04Command(request.body.command)
+      if (command?.action === 'complete') {
+        const proof = preparedOriginal, anchor = workerAnchor, record = reply.currentRecord ?? reply.record
+        if (!proof || !anchor || proof.anchor !== anchor || anchor.claimEpoch !== held.epoch
+          || anchor.startEpoch !== held.epoch || proof.epoch !== held.epoch
+          || request.body.disposition.kind !== 'completed' || request.body.disposition.attemptKey !== proof.original.attemptKey
+          || record.state !== 'succeeded') return false
+        const original = proof.original, job = original.leasedJob, result = original.result
+        const expected = { ...job, revision: job.revision + 1, predecessorRevision: job.revision,
+          updatedAt: record.updatedAt, state: 'succeeded', lease: null, lastFailure: null,
+          ...(result.kind === 'rule_research' ? { resultDecisionRef: result.decisionRef } : { resultDiscoveryRef: result.discoveryRef }) }
+        const input = command.value.input as Record<string, unknown>
+        const fence = job.lease && { jobId: job.jobId, revision: job.revision,
+          leaseId: job.lease.leaseId, generation: job.lease.generation }
+        if (canonical(record) !== canonical(expected) || canonical(reply.record) !== canonical(record)
+          || command.jobKey !== original.claim.jobKey || canonical(input.fence) !== canonical(fence)
+          || (result.kind === 'rule_research' ? input.decisionRef !== result.decisionRef : input.discoveryRef !== result.discoveryRef)
+          || (request.operation === 'queue_cas' && (canonical(request.body.commit.expected) !== canonical(job)
+            || canonical(request.body.commit.next) !== canonical(record)))
+          || (request.operation === 'queue_mutate' && (reply.commandText !== command.commandText
+            || reply.commandKey !== command.commandKey || reply.operationId !== command.operationId
+            || canonical(request.body.continuation) !== canonical({ kind: 'prepared', claim: original.claim, attemptKey: original.attemptKey })))) return false
+        // A completed original is derived only from both real ACKs. It is kept
+        // off the native reply channel and never pretends to be execution_read.
+        completedAck = { original: Object.freeze({ attemptKey: original.attemptKey, claim: original.claim,
+          leasedJob: job, job: record, result, references: original.references }), epoch: held.epoch }
       }
     }
     return true
@@ -245,14 +300,84 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       && !joint.scope.isAmbiguous() && !signal.aborted ? { status: 'current' } : { status: 'unavailable' }
   }
 
-  function fixedFor(group: Group): M04FixedOperation {
+  function ackScopeCurrent(signal: AbortSignal) {
+    return !!joint && configured.ok && !signal.aborted && !joint.scope.signal.aborted
+      && joint.scope.admits('outer') && !joint.scope.isAmbiguous()
+      && performance.now() < Math.min(joint.scope.deadline, joint.callCap ?? Infinity)
+  }
+  function originalLeaseCurrent(job: V3ManagedJobRecord, checkedAt?: string) {
+    if (!joint || job.state !== 'leased' || !job.lease) return false
+    try {
+      const now = joint.config.clock().now
+      return !!requestFor(job.kind === 'research_job_record' ? job.method : job.identity.method, now)
+        && (!checkedAt || now >= checkedAt) && job.lease.expiresAt > now
+    } catch { return false }
+  }
+  const acknowledgedCustody = Object.freeze<M04AcknowledgedCustody>({
+    lookup(claim, job, signal) {
+      if (!ackScopeCurrent(signal) || !originalLeaseCurrent(job)) return { status: 'unavailable' }
+      const anchor = workerAnchor
+      if (!anchor || anchor.claimEpoch === null || anchor.claimText !== canonical(claim)
+        || anchor.jobText !== canonical(job)) return { status: 'unavailable' }
+      const resumed = resumedPrepared; resumedPrepared = null
+      if (resumed) {
+        const proof = resumed.proof
+        if (proof.anchor !== anchor || proof.epoch !== anchor.claimEpoch || proof.epoch !== anchor.startEpoch
+          || proof.original.attemptKey !== anchor.attemptKey) return { status: 'unavailable' }
+        return { status: 'prepared', original: proof.original, ack: resumed.ack }
+      }
+      const fresh = unstartedClaim; unstartedClaim = null
+      if (fresh === anchor && anchor.startEpoch === null && anchor.attemptKey === null) return { status: 'not_attempted' }
+      return { status: 'read_required' }
+    },
+    async confirm(ack, claim, job, checkedAt, signal) {
+      const proof = preparedAcks.get(ack)
+      preparedAcks.delete(ack)
+      confirmations.delete(ack)
+      function current() {
+        return !!proof && ackScopeCurrent(signal) && originalLeaseCurrent(job, checkedAt)
+          && proof.anchor === workerAnchor && proof.epoch === proof.anchor.claimEpoch && proof.epoch === proof.anchor.startEpoch
+          && proof.anchor.claimText === canonical(claim) && proof.anchor.jobText === canonical(job)
+          && proof.original.result.preparedAt <= checkedAt && proof.original.attemptKey === proof.anchor.attemptKey
+          && proof.anchor.preparedText === canonical({ attemptKey: proof.original.attemptKey,
+            result: proof.original.result, references: proof.original.references })
+          && !!joint?.scope.processingTerminal() && !!joint.scope.terminalObservation()
+      }
+      if (!proof || !current() || !configured.ok) return false
+      // This distinct, real MA1 observation binds the acknowledged original to
+      // its immutable START epoch. It never extends the old receipt or lease.
+      const observed = await acquireOperationAuthority(proof.receipt,
+        { methodId: configured.value.methodId, revision: configured.value.revision }, checkedAt, signal)
+      if (observed.status !== 'approved' || !current()) return false
+      confirmations.set(ack, { anchor: proof.anchor, epoch: proof.epoch })
+      return true
+    },
+    takeCompleted(claim, job, result, signal) {
+      const held = completedAck; completedAck = null
+      if (!held || !ackScopeCurrent(signal) || canonical(held.original.claim) !== canonical(claim)
+        || canonical(held.original.job) !== canonical(job) || canonical(held.original.result) !== canonical(result)) return null
+      const receipt = Object.freeze({})
+      completedOriginals.set(receipt, held)
+      return Object.freeze({ receipt, original: held.original })
+    },
+    async reproveCompleted(receipt, claim, signal) {
+      const held = completedOriginals.get(receipt)
+      if (!held || !ackScopeCurrent(signal) || canonical(held.original.claim) !== canonical(claim)) return { status: 'unavailable' }
+      // Only this private, actually acknowledged original omits the pure probe.
+      // New MA1 plus the complete native history/S1/epoch/end-clock read remains.
+      return fixedFor('outer', held.epoch)({ operation: 'execution_read', body: { claim, purpose: 'artifact' } }, signal)
+    },
+  })
+
+  function fixedFor(group: Group, acknowledgedEpoch?: number): M04FixedOperation {
     return async (request, signal, providedReceipt, _terminal, beforeAuthority): Promise<M04NativeReply> => {
       if (!joint || !configured.ok || signal.aborted || !joint.scope.admits(group)) return { status: 'unavailable' }
       const isRead = request.operation === 'queue_read' || request.operation === 'queue_confirm' || request.operation === 'execution_read'
       async function execute(phase: 'probe' | 'authorized', receipt?: object): Promise<M04NativeReply> {
         if (!joint || !configured.ok || !joint.scope.admits(group) || signal.aborted) return { status: 'unavailable' }
         const held = receipt ? receipts.get(receipt as Ma1MethodReceipt) : undefined
-        if (phase === 'authorized' && (!held || held.busy || !held.dbCap)) return { status: 'unavailable' }
+        if (phase === 'authorized' && (!held || held.busy || !held.dbCap
+          || acknowledgedEpoch !== undefined && held.epoch !== acknowledgedEpoch)) return { status: 'unavailable' }
         if (phase === 'authorized' && request.operation === 'execution_start'
           && (!held || !workerAnchor || workerAnchor.claimEpoch !== held.epoch || workerAnchor.startEpoch !== null
             || workerAnchor.claimText !== canonical(request.body.claim)
@@ -290,7 +415,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
           const reply = readM04NativeReply(executed.value.rows, request.operation)
           if (!reply || (phase === 'probe' && !['absent', 'not_attempted', 'collision', 'blocked', 'requires_authority'].includes(reply.status)) || signal.aborted || joint.scope.signal.aborted || performance.now() >= deadline
             || (held && performance.now() >= held.deadline)) { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
-          if (held && !rememberWorkerAck(request, reply, held)) { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
+          if (held && receipt && !rememberWorkerAck(request, reply, held, receipt)) { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
           return reply
         } catch { joint.scope.markAmbiguous(); return { status: 'unconfirmed' } }
         finally { if (held) held.busy = null }
@@ -300,7 +425,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       // Explicit invalid receipts fail here; they never fall back to a new one.
       if ((request.operation === 'queue_read' || request.operation === 'queue_claim' || request.operation === 'queue_mutate') && providedReceipt !== undefined)
         return execute('authorized', providedReceipt)
-      if (isRead) { const probe = await execute('probe'); if (probe.status !== 'requires_authority') return probe }
+      if (isRead && acknowledgedEpoch === undefined) { const probe = await execute('probe'); if (probe.status !== 'requires_authority') return probe }
       if (request.operation === 'queue_confirm' && beforeAuthority !== undefined) {
         // The physical transport owns one method pair. A replay's actual probe
         // may finish while the independent fresh-claim observation is still in
@@ -387,7 +512,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       finally { held.busy = null; selected.shared.active-- }
     }
   }
-  return { port, processingAuthority, acquireOperationAuthority, acquireWorkerTerminalAuthority,
+  return { port, processingAuthority, acquireOperationAuthority, acquireWorkerTerminalAuthority, acknowledgedCustody,
     fixed: fixedFor('outer'), processingFixed: fixedFor('processing'),
     resultFixed: resultFixedFor('outer'), processingResultFixed: resultFixedFor('processing') }
 }
@@ -441,7 +566,8 @@ export function createV3PostgresDurableJobs(input: M04Config): M04Facade {
     try {
       const core = authorityCore(config.binding, config.methodExecutor, { scope, config })
       const composition = composeM04Invocation({ config, scope, authority: core.port, processingAuthority: core.processingAuthority,
-        fixed: core.fixed, processingFixed: core.processingFixed, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority })
+        fixed: core.fixed, processingFixed: core.processingFixed, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority,
+        acknowledgedCustody: core.acknowledgedCustody })
       const result = await composition[kind](raw, scope.signal)
       await scope.drainNative()
       return scope.signal.aborted || performance.now() >= scope.deadline || scope.snapshot().activeCallbacks > 0 ? { status: 'unconfirmed' as const } : result
@@ -600,7 +726,8 @@ export function createV3PostgresResultJobs(input: Omit<M04Config, 'evidence' | '
         fixed: selection?.status === 'selected' ? guardRetainedChDeClaim(selection, core.fixed) : core.fixed,
         processingFixed: selection?.status === 'selected' ? guardRetainedChDeClaim(selection, core.processingFixed) : core.processingFixed,
         resultFixed: core.resultFixed, processingResultFixed: core.processingResultFixed,
-        acquireOperationAuthority: core.acquireOperationAuthority, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority })
+        acquireOperationAuthority: core.acquireOperationAuthority, acquireWorkerTerminalAuthority: core.acquireWorkerTerminalAuthority,
+        acknowledgedCustody: core.acknowledgedCustody })
       const value = kind === 'monitorOnce' ? await assembly.monitorOnce(scope.signal)
         : await assembly[kind](raw, scope.signal)
       await assembly.drain()

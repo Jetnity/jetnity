@@ -101,6 +101,22 @@ export type M04OperationAuthority = (anchorReceipt: object, method: V3MethodRef,
     | { status: 'unavailable' | 'not_approved' | 'revoked' }>
 export type M04WorkerTerminalAuthority = (anchorReceipt: object, confirmed: M04NativeReply,
   checkedAt: string, signal: AbortSignal) => Promise<{ status: 'current' | 'unavailable' }>
+export type M04PreparedOriginal = Extract<M04NativeReply, { status: 'prepared' }>
+  & Readonly<{ claim: M04Claim; leasedJob: V3ManagedJobRecord }>
+export type M04CompletedOriginal = Omit<Extract<M04NativeReply, { status: 'completed' }>, 'status'>
+/** Same-invocation native ACK custody only. This is neither a configurable
+ * authority port nor an execution_read reply. Every positive object originates
+ * after real native settlement; later MA1 and full native reproof remain live. */
+export type M04AcknowledgedCustody = Readonly<{
+  lookup(claim: M04Claim, job: V3ManagedJobRecord, signal: AbortSignal):
+    { status: 'not_attempted' | 'read_required' | 'unavailable' }
+    | { status: 'prepared'; original: M04PreparedOriginal; ack: M04NativeReply };
+  confirm(ack: M04NativeReply, claim: M04Claim, job: V3ManagedJobRecord, checkedAt: string,
+    signal: AbortSignal): Promise<boolean>;
+  takeCompleted(claim: M04Claim, job: V3ManagedJobRecord, result: V3WorkerResultRecord,
+    signal: AbortSignal): Readonly<{ receipt: object; original: M04CompletedOriginal }> | null;
+  reproveCompleted(receipt: object, claim: M04Claim, signal: AbortSignal): Promise<M04NativeReply>;
+}>
 
 // Local closed metadata codec. No protected foundation/normalizer re-export.
 function canonical(value: unknown): string {

@@ -246,24 +246,29 @@ export async function runHistoryClaimNative(t: TestContext) {
       assert.ok(hrs1Same(envelope.expected, initial), 'the atomic transaction records the actual original predecessor')
       assert.ok(hrs1Same(envelope.next, atomic.record), 'the complete validated receipt binds the exact final acquisition')
       assert.equal(envelope.operationId, claim.operationId)
-      assert.ok(bridge.events.slice(start + 4).some(e => e.operation === 'execution_read' && e.purpose === 'lookup'),
-        'the unchanged worker advances only after queue.claim returns confirmed')
+      assert.deepEqual(bridge.events.slice(start + 4, start + 7).map(e => [e.operation, e.status]),
+        [['method', 'approved'], ['method', 'approved'], ['execution_start', 'reserved']],
+        'the fresh Claim ACK is followed by real worker authority, real reproof and mandatory atomic START')
       t.diagnostic('actual complete claim milliseconds: ' + (reproof.finished - acquired.entered).toFixed(3)
         + '; one atomic M04 RPC with three full history checks and three real MA1 observations; local SQL explicitly serialized')
     })
     await t.test('the real START and unavailable local producer settle through the original terminal path', async () => {
-      const lookupAt = bridge.events.findIndex(e => e.operation === 'execution_read' && e.purpose === 'lookup')
-      assert.ok(lookupAt >= 0)
-      const [lookup, acquired, reproof, start] = bridge.events.slice(lookupAt, lookupAt + 4)
-      assert.deepEqual([lookup.operation, acquired.operation, reproof.operation, start.operation],
-        ['execution_read', 'method', 'method', 'execution_start'])
-      assert.deepEqual([lookup.status, acquired.status, reproof.status, start.status], ['absent', 'approved', 'approved', 'reserved'])
-      assert.ok(lookup.finished <= acquired.entered, 'actual read finishes before the first worker authority acquisition')
+      const claimAt = bridge.events.findIndex(e => e.operation === 'queue_claim' && e.action === 'claim')
+      const startAt = bridge.events.findIndex(e => e.operation === 'execution_start')
+      assert.ok(claimAt >= 0); assert.equal(startAt, claimAt + 4)
+      const [atomic, claimReproof, acquired, reproof, start] = bridge.events.slice(claimAt, startAt + 1)
+      assert.equal(atomic.status, 'committed'); assert.equal(atomic.replayed, false)
+      assert.equal(claimReproof.operation, 'method'); assert.equal(claimReproof.status, 'approved')
+      assert.deepEqual([acquired.operation, reproof.operation, start.operation], ['method', 'method', 'execution_start'])
+      assert.deepEqual([acquired.status, reproof.status, start.status], ['approved', 'approved', 'reserved'])
+      assert.ok(claimReproof.finished <= acquired.entered, 'the confirmed fresh Claim finishes before first worker authority')
+      assert.equal(start.phase, 'authorized'); assert.equal(start.dispatched, true)
+      assert.equal(bridge.events.filter(e => e.operation === 'execution_start').length, 1)
       assert.ok(reproof.deadline <= acquired.deadline && start.deadline <= reproof.deadline,
         'the original five-second worker receipt is never renewed')
       assert.ok(start.finished < start.deadline && start.finished - acquired.entered < 5000)
       t.diagnostic('actual first worker authority through START: ' + JSON.stringify({
-        lookupMilliseconds: lookup.finished - lookup.entered, startMilliseconds: start.finished - start.entered,
+        lookupSource: 'fresh_claim_ack', startMilliseconds: start.finished - start.entered,
         originalAuthorityMilliseconds: start.finished - acquired.entered,
         remainingMilliseconds: start.deadline - start.finished }))
       assert.equal(outcome.status, 'worker_only'); assert.ok(outcome.status === 'worker_only')

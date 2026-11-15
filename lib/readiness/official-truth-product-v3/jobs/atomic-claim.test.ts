@@ -208,51 +208,115 @@ test('retained guard supplies its own predecessor/replay-only constraint and ref
   assert.deepEqual(request.body, { command: s.command.value, continuation: null, expected: null, replayOnly: false }, 'caller bytes remain unchanged')
 })
 
-async function factory(fault?: 'lost_ack' | 'wrong_lease' | 'epoch_changed') {
+type FactoryFault = 'lost_ack' | 'unknown_claim' | 'aborted_ack' | 'wrong_lease' | 'epoch_changed'
+  | 'replayed' | 'foreign_start'
+async function factory(fault?: FactoryFault) {
   const s = await acquired(), calls: { operation: string; phase: string; body: Record<string, unknown>; epoch: number | null }[] = []
   const binding = { ...METHOD, methodDigest: 'a'.repeat(64), packageDigest: 'b'.repeat(64) }
-  let epoch = 1, reads = 0, producers = 0
+  const outer = new AbortController(), trace: string[] = []
+  let epoch = 1, reads = 0, producers = 0, intakes = 0, evidence = 0, history = 0
+  let claimAcknowledged = false, foreignStart = false
   const execute: M04TerminalExecutor['executeFixed'] = async request => {
     const wire = JSON.parse(request.operationText)
     calls.push({ ...wire, epoch: request.epoch })
+    trace.push(wire.operation === 'execution_read' ? `execution_read:${wire.body.purpose}` : wire.operation)
     if (wire.operation === 'queue_claim') {
       assert.equal(wire.phase, 'authorized'); assert.equal(request.epoch, 1)
       assert.deepEqual(wire.body, { command: s.command.value, continuation: null, expected: null, replayOnly: false })
       if (fault === 'lost_ack') return { status: 'unconfirmed' }
+      if (fault === 'unknown_claim') return { status: 'blocked_remote_unknown' }
       if (fault === 'epoch_changed') epoch = 2
       let reply = s.positive
       if (fault === 'wrong_lease') {
         const next = { ...s.record, lease: { ...s.record.lease!, leaseId: ids('lease3', 'invalid-native-ack') } }
         reply = s.wire({ ...s.commit, next })
       }
+      if (fault === 'replayed') reply = { ...reply, replayed: true }
+      if (fault === 'aborted_ack') outer.abort()
+      claimAcknowledged = true; trace.push('claim_ack')
       return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
     }
-    if (wire.operation === 'execution_read') return { status: 'acknowledged', rows: [{ result: '{"status":"absent"}' }] }
-    if (wire.operation === 'execution_start') return { status: 'acknowledged', rows: [{ result: '{"status":"blocked"}' }] }
+    if (wire.operation === 'execution_read') {
+      if (wire.body.purpose === 'lookup' && fault === 'replayed') return { status: 'unconfirmed' }
+      return { status: 'acknowledged', rows: [{ result: '{"status":"absent"}' }] }
+    }
+    if (wire.operation === 'execution_start') {
+      assert.equal(wire.phase, 'authorized'); assert.equal(request.epoch, 1)
+      const subject = readM04Command({ action: 'enqueue', kind: 'rule_research', input: s.input }); assert.ok(subject)
+      assert.deepEqual(wire.body, { claim: s.claim, leasedJob: s.record, subjectText: subject.subjectText })
+      if (fault === 'foreign_start') { assert.equal(foreignStart, true); trace.push('foreign_start_blocked') }
+      return { status: 'acknowledged', rows: [{ result: '{"status":"blocked"}' }] }
+    }
     throw Error('unexpected legacy or replacement operation')
   }
   const config: M04Config = { binding, registry: s.f.registry, clock: () => ({ now: s.h.clock.now(), legalDate: '2026-11-09' }),
-    methodExecutor: { async readCurrent() { reads++; return { status: 'rows', rows: [{ status: 'approved', method_id: METHOD.methodId,
+    methodExecutor: { async readCurrent() {
+      reads++; trace.push('method')
+      // The competing custody appears after the actual Claim ACK, before its
+      // new worker MA1/START. The mandatory atomic START must still reject it.
+      if (fault === 'foreign_start' && claimAcknowledged && !foreignStart) {
+        foreignStart = true; trace.push('foreign_start')
+      }
+      return { status: 'rows', rows: [{ status: 'approved', method_id: METHOD.methodId,
       revision: '1', method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: String(epoch),
       approval_mode: 'until_revoked', approval_until: null, observed_at: s.h.clock.now(), remaining_ms: '5000' }] } } },
     jobsExecutor: { executeFixed: execute, executeAtomicClaimFixed: execute },
-    intakeExecutor: { async execute() { assert.fail('no intake effect') } },
+    intakeExecutor: { async execute() { intakes++; assert.fail('no intake effect') } },
     producer: { async produce() { producers++; assert.fail('blocked START cannot reach a producer') } },
-    evidence: { async inspect() { assert.fail('no evidence effect') }, async reprove() { assert.fail('no evidence effect') } },
-    history: { async read() { assert.fail('no history effect') }, async reprove() { assert.fail('no history effect') } } }
-  return { ...s, config, calls, counts: () => ({ reads, producers }) }
+    evidence: { async inspect() { evidence++; assert.fail('no evidence effect') }, async reprove() { evidence++; assert.fail('no evidence effect') } },
+    history: { async read() { history++; assert.fail('no history effect') }, async reprove() { history++; assert.fail('no history effect') } } }
+  return { ...s, config, calls, trace, outer, counts: () => ({ reads, producers, intakes, evidence, history }) }
 }
 
-for (const fault of [undefined, 'lost_ack', 'wrong_lease', 'epoch_changed'] as const) {
+for (const fault of [undefined, 'lost_ack', 'unknown_claim', 'aborted_ack', 'wrong_lease', 'epoch_changed'] as const) {
   test(`real private factory binds atomic ACK custody before START (${fault ?? 'valid'})`, async () => {
     const s = await factory(fault)
-    await createV3PostgresDurableJobs(s.config).workOnce(s.claim)
+    const result = await createV3PostgresDurableJobs(s.config).workOnce(s.claim, s.outer.signal)
+    assert.notEqual(result.status, 'processed')
     assert.equal(s.calls.filter(c => c.operation === 'queue_claim').length, 1)
     assert.equal(s.calls.filter(c => ['queue_confirm', 'queue_read', 'queue_cas'].includes(c.operation)).length, 0)
-    assert.equal(s.calls.filter(c => c.operation === 'execution_start').length, fault ? 0 : 1)
-    assert.equal(s.counts().producers, 0)
+    const starts = s.calls.filter(c => c.operation === 'execution_start')
+    assert.equal(starts.length, fault ? 0 : 1)
+    for (const start of starts) {
+      const subject = readM04Command({ action: 'enqueue', kind: 'rule_research', input: s.input }); assert.ok(subject)
+      assert.deepEqual(start, { operation: 'execution_start', phase: 'authorized', epoch: 1,
+        body: { claim: s.claim, leasedJob: s.record, subjectText: subject.subjectText } })
+    }
+    assert.deepEqual(s.calls.filter(c => c.operation === 'execution_read').map(c => c.body.purpose), ['resume'],
+      'only a real fresh ACK may replace lookup; a missing/foreign ACK cannot reach worker lookup or START')
+    const { reads, ...effects } = s.counts()
+    assert.ok(reads > 0); assert.deepEqual(effects, { producers: 0, intakes: 0, evidence: 0, history: 0 })
   })
 }
+
+test('replayed atomic Claim ACK retains the real lookup and unknown custody prevents START without a fallback', async () => {
+  const s = await factory('replayed')
+  const result = await createV3PostgresDurableJobs(s.config).workOnce(s.claim, s.outer.signal)
+  assert.notEqual(result.status, 'processed')
+  assert.deepEqual(s.calls.map(c => [c.operation, c.phase, c.body.purpose]), [
+    ['execution_read', 'probe', 'resume'], ['queue_claim', 'authorized', undefined], ['execution_read', 'probe', 'lookup'],
+    ['queue_confirm', 'probe', undefined],
+  ])
+  const { reads, ...effects } = s.counts()
+  assert.ok(reads > 0); assert.deepEqual(effects, { producers: 0, intakes: 0, evidence: 0, history: 0 })
+})
+
+test('fresh Claim ACK cannot bypass atomic START when foreign custody appears before the new worker authority read', async () => {
+  const s = await factory('foreign_start')
+  const result = await createV3PostgresDurableJobs(s.config).workOnce(s.claim, s.outer.signal)
+  assert.notEqual(result.status, 'processed')
+  assert.deepEqual(s.calls.map(c => [c.operation, c.phase, c.body.purpose]), [
+    ['execution_read', 'probe', 'resume'], ['queue_claim', 'authorized', undefined], ['execution_start', 'authorized', undefined],
+  ])
+  const ack = s.trace.indexOf('claim_ack'), race = s.trace.indexOf('foreign_start'), start = s.trace.indexOf('execution_start')
+  assert.ok(ack >= 0 && race > ack && start > race)
+  assert.equal(s.trace.filter(event => event === 'foreign_start_blocked').length, 1)
+  const subject = readM04Command({ action: 'enqueue', kind: 'rule_research', input: s.input }); assert.ok(subject)
+  assert.deepEqual(s.calls[2], { operation: 'execution_start', phase: 'authorized', epoch: 1,
+    body: { claim: s.claim, leasedJob: s.record, subjectText: subject.subjectText } })
+  const { reads, ...effects } = s.counts()
+  assert.ok(reads > 0); assert.deepEqual(effects, { producers: 0, intakes: 0, evidence: 0, history: 0 })
+})
 
 test('atomic executor capability must be an own function property, never a getter/prototype flag', async () => {
   for (const shape of ['absent', 'getter', 'prototype', 'boolean'] as const) {

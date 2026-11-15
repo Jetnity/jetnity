@@ -68,9 +68,10 @@ its exact private evidence still matches. Every other block, changed original,
 unconfirmed request or missing predecessor remains closed. Both old blocked
 rows remain blocked; neither review is a reset or an alteration of old history.
 
-The new compiler binds twelve current files: queue, both transport fixes, job
+The new compiler binds thirteen current files: queue, both transport fixes, job
 contract/storage/claim forwarding, method authority, job composition and owned
-scope, plus the I1 coordinator, S1 quarantine adapter and worker authority order, to their individually
+scope, plus the I1 coordinator, S1 quarantine adapter, worker authority order and
+result composition, to their individually
 reviewed SHA256s.
 Compilation refuses before those exact files are frozen. The reviewed runtime
 adds explicit atomic claim and mutation capabilities to the existing M04 API;
@@ -103,6 +104,14 @@ outer budget, per-operation caps, original history and later reproofs remain.
 Normal negative lookups retain their existing justified queue-fail path. The
 immutable `worker_authority_fix_sha256` column and updated job-storage hash bind
 this exact runtime; the native readback checks both. The review remains UNAPPLIED.
+
+The private native ACK successor also passes its capabilities through result
+composition. The additional immutable `result_composition_fix_sha256` binds that
+exact HRS assembly along with the existing method, job contract/storage and job
+composition pins. The complete JSONB readback includes this field, and both
+native installation fixtures check its exact value. Actual committed original
+receipts, fresh MA1 and the later full native reproof remain required. The
+original Cycle2/Cycle3 evidence and sender predicate are unchanged.
 
 ## Required operator sequence — Dev only
 

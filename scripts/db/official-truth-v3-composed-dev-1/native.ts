@@ -169,15 +169,15 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
-    "bytes": 29676,
-    "blob": "7bf618b9449b37cd307df8b037c8579ed94d95cb",
-    "sha256": "68175c868a39a4a1d0e0e5185be448a026ba27010f830241981cd3c3cbcb10cd"
+    "bytes": 29811,
+    "blob": "e2d51462e7fd2398d9bf24219b9e3affc053181a",
+    "sha256": "9a34e02bb16fccbd087be21b93b52af923b29587e8bc7d3747f2c2cde9bfec5a"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
-    "bytes": 37028,
-    "blob": "249abe057be7ffd35ab1a3830d3490b1816e6e60",
-    "sha256": "d5077d9f21033c3e5bb5eff1e74b6dde1379225b3c9cee59caacd67b38e1c299"
+    "bytes": 38206,
+    "blob": "59da2b82368cd15edaa82d5f04dfbd8a20533000",
+    "sha256": "eaf4d0cd72def7b8fe266d6016b587483204d6919917ce2e50700194fba9fc84"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
@@ -187,9 +187,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
-    "bytes": 18119,
-    "blob": "1bab17c23a1b6eaaf48283c6c434e91dbb85b447",
-    "sha256": "6246e2b6b9fb5c48e8170d9aea0ebb797b12d08c55a3bb12dd3fa38089f71ff8"
+    "bytes": 20741,
+    "blob": "d0e5f3c890bf2c79b6d76aceb763839149df16d2",
+    "sha256": "1fea4f1e74713c93be8b2b3cab1360b5ab95a082e89793f9a86b9a817c787d89"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
@@ -199,9 +199,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
-    "bytes": 48499,
-    "blob": "9a5cdc905ada2a66bb47529fc8369c9c683dd068",
-    "sha256": "d7c22972b6427d2169aafa56e70b037cf6babefb50469d527b48f122d104da79"
+    "bytes": 57640,
+    "blob": "504bee3e70baccab4597c2442172ed2b10db520d",
+    "sha256": "42fb1f7094764fa8ba85c122f39ee8290e0cdf08b6b8c4f2ed84f58a3139a2f3"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/method/contract.ts",
@@ -247,9 +247,9 @@ const PINS = [
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
-    "bytes": 14562,
-    "blob": "6ed8944411c3dac0bbd5fa34e5adaf1f41db4673",
-    "sha256": "aeca3081dd5491535791e2a7ff647b4331cc8e097fa84b93e8331ec70707fd83"
+    "bytes": 14686,
+    "blob": "54da9c2b6de0e03b11980c83b5bcc1c92a5efce4",
+    "sha256": "ac82224f1ac8c7f25f17e06eb1e878355a2ee8ea45edb8ffd9a7500d872c79cd"
   },
   {
     "path": "lib/readiness/official-truth-product-v3/result/contract.ts",

@@ -119,6 +119,7 @@ type RaceHooks = {
   work?(config: M04Config, claim: unknown, signal: AbortSignal): ReturnType<M04Facade['workOnce']>
 }
 type WorkerHooks = {
+  clock?: M04Config['clock'];
   epoch?: () => number;
   produce?: () => void;
   prepared?: () => void;
@@ -130,7 +131,11 @@ type WorkerHooks = {
     budget: Readonly<{ deadline: number }> | undefined) => Promise<void> | void;
   ready?: (abort: AbortController) => void;
   lostStart?: boolean;
+  lostPrepared?: boolean;
   lostConfirm?: boolean;
+  lostComplete?: boolean;
+  corruptArtifact?: boolean;
+  lostArtifactReproof?: boolean;
 }
 async function fullBatchHarness(count: number, corruptLast = false, context?: V3GlobalRuleContext, importFault?: ImportFault, race?: RaceHooks, worker?: WorkerHooks) {
   const { m04Fixture, M04_TEST_BINDING } = await import('../../../../scripts/db/official-truth-v3-durable-jobs-1/fixtures')
@@ -144,14 +149,21 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
     attemptKey: string; result?: unknown; references?: unknown; completed?: boolean } | null = null
   const counts = { method: 0, jobs: 0, intake: 0, capture: 0, read: 0, reserve: 0, finish: 0, artifactRead: 0 }
   const trace: string[] = [], nativeRequests: M04FixedRequest[] = []
+  let preparedPending = false, preparedObservations = 0
   const terminal = new AbortController()
-  const config: M04Config = { binding: M04_TEST_BINDING, registry: f.originals.registry, clock: f.clock,
+  const config: M04Config = { binding: M04_TEST_BINDING, registry: f.originals.registry, clock: worker?.clock ?? f.clock,
     methodExecutor: { async readCurrent(_request, signal, budget) { counts.method++; trace.push('method')
       await worker?.method?.(signal, budget)
       if (race && !await race.method(signal)) return { status: 'unavailable' }
-      return { status: 'rows', rows: [{ status: 'approved',
+      const observation = { status: 'rows' as const, rows: [{ status: 'approved',
       method_id: M04_TEST_BINDING.methodId, revision: '1', method_digest: M04_TEST_BINDING.methodDigest,
-      package_digest: M04_TEST_BINDING.packageDigest, epoch: String(worker?.epoch?.() ?? 1), approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] } } },
+      package_digest: M04_TEST_BINDING.packageDigest, epoch: String(worker?.epoch?.() ?? 1), approval_mode: 'until_revoked', approval_until: null, observed_at: NOW, remaining_ms: '5000' }] }
+      if (preparedPending && ++preparedObservations === 1) {
+        trace.push('prepared-ack:method-confirmation')
+        if (worker?.lostConfirm) return { status: 'unavailable' }
+        worker?.confirmed?.()
+      }
+      return observation } },
     intakeExecutor: { async execute(statement, params, signal, budget) {
       counts.intake++; assert.equal(signal.aborted, false)
       await worker?.intake?.(statement, params, signal, budget)
@@ -198,7 +210,11 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       } else if (q.operation === 'queue_read') reply = !job ? { status: 'absent' } : q.phase === 'probe' ? { status: 'requires_authority' } : { status: 'present', record: job }
       else if (q.operation === 'queue_cas') {
         const commit = b.commit as V3QueueCommit; job = commit.next; operations.set(commit.operationId, commit)
-        if (b.disposition.kind === 'completed') { assert.ok(execution); execution.completed = true }
+        if (b.disposition.kind === 'completed') {
+          assert.ok(execution); execution.completed = true
+          if (worker?.lostComplete) return { status: 'unconfirmed' }
+          if (worker?.corruptArtifact) bindings.values().next().value!.text = '{"corrupted":true}'
+        }
         reply = { status: 'committed', record: job }
       } else if (q.operation === 'execution_start') {
         await worker?.start?.(request, signal)
@@ -209,20 +225,20 @@ async function fullBatchHarness(count: number, corruptLast = false, context?: V3
       } else if (q.operation === 'execution_prepare') {
         assert.ok(execution); execution.result = b.result; execution.references = b.references
         reply = { status: 'prepared', attemptKey: execution.attemptKey, result: b.result, references: b.references }
+        preparedPending = true; preparedObservations = 0
         worker?.prepared?.()
+        if (worker?.lostPrepared) return { status: 'unconfirmed' }
       } else {
         assert.equal(q.operation, 'execution_read')
+        if (b.purpose === 'resume' && q.phase === 'probe') preparedPending = false
         if (b.purpose === 'lookup') await worker?.lookup?.(signal, request.budget)
         if (b.purpose === 'artifact') counts.artifactRead++
+        if (b.purpose === 'artifact' && worker?.lostArtifactReproof) return { status: 'unconfirmed' }
         reply = !execution?.result ? { status: 'absent' } : q.phase === 'probe' ? { status: 'requires_authority' }
           : execution.completed ? { status: 'completed', claim: execution.claim, leasedJob: execution.leasedJob, attemptKey: execution.attemptKey,
             job, result: execution.result, references: execution.references }
             : { status: 'prepared', claim: execution.claim, leasedJob: execution.leasedJob, attemptKey: execution.attemptKey,
               result: execution.result, references: execution.references }
-        if (b.purpose === 'confirm' && q.phase === 'authorized') {
-          worker?.confirmed?.()
-          if (worker?.lostConfirm) return { status: 'unconfirmed' }
-        }
       }
       return { status: 'acknowledged', rows: [{ result: JSON.stringify(reply) }] }
     } },
@@ -251,6 +267,9 @@ test('M04-B2-01: actual S1/I1/E1 complete all sixteen originals within the 256-c
   assert.equal(h.result.results.length, 16)
   assert.equal(h.counts.capture, 16); assert.equal(h.counts.finish, 16); assert.equal(h.counts.reserve, 16)
   assert.equal(h.counts.read, 48, '16 capture confirmations + 16 artifact opens + 16 I1 reads; no repeated full-batch opens')
+  assert.equal(h.counts.artifactRead, 16, 'each original still receives full native reproof; actual Complete ACK supplies only first open custody')
+  assert.equal(h.trace.some(value => value.includes('execution_read:') && value.endsWith(':confirm')), false)
+  assert.equal(h.trace.includes('execution_read:probe:artifact'), false)
   assert.equal(h.bindings.size, 16); assert.equal(h.f.producerCalls(), 1)
   assert.ok(h.counts.method + h.counts.jobs + h.counts.intake <= 256, JSON.stringify(h.counts))
   for (const delivered of h.f.delivered) assert.equal(h.bindings.get(delivered.binding.operationId)?.text, delivered.text)
@@ -422,7 +441,7 @@ for (const selected of [false, true]) test(`only a present frame overlaps initia
   } finally { releaseReserve.release(); releaseHistory.release(); caller?.abort(); await Promise.allSettled([work, ...joins]); await scope?.finish() }
 })
 
-test('genuine prepared and confirm ACK acquire separate terminal authority after the original five seconds', async t => {
+test('genuine prepared ACK and real method confirmation acquire separate terminal authority after the original five seconds', async t => {
   let now = 0, confirmed = false
   const terminalDeadlines: number[] = []
   t.mock.method(performance, 'now', () => now)
@@ -439,7 +458,7 @@ test('genuine prepared and confirm ACK acquire separate terminal authority after
   assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 1)
 })
 
-test('ABA after genuine confirm ACK cannot acquire terminal authority or complete the job', async t => {
+test('ABA after actual prepared-ACK method confirmation cannot acquire terminal authority or complete the job', async t => {
   let now = 0, epoch = 1
   t.mock.method(performance, 'now', () => now)
   const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
@@ -462,23 +481,36 @@ test('a new worker approval epoch cannot cross the actual earlier claim ACK into
   assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0)
 })
 
-test('a positive confirmation double with a changed authorization epoch cannot replace the real START anchor', async () => {
+test('a prepared ACK with a changed authorization epoch cannot replace the real START anchor', async () => {
   let epoch = 1
   const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
     epoch: () => epoch, prepared() { epoch = 3 },
   })
   assert.notEqual(h.result.status, 'processed')
-  assert.ok(h.trace.includes('execution_read:authorized:confirm'))
+  assert.ok(h.trace.includes('prepared-ack:method-confirmation'))
+  assert.equal(h.trace.some(value => value.includes('execution_read:') && value.endsWith(':confirm')), false)
   assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
 })
 
-test('the separate terminal receipt still refuses an ACK at its original five-second deadline', async t => {
-  let now = 0, confirmed = false, consumed = false
+test('an actual PREPARED ACK never extends its original job lease', async () => {
+  let now = NOW
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
+    clock: () => ({ now, legalDate: '2026-11-09' }),
+    prepared() { now = '2026-11-09T08:04:30.000Z' },
+  })
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+  assert.equal(h.trace.includes('prepared-ack:method-confirmation'), false, 'an expired original cannot acquire new confirmation authority')
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, 1)
+})
+
+for (const phase of ['prepared confirmation', 'terminal'] as const) test(`the separate ${phase} receipt still refuses an ACK at its original five-second deadline`, async t => {
+  let now = 0, prepared = false, confirmed = false, consumed = false
   t.mock.method(performance, 'now', () => now)
   const h = await fullBatchHarness(1, false, undefined, undefined, undefined, {
-    produce() { now = 6000 }, confirmed() { confirmed = true },
+    produce() { now = 6000 }, prepared() { prepared = true }, confirmed() { confirmed = true },
     method(_signal, budget) {
-      if (confirmed && !consumed) { consumed = true; assert.equal(budget?.deadline, 11000); now = 11000 }
+      if ((phase === 'terminal' ? confirmed : prepared) && !consumed) { consumed = true; assert.equal(budget?.deadline, 11000); now = 11000 }
     },
   })
   assert.equal(consumed, true)
@@ -486,10 +518,11 @@ test('the separate terminal receipt still refuses an ACK at its original five-se
   assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
 })
 
-for (const fault of ['lostStart', 'lostConfirm'] as const) test(`${fault} does not mint preflight or terminal custody`, async () => {
+for (const fault of ['lostStart', 'lostPrepared', 'lostConfirm', 'lostComplete'] as const) test(`${fault} does not mint preflight, terminal or artifact custody`, async () => {
   const h = await fullBatchHarness(1, false, undefined, undefined, undefined, { [fault]: true })
   assert.notEqual(h.result.status, 'processed')
-  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 0)
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, fault === 'lostComplete' ? 1 : 0)
+  assert.equal(h.counts.artifactRead, 0)
   if (fault === 'lostStart') { assert.equal(h.f.producerCalls(), 0); assert.equal(h.counts.intake, 0) }
 })
 
@@ -499,23 +532,52 @@ test('the same original claim resumes real PREPARED custody without another STAR
   assert.notEqual(h.result.status, 'processed')
   const starts = h.trace.filter(value => value === 'execution_start:authorized').length
   const produced = h.f.producerCalls(), captures = h.counts.capture
+  const resumedAt = h.trace.length
   hooks.lostConfirm = false
   const resumed = await h.api.workOnce(h.claim)
   assert.equal(resumed.status, 'processed', JSON.stringify(resumed))
   assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, starts)
   assert.equal(h.f.producerCalls(), produced); assert.equal(h.counts.capture, captures)
   assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 1)
+  assert.equal(h.trace.slice(resumedAt).some(value => value.includes('execution_read:') && value.endsWith(':lookup')), false,
+    'the actual original PREPARED-resume ACK is transferred once after the same Claim is confirmed')
+  assert.equal(h.trace.slice(resumedAt).some(value => value.includes('execution_read:') && value.endsWith(':confirm')), false)
 })
 
-test('caller abort during terminal acquisition retains actual native ownership until its read settles', async () => {
-  let confirmed = false, abort: AbortController | undefined, nativeSignal: AbortSignal | undefined
+test('a lost Complete ACK resumes only from a later actual completed-original read', async () => {
+  const hooks: WorkerHooks = { lostComplete: true }
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, hooks)
+  assert.notEqual(h.result.status, 'processed'); assert.equal(h.counts.artifactRead, 0)
+  const starts = h.trace.filter(value => value === 'execution_start:authorized').length, produced = h.f.producerCalls()
+  const resumedAt = h.trace.length
+  hooks.lostComplete = false
+  const resumed = await h.api.workOnce(h.claim)
+  assert.equal(resumed.status, 'processed', JSON.stringify(resumed))
+  assert.ok(h.trace.slice(resumedAt).includes('execution_read:authorized:resume'))
+  assert.equal(h.trace.slice(resumedAt).filter(value => value === 'execution_read:authorized:artifact').length, 1)
+  assert.equal(h.trace.slice(resumedAt).includes('execution_read:probe:artifact'), false)
+  assert.equal(h.trace.filter(value => value === 'execution_start:authorized').length, starts)
+  assert.equal(h.f.producerCalls(), produced)
+})
+
+for (const fault of ['corruptArtifact', 'lostArtifactReproof'] as const) test(`Complete ACK cannot conceal ${fault}`, async () => {
+  const h = await fullBatchHarness(1, false, undefined, undefined, undefined, { [fault]: true })
+  assert.notEqual(h.result.status, 'processed')
+  assert.equal([...h.operations.values()].filter(value => value.audit.kind === 'completed').length, 1)
+  assert.equal(h.counts.read, 2, 'capture confirmation and actual artifact-open read occur before I1 is admitted')
+  assert.equal(h.counts.artifactRead, fault === 'lostArtifactReproof' ? 1 : 0,
+    'positive material still requires its subsequent real full native reproof')
+})
+
+for (const phase of ['prepared confirmation', 'terminal'] as const) test(`caller abort during ${phase} acquisition retains actual native ownership until its read settles`, async () => {
+  let prepared = false, confirmed = false, abort: AbortController | undefined, nativeSignal: AbortSignal | undefined
   let release!: () => void, entered!: () => void
   const pending = new Promise<void>(resolve => { release = resolve })
   const atTerminal = new Promise<void>(resolve => { entered = resolve })
   let joined = false
   const result = fullBatchHarness(1, false, undefined, undefined, undefined, {
-    ready(value) { abort = value }, confirmed() { confirmed = true },
-    async method(signal) { if (confirmed) { nativeSignal = signal; entered(); await pending; joined = true } },
+    ready(value) { abort = value }, prepared() { prepared = true }, confirmed() { confirmed = true },
+    async method(signal) { if (phase === 'terminal' ? confirmed : prepared) { nativeSignal = signal; entered(); await pending; joined = true } },
   })
   let settled = false
   void result.then(() => { settled = true })
