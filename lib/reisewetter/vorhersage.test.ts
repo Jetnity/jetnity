@@ -55,7 +55,9 @@ test('Vorschaugrenzen, gemeinsame Ortsabfrage und keine Schlüssel in Antworten'
     assert.deepEqual(await antwort.json(), vorhersageLesen(wetter))
   }
   adapter.mock.mockImplementation(async () => new Response(null, { status: 401 }))
-  assert.equal((await GET(anfrage('lat=46&lon=7'))).status, 503)
+  const wartend = await GET(anfrage('lat=46&lon=7'))
+  assert.equal(wartend.status, 503)
+  assert.deepEqual(await wartend.json(), { grund: 'vorschauzugang' })
   adapter.mock.mockImplementation(async () => Response.json(wetter))
   assert.equal((await GET(anfrage('lat=46&lon=7'))).status, 200)
 })

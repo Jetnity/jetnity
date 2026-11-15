@@ -7,8 +7,11 @@ const limit = providerOpsInMemoryCostGuard({
   fensterMs: 60_000, anfragenJeFenster: 45, tagMs: 86_400_000, anfragenJeTag: 1000,
 })
 const cache = new Map<string, { ablauf: number; antwort: Promise<Vorhersage> }>()
-function fehler(status: number) {
-  return new Response(null, { status, headers: { 'Cache-Control': 'no-store' } })
+class Wetterfehler extends Error {
+  constructor(readonly status: number, readonly grund: string) { super(grund) }
+}
+function fehler(status: number, grund = 'nicht-verfuegbar') {
+  return Response.json({ grund }, { status, headers: { 'Cache-Control': 'no-store' } })
 }
 function koordinate(params: URLSearchParams, name: string, grenze: number) {
   const [wert, ...rest] = params.getAll(name)
@@ -17,11 +20,13 @@ function koordinate(params: URLSearchParams, name: string, grenze: number) {
 }
 
 async function laden(lat: string, lon: string, key: string) {
-  if (!(await limit.erlaubt('reisewetter')).ok) throw new Error('Limit')
+  if (!(await limit.erlaubt('reisewetter')).ok) throw new Wetterfehler(429, 'limit')
   const url = new URL('https://api.openweathermap.org/data/2.5/forecast')
   url.search = new URLSearchParams({ lat, lon, appid: key, units: 'metric', lang: 'de' }).toString()
   const antwort = await fetch(url, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(6000) })
-  if (!antwort.ok) throw new Error('Wetterdienst')
+  if (antwort.status === 401 || antwort.status === 403) throw new Wetterfehler(503, 'vorschauzugang')
+  if (antwort.status === 429) throw new Wetterfehler(429, 'limit')
+  if (!antwort.ok) throw new Wetterfehler(502, 'wetterdienst')
   const daten = vorhersageLesen(await antwort.json())
   if (!daten) throw new Error('Vorhersage')
   return daten
@@ -47,8 +52,9 @@ export async function GET(request: Request) {
   }
   try {
     return Response.json(await eintrag.antwort, { headers: { 'Cache-Control': 'private, max-age=300' } })
-  } catch {
+  } catch (ursache) {
     if (cache.get(id) === eintrag) cache.delete(id)
+    if (ursache instanceof Wetterfehler) return fehler(ursache.status, ursache.grund)
     return fehler(503)
   }
 }

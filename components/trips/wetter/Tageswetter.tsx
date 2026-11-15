@@ -15,7 +15,7 @@ export function WetterRahmen({ aktiv, children }: { aktiv: boolean; children: Re
 const datumFormat = new Intl.DateTimeFormat('de-CH', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
 const formatTag = (datum: string) => datumFormat.format(new Date(datum + 'T12:00:00Z'))
 
-type Zustand = { status: 'laedt' | 'fehler' | 'ohne-ort' } | { status: 'bereit'; daten: Vorhersage }
+type Zustand = { status: 'laedt' | 'ohne-ort' } | { status: 'fehler'; meldung: string } | { status: 'bereit'; daten: Vorhersage }
 type Ort = Pick<TripStage, 'name' | 'placeId' | 'latitude' | 'longitude'>
 
 type Props = { ort: Ort; datum: string | null; aktivitaeten?: TripItem[] }
@@ -48,11 +48,17 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
       if (!istPosition(position)) { setStand({ status: 'ohne-ort' }); return }
       const params = new URLSearchParams({ lat: position.lat.toFixed(2), lon: position.lng.toFixed(2) })
       const res = await fetch('/api/reisewetter?' + params, { signal: ctrl.signal, referrerPolicy: 'no-referrer' })
-      if (!res.ok) throw new Error('Wetterabruf')
+      if (!res.ok) {
+        const fehler = await res.json().catch(() => null)
+        const meldung = fehler?.grund === 'vorschauzugang' ? 'OpenWeather hat den Zugang für diese Vorschau noch nicht freigeschaltet.'
+          : res.status === 429 ? 'Die Wetterabfragen sind vorübergehend ausgeschöpft.' : 'Wetterdaten sind gerade nicht erreichbar.'
+        if (!ctrl.signal.aborted) setStand({ status: 'fehler', meldung })
+        return
+      }
       const daten: Vorhersage = await res.json()
       if (!ctrl.signal.aborted) setStand({ status: 'bereit', daten })
     }
-    void lesen().catch(() => { if (!ctrl.signal.aborted) setStand({ status: 'fehler' }) })
+    void lesen().catch(() => { if (!ctrl.signal.aborted) setStand({ status: 'fehler', meldung: 'Wetterdaten sind gerade nicht erreichbar.' }) })
     return () => ctrl.abort()
   }, [latitude, longitude, placeId, zuFrueh, vorbei, versuch, jetzt])
 
@@ -61,7 +67,7 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
   return <section aria-label={'Wetter in ' + ort.name} className="my-3 min-w-0 rounded-2xl border border-line-200 bg-white p-4 text-sm text-ink-900">
     <h3 className="flex items-center gap-2 font-semibold"><CloudSun size={19} aria-hidden />Wetter in {ort.name}</h3>
     {zuFrueh ? <p className="mt-1 text-ink-700">Die Vorhersage erscheint rund fünf Tage vor diesem Reisetag.</p>
-      : stand.status === 'fehler' ? <div role="status">Wetterdaten sind gerade nicht erreichbar.{' '}
+      : stand.status === 'fehler' ? <div role="status">{stand.meldung}{' '}
         <button type="button" className="min-h-11 underline" onClick={() => { setStand({ status: 'laedt' }); setVersuch(v => v + 1) }}>Erneut laden</button></div>
       : !tag ? <p role="status">Wetter wird geladen …</p>
       : !tag.zeiten.length ? <p>Für diesen Tag liegt noch keine aktuelle Vorhersage vor.</p>
