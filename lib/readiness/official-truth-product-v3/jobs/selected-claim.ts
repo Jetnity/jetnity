@@ -163,7 +163,7 @@ export function guardRetainedChDeClaim(selected: Selection, fixed: M04FixedOpera
       && job.attempt === selected.generation + 1 && job.revision === selected.acquiredRevision + 1
       && job.predecessorRevision === selected.acquiredRevision
   }
-  return async (request, signal, receipt, terminal) => {
+  return async (request, signal, receipt, terminal, beforeAuthority) => {
     if (signal.aborted) return { status: 'unconfirmed' }
     if (request.operation === 'queue_read') {
       if (request.body.jobKey !== selected.claim.jobKey
@@ -190,7 +190,7 @@ export function guardRetainedChDeClaim(selected: Selection, fixed: M04FixedOpera
       if (request.operation === 'execution_prepare' && (request.body.result.jobId !== selected.cycle.jobId
         || request.body.result.operationId !== selected.cycle.operationId || request.body.result.jobKey !== selected.claim.jobKey)) return { status: 'blocked' }
     }
-    const reply = await fixed(request, signal, receipt, terminal)
+    const reply = await fixed(request, signal, receipt, terminal, beforeAuthority)
     if ((reply.status === 'present' || reply.status === 'committed') && !recordMatches(reply.record)) return { status: 'blocked' }
     if (reply.status === 'reserved' || reply.status === 'prepared' || reply.status === 'completed') {
       if (reply.claim && !same(reply.claim, selected.claim)) return { status: 'blocked' }

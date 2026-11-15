@@ -132,6 +132,18 @@ test('lost follow-up claim ACK reselects its exact committed IDs and never repea
   assert.deepEqual(t.h.storage.records.get(t.root.jobKey), row)
 })
 
+test('retained original confirmation preserves the private authority drain through its exact claim guard', async () => {
+  const t = await setup(), selected = await t.selected(), drain = async () => {}, child = signal()
+  const command = readM04Command({ action: 'claim', input: selected.claim })!
+  const calls: Parameters<M04FixedOperation>[] = []
+  const guarded = guardRetainedChDeClaim(selected, async (...args) => {
+    calls.push(args); return { status: 'not_attempted' }
+  })
+  const request = { operation: 'queue_confirm' as const, body: { command: command.value, continuation: null } }
+  assert.deepEqual(await guarded(request, child, undefined, true, drain), { status: 'not_attempted' })
+  assert.deepEqual(calls, [[request, child, undefined, true, drain]])
+})
+
 test('four acquisitions exhaust normally without a fifth START or another enqueue', async () => {
   const t = await setup()
   for (let generation = 0; generation < 4; generation++) {

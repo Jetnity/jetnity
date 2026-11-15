@@ -42,7 +42,10 @@ export interface V3QueueStoragePort {
    * substitutes its record or freshness. It may cover a fresh claim's initial
    * read under its code-owned method, or the read after an acknowledged CAS. */
   read(jobKey: string, signal: AbortSignal, receipt?: object): Promise<{ status: 'ok'; record: unknown | null } | { status: 'unavailable' }>
-  confirm(operationId: string, commandKey: string, signal: AbortSignal): Promise<V3QueueConfirmation>
+  /** A code-owned drain only sequences a replay's separate authority read. It
+   * supplies no receipt or result and does not replace original confirmation. */
+  confirm(operationId: string, commandKey: string, signal: AbortSignal,
+    beforeAuthority?: () => Promise<void>): Promise<V3QueueConfirmation>
   compareAndSwap(commit: V3QueueCommit, authority: V3QueueCommitAuthority, signal: AbortSignal): Promise<
     { status: 'committed'; operationId: string; commandKey: string; record: unknown }
     | { status: 'mismatch' | 'collision' | 'unconfirmed' | 'unavailable' }>
@@ -192,15 +195,19 @@ function createQueueCoordinator(options: V3QueueOptions, kind: QueueKind) {
         // These independent reads share the original invocation deadline. Join
         // their actual promises, including rejection/abort cleanup, before using
         // either result. A positive method read cannot prove ledger absence.
+        // A historical confirmation may need its OWN subsequent method read;
+        // sequence only that read behind the actual speculative read's drain.
+        let drained!: () => void
+        const acquisitionDrained = new Promise<void>(resolve => { drained = resolve })
         const [confirmation, acquisition] = await Promise.allSettled([
           Promise.resolve().then(() => {
             if (budget.signal.aborted) throw new Error('aborted')
-            return storage.confirm(op, command, budget.signal)
+            return storage.confirm(op, command, budget.signal, () => acquisitionDrained)
           }),
           Promise.resolve().then(() => {
             if (budget.signal.aborted) throw new Error('aborted')
             return methodPort.resolveCurrent(claimMethod, checkedAt)
-          }),
+          }).finally(drained),
         ])
         checked = !budget.signal.aborted && confirmation.status === 'fulfilled'
           ? { ok: true, value: confirmation.value } : { ok: false }

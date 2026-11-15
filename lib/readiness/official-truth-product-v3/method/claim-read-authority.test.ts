@@ -10,7 +10,7 @@ import { createV3PostgresDurableJobs } from './authority-postgres'
 import { readMa1CurrentRows } from './contract'
 
 type Fault = 'revoked' | 'epoch_changed' | 'expired' | 'unknown' | 'blocked'
-async function factory(options: { timed?: boolean; fault?: Fault;
+async function factory(options: { timed?: boolean; fault?: Fault; singleMethodLane?: boolean; methodMilliseconds?: number;
   observation?: (kind: 'method' | 'confirm', signal: AbortSignal) => Promise<void> } = {}) {
   const f = fixture(), h = queueHarness(), seeded = await h.queue.enqueue(f.enqueue)
   assert.equal(seeded.status, 'confirmed'); if (seeded.status !== 'confirmed') assert.fail('fixture')
@@ -19,17 +19,19 @@ async function factory(options: { timed?: boolean; fault?: Fault;
   const now = () => new Date(wall + Math.floor(performance.now() - origin)).toISOString()
   const events: { operation: string; phase?: string; deadline: number; started: number; finished: number }[] = []
   const binding = { ...METHOD, methodDigest: 'a'.repeat(64), packageDigest: 'b'.repeat(64) }
-  let firstMethod = true, firstConfirm = true
+  let firstMethod = true, firstConfirm = true, methodBusy = false, rejectedMethods = 0
   async function pause(milliseconds: number) { if (milliseconds) await new Promise<void>(done => setTimeout(done, milliseconds)) }
   const config: M04Config = {
     binding, registry: f.registry, clock: () => ({ now: now(), legalDate: '2026-11-09' }),
     methodExecutor: { async readCurrent(request, signal, budget) {
       assert.ok(budget)
+      if (options.singleMethodLane && methodBusy) { rejectedMethods++; return { status: 'unavailable' } }
+      methodBusy = true
       const event = { operation: 'method', deadline: budget.deadline, started: performance.now(), finished: 0 }
       events.push(event); active++
       try {
         if (firstMethod) { firstMethod = false; await options.observation?.('method', signal) }
-        await pause(options.timed ? 600 : 0)
+        await pause(options.methodMilliseconds ?? (options.timed ? 600 : 0))
         const observedAt = now(), short = options.fault === 'expired'
         const rows = [{ status: enabled ? 'approved' : 'revoked', method_id: binding.methodId,
           revision: '1', method_digest: binding.methodDigest, package_digest: binding.packageDigest, epoch: String(epoch),
@@ -38,7 +40,7 @@ async function factory(options: { timed?: boolean; fault?: Fault;
           observed_at: observedAt, remaining_ms: !enabled ? '0' : short ? '15' : '5000' }]
         assert.equal(readMa1CurrentRows(rows, binding, request.checkedAt).ok, true, 'every negative fixture retains a valid MA1 row shape')
         return { status: 'rows', rows }
-      } finally { event.finished = performance.now(); active-- }
+      } finally { event.finished = performance.now(); active--; methodBusy = false }
     } },
     jobsExecutor: { async executeFixed(request, signal) {
       const q = JSON.parse(request.operationText), body = q.body
@@ -88,8 +90,86 @@ async function factory(options: { timed?: boolean; fault?: Fault;
     jobKey: f.identity.jobKey, leaseMilliseconds: 30000 }
   const api = createV3PostgresDurableJobs(config)
   return { events, claim, record: () => record, writes: () => writes, starts: () => starts, active: () => active,
+    rejectedMethods: () => rejectedMethods, resetObservations() { firstMethod = true; firstConfirm = true },
     run: (signal?: AbortSignal) => api.workOnce(claim, signal) }
 }
+
+test('original claim replay drains speculative MA1 before acquiring its own authority on the single physical method lane', async () => {
+  const h = await factory({ singleMethodLane: true, methodMilliseconds: 25 })
+  await h.run()
+  const original = structuredClone(h.record()), before = h.events.length
+  assert.equal(h.writes(), 1); assert.equal(h.starts(), 1)
+  await h.run()
+  assert.equal(h.rejectedMethods(), 0, 'the physical method pair is never requested concurrently')
+  assert.equal(h.writes(), 1, 'replay reconciles the original commit without another CAS')
+  assert.deepEqual(h.record(), original)
+  assert.equal(h.starts(), 2, 'both invocations reach the unchanged blocked START double after claim verification')
+  assert.equal(h.active(), 0)
+  const replay = h.events.slice(before)
+  const confirm = replay.find(e => e.operation === 'queue_confirm' && e.phase === 'probe')!
+  const methods = replay.filter(e => e.operation === 'method')
+  assert.ok(confirm.finished < methods[0].finished, 'the committed probe requires MA1 while speculation is in flight')
+  assert.ok(methods[1].started >= methods[0].finished, 'replay performs a distinct real MA1 read after complete drain')
+  const authorized = replay.find(e => e.operation === 'queue_confirm' && e.phase === 'authorized')!
+  assert.ok(authorized.started >= methods[1].finished)
+  assert.ok(authorized.deadline <= methods[1].deadline)
+  assert.ok(authorized.finished < confirm.started + 5000, 'replay completes within the original claim budget')
+})
+
+test('aborted original replay still drains speculation and starts no replacement authority or effect', { timeout: 2000 }, async () => {
+  let replay = false, entered!: () => void, release!: () => void
+  const started = new Promise<void>(resolve => { entered = resolve })
+  const held = new Promise<void>(resolve => { release = resolve })
+  const h = await factory({ singleMethodLane: true, async observation(kind) {
+    if (replay && kind === 'method') { entered(); await held }
+  } })
+  await h.run(); replay = true; h.resetObservations()
+  const before = h.events.length, original = structuredClone(h.record()), controller = new AbortController()
+  let settled = false
+  const running = h.run(controller.signal).finally(() => { settled = true })
+  try {
+    await started
+    await new Promise<void>(resolve => setImmediate(resolve))
+    controller.abort()
+    await new Promise<void>(resolve => setImmediate(resolve))
+    assert.equal(settled, false, 'the actual speculative executor remains owned')
+    assert.equal(h.active(), 1)
+  } finally { release() }
+  assert.notEqual((await running).status, 'complete')
+  assert.equal(h.active(), 0); assert.equal(h.rejectedMethods(), 0)
+  assert.equal(h.writes(), 1); assert.equal(h.starts(), 1); assert.deepEqual(h.record(), original)
+  const events = h.events.slice(before)
+  assert.equal(events.filter(e => e.operation === 'method').length, 1)
+  assert.equal(events.some(e => e.operation === 'queue_confirm' && e.phase === 'authorized'), false)
+})
+
+test('the original five-second claim signal expires a waiting replay without a new authority window', { timeout: 10000 }, async () => {
+  let replay = false, release!: () => void, expired!: () => void
+  const held = new Promise<void>(resolve => { release = resolve })
+  const aborted = new Promise<void>(resolve => { expired = resolve })
+  const h = await factory({ singleMethodLane: true, async observation(kind, signal) {
+    if (replay) {
+      // The pending native confirmation is linked to the original queue signal;
+      // the independent method's own effect timer is not that parent deadline.
+      if (kind === 'confirm') signal.addEventListener('abort', expired, { once: true })
+      await held
+    }
+  } })
+  await h.run(); replay = true; h.resetObservations()
+  const before = h.events.length, original = structuredClone(h.record())
+  let settled = false
+  const running = h.run().finally(() => { settled = true })
+  try {
+    await aborted
+    assert.equal(settled, false, 'deadline cancellation still owns the pending native method')
+  } finally { release() }
+  await running
+  assert.equal(h.active(), 0); assert.equal(h.rejectedMethods(), 0)
+  assert.equal(h.writes(), 1); assert.equal(h.starts(), 1); assert.deepEqual(h.record(), original)
+  const events = h.events.slice(before)
+  assert.equal(events.filter(e => e.operation === 'method').length, 1, 'deadline does not create a fresh replay receipt')
+  assert.equal(events.some(e => e.operation === 'queue_confirm' && e.phase === 'authorized'), false)
+})
 
 test('real M04 factory removes only the initial claim probe and duplicate resolve, retaining exact original custody', async () => {
   const h = await factory()

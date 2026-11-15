@@ -15,7 +15,11 @@ export const REVIEW = Object.freeze({
   subject: 'research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513',
   job: 'job3_6caeafbd2bcb1fed2121984e98c3c3e7',
   terminal: 'op3_0ab5b766f0d954b88a7481b0d531881f',
-  queueFix: '19e830deae608dadffc4d65b1e139a0848b0136d9ef6cce551824868f6753e06',
+  queueFix: '7ce17c68319d9dc2931de06c25062453f5ab12753a98cb1ef06345c415d79576',
+  jobContractFix: 'd28d6e272cb6d8cf480192285f91c79e5459c44efcfb058760db913410d450f8',
+  jobStorageFix: '56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14',
+  selectedClaimFix: '171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa',
+  methodAuthorityFix: '56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97',
   ownedSessionFix: '0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c',
   executorsFix: '8003eb87d2ddd96a790e56c8cb783692dd9d8bab14d794ceb88f726484832912',
   compositionFix: '667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89',
@@ -61,6 +65,8 @@ const runtimeSessions = `EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid<>pg_bac
 export function compileDevTerminalCycle3Review() {
   for (const [relative, expected] of [
     ['monitor/queue.ts', REVIEW.queueFix], ['jobs/composition.ts', REVIEW.compositionFix],
+    ['jobs/contract.ts', REVIEW.jobContractFix], ['jobs/postgres.ts', REVIEW.jobStorageFix],
+    ['jobs/selected-claim.ts', REVIEW.selectedClaimFix], ['method/authority-postgres.ts', REVIEW.methodAuthorityFix],
     ['transport/node-postgres-owned-session.ts', REVIEW.ownedSessionFix],
     ['transport/node-postgres-executors.ts', REVIEW.executorsFix],
   ]) {
@@ -196,6 +202,10 @@ CREATE TABLE jetnity_dev_import_scheduler.terminal_cycle3_review_v1(
   executors_fix_sha256 text NOT NULL CHECK(executors_fix_sha256='${REVIEW.executorsFix}'),
   queue_fix_sha256 text NOT NULL CHECK(queue_fix_sha256='${REVIEW.queueFix}'),
   composition_fix_sha256 text NOT NULL CHECK(composition_fix_sha256='${REVIEW.compositionFix}'),
+  job_contract_fix_sha256 text NOT NULL CHECK(job_contract_fix_sha256='${REVIEW.jobContractFix}'),
+  job_storage_fix_sha256 text NOT NULL CHECK(job_storage_fix_sha256='${REVIEW.jobStorageFix}'),
+  selected_claim_fix_sha256 text NOT NULL CHECK(selected_claim_fix_sha256='${REVIEW.selectedClaimFix}'),
+  method_authority_fix_sha256 text NOT NULL CHECK(method_authority_fix_sha256='${REVIEW.methodAuthorityFix}'),
   runtime_commit text NOT NULL CHECK(runtime_commit ~ '^[a-f0-9]{40}$'),
   ready_deployment text NOT NULL CHECK(ready_deployment ~ '^dpl_[A-Za-z0-9]{20,64}$'),
   ci_run bigint NOT NULL CHECK(ci_run>0), ui_version integer NOT NULL CHECK(ui_version>=6),
@@ -215,6 +225,7 @@ FOR EACH STATEMENT EXECUTE FUNCTION jetnity_dev_import_scheduler.immutable_termi
 INSERT INTO jetnity_dev_import_scheduler.terminal_cycle3_review_v1
 SELECT 3,${literal(evidenceHash)},${literal(priorDigest)},'${REVIEW.ownedSessionFix}','${REVIEW.executorsFix}',
   '${REVIEW.queueFix}','${REVIEW.compositionFix}',
+  '${REVIEW.jobContractFix}','${REVIEW.jobStorageFix}','${REVIEW.selectedClaimFix}','${REVIEW.methodAuthorityFix}',
   current_setting('jetnity.dev_terminal_cycle3_review_commit'),current_setting('jetnity.dev_terminal_cycle3_review_deployment'),
   current_setting('jetnity.dev_terminal_cycle3_review_ci_run')::bigint,current_setting('jetnity.dev_terminal_cycle3_review_ui_version')::integer,
   clock_timestamp(),current_job FROM official_v3_jobs_private.subjects_v1 WHERE job_key='${REVIEW.subject}';

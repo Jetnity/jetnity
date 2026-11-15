@@ -31,6 +31,22 @@ test('post-CAS receipt crosses only the actual queue-read adapter and never supp
   assert.equal(recorded, 1, 'readback still belongs to the requested job key')
 })
 
+test('claim confirmation forwards only its private drain while retaining original terminal and command binding', async () => {
+  const f = fixture(), signal = new AbortController().signal
+  const claim = { operationId: ids('op3', 'confirm-drain'), jobKey: f.identity.jobKey,
+    leaseId: ids('lease3', 'confirm-drain'), leaseMilliseconds: 30000 }
+  const command = readM04Command({ action: 'claim', input: claim })!
+  const drain = async () => {}, calls: Parameters<M04FixedOperation>[] = []
+  const storage = createM04QueueStorage({ fixed: async (...args) => { calls.push(args); return { status: 'not_attempted' } },
+    commandFor: (op, key) => op === command.operationId && key === command.commandKey ? command : null,
+    continuation: () => null, disposition: () => null, onRecord() {}, settled() {} })
+  assert.deepEqual(await storage.confirm(command.operationId, command.commandKey, signal, drain), { status: 'not_attempted' })
+  assert.deepEqual(calls[0], [{ operation: 'queue_confirm', body: { command: command.value, continuation: null } },
+    signal, undefined, true, drain])
+  assert.deepEqual(await storage.confirm(ids('op3', 'wrong-confirm'), command.commandKey, signal, drain), { status: 'unconfirmed' })
+  assert.equal(calls.length, 1)
+})
+
 test('terminal index custody needs its own successful exact confirm and transfers that actual ACK once', async () => {
   const h = queueHarness(), f = fixture(), signal = new AbortController().signal
   assert.equal((await h.queue.enqueue(f.enqueue)).status, 'confirmed')

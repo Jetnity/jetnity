@@ -43,10 +43,10 @@ export function createM04QueueStorage(options: Readonly<{
       options.onRecord(reply.record)
       return { status: 'ok' as const, record: reply.record }
     },
-    async confirm(operationId, commandKey, signal) {
+    async confirm(operationId, commandKey, signal, beforeAuthority) {
       const command = options.commandFor(operationId, commandKey)
       if (!command) return { status: 'unconfirmed' as const }
-      const reply = await options.fixed({ operation: 'queue_confirm', body: { command: command.value, continuation: options.continuation() } }, signal, undefined, true)
+      const reply = await options.fixed({ operation: 'queue_confirm', body: { command: command.value, continuation: options.continuation() } }, signal, undefined, true, beforeAuthority)
       if (reply.status === 'not_attempted' || reply.status === 'collision') return { status: reply.status }
       if (reply.status !== 'committed' || reply.commandText !== command.commandText || reply.commandKey !== commandKey
         || reply.operationId !== operationId || jobKey(reply.record) !== command.jobKey) return { status: 'unconfirmed' as const }

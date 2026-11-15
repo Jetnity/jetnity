@@ -68,12 +68,18 @@ its exact private evidence still matches. Every other block, changed original,
 unconfirmed request or missing predecessor remains closed. Both old blocked
 rows remain blocked; neither review is a reset or an alteration of old history.
 
-The new compiler binds the current queue and both transport fix files, as well
-as the unchanged method composition, to their individually reviewed SHA256s.
+The new compiler binds the current queue and both transport fix files, the job
+contract/storage/claim forwarding, and method authority, as well as the unchanged
+method composition, to their individually reviewed SHA256s.
 Compilation refuses before those exact files are frozen. New runtime fixes only
 overlap independently read-only observations/transport setup; all real authority
 checks, final reads, original IDs, five-second queue and 30-second tick budgets,
 lease deadlines, attempt limits and rolling 64/256 quotas remain required.
+The original-claim replay waits for the actual speculative authority read to drain
+before acquiring its own fresh authority. The original five-second deadline and
+abort signal remain effective while waiting; no speculative receipt is reused.
+Fresh claims keep their independent parallel reads. This closes the independently
+reproduced single-method-connection-lane collision on head `209b6a1c`.
 This review cannot demonstrate that the new runtime is fast enough in Dev.
 
 ## Required operator sequence — Dev only

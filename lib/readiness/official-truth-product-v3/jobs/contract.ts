@@ -66,7 +66,7 @@ export interface M04TerminalExecutor {
     | Readonly<{ status: 'blocked_remote_unknown' }>>
 }
 export type M04FixedOperation = (request: M04Operation, signal: AbortSignal,
-  receipt?: object, terminal?: boolean) => Promise<M04NativeReply>
+  receipt?: object, terminal?: boolean, beforeAuthority?: () => Promise<void>) => Promise<M04NativeReply>
 export interface M04DeliveryProducer {
   /** Code-owned pure delivery: no SQL, hidden remote effects or detached children. */
   produce(input: Readonly<{ job: V3ManagedJobRecord; fence: V3JobFence }>, signal: AbortSignal): Promise<

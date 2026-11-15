@@ -127,8 +127,12 @@ CREATE TABLE jetnity_dev_import_scheduler.terminal_cycle3_review_v1(
   prior_cycle2_evidence_digest text NOT NULL CHECK(prior_cycle2_evidence_digest='624257e5e0902a9ed1e5ba6f647430771850daf94edf54034c2e169a32af4fdd'),
   owned_session_fix_sha256 text NOT NULL CHECK(owned_session_fix_sha256='0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c'),
   executors_fix_sha256 text NOT NULL CHECK(executors_fix_sha256='8003eb87d2ddd96a790e56c8cb783692dd9d8bab14d794ceb88f726484832912'),
-  queue_fix_sha256 text NOT NULL CHECK(queue_fix_sha256='19e830deae608dadffc4d65b1e139a0848b0136d9ef6cce551824868f6753e06'),
+  queue_fix_sha256 text NOT NULL CHECK(queue_fix_sha256='7ce17c68319d9dc2931de06c25062453f5ab12753a98cb1ef06345c415d79576'),
   composition_fix_sha256 text NOT NULL CHECK(composition_fix_sha256='667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89'),
+  job_contract_fix_sha256 text NOT NULL CHECK(job_contract_fix_sha256='d28d6e272cb6d8cf480192285f91c79e5459c44efcfb058760db913410d450f8'),
+  job_storage_fix_sha256 text NOT NULL CHECK(job_storage_fix_sha256='56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14'),
+  selected_claim_fix_sha256 text NOT NULL CHECK(selected_claim_fix_sha256='171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa'),
+  method_authority_fix_sha256 text NOT NULL CHECK(method_authority_fix_sha256='56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97'),
   runtime_commit text NOT NULL CHECK(runtime_commit ~ '^[a-f0-9]{40}$'),
   ready_deployment text NOT NULL CHECK(ready_deployment ~ '^dpl_[A-Za-z0-9]{20,64}$'),
   ci_run bigint NOT NULL CHECK(ci_run>0), ui_version integer NOT NULL CHECK(ui_version>=6),
@@ -147,7 +151,8 @@ CREATE TRIGGER immutable_truncate BEFORE TRUNCATE ON jetnity_dev_import_schedule
 FOR EACH STATEMENT EXECUTE FUNCTION jetnity_dev_import_scheduler.immutable_terminal_cycle3_review_v1();
 INSERT INTO jetnity_dev_import_scheduler.terminal_cycle3_review_v1
 SELECT 3,'cc61f8b41a289d4a78f0d0fdaaca369e2f532c1f820577ca6a5b3a1a44f45dc1','624257e5e0902a9ed1e5ba6f647430771850daf94edf54034c2e169a32af4fdd','0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c','8003eb87d2ddd96a790e56c8cb783692dd9d8bab14d794ceb88f726484832912',
-  '19e830deae608dadffc4d65b1e139a0848b0136d9ef6cce551824868f6753e06','667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89',
+  '7ce17c68319d9dc2931de06c25062453f5ab12753a98cb1ef06345c415d79576','667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89',
+  'd28d6e272cb6d8cf480192285f91c79e5459c44efcfb058760db913410d450f8','56a7d2649a129b0e59a0cc27bc7ceaa304457ebd97064eaed50889163dd1cc14','171676f65a1e1acb8b9700d85771edb8e0b155d38b614d368d48e16b027375fa','56471206f02281a8009f6c60af785a8f390621b3f086016886e6fda2d6522c97',
   current_setting('jetnity.dev_terminal_cycle3_review_commit'),current_setting('jetnity.dev_terminal_cycle3_review_deployment'),
   current_setting('jetnity.dev_terminal_cycle3_review_ci_run')::bigint,current_setting('jetnity.dev_terminal_cycle3_review_ui_version')::integer,
   clock_timestamp(),current_job FROM official_v3_jobs_private.subjects_v1 WHERE job_key='research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513';

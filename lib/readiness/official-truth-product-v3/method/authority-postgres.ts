@@ -246,7 +246,7 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
   }
 
   function fixedFor(group: Group): M04FixedOperation {
-    return async (request, signal, providedReceipt): Promise<M04NativeReply> => {
+    return async (request, signal, providedReceipt, _terminal, beforeAuthority): Promise<M04NativeReply> => {
       if (!joint || !configured.ok || signal.aborted || !joint.scope.admits(group)) return { status: 'unavailable' }
       const isRead = request.operation === 'queue_read' || request.operation === 'queue_confirm' || request.operation === 'execution_read'
       async function execute(phase: 'probe' | 'authorized', receipt?: object): Promise<M04NativeReply> {
@@ -292,6 +292,15 @@ function authorityCore(bindingInput: Ma1MethodBinding, executor: Ma1MethodSqlExe
       // Explicit invalid receipts fail here; they never fall back to a new one.
       if (request.operation === 'queue_read' && providedReceipt !== undefined) return execute('authorized', providedReceipt)
       if (isRead) { const probe = await execute('probe'); if (probe.status !== 'requires_authority') return probe }
+      if (request.operation === 'queue_confirm' && beforeAuthority !== undefined) {
+        // The physical transport owns one method pair. A replay's actual probe
+        // may finish while the independent fresh-claim observation is still in
+        // flight. Join that observation before acquiring distinct replay custody;
+        // neither its result nor its receipt crosses this sequencing-only seam.
+        try { await beforeAuthority() } catch { return { status: 'unavailable' } }
+        if (signal.aborted || !joint.scope.admits(group)
+          || performance.now() >= Math.min(joint.scope.deadline, joint.callCap ?? Infinity)) return { status: 'unavailable' }
+      }
       let receipt = providedReceipt
       if (!receipt) {
         let checkedAt: string
