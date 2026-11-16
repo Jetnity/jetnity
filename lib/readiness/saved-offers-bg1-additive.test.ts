@@ -42,3 +42,6 @@ test('predecessor and publication guards are never bypassed',()=>{
   assert.match(sql,/required_generation/)
   assert.match(sql,/GET|ROLLBACK|SAVEPOINT|COMMIT/) // only source contract, not hosted proof
 })
+
+// Run the actual owned PostgreSQL 17 proof as part of the one Core CI gate.
+import '../../scripts/db/saved-offers-bg1-additive-1/native.test'
