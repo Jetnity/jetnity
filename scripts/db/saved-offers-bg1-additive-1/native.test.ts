@@ -9,6 +9,8 @@ import { compileProductionArtifacts, PRODUCTION } from '../../official-truth-pro
 import { compileProductionAdmin, BASELINE, TARGET } from '../admin-runtime-production-1/build.mjs'
 import { functionsIn } from '../official-truth-v3-background-guard-1/build.mjs'
 import { awaitNextBg1 } from '../official-truth-v3-dev-cycle4-attempt2-recovery-1/await-next-bg1'
+import { nativeSql } from '../official-truth-accepted-store-trip-integration-1/native-schema'
+import { startLocalProofCluster } from '../official-truth-integrated-pilot-1/local-cluster'
 import { compileSavedOffersGuard } from './compose.mjs'
 const read=(path:string)=>readFileSync(new URL(path,import.meta.url),'utf8')
 const compiled=compileProductionArtifacts()
@@ -76,6 +78,32 @@ async function syntheticProviderMetadata(proof: OwnedPersistentProof) {
 }
 
 
+// RLS is enforced by normal PostgreSQL client backends. A single-user backend
+// can establish the guard transition but cannot attest end-user row visibility.
+test('regular PostgreSQL sessions can only read and manage their own saved offers', () => {
+  const cluster = startLocalProofCluster()
+  try {
+    assert.match(cluster.version, /PostgreSQL\) 17\./)
+    const sql = nativeSql(cluster)
+    sql(read('../official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql'))
+    sql([1, 2].map(n => "INSERT INTO auth.users(id,email) VALUES(" + literal(uid(n)) + "," + literal(n+'@example.invalid') + ");").join('\n'))
+    sql("SET SESSION AUTHORIZATION postgres; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO service_role;" +
+      read('../../../supabase/migrations/20261113173644_saved_offers.sql'))
+    const session = (n: number) => 'SET SESSION AUTHORIZATION authenticated; SET request.jwt.claim.sub=' + literal(uid(n)) + ';'
+    const own = session(1), other = session(2)
+    assert.equal(sql(other + "SELECT row_security_active('public.saved_offers'::regclass),auth.uid();"), 't|' + uid(2))
+    const insert = "INSERT INTO public.saved_offers(category,provider,offer_ref,title,url,source) VALUES ('stay','fixture','sample','Hotel','https://example.invalid/hotel','manual');"
+    sql(own + insert)
+    assert.equal(sql(other + 'SELECT count(*) FROM public.saved_offers;'), '0')
+    sql(other + "UPDATE public.saved_offers SET title='Other'; DELETE FROM public.saved_offers;")
+    assert.equal(sql(own + 'SELECT title FROM public.saved_offers;'), 'Hotel')
+    sql(own + "UPDATE public.saved_offers SET title='Updated';")
+    assert.equal(sql(own + 'SELECT title FROM public.saved_offers;'), 'Updated')
+    sql(own + 'DELETE FROM public.saved_offers;')
+    assert.equal(sql(own + 'SELECT count(*) FROM public.saved_offers;'), '0')
+  } finally { cluster.stop() }
+})
+
 test('saved_offers successor extends the real local Production PG17 BG1 atomically', {timeout:900000}, async t=>{
  const proof=new OwnedPersistentProof(t.signal)
  const forProduction = (sql: string) => creator + sql.replace(/^BEGIN;\n/, "BEGIN;\nSET LOCAL jetnity.saved_offers_target = 'production:qscbgcdmivbbnzrcyegn:SAVED-OFFERS-BG1-1';\n")
@@ -132,19 +160,6 @@ test('saved_offers successor extends the real local Production PG17 BG1 atomical
      await refuses(creator+"BEGIN; ALTER POLICY saved_offers_select_own ON public.saved_offers USING (true); SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK;",
        /protected catalog changed/)
      await proof.run(creator+"SELECT official_v3_guard_private.assert_catalog_v1();",'restored successor check')
-   })
-   await t.test('only the offer owner can read, edit and remove a saved offer', async () => {
-     const session = (ownerId: string) => 'SET SESSION AUTHORIZATION authenticated;SET request.jwt.claim.sub=' + literal(ownerId) + ';'
-     const own = session(uid(1)), other = session(uid(2))
-     const insert = "INSERT INTO public.saved_offers(category,provider,offer_ref,title,url,source) VALUES ('stay','fixture','sample','Hotel','https://example.invalid/hotel','manual');"
-     await proof.run(own + insert, 'save own offer')
-     assert.equal(await proof.value('(SELECT to_jsonb(count(*)) FROM public.saved_offers)', other), 0)
-     await proof.run(other + "UPDATE public.saved_offers SET title='Other'; DELETE FROM public.saved_offers;", 'other account has no matching rows')
-     assert.equal(await proof.value('(SELECT to_jsonb(title) FROM public.saved_offers)', own), 'Hotel')
-     await proof.run(own + "UPDATE public.saved_offers SET title='Updated';", 'update own item')
-     assert.equal(await proof.value('(SELECT to_jsonb(title) FROM public.saved_offers)', own), 'Updated')
-     await proof.run(own + 'DELETE FROM public.saved_offers;', 'remove own item')
-     assert.equal(await proof.value('(SELECT to_jsonb(count(*)) FROM public.saved_offers)', own), 0)
    })
    assert.deepEqual(await proof.value(adminDigest,creator),originalAdmin)
    await awaitNextBg1(proof, t.signal, 'official_v3_guard_private.saved_offers_baseline_v1')

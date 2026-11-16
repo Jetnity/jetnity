@@ -75,7 +75,7 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
       assert.equal(transition.name, 'Run atomic Admin BG1 transition and guarded runtime proof')
       assert.equal(transition['timeout-minutes'], 25)
       assert.equal(transition.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/admin-runtime-bg1-1/native.test.ts')
-      assert.equal(job.steps.at(-2).run, originalCommand)
+      assert.equal(job.steps.at(-3).run, originalCommand)
     } else assert.equal(job.steps.at(-1).run, originalCommand)
     assert.equal(JSON.stringify(job).includes('secrets.'), false)
   }
