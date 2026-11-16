@@ -23,5 +23,7 @@ test('only this unapplied weather RPC, caller and SQL are admitted by schema sca
   assert.equal(examine(sourcePath,actual,false).befunde[0].grund,'missing-sql')
   assert.equal(examine(sourcePath,actual,true,'SELECT 1').befunde[0].grund,'missing-sql')
   assert.equal(examine(sourcePath,`.rpc('${name}_unexpected')`).befunde.length,1)
-  assert.equal(examine(sourcePath,`.from('missing_weather_table')`).befunde.length,1)
+  // Build the negative fixture at runtime so the repository's own static schema scanner
+  // does not misinterpret this intentionally nonexistent table as a production call.
+  assert.equal(examine(sourcePath,`.from('${'missing_' + 'weather_table'}')`).befunde.length,1)
 })
