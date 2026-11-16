@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
 
 import {
   EINREISE_AMPEL_TEXT,
@@ -200,7 +204,8 @@ test('abgelaufene Befreiung wird nicht grün und setzt nicht das heutige Datum',
   })
   assert.equal(anzeige.paare[0]?.ampel, 'neutral')
   assert.match(anzeige.standSatz, /Stand derzeit nicht verfügbar/)
-  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Visum'), true)
+  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Einreise und Aufenthalt'), true)
+  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Visum'), false)
   assert.equal(anzeige.paare[0]?.platzhalter, true)
 })
 
@@ -214,8 +219,9 @@ test('leere Themen stehen in genau einer Liste und erfinden keine Pflicht', () =
   assert.equal(anzeige.paare.length, 1)
   assert.equal(anzeige.paare[0]?.ampel, 'neutral')
   assert.equal(anzeige.paare[0]?.themen.length, 0)
-  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Zoll'), true)
-  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Minderjährige'), true)
+  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Grenze und besondere Situationen'), true)
+  assert.equal(anzeige.paare[0]?.ungeprueft.includes('Zoll'), false)
+  assert.ok((anzeige.paare[0]?.ungeprueft.length ?? 0) <= 6)
   assert.equal(EINREISE_WEITERE_THEMEN.length > 0, true)
   assert.doesNotMatch(anzeige.paare[0]?.ungeprueft.join(' '), /erforderlich|visumfrei/i)
 })
@@ -246,4 +252,28 @@ test('Besucheransicht erkennt nur den geschlossenen amtlichen Wortlaut', () => {
   assert.equal(offen.paare[0]?.ampel, 'neutral')
   assert.equal(offen.paare[0]?.themen.length, 0)
   assert.match(offen.standSatz, /Stand derzeit nicht verfügbar/)
+})
+
+test('CH→DE und ein zweiter Pass bleiben in der Beschriftung getrennt', () => {
+  const anzeige = einreiseAusBesucher({
+    zielCode: 'DE',
+    zielLabel: '🇩🇪 Deutschland',
+    zellen: [
+      { landCode: 'CH', landLabel: '🇨🇭 Schweiz', ergebnisse: [{ status: 'unavailable' }] },
+      { landCode: 'RS', landLabel: '🇷🇸 Serbien', ergebnisse: [{ status: 'unavailable' }] },
+    ],
+  })
+  assert.equal(anzeige.paare.length, 2)
+  assert.equal(anzeige.paare[0]?.dokument, 'Schweiz')
+  assert.equal(anzeige.paare[0]?.land, 'Deutschland')
+  assert.equal(anzeige.paare[1]?.dokument, 'Serbien')
+  assert.equal(anzeige.paare[1]?.land, 'Deutschland')
+  assert.equal(anzeige.paare[0]?.ampel, 'neutral')
+  assert.equal(anzeige.paare[1]?.ampel, 'neutral')
+  const html = renderToStaticMarkup(React.createElement(EinreiseKundenanzeige, { anzeige }))
+  assert.match(html, /Pass: Schweiz · Ziel: Deutschland/)
+  assert.match(html, /Pass: Serbien · Ziel: Deutschland/)
+  assert.doesNotMatch(html, /Gewählter Pass/)
+  assert.equal(html.split(EINREISE_WEITERE_THEMEN).length - 1, 2)
+  assert.doesNotMatch(html, />Zoll</)
 })

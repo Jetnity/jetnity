@@ -2,7 +2,7 @@
 // Liest nur bereits gefilterte Evaluationen und Besucheraussagen.
 // Erfindet keine Visumfreiheit, keinen Link und keinen Quellenstand.
 
-import { landAnzeigeText } from '@/lib/country/darstellung'
+import { COUNTRY_UI_LOCALE, landAnzeigeText, landName } from '@/lib/country/darstellung'
 import {
   OFFICIAL_ERGEBNIS_BEZEICHNUNG,
   OFFICIAL_VISA_MODUS_BEZEICHNUNG,
@@ -13,7 +13,7 @@ import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { officialCredentialLabel, officialZeileErgebnisText } from '@/lib/readiness/official-presentation'
 import { officialTemporalTexte } from '@/lib/readiness/temporal'
 import { destinationIstOfficialZiel } from '@/lib/trips/destination-essentials'
-import { V3_CUSTOMER_INFORMATION_TOPICS, type V3CustomerInformationTopic } from '@/lib/readiness/official-truth-product-v3/customer-information/topics'
+import { V3_CUSTOMER_INFORMATION_GROUPS, V3_CUSTOMER_INFORMATION_TOPICS, type V3CustomerInformationTopic } from '@/lib/readiness/official-truth-product-v3/customer-information/topics'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import type { TripTraveller } from '@/types/trips'
 
@@ -297,7 +297,7 @@ function paarBauen(teil: {
   const ampel = lichtAusEvaluationen(teil.evaluations)
   const themen = themenAus(teil.evaluations)
   const belegt = new Set(themen.map((thema) => thema.id))
-  const ungeprueft = V3_CUSTOMER_INFORMATION_TOPICS.filter((thema) => !belegt.has(thema.id)).map((thema) => thema.label)
+  const ungeprueft = ungepruefteGruppen(belegt)
   const antrag = antragAus(teil.evaluations, ampel)
   return {
     id: teil.id,
@@ -424,6 +424,12 @@ function lichtAusBesucher(topic: string, texte: readonly string[]): EinreiseAmpe
   return null
 }
 
+function ungepruefteGruppen(belegt: ReadonlySet<string>): string[] {
+  return V3_CUSTOMER_INFORMATION_GROUPS.filter((gruppe) =>
+    V3_CUSTOMER_INFORMATION_TOPICS.some((thema) => thema.group === gruppe.id && !belegt.has(thema.id)),
+  ).map((gruppe) => gruppe.label)
+}
+
 function themaBekannt(id: string): id is V3CustomerInformationTopic {
   return V3_CUSTOMER_INFORMATION_TOPICS.some((thema) => thema.id === id)
 }
@@ -473,8 +479,8 @@ export function einreiseAusBesucher(input: {
     return {
       id: `${zelle.landCode}:${input.zielCode}`,
       reisende: zelle.landLabel,
-      dokument: 'Gewählter Pass',
-      land: input.zielLabel,
+      dokument: landName(zelle.landCode, COUNTRY_UI_LOCALE) || zelle.landLabel,
+      land: landName(input.zielCode, COUNTRY_UI_LOCALE) || input.zielLabel,
       landCode: input.zielCode,
       ampel,
       ampelText: EINREISE_AMPEL_TEXT[ampel],
@@ -482,7 +488,7 @@ export function einreiseAusBesucher(input: {
       antragLabel: themen.find((eintrag) => eintrag.todo && eintrag.href)?.hrefLabel ?? null,
       todos: themen.filter((eintrag) => eintrag.todo),
       themen,
-      ungeprueft: V3_CUSTOMER_INFORMATION_TOPICS.filter((eintrag) => !belegt.has(eintrag.id)).map((eintrag) => eintrag.label),
+      ungeprueft: ungepruefteGruppen(belegt),
       platzhalter: themen.length === 0,
     } satisfies EinreisePaar
   })

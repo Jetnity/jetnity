@@ -65,7 +65,7 @@ export default function EinreiseLaenderpruefer() {
         </p>
       </header>
       <form onSubmit={senden} noValidate className="grid gap-5 rounded-3xl border border-line-200 bg-white px-4 py-5 sm:px-6">
-        <LandFeld id={`${id}-ziel`} label="Zielland" value={ziel} optional={false} searchable={false} onChange={(land) => zuruecksetzen(() => setZiel(land))} />
+        <LandFeld id={`${id}-ziel`} label="Zielland" value={ziel} optional={false} searchable onChange={(land) => zuruecksetzen(() => setZiel(land))} />
         <fieldset className="grid gap-3">
           <legend className="mb-2 text-base font-semibold">Pass / Staatsangehörigkeit</legend>
           {paesse.map((pass, index) => (
@@ -75,7 +75,7 @@ export default function EinreiseLaenderpruefer() {
                 label={`Pass ${index + 1}`}
                 value={pass}
                 optional={false}
-                searchable={false}
+                searchable
                 onChange={(wert) => zuruecksetzen(() => setPaesse((liste) => liste.map((eintrag, stelle) => stelle === index ? wert : eintrag)))}
               />
               {paesse.length > 1 ? (

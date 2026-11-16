@@ -78,7 +78,7 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
     >
       <h5 className="break-words text-sm font-semibold text-brand-800">{paar.reisende}</h5>
       <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
-        {paar.dokument} · {paar.land}
+        Pass: {paar.dokument} · Ziel: {paar.land}
       </p>
       <div className="mt-3">
         <Ampel art={paar.ampel} text={paar.ampelText} />
@@ -105,11 +105,13 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
             <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
           </summary>
           <div className="border-t border-line-200 px-3 py-3">
-            {paar.platzhalter ? <p className="text-sm leading-6 text-ink-900">{EINREISE_PLATZHALTER}</p> : null}
-            <p className="text-sm leading-6 text-ink-900">Für diese Themen gilt derzeit nicht verfügbar.</p>
-            <ul className="mt-2 grid gap-1">
+            <p className="text-sm leading-6 text-ink-900">
+              {paar.platzhalter ? `${EINREISE_PLATZHALTER}. ` : ''}
+              Für diese Themen gilt derzeit nicht verfügbar.
+            </p>
+            <ul className="mt-2 flex flex-wrap gap-2">
               {paar.ungeprueft.map((name) => (
-                <li key={name} className="text-sm leading-6 text-ink-800">{name}</li>
+                <li key={name} className="rounded-full bg-surface-50 px-3 py-1 text-xs leading-5 text-ink-800">{name}</li>
               ))}
             </ul>
           </div>
