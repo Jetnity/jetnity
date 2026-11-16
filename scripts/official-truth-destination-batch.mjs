@@ -58,12 +58,25 @@ export function inventory(rootInput, destination) {
   if (!/^[A-Z]{2}$/.test(destination)) fail('invalid_destination')
   const root = realpathSync(rootInput), directory = join(root, 'records', 'dest')
   for (const p of [join(root, 'records'), directory]) if (!lstatSync(p).isDirectory() || lstatSync(p).isSymbolicLink()) fail('research_directory_refused')
-  const destinations = readdirSync(directory, { withFileTypes: true }).flatMap(d => {
-    const match = /^([A-Z]{2})(?:\.(?:json|jsonl|ndjson))?$/.exec(d.name)
-    return match ? [{ code: match[1], entry: d }] : []
-  })
+  // The verified original research archive has 206 directories (204 ISO2 and
+  // CN-HK/CN-MO special-region folders) PLUS optional per-country JSON sidecars.
+  // Never treat a sidecar as a second destination or silently drop the territories.
+  // An alternative 206-regular-file layout remains explicitly supported for tests.
+  const entries = readdirSync(directory, { withFileTypes: true })
+  if (entries.some(d => d.isSymbolicLink() || (!d.isDirectory() && !d.isFile()))) fail('research_directory_entry_refused')
+  const folders = entries.filter(d => d.isDirectory())
+  const folderLayout = folders.length > 0
+  const allowedFolder = /^(?:[A-Z]{2}|CN-HK|CN-MO)$/
+  const allowedSidecar = /^(?:[A-Z]{2}|CN-HK|CN-MO|NL-caribbean|TZ-zanzibar)\.json$/
+  const destinations = folderLayout
+    ? folders.map(entry => ({ code: entry.name, entry }))
+    : entries.map(entry => ({ code: entry.name.replace(/\.(?:json|jsonl|ndjson)$/, ''), entry }))
   if (destinations.length !== 206 || new Set(destinations.map(d => d.code)).size !== 206
-    || destinations.some(d => d.entry.isSymbolicLink() || (!d.entry.isDirectory() && !d.entry.isFile()))) fail('research_206_destination_layout_required')
+    || (folderLayout
+      ? destinations.some(d => !allowedFolder.test(d.code))
+        || entries.filter(d => d.isFile()).some(d => !allowedSidecar.test(d.name))
+      : destinations.some(d => !/^[A-Z]{2}$/.test(d.code) || !/^[A-Z]{2}\.(?:json|jsonl|ndjson)$/.test(d.entry.name)))
+  ) fail('research_206_destination_layout_required')
   const found = destinations.find(d => d.code === destination), files = []; let total = 0
   if (!found) fail('destination_research_missing')
   const selected = join(directory, found.entry.name)
@@ -82,8 +95,20 @@ export function inventory(rootInput, destination) {
       else add(path)
     }
   }
-  if (found.entry.isDirectory()) walk(selected)
-  else add(selected)
+  if (found.entry.isDirectory()) {
+    walk(selected)
+    const sidecar = join(directory, destination + '.json')
+    if (existsSync(sidecar)) {
+      const bytes = regularFile(sidecar, 8 * 1024 * 1024)
+      let parsed
+      try { parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)) }
+      catch { fail('research_sidecar_invalid') }
+      if (!parsed || parsed.schema !== 'jetnity-entry-requirements-research-v2.2'
+        || parsed.status !== 'RESEARCH_ONLY' || parsed.unit_type !== 'destination_shell'
+        || parsed.dest_id !== destination || parsed.destination_iso2 !== destination) fail('research_sidecar_invalid')
+      add(sidecar)
+    }
+  } else add(selected)
   if (!files.length) fail('destination_research_empty')
   return { root, files }
 }

@@ -20,8 +20,14 @@ ungeprüften Aussagen. `completeResearch=false`, `availableClaims=0` und
 Kein Netzwerk, kein Datenbankzugriff, kein Import, kein Queue-Aufruf und keine
 Publikation. Fehlende/mehrdeutige CSV, andere Anzahl/Reihenfolge, fehlende
 206-Ziel-Struktur, Symlinks, Budgetverletzung oder beschädigte Factoryausgabe
-stoppen. Reguläre Länderordner oder einzelne `.json`/`.jsonl`/`.ndjson`-Dateien
-werden erkannt; andere Archivlayouts benötigen erst einen belegten Adapter.
+stoppen. Das **tatsächliche** Archiv hat 206 Zielordner (204 ISO2 + Sonderregionen
+`CN-HK` und `CN-MO`) und 54 ergänzende `.json`-Sidecars. Der Reader
+unterscheidet Zielland-Ordner von ergänzendem Länder-Shell, bindet einen
+passgenau geprüften Sidecar zusätzlich mit Hash und verweigert fremde Aliasse.
+Ein reines 206-Dateien-Layout ist ebenfalls kontrolliert erlaubt. Die zwei
+Sonderregionen bleiben als eigenständige Destinationen **nicht V3-übertragbar**,
+solange die kanonische V3-Zielland-Schnittstelle nur ISO2 akzeptiert; keine
+heimliche Umdeutung zu CN und keine Veröffentlichung.
 Es wird nichts stillschweigend konvertiert. Neue Ausgabe ausserhalb der Recherche,
 kein Überschreiben; der Abschlussmanifest wird zuletzt geschrieben.
 
@@ -55,8 +61,11 @@ wiederholt. Eigene Root-Quellprüfung, kein unabhängiger zweiter Reviewer behau
 **Originaldaten am 16.11. wiedergefunden und unabhängig verifiziert:**
 ChatGPT Library `/jetnity-einreise-206-ziele.tar(1).xz` (2.764.784 Bytes,
 SHA-256 `6ef8c9f6e36bee2f75cf162d725a60844ef757bfad14407f69d81631cb9f55e5`).
-Archiv-Wurzel `entry-requirements/`; 206 Zielordner mit je allen 50 CSV-Pass-Slices
-und `index.json` (neun enthalten zusätzliche Einzelslices). Keine gefährlichen
+Archiv-Wurzel `entry-requirements/`; 206 Zielordner (204 ISO2 + zwei
+Sonderregionen) mit je allen 50 CSV-Pass-Slices und `index.json`, plus 54
+zusätzliche per-Land- und Gebiets-JSON-Sidecars. Der bisherige Reader zählte
+die 54 Sidecars irrtümlich als zusätzliche Zielorte; mit dem belegten
+Verzeichnis-/Sidecar-Modell im selben Korrekturpaket behoben. Keine gefährlichen
 Tar-Pfade/Links bei der Metadatenprüfung. Originale `passport-priority.csv` hat
 50 Datenzeilen, sechs Spalten und 112.228 Bytes; SHA-256
 `4515324024236916142857bf16d67590a7a1ca11c31fd1263e8b7979fd6eb358`.

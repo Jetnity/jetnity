@@ -137,3 +137,33 @@ test('six-column research priority file permits bounded long quoted provenance, 
   assert.deepEqual(readPriority(wide,'nationality_iso2','rank'),passports)
   assert.throws(() => readPriority(wide + 'x'.repeat(128 * 1024),'nationality_iso2','rank'),/invalid_priority_file/)
 })
+
+test('verified mixed 206-folder archive layout binds the sidecar, not a duplicate destination', t => {
+  const f = fixture(t)
+  for (const code of ['HW','HX']) rmSync(join(f.root,'records','dest',code),{recursive:true})
+  for (const territory of ['CN-HK','CN-MO']) {
+    mkdirSync(join(f.root,'records','dest',territory))
+    writeFileSync(join(f.root,'records','dest',territory,'index.json'),
+      JSON.stringify({status:'RESEARCH_ONLY',dest_id:territory}))
+  }
+  const sidecarPath = join(f.root,'records','dest','AT.json')
+  writeFileSync(sidecarPath,JSON.stringify({
+    schema:'jetnity-entry-requirements-research-v2.2',status:'RESEARCH_ONLY',
+    unit_type:'destination_shell',dest_id:'AT',destination_iso2:'AT',
+  }))
+  writeFileSync(join(f.root,'records','dest','NL-caribbean.json'),
+    JSON.stringify({status:'RESEARCH_ONLY',unit_type:'territory_pending'}))
+  const found = inventory(f.root,'AT')
+  assert.ok(found.files.some(row => row.path === 'records/dest/AT.json'))
+  assert.equal(prepareDestination(f).passports,50)
+  rmSync(f.output,{recursive:true})
+  writeFileSync(sidecarPath,'{}')
+  assert.throws(() => inventory(f.root,'AT'),/research_sidecar_invalid/)
+})
+
+test('unrecognized territory or unverified mixed archive cannot silently lower the target count', t => {
+  const f=fixture(t)
+  rmSync(join(f.root,'records','dest','HX'),{recursive:true})
+  mkdirSync(join(f.root,'records','dest','UNVERIFIED-TERRITORY'))
+  assert.throws(() => inventory(f.root,'AT'),/research_206_destination_layout_required/)
+})
