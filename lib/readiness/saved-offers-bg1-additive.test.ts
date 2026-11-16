@@ -49,6 +49,7 @@ test('saved_offers full native proof is required in the existing signed PG17 CI 
   const cms=workflow.split('  cms_native:\n')[1]?.split('\n  marketing_native:')[0]
   assert.ok(cms,'signed PG17 native runner missing')
   assert.match(cms,/Provision mandatory PostgreSQL 17 from signed official packages/)
-  assert.match(cms,/name: saved_offers exact Production BG1 successor - owned PG17 proof/)
-  assert.match(cms,/scripts\/db\/saved-offers-bg1-additive-1\/native\.test\.ts/)
+  assert.match(cms,/scripts\/db\/admin-runtime-bg1-1\/native\.test\.ts/)
+  const entry = readFileSync(new URL('../../scripts/db/admin-runtime-bg1-1/native.test.ts', import.meta.url), 'utf8')
+  assert.match(entry, /^import '\.\.\/saved-offers-bg1-additive-1\/native\.test'$/m)
 })

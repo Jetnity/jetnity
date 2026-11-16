@@ -672,15 +672,6 @@ jobs:
           --test --test-reporter=tap --test-concurrency=1
           scripts/db/admin-runtime-bg1-1/native.test.ts
 
-      # The successor requires the same signed, isolated PG17 runner; Core
-      # has only PG16 and must not silently substitute a different database.
-      - name: saved_offers exact Production BG1 successor - owned PG17 proof
-        timeout-minutes: 12
-        run: >-
-          node --import ./scripts/server-only-test-register.mjs --import tsx
-          --test --test-reporter=tap --test-concurrency=1
-          scripts/db/saved-offers-bg1-additive-1/native.test.ts
-
   marketing_native:
     name: Admin marketing drafts — isolated native proof
     permissions:
