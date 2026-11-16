@@ -9,6 +9,14 @@ const REF = 'qscbgcdmivbbnzrcyegn', TOKEN = 'sb_publishable_synthetic_monitor_on
 const ENV = Object.freeze({ JETNITY_PRODUCTION_IMPORT_MONITOR: `production:${REF}:enabled-v1`,
   SUPABASE_PROJECT_REF: REF, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: TOKEN })
 const NOW = Date.parse('2026-11-15T02:00:00.000Z')
+const LEGACY_HEADER = Object.freeze({ alg: 'HS256', typ: 'JWT' })
+const LEGACY_PAYLOAD = Object.freeze({ iss: 'supabase', ref: REF, role: 'anon', iat: NOW / 1000 - 3600, exp: NOW / 1000 + 3600 })
+// Synthetic metadata and bytes only. This fixture is deliberately not signed.
+const LEGACY_SIGNATURE = Buffer.alloc(32, 1).toString('base64url')
+const encodeMetadata = value => Buffer.from(typeof value === 'string' ? value : JSON.stringify(value)).toString('base64url')
+const legacyToken = (header = LEGACY_HEADER, payload = LEGACY_PAYLOAD, signature = LEGACY_SIGNATURE) =>
+  `${encodeMetadata(header)}.${encodeMetadata(payload)}.${signature}`
+const LEGACY_TOKEN = legacyToken()
 const schedule = () => ({ schema: 1, status: 'current', nextDueAt: NOW + 1200000 })
 const visitor = () => ({ input: { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] },
   generatedAt: new Date(NOW).toISOString(), synthetic: false,
@@ -25,7 +33,7 @@ function fixtureFetch(state = schedule(), view = visitor(), options = {}) {
 const check = (state = schedule(), view = visitor(), options = {}) => checkProductionImport({ env: ENV, fetchImpl: fixtureFetch(state, view, options) })
 function assertSafe(result) {
   assert.equal(Object.isFrozen(result), true)
-  for (const secret of [TOKEN, REF, 'private-provider-error', 'synthetic-import-signing-key']) assert.equal(JSON.stringify(result).includes(secret), false)
+  for (const secret of [TOKEN, LEGACY_TOKEN, REF, 'private-provider-error', 'synthetic-import-signing-key']) assert.equal(JSON.stringify(result).includes(secret), false)
 }
 
 test('Production monitor observes the actual display and schedule independently with bounded public-only reads', async t => {
@@ -40,22 +48,24 @@ test('Production monitor observes the actual display and schedule independently 
     }
   })
   await t.test('fixed Production status/visitor endpoints, inputs and public apikey are the entire transport', async () => {
-    const calls = []
-    const result = await checkProductionImport({ env: ENV, fetchImpl: async (url, init) => {
-      calls.push(url)
-      assert.equal(init.method, 'POST'); assert.equal(init.redirect, 'error'); assert.equal(init.credentials, 'omit'); assert.equal(init.cache, 'no-store')
-      assert.ok(init.signal instanceof AbortSignal)
-      if (url.includes('supabase.co')) {
-        assert.equal(url, `https://${REF}.supabase.co/rest/v1/rpc/jetnity_production_import_status_v1`)
-        assert.deepEqual(init.headers, { 'Content-Type': 'application/json', Accept: 'application/json', apikey: TOKEN }); assert.equal(init.body, '{}')
-        return response(schedule())
-      }
-      assert.equal(url, 'https://jetnity.com/api/readiness/ch-de-visa')
-      assert.deepEqual(init.headers, { 'Content-Type': 'application/json', Accept: 'application/json' })
-      assert.deepEqual(JSON.parse(init.body), { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
-      return response(visitor())
-    } })
-    assert.equal(calls.length, 2); assert.equal(result.status, 'current'); assertSafe(result)
+    for (const key of [TOKEN, LEGACY_TOKEN]) {
+      const calls = []
+      const result = await checkProductionImport({ env: { ...ENV, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: key }, fetchImpl: async (url, init) => {
+        calls.push(url)
+        assert.equal(init.method, 'POST'); assert.equal(init.redirect, 'error'); assert.equal(init.credentials, 'omit'); assert.equal(init.cache, 'no-store')
+        assert.ok(init.signal instanceof AbortSignal)
+        if (url.includes('supabase.co')) {
+          assert.equal(url, `https://${REF}.supabase.co/rest/v1/rpc/jetnity_production_import_status_v1`)
+          assert.deepEqual(init.headers, { 'Content-Type': 'application/json', Accept: 'application/json', apikey: key }); assert.equal(init.body, '{}')
+          return response(schedule())
+        }
+        assert.equal(url, 'https://jetnity.com/api/readiness/ch-de-visa')
+        assert.deepEqual(init.headers, { 'Content-Type': 'application/json', Accept: 'application/json' })
+        assert.deepEqual(JSON.parse(init.body), { destinationCountryCode: 'DE', citizenshipCountryCodes: ['CH'] })
+        return response(visitor())
+      } })
+      assert.equal(calls.length, 2); assert.equal(result.status, 'current'); assertSafe(result)
+    }
   })
   await t.test('foreign target and private credentials refuse without I/O; management/signing secrets are never read', async () => {
     for (const env of [{ ...ENV, SUPABASE_PROJECT_REF: 'yfvbxvijcorffwxbxahl' },
@@ -65,11 +75,72 @@ test('Production monitor observes the actual display and schedule independently 
       const result = await checkProductionImport({ env, fetchImpl: async () => { calls++; return response(schedule()) } })
       assert.equal(result.status, 'alarm'); assert.equal(calls, 0); assertSafe(result)
     }
-    const env = { ...ENV }
-    for (const name of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_SERVICE_ROLE_KEY', 'JETNITY_PROD_IMPORT_CRON_SECRET', 'JETNITY_DEV_IMPORT_CRON_SECRET']) {
-      Object.defineProperty(env, name, { get() { throw Error('private credential was read') } })
+    for (const key of [TOKEN, LEGACY_TOKEN]) {
+      const env = { ...ENV, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: key }
+      for (const name of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_SERVICE_ROLE_KEY', 'JETNITY_PROD_IMPORT_CRON_SECRET',
+        'JETNITY_DEV_IMPORT_CRON_SECRET', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']) {
+        Object.defineProperty(env, name, { get() { throw Error('another credential was read') } })
+      }
+      assert.equal((await checkProductionImport({ env, fetchImpl: fixtureFetch() })).status, 'current')
     }
-    assert.equal((await checkProductionImport({ env, fetchImpl: fixtureFetch() })).status, 'current')
+  })
+  await t.test('legacy private/user/foreign or noncanonical credentials are rejected before any I/O', async () => {
+    const payloadText = JSON.stringify(LEGACY_PAYLOAD)
+    const invalid = [
+      ['service role', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, role: 'service_role' })],
+      ['authenticated user', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, role: 'authenticated' })],
+      ['user claim', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, sub: 'synthetic-user' })],
+      ['foreign project', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, ref: 'yfvbxvijcorffwxbxahl' })],
+      ['foreign issuer', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, iss: `https://${REF}.supabase.co/auth/v1` })],
+      ['missing claim', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, ref: undefined })],
+      ['unsigned algorithm', legacyToken({ ...LEGACY_HEADER, alg: 'none' })],
+      ['different algorithm', legacyToken({ ...LEGACY_HEADER, alg: 'HS512' })],
+      ['wrong type', legacyToken({ ...LEGACY_HEADER, typ: 'JWE' })],
+      ['extra header', legacyToken({ ...LEGACY_HEADER, kid: 'synthetic' })],
+      ['missing header', legacyToken({ alg: 'HS256' })],
+      ['future issue', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, iat: NOW / 1000 + 1 })],
+      ['zero issue', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, iat: 0 })],
+      ['string issue', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, iat: String(LEGACY_PAYLOAD.iat) })],
+      ['fractional issue', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, iat: LEGACY_PAYLOAD.iat + 0.5 })],
+      ['expired', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, exp: NOW / 1000 })],
+      ['reversed times', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, exp: LEGACY_PAYLOAD.iat })],
+      ['string expiry', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, exp: String(LEGACY_PAYLOAD.exp) })],
+      ['unsafe expiry', legacyToken(LEGACY_HEADER, { ...LEGACY_PAYLOAD, exp: Number.MAX_SAFE_INTEGER + 1 })],
+      ['duplicate header', legacyToken('{"alg":"none","alg":"HS256","typ":"JWT"}')],
+      ['duplicate role', legacyToken(LEGACY_HEADER, payloadText.replace('"role":"anon"', '"role":"service_role","role":"anon"'))],
+      ['escaped role', legacyToken(LEGACY_HEADER, payloadText.replace('"anon"', String.raw`"an\u006fn"`))],
+      ['number alias', legacyToken(LEGACY_HEADER, payloadText.replace(String(LEGACY_PAYLOAD.exp), `${LEGACY_PAYLOAD.exp}.0`))],
+      ['whitespace', legacyToken(LEGACY_HEADER, ` ${payloadText}`)],
+      ['BOM', legacyToken(LEGACY_HEADER, `\uFEFF${payloadText}`)],
+      ['array metadata', legacyToken(LEGACY_HEADER, [])],
+      ['invalid JSON', legacyToken(LEGACY_HEADER, '{')],
+      ['oversized header', legacyToken(' '.repeat(513))],
+      ['oversized payload', legacyToken(LEGACY_HEADER, ' '.repeat(2049))],
+      ['invalid UTF8', `${encodeMetadata(LEGACY_HEADER)}.${Buffer.from([0xff]).toString('base64url')}.${LEGACY_SIGNATURE}`],
+      ['padded segment', `${encodeMetadata(LEGACY_HEADER)}=.${encodeMetadata(LEGACY_PAYLOAD)}.${LEGACY_SIGNATURE}`],
+      ['noncanonical base64url', legacyToken(LEGACY_HEADER, LEGACY_PAYLOAD, LEGACY_SIGNATURE.slice(0, -1) + 'F')],
+      ['short signature', legacyToken(LEGACY_HEADER, LEGACY_PAYLOAD, Buffer.alloc(31).toString('base64url'))],
+      ['long signature', legacyToken(LEGACY_HEADER, LEGACY_PAYLOAD, Buffer.alloc(33).toString('base64url'))],
+      ['empty signature', legacyToken(LEGACY_HEADER, LEGACY_PAYLOAD, '')],
+      ['extra segment', `${LEGACY_TOKEN}.extra`],
+      ['bad alphabet', `${LEGACY_TOKEN}+`],
+    ]
+    for (const [label, key] of invalid) {
+      let calls = 0
+      const result = await checkProductionImport({ env: { ...ENV, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: key },
+        fetchImpl: async () => { calls++; throw Error('must not read') } })
+      assert.equal(result.status, 'alarm', label); assert.equal(result.code, 'credentials_invalid', label)
+      assert.equal(calls, 0, label); assertSafe(result)
+      assert.equal(JSON.stringify(result).includes(key), false, label)
+    }
+  })
+  await t.test('legacy metadata is not authentication; Supabase key rejection remains an alarm', async () => {
+    for (const status of [401, 403]) {
+      const result = await checkProductionImport({ env: { ...ENV, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: LEGACY_TOKEN },
+        fetchImpl: fixtureFetch(schedule(), visitor(), { schedule: { status } }) })
+      assert.equal(result.status, 'alarm'); assert.equal(result.schedule, 'access_denied')
+      assert.equal(result.visitor, 'current'); assertSafe(result)
+    }
   })
   await t.test('stopped, stale or blocked schedule alarms even while the visitor remains accepted', async () => {
     const result = await check({ schema: 1, status: 'unavailable', nextDueAt: null })
