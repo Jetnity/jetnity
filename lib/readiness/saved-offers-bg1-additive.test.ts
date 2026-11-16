@@ -13,6 +13,8 @@ test('one owner-only bundle binds unchanged migration bytes and refuses alterati
   assert.match(sql,/COMMIT;\n$/)
   assert.match(sql,/production:qscbgcdmivbbnzrcyegn:SAVED-OFFERS-BG1-1/)
   assert.match(sql,/approved_delta_digest/)
+  assert.match(sql,/c\.relname IN \('profiles','saved_offers'\)/)
+  assert.match(sql,/CREATE OR REPLACE FUNCTION official_v3_guard_private\.catalog_status_v1\(\)/)
   assert.match(sql,/saved_offers unauthorized catalog delta/)
   assert.match(sql,/saved_offers unproved successor must fail closed/)
   assert.match(sql,/official_v3_guard_private\.saved_offers_baseline_v1/)
