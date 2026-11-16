@@ -19,6 +19,8 @@ import { AlertCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Fehler } from '@/lib/admin/ladezustand'
 import { cn } from '@/lib/utils'
+import { ADMIN_LESE_TEXTE } from '@/lib/localization/admin-lese-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
 
 type Props = {
   fehler: Fehler
@@ -31,12 +33,16 @@ type Props = {
    */
   veraltet?: boolean
   className?: string
+  /** Presentation only; original diagnostics and retry semantics are unchanged. */
+  sprache?: UiSprache
 }
 
-export function Fehlerflaeche({ fehler, onWiederholen, laeuft, veraltet, className }: Props) {
+export function Fehlerflaeche({ fehler, onWiederholen, laeuft, veraltet, className, sprache = 'de' }: Props) {
+  const texte = ADMIN_LESE_TEXTE[sprache]
   return (
     <div
       role="alert"
+      lang={sprache}
       className={cn(
         'flex flex-col gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive sm:flex-row sm:items-start sm:justify-between',
         className,
@@ -46,14 +52,14 @@ export function Fehlerflaeche({ fehler, onWiederholen, laeuft, veraltet, classNa
         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
         <div>
           <p className="font-medium">
-            {veraltet ? 'Die Aktualisierung ist fehlgeschlagen.' : 'Diese Ansicht konnte nicht geladen werden.'}
+            {texte[veraltet ? 'adminRead.refreshFailed' : 'adminRead.loadFailed']}
           </p>
           <p className="mt-1 break-words opacity-90">{fehler.meldung}</p>
           {/* Der Satz ist die Antwort auf 503 aus ADR-0037: Ob es Daten gäbe,
               ist unbekannt. Bei 500 hat die Datenbank geantwortet und
               abgelehnt – dann hilft Wiederholen nicht, und die Zeile fehlt. */}
-          {fehler.wiederholbar && <p className="mt-1 opacity-90">Ein zweiter Versuch kann helfen.</p>}
-          {veraltet && <p className="mt-1 opacity-90">Die angezeigten Daten sind älter.</p>}
+          {fehler.wiederholbar && <p className="mt-1 opacity-90">{texte['adminRead.retryHint']}</p>}
+          {veraltet && <p className="mt-1 opacity-90">{texte['adminRead.staleHint']}</p>}
         </div>
       </div>
 
@@ -66,7 +72,7 @@ export function Fehlerflaeche({ fehler, onWiederholen, laeuft, veraltet, classNa
           className="shrink-0 gap-1 self-start"
         >
           <RefreshCw className={cn('h-4 w-4', laeuft && 'animate-spin')} aria-hidden="true" />
-          Erneut versuchen
+          {texte['adminRead.retry']}
         </Button>
       )}
     </div>

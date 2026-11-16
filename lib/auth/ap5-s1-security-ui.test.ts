@@ -1,3 +1,4 @@
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -26,7 +27,9 @@ describe('AP-5-S1 Security-UI Semantik', () => {
     assert.equal(security.includes('totpFaktorAnzeigename'), true)
     assert.equal(security.includes('Gerät'), false)
     assert.equal(seite.includes('SecuritySitzung'), true)
-    assert.equal(seite.includes('diese Sitzung'), true)
+    assert.match(seite, /sicherheitText\(sprache, 'page.intro'\)/)
+    assert.match(sicherheitText('de', 'page.intro'), /diese Sitzung/)
+    assert.match(sicherheitText('en', 'page.intro'), /this session/)
   })
 
   test('keine rohen GoTrue-Meldungen, Secrets oder Auth-Settings-Copy', () => {

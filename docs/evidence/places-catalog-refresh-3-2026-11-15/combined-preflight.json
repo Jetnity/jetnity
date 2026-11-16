@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "task": "Jetnity places catalog refresh 3",
+  "mode": "offline-combined-preflight",
+  "status": "pass",
+  "databaseWrites": false,
+  "checkedAt": "2026-11-15T17:01:52.443128+00:00",
+  "export": {
+    "path": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/places-combined.jsonl",
+    "bytes": 99265449,
+    "sha256": "626eda801321471285889859e2025165c6032b7b45e67abe3de27164d12fb991",
+    "rows": 294833,
+    "uniqueIds": 294833,
+    "uniqueSourceKeys": 294833,
+    "types": {
+      "airport": 5332,
+      "city": 100864,
+      "country": 250,
+      "island": 175036,
+      "region": 13351
+    },
+    "sources": {
+      "geonames": 289501,
+      "ourairports": 5332
+    },
+    "nullCoordinateValues": 0,
+    "nullCountryCodes": 92
+  },
+  "existingPlaces": {
+    "projectRef": "yfvbxvijcorffwxbxahl",
+    "count": 270,
+    "databaseDigest": "cc9a679ea45b5a66fa82bbcdc5792203",
+    "foundInCombined": 270,
+    "newRows": 294563,
+    "missingIds": [],
+    "identityFieldsCompared": [
+      "id",
+      "source",
+      "source_id",
+      "country_code",
+      "typ"
+    ],
+    "identityChanges": [],
+    "sourceIdentityCollisions": [],
+    "metadataChanges": [],
+    "updatedAtNote": "Existing updated_at is intentionally excluded from source comparison; the normal writer supplies now(). Preserve the full original snapshot before applying."
+  },
+  "checks": {
+    "duplicateIdsOrSourceKeys": 0,
+    "invalidRows": 0,
+    "existingIdentityChanges": 0,
+    "sourceIdentityCollisions": 0,
+    "missingExistingIds": 0
+  },
+  "diagnostics": {
+    "duplicates": [],
+    "invalidRows": []
+  },
+  "errors": [],
+  "limits": [
+    "This verifies pinned public source data and Root-provided Dev backups locally; no SQL was executed.",
+    "Actual write receipts, live readback, cost-capacity approval and hosted user-flow acceptance remain with Root."
+  ]
+}

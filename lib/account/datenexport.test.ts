@@ -19,6 +19,7 @@ import {
   kontoDatenexportSpaltenliste,
 } from '@/lib/account/datenexport'
 import type { Database } from '@/types/supabase'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
@@ -28,7 +29,8 @@ function quelle(relativ: string) {
 
 const helfer = quelle('datenexport.ts')
 const route = quelle('../../app/api/account/export/route.ts')
-const settings = quelle('../../app/account/settings/page.tsx')
+const settings = quelle('../../components/account/ui-einstellungen-1/EinstellungenInhalt.tsx')
+const settingsSeite = quelle('../../app/account/settings/page.tsx')
 const loeschen = quelle('../../components/account/KontoLoeschen.tsx')
 const proxy = quelle('../../proxy.ts')
 
@@ -400,22 +402,28 @@ describe('V1 Account Data Export 1 Vertrag', () => {
   test('Einstellungen bieten den Export ehrlich und die Löschung getrennt an', () => {
     assert.match(settings, /KontoDatenexportAktion/)
     assert.equal(settings.includes('href="/api/account/export"'), false)
-    assert.match(settings, /keine einzelne atomare Momentaufnahme/)
+    assert.match(einstellungenText('de', 'export.scope'), /keine einzelne atomare Momentaufnahme/)
+    assert.match(settings, /einstellungenText\(sprache, 'export.scope'\)/)
     assert.match(settings, /aria-labelledby="account-datenexport-title"/)
     assert.match(settings, /<h2[\s\S]*id="account-datenexport-title"/)
-    assert.match(settings, /aktuell von Jetnity gespeicherten Konto- und Reisedaten/)
-    assert.match(settings, /sensible Reise- und Reisendenangaben/)
-    assert.match(settings, /kein[\s\S]*vollständiger rechtlicher Datenauszug/)
-    assert.match(settings, /keine Kontolöschung/)
+    assert.match(einstellungenText('de', 'export.description'), /aktuell von Jetnity gespeicherten Konto- und Reisedaten/)
+    assert.match(einstellungenText('de', 'export.description'), /sensible Reise- und Reisendenangaben/)
+    assert.match(settings, /einstellungenText\(sprache, 'export.description'\)/)
+    assert.match(einstellungenText('de', 'export.scope'), /kein[\s\S]*vollständiger rechtlicher Datenauszug/)
+    assert.match(einstellungenText('de', 'export.scope'), /keine Kontolöschung/)
+    assert.match(settings, /einstellungenText\(sprache, 'export.exclusion'\)/)
+    assert.match(einstellungenText('de', 'export.exclusion'), /Kontosprache.*nicht enthalten/)
     assert.equal(settings.includes('/account/delete'), false)
     assert.equal(settings.includes('DSGVO'), false)
     assert.equal(settings.includes('CH-DSG'), false)
     assert.match(settings, /KontoLoeschen/)
     assert.match(loeschen, /href="\/api\/account\/export"/)
-    assert.match(settings, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
-    assert.match(settings, /loeschungAngeboten \? <KontoLoeschen \/> : null/)
+    assert.match(settingsSeite, /loeschUmgebungErlaubt\(process\.env\.NEXT_PUBLIC_SUPABASE_URL\)/)
+    assert.match(settingsSeite, /loeschungAngeboten=\{loeschungAngeboten\}/)
+    assert.match(settings, /loeschungAngeboten \? <KontoLoeschen sprache=\{sprache\} \/> : null/)
     assert.equal(settings.includes('headers('), false)
-    assert.match(settings, /aktuelle Sitzung/)
+    assert.match(einstellungenText('de', 'security.description'), /aktuelle Sitzung/)
+    assert.match(settings, /einstellungenText\(sprache, 'security.description'\)/)
     assert.match(settings, /href="\/account\/security"/)
     assert.match(settings, /min-h-11/)
   })

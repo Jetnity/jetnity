@@ -136,9 +136,9 @@ const certificates = 'UPDATE official_v3_result_private.binding_v1 SET state_cer
   + 'SELECT official_v3_guard_private.check_retirements_v1();SELECT official_v3_guard_private.check_certificates_v1();'
 
 export async function prepareCycle4Attempt2RecoveryFixture(proof: OwnedPersistentProof,
-  signal: AbortSignal): Promise<{ tables: Record<string, Row[]> }> {
+  signal: AbortSignal, beforeProtectedSetup?: () => Promise<void>): Promise<{ tables: Record<string, Row[]> }> {
   signal.throwIfAborted()
-  const prior = await prepareCycle4RecoveryFixture(proof)
+  const prior = await prepareCycle4RecoveryFixture(proof, beforeProtectedSetup)
   const previous = readJson('../official-truth-v3-dev-cycle4-recovery-1/original-evidence.json') as Evidence
   const evidence = readJson('./original-evidence.json') as Evidence
   const delta = fixture('./', 'local-history-delta', 'owned-local-pg17-redacted-dev-history-delta')

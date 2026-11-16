@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-15",
+  "runtime": "Node 22.23.5",
+  "scope": "account-admin-translations-2",
+  "render": {
+    "command": "node --import ./scripts/server-only-test-register.mjs --import tsx --test lib/localization/account-admin-display-2/display.test.ts",
+    "exitCode": 0,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "output": "render.tap"
+  },
+  "types": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "exitCode": 0,
+    "output": "types.txt"
+  },
+  "lint": {
+    "scope": "all eight modified existing route/component files, lib/localization/analytics-texte.ts, lib/localization/buchungen-texte.ts, lib/localization/admin-lese-texte.ts, lib/localization/konto-anzeigesprache.ts, lib/localization/account-admin-display-2, scripts/account-admin-display-2/harness.tsx",
+    "exitCode": 0,
+    "output": "lint.txt"
+  },
+  "fixtureBundle": {
+    "entry": "scripts/account-admin-display-2/harness.tsx",
+    "platform": "browser",
+    "exitCode": 0,
+    "unreplacedEnvironmentExpressions": false,
+    "executed": false,
+    "output": "fixture-build.txt"
+  },
+  "browserExecutedLocally": false,
+  "socketServerStartedLocally": false,
+  "postgresStartedLocally": false,
+  "ci": "pending Root publication",
+  "authenticatedDevAcceptance": "pending Root and manual user login"
+}

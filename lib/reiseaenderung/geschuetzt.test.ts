@@ -6,6 +6,47 @@ import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
 describe('Geschützte kommerzielle Felder', () => {
+  for (const schutz of ['preis', 'buchung'] as const) {
+    test(`ursprünglich tagloser Punkt mit ${schutz} behält seine gültige Etappe vollständig`, () => {
+      const vorher = beispielreise()
+      const original = {
+        ...vorher.days[0]!.items[0]!, id: 'taglose-unterkunft', kind: 'stay' as const,
+        dayId: null, stageId: vorher.stages[0]!.id,
+        priceAmount: schutz === 'preis' ? 150 : null,
+        priceCurrency: schutz === 'preis' ? 'CHF' : null,
+        provider: null, externalRef: null, bookingUrl: null,
+        bookingStatus: schutz === 'buchung' ? 'booked' as const : 'unconfirmed' as const,
+        bookingSource: schutz === 'buchung' ? 'user' as const : null,
+        bookingConfirmedAt: schutz === 'buchung' ? '2026-08-21T10:00:00.000Z' : null,
+      }
+      vorher.ohneTag.push(original)
+      const nachher = structuredClone(vorher)
+      nachher.title = 'Neuer Titel'
+      nachher.ohneTag[0] = { ...original, title: 'Unzulässige Änderung', stageId: null, priceAmount: 1 }
+      const erhalten = kommerziellErhalten(vorher, nachher)
+      assert.deepEqual(erhalten.ohneTag.find(p => p.id === original.id), original)
+      assert.equal(erhalten.days.flatMap(d => d.items).some(p => p.id === original.id), false)
+    })
+  }
+
+  test('tagloser geschützter Punkt wird beim Entfernen seiner Etappe entkoppelt', () => {
+    const vorher = beispielreise()
+    const original = { ...vorher.days[0]!.items[0]!, id: 'taglos', dayId: null }
+    vorher.ohneTag.push(original)
+    const nachher = structuredClone(vorher)
+    nachher.stages = nachher.stages.filter(s => s.id !== original.stageId)
+    const erhalten = kommerziellErhalten(vorher, nachher)
+    assert.deepEqual(erhalten.ohneTag.find(p => p.id === original.id), { ...original, stageId: null })
+  })
+
+  test('entfernter ursprünglicher Tag entkoppelt auch bei weiter vorhandener Etappe', () => {
+    const vorher = beispielreise(), original = vorher.days[0]!.items[0]!
+    const nachher = structuredClone(vorher)
+    nachher.days = nachher.days.filter(d => d.id !== original.dayId)
+    const erhalten = kommerziellErhalten(vorher, nachher)
+    assert.deepEqual(erhalten.ohneTag.find(p => p.id === original.id), { ...original, dayId: null, stageId: null })
+  })
+
   test('gleiche Kennung stellt den kommerziellen Punkt vollständig wieder her', () => {
     const vorher = beispielreise()
     const nachher = beispielreise()

@@ -1,3 +1,5 @@
+import { MFA_STEP_UP_DIALOG_TEXT } from '@/lib/auth/account-mfa-step-up'
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -64,7 +66,9 @@ describe('AP-5-S4 Vertrag und Accessibility', () => {
     assert.equal(dialog.includes('focus()'), true)
     assert.equal(dialog.includes("key === \"Escape\""), true)
     assert.equal(dialog.includes('min-h-11'), true)
-    assert.equal(dialog.includes('Bitte warten…'), true)
+    assert.match(dialog, /beschaeftigt \? sicherheitText\(sprache, "common.wait"\)/)
+    assert.equal(sicherheitText('de', 'common.wait'), 'Bitte warten…')
+    assert.equal(sicherheitText('en', 'common.wait'), 'Please wait…')
     assert.equal(dialog.includes('data-mfa-step-up-lage'), true)
   })
 
@@ -90,6 +94,8 @@ describe('AP-5-S4 Vertrag und Accessibility', () => {
     assert.equal(mfa.includes('globales Consumer-AAL2'), true)
     assert.equal(logik.includes('keine globale Zwei-Faktor-Pflicht'), true)
     assert.equal(logik.includes('technisch auf die Zwei-Faktor-Stufe'), true)
-    assert.equal(dialog.includes('MFA_STEP_UP_DIALOG_TEXT'), true)
+    assert.match(dialog, /sicherheitText\(sprache, "step.description"\)/)
+    assert.equal(sicherheitText('de', 'step.description'), MFA_STEP_UP_DIALOG_TEXT)
+    assert.match(sicherheitText('en', 'step.description'), /does not enable a global two-factor requirement/)
   })
 })

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "task": "Jetnity places catalog refresh 3",
+  "mode": "offline-existing-converter",
+  "databaseWrites": false,
+  "convertedAt": "2026-11-15T17:01:19.210Z",
+  "projectRef": "yfvbxvijcorffwxbxahl",
+  "airportRows": 5332,
+  "skippedNullIata": 0,
+  "rejectedByConverter": 0,
+  "convertedRows": 5332,
+  "airportSnapshotDatabaseDigest": "90feedd315e598f44b4b1f65b08d0304",
+  "backupFilesVerified": 14,
+  "converter": "lib/places/importieren.ts#ortAusFlughafen",
+  "converterSha256": "ea1e1807e565ab9829b722624f5833a60e23b6db61b67f5c2a454a77ec6f49b0",
+  "airportExport": {
+    "path": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/places-airports.jsonl",
+    "bytes": 1612035,
+    "sha256": "d9237f9743fb94f5a91a55246cb06e9a098b9b15bf17e347ae344bf257c9c456"
+  },
+  "combinedExportPath": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/places-combined.jsonl"
+}

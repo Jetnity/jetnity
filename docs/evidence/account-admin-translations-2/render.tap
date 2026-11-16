@@ -1,0 +1,158 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Optional display language keeps existing German callers and booking copy compatible
+ok 1 - Optional display language keeps existing German callers and booking copy compatible
+  ---
+  duration_ms: 52.731059
+  type: 'test'
+  ...
+# Subtest: English changes labels without altering analytics data, selected ranges or calendar dates
+ok 2 - English changes labels without altering analytics data, selected ranges or calendar dates
+  ---
+  duration_ms: 5.463011
+  type: 'test'
+  ...
+# Subtest: Analytics de preserves unavailable, partial source errors and confirmed zero
+ok 3 - Analytics de preserves unavailable, partial source errors and confirmed zero
+  ---
+  duration_ms: 6.844771
+  type: 'test'
+  ...
+# Subtest: Admin error framing de preserves source diagnostics, stale status and 503-only retry hint
+ok 4 - Admin error framing de preserves source diagnostics, stale status and 503-only retry hint
+  ---
+  duration_ms: 1.028
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps ungueltig distinct from all other states
+ok 5 - Bookings de keeps ungueltig distinct from all other states
+  ---
+  duration_ms: 3.348255
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps fehler distinct from all other states
+ok 6 - Bookings de keeps fehler distinct from all other states
+  ---
+  duration_ms: 2.051282
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps fehler503 distinct from all other states
+ok 7 - Bookings de keeps fehler503 distinct from all other states
+  ---
+  duration_ms: 2.423419
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps leer distinct from all other states
+ok 8 - Bookings de keeps leer distinct from all other states
+  ---
+  duration_ms: 2.365863
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps keine distinct from all other states
+ok 9 - Bookings de keeps keine distinct from all other states
+  ---
+  duration_ms: 2.396889
+  type: 'test'
+  ...
+# Subtest: Bookings de keeps fortsetzungLeer distinct from all other states
+ok 10 - Bookings de keeps fortsetzungLeer distinct from all other states
+  ---
+  duration_ms: 2.405823
+  type: 'test'
+  ...
+# Subtest: Bookings de preserves user text, booking links, legacy props and loading semantics
+ok 11 - Bookings de preserves user text, booking links, legacy props and loading semantics
+  ---
+  duration_ms: 4.436495
+  type: 'test'
+  ...
+# Subtest: Analytics en preserves unavailable, partial source errors and confirmed zero
+ok 12 - Analytics en preserves unavailable, partial source errors and confirmed zero
+  ---
+  duration_ms: 7.662866
+  type: 'test'
+  ...
+# Subtest: Admin error framing en preserves source diagnostics, stale status and 503-only retry hint
+ok 13 - Admin error framing en preserves source diagnostics, stale status and 503-only retry hint
+  ---
+  duration_ms: 1.40184
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps ungueltig distinct from all other states
+ok 14 - Bookings en keeps ungueltig distinct from all other states
+  ---
+  duration_ms: 3.631749
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps fehler distinct from all other states
+ok 15 - Bookings en keeps fehler distinct from all other states
+  ---
+  duration_ms: 3.424439
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps fehler503 distinct from all other states
+ok 16 - Bookings en keeps fehler503 distinct from all other states
+  ---
+  duration_ms: 3.127664
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps leer distinct from all other states
+ok 17 - Bookings en keeps leer distinct from all other states
+  ---
+  duration_ms: 2.814915
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps keine distinct from all other states
+ok 18 - Bookings en keeps keine distinct from all other states
+  ---
+  duration_ms: 3.236287
+  type: 'test'
+  ...
+# Subtest: Bookings en keeps fortsetzungLeer distinct from all other states
+ok 19 - Bookings en keeps fortsetzungLeer distinct from all other states
+  ---
+  duration_ms: 3.7923
+  type: 'test'
+  ...
+# Subtest: Bookings en preserves user text, booking links, legacy props and loading semantics
+ok 20 - Bookings en preserves user text, booking links, legacy props and loading semantics
+  ---
+  duration_ms: 6.248317
+  type: 'test'
+  ...
+# Subtest: English filter labels retain the original field names, enum values, selected values and limits
+ok 21 - English filter labels retain the original field names, enum values, selected values and limits
+  ---
+  duration_ms: 1.611253
+  type: 'test'
+  ...
+# Subtest: English date presentation keeps exact stored days and missing endpoints without timezone or year inference
+ok 22 - English date presentation keeps exact stored days and missing endpoints without timezone or year inference
+  ---
+  duration_ms: 0.415302
+  type: 'test'
+  ...
+# Subtest: Catalog exports only implemented booking labels and preserves analytics placeholder facts
+ok 23 - Catalog exports only implemented booking labels and preserves analytics placeholder facts
+  ---
+  duration_ms: 0.885085
+  type: 'test'
+  ...
+# (node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1774.548499

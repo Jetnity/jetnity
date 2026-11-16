@@ -4,22 +4,25 @@ import { useEffect, useRef, useState } from 'react'
 
 import { SICHERHEIT_ZIEL_44 } from '@/lib/auth/account-security-premium-ux-1'
 import {
-  EXPORT_ERFOLG_TEXT,
   EXPORT_FRIST_MS,
   exportDateiName,
   exportDokumentGueltig,
   exportFehlertext,
+  exportErfolgtext,
   exportGeneratedAt,
 } from '@/lib/account/account-home-export-1/export-antwort'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
 
 type Phase = 'bereit' | 'laeuft' | 'fehler' | 'abgebrochen' | 'uebergeben'
 
 const KNOPF =
   'inline-flex items-center rounded-2xl bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:cursor-not-allowed disabled:opacity-60'
 
-export default function KontoDatenexportAktion() {
+export default function KontoDatenexportAktion({ sprache = 'de' }: { sprache?: UiSprache }) {
   const [phase, setPhase] = useState<Phase>('bereit')
-  const [meldung, setMeldung] = useState<string | null>(null)
+  const [hinweis, setHinweis] = useState<Parameters<typeof exportFehlertext>[0] | 'erfolg' | null>(null)
+  const meldung = hinweis === null ? null : hinweis === 'erfolg' ? exportErfolgtext(sprache) : exportFehlertext(hinweis, sprache)
   const wurzel = useRef<HTMLDivElement | null>(null)
   const lauf = useRef<AbortController | null>(null)
   const generation = useRef(0)
@@ -65,7 +68,7 @@ export default function KontoDatenexportAktion() {
     generation.current += 1
     controller.abort()
     widerrufen()
-    setMeldung(exportFehlertext('abbruch'))
+    setHinweis('abbruch')
     setPhase('abgebrochen')
   }
 
@@ -78,7 +81,7 @@ export default function KontoDatenexportAktion() {
     lauf.current = controller
     ursache.current = null
     setPhase('laeuft')
-    setMeldung(null)
+    setHinweis(null)
     const frist = window.setTimeout(() => {
       if (generation.current !== meine) return
       if (lauf.current === controller) lauf.current = null
@@ -86,7 +89,7 @@ export default function KontoDatenexportAktion() {
       generation.current += 1
       controller.abort()
       widerrufen()
-      setMeldung(exportFehlertext('frist'))
+      setHinweis('frist')
       setPhase('abgebrochen')
     }, EXPORT_FRIST_MS)
 
@@ -100,7 +103,7 @@ export default function KontoDatenexportAktion() {
       })
       if (generation.current !== meine) return
       if (!antwort.ok) {
-        setMeldung(exportFehlertext(antwort.status))
+        setHinweis(antwort.status)
         setPhase('fehler')
         return
       }
@@ -110,13 +113,13 @@ export default function KontoDatenexportAktion() {
       try {
         json = JSON.parse(text)
       } catch {
-        setMeldung(exportFehlertext('unlesbar'))
+        setHinweis('unlesbar')
         setPhase('fehler')
         return
       }
       if (!exportDokumentGueltig(json) || generation.current !== meine) {
         if (generation.current !== meine) return
-        setMeldung(exportFehlertext('unlesbar'))
+        setHinweis('unlesbar')
         setPhase('fehler')
         return
       }
@@ -138,16 +141,16 @@ export default function KontoDatenexportAktion() {
       window.setTimeout(() => {
         if (adresse.current === url) widerrufen()
       }, 0)
-      setMeldung(EXPORT_ERFOLG_TEXT)
+      setHinweis('erfolg')
       setPhase('uebergeben')
     } catch {
       if (generation.current !== meine) return
       if (controller.signal.aborted) {
-        setMeldung(exportFehlertext(ursache.current === 'frist' ? 'frist' : 'abbruch'))
+        setHinweis(ursache.current === 'frist' ? 'frist' : 'abbruch')
         setPhase('abgebrochen')
         return
       }
-      setMeldung(exportFehlertext('unlesbar'))
+      setHinweis('unlesbar')
       setPhase('fehler')
     } finally {
       window.clearTimeout(frist)
@@ -162,12 +165,12 @@ export default function KontoDatenexportAktion() {
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <button
           type="button"
-          className={`${SICHERHEIT_ZIEL_44} ${KNOPF}`}
+          className={`${SICHERHEIT_ZIEL_44} ${KNOPF} min-w-0 whitespace-normal py-2 text-left [overflow-wrap:anywhere]`}
           onClick={() => void starten()}
           disabled={phase === 'laeuft'}
           aria-busy={phase === 'laeuft'}
         >
-          Konto- und Reisedaten als JSON herunterladen
+          {einstellungenText(sprache, 'export.download')}
         </button>
         {phase === 'laeuft' ? (
           <button
@@ -175,7 +178,7 @@ export default function KontoDatenexportAktion() {
             className="inline-flex min-h-11 items-center rounded-2xl border border-line-200 bg-white px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             onClick={abbrechen}
           >
-            Export abbrechen
+            {einstellungenText(sprache, 'export.cancel')}
           </button>
         ) : null}
       </div>

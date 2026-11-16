@@ -19,7 +19,6 @@ import {
   kontoloeschungFunktionsUrl,
   kontoloeschungIstBeschaeftigt,
   kontoloeschungSendenGesperrt,
-  kontoloeschungStatusText,
   kontoloeschungWeiter,
   type KontoloeschungPort,
   type KontoloeschungZustand,
@@ -27,6 +26,8 @@ import {
 import { loeschUmgebungErlaubt } from '@/lib/account/kontoloeschung-vertrag'
 import { mfaStepUpChallengeIdLesen } from '@/lib/auth/account-mfa-step-up'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { einstellungenText, lokalisierterLoeschstatus } from '@/lib/localization/einstellungen-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
 
 function portBauen(): KontoloeschungPort {
   const client = createBrowserClient()
@@ -109,7 +110,7 @@ function portBauen(): KontoloeschungPort {
   }
 }
 
-export default function KontoLoeschen() {
+export default function KontoLoeschen({ sprache = 'de' }: { sprache?: UiSprache }) {
   const [zustand, setZustand] = React.useState<KontoloeschungZustand>(KONTOLOESCHUNG_ANFANG)
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [zeigePasswort, setZeigePasswort] = React.useState(false)
@@ -121,7 +122,7 @@ export default function KontoLoeschen() {
   const codeRef = React.useRef<HTMLInputElement>(null)
   const beschaeftigt = kontoloeschungIstBeschaeftigt(zustand)
   const gesperrt = kontoloeschungSendenGesperrt(zustand, bestaetigung, passwort, code)
-  const status = kontoloeschungStatusText(zustand)
+  const status = lokalisierterLoeschstatus(sprache, zustand.phase, zustand.fehler?.code ?? null)
   // Nur Darstellung. Die Zustandsmaschine bleibt unberührt, solange die Phase
   // noch `bereit` ist. Nach dem Start gibt es kein Schließen.
   const formularSichtbar = zustand.phase !== 'nicht_unterstuetzt' && (formularOffen || zustand.phase !== 'bereit')
@@ -176,38 +177,37 @@ export default function KontoLoeschen() {
       data-kontoloeschung-formular={formularSichtbar ? 'offen' : 'zu'}
       className="scroll-mt-24 rounded-[26px] border border-red-200 bg-red-50/50 p-4 sm:p-5"
     >
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-800">
           <Trash2 className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 id="konto-loeschen-titel" className="text-lg font-semibold tracking-[-0.03em] text-brand-800">
-            Konto löschen
+            {einstellungenText(sprache, 'delete.title')}
           </h2>
           <p id="konto-loeschen-hinweis" className="mt-1 text-sm leading-6 text-ink-700">
-            Das Löschen entfernt dieses Jetnity-Konto und die dazu gespeicherten Reisen, Reisenden
-            und Besuche. Eine Wiederherstellung dieses Kontos ist nicht vorgesehen.
+            {einstellungenText(sprache, 'delete.description')}
           </p>
           <p className="mt-3 text-sm leading-6 text-ink-700">
-            Bevor du löschst, kannst du die vorhandenen Konto- und Reisedaten herunterladen.
+            {einstellungenText(sprache, 'delete.exportHint')}
           </p>
           <a
             href="/api/account/export"
             className={`${SICHERHEIT_ZIEL_44} mt-4 inline-flex items-center rounded-2xl border border-brand-800 px-4 text-sm font-semibold text-brand-800 transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
           >
-            Daten zuerst exportieren
+            {einstellungenText(sprache, 'delete.export')}
           </a>
 
           {vorbereitenSichtbar ? (
             <Button
               type="button"
               variant="outline"
-              className={`${SICHERHEIT_ZIEL_44} mt-4 border-red-700 text-red-900 hover:bg-red-100`}
+              className={`${SICHERHEIT_ZIEL_44} mt-4 h-auto max-w-full whitespace-normal border-red-700 py-2 text-red-900 hover:bg-red-100 pointer-fine:h-auto [&>span]:min-w-0 [&>span]:break-words`}
               aria-expanded={false}
               aria-controls="konto-loeschen-formular"
               onClick={() => setFormularOffen(true)}
             >
-              Kontolöschung vorbereiten
+              {einstellungenText(sprache, 'delete.prepare')}
             </Button>
           ) : null}
 
@@ -217,7 +217,7 @@ export default function KontoLoeschen() {
             <form id="konto-loeschen-formular" className="mt-6 space-y-4" onSubmit={absenden}>
               <div>
                 <label htmlFor="konto-loeschen-bestaetigung" className="text-sm font-medium text-brand-800">
-                  Gib KONTO LÖSCHEN ein, um fortzufahren
+                  {einstellungenText(sprache, 'delete.confirmLabel')}
                 </label>
                 <input
                   id="konto-loeschen-bestaetigung"
@@ -235,7 +235,7 @@ export default function KontoLoeschen() {
               {zustand.phase === 'mfa' ? (
                 <div>
                   <label htmlFor="konto-loeschen-code" className="text-sm font-medium text-brand-800">
-                    6-stelliger Code
+                    {einstellungenText(sprache, 'delete.codeLabel')}
                   </label>
                   <input
                     ref={codeRef}
@@ -252,7 +252,7 @@ export default function KontoLoeschen() {
               ) : (
                 <div>
                   <label htmlFor="konto-loeschen-passwort" className="text-sm font-medium text-brand-800">
-                    Aktuelles Passwort
+                    {einstellungenText(sprache, 'delete.passwordLabel')}
                   </label>
                   <div className="relative mt-2">
                     <input
@@ -267,7 +267,7 @@ export default function KontoLoeschen() {
                     <button
                       type="button"
                       className={`${SICHERHEIT_ZIEL_44_QUADRAT} absolute right-1 top-1/2 -translate-y-1/2 rounded-xl text-brand-800 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
-                      aria-label={zeigePasswort ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                      aria-label={einstellungenText(sprache, zeigePasswort ? 'delete.hidePassword' : 'delete.showPassword')}
                       onClick={() => setZeigePasswort((wert) => !wert)}
                     >
                       {zeigePasswort ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
@@ -282,19 +282,19 @@ export default function KontoLoeschen() {
                   variant="destructive"
                   disabled={gesperrt}
                   isLoading={beschaeftigt}
-                  loadingText="Konto wird gelöscht"
-                  className={SICHERHEIT_ZIEL_44}
+                  loadingText={einstellungenText(sprache, 'delete.busy')}
+                  className={`${SICHERHEIT_ZIEL_44} h-auto whitespace-normal py-2 pointer-fine:h-auto [&>span]:min-w-0 [&>span]:break-words`}
                 >
-                  Konto endgültig löschen
+                  {einstellungenText(sprache, 'delete.submit')}
                 </Button>
                 {schliessenSichtbar ? (
                   <Button
                     type="button"
                     variant="ghost"
-                    className={SICHERHEIT_ZIEL_44}
+                    className={`${SICHERHEIT_ZIEL_44} h-auto whitespace-normal py-2 pointer-fine:h-auto [&>span]:min-w-0 [&>span]:break-words`}
                     onClick={vorbereitungSchliessen}
                   >
-                    Vorbereitung schließen
+                    {einstellungenText(sprache, 'delete.close')}
                   </Button>
                 ) : null}
               </div>

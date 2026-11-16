@@ -13,13 +13,14 @@ import {
   type ProviderOpsBoardItem,
 } from '@/lib/admin/provider-ops-board'
 import { deuteProviderOps } from '@/lib/admin/operations-report-validation'
+import { NATIVE_RENTAL_CHECK_ID } from '@/lib/admin/provider-ops-board/typen'
 import OperationsEvidence from '@/components/admin/OperationsEvidence'
 import { HISTORISCHER_SATZ, useOperationsReport, type OperationsHinweis } from '@/components/admin/operations/useOperationsReport'
 import { cn } from '@/lib/utils'
 
 function statusKlassen(item: {
   id: string
-  status: ProviderOpsBoardItem['status']
+  status: ProviderOpsBoardCheck['status']
   freshness: ProviderOpsBoardItem['freshness']
 }): string {
   if (providerOpsKarteIstGruen(item)) {
@@ -34,7 +35,7 @@ function statusKlassen(item: {
   return 'border-border bg-background text-muted-foreground'
 }
 
-function statusLabel(status: ProviderOpsBoardItem['status'], id: string): string {
+function statusLabel(status: ProviderOpsBoardCheck['status'], id: string): string {
   if (status === 'foundation_only') return 'Technisch vorbereitet'
   if (status === 'available') return id === 'model-usage' ? 'Protokoll lesbar' : 'Belegte Test-Capability'
   return PROVIDER_OPS_BOARD_STATUS_LABEL[status]
@@ -79,7 +80,7 @@ function CheckZeile({ check, checkedAt }: { check: ProviderOpsBoardCheck; checke
         </p>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">Nachweis: {frischeText}</p>
-      {check.status !== 'disabled' ? <p className="mt-1 break-words text-xs text-muted-foreground">{check.summary}</p> : null}
+      {check.status !== 'disabled' || check.id === NATIVE_RENTAL_CHECK_ID ? <p className="mt-1 break-words text-xs text-muted-foreground">{check.summary}</p> : null}
     </li>
   )
 }

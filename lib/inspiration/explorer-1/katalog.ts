@@ -12,6 +12,7 @@ export const THEMEN = [
 export type Thema = (typeof THEMEN)[number]['id']
 type Ziel = (typeof INSPIRATION_ZIELE)[number]
 type Redaktion = { beschreibung: string; themen: readonly Exclude<Thema, 'alle'>[] }
+export type EntdeckenZiel = Omit<Ziel, 'idea'> & Redaktion & Readonly<{ idea: string; href: string | null }>
 
 // Redaktionelle Vorschläge, keine Anbieter- oder Ortsbestätigung.
 const REDAKTION: Record<Ziel['placeId'], Redaktion> = {
@@ -33,13 +34,12 @@ const REDAKTION: Record<Ziel['placeId'], Redaktion> = {
   },
 }
 
-export const ENTDECKEN_ZIELE = INSPIRATION_ZIELE.map((ziel) => ({
+export const ENTDECKEN_ZIELE: readonly EntdeckenZiel[] = INSPIRATION_ZIELE.map((ziel) => ({
   ...ziel,
   ...REDAKTION[ziel.placeId],
   href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea),
 }))
 
-export type EntdeckenZiel = (typeof ENTDECKEN_ZIELE)[number]
 export type EntdeckenZustand = { q: string; thema: Thema }
 export const SUCHLAENGE = 120
 
@@ -71,9 +71,9 @@ function vergleich(wert: string): string {
   return wert.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('de').replace(/ß/g, 'ss')
 }
 
-export function entdeckerTreffer(zustand: EntdeckenZustand): EntdeckenZiel[] {
+export function entdeckerTreffer(zustand: EntdeckenZustand, ziele: readonly EntdeckenZiel[] = ENTDECKEN_ZIELE): EntdeckenZiel[] {
   const woerter = vergleich(suchtext(zustand.q)).split(/\s+/).filter(Boolean)
-  return ENTDECKEN_ZIELE.filter((ziel) => {
+  return ziele.filter((ziel) => {
     if (zustand.thema !== 'alle' && !ziel.themen.includes(zustand.thema)) return false
     const text = vergleich([
       ziel.name, ziel.country, ziel.beschreibung, ziel.idea,

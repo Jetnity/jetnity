@@ -7,7 +7,6 @@ import { hotelZustand } from '@/lib/hotels/zustand'
 import { mobilityZustand } from '@/lib/mobility/zustand'
 import { providerOpsZustand } from '@/lib/provider-ops'
 import { readinessZustand } from '@/lib/readiness/zustand'
-import { rentalCarZustand } from '@/lib/rental-cars/zustand'
 import { createRouteHandlerClient, createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 import type { DomainZustandSnapshot, ModelUsageSnapshot } from './bewertung'
@@ -16,6 +15,7 @@ import {
   type ProviderOpsBoardAbhaengigkeiten,
 } from './sammeln'
 import type { ProviderOpsBoardBericht } from './typen'
+import { nativeRentalConfiguration } from './native-rental'
 
 const USAGE_FENSTER_MS = 30 * 24 * 60 * 60 * 1000
 const USAGE_LIMIT = 200
@@ -31,7 +31,6 @@ function domainZustaende(): DomainZustandSnapshot[] {
     { id: 'domain-hotels', name: 'Hotels', zustand: hotelZustand() },
     { id: 'domain-activities', name: 'Activities', zustand: activityZustand() },
     { id: 'domain-mobility', name: 'Mobility', zustand: mobilityZustand() },
-    { id: 'domain-rental_cars', name: 'Rental Cars', zustand: rentalCarZustand() },
     {
       id: 'domain-readiness',
       name: 'Readiness',
@@ -94,6 +93,7 @@ function standardDeps(modus: 'rsc' | 'route'): ProviderOpsBoardAbhaengigkeiten {
     nowMs: () => Date.now(),
     vercelEnv: () => process.env.VERCEL_ENV?.trim() || null,
     domainZustaende,
+    nativeRentalConfiguration,
     liesModelUsage: () => liesModelUsage(modus),
   }
 }

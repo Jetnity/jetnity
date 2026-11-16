@@ -1,0 +1,1 @@
+PASS: actual Analytics/error component fixture compiled; no unreplaced browser environment expression. No browser, socket or database was started.

@@ -9,7 +9,7 @@ import { HomeUnterschied } from '@/components/home/HomeUnterschied'
 import { HomeVertrauen } from '@/components/home/HomeVertrauen'
 import { HomeWerkzeuge } from '@/components/home/HomeWerkzeuge'
 import GastCreateLink from '@/components/trips/GastCreateLink'
-import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
+import { publicInspiration } from '@/lib/inspiration/cms-public-server'
 import { zielHref } from '@/lib/places/auswahl'
 import {
   finalHomepageJsonLd,
@@ -42,14 +42,12 @@ export const metadata: Metadata = {
   },
 }
 
-const inspirationsziele = INSPIRATION_ZIELE.map((ziel) => ({
-  name: ziel.name,
-  country: ziel.country,
-  image: ziel.image,
-  href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
-}))
-
-export default function HomePage() {
+export default async function HomePage() {
+  const inspiration = await publicInspiration()
+  const inspirationsziele = inspiration.ziele.map((ziel) => ({
+    name: ziel.name, country: ziel.country, image: ziel.image,
+    href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
+  }))
   return (
     <main data-white-mint="home" className="break-words bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800 [&_.sr-only]:whitespace-normal">
       <HomeHero />
@@ -57,7 +55,7 @@ export default function HomePage() {
       <HomeUnterschied />
       <HomeBegleitung />
       <HomeWerkzeuge />
-      <HomeInspiration ziele={inspirationsziele} />
+      <HomeInspiration ziele={inspirationsziele} status={inspiration.status} />
       <HomeVertrauen />
       <section className="px-3 pb-16 pt-4 sm:px-5 sm:pb-24 sm:pt-8" aria-labelledby="abschluss-titel">
         <div className="mx-auto max-w-[1450px] rounded-[28px] bg-brand-800 px-5 py-10 text-white sm:rounded-[36px] sm:px-12 sm:py-14">
