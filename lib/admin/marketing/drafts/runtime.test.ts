@@ -161,7 +161,7 @@ test('shipped campaign locale keys match and production UI always uses the admit
   assert.deepEqual(Object.keys(MARKETING_DRAFT_TEXT.de).sort(), Object.keys(MARKETING_DRAFT_TEXT.en).sort())
   assert.ok(Object.values(MARKETING_DRAFT_TEXT.de).every(Boolean)); assert.ok(Object.values(MARKETING_DRAFT_TEXT.en).every(Boolean))
   const page = readFileSync(new URL('../../../../app/(admin)/admin/marketing/page.tsx', import.meta.url), 'utf8')
-  assert.match(page, /CampaignDrafts sprache=\{sprache\} enabled=\{isAdminDevRuntimeEnabled\(\)\}/)
+  assert.match(page, /CampaignDrafts sprache=\{sprache\} enabled=\{isAdminHostedRuntimeEnabled\(\)\}/)
   assert.match(page, /MarketingLinks sprache=\{sprache\}/)
   assert.doesNotMatch(page, /port=|service.role|localStorage|sessionStorage/)
 })

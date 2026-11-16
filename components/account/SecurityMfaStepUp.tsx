@@ -45,7 +45,6 @@ export default function SecurityMfaStepUp({
   const statusId = "account-mfa-step-up-status";
   const codeRef = React.useRef<HTMLInputElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
-  const zurueckRef = React.useRef<Element | null>(null);
 
   function fokussierbare(): HTMLElement[] {
     if (!dialogRef.current) return [];
@@ -56,14 +55,8 @@ export default function SecurityMfaStepUp({
     );
   }
 
-  React.useEffect(() => {
-    zurueckRef.current = document.activeElement;
-    const id = window.setTimeout(() => codeRef.current?.focus(), 0);
-    return () => {
-      window.clearTimeout(id);
-      setCode("");
-      if (zurueckRef.current instanceof HTMLElement) zurueckRef.current.focus();
-    };
+  React.useLayoutEffect(() => {
+    codeRef.current?.focus();
   }, []);
 
   React.useEffect(() => {

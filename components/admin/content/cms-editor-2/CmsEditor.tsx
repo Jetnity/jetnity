@@ -27,11 +27,11 @@ const NOTICES: Record<Exclude<CmsNotice, null>, CmsTextKey> = { saved: 'saved', 
 /** The server-provided runtime selects a transport, never an authorization.
  * Every request repeats the deployment, current identity and authority gates. */
 export default function CmsEditor({ sprache, initialEntryId, runtime, recovery, port, uuid }: {
-  sprache: UiSprache; initialEntryId: string; runtime: 'development' | 'unavailable'
+  sprache: UiSprache; initialEntryId: string; runtime: 'development' | 'production' | 'unavailable'
   recovery?: CmsRecoveryMarker | null; port?: CmsPort; uuid?: () => unknown
 }) {
-  const [controller] = useState(() => createCmsEditor(port ?? (runtime === 'development' ? createCmsHttpPort() : CMS_UNAVAILABLE_PORT), initialEntryId, {
-    uuid, recovery, ...(runtime === 'development' ? { intent: writeCmsIntentLocation } : {}),
+  const [controller] = useState(() => createCmsEditor(port ?? (runtime !== 'unavailable' ? createCmsHttpPort() : CMS_UNAVAILABLE_PORT), initialEntryId, {
+    uuid, recovery, ...(runtime !== 'unavailable' ? { intent: writeCmsIntentLocation } : {}),
   }))
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot)
   const [discard, setDiscard] = useState(false)

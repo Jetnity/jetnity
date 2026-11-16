@@ -1,5 +1,5 @@
 import 'server-only'
-import { isAdminDevRuntimeEnabled } from '@/lib/admin/dev-runtime-activation'
+import { isAdminHostedRuntimeEnabled } from '@/lib/admin/hosted-runtime-activation'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { AdminDevRuntimeDatabase } from '@/types/admin-dev-runtime'
 import { applyDraft, confirmDraft, readDrafts, type DraftDatabase } from './operations'
@@ -9,7 +9,7 @@ import { parseDraftInput } from './runtime-contract'
 /** Only called after the route's current persisted Admin/AAL2/write admission. */
 export async function marketingDraftRequest(request: Request, kind: 'read' | 'apply' | 'confirm', actorId: string): Promise<Response> {
   if (!draftRequestHeadersAllowed(request)) return draftHttpFailure('invalid')
-  if (!isAdminDevRuntimeEnabled()) return draftHttpFailure('unavailable')
+  if (!isAdminHostedRuntimeEnabled()) return draftHttpFailure('unavailable')
   const input = parseDraftInput(kind, await readDraftBody(request))
   if (!input || request.signal.aborted) return draftHttpFailure('invalid')
   try {

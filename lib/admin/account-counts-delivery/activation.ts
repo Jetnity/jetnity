@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { adminProductionRuntimeEnabled } from '@/lib/admin/hosted-runtime-activation'
 import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import { ADMIN_DEV_RUNTIME_FLAG, adminDevRuntimeEnabled } from '@/lib/admin/dev-runtime-activation'
 import {
@@ -37,6 +38,7 @@ export type AdminAccountCountsActivationEnv = AdminAccountCountsDevEnv & {
   VERCEL_DEPLOYMENT_ID?: string
   CI?: string
   GITHUB_ACTIONS?: string
+  JETNITY_ADMIN_PRODUCTION_RUNTIME_ENABLED?: string
   JETNITY_ADMIN_DEV_RUNTIME_ENABLED?: string
 }
 
@@ -45,6 +47,7 @@ export function adminAccountCountsActivationEnvFromProcess(
 ): AdminAccountCountsActivationEnv {
   return {
     NODE_ENV: env.NODE_ENV,
+    JETNITY_ADMIN_PRODUCTION_RUNTIME_ENABLED: env.JETNITY_ADMIN_PRODUCTION_RUNTIME_ENABLED,
     JETNITY_ADMIN_ACCOUNT_COUNTS_LOCAL_ENABLED: env[ADMIN_ACCOUNT_COUNTS_LOCAL_FLAG],
     JETNITY_ADMIN_ACCOUNT_COUNTS_DEV_ENABLED: env[ADMIN_ACCOUNT_COUNTS_DEV_FLAG],
     JETNITY_ADMIN_DEV_RUNTIME_ENABLED: env[ADMIN_DEV_RUNTIME_FLAG],
@@ -108,5 +111,5 @@ export function isAdminAccountCountsRuntimeEnabled(): boolean {
   const env = adminAccountCountsActivationEnvFromProcess()
   const captured = getServerSupabaseUrl()
   if (isAdminAccountCountsLocallyEnabled(env) && isLoopbackSupabaseUrl(captured)) return true
-  return adminDevRuntimeEnabled(env, captured) || isAdminAccountCountsDevEnabled(env, captured)
+  return adminProductionRuntimeEnabled(env, captured) || adminDevRuntimeEnabled(env, captured) || isAdminAccountCountsDevEnabled(env, captured)
 }

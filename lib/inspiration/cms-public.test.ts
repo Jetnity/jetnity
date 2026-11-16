@@ -25,7 +25,7 @@ before(async () => {
     external: ['react', 'react/jsx-runtime', 'lucide-react'], stdin: { resolveDir: process.cwd(), contents:
       "export { default as HomePage } from './app/(public)/page'; export { default as EntdeckenSeite } from './app/(public)/entdecken/page';" },
     plugins: [{ name: 'public-cms-boundaries', setup(builder) {
-      builder.onResolve({ filter: /^(server-only|next\/(server|link)|@\/lib\/(admin\/dev-runtime-activation|admin\/content\/cms-editor-2\/server))$/ }, args => ({ path: args.path, namespace: 'cms-public' }))
+      builder.onResolve({ filter: /^(server-only|next\/(server|link)|@\/lib\/(admin\/hosted-runtime-activation|admin\/content\/cms-editor-2\/server))$/ }, args => ({ path: args.path, namespace: 'cms-public' }))
       builder.onResolve({ filter: /^@\/components\// }, args => ({ path: args.path, namespace: 'cms-component' }))
       builder.onLoad({ filter: /.*/, namespace: 'cms-component' }, args => {
         const name = args.path.split('/').at(-1)!
@@ -35,7 +35,7 @@ before(async () => {
         args.path === 'server-only' ? 'export {}'
           : args.path === 'next/link' ? "export default 'a'"
             : args.path === 'next/server' ? 'export async function connection(){__publicCms.connections++}'
-              : args.path.endsWith('dev-runtime-activation') ? 'export function isAdminDevRuntimeEnabled(){return __publicCms.enabled}'
+              : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __publicCms.enabled}'
                 : 'export async function readCmsPublished(signal){if(!(signal instanceof AbortSignal))throw Error("missing deadline");__publicCms.calls++;return __publicCms.result}',
       }))
     } }],
