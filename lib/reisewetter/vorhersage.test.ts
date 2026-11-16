@@ -45,13 +45,13 @@ test('consent, origin and bounded requests deny weather before any provider call
   assert.equal((await GET(anfrage())).status, 404)
   env.VERCEL_GIT_COMMIT_REF = 'main'
   assert.equal((await GET(anfrage('lat=47&lon=8', 'same-origin', 'https://jetnity.com'))).status, 403)
-  assert.equal((await GET(anfrage(undefined, 'cross-site', APP_MAP_ORIGIN, true))).status, 403)
-  assert.equal((await GET(anfrage('lat=91&lon=2', 'same-origin', APP_MAP_ORIGIN, true))).status, 400)
-  assert.equal((await GET(anfrage('lat=48.85&lon=2.35&tripId=private', 'same-origin', APP_MAP_ORIGIN, true))).status, 400)
+  assert.equal((await GET(anfrage(undefined, 'cross-site', 'https://jetnity.com', true))).status, 403)
+  assert.equal((await GET(anfrage('lat=91&lon=2', 'same-origin', 'https://jetnity.com', true))).status, 400)
+  assert.equal((await GET(anfrage('lat=48.85&lon=2.35&tripId=private', 'same-origin', 'https://jetnity.com', true))).status, 400)
   assert.equal(adapter.mock.callCount(), 0)
   // Without a real authenticated customer AND an installed database quota,
   // a consent marker never authorizes a provider request in the test runtime.
-  const response = await GET(anfrage(undefined, 'same-origin', APP_MAP_ORIGIN, true))
+  const response = await GET(anfrage(undefined, 'same-origin', 'https://jetnity.com', true))
   assert.ok([401, 503].includes(response.status))
   assert.equal(adapter.mock.callCount(), 0)
   env.VERCEL_ENV = 'preview'
