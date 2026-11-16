@@ -167,7 +167,8 @@ GRANT SELECT ON TABLE cron.job TO postgres;
 SET SESSION AUTHORIZATION postgres;
 `
 
-export async function prepareCycle4RecoveryFixture(proof: OwnedPersistentProof): Promise<{ tables: Record<string, Row[]> }> {
+export async function prepareCycle4RecoveryFixture(proof: OwnedPersistentProof,
+  beforeProtectedSetup?: () => Promise<void>): Promise<{ tables: Record<string, Row[]> }> {
   const prior = fixture('../official-truth-v3-dev-refresh-retirement-1/', 'local-history', 'owned-local-pg17-redacted-dev-history')
   const delta = fixture('./', 'local-history-delta', 'owned-local-pg17-redacted-dev-history-delta')
   const previous = readJson('../official-truth-v3-dev-refresh-retirement-1/original-evidence.json') as Evidence
@@ -195,7 +196,7 @@ export async function prepareCycle4RecoveryFixture(proof: OwnedPersistentProof):
   // the local retirement and its confirmation.
 
   await proof.run('CREATE SCHEMA extensions;CREATE EXTENSION pgcrypto WITH SCHEMA extensions;', 'real local pgcrypto provider')
-  await baseSetup(proof)
+  await baseSetup(proof, beforeProtectedSetup)
   const columnTypes = () => proof.value<ColumnTypes>(`(SELECT jsonb_object_agg(n.nspname||'.'||c.relname||'.'||a.attname,
     jsonb_build_object('json',a.atttypid IN ('json'::regtype,'jsonb'::regtype),'notNull',a.attnotnull))
     FROM pg_attribute a JOIN pg_class c ON c.oid=a.attrelid JOIN pg_namespace n ON n.oid=c.relnamespace

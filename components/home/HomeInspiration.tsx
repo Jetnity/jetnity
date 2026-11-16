@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
 import { HOMEPAGE_UEBERSCHRIFTEN } from '@/lib/seo/final-homepage'
+import type { PublicInspiration } from '@/lib/inspiration/cms-public'
 
 export type HomeInspirationsziel = {
   name: string
@@ -11,10 +12,13 @@ export type HomeInspirationsziel = {
   href: string
 }
 
-export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationsziel[] }) {
+export function HomeInspiration({ ziele, status = 'static' }: {
+  ziele: readonly HomeInspirationsziel[]; status?: PublicInspiration['status']
+}) {
   return (
     <section
       id="entdecken"
+      lang="de"
       className="mx-auto max-w-7xl scroll-mt-28 px-5 py-14 sm:px-8 sm:py-20"
       aria-labelledby="inspiration-titel"
     >
@@ -32,7 +36,7 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
           Deine Reise sollte es auch sein. Jetnity berücksichtigt deine Interessen, dein Tempo und die Menschen, mit denen du reist.
         </p>
       </div>
-      <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {status !== 'unavailable' && ziele.length ? <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {ziele.map((ziel) => (
           <li key={ziel.name} className="min-w-0">
             <Link
@@ -59,7 +63,9 @@ export function HomeInspiration({ ziele }: { ziele: readonly HomeInspirationszie
             </Link>
           </li>
         ))}
-      </ul>
+      </ul> : <p role="status" className="mt-8 rounded-2xl border border-line-200 bg-surface-0 p-5 text-ink-950">
+        {status === 'unavailable' ? 'Reiseideen derzeit nicht verfügbar.' : 'Derzeit sind keine Reiseideen veröffentlicht.'}
+      </p>}
       <Link
         href="/entdecken"
         className="mt-6 inline-flex min-h-11 max-w-full items-center gap-2 rounded-full border border-brand-800 px-4 py-3 text-sm font-semibold text-brand-800 hover:bg-surface-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"

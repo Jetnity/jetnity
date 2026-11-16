@@ -199,6 +199,26 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
     'lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts',
   ])
   assert.equal(new Set(importDeadlineSourceAmendment.map(row => row.path)).size, 2)
+  // Admin CI bundling preserves every existing job and adds the two mandatory
+  // native proofs. This finite successor retains every historical source pin.
+  const adminCiSourceAmendment = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 24418, sha256: '9592a0c093ef63f74c9e1688502f00cf663b8deda18d1721d8daf38f1ed0356b' },
+      reviewed: { bytes: 49661, sha256: 'fd6a209c46451db5b91b4667d4234f14dc81faaaa4addf3be92e1e85dfe4fcc6' } },
+  ] as const
+  assert.deepEqual(adminCiSourceAmendment.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(adminCiSourceAmendment.map(row => row.path)).size, 1)
+  // ADMIN-RUNTIME-BG1-1 adds one typed, mandatory atomic-transition proof to
+  // the existing CMS runner. All earlier jobs, time budgets and pins remain exact.
+  const adminRuntimeCiSourceAmendment = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 49661, sha256: 'fd6a209c46451db5b91b4667d4234f14dc81faaaa4addf3be92e1e85dfe4fcc6' },
+      reviewed: { bytes: 50018, sha256: '9060166e750251096b564b31eedc881398e116da55973cbd3f6c38606affa7f2' } },
+  ] as const
+  assert.deepEqual(adminRuntimeCiSourceAmendment.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(adminRuntimeCiSourceAmendment.map(row => row.path)).size, 1)
+  let reviewedAdminRuntimeCiRows = 0
+  let reviewedAdminCiRows = 0
   let reviewedImportDeadlineRows = 0
   let reviewedCustomerRows = 0
   let reviewedOperationRows = 0
@@ -264,7 +284,19 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousCustomer.bytes, sha256: previousCustomer.sha256 }, importDeadlineChanged.previousReviewed, row.path)
       reviewedImportDeadlineRows++
     }
-    const expected = importDeadlineChanged?.reviewed ?? previousCustomer
+    const previousImportDeadline = importDeadlineChanged?.reviewed ?? previousCustomer
+    const adminCiChanged = adminCiSourceAmendment.find(file => file.path === row.path)
+    if (adminCiChanged) {
+      assert.deepEqual({ bytes: previousImportDeadline.bytes, sha256: previousImportDeadline.sha256 }, adminCiChanged.previousReviewed, row.path)
+      reviewedAdminCiRows++
+    }
+    const previousAdminCi = adminCiChanged?.reviewed ?? previousImportDeadline
+    const adminRuntimeCiChanged = adminRuntimeCiSourceAmendment.find(file => file.path === row.path)
+    if (adminRuntimeCiChanged) {
+      assert.deepEqual({ bytes: previousAdminCi.bytes, sha256: previousAdminCi.sha256 }, adminRuntimeCiChanged.previousReviewed, row.path)
+      reviewedAdminRuntimeCiRows++
+    }
+    const expected = adminRuntimeCiChanged?.reviewed ?? previousAdminCi
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -278,4 +310,6 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedOperationRows, 2)
   assert.equal(reviewedCustomerRows, 2)
   assert.equal(reviewedImportDeadlineRows, 2)
+  assert.equal(reviewedAdminCiRows, 1)
+  assert.equal(reviewedAdminRuntimeCiRows, 1)
 })

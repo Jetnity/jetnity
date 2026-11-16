@@ -8,7 +8,7 @@ import { ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS } from '@/lib/admin/account-counts-de
 export const ADMIN_ACCOUNT_COUNTS_COPY = {
   titel: 'Registrierte Konten',
   hinweis:
-    'Zwei Roh-Aggregate aus der lokalen, nicht angewendeten Zählfunktion. Keine Besucher, keine aktiven Nutzer, kein Partnerverkehr und kein Umsatz.',
+    'Momentaufnahme von zwei Kontenzahlen aus der angebundenen Testdatenbank. Keine Besucher, keine aktiven Nutzer, kein Partnerverkehr und kein Umsatz.',
   presentLabel: 'Registrierte Konten (aktuell)',
   presentDefinition:
     'Vorhandene auth.users-Zeilen, die nicht gelöscht und nicht anonym sind. Konten ohne Profil zählen mit.',
@@ -22,7 +22,7 @@ export const ADMIN_ACCOUNT_COUNTS_COPY = {
   forbidden:
     'Für diese Kontenzahlen fehlt eine rollengebundene Berechtigung „konten-verwalten“ mit aktueller AAL2. Notzugang über die Oberfläche reicht nicht.',
   unavailable:
-    'Die lokale Zählfunktion ist in dieser Umgebung nicht vorhanden. Das ist keine leere Statistik.',
+    'Die Zählfunktion ist in dieser Umgebung nicht vorhanden. Das ist keine leere Statistik.',
   failed:
     'Die Kontenzahlen konnten nicht zuverlässig gelesen werden. Es wird keine Null angezeigt.',
 } as const

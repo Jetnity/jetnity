@@ -111,7 +111,7 @@ function kommerziellWiederherstellen(
   vorhandeneTage: Set<string>,
   vorhandeneEtappen: Set<string>,
 ): TripItem {
-  const tagDa = original.dayId !== null && vorhandeneTage.has(original.dayId)
+  const tagDa = original.dayId === null || vorhandeneTage.has(original.dayId)
   const etappeDa = original.stageId === null || vorhandeneEtappen.has(original.stageId)
   if (tagDa && etappeDa) {
     return { ...original }
@@ -123,8 +123,9 @@ function kommerziellWiederherstellen(
  * Stellt kommerzielle Planpunkte vollständig wieder her und leert
  * Handelsfelder auf neuen Kennungen.
  *
- * Solange Tag und Etappe noch existieren, bleibt der Originalpunkt unverändert
- * auf seinem Tag. Sonst landet er ungeplant, ohne Termin- oder Inhaltsänderung.
+ * Solange seine vorhandenen Bezüge noch existieren, bleibt der Originalpunkt
+ * unverändert; ein ursprünglich tagloser Punkt behält seine gültige Etappe.
+ * Entfällt ein Bezug, landet er ungeplant, ohne Termin- oder Inhaltsänderung.
  */
 export function kommerziellErhalten(vorher: Reisegraph, nachher: Reisegraph): Reisegraph {
   const ursprung = new Map(allePunkte(vorher).map((punkt) => [punkt.id, punkt]))

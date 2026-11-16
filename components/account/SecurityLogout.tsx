@@ -4,6 +4,9 @@
 "use client";
 
 import * as React from "react";
+import type { UiSprache } from "@/lib/localization/ui-sprache";
+import { sicherheitText } from "@/lib/localization/account-security-texte";
+import { sicherheitLogoutStatus, sicherheitLogoutAktion } from "@/lib/localization/account-security-display-3";
 import { AlertTriangle, CheckCircle2, LogOut } from "lucide-react";
 
 import { accountLogoutScopeAction } from "@/app/account/security/logout-action";
@@ -20,13 +23,11 @@ import { SICHERHEIT_ZIEL_44 } from "@/lib/auth/account-security-premium-ux-1";
 import {
   LOGOUT_AKTIONEN,
   LOGOUT_ANFANG,
-  LOGOUT_JWT_HINWEIS,
   LOGOUT_SCOPES,
   darfLogoutStarten,
   logoutErfolgBehaupten,
   logoutIstBeschaeftigt,
   logoutSollLokalenAuthVerlassen,
-  logoutStatusText,
   logoutWeiter,
   type LogoutScope,
   type LogoutZustand,
@@ -36,13 +37,13 @@ function lokalenAuthVerlassen() {
   window.location.assign(new URL("/", window.location.origin).toString());
 }
 
-export default function SecurityLogout() {
+export default function SecurityLogout({ sprache = "de" }: { sprache?: UiSprache }) {
   const [zustand, setZustand] = React.useState<LogoutZustand>(LOGOUT_ANFANG);
   const statusFeld = React.useRef<HTMLDivElement>(null);
   const [optionenOffen, setOptionenOffen] = React.useState(false);
   const beschaeftigt = logoutIstBeschaeftigt(zustand);
   const startbar = darfLogoutStarten(zustand);
-  const status = logoutStatusText(zustand);
+  const status = sicherheitLogoutStatus(sprache, zustand);
   const optionenSichtbar = optionenOffen || zustand.lage !== "idle" || zustand.bestaetigungFuer !== null;
 
   function optionenSchliessen() {
@@ -79,11 +80,10 @@ export default function SecurityLogout() {
       <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <LogOut className="h-5 w-5" aria-hidden="true" />
-          <CardTitle as="h2">Abmelden</CardTitle>
+          <CardTitle as="h2">{sicherheitText(sprache, "logout.title")}</CardTitle>
         </div>
         <CardDescription>
-          Beende diese Sitzung, andere Sitzungen oder alle Sitzungen. Jetnity kann andere Geräte
-          nicht auflisten. {LOGOUT_JWT_HINWEIS}
+          {sicherheitText(sprache, "logout.description")} {sicherheitText(sprache, "logout.jwtHint")}
         </CardDescription>
       </CardHeader>
 
@@ -126,7 +126,7 @@ export default function SecurityLogout() {
             aria-controls="account-logout-optionen"
             onClick={() => setOptionenOffen(true)}
           >
-            Abmeldeoptionen
+            {sicherheitText(sprache, "logout.options")}
           </Button>
         )}
 
@@ -137,10 +137,10 @@ export default function SecurityLogout() {
             aria-labelledby="account-logout-global-confirm-title"
           >
             <p id="account-logout-global-confirm-title" className="text-sm font-medium text-red-900">
-              Überall abmelden wirklich ausführen?
+              {sicherheitText(sprache, "logout.confirmTitle")}
             </p>
             <p className="mt-1 text-sm leading-6 text-red-800">
-              Damit endet auch diese Sitzung. Andere Geräte werden nicht einzeln angezeigt.
+              {sicherheitText(sprache, "logout.confirmDescription")}
             </p>
             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
               <Button
@@ -150,7 +150,7 @@ export default function SecurityLogout() {
                 onClick={() => void ausfuehren("global")}
                 disabled={beschaeftigt}
               >
-                Ja, überall abmelden
+                {sicherheitText(sprache, "logout.confirm")}
               </Button>
               <Button
                 type="button"
@@ -159,7 +159,7 @@ export default function SecurityLogout() {
                 onClick={() => setZustand((aktuell) => logoutWeiter(aktuell, { typ: "brich_bestaetigung" }))}
                 disabled={beschaeftigt}
               >
-                Abbrechen
+                {sicherheitText(sprache, "common.cancel")}
               </Button>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function SecurityLogout() {
         {optionenSichtbar ? (
         <ul id="account-logout-optionen" className="space-y-3">
           {LOGOUT_SCOPES.map((scope) => {
-            const aktion = LOGOUT_AKTIONEN[scope];
+            const aktion = { ...LOGOUT_AKTIONEN[scope], ...sicherheitLogoutAktion(sprache, scope) };
             const hinweisId = `account-logout-${scope}-hint`;
             const aktiv = zustand.lage === "working" && zustand.scope === scope;
             return (
@@ -182,7 +182,7 @@ export default function SecurityLogout() {
                 )}
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-700">
-                  {scope === "local" ? "Diese Sitzung" : scope === "others" ? "Andere Sitzungen" : "Hohes Risiko"}
+                  {sicherheitText(sprache, scope === "local" ? "session.title" : scope === "others" ? "session.other" : "logout.highRisk") }
                 </p>
                 <p className="mt-1 text-sm font-medium text-brand-800">{aktion.label}</p>
                 <p id={hinweisId} className="mt-1 text-sm leading-6 text-ink-700">
@@ -197,7 +197,7 @@ export default function SecurityLogout() {
                   aria-describedby={hinweisId}
                   data-logout-action={scope}
                 >
-                  {aktiv ? "Wird ausgeführt…" : aktion.label}
+                  {aktiv ? sicherheitText(sprache, "logout.working") : aktion.label}
                 </Button>
               </li>
             );
@@ -213,7 +213,7 @@ export default function SecurityLogout() {
             aria-controls="account-logout-optionen"
             onClick={optionenSchliessen}
           >
-            Optionen schließen
+            {sicherheitText(sprache, "logout.close")}
           </Button>
         ) : null}
       </CardContent>

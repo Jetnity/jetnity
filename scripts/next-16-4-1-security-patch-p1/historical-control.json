@@ -71,6 +71,7 @@
     "app/account/security/logout-action.ts": "e5389e5b451ea01a52d356cd65f683d14c5ac3c6",
     "app/auth/sign-out.ts": "1fe5d1b61e94f4b4b36496595c0b6523931907c1",
     "lib/account/besuche-aktionen.ts": "1593b5ea4cd146aee95b6702172a403c90d73458",
+    "lib/account/ui-einstellungen-1/aktionen.ts": "72a82c4303b00cbca55cbff6b32fb47a1ae12f3f",
     "lib/activities/aktionen.ts": "a129821becb2fe1b91011e49691d8c8fedd216c4",
     "lib/flights/aktionen.ts": "d1290edacb9c09169abdb2928b4aa6bf07fb627e",
     "lib/hotels/aktionen.ts": "af69f50972ead0205ba970351c0ae5e85717bcfd",

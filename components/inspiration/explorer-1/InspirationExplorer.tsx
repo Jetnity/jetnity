@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 import {
   ENTDECKEN_ZIELE, THEMEN, SUCHLAENGE, entdeckerHref, entdeckerParams, entdeckerTreffer,
-  type EntdeckenZustand,
+  type EntdeckenZustand, type EntdeckenZiel,
 } from '@/lib/inspiration/explorer-1/katalog'
+import type { PublicInspiration } from '@/lib/inspiration/cms-public'
 import Inspirationskarte from './Inspirationskarte'
 
-export default function InspirationExplorer({ initial }: { initial: EntdeckenZustand }) {
+export default function InspirationExplorer({ initial, ziele = ENTDECKEN_ZIELE, status = 'static' }: {
+  initial: EntdeckenZustand; ziele?: readonly EntdeckenZiel[]; status?: PublicInspiration['status']
+}) {
   const [zustand, setZustand] = useState(initial)
   const schreibt = useRef(false)
   const suche = useRef<HTMLInputElement>(null)
@@ -33,7 +36,7 @@ export default function InspirationExplorer({ initial }: { initial: EntdeckenZus
     }
   }
 
-  const treffer = entdeckerTreffer(zustand)
+  const treffer = entdeckerTreffer(zustand, ziele)
   const gefiltert = Boolean(zustand.q || zustand.thema !== 'alle')
   const reset = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
@@ -43,8 +46,15 @@ export default function InspirationExplorer({ initial }: { initial: EntdeckenZus
     suche.current?.focus()
   }
 
+  if (status === 'unavailable' || (status === 'published' && ziele.length === 0)) {
+    return <div lang="de" role="status" className="rounded-[28px] border border-line-200 bg-surface-0 p-6 sm:p-9">
+      <h2 className="text-2xl font-semibold">{status === 'unavailable' ? 'Reiseideen derzeit nicht verfügbar.' : 'Derzeit sind keine Reiseideen veröffentlicht.'}</h2>
+      <a href="/entdecken" className="mt-4 inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600">Erneut laden</a>
+    </div>
+  }
+
   return (
-    <div>
+    <div lang="de">
       <form action="/entdecken" method="get" role="search" aria-label="Reiseinspiration suchen"
         className="rounded-[28px] border border-line-200 bg-surface-0 p-5 sm:p-7"
         onSubmit={(event) => {
@@ -79,13 +89,13 @@ export default function InspirationExplorer({ initial }: { initial: EntdeckenZus
             ))}
           </div>
         </fieldset>
-        <p className="mt-4 text-xs leading-5 text-ink-950">Themen sind redaktionelle Anregungen. Die Auswahl umfasst {ENTDECKEN_ZIELE.length} Ziele.</p>
+        <p className="mt-4 text-xs leading-5 text-ink-950">Themen sind redaktionelle Anregungen. Die Auswahl umfasst {ziele.length} Ziele.</p>
         <noscript><p className="mt-3 text-sm">Wähle ein Thema und bestätige mit „Suchen“, um die Auswahl zu aktualisieren.</p></noscript>
       </form>
 
       <section aria-labelledby="entdecken-ergebnisse" className="mt-8">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="entdecken-ergebnisse" className="text-xl font-semibold" aria-live="polite" aria-atomic="true">{treffer.length} von {ENTDECKEN_ZIELE.length} Zielen</h2>
+          <h2 id="entdecken-ergebnisse" className="text-xl font-semibold" aria-live="polite" aria-atomic="true">{treffer.length} von {ziele.length} Zielen</h2>
           {gefiltert && <a href="/entdecken" onClick={reset} className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600">Suche & Themen zurücksetzen</a>}
         </div>
         {treffer.length ? (
@@ -95,7 +105,7 @@ export default function InspirationExplorer({ initial }: { initial: EntdeckenZus
         ) : (
           <div className="mt-4 rounded-[28px] border border-line-200 bg-surface-0 p-6 sm:p-9">
             <h3 className="text-2xl font-semibold">Noch keine passende Idee dabei</h3>
-            <p className="mt-3 max-w-xl text-base leading-7 text-ink-950">In unserer kleinen Auswahl passt kein Ziel zu dieser Suche und diesem Thema. Versuche einen anderen Begriff oder zeige wieder alle vier Ziele.</p>
+            <p className="mt-3 max-w-xl text-base leading-7 text-ink-950">In unserer kleinen Auswahl passt kein Ziel zu dieser Suche und diesem Thema. Versuche einen anderen Begriff oder zeige wieder alle Ziele.</p>
             <a href="/entdecken" onClick={reset} className="mt-5 inline-flex min-h-11 items-center rounded-2xl bg-brand-800 px-5 py-3 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600">Alle Ziele anzeigen</a>
           </div>
         )}

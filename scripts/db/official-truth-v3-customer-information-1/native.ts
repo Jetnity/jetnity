@@ -43,7 +43,8 @@ const oldRows = `to_jsonb(encode(sha256(convert_to((SELECT jsonb_build_object(
  'sender_preview_dispatches',(SELECT jsonb_agg(to_jsonb(s) ORDER BY id) FROM jetnity_dev_import_scheduler.preview_dispatches_v1 s)
  ))::text,'UTF8')),'hex'))`
 
-export async function baseSetup(proof: Pick<OwnedPersistentProof, 'run'> | Pick<OwnedSingleProof, 'run'>) {
+export async function baseSetup(proof: Pick<OwnedPersistentProof, 'run'> | Pick<OwnedSingleProof, 'run'>,
+  beforeProtectedSetup?: () => Promise<void>) {
   await proof.run("CREATE ROLE supabase_read_only_user LOGIN NOINHERIT NOSUPERUSER BYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION;\n"
     + readSql('official-truth-v3-composed-dev-1/observed-auth-profile-fixture.sql')
     + '\nGRANT pg_read_all_data TO postgres WITH ADMIN TRUE, INHERIT TRUE, SET TRUE;\n'
@@ -51,6 +52,9 @@ export async function baseSetup(proof: Pick<OwnedPersistentProof, 'run'> | Pick<
       INSERT INTO auth.sessions(id,user_id,aal) VALUES(${literal(uid(n + 200))}::uuid,${literal(uid(n))}::uuid,${literal(n === 3 ? 'aal1' : 'aal2')}::auth.aal_level);`).join('\n')
     + '\n' + creator + '\n' + [[1, 'owner'], [2, 'moderator'], [3, 'owner']].map(([n, role]) =>
       `INSERT INTO public.profiles(id,user_id,role,status) VALUES(${literal(uid(Number(n) + 100))}::uuid,${literal(uid(Number(n)))}::uuid,${literal(String(role))},'active');`).join('\n'), 'local auth/profile fixture');
+  // Optional synthetic prerequisites belong before every protected catalog,
+  // including PAI/HMA; an installed baseline is never rewritten for a fixture.
+  await beforeProtectedSetup?.()
   await proof.run(creator + '\n' + readSql('profile-authority-integrity-1/install-candidate.sql')
     + '\n' + ['ot_m04_jobs', 'ot_m04_intake', 'ot_ma1_reader'].map(login =>
       `CREATE ROLE ${login} LOGIN NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEROLE NOCREATEDB NOREPLICATION; GRANT CONNECT ON DATABASE postgres TO ${login};`).join('\n')

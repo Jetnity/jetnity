@@ -175,6 +175,148 @@ function anwenden(operationen: Modelloperation[], basis = reise()) {
   return operationenAnwenden(basis, operationen, kennung())
 }
 
+function offeneReise(zugeordneteTage = 0): Reisegraph {
+  return reise({
+    dayStageAssignmentMode: zugeordneteTage > 0 ? 'explicit' : 'unassigned',
+    endDate: '2026-09-17',
+    stages: [
+      etappe({ id: 'stage-1', position: 1, name: 'Florenz', placeId: 'geonames:3176959', latitude: 43.77, longitude: 11.25 }),
+      etappe({ id: 'stage-2', position: 2, name: 'Rom', placeId: 'geonames:3169070', latitude: 41.89, longitude: 12.51 }),
+    ],
+    days: Array.from({ length: 6 }, (_, i) => tag({
+      id: `day-${i + 1}`, dayIndex: i + 1,
+      stageId: i < zugeordneteTage ? 'stage-1' : null,
+    })),
+  })
+}
+
+describe('Bewusst offene Tageszuordnung', () => {
+  for (const zugeordnet of [0, 2]) {
+    test(`Kürzen erhält vorher taglose Ziele bei ${zugeordnet} zugeordneten Tagen`, () => {
+      const basis = offeneReise(zugeordnet), original = structuredClone(basis)
+      const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: -1 })], basis)
+      assert(ergebnis.ok)
+      assert.equal(ergebnis.reise.days.length, 5)
+      assert.deepEqual(ergebnis.reise.stages[1], basis.stages[1])
+      assert.deepEqual(ergebnis.reise.stages.map(s => s.id), ['stage-1', 'stage-2'])
+      assert.deepEqual(ergebnis.reise.days.map(d => d.stageId), basis.days.slice(0, 5).map(d => d.stageId))
+      assert.deepEqual(basis, original)
+    })
+  }
+
+  test('Entfernen eines unzugeordneten Tages behält alle Ziele und Ortsdaten', () => {
+    const basis = offeneReise()
+    const ergebnis = anwenden([op({ art: 'tag_entfernen', tagId: 'day-3' })], basis)
+    assert(ergebnis.ok)
+    assert.deepEqual(ergebnis.reise.stages, basis.stages)
+    assert.equal(ergebnis.reise.days.length, 5)
+    assert(ergebnis.reise.days.every(d => d.stageId === null))
+  })
+
+  for (const operation of [op({ art: 'dauer_aendern', tageDelta: -1 }), op({ art: 'tag_entfernen', tagId: 'day-6' })]) {
+    test(`${operation.art} entfernt nur die tatsächlich leer gewordene Etappe`, () => {
+      const basis = offeneReise(5)
+      basis.days[5]!.stageId = 'stage-2'
+      const offen = etappe({ id: 'stage-3', position: 3, name: 'Florenz', placeId: 'geonames:3176959' })
+      basis.stages.push(offen)
+      const ergebnis = anwenden([operation], basis)
+      assert(ergebnis.ok)
+      assert.deepEqual(ergebnis.reise.stages.map(s => s.id), ['stage-1', 'stage-3'])
+      assert.deepEqual(ergebnis.reise.stages[1], { ...offen, position: 2 })
+    })
+  }
+
+  test('ausdrückliches Entfernen einer taglosen Etappe bleibt möglich', () => {
+    const ergebnis = anwenden([op({ art: 'etappe_entfernen', etappeId: 'stage-2' })], offeneReise())
+    assert(ergebnis.ok)
+    assert.deepEqual(ergebnis.reise.stages.map(s => s.id), ['stage-1'])
+    assert.equal(ergebnis.reise.days.length, 6)
+  })
+
+  test('Kürzen bis vor alle zugeordneten Tage erhält die gesamte Zielliste', () => {
+    const basis = offeneReise()
+    basis.dayStageAssignmentMode = 'explicit'
+    basis.days[4]!.stageId = 'stage-1'
+    basis.days[5]!.stageId = 'stage-2'
+    const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: -2 })], basis)
+    assert(ergebnis.ok)
+    assert.equal(ergebnis.reise.days.length, 4)
+    assert.deepEqual(ergebnis.reise.stages, basis.stages)
+    assert(ergebnis.reise.days.every(d => d.stageId === null))
+  })
+
+  test('Betroffenheit wird nach einer vorherigen Operation im selben Batch bestimmt', () => {
+    const basis = offeneReise()
+    const ergebnis = anwenden([
+      op({ art: 'etappe_hinzufuegen', name: 'Venedig', tage: 1 }),
+      op({ art: 'dauer_aendern', tageDelta: -1 }),
+    ], basis)
+    assert(ergebnis.ok)
+    assert.deepEqual(ergebnis.reise.stages, basis.stages)
+    assert.deepEqual(ergebnis.reise.days, basis.days)
+  })
+
+  for (const zugeordnet of [0, 2]) {
+    test(`Verlängern erfindet keine Zuordnung nach ${zugeordnet} zugeordneten Tagen und offenem Ende`, () => {
+      const basis = offeneReise(zugeordnet)
+      const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: 2 })], basis)
+      assert(ergebnis.ok)
+      assert.equal(ergebnis.reise.days.length, 8)
+      assert.deepEqual(ergebnis.reise.days.map(d => d.stageId), [...basis.days.map(d => d.stageId), null, null])
+      assert.equal(ergebnis.reise.dayStageAssignmentMode, basis.dayStageAssignmentMode)
+    })
+  }
+
+  for (const nachTagId of [null, 'day-3']) {
+    test(`Einfügen ${nachTagId ?? 'am Ende'} lässt einen offenen Abschnitt unzugeordnet`, () => {
+      const basis = offeneReise(2)
+      const ergebnis = anwenden([op({ art: 'tag_hinzufuegen', nachTagId })], basis)
+      assert(ergebnis.ok)
+      assert.equal(ergebnis.reise.days.find(d => !basis.days.some(alt => alt.id === d.id))?.stageId, null)
+      assert.equal(ergebnis.reise.days.filter(d => d.stageId === 'stage-1').length, 2)
+    })
+  }
+
+  test('eine vorhandene Zuordnung setzt sich fort, ohne zur letzten Reiseetappe zu wechseln', () => {
+    const basis = offeneReise(6)
+    const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: 1 })], basis)
+    assert(ergebnis.ok)
+    assert.equal(ergebnis.reise.days.at(-1)?.stageId, 'stage-1')
+  })
+
+  for (const operation of [op({ art: 'etappe_dauer', etappeId: 'stage-2', tageDelta: 1 }), op({ art: 'tag_hinzufuegen', etappeId: 'stage-2', nachTagId: 'day-3' })]) {
+    test(`${operation.art} mit ausdrücklicher Etappe ordnet nur den neuen Tag zu`, () => {
+      const basis = offeneReise()
+      const ergebnis = anwenden([operation], basis)
+      assert(ergebnis.ok)
+      assert.equal(ergebnis.reise.days.find(d => !basis.days.some(alt => alt.id === d.id))?.stageId, 'stage-2')
+      assert.equal(ergebnis.reise.days.filter(d => d.stageId === null).length, 6)
+    })
+  }
+
+  test('Einzelziel und historischer Mehrzielbestand behalten ihren Zuordnungsvertrag', () => {
+    const einzel = offeneReise()
+    einzel.stages = [einzel.stages[0]!]
+    einzel.dayStageAssignmentMode = 'single_destination'
+    const alt = offeneReise()
+    alt.dayStageAssignmentMode = 'legacy_fallback'
+    for (const basis of [einzel, alt]) {
+      const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: 1 })], basis)
+      assert(ergebnis.ok)
+      assert(ergebnis.reise.days.every(d => d.stageId !== null))
+      assert.equal(ergebnis.reise.days.at(-1)?.stageId, basis.stages.at(-1)?.id)
+    }
+  })
+
+  test('ein veralteter Einzelziel-Mode verteilt keine offenen Tage auf mehrere Ziele', () => {
+    const basis = offeneReise()
+    basis.dayStageAssignmentMode = 'single_destination'
+    const ergebnis = anwenden([op({ art: 'dauer_aendern', tageDelta: 1 })], basis)
+    assert(ergebnis.ok)
+    assert(ergebnis.reise.days.every(d => d.stageId === null))
+  })
+})
+
 describe('Stammdaten', () => {
   test('eine neue Abreise verliert die alte Place-ID', () => {
     const basis = reise()

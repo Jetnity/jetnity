@@ -83,6 +83,17 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: READER,
           sqlPath: SQL,
         },
+        ...['admin_cms_inspiration_command_v1', 'admin_cms_inspiration_read_v1',
+          'admin_cms_inspiration_confirm_v1', 'cms_inspiration_published_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/admin/content/cms-editor-2/server.ts',
+          sqlPath: 'scripts/db/admin-editorial-cms-1/functions-candidate.sql',
+        })),
+        ...['admin_marketing_drafts_apply_v1', 'admin_marketing_drafts_read_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/admin/marketing/drafts/server.ts',
+          sqlPath: 'scripts/db/admin-marketing-drafts-1/functions-candidate.sql',
+        })),
         {
           name: STORE_RPC,
           sourcePath: STORE_SOURCE,

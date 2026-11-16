@@ -5,6 +5,9 @@
 "use client";
 
 import * as React from "react";
+import type { UiSprache } from "@/lib/localization/ui-sprache";
+import { sicherheitText } from "@/lib/localization/account-security-texte";
+import { sicherheitStepUpStatus } from "@/lib/localization/account-security-display-3";
 import { AlertTriangle, Shield } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,31 +22,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
-  MFA_STEP_UP_DIALOG_TEXT,
-  MFA_STEP_UP_DIALOG_TITEL,
   mfaStepUpIstBeschaeftigt,
-  mfaStepUpStatusText,
   type MfaStepUpZustand,
 } from "@/lib/auth/account-mfa-step-up";
 
 export default function SecurityMfaStepUp({
   zustand,
+  sprache = "de",
   onBestaetigen,
   onAbbrechen,
 }: {
   zustand: MfaStepUpZustand;
+  sprache?: UiSprache;
   onBestaetigen: (code: string) => void;
   onAbbrechen: () => void;
 }) {
   const [code, setCode] = React.useState("");
   const beschaeftigt = mfaStepUpIstBeschaeftigt(zustand);
-  const status = mfaStepUpStatusText(zustand);
+  const status = sicherheitStepUpStatus(sprache, zustand);
   const titelId = "account-mfa-step-up-titel";
   const beschreibungId = "account-mfa-step-up-beschreibung";
   const statusId = "account-mfa-step-up-status";
   const codeRef = React.useRef<HTMLInputElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
-  const zurueckRef = React.useRef<Element | null>(null);
 
   function fokussierbare(): HTMLElement[] {
     if (!dialogRef.current) return [];
@@ -54,14 +55,8 @@ export default function SecurityMfaStepUp({
     );
   }
 
-  React.useEffect(() => {
-    zurueckRef.current = document.activeElement;
-    const id = window.setTimeout(() => codeRef.current?.focus(), 0);
-    return () => {
-      window.clearTimeout(id);
-      setCode("");
-      if (zurueckRef.current instanceof HTMLElement) zurueckRef.current.focus();
-    };
+  React.useLayoutEffect(() => {
+    codeRef.current?.focus();
   }, []);
 
   React.useEffect(() => {
@@ -79,6 +74,7 @@ export default function SecurityMfaStepUp({
   return (
     <div
       ref={dialogRef}
+      lang={sprache}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       role="dialog"
       aria-modal="true"
@@ -112,16 +108,16 @@ export default function SecurityMfaStepUp({
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" aria-hidden="true" />
             <CardTitle as="h2" id={titelId}>
-              {MFA_STEP_UP_DIALOG_TITEL}
+              {sicherheitText(sprache, "step.title")}
             </CardTitle>
           </div>
-          <CardDescription id={beschreibungId}>{MFA_STEP_UP_DIALOG_TEXT}</CardDescription>
+          <CardDescription id={beschreibungId}>{sicherheitText(sprache, "step.description")}</CardDescription>
         </CardHeader>
 
         <CardContent className="pt-4">
           <form onSubmit={senden} className="space-y-4" autoComplete="off">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Label htmlFor="account-mfa-step-up-code">6-stelliger Code</Label>
+              <Label htmlFor="account-mfa-step-up-code">{sicherheitText(sprache, "common.code")}</Label>
               <Input
                 id="account-mfa-step-up-code"
                 ref={codeRef}
@@ -138,7 +134,7 @@ export default function SecurityMfaStepUp({
                 className="h-11 min-h-11 max-w-[160px] text-center tracking-widest text-lg"
               />
               <Button type="submit" disabled={beschaeftigt || code.length !== 6} className="min-h-11">
-                {beschaeftigt ? "Bitte warten…" : "Bestätigen"}
+                {beschaeftigt ? sicherheitText(sprache, "common.wait") : sicherheitText(sprache, "common.confirm")}
               </Button>
             </div>
 
@@ -168,7 +164,7 @@ export default function SecurityMfaStepUp({
               disabled={beschaeftigt}
               onClick={onAbbrechen}
             >
-              Abbrechen
+              {sicherheitText(sprache, "common.cancel")}
             </Button>
           </form>
         </CardContent>

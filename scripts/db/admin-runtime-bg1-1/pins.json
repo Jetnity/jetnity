@@ -1,0 +1,22 @@
+{
+  "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0",
+  "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16",
+  "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818",
+  "scripts/db/official-truth-v3-background-guard-1/provider-migration-body.sql": "a3a0be9c4eb1e2c61be428d0b825ee8a3b6780f3f8d154c0ccc2b1317181f950",
+  "scripts/db/official-truth-v3-background-guard-1/status-rpc-provider-migration-body.sql": "71e2f9f080b8af0b7100d49b70520f8c34dffdc1bc84f3912b20aff413adf97c",
+  "scripts/db/official-truth-v3-background-guard-1/recovery-provider-migration-body.sql": "b7cc8c0d061bef261a0d9ab3824672b7759502ab0d26c68139e5cfcf6525eaf7",
+  "scripts/db/official-truth-v3-background-guard-1/recovery-gap-provider-migration-body.sql": "96f86b8d5432508a3172ea483c8804cf405027f1bb565422df683615f061f5d7",
+  "scripts/db/official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql": "7324c5e87d18de2a692e7e61123a44565ca440ecc9f8e9afddf379ede2aac32a",
+  "scripts/db/official-truth-v3-customer-information-1/provider-migration-body.sql": "cd886ead66b92ec48ee9c5c5a214f310bc6e6645e1fc15f88a78650fcb95b37f",
+  "scripts/db/official-truth-v3-dev-refresh-retirement-1/provider-migration-body.sql": "e71c729360c0e36e7d3a00504b8f013d716ef33c76ae35c9e8fbb484d01c67fe",
+  "scripts/db/official-truth-v3-dev-cycle4-recovery-1/provider-migration-body.sql": "e12dc341cc01de2a459826e8b1c6a3a9b4dd48b40dd8cd1c765660007b7694f3",
+  "scripts/db/official-truth-v3-dev-cycle4-attempt2-recovery-1/provider-migration-body.sql": "9da5d3dee7a4c3a45fea976b27fc2996e5b5d912741407c6be9954baefa1e106",
+  "scripts/db/admin-account-counts-dev-20261115/install.sql": "3d9b69259fdcb57761c2b8f25af98cdfdd6b7da40d26b764035310d24fdfe307",
+  "scripts/db/admin-account-counts-1-candidate.sql": "612f755c12f1817e129226648b6c6fd2c1eba19b57bd163102a2eb5e344c12de",
+  "scripts/db/admin-account-counts-delivery-1-rpc.sql": "13fa3fe280d76d42ca6b2a1dff12077edc3d44a599a22300e89dd5578d63a6fb",
+  "scripts/db/admin-editorial-cms-1/schema-candidate.sql": "6b9a80992e6729aa030f1abf06029c627361f1c20fd2e0f00f03f5eea7ff2b17",
+  "scripts/db/admin-editorial-cms-1/functions-candidate.sql": "64c809ec41d5ed1484b555b7f730d347ddf40db019ba3cd707ba267182da4f1f",
+  "scripts/db/admin-marketing-drafts-1/schema-candidate.sql": "9c13f346ccbc5e17172e55d8a88e8eaf8b1fb7df8dbd01246c5c3c723a5e0426",
+  "scripts/db/admin-marketing-drafts-1/functions-candidate.sql": "e620c5701a0ce350edc6d15c56236d25a8f9fce7716f24077772576b8110eb28",
+  "supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql": "ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934"
+}

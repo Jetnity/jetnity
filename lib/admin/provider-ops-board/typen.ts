@@ -19,6 +19,11 @@ export const PROVIDER_OPS_BOARD_STATUSES = [
 
 export type ProviderOpsBoardStatus = (typeof PROVIDER_OPS_BOARD_STATUSES)[number]
 
+export const PROVIDER_OPS_BOARD_CHECK_STATUSES = [...PROVIDER_OPS_BOARD_STATUSES, 'configured'] as const
+export type ProviderOpsBoardCheckStatus = (typeof PROVIDER_OPS_BOARD_CHECK_STATUSES)[number]
+
+export const NATIVE_RENTAL_CHECK_ID = 'native-rental-search'
+
 export const FRESHNESS_STATES = ['fresh', 'stale', 'unknown'] as const
 
 export type FreshnessState = (typeof FRESHNESS_STATES)[number]
@@ -32,7 +37,7 @@ export type BoardFreshness = {
 export type ProviderOpsBoardCheck = {
   id: string
   name: string
-  status: ProviderOpsBoardStatus
+  status: ProviderOpsBoardCheckStatus
   source: string
   freshness: BoardFreshness
   summary: string
@@ -75,7 +80,7 @@ export const PROVIDER_OPS_BOARD_TTL_MS: Record<ProviderOpsBoardId, number> = {
   'model-usage': 120_000,
 }
 
-export const PROVIDER_OPS_BOARD_STATUS_LABEL: Record<ProviderOpsBoardStatus, string> = {
+export const PROVIDER_OPS_BOARD_STATUS_LABEL: Record<ProviderOpsBoardCheckStatus, string> = {
   available: 'Verfügbar (belegte Capability)',
   foundation_only: 'Nur Foundation',
   disabled: 'Abgeschaltet',
@@ -83,6 +88,7 @@ export const PROVIDER_OPS_BOARD_STATUS_LABEL: Record<ProviderOpsBoardStatus, str
   unknown: 'Unbekannt',
   unavailable: 'Nicht erreichbar',
   empty: 'Keine Einträge',
+  configured: 'Konfiguriert',
 }
 
 export const FRESHNESS_LABEL: Record<FreshnessState, string> = {
@@ -94,10 +100,10 @@ export const FRESHNESS_LABEL: Record<FreshnessState, string> = {
 /** Sichtbares Grün nur bei frischer, eng belegter Capability – nie für Parent/Budget/Live. */
 export function providerOpsKarteIstGruen(item: {
   id: string
-  status: ProviderOpsBoardStatus
+  status: ProviderOpsBoardCheckStatus
   freshness: BoardFreshness
 }): boolean {
-  if (item.id === 'provider-ops' || item.id === 'kill-switch' || item.id === 'cost-guard' || item.id === 'model-usage') {
+  if (item.id === NATIVE_RENTAL_CHECK_ID || item.id === 'provider-ops' || item.id === 'kill-switch' || item.id === 'cost-guard' || item.id === 'model-usage') {
     return false
   }
   return item.status === 'available' && item.freshness.state === 'fresh'

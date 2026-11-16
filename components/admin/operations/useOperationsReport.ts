@@ -12,6 +12,7 @@ import {
   getBeginnen,
   getErfolg,
   HISTORISCHER_SATZ,
+  kappeMeldung,
   laufGueltig,
   liesUhren,
   misserfolg,
@@ -226,6 +227,7 @@ export function useOperationsReport<R extends BerichtBasis>(input: {
     const begonnen = getBeginnen(standRef.current)
     if (!begonnen.lauf) return
     const lauf = begonnen.lauf
+    controllerRef.current?.abort()
     const controller = new AbortController()
     controllerRef.current = controller
     commit(begonnen.stand)
@@ -233,10 +235,22 @@ export function useOperationsReport<R extends BerichtBasis>(input: {
       try {
         const response = await fetch(lauf.endpunkt, { cache: 'no-store', signal: controller.signal })
         const status = response.status
+        if (!laufGueltig(standRef.current, lauf)) return
+        const denied = status === 401 || status === 403
+        if (denied) {
+          // Headers settle access. A stalled response body must never retain
+          // the previous report or prevent an explicit new authorization check.
+          commit(verweigerung(standRef.current, lauf, standardVerweigerung(status)), null)
+        }
         const ladung = await lade(async () => response, (wert) => deuteRef.current(wert))
         if (!laufGueltig(standRef.current, lauf)) return
-        if (status === 401 || status === 403) {
-          commit(verweigerung(standRef.current, lauf, ladung.fehler?.meldung ?? standardVerweigerung(status)), null)
+        if (denied) {
+          const current = standRef.current
+          if (current.latch && current.phase === 'verweigert' && current.ausgangFuer === lauf.id) {
+            // Only refine this same denial's text. Never reopen or replace a
+            // newer request, changed source, props decision or unmounted view.
+            commit({ ...current, meldung: kappeMeldung(ladung.fehler?.meldung ?? standardVerweigerung(status)) }, null)
+          }
           return
         }
         if (ladung.fehler || !ladung.daten) {

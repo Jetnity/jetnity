@@ -69,6 +69,17 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sourcePath: 'lib/admin/account-counts-delivery/reader.ts',
     sqlPath: 'scripts/db/admin-account-counts-delivery-1-rpc.sql',
   }),
+  ...['admin_cms_inspiration_command_v1', 'admin_cms_inspiration_read_v1',
+    'admin_cms_inspiration_confirm_v1', 'cms_inspiration_published_v1'].map(name => Object.freeze({
+    name,
+    sourcePath: 'lib/admin/content/cms-editor-2/server.ts',
+    sqlPath: 'scripts/db/admin-editorial-cms-1/functions-candidate.sql',
+  })),
+  ...['admin_marketing_drafts_apply_v1', 'admin_marketing_drafts_read_v1'].map(name => Object.freeze({
+    name,
+    sourcePath: 'lib/admin/marketing/drafts/server.ts',
+    sqlPath: 'scripts/db/admin-marketing-drafts-1/functions-candidate.sql',
+  })),
   Object.freeze({
     name: 'official_truth_store_accepted_v2',
     sourcePath: 'lib/readiness/official-truth-store-server.ts',

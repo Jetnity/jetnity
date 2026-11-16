@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "task": "Jetnity places catalog refresh 3",
+  "status": "downloaded",
+  "startedAt": "2026-11-15T16:56:59.818353+00:00",
+  "source": "GeoNames",
+  "distributionUrl": "https://download.geonames.org/export/dump/",
+  "license": {
+    "name": "Creative Commons Attribution 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "GeoNames"
+  },
+  "files": [
+    {
+      "name": "allCountries.zip",
+      "url": "https://download.geonames.org/export/dump/allCountries.zip",
+      "retrievalStartedAt": "2026-11-15T16:56:59.818622+00:00",
+      "localPath": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/source/allCountries.zip",
+      "httpStatus": 200,
+      "resolvedUrl": "https://download.geonames.org/export/dump/allCountries.zip",
+      "lastModified": "Sun, 15 Nov 2026 03:39:51 GMT",
+      "etag": "\"192f9d39-6604869ed42fe\"",
+      "contentType": "application/zip",
+      "contentLength": "422550841",
+      "retrievalFinishedAt": "2026-11-15T16:57:27.520268+00:00",
+      "bytes": 422550841,
+      "sha256": "1bb5c62d025a66f47d64eee201e92016937d96870089f58b133662b8e300df9d",
+      "status": "downloaded"
+    },
+    {
+      "name": "countryInfo.txt",
+      "url": "https://download.geonames.org/export/dump/countryInfo.txt",
+      "retrievalStartedAt": "2026-11-15T16:58:02.868698+00:00",
+      "localPath": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/source/countryInfo.txt",
+      "status": "downloaded",
+      "retrievalFinishedAt": "2026-11-15T16:58:08.719471+00:00",
+      "failedAttempts": [
+        {
+          "retrievalStartedAt": "2026-11-15T16:57:27.521216+00:00",
+          "retrievalFinishedAt": "2026-11-15T16:57:32.510912+00:00",
+          "error": "HTTP Error 503: Service Unavailable"
+        }
+      ],
+      "httpStatus": 200,
+      "resolvedUrl": "https://download.geonames.org/export/dump/countryInfo.txt",
+      "lastModified": "Sun, 15 Nov 2026 03:45:58 GMT",
+      "etag": "\"7d70-660487fcb46f7\"",
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": "32112",
+      "bytes": 32112,
+      "sha256": "79f8f59ea01cbb40438bf1856dd6c2ff201f03f8fc72d0530b2646aaf603ef04"
+    },
+    {
+      "name": "admin1CodesASCII.txt",
+      "url": "https://download.geonames.org/export/dump/admin1CodesASCII.txt",
+      "retrievalStartedAt": "2026-11-15T16:57:32.511873+00:00",
+      "localPath": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/source/admin1CodesASCII.txt",
+      "httpStatus": 200,
+      "resolvedUrl": "https://download.geonames.org/export/dump/admin1CodesASCII.txt",
+      "lastModified": "Sun, 15 Nov 2026 03:39:51 GMT",
+      "etag": "\"25013-6604869ed4ace\"",
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": "151571",
+      "retrievalFinishedAt": "2026-11-15T16:57:39.592587+00:00",
+      "bytes": 151571,
+      "sha256": "2e4867f5397acb056ea26377601b57af37cb4c81399770225018e9e439e91ad3",
+      "status": "downloaded"
+    },
+    {
+      "name": "admin2Codes.txt",
+      "url": "https://download.geonames.org/export/dump/admin2Codes.txt",
+      "retrievalStartedAt": "2026-11-15T16:57:39.593166+00:00",
+      "localPath": "/workspace/scratch/8d4f63afa634/places-catalog-refresh-3-data/source/admin2Codes.txt",
+      "httpStatus": 200,
+      "resolvedUrl": "https://download.geonames.org/export/dump/admin2Codes.txt",
+      "lastModified": "Sun, 15 Nov 2026 03:39:51 GMT",
+      "etag": "\"242f3b-6604869ed4ace\"",
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": "2371387",
+      "retrievalFinishedAt": "2026-11-15T16:57:46.680077+00:00",
+      "bytes": 2371387,
+      "sha256": "67492a022984623460aaaec97f4d1d49e74356c8b5730be9fe23e736223b71dc",
+      "status": "downloaded"
+    }
+  ],
+  "errors": [],
+  "parserBaseline": {
+    "scripts/places/importieren.ts": "07500bf67d5f21628a3e27fc5d61625815d6b8ccff06d3feaa130099aeb288c6",
+    "lib/places/importieren.ts": "ea1e1807e565ab9829b722624f5833a60e23b6db61b67f5c2a454a77ec6f49b0",
+    "lib/places/domain.ts": "882e50324699f9b93794b08e71076b7c20ef56f176f48cc59819a28011d7bd6d",
+    "lib/rollout/schreibauftrag.ts": "d01da681f1df80aa9a0ce6aa24082411e54c38682b7675bea617e75ec925f297"
+  },
+  "finishedAt": "2026-11-15T16:58:08.720424+00:00",
+  "historicalErrors": [
+    {
+      "file": "countryInfo.txt",
+      "error": "HTTP Error 503: Service Unavailable"
+    }
+  ]
+}
