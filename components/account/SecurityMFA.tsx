@@ -145,10 +145,17 @@ export default function SecurityMFA({
   const [message, setMessage] = React.useState<{ type: "success" | "error"; schluessel: SicherheitTextSchluessel } | null>(null);
   const [stepUp, setStepUp] = React.useState<MfaStepUpZustand>(MFA_STEP_UP_ANFANG);
   const unenrollLaufend = React.useRef(false);
+  const entfernenAusloeser = React.useRef<HTMLButtonElement | null>(null);
 
   const [browserWebAuthn, setBrowserWebAuthn] = React.useState<boolean | null>(null);
   const stepUpBeschaeftigt = mfaStepUpIstBeschaeftigt(stepUp);
   const aktionenGesperrt = loading || stepUpBeschaeftigt || mfaStepUpDialogOffen(stepUp) || unenrollLaufend.current;
+
+  React.useLayoutEffect(() => {
+    if (aktionenGesperrt) return;
+    entfernenAusloeser.current?.focus();
+    entfernenAusloeser.current = null;
+  }, [aktionenGesperrt]);
 
   React.useEffect(() => {
     setBrowserWebAuthn(typeof window !== "undefined" && "PublicKeyCredential" in window);
@@ -348,8 +355,9 @@ export default function SecurityMFA({
     }
   }
 
-  async function handleRemove(id: string, status: string | null) {
+  async function handleRemove(id: string, status: string | null, ausloeser: HTMLButtonElement) {
     if (unenrollLaufend.current || !darfMfaStepUpStarten(stepUp)) return;
+    entfernenAusloeser.current = ausloeser;
     unenrollLaufend.current = true;
     setMessage(null);
     setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "starte", faktorId: id }));
@@ -458,7 +466,7 @@ export default function SecurityMFA({
                         variant="destructive"
                         size="sm"
                         className={`${SICHERHEIT_ZIEL_44} min-h-11 w-full sm:w-auto`}
-                        onClick={() => void handleRemove(faktor.id, faktor.status)}
+                        onClick={(event) => void handleRemove(faktor.id, faktor.status, event.currentTarget)}
                         disabled={aktionenGesperrt}
                       >
                         {sicherheitText(sprache, "totp.remove", { name })}
@@ -532,7 +540,7 @@ export default function SecurityMFA({
                 variant="ghost"
                 className={`${SICHERHEIT_ZIEL_44} min-h-11`}
                 disabled={aktionenGesperrt}
-                onClick={() => void handleRemove(factorId, "unverified")}
+                onClick={(event) => void handleRemove(factorId, "unverified", event.currentTarget)}
               >
                 {sicherheitText(sprache, "totp.cancelSetup")}
               </Button>
