@@ -82,6 +82,37 @@ function exact(value, keys) {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
     && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key))
 }
+function isPublicProductionKey(key, now) {
+  if (typeof key !== 'string' || key.length > 4096) return false
+  if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) return true
+  // Classify only the public legacy anon format. This does not verify its
+  // signature or authenticate it: the fixed Supabase HTTPS endpoint must do so.
+  try {
+    const parts = key.split('.')
+    if (parts.length !== 3) return false
+    const limits = [512, 2048, 32]
+    const bytes = parts.map((part, index) => {
+      if (!/^[A-Za-z0-9_-]+$/.test(part)) throw Error('invalid key encoding')
+      const value = Buffer.from(part, 'base64url')
+      if (value.length > limits[index] || value.toString('base64url') !== part) throw Error('invalid key encoding')
+      return value
+    })
+    if (bytes[2].length !== 32) return false
+    const [header, payload] = bytes.slice(0, 2).map(value => {
+      const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(value)
+      const parsed = JSON.parse(text)
+      // Reject duplicate/escaped fields, number aliases, whitespace and BOMs.
+      if (JSON.stringify(parsed) !== text) throw Error('noncanonical key metadata')
+      return parsed
+    })
+    const seconds = Math.floor(now / 1000)
+    return exact(header, ['alg', 'typ']) && header.alg === 'HS256' && header.typ === 'JWT'
+      && exact(payload, ['iss', 'ref', 'role', 'iat', 'exp'])
+      && payload.iss === 'supabase' && payload.ref === REF && payload.role === 'anon'
+      && Number.isSafeInteger(payload.iat) && payload.iat > 0 && payload.iat <= seconds
+      && Number.isSafeInteger(payload.exp) && payload.exp > seconds && payload.exp > payload.iat
+  } catch { return false }
+}
 function readSchedule(text, now) {
   // Only these three literal keys and scalar tokens, exactly once each. This
   // rejects duplicate/escaped fields and number aliases before JSON parsing.
@@ -137,7 +168,7 @@ export async function checkProductionImport({ env = process.env, fetchImpl = glo
     if (env.JETNITY_PRODUCTION_IMPORT_MONITOR !== ARMED) return report('unarmed', 'monitor_not_armed')
     if (env.SUPABASE_PROJECT_REF !== REF) return report('alarm', 'target_refused')
     key = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-    if (typeof key !== 'string' || key.length > 4096 || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) return report('alarm', 'credentials_invalid')
+    if (!isPublicProductionKey(key, Date.now())) return report('alarm', 'credentials_invalid')
     if (typeof fetchImpl !== 'function') return report('alarm', 'transport_unavailable')
   } catch { return report('alarm', 'configuration_invalid') }
   if (signal?.aborted) return report('alarm', 'aborted')
