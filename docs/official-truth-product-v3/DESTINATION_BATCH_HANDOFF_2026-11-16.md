@@ -30,14 +30,15 @@ Ausführung im normalen Repository mit vorhandenen Abhängigkeiten, **ausserhalb
 ```sh
 node --import ./scripts/server-only-test-register.mjs --import tsx \
   scripts/official-truth-destination-batch.mjs \
-  --research-root /pfad/zur/echten/recherche --destination AT \
-  --passport-column TATSAECHLICHER_SPALTENNAME \
-  --rank-column TATSAECHLICHER_RANGSPALTENNAME \
-  --output /externe/ausgabe/AT
+  --research-root /gesichert/entry-requirements --destination AT \
+  --passport-column nationality_iso2 --rank-column rank \
+  --output /gesichert/ausgabe/AT
 ```
 
-Ohne Rangspalte gilt die tatsächliche CSV-Zeilenfolge; dann `--rank-column` weglassen.
-Spaltennamen zuerst aus der echten Datei lesen, nicht raten. stdout enthält nur
+Die tatsächliche CSV hat die sechs Spalten `rank,nationality_iso2,name,score_basis,sources,notes`.
+Ein nach Namen und SHA verifiziertes Archiv muss zuerst sicher im Ordner
+`/gesichert/entry-requirements` entpackt sein; keine automatische Extraktion im
+Starter. stdout enthält nur
 eine Zählzeile. Der Starter ist kein Massenimport; spätere Vorschläge brauchen
 weiterhin amtliche Quellenqualifikation und den normalen V3-Importweg.
 
@@ -51,12 +52,24 @@ vollständigen Repository-Abhängigkeiten; deshalb keine behauptete lokale
 Gesamt-Typecheck-/Build-/Originaldaten-Abnahme. Keine frühere grüne CH→DE-Prüfung
 wiederholt. Eigene Root-Quellprüfung, kein unabhängiger zweiter Reviewer behauptet.
 
-**Realer Input fehlt im aktuellen Zugriff:** weder das 206×50-Archiv noch
-`passport-priority.csv` waren im Mount, in gezielter Repo-/Issuesuche oder im
-persönlichen Übergabekontext auffindbar. Das alte CH-only-Archiv wird nicht als
-50-Pass-Recherche eingesetzt. Bisher **0 reale Zielpakete** erzeugt, **0 neue
-Fakten** akzeptiert. Erstes offenes Arbeitselement ist der tatsächliche Datei-
-zugriff, danach AT komplett und die kanonischen Quellen-/Anwendbarkeitsprüfungen.
+**Originaldaten am 16.11. wiedergefunden und unabhängig verifiziert:**
+ChatGPT Library `/jetnity-einreise-206-ziele.tar(1).xz` (2.764.784 Bytes,
+SHA-256 `6ef8c9f6e36bee2f75cf162d725a60844ef757bfad14407f69d81631cb9f55e5`).
+Archiv-Wurzel `entry-requirements/`; 206 Zielordner mit je allen 50 CSV-Pass-Slices
+und `index.json` (neun enthalten zusätzliche Einzelslices). Keine gefährlichen
+Tar-Pfade/Links bei der Metadatenprüfung. Originale `passport-priority.csv` hat
+50 Datenzeilen, sechs Spalten und 112.228 Bytes; SHA-256
+`4515324024236916142857bf16d67590a7a1ca11c31fd1263e8b7979fd6eb358`.
+Die zehn vorgegebenen ersten Pässe sowie CH-Beteiligung bestätigt. Die anfängliche
+64-KiB-CSV-Grenze war **zu klein für das echte Original**; auf 128 KiB begrenzt
+korrigiert und mit synthetischer breiter CSV im selben Core-Test verankert.
+Datenzugriff hier ist kein Dev-/CI-/Quellenqualifikationsnachweis. Originalarchiv
+liegt weiterhin RESEARCH_ONLY in der Library, nicht in Production oder im Repo.
+**0 real generierte Zielpakete / 0 neue akzeptierte Fakten / keine Veröffentlichung.**
+Erster offener Schritt nach grüner CI: Archiv im gesicherten Dev-Workspace über
+nachgewiesene Bytes extrahieren; dann AT mit der echten Factory per einem Befehl
+erzeugen und unabhängig auf 50 Pässe/26 Themen/0 Facts prüfen. Erst danach
+amtliche Quellen-/Methodenprüfung vor jedweder inhaltlichen Freigabe.
 
 Weitere vorbereitete Arbeit in diesem selben, nicht veröffentlichten Paket:
 - `research-notes/2026-11-16/CH-DE-and-AT.md`: amtliche zusätzliche Kandidaten,

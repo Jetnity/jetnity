@@ -6,12 +6,14 @@ import { pathToFileURL } from 'node:url'
 
 export const DESTINATION_ORDER = Object.freeze(['AT','IT','FR','ES','PT','GR','HR','NL','GB','US','TR','TH','AE'])
 const PREFIX = ['IN','TR','CN','DE','PL','IT','US','UA','RO','FR']
+// The verified original ranking includes six long quoted provenance columns (~112 KiB).
+const MAX_PRIORITY_FILE_BYTES = 128 * 1024
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 const fail = code => { throw new Error(code) }
 const inside = (root, file) => { const r = relative(root, file); return r === '' || (!r.startsWith('..' + sep) && r !== '..' && !r.startsWith(sep)) }
 
 export function readPriority(text, passportColumn, rankColumn = null) {
-  if (typeof text !== 'string' || Buffer.byteLength(text) > 65536 || text.includes('\0')) fail('invalid_priority_file')
+  if (typeof text !== 'string' || Buffer.byteLength(text) > MAX_PRIORITY_FILE_BYTES || text.includes('\0')) fail('invalid_priority_file')
   const rows = []; let row = [], field = '', quoted = false, closed = false
   text = text.replace(/^\uFEFF/, '')
   for (let i = 0; i < text.length; i++) {
@@ -89,7 +91,7 @@ export function inventory(rootInput, destination) {
 export function prepareDestination({ root, destination, output, passportColumn, rankColumn = null, createTemplate }) {
   if (typeof createTemplate !== 'function') fail('canonical_template_required')
   const research = inventory(root, destination)
-  const csvBytes = regularFile(join(research.root, 'passport-priority.csv'), 65536)
+  const csvBytes = regularFile(join(research.root, 'passport-priority.csv'), MAX_PRIORITY_FILE_BYTES)
   const passports = readPriority(new TextDecoder('utf-8', { fatal: true }).decode(csvBytes), passportColumn, rankColumn)
   // Resolve the actual parent too: a symlink may not route output into the source archive.
   const candidate = resolve(output), out = join(realpathSync(dirname(candidate)), basename(candidate))

@@ -127,3 +127,13 @@ test('wrong canonical coverage or attempted truth promotion never creates a pack
     assert.equal(existsSync(f.output),false)
   }
 })
+
+test('six-column research priority file permits bounded long quoted provenance, not oversized input', () => {
+  const longNotes = 'synthetic fixture, '.repeat(100)
+  const source = 'https://example.invalid/offline-fixture'
+  const wide = 'rank,nationality_iso2,name,score_basis,sources,notes\r\n'
+    + passports.map((c,i) => `${i+1},${c},Synthetic,"${longNotes}","${source}",untrusted fixture`).join('\r\n') + '\r\n'
+  assert.ok(Buffer.byteLength(wide) > 65_536 && Buffer.byteLength(wide) < 128 * 1024)
+  assert.deepEqual(readPriority(wide,'nationality_iso2','rank'),passports)
+  assert.throws(() => readPriority(wide + 'x'.repeat(128 * 1024),'nationality_iso2','rank'),/invalid_priority_file/)
+})
