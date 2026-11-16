@@ -24,6 +24,7 @@ test('original research archive adapter remains independently checked and fail-c
       PYTHONNOUSERSITE: '1',
       PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUTF8: '1',
+      NODE_ENV: 'test',
     },
   })
   assert.equal(result.error, undefined, 'Python3 must be available; no silent test skipping')
