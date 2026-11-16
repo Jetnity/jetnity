@@ -41,6 +41,7 @@ BEGIN
        fk AS (SELECT oid FROM pg_constraint WHERE conrelid=(SELECT oid FROM sf)
          AND confrelid='auth.users'::regclass AND contype='f'),
        p AS (SELECT oid FROM pg_policy WHERE polrelid=(SELECT oid FROM sf)),
+       df AS (SELECT oid FROM pg_attrdef WHERE adrelid=(SELECT oid FROM sf)),
        t AS (SELECT oid FROM pg_trigger WHERE tgconstraint IN (SELECT oid FROM fk)
          AND tgrelid='auth.users'::regclass),
        ids AS (
@@ -48,6 +49,7 @@ BEGIN
          UNION ALL SELECT 'pg_constraint'::regclass,oid FROM fk
          UNION ALL SELECT 'pg_trigger'::regclass,oid FROM t
          UNION ALL SELECT 'pg_policy'::regclass,oid FROM p
+         UNION ALL SELECT 'pg_attrdef'::regclass,oid FROM df
        ), keys AS (
          SELECT 'trigger:'||oid::text AS k FROM t
          UNION ALL
@@ -66,11 +68,11 @@ BEGIN
     WHERE after_catalog->e.key IS DISTINCT FROM e.value;
   SELECT count(*) INTO unexpected FROM jsonb_object_keys(after_catalog) k
     WHERE NOT before_catalog ? k AND NOT k=ANY(permit);
-  -- Real Dev saved_offers measured 2 incoming triggers + 8 distinct protected
-  -- dependency keys + 13 protected-role shared entries. No broader pattern.
-  IF total<>23 OR added<>23 OR changed<>0 OR unexpected<>0
+  -- Real Dev saved_offers measured 2 incoming triggers + 9 distinct protected
+  -- dependency keys (including auth.uid() default) + 13 role grants. No broader pattern.
+  IF total<>24 OR added<>24 OR changed<>0 OR unexpected<>0
     OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'trigger:%')<>2
-    OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'dependency:%')<>8
+    OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'dependency:%')<>9
     OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'shared:%')<>13 THEN
     RAISE EXCEPTION 'saved_offers unauthorized catalog delta' USING ERRCODE='P7911';
   END IF;
