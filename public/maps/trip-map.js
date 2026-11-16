@@ -102,7 +102,7 @@
     group.forEach((stop) => {
       const button = document.createElement('button')
       button.type = 'button'
-      button.textContent = `${stop.index + 1}. ${stop.label}`
+      button.textContent = `${stop.symbol || stop.index + 1}. ${stop.label}`
       button.addEventListener('click', () => { choose(stop.index); closeCluster() })
       clusterStops.append(button)
     })
@@ -137,7 +137,7 @@
       node.textContent = group.length > 1 ? String(group.length) : (group[0].symbol || String(group[0].index + 1))
       const marker = new window.google.maps.marker.AdvancedMarkerElement({
         map, position: group[0], content: node, gmpClickable: true,
-        title: group.length > 1 ? `${group.length} Reiseorte anzeigen` : `${group[0].index + 1}. ${group[0].label}`,
+        title: group.length > 1 ? `${group.length} Reiseorte anzeigen` : `${group[0].symbol || group[0].index + 1}. ${group[0].label}`,
       })
       marker.addListener('click', () => {
         if (group.length === 1) choose(group[0].index)

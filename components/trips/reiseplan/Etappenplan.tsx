@@ -475,7 +475,7 @@ export default function Etappenplan({
           )}
           <PlanKartenplatz reise={reise} route={route} etappe={activeStage?.id} tag={activeDay?.id}
             verbindung={verbindung} setzen={platzieren} hinreise={!!outbound} rueckreise={!!inbound}
-            onAuswahl={choose} onEdge={onEdge} onPosition={positionWaehlen}>
+            onAuswahl={choose} onSuche={onEtappensuche} onEdge={onEdge} onPosition={positionWaehlen}>
           <Etappenkarte
             reise={reise}
             auswahl={activeStage?.id || null}

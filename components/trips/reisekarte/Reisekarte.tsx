@@ -119,6 +119,13 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
     ...(o.id === abreiseId ? { symbol: 'A' } : {}) }] : []).slice(0,1000), [orte])
   const abschnitte = useMemo(() => plan ? planstrecken(orte, plan.route, plan.verbindung, plan.hinreise, plan.rueckreise) : [], [orte, plan])
   const aktiv = !!plan || offen
+  const planKontext = JSON.stringify([plan?.reise.id, plan?.tag, plan?.etappe, plan?.verbindung])
+  const [planOrt, setPlanOrt] = useState<{ kontext: string; id: string } | null>(null)
+  const ortId = plan ? (planOrt?.kontext === planKontext ? planOrt.id : '') : auswahl
+  const ortWaehlen = useCallback((id: string) => {
+    if (plan) setPlanOrt({ kontext: planKontext, id })
+    else setAuswahl(id)
+  }, [plan, planKontext])
   const post = useCallback((type: string, fields: Record<string, unknown> = {}) => {
     frame.current?.contentWindow?.postMessage({ source: 'jetnity-trip-map-parent', type, ...fields }, '*')
   }, [])
@@ -148,7 +155,7 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
           const ort = Number.isInteger(e.data.index) ? orte[e.data.index] : undefined
           if (ort && plan?.setzen && ort.position) plan.onPosition(ort.position)
           else if (ort && plan && ort.art === 'Etappe' && ort.etappeId) plan.onAuswahl(ort.etappeId)
-          else if (ort) setAuswahl(ort.id)
+          else if (ort) ortWaehlen(ort.id)
           break
         }
         case 'abschnitt': {
@@ -166,11 +173,11 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
     }
     window.addEventListener('message', receive)
     return () => window.removeEventListener('message', receive)
-  }, [pins, orte, plan, post, stop])
+  }, [pins, orte, plan, post, stop, ortWaehlen])
   useEffect(() => {
     if (!bereit || !aktiv) return
     post('stops', { stops: pins })
-    const auswahlId = plan ? (plan.etappe && 'etappe-' + plan.etappe) : auswahl
+    const auswahlId = ortId || (plan?.etappe && 'etappe-' + plan.etappe)
     const gewaehlterIndex = orte.findIndex(o => o.id === auswahlId)
     if (plan) {
       const abschnitt = abschnitte.find(s => s.aktiv)
@@ -178,26 +185,42 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
         setzen: plan.setzen })
     } else {
       post('reiseplan', { abschnitte: [], fokus: [], setzen: false })
-      post('select', { index: gewaehlterIndex >= 0 ? gewaehlterIndex : null, focus: !!auswahl })
+      post('select', { index: gewaehlterIndex >= 0 ? gewaehlterIndex : null, focus: !!ortId })
     }
-  }, [aktiv, bereit, pins, orte, plan, abschnitte, auswahl, mitAnreise, post])
+  }, [aktiv, bereit, pins, orte, plan, abschnitte, ortId, mitAnreise, post])
   useEffect(() => {
     if (!granted || bereit) return
     const timer = window.setTimeout(() => stop('Die Karte konnte nicht geladen werden. Bitte versuche es erneut.'), 30000)
     return () => window.clearTimeout(timer)
   }, [granted, bereit, stop])
-  const gewaehlt = orte.find(o => o.id === auswahl)
-  const etappe = gewaehlt?.etappeId ?? (aufruf?.reise.stages.length === 1 ? aufruf.reise.stages[0].id : undefined)
+  const gewaehlt = orte.find(o => o.id === ortId)
+  const etappe = gewaehlt?.etappeId ?? (reise?.stages.length === 1 ? reise.stages[0].id : undefined)
   const ziel = gewaehlt && gewaehlt.art !== 'Etappe' && gewaehlt.art !== 'Abreise'
     ? ({ Flughafen: 'fluege', Hotel: 'unterkunft', Besuch: 'aktivitaeten' } as const)[gewaehlt.art] : undefined
   const aktivierbar = Boolean(enabled && !abgelaufen && !gesperrt && (pins.length || plan?.setzen))
   const aktiveKante = abschnitte.find(s => s.aktiv)
-  const ersteKante = aktiveKante ?? abschnitte.find(s => plan?.etappe && orte[s.von]?.etappeId === plan.etappe) ?? abschnitte[0]
+  const ersteKante = aktiveKante ?? abschnitte.find(s => plan?.etappe && orte[s.von]?.etappeId === plan.etappe) ?? abschnitte.find(s => orte[s.von].art === 'Etappe' && orte[s.nach].art === 'Etappe')
   const von = ersteKante && orte[ersteKante.von]
   const nach = ersteKante && orte[ersteKante.nach]
   const titel = plan?.verbindung
     ? [plan.verbindung.vonId, plan.verbindung.nachId].map(id => plan.reise.stages.find(s => s.id === id)?.name ?? 'Etappe').join(' → ')
-    : plan?.reise.stages.find(s => s.id === plan.etappe)?.name ?? 'Deine Route'
+    : plan?.reise.stages.find(s => s.id === plan.etappe)?.name ?? 'Reisekarte'
+  const ortsliste = <>
+          <ol>{orte.map((o, i) => {
+            if (plan && o.position && (o.art === 'Etappe' || o.art === 'Abreise')) return null
+            const Icon = symbole[o.art]; return <li key={o.id}>
+            <button type="button" aria-pressed={ortId === o.id} onClick={() => ortWaehlen(o.id)}>
+              <span className="rk-number">{i + 1}</span><span><strong>{o.name}</strong><small><Icon size={14} aria-hidden />{o.art}{o.detail ? ' · ' + o.detail : ''}{!o.position && ' · Standort offen'}</small></span>
+            </button></li> })}</ol>
+          {gewaehlt && !gewaehlt.position && <form className="rk-coords" key={gewaehlt.id} onSubmit={e => {
+            e.preventDefault(); const data = new FormData(e.currentTarget)
+            const p = { lat: Number(data.get('lat')), lng: Number(data.get('lng')) }
+            if (istPosition(p)) setPositionen(old => ({ ...old, [gewaehlt.id]: p }))
+          }}><p>Standort für diese Ansicht ergänzen</p>
+            <label>Breitengrad<input name="lat" required type="number" step="any" min="-90" max="90" /></label>
+            <label>Längengrad<input name="lng" required type="number" step="any" min="-180" max="180" /></label>
+            <button type="submit" className="rk-link">Standort anzeigen</button></form>}
+        </>
   return <KartenKontext.Provider value={context}>
     <PlanKartenKontext.Provider value={enabled ? anmeldung : null}>{children}</PlanKartenKontext.Provider>
     <div hidden ref={parkplatzAnmelden} />
@@ -210,18 +233,7 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
         {!plan && <aside className="rk-list"><label>Ansicht<select value={tag} onChange={e => { setTag(e.target.value); setAuswahl('') }}>
           <option value="">Ganze Reise</option>{inhalt?.tage.map(t => <option value={t.id} key={t.id}>{t.name}</option>)}</select></label>
           <h3>Orte</h3>{!orte.length && <p>Für diese Ansicht sind noch keine Orte geplant.</p>}
-          <ol>{orte.map((o, i) => { const Icon = symbole[o.art]; return <li key={o.id}>
-            <button type="button" aria-pressed={auswahl === o.id} onClick={() => setAuswahl(o.id)}>
-              <span className="rk-number">{i + 1}</span><span><strong>{o.name}</strong><small><Icon size={14} aria-hidden />{o.art}{o.detail ? ' · ' + o.detail : ''}{!o.position && ' · Standort offen'}</small></span>
-            </button></li> })}</ol>
-          {gewaehlt && !gewaehlt.position && <form className="rk-coords" key={gewaehlt.id} onSubmit={e => {
-            e.preventDefault(); const data = new FormData(e.currentTarget)
-            const p = { lat: Number(data.get('lat')), lng: Number(data.get('lng')) }
-            if (istPosition(p)) setPositionen(old => ({ ...old, [gewaehlt.id]: p }))
-          }}><p>Standort für diese Ansicht ergänzen</p>
-            <label>Breitengrad<input name="lat" required type="number" step="any" min="-90" max="90" /></label>
-            <label>Längengrad<input name="lng" required type="number" step="any" min="-180" max="180" /></label>
-            <button type="submit" className="rk-link">Standort anzeigen</button></form>}
+          {ortsliste}
         </aside>}
         <div className="rk-main" key="karte">
           {plan && <header className="rk-plan-head"><div><h2>{titel}</h2><p>{plan.setzen ? 'Position für deinen Stopp auf der Karte wählen' : 'Geplanter Reiseverlauf · Luftlinien'}</p></div>
@@ -229,7 +241,7 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
               {originId && <button type="button" aria-pressed={mitAnreise} onClick={() => setMitAnreise(a => !a)}>Mit Anreise</button>}
               {bereit && <button type="button" onClick={() => post('fit')}>Zentrieren</button>}
             </div></header>}
-          {plan && mitAnreise && originId && !abreise?.position && <p role="status">{abreise?.id === originId ? 'Für den Abreiseort fehlt die Kartenposition.' : 'Abreiseort wird geladen …'}</p>}
+          {plan && mitAnreise && originId && !(abreise?.id === originId && abreise.position) && <p role="status">{abreise?.id === originId ? 'Für den Abreiseort fehlt die Kartenposition.' : 'Abreiseort wird geladen …'}</p>}
           <div className="rk-canvas">
           {granted && <iframe title="Interaktive Google-Reisekarte" ref={frame} src="/embed/trip-map" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerPolicy="strict-origin" />}
           {!granted && <div className="rk-consent"><MapIcon aria-hidden size={32} />
@@ -247,6 +259,10 @@ export default function ReisekartenRahmen({ children, enabled, expiresAt }: { ch
           key={JSON.stringify([!!plan, tag, plan?.tag, von?.id, nach?.id, aufruf?.ort?.id])}
           orte={orte} fokus={plan ? undefined : aufruf?.ort?.id} vorgabe={plan && von && nach ? { von: von.id, nach: nach.id } : undefined}
           aktiv={granted && bereit && aktiv && aktivierbar} post={post} />}
+        {plan && orte.some(o => !o.position || (o.art !== 'Etappe' && o.art !== 'Abreise')) && <details className="rk-list rk-plan-orte">
+          <summary>Geplante Orte und Standorte</summary>{ortsliste}</details>}
+        {plan?.onSuche && etappe && (ziel === 'unterkunft' || ziel === 'aktivitaeten') && <button className="rk-link" type="button"
+          onClick={() => plan.onSuche?.(ziel, etappe)}>{ziel === 'unterkunft' ? 'Hotels vergleichen' : 'Aktivitäten entdecken'}</button>}
         {!plan && gewaehlt && etappe && ziel && aufruf?.zurSuche && <div className="rk-suche">
           <strong>{gewaehlt.name}</strong>
           <button type="button" className="rk-link" onClick={() => { dialog.current?.close(); aufruf.zurSuche?.(ziel, etappe) }}>

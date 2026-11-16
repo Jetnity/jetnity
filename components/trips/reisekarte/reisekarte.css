@@ -57,3 +57,7 @@
 
 .rk-vorschau{margin:0;padding:0;list-style:none;display:grid;gap:.25rem;color:var(--color-brand-800);font-weight:600}
 .rk-inline .rk-consent{overflow:auto;justify-content:safe center}
+
+.rk-plan-orte{padding:.5rem 1rem;border:0;border-top:1px solid #d4dfd9;scrollbar-gutter:auto}
+.rk-plan-orte summary{cursor:pointer;font-weight:600;padding:.7rem 0}
+.rk-plan-orte input{max-width:100%;min-height:44px;border:1px solid #b7c9bd;border-radius:.5rem;padding:0 .4rem}
