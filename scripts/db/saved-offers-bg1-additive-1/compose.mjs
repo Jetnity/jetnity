@@ -1,6 +1,7 @@
 // Owner-gated SQL **generator**, not an installer. No network or DB access.
 // Emits one exact-commit transaction only after validating the canonical file
 // using its original Git blob identity. This generator never executes SQL.
+import { postAdminValidators } from './post-admin.mjs'
 import { createHash } from 'node:crypto'
 import { readFileSync, openSync, writeFileSync, closeSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -23,9 +24,11 @@ export function compileSavedOffersGuard() {
   const paths=['preflight.sql','delta.sql','successor.sql','post.sql']
   const parts=paths.map(name=>readFileSync(resolve(directory,'parts',name),'utf8'))
   if (parts[2].split('/* INJECT_CANONICAL_MIGRATION_STATEMENT */').length!==2
+    || parts[2].split('/* POST_ADMIN_VALIDATORS */').length!==2
     || parts.some(x=>x.length<1000)) fail()
   const substituted=parts[2].replace('/* INJECT_CANONICAL_MIGRATION_STATEMENT */',
-    '$saved_migration_statement$'+migration+'$saved_migration_statement$')
+    () => '$saved_migration_statement$'+migration+'$saved_migration_statement$')
+    .replace('/* POST_ADMIN_VALIDATORS */', () => postAdminValidators(MIGRATION_BLOB))
   const sql=['BEGIN;',parts[0],migration,parts[1],substituted,parts[3],'COMMIT;',''].join('\n')
   if (!sql.startsWith('BEGIN;\n')||!sql.endsWith('COMMIT;\n')) fail()
   return sql

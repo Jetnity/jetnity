@@ -23,18 +23,22 @@ BEGIN
         AND confrelid='auth.users'::regclass)) <> 2
     OR EXISTS(SELECT 1 FROM information_schema.table_privileges
       WHERE table_schema='public' AND table_name='saved_offers' AND grantee='anon')
-    OR (SELECT coalesce(array_agg(column_name ORDER BY column_name),ARRAY[]::text[])
+    OR (SELECT coalesce(array_agg(column_name::text ORDER BY column_name::text),ARRAY[]::text[])
       FROM information_schema.column_privileges
       WHERE table_schema='public' AND table_name='saved_offers' AND grantee='authenticated'
         AND privilege_type='UPDATE') IS DISTINCT FROM expected_updates
+    OR (SELECT array_agg(x::text ORDER BY x::text) FROM pg_class c CROSS JOIN LATERAL unnest(c.relacl) x
+          WHERE c.oid='public.saved_offers'::regclass)
+       IS DISTINCT FROM ARRAY['authenticated=ard/postgres','postgres=arwdDxtm/postgres','service_role=arwdDxtm/postgres']
     OR EXISTS(SELECT 1 FROM pg_policy WHERE polrelid='public.saved_offers'::regclass
       AND (polroles<>ARRAY['authenticated'::regrole::oid]::oid[]
-        OR polname NOT IN ('saved_offers_select_own','saved_offers_insert_own',
-          'saved_offers_update_own','saved_offers_delete_own')
-        OR (polcmd='w' AND (pg_get_expr(polqual,polrelid) IS DISTINCT FROM
-            '(( SELECT auth.uid() AS uid) = user_id)' OR
-            pg_get_expr(polwithcheck,polrelid) IS DISTINCT FROM
-            '(( SELECT auth.uid() AS uid) = user_id)')))) THEN
+        OR polname IS DISTINCT FROM 'saved_offers_' || CASE polcmd
+          WHEN 'r' THEN 'select' WHEN 'a' THEN 'insert' WHEN 'w' THEN 'update' WHEN 'd' THEN 'delete' END || '_own'
+        OR NOT polpermissive
+        OR pg_get_expr(polqual,polrelid) IS DISTINCT FROM CASE WHEN polcmd IN ('r','w','d')
+          THEN '(( SELECT auth.uid() AS uid) = user_id)' END
+        OR pg_get_expr(polwithcheck,polrelid) IS DISTINCT FROM CASE WHEN polcmd IN ('a','w')
+          THEN '(( SELECT auth.uid() AS uid) = user_id)' END)) THEN
     RAISE EXCEPTION 'saved_offers canonical migration structure mismatch' USING ERRCODE='P7911';
   END IF;
   WITH sf AS (SELECT 'public.saved_offers'::regclass::oid AS oid),
@@ -60,7 +64,9 @@ BEGIN
          SELECT 'shared:'||d.dbid||':'||d.classid||':'||d.objid||':'||d.objsubid||':'||
            d.refclassid||':'||d.refobjid||':'||d.deptype::text
          FROM pg_shdepend d WHERE (d.classid,d.objid) IN (SELECT classid,objid FROM ids)
-           AND d.refobjid='authenticated'::regrole
+           AND (d.refobjid='authenticated'::regrole OR
+             (d.refobjid='service_role'::regrole AND d.classid='pg_class'::regclass
+               AND d.objid=(SELECT oid FROM sf) AND d.objsubid=0 AND d.deptype='a'))
        ) SELECT array_agg(DISTINCT k ORDER BY k) INTO permit FROM keys WHERE after_catalog ? k;
   SELECT count(*) INTO total FROM unnest(permit) k;
   SELECT count(*) INTO added FROM jsonb_object_keys(after_catalog) k WHERE NOT before_catalog ? k;
@@ -69,11 +75,11 @@ BEGIN
   SELECT count(*) INTO unexpected FROM jsonb_object_keys(after_catalog) k
     WHERE NOT before_catalog ? k AND NOT k=ANY(permit);
   -- Real Dev saved_offers measured 2 incoming triggers + 9 distinct protected
-  -- dependency keys (including auth.uid() default) + 13 role grants. No broader pattern.
-  IF total<>24 OR added<>24 OR changed<>0 OR unexpected<>0
+  -- dependency keys (including auth.uid() default) + 14 role dependencies (including the hosted service_role table default). No broader pattern.
+  IF total<>25 OR added<>25 OR changed<>0 OR unexpected<>0
     OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'trigger:%')<>2
     OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'dependency:%')<>9
-    OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'shared:%')<>13 THEN
+    OR (SELECT count(*) FROM unnest(permit) k WHERE k LIKE 'shared:%')<>14 THEN
     RAISE EXCEPTION 'saved_offers unauthorized catalog delta' USING ERRCODE='P7911';
   END IF;
   INSERT INTO pg_temp.bg1_saved_before VALUES ('authorized_delta_catalog',after_catalog);

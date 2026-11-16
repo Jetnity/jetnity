@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFileSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { compileSavedOffersGuard, verifyMigrationBytes } from '../../scripts/db/saved-offers-bg1-additive-1/compose.mjs'
 
 test('one owner-only bundle binds unchanged migration bytes and refuses alterations',()=>{
@@ -37,11 +36,10 @@ test('predecessor and publication guards are never bypassed',()=>{
   ]
   for (const item of blocked) assert.doesNotMatch(sql,item)
   assert.match(sql,/migration_blob IS DISTINCT FROM/)
-  assert.match(sql,/predecessor_rolling_digest IS DISTINCT FROM/)
+  assert.match(sql,/offers.predecessor_admin_digest IS DISTINCT FROM/)
+  assert.match(sql,/admin.predecessor_rolling_digest IS DISTINCT FROM/)
+  assert.match(sql,/greatest\(offers.required_generation,a.required_generation,q.required_generation,b.required_generation\)/)
   assert.match(sql,/proof_not_before/)
   assert.match(sql,/required_generation/)
   assert.match(sql,/GET|ROLLBACK|SAVEPOINT|COMMIT/) // only source contract, not hosted proof
 })
-
-// Run the actual owned PostgreSQL 17 proof as part of the one Core CI gate.
-import '../../scripts/db/saved-offers-bg1-additive-1/native.test'

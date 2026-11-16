@@ -15,6 +15,7 @@ BEGIN
     OR current_setting('transaction_isolation') <> 'read committed'
     OR current_setting('jetnity.saved_offers_target',true) IS DISTINCT FROM
       'production:qscbgcdmivbbnzrcyegn:SAVED-OFFERS-BG1-1'
+    OR to_regclass('official_v3_guard_private.admin_runtime_baseline_v1') IS NULL
     OR to_regclass('public.saved_offers') IS NOT NULL
     OR to_regclass('official_v3_guard_private.saved_offers_baseline_v1') IS NOT NULL
     OR (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version='20261113173644')<>0 THEN
@@ -33,10 +34,10 @@ BEGIN
   -- definitions reviewed in this proposal. A ref or browser acknowledgement
   -- alone is never identity/TLS evidence.
   IF EXISTS(SELECT 1 FROM (VALUES
-    ('official_v3_guard_private.assert_catalog_v1()', '77584da7bc374978c7807a6e26bee5a6965feb300ba98e93ecdde2f36cecbd1d'),
-    ('official_v3_guard_private.catalog_status_v1()', 'c23417ecf2a50291c347579546316c53ab4b1618b17c92a211022d63d41c6beb'),
-    ('official_v3_guard_private.require_open_v1()', '50260de59f3fb8b286ceca46d572ddae5fd721897daf496dc5d4fc70a999b388'),
-    ('public.official_v3_guard_alarm_status_v1()', 'e55b6fa3a7a87ecbf88572294ea1a94c3485b0446f25e953c794e98024a34e3b')
+    ('official_v3_guard_private.assert_catalog_v1()', '3197b70cc170f3367fa9424c75512d4f5a22df1148601331de51ceb2756fc965'),
+    ('official_v3_guard_private.catalog_status_v1()', '82707dea945e6579a256e188dfd4878d72cfd521a858dd48750e5e073d874898'),
+    ('official_v3_guard_private.require_open_v1()', 'cdd9e4cfd7850efc595698f83ba1fc0621035194a18d1552313e92f8f31f8cc7'),
+    ('public.official_v3_guard_alarm_status_v1()', 'd2ab0fddc95480f54e13b9c8e33d13e4f71f2b62600612a64c7e823b2369465f')
   ) expected(signature,body_digest)
   WHERE to_regprocedure(expected.signature) IS NULL OR
     (SELECT encode(sha256(convert_to(prosrc,'UTF8')),'hex')
@@ -48,7 +49,7 @@ BEGIN
     jsonb_build_object('schema',1,'status','current') THEN
     RAISE EXCEPTION 'saved_offers fresh BG1 proof required' USING ERRCODE='P7911';
   END IF;
-  SELECT catalog INTO STRICT old_catalog FROM official_v3_guard_private.rolling_quota_baseline_v1 WHERE singleton;
+  SELECT catalog INTO STRICT old_catalog FROM official_v3_guard_private.admin_runtime_baseline_v1 WHERE singleton;
   IF old_catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
     RAISE EXCEPTION 'saved_offers exact old catalog mismatch' USING ERRCODE='P7911';
   END IF;

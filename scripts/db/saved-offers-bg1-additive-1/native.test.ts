@@ -6,6 +6,9 @@ import { readFileSync } from 'node:fs'
 import { OwnedPersistentProof } from '../official-truth-v3-rolling-jobs-quota-1/persistent-backend'
 import { literal } from '../official-truth-v3-rolling-jobs-quota-1/local-proof'
 import { compileProductionArtifacts, PRODUCTION } from '../../official-truth-product-v3-production/build.mjs'
+import { compileProductionAdmin, BASELINE, TARGET } from '../admin-runtime-production-1/build.mjs'
+import { functionsIn } from '../official-truth-v3-background-guard-1/build.mjs'
+import { awaitNextBg1 } from '../official-truth-v3-dev-cycle4-attempt2-recovery-1/await-next-bg1'
 import { compileSavedOffersGuard } from './compose.mjs'
 const read=(path:string)=>readFileSync(new URL(path,import.meta.url),'utf8')
 const compiled=compileProductionArtifacts()
@@ -50,6 +53,13 @@ async function fixture(proof: OwnedPersistentProof) {
       CREATE FUNCTION public.production_fixture_unrelated() RETURNS boolean LANGUAGE sql AS $$ SELECT false $$;
       REVOKE ALL ON FUNCTION public.production_fixture_unrelated() FROM PUBLIC,service_role;
       GRANT EXECUTE ON FUNCTION public.production_fixture_unrelated() TO anon;`, 'owned synthetic auth/profile/Cron fixture')
+  const moderation = functionsIn(read('../../../supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql')).find(f => f.signature === 'public.darf_inhalte_moderieren()')
+  assert.ok(moderation)
+  await proof.run('SET SESSION AUTHORIZATION ot_pilot_owner; ALTER TABLE auth.users ADD COLUMN created_at timestamptz;'
+    + "UPDATE auth.users SET created_at=clock_timestamp()-interval '1 day';"
+     + creator + "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO service_role;" + moderation.sql
+    + 'REVOKE ALL ON FUNCTION public.darf_inhalte_moderieren() FROM PUBLIC,anon;'
+    + 'GRANT EXECUTE ON FUNCTION public.darf_inhalte_moderieren() TO postgres,authenticated,service_role;', 'synthetic provider admission prerequisites')
   // Complete actual scheduler/monitor definitions precede BG1. There is no
   // replacement Official Truth schema, quota function, status getter or audit.
   await proof.run(schedulerCreator + '\nBEGIN;\n' + read('../official-truth-v3-production-import-schedule-1/core.sql')
@@ -66,10 +76,15 @@ async function syntheticProviderMetadata(proof: OwnedPersistentProof) {
 }
 
 
-test('saved_offers successor extends the real local Production PG17 BG1 atomically', {timeout:240000}, async t=>{
+test('saved_offers successor extends the real local Production PG17 BG1 atomically', {timeout:900000}, async t=>{
  const proof=new OwnedPersistentProof(t.signal)
- const owner=creator+"SET jetnity.saved_offers_target='production:qscbgcdmivbbnzrcyegn:SAVED-OFFERS-BG1-1';"
+ const forProduction = (sql: string) => creator + sql.replace(/^BEGIN;\n/, "BEGIN;\nSET LOCAL jetnity.saved_offers_target = 'production:qscbgcdmivbbnzrcyegn:SAVED-OFFERS-BG1-1';\n")
  const bundle=compileSavedOffersGuard()
+ const refuses = async (sql: string, reason: RegExp) => {
+   const result = await proof.run(sql, 'reject unsafe transition', new RegExp(reason.source + '|current transaction is aborted'))
+   const first = result.split('\n').find(line => /\bERROR:/.test(line))
+   assert.match(first ?? '', reason)
+ }
  try{
    await fixture(proof)
    await proof.run(creator+"CREATE SCHEMA supabase_migrations; CREATE TABLE supabase_migrations.schema_migrations(version text PRIMARY KEY,statements text[],name text,created_by text,idempotency_key text,rollback text[]);",
@@ -79,37 +94,60 @@ test('saved_offers successor extends the real local Production PG17 BG1 atomical
      'reviewed full local Production BG1 and genuine initial proof')
    assert.deepEqual(await proof.value('public.official_v3_guard_alarm_status_v1()',creator),
      {schema:1,status:'current'})
-   const oldCatalog=await proof.value('official_v3_guard_private.catalog_status_v1()',creator)
-   const oldRolling=await proof.value("(SELECT to_jsonb(r) FROM official_v3_guard_private.rolling_quota_baseline_v1 r)",creator)
+   const admin = compileProductionAdmin()
+   await proof.run(creator+'BEGIN; SET LOCAL jetnity.admin_runtime_target='+literal(TARGET)+';'+admin.migration+'COMMIT;', 'install reviewed #1220 admin predecessor')
+   await awaitNextBg1(proof, t.signal, BASELINE)
+   const adminDigest = "(SELECT to_jsonb(encode(sha256(convert_to(to_jsonb(a)::text,'UTF8')),'hex')) FROM official_v3_guard_private.admin_runtime_baseline_v1 a)"
+   const originalAdmin = await proof.value(adminDigest, creator)
+   const catalogDigest = "to_jsonb(encode(sha256(convert_to(official_v3_guard_private.catalog_status_v1()::text,'UTF8')),'hex'))"
+   const oldCatalog=await proof.value(catalogDigest,creator)
+   const rollingDigest = "(SELECT to_jsonb(encode(sha256(convert_to(to_jsonb(r)::text,'UTF8')),'hex')) FROM official_v3_guard_private.rolling_quota_baseline_v1 r)"
+   const oldRolling=await proof.value(rollingDigest,creator)
    await t.test('wrong owner target rolls back every addition',async ()=>{
-     await proof.run(creator+bundle,'wrong saved_offers target',
-       /saved_offers exact new production predecessor required|current transaction is aborted/)
+     await refuses(creator+bundle,
+       /saved_offers exact new production predecessor required/)
      assert.equal(await proof.value("to_jsonb(to_regclass('public.saved_offers') IS NULL)",creator),true)
-     assert.deepEqual(await proof.value('official_v3_guard_private.catalog_status_v1()',creator),oldCatalog)
+     assert.deepEqual(await proof.value(catalogDigest,creator),oldCatalog)
    })
    await t.test('unexpected mutation during migration refuses the entire transaction',async ()=>{
      const fault=bundle.replace('-- Part 2/4: after the EXACT original saved_offers migration',
-       "REVOKE EXECUTE ON FUNCTION auth.uid() FROM PUBLIC;\n-- Part 2/4: after the EXACT original saved_offers migration")
+       "GRANT SELECT ON jetnity_marketing_private.drafts_v1 TO authenticated;\n-- Part 2/4: after the EXACT original saved_offers migration")
      assert.notEqual(fault,bundle)
-     await proof.run(owner+fault,'mutated protected function ACL',
-       /saved_offers unauthorized catalog delta|saved_offers canonical migration structure mismatch|current transaction is aborted/)
+     await refuses(forProduction(fault),
+       /saved_offers unauthorized catalog delta/)
      assert.equal(await proof.value("to_jsonb(to_regclass('public.saved_offers') IS NULL)",creator),true)
-     assert.deepEqual(await proof.value('official_v3_guard_private.catalog_status_v1()',creator),oldCatalog)
+     assert.deepEqual(await proof.value(catalogDigest,creator),oldCatalog)
    })
    await t.test('genuine transaction creates saved_offers with immutable successor',async ()=>{
-     await proof.run(owner+bundle,'exact saved_offers and successor atomic install')
+     await proof.run(forProduction(bundle),'exact saved_offers and successor atomic install')
      assert.equal(await proof.value("to_jsonb(to_regclass('public.saved_offers') IS NOT NULL)",creator),true)
      assert.equal(await proof.value("to_jsonb((SELECT count(*)=1 FROM supabase_migrations.schema_migrations WHERE version='20261113173644' AND name='saved_offers'))",creator),true)
-     assert.deepEqual(await proof.value("(SELECT to_jsonb(r) FROM official_v3_guard_private.rolling_quota_baseline_v1 r)",creator),oldRolling)
+     assert.deepEqual(await proof.value(rollingDigest,creator),oldRolling)
      await proof.run(creator+"SELECT official_v3_guard_private.assert_catalog_v1();",'full installed successor check')
      assert.deepEqual(await proof.value('public.official_v3_guard_alarm_status_v1()',creator),{schema:1,status:'unavailable'})
      assert.equal(await proof.value("to_jsonb(NOT has_table_privilege('anon','public.saved_offers','SELECT'))",creator),true)
      assert.equal(await proof.value("to_jsonb((SELECT relrowsecurity FROM pg_class WHERE oid='public.saved_offers'::regclass))",creator),true)
    })
    await t.test('tampering with own RLS policy is caught; rollback restores guard',async ()=>{
-     await proof.run(creator+"BEGIN; ALTER POLICY saved_offers_select_own ON public.saved_offers USING (true); SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK;",
-       'tampered own-policy',/protected catalog changed|current transaction is aborted/)
+     await refuses(creator+"BEGIN; ALTER POLICY saved_offers_select_own ON public.saved_offers USING (true); SELECT official_v3_guard_private.assert_catalog_v1(); ROLLBACK;",
+       /protected catalog changed/)
      await proof.run(creator+"SELECT official_v3_guard_private.assert_catalog_v1();",'restored successor check')
    })
+   await t.test('only the offer owner can read, edit and remove a saved offer', async () => {
+     const session = (ownerId: string) => 'SET SESSION AUTHORIZATION authenticated;SET request.jwt.claim.sub=' + literal(ownerId) + ';'
+     const own = session(uid(1)), other = session(uid(2))
+     const insert = "INSERT INTO public.saved_offers(category,provider,offer_ref,title,url,source) VALUES ('stay','fixture','sample','Hotel','https://example.invalid/hotel','manual');"
+     await proof.run(own + insert, 'save own offer')
+     assert.equal(await proof.value('(SELECT to_jsonb(count(*)) FROM public.saved_offers)', other), 0)
+     await proof.run(other + "UPDATE public.saved_offers SET title='Other'; DELETE FROM public.saved_offers;", 'other account has no matching rows')
+     assert.equal(await proof.value('(SELECT to_jsonb(title) FROM public.saved_offers)', own), 'Hotel')
+     await proof.run(own + "UPDATE public.saved_offers SET title='Updated';", 'update own item')
+     assert.equal(await proof.value('(SELECT to_jsonb(title) FROM public.saved_offers)', own), 'Updated')
+     await proof.run(own + 'DELETE FROM public.saved_offers;', 'remove own item')
+     assert.equal(await proof.value('(SELECT to_jsonb(count(*)) FROM public.saved_offers)', own), 0)
+   })
+   assert.deepEqual(await proof.value(adminDigest,creator),originalAdmin)
+   await awaitNextBg1(proof, t.signal, 'official_v3_guard_private.saved_offers_baseline_v1')
+   await proof.run(creator+'SELECT official_v3_guard_private.admin_runtime_guard_v1();','admin retains genuine fresh proof')
  } finally {await proof.close()}
 })
