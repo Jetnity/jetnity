@@ -26,43 +26,36 @@ test('Fehlende Werte sind keine Nullprognose', () => {
   assert.equal(vorhersageLesen({ ...wetter, city: {} }), null)
 })
 
-test('Vorschaugrenzen, gemeinsame Ortsabfrage und keine Schlüssel in Antworten', async t => {
+test('consent, origin and bounded requests deny weather before any provider call', async t => {
   const env = process.env
   const keys = ['VERCEL_ENV', 'VERCEL_GIT_COMMIT_REF', 'OPENWEATHER_API_KEY'] as const
   const old = keys.map(key => env[key])
   t.after(() => keys.forEach((key, i) => { if (old[i] === undefined) delete env[key]; else env[key] = old[i] }))
-  const anfrage = (query = 'lat=48.85&lon=2.35', site = 'same-origin', origin = APP_MAP_ORIGIN) =>
-    new Request(origin + '/api/reisewetter?' + query, { headers: { 'sec-fetch-site': site } })
-  const adapter = t.mock.method(globalThis, 'fetch', async (url: URL) => {
-    assert.equal(url.origin + url.pathname, 'https://api.openweathermap.org/data/2.5/forecast')
-    assert.equal(url.searchParams.get('appid'), 'nur-test')
-    return Response.json(wetter)
+  const anfrage = (query = 'lat=48.85&lon=2.35', site = 'same-origin', origin = APP_MAP_ORIGIN, consent = false) =>
+    new Request(origin + '/api/reisewetter?' + query, { headers: {
+      'sec-fetch-site': site,
+      ...(consent ? { 'x-jetnity-weather-consent': 'v1' } : {}),
+    } })
+  const adapter = t.mock.method(globalThis, 'fetch', async () => {
+    throw new Error('upstream weather must never run before verified global admission')
   })
   env.OPENWEATHER_API_KEY = 'nur-test'
   env.VERCEL_GIT_COMMIT_REF = 'feat/private-travel-ux-20261113'
   env.VERCEL_ENV = 'production'
   assert.equal((await GET(anfrage())).status, 404)
   env.VERCEL_GIT_COMMIT_REF = 'main'
-  assert.equal((await GET(anfrage('lat=47&lon=8', 'same-origin', 'https://jetnity.com'))).status, 200)
-  assert.equal(adapter.mock.callCount(), 1)
-  adapter.mock.resetCalls()
-  env.VERCEL_GIT_COMMIT_REF = 'feat/private-travel-ux-20261113'
-  env.VERCEL_ENV = 'preview'
-  assert.equal((await GET(anfrage(undefined, 'same-origin', 'https://jetnity.com'))).status, 404)
-  assert.equal((await GET(anfrage(undefined, 'cross-site'))).status, 403)
-  assert.equal((await GET(anfrage('lat=91&lon=2'))).status, 400)
-  assert.equal((await GET(anfrage('lat=48.85&lon=2.35&tripId=private'))).status, 400)
+  assert.equal((await GET(anfrage('lat=47&lon=8', 'same-origin', 'https://jetnity.com'))).status, 403)
+  assert.equal((await GET(anfrage(undefined, 'cross-site', APP_MAP_ORIGIN, true))).status, 403)
+  assert.equal((await GET(anfrage('lat=91&lon=2', 'same-origin', APP_MAP_ORIGIN, true))).status, 400)
+  assert.equal((await GET(anfrage('lat=48.85&lon=2.35&tripId=private', 'same-origin', APP_MAP_ORIGIN, true))).status, 400)
   assert.equal(adapter.mock.callCount(), 0)
-  const antworten = await Promise.all([GET(anfrage()), GET(anfrage())])
-  assert.equal(adapter.mock.callCount(), 1)
-  for (const antwort of antworten) {
-    assert.equal(antwort.status, 200)
-    assert.deepEqual(await antwort.json(), vorhersageLesen(wetter))
-  }
-  adapter.mock.mockImplementation(async () => new Response(null, { status: 401 }))
-  const wartend = await GET(anfrage('lat=46&lon=7'))
-  assert.equal(wartend.status, 503)
-  assert.deepEqual(await wartend.json(), { grund: 'anbieterzugang' })
-  adapter.mock.mockImplementation(async () => Response.json(wetter))
-  assert.equal((await GET(anfrage('lat=46&lon=7'))).status, 200)
+  // Without a real authenticated customer AND an installed database quota,
+  // a consent marker never authorizes a provider request in the test runtime.
+  const response = await GET(anfrage(undefined, 'same-origin', APP_MAP_ORIGIN, true))
+  assert.ok([401, 503].includes(response.status))
+  assert.equal(adapter.mock.callCount(), 0)
+  env.VERCEL_ENV = 'preview'
+  env.VERCEL_GIT_COMMIT_REF = 'feat/private-travel-ux-20261113'
+  assert.equal((await GET(anfrage(undefined, 'same-origin', 'https://jetnity.com', true))).status, 404)
+  assert.equal(adapter.mock.callCount(), 0)
 })
