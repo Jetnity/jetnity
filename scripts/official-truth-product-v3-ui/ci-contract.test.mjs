@@ -67,7 +67,11 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
     const originalCommand = `node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/${directory}/native.test.ts`
     assert.equal(job.steps.filter(step => step.run === originalCommand).length, 1)
     if (family === 'cms_native') {
-      const transition = job.steps.at(-1)
+      const offers = job.steps.at(-1)
+      assert.equal(offers.name, 'saved_offers exact Production BG1 successor - owned PG17 proof')
+      assert.equal(offers['timeout-minutes'], 12)
+      assert.equal(offers.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/saved-offers-bg1-additive-1/native.test.ts')
+      const transition = job.steps.at(-2)
       assert.equal(transition.name, 'Run atomic Admin BG1 transition and guarded runtime proof')
       assert.equal(transition['timeout-minutes'], 25)
       assert.equal(transition.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/admin-runtime-bg1-1/native.test.ts')
