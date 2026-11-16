@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { isAdminDevRuntimeEnabled } from '@/lib/admin/dev-runtime-activation'
+import { adminHostedRuntimeTarget, isAdminHostedRuntimeEnabled } from '@/lib/admin/hosted-runtime-activation'
 import { createRouteHandlerClient, createServerComponentClient } from '@/lib/supabase/server'
 import type { AdminDevRuntimeDatabase } from '@/types/admin-dev-runtime'
 import type { Json } from '@/types/supabase'
@@ -8,8 +8,8 @@ import type { CmsFailure, CmsPortResult } from './port'
 import { cmsDuring, parseCmsHttpRequest, type CmsHttpRequest } from './request'
 import { parseCmsPublished, parseCmsRead, parseCmsReceipt, parseCmsStoredConfirmation } from './responses'
 
-export function cmsEditorRuntime(): 'development' | 'unavailable' {
-  return isAdminDevRuntimeEnabled() ? 'development' : 'unavailable'
+export function cmsEditorRuntime(): 'development' | 'production' | 'unavailable' {
+  return adminHostedRuntimeTarget()
 }
 
 function failure(code: string | undefined, signal: AbortSignal): CmsPortResult {
@@ -25,15 +25,15 @@ function failure(code: string | undefined, signal: AbortSignal): CmsPortResult {
  * user must agree with that gate; candidate SQL independently rechecks AAL2,
  * persisted capability, active account and authority after write lock waits. */
 export async function runCmsRequest(input: CmsHttpRequest, admittedUserId: string, signal: AbortSignal): Promise<CmsPortResult> {
-  if (!isAdminDevRuntimeEnabled()) return { ok: false, code: 'unavailable' }
+  if (!isAdminHostedRuntimeEnabled()) return { ok: false, code: 'unavailable' }
   const request = parseCmsHttpRequest(input)
   if (!request) return { ok: false, code: 'invalid' }
   if (signal.aborted) return { ok: false, code: 'timeout' }
   try {
     const client = await cmsDuring(async () => await createRouteHandlerClient<AdminDevRuntimeDatabase>(), signal)
-    if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
+    if (signal.aborted || !isAdminHostedRuntimeEnabled()) return failure(undefined, signal)
     const identity = await cmsDuring(() => client.auth.getUser(), signal)
-    if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
+    if (signal.aborted || !isAdminHostedRuntimeEnabled()) return failure(undefined, signal)
     if (identity.error) return { ok: false, code: identity.error.status === 401 || identity.error.name === 'AuthSessionMissingError' ? 'unauthenticated' : 'unavailable' }
     if (!identity.data.user || identity.data.user.id !== admittedUserId) return { ok: false, code: 'unauthenticated' }
     if (identity.data.user.is_anonymous) return { ok: false, code: 'forbidden' }
@@ -71,11 +71,11 @@ export async function runCmsRequest(input: CmsHttpRequest, admittedUserId: strin
 /** Public JSON contains published editorial revisions only. The private
  * history, operation journal and actors cannot cross this decoder. */
 export async function readCmsPublished(signal: AbortSignal): Promise<CmsPortResult> {
-  if (!isAdminDevRuntimeEnabled()) return { ok: false, code: 'unavailable' }
+  if (!isAdminHostedRuntimeEnabled()) return { ok: false, code: 'unavailable' }
   if (signal.aborted) return { ok: false, code: 'timeout' }
   try {
     const client = await cmsDuring(async () => await createServerComponentClient<AdminDevRuntimeDatabase>(signal), signal)
-    if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
+    if (signal.aborted || !isAdminHostedRuntimeEnabled()) return failure(undefined, signal)
     const result = await cmsDuring(() => client.rpc('cms_inspiration_published_v1').abortSignal(signal), signal)
     if (result.error || signal.aborted) return failure(result.error?.code, signal)
     const value = parseCmsPublished(result.data)

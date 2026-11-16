@@ -32,10 +32,10 @@ before(async () => {
     external: ['next/server'], stdin: { resolveDir: process.cwd(), contents:
       "export { POST } from './app/api/admin/content/cms/route'; export { GET } from './app/api/cms/inspiration/route';" },
     plugins: [{ name: 'cms-runtime-boundaries', setup(builder) {
-      builder.onResolve({ filter: /^(server-only|@\/lib\/(supabase\/server|auth\/admin-guard|admin\/dev-runtime-activation))$/ }, args => ({ path: args.path, namespace: 'cms-boundary' }))
+      builder.onResolve({ filter: /^(server-only|@\/lib\/(supabase\/server|auth\/admin-guard|admin\/hosted-runtime-activation))$/ }, args => ({ path: args.path, namespace: 'cms-boundary' }))
       builder.onLoad({ filter: /.*/, namespace: 'cms-boundary' }, args => ({ contents:
         args.path === 'server-only' ? 'export {}'
-          : args.path.endsWith('dev-runtime-activation') ? 'export function isAdminDevRuntimeEnabled(){return __cmsFixture.enabled}'
+          : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __cmsFixture.enabled} export function adminHostedRuntimeTarget(){return __cmsFixture.enabled ? "development" : "unavailable"}'
             : args.path.endsWith('admin-guard') ? `export async function requireAdminApi(options){
               __cmsFixture.admissions++; if(options.capability!=='inhalte-moderieren')throw Error('wrong capability');
               return __cmsFixture.denial ? {ok:false,response:new Response('',{status:__cmsFixture.denial})}
