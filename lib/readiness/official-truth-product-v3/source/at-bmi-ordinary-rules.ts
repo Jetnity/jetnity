@@ -309,7 +309,7 @@ export function atPrioritySlotReport(read: AtOfficialRead): readonly Readonly<{
   rank: 'prefix' | 'required_member_position_unknown'
   visa: AtVisaClass
   identityCard: AtIdentityCardClass
-  topics: readonly Readonly<{ topic: V3CustomerInformationTopic; status: 'clear' | 'unavailable'; reason: string }>
+  topics: ReadonlyArray<Readonly<{ topic: V3CustomerInformationTopic; status: 'clear' | 'unavailable'; reason: string }>>
 }>[] {
   const byCode = new Map(read.rules.filter(rule => rule.citizenshipCountryCode).map(rule => [rule.citizenshipCountryCode, rule]))
   return AT_PRIORITY_KNOWN_CODES.map(code => {

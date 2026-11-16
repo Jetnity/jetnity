@@ -40,7 +40,7 @@ Unter den elf bekannten Plätzen (`IN TR CN DE PL IT US UA RO FR` plus Pflichtmi
 
 ## Warum der reguläre V3-Pfad hier stoppt
 
-Der Method-Draft `jetnity-destination-primary-at-visa` Revision 1 ist `NOT_APPROVED`. `readHrs1Binding` lässt weiterhin nur Ziel `DE` und Staatsangehörigkeit `CH` zu. `HRS1_LIMITS.originalBytes` bleibt 131072; die Visaliste hat 498415 Bytes. Die BG1-Coverage-SQL bleibt auf `DE`/`CH`. Eine Aufnahme würde diese gemeinsamen Grenzen öffnen. Das ist kein Bypass.
+Der Method-Draft `jetnity-destination-primary-at-visa` Revision 1 ist `NOT_APPROVED`. `readHrs1Binding` lässt weiterhin nur Ziel `DE` und Staatsangehörigkeit `CH` zu. `HRS1_LIMITS.originalBytes` bleibt 131072; die Visaliste hat 498415 Bytes. Die BG1-Coverage-SQL bleibt auf `DE`/`CH`. Eine Aufnahme würde diese gemeinsamen Grenzen öffnen. Das ist kein Bypass. Der erste CI-Typecheck scheiterte an der Rückgabetyp-Schreibweise und ist im Folgefeld korrigiert. Der Admin-BG1-Job auf demselben Lauf beendete seine Assertions grün und überschritt danach das vorhandene 25-Minuten-Limit der fremden Admin-Lane; dieses Limit wird hier nicht angefasst.
 
 ## Einziger nächster Owner-Schritt
 

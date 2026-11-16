@@ -23,6 +23,8 @@ const contextInput: V3GlobalRuleContext = {
 const contextRead = readV3GlobalRuleContext(contextInput)
 const contextIdentity = createV3ContextIdentity(contextInput)
 if (!contextRead.ok || !contextIdentity.ok) throw Error('at_context_invalid')
+const atContext = contextRead.value
+const atContextKey = contextIdentity.value.contextKey
 
 const sources = [
   { sourceId: 'at-bmi', sourceClass: 'official_authority' as const,
@@ -92,8 +94,8 @@ export const AT_METHOD_BINDING = methodBinding.value
 /** The shared HRS reader still admits only Germany/Switzerland. Austria stops here. */
 export function atHrsAdmissionRefusal(): Readonly<{ admitted: false; reason: 'hrs_binding_locked_to_de_ch'; originalByteLimit: number }> {
   const refused = readHrs1Binding({
-    ...methodBinding.value, schema: 1, qualificationScope: 'global_context',
-    context: contextRead.value, contextKey: contextIdentity.value.contextKey, factKind: 'requirement_effect',
+    ...AT_METHOD_BINDING, schema: 1, qualificationScope: 'global_context',
+    context: atContext, contextKey: atContextKey, factKind: 'requirement_effect',
     dataMode: 'official_projection', legalTimeZone: 'Europe/Vienna',
     activeFrom: '2026-11-16T19:45:39.000Z', activeUntilExclusive: '2027-11-17T00:00:00.000Z',
     sourceMaxAgeMilliseconds: 86400000, projectionMaxAgeMilliseconds: 3600000,
