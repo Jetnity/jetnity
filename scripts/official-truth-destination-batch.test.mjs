@@ -94,10 +94,11 @@ test('missing real research or CSV produces no output and no inferred facts', t 
   assert.throws(() => prepareDestination(f),/research_empty/); assert.equal(existsSync(f.output),false)
 })
 
-test('incorrect 206-destination inventory and duplicate aliases are refused', t => {
+test('incorrect destination inventory and invalid sidecar aliases are refused', t => {
   const f = fixture(t)
   writeFileSync(join(f.root,'records','dest','AT.json'),'{}')
-  assert.throws(() => inventory(f.root,'AT'),/206_destination/)
+  // A malformed legacy sidecar must fail closed even when the 206 folder count is valid.
+  assert.throws(() => inventory(f.root,'AT'),/research_sidecar_invalid/)
   rmSync(join(f.root,'records','dest','AT.json'))
   rmSync(join(f.root,'records','dest','AA'),{recursive:true})
   assert.throws(() => inventory(f.root,'AT'),/206_destination/)
