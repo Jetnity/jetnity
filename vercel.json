@@ -1,3 +1,36 @@
 {
-  "version": 2
+  "version": 2,
+  "buildCommand": "npm run build",
+  "functions": {
+    "app/api/readiness/ch-de-visa/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-visa-tick/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-owner-import/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-owner-guard/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-dev-refresh/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    },
+    "app/api/internal/readiness/ch-de-prod-refresh/route.ts": {
+      "regions": [
+        "fra1"
+      ]
+    }
+  }
 }

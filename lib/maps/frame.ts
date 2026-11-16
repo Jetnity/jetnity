@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { mapPilotConfig, type MapEnvironment } from '@/lib/maps/config'
 
 const headers = (nonce: string) => ({
@@ -31,12 +33,20 @@ export function tripMapFrameResponse(request: Request, env: MapEnvironment): Res
   const nonce = crypto.randomUUID().replaceAll('-', '')
   // A blocked frame carries no key and no external resource references.
   const json = JSON.stringify(config).replaceAll('<', '\\u003c')
+  // Chrome treats subresource requests made by this opaque frame as cross-site.
+  // Carry the first-party bootstrap in the authenticated frame navigation itself.
+  const style = config
+    ? `<style nonce="${nonce}">${readFileSync(join(process.cwd(), 'public/maps/trip-map.css'), 'utf8')}</style>`
+    : `<link rel="stylesheet" href="/maps/trip-map.css" nonce="${nonce}"><style nonce="${nonce}"></style>`
+  const script = config
+    ? `<script nonce="${nonce}">${readFileSync(join(process.cwd(), 'public/maps/trip-map.js'), 'utf8')}</script>`
+    : `<script src="/maps/trip-map.js" nonce="${nonce}" defer></script>`
   return new Response(`<!doctype html><html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Reiseorte auf Google Maps</title>
-<link rel="stylesheet" href="/maps/trip-map.css" nonce="${nonce}"><style nonce="${nonce}"></style></head><body>
+${style}</head><body>
 <div id="map" aria-label="Reiseorte auf Google Maps"></div>
 <p id="status" role="status">${config ? 'Karte wird vorbereitet.' : 'Die Karte ist noch nicht freigeschaltet.'}</p>
 <div id="cluster" hidden><p>Stopps an diesem Ort</p><div id="cluster-stops"></div><button id="cluster-close" type="button">Schliessen</button></div>
 <script id="map-config" type="application/json">${json}</script>
-<script src="/maps/trip-map.js" nonce="${nonce}" defer></script></body></html>`, { headers: headers(nonce) })
+${script}</body></html>`, { headers: headers(nonce) })
 }

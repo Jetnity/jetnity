@@ -272,6 +272,9 @@ export default function Reisevorbereitung({
           onOffen={onBereichOffen}
           hinweis={officialAbschnittHinweis(checkliste)}
         >
+          <a href="/einreise" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15">
+            Visum für Deutschland mit Schweizer Reisepass prüfen
+          </a>
           <p className="text-xs leading-5 text-ink-800">{officialListeHinweis(evaluations)}</p>
           {checkliste.map((gruppe) => {
             const gemeinsam = preparationPlatzhalterGruppe(gruppe.eintraege)

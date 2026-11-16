@@ -1,7 +1,10 @@
 'use client'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Car, ExternalLink, Loader2, Search, X } from 'lucide-react'
-import { Feld, SucheKnopf } from '@/components/trips/organisieren/Suchfelder'
+import { SucheKnopf } from '@/components/trips/organisieren/Suchfelder'
+import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
+import { useSuchbereichAktiv } from '@/components/trips/organisieren/SuchbereichKontext'
+import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { hotelDaten } from '@/lib/trips/organisieren/katalog'
 import LandFeld from '@/components/country/LandFeld'
 import DiscoverCarsSuche from '@/components/trips/DiscoverCarsSuche'
@@ -10,6 +13,8 @@ import { offersForView, SEARCH_CURRENCIES, searchInput, type RentalResults, type
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import type { Trip } from '@/types/trips'
 import StationField from './StationField'
+import RentalHeart from '@/components/saved-offers/RentalHeart'
+import RentalHearts from '@/components/saved-offers/RentalHearts'
 import { OfferCard, OfferComparison, OfferDetails } from './Offers'
 import { BUTTON, CATEGORY, FIELD, PRIMARY, rentalDate, rentalRequest } from './client'
 
@@ -38,6 +43,8 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const [limit, setLimit] = useState(12)
   const [compare, setCompare] = useState<string[]>([])
   const [selected, setSelected] = useState<RentalOffer | null>(null)
+  const aktiv = useSuchbereichAktiv()
+  if (!aktiv && selected) setSelected(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailMessage, setDetailMessage] = useState('')
   const [now, setNow] = useState(0)
@@ -58,6 +65,9 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
     document.addEventListener('visibilitychange', checkExpiry)
     return () => { clearTimeout(timer); window.removeEventListener('focus', checkExpiry); document.removeEventListener('visibilitychange', checkExpiry) }
   }, [result])
+  useEffect(() => {
+    if (!aktiv) detailRequest.current?.abort()
+  }, [aktiv])
   useEffect(() => {
     if (selected && dialog.current && !dialog.current.open) dialog.current.showModal()
     if (!selected) dialog.current?.close()
@@ -107,8 +117,9 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
         <div className={'org-fields org-rentalfields ' + (oneWay ? 'org-four' : '')}>
           <div className="org-station"><StationField nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
           {oneWay&&<div className="org-station"><StationField nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
-          <Feld label="Abholung"><input required type="date" value={pickupDate} onChange={e=>setPickupDate(e.target.value)}/></Feld>
-          <Feld label="Rückgabe"><input required type="date" min={pickupDate} value={dropoffDate} onChange={e=>setDropoffDate(e.target.value)}/></Feld>
+          <Suchkalender start={pickupDate} ende={dropoffDate} startLabel="Abholung" endeLabel="Rückgabe"
+            min={heutigesDatum()} max="9999-12-31" minTage={0} maxTage={365} dauerAnzeigen={false} kontext="Dein Mietzeitraum"
+            setzen={(start, ende) => { invalidate(); setPickupDate(start); setDropoffDate(ende) }} />
           <SucheKnopf busy={loading}/>
         </div>
         <div className="org-sub org-rentalsub">
@@ -144,14 +155,11 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
             <legend className="sr-only">Mietzeitraum</legend>
             <p className="mb-3 flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.12em] text-brand-700">Mietzeitraum</p>
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <div className="grid min-w-0 gap-2 lg:grid-cols-[minmax(0,1fr)_6.5rem]">
-                <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Abholung<input aria-label="Abholdatum" required type="date" value={pickupDate} onChange={e => setPickupDate(e.target.value)} className={FIELD} /></label>
-                <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Uhrzeit<input aria-label="Abholzeit" required type="time" value={pickupTime} onChange={e => setPickupTime(e.target.value)} className={FIELD} /></label>
-              </div>
-              <div className="grid min-w-0 gap-2 lg:grid-cols-[minmax(0,1fr)_6.5rem]">
-                <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Rückgabe<input aria-label="Rückgabedatum" required type="date" value={dropoffDate} min={pickupDate} onChange={e => setDropoffDate(e.target.value)} className={FIELD} /></label>
-                <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Uhrzeit<input aria-label="Rückgabezeit" required type="time" value={dropoffTime} onChange={e => setDropoffTime(e.target.value)} className={FIELD} /></label>
-              </div>
+              <Suchkalender start={pickupDate} ende={dropoffDate} startLabel="Abholung" endeLabel="Rückgabe"
+                min={heutigesDatum()} max="9999-12-31" minTage={0} maxTage={365} dauerAnzeigen={false} kontext="Dein Mietzeitraum"
+                setzen={(start, ende) => { invalidate(); setPickupDate(start); setDropoffDate(ende) }} />
+              <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Abholzeit<input aria-label="Abholzeit" required type="time" value={pickupTime} onChange={e => setPickupTime(e.target.value)} className={FIELD} /></label>
+              <label className="grid min-w-0 gap-1 text-sm font-medium text-brand-800">Rückgabezeit<input aria-label="Rückgabezeit" required type="time" value={dropoffTime} onChange={e => setDropoffTime(e.target.value)} className={FIELD} /></label>
             </div>
             <p className="mt-3 text-xs leading-5 text-ink-600">Reisedaten als Vorschlag · bitte prüfen. Uhrzeiten gelten vor Ort.</p>
           </fieldset>
@@ -183,9 +191,11 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
         {comparison.length ? <OfferComparison offers={comparison} onClose={() => setCompare([])} /> : null}
         <p role="status" className="text-sm text-ink-600">{visible.length} passende Angebote · bis zu drei Fahrzeuge vergleichen</p>
         {!visible.length ? <p className="text-sm text-ink-800">Zu diesen Filtern gibt es keine Treffer. Ändere Getriebe oder Fahrzeugklasse.</p> : null}
+        <RentalHearts key={result.searchedAt} offers={result.offers.map(o => o.offer_id)} timing={{ starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }}>
         <div data-rental-grid className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
+          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} saveAction={<RentalHeart offerId={o.offer_id} token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
         </div>
+        </RentalHearts>
         {compare.length === 3 ? <p role="status" className="text-sm text-ink-600">Drei Fahrzeuge sind ausgewählt. Entferne eines, um ein anderes hinzuzufügen.</p> : null}
         {visible.length > limit ? <button type="button" className={`${BUTTON} justify-self-center`} onClick={() => setLimit(x => x + 12)}>Weitere Angebote anzeigen ({visible.length - limit})</button> : null}
       </>}

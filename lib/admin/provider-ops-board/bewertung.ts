@@ -3,7 +3,9 @@ import { berechneFreshness } from './freshness'
 import {
   PROVIDER_OPS_BOARD_NAMEN,
   PROVIDER_OPS_BOARD_TTL_MS,
+  NATIVE_RENTAL_CHECK_ID,
   type ProviderOpsBoardCheck,
+  type ProviderOpsBoardCheckStatus,
   type ProviderOpsBoardId,
   type ProviderOpsBoardItem,
   type ProviderOpsBoardStatus,
@@ -18,6 +20,10 @@ export type DomainZustandSnapshot = {
 export type ModelUsageSnapshot =
   | { ok: true; zeilen: number; kostenMikroUsd: number; juengsteCreatedAt: string | null }
   | { ok: false; timeout?: boolean; message: string }
+
+export type NativeRentalConfigurationSnapshot = {
+  kind: 'disabled' | 'not_configured' | 'configured' | 'unknown'
+}
 
 function iso(nowMs: number): string {
   return new Date(nowMs).toISOString()
@@ -50,7 +56,7 @@ function check(
   nowMs: number,
   ttlId: ProviderOpsBoardId,
   checkedAt: string,
-  status: ProviderOpsBoardStatus,
+  status: ProviderOpsBoardCheckStatus,
   rest: Omit<ProviderOpsBoardCheck, 'id' | 'name' | 'status' | 'freshness'>,
 ): ProviderOpsBoardCheck {
   return {
@@ -103,19 +109,44 @@ export function domainCheckAusZustand(
   })
 }
 
+function nativeRentalCheck(
+  snapshot: NativeRentalConfigurationSnapshot,
+  nowMs: number,
+  checkedAt: string,
+): ProviderOpsBoardCheck {
+  const kind = snapshot.kind
+  const summary = kind === 'disabled'
+    ? 'Die Freigabe für die direkte Mietwagensuche ist nicht gesetzt. Diese Suche nimmt keine Provider-Anfragen an.'
+    : kind === 'not_configured'
+      ? 'Die direkte Mietwagensuche ist freigegeben, ihre Zugangskonfiguration fehlt oder erfüllt die Mindestprüfung nicht.'
+      : kind === 'configured'
+        ? 'Die Konfigurationsprüfung der direkten Mietwagensuche ist bestanden. Schlüsselgültigkeit, Provider-Erreichbarkeit, Kontingent und Angebote wurden nicht geprüft.'
+        : 'Die Konfiguration der direkten Mietwagensuche konnte nicht geprüft werden. Ihr Zugangsstatus bleibt unbekannt.'
+  const status = kind === 'disabled' || kind === 'not_configured' || kind === 'configured' ? kind : 'unknown'
+  return check(NATIVE_RENTAL_CHECK_ID, 'Direkte Mietwagensuche · DiscoverCars', nowMs, 'provider-ops', checkedAt, status, {
+    source: 'lib/providers/discovercars/search/server.ts · rentalAccess',
+    summary,
+    proves: kind === 'unknown'
+      ? 'Keine Konfigurationsaussage; der serverseitige Leser ist fehlgeschlagen.'
+      : 'Nur die lokale Freigabe und Mindest-Zugangskonfiguration nach dem tatsächlichen rentalAccess-Vertrag dieser Serverumgebung. Keine Zugangsdaten werden ausgegeben.',
+    doesNotProve: 'Schlüsselgültigkeit, Provider-Health, Kontingent, Preis, verfügbare Angebote, Buchbarkeit oder eine Production-Freigabe.',
+  })
+}
+
 export function bewerteProviderOps(
   domains: DomainZustandSnapshot[],
   nowMs: number,
+  nativeRental: NativeRentalConfigurationSnapshot = { kind: 'unknown' },
 ): ProviderOpsBoardItem {
   const checkedAt = iso(nowMs)
-  const checks = domains.map((domain) => domainCheckAusZustand(domain, nowMs, checkedAt))
+  const checks = [nativeRentalCheck(nativeRental, nowMs, checkedAt), ...domains.map((domain) => domainCheckAusZustand(domain, nowMs, checkedAt))]
   return basis('provider-ops', nowMs, checkedAt, 'foundation_only', {
-    source: 'lib/provider-ops',
+    source: 'lib/provider-ops + DiscoverCars rentalAccess',
     summary:
-      'S1-Operationsvertrag ist vorhanden. Das ist Foundation, keine Provideraktivierung und keine Live-Health.',
+      'S1-Grundlagen und die Konfiguration der direkten Mietwagensuche werden getrennt geprüft. Keine Live-Health-Aussage.',
     detail:
-      'Eine eingeschaltete Test-Capability einer Domain macht Provider-Ops insgesamt nicht bereit. Kein Toggle.',
-    proves: 'Nur, dass der gemergte S1-Vertrag gelesen und domainweise ausgewertet wurde.',
+      'Die direkte Mietwagensuche verwendet ihren eigenen Konfigurationszugang. Die übrigen Teilprüfungen beschreiben weiterhin den historischen S1-Vertrag. Der Bericht kann bis zu 30 Sekunden zwischengespeichert sein; der Prüfzeitpunkt bleibt erhalten. Kein Toggle.',
+    proves: 'Nur die genannten Konfigurations- und S1-Prüfungen in dieser Serverumgebung.',
     doesNotProve: 'Echte Provider, Production-Traffic, Health, Verträge oder Kostenlimits.',
     checks,
   })

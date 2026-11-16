@@ -31,7 +31,7 @@ function c1SyntheticContext(from = '2026-11-07', through = '2026-11-13'): Extrac
       { op: 'atomic', predicate: { kind: 'journey_origin', place: { kind: 'country', countryCode: 'CH' } } },
     ] } }, application: { purpose: 'tourism', tripStartAndEndWindow: { from, through } },
   }))
-  if (!('contextRevision' in context)) assert.fail('synthetic application context')
+  if (!('contextRevision' in context) || context.contextRevision !== 2) assert.fail('synthetic application context')
   return context
 }
 

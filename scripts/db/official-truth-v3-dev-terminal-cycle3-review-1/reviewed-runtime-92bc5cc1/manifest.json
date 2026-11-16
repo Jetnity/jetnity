@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "purpose": "Immutable runtime evidence for the already applied Dev Cycle3 review; successor runtime must have its own separate review.",
+  "commit": "92bc5cc11920d861022ad2823cd45efd808c8904",
+  "tree": "086b72ef002598678b606f0365edc62ab170e219",
+  "ciRun": 43731590653,
+  "appliedReviewAt": "2026-11-15T16:33:47.386817Z",
+  "pins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "archive": "monitor-queue.ts.txt",
+      "bytes": 35212,
+      "sha256": "1ac59c6db4e32ad14b57ffef050c833ccd71c4260218b433e90a58fcc8b56a45"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "archive": "jobs-composition.ts.txt",
+      "bytes": 29811,
+      "sha256": "9a34e02bb16fccbd087be21b93b52af923b29587e8bc7d3747f2c2cde9bfec5a"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/result/composition.ts",
+      "archive": "result-composition.ts.txt",
+      "bytes": 14686,
+      "sha256": "ac82224f1ac8c7f25f17e06eb1e878355a2ee8ea45edb8ffd9a7500d872c79cd"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/import/service-server.ts",
+      "archive": "import-service-server.ts.txt",
+      "bytes": 27279,
+      "sha256": "8bef6976a8199a87d3db0a4f62214486eb330641849c89afb3d0e5b3adcd7b33"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/storage/quarantine-postgres.ts",
+      "archive": "storage-quarantine-postgres.ts.txt",
+      "bytes": 13960,
+      "sha256": "aa7fe8e22dd1368f99528232f6f573ca0c37f38f3bc35a36c5c1a0b02480bca2"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/contract.ts",
+      "archive": "jobs-contract.ts.txt",
+      "bytes": 38206,
+      "sha256": "eaf4d0cd72def7b8fe266d6016b587483204d6919917ce2e50700194fba9fc84"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/postgres.ts",
+      "archive": "jobs-postgres.ts.txt",
+      "bytes": 20741,
+      "sha256": "1fea4f1e74713c93be8b2b3cab1360b5ab95a082e89793f9a86b9a817c787d89"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/worker.ts",
+      "archive": "monitor-worker.ts.txt",
+      "bytes": 11375,
+      "sha256": "e614e23bf62b0d196bb0756d2e131413517d2e9d3c3ef28182534f884a97af28"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "archive": "jobs-selected-claim.ts.txt",
+      "bytes": 18328,
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "archive": "method-authority-postgres.ts.txt",
+      "bytes": 57640,
+      "sha256": "42fb1f7094764fa8ba85c122f39ee8290e0cdf08b6b8c4f2ed84f58a3139a2f3"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-owned-session.ts",
+      "archive": "transport-node-postgres-owned-session.ts.txt",
+      "bytes": 18027,
+      "sha256": "0d818c574ef4784589273f4e31b5abb74879028cbacce66e810012f987734f6c"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/transport/node-postgres-executors.ts",
+      "archive": "transport-node-postgres-executors.ts.txt",
+      "bytes": 26781,
+      "sha256": "f1fcc6a0e762104c117e771207e266a3d7eac58492bb573b7aa1be1802c7ce3b"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/owned-scope.ts",
+      "archive": "jobs-owned-scope.ts.txt",
+      "bytes": 9501,
+      "sha256": "89a22b2a2de00365505258a301614a0ac2870af79bd3ced40a66c8794c6fe280"
+    }
+  ]
+}

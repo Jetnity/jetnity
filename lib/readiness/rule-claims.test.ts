@@ -439,7 +439,7 @@ describe('Official Truth rule claims', () => {
     assert.equal(koerper.includes('proposal'), false)
   })
 
-  test('die Anforderungstaxonomie bleibt unverändert', () => {
+  test('die Anforderungstaxonomie bleibt unverändert; strukturierte Kundendetails ergänzen die Faktenarten', () => {
     assert.deepEqual([...OFFICIAL_REQUIREMENT_TYPES], [
       'visa',
       'electronic_travel_authorization',
@@ -473,6 +473,7 @@ describe('Official Truth rule claims', () => {
       'transit_conditions',
       'official_actions',
       'temporal_rule',
+      'entry_information',
     ])
     assert.deepEqual([...REGEL_EVIDENCE_QUALITAETEN], [
       'explicit_primary_statement',

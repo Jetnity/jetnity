@@ -24,6 +24,8 @@ import Suchauswahl from '../auswahl/Suchauswahl'
 import Fluggaeste, { type FluggaesteWert } from './Fluggaeste'
 import Flugergebnisse, { type FlugSuchauftrag } from './Flugergebnisse'
 
+import { FlughafenKartenknopf } from '@/components/trips/reisekarte/Reisekarte'
+
 function FlughafenFeld({
   label,
   wert,
@@ -208,6 +210,7 @@ export default function Flugvergleich({
             <Search size={20} aria-hidden="true" /> Flüge suchen
           </button>
         </div>
+        <FlughafenKartenknopf reise={reise} iata={nach?.iata} />
         {art === 'gabel' && (
           <div className="flug-openjaw">
             <FlughafenFeld

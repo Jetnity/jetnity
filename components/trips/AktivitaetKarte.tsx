@@ -12,6 +12,10 @@ import { viatorBildAnzeigen } from '@/lib/providers/viator/activities/url'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { cn } from '@/lib/utils'
 
+import type { Trip } from '@/types/trips'
+import { Kartenknopf } from '@/components/trips/reisekarte/Reisekarte'
+import { istPosition } from '@/lib/maps/reisekarte'
+
 function dauerText(minuten: number | null): string | null {
   if (minuten === null) return null
   if (minuten < 60) return `${minuten} Min.`
@@ -21,18 +25,20 @@ function dauerText(minuten: number | null): string | null {
 }
 
 export default function AktivitaetKarte({
-  option,
+  reise, option,
   verweis = null,
   laeuft,
   onUebernehmen,
   onPruefen,
 }: {
+  reise?: Trip
   option: ActivityOptionSichtbar
   verweis?: { productUrl: string } | null
   laeuft: boolean
   onUebernehmen?: () => void
   onPruefen?: () => void
 }) {
+  const position = option.punkt && { lat: option.punkt.lat, lng: option.punkt.lon }
   const bild = viatorBildAnzeigen(option.bildUrl)
   const basis =
     option.provider !== 'viator'
@@ -89,6 +95,9 @@ export default function AktivitaetKarte({
         {option.provider === 'viator' ? (
           <p className="mt-1 break-words text-xs leading-5 text-ink-700">Treffpunkt ist nicht angegeben.</p>
         ) : null}
+        {reise && istPosition(position) && <Kartenknopf reise={reise} ort={{
+          id: 'angebot-' + option.provider + '-' + option.externalRef, name: option.title, art: 'Besuch', position, tage: [],
+        }}>Auf Karte ansehen</Kartenknopf>}
         {verweis ? (
           <a
             href={verweis.productUrl}

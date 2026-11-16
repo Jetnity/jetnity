@@ -133,18 +133,20 @@ describe('Die echte config.toml', () => {
     assert.equal(sollwerte().get('disable_signup'), false)
   })
 
-  test('die eine gespeicherte Development-Weiterleitung bleibt ein Eintrag mit literalem Backslash', () => {
+  test('die Development-Weiterleitungen enthalten exakt den bestehenden Callback und die Dev-Rücksetzadresse', () => {
     // Readback #626 5893640399. Ein Backslash vor `?` ist das persistierte Glob.
-    // Die bestehende Abbildung hängt die Liste mit Komma zusammen; ein Eintrag
-    // muss unverändert als `uri_allow_list` ankommen. site_url bleibt lokal.
-    const eintrag =
+    // Die bestehende Abbildung hängt beide exakten Ziele mit Komma zusammen;
+    // der Callback bleibt unverändert und site_url bleibt lokal.
+    const callback =
       'https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen'
+    const ruecksetzung =
+      'https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password'
     const liste = tomlWert(CONFIG, 'auth.additional_redirect_urls')
 
-    assert.deepEqual(liste, [eintrag])
-    assert.equal(sollwerte().get('uri_allow_list'), eintrag)
+    assert.deepEqual(liste, [callback, ruecksetzung])
+    assert.equal(sollwerte().get('uri_allow_list'), [callback, ruecksetzung].join(','))
     assert.equal(sollwerte().get('site_url'), 'http://localhost:3000')
-    assert.equal(eintrag.split('\\').length - 1, 1)
+    assert.equal(callback.split('\\').length - 1, 1)
   })
 
   test('eine synthetisch leere Redirect-Liste wird eine leere Zeichenkette', () => {

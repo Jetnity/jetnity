@@ -14,6 +14,7 @@ import { ArrowRight, CalendarDays, CloudOff, ListChecks, Users } from 'lucide-re
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { reiseFoto } from '@/lib/trips/organisieren/katalog'
 import Reisefoto from '@/components/trips/organisieren/Reisefoto'
+import { StadtbildNachweis } from '@/components/trips/organisieren/Stadtbild'
 import { reiseOrte } from '@/lib/trips/reise-orte'
 import { cn } from '@/lib/utils'
 import type { TripSource, TripSummary } from '@/types/trips'
@@ -51,6 +52,7 @@ export default function Reisekarte({
   const atlas = foto === reiseFoto(undefined, true)
 
   return (
+    <div className="min-w-0">
     <Link
       href={href}
       className={cn(
@@ -61,14 +63,14 @@ export default function Reisekarte({
       )}
     >
       <div className="relative aspect-[2.55] overflow-hidden bg-surface-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover">
-        {atlas ? (
+        {atlas && !ziel?.placeId?.startsWith('geonames:') ? (
           <svg aria-hidden="true" className="h-full w-full" viewBox="0 8 360 144" preserveAspectRatio="xMidYMid slice">
             <image href="/images/organisieren/reiseatlas.webp" width="360" height="180" />
             {typeof ziel?.latitude === 'number' && typeof ziel?.longitude === 'number' ? (
               <circle cx={ziel.longitude + 180} cy={90 - ziel.latitude} r="4" fill="#164339" stroke="white" strokeWidth="1.5" />
             ) : null}
           </svg>
-        ) : <Reisefoto src={foto} breite={680} hoehe={267} />}
+        ) : <Reisefoto ziel={ziel} src={foto} breite={680} hoehe={267} />}
       </div>
       <div className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
@@ -108,5 +110,7 @@ export default function Reisekarte({
         </div>
       </div>
     </Link>
+    <div className="mt-2 px-2"><StadtbildNachweis ziel={ziel} /></div>
+    </div>
   )
 }

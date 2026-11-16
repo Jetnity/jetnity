@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
+import Suchkalender from './auswahl/Suchkalender'
+import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
 import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
 import { timetableAnfrageSchema } from '@/lib/providers/twelve-go/timetable/schema'
@@ -122,9 +124,9 @@ export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: 
               {optionen}
             </select>
           </Feld>
-          <Feld label="Reisedatum">
-            <input type="date" value={datum} onChange={(e) => setDatum(e.target.value)} />
-          </Feld>
+          <Suchkalender start={datum} ende="" startLabel="Reisedatum" endeLabel="" einzeln optional
+            min={heutigesDatum()} max="9999-12-31" minTage={0} kontext="Deine Verbindung"
+            setzen={wert => { setDatum(wert); suche.reset(); setGesucht(false) }} />
           <Personen wert={gaeste} setzen={setGaeste} />
           <SucheKnopf busy={suche.busy} />
         </div>

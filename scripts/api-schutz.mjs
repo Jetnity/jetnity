@@ -1,6 +1,6 @@
 // scripts/api-schutz.mjs
 //
-// Stellt sicher, dass jede Route unter `app/api/admin` den zentralen Gate
+// Stellt sicher, dass jede Route unter `app/api/admin` und der feste Dev-Import den zentralen Gate
 // benutzt – und zwar in jedem exportierten HTTP-Handler.
 //
 // Hintergrund: Der Bereichsschutz für Seiten liegt im Layout der Gruppe
@@ -59,10 +59,17 @@ function handlerKörper(quelle, methode) {
 }
 
 const beanstandungen = []
+// Der feste Dev-Import muss Ziel/Request vor Auth-I/O prüfen. Er liegt deshalb
+// ausserhalb des Proxy-Admin-Scopes, benutzt aber denselben zentralen Gate.
+const ownerImportRoute = 'app/api/internal/readiness/ch-de-owner-import/route.ts'
+const ownerGuardRoute = 'app/api/internal/readiness/ch-de-owner-guard/route.ts'
+const festeOwnerPfade = [ownerImportRoute, ownerGuardRoute].map(path => join(WURZEL, path))
 
-for (const datei of routenDateien(API_ADMIN)) {
-  const quelle = readFileSync(datei, 'utf8')
+for (const datei of [...routenDateien(API_ADMIN), ...festeOwnerPfade]) {
   const anzeige = relative(WURZEL, datei)
+  let quelle
+  try { quelle = readFileSync(datei, 'utf8') }
+  catch { beanstandungen.push(`${anzeige}: geschützte Route fehlt`); continue }
 
   if (!quelle.includes(`from '@/lib/auth/admin-guard'`)) {
     beanstandungen.push(`${anzeige}: importiert den zentralen Gate nicht`)
@@ -70,6 +77,11 @@ for (const datei of routenDateien(API_ADMIN)) {
   }
 
   const vorhandene = HTTP_METHODEN.filter(methode => handlerKörper(quelle, methode) !== null)
+
+  if (festeOwnerPfade.includes(datei) && (vorhandene.length !== 1 || vorhandene[0] !== 'POST')) {
+    beanstandungen.push(`${anzeige}: ausschliesslich der geschützte POST ist erlaubt`)
+    continue
+  }
 
   if (vorhandene.length === 0) {
     beanstandungen.push(`${anzeige}: kein HTTP-Handler gefunden`)
@@ -92,6 +104,26 @@ for (const datei of routenDateien(API_ADMIN)) {
 }
 
 const anzahl = routenDateien(API_ADMIN).length
+
+// Exact machine ingress. Functional route tests prove the HMAC/target gates;
+// this inventory additionally refuses an accidental second HTTP method or a
+// missing environment-specific key on either reviewed scheduler route.
+for (const [path, secret, domain] of [
+  ['app/api/internal/readiness/ch-de-dev-refresh/route.ts', 'JETNITY_DEV_IMPORT_CRON_SECRET', 'jetnity-dev-import-v1'],
+  ['app/api/internal/readiness/ch-de-prod-refresh/route.ts', 'JETNITY_PROD_IMPORT_CRON_SECRET', 'jetnity-prod-import-v1'],
+]) {
+  try {
+    const source = readFileSync(join(WURZEL, path), 'utf8')
+    const methods = HTTP_METHODEN.filter(method => handlerKörper(source, method) !== null)
+    const body = handlerKörper(source, 'POST') ?? ''
+    if (methods.length !== 1 || methods[0] !== 'POST'
+      || !source.includes("from 'node:crypto'") || !body.includes('timingSafeEqual(')
+      || !body.includes(`process.env.${secret}`) || !body.includes(domain)
+      || !body.includes('checkOfficialTruthV3ChDeMethod(')) {
+      beanstandungen.push(`${path}: ausschliesslich der feste HMAC-geschützte Quellen-POST ist erlaubt`)
+    }
+  } catch { beanstandungen.push(`${path}: fester Scheduler-Einstieg fehlt`) }
+}
 
 // #1155: exact dormant explicit-read route. Its package handler owns the
 // default-closed deployment, same-origin, body, Auth, rate and own-Trip gates.
@@ -116,13 +148,13 @@ if (beanstandungen.length > 0) {
   console.error(`API-Schutz: ${beanstandungen.length} Beanstandung(en)\n`)
   for (const zeile of beanstandungen) console.error(`  - ${zeile}`)
   console.error(
-    `\nJede Route unter app/api/admin muss ${GATE}() aufrufen und bei einer Ablehnung ` +
+    `\nJede Route unter app/api/admin sowie der feste Dev-Import muss ${GATE}() aufrufen und bei einer Ablehnung ` +
       `die gelieferte Antwort zurückgeben.`,
   )
   process.exit(1)
 }
 
-console.log(`API-Schutz: ${anzahl} Admin-Route(n) geprüft, alle nutzen ${GATE}().`)
+console.log(`API-Schutz: ${anzahl} Admin-Route(n) und der feste Dev-Import geprüft, alle nutzen ${GATE}().`)
 
 // Ohne diesen Hinweis wäre nicht ersichtlich, dass die Prüfung nur greift,
 // wenn es das Verzeichnis überhaupt gibt.

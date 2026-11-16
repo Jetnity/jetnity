@@ -1,13 +1,16 @@
+import { ANDERE_SITZUNGEN_TEXT } from '@/lib/auth/account-session-view'
+import { sicherheitText } from '@/lib/localization/account-security-texte'
 import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 const komponente = readFileSync(join(hier, '../../components/account/SecuritySitzung.tsx'), 'utf8')
 const seite = readFileSync(join(hier, '../../app/account/security/page.tsx'), 'utf8')
-const settings = readFileSync(join(hier, '../../app/account/settings/page.tsx'), 'utf8')
+const settings = readFileSync(join(hier, '../../components/account/ui-einstellungen-1/EinstellungenInhalt.tsx'), 'utf8')
 const logout = readFileSync(join(hier, '../../components/account/SecurityLogout.tsx'), 'utf8')
 const logoutLogik = readFileSync(join(hier, './account-logout-scopes.ts'), 'utf8')
 const logoutAktion = readFileSync(join(hier, '../../app/account/security/logout-action.ts'), 'utf8')
@@ -22,12 +25,15 @@ describe('AP-5-S5 Vertrag und Accessibility', () => {
   test('Security-Seite zeigt die ehrliche Sessionkarte und keine Listing-Route', () => {
     assert.equal(seite.includes('SecuritySitzung'), true)
     assert.equal(seite.includes('SecurityLogout'), true)
-    assert.equal(settings.includes('aktuelle Sitzung'), true)
+    assert.equal(settings.includes("einstellungenText(sprache, 'security.description')"), true)
+    assert.match(einstellungenText('de', 'security.description'), /aktuelle Sitzung/)
     assert.equal(seite.includes('listSessions'), false)
     assert.equal(seite.includes('getSessions'), false)
     assert.equal(seite.includes('/account/sessions'), false)
     assert.equal(komponente.includes('data-andere-sitzungen={zustand.andere}'), true)
-    assert.equal(komponente.includes('ANDERE_SITZUNGEN_TEXT'), true)
+    assert.match(komponente, /sicherheitText\(sprache, "session.otherDescription"\)/)
+    assert.equal(sicherheitText('de', 'session.otherDescription'), ANDERE_SITZUNGEN_TEXT)
+    assert.match(sicherheitText('en', 'session.otherDescription'), /neither a device list nor a count, including zero/)
     assert.equal(logik.includes("andere: 'unsupported'") || logik.includes('andere: SITZUNG_ANDERE_LAGE'), true)
     assert.equal(logik.includes('andereSitzungenAnzahl'), true)
     assert.equal(logik.includes('return null'), true)

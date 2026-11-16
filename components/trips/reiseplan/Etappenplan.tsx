@@ -21,13 +21,15 @@ import {
 import type { Trip, TripItemKind, TripSource } from '@/types/trips'
 import { landName } from '@/lib/country/darstellung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
-import { reiseFoto } from '@/lib/trips/organisieren/katalog'
+import { StadtbildMiniatur, StadtbildNachweis, useStadtbild } from '@/components/trips/organisieren/Stadtbild'
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
+import PlanKartenplatz from '@/components/trips/reisekarte/PlanKartenplatz'
 import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import EtappenTage from './EtappenTage'
+import Tageswetter from '@/components/trips/wetter/Tageswetter'
 import StoppForm from './StoppForm'
 
 type Props = {
@@ -91,6 +93,7 @@ export default function Etappenplan({
   const [platzieren, setPlatzieren] = useState(false)
   const [ohneTage, setOhneTage] = useState<string | null>(null)
   const stages = [...reise.stages].sort((a, b) => a.position - b.position)
+  const heroBild = useStadtbild(stages[0])
   const activeDay = !ohneTage && !focusRoute && tagId ? reise.days.find((d) => d.id === tagId) : undefined
   const activeStage = stages.find((s) => s.id === (ohneTage || activeDay?.stageId))
   const activeRun = activeDay && route.find((r) => r.art === 'lauf' && r.tagIds.includes(activeDay.id))
@@ -122,6 +125,11 @@ export default function Etappenplan({
       setOhneTage(null)
       onDay(first)
     } else setOhneTage(id)
+  }
+  function positionWaehlen(p: { lat: number; lng: number }) {
+    setPunkt(p)
+    setPlatzieren(false)
+    setAnsicht('plan')
   }
   function openStop() {
     setPunkt(null)
@@ -161,7 +169,7 @@ export default function Etappenplan({
         </span>
         <span className="et-stage-surface">
           {stage && (
-            <span className="et-thumb" style={{ backgroundImage: 'url(' + reiseFoto(stage) + ')' }} />
+            <StadtbildMiniatur className="et-thumb" ziel={stage} />
           )}
           <span className="et-tiletext">
             <b>{title}</b>
@@ -182,7 +190,7 @@ export default function Etappenplan({
         style={{
           backgroundImage:
             'linear-gradient(90deg,rgba(11,49,42,.98) 0%,rgba(13,48,41,.91) 35%,rgba(13,48,41,.20) 100%),url(' +
-            reiseFoto(stages[0], true) +
+            heroBild.src +
             ')',
         }}
       >
@@ -255,10 +263,7 @@ export default function Etappenplan({
               </button>
               <div className="et-detail-title">
                 {activeStage && (
-                  <span
-                    className="et-thumb detail"
-                    style={{ backgroundImage: 'url(' + reiseFoto(activeStage) + ')' }}
-                  />
+                  <StadtbildMiniatur className="et-thumb detail" ziel={activeStage} />
                 )}
                 <div>
                   <small>{country || 'Reiseplan'}</small>
@@ -361,6 +366,7 @@ export default function Etappenplan({
                     </div>
                     {activeDay && days.some((d) => d.id === activeDay.id) && (
                       <>
+                        {activeStage && activeDay.dayDate && <Tageswetter ort={activeStage} datum={activeDay.dayDate} aktivitaeten={activeDay.items} />}
                         {day}
                       </>
                     )}
@@ -467,20 +473,21 @@ export default function Etappenplan({
               Ortswahl abbrechen
             </button>
           )}
+          <PlanKartenplatz reise={reise} route={route} etappe={activeStage?.id} tag={activeDay?.id}
+            verbindung={verbindung} setzen={platzieren} hinreise={!!outbound} rueckreise={!!inbound}
+            onAuswahl={choose} onSuche={onEtappensuche} onEdge={onEdge} onPosition={positionWaehlen}>
           <Etappenkarte
             reise={reise}
             auswahl={activeStage?.id || null}
             verbindung={verbindung}
             onAuswahl={(id) => choose(id)}
             setzen={platzieren}
-            onPosition={(p) => {
-              setPunkt(p)
-              setPlatzieren(false)
-              setAnsicht('plan')
-            }}
+            onPosition={positionWaehlen}
           />
+          </PlanKartenplatz>
         </div>
       </div>
+      <div className="grid gap-1 px-4 py-3">{Array.from(new Map(stages.map(s => [s.placeId ?? s.name, s])).values()).map(s => <StadtbildNachweis key={s.id} ziel={s} />)}</div>
     </div>
   )
 }

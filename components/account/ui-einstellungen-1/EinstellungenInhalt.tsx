@@ -1,0 +1,67 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { Download, Shield } from 'lucide-react'
+import KontoDatenexportAktion from '@/components/account/account-home-export-1/KontoDatenexportAktion'
+import KontoLoeschen from '@/components/account/KontoLoeschen'
+import Kontosprache, { type KontospracheAktionen } from './Kontosprache'
+import type { UiEinstellungenLesen } from '@/lib/account/ui-einstellungen-1/vertrag'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
+import { einstellungenText } from '@/lib/localization/einstellungen-texte'
+
+type Eigenschaften = KontospracheAktionen & {
+  initial: UiEinstellungenLesen
+  bereich: 'konto' | 'admin'
+  loeschungAngeboten?: boolean
+}
+
+function Inhalt({ initial, bereich, loeschungAngeboten = false, ...aktionen }: Eigenschaften) {
+  const [sprache, setSprache] = useState<UiSprache>(initial.status === 'bereit' ? initial.sprache : 'de')
+  const loeschBereich = loeschungAngeboten ? <KontoLoeschen sprache={sprache} /> : null
+  const titelPraefix = bereich === 'admin' ? 'admin' : 'account'
+  const titelFarbe = bereich === 'admin' ? 'text-foreground' : 'text-brand-800'
+  const textFarbe = bereich === 'admin' ? 'text-foreground/80' : 'text-ink-700'
+  return (
+    <div lang={sprache} data-einstellungen-hub="" className="min-w-0 px-4 py-6 [overflow-wrap:anywhere] sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="max-w-2xl">
+          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${bereich === 'admin' ? 'text-foreground/80' : 'text-brand-600'}`}>{einstellungenText(sprache, `${titelPraefix}.eyebrow`)}</p>
+          <h1 className={`mt-1 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl ${titelFarbe}`}>{einstellungenText(sprache, `${titelPraefix}.title`)}</h1>
+          <p className={`mt-2 max-w-xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, `${titelPraefix}.intro`)}</p>
+        </header>
+        <Kontosprache initial={initial} sprache={sprache} waehlen={setSprache} bereich={bereich} {...aktionen} />
+        {bereich === 'admin' ? <p className="mt-4 text-sm leading-6 text-foreground/80">{einstellungenText(sprache, 'admin.scope')}</p> : (
+          <>
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <Link href="/account/security" className="flex min-h-11 flex-col gap-4 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:flex-row sm:items-start">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-600"><Shield className="h-5 w-5" aria-hidden="true" /></span>
+                <span className="min-w-0"><span className="block text-lg font-semibold tracking-[-0.03em] text-brand-800">{einstellungenText(sprache, 'security.title')}</span><span className="mt-1 block text-sm leading-6 text-ink-700">{einstellungenText(sprache, 'security.description')}</span></span>
+              </Link>
+              <section aria-labelledby="account-datenexport-title" className="min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)]">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-600"><Download className="h-5 w-5" aria-hidden="true" /></span>
+                  <div className="min-w-0 flex-1">
+                    <h2 id="account-datenexport-title" className="text-lg font-semibold tracking-[-0.03em] text-brand-800">{einstellungenText(sprache, 'export.title')}</h2>
+                    <p className="mt-1 text-sm leading-6 text-ink-700">{einstellungenText(sprache, 'export.description')}</p>
+                    <p className="mt-3 text-sm leading-6 text-ink-700">{einstellungenText(sprache, 'export.scope')}</p>
+                    <p className="mt-3 text-sm leading-6 text-ink-700">{einstellungenText(sprache, 'export.exclusion')}</p>
+                    <KontoDatenexportAktion sprache={sprache} />
+                  </div>
+                </div>
+              </section>
+            </div>
+            {loeschBereich ? <div className="mt-8 border-t border-red-200 pt-6"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-red-800">{einstellungenText(sprache, 'delete.danger')}</p><div className="mt-3">{loeschBereich}</div></div> : null}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default function EinstellungenInhalt(eigenschaften: Eigenschaften) {
+  // Account replacement remounts drafts/status. Old responses cannot update
+  // the new account's component instance.
+  const key = eigenschaften.initial.status === 'bereit' ? eigenschaften.initial.benutzerId : eigenschaften.initial.status
+  return <Inhalt key={key} {...eigenschaften} />
+}

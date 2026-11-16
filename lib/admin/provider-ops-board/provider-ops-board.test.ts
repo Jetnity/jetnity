@@ -109,6 +109,7 @@ describe('Provider-Ops-Board Bewertung', () => {
     const bericht = await sammleProviderOpsBoard({
       nowMs: () => JETZT,
       vercelEnv: () => 'preview',
+      nativeRentalConfiguration: () => ({ kind: 'disabled' }),
       domainZustaende: () => [
         { id: 'domain-flights', name: 'Flights', zustand: { aktiv: false, grund: 'abgeschaltet' } },
       ],

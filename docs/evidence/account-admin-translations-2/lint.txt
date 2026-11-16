@@ -1,0 +1,7 @@
+Node 22.23.5
+Command: ESLint on this slice's eight modified existing route/component files and all new localization/harness source files.
+Exit code: 0
+ESLint code diagnostics: none
+Runtime output:
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

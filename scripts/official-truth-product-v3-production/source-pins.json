@@ -1,0 +1,192 @@
+[
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/build.mjs",
+    "bytes": 27295,
+    "sha256": "06fd0e9fea26d5276f38182a08d30c5b87745ec1c9d2fc4c2abe1649f7f1a08c"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/audit.sql",
+    "bytes": 7121,
+    "sha256": "31daa91c0811c8b6a037b4c80bfe0d2ac0743c3ecfe20371f49a85b2d8361766"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/catalog.sql",
+    "bytes": 7746,
+    "sha256": "52f56dbb681b83d3309751149d79e4e36b115bbee60c46cd23141398b0959d84"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/certificates.sql",
+    "bytes": 4991,
+    "sha256": "1f96bbd256dbd364a536618d66cd776312f8bcf90890b5799fffeb1734433053"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/history.sql",
+    "bytes": 17092,
+    "sha256": "9a0dc9be27bbdfe2e23aebf6d2da1f90f0c09e96f7b521ffc542b9c39365d9bd"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/owner.sql",
+    "bytes": 25589,
+    "sha256": "9fbc00a5412481a7fcc02287d7f108dbadeba96b15867899d9bca133ad411abb"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/state.sql",
+    "bytes": 11219,
+    "sha256": "adf674f5cd6fbd5cd902307f5f6488ef44e2a53fed0bc132cb7e41f15cfa89e7"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/status-rpc.sql",
+    "bytes": 18731,
+    "sha256": "8dab1ad792be8133e8be6c752f23704876ddf7dba499b9cbf577ebafe9b9e569"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/upgrade-prefix.sql",
+    "bytes": 7267,
+    "sha256": "cf5741aa32afc2a00eaff51eac6df0454e734124a43177ef3ad6b15bb14edd97"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/upgrade-suffix.sql",
+    "bytes": 12327,
+    "sha256": "dcf4447671f82b13b0dcc7c001419edafa9b262744c0631a88f561d2c0c421da"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/parts/visitor.sql",
+    "bytes": 6603,
+    "sha256": "9a73b0cbcbcf1190c665581f6b1cca951113c3883e885587bdccb7762f7c20c6"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/provider-migration-body.sql",
+    "bytes": 411108,
+    "sha256": "a3a0be9c4eb1e2c61be428d0b825ee8a3b6780f3f8d154c0ccc2b1317181f950"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/status-rpc-build.mjs",
+    "bytes": 4977,
+    "sha256": "aaeb3cfbe7db9d10f63d0d2b77e41686a53f48b30b6d7f304bfe4ba0767fbb98"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-background-guard-1/status-rpc-provider-migration-body.sql",
+    "bytes": 45568,
+    "sha256": "71e2f9f080b8af0b7100d49b70520f8c34dffdc1bc84f3912b20aff413adf97c"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/definitions.sql",
+    "bytes": 794857,
+    "sha256": "6c5d64c50389caf424d99b204e7f0f08ba64c0f669e7b9e3f8cccead2deb992f"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+    "bytes": 446847,
+    "sha256": "9d9623206dfd82a9cbd465aef6e36ea48fe0534ff02a85d1a857b2672ec67818"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+    "bytes": 124354,
+    "sha256": "f2a3f1b8a2845b2706d06dbef66c225c1836d9398e65682a01bf19d035018ac0"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+    "bytes": 69705,
+    "sha256": "edbaf9d56b3da115b12bf1c8cfd5c76d8bc9483f7fc1658ee648b380a16fe2c0"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
+    "bytes": 383390,
+    "sha256": "ba036a9394baf8a0a4194850ed25e0dba0c97ed8dabfd7842d0c5bf8bbcc4d16"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql",
+    "bytes": 53457,
+    "sha256": "727e83dbed7f0a6b127c3003248d85acc6b920fddc44356cdfeb8f3f57a82d2c"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-private-owner-guards-1/install-candidate.sql",
+    "bytes": 10945,
+    "sha256": "3e21495ff40f66337b004fadc98599cd336c19c31bb4f6e4f9013c2c01f02bd2"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/README.md",
+    "bytes": 10703,
+    "sha256": "dd4cda0835f18d438047985de190f3049b0c636e06eed515201c852cafec1451"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/activate.sql",
+    "bytes": 3869,
+    "sha256": "2e50ae9508359e099683a83474a2556dff1b96db8065cdac1f04d1e1eaa81bc1"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+    "bytes": 14307,
+    "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/deactivate.sql",
+    "bytes": 1968,
+    "sha256": "13d22944debc77cb8f0b7b98c774ab14f8a1852b996e1b82072746bfc730dd6f"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/monitoring.sql",
+    "bytes": 3424,
+    "sha256": "659c02f5ba45930dd5d2b9eab8279dce6c426cf98d8ae497be64097a96ca1e9c"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/provider-prerequisites.sql",
+    "bytes": 2559,
+    "sha256": "522ba4fce0c849070a24a1c49901b8b3a3a86300c144fa2d26985ebb1ce1b1a2"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-production-import-schedule-1/readback.sql",
+    "bytes": 2087,
+    "sha256": "0c8814f7ee6fb7bdae05a8f2a1fef80f7992ec1080370d735172ea2a9ab827dc"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-rolling-jobs-quota-1/constraints-before.sql",
+    "bytes": 1780,
+    "sha256": "b0e64b84ecf9b6d0d9f7d169963a5739d370b6780640ce032e7154a9f20e55ab"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-rolling-jobs-quota-1/constraints.sql",
+    "bytes": 1210,
+    "sha256": "677c810606536b999a2aee986f5806f05923e13fb173a5f5c73ededfe956cce9"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-rolling-jobs-quota-1/delta.sql",
+    "bytes": 13048,
+    "sha256": "12c55bc9a79335fc0355311ab69df420c43bcc50dd8d15384422de45897f82c1"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-rolling-jobs-quota-1/policy.sql",
+    "bytes": 7869,
+    "sha256": "a4fc4e15b043d2ff82287e49c5e8a797a1c15941d565510ad89ab61e76ecfccd"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-rolling-jobs-quota-1/provider-migration-body.sql",
+    "bytes": 133061,
+    "sha256": "7324c5e87d18de2a692e7e61123a44565ca440ecc9f8e9afddf379ede2aac32a"
+  },
+  {
+    "path": "scripts/db/profile-authority-integrity-1/install-candidate.sql",
+    "bytes": 36608,
+    "sha256": "2dda7f1bd523e5046bcc72f352a876133d1c7ed01994eb7687c6d1c9d3218774"
+  },
+  {
+    "path": "scripts/db/profile-authority-integrity-1/observed-baseline.json",
+    "bytes": 38527,
+    "sha256": "0e586796b8cdd4c420992e7c6e6c0978fa266d49915d9dc47c2f44425a0d6fa8"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/history-definition.sql",
+    "bytes": 304558,
+    "sha256": "061e62165021fe13959b72bfb3135114d5c77b5119f32eb7233e1290d586d692"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/history-guard-definition.sql",
+    "bytes": 4767,
+    "sha256": "f4a6ee4ade45524bd8ce12e389b9958568c6e2bcda1c103d22233e1e3d32987b"
+  },
+  {
+    "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+    "bytes": 43695,
+    "sha256": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a"
+  }
+]

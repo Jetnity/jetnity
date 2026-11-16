@@ -41,14 +41,18 @@ export type V3VersionHead = Readonly<{
 }>
 export type V3TransitionProofState = { status: 'current'; freshUntil: string } | { status: 'invalid' | 'unsupported' | 'unavailable' }
 export interface V3TransitionProofPort<Receipt extends object> {
-  inspect(prepared: V3PreparedTransition, checkedAt: string, legalDate: string, signal: AbortSignal): Promise<
+  inspect(prepared: V3PreparedTransition, checkedAt: string, legalDate: string, signal: AbortSignal, methodReceipt?: object): Promise<
     { status: 'verified'; receipt: Receipt } | { status: 'invalid' | 'unsupported' | 'unavailable' }>
   /** Re-extract original facts, qualify primary/comparison/resolutions, prove actual
    * previous head/archive custody, historical recovery source and native freshness.
    * Parsing the prepared DTO is NOT an implementation of this authority port. */
   reprove(receipt: Receipt, prepared: V3PreparedTransition, checkedAt: string, legalDate: string,
-    signal: AbortSignal): Promise<V3TransitionProofState>
+    signal: AbortSignal, methodReceipt?: object, proofContext?: object): Promise<V3TransitionProofState>
 }
+/** Internal composition seam: a separate genuine observation of the same epoch.
+ * It never renews the anchor receipt or changes reproveAtCommit semantics. */
+export type V3OperationAuthority = (anchorReceipt: object, method: V3MethodRef, checkedAt: string, signal: AbortSignal) => Promise<
+  { status: 'approved'; receipt: object } | { status: 'unavailable' | 'not_approved' | 'revoked' }>
 export type V3TransitionConfirmation = Readonly<{
   operationId: string; operationKey: string; versionRef: string; sourceDecisionRef: string;
   revision: number; state: 'accepted' | 'withdrawn' | 'conflicted'; auditRef: string; committedAt: string;
@@ -62,7 +66,7 @@ export type V3TransitionAtomicCommand = Readonly<{
   operationKey: string; prepared: V3PreparedTransition; expectedHead: V3VersionHead;
   authority: V3TransitionAtomicAuthority; notAfter: string;
   /** Preliminary asynchronous proof, NOT the final atomic authorization. */
-  reprove(signal: AbortSignal): Promise<V3TransitionProofState>;
+  reprove(signal: AbortSignal, proofContext?: object): Promise<V3TransitionProofState>;
 }>
 export type V3CurrentTransitionConfirmation = Readonly<{
   operation: V3TransitionConfirmation; head: V3VersionHead; method: V3MethodRef;
@@ -89,7 +93,7 @@ export interface V3VersionCommitPort {
   confirm(operationId: string, operationKey: string, signal: AbortSignal): Promise<
     { status: 'committed'; confirmation: unknown } | { status: 'not_attempted' | 'collision' | 'unconfirmed' | 'unavailable' }>
   /** A preflight only. The final boundary must inspect its own actual head. */
-  readHead(contextKey: string, factKind: V3TransitionPlan['factKind'], signal: AbortSignal): Promise<
+  readHead(contextKey: string, factKind: V3TransitionPlan['factKind'], signal: AbortSignal, methodReceipt?: object): Promise<
     { status: 'current'; head: V3VersionHead } | { status: 'unavailable' }>
   atomicBoundary: V3AtomicVersionBoundaryPort | null;
 }
@@ -150,6 +154,7 @@ function clockValid(input: V3PreparedTransition, now: string, legalDate: string)
 export async function commitV3PreparedTransition<ProofReceipt extends object>(value: unknown, dependencies: Readonly<{
   registry: QuellenRegistry; store: V3VersionCommitPort | null; proofs: V3TransitionProofPort<ProofReceipt> | null;
   methodAuthority: V3MethodAuthorityPort<object> | null; now: () => string; legalDate: () => string; invocationMilliseconds: number;
+  acquireOperationAuthority?: V3OperationAuthority;
 }>, signal?: AbortSignal): Promise<V3TransitionOutcome> {
   const prepared = parsePrepared(value, dependencies.registry)
   if (!prepared) return { status: 'invalid' }
@@ -178,16 +183,21 @@ export async function commitV3PreparedTransition<ProofReceipt extends object>(va
     const approval = await budget.call(() => methodAuthority.resolveCurrent(prepared.transition.method, at))
     if (!approval.ok || approval.value.status !== 'approved') return { status: replayed ? 'committed_not_current' : 'unavailable' }
     const methodReceipt = approval.value.receipt
-    const proof = await budget.call((s) => proofs.inspect(prepared, at, date, s))
+    const proof = await budget.call((s) => proofs.inspect(prepared, at, date, s,
+      dependencies.acquireOperationAuthority ? methodReceipt : undefined))
     if (!proof.ok) return { status: replayed ? 'committed_not_current' : 'unavailable' }
     if (proof.value.status !== 'verified') return { status: replayed ? 'committed_not_current' : proof.value.status }
     const receipt = proof.value.receipt
-    async function reprove(s: AbortSignal): Promise<V3TransitionProofState> {
+    async function reprove(s: AbortSignal, proofContext?: object, operationReceipt = methodReceipt,
+      acquired = false): Promise<V3TransitionProofState> {
       const time = now(), dateNow = legalDate()
       if (!time || !clockValid(prepared!, time, dateNow) || s.aborted) return { status: 'invalid' }
-      const approved = await budget.call(() => methodAuthority!.reproveAtCommit(methodReceipt, prepared!.transition.method, time))
-      if (!approved.ok || approved.value.status !== 'current') return { status: 'unavailable' }
-      const actual = await budget.call((child) => proofs!.reprove(receipt, prepared!, time, dateNow, child))
+      if (!acquired) {
+        const approved = await budget.call(() => methodAuthority!.reproveAtCommit(operationReceipt, prepared!.transition.method, time))
+        if (!approved.ok || approved.value.status !== 'current') return { status: 'unavailable' }
+      }
+      const actual = await budget.call((child) => proofs!.reprove(receipt, prepared!, time, dateNow, child,
+        dependencies.acquireOperationAuthority ? operationReceipt : undefined, proofContext))
       if (!actual.ok || actual.value.status !== 'current') return actual.ok ? actual.value : { status: 'unavailable' }
       const end = now(), endDate = legalDate()
       if (!end || end < time || endDate !== dateNow || !clockValid(prepared!, end, endDate)
@@ -201,27 +211,44 @@ export async function commitV3PreparedTransition<ProofReceipt extends object>(va
     if (check.status !== 'current') return { status: replayed ? 'committed_not_current' : check.status }
     const authority: V3TransitionAtomicAuthority = { method: prepared.transition.method, methodReceipt, proofReceipt: receipt }
     const notAfter = check.freshUntil < invocationDeadline ? check.freshUntil : invocationDeadline
+    async function operation(s: AbortSignal) {
+      if (!dependencies.acquireOperationAuthority) return { authority, reprove }
+      const time = now()
+      if (!time || s.aborted || time >= notAfter) return null
+      const fresh = await dependencies.acquireOperationAuthority(methodReceipt, prepared!.transition.method, time, s)
+      if (fresh.status !== 'approved' || s.aborted) return null
+      return { authority: { ...authority, methodReceipt: fresh.receipt },
+        reprove: (active: AbortSignal, context?: object) => reprove(active, context, fresh.receipt, true) }
+    }
     if (!replayed) {
-      const head = await budget.call((s) => store.readHead(prepared.transition.contextKey, prepared.transition.factKind, s))
+      const head = await budget.call((s) => store.readHead(prepared.transition.contextKey, prepared.transition.factKind, s,
+        dependencies.acquireOperationAuthority ? methodReceipt : undefined))
       if (!head.ok || head.value.status !== 'current') return { status: 'unavailable' }
       const expected = expectedHead(prepared)
       if (!same(head.value.head, expected)) return { status: 'stale_head' }
-      const written = await budget.call((s) => boundary.commit({ operationKey, prepared, expectedHead: expected,
-        authority, notAfter, reprove }, s))
+      const written = await budget.call(async (s) => {
+        const phase = await operation(s)
+        return phase ? boundary.commit({ operationKey, prepared, expectedHead: expected, ...phase, notAfter }, s)
+          : { status: 'unavailable' as const }
+      })
       if (!written.ok || written.value.status === 'unconfirmed') return { status: 'unconfirmed' }
       if (written.value.status !== 'commit_reported') return { status: written.value.status }
     }
-    return await confirmActual(prepared, operationKey, boundary, authority, notAfter, reprove, budget, now, legalDate, replayed)
+    return await confirmActual(prepared, operationKey, boundary, notAfter, budget, now, legalDate, replayed, operation)
   } catch { return { status: 'unconfirmed' } } finally { budget.dispose() }
 }
 
 async function confirmActual(prepared: V3PreparedTransition, operationKey: string, boundary: V3AtomicVersionBoundaryPort,
-  authority: V3TransitionAtomicAuthority, notAfter: string, reprove: V3TransitionAtomicCommand['reprove'],
-  budget: InvocationBudget, now: () => string | null, legalDate: () => string, replayed: boolean): Promise<V3TransitionOutcome> {
+  notAfter: string,
+  budget: InvocationBudget, now: () => string | null, legalDate: () => string, replayed: boolean,
+  operation: (signal: AbortSignal) => Promise<{ authority: V3TransitionAtomicAuthority; reprove: V3TransitionAtomicCommand['reprove'] } | null>): Promise<V3TransitionOutcome> {
   const expected: V3VersionHead = { pointer: prepared.transition.next, sourceDecisionRef: prepared.decision.reference,
     historyArchive: prepared.decision.historyArchive }
-  const result = await budget.call((s) => boundary.confirmCurrent({ operationKey, prepared, expectedHead: expected,
-    authority, notAfter, reprove }, s))
+  const result = await budget.call(async (s) => {
+    const phase = await operation(s)
+    return phase ? boundary.confirmCurrent({ operationKey, prepared, expectedHead: expected, ...phase, notAfter }, s)
+      : { status: 'unavailable' as const }
+  })
   if (!result.ok) return { status: 'unconfirmed' }
   if (result.value.status !== 'current') return { status: result.value.status === 'not_current' ? 'committed_not_current' : result.value.status }
   const current = readData(result.value.confirmation, currentConfirmationSchema), time = now(), date = legalDate()

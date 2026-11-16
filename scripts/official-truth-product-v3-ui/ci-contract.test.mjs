@@ -10,9 +10,9 @@ import { selectU1SystemBrowser } from './browser.mjs'
 const require = createRequire(import.meta.url)
 const { load } = require('js-yaml')
 const workflow = load(readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8'))
-const families = ['verify', 'persisted_native', 'refresh_native', 'accepted_store_native', 'official_truth_v3_ui', 'hosted_v3_native_pg17']
+const families = ['verify', 'persisted_native', 'refresh_native', 'accepted_store_native', 'official_truth_v3_ui', 'hosted_v3_native_pg17', 'cms_native', 'marketing_native']
 
-test('CI aggregate requires success from all six families including isolated UI and hosted PG17', () => {
+test('CI aggregate requires success from all eight families including mandatory Admin native proofs', () => {
   const aggregate = workflow.jobs.required_verify
   assert.equal(aggregate.name, 'Typecheck, Lint & Build')
   assert.equal(aggregate['timeout-minutes'], 2)
@@ -20,7 +20,7 @@ test('CI aggregate requires success from all six families including isolated UI 
   assert.equal(aggregate.if, '${{ always() }}')
   const gate = aggregate.steps[0]
   const variables = Object.keys(gate.env)
-  assert.equal(variables.length, 6)
+  assert.equal(variables.length, 8)
   for (const family of families) {
     assert.ok(workflow.jobs[family])
     assert.ok(Object.values(gate.env).includes(`\${{ needs.${family}.result }}`))
@@ -38,11 +38,52 @@ test('CI aggregate requires success from all six families including isolated UI 
   }
 })
 
-test('hosted PG17 is a mandatory isolated family with the original setup and operating guards', () => {
+test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the required CI run', () => {
+  const provisionName = 'Provision mandatory PostgreSQL 17 from signed official packages'
+  const existingProvision = workflow.jobs.hosted_v3_native_pg17.steps.find((step) => step.name === provisionName)
+  for (const [family, directory] of [
+    ['cms_native', 'admin-editorial-cms-1'], ['marketing_native', 'admin-marketing-drafts-1'],
+  ]) {
+    const job = workflow.jobs[family]
+    assert.deepEqual(job.permissions, { contents: 'read' })
+    assert.equal(job['runs-on'], 'ubuntu-24.04')
+    assert.equal(job['timeout-minutes'], 30)
+    assert.equal('if' in job, false)
+    assert.equal('continue-on-error' in job, false)
+    assert.ok(job.steps.every((step) => !('if' in step) && !('continue-on-error' in step)))
+    assert.equal(job.steps[0].with['fetch-depth'], 0)
+    assert.deepEqual(job.steps.find((step) => step.uses === 'actions/setup-node@v4')?.with, { 'node-version': '22.x', cache: 'npm' })
+    for (const command of ['npm ci', 'npm run check:setup:ci', 'npm run check:operating-mode']) {
+      assert.equal(job.steps.filter((step) => step.run === command).length, 1, family + ': ' + command)
+    }
+    assert.equal(job.steps.filter((step) => step.name === provisionName).length, 1)
+    assert.deepEqual(job.steps.find((step) => step.name === provisionName), existingProvision)
+    const typecheck = job.steps.find((step) => step.name === 'Typecheck native proof')?.run ?? ''
+    const roots = [`scripts/db/${directory}/fixture.ts`, `scripts/db/${directory}/native.test.ts`]
+    if (family === 'cms_native') roots.push('scripts/db/admin-runtime-bg1-1/native.test.ts')
+    assert.ok(typecheck.includes(`rootNames: [${roots.map(path => `'${path}'`).join(', ')}]`))
+    assert.ok(typecheck.includes('...ts.getPreEmitDiagnostics(program)'))
+    assert.ok(typecheck.includes('process.exitCode = 1'))
+    const originalCommand = `node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/${directory}/native.test.ts`
+    assert.equal(job.steps.filter(step => step.run === originalCommand).length, 1)
+    if (family === 'cms_native') {
+      const transition = job.steps.at(-1)
+      assert.equal(transition.name, 'Run atomic Admin BG1 transition and guarded runtime proof')
+      assert.equal(transition['timeout-minutes'], 25)
+      assert.equal(transition.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/admin-runtime-bg1-1/native.test.ts')
+      assert.equal(job.steps.at(-2).run, originalCommand)
+    } else assert.equal(job.steps.at(-1).run, originalCommand)
+    assert.equal(JSON.stringify(job).includes('secrets.'), false)
+  }
+})
+
+test('hosted PG17 has two mandatory isolated runners with complete serial proofs and unchanged guards', () => {
   const job = workflow.jobs.hosted_v3_native_pg17
   assert.ok(job)
+  assert.equal(job.name, 'Hosted V3 — native PostgreSQL 17 (${{ matrix.group }})')
   assert.equal(job['runs-on'], 'ubuntu-24.04')
   assert.equal(job['timeout-minutes'], 30)
+  assert.deepEqual(job.strategy, { 'fail-fast': false, 'max-parallel': 2, matrix: { group: ['main', 'quota'] } })
   assert.equal('if' in job, false)
   assert.equal('continue-on-error' in job, false)
   assert.ok(job.steps.every((step) => !('if' in step) && !('continue-on-error' in step)))
@@ -66,8 +107,14 @@ test('hosted PG17 is a mandatory isolated family with the original setup and ope
   assert.equal(provision.shell, 'bash')
   assert.equal(job.steps.filter((step) => step.name === provisionName).length, 1)
   assert.ok(job.steps.indexOf(operating) < job.steps.indexOf(provision))
-  assert.equal(job.steps.at(-1).run, 'npm run test:hosted-v3-native')
-  assert.equal(job.steps.filter((step) => step.run === 'npm run test:hosted-v3-native').length, 1)
+  const selectedCommand = 'npm run test:hosted-v3-native:${{ matrix.group }}'
+  assert.equal(job.steps.at(-1).run, selectedCommand)
+  assert.equal(job.steps.filter((step) => step.run === selectedCommand).length, 1)
+  const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'))
+  for (const group of ['main', 'quota']) {
+    assert.equal(pkg.scripts['test:hosted-v3-native:' + group],
+      'node scripts/official-truth-v3-test-selection.mjs hosted-pg17-' + group)
+  }
   assert.equal(workflow.jobs.verify.steps.some((step) => step.name === provisionName), false)
   assert.equal(workflow.jobs.verify.steps.filter((step) => step.run === 'npm run test:core').length, 1)
   assert.equal(JSON.stringify(job).includes('secrets.'), false)

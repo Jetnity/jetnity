@@ -79,6 +79,16 @@ const SCHREIB_VERWEIGERT = {
   wiederholbar: false,
 } as const
 
+function verwerfeVerweigerungsKoerper(antwort: Response): void {
+  try {
+    // Der HTTP-Status entscheidet. Eine stockende oder fehlschlagende
+    // Stream-Kündigung darf das Ausblenden nicht verzögern.
+    void antwort.body?.cancel().catch(() => undefined)
+  } catch {
+    // Best effort only; no server body or exception enters the operator view.
+  }
+}
+
 export default function SecurityWidget() {
   const [data, setData] = React.useState<SecurityListenAntwort | null>(null)
   const [fehler, setFehler] = React.useState<ReturnType<typeof sichereLeseFehler> | null>(null)
@@ -116,6 +126,10 @@ export default function SecurityWidget() {
         async () => {
           const antwort = await fetch('/api/admin/security/list', { cache: 'no-store' })
           status = antwort.status
+          if (status === 401 || status === 403) {
+            verwerfeVerweigerungsKoerper(antwort)
+            return { ok: false, status, json: async () => null }
+          }
           return antwort
         },
         (koerper) => {
@@ -184,12 +198,17 @@ export default function SecurityWidget() {
       setBuchBeide(schliesseVorgang(buchRef.current, vorgang.id, vorgang.ip, 'unbestaetigt'))
       return
     }
+    if (!mounted.current || verweigerung.current !== epoche) return
     let koerper: unknown = null
     let lesbar = true
-    try {
-      koerper = await antwort.json()
-    } catch {
-      lesbar = false
+    if (antwort.status === 401 || antwort.status === 403) {
+      verwerfeVerweigerungsKoerper(antwort)
+    } else {
+      try {
+        koerper = await antwort.json()
+      } catch {
+        lesbar = false
+      }
     }
     if (!mounted.current || verweigerung.current !== epoche) return
     const ausgang = schreibAusgang(antwort.status, koerper, lesbar)

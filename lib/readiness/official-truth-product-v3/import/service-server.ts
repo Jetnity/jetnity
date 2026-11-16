@@ -1,4 +1,5 @@
 import 'server-only'
+import { performance } from 'node:perf_hooks'
 
 import { sha256Hex } from '@/lib/readiness/digest'
 import { civilDateOrdinalLesen, schema2DatenPruefen, schema2Kanonisch } from '@/lib/readiness/regulierungs-anwendbarkeit'
@@ -12,6 +13,7 @@ import {
   type V3ResearchProposal,
 } from '../contract'
 import { readV3ProposalUpload, type V3ProposalUpload } from './interface'
+import { traceDevDiagnosticStage, withDevDiagnosticBudget } from '../runtime/dev-diagnostics'
 
 type Primary = V3SourceDecisionRecord['primary']
 type DecisionParts = Pick<V3SourceDecisionRecord, 'primary' | 'counterCheck' | 'knownConflicts' | 'historyArchive'>
@@ -77,6 +79,8 @@ export type V3ImportAudit = Readonly<{
   jobId: string; contextKey: string; method: V3MethodRef; recordedAt: string;
   result: V3ImportOutcome['status']; decisionRef: string | null; escalationKey: string | null;
 }>
+/** Absolute monotonic cap of this invocation; adapters may only shorten it. */
+export type V3ImportCallBudget = Readonly<{ deadline: number }>
 
 /**
  * Atomic acquisition/finish; no in-memory production implementation or blind replay.
@@ -89,11 +93,11 @@ export type V3ImportAudit = Readonly<{
  * previousDecision/archiveAppend bound to an escalation, never only references.
  */
 export interface V3ImportQuarantinePort<Ticket extends object> {
-  reserve(upload: V3ProposalUpload, signal: AbortSignal): Promise<
+  reserve(upload: V3ProposalUpload, signal: AbortSignal, budget?: V3ImportCallBudget): Promise<
     { status: 'acquired'; ticket: Ticket } | { status: 'completed'; outcome: V3ImportOutcome }
     | { status: 'collision' | 'busy' | 'unavailable' }>
   /** Full outcome (decision/predecessor/archive), audit and outbox key are atomic. */
-  finish(ticket: Ticket, outcome: V3ImportOutcome, audit: V3ImportAudit, signal: AbortSignal): Promise<
+  finish(ticket: Ticket, outcome: V3ImportOutcome, audit: V3ImportAudit, signal: AbortSignal, budget?: V3ImportCallBudget): Promise<
     { status: 'recorded' } | { status: 'unconfirmed' }>
 }
 
@@ -159,7 +163,7 @@ function historyRead(input: V3ImportHistory, proposal: V3ResearchProposal, regis
 
 async function boundedInvocation(
   external: AbortSignal, milliseconds: number, operationId: string,
-  run: (signal: AbortSignal) => Promise<V3ImportResult>,
+  run: (signal: AbortSignal, budget: V3ImportCallBudget) => Promise<V3ImportResult>,
 ): Promise<V3ImportResult> {
   const controller = new AbortController()
   const abort = () => controller.abort()
@@ -167,11 +171,14 @@ async function boundedInvocation(
   let rejectAbort: () => void = () => {}
   const stopped = new Promise<never>((_resolve, reject) => { rejectAbort = () => reject(new Error('import_stopped')) })
   controller.signal.addEventListener('abort', rejectAbort, { once: true })
+  const budgetStart = performance.now()
+  const budget = Object.freeze({ deadline: budgetStart + milliseconds })
   const timer = setTimeout(abort, milliseconds)
   if (external.aborted) abort()
   try {
     if (controller.signal.aborted) await stopped
-    return await Promise.race([run(controller.signal), stopped])
+    return await withDevDiagnosticBudget('i1', budgetStart, budget.deadline,
+      () => Promise.race([run(controller.signal, budget), stopped]))
   } catch {
     // run begins with a mutating reservation. A racing/late response leaves its
     // outcome unknown; the durable adapter must reconcile the same operation.
@@ -196,7 +203,7 @@ export function importV3ResearchProposalProduction(): V3ImportResult {
  */
 export function createV3ImportCoordinator<M extends object, E extends object, H extends object, T extends object>(
   ports: V3ImportPorts<M, E, H, T>,
-  options: Readonly<{ budgetMilliseconds?: number }> = {},
+  options: Readonly<{ budgetMilliseconds?: number; overlapInitialReadsWithReservation?: boolean }> = {},
 ) {
   const budget = options.budgetMilliseconds ?? 30_000
   return Object.freeze({
@@ -213,12 +220,28 @@ export function createV3ImportCoordinator<M extends object, E extends object, H 
         return { status: 'unavailable', reason: 'invalid_configuration' }
       }
       const checkedStart = start
-      return boundedInvocation(signal, budget, proposal.operationId, async (signal) => {
+      return boundedInvocation(signal, budget, proposal.operationId, async (signal, callBudget) => {
         let ticket: T | null = null
         let uncertain = false
         try {
           uncertain = true // reserve can write successfully and lose its reply.
-          const acquired = await ports.quarantine.reserve(upload.value, signal)
+          const reserve = () => traceDevDiagnosticStage('i1_reserve', signal,
+            () => ports.quarantine.reserve(upload.value, signal, callBudget))
+          let initial: InitialImportState<M, H> | undefined
+          let acquired: Awaited<ReturnType<typeof ports.quarantine.reserve>>
+          if (options.overlapInitialReadsWithReservation === true) {
+            // Only the selected code-owned frame opts in. These are real,
+            // read-only MA1/history calls with this invocation's original
+            // receipts, never cached approval or a reconstructed receipt.
+            // Join both starts even when reservation rejects; no evidence,
+            // attestation or finish may follow an unconfirmed reservation.
+            const [reserved, read] = await Promise.allSettled([
+              reserve(), readInitialState(ports, upload.value, checkedStart, signal),
+            ])
+            if (reserved.status !== 'fulfilled' || read.status !== 'fulfilled') throw new Error('import_initial_unconfirmed')
+            acquired = reserved.value
+            initial = read.value
+          } else acquired = await reserve()
           if (signal.aborted) return { status: 'outcome_unknown', operationId: proposal.operationId }
           if (acquired.status === 'collision') return { status: 'rejected', reason: 'operation_collision' }
           if (acquired.status === 'busy') return { status: 'busy' }
@@ -227,7 +250,8 @@ export function createV3ImportCoordinator<M extends object, E extends object, H 
           if (acquired.status !== 'acquired') return { status: 'unavailable', reason: 'temporary_failure' }
           const acquiredTicket = acquired.ticket
           ticket = acquiredTicket
-          const outcome = await prepare(ports, upload.value, checkedStart, signal)
+          const outcome = await traceDevDiagnosticStage('i1_prepare', signal,
+            () => prepare(ports, upload.value, checkedStart, signal, initial))
           if (signal.aborted) return { status: 'outcome_unknown', operationId: proposal.operationId }
           const finishClock = clockRead(ports.clock())
           if (!finishClock || finishClock.now < checkedStart.now) return { status: 'outcome_unknown', operationId: proposal.operationId }
@@ -240,7 +264,8 @@ export function createV3ImportCoordinator<M extends object, E extends object, H 
             decisionRef, escalationKey: outcome.status === 'escalation' ? outcome.key : null,
           })
           uncertain = true
-          const saved = await ports.quarantine.finish(acquiredTicket, outcome, audit, signal)
+          const saved = await traceDevDiagnosticStage('i1_finish', signal,
+            () => ports.quarantine.finish(acquiredTicket, outcome, audit, signal, callBudget))
           if (signal.aborted || saved.status !== 'recorded') return { status: 'outcome_unknown', operationId: proposal.operationId }
           return Object.freeze({ status: 'completed', replayed: false, outcome })
         } catch {
@@ -253,27 +278,47 @@ export function createV3ImportCoordinator<M extends object, E extends object, H 
   })
 }
 
+type InitialImportState<M extends object, H extends object> =
+  | Readonly<{ status: 'ready'; methodReceipt: M; historyReceipt: H; history: V3ImportHistory }>
+  | Extract<V3ImportOutcome, { status: 'unavailable' | 'quarantined' }>
+
+async function readInitialState<M extends object, E extends object, H extends object, T extends object>(
+  ports: V3ImportPorts<M, E, H, T>, upload: V3ProposalUpload, start: V3ReadClock, signal: AbortSignal,
+): Promise<InitialImportState<M, H>> {
+  try {
+    const method = await traceDevDiagnosticStage('i1_method_resolve', signal,
+      () => ports.methodAuthority.resolveCurrent(ports.method, start.now))
+    if (signal.aborted) return { status: 'unavailable', reason: 'aborted' }
+    if (method.status !== 'approved') return { status: 'unavailable', reason: method.status === 'not_approved' ? 'method_not_approved' : 'method_unavailable' }
+    const proposal = upload.proposal
+    const found = await traceDevDiagnosticStage('i1_history_read', signal,
+      () => ports.history.read(proposal.contextKey, proposal.research.factKind, signal))
+    if (signal.aborted) return { status: 'unavailable', reason: 'aborted' }
+    if (found.status !== 'snapshot') return { status: 'unavailable', reason: 'history_unavailable' }
+    const history = historyRead(found.history, proposal, ports.registry)
+    return history ? Object.freeze({ status: 'ready', methodReceipt: method.receipt, historyReceipt: found.receipt, history })
+      : { status: 'quarantined', reason: 'invalid_verification' }
+  } catch { return { status: 'unavailable', reason: 'temporary_failure' } }
+}
+
 async function prepare<M extends object, E extends object, H extends object, T extends object>(
   ports: V3ImportPorts<M, E, H, T>, upload: V3ProposalUpload, start: V3ReadClock, signal: AbortSignal,
+  initial?: InitialImportState<M, H>,
 ): Promise<V3ImportOutcome> {
   const proposal = upload.proposal
   const unavailable = (reason: Extract<V3ImportOutcome, { status: 'unavailable' }>['reason']): V3ImportOutcome => ({ status: 'unavailable', reason })
   const quarantined = (reason: Extract<V3ImportOutcome, { status: 'quarantined' }>['reason']): V3ImportOutcome => ({ status: 'quarantined', reason })
   try {
-    const method = await ports.methodAuthority.resolveCurrent(ports.method, start.now)
+    const state = initial ?? await readInitialState(ports, upload, start, signal)
     if (signal.aborted) return unavailable('aborted')
-    if (method.status !== 'approved') return unavailable(method.status === 'not_approved' ? 'method_not_approved' : 'method_unavailable')
-    const found = await ports.history.read(proposal.contextKey, proposal.research.factKind, signal)
-    if (signal.aborted) return unavailable('aborted')
-    if (found.status !== 'snapshot') return unavailable('history_unavailable')
-    const history = historyRead(found.history, proposal, ports.registry)
-    if (!history) return quarantined('invalid_verification')
+    if (state.status !== 'ready') return state
+    const history = state.history
     const request: V3ImportVerificationRequest = Object.freeze({ context: proposal.context, contextKey: proposal.contextKey,
       factKind: proposal.research.factKind, references: Object.freeze(proposal.references.map((item) => item.source)),
       method: Object.freeze({ ...ports.method }), clock: start, previousDecision: history.decision,
       decisionRef: ref('source-decision', { operationId: proposal.operationId, proposalDigest: upload.digest,
         contextKey: proposal.contextKey, method: ports.method, predecessor: history.decision?.reference ?? null }) })
-    const inspected = await ports.evidence.inspect(request, signal)
+    const inspected = await traceDevDiagnosticStage('i1_evidence_inspect', signal, () => ports.evidence.inspect(request, signal))
     if (signal.aborted) return unavailable('aborted')
     if (inspected.status !== 'inspected') return unavailable('verification_unavailable')
     const parts = partsRead(inspected.parts)
@@ -291,15 +336,16 @@ async function prepare<M extends object, E extends object, H extends object, T e
     const archive = inspected.archiveAppend === null ? null : readV3ConflictArchiveRecord(inspected.archiveAppend, ports.registry)
     if (archive !== null && !archive.ok) return quarantined('invalid_verification')
     const archiveValue = archive?.ok ? archive.value : null
-    const evidence = await ports.evidence.reprove(inspected.receipt, request, decision.value, archiveValue, checked, signal)
+    const evidence = await traceDevDiagnosticStage('i1_evidence_reproof', signal,
+      () => ports.evidence.reprove(inspected.receipt, request, decision.value, archiveValue, checked, signal))
     if (signal.aborted) return unavailable('aborted')
     if (evidence.status !== 'current') return unavailable('verification_unavailable')
-    const currentHistory = await ports.history.reprove(found.receipt, history, signal)
+    const currentHistory = await traceDevDiagnosticStage('i1_history_reproof', signal, () => ports.history.reprove(state.historyReceipt, history, signal))
     if (signal.aborted) return unavailable('aborted')
     if (currentHistory.status !== 'current') return quarantined('history_changed')
     const end = clockRead(ports.clock())
     if (!end || end.now < checked.now || end.legalDate !== checked.legalDate) return quarantined('invalid_verification')
-    const approval = await ports.methodAuthority.reproveAtCommit(method.receipt, ports.method, end.now)
+    const approval = await traceDevDiagnosticStage('i1_method_reproof', signal, () => ports.methodAuthority.reproveAtCommit(state.methodReceipt, ports.method, end.now))
     if (signal.aborted) return unavailable('aborted')
     if (approval.status !== 'current') return quarantined('method_not_current')
     const done = clockRead(ports.clock())

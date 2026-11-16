@@ -133,13 +133,14 @@ Kein Captcha: Es verlangt einen Anbieter samt Secret und würde jede Anmeldung v
 
 ## 4. Redirect-Ziele
 
-**Development, aktueller Repository-Sollwert.** `site_url` bleibt `http://localhost:3000`. `additional_redirect_urls` enthält genau einen Eintrag: den bereits freigegebenen und gespeicherten Preview-Callback aus #626, Freigabe [5893108838](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893108838), Readback [5893640399](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893640399).
+**Development, aktueller Repository-Sollwert.** `site_url` bleibt `http://localhost:3000`. `additional_redirect_urls` enthält genau zwei Einträge: den bereits freigegebenen und gespeicherten Preview-Callback aus #626, Freigabe [5893108838](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893108838), Readback [5893640399](https://github.com/Jetnity/jetnity/issues/626#issuecomment-5893640399), und die am 13. November 2026 vom PO freigegebene exakte Rücksetzadresse für den bestehenden Dev-Owner-Zugang auf Development `yfvbxvijcorffwxbxahl`.
 
 ```text
 https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\?next=%2Freisen
+https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password
 ```
 
-Ein literaler Backslash vor `?` ist das persistierte Glob. Der Browser-Callback enthält keinen Backslash. Kein zweites Ziel und kein Wildcard. Diese Datei gleicht den Sollwert an den schon gespeicherten Branch an. Sie wendet die Auth-Konfiguration nicht neu an und ändert Production nicht.
+Ein literaler Backslash vor `?` im ersten Eintrag ist das persistierte Glob. Der Browser-Callback enthält keinen Backslash. Der zweite Eintrag erlaubt genau den Rücksetzpfad; ein zusätzlicher Signup-Callback ist für das bestehende Konto nicht erforderlich. Kein Wildcard und keine Production-URL. Dieser Repository-Sollwert ist kein Nachweis einer bereits angewendeten Hosted-Konfiguration; deren Änderung und Readback erfolgen separat auf Development.
 
 **Historische Beobachtung, als die Liste leer war.** Die leere Liste sah nach einem Versehen aus. Die offizielle Musterregel für Redirect-URLs legt nahe, dass `site_url` ohne `/**` keinen Unterpfad abdeckt – der Rücksetzlink auf `/auth/update-password` müsste dann auf der Startseite landen. **Nachgestellt an echten Links des Branches traf das nicht zu:**
 
@@ -150,7 +151,7 @@ Ein literaler Backslash vor `?` ist das persistierte Glob. Der Browser-Callback 
 | `http://127.0.0.1:3000/auth/update-password` | wird übernommen |
 | `https://beispiel-fremd.example.com/abgriff` | fällt auf `site_url` zurück |
 
-Der letzte Fall ist der wichtige: Ein fremder Host bekommt das Token nicht. Ein Muster wie `https://*.vercel.app/**` würde Hosts einschliessen, die Jetnity nicht besitzt. Die leere Liste war deshalb der damalige Sollwert. Sie ist nicht mehr der Development-Sollwert: der eine oben genannte Callback ist die freigegebene Ausnahme. Weitere Ursprünge werden nicht erfunden.
+Der letzte Fall ist der wichtige: Ein fremder Host bekommt das Token nicht. Ein Muster wie `https://*.vercel.app/**` würde Hosts einschliessen, die Jetnity nicht besitzt. Die leere Liste war deshalb der damalige Sollwert. Sie ist nicht mehr der Development-Sollwert: die beiden oben genannten Ziele sind die freigegebenen Ausnahmen. Weitere Ursprünge werden nicht erfunden.
 
 Der Fall „fremder Host fällt zurück" ist einer der 18 Fälle in `npm run auth:fluesse` und läuft damit bei jeder Prüfung mit.
 
@@ -322,7 +323,7 @@ Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [do
 | Punkt | Stand |
 | --- | --- |
 | Google und Apple sind in beiden Formularen als Schaltfläche sichtbar, auf dem Branch aber aus. Ein Klick endet in einer Fehlermeldung von Supabase | festgehalten, nicht behoben – Einschalten braucht Client-ID und Secret beider Anbieter, also eine Handlung ausserhalb dieses Repositories |
-| Development-Redirect neben `site_url` | **Ein** bereits gespeicherter Preview-Callback in `additional_redirect_urls`, Abschnitt 4. `site_url` bleibt `http://localhost:3000`. Production bleibt Gate #581: `https://jetnity.com`, `https://jetnity.com/auth/callback**` und `https://jetnity.com/auth/update-password`. Diese Datei schreibt Production nicht. |
+| Development-Redirect neben `site_url` | **Zwei** exakte Ziele in `additional_redirect_urls`, Abschnitt 4: der bestehende Preview-Callback und die freigegebene Dev-Rücksetzadresse. `site_url` bleibt `http://localhost:3000`. Production bleibt Gate #581: `https://jetnity.com`, `https://jetnity.com/auth/callback**` und `https://jetnity.com/auth/update-password`. Diese Datei schreibt Production nicht. |
 | kein eigener SMTP-Server; zwei E-Mails je Stunde | **Production geschlossen durch Gate #582.** Custom SMTP über Infomaniak ist aktiv; Zustellung und Auth-Redirects wurden verifiziert. Der historische 2/h-Snapshot beschreibt nur den Zustand vor #582. |
 | `auth_db_connections_absolute` (Performance-Advisor) | Kapazitätsplanung vor dem Launch, kein Sicherheitsbefund |
 | Production ist kein config-as-code-Ziel | Absicht. `auth:pruefen` / `auth:anwenden` verwalten nur Development. Abschnitt 12 ist ein GET-only Allowlist-Nachweis, kein Write-Pfad und kein vollständiger Abgleich |

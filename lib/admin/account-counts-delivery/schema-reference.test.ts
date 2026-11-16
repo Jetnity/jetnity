@@ -83,6 +83,17 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: READER,
           sqlPath: SQL,
         },
+        ...['admin_cms_inspiration_command_v1', 'admin_cms_inspiration_read_v1',
+          'admin_cms_inspiration_confirm_v1', 'cms_inspiration_published_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/admin/content/cms-editor-2/server.ts',
+          sqlPath: 'scripts/db/admin-editorial-cms-1/functions-candidate.sql',
+        })),
+        ...['admin_marketing_drafts_apply_v1', 'admin_marketing_drafts_read_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/admin/marketing/drafts/server.ts',
+          sqlPath: 'scripts/db/admin-marketing-drafts-1/functions-candidate.sql',
+        })),
         {
           name: STORE_RPC,
           sourcePath: STORE_SOURCE,
@@ -102,6 +113,37 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           name: FACT_ENTRY_RPC,
           sourcePath: FACT_ENTRY_SOURCE,
           sqlPath: FACT_ENTRY_SQL,
+        },
+        {
+          name: 'official_v3_method_stage_draft_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_approve_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_revoke_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        {
+          name: 'official_v3_method_confirm_operation_v1',
+          sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
+        },
+        ...['official_v3_guard_review_v1', 'official_v3_guard_retire_v1',
+          'official_v3_guard_resume_v1', 'official_v3_guard_confirm_v1'].map(name => ({
+          name,
+          sourcePath: 'lib/readiness/official-truth-product-v3/runtime/guard-server.ts',
+          sqlPath: 'scripts/db/official-truth-v3-background-guard-1/upgrade-candidate.sql',
+        })),
+        {
+          name: 'jetnity_production_import_status_v1',
+          sourcePath: 'scripts/official-truth-production-import-monitor.mjs',
+          sqlPath: 'scripts/db/official-truth-v3-production-import-schedule-1/monitoring.sql',
         },
       ],
     )

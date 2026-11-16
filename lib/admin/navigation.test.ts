@@ -6,6 +6,7 @@ import {
   adminNavIstNurUx,
   adminNavItemSichtbar,
   filterAdminNav,
+  type AdminNavItem,
 } from './navigation'
 
 describe('Admin-Navigation (UX, keine Autorisierung)', () => {
@@ -36,12 +37,18 @@ describe('Admin-Navigation (UX, keine Autorisierung)', () => {
     )
     assert.deepEqual(
       sichtbar.filter((item) => item.kind === 'ready').map((item) => item.label),
-      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten'],
+      ['Steuerzentrale', 'Nutzer', 'Zahlungen', 'Security', 'System Health', 'Provider & Kosten', 'Reiseauswertung', 'Content-Inventar', 'Marketing-Links', 'Einstellungen', 'Sprachkatalog'],
     )
-    assert.equal(
-      sichtbar.filter((item) => item.kind === 'later').every((item) => item.kind === 'later'),
-      true,
+    assert.deepEqual(
+      sichtbar.filter((item) => item.kind === 'later').map((item) => item.href),
+      [],
     )
+  })
+
+  test('kennzeichnet explizite spätere Flächen weiterhin ohne vorgetäuschte Autorisierung', () => {
+    const later: AdminNavItem = { href: '/admin/future-test', label: 'Später', kind: 'later', capability: 'konten-verwalten' }
+    assert.equal(adminNavItemSichtbar(later, { role: 'creator', grant: 'role' }), true)
+    assert.equal(filterAdminNav([later], { role: null, grant: 'break-glass' })[0]?.kind, 'later')
   })
 
   test('blendet Nutzer und Betrieb für Creator aus, ohne das als Auth zu behandeln', () => {
@@ -53,6 +60,8 @@ describe('Admin-Navigation (UX, keine Autorisierung)', () => {
     assert.equal(sichtbar.some((item) => item.href === '/admin/payments'), false)
     assert.equal(sichtbar.some((item) => item.href === '/admin/system-health'), false)
     assert.equal(sichtbar.some((item) => item.href === '/admin/provider-ops'), false)
+    assert.equal(sichtbar.some((item) => item.href === '/admin/analytics'), false)
+    assert.equal(sichtbar.some((item) => item.href === '/admin/content'), false)
     const users = ADMIN_NAV_ITEMS.find((item) => item.href === '/admin/users')
     assert.equal(users !== undefined, true)
     assert.equal(adminNavItemSichtbar(users!, { role: 'creator', grant: 'role' }), false)

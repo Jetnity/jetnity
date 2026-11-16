@@ -4,6 +4,9 @@
 "use client";
 
 import * as React from "react";
+import type { UiSprache } from "@/lib/localization/ui-sprache";
+import { sicherheitText } from "@/lib/localization/account-security-texte";
+import { sicherheitSitzungStatus, sicherheitSitzungAal, sicherheitSitzungAblauf, sicherheitLokalerHinweis } from "@/lib/localization/account-security-display-3";
 import { AlertTriangle, MonitorSmartphone } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,15 +14,11 @@ import { createBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { SICHERHEIT_ZIEL_44 } from "@/lib/auth/account-security-premium-ux-1";
 import {
-  ANDERE_SITZUNGEN_TEXT,
   SITZUNG_ABMELDEN_ANKER,
   SITZUNG_ANFANG,
   aktuelleSitzungLesen,
-  sitzungAalText,
   sitzungIstBeschaeftigt,
-  sitzungStatusText,
   sitzungWeiter,
-  sitzungZugangscodeText,
   type SitzungZustand,
 } from "@/lib/auth/account-session-view";
 
@@ -38,14 +37,14 @@ function navigatorHinweis(): { userAgentData?: { brands?: Array<{ brand?: string
   };
 }
 
-export default function SecuritySitzung() {
+export default function SecuritySitzung({ sprache = "de" }: { sprache?: UiSprache }) {
   const [zustand, setZustand] = React.useState<SitzungZustand>(SITZUNG_ANFANG);
   const statusFeld = React.useRef<HTMLDivElement>(null);
   const beschaeftigt = sitzungIstBeschaeftigt(zustand);
-  const status = sitzungStatusText(zustand);
-  const aalText = zustand.aktuelle ? sitzungAalText(zustand.aktuelle.aal) : null;
+  const status = sicherheitSitzungStatus(sprache, zustand);
+  const aalText = zustand.aktuelle ? sicherheitSitzungAal(sprache, zustand.aktuelle.aal) : null;
   const zugangscodeText = zustand.aktuelle
-    ? sitzungZugangscodeText(zustand.aktuelle.zugangscodeBisUnix)
+    ? sicherheitSitzungAblauf(sprache, zustand.aktuelle.zugangscodeBisUnix)
     : null;
 
   React.useEffect(() => {
@@ -96,11 +95,10 @@ export default function SecuritySitzung() {
       <CardHeader withDivider className="p-4">
         <div className="flex items-center gap-2">
           <MonitorSmartphone className="h-5 w-5" aria-hidden="true" />
-          <CardTitle as="h2">Diese Sitzung</CardTitle>
+          <CardTitle as="h2">{sicherheitText(sprache, "session.title")}</CardTitle>
         </div>
         <CardDescription>
-          Jetnity zeigt nur die aktuelle Sitzung mit vorhandenen, datensparsamen Angaben. Eine
-          vollständige Geräteliste liefert die vorhandene Anmeldung nicht.
+          {sicherheitText(sprache, "session.description")}
         </CardDescription>
       </CardHeader>
 
@@ -134,25 +132,25 @@ export default function SecuritySitzung() {
         {zustand.lage === "current" && zustand.aktuelle ? (
           <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <dt className="text-sm font-medium text-brand-800">Aktuelle Sitzung</dt>
-              <dd className="mt-1 text-sm leading-6 text-ink-700">Aktiv in diesem Browser.</dd>
+              <dt className="text-sm font-medium text-brand-800">{sicherheitText(sprache, "session.current")}</dt>
+              <dd className="mt-1 text-sm leading-6 text-ink-700">{sicherheitText(sprache, "session.active")}</dd>
             </div>
             {aalText ? (
               <div>
-                <dt className="text-sm font-medium text-brand-800">Anmeldestufe</dt>
+                <dt className="text-sm font-medium text-brand-800">{sicherheitText(sprache, "session.level")}</dt>
                 <dd className="mt-1 text-sm leading-6 text-ink-700">{aalText}</dd>
               </div>
             ) : null}
             {zugangscodeText ? (
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-brand-800">Zugangscode</dt>
+                <dt className="text-sm font-medium text-brand-800">{sicherheitText(sprache, "session.accessCode")}</dt>
                 <dd className="mt-1 text-sm leading-6 text-ink-700">{zugangscodeText}</dd>
               </div>
             ) : null}
             {zustand.lokal ? (
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-brand-800">Lokaler Hinweis</dt>
-                <dd className="mt-1 text-sm leading-6 text-ink-700">{zustand.lokal.text}</dd>
+                <dt className="text-sm font-medium text-brand-800">{sicherheitText(sprache, "session.localHint")}</dt>
+                <dd className="mt-1 text-sm leading-6 text-ink-700">{sicherheitLokalerHinweis(sprache, zustand.lokal.text)}</dd>
               </div>
             ) : null}
           </dl>
@@ -160,14 +158,14 @@ export default function SecuritySitzung() {
 
         <section aria-labelledby="account-andere-sitzungen-title">
           <h3 id="account-andere-sitzungen-title" className="text-sm font-medium text-brand-800">
-            Andere Sitzungen
+            {sicherheitText(sprache, "session.other")}
           </h3>
-          <p className="mt-1 text-sm leading-6 text-ink-700">{ANDERE_SITZUNGEN_TEXT}</p>
+          <p className="mt-1 text-sm leading-6 text-ink-700">{sicherheitText(sprache, "session.otherDescription")}</p>
           <a
             href={`#${SITZUNG_ABMELDEN_ANKER}`}
             className={`${SICHERHEIT_ZIEL_44} mt-3 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15`}
           >
-            Zur Aktion „Andere Geräte abmelden“
+            {sicherheitText(sprache, "session.logoutLink")}
           </a>
         </section>
       </CardContent>

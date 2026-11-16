@@ -26,6 +26,40 @@ async function first(f: ReturnType<typeof integrationFixture>, seed = 'first') {
 }
 
 describe('E1 actual module composition; external adapters are synthetic only', () => {
+  test('publication uses distinct fresh receipts for confirm, publish and final confirm, with terminal denial at every phase', async () => {
+    for (const deny of [0, 3, 4, 5]) {
+      const f = integrationFixture(), receipts: object[] = [], anchors: object[] = [], phases: string[] = []
+      const publisher = f.ports.publication; assert.ok(publisher)
+      const ports = { ...f.ports,
+        acquireOperationAuthority: async (anchor: object, method: Parameters<typeof f.store.methodAuthority.resolveCurrent>[0], at: string, signal: AbortSignal) => {
+          anchors.push(anchor); assert.equal(signal.aborted, false); assert.ok(f.store.methodCurrent(anchor, method))
+          if (anchors.length === deny) return { status: 'revoked' as const }
+          const fresh = await f.store.methodAuthority.resolveCurrent(method)
+          assert.equal(fresh.status, 'approved'); if (fresh.status !== 'approved') assert.fail('fresh method')
+          assert.notEqual(fresh.receipt, anchor); receipts.push(fresh.receipt)
+          assert.equal(at, f.store.clock().now)
+          return fresh
+        },
+        publication: {
+          async confirm(command: Parameters<typeof publisher.confirm>[0], signal: AbortSignal) {
+            phases.push('confirm'); assert.equal(command.methodReceipt, receipts[receipts.length - 1])
+            return publisher.confirm(command, signal)
+          },
+          async publish(command: Parameters<typeof publisher.publish>[0], signal: AbortSignal) {
+            phases.push('publish'); assert.equal(command.methodReceipt, receipts[receipts.length - 1])
+            return publisher.publish(command, signal)
+          },
+        },
+      }
+      const result = await createV3IntegrationCoordinator(ports).ingest(JSON.stringify(f.originals.proposal('phased-' + deny)))
+      assert.equal(result.status, deny ? 'unavailable' : 'published')
+      assert.deepEqual(phases, ['confirm', 'publish', 'confirm'].slice(0, deny ? deny - 3 : 3))
+      assert.equal(f.store.counts.versionWrites, 1)
+      assert.equal(f.store.counts.publicationWrites, deny === 3 || deny === 4 ? 0 : 1)
+      assert.equal(anchors[0], anchors[1]); if (anchors.length >= 4) assert.equal(anchors[2], anchors[3])
+      if (!deny) { assert.equal(anchors[2], anchors[4]); assert.equal(new Set(receipts).size, 5) }
+    }
+  })
   test('two citizenship misses become actual Discovery jobs, real workers/imports/versions/cache and full presentation', async () => {
     const f = integrationFixture(), before = await answer(f, ['RS', 'CH', 'CH'])
     assert.deepEqual(before.response.input.citizenshipCountryCodes, ['CH', 'RS'])

@@ -9,11 +9,61 @@ export const ORIGINAL_TEST_FAMILIES = Object.freeze([
   'scripts/operating-mode-guard.test.mjs',
   'scripts/dev-reference-local-pg-prep-1/*.test.ts',
 ])
+// Root-selected A3 proofs: these three complete paths do not open a scripts/db glob.
+export const TRANSPORT_TEST_FILES = Object.freeze([
+  'scripts/db/official-truth-v3-node-postgres-transport-1/boundary.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/offline.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+])
+// The prepared Production package adds only these reviewed scripts, never a
+// broad scripts/db or scripts/** test glob. Each proof is mandatory once.
+export const PRODUCTION_TEST_FILES = Object.freeze([
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+  'scripts/official-truth-product-v3-production/build.test.mjs',
+  'scripts/official-truth-production-import-monitor.test.mjs',
+])
 export const HOSTED_PG17_FILES = Object.freeze([
+  'lib/readiness/official-truth-customer-information-migration.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
+  'lib/readiness/official-truth-dev-import-scheduler.test.ts',
+  'lib/readiness/official-truth-dev-preview-renewal.test.ts',
+  'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
+  'lib/readiness/official-truth-prod-import-scheduler.test.ts',
+  // Real 5s wall-clock custody proof needs the existing sequential gate; the
+  // parallel Core load must not consume its unchanged product deadline.
+  'lib/readiness/official-truth-product-v3/method/claim-read-authority.test.ts',
+  'lib/readiness/official-truth-v3-background-guard-1.test.ts',
+  'lib/readiness/official-truth-v3-composed-dev-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-durable-jobs-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-intake-store-1.test.ts',
   'lib/readiness/official-truth-v3-hosted-method-authority-1.test.ts',
+  'lib/readiness/official-truth-v3-hosted-result-store-1.test.ts',
+  'lib/readiness/official-truth-v3-human-method-transport-1.test.ts',
+  'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
+  'lib/readiness/profile-authority-integrity-1.test.ts',
+  'scripts/db/official-truth-v3-node-postgres-transport-1/native.test.ts',
+  'scripts/db/official-truth-v3-production-install-1/native.test.ts',
+])
+// Keep the quota and Dev recovery proofs sequential on the second existing
+// runner. Main previously used 29:46 of its 30-minute cap; moving these complete
+// independent files leaves room for the new recovery without another runner.
+// The bounded Attempt2 recovery (at most 15 minutes) joins the existing ~11-minute
+// quota group; both unchanged 30-minute runner caps remain in force.
+// No test/group inside a file is filtered or concurrent; main is the complement.
+export const HOSTED_PG17_QUOTA_FILES = Object.freeze([
+  'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
+  'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
+  'lib/readiness/official-truth-dev-refresh-retirement.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle-review.test.ts',
+  'lib/readiness/official-truth-dev-terminal-cycle3-review.test.ts',
+  'lib/readiness/official-truth-v3-rolling-jobs-quota.test.ts',
 ])
 export const SELECTOR_CONTRACT = 'scripts/official-truth-v3-test-selection.test.mjs'
 const requiredScriptTests = Object.freeze([
+  'scripts/official-truth-dev-guard-alarm.test.mjs',
   'scripts/operating-mode-guard.test.mjs',
   'scripts/dev-reference-local-pg-prep-1/ablauf.test.ts',
   'scripts/dev-reference-local-pg-prep-1/nativ.test.ts',
@@ -33,6 +83,9 @@ function isOriginalTest(path) {
   return /^lib\/.+\.test\.ts$/.test(path)
     || path === 'scripts/operating-mode-guard.test.mjs'
     || /^scripts\/dev-reference-local-pg-prep-1\/[^/]+\.test\.ts$/.test(path)
+    || TRANSPORT_TEST_FILES.includes(path)
+    || PRODUCTION_TEST_FILES.includes(path)
+    || path === 'scripts/official-truth-dev-guard-alarm.test.mjs'
 }
 
 function checkedPaths(paths, label) {
@@ -68,6 +121,10 @@ export function discoverOriginalTestFiles(root = repositoryRoot) {
     if (family.length === 0) throw new Error('Missing required test family: ' + pattern)
     found.push(...family)
   }
+  for (const path of [...TRANSPORT_TEST_FILES, ...PRODUCTION_TEST_FILES, 'scripts/official-truth-dev-guard-alarm.test.mjs']) {
+    requireRegularFile(root, path)
+    found.push(path)
+  }
   const original = checkedPaths(found, 'original')
   for (const path of requiredScriptTests) {
     if (!original.includes(path)) throw new Error('Missing required Script test: ' + path)
@@ -83,6 +140,13 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
   for (const path of hostedPg17) {
     if (!universe.has(path)) throw new Error('Missing hosted test in the original universe: ' + path)
   }
+  for (const path of TRANSPORT_TEST_FILES) {
+    if (!universe.has(path)) throw new Error('Missing required transport test: ' + path)
+  }
+  for (const path of PRODUCTION_TEST_FILES) {
+    if (!universe.has(path)) throw new Error('Missing required Production test: ' + path)
+  }
+  if (!universe.has('scripts/official-truth-dev-guard-alarm.test.mjs')) throw new Error('Missing required guard alarm test')
   if (hostedPg17.length !== HOSTED_PG17_FILES.length
     || hostedPg17.some((path, index) => path !== HOSTED_PG17_FILES[index])) {
     throw new Error('Hosted test membership requires an explicit reviewed amendment')
@@ -96,22 +160,33 @@ export function partitionRequiredTests(originalFiles, hostedFiles = HOSTED_PG17_
     throw new Error('Required test partition has omissions or overlaps')
   }
   const core = [...originalCore, SELECTOR_CONTRACT].sort()
-  return { original, core, hostedPg17 }
+  const hostedPg17Quota = checkedPaths(HOSTED_PG17_QUOTA_FILES, 'hosted quota')
+  if (hostedPg17Quota.some((path) => !hosted.has(path))) throw new Error('Missing mandatory quota test in hosted family')
+  const quota = new Set(hostedPg17Quota)
+  const hostedPg17Main = hostedPg17.filter((path) => !quota.has(path))
+  if (hostedPg17Main.length === 0 || hostedPg17Main.length + hostedPg17Quota.length !== hostedPg17.length) {
+    throw new Error('Hosted runner partition has omissions or overlaps')
+  }
+  return { original, core, hostedPg17, hostedPg17Main, hostedPg17Quota }
 }
 
 export function selectedMode(args) {
-  if (!Array.isArray(args) || args.length !== 1 || !['core', 'hosted-pg17'].includes(args[0])) {
-    throw new Error('Expected exactly one mode: core or hosted-pg17')
+  if (!Array.isArray(args) || args.length !== 1
+    || !['core', 'hosted-pg17', 'hosted-pg17-main', 'hosted-pg17-quota'].includes(args[0])) {
+    throw new Error('Expected exactly one mode: core, hosted-pg17, hosted-pg17-main or hosted-pg17-quota')
   }
   return args[0]
 }
 
 export function nodeTestArguments(mode, partition) {
   selectedMode([mode])
-  const prefix = ['--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
+  // A3 mocked-module consumers remain in separate Node test processes.
+  const prefix = ['--experimental-test-module-mocks', '--import', './scripts/server-only-test-register.mjs', '--import', 'tsx', '--test']
+  const hosted = mode === 'hosted-pg17-main' ? partition.hostedPg17Main
+    : mode === 'hosted-pg17-quota' ? partition.hostedPg17Quota : partition.hostedPg17
   return mode === 'core'
     ? [...prefix, ...partition.core]
-    : [...prefix, '--test-concurrency=1', ...partition.hostedPg17]
+    : [...prefix, '--test-concurrency=1', ...hosted]
 }
 
 export function childExitStatus(result) {

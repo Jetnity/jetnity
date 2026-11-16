@@ -6,6 +6,7 @@ import {
   wendeEvidenceAlterAn,
   type DomainZustandSnapshot,
   type ModelUsageSnapshot,
+  type NativeRentalConfigurationSnapshot,
 } from './bewertung'
 import { PROVIDER_OPS_BOARD_IDS, type ProviderOpsBoardBericht, type ProviderOpsBoardItem } from './typen'
 
@@ -13,6 +14,7 @@ export type ProviderOpsBoardAbhaengigkeiten = {
   nowMs: () => number
   vercelEnv: () => string | null
   domainZustaende: () => DomainZustandSnapshot[]
+  nativeRentalConfiguration: () => NativeRentalConfigurationSnapshot
   liesModelUsage: () => Promise<ModelUsageSnapshot>
 }
 
@@ -46,7 +48,13 @@ export async function sammleProviderOpsBoard(
     }
   }
 
-  const providerOps = bewerteProviderOps(deps.domainZustaende(), nowMs)
+  let nativeRental: NativeRentalConfigurationSnapshot = { kind: 'unknown' }
+  try {
+    nativeRental = deps.nativeRentalConfiguration()
+  } catch {
+    // A diagnostic failure must not expose exception text or hide the other reads.
+  }
+  const providerOps = bewerteProviderOps(deps.domainZustaende(), nowMs, nativeRental)
   const killSwitch = bewerteKillSwitch({ vercelEnv: deps.vercelEnv(), nowMs })
   const costGuard = bewerteCostGuard(nowMs)
   const usageFallback = bewerteModelUsage({ nowMs })

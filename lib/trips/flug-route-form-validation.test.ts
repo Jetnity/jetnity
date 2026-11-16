@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path'
 import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import * as React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import ts from 'typescript'
 
 import type FlugBestand from '@/components/trips/FlugBestand'
@@ -30,11 +31,19 @@ type Props = {
   onSpeichern?: (id: string, segments: FlugSegmentManuell[]) => Promise<string | null>
   children?: React.ReactNode; id?: string; type?: string; value?: string; disabled?: boolean; role?: string; tabIndex?: number
   ref?: { current: unknown }; htmlFor?: string; 'aria-label'?: string; 'aria-invalid'?: boolean; 'aria-describedby'?: string
+  start?: string; startId?: string; startLabel?: string; startFehler?: boolean; startBeschrieben?: string
+  setzen?: (start: string, ende: string) => void
   onClick?: () => void; onChange?: (event: { target: { value: string } }) => void
   onSubmit?: (event: { preventDefault: () => void }) => Promise<void>
   onKeyDown?: (event: { key: string; preventDefault: () => void; stopPropagation: () => void }) => void
 }
 type Element = React.ReactElement<Props>
+const isCalendar = (el: Element) => typeof el.type === 'function' && el.type.name === 'Suchkalender'
+const isField = (el: Element) => el.type === 'input' || isCalendar(el)
+const fieldId = (el: Element) => isCalendar(el) ? el.props.startId : el.props.id
+const fieldValue = (el: Element) => isCalendar(el) ? el.props.start : el.props.value
+const fieldInvalid = (el: Element) => isCalendar(el) ? el.props.startFehler : el.props['aria-invalid']
+const fieldDescription = (el: Element) => isCalendar(el) ? el.props.startBeschrieben : el.props['aria-describedby']
 function elements(node: React.ReactNode, match: (el: Element) => boolean): Element[] {
   const found: Element[] = []
   React.Children.forEach(node, child => {
@@ -97,15 +106,17 @@ function editor(options: {
   const child = elements(outer, el => typeof el.type === 'function' && el.type.name === 'ManuelleFlugRoute')[0]!
   states.length = 0; refs.length = 0; deps.length = 0; pendingEffects = []
   const all = () => elements(tree, () => true)
-  const inputs = () => all().filter(el => el.type === 'input')
-  const key = (el: Element) => el.props.id ?? el.props['aria-label'] ?? String(el.props.children)
+  const fields = () => all().filter(isField)
+  const key = (el: Element) => fieldId(el) ?? el.props['aria-label'] ?? String(el.props.children)
   const focus = (el: Element) => { active = key(el); focusHistory.push(active) }
   const host = (el: Element) => ({
     focus: () => focus(el),
     querySelector: (selector: string) => {
-      assert.ok(selector === 'input' || selector === 'input[aria-invalid="true"]', selector)
-      const found = elements(el.props.children, candidate => candidate.type === 'input'
-        && (selector === 'input' || candidate.props['aria-invalid'] === true))[0]
+      assert.ok(selector === 'input' || selector === 'input[aria-invalid="true"], button[data-invalid="true"]', selector)
+      // Match the real mixed host selector in DOM order. Calendar trigger
+      // attributes are additionally checked through its actual SSR render below.
+      const found = elements(el.props.children, candidate => selector === 'input'
+        ? candidate.type === 'input' : isField(candidate) && fieldInvalid(candidate) === true)[0]
       return found ? { focus: () => focus(found) } : null
     },
   })
@@ -124,14 +135,17 @@ function editor(options: {
   }
   const click = (name: string) => { const el = button(name); assert.ok(!el.props.disabled); focus(el); el.props.onClick!(); render() }
   const input = (index: number, field: typeof felder[number]) => {
-    const found = inputs().find(el => el.props.id === `flight-validation-${index}-${field}`)
+    const found = fields().find(el => fieldId(el) === `flight-validation-${index}-${field}`)
     assert.ok(found); return found
   }
   const change = (index: number, field: typeof felder[number], value: string) => {
-    const el = input(index, field); focus(el); el.props.onChange!({ target: { value } }); render()
+    const el = input(index, field); focus(el)
+    if (isCalendar(el)) el.props.setzen!(value, '')
+    else el.props.onChange!({ target: { value } })
+    render()
   }
   const fill = (segments: FlugSegmentManuell[]) => {
-    while (inputs().length < segments.length * 6) click('Segment hinzufügen')
+    while (fields().length < segments.length * 6) click('Segment hinzufügen')
     segments.forEach((segment, i) => felder.forEach(field => change(i, field, segment[field] ?? '')))
   }
   const submit = async () => {
@@ -145,9 +159,9 @@ function editor(options: {
     all().find(el => el.props.onKeyDown)!.props.onKeyDown!({ key: 'Escape', preventDefault() {}, stopPropagation() {} }); render()
   }
   render()
-  return { all, inputs, input, button, click, change, fill, submit, escape, calls, focusHistory,
+  return { all, fields, input, button, click, change, fill, submit, escape, calls, focusHistory,
     open: () => click('Flugroute ergänzen'), active: () => active,
-    invalid: () => inputs().filter(el => el.props['aria-invalid'] === true).map(el => el.props.id),
+    invalid: () => fields().filter(el => fieldInvalid(el) === true).map(fieldId),
     summary: () => all().find(el => el.props.id === 'flight-validation-fehler'),
   }
 }
@@ -156,12 +170,12 @@ describe('Manual flight validation recovery — actual issue paths, events and c
   test('one missing IATA among four segments marks/focuses only that input; no write or repair', async () => {
     const ui = editor(); ui.open(); ui.fill([{ ...direkt, origin: '' }, ...vier.slice(1)])
     assert.deepEqual(ui.invalid(), [], 'no premature invalid state')
-    const before = ui.inputs().map(el => el.props.value)
+    const before = ui.fields().map(fieldValue)
     await ui.submit()
     assert.deepEqual(ui.invalid(), ['flight-validation-0-origin'])
     assert.equal(ui.active(), 'flight-validation-0-origin')
-    assert.equal(ui.inputs().length, 24)
-    assert.deepEqual(ui.inputs().map(el => el.props.value), before)
+    assert.equal(ui.fields().length, 24)
+    assert.deepEqual(ui.fields().map(fieldValue), before)
     assert.deepEqual(ui.calls, [])
     const result = schema.flugRouteManuellSchema.safeParse({ segments: [{ ...direkt, origin: '' }, ...vier.slice(1)] })
     assert.ok(!result.success)
@@ -179,7 +193,7 @@ describe('Manual flight validation recovery — actual issue paths, events and c
     assert.deepEqual(ui.calls, [])
     await ui.submit()
     assert.deepEqual(ui.calls, [[ITEM, [direkt]]])
-    assert.equal(ui.inputs().length, 0)
+    assert.equal(ui.fields().length, 0)
     assert.ok(ui.all().some(el => el.props.role === 'status'))
   })
 
@@ -201,12 +215,19 @@ describe('Manual flight validation recovery — actual issue paths, events and c
   for (const field of felder) test(`actual ${field} issue has its own accessible message and label`, async () => {
     const ui = editor(); ui.open(); ui.fill([{ ...direkt, [field]: field.endsWith('Time') ? '24:00' : '' }]); await ui.submit()
     const target = ui.input(0, field)
-    assert.deepEqual(ui.invalid(), [target.props.id])
-    assert.equal(ui.active(), target.props.id)
-    const message = ui.all().find(el => el.props.id === target.props['aria-describedby'])
+    assert.deepEqual(ui.invalid(), [fieldId(target)])
+    assert.equal(ui.active(), fieldId(target))
+    const message = ui.all().find(el => el.props.id === fieldDescription(target))
     assert.ok(message); assert.equal(message.props.role, 'alert')
-    assert.ok(ui.all().some(el => el.type === 'label' && el.props.htmlFor === target.props.id))
-    for (const valid of ui.inputs().filter(el => !el.props['aria-invalid'])) assert.equal(valid.props['aria-describedby'], undefined)
+    if (isCalendar(target)) {
+      const markup = renderToStaticMarkup(target)
+      assert.ok(markup.includes(`id="${fieldId(target)}"`))
+      assert.ok(markup.includes(`aria-label="${target.props.startLabel}:`))
+      assert.ok(markup.includes(`aria-describedby="${fieldDescription(target)}"`))
+      assert.match(markup, /data-invalid="true"/)
+      assert.match(markup, /aria-haspopup="dialog"/)
+    } else assert.ok(ui.all().some(el => el.type === 'label' && el.props.htmlFor === fieldId(target)))
+    for (const valid of ui.fields().filter(el => !fieldInvalid(el))) assert.equal(fieldDescription(valid), undefined)
     assert.deepEqual(ui.calls, [])
   })
 
@@ -244,10 +265,10 @@ describe('Manual flight validation recovery — actual issue paths, events and c
     ui.fill(vier); assert.equal(ui.button('Segment hinzufügen').props.disabled, true)
     ui.change(3, 'arrivalDate', ''); await ui.submit()
     ui.click('Segment 2 entfernen'); await Promise.resolve()
-    assert.equal(ui.inputs().length, 18); assert.equal(ui.active(), 'Segment hinzufügen')
+    assert.equal(ui.fields().length, 18); assert.equal(ui.active(), 'Segment hinzufügen')
     assert.deepEqual(ui.invalid(), ['flight-validation-1-origin', 'flight-validation-2-arrivalDate'])
     assert.equal(ui.input(1, 'origin').props.value, 'BKK')
-    ui.click('Segment hinzufügen'); assert.equal(ui.inputs().length, 24)
+    ui.click('Segment hinzufügen'); assert.equal(ui.fields().length, 24)
     assert.ok(ui.invalid().includes('flight-validation-3-origin'))
     assert.equal(ui.button('Segment hinzufügen').props.disabled, true)
     await ui.submit(); assert.equal(ui.active(), 'flight-validation-1-origin'); assert.deepEqual(ui.calls, [])
@@ -258,15 +279,15 @@ describe('Manual flight validation recovery — actual issue paths, events and c
     const ui = editor({ outcome: () => new Promise(resolve => { finish = resolve }) })
     ui.open(); ui.fill(vier)
     const first = ui.submit(); await ui.submit(); ui.escape()
-    assert.deepEqual(ui.calls, [[ITEM, vier]]); assert.equal(ui.inputs().length, 24)
+    assert.deepEqual(ui.calls, [[ITEM, vier]]); assert.equal(ui.fields().length, 24)
     assert.equal(ui.button('Segment hinzufügen').props.disabled, true)
     finish(null); await first
-    assert.equal(ui.inputs().length, 0); assert.equal(ui.active(), 'Flugroute ergänzen')
+    assert.equal(ui.fields().length, 0); assert.equal(ui.active(), 'Flugroute ergänzen')
   })
 
   test('Escape and reopen reset validation, preserve trigger/initial focus and write nothing', async () => {
     const ui = editor(); ui.open(); await ui.submit(); ui.escape()
-    assert.equal(ui.inputs().length, 0); assert.equal(ui.active(), 'Flugroute ergänzen')
+    assert.equal(ui.fields().length, 0); assert.equal(ui.active(), 'Flugroute ergänzen')
     ui.open(); assert.equal(ui.active(), 'flight-validation-0-origin')
     assert.deepEqual(ui.invalid(), []); assert.equal(ui.summary(), undefined); assert.deepEqual(ui.calls, [])
   })

@@ -133,7 +133,15 @@ async function guardProof(primary: LocalIntegratedPilotEnvelope, checks: string[
             }
           }
           writer = c; writerPid = (await query('SELECT pg_backend_pid()::text AS pid'))[0]!.pid!
-          c.query = async (sql, parameters) => { if (sql === 'COMMIT') await query('INSERT INTO r3_guard_probe.pending VALUES(1)'); return query(sql, parameters) }
+          c.query = async (sql, parameters) => {
+            if (sql === 'COMMIT') {
+              // Keep this test-only wait inside the real COMMIT even after the
+              // adapter has completed all provenance constraints before it.
+              await query('SET CONSTRAINTS r3_guard_probe.r3_wait DEFERRED')
+              await query('INSERT INTO r3_guard_probe.pending VALUES(1)')
+            }
+            return query(sql, parameters)
+          }
         } else if (inject && candidate === cluster && scenario === 'ack_race') {
           c.query = async (sql, parameters) => {
             if (sql.includes('pg_terminate_backend(a.pid,1000)')) { recoveryDelay = true; await pause(1500) }

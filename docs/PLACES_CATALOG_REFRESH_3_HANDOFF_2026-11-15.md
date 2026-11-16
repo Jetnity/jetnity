@@ -2,6 +2,8 @@
 
 Stand: 15. November 2026. Autor: **Jetnity places catalog refresh 3**. Auftrag: [TASK](PLACES_CATALOG_REFRESH_3_TASK_2026-11-15.md).
 
+**Spätere Admin-Fortsetzung nach Merge #1197:** Der aktuelle gemeinsame Freigabestand steht im [Admin-Handoff](ADMIN_REFRESH_AFTER_1197_HANDOFF_2026-11-15.md). Die folgenden Paket-HOLDs beschreiben die vorherige Runde. Das Import-Ausführungsverbot bleibt bestehen; der externe Runner wurde auch in der Admin-Aktualisierung nicht gestartet. Der alte Katalog-CI bestätigte inzwischen sämtliche 13 Fälle einschließlich echtem isoliertem PostgreSQL; sein damaliger Auth-Fehler wird mit dem neuen Main im gemeinsamen Lauf erneut abgeglichen.
+
 ## Aktueller Fortsetzungsstand — Owner-Auftrag nach Admin 3
 
 **Nur Code bereitstellen, danach STOPP. Der neue Starter wurde weder gegen Dev noch gegen Production ausgeführt.** In dieser Fortsetzung gab es keine Supabase-Abfrage, keinen Datenimport und keinen Login. Der folgende Vorbereitungsbericht ist historisch; seine Aussage „noch kein Dev-Import“ gilt nicht für den späteren, bereits unterbrochenen Datenlauf.

@@ -10,11 +10,13 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
 import syntheticServerModule from './synthetic-server.ts'
+import customerInformationModule from '../../lib/readiness/official-truth-product-v3/customer-information/topics.ts'
 import { selectU1SystemBrowser } from './browser.mjs'
 import { U1_EVIDENCE_DIRECTORY, writeU1Evidence } from './evidence.mjs'
 
 const require = createRequire(import.meta.url)
 const { syntheticServer } = syntheticServerModule
+const { V3_CUSTOMER_INFORMATION_TOPICS } = customerInformationModule
 const esbuild = createRequire(require.resolve('tsx'))('esbuild')
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..')
 const OUT = U1_EVIDENCE_DIRECTORY
@@ -129,6 +131,15 @@ if (serving) {
       await page.getByRole('heading', { name: /^Einreise nach / }).waitFor()
     }
     async function scenario(value) { await page.getByLabel('Testfall', { exact: true }).selectOption(value) }
+    async function customerTopics(root, confirmed = []) {
+      for (const topic of V3_CUSTOMER_INFORMATION_TOPICS) {
+        const region = root.getByRole('region', { name: topic.label, exact: true })
+        assert.equal(await region.count(), 1, `${topic.id}: exactly one visible topic`)
+        assert.equal(await region.isVisible(), true, `${topic.id}: topic must stay open`)
+        assert.equal(await region.evaluate(element => element.closest('details') !== null), false, `${topic.id}: no collapsed detail`)
+        if (!confirmed.includes(topic.id)) assert.match(await region.innerText(), /Derzeit nicht verfügbar/, topic.id)
+      }
+    }
     async function layout(name) {
       const value = await page.evaluate(() => {
         const controls = [...document.querySelectorAll('button,select')].map((element) => {
@@ -136,7 +147,7 @@ if (serving) {
           return { text: element.tagName === 'SELECT' ? element.id : element.textContent.trim(),
             width: rect.width, height: rect.height, font: parseFloat(style.fontSize), overflow: element.scrollWidth > element.clientWidth + 1 }
         })
-        const overflowing = [...document.querySelectorAll('h2,h3,h4,p,li,label,button,select,a')].filter((element) => {
+        const overflowing = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,label,button,select,a')].filter((element) => {
           if (element.classList.contains('sr-only')) return false
           const rect = element.getBoundingClientRect()
           return rect.width > 0 && (rect.left < -1 || rect.right > innerWidth + 1)
@@ -155,6 +166,9 @@ if (serving) {
       report.screenshots.push({ name, path, sha256: createHash('sha256').update(await readFile(path)).digest('hex') })
     }
     await page.goto(origin)
+    await customerTopics(page.getByRole('region', { name: 'Themen der Einreisevorbereitung', exact: true }))
+    assert.equal(await page.getByText('Bitte vor der Reise prüfen', { exact: true }).isVisible(), true)
+    report.interactions.push('All 26 customer topics and pre-travel review notice are visible before the first query')
     assert.equal(await page.getByRole('button', { name: 'Einreisebestimmungen anzeigen', exact: true }).isDisabled(), true)
     await page.keyboard.press('Tab')
     assert.equal(await page.getByLabel('Testfall', { exact: true }).evaluate((element) => element === document.activeElement), true)
@@ -167,6 +181,9 @@ if (serving) {
     await submit()
     assert.match(await page.getByRole('region', { name: /^Staatsangehörigkeit .*Schweiz$/ }).innerText(), /Mindestens 9 freie Passseiten/)
     assert.match(await page.getByRole('region', { name: /^Staatsangehörigkeit .*Serbien$/ }).innerText(), /Wird geprüft/)
+    await customerTopics(page.getByRole('region', { name: /^Staatsangehörigkeit .*Schweiz$/ }), ['blank_passport_pages'])
+    await customerTopics(page.getByRole('region', { name: /^Staatsangehörigkeit .*Serbien$/ }))
+    report.interactions.push('Every citizenship retains all 26 topics; the synthetic nine-page fact fills only its exact passport-pages topic')
     assert.match(await page.locator('body').innerText(), /Stand vom 09\.11\.2026, 08:00 UTC/)
     assert.match(await page.locator('body').innerText(), /Ein- und Ausreisetag zählen mit/)
     assert.equal(await page.getByRole('link', { name: 'Amtliche Quelle: Fiktive Testbehörde' }).getAttribute('href'), 'https://destination.example/synthetic-test-publication')
@@ -184,6 +201,7 @@ if (serving) {
     await page.evaluate(() => { document.documentElement.style.fontSize = '' })
     await scenario('conflict'); await selectPair(); await submit()
     await page.getByRole('heading', { name: 'Amtliche Angaben werden geklärt', exact: true }).waitFor()
+    await customerTopics(page.getByRole('region', { name: /^Staatsangehörigkeit .*Schweiz$/ }))
     assert.equal(await page.getByRole('link', { name: /^Amtliche Quelle/ }).count(), 0)
     report.interactions.push('Conflict suppresses positive rule and source link')
     await screenshot('conflict-320')
@@ -200,6 +218,7 @@ if (serving) {
     await page.getByRole('button', { name: 'Einreisebestimmungen anzeigen', exact: true }).click()
     await page.getByRole('heading', { name: 'Abfrage fehlgeschlagen', exact: true }).waitFor()
     assert.match(await page.evaluate(() => document.activeElement.textContent), /Abfrage fehlgeschlagen/)
+    await customerTopics(page.getByRole('region', { name: 'Themen der Einreisevorbereitung', exact: true }))
     report.interactions.push('Transport failure has a focused, retryable error state')
     await scenario('slow'); await selectPair()
     await page.getByRole('button', { name: 'Einreisebestimmungen anzeigen', exact: true }).click()

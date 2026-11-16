@@ -1,12 +1,9 @@
 export const dynamic = 'force-dynamic'
 
-import AdminFolgtSeite from '@/components/admin/AdminFolgtSeite'
+import Sprachkatalog from '@/components/admin/localization/Sprachkatalog'
+import { uiEinstellungenFuerSeite } from '@/lib/account/ui-einstellungen-1/server'
 
 export default async function LocalizationPage() {
-  return (
-    <AdminFolgtSeite
-      titel="Lokalisierung"
-      satz="Keine Sprach- oder Übersetzungssteuerung. hreflang und Locale-Verwaltung folgen später."
-    />
-  )
+  const initial = await uiEinstellungenFuerSeite()
+  return <Sprachkatalog sprache={initial.status === 'bereit' ? initial.sprache : 'de'} />
 }

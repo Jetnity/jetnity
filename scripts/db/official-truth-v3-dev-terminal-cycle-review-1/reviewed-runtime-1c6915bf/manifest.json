@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "purpose": "Immutable runtime evidence for the already applied Dev Cycle2 review; successor runtime must have its own separate review.",
+  "commit": "1c6915bf0ed661a8b57c5fb3a43c9b71b559a90a",
+  "tree": "9467287fbe9c5fd00b3b2fc6a218eb46a22e0a4f",
+  "ciRun": 43663530549,
+  "appliedReviewAt": "2026-11-15T02:11:51.736081Z",
+  "pins": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/monitor/queue.ts",
+      "archive": "queue.ts.txt",
+      "bytes": 22643,
+      "sha256": "4205b79b1a22c80823a4965cf911445213e3f99b8daae6365a710a4748a24f3d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/composition.ts",
+      "archive": "composition.ts.txt",
+      "bytes": 29022,
+      "sha256": "667316468efe2328ae41493537462a7ff4bd571da43fe219bdf738a63dd47b89"
+    }
+  ]
+}

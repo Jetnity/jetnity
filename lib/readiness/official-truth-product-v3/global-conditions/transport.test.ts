@@ -64,7 +64,7 @@ function queryFor(f: ReturnType<typeof syntheticV3Fixture>, context: V3GlobalRul
 test('real visitor reproof refuses another valid window or stripped restriction despite the same base scope', async () => {
   for (const strip of [false, true]) {
     const f = syntheticV3Fixture(), original = f.applicationContext()
-    assert.ok('contextRevision' in original)
+    assert.ok('contextRevision' in original && original.contextRevision === 2)
     const changed = strip ? { scope: original.scope, route: original.route, conditions: original.conditions }
       : { ...original, application: { ...original.application, tripStartAndEndWindow: { from: '2026-11-08', through: '2026-11-13' } } }
     const context = readV3GlobalRuleContext(changed), before = createV3ContextIdentity(original), after = createV3ContextIdentity(changed)
