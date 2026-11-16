@@ -150,3 +150,6 @@ test('atomic Admin installation preserves real BG1, enforces the new proof and p
       })
     } finally { await proof.close() }
   })
+
+// The same mandatory PG17 lane exercises the saved-offers successor on the deployed Admin baseline.
+import '../saved-offers-bg1-additive-1/native.test'

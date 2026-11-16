@@ -8,7 +8,7 @@ import { ADMIN_ACCOUNT_COUNTS_WINDOW_HOURS } from '@/lib/admin/account-counts-de
 export const ADMIN_ACCOUNT_COUNTS_COPY = {
   titel: 'Registrierte Konten',
   hinweis:
-    'Momentaufnahme von zwei Kontenzahlen aus der angebundenen Testdatenbank. Keine Besucher, keine aktiven Nutzer, kein Partnerverkehr und kein Umsatz.',
+    'Momentaufnahme der registrierten Konten zum angegebenen Datenstand.',
   presentLabel: 'Registrierte Konten (aktuell)',
   presentDefinition:
     'Vorhandene auth.users-Zeilen, die nicht gelöscht und nicht anonym sind. Konten ohne Profil zählen mit.',
@@ -18,7 +18,7 @@ export const ADMIN_ACCOUNT_COUNTS_COPY = {
   standLabel: 'Stand der Datenbankuhr',
   fensterLabel: 'Fensterbeginn',
   caveats:
-    'Rohkonten, keine bereinigten Menschen. Interne, unbestätigte und gesperrte Profile bleiben enthalten, solange das Konto vorhanden ist. Das aufrufende Konto zählt in der Gegenwart mit; das Fenster kann 0 sein. Keine Live-Statistik und keine Production-Aktivierung.',
+    'Rohkonten, keine bereinigten Menschen. Interne, unbestätigte und gesperrte Profile bleiben enthalten, solange das Konto vorhanden ist. Das aufrufende Konto zählt in der Gegenwart mit; das Fenster kann 0 sein.',
   forbidden:
     'Für diese Kontenzahlen fehlt eine rollengebundene Berechtigung „konten-verwalten“ mit aktueller AAL2. Notzugang über die Oberfläche reicht nicht.',
   unavailable:

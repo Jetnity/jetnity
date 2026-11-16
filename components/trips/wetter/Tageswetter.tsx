@@ -1,15 +1,15 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { CloudSun, Sunset } from 'lucide-react'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { istPosition } from '@/lib/maps/reisekarte'
 import { wetterAmTag, wetterZurUhrzeit, type Vorhersage } from '@/lib/reisewetter/vorhersage'
+import { WetterSchutz, WetterZustimmung } from './WetterZustimmung'
 import type { TripItem, TripStage } from '@/types/trips'
 
-const WetterVorschau = createContext(false)
 export function WetterRahmen({ aktiv, children }: { aktiv: boolean; children: ReactNode }) {
-  return <WetterVorschau.Provider value={aktiv}>{children}</WetterVorschau.Provider>
+  return <WetterZustimmung aktiv={aktiv}>{children}</WetterZustimmung>
 }
 const datumFormat = new Intl.DateTimeFormat('de-CH', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
 const formatTag = (datum: string) => datumFormat.format(new Date(datum + 'T12:00:00Z'))
@@ -46,10 +46,12 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
       if (ctrl.signal.aborted) return
       if (!istPosition(position)) { setStand({ status: 'ohne-ort' }); return }
       const params = new URLSearchParams({ lat: position.lat.toFixed(2), lon: position.lng.toFixed(2) })
-      const res = await fetch('/api/reisewetter?' + params, { signal: ctrl.signal, referrerPolicy: 'no-referrer' })
+      const res = await fetch('/api/reisewetter?' + params, { signal: ctrl.signal, referrerPolicy: 'no-referrer',
+        cache: 'no-store', headers: { 'x-jetnity-weather-consent': 'v1' } })
       if (!res.ok) {
         const fehler = await res.json().catch(() => null)
         const meldung = fehler?.grund === 'anbieterzugang' ? 'Der Wetterdienst ist gerade nicht erreichbar.'
+          : res.status === 401 ? 'Bitte melde dich für den Wetterabruf an.'
           : res.status === 429 ? 'Die Wetterabfragen sind vorübergehend ausgeschöpft.' : 'Wetterdaten sind gerade nicht erreichbar.'
         if (!ctrl.signal.aborted) setStand({ status: 'fehler', meldung })
         return
@@ -102,7 +104,6 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
 }
 
 export default function Tageswetter({ ort, datum, aktivitaeten }: Props) {
-  const aktiv = useContext(WetterVorschau)
-  if (!aktiv || (!ort.placeId && (ort.latitude === null || ort.longitude === null))) return null
-  return <WetterFuerOrt key={JSON.stringify([ort.placeId, ort.latitude, ort.longitude])} ort={ort} datum={datum} aktivitaeten={aktivitaeten} />
+  if (!ort.placeId && (ort.latitude === null || ort.longitude === null)) return null
+  return <WetterSchutz><WetterFuerOrt key={JSON.stringify([ort.placeId, ort.latitude, ort.longitude])} ort={ort} datum={datum} aktivitaeten={aktivitaeten} /></WetterSchutz>
 }

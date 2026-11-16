@@ -133,9 +133,19 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
   }),
 ])
 
+// Own finite weather registry. The entry/Admin registry and its independent
+// historical contract remain unchanged. Both registries use the same strict
+// source-file and SQL-file checks; no generated-schema or installed-state claim.
+export const WEATHER_LOCAL_UNAPPLIED_RPCS = Object.freeze([
+  Object.freeze({ name: 'reisewetter_reservieren_v1',
+    sourcePath: 'lib/reisewetter/global-quota-server.ts',
+    sqlPath: 'scripts/db/reisewetter-global-1/quota-candidate.sql' }),
+])
+
 function lokaleRpcRegel(name) {
   const kurz = name.replace(/^public\./, '')
-  return LOCAL_UNAPPLIED_RPCS.find((regel) => regel.name === kurz) ?? null
+  return [...LOCAL_UNAPPLIED_RPCS, ...WEATHER_LOCAL_UNAPPLIED_RPCS]
+    .find((regel) => regel.name === kurz) ?? null
 }
 
 /**
