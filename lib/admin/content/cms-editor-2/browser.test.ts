@@ -19,12 +19,12 @@ type Fixture = { boot: CmsFixtureBoot; violations: string[]; loads: number; allo
 const fixtures = new Map<string, Fixture>()
 const words = {
   de: { title: 'Reiseideen bearbeiten', description: 'Beschreibung', idea: 'Reiseidee für die Planung', nature: 'Natur', save: 'Entwurf speichern',
-    saved: 'Der Entwurf ist gespeichert und bestätigt.', publish: 'Gespeicherten Entwurf veröffentlichen', published: 'Die Veröffentlichung im Dev-CMS ist bestätigt.',
+    saved: 'Der Entwurf ist gespeichert und bestätigt.', publish: 'Gespeicherten Entwurf veröffentlichen', published: 'Die Veröffentlichung im CMS ist bestätigt.',
     archive: 'Archivieren', archiveConfirm: 'Archivierung bestätigen', archived: 'Die Archivierung ist bestätigt.', view: 'Revision ansehen 1', restore: 'Als neuen Entwurf wiederherstellen', restored: 'Die Revision ist als neuer Entwurf gespeichert und bestätigt.',
     confirm: 'Speicherstatus prüfen', retry: 'Denselben Auftrag erneut senden', unavailable: 'CMS derzeit nicht verfügbar', choose: 'Reiseidee auswählen',
     discard: 'Änderungen verwerfen und neu laden', discardConfirm: 'Verwerfen und neu laden', conflict: 'Der Eintrag wurde inzwischen geändert.', invalid: 'Prüfe beide Textfelder und die Themen.' },
   en: { title: 'Edit travel ideas', description: 'Description', idea: 'Travel planning idea', nature: 'Nature', save: 'Save draft',
-    saved: 'The draft is saved and confirmed.', publish: 'Publish saved draft', published: 'Publication in the Dev CMS is confirmed.',
+    saved: 'The draft is saved and confirmed.', publish: 'Publish saved draft', published: 'Publication in the CMS is confirmed.',
     archive: 'Archive', archiveConfirm: 'Confirm archive', archived: 'Archiving is confirmed.', view: 'View revision 1', restore: 'Restore as a new draft', restored: 'The revision is saved and confirmed as a new draft.',
     confirm: 'Check save status', retry: 'Retry the same request', unavailable: 'CMS currently unavailable', choose: 'Choose travel idea',
     discard: 'Discard changes and reload', discardConfirm: 'Discard and reload', conflict: 'The entry has changed.', invalid: 'Check both text fields and the topics.' },
