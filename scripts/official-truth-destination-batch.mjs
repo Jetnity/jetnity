@@ -125,7 +125,8 @@ export function prepareDestination({ root, destination, output, passportColumn, 
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  try {
+  void (async () => {
+    try {
     const args = process.argv.slice(2), options = {}
     const flags = { '--research-root': 'root', '--destination': 'destination', '--output': 'output', '--passport-column': 'passportColumn', '--rank-column': 'rankColumn' }
     while (args.length) { const flag = args.shift(), value = args.shift(); if (!flags[flag] || !value || value.startsWith('--') || options[flags[flag]]) fail('invalid_arguments'); options[flags[flag]] = value }
@@ -133,5 +134,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     const { createV3SourceOnboardingTemplate } = await import('../lib/readiness/official-truth-product-v3/customer-information/source-onboarding.ts')
     const result = prepareDestination({ ...options, createTemplate: createV3SourceOnboardingTemplate })
     process.stdout.write(JSON.stringify(result) + '\n')
-  } catch { process.stderr.write('RESEARCH_PREPARATION_FAILED errors=1 accepted=0\n'); process.exitCode = 1 }
+    } catch { process.stderr.write('RESEARCH_PREPARATION_FAILED errors=1 accepted=0\n'); process.exitCode = 1 }
+  })()
 }
