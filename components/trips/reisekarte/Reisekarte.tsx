@@ -48,7 +48,7 @@ export function FlughafenKartenknopf({ reise, iata }: { reise: Trip; iata?: stri
     Flughafen {iata} auf Karte ansehen</button>{meldung && <p role="status">{meldung}</p>}</div>
 }
 
-export default function ReisekartenRahmen({ children, expiresAt }: { children: ReactNode; expiresAt: number | null }) {
+export default function ReisekartenRahmen({ children, enabled, expiresAt }: { children: ReactNode; enabled: boolean; expiresAt: number | null }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const frame = useRef<HTMLIFrameElement>(null)
   const [aufruf, setAufruf] = useState<Aufruf | null>(null)
@@ -112,7 +112,7 @@ export default function ReisekartenRahmen({ children, expiresAt }: { children: R
   const etappe = gewaehlt?.etappeId ?? (aufruf?.reise.stages.length === 1 ? aufruf.reise.stages[0].id : undefined)
   const ziel = gewaehlt && gewaehlt.art !== 'Etappe'
     ? ({ Flughafen: 'fluege', Hotel: 'unterkunft', Besuch: 'aktivitaeten' } as const)[gewaehlt.art] : undefined
-  const aktivierbar = Boolean(expiresAt && !abgelaufen && !gesperrt && pins.length)
+  const aktivierbar = Boolean(enabled && !abgelaufen && !gesperrt && pins.length)
   return <KartenKontext.Provider value={context}>
     {children}
     <dialog ref={dialog} className="rk-dialog" aria-labelledby="rk-titel" onClose={() => setOffen(false)}>
@@ -139,7 +139,7 @@ export default function ReisekartenRahmen({ children, expiresAt }: { children: R
           {granted && <iframe title="Interaktive Google-Reisekarte" ref={frame} src="/embed/trip-map" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerPolicy="strict-origin" />}
           {!granted && <div className="rk-consent"><MapIcon aria-hidden size={32} /><h3>{pins.length ? 'Deine Orte auf einer Karte' : 'Die Orte deiner Reise'}</h3>
             <p>{status || (!pins.length ? 'Wähle einen Ort und ergänze seinen Standort.' : !aktivierbar ? 'Die interaktive Karte ist ausserhalb des Testfensters ausgeschaltet.' : 'Beim Laden erhält Google deine IP-Adresse, Browserdaten und den Kartenausschnitt.')}</p>
-            {aktivierbar && <button className="rk-primary" type="button" onClick={() => { if (window.PrivacyBee === undefined && expiresAt && expiresAt > Date.now()) { setStatus(''); setGranted(true) } }}>Zustimmen und Karte laden</button>}
+            {aktivierbar && <button className="rk-primary" type="button" onClick={() => { if (window.PrivacyBee === undefined && enabled && (expiresAt === null || expiresAt > Date.now())) { setStatus(''); setGranted(true) } }}>Zustimmen und Karte laden</button>}
             {aktivierbar && <a href="https://policies.google.com/privacy?hl=de" target="_blank" rel="noreferrer">Datenschutz bei Google</a>}
           </div>}
         </div>

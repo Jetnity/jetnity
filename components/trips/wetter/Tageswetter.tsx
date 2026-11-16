@@ -49,7 +49,7 @@ function WetterFuerOrt({ ort, datum, aktivitaeten }: Props) {
       const res = await fetch('/api/reisewetter?' + params, { signal: ctrl.signal, referrerPolicy: 'no-referrer' })
       if (!res.ok) {
         const fehler = await res.json().catch(() => null)
-        const meldung = fehler?.grund === 'vorschauzugang' ? 'OpenWeather hat den Zugang für diese Vorschau noch nicht freigeschaltet.'
+        const meldung = fehler?.grund === 'anbieterzugang' ? 'Der Wetterdienst ist gerade nicht erreichbar.'
           : res.status === 429 ? 'Die Wetterabfragen sind vorübergehend ausgeschöpft.' : 'Wetterdaten sind gerade nicht erreichbar.'
         if (!ctrl.signal.aborted) setStand({ status: 'fehler', meldung })
         return

@@ -13,15 +13,18 @@ import { headers } from 'next/headers'
 import { WetterRahmen } from '@/components/trips/wetter/Tageswetter'
 import ReisekartenRahmen from '@/components/trips/reisekarte/Reisekarte'
 import '@/components/trips/reisekarte/reisekarte.css'
-import { APP_MAP_ORIGIN, isAppMapPreview, mapPilotConfig } from '@/lib/maps/config'
+import { mapPilotConfig, tripServicesOrigin } from '@/lib/maps/config'
 
 export default async function ReiseLayout({ children, params }: { children: ReactNode; params: Promise<{ tripId: string }> }) {
-  if (!isAppMapPreview(process.env)) return children
+  const origin = tripServicesOrigin(process.env)
+  if (!origin) return children
   await connection()
+  if ((await headers()).get('host') !== new URL(origin).host) return children
+  const config = mapPilotConfig(process.env, origin)
   const { tripId } = await params
-  const config = mapPilotConfig(process.env, APP_MAP_ORIGIN)
-  const wetterAktiv = Boolean(process.env.OPENWEATHER_API_KEY) && (await headers()).get('host') === new URL(APP_MAP_ORIGIN).host
-  return <WetterRahmen aktiv={wetterAktiv}>
-    <ReisekartenRahmen key={tripId} expiresAt={config?.expiresAt ?? null}>{children}</ReisekartenRahmen>
+  return <WetterRahmen aktiv={Boolean(process.env.OPENWEATHER_API_KEY)}>
+    {config || process.env.VERCEL_ENV === 'preview'
+      ? <ReisekartenRahmen key={tripId} enabled={Boolean(config)} expiresAt={config?.expiresAt ?? null}>{children}</ReisekartenRahmen>
+      : children}
   </WetterRahmen>
 }

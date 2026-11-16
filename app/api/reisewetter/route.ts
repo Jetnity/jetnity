@@ -1,4 +1,4 @@
-import { APP_MAP_ORIGIN, isAppMapPreview } from '@/lib/maps/config'
+import { tripServicesOrigin } from '@/lib/maps/config'
 import { providerOpsInMemoryCostGuard } from '@/lib/provider-ops/cost-guard'
 import { vorhersageLesen, type Vorhersage } from '@/lib/reisewetter/vorhersage'
 
@@ -24,7 +24,7 @@ async function laden(lat: string, lon: string, key: string) {
   const url = new URL('https://api.openweathermap.org/data/2.5/forecast')
   url.search = new URLSearchParams({ lat, lon, appid: key, units: 'metric', lang: 'de' }).toString()
   const antwort = await fetch(url, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(6000) })
-  if (antwort.status === 401 || antwort.status === 403) throw new Wetterfehler(503, 'vorschauzugang')
+  if (antwort.status === 401 || antwort.status === 403) throw new Wetterfehler(503, 'anbieterzugang')
   if (antwort.status === 429) throw new Wetterfehler(429, 'limit')
   if (!antwort.ok) throw new Wetterfehler(502, 'wetterdienst')
   const daten = vorhersageLesen(await antwort.json())
@@ -35,7 +35,7 @@ async function laden(lat: string, lon: string, key: string) {
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const key = process.env.OPENWEATHER_API_KEY
-  if (!key || !isAppMapPreview(process.env) || url.origin !== APP_MAP_ORIGIN) return fehler(404)
+  if (!key || url.origin !== tripServicesOrigin(process.env)) return fehler(404)
   if (request.headers.get('sec-fetch-site') !== 'same-origin') return fehler(403)
   const lat = koordinate(url.searchParams, 'lat', 90)
   const lon = koordinate(url.searchParams, 'lon', 180)
