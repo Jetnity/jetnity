@@ -10,6 +10,7 @@ import { HomeVertrauen } from '@/components/home/HomeVertrauen'
 import { HomeWerkzeuge } from '@/components/home/HomeWerkzeuge'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import { publicInspiration } from '@/lib/inspiration/cms-public-server'
+import { zielHref } from '@/lib/places/auswahl'
 import {
   finalHomepageJsonLd,
   finalHomepageMetadaten,
@@ -44,7 +45,8 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const inspiration = await publicInspiration()
   const inspirationsziele = inspiration.ziele.map((ziel) => ({
-    name: ziel.name, country: ziel.country, image: ziel.image, href: ziel.href ?? '/planen',
+    name: ziel.name, country: ziel.country, image: ziel.image,
+    href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
   }))
   return (
     <main data-white-mint="home" className="break-words bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800 [&_.sr-only]:whitespace-normal">

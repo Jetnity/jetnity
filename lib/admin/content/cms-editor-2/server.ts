@@ -30,7 +30,7 @@ export async function runCmsRequest(input: CmsHttpRequest, admittedUserId: strin
   if (!request) return { ok: false, code: 'invalid' }
   if (signal.aborted) return { ok: false, code: 'timeout' }
   try {
-    const client = await cmsDuring(() => createRouteHandlerClient<AdminDevRuntimeDatabase>(), signal)
+    const client = await cmsDuring(async () => await createRouteHandlerClient<AdminDevRuntimeDatabase>(), signal)
     if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
     const identity = await cmsDuring(() => client.auth.getUser(), signal)
     if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
@@ -74,7 +74,7 @@ export async function readCmsPublished(signal: AbortSignal): Promise<CmsPortResu
   if (!isAdminDevRuntimeEnabled()) return { ok: false, code: 'unavailable' }
   if (signal.aborted) return { ok: false, code: 'timeout' }
   try {
-    const client = await cmsDuring(() => createServerComponentClient<AdminDevRuntimeDatabase>(signal), signal)
+    const client = await cmsDuring(async () => await createServerComponentClient<AdminDevRuntimeDatabase>(signal), signal)
     if (signal.aborted || !isAdminDevRuntimeEnabled()) return failure(undefined, signal)
     const result = await cmsDuring(() => client.rpc('cms_inspiration_published_v1').abortSignal(signal), signal)
     if (result.error || signal.aborted) return failure(result.error?.code, signal)

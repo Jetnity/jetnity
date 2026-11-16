@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import HomePage from '@/app/(public)/page'
@@ -68,7 +68,7 @@ function NegativeKontrollen() {
   )
 }
 
-export function WhiteMintHarness() {
+export function WhiteMintHarness({ homePage }: { homePage: ReactNode }) {
   const route = pfad()
   if (route.startsWith('/account')) {
     return (
@@ -84,7 +84,7 @@ export function WhiteMintHarness() {
   const gast = route.match(/^\/reisen\/(trip-[^/]+)$/)
   return (
     <>
-      <PublicChrome>{gast ? <GastMontage tripId={gast[1]!} /> : route === '/' ? <HomePage /> : route === '/datenquellen' ? <DatenquellenPage /> : null}</PublicChrome>
+      <PublicChrome>{gast ? <GastMontage tripId={gast[1]!} /> : route === '/' ? homePage : route === '/datenquellen' ? <DatenquellenPage /> : null}</PublicChrome>
       <NegativeKontrollen />
     </>
   )
@@ -100,5 +100,11 @@ if (typeof window !== 'undefined') {
 
 if (typeof document !== 'undefined') {
   const root = document.getElementById('root')
-  if (root) createRoot(root).render(<WhiteMintHarness />)
+  if (root) {
+    // Resolve the real async page before mounting its UI in this client fixture.
+    void (async () => {
+      const homePage = pfad() === '/' ? await HomePage() : null
+      createRoot(root).render(<WhiteMintHarness homePage={homePage} />)
+    })()
+  }
 }

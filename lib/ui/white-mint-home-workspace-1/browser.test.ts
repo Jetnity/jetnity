@@ -15,6 +15,7 @@ import dynamicStub from '@/lib/ui/white-mint-home-workspace-1/dynamic-stub'
 import { aenderungErzeugen, ortBestaetigen } from '@/lib/ui/white-mint-home-workspace-1/server-action-stub'
 import { createBrowserClient } from '@/lib/ui/white-mint-home-workspace-1/supabase-stub'
 import { signOutAction } from '@/lib/ui/white-mint-home-workspace-1/sign-out-stub'
+import { publicInspiration } from '@/lib/ui/white-mint-home-workspace-1/inspiration-server-stub'
 import { usePathname } from '@/lib/ui/white-mint-home-workspace-1/navigation'
 import Image from '@/lib/ui/white-mint-home-workspace-1/image'
 import Link from '@/lib/ui/white-mint-home-workspace-1/link'
@@ -34,6 +35,7 @@ async function harnessModul() {
 test('local shims stay on the fixture import path', () => {
   assert.equal(typeof createBrowserClient, 'function')
   assert.equal(typeof signOutAction, 'function')
+  assert.equal(typeof publicInspiration, 'function')
   assert.equal(typeof dynamicStub, 'function')
   assert.equal(typeof aenderungErzeugen, 'function')
   assert.equal(typeof ortBestaetigen, 'function')
@@ -136,6 +138,7 @@ async function bundeln() {
           build.onResolve({ filter: /^next\/image$/ }, () => ({ path: datei('image.tsx') }))
           build.onResolve({ filter: /^next\/navigation$/ }, () => ({ path: datei('navigation.tsx') }))
           build.onResolve({ filter: /^@\/app\/auth\/sign-out$/ }, () => ({ path: datei('sign-out-stub.ts') }))
+          build.onResolve({ filter: /^@\/lib\/inspiration\/cms-public-server$/ }, () => ({ path: datei('inspiration-server-stub.ts') }))
           build.onResolve({ filter: /^@\/lib\/supabase\/client$/ }, () => ({ path: datei('supabase-stub.ts') }))
           build.onResolve({ filter: /^@\/lib\/reiseaenderung\/aktionen$/ }, () => ({ path: datei('server-action-stub.ts') }))
           build.onResolve({ filter: /^@\/lib\/places\/aktionen$/ }, () => ({ path: datei('server-action-stub.ts') }))
