@@ -43,5 +43,11 @@ test('predecessor and publication guards are never bypassed',()=>{
   assert.match(sql,/GET|ROLLBACK|SAVEPOINT|COMMIT/) // only source contract, not hosted proof
 })
 
-// Run the actual owned PostgreSQL 17 proof as part of the one Core CI gate.
-import '../../scripts/db/saved-offers-bg1-additive-1/native.test'
+test('saved_offers full native proof is required in the existing signed PG17 CI runner',()=>{
+  const workflow=readFileSync(new URL('../../.github/workflows/ci.yml',import.meta.url),'utf8')
+  const cms=workflow.split('  cms_native:\n')[1]?.split('\n  marketing_native:')[0]
+  assert.ok(cms,'signed PG17 native runner missing')
+  assert.match(cms,/Provision mandatory PostgreSQL 17 from signed official packages/)
+  assert.match(cms,/name: saved_offers exact Production BG1 successor - owned PG17 proof/)
+  assert.match(cms,/scripts\/db\/saved-offers-bg1-additive-1\/native\.test\.ts/)
+})
