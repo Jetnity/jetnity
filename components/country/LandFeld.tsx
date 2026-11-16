@@ -83,6 +83,8 @@ export default function LandFeld({
       </p>
       </> : null}
       <select
+        // Ein neues Filterergebnis braucht ein neues Select, sonst bleibt eine fremde Option sichtbar.
+        key={suche}
         id={selectId}
         aria-labelledby={labelId}
         disabled={disabled}

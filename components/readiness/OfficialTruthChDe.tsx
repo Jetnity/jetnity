@@ -1,8 +1,7 @@
 'use client'
 
-import OfficialTruthVisitorV3 from './OfficialTruthVisitorV3'
-import { loadChDeVisa } from '@/lib/readiness/official-truth-product-v3/visitor/ch-de-http'
+import EinreiseLaenderpruefer from './EinreiseLaenderpruefer'
 
 export default function OfficialTruthChDe() {
-  return <OfficialTruthVisitorV3 query={loadChDeVisa} mode="ch-de-visa" />
+  return <EinreiseLaenderpruefer />
 }
