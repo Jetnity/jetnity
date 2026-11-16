@@ -2,6 +2,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { createV3SourceOnboardingTemplate, prepareV3SourceOnboardingPlan } from '../../lib/readiness/official-truth-product-v3/customer-information/source-onboarding'
 import { AA_BERN_CH_DE_REVIEWED_PROGRAM } from '../../lib/readiness/official-truth-product-v3/source/aa-ch-de-reviewed-program'
+import { AT_BMI_REVIEWED_REGISTRY } from '../../lib/readiness/official-truth-product-v3/source/at-reviewed-program'
 
 const args = process.argv.slice(2), mode = args.shift()
 function option(name: string): string {
@@ -18,11 +19,12 @@ if (mode === 'template') {
   process.stdout.write(`RESEARCH_ONLY: ${plan.coverage.length} explicit coverage slots written.\n`)
 } else if (mode === 'check') {
   const input = option('--input'), program = option('--program')
-  if (args.length || program !== 'aa-bern-ch-de') throw Error('unknown reviewed program')
+  if (args.length || (program !== 'aa-bern-ch-de' && program !== 'bmi-at')) throw Error('unknown reviewed program')
   // Deliberately a code-owned finite catalog. A plan cannot upload a registry,
   // profile verifier, source authority, qualification or publication permit.
-  const result = prepareV3SourceOnboardingPlan(JSON.parse(readFileSync(input, 'utf8')), AA_BERN_CH_DE_REVIEWED_PROGRAM.registry)
+  const registry = program === 'aa-bern-ch-de' ? AA_BERN_CH_DE_REVIEWED_PROGRAM.registry : AT_BMI_REVIEWED_REGISTRY
+  const result = prepareV3SourceOnboardingPlan(JSON.parse(readFileSync(input, 'utf8')), registry)
   if (!result.ok) throw Error(`invalid research plan: ${result.reason}`)
   process.stdout.write(JSON.stringify({ digest: result.digest, publicationAuthority: result.publicationAuthority,
     intake: result.intake, proposalCount: result.proposals.length, rows: result.rows }, null, 2) + '\n')
-} else throw Error('usage: source-plan.ts template --destination DE --citizenships CH --output file.json | check --input file.json --program aa-bern-ch-de')
+} else throw Error('usage: source-plan.ts template --destination DE --citizenships CH --output file.json | check --input file.json --program aa-bern-ch-de|bmi-at')

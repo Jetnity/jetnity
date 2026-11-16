@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "kind": "at_official_original_byte_receipt",
+  "classification": "SOURCE_IDENTITY_ONLY",
+  "publicationAuthority": "none",
+  "fetchedAtUtc": "2026-11-16T19:45:39Z",
+  "userAgent": "JetnityOfficialTruthSourceFetch/1.0",
+  "documents": [
+    {
+      "role": "primary_visa_matrix",
+      "requestUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "finalUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "httpStatus": 200,
+      "contentType": "text/html",
+      "bytes": 498415,
+      "sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "httpLastModified": "Mon, 16 Nov 2026 18:49:23 GMT",
+      "editorialEdition": "2026-11-06",
+      "editorialMarker": "(Stand: 6.11.2026)",
+      "rejectedHistoricalMarker": "15.7.2026 / 15.07.2026 absent",
+      "note": "HTTP Last-Modified is the CDN timestamp and is not the legal edition."
+    },
+    {
+      "role": "primary_short_stay",
+      "requestUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "finalUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "httpStatus": 200,
+      "contentType": "text/html",
+      "bytes": 91655,
+      "sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "editorialEdition": null,
+      "note": "The page publishes no Stand date. The byte hash is the reviewed version. A later Stand date fails closed."
+    },
+    {
+      "role": "ch_counter_bern",
+      "requestUrl": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "finalUrl": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "canonicalUrl": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag",
+      "canonicalCount": 2,
+      "canonicalsIdentical": true,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 172460,
+      "sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+      "editorialEdition": null,
+      "note": "Both canonical links are the same slashless URL. The fetched final URL keeps the trailing slash. Swiss residence permits are a separate population from Swiss passports."
+    }
+  ]
+}

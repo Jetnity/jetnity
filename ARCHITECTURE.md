@@ -697,6 +697,10 @@ Der private Guard prüft genau die CH-Pass-/DE-Visum-Zelle, eine primäre Stütz
 Der Volltext-Pin erkennt auch globale Qualifikationen, geänderte fremde Fußnoten und neu verborgene Tabellenvorfahren; S1 wird dafür keine zusätzliche Rechtsinterpretation zugeschrieben. Hash und Callback ersetzen weder Herkunft/Transportvollständigkeit noch die bestehende Evidence→Review→Rule→Requirements-Kette. Nur synthetische Tests ersetzen das feste Datenmodul; keine öffentliche Injektionsschnittstelle. Reale Quellenzulassung, gehostete Autorität, Readback und Production-Aktivierung bleiben eigene gehaltene Gates. [Handoff](docs/OFFICIAL_TRUTH_AA_CH_DE_VISA_MAPPING_CANDIDATE_1_HANDOFF_2026-11-06.md).
 
 
+## Official Truth — AT ordinary-passport source program (16.11.2026)
+
+Issue #1223 ergänzt unter `lib/readiness/official-truth-product-v3/source/` einen code-eigenen BMI-/BMEIA-Katalog und einen gewöhnlichen Pass-Extractor. Er liest nur die bytegebundenen Originale und erzeugt keine zweite Truth-Engine. Der Method-Draft bleibt `NOT_APPROVED`. Der gemeinsame HRS-Reader, das 128-KiB-Originalbudget und die BG1-Coverage bleiben CH→DE. Deshalb gibt es keinen AT-Import und keinen Besucherreadback. [Handoff](docs/official-truth-product-v3/AT_OFFICIAL_SOURCE_V3_HANDOFF_2026-11-16.md).
+
 ## Official Truth — Pilot Target Guard 1 (07.11.2026)
 
 #1148 / Draft #1149 ergänzt einen parameterlosen `server-only`-Zielguard im bestehenden CH→DE-Piloten. Er verlangt den exakten Development-HTTPS-Host sowohl in `getServerSupabaseUrl()` der gemeinsamen SSR-Factory als auch im aktuellen Laufzeitobjekt `process.env`, dazu Vercel Preview einschließlich `VERCEL_TARGET_ENV=preview` und der festen Jetnity-Projekt-ID. Der dynamische Environment-Zugriff verhindert eine alleinige Prüfung des beim Next-Build eingefrorenen Public-Werts. Der Guard erzeugt keinen Client und prüft keine Schlüssel.

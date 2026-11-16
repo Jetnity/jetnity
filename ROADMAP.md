@@ -1,5 +1,9 @@
 # Jetnity – Roadmap
 
+## AT-Quellenlane blockiert vor der 50-Pass-Freigabe — 16.11.2026
+
+Issue #1223 bindet die BMI-Visaliste als Originaledition **6.11.2026** und lässt den Method-Draft `NOT_APPROVED`. HRS, das 128-KiB-Budget und BG1 bleiben CH→DE. 39 von 50 Prioritätsplätzen sind ohne `passport-priority.csv` nicht benennbar. Keine Veröffentlichung. [Handoff](docs/official-truth-product-v3/AT_OFFICIAL_SOURCE_V3_HANDOFF_2026-11-16.md). Die darunter stehende CH→DE-Fortsetzung bleibt der bisherige Produktpfad.
+
 ## Aktuell: CH→DE-Fortsetzung korrigieren; regelmäßigen Dev-Import abnehmen — 14.11.2026
 
 **Belegt:** [#1197](https://github.com/Jetnity/jetnity/pull/1197) hat Vorrang. CI4245 am Head `b7426918` bestand vollständig; die erste öffentliche Dev-Projektion und ihre Abnahme sind abgeschlossen. Der neue reguläre Quellenlauf auf `d6a264aa` veröffentlichte **Regelversion 2 am 14.11.2026 um 21:20:24 UTC**, gültig bis **22:18:56 UTC**. Der normale UI-Resume verwendete die gespeicherten Original-IDs, bestätigte eine Veröffentlichung und beließ Source-START bei 5. Bereits abgeschlossene Owner-Schritte wurden nicht wiederholt. Recovery3 und ihr früherer Folge-Cron bleiben abgeschlossen. Die alten R41-Statusblöcke darunter sind datierte Historie.
