@@ -14,11 +14,13 @@ import {
   workspacePraeferenzHatInhalt,
   workspacePraeferenzSicht,
 } from '@/lib/trips/workspace-praeferenzen'
+import type { EinreiseUebersichtZeile } from '@/lib/readiness/einreise-kundenanzeige'
 import type { DestinationEssentialsAbleitung } from '@/lib/trips/destination-essentials'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip, TripItem } from '@/types/trips'
 import TripAuditV1Panel from '@/components/trips/TripAuditV1Panel'
+import EinreiseUebersichtZeilen from '@/components/trips/EinreiseUebersichtZeilen'
 import TripWorkspaceDestinationEssentials from '@/components/trips/TripWorkspaceDestinationEssentials'
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 import WorkspaceRouteOverview from '@/components/workspace/WorkspaceRouteOverview'
@@ -105,6 +107,8 @@ export default function TripWorkspaceUebersicht({
   uebersicht,
   attention,
   destinationEssentials,
+  einreiseZeilen = [],
+  onEinreise,
   onLuecke,
   onAttention,
   workspace = false,
@@ -116,6 +120,8 @@ export default function TripWorkspaceUebersicht({
   uebersicht: UebersichtAbleitung
   attention: AttentionAbleitung
   destinationEssentials: DestinationEssentialsAbleitung
+  einreiseZeilen?: readonly EinreiseUebersichtZeile[]
+  onEinreise?: () => void
   onLuecke: (domain: DetailDomain) => void
   onAttention: (aktion: AttentionAktion) => void
   workspace?: boolean
@@ -152,7 +158,9 @@ export default function TripWorkspaceUebersicht({
 
       {workspace && onRoute ? <WorkspaceRouteOverview reise={reise} onRoute={onRoute} /> : null}
 
-      {!workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} /> : null}
+      {einreiseZeilen.length > 0 ? <EinreiseUebersichtZeilen zeilen={einreiseZeilen} onOeffnen={onEinreise} /> : null}
+
+      {!workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} /> : null}
 
       <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className="min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white">
         <p className="border-b border-line-100 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
@@ -217,7 +225,7 @@ export default function TripWorkspaceUebersicht({
         </section>
       ) : null}
 
-      {workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} /> : null}
+      {workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} /> : null}
 
       {workspacePraeferenzHatInhalt(praeferenzen) ? (
         <div className="grid gap-3">

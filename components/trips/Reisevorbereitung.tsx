@@ -17,20 +17,19 @@ import {
   SENSITIVE_HINWEIS,
   nutzerstandText,
   officialFehlendeAngabenText,
-  officialListeHinweis,
   officialPruefungAusEvaluations,
   officialStatusText,
 } from '@/lib/readiness/bezeichnungen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
-import { officialChecklist, type OfficialChecklistEintrag } from '@/lib/readiness/official-presentation'
+import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
+import { einreiseKundenanzeige } from '@/lib/readiness/einreise-kundenanzeige'
+import { officialChecklist } from '@/lib/readiness/official-presentation'
 import { gruppenUnterschiede, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import {
   PREPARATION_BEREICHE,
   PREPARATION_DISCLAIMER,
   PREPARATION_PREMIUM_EXPERIENCE,
   preparationPersoenlichAufteilen,
-  preparationPlatzhalterGruppe,
-  preparationPlatzhalterZeile,
   preparationUebersichtStatus,
   type PreparationBereichId,
 } from '@/lib/readiness/preparation-premium-experience-5'
@@ -136,6 +135,12 @@ export default function Reisevorbereitung({
     party: reise.party ?? [],
     slots,
   })
+  const einreise = einreiseKundenanzeige({
+    evaluations,
+    party: reise.party ?? [],
+    slots,
+    laender: reise.stages.map((etappe) => etappe.countryCode),
+  })
   const persoenlich = preparationPersoenlichAufteilen(sichtbareItems)
   const anwendbareSlots = slots.filter((slot) => slot.applicable)
   const fehlendeFakten = [...new Set(anwendbareSlots.flatMap((slot) => slot.missingFacts))]
@@ -224,12 +229,29 @@ export default function Reisevorbereitung({
                 event.preventDefault()
                 onZiel(bereich.id)
               }}
-              className="block min-h-[44px] w-full min-w-0 break-words rounded-2xl border border-line-200 px-[12px] py-[10px] text-sm font-semibold leading-5 text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              className={cn(
+                'block min-h-[44px] w-full min-w-0 break-words rounded-2xl px-[12px] py-[10px] text-sm font-semibold leading-5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                bereich.id === 'offizielle-anforderungen'
+                  ? 'bg-brand-800 text-white'
+                  : 'border border-line-200 text-brand-800',
+              )}
             >
               {bereich.titel}
             </a>
           ))}
         </nav>
+
+        <Bereich
+          id="offizielle-anforderungen"
+          hervorheben
+          offen={offeneBereiche.has('offizielle-anforderungen')}
+          onOffen={onBereichOffen}
+          hinweis={einreise.satz}
+        >
+          <div data-official-group={checkliste.map((gruppe) => gruppe.id).join(' ')}>
+            <EinreiseKundenanzeige anzeige={einreise} />
+          </div>
+        </Bereich>
 
         <Bereich
           id="reisende-dokumente"
@@ -264,40 +286,6 @@ export default function Reisevorbereitung({
               steuerung={onTravellerSetzen || onTravellerEntfernen ? travellerSteuerung : null}
             />
           ))}
-        </Bereich>
-
-        <Bereich
-          id="offizielle-anforderungen"
-          offen={offeneBereiche.has('offizielle-anforderungen')}
-          onOffen={onBereichOffen}
-          hinweis={officialAbschnittHinweis(checkliste)}
-        >
-          <a href="/einreise" className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15">
-            Visum für Deutschland mit Schweizer Reisepass prüfen
-          </a>
-          <p className="text-xs leading-5 text-ink-800">{officialListeHinweis(evaluations)}</p>
-          {checkliste.map((gruppe) => {
-            const gemeinsam = preparationPlatzhalterGruppe(gruppe.eintraege)
-            return (
-              <section key={gruppe.id} className="grid gap-2" data-official-group={gruppe.id}>
-                <h5 className="text-sm font-semibold text-brand-800">{gruppe.titel}</h5>
-                {gemeinsam.art === 'gemeinsam' ? (
-                  <p role="status" className="text-sm font-semibold leading-6 text-brand-800">
-                    {gemeinsam.zeile}
-                  </p>
-                ) : null}
-                <ul className="grid gap-2">
-                  {gruppe.eintraege.map((eintrag, index) => (
-                    <OfficialZeile
-                      key={`${eintrag.scopeKey}:${index}`}
-                      eintrag={eintrag}
-                      statusSichtbar={gemeinsam.art !== 'gemeinsam'}
-                    />
-                  ))}
-                </ul>
-              </section>
-            )
-          })}
         </Bereich>
 
         <Bereich
@@ -371,38 +359,30 @@ function punkteHinweis(items: readonly ReadinessViewItem[]): string {
   return teile.join(' · ')
 }
 
-function officialAbschnittHinweis(
-  checkliste: ReturnType<typeof officialChecklist>,
-): string {
-  const eintraege = checkliste.flatMap((gruppe) => gruppe.eintraege)
-  if (eintraege.length === 0) return 'Noch keine prüfbaren offiziellen Anforderungen'
-  const kompakt = eintraege.filter((eintrag) => eintrag.kompakt).length
-  const einzeln = eintraege.length - kompakt
-  const teile: string[] = []
-  if (einzeln > 0) teile.push(`${einzeln} einzeln sichtbar`)
-  if (kompakt > 0) teile.push(`${kompakt} noch nicht prüfbar`)
-  return teile.join(' · ')
-}
-
 function Bereich({
   id,
   hinweis,
   children,
   offen,
   onOffen,
+  hervorheben = false,
 }: {
   id: PreparationBereichId
   hinweis: string
   children: React.ReactNode
   offen: boolean
   onOffen: (id: PreparationBereichId, offen: boolean) => void
+  hervorheben?: boolean
 }) {
   return (
     <details
       open={offen}
       id={`preparation-${id}`}
       data-preparation-section={id}
-      className="group/bereich scroll-mt-28 min-w-0 rounded-2xl border border-line-200 bg-surface-25"
+      className={cn(
+        'group/bereich scroll-mt-28 min-w-0 rounded-2xl border bg-surface-25',
+        hervorheben ? 'border-brand-800' : 'border-line-200',
+      )}
     >
       <summary
         data-preparation-heading
@@ -422,77 +402,9 @@ function Bereich({
   )
 }
 
-function OfficialZeile({
-  eintrag,
-  statusSichtbar,
-}: {
-  eintrag: OfficialChecklistEintrag
-  statusSichtbar: boolean
-}) {
-  const zeile = preparationPlatzhalterZeile(eintrag.ergebnisText, eintrag.freshnessText)
-  return (
-    <li
-      className={cn(
-        'min-w-0 rounded-2xl border border-line-200 bg-white px-[12px] py-3',
-        eintrag.kompakt && 'py-2',
-      )}
-      data-official-requirement-type={eintrag.requirementType ?? undefined}
-      data-official-freshness={eintrag.freshness}
-      data-official-status={eintrag.status}
-      data-official-result={eintrag.result}
-      data-official-placeholder-block={eintrag.kompakt ? 'true' : undefined}
-    >
-      <p className="break-words text-sm font-semibold text-brand-800">{eintrag.titel}</p>
-      <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
-        {eintrag.travellerLabel}
-        {' · '}
-        {eintrag.credentialLabel}
-        {eintrag.ortText ? ` · ${eintrag.ortText}` : ''}
-      </p>
-      {eintrag.kompakt ? (
-        statusSichtbar ? (
-          <p role="status" className="mt-2 break-words text-sm font-semibold leading-6 text-brand-800">
-            {zeile}
-          </p>
-        ) : (
-          <p className="sr-only">{zeile}</p>
-        )
-      ) : (
-        <>
-          <p role="status" className="mt-2 break-words text-sm font-semibold leading-6 text-brand-800">
-            {eintrag.ergebnisText}
-          </p>
-          {eintrag.timingTexte.map((text) => (
-            <p key={text} className="mt-1 break-words text-xs leading-5 text-ink-800">
-              {text}
-            </p>
-          ))}
-          {eintrag.authorityText ? (
-            <p className="mt-1 break-words text-xs leading-5 text-ink-800">Stelle {eintrag.authorityText}</p>
-          ) : null}
-          {eintrag.pruefzeitText ? (
-            <p className="mt-1 break-words text-xs leading-5 text-ink-800">{eintrag.pruefzeitText}</p>
-          ) : null}
-          <p className="mt-1 break-words text-xs leading-5 text-ink-800">{eintrag.freshnessText}</p>
-          {eintrag.aktionen.length > 0 ? (
-            <div className="mt-2 grid w-full grid-cols-1 gap-2">
-              {eintrag.aktionen.map((aktion) => (
-                <a
-                  key={`${aktion.href}:${aktion.label}`}
-                  href={aktion.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-h-[44px] w-full min-w-0 items-center break-words text-sm font-semibold leading-5 text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                >
-                  {aktion.label}
-                </a>
-              ))}
-            </div>
-          ) : null}
-        </>
-      )}
-    </li>
-  )
+function standFuerKunde(status: ReadinessUserStatus, currentness: 'current' | 'stale' | 'not_applicable'): string {
+  if (currentness === 'not_applicable') return 'Für diese Reise nicht anwendbar'
+  return nutzerstandText(status, currentness)
 }
 
 function Vorbereitungspunkt({
@@ -544,7 +456,7 @@ function Vorbereitungspunkt({
               : ''}
           </p>
           <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
-            {nutzerstandText(item.userStatus, item.currentness)}
+            {standFuerKunde(item.userStatus, item.currentness)}
             {' · '}
             {officialStatusText(item.official.status)}
           </p>
@@ -618,7 +530,7 @@ function StandSymbol({
   return (
     <span className="flex size-[40px] shrink-0 items-center justify-center rounded-xl bg-surface-25 text-ink-800">
       <AlertCircle className="h-4 w-4" aria-hidden="true" />
-      <span className="sr-only">{nutzerstandText(status, currentness)}</span>
+      <span className="sr-only">{standFuerKunde(status, currentness)}</span>
     </span>
   )
 }

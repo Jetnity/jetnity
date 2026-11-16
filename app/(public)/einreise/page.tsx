@@ -3,8 +3,8 @@ import OfficialTruthChDe from '@/components/readiness/OfficialTruthChDe'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 
 export const metadata: Metadata = {
-  title: 'Einreise nach Deutschland mit Schweizer Reisepass',
-  description: 'Übersicht zur Einreise nach Deutschland: bestätigte amtliche Angaben mit Quellen und Stand sowie offen ausgewiesene Informationen zu Dokumenten, Gesundheit, Formularen und weiteren Anforderungen.',
+  title: 'Einreise und Visum prüfen',
+  description: 'Zielland und Pass wählen. Bestätigte amtliche Angaben erscheinen auf derselben Seite. Ohne bestätigte Auskunft bleibt der Status offen.',
   alternates: { canonical: kanonischeUrl('/einreise') },
 }
 

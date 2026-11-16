@@ -57,6 +57,8 @@ import {
   type WorkspaceDetailAuswahl,
   type WorkspaceRueckkehr,
 } from '@/lib/trips/detail'
+import { einreiseKundenanzeige, einreiseUebersicht } from '@/lib/readiness/einreise-kundenanzeige'
+import { travellerSlots } from '@/lib/readiness/party'
 import { destinationEssentialsAbleiten } from '@/lib/trips/destination-essentials'
 import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
@@ -1054,6 +1056,12 @@ export default function TripWorkspace({
     safetyEvaluations,
     seasonalEvaluations,
   })
+  const einreiseZeilen = einreiseUebersicht(einreiseKundenanzeige({
+    evaluations: officialEvaluations ?? [],
+    party: reise.party ?? [],
+    slots: travellerSlots(reise),
+    laender: reise.stages.map((etappe) => etappe.countryCode),
+  }))
   const attention = attentionAbleiten({
     reise,
     ohneTag: ungeplantePunkte,
@@ -1399,6 +1407,8 @@ export default function TripWorkspace({
               <TripWorkspaceUebersicht
                 reise={reise}
                 ungeplantePunkte={ungeplantePunkte}
+                einreiseZeilen={einreiseZeilen}
+                onEinreise={() => preparationOeffnen({ bereich: 'offizielle-anforderungen' })}
                 uebersicht={uebersicht}
                 attention={attention}
                 destinationEssentials={destinationEssentials}

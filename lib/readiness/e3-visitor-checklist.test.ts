@@ -632,15 +632,19 @@ describe('Entry Requirements E3 – Visitor Checklist', () => {
 
   test('UI-Quelle rendert Gruppen und purpose-spezifische Actions', () => {
     const ui = quelle('components/trips/Reisevorbereitung.tsx')
+    const anzeige = quelle('components/readiness/EinreiseKundenanzeige.tsx')
     assert.equal(ui.includes('officialChecklist'), true)
     assert.equal(ui.includes('data-official-group'), true)
-    assert.equal(ui.includes('data-official-requirement-type'), true)
-    assert.equal(ui.includes('aktion.label'), true)
+    assert.equal(anzeige.includes('data-official-requirement-type'), true)
+    assert.equal(anzeige.includes('hrefLabel'), true)
     assert.equal(ui.includes('evaluations[0]'), false)
+    assert.equal(anzeige.includes('evaluations[0]'), false)
     assert.equal(ui.includes('documents[0]'), false)
+    assert.equal(anzeige.includes('documents[0]'), false)
     assert.equal(ui.includes('best passport'), false)
     assert.equal(ui.includes('bester Pass'), false)
     assert.doesNotMatch(ui, /90 Tage|6 Monate|2 freie|Proof of Funds|USD 10|deadline/i)
+    assert.doesNotMatch(anzeige, /90 Tage|6 Monate|2 freie|Proof of Funds|USD 10|deadline/i)
   })
 
   test('Residual other_entry_requirement landet in Weitere offizielle Anforderungen', () => {

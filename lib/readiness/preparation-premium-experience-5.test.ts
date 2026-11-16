@@ -96,12 +96,13 @@ describe('Preparation premium experience 5', () => {
 
   test('UI bleibt bei den bestehenden Verträgen und nennt die vier Bereiche', () => {
     const ui = quelle('components/trips/Reisevorbereitung.tsx')
+    const anzeige = quelle('components/readiness/EinreiseKundenanzeige.tsx')
     const registry = quelle('components/trips/RegistryReiseUebernahme.tsx')
     assert.deepEqual(
       PREPARATION_BEREICHE.map((bereich) => bereich.titel),
       [
+        'Einreise & Visum',
         'Reisende & Dokumente',
-        'Offizielle Anforderungen',
         'Tickets & Buchungsbestätigungen',
         'Eigene Vorbereitung',
       ],
@@ -117,11 +118,12 @@ describe('Preparation premium experience 5', () => {
     assert.equal(ui.includes('readinessWorkspaceSichtbar'), true)
     assert.equal(ui.includes('readinessWorkspaceZusammenfassung'), true)
     assert.equal(ui.includes('data-official-group'), true)
-    assert.equal(ui.includes('data-official-requirement-type'), true)
-    assert.equal(ui.includes('data-official-freshness'), true)
-    assert.equal(ui.includes('data-official-status'), true)
-    assert.equal(ui.includes('data-official-result'), true)
-    assert.equal(ui.includes('timingTexte'), true)
+    assert.equal(anzeige.includes('data-official-requirement-type'), true)
+    assert.equal(anzeige.includes('data-official-freshness'), true)
+    assert.equal(anzeige.includes('data-official-status'), true)
+    assert.equal(anzeige.includes('data-official-result'), true)
+    assert.equal(anzeige.includes('timingTexte'), true)
+    assert.equal(ui.includes('Visum für Deutschland mit Schweizer Reisepass prüfen'), false)
     assert.equal(ui.includes('Vorbereitung öffnen'), false)
     assert.equal(ui.includes('Vorbereitung schliessen'), false)
     assert.equal(ui.includes('Angaben speichern'), true)

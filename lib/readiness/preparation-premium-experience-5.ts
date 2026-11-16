@@ -11,8 +11,8 @@ export const PREPARATION_DISCLAIMER =
   'Ein Häkchen ist keine offizielle Visa- oder Einreisebestätigung.'
 
 export const PREPARATION_BEREICHE = [
+  { id: 'offizielle-anforderungen', titel: 'Einreise & Visum' },
   { id: 'reisende-dokumente', titel: 'Reisende & Dokumente' },
-  { id: 'offizielle-anforderungen', titel: 'Offizielle Anforderungen' },
   { id: 'tickets-buchungen', titel: 'Tickets & Buchungsbestätigungen' },
   { id: 'eigene-vorbereitung', titel: 'Eigene Vorbereitung' },
 ] as const

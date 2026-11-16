@@ -672,11 +672,12 @@ describe('Entry Requirements E4 – Temporal-Rule-Contract', () => {
     const presentation = quelle('lib/readiness/official-presentation.ts')
     const temporal = quelle('lib/readiness/temporal.ts')
     const ui = quelle('components/trips/Reisevorbereitung.tsx')
-    for (const datei of [engine, presentation, temporal, ui]) {
+    const anzeige = quelle('components/readiness/EinreiseKundenanzeige.tsx')
+    for (const datei of [engine, presentation, temporal, ui, anzeige]) {
       assert.equal(datei.includes('evaluations[0]'), false)
       assert.equal(datei.includes('documents[0]'), false)
     }
-    assert.equal(ui.includes('timingTexte'), true)
+    assert.equal(anzeige.includes('timingTexte'), true)
     assert.equal(presentation.includes('officialTemporalTexte'), true)
     assert.equal(temporal.includes('validFrom'), true)
     assert.match(temporal, /Liest weder URL, Requirement-Typ, validFrom\/validUntil/)

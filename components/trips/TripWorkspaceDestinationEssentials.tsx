@@ -113,7 +113,7 @@ function ZielMerkmale(ziel: DestinationEssentialZiel) {
   }
 }
 
-function GemeinsameLeereEinreise({ gruppe }: { gruppe: U3bAnzeigeGruppe }) {
+function GemeinsameLeereEinreise({ gruppe, einreiseZeile }: { gruppe: U3bAnzeigeGruppe; einreiseZeile?: boolean }) {
   return (
     <li
       className="min-w-0"
@@ -122,14 +122,16 @@ function GemeinsameLeereEinreise({ gruppe }: { gruppe: U3bAnzeigeGruppe }) {
       data-u3b-stage-count={String(gruppe.ziele.length)}
     >
       <article className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3">
-        <dl className="grid gap-2">
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Einreise</dt>
-            <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800" data-u3b-shared-entry-text="ein">
-              {gruppe.text}
-            </dd>
-          </div>
-        </dl>
+        {einreiseZeile ? null : (
+          <dl className="grid gap-2">
+            <div>
+              <dt className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Einreise</dt>
+              <dd className="mt-0.5 break-words text-sm leading-6 text-ink-800" data-u3b-shared-entry-text="ein">
+                {gruppe.text}
+              </dd>
+            </div>
+          </dl>
+        )}
         <ol className="mt-3 grid min-w-0 border-t border-line-100">
           {gruppe.ziele.map((ziel) => (
             <li
@@ -182,8 +184,10 @@ function ZielQuellen({ ziel }: { ziel: DestinationEssentialZiel }) {
 
 export default function TripWorkspaceDestinationEssentials({
   essentials,
+  einreiseZeile = false,
 }: {
   essentials: DestinationEssentialsAbleitung
+  einreiseZeile?: boolean
 }) {
   const kompaktLeer =
     essentials.hatZiele &&
@@ -232,7 +236,7 @@ export default function TripWorkspaceDestinationEssentials({
         <ul className="mt-3 grid min-w-0 gap-3">
           {u3bAnzeigeGruppen(essentials.ziele).map((eintrag) =>
             eintrag.art === 'gemeinsame-leere-einreise' ? (
-              <GemeinsameLeereEinreise key={eintrag.ziele[0]?.stageId ?? eintrag.countryCode} gruppe={eintrag} />
+              <GemeinsameLeereEinreise key={eintrag.ziele[0]?.stageId ?? eintrag.countryCode} gruppe={eintrag} einreiseZeile={einreiseZeile} />
             ) : (
               <li key={eintrag.ziel.stageId} className="min-w-0">
                 <article
@@ -240,7 +244,7 @@ export default function TripWorkspaceDestinationEssentials({
                   className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3"
                 >
                   <ZielKopf ziel={eintrag.ziel} datumAbstand="mt-1" />
-                  <ZielHinweise ziel={eintrag.ziel} />
+                  <ZielHinweise ziel={eintrag.ziel} einreiseZeigen={!einreiseZeile} />
                   <ZielQuellen ziel={eintrag.ziel} />
                 </article>
               </li>
