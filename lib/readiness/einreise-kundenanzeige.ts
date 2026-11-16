@@ -27,7 +27,7 @@ export type EinreiseAmpel = keyof typeof EINREISE_AMPEL_TEXT
 
 export const EINREISE_WEITERE_THEMEN = 'Weitere Themen werden noch geprüft'
 export const EINREISE_PLATZHALTER = 'Einreiseanforderungen noch nicht prüfbar'
-export const EINREISE_UNBEKANNT_LAND = 'Zielland noch nicht bestätigt'
+const EINREISE_UNBEKANNT_LAND = 'Zielland noch nicht bestätigt'
 
 const VISUMFREI = `${OFFICIAL_ERGEBNIS_BEZEICHNUNG.not_required} · ${OFFICIAL_VISA_MODUS_BEZEICHNUNG.visa_exempt}`
 const ORANGE_VISUM = new Set([
@@ -141,7 +141,7 @@ function satzAus(paare: readonly EinreisePaar[]): string {
   return 'Die Visumlage ist noch nicht bestätigt.'
 }
 
-export function einreiseAmpelAggregieren(lichter: readonly EinreiseAmpel[]): EinreiseAmpel {
+function einreiseAmpelAggregieren(lichter: readonly EinreiseAmpel[]): EinreiseAmpel {
   if (lichter.length === 0) return 'neutral'
   if (lichter.some((licht) => licht === 'orange')) return 'orange'
   if (lichter.every((licht) => licht === 'gruen')) return 'gruen'
