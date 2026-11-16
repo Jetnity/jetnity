@@ -6314,3 +6314,13 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Fortsetzung und Grenzen:** UNKNOWN stoppt jeden neuen Claim. Für tatsächlich vorhandene PREPARED-/COMPLETED-Ergebnisse wird der zugehörige Claim aus der begrenzten deterministischen Familie wiedergefunden und über die bestehende Original-Custody fortgesetzt. Es wird kein Ausführungstoken rekonstruiert. Beobachtung und tatsächliche Ausführung erhalten getrennte private Authority-Instanzen im selben bestehenden Invocation-Scope; Beobachtungsbelege werden nicht als Autorität des Folgeclaims weitergereicht. Die ursprünglichen MA1-/Native-/5s-/30s-/Attempt-/Quota-Grenzen gelten. Historische Requests ohne neue Root→Enqueue-Bindung behalten ihre ursprüngliche Fortsetzung.
 
 **Alternativen und Abnahme:** Ein Quellenersatz, das Löschen des Sitzungsspeichers, ein künstlicher START, das Verlängern der alten Lease oder eine erneute Methodenfreigabe würden das konkrete Problem nicht korrekt lösen. Der Nachfolger verändert deshalb weder HTTP-/UI-/Cron-Vertrag noch M04-SQL. Gezielte Lost-ACK-/UNKNOWN-/PREPARED-/Race-/Legacy-Gegenfälle, die echten privaten Factory-Grenzen, vollständige CI und die normale Fortsetzung dieses gespeicherten Dev-Auftrags bleiben erforderliche Nachweise. Kein Production-/Merge-PASS und keine neuen kostenpflichtigen Dienste; der aktuelle Abschlussstand wird in #1197 festgehalten.
+
+## AT-Source-Reader bleibt ausserhalb der V3-Freigabekette — 16.11.2026
+
+**Entscheidung:** Issue #1223 bekommt einen eigenen Leser unter `lib/readiness/official-truth-at-source-reader/`. Er bindet die drei fest bezeichneten BMI-/BMEIA-URLs mechanisch und hält jeden Kandidaten auf `RESEARCH_ONLY` mit null akzeptierten Fakten. Ein beobachteter Stand-Token ist keine genehmigte Fassung. Die bestehende CH→DE-V3-Kette und die Anzeige-Dateien von #1222 werden nicht verändert.
+
+**Kontext:** Die Owner-Scopekorrektur vom 16.11.2026 begrenzt Cursor auf Programmierung. Fachliche Bewertung und Methodenfreigabe bleiben beim Technical Lead, Veröffentlichung beim Product Owner. Ein direkter Einstieg in Method, S1, M04, I1, HRS, BG1 oder den Visitor-Readback würde gepinnte Sicherheitsdateien und die exklusive Anzeige-Lane #1222 anfassen.
+
+**Alternativen:** Die CH→DE-Programme zu erweitern oder Nationalitäten im Leser zu klassifizieren würde eine parallele Wahrheitsentscheidung erzeugen. Beides ist nicht gewählt.
+
+**Konsequenzen:** Solange der Technical Lead keine separate Bewertung und keine V3-Methodenfreigabe übergibt, bleibt der Importadapter geschlossen. Keine neuen Kosten, keine Production-Änderung, kein Merge durch Cursor. [Grenze und Live-Abruf](docs/official-truth-at-source-reader/SCOPE_BOUNDARY_2026-11-16.md).

@@ -1,5 +1,11 @@
 # Jetnity – Active Work Status
 
+<!-- AT_OFFICIAL_SOURCE_READER_1223_BEGIN -->
+## AT-Source-Reader #1223 — nur Technik, 16.11.2026
+
+Cursor-Lane auf `cursor/at-official-source-reader-31a9`, Issue [#1223](https://github.com/Jetnity/jetnity/issues/1223). Isolierter amtlicher AT-Leser und fail-closed Importadapter. Keine Nationalitätenklassifikation, 0 accepted-Fakten, Kundenaussage „derzeit nicht verfügbar“. Anzeige-UI bleibt bei [#1222](https://github.com/Jetnity/jetnity/issues/1222). Bestehende V3-Verträge sind unverändert; Method/S1/M04/I1/HRS/BG1/Visitor ist gestoppt, weil dafür gemeinsame Dateien geändert werden müssten. Handoff: [Scope und Dateigrenze](official-truth-at-source-reader/SCOPE_BOUNDARY_2026-11-16.md). Kein Ready, kein Merge, keine Production.
+<!-- AT_OFFICIAL_SOURCE_READER_1223_END -->
+
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
 **12. November 2026 — M04 R41: tatsächlicher Main-Lauf fehlgeschlagen; unmittelbarer Review-Fix in derselben Generation4-Sitzung.** Main ist `4313049c2a8c276f2a63101dda8df996327230e0`, Tree `5a331f1a8846e8dc07a3e0a6de033fcf8da7400f`. #1190 ist gemergt, sein eigener [Push-Lauf 43150141948 / #4117 / Versuch 1](https://github.com/Jetnity/jetnity/actions/runs/43150141948) ist **FAILURE**. M04 erreicht 24 vollständige Prüfgruppen; Gruppe 25 überschreitet das feste 240-Sekunden-Budget beim 64. Start, sechs weitere Gruppen werden nicht ausgeführt. Die übrigen sechs CI-Jobs sind erfolgreich; Core und Aggregate schlagen fehl. Sauberes Cleanup ersetzt die fehlenden Prüfungen nicht. [Vollständige Root-Fehlerevidence](https://github.com/Jetnity/jetnity/pull/1190#issuecomment-6814174877).
