@@ -1,3 +1,5 @@
+import { planstrecken, abreiseId } from './planstrecken'
+import { routeModell } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { APP_MAP_ORIGIN, mapPilotConfig } from './config'
@@ -49,4 +51,19 @@ test('Paris opens the airport transfer and the adjacent museum walks in travel o
     assert.equal(start?.id, von)
     assert.equal(ziel?.id, nach)
   }
+})
+
+test('Bangkok itinerary, selected leg, missing coordinates and optional return use the route list', () => {
+  const trip = referenzReise()
+  const route = routeModell(trip).zeilen
+  const { orte } = reiseKarteninhalt(trip)
+  for (const [index, ort] of orte.entries()) if (ort.art === 'Etappe') ort.position = { lat: 12 + index, lng: 100 }
+  const edges = planstrecken(orte, route, { vonId: 'stage-kc', nachId: 'stage-hkt' })
+  assert.deepEqual(edges, [{ von: 0, nach: 1, aktiv: false }, { von: 1, nach: 2, aktiv: true }])
+  const start = orte.length
+  orte.push({ id: abreiseId, name: 'Zürich', art: 'Abreise', position: { lat: 47.37, lng: 8.54 }, tage: [] })
+  const all = planstrecken(orte, route, undefined, true, true)
+  assert.deepEqual(all.map(e => [e.von, e.nach]), [[start, 0], [0, 1], [1, 2], [2, start]])
+  orte[1].position = null
+  assert.deepEqual(planstrecken(orte, route), [])
 })

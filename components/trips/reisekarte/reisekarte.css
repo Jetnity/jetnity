@@ -36,3 +36,28 @@
 .rk-revoke{align-self:flex-start;margin:0 20px;font-size:.82rem;font-weight:400}
 @media(max-width:700px){.rk-dialog{width:100%;height:100dvh;border:0;border-radius:0;max-height:100dvh}.rk-layout{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}.rk-head{position:sticky;top:0;background:white;z-index:1;padding:10px 16px;order:0}.rk-main{order:1;overflow:visible;scrollbar-gutter:auto}.rk-list{order:2;overflow:visible;scrollbar-gutter:auto;border:0;border-top:1px solid var(--rk-line)}.rk-canvas{flex:none;height:clamp(255px,46dvh,430px)}.rk-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.rk-fields label:last-child{grid-column:1/-1}.rk-consent{padding:14px;gap:8px}.rk-consent svg{width:22px;height:22px}.rk-wege{padding:6px 16px}}
 .rk-suche{display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;margin:0 20px;padding:5px 0;border-top:1px solid var(--rk-line)}
+
+.rk-dialog-slot,.rk-dialog-slot>div{height:100%}
+.rk-plan{overflow:hidden;border:1px solid var(--color-line-200,#d4dfd9);border-radius:20px;background:white;color:var(--color-brand-800,#193d33)}
+.rk-plan-head,.rk-plan-tools{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.rk-plan-head{justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid #d4dfd9}
+.rk-plan-head h2{font-weight:700;font-size:1.12rem}
+.rk-plan-head p,.rk-streckenhinweis{font-size:.85rem;color:#50665d}
+.rk-plan-tools button{min-height:44px;padding:0 .65rem;border:1px solid #b7c9bd;border-radius:.65rem}
+.rk-plan-tools button[aria-pressed=true]{color:white;background:#245744}
+.rk-inline .rk-main{overflow:visible;scrollbar-gutter:auto}
+.rk-inline .rk-canvas{flex:none;min-height:260px;height:clamp(18rem,45vh,38rem)}
+.rk-inline .rk-wege label{display:grid;gap:.3rem;min-width:0;font-size:.86rem;font-weight:600}
+.rk-inline select{width:100%;min-height:44px;border:1px solid #b7c9bd;border-radius:.5rem;padding:0 .4rem;background:white}
+.rk-inline button:disabled{opacity:.5}
+.rk-inline .rk-wege{padding:.5rem 1rem}
+.rk-inline .rk-revoke{margin:0 1rem}
+.rk-streckenhinweis{padding:.65rem 1rem}
+@media(max-width:700px){.rk-inline .rk-canvas{height:45svh}.rk-plan-head{padding:.65rem .8rem}}
+
+.rk-vorschau{margin:0;padding:0;list-style:none;display:grid;gap:.25rem;color:var(--color-brand-800);font-weight:600}
+.rk-inline .rk-consent{overflow:auto;justify-content:safe center}
+
+.rk-plan-orte{padding:.5rem 1rem;border:0;border-top:1px solid #d4dfd9;scrollbar-gutter:auto}
+.rk-plan-orte summary{cursor:pointer;font-weight:600;padding:.7rem 0}
+.rk-plan-orte input{max-width:100%;min-height:44px;border:1px solid #b7c9bd;border-radius:.5rem;padding:0 .4rem}

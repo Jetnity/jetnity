@@ -16,6 +16,9 @@
   let started = false
   let map = null
   let line = null
+  let abschnittLinien = []
+  let fokus = []
+  let setzen = false
   let routeVersion = 0
   let stops = []
   let selected = null
@@ -42,14 +45,41 @@
       && Number.isFinite(p.lat) && Math.abs(p.lat) <= 90 && Number.isFinite(p.lng) && Math.abs(p.lng) <= 180)
   function fit() {
     if (!map || !stops.length) return
-    if (stops.length === 1) { map.setCenter(stops[0]); map.setZoom(10); return }
+    const punkte = fokus.length ? stops.filter(p => fokus.includes(p.index)) : stops
+    if (!punkte.length) return
+    if (punkte.length === 1) { map.setCenter(punkte[0]); map.setZoom(10); return }
     const bounds = new window.google.maps.LatLngBounds()
-    stops.forEach((stop) => bounds.extend(stop))
+    punkte.forEach((stop) => bounds.extend(stop))
     map.fitBounds(bounds, 48)
+  }
+  function planZeigen(data) {
+    if (!Array.isArray(data.abschnitte) || data.abschnitte.length > 2000 || !Array.isArray(data.fokus)) return
+    for (const linie of abschnittLinien) {
+      window.google.maps.event.clearInstanceListeners(linie)
+      linie.setMap(null)
+    }
+    abschnittLinien = []
+    const punkte = new Map(stops.map(p => [p.index, p]))
+    fokus = data.fokus.filter(i => punkte.has(i)).slice(0, 2)
+    setzen = data.setzen === true
+    for (const kante of data.abschnitte) {
+      if (!kante || !punkte.has(kante.von) || !punkte.has(kante.nach)) continue
+      const farbe = kante.aktiv ? '#174c39' : '#416f61'
+      const linie = new window.google.maps.Polyline({
+        map, path: [punkte.get(kante.von), punkte.get(kante.nach)], geodesic: true,
+        strokeColor: farbe, strokeOpacity: kante.aktiv ? 0.65 : 0.18, strokeWeight: kante.aktiv ? 5 : 3,
+        icons: [{ icon: { path: 'M 0,-1 0,1', strokeColor: farbe, strokeOpacity: 1, scale: 2 }, offset: '0', repeat: '12px' }],
+        zIndex: kante.aktiv ? 2 : 1, clickable: !setzen,
+      })
+      linie.addListener('click', () => send('abschnitt', { von: kante.von, nach: kante.nach }))
+      abschnittLinien.push(linie)
+    }
+    highlight()
+    fit()
   }
   function highlight() {
     markers.forEach(({ marker, node, group }) => {
-      const active = group.some((stop) => stop.index === selected)
+      const active = group.some((stop) => stop.index === selected || fokus.includes(stop.index))
       node.dataset.selected = String(active)
       marker.zIndex = active ? 1000 : group.length
     })
@@ -72,7 +102,7 @@
     group.forEach((stop) => {
       const button = document.createElement('button')
       button.type = 'button'
-      button.textContent = `${stop.index + 1}. ${stop.label}`
+      button.textContent = `${stop.symbol || stop.index + 1}. ${stop.label}`
       button.addEventListener('click', () => { choose(stop.index); closeCluster() })
       clusterStops.append(button)
     })
@@ -104,10 +134,10 @@
     markers = groups().map((group) => {
       const node = document.createElement('span')
       node.className = group.length > 1 ? 'map-marker map-cluster' : 'map-marker'
-      node.textContent = group.length > 1 ? String(group.length) : String(group[0].index + 1)
+      node.textContent = group.length > 1 ? String(group.length) : (group[0].symbol || String(group[0].index + 1))
       const marker = new window.google.maps.marker.AdvancedMarkerElement({
         map, position: group[0], content: node, gmpClickable: true,
-        title: group.length > 1 ? `${group.length} Reiseorte anzeigen` : `${group[0].index + 1}. ${group[0].label}`,
+        title: group.length > 1 ? `${group.length} Reiseorte anzeigen` : `${group[0].symbol || group[0].index + 1}. ${group[0].label}`,
       })
       marker.addListener('click', () => {
         if (group.length === 1) choose(group[0].index)
@@ -126,13 +156,22 @@
     if (stopped || expired()) return
     try {
       map = new window.google.maps.Map(document.getElementById('map'), {
-        mapId: config.mapId, center: stops[0], zoom: 10,
+        mapId: config.mapId, center: stops[0] ?? { lat: 18, lng: 8 }, zoom: stops.length ? 10 : 2,
         mapTypeControl: false, streetViewControl: false, fullscreenControl: false,
         clickableIcons: false, gestureHandling: 'cooperative', keyboardShortcuts: true,
         maxZoom: 20,
       })
       fit()
       map.addListener('zoom_changed', () => { if (stopped) return; const next = Math.floor(map.getZoom()); if (zoom !== next) { zoom = next; renderMarkers() } })
+      map.addListener('click', event => {
+        if (setzen && event.latLng) send('position', { position: event.latLng.toJSON() })
+      })
+      let sichtbar = true
+      if (typeof ResizeObserver !== 'undefined') new ResizeObserver(([entry]) => {
+        const jetzt = entry.contentRect.width > 0 && entry.contentRect.height > 0
+        if (!sichtbar && jetzt) fit()
+        sichtbar = jetzt
+      }).observe(document.getElementById('map'))
       renderMarkers()
       window.google.maps.event.addListenerOnce(map, 'tilesloaded', () => {
         if (stopped) return
@@ -146,9 +185,9 @@
     if (stopped || event.source !== parent || event.origin !== config.origin || expired()) return
     const data = event.data
     if (!data || data.source !== 'jetnity-trip-map-parent') return
-    if (data.type === 'init' && !started && validStops(data.stops)) {
+    if (data.type === 'init' && !started && (validStops(data.stops) || (data.setzen === true && Array.isArray(data.stops) && data.stops.length === 0))) {
       started = true
-      stops = data.stops.map(({ index, label, lat, lng }) => ({ index, label, lat, lng }))
+      stops = data.stops.map(({ index, label, lat, lng, symbol }) => ({ index, label, lat, lng, symbol: symbol === 'A' ? 'A' : undefined }))
       const script = document.createElement('script')
       const params = new URLSearchParams({ key: config.key, v: 'quarterly', libraries: 'marker', loading: 'async',
         callback: '__jetnityTripMapsReady', auth_referrer_policy: 'origin', language: 'de', region: 'CH' })
@@ -157,6 +196,8 @@
       script.onerror = fail
       document.head.append(script)
       send('loading', { expiresAt: config.expiresAt })
+    } else if (data.type === 'reiseplan' && map) {
+      planZeigen(data)
     } else if (data.type === 'clear-path' && map) {
       routeVersion++
       line?.setMap(null)
@@ -168,12 +209,12 @@
       if (version !== routeVersion || stopped || expired()) return
       const path = geometry.encoding.decodePath(data.path)
       line?.setMap(null)
-      line = new window.google.maps.Polyline({ map, path, strokeColor: '#205945', strokeOpacity: 0.95, strokeWeight: 5 })
+      line = new window.google.maps.Polyline({ map, path, zIndex: 4, strokeColor: '#205945', strokeOpacity: 0.95, strokeWeight: 5 })
       const bounds = new window.google.maps.LatLngBounds()
       path.forEach(point => bounds.extend(point))
       if (!bounds.isEmpty()) map.fitBounds(bounds, 48)
     } else if (data.type === 'stops' && map && (validStops(data.stops) || (Array.isArray(data.stops) && !data.stops.length))) {
-      stops = data.stops.map(({ index, label, lat, lng }) => ({ index, label, lat, lng }))
+      stops = data.stops.map(({ index, label, lat, lng, symbol }) => ({ index, label, lat, lng, symbol: symbol === 'A' ? 'A' : undefined }))
       cluster.hidden = true
       renderMarkers()
       fit()

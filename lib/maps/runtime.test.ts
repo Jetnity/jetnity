@@ -27,6 +27,14 @@ function runtime(configured = true, expiresAt: number | null = Date.now() + 1800
   const timers: { callback: () => void; delay: number }[] = []
   const maps: FakeMap[] = []
   const markers: FakeMarker[] = []
+  const lines: FakeLine[] = []
+  class FakeLine {
+    map: FakeMap | null
+    listeners: Record<string, () => void> = {}
+    constructor(readonly options: { map: FakeMap; path: unknown[] }) { this.map = options.map; lines.push(this) }
+    addListener(name: string, callback: () => void) { this.listeners[name] = callback }
+    setMap(map: FakeMap | null) { this.map = map }
+  }
   let tiles: (() => void) | undefined
   class FakeMap {
     zoom = 10; listeners: Record<string, () => void> = {}
@@ -48,7 +56,7 @@ function runtime(configured = true, expiresAt: number | null = Date.now() + 1800
   const head = new Element()
   const window: Record<string, unknown> = {
     addEventListener: (name: string, callback: (event: unknown) => void) => { listeners[name] = callback },
-    google: { maps: { Map: FakeMap, LatLngBounds: class { extend() {} }, marker: { AdvancedMarkerElement: FakeMarker },
+    google: { maps: { Map: FakeMap, Polyline: FakeLine, LatLngBounds: class { extend() {} }, marker: { AdvancedMarkerElement: FakeMarker },
       event: { clearInstanceListeners() {}, addListenerOnce: (_map: unknown, _type: string, callback: () => void) => { tiles = callback } } } },
   }
   runInNewContext(source, { window, parent, location: { origin }, URLSearchParams, console,
@@ -57,7 +65,7 @@ function runtime(configured = true, expiresAt: number | null = Date.now() + 1800
   })
   const send = (data: object, sender: unknown = parent, from = origin) => listeners.message?.({ source: sender, origin: from, data: { source: 'jetnity-trip-map-parent', ...data } })
   const ready = () => { (window.__jetnityTripMapsReady as () => void)(); tiles?.() }
-  return { nodes, messages, head, send, ready, maps, markers, timers, window }
+  return { nodes, messages, head, send, ready, maps, markers, lines, timers, window }
 }
 const stops = [
   { index: 0, label: 'Bangkok', lat: 13.75, lng: 100.5 },
@@ -121,4 +129,20 @@ test('a production map starts after consent and has no pilot expiry timer', () =
   assert.ok(!r.timers.some(timer => timer.delay > 25000))
   r.send({ type: 'init', stops }); r.ready()
   assert.equal(r.maps.length, 1)
+})
+
+test('the inline itinerary updates and selects its real edges on the same map', () => {
+  const r = runtime(true, null)
+  r.send({ type: 'init', stops }); r.ready()
+  const abschnitte = [{ von: 0, nach: 1, aktiv: false }, { von: 1, nach: 2, aktiv: true }]
+  r.send({ type: 'reiseplan', abschnitte, fokus: [1, 2] })
+  assert.equal(r.lines.filter(l => l.map).length, 2)
+  r.lines[1].listeners.click()
+  assert.equal(r.messages.at(-1)?.type, 'abschnitt')
+  assert.equal(r.messages.at(-1)?.von, 1)
+  assert.equal(r.messages.at(-1)?.nach, 2)
+  r.send({ type: 'reiseplan', abschnitte: [], fokus: [] })
+  assert.equal(r.lines.filter(l => l.map).length, 0)
+  assert.equal(r.maps.length, 1)
+  assert.equal(r.head.children.length, 1)
 })

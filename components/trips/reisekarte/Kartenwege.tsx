@@ -4,16 +4,17 @@ import { useEffect, useRef, useState } from 'react'
 import { wegauswahl, type Reiseort } from '@/lib/maps/reisekarte'
 
 type Weg = { path: string; meters: number; seconds: number; warnings: string[]; agencies: { name: string; url: string }[] }
-export default function Kartenwege({ orte, fokus, aktiv, post }: {
+export default function Kartenwege({ orte, fokus, aktiv, vorgabe, post }: {
+  vorgabe?: { von: string; nach: string }
   orte: Reiseort[]; fokus?: string; aktiv: boolean; post: (type: string, fields?: Record<string, unknown>) => void
 }) {
   const { pins, start, ziel } = wegauswahl(orte, fokus)
-  const [vonId, setVon] = useState('')
-  const [nachId, setNach] = useState('')
+  const [vonId, setVon] = useState(vorgabe?.von ?? '')
+  const [nachId, setNach] = useState(vorgabe?.nach ?? '')
   const von = pins.find(o => o.id === vonId) ?? start
   const nach = pins.find(o => o.id === nachId) ?? ziel
   const [modus, setModus] = useState('')
-  const mode = modus || (von?.art === 'Flughafen' || nach?.art === 'Flughafen' ? 'TRANSIT' : 'WALK')
+  const mode = modus || (vorgabe || von?.art === 'Flughafen' || nach?.art === 'Flughafen' ? 'TRANSIT' : 'WALK')
   const [ergebnis, setErgebnis] = useState<Weg | null>(null)
   const [info, setInfo] = useState('')
   const lauf = useRef<AbortController | null>(null)
@@ -39,7 +40,7 @@ export default function Kartenwege({ orte, fokus, aktiv, post }: {
       if (!ctrl.signal.aborted) { setErgebnis(weg); setInfo(''); post('path', { path: weg.path }) }
     } catch { if (!ctrl.signal.aborted) setInfo('Für diesen Abschnitt ist gerade kein Weg verfügbar.') }
   }
-  return <section className="rk-wege"><h3>Weg planen</h3>
+  return <section className="rk-wege"><h3>{vorgabe ? 'Weg für diesen Abschnitt' : 'Weg planen'}</h3>
     <div className="rk-fields"><label>Von<select value={von.id} onChange={e => setVon(e.target.value)}>{pins.map(o => <option value={o.id} key={o.id}>{o.name}</option>)}</select></label>
     <label>Nach<select value={nach?.id ?? ''} onChange={e => setNach(e.target.value)}>{!nach && <option value="">Ziel wählen</option>}{pins.map(o => <option value={o.id} key={o.id}>{o.name}</option>)}</select></label>
     <label>Unterwegs<select value={mode} onChange={e => setModus(e.target.value)}><option value="WALK">Zu Fuss</option><option value="TRANSIT">ÖV · Abfahrt jetzt</option></select></label></div>
