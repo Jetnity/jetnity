@@ -5,7 +5,7 @@ export type Position = { lat: number; lng: number }
 export type Reiseort = {
   id: string
   name: string
-  art: 'Etappe' | 'Hotel' | 'Besuch' | 'Flughafen'
+  art: 'Abreise' | 'Etappe' | 'Hotel' | 'Besuch' | 'Flughafen'
   etappeId?: string
   detail?: string
   position: Position | null

@@ -26,6 +26,7 @@ import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import Etappenkarte from './Etappenkarte'
+import PlanKartenplatz from '@/components/trips/reisekarte/PlanKartenplatz'
 import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import EtappenTage from './EtappenTage'
 import Tageswetter from '@/components/trips/wetter/Tageswetter'
@@ -124,6 +125,11 @@ export default function Etappenplan({
       setOhneTage(null)
       onDay(first)
     } else setOhneTage(id)
+  }
+  function positionWaehlen(p: { lat: number; lng: number }) {
+    setPunkt(p)
+    setPlatzieren(false)
+    setAnsicht('plan')
   }
   function openStop() {
     setPunkt(null)
@@ -467,18 +473,18 @@ export default function Etappenplan({
               Ortswahl abbrechen
             </button>
           )}
+          <PlanKartenplatz reise={reise} route={route} etappe={activeStage?.id} tag={activeDay?.id}
+            verbindung={verbindung} setzen={platzieren} hinreise={!!outbound} rueckreise={!!inbound}
+            onAuswahl={choose} onEdge={onEdge} onPosition={positionWaehlen}>
           <Etappenkarte
             reise={reise}
             auswahl={activeStage?.id || null}
             verbindung={verbindung}
             onAuswahl={(id) => choose(id)}
             setzen={platzieren}
-            onPosition={(p) => {
-              setPunkt(p)
-              setPlatzieren(false)
-              setAnsicht('plan')
-            }}
+            onPosition={positionWaehlen}
           />
+          </PlanKartenplatz>
         </div>
       </div>
       <div className="grid gap-1 px-4 py-3">{Array.from(new Map(stages.map(s => [s.placeId ?? s.name, s])).values()).map(s => <StadtbildNachweis key={s.id} ziel={s} />)}</div>
