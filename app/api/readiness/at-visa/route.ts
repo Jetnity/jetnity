@@ -12,14 +12,16 @@ import { readinessBegrenztLesen,readinessContentLengthUeberschritten,
  readinessHttpHeader,readinessInhaltstypOk,readinessKoerperLesen } from '@/lib/readiness/anfrage'
 import { readinessAnfrageErlaubt,readinessRateKennungAus } from '@/lib/readiness/rate-limit'
 import { selectedAustriaDev } from '@/lib/readiness/official-truth-at-method-v1/at-dev-selection'
+import { selectedAustriaProduction } from '@/lib/readiness/official-truth-at-method-v1/at-production-selection'
 import { readAtVisaInput,readAtVisaView } from '@/lib/readiness/official-truth-at-method-v1/at-visa-http'
 export const runtime='nodejs'
 export const dynamic='force-dynamic'
 export const maxDuration=10
 const reply=(status:number,data:unknown,headers:Record<string,string>={})=>
  Response.json(data,{status,headers:{...readinessHttpHeader(),...headers}})
-/** Never accepts a supplied legal fact. Only a real Dev MA1/BG1/Source-checked
- * private SQL reply with unexpired absolute timestamps can show visa freedom. */
+/** Never accepts a supplied legal fact. Even when the independent Owner-held
+ * Production visitor flag is enabled, only a current protected PG17
+ * MA1/BG1/official-source read can produce an accepted visa result. */
 export async function POST(request:Request):Promise<Response>{
  try{
   if(request.signal.aborted)return reply(503,{message:'Abgebrochen'})
@@ -33,11 +35,10 @@ export async function POST(request:Request):Promise<Response>{
   const parsed=readinessKoerperLesen(bounded.text)
   const input=parsed.ok?readAtVisaInput(parsed.wert):null
   if(!input)return reply(400,{message:'Ungültige Passauswahl'})
-  // Query only the selected exact passport codes. The guarded Dev SQL
-  // independently allows positives only where MA1/BG1/source and the
-  // *specific* nationality rule have been approved.
+  // Query only the selected exact passport codes. The guarded SQL must
+  // independently reprove MA1/BG1/source and passport-specific authorization.
   const empty=presentAtVisaReadbacks(input,[],new Date())
-  if(!selectedAustriaDev()||request.signal.aborted)return reply(200,empty)
+  if(!(selectedAustriaDev()||selectedAustriaProduction())||request.signal.aborted)return reply(200,empty)
   const client=await createRouteHandlerClient<AtVisitorDatabase>()
   const attempts=await Promise.allSettled(input.citizenshipCountryCodes.map(async country=>{
     const response=await client.rpc('jetnity_source_bound_at_visa_v1',{p_citizenship_country_code:country})

@@ -2,6 +2,48 @@
 
 **Status: STOP / not eligible for release.** This is a Technical-Lead safety handoff, NOT an Owner approval and NOT a production installer. Production was read-only verified on the current main: BG1 `current`, AT HRS2 source custody **absent**, AT accepted store **absent**, AT method head **0**; Jetnity Production is unaffected. PR #1227 is a Draft on its own branch.
 
+## Verified 17.11.2026 update — Dev passed; Production is still STOP
+
+The actual Dev source-watch-bound renewal has now completed a natural **75-minute**
+cycle: the original CH→AT fact expired, the next genuine three-authority HTTPS
+batch was independently checked, and the scheduler appended a third immutable
+fact without a manual writer. BG1 and the 49-passport negative isolation were
+rechecked; the latest exact-head CI and Vercel Preview were green. The earlier
+Work browser audit already passed and is not repeated.
+
+Read-only Production PG17 on 17.11 verified: BG1 current and the named 5-minute
+Production guard job active; **no** AT source custody, method head, source watch,
+source-renewal store or new visitor RPC installed. No Dev approval can be copied.
+
+**Prepared, NOT activated:** `selectedAustriaProduction()` permits an attempt
+at the existing source-bound read-only visitor RPC only when the exact Vercel
+production project, official `main`, Production Supabase URL and separate
+server-only `JETNITY_OFFICIAL_AT_PRODUCTION_VISITOR_V1=enabled` all match.
+The flag is not created or enabled by this PR, and the code by itself does
+not grant any database method, source, legal or customer publication permission.
+Without a fully reviewed, installed PG17 Production source/method/BG1/visitor
+package the flag **MUST remain unset**. Missing/stale/revoked/out-of-scope
+DB replies stay "derzeit nicht verfügbar".
+
+The standalone read-only SQL preflight provides a compact missing-component
+inventory, always reports `STOP_BEFORE_PRODUCTION_OWNER_RELEASE`, and
+requires the calling tool to independently verify the production project ID.
+A SQL database name cannot prove the Supabase project ID.
+
+**Five-stage release gate, none executed:** (1) freeze exact source originals
+and an independent Production-approved method/MA1-Owner packet; (2) independently
+native-PG17/rollback-proof the additive Production HRS/source-watch/source-renewal
+and BG1 successor against the *actual* protected Production predecessor;
+(3) obtain explicit Owner merge and Production-install approval and perform
+the approved guarded installation; (4) Owner signs into the real Production
+owner/AAL2 interface and approves the **Production method separately**, followed
+by a fresh natural BG1 audit and actual unchanged-source cycle; (5) only
+after real Production visitor CH accepted/IN unavailable and fail-closed checks,
+activate the server-only Vercel Production visitor flag, verify public desktop/mobile
+on jetnity.com, and preserve a controlled rollback (flag off and halt issuer).
+The flag itself never authorizes installing or merging. No new cost, role, secret,
+provider or Login action is implied.
+
 ## 1. Legal validity vs technical TTL
 
 - **An official visa fact has the validity stated by the competent authority, not automatically one hour.** The source can change. It must be checked for source revision and effective legal dates; on a material change or contradiction the affected rule is immediately unavailable until requalified.
