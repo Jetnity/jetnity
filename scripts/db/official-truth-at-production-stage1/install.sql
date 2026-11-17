@@ -628,7 +628,7 @@ WITH namespaces AS (
     FROM pg_seclabel s WHERE (s.classoid,s.objoid) IN (SELECT classid,objid FROM objects)
 )
 SELECT jsonb_object_agg(key,value ORDER BY key COLLATE "C") FROM entries
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION official_v3_guard_private.assert_catalog_v1()
@@ -676,7 +676,7 @@ BEGIN
     OR at_prod.predecessor_weather_digest IS DISTINCT FROM encode(sha256(convert_to((to_jsonb(weather)||jsonb_build_object('proof_not_before',extract(epoch FROM weather.proof_not_before)))::text,'UTF8')),'hex')
     OR at_prod.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
     RAISE EXCEPTION 'production rolling protected catalog changed' USING ERRCODE='P7905'; END IF;
-END $function$
+END $function$;
 
 
 CREATE OR REPLACE FUNCTION official_v3_guard_private.require_open_v1()
@@ -702,7 +702,7 @@ BEGIN
       AND run.due_at=s.last_due AND run.started_at=s.last_started AND run.proof_started_at=s.last_proof_started AND run.finished_at=s.last_finished) THEN
     RAISE EXCEPTION 'bg1 recovery fresh full proof required' USING ERRCODE='P7902'; END IF;
   RETURN s.incident_generation;
-END $function$
+END $function$;
 
 
 CREATE OR REPLACE FUNCTION public.official_v3_guard_alarm_status_v1()
@@ -730,7 +730,7 @@ BEGIN
     OR clock_timestamp()>=current_state.valid_until THEN RETURN unavailable_value; END IF;
   RETURN jsonb_build_object('schema',1,'status','current');
 EXCEPTION WHEN query_canceled OR OTHERS THEN RETURN unavailable_value;
-END $function$
+END $function$;
 
 
 INSERT INTO official_v3_guard_private.at_source_monitor_baseline_v1(

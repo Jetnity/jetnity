@@ -109,3 +109,12 @@ test('BMEIA canonical whole-original is the exact live-proven 64-char Dev pin, n
  assert.doesNotMatch(sql,/b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3b67a7a3367052a55/)
  assert.doesNotMatch(sql,/b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3cb67a7a3367052a55/)
 })
+
+test('all four real Production BG1 replacements form complete, executable PostgreSQL statements',()=>{
+ // The exact native PG17 rollback must parse *every* protected function body,
+ // not merely match substrings. A missing semicolon prevents installation.
+ assert.equal((sql.match(/CREATE OR REPLACE FUNCTION /g)||[]).length,4)
+ assert.equal((sql.match(/\$function\$;/g)||[]).length,4)
+ assert.doesNotMatch(sql,/\$function\$\s+CREATE OR REPLACE FUNCTION/)
+ assert.match(sql,/END \$function\$;\s+INSERT INTO official_v3_guard_private\.at_source_monitor_baseline_v1/)
+})
