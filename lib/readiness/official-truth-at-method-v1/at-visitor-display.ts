@@ -46,7 +46,13 @@ function perPassport(country: string, raw: unknown, now: number): V3VisitorViewR
   const fact = parsed.data
   const source = Date.parse(fact.sourceCheckedAt), verified = Date.parse(fact.verifiedAt)
   const expiry = Date.parse(fact.expiresAt)
-  if (source > verified || verified > now || expiry <= now
+  // Browser-visible freshness must not outlive EITHER the approved one-hour
+  // projection OR the 24-hour maximum age of its last official source fetch.
+  // The SQL server already refuses stale reads; this closes the client cache
+  // gap when the source-age deadline arrives while the page stays open.
+  const sourceDeadline = source + 86_400_000
+  const safeExpiry = Math.min(expiry, sourceDeadline)
+  if (source > verified || verified > now || safeExpiry <= now
     || source > now || now - source >= 86_400_000
     || expiry <= verified || expiry - verified > 3_600_000) return unavailable
   // CH uses the exact three-source Austrian receipt. Future passports must
@@ -72,7 +78,7 @@ function perPassport(country: string, raw: unknown, now: number): V3VisitorViewR
     source: { label: isSwiss ? 'Österreichische Botschaft Bern' : 'Österreichisches Bundesministerium für Inneres', href },
     checkedAtText: `Stand vom ${formattedUtc(fact.sourceCheckedAt)}`,
     validityText: `Bestätigte Regel, zuletzt geprüft ${formattedUtc(fact.verifiedAt)}; keine allgemeine Einreisegarantie`,
-    ruleVersion: fact.ruleVersion, expiresAt: fact.expiresAt,
+    ruleVersion: fact.ruleVersion, expiresAt: new Date(safeExpiry).toISOString(),
   }
 }
 

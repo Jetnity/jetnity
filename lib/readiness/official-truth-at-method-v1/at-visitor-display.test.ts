@@ -154,3 +154,17 @@ test('future passport evidence cannot inherit the Swiss-only Bern source or omit
   item.status==='accepted'?{...item,visaAssessment:undefined}:item)}))}
  assert.equal(readAtVisaView(without),null)
 })
+
+test('AT visitor never caches a positive fact beyond the last official source 24-hour deadline',()=>{
+ const officialDeadline='2026-11-17T19:45:39.000Z'
+ const nearExpiry={...sample('CH'),verifiedAt:'2026-11-17T19:35:39.000Z',
+  expiresAt:'2026-11-17T20:35:39.000Z'}
+ const before=result(['CH'],[{country:'CH',data:nearExpiry}],new Date('2026-11-17T19:40:00.000Z'))
+ assert.equal(before.shown.anzeige.paare[0]?.ampel,'gruen')
+ const cell=before.view.cells[0]?.results[0]
+ assert.equal(cell?.status,'accepted')
+ if(cell?.status==='accepted')assert.equal(cell.expiresAt,officialDeadline)
+ const after=result(['CH'],[{country:'CH',data:nearExpiry}],new Date(officialDeadline))
+ assert.equal(after.view.cells[0]?.results[0]?.status,'unavailable')
+ assert.equal(after.shown.anzeige.paare[0]?.ampel,'neutral')
+})
