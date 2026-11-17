@@ -43,3 +43,21 @@ export function selectedAustriaProduction(): boolean {
     supabaseUrl: getServerSupabaseUrl(),
   })
 }
+
+/** A SEPARATE Owner-held Production gate for stage/approve/revoke.
+ * The visitor flag remains disabled until official-source / BG1 / MA1 readback.
+ * This merely enables the pre-existing Owner+AAL2 UI transport, never a
+ * database method, legal fact, schema migration, public read or new role. */
+export function selectedAustriaProductionMethod(): boolean {
+  const flag = process.env.JETNITY_OFFICIAL_AT_PRODUCTION_METHOD_OWNER_V1
+  if (flag !== 'enabled' || process.env.VERCEL_ENV !== 'production') return false
+  return eligibleAustriaProductionVisitor({
+    ownerRelease: flag,
+    deploymentEnv: process.env.VERCEL_ENV,
+    projectId: process.env.VERCEL_PROJECT_ID,
+    repoOwner: process.env.VERCEL_GIT_REPO_OWNER,
+    repoSlug: process.env.VERCEL_GIT_REPO_SLUG,
+    branch: process.env.VERCEL_GIT_COMMIT_REF,
+    supabaseUrl: getServerSupabaseUrl(),
+  })
+}
