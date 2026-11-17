@@ -30,10 +30,14 @@ const VIEW=z.object({input:INPUT,generatedAt:ISO,synthetic:z.literal(false),
  cell.country===v.input.citizenshipCountryCodes[i]&&cell.results.every(x=>
  x.status!=='accepted'||(cell.country==='CH'&&Date.parse(x.expiresAt)>Date.parse(v.generatedAt)))))
 export function readAtVisaInput(raw:unknown):V3VisitorInput|null{
- const a=INPUT.safeParse(raw);return a.success&&readV3VisitorInput(a.data).ok?a.data:null
+ const a=INPUT.safeParse(raw);if(!a.success)return null
+ const parsed=readV3VisitorInput(a.data)
+ return parsed.ok?parsed.value:null
 }
 export function readAtVisaView(raw:unknown):V3VisitorView|null{
- const v=VIEW.safeParse(raw);return v.success&&readAtVisaInput(v.data.input)?v.data:null
+ const v=VIEW.safeParse(raw);if(!v.success)return null
+ const input=readAtVisaInput(v.data.input)
+ return input?{...v.data,input}:null
 }
 export const loadAtVisa:V3VisitorLoad=async(input,signal)=>{
  const failed={daten:null,fehler:{meldung:'Die Visumauskunft ist vorübergehend nicht verfügbar.',wiederholbar:true}}
