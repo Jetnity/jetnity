@@ -52,7 +52,8 @@ test('any destination and passport in the exact 50-priority list may be checked,
   receipt.id === 'bmi-matrix' ? {...receipt,officialUrl:'https://italy.example/government-source'} : receipt)}
  assert.equal(run(dest,check).status,'eligible_for_protected_issuer_only')
  unavailable(dest,{...check,subject:{...dest.subject,citizenshipCountryCode:'CH'}})
- unavailable(dest,{...check,passportPriority:priority.slice(1)})\n unavailable(dest,{...check,passportPriority:[priority[1]!,priority[0]!,...priority.slice(2)]})
+ unavailable(dest,{...check,passportPriority:priority.slice(1)})
+ unavailable(dest,{...check,passportPriority:[priority[1]!,priority[0]!,...priority.slice(2)]})
  unavailable(dest,{...check,passportPriority:[...priority.slice(0,49),'IN']})
  unavailable(dest,{...check,subject:{...dest.subject,citizenshipCountryCode:'ZZ'}})
 })
@@ -83,7 +84,9 @@ test('changed, missing, pending or wrongly normalized originals fail closed',()=
  }
  unavailable(previous,{...input,observations:[{...input.observations[0]!,rawDigest:'0'.repeat(64)},input.observations[1]!]})
  unavailable(previous,{...input,observations:[input.observations[0]!,{...input.observations[1]!,canonicalDigest:'0'.repeat(64)}]})
- unavailable(previous,{...input,observations:[input.observations[0]!,{...input.observations[1]!,normalizationContract:'none'}]})\n unavailable({...previous,sourceBindings:previous.sourceBindings.map(p=>p.id==='bmeia-bern'?\n  {...p,officialUrl:'https://www.bmeia.gv.at/other-page'}:p)},input)
+ unavailable(previous,{...input,observations:[input.observations[0]!,{...input.observations[1]!,normalizationContract:'none'}]})
+ unavailable({...previous,sourceBindings:previous.sourceBindings.map(p=>p.id==='bmeia-bern'?
+  {...p,officialUrl:'https://www.bmeia.gv.at/other-page'}:p)},input)
  unavailable({...previous,sourceBindings:previous.sourceBindings.map(p=>({...p,role:'independent_official'}))},input)
 })
 test('one hour never silently becomes a legal-validity extension or an unbounded cache',()=>{

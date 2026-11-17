@@ -66,7 +66,10 @@ export type SourceRenewalDecision = Readonly<{
   reason: string
 }>
 
-// Exact, versioned user passport-priority.csv ranking (50); no reordering or\n// substituting a convenient nationality to mint a rule. A new ranking is a new review.\nconst PASSPORT_PRIORITY_20261113 = 'IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'\nconst digest = (s: string): boolean => /^[a-f0-9]{64}$/.test(s)
+// Exact, versioned user passport-priority.csv ranking (50); no reordering or
+// substituting a convenient nationality to mint a rule. A new ranking is a new review.
+const PASSPORT_PRIORITY_20261113 = 'IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'
+const digest = (s: string): boolean => /^[a-f0-9]{64}$/.test(s)
 const code = (s: string): boolean => /^[A-Z]{2}$/.test(s)
 const iso = (s: string): number | null => {
   if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/.test(s)) return null
@@ -99,13 +102,15 @@ export function checkSourceBoundRenewal(
     return fail('unqualified_subject')
   if (input.passportPriority.length !== 50 ||
       new Set(input.passportPriority).size !== 50 ||
-      input.passportPriority.some(p => !code(p)) ||\n      input.passportPriority.join(' ') !== PASSPORT_PRIORITY_20261113 ||
+      input.passportPriority.some(p => !code(p)) ||
+      input.passportPriority.join(' ') !== PASSPORT_PRIORITY_20261113 ||
       !input.passportPriority.includes(input.subject.citizenshipCountryCode))
     return fail('unqualified_passport')
   if (previous.release !== 'accepted' || previous.unresolvedConflict ||
       previous.ownerApproval !== 'approved' || input.methodStatus !== 'current' ||
       !previous.methodId || !digest(previous.methodDigest) || !digest(previous.packageDigest) ||
-      !Number.isSafeInteger(previous.methodRevision) || previous.methodRevision < 1 ||\n      !Number.isSafeInteger(previous.methodEpoch) || previous.methodEpoch < 1 ||
+      !Number.isSafeInteger(previous.methodRevision) || previous.methodRevision < 1 ||
+      !Number.isSafeInteger(previous.methodEpoch) || previous.methodEpoch < 1 ||
       previous.methodId !== input.approvedMethodId ||
       previous.methodRevision !== input.approvedMethodRevision ||
       previous.methodEpoch !== input.approvedMethodEpoch ||
@@ -143,7 +148,8 @@ export function checkSourceBoundRenewal(
       if (receipt.rawDigest !== pin.rawDigest ||
           receipt.normalizationContract !== 'none') return fail('original_changed')
     } else if (receipt.state === 'unchanged_asset_version_only') {
-      if (pin.officialUrl !== 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/' ||\n          pin.normalizationContract !== 'bmeia-theme-assets-v1' ||
+      if (pin.officialUrl !== 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/' ||
+          pin.normalizationContract !== 'bmeia-theme-assets-v1' ||
           receipt.normalizationContract !== pin.normalizationContract ||
           !digest(pin.canonicalDigest ?? '') ||
           receipt.canonicalDigest !== pin.canonicalDigest)
