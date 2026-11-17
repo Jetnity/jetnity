@@ -87,7 +87,7 @@ INSERT INTO official_v3_at_production_private.source_pins_v1
  ('bmeia-bern-how-to-apply',
   'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/',
   '7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18',172460,
-  'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3b67a7a3367052a55',
+  'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55',
   'bmeia-theme-assets-v1',NULL);
 
 CREATE TABLE official_v3_at_production_private.watch_batches_v1(
@@ -390,7 +390,7 @@ BEGIN
      AND (r.source_id<>'bmeia-bern-how-to-apply'
        OR p.normalization<>'bmeia-theme-assets-v1'
        OR p.canonical_sha IS DISTINCT FROM
-       'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3cb67a7a3367052a55'
+       'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
        OR r.bytes<>p.original_bytes))))
  THEN RETURN 0; END IF;
  SELECT * INTO h FROM official_v3_method_private.heads_v1

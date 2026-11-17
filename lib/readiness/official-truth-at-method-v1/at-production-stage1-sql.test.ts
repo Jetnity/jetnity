@@ -101,3 +101,11 @@ test('all new grant paths are narrow, no owner role or secrets introduced',()=>{
  assert.doesNotMatch(sql,/INSERT INTO official_v3_method_private\.heads_v1/)
  assert.equal((sql.match(/CREATE OR REPLACE FUNCTION /g)||[]).length,4)
 })
+
+test('BMEIA canonical whole-original is the exact live-proven 64-char Dev pin, never a prefix',()=>{
+ const canonical='b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
+ assert.equal(canonical.length,64)
+ assert.equal(sql.split(canonical).length-1,2)
+ assert.doesNotMatch(sql,/b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3b67a7a3367052a55/)
+ assert.doesNotMatch(sql,/b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3cb67a7a3367052a55/)
+})
