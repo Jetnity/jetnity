@@ -277,14 +277,248 @@ END $status$;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA official_v3_at_production_private
  FROM PUBLIC,anon,authenticated,service_role;
 
--- No accepted rules, public RPC, method approvals, Owner roles or secrets.
--- Future release must use a *separate* additive guarded successor and an
--- explicit Owner/AAL2 method approval. Stage 1 never supplies one.
+-- This installation schedules source collection and the future approved
+-- CH-only issuer. It writes ZERO facts until exact Owner+AAL2 MA1 and
+-- three unchanged current official source receipts.
 SELECT cron.schedule('jetnity-at-production-source-enqueue-v1','9 * * * *',
  'SELECT official_v3_at_production_private.enqueue_v1()');
 SELECT cron.schedule('jetnity-at-production-source-collect-v1','*/5 * * * *',
  'SELECT official_v3_at_production_private.collect_v1()');
 
+
+-- CH->AT only Production Official-Truth V3 issuer and guarded visitor.
+-- Installed empty: no method head, no legal fact, no public positive. A real
+-- Owner+AAL2 approval of the exact existing method and an unmodified complete
+-- government source batch are REQUIRED before the sole CH rule can rotate.
+-- All other 49 passports are permanently unavailable in this revision.
+CREATE TABLE official_v3_at_production_private.ch_visa_facts_v1(
+  version_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  citizenship_code text NOT NULL DEFAULT 'CH' CHECK(citizenship_code='CH'),
+  destination_code text NOT NULL DEFAULT 'AT' CHECK(destination_code='AT'),
+  requirement_type text NOT NULL DEFAULT 'visa' CHECK(requirement_type='visa'),
+  document_type text NOT NULL DEFAULT 'passport' CHECK(document_type='passport'),
+  route_type text NOT NULL DEFAULT 'direct_entry' CHECK(route_type='direct_entry'),
+  visa_effect text NOT NULL DEFAULT 'not_required' CHECK(visa_effect='not_required'),
+  visa_mode text NOT NULL DEFAULT 'visa_exempt' CHECK(visa_mode='visa_exempt'),
+  source_batch_id bigint NOT NULL UNIQUE
+    REFERENCES official_v3_at_production_private.watch_batches_v1(batch_id),
+  predecessor_version_id bigint
+    REFERENCES official_v3_at_production_private.ch_visa_facts_v1(version_id),
+  method_epoch integer NOT NULL CHECK(method_epoch>0),
+  method_id text NOT NULL CHECK(method_id='jetnity-destination-primary-at-visa'),
+  method_revision integer NOT NULL DEFAULT 1 CHECK(method_revision=1),
+  method_digest text NOT NULL CHECK(method_digest=
+    'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9'),
+  package_digest text NOT NULL CHECK(package_digest=
+    '55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe'),
+  source_digest text NOT NULL CHECK(source_digest~'^[0-9a-f]{64}$'),
+  verified_at timestamptz NOT NULL,
+  source_checked_at timestamptz NOT NULL,
+  expires_at timestamptz NOT NULL,
+  legal_valid_until timestamptz CHECK(legal_valid_until IS NULL),
+  approved_origin text NOT NULL DEFAULT 'OWNER_METHOD_AND_EXACT_BMI_CH'
+   CHECK(approved_origin='OWNER_METHOD_AND_EXACT_BMI_CH'),
+  CHECK(verified_at>=source_checked_at AND expires_at>verified_at
+    AND expires_at<=verified_at+interval '1 hour'
+    AND expires_at<=source_checked_at+interval '70 minutes'
+    AND expires_at<='2027-11-16T00:00:00Z'::timestamptz)
+);
+ALTER TABLE official_v3_at_production_private.ch_visa_facts_v1 ENABLE ROW LEVEL SECURITY;
+ALTER TABLE official_v3_at_production_private.ch_visa_facts_v1 FORCE ROW LEVEL SECURITY;
+CREATE POLICY postgres_only ON official_v3_at_production_private.ch_visa_facts_v1
+ TO postgres USING(true) WITH CHECK(true);
+CREATE TRIGGER immutable_rows BEFORE UPDATE OR DELETE
+ ON official_v3_at_production_private.ch_visa_facts_v1 FOR EACH ROW
+ EXECUTE FUNCTION official_v3_at_production_private.deny_mutation_v1();
+CREATE TRIGGER immutable_truncate BEFORE TRUNCATE
+ ON official_v3_at_production_private.ch_visa_facts_v1 FOR EACH STATEMENT
+ EXECUTE FUNCTION official_v3_at_production_private.deny_mutation_v1();
+REVOKE ALL ON TABLE official_v3_at_production_private.ch_visa_facts_v1
+ FROM PUBLIC,anon,authenticated,service_role;
+REVOKE ALL ON SEQUENCE official_v3_at_production_private.ch_visa_facts_v1_version_id_seq
+ FROM PUBLIC,anon,authenticated,service_role;
+
+-- Called by the private hourly source batch reconciler (not the visitor).
+-- The function intentionally has no automatic "approve source" operation.
+-- It may insert CH only after the existing human Owner MA1 is current and
+-- only for the exact reviewed original BMI edition + supporting official pages.
+CREATE FUNCTION official_v3_at_production_private.renew_ch_v1()
+ RETURNS integer LANGUAGE plpgsql VOLATILE SECURITY INVOKER
+ SET search_path=pg_catalog AS $renew$
+DECLARE latest record; h official_v3_method_private.heads_v1%ROWTYPE;
+ previous record; as_of timestamptz; seen timestamptz; digest text; official_count integer;
+ expires timestamptz;
+BEGIN
+ IF session_user<>'postgres' OR current_user<>session_user
+   OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+   OR NOT pg_try_advisory_xact_lock(771112,2)
+ THEN RETURN 0; END IF;
+ SELECT * INTO latest FROM official_v3_at_production_private.watch_batches_v1
+ ORDER BY batch_id DESC LIMIT 1 FOR SHARE;
+ as_of:=clock_timestamp();
+ IF NOT FOUND OR latest.started_at>as_of
+   OR latest.started_at<=as_of-interval '70 minutes' THEN RETURN 0; END IF;
+ SELECT count(*),min(observed_at) INTO official_count,seen
+ FROM official_v3_at_production_private.watch_observations_v1
+ WHERE batch_id=latest.batch_id
+   AND source_status IN('unchanged_exact','unchanged_asset_version_only');
+ IF official_count<>3 OR seen IS NULL OR seen<=as_of-interval '70 minutes' THEN RETURN 0; END IF;
+ IF (SELECT count(*) FROM official_v3_at_production_private.first_originals_v1)<>3
+ OR (SELECT count(*) FROM official_v3_at_production_private.source_pins_v1)<>3
+ OR (SELECT count(*) FROM cron.job WHERE username='postgres' AND active
+    AND jobname IN ('jetnity-at-production-source-enqueue-v1',
+                    'jetnity-at-production-source-collect-v1',
+                    'jetnity-at-production-source-renew-v1'))<>3
+ THEN RETURN 0; END IF;
+ IF NOT EXISTS(
+   SELECT 1 FROM official_v3_at_production_private.first_originals_v1 o
+   JOIN official_v3_at_production_private.source_pins_v1 p USING(source_id)
+   WHERE o.source_id='bmi-visa-nationality-matrix'
+     AND p.original_sha='fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778'
+     AND o.raw_sha=p.original_sha AND o.raw_bytes=498415
+     AND position('(Stand: 6.11.2026)' IN convert_from(o.raw_body,'UTF8'))>0
+     AND position('EU-Freiz&uuml;gigkeit' IN convert_from(o.raw_body,'UTF8'))>0
+     AND position('Schweiz' IN convert_from(o.raw_body,'UTF8'))>0)
+ THEN RETURN 0; END IF;
+ IF EXISTS(
+  SELECT 1 FROM official_v3_at_production_private.watch_observations_v1 r
+  JOIN official_v3_at_production_private.source_pins_v1 p USING(source_id)
+  WHERE r.batch_id=latest.batch_id
+   AND ((r.source_status='unchanged_exact'
+     AND (r.body_sha IS DISTINCT FROM p.original_sha OR r.bytes<>p.original_bytes))
+   OR (r.source_status='unchanged_asset_version_only'
+     AND (r.source_id<>'bmeia-bern-how-to-apply'
+       OR p.normalization<>'bmeia-theme-assets-v1'
+       OR p.canonical_sha IS DISTINCT FROM
+       'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3cb67a7a3367052a55'
+       OR r.bytes<>p.original_bytes))))
+ THEN RETURN 0; END IF;
+ SELECT * INTO h FROM official_v3_method_private.heads_v1
+ WHERE method_id='jetnity-destination-primary-at-visa' FOR SHARE;
+ IF NOT FOUND OR h.revision<>1 OR h.method_digest<>
+ 'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9'
+ OR h.package_digest<>
+ '55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe'
+ OR h.epoch<1
+ THEN RETURN 0; END IF;
+ PERFORM official_v3_method_private.require_current_locked_v1(
+  'jetnity-destination-primary-at-visa',1,
+  'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9',
+  '55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe',h.epoch);
+ SELECT * INTO previous FROM official_v3_at_production_private.ch_visa_facts_v1
+ ORDER BY version_id DESC LIMIT 1 FOR SHARE;
+ IF FOUND AND (previous.source_batch_id=latest.batch_id
+   OR previous.source_checked_at>=seen) THEN RETURN 0; END IF;
+ SELECT encode(sha256(convert_to(string_agg(
+   source_id||':'||body_sha,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
+ INTO digest FROM official_v3_at_production_private.watch_observations_v1
+ WHERE batch_id=latest.batch_id;
+ IF digest IS NULL THEN RETURN 0; END IF;
+ as_of:=clock_timestamp();
+ expires:=least(as_of+interval '1 hour',seen+interval '70 minutes',
+   '2027-11-16T00:00:00Z'::timestamptz);
+ IF expires<=as_of OR as_of>=seen+interval '70 minutes'
+ OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+ THEN RETURN 0; END IF;
+ INSERT INTO official_v3_at_production_private.ch_visa_facts_v1(
+  source_batch_id,predecessor_version_id,method_epoch,method_id,
+  method_revision,method_digest,package_digest,source_digest,
+  verified_at,source_checked_at,expires_at)
+ VALUES(latest.batch_id,previous.version_id,h.epoch,
+ 'jetnity-destination-primary-at-visa',1,
+ 'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9',
+ '55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe',
+ digest,as_of,seen,expires)
+ ON CONFLICT DO NOTHING;
+ IF FOUND THEN
+   PERFORM official_v3_guard_private.assert_catalog_v1();
+   RETURN 1;
+ END IF;
+ RETURN 0;
+EXCEPTION WHEN OTHERS THEN RETURN 0;
+END $renew$;
+REVOKE ALL ON FUNCTION official_v3_at_production_private.renew_ch_v1()
+ FROM PUBLIC,anon,authenticated,service_role;
+
+CREATE FUNCTION public.jetnity_source_bound_at_visa_v1(p_citizenship_country_code text)
+RETURNS jsonb LANGUAGE plpgsql VOLATILE SECURITY DEFINER
+SET search_path=pg_catalog AS $visitor$
+DECLARE f record; b record; method official_v3_method_private.heads_v1%ROWTYPE;
+ instant timestamptz; check_count integer; source_count integer;
+ source_links jsonb; signed_sources text;
+ unavailable jsonb:=jsonb_build_object('status','unavailable','destinationCountryCode','AT');
+BEGIN
+ -- Nothing else (including any other passport, destination or document) can
+ -- be promoted by a generic 50-passport method approval.
+ IF p_citizenship_country_code IS DISTINCT FROM 'CH'
+   OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+ THEN RETURN unavailable; END IF;
+ SELECT * INTO b FROM official_v3_at_production_private.watch_batches_v1
+ ORDER BY batch_id DESC LIMIT 1;
+ instant:=clock_timestamp();
+ IF NOT FOUND OR b.started_at>instant OR b.started_at<=instant-interval '70 minutes'
+ THEN RETURN unavailable; END IF;
+ SELECT count(*) INTO check_count
+ FROM official_v3_at_production_private.watch_observations_v1
+ WHERE batch_id=b.batch_id
+   AND source_status IN('unchanged_exact','unchanged_asset_version_only')
+   AND observed_at<=instant AND observed_at>instant-interval '70 minutes';
+ SELECT count(*) INTO source_count
+ FROM official_v3_at_production_private.source_pins_v1;
+ IF check_count<>3 OR source_count<>3
+   OR (SELECT count(*) FROM official_v3_at_production_private.first_originals_v1)<>3
+   OR (SELECT count(*) FROM cron.job WHERE active AND username='postgres'
+     AND jobname IN('jetnity-at-production-source-enqueue-v1',
+        'jetnity-at-production-source-collect-v1',
+        'jetnity-at-production-source-renew-v1'))<>3
+ THEN RETURN unavailable; END IF;
+ SELECT * INTO f FROM official_v3_at_production_private.ch_visa_facts_v1
+ ORDER BY version_id DESC LIMIT 1;
+ IF NOT FOUND OR f.citizenship_code<>'CH' OR f.destination_code<>'AT'
+  OR f.source_batch_id<>b.batch_id OR f.verified_at>instant
+  OR f.source_checked_at>instant OR instant>=f.expires_at
+  OR instant>=f.source_checked_at+interval '70 minutes'
+  OR f.method_revision<>1
+  OR f.method_digest<>'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9'
+  OR f.package_digest<>'55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe'
+ THEN RETURN unavailable; END IF;
+ SELECT * INTO method FROM official_v3_method_private.heads_v1
+ WHERE method_id=f.method_id FOR SHARE;
+ IF NOT FOUND OR method.epoch<>f.method_epoch THEN RETURN unavailable; END IF;
+ PERFORM official_v3_method_private.require_current_locked_v1(
+ f.method_id,f.method_revision,f.method_digest,f.package_digest,f.method_epoch);
+ SELECT encode(sha256(convert_to(
+   string_agg(source_id||':'||body_sha,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
+ INTO signed_sources FROM official_v3_at_production_private.watch_observations_v1
+ WHERE batch_id=b.batch_id;
+ IF signed_sources IS DISTINCT FROM f.source_digest THEN RETURN unavailable; END IF;
+ SELECT jsonb_agg(official_url ORDER BY CASE source_id
+  WHEN 'bmi-general-entry' THEN 1
+  WHEN 'bmi-visa-nationality-matrix' THEN 2
+  WHEN 'bmeia-bern-how-to-apply' THEN 3 ELSE 4 END)
+ INTO source_links FROM official_v3_at_production_private.source_pins_v1;
+ IF jsonb_array_length(source_links)<>3 THEN RETURN unavailable; END IF;
+ RETURN jsonb_build_object(
+ 'status','accepted','citizenshipCountryCode','CH',
+ 'destinationCountryCode','AT','documentType','passport',
+ 'visaEffect','not_required','visaMode','visa_exempt',
+ 'ruleVersion',f.version_id,
+ 'sourceCheckedAt',to_char(f.source_checked_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+ 'verifiedAt',to_char(f.verified_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+ 'expiresAt',to_char(f.expires_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+ 'sourceUrls',source_links);
+EXCEPTION WHEN query_canceled OR OTHERS THEN RETURN unavailable;
+END $visitor$;
+REVOKE ALL ON FUNCTION public.jetnity_source_bound_at_visa_v1(text)
+ FROM PUBLIC,anon,authenticated,service_role;
+GRANT EXECUTE ON FUNCTION public.jetnity_source_bound_at_visa_v1(text)
+ TO anon,authenticated;
+
+-- One atomic source-based revision per complete unchanged government batch;
+-- no manual time extension. No method approval or legal fact is inserted by
+-- the installation itself. Before Owner+AAL2, this job writes ZERO facts.
+SELECT cron.schedule('jetnity-at-production-source-renew-v1','17-59/5 * * * *',
+ 'SELECT official_v3_at_production_private.renew_ch_v1()');
 
 -- Protects the new append-only authority monitor and its code, every RLS
 -- policy, original/receipt ledger, dependency and PostgreSQL privileges.
@@ -330,7 +564,7 @@ WITH namespaces AS (
       'profil_kerndaten_aus_auth','profil_rollenwechsel_pruefen','rollenrang','darf_konten_verwalten',
       'profil_autoritaet_integritaet_pruefen_v1','official_v3_method_stage_draft_v1','official_v3_method_approve_v1',
       'official_v3_method_revoke_v1','official_v3_method_confirm_operation_v1','official_v3_guard_review_v1',
-      'official_v3_guard_retire_v1','official_v3_guard_resume_v1','official_v3_guard_confirm_v1','official_v3_guard_alarm_status_v1','admin_account_counts_v1','admin_cms_inspiration_command_v1','admin_cms_inspiration_read_v1','admin_cms_inspiration_confirm_v1','cms_inspiration_published_v1','admin_marketing_drafts_apply_v1','admin_marketing_drafts_read_v1','darf_inhalte_moderieren','reisewetter_reservieren_v1'))
+      'official_v3_guard_retire_v1','official_v3_guard_resume_v1','official_v3_guard_confirm_v1','official_v3_guard_alarm_status_v1','admin_account_counts_v1','admin_cms_inspiration_command_v1','admin_cms_inspiration_read_v1','admin_cms_inspiration_confirm_v1','cms_inspiration_published_v1','admin_marketing_drafts_apply_v1','admin_marketing_drafts_read_v1','darf_inhalte_moderieren','reisewetter_reservieren_v1','jetnity_source_bound_at_visa_v1'))
 ), tables AS (
   SELECT c.oid,c.reltoastrelid FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
   WHERE c.relkind IN ('r','p') AND (c.relnamespace IN (SELECT oid FROM namespaces)
@@ -521,6 +755,13 @@ BEGIN
  OR (SELECT count(*) FROM official_v3_at_production_private.watch_batches_v1)<>0
  OR (SELECT count(*) FROM official_v3_at_production_private.watch_observations_v1)<>0
  OR (SELECT count(*) FROM official_v3_at_production_private.first_originals_v1)<>0
+ OR (SELECT count(*) FROM official_v3_at_production_private.ch_visa_facts_v1)<>0
+ OR NOT has_function_privilege('anon','public.jetnity_source_bound_at_visa_v1(text)','EXECUTE')
+ OR NOT has_function_privilege('authenticated','public.jetnity_source_bound_at_visa_v1(text)','EXECUTE')
+ OR public.jetnity_source_bound_at_visa_v1('CH')->>'status'<>'unavailable'
+ OR public.jetnity_source_bound_at_visa_v1('IN')->>'status'<>'unavailable'
+ OR (SELECT count(*) FROM cron.job WHERE active AND username='postgres'
+    AND jobname='jetnity-at-production-source-renew-v1')<>1
  OR (SELECT count(*) FROM cron.job WHERE active AND username='postgres'
   AND jobname IN('jetnity-at-production-source-enqueue-v1','jetnity-at-production-source-collect-v1'))<>2
  OR (SELECT count(*) FROM official_v3_guard_private.saved_offers_baseline_v1)<>1
