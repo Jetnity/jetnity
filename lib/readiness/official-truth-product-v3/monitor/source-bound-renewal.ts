@@ -16,6 +16,7 @@ export type RenewalSubject = Readonly<{
 export type PinnedSource = Readonly<{
   id: string
   role: 'destination_primary' | 'independent_official'
+  authorityCountryCode: string // fixed government registry scope, never guessed from host alone
   officialUrl: string
   rawDigest: string
   canonicalDigest: string | null
@@ -128,7 +129,9 @@ export function checkSourceBoundRenewal(
     return fail('mixed_source_batch')
   for (const pin of pins) {
     const receipt = observations.find(o=>o.id===pin.id)
-    if (!receipt || !pin.id || !digest(pin.rawDigest) ||
+    if (!receipt || !pin.id || !code(pin.authorityCountryCode) ||
+      (pin.role === 'destination_primary' && pin.authorityCountryCode !== input.subject.destinationCountryCode) ||
+      !digest(pin.rawDigest) ||
       !pin.officialUrl.startsWith('https://') || receipt.officialUrl!==pin.officialUrl)
       return fail('source_identity')
     const seen = iso(receipt.observedAt), sent = iso(receipt.requestedAt)
