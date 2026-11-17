@@ -132,9 +132,10 @@ CREATE TABLE jetnity_followup_primary_private.passport_scope_v1(
  next_gate text NOT NULL DEFAULT 'PIN_WHOLE_PRIMARY_QUALIFY_DOCUMENT_ROUTE_MA1_BG1'
   CHECK(next_gate='PIN_WHOLE_PRIMARY_QUALIFY_DOCUMENT_ROUTE_MA1_BG1'),
  PRIMARY KEY(destination_code,priority_rank),
- UNIQUE(destination_code,citizenship_code),
- FOREIGN KEY(priority_rank,citizenship_code)
-   REFERENCES official_v3_source_renewal_private.passport_priority_v1(rank,code)
+ UNIQUE(destination_code,citizenship_code)
+ -- No FK to the protected BG1/SourceRenewal priority table: that would add
+ -- catalog dependencies to immutable protected history. The read-only
+ -- preflight checks the exact 50 rank/code pairs before the insert.
 );
 INSERT INTO jetnity_followup_primary_private.passport_scope_v1
  (destination_code,priority_rank,citizenship_code,source_group)

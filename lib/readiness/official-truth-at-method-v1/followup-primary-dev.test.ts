@@ -35,3 +35,8 @@ test('source inventory cannot be promoted to public, nor modify old protected tr
  assert.doesNotMatch(sql,/cron\.schedule|jetnity_source_bound_at_visa_v1\(/)
  assert.match(sql,/research_conflicts<>CASE WHEN c.destination_code='ES' THEN 30 ELSE 0 END/)
 })
+
+test('append-only follow-up queue cannot alter protected source-renewal dependency graph',()=>{
+ assert.doesNotMatch(sql,/FOREIGN KEY\s*\([^)]*\)\s*REFERENCES official_v3_source_renewal_private/i)
+ assert.match(sql,/priority\.rank=r\.passport_rank AND priority\.code=r\.citizenship_country_code/)
+})
