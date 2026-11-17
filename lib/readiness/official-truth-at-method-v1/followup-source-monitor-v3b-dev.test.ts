@@ -14,7 +14,8 @@ test('source body gate distinguishes real government page containing captcha tex
 test('old append-only observations and all full source/Guard gates remain; only collector cron swapped',()=>{
  assert.match(sql,/observations_v1\)<>4/)
  assert.match(sql,/observations_v2\)<>4/)
- assert.match(sql,/observations_v3\)<>0/)
+ assert.match(sql,/observations_v3\\)<>4/)
+ assert.match(sql,/status='invalid_source_body' AND http_code=200/)
  assert.match(sql,/cron\.unschedule\('jetnity-followup-government-collect-v3-dev'\)/)
  assert.match(sql,/cron\.schedule\('jetnity-followup-government-collect-v3b-dev'/)
  assert.match(sql,/REVOKE ALL ON FUNCTION jetnity_followup_source_monitor_private\.collect_v3b\(\)/)

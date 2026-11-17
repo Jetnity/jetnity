@@ -19,7 +19,11 @@ BEGIN
  OR to_regprocedure('jetnity_followup_source_monitor_private.collect_v3b()') IS NOT NULL
  OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.requests_v3)<>1
  OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.items_v3)<>4
- OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3)<>0
+ OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3)<>4
+ OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3
+     WHERE destination_code='FR' AND status='invalid_source_body' AND http_code=200)<>1
+ OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3
+     WHERE destination_code IN('IT','ES','PT') AND status='unqualified_snapshot' AND http_code=200)<>3
  OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.sources_v3)<>4
  OR (SELECT encode(sha256(convert_to(prosrc,'UTF8')),'hex') FROM pg_proc
    WHERE oid='jetnity_followup_source_monitor_private.collect_v3()'::regprocedure)
@@ -96,7 +100,7 @@ DO $post$
 BEGIN
  IF (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v1)<>4
  OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v2)<>4
- OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3)<>0
+ OR (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3)<>4
  OR (SELECT count(*) FROM cron.job WHERE username='postgres' AND active
    AND jobname IN('jetnity-followup-government-enqueue-v3-dev','jetnity-followup-government-collect-v3b-dev'))<>2
  OR EXISTS(SELECT 1 FROM cron.job WHERE jobname='jetnity-followup-government-collect-v3-dev')
