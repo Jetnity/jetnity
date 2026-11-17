@@ -20,7 +20,7 @@ const ITEMS:readonly Entry[]=Object.freeze([
   url:OFFICIAL_ETIAS,source:'Europäische Union'},
  {id:'passport',title:'Reisepass und Gültigkeit',
   message:'Drittstaatsangehörige benötigen grundsätzlich einen Reisepass, der drei Monate über die Schengen-Ausreise hinaus gilt und in den letzten zehn Jahren ausgestellt wurde. Für EU/EWR/CH bestehen andere Regelungen; Sonderfälle individuell prüfen.',
-  url:'https://eausweise.oesterreich.gv.at/de/themen/bauen_und_wohnen/umzug/2/1/Seite.180662',source:'oesterreich.gv.at'},
+  url:'https://eausweise.oesterreich.gv.at/de/themen/bauen_und_wohnen/umzug/2/1/Seite.180653',source:'oesterreich.gv.at'},
  {id:'passpages',title:'Leere Passseiten',
   message:'Die Botschaft Bern verlangt für dortige Visa-C/D-Anträge grundsätzlich zwei freie Passseiten. Daraus folgt keine allgemeine Passseitenpflicht für visumfreie Reisende.',
   url:'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/',source:'Österreichische Botschaft Bern'},
