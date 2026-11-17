@@ -146,9 +146,9 @@ export const WEATHER_LOCAL_UNAPPLIED_RPCS = Object.freeze([
  * This does not represent a Production installation or relax unknown-RPC
  * detection. Only this single route and reviewed SQL candidate are admitted. */
 export const AT_DEV_INSTALLED_RPCS = Object.freeze([
-  Object.freeze({ name: 'jetnity_at_visa_v3',
+  Object.freeze({ name: 'jetnity_source_bound_at_visa_v1',
     sourcePath: 'app/api/readiness/at-visa/route.ts',
-    sqlPath: 'scripts/db/official-truth-at-bg1-dev-1/candidate.sql' }),
+    sqlPath: 'scripts/db/official-truth-source-bound-renewal-dev-1/install.sql' }),
 ])
 
 function lokaleRpcRegel(name) {
