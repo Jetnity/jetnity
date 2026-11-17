@@ -2,6 +2,7 @@
 // The real Dev RPC readback is separately guarded by MA1/BG1/official sources.
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
@@ -133,4 +134,23 @@ test('generic Austrian HTTP view cannot accept unverified symbols or foreign pas
   validityText:'Test',ruleVersion:1,expiresAt:EXPIRES_AT,
  }]}:cell)}
  assert.equal(readAtVisaView(forced),null)
+})
+
+test('the real AT route queries the exact country of every selected passport and has no CH-only shortcut',()=>{
+ const route=readFileSync(new URL('../../../app/api/readiness/at-visa/route.ts',import.meta.url),'utf8')
+ assert.match(route,/input\.citizenshipCountryCodes\.map\(async country/)
+ assert.match(route,/p_citizenship_country_code:country/)
+ assert.match(route,/Promise\.allSettled/)
+ assert.doesNotMatch(route,/p_citizenship_country_code:'CH'/)
+ assert.doesNotMatch(route,/includes\('CH'\)/)
+})
+
+test('future passport evidence cannot inherit the Swiss-only Bern source or omit the verified assessment',()=>{
+ const invalid=sample('IN')
+ assert.equal(result(['IN'],[{country:'IN',data:{...invalid,sourceUrls:[BMI_ENTRY,BMI_VISA,BERN]}}]).shown.anzeige.paare[0]?.ampel,'neutral')
+ const good=presentAtVisaReadbacks(readAtVisaInput({destinationCountryCode:'AT',citizenshipCountryCodes:['CH']})!,
+  [{country:'CH',data:sample('CH')}],NOW)
+ const without={...good,cells:good.cells.map(cell=>({...cell,results:cell.results.map(item=>
+  item.status==='accepted'?{...item,visaAssessment:undefined}:item)}))}
+ assert.equal(readAtVisaView(without),null)
 })
