@@ -15,7 +15,7 @@ import type { V3VisitorView } from '../official-truth-product-v3/visitor/present
 const BMI_ENTRY='https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html'
 const BMI_VISA='https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html'
 const BERN='https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/'
-const SOURCE_AT='2026-11-16T19:45:39.000Z'
+const SOURCE_AT='2026-11-17T10:00:00.000Z'
 const VERIFIED_AT='2026-11-17T10:31:38.041Z'
 const EXPIRES_AT='2026-11-17T11:31:38.041Z'
 const NOW=new Date('2026-11-17T10:45:00.000Z')
@@ -44,14 +44,14 @@ test('Austrian Dev CH accepted reply shows official wording, actual source date 
  assert.equal(shown.anzeige.paare[0]?.ampel,'gruen')
  assert.equal(shown.anzeige.paare[0]?.ampelText,'Kein Visum nötig')
  assert.equal(shown.anzeige.paare[0]?.themen[0]?.quelle,'Österreichische Botschaft Bern')
- assert.equal(shown.anzeige.paare[0]?.themen[0]?.stand,'16.11.2026')
+ assert.equal(shown.anzeige.paare[0]?.themen[0]?.stand,'17.11.2026')
  assert.match(shown.anzeige.paare[0]?.themen[0]?.text??'',/Schweizer Staatsangehörige.*kein Visum/)
- assert.match(shown.anzeige.standSatz,/Stand 16\.11\.2026/)
+ assert.match(shown.anzeige.standSatz,/Stand 17\.11\.2026/)
  const html=renderToStaticMarkup(React.createElement(EinreiseKundenanzeige,{anzeige:shown.anzeige}))
  assert.match(html,/data-einreise-ampel="gruen"/)
  assert.match(html,/Kein Visum nötig/)
  assert.match(html,/Österreichische Botschaft Bern/)
- assert.match(html,/Stand 16\.11\.2026/)
+ assert.match(html,/Stand 17\.11\.2026/)
  assert.match(html,/Schweizer Staatsangehörige/)
 })
 
@@ -74,7 +74,7 @@ test('all 50 distinct synthetic passport choices use the same accepted/unavailab
    if(cell.country===acceptedCountry){
     assert.equal(cell.results[0]?.status,'accepted')
     assert.equal(pair.ampel,'gruen')
-    assert.equal(pair.themen[0]?.stand,'16.11.2026')
+    assert.equal(pair.themen[0]?.stand,'17.11.2026')
     assert.match(pair.themen[0]?.text??'',/kein Visum erforderlich|kein Visum/i)
     confirmed++
    }else{
@@ -155,11 +155,11 @@ test('future passport evidence cannot inherit the Swiss-only Bern source or omit
  assert.equal(readAtVisaView(without),null)
 })
 
-test('AT visitor never caches a positive fact beyond the last official source 24-hour deadline',()=>{
- const officialDeadline='2026-11-17T19:45:39.000Z'
- const nearExpiry={...sample('CH'),verifiedAt:'2026-11-17T19:35:39.000Z',
-  expiresAt:'2026-11-17T20:35:39.000Z'}
- const before=result(['CH'],[{country:'CH',data:nearExpiry}],new Date('2026-11-17T19:40:00.000Z'))
+test('AT held visitor reply expires at the 70-minute source-watch boundary before the fact lease',()=>{
+ const officialDeadline='2026-11-17T11:10:00.000Z'
+ const nearExpiry={...sample('CH'),verifiedAt:'2026-11-17T10:55:00.000Z',
+  expiresAt:'2026-11-17T11:55:00.000Z'}
+ const before=result(['CH'],[{country:'CH',data:nearExpiry}],new Date('2026-11-17T11:05:00.000Z'))
  assert.equal(before.shown.anzeige.paare[0]?.ampel,'gruen')
  const cell=before.view.cells[0]?.results[0]
  assert.equal(cell?.status,'accepted')

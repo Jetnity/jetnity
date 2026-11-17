@@ -46,14 +46,13 @@ function perPassport(country: string, raw: unknown, now: number): V3VisitorViewR
   const fact = parsed.data
   const source = Date.parse(fact.sourceCheckedAt), verified = Date.parse(fact.verifiedAt)
   const expiry = Date.parse(fact.expiresAt)
-  // Browser-visible freshness must not outlive EITHER the approved one-hour
-  // projection OR the 24-hour maximum age of its last official source fetch.
-  // The SQL server already refuses stale reads; this closes the client cache
-  // gap when the source-age deadline arrives while the page stays open.
-  const sourceDeadline = source + 86_400_000
+  // Browser-held responses cannot outlive the stricter 70-minute source-watch
+  // admission limit of the protected SQL visitor, even if the one-hour fact
+  // lease continues. The 24-hour original-custody age is NOT this limit.
+  const sourceDeadline = source + 70 * 60_000
   const safeExpiry = Math.min(expiry, sourceDeadline)
   if (source > verified || verified > now || safeExpiry <= now
-    || source > now || now - source >= 86_400_000
+    || source > now || now - source >= 70 * 60_000
     || expiry <= verified || expiry - verified > 3_600_000) return unavailable
   // CH uses the exact three-source Austrian receipt. Future passports must
   // instead have the Austrian BMI visa primary, never a Swiss-only Bern source
