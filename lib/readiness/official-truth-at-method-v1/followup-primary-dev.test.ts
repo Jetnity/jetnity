@@ -10,7 +10,7 @@ const sql = readFileSync(
 )
 test('four destinations and all 50 existing passport identities stay research-only',()=>{
  assert.match(sql,/FOLLOWUP-SOURCE-CANDIDATES-1/)
- assert.match(sql,/passport_priority_v1\(rank,code\)/)
+ assert.match(sql,/LEFT JOIN official_v3_source_renewal_private\.passport_priority_v1 priority/)
  assert.match(sql,/passports?._?research_v1|passport_research_v1/)
  assert.match(sql,/<>200/)
  assert.match(sql,/<>5200/)

@@ -47,8 +47,7 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
     const job = workflow.jobs[family]
     assert.deepEqual(job.permissions, { contents: 'read' })
     assert.equal(job['runs-on'], 'ubuntu-24.04')
-    // CMS BG1 native retains every proof but needs a longer bounded runner.
-    assert.equal(job['timeout-minutes'], family === 'cms_native' ? 50 : 30)
+    assert.equal(job['timeout-minutes'], 30)
     assert.equal('if' in job, false)
     assert.equal('continue-on-error' in job, false)
     assert.ok(job.steps.every((step) => !('if' in step) && !('continue-on-error' in step)))
@@ -70,7 +69,7 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
     if (family === 'cms_native') {
       const transition = job.steps.at(-1)
       assert.equal(transition.name, 'Run atomic Admin BG1 transition and guarded runtime proof')
-      assert.equal(transition['timeout-minutes'], 45)
+      assert.equal(transition['timeout-minutes'], 25)
       assert.equal(transition.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/admin-runtime-bg1-1/native.test.ts')
       assert.equal(job.steps.at(-2).run, originalCommand)
     } else assert.equal(job.steps.at(-1).run, originalCommand)
