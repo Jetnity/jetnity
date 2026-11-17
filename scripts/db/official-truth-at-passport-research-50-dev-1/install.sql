@@ -5,6 +5,7 @@
 -- This script never calls V3 MA1 owner approval, changes a protected schema,
 -- or publishes a rule. It may run in DEV ONLY. No user data.
 BEGIN;
+SET LOCAL jetnity.at_dev_target='dev:yfvbxvijcorffwxbxahl:AT-50-RESEARCH-1';
 SET LOCAL search_path=pg_catalog;
 SET LOCAL statement_timeout='30s';
 SET LOCAL lock_timeout='5s';
