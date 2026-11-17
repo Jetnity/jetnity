@@ -94,7 +94,7 @@ chunks AS(SELECT ord,segment FROM src CROSS JOIN LATERAL
  regexp_split_to_table(html,'<details>[[:space:]]*<summary([[:space:]]+class="sum_letter")?>')
  WITH ORDINALITY AS p(segment,ord)),
 named AS(SELECT ord,substring(segment FROM '^([^<]+)</summary>') AS country,
- btrim(split_part(segment,'</summary>',2),E' \\t\\n\\r') AS detail_fragment FROM chunks)
+ btrim(split_part(segment,'</summary>',2),chr(32)||chr(9)||chr(10)||chr(13)) AS detail_fragment FROM chunks)
 SELECT p.rank,p.code,p.bmi_html_name,n.detail_fragment FROM at_50_priority p
 LEFT JOIN named n ON p.bmi_html_name=n.country AND n.detail_fragment LIKE '<dl>%';
 -- Exactly 49 original nationality matrix sections + 1 Austrian home-country entry
