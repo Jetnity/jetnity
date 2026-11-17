@@ -192,7 +192,7 @@ AS $seal$
 DECLARE b record; rec record; h official_v3_method_private.heads_v1%ROWTYPE;
   subject record; predecessor record; old_v3 record;
   count_sources integer:=0; count_good integer:=0; changed integer:=0;
-  current_time timestamptz; seen_at timestamptz; result_value text;
+  clock_now timestamptz; seen_at timestamptz; result_value text;
   collected_digest text; result_rows integer:=0;
 BEGIN
  IF session_user<>'postgres' OR current_user<>session_user OR current_database()<>'postgres'
@@ -210,8 +210,8 @@ BEGIN
  PERFORM official_v3_guard_private.assert_catalog_v1();
  SELECT * INTO b FROM official_v3_at_source_watch_private.batches_v1
   ORDER BY batch_id DESC LIMIT 1;
- current_time:=clock_timestamp();
- IF NOT FOUND OR b.requested_at>current_time OR b.requested_at<=current_time-interval '70 minutes'
+ clock_now:=clock_timestamp();
+ IF NOT FOUND OR b.requested_at>clock_now OR b.requested_at<=clock_now-interval '70 minutes'
  THEN RETURN jsonb_build_object('status','source_unavailable','renewed',0); END IF;
  IF (SELECT count(*) FROM official_v3_at_source_watch_private.reads_v1
       WHERE batch_id=b.batch_id AND state='pending')>0
@@ -230,7 +230,7 @@ BEGIN
   WHERE r.batch_id=b.batch_id ORDER BY r.source_id
  LOOP
   count_sources:=count_sources+1;
-  IF rec.observed_at IS NULL OR rec.observed_at>current_time
+  IF rec.observed_at IS NULL OR rec.observed_at>clock_now
    OR rec.requested_at IS DISTINCT FROM b.requested_at
    OR rec.requested_at>rec.observed_at OR rec.observed_at>rec.requested_at+interval '5 minutes'
    OR rec.url IS DISTINCT FROM rec.official_url OR rec.raw_sha IS DISTINCT FROM rec.pinned_sha
@@ -253,7 +253,7 @@ BEGIN
   WHEN count_good=3 THEN 'unchanged' ELSE 'unavailable' END;
  INSERT INTO official_v3_source_renewal_private.batches_v1(
    destination_code,source_batch_id,requested_at,sealed_at,outcome,source_count)
- VALUES('AT',b.batch_id,b.requested_at,current_time,result_value,3)
+ VALUES('AT',b.batch_id,b.requested_at,clock_now,result_value,3)
  ON CONFLICT DO NOTHING;
  IF (SELECT outcome FROM official_v3_source_renewal_private.batches_v1
    WHERE destination_code='AT' AND source_batch_id=b.batch_id) IS DISTINCT FROM result_value
@@ -281,7 +281,7 @@ BEGIN
  THEN RETURN jsonb_build_object('status','watch_unavailable','renewed',0); END IF;
  SELECT min(observed_at) INTO seen_at FROM official_v3_source_renewal_private.observations_v1
   WHERE destination_code='AT' AND source_batch_id=b.batch_id;
- IF seen_at IS NULL OR seen_at>current_time OR seen_at<current_time-interval '70 minutes'
+ IF seen_at IS NULL OR seen_at>clock_now OR seen_at<clock_now-interval '70 minutes'
  THEN RETURN jsonb_build_object('status','old_batch','renewed',0); END IF;
  SELECT * INTO STRICT h FROM official_v3_method_private.heads_v1
   WHERE method_id='jetnity-destination-primary-at-visa' FOR SHARE;
@@ -296,7 +296,7 @@ BEGIN
    OR subject.method_digest IS DISTINCT FROM h.method_digest
    OR subject.package_digest IS DISTINCT FROM h.package_digest
    OR subject.method_epoch IS DISTINCT FROM h.epoch
-   OR subject.legal_valid_until<=current_time
+   OR subject.legal_valid_until<=clock_now
    OR subject.source_count<>3
    OR NOT EXISTS(SELECT 1 FROM official_v3_source_renewal_private.passport_priority_v1
     WHERE code=subject.citizenship_code)
@@ -312,8 +312,8 @@ BEGIN
     OR old_v3.visa_mode<>'visa_exempt' OR old_v3.verified_at>=seen_at OR old_v3.expires_at<=old_v3.verified_at
    THEN CONTINUE; END IF;
   END IF;
-  current_time:=clock_timestamp();
-  IF current_time>=seen_at+interval '70 minutes' OR current_time>=subject.legal_valid_until
+  clock_now:=clock_timestamp();
+  IF clock_now>=seen_at+interval '70 minutes' OR clock_now>=subject.legal_valid_until
    OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
   THEN RETURN jsonb_build_object('status','expiry_or_guard','renewed',0); END IF;
   -- No invented fact: only renew same existing owner-approved legal effect.
@@ -325,7 +325,7 @@ BEGIN
    subject_id,destination_code,source_batch_id,predecessor_fact_id,
    verified_at,source_checked_at,expires_at,method_epoch,approval_origin,source_digest)
   VALUES(subject.subject_id,'AT',b.batch_id,predecessor.fact_id,
-   current_time,seen_at,least(current_time+interval '1 hour',subject.legal_valid_until,
+   clock_now,seen_at,least(clock_now+interval '1 hour',subject.legal_valid_until,
    seen_at+interval '24 hours'),h.epoch,subject.approved_origin,collected_digest)
   ON CONFLICT DO NOTHING;
   IF FOUND THEN result_rows:=result_rows+1; END IF;
