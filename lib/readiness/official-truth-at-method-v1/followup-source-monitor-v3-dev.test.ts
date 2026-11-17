@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
+const sql=readFileSync(new URL('../../../scripts/db/official-truth-followup-source-monitor-dev-3/install.sql',import.meta.url),'utf8')
+test('Italy official visa selector replaces captcha source while preserving FR ES PT and old immutable histories',()=>{
+ assert.match(sql,/FOLLOWUP-WATCH-3/)
+ assert.match(sql,/https:\/\/vistoperitalia\.esteri\.it\//)
+ assert.match(sql,/La tua nazionalità/)
+ assert.match(sql,/status='invalid_source_body' AND http_code=200/)
+ assert.match(sql,/observations_v1\)<>4/)
+ assert.match(sql,/observations_v2\)<>4/)
+ assert.match(sql,/cron\.unschedule\('jetnity-followup-government-enqueue-v2-dev'\)/)
+ assert.match(sql,/cron\.schedule\('jetnity-followup-government-enqueue-v3-dev'/)
+ for(const host of ['service-public.gouv.fr','boe.es','gov.pt'])assert.ok(sql.includes(host))
+})
+test('actual HTTP body must be government-marked and reject 200 captcha and access-denied responses',()=>{
+ assert.match(sql,/resp\.status_code=200/)
+ assert.match(sql,/position\(lower\(rec\.content_marker\) IN lower\(resp\.content\)\)>0/)
+ for(const word of ['captcha','radware','accesso negato','access denied']) assert.ok(sql.includes(word))
+ assert.match(sql,/changed_requires_review/)
+ assert.match(sql,/unqualified_snapshot/)
+ assert.match(sql,/unchanged_unqualified/)
+ assert.match(sql,/BETWEEN 1 AND 1048576/)
+ assert.match(sql,/15000/)
+})
+test('V3 monitoring writes no legal result or approved data and creates private append-only tables',()=>{
+ assert.match(sql,/RESEARCH_ONLY/)
+ assert.match(sql,/source_qualified boolean NOT NULL DEFAULT false CHECK\(source_qualified=false\)/)
+ assert.match(sql,/approved_facts integer NOT NULL DEFAULT 0 CHECK\(approved_facts=0\)/)
+ assert.match(sql,/FORCE ROW LEVEL SECURITY/)
+ assert.match(sql,/immutable_rows BEFORE UPDATE OR DELETE/)
+ assert.match(sql,/immutable_truncate BEFORE TRUNCATE/)
+ assert.match(sql,/REVOKE ALL ON ALL TABLES IN SCHEMA jetnity_followup_source_monitor_private/)
+ assert.match(sql,/PERFORM official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.match(sql,/BEGIN;/)
+ assert.match(sql,/COMMIT;\s*$/)
+ assert.doesNotMatch(sql,/CREATE OR REPLACE FUNCTION public\.|GRANT EXECUTE|INSERT INTO official_v3_source_renewal_private/i)
+})
