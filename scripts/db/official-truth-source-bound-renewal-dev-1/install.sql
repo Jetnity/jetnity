@@ -424,7 +424,26 @@ DECLARE subject record; fact record; b record; h official_v3_method_private.head
 BEGIN
  IF p_citizenship_country_code<>'CH'
   OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
-  OR official_v3_at_source_watch_private.status_v1()->>'status'<>'PINNED_UNCHANGED_NOT_APPROVED'
+  -- A public PostgREST session is authenticator/anon, NOT a postgres
+  -- session. The private status_v1 intentionally refuses such sessions;
+  -- this SECURITY DEFINER reader instead checks the identical private
+  -- immutable source/watch conditions directly, with no extra role grants.
+  OR (SELECT count(*) FROM cron.job WHERE active AND username='postgres'
+     AND jobname IN ('jetnity-at-source-enqueue-dev-v1',
+                     'jetnity-at-source-collect-dev-v1'))<>2
+  OR NOT EXISTS(
+    SELECT 1 FROM official_v3_at_source_watch_private.batches_v1 w
+    WHERE w.batch_id=(SELECT max(batch_id) FROM official_v3_at_source_watch_private.batches_v1)
+      AND w.requested_at<=clock_timestamp()
+      AND w.requested_at>clock_timestamp()-interval '70 minutes'
+      AND (SELECT count(*) FROM official_v3_at_source_watch_private.reads_v1 r
+           WHERE r.batch_id=w.batch_id) = 3
+      AND (SELECT count(*) FROM official_v3_at_source_watch_private.reads_v1 r
+           WHERE r.batch_id=w.batch_id AND r.state IN
+            ('unchanged_exact','unchanged_asset_version_only')
+             AND r.observed_at>=r.requested_at AND r.observed_at<=clock_timestamp()
+             AND r.observed_at<=r.requested_at+interval '5 minutes')=3
+  )
  THEN RETURN unavailable; END IF;
  SELECT * INTO latest_source FROM official_v3_at_source_watch_private.batches_v1
   ORDER BY batch_id DESC LIMIT 1;
