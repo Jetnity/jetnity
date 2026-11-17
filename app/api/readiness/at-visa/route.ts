@@ -1,10 +1,10 @@
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Json } from '@/types/supabase'
-/** Only this exact fixed public RPC is callable from the AT visitor.
+/** Only this exact new source-bound public RPC is callable from the AT visitor.
  * The global generated Production database types are not widened. */
 type AtVisitorDatabase={public:{
  Tables:{[_ in never]:never};Views:{[_ in never]:never};
- Functions:{jetnity_at_visa_v3:{Args:{p_citizenship_country_code:string};Returns:Json}};
+ Functions:{jetnity_source_bound_at_visa_v1:{Args:{p_citizenship_country_code:string};Returns:Json}};
  Enums:{[_ in never]:never};CompositeTypes:{[_ in never]:never}
 }}
 import { presentAtVisaReadbacks } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-display'
@@ -40,7 +40,7 @@ export async function POST(request:Request):Promise<Response>{
   if(!selectedAustriaDev()||request.signal.aborted)return reply(200,empty)
   const client=await createRouteHandlerClient<AtVisitorDatabase>()
   const attempts=await Promise.allSettled(input.citizenshipCountryCodes.map(async country=>{
-    const response=await client.rpc('jetnity_at_visa_v3',{p_citizenship_country_code:country})
+    const response=await client.rpc('jetnity_source_bound_at_visa_v1',{p_citizenship_country_code:country})
       .abortSignal(request.signal)
     return {country,data:response.error?null:response.data}
   }))
