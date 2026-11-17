@@ -141,7 +141,7 @@ export function checkSourceBoundRenewal(
       return fail('source_identity')
     const seen = iso(receipt.observedAt), sent = iso(receipt.requestedAt)
     if (seen === null || sent === null || sent > seen || seen > now ||
-      seen - sent > 5 * 60_000 || now - seen > 70 * 60_000 ||
+      seen - sent > 5 * 60_000 + 10_000 || now - seen > 70 * 60_000 ||
       seen <= prior || !digest(receipt.rawDigest ?? ''))
       return fail('source_not_new_and_fresh')
     if (receipt.state === 'unchanged_exact') {

@@ -233,7 +233,7 @@ BEGIN
   count_sources:=count_sources+1;
   IF rec.observed_at IS NULL OR rec.observed_at>clock_now
    OR rec.requested_at IS DISTINCT FROM b.requested_at
-   OR rec.requested_at>rec.observed_at OR rec.observed_at>rec.requested_at+interval '5 minutes'
+   OR rec.requested_at>rec.observed_at OR rec.observed_at>rec.requested_at+interval '5 minutes 10 seconds'
    OR rec.url IS DISTINCT FROM rec.official_url OR rec.raw_sha IS DISTINCT FROM rec.pinned_sha
    OR rec.expected_bytes IS DISTINCT FROM rec.original_bytes
    OR rec.canonical_sha IS DISTINCT FROM rec.pinned_canonical
@@ -338,7 +338,7 @@ BEGIN
    USING(destination_code,source_id)
   WHERE o.destination_code=p_destination_code AND o.source_batch_id=p_source_batch_id
    AND (o.observed_at IS NULL OR o.observed_at>stamp OR o.observed_at<o.requested_at
-    OR o.observed_at>o.requested_at+interval '5 minutes'
+    OR o.observed_at>o.requested_at+interval '5 minutes 10 seconds'
     OR (o.result='unchanged_exact' AND
       (o.observed_sha IS DISTINCT FROM p.raw_sha OR o.observed_bytes IS DISTINCT FROM p.original_bytes))
     OR (o.result='unchanged_asset_version_only' AND
@@ -445,7 +445,7 @@ BEGIN
            WHERE r.batch_id=w.batch_id AND r.state IN
             ('unchanged_exact','unchanged_asset_version_only')
              AND r.observed_at>=r.requested_at AND r.observed_at<=clock_timestamp()
-             AND r.observed_at<=r.requested_at+interval '5 minutes')=3
+             AND r.observed_at<=r.requested_at+interval '5 minutes 10 seconds')=3
   )
  THEN RETURN unavailable; END IF;
  SELECT * INTO latest_source FROM official_v3_at_source_watch_private.batches_v1

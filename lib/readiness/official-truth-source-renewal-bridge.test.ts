@@ -30,6 +30,7 @@ test('generic source-to-fact Dev transition protects real 50-pass history and MA
  assert.match(sql,/newest\+interval '24 hours'/)
  assert.match(sql,/verified_at\+interval '1 hour'/)
  assert.match(sql,/PINNED_UNCHANGED_NOT_APPROVED/)
+ assert.ok((sql.match(/interval '5 minutes 10 seconds'/g)??[]).length===3)
  assert.match(sql,/jetnity-source-renew-at-dev-v1/)
  assert.match(sql,/GRANT EXECUTE ON FUNCTION public\.jetnity_source_bound_at_visa_v1\(text\) TO anon,authenticated/)
  assert.doesNotMatch(sql,/ALTER TABLE official_v3_result_private\.originals_v1/)

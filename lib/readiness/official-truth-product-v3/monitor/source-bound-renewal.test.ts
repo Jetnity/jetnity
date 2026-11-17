@@ -78,6 +78,14 @@ test('one new independent source batch must be exact, fresh, ordered after previ
  unavailable(previous,{...input,observations:input.observations.map(o=>({...o,observedAt:'2026-11-17T13:20:00.000Z'}))})
  unavailable(previous,{...input,observations:input.observations.map(o=>({...o,requestedAt:'2026-11-17T12:00:00.000Z'}))})
 })
+test('actual five-minute collector jitter does not reject an otherwise exact official receipt',()=>{
+ const observedAt='2026-11-17T13:10:00.030Z'
+ const check:SourceRenewalCheck={...input,checkedAt:'2026-11-17T13:10:01.000Z',
+  observations:input.observations.map(o=>({...o,observedAt}))}
+ assert.equal(run(previous,check).status,'eligible_for_protected_issuer_only')
+ unavailable(previous,{...check,checkedAt:'2026-11-17T13:10:12.000Z',
+  observations:input.observations.map(o=>({...o,observedAt:'2026-11-17T13:10:11.000Z'}))})
+})
 test('changed, missing, pending or wrongly normalized originals fail closed',()=>{
  for (const state of ['changed','pending','unavailable'] as const){
   unavailable(previous,{...input,observations:[{...input.observations[0]!,state},input.observations[1]!]})
