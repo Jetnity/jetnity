@@ -10,7 +10,7 @@ test('AT source monitoring: shortened scheduler polling never bypasses 50-minute
  assert.match(sql,/DEV ONLY/)
  assert.match(sql,/server_version_num/)
  assert.match(sql,/dev:yfvbxvijcorffwxbxahl:AT-WATCH-SCHEDULE-1/)
- assert.match(sql,/jetnity-at-source-enqueue-dev-v1','\/5 \* \* \* \*'/)
+ assert.ok(sql.includes("cron.schedule('jetnity-at-source-enqueue-dev-v1','*/5 * * * *'"))
  assert.match(sql,/jetnity-at-source-collect-dev-v1/)
  assert.match(sql,/official_v3_guard_private.assert_catalog_v1\(\)/)
  assert.match(sql,/official_v3_guard_private.catalog_status_v1\(\)/)
