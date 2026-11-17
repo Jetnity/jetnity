@@ -142,9 +142,18 @@ export const WEATHER_LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sqlPath: 'scripts/db/reisewetter-global-1/quota-candidate.sql' }),
 ])
 
+/** Exact AT Dev-installed public wrapper, absent from generated Production types.
+ * This does not represent a Production installation or relax unknown-RPC
+ * detection. Only this single route and reviewed SQL candidate are admitted. */
+export const AT_DEV_INSTALLED_RPCS = Object.freeze([
+  Object.freeze({ name: 'jetnity_at_visa_v3',
+    sourcePath: 'app/api/readiness/at-visa/route.ts',
+    sqlPath: 'scripts/db/official-truth-at-bg1-dev-1/candidate.sql' }),
+])
+
 function lokaleRpcRegel(name) {
   const kurz = name.replace(/^public\./, '')
-  return [...LOCAL_UNAPPLIED_RPCS, ...WEATHER_LOCAL_UNAPPLIED_RPCS]
+  return [...LOCAL_UNAPPLIED_RPCS, ...WEATHER_LOCAL_UNAPPLIED_RPCS, ...AT_DEV_INSTALLED_RPCS]
     .find((regel) => regel.name === kurz) ?? null
 }
 
@@ -259,7 +268,8 @@ export function pruefe(optionen = {}) {
             stellen,
             sourcePath: regel.sourcePath,
             sqlPath: regel.sqlPath,
-            classification: 'LOCAL/UNAPPLIED',
+            classification: AT_DEV_INSTALLED_RPCS.includes(regel)
+              ? 'DEV-INSTALLED/PRODUCTION-UNAPPLIED' : 'LOCAL/UNAPPLIED',
           })
           continue
         }
@@ -304,7 +314,8 @@ function main() {
     console.log(`\n=== ${titel} (${map.size}) ===`)
     for (const [name, stellen] of [...map.entries()].sort()) {
       const lokal = titel === 'RPCs' && lokaleRpcRegel(name)
-      const marke = lokal ? ' LOCAL/UNAPPLIED (not in generated schema)' : ''
+      const marke = lokal ? ` ${AT_DEV_INSTALLED_RPCS.includes(lokal)
+        ? 'DEV-INSTALLED/PRODUCTION-UNAPPLIED' : 'LOCAL/UNAPPLIED'} (not in generated schema)` : ''
       console.log(
         `  ${name.padEnd(34)} ${stellen.length}x${marke}  ${stellen.slice(0, 3).join('  ')}`,
       )
