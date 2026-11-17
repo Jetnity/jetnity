@@ -447,13 +447,18 @@ BEGIN
   OR fact.verified_at>instant OR fact.source_checked_at>instant
   OR instant>=fact.expires_at OR instant>=fact.source_checked_at+interval '70 minutes'
   OR instant>=subject.legal_valid_until
+  OR fact.source_digest IS DISTINCT FROM (SELECT encode(sha256(convert_to(
+    string_agg(source_id||':'||reference_digest,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
+    FROM official_v3_source_renewal_private.observations_v1
+    WHERE destination_code='AT' AND source_batch_id=b.source_batch_id)
  THEN RETURN unavailable; END IF;
  SELECT * INTO h FROM official_v3_method_private.heads_v1
    WHERE method_id=subject.method_id FOR SHARE;
  IF NOT FOUND OR h.epoch<>subject.method_epoch THEN RETURN unavailable; END IF;
  PERFORM official_v3_method_private.require_current_locked_v1(
    subject.method_id,subject.method_revision,subject.method_digest,subject.package_digest,h.epoch);
- PERFORM official_v3_guard_private.assert_catalog_v1();
+ -- Full catalog proof stays on the 5-minute BG1 worker and source/fact writes;
+ -- public read checks only the fresh sealed BG1 status + short immutable lease.
  SELECT jsonb_agg(official_url ORDER BY CASE source_id
    WHEN 'bmi-general-entry' THEN 1
    WHEN 'bmi-visa-nationality-matrix' THEN 2
