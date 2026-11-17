@@ -2,7 +2,7 @@
 import 'server-only'
 import { readHumanRelease, HUMAN_METHOD_DEV_URL, type HumanRelease } from
   '../official-truth-product-v3/method/human-contract'
-import { selectedV3PgTarget } from '../official-truth-product-v3/transport/node-postgres-selection'
+import { selectedAustriaDev } from './at-dev-selection'
 import { AT_V3_METHOD_PREPARATION } from './at-v3-method-preparation'
 
 // Only the completed audited AT-HRS2/BG1 transition may lift these code-owned
@@ -14,9 +14,7 @@ function atNativeMethodReady(): boolean {
 const fixedId = 'hmr1_7b99e62adbb78c89b4e45e8772c1fc09'
 
 export function getAtHumanRelease(): HumanRelease | null {
-  const target = selectedV3PgTarget()
-  if (!target || target.connectHost !== 'db.yfvbxvijcorffwxbxahl.supabase.co'
-    || !atNativeMethodReady()) return null
+  if (!selectedAustriaDev() || !atNativeMethodReady()) return null
   const method = AT_V3_METHOD_PREPARATION
   return readHumanRelease({
     schema: 1, selectionId: fixedId, targetUrl: HUMAN_METHOD_DEV_URL,
