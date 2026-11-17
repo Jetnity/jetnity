@@ -7,10 +7,10 @@ const body=new Uint8Array(new TextEncoder().encode('<html>unchanged</html>'))
 const sha=createHash('sha256').update(body).digest('hex')
 const pin={url:'https://www.bmi.gv.at/test-only',bytes:body.byteLength,sha,edition:null}
 function mock(text:Uint8Array,opts:{url?:string,status?:number,contentType?:string,contentLength?:string}={}){
- return async ()=>({url:opts.url??pin.url,status:opts.status??200,
+ return (async ()=>({url:opts.url??pin.url,status:opts.status??200,
   headers:new Headers({'content-type':opts.contentType??'text/html',
    'content-length':opts.contentLength??String(text.byteLength)}),
-  body:new ReadableStream<Uint8Array>({start(stream){stream.enqueue(text);stream.close()}})})
+  body:new ReadableStream<Uint8Array>({start(stream){stream.enqueue(text);stream.close()}})})) as unknown as typeof fetch
 }
 test('AT source watch verifies bytes, HTTPS origin, media, completeness and never grants method authority',async()=>{
  assert.equal(await checkAtSourcePin(pin,mock(body)),'unchanged')
