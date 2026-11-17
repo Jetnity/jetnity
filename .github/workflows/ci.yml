@@ -454,7 +454,10 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # The unchanged complete native PostgreSQL suite can need more than the
+    # former 25-minute step cap under shared CI runner contention. Never skip
+    # its assertions, change time budgets inside the tests or reuse old CI.
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
         with:
@@ -666,7 +669,7 @@ jobs:
           scripts/db/admin-editorial-cms-1/native.test.ts
 
       - name: Run atomic Admin BG1 transition and guarded runtime proof
-        timeout-minutes: 25
+        timeout-minutes: 45
         run: >-
           node --import ./scripts/server-only-test-register.mjs --import tsx
           --test --test-reporter=tap --test-concurrency=1
