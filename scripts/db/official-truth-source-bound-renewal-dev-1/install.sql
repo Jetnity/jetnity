@@ -92,7 +92,8 @@ CREATE TABLE official_v3_source_renewal_private.subjects_v1(
  method_digest text NOT NULL CHECK(method_digest ~ '^[a-f0-9]{64}$'),
  package_digest text NOT NULL CHECK(package_digest ~ '^[a-f0-9]{64}$'),
  method_epoch integer NOT NULL CHECK(method_epoch>0),
- legal_valid_until timestamptz NOT NULL,
+ legal_valid_until timestamptz, -- NULL when government gave no legal end date
+ method_active_until timestamptz NOT NULL, -- independently approved operational scope
  approved_origin text NOT NULL, first_approved_at timestamptz NOT NULL,
  source_count integer NOT NULL CHECK(source_count BETWEEN 1 AND 8),
  UNIQUE(destination_code,citizenship_code,requirement_type,document_type,route_type,conditions_digest),
@@ -102,11 +103,11 @@ CREATE TABLE official_v3_source_renewal_private.subjects_v1(
 INSERT INTO official_v3_source_renewal_private.subjects_v1(
  destination_code,citizenship_code,requirement_type,document_type,route_type,conditions_digest,
  result,visa_mode,method_id,method_revision,method_digest,package_digest,method_epoch,
- legal_valid_until,approved_origin,first_approved_at,source_count)
+ legal_valid_until,method_active_until,approved_origin,first_approved_at,source_count)
 SELECT 'AT','CH','visa','passport','direct_entry',
  encode(sha256(convert_to('AT|CH|visa|passport|direct_entry|valid_swiss_national_passport|BMI_2026_11_06|BMEIA_BERN','UTF8')),'hex'),
  'not_required','visa_exempt',v.method_id,v.method_revision,v.method_digest,v.package_digest,v.method_epoch,
- '2027-11-16T00:00:00Z'::timestamptz,'verified_visas_v3:CH:'||v.rule_version,v.verified_at,3
+ NULL::timestamptz,'2027-11-16T00:00:00Z'::timestamptz,'verified_visas_v3:CH:'||v.rule_version,v.verified_at,3
 FROM official_v3_at_private.verified_visas_v3 v
 WHERE v.citizenship_country_code='CH'
  AND v.method_id='jetnity-destination-primary-at-visa'
@@ -358,7 +359,8 @@ BEGIN
  IF signed_sources IS NULL THEN RETURN 0; END IF;
  FOR s IN SELECT * FROM official_v3_source_renewal_private.subjects_v1
     WHERE destination_code=p_destination_code ORDER BY subject_id LOOP
-  IF s.source_count<>b.source_count OR s.legal_valid_until<=stamp
+  IF s.source_count<>b.source_count OR (s.legal_valid_until IS NOT NULL AND s.legal_valid_until<=stamp)
+   OR s.method_active_until<=stamp
    OR s.first_approved_at>stamp OR s.method_epoch<1
    OR NOT EXISTS(SELECT 1 FROM official_v3_source_renewal_private.passport_priority_v1
        WHERE code=s.citizenship_code)
@@ -394,15 +396,16 @@ BEGIN
   END IF;
   stamp:=clock_timestamp();
   IF stamp>=newest+interval '70 minutes'
-   OR stamp>=s.legal_valid_until
+   OR (s.legal_valid_until IS NOT NULL AND stamp>=s.legal_valid_until)
+   OR stamp>=s.method_active_until
    OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
   THEN RETURN inserted; END IF;
   INSERT INTO official_v3_source_renewal_private.facts_v1(
    subject_id,destination_code,source_batch_id,predecessor_fact_id,
    verified_at,source_checked_at,expires_at,method_epoch,approval_origin,source_digest)
   VALUES(s.subject_id,p_destination_code,p_source_batch_id,preceding.fact_id,
-   stamp,newest,least(stamp+interval '1 hour',s.legal_valid_until,
-   newest+interval '24 hours'),s.method_epoch,s.approved_origin,signed_sources)
+   stamp,newest,least(stamp+interval '1 hour',coalesce(s.legal_valid_until,'infinity'::timestamptz),
+   s.method_active_until,newest+interval '24 hours'),s.method_epoch,s.approved_origin,signed_sources)
   ON CONFLICT DO NOTHING;
   IF FOUND THEN inserted:=inserted+1; END IF;
  END LOOP;
@@ -465,7 +468,8 @@ BEGIN
   OR fact.method_epoch<>subject.method_epoch
   OR fact.verified_at>instant OR fact.source_checked_at>instant
   OR instant>=fact.expires_at OR instant>=fact.source_checked_at+interval '70 minutes'
-  OR instant>=subject.legal_valid_until
+  OR (subject.legal_valid_until IS NOT NULL AND instant>=subject.legal_valid_until)
+  OR instant>=subject.method_active_until
   OR fact.source_digest IS DISTINCT FROM (SELECT encode(sha256(convert_to(
     string_agg(source_id||':'||reference_digest,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
     FROM official_v3_source_renewal_private.observations_v1
