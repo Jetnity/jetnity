@@ -4,7 +4,7 @@ import { providerOpsBegrenztLesen,providerOpsContentLengthUeberschritten,
 import { readV3VisitorInput,type V3VisitorInput } from '../official-truth-product-v3/contract'
 import type { V3VisitorView } from '../official-truth-product-v3/visitor/presentation'
 import type { V3VisitorLoad } from '../official-truth-product-v3/visitor/controller'
-export const AT_VISA_HTTP_PATH='/api/readiness/at-visa'
+const AT_VISA_HTTP_PATH='/api/readiness/at-visa'
 const S=z.string().min(1).max(2000)
 const ISO=z.string().regex(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/)
  .refine(x=>Number.isFinite(Date.parse(x))&&new Date(x).toISOString()===x)
