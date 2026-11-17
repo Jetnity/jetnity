@@ -17,8 +17,8 @@ const previous:ReviewedFact={
  legalValidUntil:'2026-11-30T00:00:00.000Z',lastVerifiedAt:'2026-11-17T12:00:00.000Z',
  release:'accepted',unresolvedConflict:false,
  sourceBindings:[
-  {id:'bmi-matrix',role:'destination_primary',officialUrl:'https://www.bmi.gv.at/example',rawDigest:one,canonicalDigest:null,normalizationContract:'none'},
-  {id:'bmeia-bern',role:'independent_official',officialUrl:'https://www.bmeia.gv.at/example',rawDigest:two,canonicalDigest:three,normalizationContract:'bmeia-theme-assets-v1'},
+  {id:'bmi-matrix',role:'destination_primary',authorityCountryCode:'AT',officialUrl:'https://www.bmi.gv.at/example',rawDigest:one,canonicalDigest:null,normalizationContract:'none'},
+  {id:'bmeia-bern',role:'independent_official',authorityCountryCode:'AT',officialUrl:'https://www.bmeia.gv.at/example',rawDigest:two,canonicalDigest:three,normalizationContract:'bmeia-theme-assets-v1'},
  ],
 }
 const input:SourceRenewalCheck={
@@ -42,8 +42,14 @@ test('Source-bound renewal: fresh real-time receipt after old 1h window is only 
  assert.ok(result.reason.includes('protected')===false)
 })
 test('any destination and passport in the exact 50-priority list may be checked, none is a default',()=>{
- const dest:ReviewedFact={...previous,subject:{...previous.subject,destinationCountryCode:'IT',citizenshipCountryCode:'IN'}}
- const check:SourceRenewalCheck={...input,subject:dest.subject}
+ const oldScope:ReviewedFact={...previous,subject:{...previous.subject,destinationCountryCode:'IT',citizenshipCountryCode:'IN'}}
+ const oldCheck:SourceRenewalCheck={...input,subject:oldScope.subject}
+ unavailable(oldScope,oldCheck) // Austrian primary is not Italy's authority!
+ const dest:ReviewedFact={...oldScope,sourceBindings:previous.sourceBindings.map(pin =>
+  pin.role === 'destination_primary' ? {...pin,authorityCountryCode:'IT',
+   officialUrl:'https://italy.example/government-source'} : pin)}
+ const check:SourceRenewalCheck={...input,subject:dest.subject,observations:input.observations.map(receipt =>
+  receipt.id === 'bmi-matrix' ? {...receipt,officialUrl:'https://italy.example/government-source'} : receipt)}
  assert.equal(run(dest,check).status,'eligible_for_protected_issuer_only')
  unavailable(dest,{...check,subject:{...dest.subject,citizenshipCountryCode:'CH'}})
  unavailable(dest,{...check,passportPriority:priority.slice(1)})
