@@ -18,6 +18,7 @@ const INPUT=z.object({destinationCountryCode:z.literal('AT'),
  citizenshipCountryCodes:z.array(z.string().regex(/^[A-Z]{2}$/)).min(1).max(5)
   .refine(v=>new Set(v).size===v.length)}).strict()
 const accepted=z.object({status:z.literal('accepted'),informationTopic:z.literal('visa'),
+ visaAssessment:z.object({effect:z.literal('not_required'),mode:z.literal('visa_exempt')}).strict(),
  title:S,conditions:z.array(S).min(1).max(10),
  statements:z.array(z.object({text:S,when:S.nullable(),href:H.nullable()}).strict()).min(1).max(4),
  source:z.object({label:S,href:H}).strict(),checkedAtText:S,validityText:S,
@@ -28,7 +29,7 @@ const VIEW=z.object({input:INPUT,generatedAt:ISO,synthetic:z.literal(false),
  results:z.tuple([z.union([accepted,negative])])}).strict()).min(1).max(5)}).strict()
  .refine(v=>v.cells.length===v.input.citizenshipCountryCodes.length&&v.cells.every((cell,i)=>
  cell.country===v.input.citizenshipCountryCodes[i]&&cell.results.every(x=>
- x.status!=='accepted'||(cell.country==='CH'&&Date.parse(x.expiresAt)>Date.parse(v.generatedAt)))))
+ x.status!=='accepted'||Date.parse(x.expiresAt)>Date.parse(v.generatedAt))))
 export function readAtVisaInput(raw:unknown):V3VisitorInput|null{
  const a=INPUT.safeParse(raw);if(!a.success)return null
  const parsed=readV3VisitorInput(a.data)

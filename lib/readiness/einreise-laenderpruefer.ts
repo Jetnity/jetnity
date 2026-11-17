@@ -39,6 +39,7 @@ function ergebnisLesen(result: V3VisitorView['cells'][number]['results'][number]
     statements: result.statements,
     source: result.source,
     checkedAtText: result.checkedAtText,
+    ...(result.visaAssessment ? { visaAssessment: result.visaAssessment } : {}),
   }
 }
 
