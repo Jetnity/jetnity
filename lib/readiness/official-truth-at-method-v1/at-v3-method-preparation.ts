@@ -58,8 +58,12 @@ const methodBinding = readMa1MethodBinding(parsed.value,
   new TextEncoder().encode(packageText), sha256Hex(packageText))
 if (!methodBinding.ok) throw Error('at_v3_method_package_invalid')
 
-/** No callable source issuer/SQL route is exported. Method/Dev/owner and BG1
- * must still accept a future native AT protocol before any customer rule. */
+/** AT private HRS2 and the additive BG1 successor are installed and passed
+ * PG17 rollback and next-generation full-proof readback in Dev on 17.11.2026.
+ * This is merely engineering readiness for authentic Owner/AAL2 method staging.
+ * Zero AT methods are approved; zero positive facts or visitor E2E exist yet.
+ * Production is unmodified; only CH can ever be positively admitted by the
+ * exact private Dev HRS2 SQL after genuine MA1 Owner approval. */
 export const AT_V3_METHOD_PREPARATION = Object.freeze({
   status: 'DRAFT_NOT_STAGED' as const, publicationAuthority: 'none' as const,
   acceptedFacts: 0 as const, importable: false as const,
@@ -68,6 +72,6 @@ export const AT_V3_METHOD_PREPARATION = Object.freeze({
   originalBytes: HRS1_LIMITS.originalBytes,
   proposedAtOnlyMaximumBytes: AT_PROPOSED_ORIGINAL_LIMIT,
   sourcePins, method: parsed.value, binding: methodBinding.value,
-  nativeHrsQualified: false as const, ownerMethodApproved: false as const,
-  backgroundGuardBound: false as const, devVisitorReadback: false as const,
+  nativeHrsQualified: true as const, ownerMethodApproved: false as const,
+  backgroundGuardBound: true as const, devVisitorReadback: false as const,
 })

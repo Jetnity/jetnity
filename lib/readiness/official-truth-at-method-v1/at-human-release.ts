@@ -5,8 +5,10 @@ import { readHumanRelease, HUMAN_METHOD_DEV_URL, type HumanRelease } from
 import { selectedAustriaDev } from './at-dev-selection'
 import { AT_V3_METHOD_PREPARATION } from './at-v3-method-preparation'
 
-// Only the completed audited AT-HRS2/BG1 transition may lift these code-owned
-// integration gates. Draft HRS2 is not a reason to solicit Owner/AAL2.
+// The actual Dev HRS2 migration, full original proof and BG1 successor all
+// passed native rollback and next-generation full BG1 readback; production and
+// customer facts remain untouched. Only this exact Preview may expose the
+// Owner/AAL2 stage/approve controls. SQL independently checks fresh BG1/MA1.
 function atNativeMethodReady(): boolean {
   return AT_V3_METHOD_PREPARATION.nativeHrsQualified
     && AT_V3_METHOD_PREPARATION.backgroundGuardBound
