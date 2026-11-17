@@ -289,47 +289,7 @@ BEGIN
   'jetnity-destination-primary-at-visa',1,
   'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9',
   '55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe',h.epoch);
- FOR subject IN SELECT * FROM official_v3_source_renewal_private.subjects_v1
-   WHERE destination_code='AT' AND requirement_type='visa' ORDER BY subject_id LOOP
-  IF subject.method_id IS DISTINCT FROM h.method_id
-   OR subject.method_revision IS DISTINCT FROM h.revision
-   OR subject.method_digest IS DISTINCT FROM h.method_digest
-   OR subject.package_digest IS DISTINCT FROM h.package_digest
-   OR subject.method_epoch IS DISTINCT FROM h.epoch
-   OR subject.legal_valid_until<=clock_now
-   OR subject.source_count<>3
-   OR NOT EXISTS(SELECT 1 FROM official_v3_source_renewal_private.passport_priority_v1
-    WHERE code=subject.citizenship_code)
-  THEN CONTINUE; END IF;
-  SELECT * INTO predecessor FROM official_v3_source_renewal_private.facts_v1
-    WHERE subject_id=subject.subject_id ORDER BY fact_id DESC LIMIT 1 FOR SHARE;
-  IF FOUND AND (predecessor.source_batch_id=b.batch_id OR predecessor.verified_at>=seen_at)
-  THEN CONTINUE; END IF;
-  IF NOT FOUND THEN
-   SELECT * INTO old_v3 FROM official_v3_at_private.verified_visas_v3 v
-    WHERE 'verified_visas_v3:CH:'||v.rule_version=subject.approved_origin;
-   IF NOT FOUND OR old_v3.method_epoch<>h.epoch OR old_v3.visa_effect<>'not_required'
-    OR old_v3.visa_mode<>'visa_exempt' OR old_v3.verified_at>=seen_at OR old_v3.expires_at<=old_v3.verified_at
-   THEN CONTINUE; END IF;
-  END IF;
-  clock_now:=clock_timestamp();
-  IF clock_now>=seen_at+interval '70 minutes' OR clock_now>=subject.legal_valid_until
-   OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
-  THEN RETURN jsonb_build_object('status','expiry_or_guard','renewed',0); END IF;
-  -- No invented fact: only renew same existing owner-approved legal effect.
-  collected_digest:=(SELECT encode(sha256(convert_to(string_agg(
-    source_id||':'||reference_digest,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
-    FROM official_v3_source_renewal_private.observations_v1
-    WHERE destination_code='AT' AND source_batch_id=b.batch_id);
-  INSERT INTO official_v3_source_renewal_private.facts_v1(
-   subject_id,destination_code,source_batch_id,predecessor_fact_id,
-   verified_at,source_checked_at,expires_at,method_epoch,approval_origin,source_digest)
-  VALUES(subject.subject_id,'AT',b.batch_id,predecessor.fact_id,
-   clock_now,seen_at,least(clock_now+interval '1 hour',subject.legal_valid_until,
-   seen_at+interval '24 hours'),h.epoch,subject.approved_origin,collected_digest)
-  ON CONFLICT DO NOTHING;
-  IF FOUND THEN result_rows:=result_rows+1; END IF;
- END LOOP;
+ result_rows:=official_v3_source_renewal_private.renew_approved_batch_v1('AT',b.batch_id);
  PERFORM official_v3_guard_private.assert_catalog_v1();
  RETURN jsonb_build_object('status','source_checked','renewed',result_rows,
    'sources',count_sources,'accepted_from_research',0);
@@ -339,6 +299,118 @@ EXCEPTION WHEN OTHERS THEN
  RETURN jsonb_build_object('status','unavailable','renewed',0);
 END $seal$;
 REVOKE ALL ON FUNCTION official_v3_source_renewal_private.seal_at_v1() FROM PUBLIC,anon,authenticated,service_role;
+
+
+-- Shared and METHOD-BOUNDED renewal core for any approved country/priority
+-- passport/requirement. The source adapter must first seal a genuine set of
+-- current official HTTP observations into immutable batches/observations.
+-- This cannot authorize an unapproved subject or bootstrap from research.
+CREATE FUNCTION official_v3_source_renewal_private.renew_approved_batch_v1(
+  p_destination_code text,p_source_batch_id bigint) RETURNS integer
+LANGUAGE plpgsql VOLATILE SECURITY INVOKER SET search_path=pg_catalog
+AS $renew_approved$
+DECLARE b record; s record; preceding record; initial record;
+ method official_v3_method_private.heads_v1%ROWTYPE; stamp timestamptz;
+ newest timestamptz; signed_sources text; inserted integer:=0;
+BEGIN
+ IF session_user<>'postgres' OR current_user<>session_user OR current_database()<>'postgres'
+  OR p_destination_code !~ '^[A-Z]{2}$' OR p_source_batch_id IS NULL
+  OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+ THEN RETURN 0; END IF;
+ SELECT * INTO b FROM official_v3_source_renewal_private.batches_v1
+  WHERE destination_code=p_destination_code AND source_batch_id=p_source_batch_id FOR SHARE;
+ stamp:=clock_timestamp();
+ IF NOT FOUND OR b.outcome<>'unchanged' OR b.source_count<1
+  OR b.requested_at>stamp OR b.requested_at<=stamp-interval '70 minutes'
+  OR (SELECT count(*) FROM official_v3_source_renewal_private.sources_v1 WHERE destination_code=p_destination_code)<>b.source_count
+  OR (SELECT count(*) FROM official_v3_source_renewal_private.sources_v1
+      WHERE destination_code=p_destination_code AND role='destination_primary')<>1
+  OR (SELECT count(*) FROM official_v3_source_renewal_private.observations_v1
+      WHERE destination_code=p_destination_code AND source_batch_id=p_source_batch_id
+       AND result IN ('unchanged_exact','unchanged_asset_version_only'))<>b.source_count
+ THEN RETURN 0; END IF;
+ -- Independently check recorded pinned source identity, one-by-one; BMEIA
+ -- theme asset canonicalization is restricted to its already reviewed URL.
+ IF EXISTS(
+  SELECT 1 FROM official_v3_source_renewal_private.observations_v1 o
+  JOIN official_v3_source_renewal_private.sources_v1 p
+   USING(destination_code,source_id)
+  WHERE o.destination_code=p_destination_code AND o.source_batch_id=p_source_batch_id
+   AND (o.observed_at IS NULL OR o.observed_at>stamp OR o.observed_at<o.requested_at
+    OR o.observed_at>o.requested_at+interval '5 minutes'
+    OR (o.result='unchanged_exact' AND
+      (o.observed_sha IS DISTINCT FROM p.raw_sha OR o.observed_bytes IS DISTINCT FROM p.original_bytes))
+    OR (o.result='unchanged_asset_version_only' AND
+      (p.destination_code<>'AT' OR p.source_id<>'bmeia-bern-how-to-apply'
+       OR p.normalization<>'bmeia-theme-assets-v1'
+       OR p.canonical_sha IS DISTINCT FROM 'b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
+       OR o.observed_bytes IS DISTINCT FROM p.original_bytes))))
+ THEN RETURN 0; END IF;
+ SELECT min(observed_at) INTO newest
+ FROM official_v3_source_renewal_private.observations_v1
+ WHERE destination_code=p_destination_code AND source_batch_id=p_source_batch_id;
+ IF newest IS NULL OR newest<=stamp-interval '70 minutes' OR newest>stamp
+ THEN RETURN 0; END IF;
+ SELECT encode(sha256(convert_to(
+  string_agg(source_id||':'||reference_digest,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
+ INTO signed_sources FROM official_v3_source_renewal_private.observations_v1
+ WHERE destination_code=p_destination_code AND source_batch_id=p_source_batch_id;
+ IF signed_sources IS NULL THEN RETURN 0; END IF;
+ FOR s IN SELECT * FROM official_v3_source_renewal_private.subjects_v1
+    WHERE destination_code=p_destination_code ORDER BY subject_id LOOP
+  IF s.source_count<>b.source_count OR s.legal_valid_until<=stamp
+   OR s.first_approved_at>stamp OR s.method_epoch<1
+   OR NOT EXISTS(SELECT 1 FROM official_v3_source_renewal_private.passport_priority_v1
+       WHERE code=s.citizenship_code)
+  THEN CONTINUE; END IF;
+  SELECT * INTO method FROM official_v3_method_private.heads_v1
+   WHERE method_id=s.method_id FOR SHARE;
+  IF NOT FOUND OR method.revision<>s.method_revision OR method.epoch<>s.method_epoch
+   OR method.method_digest<>s.method_digest OR method.package_digest<>s.package_digest
+  THEN CONTINUE; END IF;
+  PERFORM official_v3_method_private.require_current_locked_v1(
+    s.method_id,s.method_revision,s.method_digest,s.package_digest,s.method_epoch);
+  SELECT * INTO preceding FROM official_v3_source_renewal_private.facts_v1
+    WHERE subject_id=s.subject_id ORDER BY fact_id DESC LIMIT 1 FOR SHARE;
+  IF FOUND AND (preceding.verified_at>=newest OR preceding.source_batch_id=p_source_batch_id)
+  THEN CONTINUE; END IF;
+  IF NOT FOUND THEN
+   -- The first approved pilot is CH/AT from the existing real Owner method.
+   -- Further passports require their own genuine initial MA1/I1/HRS receipt,
+   -- NOT an inferred visa exemption from a BMI matrix or RESEARCH_ONLY row.
+   IF s.destination_code<>'AT' OR s.citizenship_code<>'CH' OR
+     s.requirement_type<>'visa' OR s.approved_origin !~ '^verified_visas_v3:CH:[0-9]+$'
+   THEN CONTINUE; END IF;
+   SELECT * INTO initial FROM official_v3_at_private.verified_visas_v3 v
+    WHERE 'verified_visas_v3:CH:'||v.rule_version=s.approved_origin;
+   IF NOT FOUND OR initial.method_epoch<>s.method_epoch
+    OR initial.method_digest<>s.method_digest OR initial.package_digest<>s.package_digest
+    OR initial.visa_effect<>'not_required' OR initial.visa_mode<>'visa_exempt'
+    OR initial.verified_at>=newest OR initial.expires_at<=initial.verified_at
+    OR initial.chain_digest IS DISTINCT FROM (
+      SELECT encode(sha256(convert_to(string_agg(source_id||':'||body_digest,'|' ORDER BY source_id COLLATE "C"),'UTF8')),'hex')
+      FROM official_v3_at_private.whole_originals_v2)
+   THEN CONTINUE; END IF;
+  END IF;
+  stamp:=clock_timestamp();
+  IF stamp>=newest+interval '70 minutes'
+   OR stamp>=s.legal_valid_until
+   OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+  THEN RETURN inserted; END IF;
+  INSERT INTO official_v3_source_renewal_private.facts_v1(
+   subject_id,destination_code,source_batch_id,predecessor_fact_id,
+   verified_at,source_checked_at,expires_at,method_epoch,approval_origin,source_digest)
+  VALUES(s.subject_id,p_destination_code,p_source_batch_id,preceding.fact_id,
+   stamp,newest,least(stamp+interval '1 hour',s.legal_valid_until,
+   newest+interval '24 hours'),s.method_epoch,s.approved_origin,signed_sources)
+  ON CONFLICT DO NOTHING;
+  IF FOUND THEN inserted:=inserted+1; END IF;
+ END LOOP;
+ RETURN inserted;
+EXCEPTION WHEN OTHERS THEN RETURN 0;
+END $renew_approved$;
+REVOKE ALL ON FUNCTION official_v3_source_renewal_private.renew_approved_batch_v1(text,bigint)
+ FROM PUBLIC,anon,authenticated,service_role;
 
 -- Public read is scoped by every exact subject key; never a general assertion
 -- about a country's entry requirements. Source change, missing fresh monitor,
