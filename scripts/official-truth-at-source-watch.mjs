@@ -87,9 +87,17 @@ export async function checkAtOfficialSourceSet(fetcher=fetch){
    changed>0?'CHANGED_REQUIRES_REVIEW':unavailable>0?'SOURCE_UNAVAILABLE':'PINNED_UNCHANGED_NOT_APPROVED'})
 }
 
-if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
- if(process.argv.length!==3||process.argv[2]!=='--once')fail('AT_OFFICIAL_WATCH_INVALID_ARGS')
+// No top-level await: the repository's CI TypeScript loader transforms this
+// module through CJS. The CLI still awaits all source checks before exiting.
+async function runAtWatchCli(){
  const result=await checkAtOfficialSourceSet()
  console.log(JSON.stringify(result))
  if(result.changed||result.unavailable)process.exitCode=1
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
+ if(process.argv.length!==3||process.argv[2]!=='--once')fail('AT_OFFICIAL_WATCH_INVALID_ARGS')
+ void runAtWatchCli().catch(()=>{
+  console.error('AT_OFFICIAL_WATCH_FAILED accepted=0 published=0')
+  process.exitCode=1
+ })
 }

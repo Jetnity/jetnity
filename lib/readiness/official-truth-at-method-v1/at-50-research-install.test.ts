@@ -32,9 +32,12 @@ test('AT 50 pass installer is strictly Dev, external original-bound and research
 })
 
 test('AT 50 passport priority, one unsupported domestic matrix entry, twenty-six topics',()=>{
- const priorityPart=sql.split('INSERT INTO at_50_priority(rank,code,bmi_html_name) VALUES')[1]?.split(';')[0]
+ // HTML-encoded national names contain semicolons (e.g. &uuml;): do NOT
+ // split this SQL VALUES section on the first semicolon.
+ const priorityPart=sql.split('INSERT INTO at_50_priority(rank,code,bmi_html_name) VALUES')[1]
+   ?.split('\nCREATE TEMP TABLE at_50_raw')[0]
  assert.ok(priorityPart)
- const passportCodes=[...priorityPart.matchAll(/\((\d+),'([A-Z]{2})','[^']*'\)/g)]
+ const passportCodes=[...priorityPart.matchAll(/\((\d+),'([A-Z]{2})','(?:''|[^'])*'\)/g)]
  assert.equal(passportCodes.length,50)
  assert.deepEqual(passportCodes.slice(0,10).map(v=>v[2]),['IN','TR','CN','DE','PL','IT','US','UA','RO','FR'])
  assert.equal(new Set(passportCodes.map(v=>v[2])).size,50)
