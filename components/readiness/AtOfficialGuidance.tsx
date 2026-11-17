@@ -1,7 +1,7 @@
 // General Austrian primary-source pointers only, NOT a passport-specific
 // Official Truth rule. Unverified obligations are never displayed as required.
 // Only the official fixed URL set is rendered; no third-party checkout.
-const OFFICIAL_VISA_C='https://www.bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare_ab_2023/Antragsformular_Visum_C1_Schengenvisum_DE-ES.pdf?1698071193='
+const OFFICIAL_VISA_C='https://www.bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare_ab_2023/Antragsformular_Visum_C1_Schengenvisum_DE-ES.pdf'
 const OFFICIAL_CC2='https://afs-formulare.bmf.gv.at/IDOC/FormServlet?fid=7306'
 const OFFICIAL_ETIAS='https://travel-europe.europa.eu/etias/faq'
 const WARNING='Achtung vor inoffiziellen oder kostenpflichtigen Vermittlerseiten. Nutze nur das verlinkte Behördenformular und prüfe Gebühren vor der Zahlung.'
@@ -20,7 +20,7 @@ const ITEMS:readonly Entry[]=Object.freeze([
   url:OFFICIAL_ETIAS,source:'Europäische Union'},
  {id:'passport',title:'Reisepass und Gültigkeit',
   message:'Drittstaatsangehörige benötigen grundsätzlich einen Reisepass, der drei Monate über die Schengen-Ausreise hinaus gilt und in den letzten zehn Jahren ausgestellt wurde. Für EU/EWR/CH bestehen andere Regelungen; Sonderfälle individuell prüfen.',
-  url:'https://eausweise.oesterreich.gv.at/de/themen/bauen_und_wohnen/umzug/2/1/Seite.180653',source:'oesterreich.gv.at'},
+  url:'https://eausweise.oesterreich.gv.at/de/themen/bauen_und_wohnen/umzug/2/1/Seite.180662',source:'oesterreich.gv.at'},
  {id:'passpages',title:'Leere Passseiten',
   message:'Die Botschaft Bern verlangt für dortige Visa-C/D-Anträge grundsätzlich zwei freie Passseiten. Daraus folgt keine allgemeine Passseitenpflicht für visumfreie Reisende.',
   url:'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/',source:'Österreichische Botschaft Bern'},
