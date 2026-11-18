@@ -53,3 +53,53 @@ test('50-minute dedupe plus 5-minute retry closes the original phase-collision o
  assert.equal(new Date(renewal).toISOString(),'2026-11-18T03:07:00.000Z')
  assert.ok(renewal<Date.parse('2026-11-18T03:12:09.715Z'))
 })
+
+
+const batchCandidate = readFileSync(
+ new URL('official-truth-at-production-schedule-v2/batch-boundary-v3.reference.txt',base), 'utf8'
+)
+
+test('P0: the enqueue cadence alone cannot make newest-batch selection safe',()=>{
+ // The installed v1 reader intentionally remains unchanged in Production.
+ assert.match(original,/CREATE FUNCTION public\.jetnity_source_bound_at_visa_v1/)
+ assert.match(original,/SELECT \* INTO b FROM official_v3_at_production_private\.watch_batches_v1\s+ORDER BY batch_id DESC LIMIT 1/)
+ assert.match(batchCandidate,/NON-INSTALLABLE REFERENCE/)
+ assert.match(batchCandidate,/SELECT \* INTO f FROM official_v3_at_production_private\.ch_visa_facts_v1\s+ORDER BY version_id DESC LIMIT 1/)
+ assert.match(batchCandidate,/SELECT \* INTO b FROM official_v3_at_production_private\.watch_batches_v1\s+WHERE batch_id=f\.source_batch_id/)
+ assert.doesNotMatch(batchCandidate,/SELECT \* INTO b FROM official_v3_at_production_private\.watch_batches_v1\s+ORDER BY batch_id DESC LIMIT 1/)
+ assert.match(batchCandidate,/o\.source_status IN\('changed','unavailable'\)/)
+ assert.match(batchCandidate,/newer\.started_at<=instant-interval '6 minutes'/)
+ assert.match(batchCandidate,/o\.source_status='changed'/)
+ assert.match(batchCandidate,/public\.official_v3_guard_alarm_status_v1\(\)->>'status'<>'current'/)
+ assert.match(batchCandidate,/require_current_locked_v1/)
+ assert.match(batchCandidate,/signed_sources IS DISTINCT FROM f\.source_digest/)
+ assert.match(batchCandidate,/p_citizenship_country_code IS DISTINCT FROM 'CH'/)
+ assert.match(batchCandidate,/new immutable BG1 successor/)
+})
+
+test('P0: real 03:00 UTC timeline requires a pending-safe but strictly leased successor',()=>{
+ const previousBatchAt = Date.parse('2026-11-18T02:09:00.031Z')
+ const oldCheckedAt = Date.parse('2026-11-18T02:09:00.200Z')
+ const oldFactExpires = Date.parse('2026-11-18T03:12:09.715Z')
+ const nextBatchAt = Date.parse('2026-11-18T03:00:00.000Z')
+ const pendingAt = Date.parse('2026-11-18T03:00:17.000Z')
+ assert.ok(nextBatchAt-previousBatchAt>=50*60_000)
+ assert.ok(pendingAt<oldFactExpires && pendingAt<oldCheckedAt+70*60_000)
+ type NewerBatch = {at:number; observations: Array<'unchanged'|'changed'|'unavailable'>}
+ const decision = (at:number, bg1:boolean, newer:NewerBatch|undefined, factExpiry=oldFactExpires) => {
+  if(!bg1||at>=factExpiry||at>=oldCheckedAt+70*60_000) return 'unavailable'
+  if(!newer) return 'accepted'
+  if(newer.observations.some(x=>x==='changed'||x==='unavailable')) return 'unavailable'
+  if(newer.observations.length!==3 && at>=newer.at+6*60_000) return 'unavailable'
+  return 'accepted'
+ }
+ assert.equal(decision(pendingAt,true,{at:nextBatchAt,observations:[]}), 'accepted')
+ assert.equal(decision(pendingAt,true,{at:nextBatchAt,observations:['changed']}), 'unavailable')
+ assert.equal(decision(pendingAt,true,{at:nextBatchAt,observations:['unavailable']}), 'unavailable')
+ assert.equal(decision(nextBatchAt+6*60_000,true,{at:nextBatchAt,observations:[]}), 'unavailable')
+ assert.equal(decision(oldFactExpires,true,{at:nextBatchAt,observations:['unchanged','unchanged','unchanged']}), 'unavailable')
+ assert.equal(decision(pendingAt,false,{at:nextBatchAt,observations:[]}), 'unavailable')
+ // The next authoritatively renewed version is distinct: no old-lease extension.
+ assert.equal(decision(Date.parse('2026-11-18T03:07:01Z'),true,undefined,
+   Date.parse('2026-11-18T04:07:00Z')), 'accepted')
+})
