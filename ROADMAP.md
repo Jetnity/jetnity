@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> 18.11.2026: Flight discovery and country-aware airport autocomplete: implemented as an isolated preview; review and coordinated widget/app release remain. [Status](docs/FLIGHT_DISCOVERY_2026-11-18.md).
+
 ## Aktuell: CH→DE-Fortsetzung korrigieren; regelmäßigen Dev-Import abnehmen — 14.11.2026
 
 **Belegt:** [#1197](https://github.com/Jetnity/jetnity/pull/1197) hat Vorrang. CI4245 am Head `b7426918` bestand vollständig; die erste öffentliche Dev-Projektion und ihre Abnahme sind abgeschlossen. Der neue reguläre Quellenlauf auf `d6a264aa` veröffentlichte **Regelversion 2 am 14.11.2026 um 21:20:24 UTC**, gültig bis **22:18:56 UTC**. Der normale UI-Resume verwendete die gespeicherten Original-IDs, bestätigte eine Veröffentlichung und beließ Source-START bei 5. Bereits abgeschlossene Owner-Schritte wurden nicht wiederholt. Recovery3 und ihr früherer Folge-Cron bleiben abgeschlossen. Die alten R41-Statusblöcke darunter sind datierte Historie.
