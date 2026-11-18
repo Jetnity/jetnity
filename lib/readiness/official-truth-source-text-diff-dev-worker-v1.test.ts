@@ -113,7 +113,11 @@ describe('Dev source-body worker: audited source-pair reads, no model/no legal t
   ]) {
    const unsafe=parseOnePrivateRow([fake],S)
    assert.deepEqual(await reviewDevSourceDiff(S,async()=>unsafe),
-     {status:'blocked',reason:unsafe && (unsafe as {status:string}).status==='not_found'?'missing_evidence':'invalid_evidence'})
+     {status:'blocked',reason:unsafe && (unsafe as {status:string}).status==='not_found'
+       ? 'missing_evidence'
+       : unsafe && (unsafe as {status:string}).status==='unavailable'
+         ? 'reader_failed'
+         : 'invalid_evidence'})
   }
   assert.deepEqual(parseOnePrivateRow([base,base],S),{status:'not_found'})
  })
