@@ -70,7 +70,7 @@ export function flugRahmen(
   if (
     !flugWidgetOrigin(target.origin) ||
     target.origin === window.location.origin ||
-    target.pathname !== '/'
+    !['/', '/entdecken.html'].includes(target.pathname)
   ) {
     status('fehler')
     return () => {}
@@ -80,7 +80,7 @@ export function flugRahmen(
     return () => {}
   }
   const frame = document.createElement('iframe')
-  frame.title = 'Flugangebote und Preisvergleich'
+  frame.title = target.pathname === '/entdecken.html' ? 'Flugziel und Orientierungspreise' : 'Flugangebote und Preisvergleich'
   frame.className = 'flug-frame'
   // Separate-origin storage is required by the official widget. No Jetnity account origin.
   frame.setAttribute(

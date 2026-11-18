@@ -7,7 +7,6 @@ import {
   Check,
   Plane,
   Search,
-  SlidersHorizontal,
 } from 'lucide-react'
 import FlughafenSuche from '@/components/airports/FlughafenSuche'
 import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
@@ -22,6 +21,7 @@ import type { Trip } from '@/types/trips'
 import Suchkalender from '../auswahl/Suchkalender'
 import Suchauswahl from '../auswahl/Suchauswahl'
 import Fluggaeste, { type FluggaesteWert } from './Fluggaeste'
+import FlugzieleEntdecken from './FlugzieleEntdecken'
 import Flugergebnisse, { type FlugSuchauftrag } from './Flugergebnisse'
 
 import { FlughafenKartenknopf } from '@/components/trips/reisekarte/Reisekarte'
@@ -43,7 +43,7 @@ function FlughafenFeld({
         inputId={id}
         value={wert}
         onChange={setzen}
-        placeholder="Stadt oder Flughafen"
+        placeholder="Stadt, Land oder Flughafen"
         inputClassName="org-air-input"
       />
     </div>
@@ -247,27 +247,10 @@ export default function Flugvergleich({
         {suche ? (
           <Flugergebnisse key={`${suche.url}:${suchlauf}`} suche={suche} />
         ) : (
-          <div className="flug-start">
-            <div className="flug-start-icon">
-              <Plane size={28} aria-hidden="true" />
-            </div>
-            <h3>Finde den Flug, der zu deiner Reise passt.</h3>
-            <p>
-              Vergleiche verfügbare Flüge und Preise. Buche dein gewähltes
-              Angebot anschliessend beim Anbieter.
-            </p>
-            <div className="flug-benefits">
-              <span>
-                <SlidersHorizontal size={17} /> Gepäck & Zwischenstopps
-              </span>
-              <span>
-                <ArrowLeftRight size={17} /> Airlines & Flugzeiten
-              </span>
-              <span>
-                <Check size={17} /> Preise in CHF
-              </span>
-            </div>
-          </div>
+          <FlugzieleEntdecken origin={origin} onWaehlen={(ziel) => {
+            setNach(ziel)
+            setFehler('')
+          }} />
         )}
       </div>
     </div>
