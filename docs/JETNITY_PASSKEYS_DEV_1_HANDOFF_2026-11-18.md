@@ -19,7 +19,7 @@
 - Baseline: `main@f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5`
 - Modus: `NORMAL`
 
-Der Review-Head ist der Branch-Tip nach dem Commit dieser Lieferung. Die SHA steht im PR-Kommentar. Jeder neuere Commit macht diesen Stand ungültig.
+`d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` hat CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) mit FAILURE in `npm run check:exports`. Der Review-Head ist der Branch-Tip nach dem Export-Fix. Die SHA und das Ergebnis der frischen vollständigen CI stehen im PR-Kommentar. Jeder neuere Commit macht diesen Stand ungültig.
 
 ## Ergebnis
 
@@ -29,7 +29,7 @@ Passwort, TOTP und Admin-AAL2 bleiben die bestehenden Pfade. Ein Passkey, sobald
 
 ## CI und Preview
 
-CI und Preview des Review-Heads starten mit dem Push. Bis dahin kein CI-PASS und kein Preview-PASS. Eine Vercel-Preview auf `*.vercel.app` ist auch danach kein gültiger RP-Origin für `jetnity.com` und darf nicht als Passkey-Smoke gelten.
+Die CI von `d993dbf3b` ist historical und rot. Die CI des korrigierten Heads ist erst nach dem Push das Gate und wird im PR-Kommentar mit ihrem echten Ergebnis genannt. Eine Vercel-Preview auf `*.vercel.app` ist kein gültiger RP-Origin für `jetnity.com` und kein Passkey-Smoke.
 
 `HOSTED_E2E_NOT_RUN`.
 

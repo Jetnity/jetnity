@@ -4,8 +4,6 @@
 
 export const PASSKEY_RP_ID_GEPLANT = 'jetnity.com'
 
-export const PASSKEY_SDK_MINIMUM = '2.105.0'
-
 export type PasskeySperrgrund =
   | 'server_aus'
   | 'sdk_fehlt'

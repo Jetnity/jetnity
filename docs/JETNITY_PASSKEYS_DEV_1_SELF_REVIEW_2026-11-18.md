@@ -40,7 +40,8 @@ Der globale Browser-Client bleibt ohne `experimental.passkey`. Ein zweiter SSR-C
 | AAL-Step-up im Fake | MOCK_PASS |
 | Security-Karten ohne Passkey-Schaltfläche | Playwright-Harness, 11/11, synthetische Auth |
 | Typecheck und zweiter Production-Build | lokal Exit 0 |
-| GitHub-CI und Vercel-Preview dieses Heads | erst nach dem Push |
+| CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) auf `d993dbf3b` | FAILURE, nur `check:exports`; die übrigen sieben Prüffamilien dieses Laufs waren erfolgreich |
+| Export-Fix | `PASSKEY_SDK_MINIMUM` entfernt, `passkeyEintragLesen` nicht mehr exportiert. Kein Dummy-Aufrufer |
 | Echter WebAuthn-Dialog | `HOSTED_E2E_NOT_RUN` |
 | Gehostete Supabase-Auth-Config | nicht gelesen; Repo-Config bleibt die fail-closed Authority |
 

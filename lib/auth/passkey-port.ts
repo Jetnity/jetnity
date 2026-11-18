@@ -128,7 +128,7 @@ export function passkeyFehlerCode(fehler: unknown): PasskeyFehlerCode {
   return 'unbekannt'
 }
 
-export function passkeyEintragLesen(roh: unknown): PasskeyEintrag | null {
+function passkeyEintragLesen(roh: unknown): PasskeyEintrag | null {
   if (!roh || typeof roh !== 'object') return null
   const id = (roh as { id?: unknown }).id
   if (typeof id !== 'string' || !PASSKEY_ID.test(id)) return null

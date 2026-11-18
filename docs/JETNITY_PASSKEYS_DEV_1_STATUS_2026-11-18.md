@@ -20,7 +20,8 @@
 | Übernommener Head | `cb32b49989f345536047b00fc218bb7138d8e73b` |
 | Baseline | `main@f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5` |
 | Modus | `.jetnity/operating-mode.json` = `NORMAL` |
-| Review-Head | der Branch-Tip nach den Commits dieser Lieferung. Die SHA steht im PR-Kommentar. `cb32b49989f345536047b00fc218bb7138d8e73b` ist nicht der Review-Head. |
+| Früherer Head | `d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee`, CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) FAILURE an `npm run check:exports` |
+| Review-Head | der Branch-Tip nach dem Export-Fix. Die SHA und die frische CI stehen im PR-Kommentar. `d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` ist nicht mehr der Review-Head. |
 
 `main` war bei der Übernahme `f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5`. Kein Rebase. Main-CI [44333651972](https://github.com/Jetnity/jetnity/actions/runs/44333651972) ist SUCCESS auf dieser SHA. Das ist die Baseline, nicht das Gate dieses PR-Heads.
 
@@ -76,7 +77,9 @@ Dieselbe Form zusätzlich für `lib/auth/account-security-lage.test.ts`, `accoun
 `npx eslint` auf den berührten Dateien: Exit 0.  
 `npm run build`: der erste Lauf hat nach erfolgreichem Compile wegen eines Next.js-Security-Hinweises mit Exit 1 aufgehört. Der Wiederholungslauf endete Exit 0 und wiederholt denselben Hinweis. Next bleibt `16.4.1`. Kein Upgrade in diesem Slice.
 
-Nicht gelaufen und deshalb nicht grün genannt: `npm test`, GitHub-CI dieses Heads, Hosted-Preview-Login, echtes WebAuthn auf Chrome, Safari, Android oder iOS.
+`d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` ist historical. Job Repository verification meldete zwei Exporte ohne Aufrufer: `PASSKEY_SDK_MINIMUM` und `passkeyEintragLesen`. Die Konstante hatte keinen Leser und ist entfernt. Das Minimum `2.105.0` bleibt in dieser Statusdatei als gelesene Herstellergrenze. `passkeyEintragLesen` bleibt die interne Normalisierung und ist nicht mehr exportiert. Gate, TOTP-Step-up und Tests sind dieselben.
+
+Nicht gelaufen und deshalb nicht grün genannt: `npm test`, die frische GitHub-CI des korrigierten Heads, Hosted-Preview-Login, echtes WebAuthn auf Chrome, Safari, Android oder iOS. Die alte CI ist kein PASS.
 
 ## Nicht angefasst
 
