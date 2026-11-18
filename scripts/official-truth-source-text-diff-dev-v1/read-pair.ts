@@ -3,6 +3,7 @@
 // Queries deliberately return the exact two HTML bodies only to the local,
 // trusted worker process; the worker NEVER prints the bodies to the terminal.
 import { createHash } from 'node:crypto'
+import { types } from 'node:util'
 
 export type SourceSelection = Readonly<{
   sourceFamily: 'SIX' | 'FOUR'
@@ -13,13 +14,24 @@ export type SourceSelection = Readonly<{
 const BRANCH = 'yfvbxvijcorffwxbxahl'
 export const OFFICIAL_SOURCE_DIFF_DEV_REF = BRANCH
 
+function ownData(value: unknown, fields: readonly string[]): Record<string,unknown> | null {
+  if(!value || typeof value!=='object' || Array.isArray(value) || types.isProxy(value))return null
+  try {
+    if(Object.getPrototypeOf(value)!==Object.prototype)return null
+    const props=Object.getOwnPropertyDescriptors(value)
+    if(Reflect.ownKeys(props).length!==fields.length)return null
+    const result:Record<string,unknown>={}
+    for(const field of fields){
+      const descriptor=props[field]
+      if(!descriptor?.enumerable || !('value' in descriptor))return null
+      result[field]=descriptor.value
+    }
+    return result
+  } catch{return null}
+}
 export function readSelection(value: unknown): SourceSelection | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value) ||
-      Object.getPrototypeOf(value)!==Object.prototype) return null
-  const x=value as Record<string,unknown>
-  if(Object.keys(x).length!==3 || !Object.hasOwn(x,'sourceFamily') ||
-     !Object.hasOwn(x,'destinationCode') || !Object.hasOwn(x,'sourceKey')) return null
-  if(x.sourceFamily!=='SIX' && x.sourceFamily!=='FOUR') return null
+  const x=ownData(value,['sourceFamily','destinationCode','sourceKey'])
+  if(!x || (x.sourceFamily!=='SIX' && x.sourceFamily!=='FOUR'))return null
   if(typeof x.destinationCode!=='string' || !/^[A-Z]{2}$/.test(x.destinationCode))return null
   if(typeof x.sourceKey!=='string' || !/^[a-z][a-z0-9-]{1,63}$/.test(x.sourceKey))return null
   if(x.sourceFamily==='FOUR' && x.sourceKey!=='primary')return null
@@ -132,16 +144,13 @@ export function parseOnePrivateRow(
   input:unknown, selection:SourceSelection,
 ):unknown {
   if(!Array.isArray(input)||input.length!==1)return {status:'not_found'}
-  const r=input[0]
-  if(!r||typeof r!=='object'||Array.isArray(r)||Object.getPrototypeOf(r)!==Object.prototype)
-    return {status:'unavailable'}
-  const p=r as Record<string,unknown>
   const expected=[
     'source_family','destination_code','source_key','old_batch','old_sha','old_bytes',
     'old_body_base64','new_batch','new_sha','new_bytes','new_body_base64',
     'latest_batch','latest_sha','latest_state',
   ]
-  if(Object.keys(p).length!==expected.length||expected.some(k=>!Object.hasOwn(p,k)))return {status:'unavailable'}
+  const p=ownData(input[0],expected)
+  if(!p)return {status:'unavailable'}
   if(p.source_family!==selection.sourceFamily||p.destination_code!==selection.destinationCode||
      p.source_key!==selection.sourceKey)return {status:'unavailable'}
   const oldBatch=safeNumber(p.old_batch),newBatch=safeNumber(p.new_batch),
