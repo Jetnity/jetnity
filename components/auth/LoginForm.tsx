@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/formular/feldfehler';
 import { feldInSichtNehmen } from '@/lib/formular/sicht';
 import OauthAnbieter from '@/components/auth/OauthAnbieter';
+import PasskeyAnmeldung from '@/components/auth/PasskeyAnmeldung';
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
 import { brauchtLoginTotpStepUp, getAAL, startTotpChallenge } from '@/lib/auth/mfa';
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
@@ -47,9 +48,11 @@ function mapAuthError(message?: string) {
 export default function LoginForm({
   next = null,
   oauth,
+  passkeysServerAktiviert = false,
 }: {
   next?: string | null
   oauth: OauthFreigabe
+  passkeysServerAktiviert?: boolean
 }) {
   const router = useRouter();
   const nachErfolg = erlaubtesNaechstesZiel(next);
@@ -276,6 +279,18 @@ export default function LoginForm({
           </Button>
         </div>
       </form>
+
+      <PasskeyAnmeldung
+        serverAktiviert={passkeysServerAktiviert}
+        auth={supabase.auth}
+        onStepUp={async () => {
+          const { factorId: naechsterFaktor, challengeId: naechsteChallenge } = await startTotpChallenge(supabase);
+          setFactorId(naechsterFaktor);
+          setChallengeId(naechsteChallenge);
+          setMfaOpen(true);
+        }}
+        onWeiter={() => router.replace(nachErfolg)}
+      />
 
       <OauthAnbieter freigabe={oauth} loading={oauthLoading} onStart={handleOAuth} />
 

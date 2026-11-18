@@ -70,7 +70,9 @@ import {
   type MfaStepUpEreignis,
   type MfaStepUpZustand,
 } from "@/lib/auth/account-mfa-step-up";
+import PasskeyVerwaltung from "@/components/account/PasskeyVerwaltung";
 import SecurityMfaStepUp from "@/components/account/SecurityMfaStepUp";
+import { passkeyHandlungErlaubt, passkeySdkVorhanden } from "@/lib/auth/passkey-faehigkeit";
 
 type BrowserSupabase = SbClient<Database>;
 
@@ -179,6 +181,12 @@ export default function SecurityMFA({
   const aktuellePasskeyLage: PasskeyLage = passkeyLage({
     serverAktiviert: passkeysServerAktiviert,
     browserWebAuthn,
+  });
+  const passkeyBereit = passkeyHandlungErlaubt({
+    serverAktiviert: passkeysServerAktiviert,
+    sdkVorhanden: passkeySdkVorhanden(supabase.auth),
+    browserWebAuthn,
+    origin: typeof window === "undefined" ? null : window.location.origin,
   });
 
   async function refreshFactors() {
@@ -585,10 +593,13 @@ export default function SecurityMFA({
           {sicherheitText(sprache, `passkey.status.${aktuellePasskeyLage}`)}
           {browserHinweis ? ` ${sicherheitText(sprache, "passkey.browserHint")}` : null}
         </p>
-        {darfPasskeyHinzufuegen(aktuellePasskeyLage) ? (
+        {darfPasskeyHinzufuegen(aktuellePasskeyLage) && !passkeyBereit ? (
           <p className="mt-3 text-sm leading-6 text-ink-700">
             {sicherheitText(sprache, "passkey.notConnected")}
           </p>
+        ) : null}
+        {passkeyBereit ? (
+          <PasskeyVerwaltung sprache={sprache} serverAktiviert={passkeysServerAktiviert} auth={supabase.auth} />
         ) : null}
       </section>
       </div>
