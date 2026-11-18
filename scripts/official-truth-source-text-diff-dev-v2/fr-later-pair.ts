@@ -66,6 +66,9 @@ WHERE sample.source_family='FOUR'
  AND first_monitor.source_sha256 IS DISTINCT FROM archive.raw_sha256
  AND first_monitor.source_sha256 IS NOT NULL
  AND latest.batch_id>sample.batch_id
+ AND latest.observed_at>=clock_timestamp()-interval '90 minutes'
+ AND latest.observed_at<=clock_timestamp()
+ AND item.requested_at<=latest.observed_at
  AND latest.status='changed_requires_review'
  AND latest.observed_at>=sample.observed_at
  AND latest.http_code=200
