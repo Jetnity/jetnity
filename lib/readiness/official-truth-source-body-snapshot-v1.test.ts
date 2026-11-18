@@ -1,0 +1,67 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
+
+const sql=readFileSync(new URL(
+  '../../../scripts/db/official-truth-global-source-body-v1/dev-install.sql',
+  import.meta.url,
+),'utf8')
+
+test('Dev-only source-body snapshot installer has exact predecessor and one atomic transaction',()=>{
+ assert.match(sql,/^-- DEV ONLY/)
+ assert.match(sql,/dev:yfvbxvijcorffwxbxahl:GLOBAL-BODY-V1/)
+ assert.match(sql,/current_database\(\)<>'postgres'/)
+ assert.match(sql,/session_user<>'postgres' OR current_user<>session_user/)
+ assert.match(sql,/current_setting\('server_version_num'\)::integer\/10000<>17/)
+ assert.match(sql,/official_v3_guard_alarm_status_v1\(\)->>'status'<>'current'/)
+ assert.match(sql,/official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.equal((sql.match(/^BEGIN;$/gm)??[]).length,1)
+ assert.equal((sql.match(/^COMMIT;$/gm)??[]).length,1)
+ assert.doesNotMatch(sql,/production:qscbgcdmivbbnzrcyegn|CREATE OR REPLACE FUNCTION public\.|ALTER TABLE official_v3_|CREATE ROLE|ALTER ROLE/i)
+})
+test('only existing recorded source response bodies can be captured; no additional fetch',()=>{
+ assert.match(sql,/JOIN net\._http_response n ON n\.id=r\.request_id/g)
+ assert.match(sql,/jetnity_global_source_monitor_private\.observations_v1 o/)
+ assert.match(sql,/jetnity_followup_source_monitor_private\.observations_v3 o/)
+ assert.match(sql,/WHERE o\.result='changed_unqualified_snapshot'/)
+ assert.match(sql,/WHERE o\.status='changed_requires_review'/)
+ assert.match(sql,/n\.id=r\.request_id/)
+ assert.match(sql,/status_code=200/)
+ assert.match(sql,/timed_out IS NOT TRUE/)
+ assert.match(sql,/error_msg IS NULL/)
+ assert.match(sql,/raw_sha ~ '\^\[a-f0-9\]\{64\}\$'/)
+ assert.match(sql,/encode\(sha256\(content_bytes\),'hex'\) IS DISTINCT FROM src\.raw_sha/)
+ assert.match(sql,/current_bytes IS DISTINCT FROM src\.body_bytes/)
+ assert.doesNotMatch(sql,/\bnet\.http_get\s*\(|\bnet\.http_post\s*\(|\bfetch\s*\(|\bOPENAI_API_KEY\b|\bXAI_API_KEY\b/)
+})
+test('immutable source text sample is bounded per day and across all sources',()=>{
+ assert.match(sql,/CREATE TABLE jetnity_source_body_private\.changed_originals_v1/)
+ assert.match(sql,/UNIQUE\(source_family,destination_code,source_key,observed_day_utc\)/)
+ assert.match(sql,/observed_day_utc=\(observed_at AT TIME ZONE 'UTC'\)::date/)
+ assert.match(sql,/body_bytes integer NOT NULL CHECK\(body_bytes BETWEEN 1000 AND 262144\)/)
+ assert.match(sql,/used_rows>=96 OR used_bytes>=16777216/)
+ assert.match(sql,/used_rows>=96 OR used_bytes\+current_bytes>16777216/)
+ assert.match(sql,/CHECK\(body_bytes=octet_length\(original_html\)\)/)
+ assert.match(sql,/CHECK\(raw_sha=encode\(sha256\(original_html\),'hex'\)\)/)
+ assert.match(sql,/FOREIGN KEY\(six_batch_id,destination_code,source_key\)/)
+ assert.match(sql,/FOREIGN KEY\(four_batch_id,destination_code\)/)
+ assert.match(sql,/ON CONFLICT DO NOTHING/)
+ assert.match(sql,/BEFORE UPDATE OR DELETE/)
+ assert.match(sql,/BEFORE TRUNCATE/)
+})
+test('no legal truth, public visibility or a new cron is possible from this slice',()=>{
+ assert.match(sql,/CHECK\(evidence_class='UNQUALIFIED_RESEARCH_SNAPSHOT'\)/)
+ assert.match(sql,/CHECK\(NOT primary_rule_qualified\)/)
+ assert.match(sql,/CHECK\(NOT legal_fact_approved\)/)
+ assert.match(sql,/CHECK\(NOT public_publish_allowed\)/)
+ assert.match(sql,/FORCE ROW LEVEL SECURITY/)
+ assert.match(sql,/CREATE POLICY postgres_only/)
+ assert.match(sql,/REVOKE ALL ON ALL TABLES IN SCHEMA jetnity_source_body_private/)
+ assert.match(sql,/REVOKE ALL ON ALL FUNCTIONS IN SCHEMA jetnity_source_body_private/)
+ assert.match(sql,/REVOKE ALL ON SCHEMA jetnity_source_body_private/)
+ assert.match(sql,/CREATE VIEW jetnity_source_body_private\.latest_six_source_v1/)
+ assert.match(sql,/CHANGED_OR_UNSAMPLED_REQUIRES_REVIEW/)
+ assert.match(sql,/cron\.alter_job\(jobid,/)
+ assert.match(sql,/command=>'SELECT jetnity_source_body_private\.capture_all_v1\(\)'/)
+ assert.doesNotMatch(sql,/\bcron\.schedule\(|\bGRANT EXECUTE\b|\bGRANT SELECT\b|INSERT INTO official_v3_|UPDATE official_v3_|DELETE FROM official_v3_/i)
+})
