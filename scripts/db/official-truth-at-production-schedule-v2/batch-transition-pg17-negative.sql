@@ -2,7 +2,7 @@
 -- No references to production objects, no DDL/DML, no rights, no live RPC calls.
 -- Runs as a single SELECT in a PG17 Dev session; expected failed_cases=0.
 WITH test_cases(
-  name, current_time, fact_checked_at, fact_expires_at,
+  name, evaluated_at, fact_checked_at, fact_expires_at,
   new_started_at, new_observations, bg1_current, citizen,
   source_digest_valid, method_current, expected, renewed_after_change
 ) AS (
@@ -64,11 +64,11 @@ evaluation AS (
  SELECT name,expected,
    CASE WHEN NOT bg1_current OR citizen <> 'CH' OR NOT source_digest_valid
      OR NOT method_current OR renewed_after_change
-     OR current_time>=fact_expires_at
-     OR current_time>=fact_checked_at+interval '70 minutes'
+     OR evaluated_at>=fact_expires_at
+     OR evaluated_at>=fact_checked_at+interval '70 minutes'
      OR 'changed'=ANY(new_observations) OR 'unavailable'=ANY(new_observations)
      OR (new_started_at IS NOT NULL
-        AND current_time>=new_started_at+interval '6 minutes'
+        AND evaluated_at>=new_started_at+interval '6 minutes'
         AND coalesce(array_length(new_observations,1),0)<>3)
    THEN 'unavailable' ELSE 'accepted' END AS actual
  FROM test_cases
