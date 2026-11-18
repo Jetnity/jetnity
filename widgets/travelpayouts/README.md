@@ -27,3 +27,16 @@ Some provider fallback/error copy is English despite German configuration. Filte
 ## Release hosting
 
 Approved static project: `jetnity-flight-widget` (`prj_SrFRWKBWs8rzO5VrHVxhXKicQAqr`). Public origin: `https://jetnity-flight-widget.vercel.app`. Deploy only this directory; never include application environment files or credentials.
+
+## Destination cards (18.11.2026, preview)
+
+`/entdecken.html?ziel=VIE|BCN|LIS` embeds the official Popular Routes widget
+(https://support.travelpayouts.com/hc/en-us/articles/205670418-Popular-routes-widget).
+German/CHF, marker 804084, four incoming routes, Jetnity green. Native buttons
+select only the airport, retaining the user's flight dates/passengers. Provider
+price links open Aviasales.com with the widget's indicative dates; these are not
+trip-specific live fares. No price extraction or new API credentials.
+
+Release this directory's new files/CSP together before releasing the app change.
+The existing deployed widget host does not yet have this page. Local preview is
+verified; hosted HTTPS and physical mobile verification remain for release.

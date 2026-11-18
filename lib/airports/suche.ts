@@ -5,6 +5,7 @@
 // Suchvarianten und Rangfolge.
 
 import { enthaeltGefaltet, gleichGefaltet, sucheVarianten } from '@/lib/airports/normalisieren'
+import { flughafenLandPasst } from './laendersuche'
 import { iataLesen } from '@/lib/route/referenz'
 import { namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
@@ -15,6 +16,7 @@ export type FlughafenZeile = {
   city: string | null
   region?: string | null
   country: string | null
+  country_code?: string | null
   keywords?: string | null
   klasse?: string | null
 }
@@ -25,7 +27,7 @@ export type FlughafenOption = {
   description?: string
 }
 
-const FLUGHAFEN_TREFFER = 6
+const FLUGHAFEN_TREFFER = 8
 export const FLUGHAFEN_ABFRAGE = 80
 
 const STARK_RANG = 2_800
@@ -73,6 +75,7 @@ function flughafenRang(zeile: FlughafenZeile, suche: string): number {
       .some((teil) => gleichGefaltet(teil.trim(), raw))
     rang += genau ? 2_000 : 180
   }
+  if (flughafenLandPasst(zeile.country_code, zeile.country, raw)) rang += 1_800
   if (rang === 0) return 0
   if (enthaeltGefaltet(zeile.region, raw) && !gleichGefaltet(zeile.city, raw)) rang += 80
   if (enthaeltGefaltet(zeile.country, raw) && !gleichGefaltet(zeile.city, raw)) rang += 20

@@ -335,6 +335,53 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     if (server) await new Promise<void>((resolve, reject) => server.close((fehler) => (fehler ? reject(fehler) : resolve())))
   })
 
+  test('Einreise öffnet unter Vorbereitung in derselben Reise und bleibt nach Neuladen und History-Wechsel erreichbar', async () => {
+    for (const width of [1440, 390, 320]) {
+      const page = await browser.newPage({ viewport: { width, height: 900 } })
+      try {
+        await page.goto(`${origin}/reisen/trip-u1c-referenz?ansicht=vorbereitung`)
+        await page.locator('[data-workspace-modus="vorbereitung"]').waitFor()
+        if (width < 1024) await page.getByRole('button', { name: 'Navigation öffnen' }).click()
+        const navigation = page.locator('[data-workspace-mode-nav="sidebar"]')
+        assert.deepEqual(await navigation.getByRole('button').allTextContents(), [
+          'Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung', 'Einreise & Visum',
+        ])
+        const einreise = navigation.getByRole('button', { name: 'Einreise & Visum' })
+        await einreise.focus()
+        await page.keyboard.press('Enter')
+        const pruefer = page.locator('[data-workspace-modus="einreise"]')
+        await pruefer.getByRole('heading', { name: 'Einreise und Visum prüfen' }).waitFor()
+        assert.equal(await pruefer.evaluate(el => el === document.activeElement), true)
+        assert.equal(await page.locator('.workspace-shell').getAttribute('data-menu-open'), 'false')
+        assert.equal(new URL(page.url()).pathname, '/reisen/trip-u1c-referenz')
+        assert.equal(new URL(page.url()).searchParams.get('ansicht'), 'einreise')
+        await pruefer.getByRole('combobox', { name: 'Zielland', exact: true }).selectOption('AT')
+        await pruefer.getByRole('combobox', { name: 'Pass 1', exact: true }).selectOption('CH')
+        assert.equal(await pruefer.getByRole('button', { name: 'Einreise anzeigen', exact: true }).isEnabled(), true)
+        if (process.env.JETNITY_WORKSPACE_EVIDENCE_DIR) {
+          await page.screenshot({ path: join(process.env.JETNITY_WORKSPACE_EVIDENCE_DIR, `einreise-workspace-${width}.png`), fullPage: true })
+        }
+        await page.reload()
+        await pruefer.getByRole('heading', { name: 'Einreise und Visum prüfen' }).waitFor()
+        assert.equal(await navigation.getByRole('button', { name: 'Einreise & Visum', includeHidden: true }).getAttribute('aria-current'), 'page')
+        await page.goBack()
+        await page.locator('[data-workspace-modus="vorbereitung"]').waitFor()
+        await page.goForward()
+        await pruefer.getByRole('heading', { name: 'Einreise und Visum prüfen' }).waitFor()
+        if (width < 1024) {
+          const mobile = page.locator('[data-workspace-mode-nav="mobile"]')
+          assert.equal(await mobile.getByRole('button', { name: 'Einreise & Visum' }).getAttribute('aria-current'), 'page')
+          assert.equal(await mobile.evaluate(el => el.scrollWidth <= el.clientWidth), true)
+          await mobile.getByRole('button', { name: 'Reiseplan', exact: true }).click()
+        } else {
+          await navigation.getByRole('button', { name: 'Reiseplan', exact: true }).click()
+        }
+        await page.locator('[data-trip-atlas]').waitFor()
+        assert.equal(await pruefer.count(), 0)
+      } finally { await page.close() }
+    }
+  })
+
   test('Verbindungsdetail, direkter Link, Zurück und Vorwärts erhalten den Abschnitt; mehrdeutige Zuordnung bleibt gesperrt', async () => {
     const page = await browser.newPage({ viewport:{width:1440,height:900} })
     try {

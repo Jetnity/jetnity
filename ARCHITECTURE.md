@@ -1,5 +1,7 @@
 # Jetnity – Architektur
 
+> 18.11.2026: Flight discovery preview reuses the native airport catalog and existing consent/sandbox boundary; an isolated official Popular Routes widget supplies indicative prices. [Scope and validation](docs/FLIGHT_DISCOVERY_2026-11-18.md).
+
 ## CH→DE in Dev: reguläre Claim-Fortsetzung und regelmäßiger Import — 14.11.2026
 
 Der aktuelle Dev-Auftrag läuft in [#1197](https://github.com/Jetnity/jetnity/pull/1197); die folgenden datierten R41-Einträge bleiben Historie. BG1, sein öffentlicher Status sowie Recovery2 und Recovery3 sind in `yfvbxvijcorffwxbxahl` installiert und durch echte Folge-Crons geprüft. Die erste Dev-Veröffentlichung folgte auf den vollständig grünen CI4245 am Head `b7426918`. Der neue normale Quellenlauf auf `d6a264aa` veröffentlichte am 14.11.2026 um **21:20:24 UTC Regelversion 2**; Quellenprüfung 21:18:53 UTC, Versionsgeburt 21:18:56 UTC, Ablauf **22:18:56 UTC**. Nach dem unterbrochenen ersten Tick bestätigte die UI-Fortsetzung derselben gespeicherten Auftrags-/Lease-Kennungen die Veröffentlichung. Der Source-START-Zähler blieb dabei 5; kein Ersatzlauf und keine neue Owner-Freigabe. [Verlauf der vorhandenen Recovery](docs/OFFICIAL_TRUTH_DEV_GUARD_RECOVERY_1_HANDOFF_2026-11-14.md).

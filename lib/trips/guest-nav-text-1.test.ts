@@ -360,7 +360,7 @@ describe('mounted guest resume links and large-text tabs', () => {
               const text = bereich.getBoundingClientRect()
               const stil = getComputedStyle(knopf)
               return {
-                name: knopf.textContent?.trim() ?? '',
+                name: knopf.getAttribute('aria-label') ?? knopf.textContent?.trim() ?? '',
                 left: kasten.left,
                 right: kasten.right,
                 top: kasten.top,
@@ -381,7 +381,7 @@ describe('mounted guest resume links and large-text tabs', () => {
           })
           assert.deepEqual(
             messung.kaesten.map((kasten) => kasten.name),
-            ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung'],
+            ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung', 'Einreise & Visum'],
             `${breite}/${schrift}`,
           )
           const erwartet = schrift === '32px' ? '28px' : '14px'
