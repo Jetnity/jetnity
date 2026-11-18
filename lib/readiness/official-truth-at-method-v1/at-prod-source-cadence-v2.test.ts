@@ -154,3 +154,25 @@ test('P0 PG17 negative fixture is read-only and covers 13 independent safety cas
  assert.match(pg17Fixture,/count\(\*\) FILTER\(WHERE expected IS DISTINCT FROM actual\) AS failed_cases/)
  assert.doesNotMatch(pg17Fixture,/\b(INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE|GRANT|REVOKE)\s+(INTO|TABLE|FUNCTION|ROLE|FROM|ON)\b/i)
 })
+
+
+const nativeFullInstaller = readFileSync(
+ new URL('official-truth-at-production-schedule-v2/native-full-installer-pg17-rollback.sql',base), 'utf8'
+)
+test('P0 catalog comparison removes definition only from a JSONB value, not from its textual key',()=>{
+ assert.match(switchCandidate,/\(\(new_catalog->orig\.key\)-'definition'\)/)
+ assert.doesNotMatch(switchCandidate,/new_catalog->orig\.key-'definition'/)
+})
+test('Full owner-gated BG1 installer has a reproducible isolated PG17 transaction proof',()=>{
+ assert.match(nativeFullInstaller,/BEGIN;/)
+ assert.match(nativeFullInstaller,/CREATE SCHEMA jetnity_at_full_rehearsal AUTHORIZATION postgres/)
+ assert.match(nativeFullInstaller,/AT_BATCH_V3_PREDECESSOR_REJECTED/)
+ assert.match(nativeFullInstaller,/AT_BATCH_V3_PREDECESSOR_CATALOG_DRIFT/)
+ assert.match(nativeFullInstaller,/CREATE TABLE jetnity_at_full_rehearsal\.at_batch_switch_baseline_v2/)
+ assert.match(nativeFullInstaller,/UPDATE jetnity_at_full_rehearsal\.state_v1 SET generation=generation\+1/)
+ assert.match(nativeFullInstaller,/PERFORM jetnity_at_full_rehearsal\.assert_catalog_v1\(\)/)
+ assert.match(nativeFullInstaller,/PERFORM jetnity_at_full_rehearsal\.require_open_v1\(\)/)
+ assert.match(nativeFullInstaller,/EXCEPTION WHEN SQLSTATE 'P7901'/)
+ assert.match(nativeFullInstaller,/ROLLBACK;\s*$/)
+ assert.doesNotMatch(nativeFullInstaller,/\bCOMMIT;\s*$/)
+})
