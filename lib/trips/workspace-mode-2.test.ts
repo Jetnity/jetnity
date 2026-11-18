@@ -65,6 +65,17 @@ test('bereich ausserhalb von Organisieren wird entfernt, der Modus bleibt', () =
   assert.equal(vorbereitung.search, 'foo=1&ansicht=vorbereitung')
 })
 
+test('Einreise bleibt nach Neuladen in derselben Reise und übernimmt keine Auswahl anderer Bereiche', () => {
+  const url = modusUrl('/reisen/trip-1?ansicht=plan&tag=day-1&punkt=item-1&spur=bleibt', {
+    ansicht: 'einreise', bereich: null,
+  })
+  assert.equal(url, '/reisen/trip-1?spur=bleibt&ansicht=einreise')
+  assert.deepEqual(lesen('ansicht=einreise').modus, {
+    ansicht: 'einreise', bereich: null, urlAnpassen: false,
+  })
+  assert.equal(lesen('ansicht=einreise&vorbereitung=reisende-dokumente&reisender=a&bereich=fluege').search, 'ansicht=einreise')
+})
+
 test('ungültige Werte fallen auf Übersicht und bewahren fremde Parameter', () => {
   for (const search of [
     'ansicht=unbekannt',

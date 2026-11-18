@@ -14,6 +14,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { ArrowLeft } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
@@ -104,6 +105,10 @@ import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
 import TripComSuche from '@/components/trips/TripComSuche'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
+
+const EinreiseLaenderpruefer = dynamic(() => import('@/components/readiness/EinreiseLaenderpruefer'), {
+  loading: () => <p role="status">Einreiseprüfung wird geladen.</p>,
+})
 
 function kompakteAnsichtAbonnieren(melden: () => void) {
   const mq = window.matchMedia(`(min-width: ${ARBEITSBEREICH_DESKTOP_AB_PX}px)`)
@@ -1478,6 +1483,18 @@ export default function TripWorkspace({
               {sicherheit}
               {reisezeit}
               {vorbereitung}
+            </section>
+          ) : null}
+
+          {modusBereit && modus.ansicht === 'einreise' ? (
+            <section
+              aria-label="Einreise & Visum"
+              tabIndex={-1}
+              data-workspace-modus-heading
+              data-workspace-modus="einreise"
+              className="mt-4 min-w-0 outline-none"
+            >
+              <EinreiseLaenderpruefer />
             </section>
           ) : null}
 
