@@ -140,7 +140,7 @@ describe('government HTML changes remain unqualified even with equal visible sou
    const good=snapshot(page(),2)
    for(const bad of [
       null,[],{...good,sourceKey:'../evil'}, {...good,sourceFamily:'UNKNOWN'},
-      {...good,sourceKey:'primary',sourceFamily:'FOUR',destinationCode:'GB'},
+      {...good,sourceKey:'thai-tdac',sourceFamily:'FOUR',destinationCode:'GB'},
       {...good,sourceKey:'thai-tdac',rawSha:'not-a-hash'}, {...good,batchId:0},
       {...good,acceptedFacts:10}, {...good,publicationAllowed:true}
    ]) assert.deepEqual(officialTruthQuellenTextVergleich(original,bad),
