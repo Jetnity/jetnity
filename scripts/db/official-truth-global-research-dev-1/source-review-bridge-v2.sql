@@ -1,6 +1,6 @@
 -- DEV ONLY — shared review queue V2: reuses EXISTING monitored AT + IT/FR/ES/PT
 -- and six-country research sources without building eleven legal approval paths.
--- All 206 destinations and all 50 passports keep "derzeit nicht verfügbar"
+-- This RESEARCH_ONLY matrix keeps all 206 destinations and all 50 passports "derzeit nicht verfügbar"
 -- unless separately qualified by protected MA1/BG1; this queue cannot publish.
 BEGIN;
 SET LOCAL search_path=pg_catalog;
@@ -159,31 +159,11 @@ LEFT JOIN LATERAL(
 LEFT JOIN jetnity_global_review_private.followup_events_v2 evt
  ON evt.batch_id=b.batch_id AND evt.dest=s.destination_code;
 
--- Austria's original THREE exact pinned official sources already have their
--- own V3 monitor/qualified CH-only method. Reuse read-only monitor evidence
--- only: NEVER infer the other 49 passports are entitled to CH's rule.
-CREATE VIEW jetnity_global_review_private.austria_source_head_v2
- WITH (security_invoker=true) AS
-SELECT 'AT'::text AS dest,p.source_id AS source_key,p.url AS official_url,
- b.batch_id,b.requested_at,r.observed_at,r.state AS disposition,
- r.observed_sha AS raw_sha,
- CASE WHEN b.batch_id IS NULL THEN 'NO_SOURCE_BATCH'
-  WHEN r.batch_id=b.batch_id THEN
-   CASE WHEN r.state IN('unchanged_exact','unchanged_asset_version_only')
-     THEN 'RESEARCH_ONLY_NOT_LEGALLY_QUALIFIED'
-    ELSE 'SOURCE_UNAVAILABLE_REQUIRES_RETRY' END
-  WHEN b.requested_at<=clock_timestamp()-interval '6 minutes'
-   THEN 'SOURCE_COLLECTION_TIMEOUT'
-  ELSE 'COLLECTION_PENDING' END AS triage,
- false::boolean AS legally_qualified,false::boolean AS publishable
-FROM official_v3_at_source_watch_private.pins_v1 p
-LEFT JOIN LATERAL(
- SELECT b.batch_id,b.requested_at
- FROM official_v3_at_source_watch_private.batches_v1 b
- ORDER BY b.batch_id DESC LIMIT 1
-) b ON true
-LEFT JOIN official_v3_at_source_watch_private.reads_v1 r
- ON r.batch_id=b.batch_id AND r.source_id=p.source_id;
+-- AT has a separately protected MA1/BG1 source/visitor pipeline.
+-- Never make this research-only bridge depend on AT's immutable BG1-protected
+-- namespace: that would alter the protected dependency catalog and alarm.
+-- AT remains monitored and qualified for CH ONLY via its existing system.
+-- Its other 49 passport cases stay private/unavailable in the 206x50 matrix.
 
 CREATE VIEW jetnity_global_review_private.all_source_head_v2
  WITH (security_invoker=true) AS
@@ -191,10 +171,7 @@ SELECT dest,source_key,triage,'GLOBAL_SIX'::text AS registry
  FROM jetnity_global_review_private.source_head_v1
 UNION ALL
 SELECT dest,source_key,triage,'FOLLOWUP_FOUR'::text AS registry
- FROM jetnity_global_review_private.followup_source_head_v2
-UNION ALL
-SELECT dest,source_key,triage,'AT_OFFICIAL'::text AS registry
- FROM jetnity_global_review_private.austria_source_head_v2;
+ FROM jetnity_global_review_private.followup_source_head_v2;
 
 CREATE VIEW jetnity_global_review_private.destination_head_v2
  WITH (security_invoker=true) AS
@@ -251,11 +228,11 @@ BEGIN
    IS DISTINCT FROM (SELECT count(*) FROM jetnity_global_source_monitor_private.observations_v1)
  OR (SELECT count(*) FROM jetnity_global_review_private.followup_events_v2)
    IS DISTINCT FROM (SELECT count(*) FROM jetnity_followup_source_monitor_private.observations_v3)
- OR (SELECT count(*) FROM jetnity_global_review_private.all_source_head_v2)<>18
- OR (SELECT count(DISTINCT dest) FROM jetnity_global_review_private.all_source_head_v2)<>11
+ OR (SELECT count(*) FROM jetnity_global_review_private.all_source_head_v2)<>15
+ OR (SELECT count(DISTINCT dest) FROM jetnity_global_review_private.all_source_head_v2)<>10
  OR (SELECT count(*) FROM jetnity_global_review_private.passport_triage_v2)<>10300
  OR (SELECT count(*) FROM jetnity_global_review_private.passport_triage_v2
-   WHERE source_monitor_candidates>0)<>550
+   WHERE source_monitor_candidates>0)<>500
  OR EXISTS(SELECT 1 FROM jetnity_global_review_private.followup_events_v2
    WHERE source_qualified OR legal_fact_approved OR public_publish_allowed)
  OR (SELECT count(*) FROM cron.job WHERE active AND username='postgres'
