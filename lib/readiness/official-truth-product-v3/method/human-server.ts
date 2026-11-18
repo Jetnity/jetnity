@@ -9,6 +9,7 @@ import {
   type HumanOutcome, type HumanOutcomeCode, type HumanRequest, type HumanRevokeArgs, type HumanStageArgs,
 } from './human-contract'
 import { getHumanRelease } from './human-release'
+import { getAtHumanRelease } from '../../official-truth-at-method-v1/at-human-release'
 
 // Local types for the four reviewed, not-yet-applied HMT wrappers. This does
 // not assert that generated or hosted schema already contains these functions.
@@ -42,7 +43,8 @@ export async function runHumanMethodRequest(request: HumanRequest, actorId: stri
   const operation: HumanOperation = { schema: 1, selectionId: request.selectionId, action: request.action, operationId: request.operationId }
   const unresolved = (code: HumanOutcomeCode): HumanOutcome => ({ schema: 1, intent: request.intent,
     operation, status: 'unresolved', recordedAt: null, code })
-  const release = getHumanRelease()
+  const atRelease = getAtHumanRelease()
+  const release = atRelease?.selectionId === request.selectionId ? atRelease : getHumanRelease()
   if (!release) return unresolved('unselected')
   if (getServerSupabaseUrl() !== release.targetUrl) return unresolved('target_refused')
   const command = buildHumanCommand(release, operation)

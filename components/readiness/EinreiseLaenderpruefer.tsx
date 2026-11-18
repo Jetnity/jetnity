@@ -4,9 +4,12 @@ import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'rea
 
 import LandFeld from '@/components/country/LandFeld'
 import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
+import AtOfficialGuidance from '@/components/readiness/AtOfficialGuidance'
+import FollowupOfficialGuidance from '@/components/readiness/FollowupOfficialGuidance'
 import { istKatalogLand, type Iso3166Alpha2 } from '@/lib/country/katalog'
 import { einreisePrueferLaden, einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
 import { loadChDeVisa } from '@/lib/readiness/official-truth-product-v3/visitor/ch-de-http'
+import { loadAtVisa } from '@/lib/readiness/official-truth-at-method-v1/at-visa-http'
 import { createV3VisitorController, type V3VisitorUiState } from '@/lib/readiness/official-truth-product-v3/visitor/controller'
 
 const sekundär = 'inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
@@ -22,7 +25,7 @@ export default function EinreiseLaenderpruefer() {
   const [stand, setStand] = useState<V3VisitorUiState>({ phase: 'idle', view: null, message: null })
   const ergebnisTitel = useRef<HTMLHeadingElement>(null)
   const controller = useMemo(
-    () => createV3VisitorController(einreisePrueferLaden(loadChDeVisa), setStand),
+    () => createV3VisitorController(einreisePrueferLaden(loadChDeVisa, loadAtVisa), setStand),
     [],
   )
   useEffect(() => () => controller.dispose(), [controller])
@@ -117,6 +120,8 @@ export default function EinreiseLaenderpruefer() {
           ) : null}
           {sicht.hinweis ? <p role="status" className="text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
           <EinreiseKundenanzeige anzeige={sicht.anzeige} />
+          {sicht.zielCode === 'AT' ? <AtOfficialGuidance /> : null}
+          {['IT','FR','ES','PT'].includes(sicht.zielCode) ? <FollowupOfficialGuidance country={sicht.zielCode} /> : null}
         </div>
       ) : null}
     </section>

@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
+const sql=readFileSync(new URL('../../../scripts/db/official-truth-followup-source-monitor-dev-1/install.sql',import.meta.url),'utf8')
+test('four official destination source candidates are read in bounded hourly batches, not published',()=>{
+ assert.match(sql,/FOLLOWUP-WATCH-1/)
+ for(const code of ['IT','FR','ES','PT']) assert.match(sql,new RegExp("'"+code+"'"))
+ assert.match(sql,/net\.http_get\(s\.official_url/)
+ assert.match(sql,/50 minutes/)
+ assert.match(sql,/15000/)
+ assert.match(sql,/1048576/)
+ assert.match(sql,/source_sha256/)
+ assert.match(sql,/changed_requires_review/)
+ assert.match(sql,/unqualified_snapshot/)
+ assert.match(sql,/unchanged_unqualified/)
+ assert.match(sql,/raw_source_approved boolean NOT NULL DEFAULT false CHECK\(raw_source_approved=false\)/)
+ assert.match(sql,/legal_fact_approved boolean NOT NULL DEFAULT false CHECK\(legal_fact_approved=false\)/)
+ assert.match(sql,/cron\.schedule\('jetnity-followup-government-enqueue-dev-v1','11 \* \* \* \*'/)
+})
+test('monitor observations are private append-only and do not mutate Official Truth',()=>{
+ assert.match(sql,/BEGIN;/)
+ assert.match(sql,/COMMIT;\s*$/)
+ assert.match(sql,/FORCE ROW LEVEL SECURITY/)
+ assert.match(sql,/no_row_mutation BEFORE UPDATE OR DELETE/)
+ assert.match(sql,/no_truncate BEFORE TRUNCATE/)
+ assert.match(sql,/REVOKE ALL ON ALL TABLES IN SCHEMA jetnity_followup_source_monitor_private/)
+ assert.match(sql,/PERFORM official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.doesNotMatch(sql,/CREATE OR REPLACE FUNCTION public\.|GRANT EXECUTE|GRANT SELECT/i)
+ assert.doesNotMatch(sql,/INSERT INTO official_v3_source_renewal_private|UPDATE official_v3_/i)
+})

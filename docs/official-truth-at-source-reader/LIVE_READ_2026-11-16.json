@@ -1,0 +1,99 @@
+{
+  "kind": "at-official-source-live-read",
+  "issue": 1223,
+  "disposition": "RESEARCH_ONLY",
+  "legalClassification": "not_performed",
+  "acceptedFactCount": 0,
+  "customerStatement": "derzeit nicht verfügbar",
+  "importDecision": "not_taken",
+  "note": "Mechanical retrieval only. A Stand token and the literal date probe are observations for the Technical Lead. They are not an approved document version and not a visa classification. Last-Modified is recorded and is not a version pin.",
+  "sources": [
+    {
+      "publicationId": "bmi-visa-nationality-matrix",
+      "requestUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "transport": "read",
+      "contentType": "text/html",
+      "retrievedAt": "2026-11-16T20:01:05.447Z",
+      "lastModifiedHeader": "Mon, 16 Nov 2026 19:49:32 GMT",
+      "bind": {
+        "status": "bound",
+        "byteLength": 498415,
+        "sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+        "byteOrderMark": true,
+        "title": "Visumpflichtige Länder",
+        "versionObservation": {
+          "status": "single_observed_token",
+          "token": "6.11.2026",
+          "approvedVersion": null
+        },
+        "legalClassification": "not_performed",
+        "lastModifiedIsVersionPin": false,
+        "literalDateProbe": {
+          "15.7.2026": false,
+          "6.11.2026": true
+        }
+      }
+    },
+    {
+      "publicationId": "bmi-general-entry",
+      "requestUrl": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "transport": "read",
+      "contentType": "text/html",
+      "retrievedAt": "2026-11-16T20:01:06.020Z",
+      "lastModifiedHeader": "Mon, 16 Nov 2026 19:49:32 GMT",
+      "bind": {
+        "status": "bound",
+        "byteLength": 91655,
+        "sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+        "byteOrderMark": true,
+        "title": "Fremdenpolizei und Grenzkontrollwesen",
+        "versionObservation": {
+          "status": "absent",
+          "token": null,
+          "approvedVersion": null
+        },
+        "legalClassification": "not_performed",
+        "lastModifiedIsVersionPin": false,
+        "literalDateProbe": {
+          "15.7.2026": false,
+          "6.11.2026": false
+        }
+      }
+    },
+    {
+      "publicationId": "bmeia-bern-how-to-apply",
+      "requestUrl": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "transport": "read",
+      "contentType": "text/html; charset=utf-8",
+      "retrievedAt": "2026-11-16T20:01:07.324Z",
+      "lastModifiedHeader": null,
+      "bind": {
+        "status": "bound",
+        "byteLength": 172460,
+        "sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+        "byteOrderMark": false,
+        "title": "Wie stelle ich einen Antrag? – BMEIA - Außenministerium Österreich",
+        "versionObservation": {
+          "status": "absent",
+          "token": null,
+          "approvedVersion": null
+        },
+        "legalClassification": "not_performed",
+        "lastModifiedIsVersionPin": false,
+        "literalDateProbe": {
+          "15.7.2026": false,
+          "6.11.2026": false
+        }
+      }
+    }
+  ],
+  "adapter": {
+    "disposition": "RESEARCH_ONLY",
+    "acceptedFactCount": 0,
+    "positiveStatementCount": 0,
+    "importable": false,
+    "v3MethodInvoked": false,
+    "visitorReadback": false,
+    "admissionWithoutExternalProof": "tl_evaluation_required"
+  }
+}

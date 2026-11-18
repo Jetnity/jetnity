@@ -16,7 +16,9 @@ import { presentV3CustomerDetail, type V3VisitorStatement as Statement } from '.
 export type V3VisitorViewResult =
   | Readonly<{ status: 'accepted'; title: string; conditions: readonly string[]; statements: readonly Statement[];
       source: Readonly<{ label: string; href: string }>; checkedAtText: string; validityText: string; ruleVersion: number; expiresAt: string;
-      informationTopic?: V3CustomerInformationTopic; relatedInformationTopics?: readonly V3CustomerInformationTopic[] }>
+      informationTopic?: V3CustomerInformationTopic; relatedInformationTopics?: readonly V3CustomerInformationTopic[];
+      /** Accepted/qualified source-program outcome; never derived from a free-text visa claim. */
+      visaAssessment?: Readonly<{ effect: 'not_required'; mode: 'visa_exempt' }> }>
   | Readonly<{ status: 'pending' | 'conflict' | 'unavailable' | 'error'; title: string; message: string }>
 export type V3VisitorView = Readonly<{
   input: V3VisitorInput; generatedAt: string; synthetic: boolean;

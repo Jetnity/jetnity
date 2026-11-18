@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
+const sql=readFileSync(new URL('../../../scripts/db/official-truth-fr-es-eu-ch-review-dev-1/install.sql',import.meta.url),'utf8')
+test('38 French and Spanish exact EU/Swiss research candidates preserve government source identity',()=>{
+ assert.match(sql,/FR-ES-REVIEW-38-1/)
+ assert.match(sql,/Européen en France/)
+ assert.match(sql,/Artículo 4\. Entrada\./)
+ assert.match(sql,/Confederación Suiza/)
+ assert.match(sql,/source_originals_v1/)
+ assert.match(sql,/raw_sha256=/)
+ assert.match(sql,/research_conflicts/)
+ assert.match(sql,/<>38/)
+ assert.match(sql,/<>19/)
+ assert.match(sql,/ordinary_valid_national_passport/)
+ assert.match(sql,/SWISS_EU/)
+})
+test('all newly reviewed sources and passports remain unapproved and fully private',()=>{
+ assert.match(sql,/PRIMARY_SOURCE_CANDIDATE_NOT_QUALIFIED/)
+ assert.match(sql,/result text NOT NULL DEFAULT 'derzeit nicht verfügbar'/)
+ assert.match(sql,/method_approved boolean NOT NULL DEFAULT false CHECK\(method_approved=false\)/)
+ assert.match(sql,/legal_rule_approved boolean NOT NULL DEFAULT false CHECK\(legal_rule_approved=false\)/)
+ assert.match(sql,/publication_allowed boolean NOT NULL DEFAULT false CHECK\(publication_allowed=false\)/)
+ assert.match(sql,/FORCE ROW LEVEL SECURITY/)
+ assert.match(sql,/no_rows_changed BEFORE UPDATE OR DELETE/)
+ assert.match(sql,/no_truncate BEFORE TRUNCATE/)
+ assert.match(sql,/PERFORM official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.match(sql,/BEGIN;/);assert.match(sql,/COMMIT;\s*$/)
+ assert.doesNotMatch(sql,/CREATE OR REPLACE FUNCTION public\.|GRANT EXECUTE|cron\.schedule/i)
+})

@@ -5,15 +5,17 @@
 import { landAnzeigeText } from '@/lib/country/darstellung'
 import { einreiseAusBesucher, type EinreiseAnzeige, type EinreiseBesucherErgebnis } from '@/lib/readiness/einreise-kundenanzeige'
 import { readChDeVisaInput } from '@/lib/readiness/official-truth-product-v3/visitor/ch-de-http'
+import { readAtVisaInput } from '@/lib/readiness/official-truth-at-method-v1/at-visa-http'
 import type { V3VisitorLoad, V3VisitorUiState } from '@/lib/readiness/official-truth-product-v3/visitor/controller'
 import type { V3VisitorView } from '@/lib/readiness/official-truth-product-v3/visitor/presentation'
 
 const OFFEN = 'Für diese Kombination liegt keine freigegebene Auskunft vor.'
 
 /** Only the released CH→DE input reaches the real loader. Every other selection stays unconfirmed and does not start a request. */
-export function einreisePrueferLaden(chDe: V3VisitorLoad): V3VisitorLoad {
+export function einreisePrueferLaden(chDe: V3VisitorLoad, at?: V3VisitorLoad): V3VisitorLoad {
   return async (input, signal) => {
     if (readChDeVisaInput(input)) return chDe(input, signal)
+    if (at && readAtVisaInput(input)) return at(input, signal)
     if (signal.aborted) return { daten: null, fehler: { meldung: 'Die Abfrage wurde abgebrochen.', wiederholbar: true } }
     const view: V3VisitorView = {
       input,
@@ -37,6 +39,7 @@ function ergebnisLesen(result: V3VisitorView['cells'][number]['results'][number]
     statements: result.statements,
     source: result.source,
     checkedAtText: result.checkedAtText,
+    ...(result.visaAssessment ? { visaAssessment: result.visaAssessment } : {}),
   }
 }
 

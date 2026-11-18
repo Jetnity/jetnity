@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { scopedMethodJournalStorage, AT_HUMAN_METHOD_STORAGE_KEY } from '@/lib/readiness/official-truth-at-method-v1/at-journal-storage'
 import {
   HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY, appendHumanOperation, createHumanOperationId,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome, readHumanRelease,
@@ -36,6 +37,8 @@ async function outcomeBody(response: Response): Promise<unknown> {
 
 export default function MethodAuthorityPanel({ release }: { release: HumanRelease | null }) {
   const selected = readHumanRelease(release), selectedId = selected?.selectionId ?? null
+  const atMethod = selected?.scope.destination === 'AT'
+  const storageKey = atMethod ? AT_HUMAN_METHOD_STORAGE_KEY : HUMAN_METHOD_STORAGE_KEY
   const [journal, setJournal] = useState<HumanJournal | null>(null)
   const [confirmed, setConfirmed] = useState<HumanOperation | null>(null)
   const [storageBlocked, setStorageBlocked] = useState(false)
@@ -52,7 +55,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
     mounted.current = true
     if (selectedId) {
       try {
-        const raw = sessionStorage.getItem(HUMAN_METHOD_STORAGE_KEY)
+        const raw = sessionStorage.getItem(storageKey)
         const retained = readHumanJournal(raw, selectedId)
         if (!retained) {
           setStorageBlocked(true)
@@ -68,7 +71,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
       }
     }
     return () => { mounted.current = false; controller.current?.abort() }
-  }, [selectedId])
+  }, [selectedId, storageKey])
 
   async function send(operation: HumanOperation, intent: HumanIntent) {
     const abort = new AbortController()
@@ -118,7 +121,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
       if (intent === 'mutate') {
         if (storageBlocked || !consent || !requestedAction || nextHumanAction(current, confirmed) !== requestedAction) return
         // Never overwrite a changed or unreadable pending identity.
-        if (sessionStorage.getItem(HUMAN_METHOD_STORAGE_KEY) !== saved.current.raw) {
+        if (sessionStorage.getItem(storageKey) !== saved.current.raw) {
           setStorageBlocked(true)
           setConfirmed(null)
           setMessage('Der Sitzungsmerker hat sich geändert. Lade die Seite neu und prüfe den gespeicherten Vorgang; nichts wurde geschrieben.')
@@ -134,7 +137,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
         setJournal(current)
         setConfirmed(null)
         setConsent(false)
-        if (!persistHumanJournal(sessionStorage, current)) {
+        if (!persistHumanJournal(scopedMethodJournalStorage(sessionStorage, storageKey), current)) {
           setStorageBlocked(true)
           setMessage('Der Sitzungsmerker konnte nicht sicher gespeichert werden. Es wurde kein Schreibvorgang gestartet. Bitte den angezeigten Vorgang mit der technischen Leitung klären.')
           return
@@ -165,8 +168,8 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
   return (
     <div className="space-y-5" aria-busy={busy}>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="method-scope">
-        <h2 id="method-scope" className="text-lg font-semibold">Schweizer Pass → Deutschland · Visum</h2>
-        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · Schweizer Reisepass · direkte Einreise</p>
+        <h2 id="method-scope" className="text-lg font-semibold">{atMethod ? '50 priorisierte nationale Reisepässe → Österreich · Visum' : 'Schweizer Pass → Deutschland · Visum'}</h2>
+        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · {atMethod ? 'Nationale Reisepässe der festen 50er-Priorität' : 'Schweizer Reisepass'} · direkte Einreise</p>
         <p>{selected.scope.reviewedScope}</p>
         <dl className="grid gap-2 sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium">Betriebszeitraum</dt><dd>{selected.scope.activeFrom} bis {selected.scope.activeUntilExclusive} (Ende ausgeschlossen, UTC)</dd>
@@ -200,7 +203,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
         </> : null}
       </div>
       <p className="text-sm">Jeder Schreibschritt braucht danach eine neue Bestätigungsanfrage. Bei Abbruch oder verlorener Antwort bleibt derselbe Vorgang erhalten; es gibt keinen automatischen erneuten Schreibversuch.</p>
-      <p className="text-sm"><Link className="underline" href="/admin/login">Zur Anmeldung und Zwei-Faktor-Prüfung</Link>. Kehre anschließend zu <Link className="underline" href="/admin/official-truth/method">dieser Freigabeseite</Link> zurück.</p>
+      <p className="text-sm"><Link className="underline" href="/admin/login">Zur Anmeldung und Zwei-Faktor-Prüfung</Link>. Kehre anschließend zu <Link className="underline" href={atMethod ? '/admin/official-truth/at-method' : '/admin/official-truth/method'}>dieser Freigabeseite</Link> zurück.</p>
     </div>
   )
 }

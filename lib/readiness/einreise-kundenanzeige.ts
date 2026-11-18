@@ -103,6 +103,7 @@ export type EinreiseBesucherErgebnis = {
   statements?: readonly EinreiseBesucherAussage[]
   source?: { label: string; href: string }
   checkedAtText?: string
+  visaAssessment?: Readonly<{ effect: 'not_required'; mode: 'visa_exempt' }>
 }
 
 type Land = { code: string; label: string }
@@ -411,9 +412,15 @@ function aussageBrauchbar(text: string): boolean {
   return true
 }
 
-function lichtAusBesucher(topic: string, texte: readonly string[]): EinreiseAmpel | null {
+function lichtAusBesucher(topic: string, texte: readonly string[],
+  verifiedVisa?: Readonly<{ effect: 'not_required'; mode: 'visa_exempt' }>): EinreiseAmpel | null {
   if (texte.length === 0) return null
   if (topic === 'visa') {
+    // A code-owned, strictly decoded V3 visa outcome determines the colour
+    // for ANY passport; legal prose need not equal a German UI constant.
+    // The legacy CH→DE presentation keeps its independently checked wording.
+    if (verifiedVisa) return verifiedVisa.effect === 'not_required'
+      && verifiedVisa.mode === 'visa_exempt' ? 'gruen' : 'neutral'
     if (texte.every((text) => text === VISUMFREI)) return 'gruen'
     if (texte.every((text) => ORANGE_VISUM.has(text))) return 'orange'
     return 'neutral'
@@ -446,7 +453,8 @@ export function einreiseAusBesucher(input: {
       if (ergebnis.status !== 'accepted' || !ergebnis.informationTopic || !themaBekannt(ergebnis.informationTopic)) continue
       const aussagen = (ergebnis.statements ?? []).filter((aussage) => aussageBrauchbar(aussage.text))
       if (aussagen.length === 0) continue
-      const licht = lichtAusBesucher(ergebnis.informationTopic, aussagen.map((aussage) => aussage.text))
+      const licht = lichtAusBesucher(ergebnis.informationTopic,
+        aussagen.map((aussage) => aussage.text), ergebnis.visaAssessment)
       if (licht) lichter.push(licht)
       if (thema.has(ergebnis.informationTopic)) continue
       const label = V3_CUSTOMER_INFORMATION_TOPICS.find((eintrag) => eintrag.id === ergebnis.informationTopic)?.label ?? ergebnis.informationTopic
@@ -455,7 +463,9 @@ export function einreiseAusBesucher(input: {
       thema.set(ergebnis.informationTopic, {
         id: ergebnis.informationTopic,
         label,
-        text: visaThema && licht ? EINREISE_AMPEL_TEXT[licht] : (erste?.text ?? ''),
+        text: ergebnis.visaAssessment && licht === 'gruen'
+          ? (erste?.text ?? '') // retain the qualified Austrian wording, not just the badge
+          : visaThema && licht ? EINREISE_AMPEL_TEXT[licht] : (erste?.text ?? ''),
         bedingung: erste?.when ?? null,
         href: https(erste?.href),
         hrefLabel: https(erste?.href) ? 'Amtliche Seite öffnen' : null,

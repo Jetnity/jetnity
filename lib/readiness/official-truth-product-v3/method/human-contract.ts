@@ -22,8 +22,8 @@ export type HumanRelease = Readonly<HumanBinding & {
   predecessorRevision: number | null; expectedHead: HumanSnapshot | null
   approval: HumanApproval; packageVersion: string; packageHref: string
   scope: Readonly<{
-    citizenship: 'CH'; destination: 'DE'; requirement: 'visa'
-    document: 'swiss_passport'; route: 'direct_entry'; conditions: 'unconditional'
+    citizenship: 'CH' | 'PRIORITY_50'; destination: 'DE' | 'AT'; requirement: 'visa'
+    document: 'swiss_passport' | 'national_passport'; route: 'direct_entry'; conditions: 'unconditional' | 'verified_context_only'
     activeFrom: string; activeUntilExclusive: string; reviewedScope: string
   }>
 }>
@@ -177,14 +177,20 @@ export function readHumanRelease(value: unknown): HumanRelease | null {
       || !/^https:\/\/github\.com\/Jetnity\/jetnity\/blob\/[0-9a-f]{40}\/[A-Za-z0-9_./-]{1,300}$/.test(row.packageHref)
       || new URL(row.packageHref).href !== row.packageHref || row.packageHref.includes('//', 8)) return null
     const scope = record(row.scope, ['citizenship', 'destination', 'requirement', 'document', 'route', 'conditions', 'activeFrom', 'activeUntilExclusive', 'reviewedScope'])
-    if (!scope || scope.citizenship !== 'CH' || scope.destination !== 'DE' || scope.requirement !== 'visa'
-      || scope.document !== 'swiss_passport' || scope.route !== 'direct_entry' || scope.conditions !== 'unconditional'
+    if (!scope || scope.requirement !== 'visa' || scope.route !== 'direct_entry'
+      || !((scope.citizenship === 'CH' && scope.destination === 'DE' && scope.document === 'swiss_passport'
+             && scope.conditions === 'unconditional')
+        || (scope.citizenship === 'PRIORITY_50' && scope.destination === 'AT' && scope.document === 'national_passport'
+             && scope.conditions === 'verified_context_only'))
       || !utcMilliseconds(scope.activeFrom) || !utcMilliseconds(scope.activeUntilExclusive) || scope.activeFrom >= scope.activeUntilExclusive
       || !text(scope.reviewedScope, 1600)) return null
     return freeze({ schema: 1, selectionId: row.selectionId, targetUrl: row.targetUrl, ...tuple,
       predecessorRevision: row.predecessorRevision as number | null, expectedHead: head, approval: selectedApproval,
       packageVersion: row.packageVersion, packageHref: row.packageHref, scope: {
-        citizenship: 'CH', destination: 'DE', requirement: 'visa', document: 'swiss_passport', route: 'direct_entry', conditions: 'unconditional',
+        citizenship: scope.citizenship as HumanRelease['scope']['citizenship'],
+        destination: scope.destination as HumanRelease['scope']['destination'],
+        requirement: 'visa', document: scope.document as HumanRelease['scope']['document'],
+        route: 'direct_entry', conditions: scope.conditions as HumanRelease['scope']['conditions'],
         activeFrom: scope.activeFrom, activeUntilExclusive: scope.activeUntilExclusive, reviewedScope: scope.reviewedScope,
       } })
   } catch { return null }

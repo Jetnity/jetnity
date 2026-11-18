@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { readFileSync } from 'node:fs'
+const sql=readFileSync(new URL('../../../scripts/db/official-truth-pt-eu-ch-source-review-dev-1/install.sql',import.meta.url),'utf8')
+test('Portugal govt short-stay visa raw HTML is pinned to an actual independent GET receipt',()=>{
+ assert.match(sql,/PT-EUCH-GOVT-RAW-1/)
+ assert.match(sql,/r\.id=65/)
+ assert.match(sql,/r\.status_code=200/)
+ assert.match(sql,/octet_length\(convert_to\(r\.content,'UTF8'\)\)=46233/)
+ assert.match(sql,/sha256\(convert_to\(r\.content,'UTF8'\)\)/)
+ assert.match(sql,/Pedir um Visto Schengen/)
+ assert.match(sql,/União Europeia \(UE\)/)
+ assert.match(sql,/Suíça/)
+ assert.match(sql,/pt_visa_original_v1/)
+ assert.match(sql,/law_original_verified boolean NOT NULL DEFAULT false/)
+})
+test('all 19 50-priority EU/Swiss passport candidates remain unpublished, private, append-only',()=>{
+ assert.match(sql,/<>19/)
+ assert.match(sql,/<>18/)
+ assert.match(sql,/<>50/)
+ assert.match(sql,/ordinary_valid_national_passport/)
+ assert.match(sql,/direct_entry_short_stay_up_to_90_days/)
+ assert.match(sql,/LEGAL_PRIMARY_AND_MA1_QUALIFICATION_PENDING/)
+ assert.match(sql,/customer_publication_allowed boolean NOT NULL DEFAULT false/)
+ assert.match(sql,/source_qualified boolean NOT NULL DEFAULT false/)
+ assert.match(sql,/FORCE ROW LEVEL SECURITY/)
+ assert.match(sql,/immutable_rows BEFORE UPDATE OR DELETE/)
+ assert.match(sql,/immutable_truncate BEFORE TRUNCATE/)
+ assert.match(sql,/PERFORM official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.match(sql,/BEGIN;/);assert.match(sql,/COMMIT;\s*$/)
+ assert.doesNotMatch(sql,/CREATE OR REPLACE FUNCTION public\.|GRANT EXECUTE|cron\.schedule/i)
+})
