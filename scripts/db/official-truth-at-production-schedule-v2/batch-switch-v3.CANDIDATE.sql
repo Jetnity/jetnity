@@ -399,7 +399,7 @@ BEGIN
      'function:'||to_regprocedure('official_v3_guard_private.require_open_v1()')::oid,
      'function:'||to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid,
      'function:'||to_regprocedure('public.official_v3_guard_alarm_status_v1()')::oid)
-   THEN (orig.value-'definition') IS DISTINCT FROM (new_catalog->orig.key-'definition')
+   THEN (orig.value-'definition') IS DISTINCT FROM ((new_catalog->orig.key)-'definition')
    ELSE orig.value IS DISTINCT FROM new_catalog->orig.key END;
  IF drift<>0 THEN RAISE EXCEPTION 'AT_BATCH_V3_PREDECESSOR_CATALOG_DRIFT'
  USING ERRCODE='P7985'; END IF;
