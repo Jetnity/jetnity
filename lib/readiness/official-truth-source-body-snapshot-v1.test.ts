@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import { readFileSync } from 'node:fs'
 
 const sql=readFileSync(new URL(
-  '../../../scripts/db/official-truth-global-source-body-v1/dev-install.sql',
+  '../../scripts/db/official-truth-global-source-body-v1/dev-install.sql',
   import.meta.url,
 ),'utf8')
 
