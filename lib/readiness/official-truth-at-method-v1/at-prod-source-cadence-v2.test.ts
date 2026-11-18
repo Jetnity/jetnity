@@ -103,3 +103,54 @@ test('P0: real 03:00 UTC timeline requires a pending-safe but strictly leased su
  assert.equal(decision(Date.parse('2026-11-18T03:07:01Z'),true,undefined,
    Date.parse('2026-11-18T04:07:00Z')), 'accepted')
 })
+
+
+const switchCandidate = readFileSync(
+ new URL('official-truth-at-production-schedule-v2/batch-switch-v3.CANDIDATE.sql',base),'utf8'
+)
+const pg17Fixture = readFileSync(
+ new URL('official-truth-at-production-schedule-v2/batch-transition-pg17-negative.sql',base),'utf8'
+)
+
+test('P0 rollout stays owner-gated with exact PG17 predecessor, immutable BG1 successor and atomic rollback',()=>{
+ assert.match(switchCandidate,/OWNER-GATED PRODUCTION CANDIDATE/)
+ assert.match(switchCandidate,/DO NOT RUN ON PRODUCTION WITHOUT USER APPROVAL/)
+ assert.match(switchCandidate,/production:qscbgcdmivbbnzrcyegn:AT-BATCH-SWITCH-V3/)
+ assert.match(switchCandidate,/CREATE TABLE official_v3_guard_private\.at_batch_switch_baseline_v2/)
+ assert.match(switchCandidate,/predecessor_catalog_digest/)
+ assert.match(switchCandidate,/predecessor_baseline_digest/)
+ assert.match(switchCandidate,/required_generation bigint/)
+ assert.match(switchCandidate,/proof_not_before timestamptz/)
+ assert.match(switchCandidate,/FORCE ROW LEVEL SECURITY/)
+ assert.match(switchCandidate,/CREATE TRIGGER immutable_rows BEFORE UPDATE OR DELETE/)
+ assert.match(switchCandidate,/CREATE TRIGGER immutable_truncate BEFORE TRUNCATE/)
+ assert.match(switchCandidate,/official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.match(switchCandidate,/current_setting\('server_version_num'\)::integer\/10000<>17/)
+ assert.match(switchCandidate,/pg_try_advisory_xact_lock\(771106,1\)/)
+ assert.match(switchCandidate,/pg_try_advisory_xact_lock\(771112,1\)/)
+ assert.match(switchCandidate,/pg_try_advisory_xact_lock\(771112,2\)/)
+ assert.match(switchCandidate,/AT_BATCH_V3_PREDECESSOR_CATALOG_DRIFT/)
+ assert.match(switchCandidate,/AT_BATCH_V3_INSTALL_MUST_FAIL_CLOSED/)
+ assert.match(switchCandidate,/public\.official_v3_guard_alarm_status_v1\(\)->>'status'<>'unavailable'/)
+ assert.match(switchCandidate,/public\.jetnity_source_bound_at_visa_v1\('IN'\)->>'status'<>'unavailable'/)
+ assert.match(switchCandidate,/BEGIN;/)
+ assert.match(switchCandidate,/COMMIT;/)
+ assert.doesNotMatch(switchCandidate,/ALTER ROLE|CREATE ROLE|UPDATE\s+official_v3_guard_private\.at_source_monitor_baseline_v1|DELETE FROM\s+official_v3_guard_private\.at_source_monitor_baseline_v1/i)
+ assert.doesNotMatch(switchCandidate,/CREATE\s+EXTENSION|CREATE\s+PUBLICATION|TRUNCATE\s+TABLE|GRANT\s+EXECUTE/i)
+})
+
+test('P0 PG17 negative fixture is read-only and covers 13 independent safety cases',()=>{
+ assert.match(pg17Fixture,/WITH test_cases\(/)
+ assert.match(pg17Fixture,/pending_queue_no_negative/)
+ assert.match(pg17Fixture,/one_source_changed/)
+ assert.match(pg17Fixture,/one_source_http_failure/)
+ assert.match(pg17Fixture,/pending_after_six_minutes/)
+ assert.match(pg17Fixture,/old_lease_expires_even_if_new_unchanged/)
+ assert.match(pg17Fixture,/new_signed_fact_after_atomic_renewal/)
+ assert.match(pg17Fixture,/source_digest_tampered/)
+ assert.match(pg17Fixture,/method_revoked/)
+ assert.match(pg17Fixture,/in_pass_not_qualified/)
+ assert.match(pg17Fixture,/observed_change_blocks_auto_renewal_after_recovery/)
+ assert.match(pg17Fixture,/count\(\*\) FILTER\(WHERE expected IS DISTINCT FROM actual\) AS failed_cases/)
+ assert.doesNotMatch(pg17Fixture,/\b(INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE|GRANT|REVOKE)\s+(INTO|TABLE|FUNCTION|ROLE|FROM|ON)\b/i)
+})
