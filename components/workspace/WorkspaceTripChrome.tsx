@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { LayoutDashboard, Route, BriefcaseBusiness, ClipboardCheck } from 'lucide-react'
+import { LayoutDashboard, Route, BriefcaseBusiness, ClipboardCheck, BookUser } from 'lucide-react'
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import { WORKSPACE_ANSICHTEN, WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { useWorkspaceShell } from './WorkspaceContext'
 
-const ICONS = { uebersicht: LayoutDashboard, plan: Route, organisieren: BriefcaseBusiness, vorbereitung: ClipboardCheck }
+const ICONS = { uebersicht: LayoutDashboard, plan: Route, organisieren: BriefcaseBusiness, vorbereitung: ClipboardCheck, einreise: BookUser }
 
 export function WorkspacePortal({ slot, children }: { slot: 'actions' | 'title'; children: ReactNode }) {
   const shell = useWorkspaceShell()
@@ -34,7 +34,7 @@ export default function WorkspaceTripChrome(props: {
     const measure = () => {
       const font = parseFloat(getComputedStyle(root).fontSize)
       const keyboard = window.visualViewport && window.visualViewport.height < window.innerHeight * .75
-      const nextFlow = font >= 24 || window.innerHeight < 500 || Boolean(keyboard)
+      const nextFlow = font >= 24 || window.innerWidth < 360 || window.innerHeight < 500 || Boolean(keyboard)
       setFlow(nextFlow)
       const height = !nextFlow && window.innerWidth < 1024 ? bottomRef.current?.getBoundingClientRect().height ?? 0 : 0
       root.style.setProperty('--ux-u1a-nav-offset', `${Math.ceil(height + 12)}px`)
@@ -66,7 +66,7 @@ export default function WorkspaceTripChrome(props: {
         if (props.ansicht === view && !props.detailOffen) shell.closeNavigation()
         else shell.finishNavigation()
       }}>
-      <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{label}</span>
+      <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{!rail && !flow && view === 'einreise' ? 'Einreise' : label}</span>
     </button>
     return <div key={view}>{button}</div>
   })

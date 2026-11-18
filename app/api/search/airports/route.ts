@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server'
 import { problemAntwort } from '@/lib/api/antwort'
 import { lese } from '@/lib/api/datenbank-lesen'
 import { FLUGHAFEN_ABFRAGE, flughaefenOrdnen, sucheFilter } from '@/lib/airports/suche'
+import { flughafenLaender } from '@/lib/airports/laendersuche'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -57,11 +58,16 @@ export async function GET(req: Request) {
   }
 
   const client = await createRouteHandlerClient()
+  const laender = flughafenLaender(raw)
+  const filter = [orFilter(teile), ...laender.map(code => `country_code.eq.${code}`)].join(',')
   const gelesen = await lese(() =>
     client
       .from('airports')
-      .select('iata, icao, name, city, region, country, keywords, klasse')
-      .or(orFilter(teile))
+      .select('iata, icao, name, city, region, country, country_code, keywords, klasse')
+      .or(filter)
+      .not('iata', 'is', null)
+      .order('klasse', { ascending: true, nullsFirst: false })
+      .order('iata')
       .limit(FLUGHAFEN_ABFRAGE),
   )
 

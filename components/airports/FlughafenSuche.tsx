@@ -264,10 +264,11 @@ export default function FlughafenSuche({
       {listeSichtbar && (
         <Suchliste
           id={listeId}
+          className="!max-h-80 sm:!w-[22rem] !max-w-[calc(100vw-3rem)]"
           lage={lage}
           eintraege={treffer.map((option, index) => ({
             id: `${option.value}-${index}`,
-            primaer: option.label,
+            primaer: option.label.replace(/ · [A-Z]{3}$/, ''),
             sekundaer: option.description && option.description !== 'Stadt' ? option.description : undefined,
             extra: option.description === 'Stadt' ? 'Stadt' : option.value,
           }))}

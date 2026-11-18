@@ -1,4 +1,4 @@
-// URL-/History-Vertrag der vier Arbeitsmodi. Referenzen sind Navigationsintent,
+// URL-/History-Vertrag der Arbeitsmodi. Referenzen sind Navigationsintent,
 // niemals Reise-/Readiness-Wahrheit. Übersicht besitzt keine Auswahlparameter.
 
 import { READINESS_GRENZEN } from '@/lib/readiness/domain'
@@ -12,7 +12,7 @@ import { hotelPlanOrte } from '@/lib/trips/hotel-suchkontext'
 import { itemInReise } from '@/lib/trips/detail'
 import type { Trip, TripItem } from '@/types/trips'
 
-export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung'] as const
+export const WORKSPACE_ANSICHTEN = ['uebersicht', 'plan', 'organisieren', 'vorbereitung', 'einreise'] as const
 const WORKSPACE_BEREICHE = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
 export const WORKSPACE_QUERY_KEYS = ['ansicht', 'bereich', 'tag', 'punkt', 'kante', 'kategorie', 'etappe', 'hotelort', 'vorbereitung', 'reisender'] as const
 /** Opaque plan selection. Not travel intent. Stage ids are at most 80 characters each. */
@@ -55,6 +55,7 @@ export const WORKSPACE_ANSICHT_LABEL: Record<WorkspaceAnsicht, string> = {
   plan: 'Reiseplan',
   organisieren: 'Organisieren',
   vorbereitung: 'Vorbereitung',
+  einreise: 'Einreise & Visum',
 }
 
 const UEBERSICHT: WorkspaceModus = { ansicht: 'uebersicht', bereich: null, urlAnpassen: false }
@@ -85,6 +86,7 @@ function refLesen(params: URLSearchParams, key: string, max: number): string | u
 
 function rohLesen(params: URLSearchParams): Navigation {
   const ansicht = einzeln(params, 'ansicht')
+  if (ansicht === 'einreise') return { ansicht, bereich: null }
   if (ansicht === 'plan') {
     const tagId = refLesen(params, 'tag', 80) // Trip day/item schema: max(80)
     const itemId = refLesen(params, 'punkt', 80)

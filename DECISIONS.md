@@ -1,5 +1,7 @@
 # Jetnity – Entscheidungsprotokoll
 
+> 18.11.2026: Flugziele entdecken uses official provider cards without extracting prices. Airport selection changes only the transient destination, preserving dates/passengers; country names find airports, not country-wide live fares. [Decision and evidence](docs/FLIGHT_DISCOVERY_2026-11-18.md).
+
 Alle wichtigen technischen und produktnahen Entscheidungen. Neueste Einträge unten anfügen. Format je Entscheidung: Datum, Entscheidung, Kontext, Alternativen, Begründung, Konsequenzen ([AGENTS.md](AGENTS.md) Regel 6).
 
 Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem Code.
