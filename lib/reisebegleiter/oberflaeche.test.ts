@@ -24,6 +24,7 @@ function quelle(...teile: string[]): string {
 
 const aktionen = quelle('lib', 'reisebegleiter', 'aktionen.ts')
 const flaeche = quelle('components', 'trips', 'Reisebegleiter.tsx')
+const fortschritt = quelle('components', 'trips', 'Begleiterfortschritt.tsx')
 const workspace = quelle('components', 'trips', 'TripWorkspace.tsx')
 const uebersicht = quelle('components', 'trips', 'TripWorkspaceUebersicht.tsx')
 const konto = quelle('components', 'trips', 'KontoArbeitsbereich.tsx')
@@ -137,8 +138,10 @@ describe('Die Fläche fragt nicht von selbst', () => {
   })
 
   test('meldet Laufen, Fehler und Ergebnis unterscheidbar', () => {
-    assert.equal(flaeche.includes('aria-live="polite"'), true)
-    assert.equal(flaeche.includes('aria-busy="true"'), true)
+    assert.equal(flaeche.includes('<Begleiterfortschritt />'), true)
+    assert.equal(fortschritt.includes('role="status"'), true)
+    assert.equal(fortschritt.includes('aria-live="polite"'), true)
+    assert.equal(fortschritt.includes('aria-busy="true"'), true)
     assert.equal(flaeche.includes('role="alert"'), true)
   })
 
@@ -158,7 +161,7 @@ describe('Die Fläche fragt nicht von selbst', () => {
       assert.equal(flaeche.includes(irreführend), false, `irreführende Kopie: ${irreführend}`)
     }
 
-    assert.equal(flaeche.includes('wählt passende Jetnity-Aussagen aus'), true)
+    assert.equal(fortschritt.includes('Zutreffende Jetnity-Aussagen auswählen'), true)
     assert.equal(flaeche.includes('Auskunft wird zusammengestellt'), true)
     assert.equal(flaeche.includes('unten schreibt Jetnity'), true)
   })
