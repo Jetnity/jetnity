@@ -3,17 +3,18 @@ import { test } from 'node:test'
 import { readFileSync } from 'node:fs'
 const sql=readFileSync(new URL(
  '../../../scripts/db/official-truth-global-research-dev-1/source-review-bridge-v2.sql',import.meta.url),'utf8')
-test('global 206x50 review pipeline reuses 11 destination monitors without legal publication',()=>{
+test('global 206x50 review pipeline reuses six + four unprotected destination source monitors without legal publication',()=>{
  assert.match(sql,/GLOBAL-REVIEW-BRIDGE-V2/)
  assert.match(sql,/jetnity_followup_source_monitor_private\.sources_v3\)<>4/)
  assert.match(sql,/official_v3_at_source_watch_private\.pins_v1\)<>3/)
+ assert.doesNotMatch(sql,/CREATE VIEW jetnity_global_review_private\.austria_source_head_v2/)
  assert.match(sql,/jetnity_global_source_monitor_private\.sources_v1\)<>11/)
  assert.match(sql,/CREATE VIEW jetnity_global_review_private\.all_source_head_v2/)
  assert.match(sql,/CREATE VIEW jetnity_global_review_private\.passport_triage_v2/)
- assert.match(sql,/all_source_head_v2\)<>18/)
- assert.match(sql,/DISTINCT dest.*all_source_head_v2\)<>11/)
+ assert.match(sql,/all_source_head_v2\)<>15/)
+ assert.match(sql,/DISTINCT dest.*all_source_head_v2\)<>10/)
  assert.match(sql,/passport_triage_v2\)<>10300/)
- assert.match(sql,/source_monitor_candidates>0\)<>550/)
+ assert.match(sql,/source_monitor_candidates>0\)<>500/)
  assert.match(sql,/false::boolean AS customer_rule_approved/)
  assert.match(sql,/false::boolean AS publication_allowed/)
  assert.doesNotMatch(sql,/CREATE (OR REPLACE )?FUNCTION public\.|ALTER\s+(?:TABLE|FUNCTION)\s+official_v3_|INSERT INTO official_v3_source_renewal_private|CREATE ROLE|ALTER ROLE/i)
