@@ -38,7 +38,7 @@ JOIN LATERAL (
  ORDER BY o.batch_id ASC LIMIT 1
 ) first_monitor ON true
 JOIN LATERAL (
- SELECT o.batch_id,o.observed_at,o.status,o.source_sha256,o.source_bytes,o.http_code
+ SELECT o.destination_code,o.batch_id,o.observed_at,o.status,o.source_sha256,o.source_bytes,o.http_code
  FROM jetnity_followup_source_monitor_private.observations_v3 o
  WHERE o.destination_code=sample.destination_code
  ORDER BY o.batch_id DESC LIMIT 1
