@@ -1,0 +1,16 @@
+# Global Official Truth scope index — 206 destinations × 50 passports (Dev only)
+
+This is a **private research queue**, not an accepted legal-fact database. The fixed archive was independently audited as whole-file SHA-256 `4d8e9804598788a1070016f69ecd6e28c72dfdee78b56aafbd647d23e4243e9d` (original 206-destination upload `6ef8c9f6e36bee2f75cf162d725a60844ef757bfad14407f69d81631cb9f55e5`). The source archive has 206 canonical destination indices, including `CN-HK` and `CN-MO`, plus exactly 50 canonical priority passport slices in each. Nine folders contain a separate 51st non-priority slice; that does not become a 51st passport. Original index `status` variants are treated as RESEARCH_ONLY **even when spelled `researched`**.
+
+## Security boundary
+
+The migration materializes 206 destination scopes, 50 priority identities and 10,300 strictly private, unavailable passport-country candidates. A security-invoker private view exposes 267,800 possible **unavailable** topic slots, without materializing false legal records. All tables use forced RLS, postgres-only access and append-only immutability. No public user data, new roles, keys, costs, cron jobs, legal qualification, method approvals, BG1 changes, official facts or visitor endpoints. The exact original source files remain in the research archive; this scope index **does not claim to have verified the content of each nationality slice**. The original immutable source and method approvals remain independent.
+
+`HR` and `NL` have unresolved ambiguous unsplit original indices, copied as blocked review status. All 206 destinations default unavailable, regardless of original research labels. Original source material must be re-verified against destination-government primary sources, individually per destination, nationality, document and topic. A source-watch HTTP 200, successful SHA comparison or a private research row is **never** enough for publication. The Owner and BG1/MA1 release boundary remains unchanged.
+
+## Release path
+
+1. On the exact source archive verify file and tracker/priority digests; confirm 206 destinations and priority-50 identity. Never treat special territories as passport codes.
+2. Install `install.sql` in **Supabase Development** only, after the exact preflight. Check 206 / 50 / 10,300 / 267,800, forced RLS, 0 newly approved, existing CH→AT accepted and BG1 current.
+3. Expand the official-source watch separately for the priority destination sequence AT, IT, FR, ES, PT, GR, HR, NL, GB, US, TR, TH, AE. Each positive rule needs its own actual official original, retrieval timestamp, conditions and legal validity, MA1 authorization, append-only proof and BG1 verification.
+4. Production and public visitor releases are separate explicit Owner steps. No migration from this package to Production is authorized by a Dev success.
