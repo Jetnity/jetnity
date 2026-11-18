@@ -434,7 +434,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     await page.close()
   })
 
-  test('390 and 430 show five equal tabs in one bottom row; 360 uses flow', async () => {
+  test('390 and 430 show five readable tabs in one bottom row; 360 uses flow', async () => {
     const { page, fehler } = await oeffnen(390, 844)
     const laeufe: Record<string, unknown> = {}
     for (const breite of [390, 430]) {
@@ -449,9 +449,9 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
       assert.equal(stand.navHeight < 80, true, JSON.stringify(knapp(stand)))
       assert.deepEqual(stand.knoepfe.map((knopf) => knopf.name), LABEL)
       const tops = stand.knoepfe.map((knopf) => knopf.top)
-      const widths = stand.knoepfe.map((knopf) => knopf.width)
       assert.equal(Math.max(...tops) - Math.min(...tops) <= 1, true, JSON.stringify(tops))
-      assert.equal(Math.max(...widths) - Math.min(...widths) <= 1, true, JSON.stringify(widths))
+      assert.equal(stand.knoepfe[0]!.left <= 1, true)
+      assert.equal(stand.knoepfe.at(-1)!.right >= breite - 1, true)
       for (const knopf of stand.knoepfe) {
         assert.equal(knopf.height >= 44, true, knopf.name)
         assert.equal(knopf.width >= 44, true, knopf.name)
@@ -489,7 +489,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
   test('DejaVu labels stay inside the 390 row, and a safe-area inset leaves that row', async () => {
     const { page, fehler } = await oeffnen(390, 844)
     await page.addStyleTag({
-      content: '[data-shell-nav="bottom"] button { font-family: "DejaVu Sans", sans-serif !important; }',
+      content: '[data-shell-nav="bottom"] button { font-family: "DejaVu Sans", Verdana, sans-serif !important; }',
     })
     await page.setViewportSize({ width: 391, height: 844 })
     await page.setViewportSize({ width: 390, height: 844 })
@@ -509,10 +509,10 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     }
     await bild(page, 'bottom-390-dejavu')
 
-    // The named font is optional on macOS. Reserve enough real inset to make
-    // at least one measured label too wide for its cell under the current font.
-    const longest = Math.max(...weit.knoepfe.map(button => button.textRight - button.textLeft))
-    const inset = Math.ceil((390 - LABEL.length * (longest - 8)) / 2)
+    // Reserve enough real inset to overflow a measured label, including when
+    // longer labels receive more room than shorter ones in the bottom row.
+    const tightest = Math.max(...weit.knoepfe.map(button => (button.textRight - button.textLeft) / button.width))
+    const inset = Math.ceil(390 * (1 - tightest) / 2) + 20
     await page.addStyleTag({
       content: `[data-shell-nav="bottom"] { padding-inline: ${inset}px !important; }`,
     })

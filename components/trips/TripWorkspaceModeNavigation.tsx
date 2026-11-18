@@ -197,7 +197,7 @@ export default function TripWorkspaceModeNavigation({
           variante === 'sticky' &&
             'inline-flex w-full items-center justify-center whitespace-normal rounded-full sm:w-auto sm:shrink-0 sm:grow sm:basis-auto sm:whitespace-nowrap sm:px-3.5',
           variante === 'bottom' &&
-            'inline-flex w-full min-w-0 items-center justify-center whitespace-nowrap rounded-2xl px-0 tracking-[-0.07em]',
+            'inline-flex min-w-0 flex-auto items-center justify-center whitespace-nowrap rounded-2xl px-0 tracking-[-0.07em]',
           variante === 'flow' && 'block w-full min-w-0 whitespace-normal rounded-full',
           aktiv ? 'bg-brand-800 text-white' : 'text-brand-800 hover:bg-surface-50',
         )}
@@ -216,7 +216,7 @@ export default function TripWorkspaceModeNavigation({
         data-shell-nav="bottom"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line-200 bg-white pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] shadow-[0_-8px_24px_rgba(15,46,42,0.06)]"
       >
-        <div className="grid min-w-0 max-w-full grid-cols-5 items-stretch gap-px px-0 py-1">
+        <div className="flex min-w-0 max-w-full items-stretch gap-px px-0 py-1">
           {WORKSPACE_ANSICHTEN.map((modus) => knopf(modus, 'bottom'))}
         </div>
       </nav>
