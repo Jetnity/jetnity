@@ -215,7 +215,7 @@ export default function TripWorkspaceModeNavigation({
         data-shell-nav="bottom"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line-200 bg-white pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] shadow-[0_-8px_24px_rgba(15,46,42,0.06)]"
       >
-        <div className="grid min-w-0 max-w-full grid-cols-4 items-stretch gap-px px-0 py-1">
+        <div className="grid min-w-0 max-w-full grid-cols-5 items-stretch gap-px px-0 py-1">
           {WORKSPACE_ANSICHTEN.map((modus) => knopf(modus, 'bottom'))}
         </div>
       </nav>
