@@ -15,7 +15,7 @@ import { mountUxU1a2Harness } from '@/lib/trips/ux-u1a2-geometry-1/harness'
 
 const PROVIDER = /\/api\/(flights|hotels|activities|mobility|rental-cars|reisebegleiter)\b/
 const BROWSER_ARGS = ['--no-sandbox', '--disable-dev-shm-usage']
-const LABEL = ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung']
+const LABEL = ['Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung', 'Einreise & Visum']
 
 type Knopf = {
   name: string
@@ -158,7 +158,7 @@ async function geometrie(page: Page): Promise<Geometrie> {
       range.selectNodeContents(el)
       const text = range.getBoundingClientRect()
       return {
-        name: (el.textContent || '').replace(/\s+/g, ' ').trim(),
+        name: (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim(),
         left: box.left,
         right: box.right,
         top: box.top,
@@ -434,7 +434,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     await page.close()
   })
 
-  test('390 and 430 show four equal labels in one bottom row; 360 uses flow', async () => {
+  test('390 and 430 show five equal tabs in one bottom row; 360 uses flow', async () => {
     const { page, fehler } = await oeffnen(390, 844)
     const laeufe: Record<string, unknown> = {}
     for (const breite of [390, 430]) {
@@ -512,7 +512,7 @@ describe('UX U1-A2 navigation geometry', { timeout: 180_000 }, () => {
     // The named font is optional on macOS. Reserve enough real inset to make
     // at least one measured label too wide for its cell under the current font.
     const longest = Math.max(...weit.knoepfe.map(button => button.textRight - button.textLeft))
-    const inset = Math.ceil((390 - 4 * (longest - 8)) / 2)
+    const inset = Math.ceil((390 - LABEL.length * (longest - 8)) / 2)
     await page.addStyleTag({
       content: `[data-shell-nav="bottom"] { padding-inline: ${inset}px !important; }`,
     })

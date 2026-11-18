@@ -189,6 +189,7 @@ export default function TripWorkspaceModeNavigation({
       <button
         key={modus}
         type="button"
+        aria-label={WORKSPACE_ANSICHT_LABEL[modus]}
         aria-current={aktiv ? 'page' : undefined}
         onClick={(ereignis) => onWechsel(modus, ereignis.detail === 0)}
         className={cn(
@@ -201,7 +202,7 @@ export default function TripWorkspaceModeNavigation({
           aktiv ? 'bg-brand-800 text-white' : 'text-brand-800 hover:bg-surface-50',
         )}
       >
-        {WORKSPACE_ANSICHT_LABEL[modus]}
+        {variante === 'bottom' && modus === 'einreise' ? 'Einreise' : WORKSPACE_ANSICHT_LABEL[modus]}
       </button>
     )
   }
