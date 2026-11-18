@@ -1,5 +1,9 @@
 # Jetnity – Roadmap
 
+
+> **Produktweiter Gesamtstand vom 18.11.2026 (neuer datierter Abgleich):** [Jetnity-Gesamtstand, Drei-Phasen-Plan und Restreihenfolge](docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md). Er berücksichtigt den aktuellen Main-Code, die bestätigten Owner-Tests für Reise, Reisewetter und Merkliste sowie die noch nicht funktionierenden KI-Wege. Alle acht strategischen Funktionen und der verbindliche Drei-Phasen-Vertrag bleiben unverändert. Die folgenden früheren operativen Einträge sind datierte Historie; der aktuelle Official-Truth-/Datenbankstand wird ausschliesslich vom zuständigen separaten Technical Lead geführt. Dieser Hinweis autorisiert **keinen** Runtime-Slice, Merge, Production-Apply oder Launch.
+
+
 > 18.11.2026: Flight discovery and country-aware airport autocomplete: implemented as an isolated preview; review and coordinated widget/app release remain. [Status](docs/FLIGHT_DISCOVERY_2026-11-18.md).
 
 ## Aktuell: CH→DE-Fortsetzung korrigieren; regelmäßigen Dev-Import abnehmen — 14.11.2026
