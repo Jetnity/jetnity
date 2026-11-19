@@ -17,8 +17,107 @@ export type DiffEintrag = {
   text: string
 }
 
-function punkte(reise: Reisegraph): TripItem[] {
+export type StrukturEtappe = {
+  id: string
+  name: string
+  vorher: string
+  nachher: string
+  vorherTage: string[]
+  nachherTage: string[]
+  geaendert: boolean
+}
+
+export type StrukturZeile = {
+  id: string
+  text: string
+}
+
+export type StrukturVergleich = {
+  tageVorher: number
+  tageNachher: number
+  etappen: StrukturEtappe[]
+  ungeplant: StrukturZeile[]
+  entfernt: StrukturZeile[]
+  strukturell: boolean
+}
+
+function allePunkte(reise: Reisegraph): TripItem[] {
   return [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
+}
+
+function tagText(tag: TripDay, etappeName: string | null): string {
+  const titel = tag.title ? ` „${tag.title}“` : ''
+  const ort = etappeName ? ` · ${etappeName}` : ''
+  return `Tag ${tag.dayIndex}${titel} · ${tag.dayDate ?? 'Datum offen'}${ort}`
+}
+
+function zuordnung(reise: Reisegraph, stageId: string): { text: string; tage: string[] } {
+  const tage = reise.days.filter((tag) => tag.stageId === stageId).map((tag) => tagText(tag, null))
+  if (tage.length === 0) return { text: 'keine zugeordneten Reisetage', tage: [] }
+  return { text: tage.join(', '), tage }
+}
+
+/**
+ * Vorher/Nachher aus den beiden Graphen.
+ *
+ * Reisetage sind hier keine Hotelnächte. Ein Punkt, der seinen Tag verliert
+ * und noch existiert, ist ungeplant – nicht gelöscht.
+ */
+export function strukturVergleich(vorher: Reisegraph, nachher: Reisegraph): StrukturVergleich {
+  const gesehen = new Set<string>()
+  const etappen: StrukturEtappe[] = []
+  for (const etappe of [...vorher.stages, ...nachher.stages]) {
+    if (gesehen.has(etappe.id)) continue
+    gesehen.add(etappe.id)
+    const alt = vorher.stages.find((eintrag) => eintrag.id === etappe.id)
+    const neu = nachher.stages.find((eintrag) => eintrag.id === etappe.id)
+    const vorherZuordnung = alt ? zuordnung(vorher, etappe.id) : { text: 'nicht vorhanden', tage: [] as string[] }
+    const nachherZuordnung = neu ? zuordnung(nachher, etappe.id) : { text: 'Etappe entfernt', tage: [] as string[] }
+    etappen.push({
+      id: etappe.id,
+      name: (neu ?? alt)?.name ?? etappe.name,
+      vorher: vorherZuordnung.text,
+      nachher: nachherZuordnung.text,
+      vorherTage: vorherZuordnung.tage,
+      nachherTage: nachherZuordnung.tage,
+      geaendert: vorherZuordnung.text !== nachherZuordnung.text,
+    })
+  }
+
+  const nachherPunkte = new Map(allePunkte(nachher).map((punkt) => [punkt.id, punkt]))
+  const ungeplant: StrukturZeile[] = []
+  const entfernt: StrukturZeile[] = []
+  for (const alt of allePunkte(vorher)) {
+    const neu = nachherPunkte.get(alt.id)
+    if (!neu) {
+      entfernt.push({ id: alt.id, text: `Entfernt: ${alt.title}` })
+      continue
+    }
+    if (alt.dayId && neu.dayId === null) {
+      const tag = vorher.days.find((eintrag) => eintrag.id === alt.dayId)
+      const etappe = vorher.stages.find((eintrag) => eintrag.id === tag?.stageId)
+      ungeplant.push({
+        id: alt.id,
+        text: `Ungeplant, nicht gelöscht: ${alt.title} (vorher ${tag ? tagText(tag, etappe?.name ?? null) : 'ohne Tag'}). Inhalt und Zeiten bleiben. Keine neue Unterkunft.`,
+      })
+    }
+  }
+
+  return {
+    tageVorher: vorher.days.length,
+    tageNachher: nachher.days.length,
+    etappen,
+    ungeplant,
+    entfernt,
+    strukturell: vorher.days.length !== nachher.days.length
+      || etappen.some((etappe) => etappe.geaendert)
+      || ungeplant.length > 0
+      || entfernt.length > 0,
+  }
+}
+
+function punkte(reise: Reisegraph): TripItem[] {
+  return allePunkte(reise)
 }
 
 function zeitraum(reise: Reisegraph): string {
@@ -166,6 +265,16 @@ export function reiseDiff(vorher: Reisegraph, nachher: Reisegraph): DiffEintrag[
       text: `Etappen: ${etappenNamen(vorher.stages)} → ${etappenNamen(nachher.stages)}`,
     })
   }
+
+  const struktur = strukturVergleich(vorher, nachher)
+  for (const etappe of struktur.etappen) {
+    if (!etappe.geaendert) continue
+    eintraege.push({
+      art: 'etappe',
+      text: `${etappe.name}: zugeordnete Reisetage ${etappe.vorher} → ${etappe.nachher}`,
+    })
+  }
+  for (const punkt of struktur.ungeplant) eintraege.push({ art: 'punkt', text: punkt.text })
 
   return eintraege
 }

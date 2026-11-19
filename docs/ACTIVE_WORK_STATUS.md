@@ -1,5 +1,9 @@
 # Jetnity – Active Work Status
 
+## Aktueller Writer — KI-Reiseänderung Datenverlustschutz 1
+
+19. November 2026. Draft PR #1252, Branch `fix/ki-reiseaenderung-datenverlust-1-20261119`, Issue #1247. Cursor-Agent **Jetnity KI Datenverlustschutz 1**, Generation 1, Session [bc-8bcd33df-ceae-48b0-b81e-ee1de890e6f5](https://cursor.com/agents/bc-8bcd33df-ceae-48b0-b81e-ee1de890e6f5), Modell `grok-4.7-high-fast`. Strukturelle KI-Kürzung behält Planpunkte ungeplant. `punkt_entfernen` neben einer Tages- oder Etappenänderung wird vor dem Apply abgelehnt. Kein Merge, kein Ready. Nächster Schritt: unabhängiger Exact-Head-Review. Handoff: `docs/JETNITY_KI_REISEAENDERUNG_DATENVERLUST_1_HANDOFF_2026-11-19.md`.
+
 ## Aktueller Anzeige-Slice — Premium-Kundenanzeige Einreise & Visum
 
 **16. November 2026.** Issue [#1222](https://github.com/Jetnity/jetnity/issues/1222). Nur Kundenanzeige auf dem Branch `cursor/premium-einreise-anzeige-80eb`. Einreise & Visum steht in der Vorbereitung zuerst. Ampel und To-dos kommen ausschliesslich aus bereits bestätigten Evaluationen: Grün nur bei frischer Visumbefreiung `visa_exempt`, Orange nur bei bestätigter Visum- oder ETA-Pflicht mit vorhandenem amtlichen Link, sonst neutral. Unbestätigte Themen sind eine zugeklappte Zeile. `/einreise` nutzt die durchsuchbare Länderauswahl, beschriftet Pass und Ziel getrennt und bündelt unbestätigte Themen in wenige Gruppen. Der Prüfer hängt am bestehenden Besucher-Controller: nur CH→DE wird abgefragt, ein Länder- oder Passwechsel verwirft eine laufende Antwort, und ein abgelaufenes Ergebnis fällt auf neutral zurück. Jede andere Kombination bleibt „Noch nicht bestätigt“. Keine Datenbank, keine Änderung an #1218/#1221, kein Merge, keine Production. Die geschützte Datei `components/readiness/OfficialTruthVisitorV3.tsx` bleibt unverändert. Generische Auskunft ausser CH→DE ist ein benannter Anbinde-Blocker, kein UI-Ersatz.
