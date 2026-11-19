@@ -24,15 +24,21 @@ const offen = {
 }
 
 describe('Passkey-Fähigkeit, MOCK und fail-closed', () => {
-  test('installierte SDK-Version hat keine Passkey-Methoden', () => {
+  test('installiertes SDK kann Passkeys, der Server und die Preview bleiben zu', () => {
     const lock = readFileSync(join(hier, '../../package-lock.json'), 'utf8')
-    assert.match(lock, /"node_modules\/@supabase\/supabase-js": \{\s*"version": "2\.57\.2"/)
-    assert.match(lock, /"node_modules\/@supabase\/auth-js": \{\s*"version": "2\.71\.1"/)
+    assert.match(lock, /"node_modules\/@supabase\/supabase-js": \{\s*"version": "2\.119\.2"/)
+    assert.match(lock, /"node_modules\/@supabase\/auth-js": \{\s*"version": "2\.119\.2"/)
     assert.match(lock, /"node_modules\/@supabase\/ssr": \{\s*"version": "0\.6\.1"/)
     const quelle = readFileSync(join(hier, '../../node_modules/@supabase/auth-js/src/GoTrueClient.ts'), 'utf8')
-    assert.equal(quelle.includes('registerPasskey'), false)
-    assert.equal(quelle.includes('signInWithPasskey'), false)
+    assert.equal(quelle.includes('registerPasskey'), true)
+    assert.equal(quelle.includes('signInWithPasskey'), true)
+    const client = readFileSync(join(hier, '../supabase/client.ts'), 'utf8')
+    assert.match(client, /experimental: \{ passkey: true \}/)
+    assert.equal(client.includes('createBrowserClient(url, anon)'), false)
+    const config = readFileSync(join(hier, '../../supabase/config.toml'), 'utf8')
+    assert.match(config, /\[auth\.passkey\]\nenabled = false/)
     assert.equal(PASSKEY_RP_ID_GEPLANT, 'jetnity.com')
+    assert.equal(passkeyOriginErlaubt('https://jetnity-app.vercel.app'), false)
   })
 
   test('Server, SDK, Browser und Origin müssen gleichzeitig passen', () => {

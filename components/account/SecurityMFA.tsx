@@ -585,6 +585,7 @@ export default function SecurityMFA({
         <p className="mt-2 text-sm leading-6 text-ink-700">
           {sicherheitText(sprache, "passkey.description")}
         </p>
+        {!passkeyBereit ? (
         <p role="status" className="mt-3 text-sm leading-6 text-ink-700">
           <span className="font-medium">
             {sicherheitText(sprache, `passkey.label.${aktuellePasskeyLage}`)}
@@ -593,6 +594,7 @@ export default function SecurityMFA({
           {sicherheitText(sprache, `passkey.status.${aktuellePasskeyLage}`)}
           {browserHinweis ? ` ${sicherheitText(sprache, "passkey.browserHint")}` : null}
         </p>
+        ) : null}
         {darfPasskeyHinzufuegen(aktuellePasskeyLage) && !passkeyBereit ? (
           <p className="mt-3 text-sm leading-6 text-ink-700">
             {sicherheitText(sprache, "passkey.notConnected")}

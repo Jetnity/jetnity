@@ -41,7 +41,9 @@ Der globale Browser-Client bleibt ohne `experimental.passkey`. Ein zweiter SSR-C
 | Security-Karten ohne Passkey-Schaltfläche | Playwright-Harness, 11/11, synthetische Auth |
 | Typecheck und zweiter Production-Build | lokal Exit 0 |
 | CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) auf `d993dbf3b` | FAILURE, nur `check:exports`; die übrigen sieben Prüffamilien dieses Laufs waren erfolgreich |
-| Export-Fix | `PASSKEY_SDK_MINIMUM` entfernt, `passkeyEintragLesen` nicht mehr exportiert. Kein Dummy-Aufrufer |
+| SDK | `@supabase/supabase-js` `2.119.2`, SSR bleibt `0.6.1`, eine Browser-Session, Server-Flag aus |
+| Schreibzugang | Passwort oder frisches TOTP/AAL2 im Port. `getUser()` allein schreibt nicht |
+| Login-Abbruch | `signOut({ scope: 'local' })` bei AAL-Fehler, Challenge-Fehler und Dialog-Schliessen |
 | Echter WebAuthn-Dialog | `HOSTED_E2E_NOT_RUN` |
 | Gehostete Supabase-Auth-Config | nicht gelesen; Repo-Config bleibt die fail-closed Authority |
 

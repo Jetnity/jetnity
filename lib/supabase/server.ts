@@ -78,7 +78,9 @@ export async function createServerComponentClient<Db = Database>(signal?: AbortS
     try {
       boundedClient = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
         cookies: rscCookiesAdapter(boundedStore),
-        global: { fetch: (input, init) => lifetime.fetch(input, init) },
+        global: {
+          fetch: (input: RequestInfo | URL, init?: RequestInit) => lifetime.fetch(input, init),
+        },
         auth: { debug: observation.debug },
       }) as unknown as SupabaseClient<Db>
     } finally { observation.constructionComplete() }

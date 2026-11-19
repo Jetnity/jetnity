@@ -48,10 +48,12 @@ function mapAuthError(message?: string) {
 export default function LoginForm({
   next = null,
   oauth,
+  sprache = 'de',
   passkeysServerAktiviert = false,
 }: {
   next?: string | null
   oauth: OauthFreigabe
+  sprache?: 'de' | 'en'
   passkeysServerAktiviert?: boolean
 }) {
   const router = useRouter();
@@ -71,6 +73,7 @@ export default function LoginForm({
 
   // MFA Dialog State
   const [mfaOpen, setMfaOpen] = React.useState(false);
+  const passkeyStepUp = React.useRef(false);
   const [factorId, setFactorId] = React.useState('');
   const [challengeId, setChallengeId] = React.useState('');
 
@@ -283,13 +286,24 @@ export default function LoginForm({
       <PasskeyAnmeldung
         serverAktiviert={passkeysServerAktiviert}
         auth={supabase.auth}
+        sprache={sprache}
         onStepUp={async () => {
-          const { factorId: naechsterFaktor, challengeId: naechsteChallenge } = await startTotpChallenge(supabase);
-          setFactorId(naechsterFaktor);
-          setChallengeId(naechsteChallenge);
-          setMfaOpen(true);
+          try {
+            const { factorId: naechsterFaktor, challengeId: naechsteChallenge } = await startTotpChallenge(supabase);
+            setFactorId(naechsterFaktor);
+            setChallengeId(naechsteChallenge);
+            passkeyStepUp.current = true;
+            setMfaOpen(true);
+          } catch (error) {
+            passkeyStepUp.current = false;
+            await supabase.auth.signOut({ scope: 'local' });
+            throw error;
+          }
         }}
         onWeiter={() => router.replace(nachErfolg)}
+        onSitzungBeenden={async () => {
+          await supabase.auth.signOut({ scope: 'local' });
+        }}
       />
 
       <OauthAnbieter freigabe={oauth} loading={oauthLoading} onStart={handleOAuth} />
@@ -302,11 +316,17 @@ export default function LoginForm({
       {/* MFA – TOTP Dialog */}
       <MFATotpDialog
         open={mfaOpen}
-        onClose={() => setMfaOpen(false)}
+        onClose={() => {
+          setMfaOpen(false);
+          if (!passkeyStepUp.current) return;
+          passkeyStepUp.current = false;
+          void supabase.auth.signOut({ scope: 'local' });
+        }}
         supabase={supabase}
         factorId={factorId}
         challengeId={challengeId}
         onVerified={() => {
+          passkeyStepUp.current = false;
           setMfaOpen(false);
           router.replace(nachErfolg);
         }}

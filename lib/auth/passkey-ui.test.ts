@@ -21,6 +21,7 @@ const basis = {
   entfernenFuer: null,
   umbenennenFuer: null,
   nameEntwurf: '',
+  nachweis: null,
 }
 
 function html(knoten: ReturnType<typeof createElement>) {
@@ -52,9 +53,15 @@ describe('Passkey-Oberfläche, MOCK_PASS', () => {
     const seite = html(createElement(PasskeyAnmeldung, {
       serverAktiviert: false,
       auth: {},
+      sprache: 'en',
       onStepUp: async () => undefined,
       onWeiter: noop,
+      onSitzungBeenden: async () => undefined,
     }))
+    assert.match(seite, /data-passkey-login="geschlossen"/)
+    assert.match(seite, /currently unavailable/)
+    assert.equal(seite.includes('nicht verfügbar'), false)
+    assert.equal(seite.includes('<button'), false)
     assert.match(seite, /data-passkey-login="geschlossen"/)
     assert.equal(seite.includes('<button'), false)
   })

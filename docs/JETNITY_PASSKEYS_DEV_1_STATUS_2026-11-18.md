@@ -21,7 +21,7 @@
 | Baseline | `main@f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5` |
 | Modus | `.jetnity/operating-mode.json` = `NORMAL` |
 | Früherer Head | `d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee`, CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) FAILURE an `npm run check:exports` |
-| Review-Head | der Branch-Tip nach dem Export-Fix. Die SHA und die frische CI stehen im PR-Kommentar. `d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` ist nicht mehr der Review-Head. |
+| Review-Head | der Branch-Tip nach dem Main-Merge und dem SDK-/Step-up-Stand. Die SHA und die frische CI stehen im PR-Kommentar. `86dfd2785d89d5630e1c397fd3880f7ad5687a5f` ist historical. |
 
 `main` war bei der Übernahme `f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5`. Kein Rebase. Main-CI [44333651972](https://github.com/Jetnity/jetnity/actions/runs/44333651972) ist SUCCESS auf dieser SHA. Das ist die Baseline, nicht das Gate dieses PR-Heads.
 

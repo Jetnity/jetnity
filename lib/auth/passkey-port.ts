@@ -4,6 +4,7 @@
 // Kein eigener WebAuthn-Verifier, kein zweiter Speicher, kein AAL2-Schreiben.
 // Tests ersetzen den Client durch Fakes. Das ist MOCK_PASS, kein Hosted-E2E.
 
+import { istVerifizierterTotpFaktor, mfaFaktorenListeLesen } from '@/lib/auth/account-security-faktoren'
 import { brauchtLoginTotpStepUp } from '@/lib/auth/mfa'
 import {
   passkeyAnzeigename,
@@ -63,7 +64,12 @@ export type PasskeyAuthSchnittstelle = {
     } | null>
   >
   getUser?: () => Promise<PasskeyAuthAntwort<{ user?: unknown } | null>>
+  signInWithPassword?: (args: { email: string; password: string }) => Promise<PasskeyAuthAntwort<unknown>>
+  signOut?: (args?: { scope?: 'local' | 'global' | 'others' }) => Promise<{ error: PasskeyAuthFehler | null }>
   mfa?: {
+    listFactors?: () => Promise<PasskeyAuthAntwort<unknown>>
+    challenge?: (args: { factorId: string }) => Promise<PasskeyAuthAntwort<{ id?: string; challenge_id?: string } | null>>
+    verify?: (args: { factorId: string; challengeId: string; code: string }) => Promise<{ error: PasskeyAuthFehler | null }>
     getAuthenticatorAssuranceLevel?: () => Promise<
       PasskeyAuthAntwort<{ currentLevel?: string | null; nextLevel?: string | null } | null>
     >
@@ -90,6 +96,11 @@ export type PasskeyListeErgebnis =
 export type PasskeySchreibErgebnis =
   | { ok: true }
   | { ok: false; code: PasskeyFehlerCode }
+
+/** Frischer Nachweis am Schreibzugang. Eine bestehende Sitzung oder getUser() ist keiner. */
+export type PasskeySchreibBeweis =
+  | { art: 'totp'; factorId: string; challengeId: string; code: string }
+  | { art: 'passwort'; passwort: string }
 
 function alsSchnittstelle(auth: unknown): PasskeyAuthSchnittstelle {
   if (!auth || typeof auth !== 'object') return {}
@@ -166,12 +177,77 @@ export async function passkeyAuflisten(auth: unknown, gate: PasskeyHandlungEinga
   }
 }
 
-export async function passkeyRegistrieren(auth: unknown, gate: PasskeyHandlungEingabe): Promise<PasskeySchreibErgebnis> {
+function kontoEmail(user: unknown): string | null {
+  if (!user || typeof user !== 'object') return null
+  const email = (user as { email?: unknown }).email
+  return typeof email === 'string' && email.includes('@') ? email : null
+}
+
+async function verifizierteTotpIds(client: PasskeyAuthSchnittstelle): Promise<string[] | PasskeyFehlerCode> {
+  if (typeof client.mfa?.listFactors !== 'function') return 'nicht_erlaubt'
+  const liste = await client.mfa.listFactors()
+  if (liste.error) return 'nicht_erlaubt'
+  const lesung = mfaFaktorenListeLesen(liste.data)
+  if (lesung.status !== 'ok') return 'nicht_erlaubt'
+  return lesung.liste.filter(istVerifizierterTotpFaktor).map((faktor) => faktor.id)
+}
+
+/**
+ * Der Schreibzugang prüft den Nachweis selbst. getUser() und eine
+ * UI-Bestätigung reichen nicht. Bei vorhandenem TOTP ist nur ein gerade
+ * verifizierter AAL2-Schritt zulässig, sonst ein frisches Passwort.
+ */
+async function passkeySchreibBeweisPruefen(
+  auth: unknown,
+  beweis: PasskeySchreibBeweis | null,
+): Promise<PasskeyFehlerCode | null> {
+  if (!beweis) return 'nicht_erlaubt'
+  const client = alsSchnittstelle(auth)
+  try {
+    const totpIds = await verifizierteTotpIds(client)
+    if (typeof totpIds === 'string') return totpIds
+    if (totpIds.length > 0) {
+      if (beweis.art !== 'totp') return 'nicht_erlaubt'
+      if (!totpIds.includes(beweis.factorId) || beweis.challengeId.trim().length < 8) return 'nicht_erlaubt'
+      if (!/^\d{6}$/.test(beweis.code)) return 'nicht_erlaubt'
+      if (typeof client.mfa?.verify !== 'function' || typeof client.mfa.getAuthenticatorAssuranceLevel !== 'function') {
+        return 'nicht_erlaubt'
+      }
+      const verifiziert = await client.mfa.verify({
+        factorId: beweis.factorId,
+        challengeId: beweis.challengeId,
+        code: beweis.code,
+      })
+      if (verifiziert.error) return 'nicht_erlaubt'
+      const aal = await client.mfa.getAuthenticatorAssuranceLevel()
+      if (aal.error || aal.data?.currentLevel !== 'aal2') return 'nicht_erlaubt'
+      return null
+    }
+    if (beweis.art !== 'passwort' || beweis.passwort.length < 1) return 'nicht_erlaubt'
+    if (typeof client.getUser !== 'function' || typeof client.signInWithPassword !== 'function') return 'nicht_erlaubt'
+    const nutzer = await client.getUser()
+    const email = kontoEmail(nutzer.data?.user)
+    if (nutzer.error || !email) return 'nicht_erlaubt'
+    const login = await client.signInWithPassword({ email, password: beweis.passwort })
+    if (login.error) return 'nicht_erlaubt'
+    return null
+  } catch {
+    return 'nicht_erlaubt'
+  }
+}
+
+export async function passkeyRegistrieren(
+  auth: unknown,
+  gate: PasskeyHandlungEingabe,
+  beweis: PasskeySchreibBeweis | null,
+): Promise<PasskeySchreibErgebnis> {
   if (!passkeyHandlungErlaubt(gate)) return { ok: false, code: 'geschlossen' }
   const client = alsSchnittstelle(auth)
   if (typeof client.getUser !== 'function' || typeof client.registerPasskey !== 'function') {
     return { ok: false, code: 'sdk_fehlt' }
   }
+  const nachweis = await passkeySchreibBeweisPruefen(auth, beweis)
+  if (nachweis) return { ok: false, code: nachweis }
   try {
     const nutzer = await client.getUser()
     if (nutzer.error || !passkeyKontoBestaetigt(nutzer.data?.user)) {
@@ -189,9 +265,11 @@ export async function passkeyRegistrieren(auth: unknown, gate: PasskeyHandlungEi
 export async function passkeyUmbenennen(
   auth: unknown,
   gate: PasskeyHandlungEingabe,
-  eingabe: { id: string; name: string; gelisteteIds: readonly string[] },
+  eingabe: { id: string; name: string; gelisteteIds: readonly string[]; beweis: PasskeySchreibBeweis | null },
 ): Promise<PasskeySchreibErgebnis> {
   if (!passkeyHandlungErlaubt(gate)) return { ok: false, code: 'geschlossen' }
+  const nachweis = await passkeySchreibBeweisPruefen(auth, eingabe.beweis)
+  if (nachweis) return { ok: false, code: nachweis }
   if (!PASSKEY_ID.test(eingabe.id) || !eingabe.gelisteteIds.includes(eingabe.id)) {
     return { ok: false, code: 'nicht_gelistet' }
   }
@@ -210,10 +288,11 @@ export async function passkeyUmbenennen(
 export async function passkeyEntfernen(
   auth: unknown,
   gate: PasskeyHandlungEingabe,
-  eingabe: { id: string; gelisteteIds: readonly string[]; bestaetigt: boolean; kontoBestaetigt: boolean },
+  eingabe: { id: string; gelisteteIds: readonly string[]; beweis: PasskeySchreibBeweis | null },
 ): Promise<PasskeySchreibErgebnis> {
   if (!passkeyHandlungErlaubt(gate)) return { ok: false, code: 'geschlossen' }
-  if (!eingabe.bestaetigt || !eingabe.kontoBestaetigt) return { ok: false, code: 'nicht_erlaubt' }
+  const nachweis = await passkeySchreibBeweisPruefen(auth, eingabe.beweis)
+  if (nachweis) return { ok: false, code: nachweis }
   if (!PASSKEY_ID.test(eingabe.id) || !eingabe.gelisteteIds.includes(eingabe.id)) {
     return { ok: false, code: 'nicht_gelistet' }
   }
@@ -242,15 +321,39 @@ export async function passkeyAnmeldungAusfuehren(
   if (typeof client.signInWithPasskey !== 'function') return { art: 'fehler', code: 'sdk_fehlt' }
   try {
     const antwort = await client.signInWithPasskey()
-    if (antwort.error) return { art: 'fehler', code: passkeyFehlerCode(antwort.error) }
-    if (!antwort.data?.session || !antwort.data.user) return { art: 'fehler', code: 'unbekannt' }
+    if (antwort.error) {
+      await passkeySitzungBeenden(client)
+      return { art: 'fehler', code: passkeyFehlerCode(antwort.error) }
+    }
+    if (!antwort.data?.session || !antwort.data.user) {
+      await passkeySitzungBeenden(client)
+      return { art: 'fehler', code: 'unbekannt' }
+    }
     const aalLesen = client.mfa?.getAuthenticatorAssuranceLevel
-    if (typeof aalLesen !== 'function') return { art: 'fehler', code: 'aal_unbekannt' }
+    if (typeof aalLesen !== 'function') {
+      await passkeySitzungBeenden(client)
+      return { art: 'fehler', code: 'aal_unbekannt' }
+    }
     const aal = await aalLesen()
-    if (aal.error || !aal.data) return { art: 'fehler', code: 'aal_unbekannt' }
+    if (aal.error || !aal.data) {
+      await passkeySitzungBeenden(client)
+      return { art: 'fehler', code: 'aal_unbekannt' }
+    }
     if (brauchtLoginTotpStepUp(aal.data)) return { art: 'totp_step_up' }
     return { art: 'weiter' }
   } catch (fehler) {
+    await passkeySitzungBeenden(alsSchnittstelle(auth))
     return { art: 'fehler', code: passkeyFehlerCode(fehler) }
+  }
+}
+
+/** Beendet die gerade entstandene AAL1-Sitzung auf diesem Gerät. */
+export async function passkeySitzungBeenden(auth: unknown): Promise<void> {
+  const client = alsSchnittstelle(auth)
+  if (typeof client.signOut !== 'function') return
+  try {
+    await client.signOut({ scope: 'local' })
+  } catch {
+    // Der Aufrufer darf danach trotzdem nicht weiterleiten.
   }
 }

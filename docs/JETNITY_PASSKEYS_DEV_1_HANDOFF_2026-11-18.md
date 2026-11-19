@@ -19,7 +19,7 @@
 - Baseline: `main@f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5`
 - Modus: `NORMAL`
 
-`d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` hat CI [44384931535](https://github.com/Jetnity/jetnity/actions/runs/44384931535) mit FAILURE in `npm run check:exports`. Der Review-Head ist der Branch-Tip nach dem Export-Fix. Die SHA und das Ergebnis der frischen vollständigen CI stehen im PR-Kommentar. Jeder neuere Commit macht diesen Stand ungültig.
+`86dfd2785d89d5630e1c397fd3880f7ad5687a5f` hatte CI [44403042174](https://github.com/Jetnity/jetnity/actions/runs/44403042174) SUCCESS. Dieser Stand ist nach dem Merge von `main@9f065a555754c76c64a4f02868797c70f1f49310` und dem SDK-/Step-up-Commit historical. Der Review-Head ist der neue Branch-Tip. Seine CI steht im PR-Kommentar. Jeder neuere Commit macht diesen Stand ungültig.
 
 ## Ergebnis
 

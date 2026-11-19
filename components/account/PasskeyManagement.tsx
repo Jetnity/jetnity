@@ -6,6 +6,11 @@ import type { PasskeyEintrag, PasskeyListeErgebnis } from '@/lib/auth/passkey-po
 import { sicherheitText, type SicherheitTextSchluessel } from '@/lib/localization/account-security-texte'
 import type { UiSprache } from '@/lib/localization/ui-sprache'
 
+export type PasskeyNachweisAnsicht =
+  | null
+  | { art: 'totp'; code: string; factorId: string; challengeId: string }
+  | { art: 'passwort'; code: string }
+
 export type PasskeyVerwaltungAnsicht = {
   liste: PasskeyListeErgebnis | { art: 'laden' }
   kontoBestaetigt: boolean
@@ -14,6 +19,7 @@ export type PasskeyVerwaltungAnsicht = {
   entfernenFuer: string | null
   umbenennenFuer: string | null
   nameEntwurf: string
+  nachweis: PasskeyNachweisAnsicht
 }
 
 export function PasskeyManagement({
@@ -27,6 +33,9 @@ export function PasskeyManagement({
   onEntfernenStart,
   onEntfernenBestaetigen,
   onEntfernenAbbrechen,
+  onNachweisCode = () => undefined,
+  onNachweisSenden = () => undefined,
+  onNachweisAbbrechen = () => undefined,
 }: {
   sprache: UiSprache
   ansicht: PasskeyVerwaltungAnsicht
@@ -38,6 +47,9 @@ export function PasskeyManagement({
   onEntfernenStart: (id: string) => void
   onEntfernenBestaetigen: () => void
   onEntfernenAbbrechen: () => void
+  onNachweisCode?: (wert: string) => void
+  onNachweisSenden?: () => void
+  onNachweisAbbrechen?: () => void
 }) {
   const eintraege: PasskeyEintrag[] = ansicht.liste.art === 'liste' ? ansicht.liste.eintraege : []
   const verwalten = ansicht.kontoBestaetigt && (ansicht.liste.art === 'leer' || ansicht.liste.art === 'liste')
@@ -137,6 +149,39 @@ export function PasskeyManagement({
         <p role="status" className="text-sm leading-6 text-ink-700">
           {sicherheitText(sprache, 'passkey.accountRequired')}
         </p>
+      ) : null}
+      {ansicht.nachweis ? (
+        <form
+          className="space-y-2"
+          onSubmit={(event) => {
+            event.preventDefault()
+            onNachweisSenden()
+          }}
+        >
+          <p className="text-sm leading-6 text-ink-700">
+            {sicherheitText(sprache, ansicht.nachweis.art === 'totp' ? 'passkey.step.totp' : 'passkey.step.password')}
+          </p>
+          <Label htmlFor="passkey-nachweis">
+            {sicherheitText(sprache, ansicht.nachweis.art === 'totp' ? 'common.code' : 'passkey.step.passwordLabel')}
+          </Label>
+          <Input
+            id="passkey-nachweis"
+            value={ansicht.nachweis.code}
+            autoComplete={ansicht.nachweis.art === 'totp' ? 'one-time-code' : 'current-password'}
+            type={ansicht.nachweis.art === 'totp' ? 'text' : 'password'}
+            inputMode={ansicht.nachweis.art === 'totp' ? 'numeric' : undefined}
+            maxLength={ansicht.nachweis.art === 'totp' ? 6 : 128}
+            onChange={(event) => onNachweisCode(event.target.value)}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" className={`${SICHERHEIT_ZIEL_44} min-h-11`} disabled={ansicht.beschaeftigt}>
+              {sicherheitText(sprache, 'common.confirm')}
+            </Button>
+            <Button type="button" variant="ghost" className={`${SICHERHEIT_ZIEL_44} min-h-11`} disabled={ansicht.beschaeftigt} onClick={onNachweisAbbrechen}>
+              {sicherheitText(sprache, 'common.cancel')}
+            </Button>
+          </div>
+        </form>
       ) : null}
       {ansicht.meldung ? (
         <p role="alert" className="text-sm leading-6 text-ink-700">

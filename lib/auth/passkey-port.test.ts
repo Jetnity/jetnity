@@ -27,7 +27,11 @@ const offen = {
   origin: 'https://jetnity.com',
 }
 const zu = { ...offen, serverAktiviert: false }
-const bestaetigt = { email_confirmed_at: '2026-11-18T00:00:00Z', is_anonymous: false }
+const bestaetigt = { email: 'konto@example.com', email_confirmed_at: '2026-11-18T00:00:00Z', is_anonymous: false }
+const FAKTOR = '33333333-3333-4333-8333-333333333333'
+const CHALLENGE = 'challenge-1'
+const passwortBeweis = { art: 'passwort' as const, passwort: 'frisches-passwort' }
+const totpBeweis = { art: 'totp' as const, factorId: FAKTOR, challengeId: CHALLENGE, code: '123456' }
 
 function protokoll() {
   const aufrufe: string[] = []
@@ -44,7 +48,23 @@ function protokoll() {
       aufrufe.push('signInWithPasskey')
       return { data: { session: { access_token: 'nicht-loggen' }, user: { id: 'user' } }, error: null }
     },
+    async signInWithPassword() {
+      aufrufe.push('signInWithPassword')
+      return { data: {}, error: null }
+    },
+    async signOut() {
+      aufrufe.push('signOut')
+      return { error: null }
+    },
     mfa: {
+      async listFactors() {
+        aufrufe.push('listFactors')
+        return { data: { all: [] }, error: null }
+      },
+      async verify() {
+        aufrufe.push('verify')
+        return { error: null }
+      },
       async getAuthenticatorAssuranceLevel() {
         aufrufe.push('aal')
         return { data: { currentLevel: 'aal1', nextLevel: 'aal2' }, error: null }
@@ -72,7 +92,7 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
   test('geschlossenes Gate ruft keine Zeremonie auf', async () => {
     const { auth, aufrufe } = protokoll()
     const liste = await passkeyAuflisten(auth, zu)
-    const registrierung = await passkeyRegistrieren(auth, zu)
+    const registrierung = await passkeyRegistrieren(auth, zu, passwortBeweis)
     const anmeldung = await passkeyAnmeldungAusfuehren(auth, zu)
     assert.equal(liste.art, 'geschlossen')
     assert.equal(registrierung.ok, false)
@@ -84,16 +104,56 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
     const { auth, aufrufe } = protokoll()
     auth.getUser = async () => {
       aufrufe.push('getUser')
-      return { data: { user: { is_anonymous: true, email_confirmed_at: '2026-11-18T00:00:00Z' } }, error: null }
+      return { data: { user: { email: 'konto@example.com', is_anonymous: true, email_confirmed_at: '2026-11-18T00:00:00Z' } }, error: null }
     }
-    const anonym = await passkeyRegistrieren(auth, offen)
+    const ohneNachweis = await passkeyRegistrieren(auth, offen, null)
+    assert.deepEqual(ohneNachweis, { ok: false, code: 'nicht_erlaubt' })
+    assert.equal(aufrufe.includes('registerPasskey'), false)
+
+    const anonym = await passkeyRegistrieren(auth, offen, passwortBeweis)
     assert.deepEqual(anonym, { ok: false, code: 'konto_nicht_bestaetigt' })
     assert.equal(aufrufe.includes('registerPasskey'), false)
 
-    auth.getUser = async () => ({ data: { user: bestaetigt }, error: null })
-    const ok = await passkeyRegistrieren(auth, offen)
+    auth.getUser = async () => {
+      aufrufe.push('getUser')
+      return { data: { user: bestaetigt }, error: null }
+    }
+    const ok = await passkeyRegistrieren(auth, offen, passwortBeweis)
     assert.deepEqual(ok, { ok: true })
     assert.equal(aufrufe.filter((aufruf) => aufruf === 'registerPasskey').length, 1)
+    assert.equal(JSON.stringify(ok).includes('konto@example.com'), false)
+    assert.equal(JSON.stringify(ok).includes('frisches-passwort'), false)
+  })
+
+  test('vorhandener TOTP lässt das Passwort als Schreibnachweis nicht zu', async () => {
+    const { auth, aufrufe } = protokoll()
+    auth.mfa = {
+      ...auth.mfa,
+      async listFactors() {
+        aufrufe.push('listFactors')
+        return { data: { all: [{ id: FAKTOR, factor_type: 'totp', status: 'verified' }] }, error: null }
+      },
+      async getAuthenticatorAssuranceLevel() {
+        aufrufe.push('aal')
+        return { data: { currentLevel: 'aal1', nextLevel: 'aal2' }, error: null }
+      },
+    }
+    const passwort = await passkeyRegistrieren(auth, offen, passwortBeweis)
+    assert.deepEqual(passwort, { ok: false, code: 'nicht_erlaubt' })
+    assert.equal(aufrufe.includes('signInWithPassword'), false)
+    assert.equal(aufrufe.includes('registerPasskey'), false)
+
+    auth.mfa = {
+      ...auth.mfa,
+      async getAuthenticatorAssuranceLevel() {
+        aufrufe.push('aal')
+        return { data: { currentLevel: 'aal2', nextLevel: 'aal2' }, error: null }
+      },
+    }
+    const totp = await passkeyRegistrieren(auth, offen, totpBeweis)
+    assert.deepEqual(totp, { ok: true })
+    assert.equal(aufrufe.includes('verify'), true)
+    assert.equal(aufrufe.includes('registerPasskey'), true)
   })
 
   test('Liste unterscheidet leer, Fehler und Eintrag; Kennungen werden nicht zum Namen', async () => {
@@ -119,25 +179,23 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
 
   test('Umbenennen und Entfernen gelten nur für die geladene Liste und eine Bestätigung', async () => {
     const { auth, aufrufe } = protokoll()
-    const name = await passkeyUmbenennen(auth, offen, { id: ANDERE, name: 'Neu', gelisteteIds: [ID] })
+    const name = await passkeyUmbenennen(auth, offen, { id: ANDERE, name: 'Neu', gelisteteIds: [ID], beweis: passwortBeweis })
     assert.deepEqual(name, { ok: false, code: 'nicht_gelistet' })
-    const mail = await passkeyUmbenennen(auth, offen, { id: ID, name: 'person@example.com', gelisteteIds: [ID] })
+    const mail = await passkeyUmbenennen(auth, offen, { id: ID, name: 'person@example.com', gelisteteIds: [ID], beweis: passwortBeweis })
     assert.deepEqual(mail, { ok: false, code: 'name_ungueltig' })
-    const umbenannt = await passkeyUmbenennen(auth, offen, { id: ID, name: 'Arbeit', gelisteteIds: [ID] })
+    const umbenannt = await passkeyUmbenennen(auth, offen, { id: ID, name: 'Arbeit', gelisteteIds: [ID], beweis: passwortBeweis })
     assert.deepEqual(umbenannt, { ok: true })
 
-    const ohneKlick = await passkeyEntfernen(auth, offen, {
+    const ohneNachweis = await passkeyEntfernen(auth, offen, {
       id: ID,
       gelisteteIds: [ID],
-      bestaetigt: false,
-      kontoBestaetigt: true,
+      beweis: null,
     })
-    assert.deepEqual(ohneKlick, { ok: false, code: 'nicht_erlaubt' })
+    assert.deepEqual(ohneNachweis, { ok: false, code: 'nicht_erlaubt' })
     const entfernt = await passkeyEntfernen(auth, offen, {
       id: ID,
       gelisteteIds: [ID],
-      bestaetigt: true,
-      kontoBestaetigt: true,
+      beweis: passwortBeweis,
     })
     assert.deepEqual(entfernt, { ok: true })
     assert.deepEqual(aufrufe.filter((aufruf) => aufruf.startsWith('delete:') || aufruf.startsWith('update:')), [
@@ -151,6 +209,7 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
     const ergebnis = await passkeyAnmeldungAusfuehren(auth, offen)
     assert.deepEqual(ergebnis, { art: 'totp_step_up' })
     assert.deepEqual(aufrufe, ['signInWithPasskey', 'aal'])
+    assert.equal(aufrufe.includes('signOut'), false)
     assert.equal(brauchtLoginTotpStepUp({ currentLevel: 'aal1', nextLevel: 'aal2' }), true)
     assert.equal(JSON.stringify(ergebnis).includes('aal2'), false)
     assert.equal(JSON.stringify(ergebnis).includes('@'), false)
@@ -158,7 +217,7 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
   })
 
   test('bereits AAL2 geht weiter, fehlende AAL-Lesung nicht', async () => {
-    const { auth } = protokoll()
+    const { auth, aufrufe } = protokoll()
     auth.mfa = {
       async getAuthenticatorAssuranceLevel() {
         return { data: { currentLevel: 'aal2', nextLevel: 'aal2' }, error: null }
@@ -171,9 +230,14 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
         return { data: null, error: { message: 'Auth session missing for person@example.com' } }
       },
     }
+    auth.signOut = async () => {
+      aufrufe.push('signOut')
+      return { error: null }
+    }
     const fehler = await passkeyAnmeldungAusfuehren(auth, offen)
     assert.deepEqual(fehler, { art: 'fehler', code: 'aal_unbekannt' })
     assert.equal(JSON.stringify(fehler).includes('@'), false)
+    assert.equal(aufrufe.includes('signOut'), true)
   })
 
   test('Fehlercodes bleiben feste Sätze und wiederholen keine Rohmeldung', () => {

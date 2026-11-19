@@ -4,9 +4,10 @@ import * as React from 'react'
 
 import { PasskeySignIn } from '@/components/auth/PasskeySignIn'
 import { passkeyHandlungErlaubt, passkeySdkVorhanden } from '@/lib/auth/passkey-faehigkeit'
-import { passkeyAnmeldungAusfuehren } from '@/lib/auth/passkey-port'
+import { passkeyAnmeldungAusfuehren, passkeySitzungBeenden } from '@/lib/auth/passkey-port'
 import { passkeyFehlerSchluessel } from '@/lib/auth/passkey-meldungen'
 import type { SicherheitTextSchluessel } from '@/lib/localization/account-security-texte'
+import type { UiSprache } from '@/lib/localization/ui-sprache'
 
 function gateVon(auth: unknown, serverAktiviert: boolean) {
   return {
@@ -20,13 +21,17 @@ function gateVon(auth: unknown, serverAktiviert: boolean) {
 export default function PasskeyAnmeldung({
   serverAktiviert,
   auth,
+  sprache = 'de',
   onStepUp,
   onWeiter,
+  onSitzungBeenden,
 }: {
   serverAktiviert: boolean
   auth: unknown
+  sprache?: UiSprache
   onStepUp: () => Promise<void>
   onWeiter: () => void
+  onSitzungBeenden: () => Promise<void>
 }) {
   const bereit = React.useSyncExternalStore(
     () => () => undefined,
@@ -45,6 +50,8 @@ export default function PasskeyAnmeldung({
       try {
         await onStepUp()
       } catch {
+        await passkeySitzungBeenden(auth)
+        await onSitzungBeenden()
         setMeldung('passkey.error.aal')
       } finally {
         setBeschaeftigt(false)
@@ -56,17 +63,18 @@ export default function PasskeyAnmeldung({
       onWeiter()
       return
     }
-    if (ergebnis.art === 'geschlossen') {
-      setMeldung('passkey.login.closed')
-      return
+    if (ergebnis.art === 'fehler') {
+      await passkeySitzungBeenden(auth)
+      await onSitzungBeenden()
     }
-    setMeldung(passkeyFehlerSchluessel(ergebnis.code))
+    setMeldung(passkeyFehlerSchluessel(ergebnis.art === 'geschlossen' ? 'geschlossen' : ergebnis.code))
   }
 
   return (
     <PasskeySignIn
+      sprache={sprache}
       bereit={bereit}
-      meldung={meldung}
+      meldung={bereit ? meldung : null}
       beschaeftigt={beschaeftigt}
       onAnmelden={() => void anmelden()}
     />
