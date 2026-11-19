@@ -1,0 +1,21 @@
+# USAGov: kontrollierte fortlaufende amtliche Quellenrecherche – Dev V1
+
+**19.11.2026 – Nur Dev und ausschließlich RESEARCH_ONLY.** Ergänzung des zuvor als Quelle zugänglichen USAGov-Schnappschusses [#1251](https://github.com/Jetnity/jetnity/pull/1251). Diese Arbeit ist gestapelt und erfordert weiterhin die expliziten Owner-Merges ihrer Eltern-PRs. Sie erzeugt **keine** gültige Einreise- oder ESTA-Aussage.
+
+## Was der Monitor kann
+
+Der ursprüngliche US-Department-of-State-Visum-Waiver-URL gab im bestehenden Quellenmonitor mehrfach **HTTP 403** zurück; er wird nicht umgeschrieben oder gelöscht. Eine eigene amtliche **USAGov**-Seite unter `https://www.usa.gov/visa-waiver-esta` war in Supabase Dev einmal mit HTTP 200 erreichbar, und ihre 42'833 Originalbytes samt SHA-256 wurden privat unveränderlich archiviert. Ein einzelner Schnappschuss genügt nicht für einen aktuellen, belastbaren amtlichen Auskunftsdienst.
+
+Deshalb fügt `hourly-watch-v1.sql` einen eigenen, von der bisherigen Quelle und vom freigegebenen Recht **strikt getrennten** fortlaufenden Quellenmonitor hinzu, jedoch **ohne** einen neuen Cron-Job. Der bestehende private fünfminütige Review-Cron ruft die neue Wrapperfunktion auf, welche die **bisherige V2-Quellen-/Belegaufnahme** unverändert weiter ausführt, anschliessend letzte USAGov-HTTP-Antworten sammelt und bei Freigabe durch harte Grenzen einen weiteren öffentlichen USAGov-GET **nur nach mindestens 65 Minuten** einreiht.
+
+**Grenzen:** höchstens **320 GET-Versuche insgesamt** im Pilot, maximal 24 MiB gespeicherte USAGov-Response-Bodies, höchstens 128 KiB pro bestätigter Antwort und ein harsch abbrechender Stopp, sobald die gesamte Dev-Postgres-Datenbank 256 MiB erreicht. Ist `pg_net` nicht erreichbar oder die Antwort nach 8 Minuten noch ausstehend, bleibt das Resultat `collection_timeout` oder `source_unavailable`. Erfolgreiche HTML-Seiten liefern nur `unchanged_unqualified` oder `changed_requires_review`; beide bleiben **ohne** rechtliche Qualifikation. Der Monitor speichert die Originalbytes mit eigener SHA-256-Kette und kompletter append-only Historie. Keine negativen Schlüsse aus fehlendem HTML; kein Überschreiben, kein automatisches Freigeben.
+
+Die Datenbank besitzt zwei private, erzwungen-RLS-Tabellen mit postgres-only-Policies und unveränderlichen Triggern sowie drei interne SECURITY-INVOKER-Funktionen. `anon`, `authenticated`, `service_role` erhalten weder private Tabellen- noch Schema- oder Funktionsrechte. Unverändert: alle 11 vorherigen Quellenmonitore, die 206×50-Pass-Recherchefälle, die ursprüngliche USAGov-Quellenfassung und die MA1-/BG1-Sicherheitsmethoden.
+
+**Keine Abfrage mit persönlichen Reisenden- oder Passdaten; keine Modell-/xAI-/OpenAI-Aufrufe; keine bezahlten Keys, keine neuen Provider, keine Anmeldung und keine neue externe Abonnementbuchung.** Öffentliche GET-Anfragen sind über pg_net nachvollziehbar und bis zum Stopp limitiert. Die reale Datenbank-/Provider-Usage muss trotz fixer technischer Grenzen überwacht werden, weil ein Code-Hardcap keine Zusage für ein kostenloses Supabase-Kontingent ist.
+
+## Prüfweg und Grenzen
+
+Der vollständige Postgres-17-Installer muss zunächst **in einer Transaktion mit ROLLBACK** bestehen. Ein erfolgreicher Rücklesebeleg sollte genau eine neue, noch nicht bearbeitete Request-Zeile zeigen; erst der Commit schickt diesen asynchronen HTTP-Aufruf tatsächlich ab. Nach der Dev-Installation müssen echter HTTP-Response-Status, der normale fünfminütige Folge-Cron und die append-only Observation zurückgelesen werden. Der original gespeicherte 403-Monitor bleibt gesperrt; die USAGov-Antworten sind ebenfalls noch **keine** veröffentlichte Einreiseinformation für 50 Pässe.
+
+Die Fachprüfung künftiger US-Visa-/ESTA-Regeln erfordert präzise amtliche Quelle, konkreten Pass und Aufenthaltskontext, Gültigkeit, externe amtliche Gegenquelle wenn vorhanden, unveränderliche Herkunft und autonome MA1/BG1-Methode. Der bestehende **Owner-Entscheid [#1232](https://github.com/Jetnity/jetnity/issues/1232)** beschreibt die späteren OpenAI-/Grok-Kandidaten, berechtigt jedoch keinen kostenpflichtigen KI-Lauf durch diesen Monitor. Kein Merge oder Production-Apply ohne ausdrückliche separate Freigabe.
