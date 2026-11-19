@@ -52,6 +52,7 @@
 .stay22-stages-more {margin-top:28px}
 .stay22-stages-more>summary {cursor:pointer;min-height:44px;padding:12px 0;font-size:13px;font-weight:650}
 .stay22-datecontext {display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;color:var(--org-muted);font-size:12px}
+.stay22-belegung {align-items:flex-start;max-width:68ch;color:var(--org-ink);font-weight:500;line-height:1.55}
 .stay22-datecontext button {text-decoration:underline;min-height:44px;padding:0 8px;font-weight:650}
 .stay22-location {margin-top:20px;border:1px solid var(--org-line);border-radius:14px;padding:18px;background:var(--org-bg)}
 .stay22-location-title {display:flex;gap:10px;align-items:flex-start}

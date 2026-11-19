@@ -1,5 +1,9 @@
 # Jetnity – Active Work Status
 
+## Aktueller Writer — Reiseintegration S1 Hotel-Etappen-Belegung
+
+**19. November 2026.** Issue [#1256](https://github.com/Jetnity/jetnity/issues/1256). Ein Writer auf `feat/travel-integration-20261119`, Basis main `65c0720bfc39bef9972e6d2df456455b617ac269`. Nur S1: Etappen-Termine und ehrliche Suchbelegung im vorhandenen Hotelpfad. `Trip.travellers` wird nicht als Erwachsenenzahl ausgegeben. S2–S4 sind nicht begonnen. Kein PR, solange #1254, #1252 und #1240 offen sind (`BLOCKED_PR_SLOT`). Kein Merge, keine Provideraktivierung, keine Datenbankänderung. Funktion 18 im Gesamtplan bleibt **P**, bis ein unabhängiger Technical-Lead-Review den Exact Head akzeptiert. [Scope und Tests](TRAVEL_INTEGRATION_S1_HOTEL_BELEGUNG_2026-11-19.md).
+
 ## Aktueller Anzeige-Slice — Premium-Kundenanzeige Einreise & Visum
 
 **16. November 2026.** Issue [#1222](https://github.com/Jetnity/jetnity/issues/1222). Nur Kundenanzeige auf dem Branch `cursor/premium-einreise-anzeige-80eb`. Einreise & Visum steht in der Vorbereitung zuerst. Ampel und To-dos kommen ausschliesslich aus bereits bestätigten Evaluationen: Grün nur bei frischer Visumbefreiung `visa_exempt`, Orange nur bei bestätigter Visum- oder ETA-Pflicht mit vorhandenem amtlichen Link, sonst neutral. Unbestätigte Themen sind eine zugeklappte Zeile. `/einreise` nutzt die durchsuchbare Länderauswahl, beschriftet Pass und Ziel getrennt und bündelt unbestätigte Themen in wenige Gruppen. Der Prüfer hängt am bestehenden Besucher-Controller: nur CH→DE wird abgefragt, ein Länder- oder Passwechsel verwirft eine laufende Antwort, und ein abgelaufenes Ergebnis fällt auf neutral zurück. Jede andere Kombination bleibt „Noch nicht bestätigt“. Keine Datenbank, keine Änderung an #1218/#1221, kein Merge, keine Production. Die geschützte Datei `components/readiness/OfficialTruthVisitorV3.tsx` bleibt unverändert. Generische Auskunft ausser CH→DE ist ein benannter Anbinde-Blocker, kein UI-Ersatz.
