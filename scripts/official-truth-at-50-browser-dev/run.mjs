@@ -69,7 +69,7 @@ try {
  assert.deepEqual(payload.input?.citizenshipCountryCodes,['DE','IN','UA'])
  assert.equal(payload.cells?.length,3)
  for(const cell of payload.cells)assert.ok(cell.results?.every(x=>x.status==='unavailable'),'49 not yet Owner-authorized')
- const heading=page.getByRole('heading',{name:/Einreise nach Österreich/})
+ const heading=page.getByRole('heading',{name:/^Einreise nach .*Österreich$/})
  try { await heading.waitFor({timeout:12000}) }
  catch {
   // Never turn an HTTP-200 into a UI PASS: bound what the real browser actually
