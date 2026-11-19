@@ -8,7 +8,7 @@
 // Planpunkte sind bis Phase 3 vollständig gesperrt: Inhalt, Termin und
 // Zuordnung bleiben. Entfällt ein Tag oder eine Etappe, bleibt jeder Planpunkt
 // ungeplant und sonst unverändert – kommerziell wie nicht kommerziell. Eine
-// strukturelle Operation darf `punkt_entfernen` nicht mit durchwinken. Neue
+// KI-Operation darf `punkt_entfernen` nicht durchwinken. Neue
 // Planpunkte bleiben ohne Handelsfelder.
 //
 // Frei von Next, Supabase und `process.env`.
@@ -226,22 +226,14 @@ function tageEinfuegen(
   tagePruefen(reise)
 }
 
-const STRUKTUR_ARTEN = new Set<Modelloperation['art']>([
-  'dauer_aendern',
-  'etappe_dauer',
-  'etappe_entfernen',
-  'etappe_hinzufuegen',
-  'tag_entfernen',
-  'tag_hinzufuegen',
-])
-
 /**
- * Eine Kürzung oder ein neuer Tag ist keine Erlaubnis, Planpunkte zu löschen.
- * Der ganze Vorschlag fällt, bevor etwas angewendet wird.
+ * Modelloperationen haben keinen unabhängig bestätigten Löschauftrag.
+ * Deshalb bleibt punkt_entfernen in dieser gemeinsamen KI-Pipeline gesperrt,
+ * auch als einzelne Operation oder neben einer harmlosen Titeländerung.
+ * Manuelle Punktlöschung läuft über die getrennten Editor-Aktionen.
  */
-function loeschtNebenStruktur(operationen: Modelloperation[]): boolean {
+function enthaeltPunktLoeschung(operationen: Modelloperation[]): boolean {
   return operationen.some((op) => op.art === 'punkt_entfernen')
-    && operationen.some((op) => STRUKTUR_ARTEN.has(op.art))
 }
 
 function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
@@ -498,12 +490,12 @@ export function operationenAnwenden(
   if (operationen.length === 0) {
     return { ok: false, fehler: { code: 'ungueltig', meldung: 'Es liegt keine Änderung vor.' } }
   }
-  if (loeschtNebenStruktur(operationen)) {
+  if (enthaeltPunktLoeschung(operationen)) {
     return {
       ok: false,
       fehler: {
         code: 'ungueltig',
-        meldung: 'Eine Änderung von Tagen oder Etappen darf Planpunkte nicht mitlöschen. Der Vorschlag wurde nicht übernommen.',
+        meldung: 'Ein KI-Vorschlag darf bestehende Planpunkte nicht löschen. Der Vorschlag wurde nicht übernommen. Entferne einzelne Punkte bei Bedarf direkt im Reiseplan.',
       },
     }
   }

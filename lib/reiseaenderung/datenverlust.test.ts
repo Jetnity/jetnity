@@ -430,12 +430,29 @@ describe('Strukturelle KI-Änderung behält Planpunkte', () => {
     assert.deepEqual(basis, vorher)
   })
 
-  test('ein ausdrücklich einzelner punkt_entfernen bleibt für nichtkommerzielle Punkte möglich', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-abend' })])
-    assert.equal(ergebnis.ok, true)
-    if (!ergebnis.ok) return
-    assert.equal(finden(ergebnis.reise, 'item-abend'), undefined)
-    assert.ok(finden(ergebnis.reise, 'item-vormittag'))
+  test('isolierter KI-Löschbefehl kann auch ungebuchte Notizen nicht entfernen', () => {
+    const basis = bangkokKrabi()
+    const vorher = structuredClone(basis)
+    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-abend' })], basis)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.fehler.code, 'ungueltig')
+    assert.match(ergebnis.fehler.meldung, /nicht übernommen/)
+    assert.deepEqual(basis, vorher)
+    assert.ok(finden(basis, 'item-abend'))
+  })
+
+  test('isoliertes punkt_entfernen neben harmlosen Stammdaten ist ebenfalls gesperrt', () => {
+    const basis = bangkokKrabi()
+    const vorher = structuredClone(basis)
+    const ergebnis = anwenden([
+      op({ art: 'stammdaten', titel: 'Umbenannte Reise' }),
+      op({ art: 'punkt_entfernen', punktId: 'item-vormittag' }),
+    ], basis)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.fehler.code, 'ungueltig')
+    assert.deepEqual(basis, vorher)
   })
 
   test('Readback und Bedeutung behalten die verschobenen IDs', () => {
@@ -554,4 +571,34 @@ describe('Der Modellantwort-Pfad erzeugt keine Löschvorschau', () => {
     assert.match(ergebnis.meldung, /nicht übernommen/)
     assert.equal(aufrufe, 1)
   })
+  test('ein einzelner unerwünschter Löschvorschlag aus dem Modell wird vor der Vorschau verworfen', async () => {
+    let aufrufe = 0
+    const werkzeuge: Aenderungswerkzeuge = {
+      zustand: { aktiv: true, modell: 'gpt-5.6-terra', aufwand: 'low' },
+      beanspruchen: async () => ({ ok: true, id: 'nutzung-1' }),
+      abschliessen: async () => undefined,
+      aufrufen: async () => {
+        aufrufe += 1
+        return {
+          ...rohergebnisAus(200, antwortMit(aenderungAntwort([
+            leereOperation('punkt_entfernen', { punktId: 'item-abend' }),
+          ]))),
+          laufzeitMs: 20,
+        }
+      },
+      heute: '2026-11-19',
+      kennung: (prefix) => `${prefix}-neu`,
+      mutationId: 'mut-2',
+    }
+    const original = bangkokKrabi()
+    const vorher = structuredClone(original)
+    const ergebnis = await reiseaenderungErzeugen('Eine Nacht weniger in Bangkok.', original, werkzeuge)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.klasse, 'schema')
+    assert.match(ergebnis.meldung, /nicht übernommen/)
+    assert.deepEqual(original, vorher)
+    assert.equal(aufrufe, 1)
+  })
+
 })
