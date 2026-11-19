@@ -76,7 +76,7 @@ export async function readCmsPublished(signal: AbortSignal): Promise<CmsPortResu
   try {
     const client = await cmsDuring(async () => await createServerComponentClient<AdminDevRuntimeDatabase>(signal), signal)
     if (signal.aborted || !isAdminHostedRuntimeEnabled()) return failure(undefined, signal)
-    const result = await cmsDuring(() => client.rpc('cms_inspiration_published_v1').abortSignal(signal), signal)
+    const result = await cmsDuring(() => client.rpc('cms_inspiration_published_v2').abortSignal(signal), signal)
     if (result.error || signal.aborted) return failure(result.error?.code, signal)
     const value = parseCmsPublished(result.data)
     return value ? { ok: true, value } : { ok: false, code: 'unavailable' }
