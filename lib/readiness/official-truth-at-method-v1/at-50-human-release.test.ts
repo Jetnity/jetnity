@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL } from '../official-truth-product-v3/method/human-contract'
+import { HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY } from '../official-truth-product-v3/method/human-contract'
 import { eligibleAustria50Dev, getAt50HumanRelease } from './at-50-human-release'
 import { scopedMethodJournalStorage, AT50_HUMAN_METHOD_STORAGE_KEY, AT_HUMAN_METHOD_STORAGE_KEY }
   from './at-journal-storage'
-import { HUMAN_METHOD_STORAGE_KEY } from '../official-truth-product-v3/method/human-contract'
 
 const valid=Object.freeze({
  deploymentEnv:'preview',projectId:'prj_wTTVawPItEO7a4HihEmaU3PsuaXM',
