@@ -36,9 +36,9 @@ export default function DiscoverCarsSuche() {
       {!anzeigen ? (
         <div className="mt-4 rounded-2xl bg-surface-25 p-4 text-sm leading-6 text-ink-800">
           <p id={`${id}-hinweis`}>
-            Mit „Suchformular laden“ verbindest du dich mit DiscoverCars. Dabei erhält der Anbieter
-            Verbindungsdaten wie deine IP-Adresse und kann Cookies oder ähnliche Technologien nutzen.
-            Deine gespeicherte Reise wird nicht übermittelt.
+            {widgetFreigegeben
+              ? 'Das externe Suchformular wird erst nach deiner Aktion geladen. Der Anbieter erhält Verbindungsdaten und kann Cookies einsetzen; deine gespeicherte Reise wird nicht übertragen.'
+              : 'Das optionale externe Suchformular ist noch nicht freigegeben. Es wird nicht geladen und erhält dadurch keine Verbindungsdaten über diese Einbettung.'}
           </p>
           {widgetFreigegeben ? (
             <button type="button" onClick={() => { setPhase('laedt'); setAnzeigen(true) }} aria-describedby={`${id}-hinweis`} aria-controls={`${id}-formular`} className={`${AKTION} mt-4 bg-brand-800 text-white hover:bg-brand-900`}>
