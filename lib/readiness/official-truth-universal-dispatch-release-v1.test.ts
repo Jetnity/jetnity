@@ -111,7 +111,7 @@ test('AT primary authority sources use the same generic register, never new coun
  assert.match(atSources,/admit_host_v1/g)
  assert.match(atSources,/admit_source_v1/g)
  assert.match(atSources,/passport_scope_v1\)<>1150/)
- assert.match(atSources,/legal_rule_qualified OR publication_allowed OR accepted_fact_count<>0/)
+ assert.match(atSources,/publication_allowed OR legal_rule_qualified OR accepted_fact_count<>0/)
  assert.doesNotMatch(atSources,/\bcron\.schedule\s*\(|\bcron\.alter_job\s*\(|\bnet\.http_get\s*\(|\bCREATE ROLE\b|qscbgcdmivbbnzrcyegn/i)
 })
 test('AT passport-page, travel insurance and airside transit are only topic review candidates',()=>{
@@ -122,4 +122,17 @@ test('AT passport-page, travel insurance and airside transit are only topic revi
  assert.match(atTopics,/customer_answer<>'derzeit nicht verfügbar'/)
  assert.match(atTopics,/AT_TOPIC_MAPPING_POSTCHECK_ROLLBACK/)
  assert.doesNotMatch(atTopics,/\bnet\.http_get\s*\(|\bcron\.schedule\s*\(|\bCREATE ROLE\b|qscbgcdmivbbnzrcyegn/i)
+})
+
+const atGaps=read('at-official-source-gaps-v2.sql')
+test('Austria missing topic source candidates preserve all Dev-only and unavailable gates',()=>{
+ assert.match(atGaps,/^-- DEV ONLY/)
+ assert.match(atGaps,/dev:yfvbxvijcorffwxbxahl:AT-GAPS-V2/)
+ for(const id of ['bmi-etias-information','bmi-entry-exit-system','sozial-into-austria']) assert.ok(atGaps.includes(id),id)
+ assert.match(atGaps,/fraud_warnings/)
+ assert.match(atGaps,/AT_SOURCE_GAPS_PREDECESSOR_REFUSED/)
+ assert.match(atGaps,/AT_SOURCE_GAPS_POSTCHECK_ROLLBACK/)
+ assert.match(atGaps,/NOT EXISTS\(SELECT 1 FROM jetnity_global_research_private\.cases_v1/)
+ assert.match(atGaps,/customer_answer<>'derzeit nicht verfügbar'/)
+ assert.doesNotMatch(atGaps,/\bCREATE ROLE\b|\bGRANT EXECUTE\b|\bcron\.schedule\s*\(|\bcron\.alter_job\s*\(|\bCREATE OR REPLACE FUNCTION\s+public\.|qscbgcdmivbbnzrcyegn/i)
 })
