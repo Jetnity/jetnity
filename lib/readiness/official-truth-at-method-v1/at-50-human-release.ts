@@ -8,13 +8,35 @@ import { AT_50_VISA_METHOD_PROPOSAL } from './at-50-method-proposal'
 
 export const AT_50_DEV_SELECTION_ID = 'hmr1_da2391387e35c2e0ab0b5f048852ec6e'
 
+export type At50PreviewSelection = Readonly<{
+ deploymentEnv: string | undefined
+ projectId: string | undefined
+ repoOwner: string | undefined
+ repoSlug: string | undefined
+ branch: string | undefined
+ getSupabaseUrl: () => string
+}>
+
+/** Pure, strict target check; do not even read the Supabase URL until the
+ * Vercel Preview identity and exact PR branch match. Source/legal/Owner
+ * approval remains enforced independently by protected SQL and AAL2. */
+export function eligibleAustria50Dev(context: At50PreviewSelection): boolean {
+ return context.deploymentEnv==='preview'
+  && context.projectId==='prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
+  && context.repoOwner==='Jetnity'
+  && context.repoSlug==='jetnity'
+  && context.branch==='feat/official-truth-universal-source-registry-dev-20261119'
+  && context.getSupabaseUrl()===HUMAN_METHOD_DEV_URL
+}
 export function selectedAustria50Dev(): boolean {
- return process.env.VERCEL_ENV==='preview'
-  && process.env.VERCEL_PROJECT_ID==='prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
-  && process.env.VERCEL_GIT_REPO_OWNER==='Jetnity'
-  && process.env.VERCEL_GIT_REPO_SLUG==='jetnity'
-  && process.env.VERCEL_GIT_COMMIT_REF==='feat/official-truth-universal-source-registry-dev-20261119'
-  && getServerSupabaseUrl()===HUMAN_METHOD_DEV_URL
+ return eligibleAustria50Dev({
+  deploymentEnv:process.env.VERCEL_ENV,
+  projectId:process.env.VERCEL_PROJECT_ID,
+  repoOwner:process.env.VERCEL_GIT_REPO_OWNER,
+  repoSlug:process.env.VERCEL_GIT_REPO_SLUG,
+  branch:process.env.VERCEL_GIT_COMMIT_REF,
+  getSupabaseUrl:getServerSupabaseUrl,
+ })
 }
 
 export function getAt50HumanRelease(): HumanRelease | null {

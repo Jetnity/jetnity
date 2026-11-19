@@ -358,9 +358,9 @@ const humanJournal=readFileSync(new URL('./official-truth-at-method-v1/at-journa
 const humanPanel=readFileSync(new URL('../../app/(admin)/admin/official-truth/method/MethodAuthorityPanel.tsx',import.meta.url),'utf8')
 test('50-passport Owner method is Dev-only, separate identity, separate journal, and never a legal fact issuer',()=>{
  assert.match(at50Human,/selectedAustria50Dev/)
- assert.match(at50Human,/VERCEL_ENV==='preview'/)
+ assert.match(at50Human,/deploymentEnv==='preview'/)
  assert.match(at50Human,/feat\/official-truth-universal-source-registry-dev-20261119/)
- assert.match(at50Human,/getServerSupabaseUrl\(\)===HUMAN_METHOD_DEV_URL/)
+ assert.match(at50Human,/context\.getSupabaseUrl\(\)===HUMAN_METHOD_DEV_URL/)
  assert.match(at50Human,/issuerForAll50Installed/)
  assert.match(at50Human,/acceptedFacts!==0/)
  assert.match(at50Human,/publicationAllowed/)
