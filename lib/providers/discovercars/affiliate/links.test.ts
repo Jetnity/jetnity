@@ -10,11 +10,11 @@ import { rentalCarProviderAus } from '@/lib/rental-cars/factory'
 describe('DiscoverCars Suche vor der bewussten Anzeige', () => {
   test('keine Anbieterquelle, klare Übergabe und jederzeit geschützter Partnerlink', () => {
     const html = renderToStaticMarkup(createElement(DiscoverCarsSuche))
-    assert.match(html, /Suchformular laden/)
+    assert.doesNotMatch(html, />Suchformular laden</, 'Widget-CTA bleibt bis zur Consent-Abnahme aus')
+    assert.match(html, /optionale externe Suchformular ist noch nicht freigegeben/)
+    assert.match(html, /nicht geladen und erhält dadurch keine Verbindungsdaten/)
     assert.match(html, /Fahrzeuge, Preise und Mietbedingungen/)
     assert.match(html, /anschließend bei DiscoverCars/)
-    assert.match(html, /IP-Adresse/)
-    assert.match(html, /Cookies/)
     assert.match(html, /Affiliate-Partner/)
     assert.match(html, /href="https:\/\/www\.discovercars\.com\/\?a_aid=jetnity" target="_blank" rel="noopener noreferrer sponsored" referrerPolicy="no-referrer"/i)
     assert.match(html, /data-discovercars-zustand="ruhend"/)
