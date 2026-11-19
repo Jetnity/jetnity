@@ -1,6 +1,6 @@
 # Passkeys Dev 1 — Status
 
-**Stand:** 19.11.2026  
+**Stand:** 19.11.2026, Abbruchpfad nach `e19d49424`  
 **Verdikt:** `REVIEW_REQUIRED` für diesen fail-closed Draft. Live-Passkeys: `BLOCKED_OWNER_GATE`.  
 **Nicht:** `READY`. Kein Merge. Keine Live-Funktion. Kein Folgeslice.
 
@@ -53,6 +53,8 @@ Geplante RP-ID: `jetnity.com`. Kein Schreibzugriff auf Config, Dashboard oder Ve
 Eine spätere Änderung der RP-ID macht bereits registrierte Passkeys unbrauchbar. Production-Origins und eine eigene Dev-Origin unter `jetnity.com` müssen vor der ersten Registrierung feststehen. Vercel-Preview ist kein Passkey-Origin.
 
 ## Was der Draft tut
+
+Der Passkey-TOTP-Abbruch bleibt fail-closed. Solange `signOut({ scope: 'local' })` nicht ohne Fehler zurück ist, gilt die Sitzung nicht als beendet, der Login leitet nicht weiter und die Formularnavigation bleibt gesperrt. Ein Fehler, ein fehlendes `signOut` oder ein Netzabbruch zeigt `logout.status.error`. Der Passwort-Dialog schließt weiterhin ohne diesen Abmeldeschritt. `[auth.passkey]` bleibt aus.
 
 Passwort-Login, TOTP-Dialog und Admin-AAL2-Guard sind unverändert verdrahtet. Eine Passkey-Schaltfläche erscheint nur, wenn Server-Flag, SDK-Methoden, Browser-WebAuthn und eine zur RP-ID passende HTTPS-Origin gleichzeitig wahr sind. Heute ist das Server-Flag aus. Login und `/account/security` bleiben deshalb ohne Handlungs-Schaltfläche. Der Hinweis „nicht verfügbar“ steht nur dort, einmal, auf Deutsch oder Englisch.
 

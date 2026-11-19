@@ -1,8 +1,7 @@
 // Injizierbarer Passkey-Port auf der offiziellen Supabase-Form.
-// Die installierte Auth-JS 2.71.1 hat diese Methoden nicht. Der Port ruft
-// sie nur, wenn das Laufzeitobjekt sie wirklich besitzt und das Gate offen ist.
-// Kein eigener WebAuthn-Verifier, kein zweiter Speicher, kein AAL2-Schreiben.
-// Tests ersetzen den Client durch Fakes. Das ist MOCK_PASS, kein Hosted-E2E.
+// Der Port ruft die Methoden nur, wenn das Laufzeitobjekt sie wirklich besitzt
+// und das Gate offen ist. Kein eigener WebAuthn-Verifier, kein zweiter Speicher,
+// kein AAL2-Schreiben. Tests ersetzen den Client durch Fakes. Das ist MOCK_PASS.
 
 import { istVerifizierterTotpFaktor, mfaFaktorenListeLesen } from '@/lib/auth/account-security-faktoren'
 import { brauchtLoginTotpStepUp } from '@/lib/auth/mfa'
@@ -347,13 +346,38 @@ export async function passkeyAnmeldungAusfuehren(
   }
 }
 
-/** Beendet die gerade entstandene AAL1-Sitzung auf diesem Gerät. */
-export async function passkeySitzungBeenden(auth: unknown): Promise<void> {
+export type PasskeySitzungEnde = { beendet: true } | { beendet: false }
+
+export type PasskeyTotpLage = 'zu' | 'dialog' | 'beenden' | 'offen'
+
+/**
+ * Beendet die gerade entstandene AAL1-Sitzung auf diesem Gerät.
+ * Ein Fehler, ein fehlendes signOut oder eine leere Antwort ist nicht bestätigt.
+ */
+export async function passkeySitzungBeenden(auth: unknown): Promise<PasskeySitzungEnde> {
   const client = alsSchnittstelle(auth)
-  if (typeof client.signOut !== 'function') return
+  if (typeof client.signOut !== 'function') return { beendet: false }
   try {
-    await client.signOut({ scope: 'local' })
+    const antwort = await client.signOut({ scope: 'local' })
+    if (!antwort || !('error' in antwort) || antwort.error) return { beendet: false }
+    return { beendet: true }
   } catch {
-    // Der Aufrufer darf danach trotzdem nicht weiterleiten.
+    return { beendet: false }
   }
+}
+
+/** Der Passwort-Dialog bleibt `zu`. Nur ein offener Passkey-Dialog startet die Abmeldung. */
+export function passkeyTotpDialogGeschlossen(lage: PasskeyTotpLage): PasskeyTotpLage {
+  return lage === 'dialog' ? 'beenden' : lage
+}
+
+/** Die Abmeldung bleibt unbestätigt, bis signOut ohne Fehler zurück ist. */
+export function passkeyTotpNachAbmeldung(lage: PasskeyTotpLage, beendet: boolean): PasskeyTotpLage {
+  if (lage !== 'beenden') return lage
+  return beendet ? 'zu' : 'offen'
+}
+
+/** Weiterleiten darf nur der noch offene Passkey-Dialog nach erfolgreichem TOTP. */
+export function passkeyTotpDarfWeiterleiten(lage: PasskeyTotpLage): boolean {
+  return lage === 'dialog'
 }

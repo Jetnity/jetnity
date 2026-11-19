@@ -25,7 +25,7 @@
 
 Der Draft ist fail-closed. Es gibt keine Live-Passkey-Anmeldung und keine Behauptung, dass Face ID oder Touch ID genügen. `supabase/config.toml` bleibt `enabled = false`. Installiert sind `@supabase/supabase-js` und Auth-JS `2.119.2` im bestehenden SSR-Singleton `0.6.1`, mit einmaligem `experimental.passkey`. Schreiben braucht einen frischen Passwort- oder TOTP/AAL2-Beweis. Ein abgebrochener Login-Step-up ruft `signOut` auf.
 
-Passwort, TOTP und Admin-AAL2 bleiben die bestehenden Pfade. Ein Passkey, sobald das Gate einmal offen wäre, wäre ein erster Faktor und müsste danach denselben TOTP-Step-up durchlaufen.
+Passwort, TOTP und Admin-AAL2 bleiben die bestehenden Pfade. Ein Passkey, sobald das Gate einmal offen wäre, wäre ein erster Faktor und müsste danach denselben TOTP-Step-up durchlaufen. Bricht dieser Dialog ab oder scheitert die lokale Abmeldung, bleibt die AAL1-Sitzung unbestätigt und die Weiterleitung aus. Der Dev-Guard-Alarm von [44595752922](https://github.com/Jetnity/jetnity/actions/runs/44595752922) gehört nicht in diesen Fix und wird nicht umgangen.
 
 ## CI und Preview
 

@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import { PasskeySignIn } from '@/components/auth/PasskeySignIn'
 import { passkeyHandlungErlaubt, passkeySdkVorhanden } from '@/lib/auth/passkey-faehigkeit'
-import { passkeyAnmeldungAusfuehren, passkeySitzungBeenden } from '@/lib/auth/passkey-port'
+import { passkeyAnmeldungAusfuehren } from '@/lib/auth/passkey-port'
 import { passkeyFehlerSchluessel } from '@/lib/auth/passkey-meldungen'
 import type { SicherheitTextSchluessel } from '@/lib/localization/account-security-texte'
 import type { UiSprache } from '@/lib/localization/ui-sprache'
@@ -31,7 +31,7 @@ export default function PasskeyAnmeldung({
   sprache?: UiSprache
   onStepUp: () => Promise<void>
   onWeiter: () => void
-  onSitzungBeenden: () => Promise<void>
+  onSitzungBeenden: () => Promise<{ beendet: boolean }>
 }) {
   const bereit = React.useSyncExternalStore(
     () => () => undefined,
@@ -50,9 +50,8 @@ export default function PasskeyAnmeldung({
       try {
         await onStepUp()
       } catch {
-        await passkeySitzungBeenden(auth)
-        await onSitzungBeenden()
-        setMeldung('passkey.error.aal')
+        const ende = await onSitzungBeenden()
+        if (ende.beendet) setMeldung('passkey.error.aal')
       } finally {
         setBeschaeftigt(false)
       }
@@ -64,8 +63,8 @@ export default function PasskeyAnmeldung({
       return
     }
     if (ergebnis.art === 'fehler') {
-      await passkeySitzungBeenden(auth)
-      await onSitzungBeenden()
+      const ende = await onSitzungBeenden()
+      if (!ende.beendet) return
     }
     setMeldung(passkeyFehlerSchluessel(ergebnis.art === 'geschlossen' ? 'geschlossen' : ergebnis.code))
   }

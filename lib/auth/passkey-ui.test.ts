@@ -56,7 +56,7 @@ describe('Passkey-Oberfläche, MOCK_PASS', () => {
       sprache: 'en',
       onStepUp: async () => undefined,
       onWeiter: noop,
-      onSitzungBeenden: async () => undefined,
+      onSitzungBeenden: async () => ({ beendet: true }),
     }))
     assert.match(seite, /data-passkey-login="geschlossen"/)
     assert.match(seite, /currently unavailable/)
@@ -148,7 +148,10 @@ describe('Passkey-Oberfläche, MOCK_PASS', () => {
     assert.equal(mfa.includes('err.message'), false)
     assert.equal(mfa.includes('signInWithPasskey'), false)
     assert.match(login, /<PasskeyAnmeldung/)
-    assert.match(login, /onWeiter=\{\(\) => router\.replace\(nachErfolg\)\}/)
+    assert.match(login, /router\.replace\(nachErfolg\)/)
+    assert.equal(login.includes('void supabase.auth.signOut'), false)
+    assert.match(login, /passkeySitzungBeenden/)
+    assert.match(login, /passkeyTotpDarfWeiterleiten/)
     assert.match(login, /signInWithPassword/)
   })
 })

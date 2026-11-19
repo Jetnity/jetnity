@@ -13,9 +13,14 @@ import {
   passkeyEntfernen,
   passkeyFehlerCode,
   passkeyRegistrieren,
+  passkeySitzungBeenden,
+  passkeyTotpDarfWeiterleiten,
+  passkeyTotpDialogGeschlossen,
+  passkeyTotpNachAbmeldung,
   passkeyUmbenennen,
   type PasskeyAuthSchnittstelle,
   type PasskeyFehlerCode,
+  type PasskeyTotpLage,
 } from '@/lib/auth/passkey-port'
 
 const ID = '11111111-1111-4111-8111-111111111111'
@@ -262,6 +267,54 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
     }
   })
 
+  test('abgebrochener Passkey-TOTP leitet nicht weiter, auch wenn die Abmeldung fehlt oder scheitert', async () => {
+    const passwort = passkeyTotpDialogGeschlossen('zu')
+    assert.equal(passwort, 'zu')
+    assert.equal(passkeyTotpDarfWeiterleiten(passwort), false)
+
+    let lage: PasskeyTotpLage = passkeyTotpDialogGeschlossen('dialog')
+    assert.equal(lage, 'beenden')
+    assert.equal(passkeyTotpDarfWeiterleiten(lage), false)
+    assert.equal(sicherheitText('de', 'logout.status.working'), 'Abmeldung wird ausgeführt.')
+    assert.equal(sicherheitText('en', 'logout.status.working'), 'Signing out.')
+
+    let freigabe: (wert: { error: { message: string } | null }) => void = () => undefined
+    const verzoegert = passkeySitzungBeenden({
+      signOut: () => new Promise<{ error: { message: string } | null }>((resolve) => {
+        freigabe = resolve
+      }),
+    })
+    assert.equal(passkeyTotpDarfWeiterleiten(lage), false)
+    freigabe({ error: { message: 'Failed to fetch' } })
+    const netz = await verzoegert
+    assert.deepEqual(netz, { beendet: false })
+    lage = passkeyTotpNachAbmeldung(lage, netz.beendet)
+    assert.equal(lage, 'offen')
+    assert.equal(passkeyTotpDarfWeiterleiten(lage), false)
+    assert.equal(sicherheitText('de', 'logout.status.error'), 'Die Abmeldung konnte nicht bestätigt werden.')
+    assert.equal(sicherheitText('en', 'logout.status.error'), 'Sign-out could not be confirmed.')
+
+    assert.deepEqual(await passkeySitzungBeenden({}), { beendet: false })
+    assert.deepEqual(await passkeySitzungBeenden({
+      signOut: async () => {
+        throw new Error('Failed to fetch')
+      },
+    }), { beendet: false })
+    assert.deepEqual(await passkeySitzungBeenden({
+      signOut: async () => ({ error: { message: 'network down' } }),
+    }), { beendet: false })
+
+    const bestaetigt = await passkeySitzungBeenden({
+      signOut: async () => ({ error: null }),
+    })
+    assert.deepEqual(bestaetigt, { beendet: true })
+    lage = passkeyTotpNachAbmeldung('beenden', bestaetigt.beendet)
+    assert.equal(lage, 'zu')
+    assert.equal(passkeyTotpDarfWeiterleiten(lage), false)
+    assert.equal(sicherheitText('de', 'logout.status.success'), 'Die Abmeldung wurde bestätigt.')
+    assert.equal(sicherheitText('en', 'logout.status.success'), 'Sign-out was confirmed.')
+  })
+
   test('Passwort-Login und Admin-AAL2-Quelle bleiben die bestehende Prüfung', () => {
     const hier = dirname(fileURLToPath(import.meta.url))
     const login = readFileSync(join(hier, '../../components/auth/LoginForm.tsx'), 'utf8')
@@ -272,6 +325,9 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
     assert.match(login, /signInWithPassword\(\{ email: em, password \}\)/)
     assert.match(login, /brauchtLoginTotpStepUp\(aal\)/)
     assert.match(login, /startTotpChallenge\(supabase\)/)
+    assert.equal(login.includes('void supabase.auth.signOut'), false)
+    assert.match(login, /passkeySitzungBeenden\(supabase\.auth\)/)
+    assert.match(login, /passkeyTotpDarfWeiterleiten\(passkeyLageRef\.current\)/)
     assert.equal(anmeldung.includes('signInWithPassword'), false)
     assert.equal(anmeldung.includes('currentLevel'), false)
     assert.match(port, /brauchtLoginTotpStepUp\(aal\.data\)/)

@@ -14,6 +14,14 @@ import OauthAnbieter from '@/components/auth/OauthAnbieter';
 import PasskeyAnmeldung from '@/components/auth/PasskeyAnmeldung';
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
 import { brauchtLoginTotpStepUp, getAAL, startTotpChallenge } from '@/lib/auth/mfa';
+import {
+  passkeySitzungBeenden,
+  passkeyTotpDarfWeiterleiten,
+  passkeyTotpDialogGeschlossen,
+  passkeyTotpNachAbmeldung,
+  type PasskeyTotpLage,
+} from '@/lib/auth/passkey-port';
+import { sicherheitText } from '@/lib/localization/account-security-texte';
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
 import type { OauthAnbieter as OauthName, OauthFreigabe } from '@/lib/auth/oauth-anbieter';
 import {
@@ -73,9 +81,26 @@ export default function LoginForm({
 
   // MFA Dialog State
   const [mfaOpen, setMfaOpen] = React.useState(false);
-  const passkeyStepUp = React.useRef(false);
+  const passkeyLageRef = React.useRef<PasskeyTotpLage>('zu');
+  const [passkeyLage, setPasskeyLage] = React.useState<PasskeyTotpLage>('zu');
+  const [passkeyHinweis, setPasskeyHinweis] = React.useState<null | 'working' | 'error' | 'success'>(null);
   const [factorId, setFactorId] = React.useState('');
   const [challengeId, setChallengeId] = React.useState('');
+  const passkeyGesperrt = passkeyLage === 'beenden' || passkeyLage === 'offen';
+
+  const passkeyLageSetzen = (lage: PasskeyTotpLage) => {
+    passkeyLageRef.current = lage;
+    setPasskeyLage(lage);
+  };
+
+  const passkeyDialogAbbruch = async () => {
+    setPasskeyHinweis('working');
+    const ende = await passkeySitzungBeenden(supabase.auth);
+    if (passkeyLageRef.current !== 'beenden') return;
+    const naechste = passkeyTotpNachAbmeldung('beenden', ende.beendet);
+    passkeyLageSetzen(naechste);
+    setPasskeyHinweis(ende.beendet ? 'success' : 'error');
+  };
 
   // Caps-Lock Erkennung ohne ts-expect-error
   const onPasswordKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -103,6 +128,8 @@ export default function LoginForm({
       return;
     }
     setFeldfehler({});
+
+    if (passkeyLageRef.current === 'beenden' || passkeyLageRef.current === 'offen') return;
 
     setLoading(true);
     try {
@@ -134,6 +161,7 @@ export default function LoginForm({
   };
 
   const handleForgotPassword = async () => {
+    if (passkeyLageRef.current === 'beenden' || passkeyLageRef.current === 'offen') return;
     setErrorMsg(null);
     setInfoMsg(null);
 
@@ -261,6 +289,22 @@ export default function LoginForm({
           </div>
         )}
 
+        {passkeyHinweis === 'working' && (
+          <div className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status">
+            {sicherheitText(sprache, 'logout.status.working')}
+          </div>
+        )}
+        {passkeyHinweis === 'error' && (
+          <div className="rounded-xl border border-brand-200 bg-brand-50 p-3 text-sm text-ink-800" role="alert">
+            {sicherheitText(sprache, 'logout.status.error')}
+          </div>
+        )}
+        {passkeyHinweis === 'success' && (
+          <div className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary" role="status">
+            {sicherheitText(sprache, 'logout.status.success')}
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -272,7 +316,7 @@ export default function LoginForm({
 
           <Button
             type="submit"
-            disabled={loading}
+            disabled={loading || passkeyGesperrt}
             className="min-w-[8rem]"
             isLoading={loading}
             loadingText="Anmelden…"
@@ -288,21 +332,23 @@ export default function LoginForm({
         auth={supabase.auth}
         sprache={sprache}
         onStepUp={async () => {
-          try {
-            const { factorId: naechsterFaktor, challengeId: naechsteChallenge } = await startTotpChallenge(supabase);
-            setFactorId(naechsterFaktor);
-            setChallengeId(naechsteChallenge);
-            passkeyStepUp.current = true;
-            setMfaOpen(true);
-          } catch (error) {
-            passkeyStepUp.current = false;
-            await supabase.auth.signOut({ scope: 'local' });
-            throw error;
-          }
+          const { factorId: naechsterFaktor, challengeId: naechsteChallenge } = await startTotpChallenge(supabase);
+          setFactorId(naechsterFaktor);
+          setChallengeId(naechsteChallenge);
+          passkeyLageSetzen('dialog');
+          setMfaOpen(true);
         }}
-        onWeiter={() => router.replace(nachErfolg)}
+        onWeiter={() => {
+          if (passkeyLageRef.current === 'beenden' || passkeyLageRef.current === 'offen') return;
+          router.replace(nachErfolg);
+        }}
         onSitzungBeenden={async () => {
-          await supabase.auth.signOut({ scope: 'local' });
+          const ende = await passkeySitzungBeenden(supabase.auth);
+          if (!ende.beendet) {
+            passkeyLageSetzen('offen');
+            setPasskeyHinweis('error');
+          }
+          return ende;
         }}
       />
 
@@ -310,7 +356,11 @@ export default function LoginForm({
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Noch kein Konto?{' '}
-        <Link href={`/register?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Konto erstellen</Link>
+        {passkeyGesperrt ? (
+          <span className="text-muted-foreground">Konto erstellen</span>
+        ) : (
+          <Link href={`/register?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Konto erstellen</Link>
+        )}
       </p>
 
       {/* MFA – TOTP Dialog */}
@@ -318,17 +368,26 @@ export default function LoginForm({
         open={mfaOpen}
         onClose={() => {
           setMfaOpen(false);
-          if (!passkeyStepUp.current) return;
-          passkeyStepUp.current = false;
-          void supabase.auth.signOut({ scope: 'local' });
+          const naechste = passkeyTotpDialogGeschlossen(passkeyLageRef.current);
+          if (naechste === passkeyLageRef.current) return;
+          passkeyLageSetzen(naechste);
+          void passkeyDialogAbbruch();
         }}
         supabase={supabase}
         factorId={factorId}
         challengeId={challengeId}
         onVerified={() => {
-          passkeyStepUp.current = false;
-          setMfaOpen(false);
-          router.replace(nachErfolg);
+          if (passkeyTotpDarfWeiterleiten(passkeyLageRef.current)) {
+            passkeyLageSetzen('zu');
+            setPasskeyHinweis(null);
+            setMfaOpen(false);
+            router.replace(nachErfolg);
+            return;
+          }
+          if (passkeyLageRef.current === 'zu') {
+            setMfaOpen(false);
+            router.replace(nachErfolg);
+          }
         }}
       />
     </div>
