@@ -69,6 +69,7 @@ END $wrapper$;
 
 -- Narrowly shrink waiting on a protected guard tuple; do NOT weaken its
 -- 5-minute audit, protected rights, or quota. A missed run is retried next minute.
+REVOKE ALL ON FUNCTION jetnity_dev_import_scheduler.skip_overlap_v2() FROM PUBLIC,anon,authenticated,service_role;
 ALTER FUNCTION jetnity_dev_import_scheduler.run_v1() SET lock_timeout='150ms';
 ALTER FUNCTION jetnity_dev_import_scheduler.tick_v1() SET lock_timeout='150ms';
 ALTER FUNCTION jetnity_dev_import_scheduler.maintain_preview_v1() SET lock_timeout='150ms';
@@ -86,6 +87,8 @@ BEGIN
  OR (SELECT count(*) FROM cron.job WHERE active AND jobname='jetnity-official-truth-dev-guard-v1'
    AND schedule='*/5 * * * *')<>1
  OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+ OR has_function_privilege('anon','jetnity_dev_import_scheduler.skip_overlap_v2()','EXECUTE')
+ OR has_function_privilege('authenticated','jetnity_dev_import_scheduler.skip_overlap_v2()','EXECUTE')
  THEN RAISE EXCEPTION 'IMPORT_GUARD_COLLISION_POSTCHECK_ROLLBACK' USING ERRCODE='P7975'; END IF;
  PERFORM official_v3_guard_private.assert_catalog_v1();
 END $switch$;

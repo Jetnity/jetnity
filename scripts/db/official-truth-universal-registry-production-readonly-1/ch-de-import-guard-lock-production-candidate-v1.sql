@@ -15,6 +15,9 @@ BEGIN
   IS DISTINCT FROM 'production:qscbgcdmivbbnzrcyegn:IMPORT-GUARD-COLLISION-V1'
  OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
  OR to_regprocedure('jetnity_prod_import_scheduler.skip_overlap_v2()') IS NOT NULL
+ OR (SELECT encode(sha256(convert_to(prosrc,'UTF8')),'hex')
+     FROM pg_proc WHERE oid='jetnity_prod_import_scheduler.tick_v1()'::regprocedure)
+    IS DISTINCT FROM 'ebc518fc18e8c5057941c1d65890171b510fa67138dc85023ac1d95195f6bb3a'
  OR (SELECT count(*) FROM cron.job WHERE active AND jobname='jetnity-ch-de-prod-import-v1'
   AND schedule='* * * * *' AND command='SELECT jetnity_prod_import_scheduler.tick_v1();'
   AND username='postgres' AND database='postgres')<>1
@@ -44,6 +47,7 @@ BEGIN
  EXCEPTION WHEN lock_not_available OR query_canceled
  THEN RETURN 'skip_guard_lock'; END;
 END $wrapper$;
+REVOKE ALL ON FUNCTION jetnity_prod_import_scheduler.skip_overlap_v2() FROM PUBLIC,anon,authenticated,service_role;
 ALTER FUNCTION jetnity_prod_import_scheduler.tick_v1() SET lock_timeout='150ms';
 
 DO $post$
@@ -59,6 +63,8 @@ BEGIN
    AND jobname='jetnity-official-truth-production-guard-v1'
    AND schedule='*/5 * * * *')<>1
  OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'
+ OR has_function_privilege('anon','jetnity_prod_import_scheduler.skip_overlap_v2()','EXECUTE')
+ OR has_function_privilege('authenticated','jetnity_prod_import_scheduler.skip_overlap_v2()','EXECUTE')
  THEN RAISE EXCEPTION 'PROD_LOCK_FIX_POSTCHECK_ROLLBACK' USING ERRCODE='P7976'; END IF;
  PERFORM official_v3_guard_private.assert_catalog_v1();
 END $post$;
