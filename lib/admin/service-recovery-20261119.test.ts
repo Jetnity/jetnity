@@ -22,7 +22,9 @@ test('public CMS v2 reads only published, unarchived revisions without the share
   assert.doesNotMatch(candidate, /GRANT EXECUTE ON FUNCTION public\.cms_inspiration_published_v2\(\) TO anon, authenticated/)
   assert.match(candidate, /d\.deptype='a'/)
   assert.match(cmsServer, /\.rpc\('cms_inspiration_published_v2'\)/)
-  assert.doesNotMatch(cmsServer, /\.rpc\('cms_inspiration_published_v1'\)/)
+  assert.match(cmsServer, /\.rpc\('cms_inspiration_published_v1'\)/)
+  assert.match(cmsServer, /cmsEditorRuntime\(\) === 'production'/)
+  assert.match(cmsServer, /JETNITY_CMS_PUBLIC_V2_ENABLED !== 'true'/)
 })
 
 test('quota HTTP 429 is an error-mapping change, not a loosened cost or authorization limit', () => {
