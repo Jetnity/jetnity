@@ -45,6 +45,8 @@ def stage(archive: Path, output: Path):
         Path(__file__).with_name("official-truth-research-package.py"))
     eu_proof = load_local("jetnity_eu_research_proof",
         Path(__file__).with_name("official-truth-europe-four-research-proof.py"))
+    source_ref_review = load_local("jetnity_ref_reconciliation",
+        Path(__file__).with_name("official-truth-source-ref-reconciliation-v1.py"))
     require(eu_proof.proof(archive)["accepted"] == 0, "eu_evidence_review_refused")
     with tempfile.TemporaryDirectory(prefix=".official-truth-five-", dir=parent) as temp_name:
         temp = Path(temp_name)
@@ -105,6 +107,7 @@ def stage(archive: Path, output: Path):
                     os.chmod(dest, 0o600)
                     f.write(data)
         counts = {}
+        reference_reviews = {}
         for country in COUNTRIES:
             private = target / country
             counts[country] = research.prepare(root, country, private)
@@ -113,6 +116,11 @@ def stage(archive: Path, output: Path):
                     and counts[country]["topicSlots"] == 1300
                     and counts[country]["accepted"] == 0
                     and counts[country]["published"] == 0, "release_count_refused")
+            reference_reviews[country] = source_ref_review.reconcile(root, country, passports, private)
+            require(reference_reviews[country]["reviewedSlots"] == 1300
+                    and reference_reviews[country]["positiveLegalRules"] == 0
+                    and reference_reviews[country]["published"] == 0,
+                    "source_ref_review_release_refused")
         index = {
             "schema": 1, "kind": "official_truth_private_five_country_research",
             "destinationOrder": list(COUNTRIES), "passportsPerDestination": 50,
@@ -123,6 +131,7 @@ def stage(archive: Path, output: Path):
             "sourceOfTruth": "original_owner_archive_pinned",
             "unavailableText": "derzeit nicht verfügbar",
             "countryCounts": counts,
+            "sourceReferenceReviews": reference_reviews,
         }
         with (target / "private-release-index.json").open("x", encoding="utf-8") as out:
             os.chmod(target / "private-release-index.json", 0o600)
