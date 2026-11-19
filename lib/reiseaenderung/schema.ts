@@ -50,6 +50,10 @@ export const AENDERUNG_ARTEN = [
   'punkt_anpassen',
 ] as const
 
+// Alte Lösch-Operationen bleiben für die sichere Prüfung historischer Vorschläge
+// im internen Schema erkennbar. Neue Modellantworten dürfen sie nicht erzeugen.
+export const KI_AENDERUNG_ARTEN = AENDERUNG_ARTEN.filter((art) => art !== 'punkt_entfernen')
+
 export type AenderungArt = (typeof AENDERUNG_ARTEN)[number]
 
 const modelltext = (maximum: number) =>
@@ -296,7 +300,7 @@ export const AENDERUNG_JSON_SCHEMA = {
           'startdatum',
         ],
         properties: {
-          art: { type: 'string', enum: [...AENDERUNG_ARTEN] },
+          art: { type: 'string', enum: [...KI_AENDERUNG_ARTEN] },
           etappeId: {
             type: ['string', 'null'],
             description: 'id einer bestehenden Etappe aus der Reise. Sonst null.',
