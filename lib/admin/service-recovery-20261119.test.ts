@@ -16,7 +16,11 @@ test('public CMS v2 reads only published, unarchived revisions without the share
   assert.match(match[1], /WHERE NOT e\.archived AND e\.published_revision IS NOT NULL/)
   assert.doesNotMatch(match[1], /admin_runtime_guard|official_v3_guard|pg_advisory/i)
   assert.match(candidate, /REVOKE ALL ON FUNCTION public\.cms_inspiration_published_v2\(\) FROM PUBLIC, anon, authenticated, service_role/)
-  assert.match(candidate, /GRANT EXECUTE ON FUNCTION public\.cms_inspiration_published_v2\(\) TO anon, authenticated/)
+  // The published-only public RPC intentionally inherits EXECUTE via PUBLIC:
+  // explicit anon/authenticated GRANTs create pg_shdepend rows and trip BG1.
+  assert.match(candidate, /GRANT EXECUTE ON FUNCTION public\.cms_inspiration_published_v2\(\) TO PUBLIC/)
+  assert.doesNotMatch(candidate, /GRANT EXECUTE ON FUNCTION public\.cms_inspiration_published_v2\(\) TO anon, authenticated/)
+  assert.match(candidate, /d\.deptype='a'/)
   assert.match(cmsServer, /\.rpc\('cms_inspiration_published_v2'\)/)
   assert.doesNotMatch(cmsServer, /\.rpc\('cms_inspiration_published_v1'\)/)
 })
