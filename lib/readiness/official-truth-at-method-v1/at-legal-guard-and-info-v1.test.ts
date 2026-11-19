@@ -53,3 +53,20 @@ test('ETIAS operating notice has no price, vaccinations remain source-honest',()
  assert.match(ui,/individuelle Pflichtimpfungs-Auskunft «derzeit nicht verfügbar»/)
  assert.doesNotMatch(ui,/Der zukünftige EU-Direktantrag kostet/)
 })
+
+const rollbackProduction=readFileSync(new URL('../../../scripts/db/official-truth-universal-registry-production-readonly-1/ch-de-import-guard-lock-production-rollback-v1.sql',import.meta.url),'utf8')
+const rollbackDevelopment=sql('ch-de-import-guard-lock-dev-rollback-v1.sql')
+test('the Dev and Owner-only Production collision-fix rollbacks restore exact original scheduler while preserving guard',()=>{
+ for(const [source,original] of [
+   [rollbackProduction,'SELECT jetnity_prod_import_scheduler.tick_v1();'],
+   [rollbackDevelopment,'SELECT jetnity_dev_import_scheduler.run_v1();'],
+ ] as const){
+   assert.match(source,/LOCK_RESTORE_PREDECESSOR_REQUIRED/)
+   assert.match(source,/LOCK_RESTORE_POSTCHECK_ROLLBACK/)
+   assert.ok(source.includes(original))
+   assert.match(source,/DROP FUNCTION jetnity_(?:dev|prod)_import_scheduler\.skip_overlap_v2\(\)/)
+   assert.match(source,/official_v3_guard_private\.assert_catalog_v1\(\)/)
+   assert.match(source,/COMMIT;/)
+   assert.doesNotMatch(source,/ALTER FUNCTION official_v3_guard_private\.|CREATE ROLE|GRANT EXECUTE|DELETE FROM/i)
+ }
+})
