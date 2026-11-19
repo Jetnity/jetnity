@@ -6,8 +6,10 @@
 // Datei ist die einzige Stelle, die daraus einen neuen Reisegraphen macht.
 // Nach dem Anwenden muss das Ergebnis erneut durch `reiseSchema`. Kommerzielle
 // Planpunkte sind bis Phase 3 vollständig gesperrt: Inhalt, Termin und
-// Zuordnung bleiben. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant
-// und sonst unverändert. Neue Planpunkte bleiben ohne Handelsfelder.
+// Zuordnung bleiben. Entfällt ein Tag oder eine Etappe, bleibt jeder Planpunkt
+// ungeplant und sonst unverändert – kommerziell wie nicht kommerziell. Eine
+// strukturelle Operation darf `punkt_entfernen` nicht mit durchwinken. Neue
+// Planpunkte bleiben ohne Handelsfelder.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -224,20 +226,39 @@ function tageEinfuegen(
   tagePruefen(reise)
 }
 
+const STRUKTUR_ARTEN = new Set<Modelloperation['art']>([
+  'dauer_aendern',
+  'etappe_dauer',
+  'etappe_entfernen',
+  'etappe_hinzufuegen',
+  'tag_entfernen',
+  'tag_hinzufuegen',
+])
+
+/**
+ * Eine Kürzung oder ein neuer Tag ist keine Erlaubnis, Planpunkte zu löschen.
+ * Der ganze Vorschlag fällt, bevor etwas angewendet wird.
+ */
+function loeschtNebenStruktur(operationen: Modelloperation[]): boolean {
+  return operationen.some((op) => op.art === 'punkt_entfernen')
+    && operationen.some((op) => STRUKTUR_ARTEN.has(op.art))
+}
+
 function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
-  const entfernt: TripItem[] = []
+  const bewahrt: TripItem[] = []
   const betroffeneEtappen = new Set<string>()
   reise.days = reise.days.filter((tag) => {
     if (!ids.has(tag.id)) return true
     if (tag.stageId) betroffeneEtappen.add(tag.stageId)
-    for (const punkt of tag.items) {
-      if (istKommerziell(punkt)) {
-        entfernt.push({ ...punkt, dayId: null, stageId: null })
-      }
-    }
+    for (const punkt of tag.items) bewahrt.push({ ...punkt, dayId: null, stageId: null })
     return false
   })
-  reise.ohneTag = [...reise.ohneTag, ...entfernt]
+  const vorhanden = new Set(reise.ohneTag.map((punkt) => punkt.id))
+  for (const punkt of bewahrt) {
+    if (vorhanden.has(punkt.id)) continue
+    vorhanden.add(punkt.id)
+    reise.ohneTag.push(punkt)
+  }
   reindex(reise)
   tagePruefen(reise)
   return betroffeneEtappen
@@ -476,6 +497,15 @@ export function operationenAnwenden(
 ): AnwendenErgebnis {
   if (operationen.length === 0) {
     return { ok: false, fehler: { code: 'ungueltig', meldung: 'Es liegt keine Änderung vor.' } }
+  }
+  if (loeschtNebenStruktur(operationen)) {
+    return {
+      ok: false,
+      fehler: {
+        code: 'ungueltig',
+        meldung: 'Eine Änderung von Tagen oder Etappen darf Planpunkte nicht mitlöschen. Der Vorschlag wurde nicht übernommen.',
+      },
+    }
   }
 
   const reise = tageEtappenZuordnen(alsGraph(original))
