@@ -238,3 +238,17 @@ test('Austrian ETIAS fee conflict is quarantined until current EU determination 
  assert.match(sourceConsistency,/NO_QUALIFIED_AUSTRIAN_ENTRY_PRIMARY_SOURCE/)
  assert.doesNotMatch(sourceConsistency,/cron\.schedule|cron\.alter_job|CREATE ROLE|ALTER ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
 })
+
+const euCounterCheck=read('four-eu-official-countercheck-v1.sql')
+test('IT FR ES PT share only official EU source countercheck, never bypass primary or legal gates',()=>{
+ assert.match(euCounterCheck,/^-- DEV ONLY/)
+ assert.match(euCounterCheck,/FOUR-EU-CHECK-V1/)
+ assert.match(euCounterCheck,/eu-schengen-common-check/)
+ assert.match(euCounterCheck,/eu-etias-future-check/)
+ assert.match(euCounterCheck,/ARRAY\['IT','FR','ES','PT'\]/)
+ assert.match(euCounterCheck,/ARRAY\['visa'/)
+ assert.match(euCounterCheck,/country|target/)
+ assert.match(euCounterCheck,/EU_FOUR_COUNTERCHECK_POSTCHECK_ROLLBACK/)
+ assert.match(euCounterCheck,/customer_answer<>'derzeit nicht verfügbar'/)
+ assert.doesNotMatch(euCounterCheck,/cron\.schedule|cron\.alter_job|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
+})
