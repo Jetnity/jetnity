@@ -328,11 +328,11 @@ test('ES topic-scoped research conflict uses actual offline synthetic Python neg
  const fixture='scripts/official-truth-source-ref-reconciliation-v1.test.py'
  const result=spawnSync('python3',[fixture,'-q'],{
    encoding:'utf8',timeout:15000,maxBuffer:256*1024,cwd:process.cwd(),
-   env:{PATH:process.env.PATH||'/usr/bin:/bin',PYTHONNOUSERSITE:'1',PYTHONDONTWRITEBYTECODE:'1',PYTHONUTF8:'1'}
+   env:{PATH:process.env.PATH||'/usr/bin:/bin',PYTHONNOUSERSITE:'1',PYTHONDONTWRITEBYTECODE:'1',PYTHONUTF8:'1',NODE_ENV:'test'}
  })
  assert.equal(result.error,undefined)
  assert.equal(result.signal,null)
- assert.equal(result.status,0,(result.stderr||'').slice(-1400))
+ assert.equal(result.status,0,String(result.stderr||'').slice(-1400))
  assert.match(result.stderr||'',/Ran 6 tests/)
  assert.match(result.stderr||'',/\bOK\b/)
 })
