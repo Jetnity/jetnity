@@ -217,6 +217,19 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(adminRuntimeCiSourceAmendment.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set(adminRuntimeCiSourceAmendment.map(row => row.path)).size, 1)
+  // Passkeys Dev 1 installs supabase-js 2.119.2. Only the package identity moves.
+  // Every earlier official-truth amendment stays on its reviewed hash.
+  const passkeySdkSourceAmendment = [
+    { path: 'package.json',
+      previousReviewed: { bytes: 6717, sha256: 'd0cc039b2dc2aa20b066c9421edc8df1ab03455caefcfa41396d504b6237df8f' },
+      reviewed: { bytes: 6717, sha256: '5cc96473998d3a76dcfc234c46ca36c1a4faa15fc8852f78179c5355c566c7a8' } },
+    { path: 'package-lock.json',
+      previousReviewed: { bytes: 326553, sha256: 'f763a124825aab57fcbed14c4913a18503dd3f3b03773c9877a340870695e37f' },
+      reviewed: { bytes: 324951, sha256: 'f24b42a38f10c65b1fd4899b066da4e4347e3c048015f44f9367c0f255aebe59' } },
+  ] as const
+  assert.deepEqual(passkeySdkSourceAmendment.map(row => row.path), ['package.json', 'package-lock.json'])
+  assert.equal(new Set(passkeySdkSourceAmendment.map(row => row.path)).size, 2)
+  let reviewedPasskeySdkRows = 0
   let reviewedAdminRuntimeCiRows = 0
   let reviewedAdminCiRows = 0
   let reviewedImportDeadlineRows = 0
@@ -296,7 +309,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousAdminCi.bytes, sha256: previousAdminCi.sha256 }, adminRuntimeCiChanged.previousReviewed, row.path)
       reviewedAdminRuntimeCiRows++
     }
-    const expected = adminRuntimeCiChanged?.reviewed ?? previousAdminCi
+    const previousRuntime = adminRuntimeCiChanged?.reviewed ?? previousAdminCi
+    const passkeySdkChanged = passkeySdkSourceAmendment.find(file => file.path === row.path)
+    if (passkeySdkChanged) {
+      assert.deepEqual({ bytes: previousRuntime.bytes, sha256: previousRuntime.sha256 }, passkeySdkChanged.previousReviewed, row.path)
+      reviewedPasskeySdkRows++
+    }
+    const expected = passkeySdkChanged?.reviewed ?? previousRuntime
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -312,4 +331,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedImportDeadlineRows, 2)
   assert.equal(reviewedAdminCiRows, 1)
   assert.equal(reviewedAdminRuntimeCiRows, 1)
+  assert.equal(reviewedPasskeySdkRows, 2)
 })

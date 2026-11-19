@@ -1,6 +1,6 @@
 # Passkeys Dev 1 — Status
 
-**Stand:** 18.11.2026  
+**Stand:** 19.11.2026  
 **Verdikt:** `REVIEW_REQUIRED` für diesen fail-closed Draft. Live-Passkeys: `BLOCKED_OWNER_GATE`.  
 **Nicht:** `READY`. Kein Merge. Keine Live-Funktion. Kein Folgeslice.
 
@@ -29,14 +29,14 @@
 
 | Prüfung | Beobachtet | Folge |
 | --- | --- | --- |
-| `@supabase/supabase-js` Lock | `2.57.2` | unter dem offiziellen Minimum `2.105.0` |
-| `@supabase/auth-js` Lock | `2.71.1` | `GoTrueClient.ts` enthält weder `registerPasskey` noch `signInWithPasskey` |
-| `@supabase/ssr` Lock | `0.6.1`, Peer `^2.43.4` | semver würde `2.105.0` akzeptieren; das beweist keine Session-Kompatibilität |
-| SSR-Browser-Client | `createBrowserClient` cached ein Singleton, sobald `isSingleton` fehlt | ein späterer zweiter Client mit `experimental.passkey` bekommt im Browser den ersten Client zurück |
+| `@supabase/supabase-js` Lock | `2.119.2` | über dem offiziellen Minimum `2.105.0`; kein Sprung auf 3.x |
+| `@supabase/auth-js` Lock | `2.119.2` | `registerPasskey` und `signInWithPasskey` sind vorhanden. Der Client ignoriert `experimental.passkey`, das Flag steht einmal am Singleton |
+| `@supabase/ssr` Lock | `0.6.1`, Peer `^2.43.4` | `2.119.2` liegt im Peer-Bereich. Es gibt weiter nur einen Browser-Client |
+| SSR-Browser-Client | `createBrowserClient` cached ein Singleton, sobald `isSingleton` fehlt | `experimental.passkey: true` steht beim ersten Aufruf in `lib/supabase/client.ts` |
 | Server | `supabase/config.toml` `[auth.passkey] enabled = false` | unverändert, nur gelesen |
 | Offizielle Doku, gelesen 18.11.2026 | [Passkeys](https://supabase.com/docs/guides/auth/passkeys), [Changelog](https://supabase.com/changelog/46458-passkeys-for-supabase-auth-beta) | experimentell, Opt-in `auth.experimental.passkey`, separates Server-Enable, RP-ID und Origins |
 
-Ein SDK-Sprung `2.57.2` → `>=2.105.0` würde `auth-js`, PostgREST, Realtime und Storage im Lock mitziehen und den gemeinsamen Browser-Client betreffen. Das ist hier nicht beweisbar, ohne den bestehenden Auth-/Session-Vertrag anzufassen. Deshalb kein Package-Diff. Der Port ruft die offizielle Form nur, wenn das Laufzeitobjekt die Methoden wirklich hat.
+Der Sprung von `2.57.2` auf `2.119.2` zieht `auth-js`, PostgREST, Realtime und Storage im Lock mit. Es bleibt ein Client und ein Cookie-Vertrag. Der Port ruft die Methoden nur, wenn das Laufzeitobjekt sie hat. Das Server-Flag bleibt aus, deshalb gibt es weiter keine Live-Schaltfläche. PKCE-Wiederherstellung erkennt den neuen Speicherwert `recovery` und den alten Wert `PASSWORD_RECOVERY`. Ein fehlender Verifier wird lokal abgelehnt und nicht mehr mit leerem Verifier gesendet.
 
 ## RP-ID und Origin, nur geplant
 
@@ -54,7 +54,7 @@ Eine spätere Änderung der RP-ID macht bereits registrierte Passkeys unbrauchba
 
 ## Was der Draft tut
 
-Passwort-Login, TOTP-Dialog und Admin-AAL2-Guard sind unverändert verdrahtet. Eine Passkey-Schaltfläche erscheint nur, wenn Server-Flag, SDK-Methoden, Browser-WebAuthn und eine zur RP-ID passende HTTPS-Origin gleichzeitig wahr sind. Heute ist das Server-Flag falsch und das SDK ohne Methoden. Login und `/account/security` bleiben deshalb ohne Handlungs-Schaltfläche.
+Passwort-Login, TOTP-Dialog und Admin-AAL2-Guard sind unverändert verdrahtet. Eine Passkey-Schaltfläche erscheint nur, wenn Server-Flag, SDK-Methoden, Browser-WebAuthn und eine zur RP-ID passende HTTPS-Origin gleichzeitig wahr sind. Heute ist das Server-Flag aus. Login und `/account/security` bleiben deshalb ohne Handlungs-Schaltfläche. Der Hinweis „nicht verfügbar“ steht nur dort, einmal, auf Deutsch oder Englisch.
 
 Der Port delegiert Registrierung, Login, Liste, Umbenennen und Entfernen an die offizielle Schnittstelle, sobald sie existiert. Login ohne Argumente, also ohne eigene Authenticator-Auswahl. Danach liest derselbe `brauchtLoginTotpStepUp`-Vertrag das AAL. `currentLevel` wird nicht auf `aal2` geschrieben. Fehlt die AAL-Lesung, gibt es kein Weiter. Entfernen braucht die gerade geladene Kennung, ein bestätigtes Konto und eine zweite Bestätigung. Namen mit `@` oder über 120 Zeichen werden abgelehnt. Rohmeldungen und E-Mail-Adressen gehen nicht in die UI.
 
@@ -79,18 +79,19 @@ Dieselbe Form zusätzlich für `lib/auth/account-security-lage.test.ts`, `accoun
 
 `d993dbf3b9f05cbecb7ce42ce1f922c3d2482bee` ist historical. Job Repository verification meldete zwei Exporte ohne Aufrufer: `PASSKEY_SDK_MINIMUM` und `passkeyEintragLesen`. Die Konstante hatte keinen Leser und ist entfernt. Das Minimum `2.105.0` bleibt in dieser Statusdatei als gelesene Herstellergrenze. `passkeyEintragLesen` bleibt die interne Normalisierung und ist nicht mehr exportiert. Gate, TOTP-Step-up und Tests sind dieselben.
 
-Nicht gelaufen und deshalb nicht grün genannt: `npm test`, die frische GitHub-CI des korrigierten Heads, Hosted-Preview-Login, echtes WebAuthn auf Chrome, Safari, Android oder iOS. Die alte CI ist kein PASS.
+CI [44588883820](https://github.com/Jetnity/jetnity/actions/runs/44588883820) auf `098e3baf98654c694f338ad233d4bb7a52b482b1` ist FAILURE und gilt nicht für den nächsten Head. Der Auth-Callback folgt dem neuen PKCE-Marker `recovery`. Die Settings-Browser-Prüfung ersetzt das dokumentierte `process.env.SUPABASE_SECRET_KEY` im Bundle. Die Official-Truth-Identität nennt `2.119.2` und die neuen Paket-Hashes. Beweislogik, SQL und historische Evidence-JSON bleiben stehen.
+
+Nicht gelaufen und deshalb nicht grün genannt: die frische GitHub-CI dieses Heads, Hosted-Preview-Login, echtes WebAuthn auf Chrome, Safari, Android oder iOS.
 
 ## Nicht angefasst
 
-`supabase/**`, Migrationen, Rollen, RLS, AAL2-Guards, CI, Packages, Secrets, Vercel, Production, Official Truth, Einreise, Readiness, `ROADMAP.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `AGENTS.md`, PR #1238, PR #1235.
+`supabase/**`, Migrationen, Rollen, RLS, AAL2-Guards, CI-Workflows, Secrets, Vercel, Production, Einreise-Inhalte, `ROADMAP.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `AGENTS.md`, PR #1238, PR #1235. Official-Truth-Beweise sind nicht umgeschrieben. Nur die Paket- und Loader-Identität folgt `2.119.2`.
 
 ## Owner-Schritt, bevor irgendetwas live sein kann
 
-1. Technical Lead prüft diesen exakten Head.
-2. Owner entscheidet einen SDK-Schritt auf `@supabase/supabase-js` `>=2.105.0` zusammen mit dem Nachweis, dass `@supabase/ssr` `0.6.1` Session, Cookies, Passwort-Login und TOTP nicht verändert. Erst dann darf `lib/supabase/client.ts` das Singleton mit `auth.experimental.passkey: true` erzeugen.
-3. Getrennt: Dev-Auth-Enable, RP-ID `jetnity.com`, Origins nur `https://jetnity.com` und eine ausdrücklich gewählte `https://*.jetnity.com`-Dev-Origin. Kein `*.vercel.app`.
-4. Danach ein echter Dev-Smoke mit bestätigtem Konto, Abbruch, abgelaufener Challenge, vorhandenem Credential und TOTP-Step-up. Production bleibt aus, bis das ein eigenes Gate ist.
+1. Technical Lead prüft diesen exakten Head und seine frische CI.
+2. Getrennt: Dev-Auth-Enable, RP-ID `jetnity.com`, Origins nur `https://jetnity.com` und eine ausdrücklich gewählte `https://*.jetnity.com`-Dev-Origin. Kein `*.vercel.app`. Das Server-Flag bleibt bis dahin aus.
+3. Danach ein echter Dev-Smoke mit bestätigtem Konto, Abbruch, abgelaufener Challenge, vorhandenem Credential und TOTP-Step-up. Production bleibt aus, bis das ein eigenes Gate ist.
 
 ## Stop
 

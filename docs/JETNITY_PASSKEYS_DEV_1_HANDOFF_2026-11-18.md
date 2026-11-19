@@ -1,6 +1,6 @@
 # Passkeys Dev 1 — Handoff
 
-**Stand:** 18.11.2026  
+**Stand:** 19.11.2026  
 **An:** ChatGPT / Technical Lead, unabhängiger Exact-Head-Review  
 **Verdikt:** `REVIEW_REQUIRED`  
 **Live-Passkeys:** `BLOCKED_OWNER_GATE`
@@ -23,7 +23,7 @@
 
 ## Ergebnis
 
-Der Draft ist fail-closed. Es gibt keine Live-Passkey-Anmeldung und keine Behauptung, dass Face ID oder Touch ID genügen. `supabase/config.toml` bleibt `enabled = false`. Das installierte SDK `2.57.2` kann die offizielle API nicht ausführen. Ein Upgrade wurde nicht vorbereitet, weil der SSR-Singleton und der Sprung der Auth-Bibliothek in diesem Slice nicht als kompatibel beweisbar sind.
+Der Draft ist fail-closed. Es gibt keine Live-Passkey-Anmeldung und keine Behauptung, dass Face ID oder Touch ID genügen. `supabase/config.toml` bleibt `enabled = false`. Installiert sind `@supabase/supabase-js` und Auth-JS `2.119.2` im bestehenden SSR-Singleton `0.6.1`, mit einmaligem `experimental.passkey`. Schreiben braucht einen frischen Passwort- oder TOTP/AAL2-Beweis. Ein abgebrochener Login-Step-up ruft `signOut` auf.
 
 Passwort, TOTP und Admin-AAL2 bleiben die bestehenden Pfade. Ein Passkey, sobald das Gate einmal offen wäre, wäre ein erster Faktor und müsste danach denselben TOTP-Step-up durchlaufen.
 
@@ -36,13 +36,13 @@ Die CI von `d993dbf3b` ist historical und rot. Die CI des korrigierten Heads ist
 ## Nächster begrenzter Review-Schritt
 
 1. Technical Lead liest den exakten PR-Head, nicht `cb32b49989f345536047b00fc218bb7138d8e73b`.
-2. Prüfen, dass der Diff weder `supabase/**` noch Packages, AAL-Guards oder fremde PRs enthält.
+2. Prüfen, dass der Diff weder `supabase/**` noch AAL-Guards oder fremde PRs enthält. Das Package-Diff ist der bestellte Sprung auf `2.119.2`. Die Official-Truth-Pins nennen nur diese neue Paketidentität.
 3. Die MOCK-Tests als MOCK lesen. Sie ersetzen keinen Chrome-/Safari-/Android-/iOS-Smoke.
 4. Live-Enable bleibt ein getrenntes Owner-Gate: SDK plus SSR-Nachweis, Dev-Server-Enable, feste RP-ID `jetnity.com`, Origins nur unter dieser Domain, danach erst ein bestätigtes Dev-Konto. Production bleibt aus.
 
 ## Nicht angefasst
 
-Official Truth, Einreise, Readiness, Datenbank, Migrationen, CI, Secrets, Vercel, Supabase-Apply, Production, PR #1238 und PR #1235.
+Einreise-Inhalte, Datenbank, Migrationen, CI-Workflows, Secrets, Vercel, Supabase-Apply, Production, PR #1238 und PR #1235. Die Official-Truth-Beweise sind nicht umgeschrieben. Nur die Paket- und Loader-Identität folgt dem bestellten SDK-Stand `2.119.2`.
 
 ## Stop
 

@@ -35,7 +35,7 @@ Der globale Browser-Client bleibt ohne `experimental.passkey`. Ein zweiter SSR-C
 
 | Behauptung | Grad |
 | --- | --- |
-| Lock `2.57.2` / Auth-JS `2.71.1` ohne Passkey-Methoden | lokal gelesen und durch Test belegt |
+| Lock `2.119.2` mit `registerPasskey` und `signInWithPasskey` | lokal gelesen. Server-Flag bleibt aus |
 | `config.toml` Passkeys aus | gelesen, Datei unverändert |
 | AAL-Step-up im Fake | MOCK_PASS |
 | Security-Karten ohne Passkey-Schaltfläche | Playwright-Harness, 11/11, synthetische Auth |
