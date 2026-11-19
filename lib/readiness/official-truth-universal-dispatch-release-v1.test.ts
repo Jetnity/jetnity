@@ -336,3 +336,17 @@ test('ES topic-scoped research conflict uses actual offline synthetic Python neg
  assert.match(result.stderr||'',/Ran 6 tests/)
  assert.match(result.stderr||'',/\bOK\b/)
 })
+
+const bmiSourcePairWatch=read('at-nonch-bmi-pair-watch-v1.sql')
+test('the two destination BMI primaries cannot be confused with unavailable Swiss-only Bern source',()=>{
+ assert.match(bmiSourcePairWatch,/^-- DEV ONLY/)
+ assert.match(bmiSourcePairWatch,/AT-NONCH-BMI-WATCH-V1/)
+ assert.match(bmiSourcePairWatch,/CREATE FUNCTION jetnity_legal_review_private\.nonch_bmi_pair_status_v1/)
+ assert.match(bmiSourcePairWatch,/SECURITY INVOKER/)
+ assert.match(bmiSourcePairWatch,/source_id IN \('bmi-visa-nationality-matrix','bmi-general-entry'\)/)
+ assert.match(bmiSourcePairWatch,/does NOT use the Swiss-only BMEIA Bern source/)
+ assert.match(bmiSourcePairWatch,/two_destination_primaries_unchanged_research_only/)
+ assert.match(bmiSourcePairWatch,/MA1\/Owner\/AAL2/)
+ assert.match(bmiSourcePairWatch,/AT_NONCH_BMI_WATCH_POSTCHECK_ROLLBACK/)
+ assert.doesNotMatch(bmiSourcePairWatch,/GRANT EXECUTE|cron\.alter_job|cron\.schedule|CREATE ROLE|qscbgcdmivbbnzrcyegn/i)
+})
