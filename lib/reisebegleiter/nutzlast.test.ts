@@ -373,9 +373,16 @@ describe('Die Reissleine', () => {
 describe('Bezüge sind Zeiger, kein Zustand des Modells', () => {
   test('jede Bezugskennung im Prompt hat genau einen angezeigten Zustand', () => {
     const { kontext, bezuege } = nutzlast()
-    const refsImPrompt = [...JSON.stringify(JSON.parse(kontext)).matchAll(/"ref":"([A-Z]{1,2}\d{1,3})"/g)].map(
-      (treffer) => treffer[1],
-    )
+    const inhalt = JSON.parse(kontext) as {
+      official?: { felder?: string[]; gruppen?: Array<{ zeilen: unknown[][] }> }
+    }
+    const refsImPrompt = [...kontext.matchAll(/"ref":"([A-Z]{1,2}\d{1,3})"/g)].map((treffer) => treffer[1])
+    // Official-Zeilen nennen ihre ref in der ersten Spalte, nicht als Feld `ref`.
+    if (inhalt.official?.felder?.[0] === 'ref') {
+      for (const gruppe of inhalt.official.gruppen ?? []) {
+        for (const zeile of gruppe.zeilen) refsImPrompt.push(String(zeile[0]))
+      }
+    }
     const angezeigt = bezuege.map((bezug) => bezug.ref)
 
     assert.ok(refsImPrompt.length > 0)

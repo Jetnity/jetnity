@@ -447,9 +447,28 @@ describe('Tage und Planpunkte', () => {
     assert.equal(ergebnis.reise.days[1]?.title, 'Ruhetag')
   })
 
-  test('Planpunkt entfernen und einen neuen anlegen', () => {
+  test('Punktlöschung neben einer Neuanlage wird ohne Seiteneffekte abgelehnt', () => {
+    const basis = reise()
+    const vorher = structuredClone(basis)
     const ergebnis = anwenden([
       op({ art: 'punkt_entfernen', punktId: 'item-2' }),
+      op({
+        art: 'punkt_hinzufuegen',
+        tagId: 'day-2',
+        titel: 'Spaziergang am Arno',
+        punktArt: 'activity',
+        beginn: '17:00',
+      }),
+    ], basis)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.fehler.code, 'ungueltig')
+    assert.match(ergebnis.fehler.meldung, /nicht übernommen/)
+    assert.deepEqual(basis, vorher)
+  })
+
+  test('Planpunkt ohne Löschung weiterhin anlegen', () => {
+    const ergebnis = anwenden([
       op({
         art: 'punkt_hinzufuegen',
         tagId: 'day-2',
@@ -461,7 +480,7 @@ describe('Tage und Planpunkte', () => {
     assert.equal(ergebnis.ok, true)
     if (!ergebnis.ok) return
     const tag2 = ergebnis.reise.days.find((tag) => tag.id === 'day-2')
-    assert.equal(tag2?.items.some((punkt) => punkt.title === 'Uffizien'), false)
+    assert.equal(tag2?.items.some((punkt) => punkt.title === 'Uffizien'), true)
     assert.equal(tag2?.items.some((punkt) => punkt.title === 'Spaziergang am Arno'), true)
   })
 
@@ -561,18 +580,14 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(dom?.priceAmount, 18)
   })
 
-  test('punkt_entfernen nimmt einen kommerziellen Punkt nicht weg', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-1' })])
-    assert.equal(ergebnis.ok, true)
-    if (!ergebnis.ok) return
-    const alle = [
-      ...ergebnis.reise.days.flatMap((tag) => tag.items),
-      ...ergebnis.reise.ohneTag,
-    ]
-    const dom = alle.find((punkt) => punkt.id === 'item-1')
-    assert.equal(dom?.title, 'Dom')
-    assert.equal(dom?.provider, 'getyourguide')
-    assert.equal(dom?.bookingUrl, 'https://example.com/dom')
+  test('auch die Löschung eines kommerziellen Punkts ist als KI-Operation gesperrt', () => {
+    const basis = reise()
+    const vorher = structuredClone(basis)
+    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-1' })], basis)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.fehler.code, 'ungueltig')
+    assert.deepEqual(basis, vorher)
   })
 
   test('eine gekürzte Etappe bewahrt den kommerziellen Punkt ungeplant', () => {
@@ -661,15 +676,14 @@ describe('Geschützter kommerzieller stay', () => {
     assert.equal(stay?.dayId, 'day-1')
   })
 
-  test('punkt_entfernen nimmt einen kommerziellen stay nicht weg', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-stay' })], mitStay())
-    assert.equal(ergebnis.ok, true)
-    if (!ergebnis.ok) return
-    const alle = [...ergebnis.reise.days.flatMap((tag) => tag.items), ...ergebnis.reise.ohneTag]
-    const stay = alle.find((punkt) => punkt.id === 'item-stay')
-    assert.equal(stay?.kind, 'stay')
-    assert.equal(stay?.provider, 'test-hotel')
-    assert.equal(stay?.priceAmount, 760)
+  test('die KI darf einen kommerziellen Stay auch isoliert nicht löschen', () => {
+    const basis = mitStay()
+    const vorher = structuredClone(basis)
+    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-stay' })], basis)
+    assert.equal(ergebnis.ok, false)
+    if (ergebnis.ok) return
+    assert.equal(ergebnis.fehler.code, 'ungueltig')
+    assert.deepEqual(basis, vorher)
   })
 
   test('zeitraum_verschieben lässt den stay-Termin stehen', () => {
@@ -698,7 +712,7 @@ describe('Unbekannte Referenzen', () => {
   })
 
   test('unbekannter Planpunkt', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-99' })])
+    const ergebnis = anwenden([op({ art: 'punkt_anpassen', punktId: 'item-99', titel: 'Titel' })])
     assert.equal(ergebnis.ok, false)
     if (ergebnis.ok) return
     assert.equal(ergebnis.fehler.code, 'unbekannte-referenz')

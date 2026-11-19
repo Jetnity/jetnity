@@ -165,7 +165,11 @@ function etappeFuerModell(stage: AssistantStageContext, ref: string) {
   }
 }
 
-function reisendeFuerModell(traveller: AssistantTravellerContext, ref: string) {
+function reisendeFuerModell(
+  traveller: AssistantTravellerContext,
+  ref: string,
+  kennungen: ReadonlyMap<string, string>,
+) {
   return {
     ref,
     residenceCountryCode: traveller.residenceCountryCode,
@@ -180,6 +184,9 @@ function reisendeFuerModell(traveller: AssistantTravellerContext, ref: string) {
       expiresOn: document.expiresOn,
     })),
     credentialOptions: traveller.credentialOptions.map((option) => ({
+      // Kurze Kennung statt der internen Optionsreferenz. Dieselbe Kennung
+      // steht in den Official-Zeilen. Sie trägt keine eigene Wahrheit.
+      kennung: kennungen.get(option.optionRef) ?? null,
       citizenshipCountryCodes: [...option.citizenshipCountryCodes],
       issuingCountryCode: option.issuingCountryCode,
       expiresOn: option.expiresOn,
@@ -187,37 +194,154 @@ function reisendeFuerModell(traveller: AssistantTravellerContext, ref: string) {
   }
 }
 
-function officialFuerModell(
-  official: AssistantOfficialContext,
-  ref: string,
-  reisendenRef: (clientRef: string | null) => string | null,
-  etappenRef: (stageId: string) => string | null,
-) {
+/**
+ * Spalten einer Official-Zeile. `stand` der Gruppe trägt den Prüfstand,
+ * die Zeile nur, welche Lage es ist.
+ */
+const OFFICIAL_ZEILEN_FELDER = [
+  'ref',
+  'typ',
+  'reisende',
+  'option',
+  'ziel',
+  'transit',
+  'etappen',
+] as const
+
+function refNummer(ref: string): number {
+  const zahl = /\d+$/.exec(ref)
+  return zahl ? Number(zahl[0]) : 0
+}
+
+/**
+ * Stabile Kurzkennungen für Dokument-Optionen, in Projektionsreihenfolge.
+ *
+ * Die interne `optionRef` bleibt in der Projektion und wird hier nicht
+ * wiederholt: Staatsangehörigkeiten, Ausstellungsland und Ablaufdatum stehen
+ * an der Option selbst.
+ */
+function optionKennungen(kontext: AssistantTruthContext): Map<string, string> {
+  const kennungen = new Map<string, string>()
+  let nummer = 0
+  for (const traveller of kontext.travellers) {
+    for (const option of traveller.credentialOptions) {
+      if (kennungen.has(option.optionRef)) continue
+      nummer += 1
+      kennungen.set(option.optionRef, `K${nummer}`)
+    }
+  }
+  return kennungen
+}
+
+type OfficialStand = {
+  scope: AssistantOfficialContext['scope']
+  result: AssistantOfficialContext['result']
+  status: AssistantOfficialContext['status']
+  freshness: AssistantOfficialContext['freshness']
+  officialClass: AssistantOfficialContext['officialClass']
+  visaMode?: NonNullable<AssistantOfficialContext['visaMode']>
+  optionEligibility?: NonNullable<AssistantOfficialContext['optionEligibility']>
+  optionMandate?: NonNullable<AssistantOfficialContext['optionMandate']>
+  missingFacts?: AssistantOfficialContext['missingFacts']
+  checkedAt?: string
+  validFrom?: string
+  validUntil?: string
+  authority?: string
+  ruleReference?: string
+  temporalRule?: NonNullable<AssistantOfficialContext['temporalRule']>
+}
+
+/**
+ * Der Prüfstand, einmal je unterscheidbarer Lage.
+ *
+ * Fehlende optionale Felder sind in der Projektion `null` oder leer. Sie
+ * wegzulassen ändert den Stand nicht: die Regeln lesen Abwesenheit als null
+ * und als „keine fehlenden Angaben“. Gesetzte Werte bleiben wörtlich.
+ */
+function officialStand(official: AssistantOfficialContext): OfficialStand {
+  const authority = ohneLink(official.authority)
+  const ruleReference = ohneLink(official.ruleReference)
   return {
-    ref,
-    truthClass: official.truthClass,
     scope: official.scope,
-    reisendeRef: reisendenRef(official.travellerClientRef),
-    credentialOptionRef: official.credentialOptionRef,
-    destinationCountryCode: official.destinationCountryCode,
-    transitCountryCode: official.transitCountryCode,
-    etappenRefs: official.boundStageIds.map(etappenRef).filter((wert): wert is string => wert !== null),
-    requirementType: official.requirementType,
     result: official.result,
     status: official.status,
     freshness: official.freshness,
     officialClass: official.officialClass,
-    visaMode: official.visaMode,
-    optionEligibility: official.optionEligibility,
-    optionMandate: official.optionMandate,
-    missingFacts: [...official.missingFacts],
-    checkedAt: official.checkedAt,
-    validFrom: official.validFrom,
-    validUntil: official.validUntil,
-    authority: ohneLink(official.authority),
-    ruleReference: ohneLink(official.ruleReference),
-    temporalRule: official.temporalRule,
+    ...(official.visaMode ? { visaMode: official.visaMode } : {}),
+    ...(official.optionEligibility ? { optionEligibility: official.optionEligibility } : {}),
+    ...(official.optionMandate ? { optionMandate: official.optionMandate } : {}),
+    ...(official.missingFacts.length > 0 ? { missingFacts: [...official.missingFacts] } : {}),
+    ...(official.checkedAt ? { checkedAt: official.checkedAt } : {}),
+    ...(official.validFrom ? { validFrom: official.validFrom } : {}),
+    ...(official.validUntil ? { validUntil: official.validUntil } : {}),
+    ...(authority ? { authority } : {}),
+    ...(ruleReference ? { ruleReference } : {}),
+    ...(official.temporalRule ? { temporalRule: official.temporalRule } : {}),
   }
+}
+
+type OfficialZeile = [
+  string,
+  AssistantOfficialContext['requirementType'],
+  string | null,
+  string | null,
+  string | null,
+  string | null,
+  string[],
+]
+
+/**
+ * Alle Official-Lagen, nach gleichem Prüfstand gruppiert.
+ *
+ * Jede Lage bleibt eine eigene Zeile mit eigener `ref`. Die Gruppe spart nur
+ * den Prüfstand, der sich sonst auf jeder Zeile wiederholt. Keine Zeile, kein
+ * Anforderungstyp und keine Dokument-Option fällt weg.
+ */
+function officialFuerModell(
+  kontext: AssistantTruthContext,
+  kennungen: ReadonlyMap<string, string>,
+  reisendenRefs: ReadonlyMap<string, string>,
+  etappenRefs: ReadonlyMap<string, string>,
+) {
+  const gruppen = new Map<string, { stand: OfficialStand; zeilen: OfficialZeile[] }>()
+
+  kontext.official.forEach((official, stelle) => {
+    const ref = `O${stelle + 1}`
+    const stand = officialStand(official)
+    const schluessel = JSON.stringify(stand)
+    let gruppe = gruppen.get(schluessel)
+    if (!gruppe) {
+      gruppe = { stand, zeilen: [] }
+      gruppen.set(schluessel, gruppe)
+    }
+    const reisende =
+      official.travellerClientRef === null
+        ? null
+        : (reisendenRefs.get(official.travellerClientRef) ?? null)
+    const option =
+      official.credentialOptionRef === null
+        ? null
+        : (kennungen.get(official.credentialOptionRef) ?? null)
+    gruppe.zeilen.push([
+      ref,
+      official.requirementType,
+      reisende,
+      option,
+      official.destinationCountryCode,
+      official.transitCountryCode,
+      official.boundStageIds
+        .map((stageId) => etappenRefs.get(stageId) ?? null)
+        .filter((wert): wert is string => wert !== null),
+    ])
+  })
+
+  const liste = [...gruppen.values()]
+  for (const gruppe of liste) {
+    gruppe.zeilen.sort((links, rechts) => refNummer(links[0]) - refNummer(rechts[0]))
+  }
+  liste.sort((links, rechts) => refNummer(links.zeilen[0][0]) - refNummer(rechts.zeilen[0][0]))
+
+  return { felder: OFFICIAL_ZEILEN_FELDER, gruppen: liste }
 }
 
 function safetyFuerModell(
@@ -485,9 +609,8 @@ export function begleiternutzlastAus(kontext: AssistantTruthContext): Nutzlaster
     reisendenRefs.set(traveller.travellerClientRef, `R${stelle + 1}`),
   )
 
+  const kennungen = optionKennungen(kontext)
   const etappenRef = (stageId: string) => etappenRefs.get(stageId) ?? null
-  const reisendeRef = (clientRef: string | null) =>
-    clientRef === null ? null : (reisendenRefs.get(clientRef) ?? null)
 
   const inhalt = {
     kontextFassung: kontext.version,
@@ -515,11 +638,13 @@ export function begleiternutzlastAus(kontext: AssistantTruthContext): Nutzlaster
       etappeFuerModell(stage, etappenRefs.get(stage.stageId) as string),
     ),
     reisende: kontext.travellers.map((traveller) =>
-      reisendeFuerModell(traveller, reisendenRefs.get(traveller.travellerClientRef) as string),
+      reisendeFuerModell(
+        traveller,
+        reisendenRefs.get(traveller.travellerClientRef) as string,
+        kennungen,
+      ),
     ),
-    official: kontext.official.map((official, stelle) =>
-      officialFuerModell(official, `O${stelle + 1}`, reisendeRef, etappenRef),
-    ),
+    official: officialFuerModell(kontext, kennungen, reisendenRefs, etappenRefs),
     safety: kontext.safety.map((safety, stelle) =>
       safetyFuerModell(safety, `S${stelle + 1}`, etappenRef),
     ),

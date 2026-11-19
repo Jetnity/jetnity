@@ -6,8 +6,10 @@
 // Datei ist die einzige Stelle, die daraus einen neuen Reisegraphen macht.
 // Nach dem Anwenden muss das Ergebnis erneut durch `reiseSchema`. Kommerzielle
 // Planpunkte sind bis Phase 3 vollständig gesperrt: Inhalt, Termin und
-// Zuordnung bleiben. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant
-// und sonst unverändert. Neue Planpunkte bleiben ohne Handelsfelder.
+// Zuordnung bleiben. Entfällt ein Tag oder eine Etappe, bleibt jeder Planpunkt
+// ungeplant und sonst unverändert – kommerziell wie nicht kommerziell. Eine
+// KI-Operation darf `punkt_entfernen` nicht durchwinken. Neue
+// Planpunkte bleiben ohne Handelsfelder.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -224,20 +226,31 @@ function tageEinfuegen(
   tagePruefen(reise)
 }
 
+/**
+ * Modelloperationen haben keinen unabhängig bestätigten Löschauftrag.
+ * Deshalb bleibt punkt_entfernen in dieser gemeinsamen KI-Pipeline gesperrt,
+ * auch als einzelne Operation oder neben einer harmlosen Titeländerung.
+ * Manuelle Punktlöschung läuft über die getrennten Editor-Aktionen.
+ */
+function enthaeltPunktLoeschung(operationen: Modelloperation[]): boolean {
+  return operationen.some((op) => op.art === 'punkt_entfernen')
+}
+
 function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
-  const entfernt: TripItem[] = []
+  const bewahrt: TripItem[] = []
   const betroffeneEtappen = new Set<string>()
   reise.days = reise.days.filter((tag) => {
     if (!ids.has(tag.id)) return true
     if (tag.stageId) betroffeneEtappen.add(tag.stageId)
-    for (const punkt of tag.items) {
-      if (istKommerziell(punkt)) {
-        entfernt.push({ ...punkt, dayId: null, stageId: null })
-      }
-    }
+    for (const punkt of tag.items) bewahrt.push({ ...punkt, dayId: null, stageId: null })
     return false
   })
-  reise.ohneTag = [...reise.ohneTag, ...entfernt]
+  const vorhanden = new Set(reise.ohneTag.map((punkt) => punkt.id))
+  for (const punkt of bewahrt) {
+    if (vorhanden.has(punkt.id)) continue
+    vorhanden.add(punkt.id)
+    reise.ohneTag.push(punkt)
+  }
   reindex(reise)
   tagePruefen(reise)
   return betroffeneEtappen
@@ -476,6 +489,15 @@ export function operationenAnwenden(
 ): AnwendenErgebnis {
   if (operationen.length === 0) {
     return { ok: false, fehler: { code: 'ungueltig', meldung: 'Es liegt keine Änderung vor.' } }
+  }
+  if (enthaeltPunktLoeschung(operationen)) {
+    return {
+      ok: false,
+      fehler: {
+        code: 'ungueltig',
+        meldung: 'Ein KI-Vorschlag darf bestehende Planpunkte nicht löschen. Der Vorschlag wurde nicht übernommen. Entferne einzelne Punkte bei Bedarf direkt im Reiseplan.',
+      },
+    }
   }
 
   const reise = tageEtappenZuordnen(alsGraph(original))
