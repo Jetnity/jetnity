@@ -69,7 +69,25 @@ try {
  assert.deepEqual(payload.input?.citizenshipCountryCodes,['DE','IN','UA'])
  assert.equal(payload.cells?.length,3)
  for(const cell of payload.cells)assert.ok(cell.results?.every(x=>x.status==='unavailable'),'49 not yet Owner-authorized')
- await page.getByRole('heading',{name:/Einreise nach Österreich/}).waitFor()
+ const heading=page.getByRole('heading',{name:/Einreise nach Österreich/})
+ try { await heading.waitFor({timeout:12000}) }
+ catch {
+  // Never turn an HTTP-200 into a UI PASS: bound what the real browser actually
+  // displayed, without recording credentials, headers, session or RPC payload.
+  report.browserDiagnostic={
+   alerts:(await page.getByRole('alert').allInnerTexts()).slice(0,2).map(x=>x.slice(0,180)),
+   statuses:(await page.getByRole('status').allInnerTexts()).slice(0,2).map(x=>x.slice(0,180)),
+   buttons:(await page.getByRole('button',{name:/Einreise anzeigen|Angaben werden geladen/}).allInnerTexts()).slice(0,2),
+   resultPanels:await page.locator('[data-einreise-kundenanzeige]').count(),
+   pageErrors:errors.slice(0,2).map(x=>x.slice(0,180)),
+   responseContentType:response.headers()['content-type']?.slice(0,60)??null,
+   cells:payload.cells.map(x=>({country:x.country,statuses:x.results?.map(y=>y.status)})),
+  }
+  const name='at-grouped-failure.png'
+  await page.screenshot({path:join(out,name),fullPage:true,animations:'disabled'})
+  report.screenshotPaths.push(name)
+  throw Error('AT result heading absent after real Dev HTTP 200; bounded evidence in CI browser artifact')
+ }
  const groups=page.locator('[data-at-bmi-source-groups="conditional-only"]')
  await groups.waitFor()
  assert.equal(await groups.locator('[data-at-bmi-passport]').count(),3)
