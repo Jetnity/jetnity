@@ -1456,6 +1456,7 @@ export default function TripWorkspace({
               etappeId={modus.etappeId}
               hotelOrtKey={modus.hotelOrtKey}
               kanteId={modus.kanteId}
+              rueckkehrTagId={historyEltern?.ansicht === 'plan' && historyEltern.tagId ? historyEltern.tagId : planTagRef.current}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}
               kategorieWaehlen={(kategorie, etappeId) => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'replace')}
