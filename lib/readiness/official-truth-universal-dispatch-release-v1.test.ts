@@ -282,3 +282,16 @@ test('50 national passport method is draft-only and cannot reuse Swiss-only Bern
  assert.match(fiftyVisaProposal,/publicationAllowed: false/)
  assert.doesNotMatch(fiftyVisaProposal,/\bfetch\(|\bprocess\.env\b|supabase\.from|cron\.schedule|GRANT|CREATE ROLE|qscbgcdmivbbnzrcyegn/i)
 })
+
+const itEsPrimary=read('it-es-authority-alternatives-v1.sql')
+test('Italy and Spain official first-party supplements never silence 30 ES conflicts',()=>{
+ assert.match(itEsPrimary,/^-- DEV ONLY/)
+ assert.match(itEsPrimary,/IT-ES-OFFICIAL-V1/)
+ assert.match(itEsPrimary,/www\.esteri\.it/)
+ assert.match(itEsPrimary,/www\.interior\.gob\.es/)
+ assert.match(itEsPrimary,/30 passport records remain quarantined/)
+ assert.equal((itEsPrimary.match(/register_research_source_v1\(/g)||[]).length,2)
+ assert.equal((itEsPrimary.match(/admit_source_v1\(/g)||[]).length,2)
+ assert.match(itEsPrimary,/IT_ES_SOURCE_POSTCHECK_ROLLBACK/)
+ assert.doesNotMatch(itEsPrimary,/cron\.schedule|cron\.alter_job|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
+})
