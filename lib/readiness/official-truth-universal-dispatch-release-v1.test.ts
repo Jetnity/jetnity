@@ -252,3 +252,17 @@ test('IT FR ES PT share only official EU source countercheck, never bypass prima
  assert.match(euCounterCheck,/customer_answer<>'derzeit nicht verfügbar'/)
  assert.doesNotMatch(euCounterCheck,/cron\.schedule|cron\.alter_job|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
 })
+
+const productionReadOnly=readFileSync(new URL('../../scripts/db/official-truth-universal-registry-production-readonly-1/preflight.sql',import.meta.url),'utf8')
+test('Production release preflight is hard read-only, names all distinct Owner AAL2 and verified legal gates',()=>{
+ assert.match(productionReadOnly,/^-- PRODUCTION READ ONLY/)
+ assert.match(productionReadOnly,/^BEGIN READ ONLY;/m)
+ assert.match(productionReadOnly,/qscbgcdmivbbnzrcyegn/)
+ assert.match(productionReadOnly,/jetnity_global_research_private\.cases_v1/)
+ assert.match(productionReadOnly,/jetnity_source_dispatch_private\.tick_v1\(\)/)
+ assert.match(productionReadOnly,/jetnity_legal_review_private\.at_rule_readiness_v1/)
+ assert.match(productionReadOnly,/STOP_NO_OWNER_AAL2_NO_SOURCE_BOUND_PRODUCTION_METHOD/)
+ assert.match(productionReadOnly,/automaticPublishAllowed',false/)
+ assert.match(productionReadOnly,/productionDDLExecuted',false/)
+ assert.doesNotMatch(productionReadOnly,/\bCREATE\s+(?:SCHEMA|TABLE|ROLE|FUNCTION)\b|\bALTER\s+(?:ROLE|TABLE|SCHEMA)\b|\bDROP\s+TABLE\b|\bINSERT\s+INTO\b|\bUPDATE\s+\w+\s+SET\b|\bDELETE\s+FROM\b|\bGRANT\b|\bnet\.http_(?:get|post)\b|\bcron\.schedule\b/i)
+})
