@@ -47,7 +47,12 @@ SET timezone = 'UTC' AS $cms_public_reader$
 $cms_public_reader$;
 ALTER FUNCTION public.cms_inspiration_published_v2() OWNER TO postgres;
 REVOKE ALL ON FUNCTION public.cms_inspiration_published_v2() FROM PUBLIC, anon, authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.cms_inspiration_published_v2() TO anon, authenticated;
+-- Deliberate PUBLIC grant for this *published-only*, side-effect-free endpoint.
+-- Per-role anon/authenticated grants add pg_shdepend role dependencies watched
+-- by the shared integrity catalog, causing a guard incident. PUBLIC is the
+-- correct lowest common API audience for content that is already public and
+-- creates no individual-role shdepend rows. Never use this on admin writers.
+GRANT EXECUTE ON FUNCTION public.cms_inspiration_published_v2() TO PUBLIC;
 
 -- Keep the single authoritative quota, limits, lock and service-only privileges.
 -- Only replace five expected user-facing resource-limit SQLSTATEs so PostgREST
@@ -83,7 +88,9 @@ BEGIN
   IF cms ~* '(pg_advisory|admin_runtime_guard|official_v3_guard)'
      OR NOT has_function_privilege('anon',v2,'EXECUTE')
      OR NOT has_function_privilege('authenticated',v2,'EXECUTE')
-     OR has_function_privilege('service_role',v2,'EXECUTE')
+     OR EXISTS(SELECT 1 FROM pg_shdepend d WHERE d.classid='pg_proc'::regclass
+          AND d.objid=v2::oid AND d.deptype='a'
+          AND d.refobjid IN ('anon'::regrole, 'authenticated'::regrole))
      OR (length(model)-length(replace(model, 'errcode = ''PT429''', ''))) /
           length('errcode = ''PT429''') <> 5 THEN
     RAISE EXCEPTION 'Admin public read / KI quota readback failed';
