@@ -242,9 +242,9 @@ WITH observed AS (
  UNION ALL
  SELECT 'FOUR',o.destination_code,'primary',o.observed_at,o.status,o.source_sha256
  FROM jetnity_followup_source_monitor_private.observations_v3 o
- UNION ALL
- SELECT 'AT','AT',o.source_id,o.observed_at,o.state,o.observed_sha
- FROM official_v3_at_source_watch_private.reads_v1 o
+ -- AT HRS/BG1-protected monitoring intentionally stays inside its own
+ -- existing adapter. A persistent SQL VIEW dependency on its guarded tables
+ -- would change the protected catalog fingerprint; never add that edge.
  UNION ALL
  SELECT 'USAGOV','US','usagov-vwp-esta',o.observed_at,o.result,o.raw_sha
  FROM jetnity_usagov_watch_private.observations_v1 o
@@ -253,7 +253,8 @@ SELECT r.source_id,r.destination_code,r.source_key,r.monitor_family,
  r.review_interval_minutes,r.launch_priority,r.migration_state,
  o.observed_at AS last_observed_at,o.raw_state AS source_observation,
  o.raw_sha AS last_observed_sha,
- CASE WHEN r.monitor_family='GENERIC' THEN 'REGISTERED_AWAITING_AUTHORITY_CHECK'
+ CASE WHEN r.monitor_family='AT' THEN 'LEGACY_AT_PROTECTED_MONITOR_UNTOUCHED'
+      WHEN r.monitor_family='GENERIC' THEN 'REGISTERED_AWAITING_AUTHORITY_CHECK'
       WHEN o.observed_at IS NULL THEN 'UNOBSERVED_RESEARCH_ONLY'
       WHEN o.observed_at < clock_timestamp()-make_interval(mins=>r.review_interval_minutes*3)
         THEN 'STALE_RESEARCH_ONLY'
