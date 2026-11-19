@@ -181,3 +181,15 @@ test('reconciliation resolves identity only, never legal validity, and preserves
  assert.match(fiveBatch,/reference_reviews\[country\]\["positiveLegalRules"\] == 0/)
  assert.doesNotMatch(refScript,/\bimport requests\b|\burllib\.request\b|\bhttpx\b|\bGRANT\b|\bservice_role\b/i)
 })
+
+const portugueseOfficialLaw=read('pt-official-gazette-v1.sql')
+test('Portuguese gazette takes a separate append-only reviewed official source, never rewrites S_LEI23',()=>{
+ assert.match(portugueseOfficialLaw,/^-- DEV ONLY/)
+ assert.match(portugueseOfficialLaw,/PT-GAZETTE-V1/)
+ assert.match(portugueseOfficialLaw,/diariodarepublica\.pt/)
+ assert.match(portugueseOfficialLaw,/S_LEI23/)
+ assert.match(portugueseOfficialLaw,/PT_GAZETTE_REVIEW_POSTCHECK_ROLLBACK/)
+ assert.match(portugueseOfficialLaw,/customer_answer<>'derzeit nicht verfügbar'/)
+ assert.doesNotMatch(portugueseOfficialLaw,/cron\.schedule|cron\.alter_job|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
+ assert.match(fiveBatch,/reviewJsonSha256/)
+})

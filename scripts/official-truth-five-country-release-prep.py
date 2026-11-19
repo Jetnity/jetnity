@@ -121,6 +121,12 @@ def stage(archive: Path, output: Path):
                     and reference_reviews[country]["positiveLegalRules"] == 0
                     and reference_reviews[country]["published"] == 0,
                     "source_ref_review_release_refused")
+            ref_report = private / "source-reference-review.json"
+            require(ref_report.is_file() and not ref_report.is_symlink()
+                    and ref_report.stat().st_size <= 2 * 1024 * 1024,
+                    "source_review_file_bound_refused")
+            reference_reviews[country]["reviewJsonSha256"] = hashlib.sha256(
+                ref_report.read_bytes()).hexdigest()
         index = {
             "schema": 1, "kind": "official_truth_private_five_country_research",
             "destinationOrder": list(COUNTRIES), "passportsPerDestination": 50,
