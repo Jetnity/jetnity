@@ -155,7 +155,7 @@ test('RPC errors and malformed receipts never become fabricated writes or empty 
 test('public route admits only the fixed published response; private fields and DB failure are unavailable', async () => {
   const f = fixture(), routes = compiled(f)
   const item = { entryId: CMS_TEST_ENTRY, revision: '1', content: fixtureRevision('1').content, publishedAt: CMS_TEST_AT }
-  f.result = async name => { assert.equal(name, 'cms_inspiration_published_v1'); return { data: { schema: 1, items: [item] }, error: null } }
+  f.result = async name => { assert.equal(name, 'cms_inspiration_published_v2'); return { data: { schema: 1, items: [item] }, error: null } }
   const ok = await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))
   assert.equal(ok.status, 200); assert.match(ok.headers.get('cache-control') ?? '', /no-store/)
   assert.equal(f.identities, 0)
