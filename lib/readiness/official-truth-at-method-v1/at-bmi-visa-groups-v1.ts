@@ -1,0 +1,54 @@
+// Checked only against Austrian BMI source-category list (06.11.2026) and
+// BMEIA visa conditions (19.11.2026). This is NOT an individualized rule,
+// visitor visa decision, MA1 permit, or authorization to publish a fact.
+export const AT_BMI_REVIEW_SOURCES=Object.freeze({
+ bmi:'https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html',
+ bmeia:'https://www.bmeia.gv.at/reise-services/einreise-und-aufenthalt-in-oesterreich/visum/',
+ sourceEdition:'2026-11-06',reviewedAt:'2026-11-19',
+});
+export const AT_BMI_GROUPS=Object.freeze({
+ V:Object.freeze('IN TR CN SY AF RU IQ IR PK ER TH SO VN NG EG LK PH LB CM MA'.split(' ')),
+ F:Object.freeze('DE PL IT RO FR NL ES HU CZ CH HR BE PT BG GR SK SE DK LT'.split(' ')),
+ E:Object.freeze('US UA GB BR XK KR JP RS CA IL'.split(' ')),
+ H:Object.freeze(['AT']),
+});
+export type AtBmiGroup=keyof typeof AT_BMI_GROUPS
+const expected:Readonly<Record<AtBmiGroup,number>>={V:20,F:19,E:10,H:1}
+const groups=new Map<string,AtBmiGroup>()
+for(const group of (['V','F','E','H'] as const)){
+ if(AT_BMI_GROUPS[group].length!==expected[group])throw Error('AT_BMI_GROUP_SIZE_REFUSED')
+ for(const code of AT_BMI_GROUPS[group]){
+  if(!/^[A-Z]{2}$/.test(code)||groups.has(code))throw Error('AT_BMI_DUPLICATE_CODE_REFUSED')
+  groups.set(code,group)
+ }
+}
+if(groups.size!==50||groups.get('CH')!=='F'||groups.get('AT')!=='H'
+ ||groups.get('UA')!=='E'||groups.get('XK')!=='E'||groups.get('RS')!=='E')
+ throw Error('AT_BMI_MATRIX_SIGNATURE_REFUSED')
+const scope=Object.freeze({
+ V:Object.freeze({label:'Visumpflicht als BMI-Grundregel',text:'Bei einem gewöhnlichen Pass ist eine reguläre touristische Einreise grundsätzlich visumpflichtig. Gültige Schengen-Visa/Aufenthaltstitel, EU-Familienrechte, Sonderdokumente und andere Ausnahmen müssen für den Einzelfall zusätzlich geprüft werden.'}),
+ F:Object.freeze({label:'EU/EWR/CH-Freizügigkeitsgruppe',text:'Mit gültigem anerkanntem Reisepass oder Personalausweis benötigen EU-/EWR-/Schweizer Staatsangehörige für die reguläre Einreise kein Visum. Dokument und Staatsangehörigkeit müssen tatsächlich geprüft werden.'}),
+ E:Object.freeze({label:'Bedingte Befreiung für Kurzaufenthalte',text:'Für gewöhnliche touristische Kurzaufenthalte ohne Erwerbstätigkeit kann bis 90 Tage in 180 Tagen Visumfreiheit bestehen; nur bei einem im BMI ausdrücklich erfassten Pass und erfüllten weiteren Bedingungen. Bilaterale Besonderheiten nicht pauschal übernehmen.'}),
+ H:Object.freeze({label:'Österreichische Staatsangehörigkeit',text:'Ein österreichischer Pass ist kein Fall eines ausländischen Visa-Antrags; Dokument und Identität bleiben gesondert zu prüfen.'}),
+})
+const biometric=new Set(['UA','XK','RS'])
+const bilateral=new Set(['BR','KR','JP','CA','IL'])
+export type AtBmiSourceReview=Readonly<{code:string;group:AtBmiGroup;label:string;text:string;
+ special:string|null;sourceEdition:string;reviewedAt:string;bmiUrl:string;bmeiaUrl:string;
+ groupSourceVerified:true;individualVisaQualified:false;ownerAal2Approved:false;
+ personalVisaEffect:null;verifiedPrice:null}>
+export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
+ if(!/^[A-Z]{2}$/.test(code))return null
+ const group=groups.get(code);if(!group)return null
+ let special:string|null=null
+ if(biometric.has(code))special='Für diese Staatsangehörigkeit erfordert die BMI-Visumbefreiung einen biometrischen Reisepass. Ein nichtbiometrischer gewöhnlicher Pass ist dadurch nicht automatisch visumfrei.'
+ else if(code==='GB')special='Die BMI-Liste unterscheidet mehrere britische Staatsangehörigkeits- und Passkategorien, die im konkreten Fall geprüft werden müssen.'
+ else if(bilateral.has(code))special='Zusätzliche österreichische bilaterale Aufenthaltserleichterungen können gelten; keine pauschale Verlängerung des EU-Kurzaufenthalts annehmen.'
+ return Object.freeze({
+  code,group,label:scope[group].label,text:scope[group].text,special,
+  sourceEdition:AT_BMI_REVIEW_SOURCES.sourceEdition,reviewedAt:AT_BMI_REVIEW_SOURCES.reviewedAt,
+  bmiUrl:AT_BMI_REVIEW_SOURCES.bmi,bmeiaUrl:AT_BMI_REVIEW_SOURCES.bmeia,
+  groupSourceVerified:true,individualVisaQualified:false,ownerAal2Approved:false,
+  personalVisaEffect:null,verifiedPrice:null,
+ })
+}

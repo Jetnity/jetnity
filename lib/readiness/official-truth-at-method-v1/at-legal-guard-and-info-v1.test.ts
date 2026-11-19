@@ -6,6 +6,7 @@ const dev=sql('ch-de-import-guard-lock-dev-v1.sql')
 const prod=readFileSync(new URL('../../../scripts/db/official-truth-universal-registry-production-readonly-1/ch-de-import-guard-lock-production-candidate-v1.sql',import.meta.url),'utf8')
 const scoped=sql('at-36-official-legal-fee-scope-v1.sql')
 const health=sql('at-etias-vaccinations-status-v1.sql')
+const grouped=sql('at-50-group-source-review-v2.sql')
 const ui=readFileSync(new URL('../../../components/readiness/AtOfficialGuidance.tsx',import.meta.url),'utf8')
 
 test('Dev minute sender skips running writer/guard and applies only an exact bounded scheduler lock fix',()=>{
@@ -72,4 +73,21 @@ test('the Dev and Owner-only Production collision-fix rollbacks restore exact or
    assert.match(source,/COMMIT;/)
    assert.doesNotMatch(source,/ALTER FUNCTION official_v3_guard_private\.|CREATE ROLE|GRANT EXECUTE|DELETE FROM/i)
  }
+})
+
+test('AT 49+CH BMI group source-confirmation is strict private Dev research without visitor visa grants',()=>{
+ assert.match(grouped,/DEV ONLY|Development-only/i)
+ assert.match(grouped,/AT-50-GROUPED-LAW-V2/)
+ assert.match(grouped,/pinned_original_digest='fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778'/)
+ assert.match(grouped,/security_invoker=true/)
+ assert.match(grouped,/biometric_passport_required_for_waiver/)
+ assert.match(grouped,/british_document_category_required/)
+ assert.match(grouped,/separate_austrian_bilateral_scope_check/)
+ assert.match(grouped,/individual_legal_rule_qualified/)
+ assert.match(grouped,/publication_allowed/)
+ assert.match(grouped,/ma1_owner_authorized/)
+ assert.match(grouped,/individual_visitor_decision<>'derzeit nicht verfügbar'/)
+ assert.match(grouped,/official_v3_guard_private\.assert_catalog_v1\(\)/)
+ assert.match(grouped,/REVOKE ALL ON jetnity_legal_review_private\.at_50_group_source_review_v2/)
+ assert.doesNotMatch(grouped,/GRANT SELECT|GRANT EXECUTE|ALTER FUNCTION official_v3_guard_private\.|CREATE ROLE|CREATE POLICY|cron\.schedule/i)
 })
