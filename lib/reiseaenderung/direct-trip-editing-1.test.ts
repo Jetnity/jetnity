@@ -56,13 +56,16 @@ test('flexible to dated leaves explicit point dates unchanged; structural compou
   const after = apply({ title: 'Neu', startDate: '2026-10-08', stages: [{ id: 'stage-1', days: 3 }], duration: 5 }, before).nachher
   assert.equal(after.endDate, '2026-10-12'); assert.equal(after.days[0].items[0].startsOn, before.days[0].items[0].startsOn)
 })
-test('removal preview lists every normal removed point and preserved unplanned booking exactly once', () => {
+test('stage removal keeps every normal point unplanned and the protected booking unchanged', () => {
   const before = fixture(), after = apply({ stages: [{ id: 'stage-2', remove: true }] }).nachher
   const groups = auswirkungen(before, after)
-  assert.equal(groups.find(g => g.titel.startsWith('Normale'))?.zeilen.length, 1)
+  assert.equal(groups.find(g => g.titel.startsWith('Normale'))?.zeilen.length, 0)
   assert.equal(groups.find(g => g.titel.startsWith('Geschützte'))?.zeilen.length, 1)
-  assert(groups.flatMap(g => g.zeilen).some(x => x.text.includes('Tag 3') && x.text.includes('Planpunkt 3')))
-  assert.deepEqual(after.ohneTag[0], { ...before.days[3].items[0], dayId: null, stageId: null })
+  assert.equal(groups.find(g => g.titel.startsWith('Weitere'))?.zeilen.length, 1)
+  assert(groups.flatMap(g => g.zeilen).some(x => x.text.includes('Tag 3') && x.text.includes('Planpunkt 3') && x.text.includes('Ungeplant')))
+  assert.deepEqual(after.ohneTag.find(p => p.id === 'item-3'), { ...before.days[2].items[0], dayId: null, stageId: null })
+  assert.deepEqual(after.ohneTag.find(p => p.id === 'item-4'), { ...before.days[3].items[0], dayId: null, stageId: null })
+  assert.equal(new Set(after.ohneTag.map(p => p.id)).size, after.ohneTag.length)
 })
 test('R1: actual proposed temporal conflict is prospective and preview leaves the original graph unchanged', async () => {
   const before = conflictFixture(), original = structuredClone(before)
@@ -253,10 +256,15 @@ test('new IDs cannot collide with surviving authoritative days', () => {
 test('multiline manual wish preserves literal meaning without model normalization', () => {
   assert.equal(apply({travelWish:'CHF 1200.\nNatur und Kultur.'}).nachher.travelWish,'CHF 1200.\nNatur und Kultur.')
 })
-test('existing Account readiness FK limitation is rejected before proposal; no silent dependent cleanup', () => {
+test('stage removal keeps a linked preparation on the preserved plan point', () => {
   const before=fixture();before.readinessItems=[readinessItemLesen({id:'preparation-linked',clientRef:'preparation-linked',tripItemId:'item-3',kind:'preparation',title:'Synthetische Vorbereitung',userStatus:'open',contextFingerprint:'synthetic',createdAt:before.createdAt,updatedAt:before.updatedAt})!]
   const result=manuellerEntwurf(before,{stages:[{id:'stage-2',remove:true}]},vorschauKennungen(seed),'account')
-  assert.equal(result.ok,false);if(!result.ok)assert.match(result.meldung,/verknüpfte Vorbereitungen/)
+  assert.equal(result.ok,true)
+  if(!result.ok)return
+  assert.equal(result.nachher.ohneTag.some(p => p.id === 'item-3'), true)
+  assert.equal(result.nachher.readinessItems?.[0]?.tripItemId, 'item-3')
+  assert.equal(result.nachher.readinessItems?.[0]?.title, 'Synthetische Vorbereitung')
+  assert.equal(result.nachher.readinessItems?.[0]?.userStatus, 'open')
 })
 
 test('canonical protected route facts survive metadata and date changes exactly',()=>{

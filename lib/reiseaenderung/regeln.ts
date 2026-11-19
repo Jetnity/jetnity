@@ -10,7 +10,7 @@
 
 import { GRENZEN } from '@/lib/trips/schema'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
-import { AENDERUNG_GRENZEN, AENDERUNG_ARTEN } from '@/lib/reiseaenderung/schema'
+import { AENDERUNG_GRENZEN, KI_AENDERUNG_ARTEN } from '@/lib/reiseaenderung/schema'
 import { TRIP_INTERESTS, TRIP_ITEM_KINDS, TRIP_PACES } from '@/types/trips'
 import type { ReisefuerModell } from '@/lib/reiseaenderung/snapshot'
 
@@ -23,7 +23,7 @@ const INTERESSE_LISTE = TRIP_INTERESTS.map(
 ).join(', ')
 
 const ART_LISTE = TRIP_ITEM_KINDS.join(', ')
-const OP_LISTE = AENDERUNG_ARTEN.join(', ')
+const OP_LISTE = KI_AENDERUNG_ARTEN.join(', ')
 
 export function aenderungsregeln(heute: string, reise: ReisefuerModell): string {
   return [
@@ -55,7 +55,7 @@ export function aenderungsregeln(heute: string, reise: ReisefuerModell): string 
     '- etappe_hinzufuegen: neue Etappe nach nachEtappeId, Dauer in tage.',
     '- etappe_dauer: Tage dieser Etappe verlängern oder verkürzen.',
     '- tag_entfernen / tag_hinzufuegen / tag_titel.',
-    '- punkt_entfernen / punkt_hinzufuegen / punkt_anpassen.',
+    '- punkt_hinzufuegen / punkt_anpassen. punkt_entfernen ist für KI-Vorschläge nicht freigegeben.',
     '',
     'WAS DU NICHT DARFST',
     '- Keine Preise, Anbieter, Buchungslinks, Verfügbarkeiten oder External-Refs erfinden oder ändern.',
@@ -64,8 +64,11 @@ export function aenderungsregeln(heute: string, reise: ReisefuerModell): string 
     '- Entfällt ihr Tag oder ihre Etappe durch eine andere Änderung, bleiben sie ungeplant und unverändert.',
     '- zeitraum_verschieben und andere globale Operationen verschieben ihre Termine nicht.',
     '- Eine allgemeine Umplanung („entspannter“, „weniger Programm“) lässt solche Planpunkte stehen.',
-    '- punkt_entfernen und punkt_anpassen gelten nur für Punkte ohne diese Felder.',
-    '- punkt_entfernen nur, wenn der Wunsch den Punkt ausdrücklich nennt.',
+    '- punkt_anpassen gilt nur für Punkte ohne diese Felder.',
+    '- punkt_entfernen niemals ausgeben, auch nicht bei einem ausdrücklichen Löschwunsch: die Löschung erfolgt separat im manuellen Reiseplan. Keine Ersatzänderung erfinden.',
+    '- Eine Kürzung oder ein zusätzlicher Tag löscht keine Planpunkte. Was seinen Tag verliert, bleibt ungeplant und inhaltlich unverändert. Dafür keine neue Uhrzeit, Etappe oder Unterkunft erfinden.',
+    '- Weniger Nächte und neue Etappen erlauben nicht, Aktivitäten, Notizen oder Unterkünfte zu löschen. Betroffene Punkte bleiben ungeplant erhalten.',
+    '- Reisetage sind keine Hotelnächte. Eine Nachtzahl nur nennen, wenn ein vorhandener Unterkunftszeitraum sie bereits trägt.',
     '- tempo nur: ' + TEMPO_LISTE + '.',
     '- interessen nur: ' + INTERESSE_LISTE + '.',
     '- punktArt nur: ' + ART_LISTE + '.',

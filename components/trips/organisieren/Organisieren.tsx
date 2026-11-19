@@ -4,6 +4,7 @@ import { useId, useLayoutEffect, useRef, useState, type ReactNode, type Keyboard
 import Reisefoto from './Reisefoto'
 import { StadtbildNachweis } from './Stadtbild'
 import ManualOffer from '@/components/saved-offers/ManualOffer'
+import { providerZurReiseplanUrl } from '@/lib/trips/provider-rueckkehr'
 import {
   Plane,
   BedDouble,
@@ -94,6 +95,7 @@ export default function Organisieren({
   etappeId,
   hotelOrtKey,
   kanteId,
+  rueckkehrTagId,
 }: {
   reise: Trip
   tab: Suchkategorie
@@ -101,6 +103,7 @@ export default function Organisieren({
   etappeId?: string
   hotelOrtKey?: string
   kanteId?: string
+  rueckkehrTagId?: string
   partnerAktivitaeten?: ReactNode
 }) {
   const uid = useId()
@@ -190,6 +193,8 @@ export default function Organisieren({
           <h1 id="workspace-organisieren-titel" data-workspace-modus-heading tabIndex={-1}>
             {titel}
           </h1>
+          <a href={providerZurReiseplanUrl(reise, rueckkehrTagId)} className="mt-2 inline-flex min-h-11 max-w-full items-center rounded-full border border-white/70 px-4 py-2 text-sm font-semibold text-white underline decoration-white/60 underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50" data-provider-rueckkehr="plan">Zurück zu meinem Reiseplan</a>
+          <p className="mt-1 text-xs text-white/90">Anbieter öffnen sich separat. Deine gespeicherte Reise bleibt bei Jetnity; eine externe Buchung wird nicht automatisch übernommen.</p>
           <p className="org-route">
             {reise.stages.map((s, i) => (
               <span key={s.id}>

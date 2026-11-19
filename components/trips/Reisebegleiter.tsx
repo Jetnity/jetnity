@@ -34,6 +34,7 @@
 import * as React from 'react'
 import { AlertTriangle, CircleHelp, Compass } from 'lucide-react'
 
+import Begleiterfortschritt from '@/components/trips/Begleiterfortschritt'
 import { begleiterFragen } from '@/lib/reisebegleiter/aktionen'
 import type { Begleiterauskunft } from '@/lib/reisebegleiter/erzeugen'
 import { BEGLEITER_GRENZEN } from '@/lib/reisebegleiter/schema'
@@ -83,7 +84,16 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
     setLaeuft(true)
 
     const eigener = ++anlauf.current
-    const ergebnis = await begleiterFragen({ tripId: reise.id, frage })
+    let ergebnis: Awaited<ReturnType<typeof begleiterFragen>>
+    try {
+      ergebnis = await begleiterFragen({ tripId: reise.id, frage })
+    } catch {
+      if (eigener === anlauf.current) {
+        setLaeuft(false)
+        setMeldung('Die Auskunft konnte gerade nicht erstellt werden. Bitte versuche es später erneut.')
+      }
+      return
+    }
 
     // Eine ältere Antwort darf eine neuere nicht überschreiben. Ohne diese
     // Prüfung entscheidet die Reihenfolge der Netzantworten, was am Ende steht.
@@ -132,6 +142,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
         <textarea
           id="reisebegleiter-frage"
           value={frage}
+          disabled={laeuft}
           onChange={(ereignis) => setFrage(ereignis.target.value)}
           rows={3}
           maxLength={BEGLEITER_GRENZEN.frageMaximum}
@@ -144,6 +155,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
             <button
               key={beispiel.kurz}
               type="button"
+              disabled={laeuft}
               onClick={() => setFrage(beispiel.text)}
               className="inline-flex min-h-11 max-w-full items-center rounded-full border border-line-200 px-4 text-left text-xs font-medium text-ink-900 transition hover:border-line-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
@@ -153,13 +165,9 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
         </div>
 
         {laeuft && (
-          <p
-            aria-live="polite"
-            aria-busy="true"
-            className="mt-5 rounded-2xl border border-line-200 bg-surface-25 px-4 py-3 text-sm leading-6 text-brand-900"
-          >
-            Der Reisebegleiter liest deine Reise und wählt passende Jetnity-Aussagen aus …
-          </p>
+          <div className="mt-5">
+            <Begleiterfortschritt />
+          </div>
         )}
 
         {meldung && (

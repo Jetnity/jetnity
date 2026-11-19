@@ -47,9 +47,11 @@ export function discoverCarsWidgetHoehe(event: Pick<MessageEvent, 'origin' | 'so
   } catch { return null }
 }
 
-/** A local display choice never overrides a refusal or an unusable existing CMP. */
-export function discoverCarsDatenschutzErlaubt(api: unknown, cmpErforderlich: boolean): boolean {
+/** No display click is optional third-party consent.
+ * Fail closed even when an old caller passes cmpErforderlich=false.
+ * Keeping the argument allows old invocations to remain type-compatible.
+ */
+export function discoverCarsDatenschutzErlaubt(api: unknown, _cmpErforderlich: boolean): boolean {
   const read = readCmpApi(api)
-  if (read.status === 'explicit') return read.optionalSatisfied
-  return !cmpErforderlich && api === undefined && read.reason === 'missing_api'
+  return read.status === 'explicit' && read.optionalSatisfied
 }
