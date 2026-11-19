@@ -120,7 +120,7 @@ export default function EinreiseLaenderpruefer() {
           ) : null}
           {sicht.hinweis ? <p role="status" className="text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
           <EinreiseKundenanzeige anzeige={sicht.anzeige} />
-          {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.anzeige.paare.map(paar => paar.landCode)} /> : null}
+          {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.citizenshipCodes} /> : null}
           {['IT','FR','ES','PT'].includes(sicht.zielCode) ? <FollowupOfficialGuidance country={sicht.zielCode} /> : null}
         </div>
       ) : null}
