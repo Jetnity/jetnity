@@ -199,7 +199,7 @@ test('50 Austrian ministry visa candidate classes remain conditional and unpubli
  assert.match(atVisaCandidate,/AT-VISA-CANDIDATES-V1/)
  assert.match(atVisaCandidate,/at_visa_method_candidates_v1/)
  assert.match(atVisaCandidate,/WITH \(security_invoker=true\)/)
- for(const count of [19,20,10,1]) assert.ok(atVisaCandidate.includes('<>'+count),count)
+ for(const count of [19,20,10,1]) assert.ok(atVisaCandidate.includes('<>'+count),String(count))
  for(const gate of ['current_primary_source_checked_for_this_rule','primary_rule_qualified',
    'ma1_method_authorized','owner_aal2_approved','publication_allowed'])
    assert.match(atVisaCandidate,new RegExp(gate))
