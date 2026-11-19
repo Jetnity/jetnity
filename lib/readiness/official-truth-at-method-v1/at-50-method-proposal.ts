@@ -10,6 +10,40 @@ import { readMa1MethodBinding } from '../official-truth-product-v3/method/contra
 
 const PASSPORTS = 'IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'.split(' ')
 const PASSPORT_SHA = '4515324024236916142857bf16d67590a7a1ca11c31fd1263e8b7979fd6eb358'
+
+// These exact 50 ordered row categories were independently extracted in
+// Supabase Dev from the pinned 06.11.2026 BMI original, NOT from heuristics
+// on a 2026 owner research JSON (which can be stale/incomplete).
+// Each letter is a *conditional law review classification* only.
+const BMI_EXTRACTED_CATEGORY_SIGNATURE = 'VVVFFFEEFFFEHFFVFVFVFFVFFEFVFVVVVVFVVEEVFVEVEFEVVE'
+const BMI_EXTRACTED_ROWSET_SHA256 = '06725851fd83fb167e432b95a728dcbe2dcd9a425529138d4df49e61e2dd77ce'
+const matrixTypes = Object.freeze({
+  V: 'BMI_VISA_DUTY_BASELINE_EXCEPT_RESIDENCE_FAMILY_SPECIAL_DOCUMENT_AND_PURPOSE',
+  F: 'EU_EEA_CH_FREE_MOVEMENT_VALID_DOCUMENT',
+  E: 'BMI_SHORT_STAY_EXEMPT_IF_PASSPORT_BIOMETRIC_AND_TREATY_RULES_SATISFIED',
+  H: 'AUSTRIAN_NATIONAL_NO_FOREIGN_VISITOR_VISA_DECISION',
+})
+const matrixCaseRecords = Object.freeze(PASSPORTS.map((citizenshipCode,index) => {
+  const kind=BMI_EXTRACTED_CATEGORY_SIGNATURE[index] as keyof typeof matrixTypes | undefined
+  if (!kind || !(kind in matrixTypes)) throw Error('BMI_UNRECOGNIZED_SOURCE_CATEGORY')
+  return Object.freeze({ citizenshipCode,rank:index+1,originalRowKind:kind,
+    conditionalReviewClass:matrixTypes[kind],
+    legalApplicabilityVerified:false as const,
+    publicationAllowed:false as const })
+}))
+if (BMI_EXTRACTED_CATEGORY_SIGNATURE.length!==50
+  || matrixCaseRecords.length!==50
+  || (['V','F','E','H'] as const).some((kind) =>
+       matrixCaseRecords.filter(item => item.originalRowKind===kind).length
+       !== ({V:20,F:19,E:10,H:1} as const)[kind])
+  || matrixCaseRecords[12]?.citizenshipCode!=='AT'
+  || matrixCaseRecords[12]?.originalRowKind!=='H'
+  || matrixCaseRecords.find(item=>item.citizenshipCode==='CH')?.originalRowKind!=='F'
+  || matrixCaseRecords.find(item=>item.citizenshipCode==='UA')?.originalRowKind!=='E'
+  || matrixCaseRecords.find(item=>item.citizenshipCode==='XK')?.originalRowKind!=='E') {
+ throw Error('AT_50_CATEGORICAL_SOURCE_BINDING_REFUSED')
+}
+
 const BMI_MATRIX = Object.freeze({
   sourceId: 'bmi-visa-nationality-matrix',
   officialUrl: 'https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html',
@@ -47,6 +81,9 @@ const packageValue = Object.freeze({
   route: 'direct_entry', purpose: 'short_stay_tourism_only',
   bmiDestinationPrimary: BMI_MATRIX,
   bmiBorderConditions: BMI_BORDER,
+  bmiMatrix50OriginalRowsetSha256: BMI_EXTRACTED_ROWSET_SHA256,
+  exactSourceCategoryMapping: matrixCaseRecords,
+  sourceCategorySignature: BMI_EXTRACTED_CATEGORY_SIGNATURE,
   otherAuthorityForSwissOnly: 'BMEIA Bern is CH-only and never positive evidence for a non-CH passport',
   visaClassesSourceReviewed: Object.freeze({
     euSwissFreeMovement: 19, baselineVisaRequiredWithExceptions: 20,
@@ -85,6 +122,8 @@ export const AT_50_VISA_METHOD_PROPOSAL = Object.freeze({
   passportPriorityCsvSha256: PASSPORT_SHA,
   method: draft.value, methodBinding: binding.value,
   primary: BMI_MATRIX, officialConditions: BMI_BORDER,
+  originalExtractedCategoryDigest: BMI_EXTRACTED_ROWSET_SHA256,
+  sourceBoundCountryCategories: matrixCaseRecords,
   humanReleaseScope: Object.freeze({
     citizenship: 'PRIORITY_50' as const,
     destination: 'AT' as const,
