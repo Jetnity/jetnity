@@ -30,9 +30,9 @@ test('public CMS v2 reads only published, unarchived revisions without the share
 test('quota HTTP 429 is an error-mapping change, not a loosened cost or authorization limit', () => {
   // The candidate uses a preflight-pinned regprocedure OID, then reads that
   // exact definer function body from pg_proc. No hardcoded alternate RPC.
-  assert.match(candidate, /f regprocedure := 'public\\.modell_kontingent_beanspruchen\\(text,text,text,uuid\\)'::regprocedure/)
-  assert.match(candidate, /SELECT pg_get_functiondef\\(p\\.oid\\) INTO src/)
-  assert.match(candidate, /WHERE p\\.oid = f::oid AND p\\.prosecdef/)
+  assert.match(candidate, /f regprocedure := 'public\.modell_kontingent_beanspruchen\(text,text,text,uuid\)'::regprocedure/)
+  assert.match(candidate, /SELECT pg_get_functiondef\(p\.oid\) INTO src/)
+  assert.match(candidate, /WHERE p\.oid = f::oid AND p\.prosecdef/)
   assert.match(candidate, /replace\(src, 'errcode = ''53400''', 'errcode = ''PT429'''\)/)
   assert.match(candidate, /has_function_privilege\('anon', f, 'EXECUTE'\)/)
   assert.match(candidate, /pg_advisory_xact_lock/)
