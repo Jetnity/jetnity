@@ -6,7 +6,7 @@ import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import { HUMAN_METHOD_DEV_URL, readHumanRelease, type HumanRelease } from '../official-truth-product-v3/method/human-contract'
 import { AT_50_VISA_METHOD_PROPOSAL } from './at-50-method-proposal'
 
-export const AT_50_DEV_SELECTION_ID = 'hmr1_da2391387e35c2e0ab0b5f048852ec6e'
+const AT_50_DEV_SELECTION_ID = 'hmr1_da2391387e35c2e0ab0b5f048852ec6e'
 
 export type At50PreviewSelection = Readonly<{
  deploymentEnv: string | undefined
