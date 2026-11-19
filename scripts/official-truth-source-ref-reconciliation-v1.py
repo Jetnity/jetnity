@@ -69,6 +69,29 @@ def load(path:Path):
         return found
     return json.loads(path.read_bytes(),object_pairs_hook=unique)
 
+def affected_conflict_topics(record:dict,country:str):
+    """Fail-closed per-topic conflict scope: do not block unrelated visa rules
+    for a funds-only numeric discrepancy. Every unrecognized conflict blocks ALL
+    26 topic slots; no numeric amount is ever accepted by this review.
+    """
+    conflicts=record.get('conflicts',[])
+    if not isinstance(conflicts,list):
+        return frozenset(AT_TOPICS)
+    if not conflicts:
+        return frozenset()
+    if (country=='ES' and len(conflicts)==1 and isinstance(conflicts[0],dict)):
+        issue=conflicts[0]
+        if (issue.get('topic')=='Mittel / Tagessatz 2026 (Drittstaaten, régimen general)'
+            and issue.get('conflict_type')=='minor_numeric_discrepancy'
+            and issue.get('affects_visa_requirement_or_entry_permission') is False
+            and issue.get('status')=='fertig'
+            and isinstance(issue.get('primary_sources'),list)
+            and len(issue['primary_sources'])>=2
+            and isinstance(issue.get('deviating_source'),dict)):
+            return frozenset(('financial_means',))
+    return frozenset(AT_TOPICS)
+
+
 def reconcile(root:Path,country:str,passports:list[str],prepared:Path):
     if country not in REFS or len(passports)!=50 or len(set(passports))!=50:
         raise ValueError('invalid_review_scope')
@@ -87,9 +110,11 @@ def reconcile(root:Path,country:str,passports:list[str],prepared:Path):
                 raise ValueError('unsafe_source_catalog')
             srcmap[sid]=url;global_ids[sid].add(url)
         local_ids[nat]=srcmap
+    affected={nat:affected_conflict_topics(record,country) for nat,record in records.items()}
     coverage=load(prepared/'coverage.json')
     if len(coverage)!=1300:raise ValueError('expected_1300_topics')
     cases=[];seen=set();recovered=unresolved=ref_slots=0
+    conflict_slots=0
     for row in coverage:
         nat=row.get('nationality');topic=row.get('topic')
         if nat not in records or (nat,topic) in seen:raise ValueError('duplicate_passport_topic')
@@ -123,15 +148,17 @@ def reconcile(root:Path,country:str,passports:list[str],prepared:Path):
                     else 'RESEARCH_OWN_OR_UNKNOWN')
         else:
             government_url=None;condition='requires_current_destination_primary_and_traveler_context'
-            state=('CONFLICT_QUARANTINE' if row.get('recordConflictFlag')
+            state=('CONFLICT_QUARANTINE' if topic in affected[nat]
                    else 'UNRESOLVED_SOURCE_REF' if unresolved and any(r['officialURLRecoveredFromOtherSlice'] is None for r in refs)
                    else 'SOURCE_SCOPE_NOT_LEGALLY_QUALIFIED')
             visa_class=None
+        if topic in affected[nat]:conflict_slots+=1
         cases.append({'passport':nat,'topic':topic,'originalSourceRefs':row.get('explicitSourceRefs',[]),
             'originalResearchPointers':row.get('researchPointers',[]),'missingRefResolution':refs,
             'sourceCandidate':government_url,'requiredLegalContext':condition,
             'visaResearchClass':visa_class,'legalReviewDisposition':state,
             'originalConflictFlag':bool(row.get('recordConflictFlag')),
+            'topicHasUnresolvedOriginalConflict':topic in affected[nat],
             'legalRuleVerified':False,'publicationAllowed':False,
             'verifiedFee':None,'validFrom':None,'validUntil':None,
             'customerAnswer':'derzeit nicht verfügbar'})
@@ -140,9 +167,11 @@ def reconcile(root:Path,country:str,passports:list[str],prepared:Path):
         or sum(x['legalReviewDisposition']=='NO_PRIMARY_RULE_SOURCE_UNAVAILABLE' for x in cases)!=100):
         raise ValueError('AT_36_ORPHAN_REFERENCE_RECOVERY_DRIFT')
     if country=='PT' and unresolved!=18:raise ValueError('PT_S_LEI23_official_gazette_not_yet_bound')
+    if country=='ES' and conflict_slots!=30:raise ValueError('ES_30_FINANCIAL_MEANS_ONLY_CONFLICT_DRIFT')
     data={'schema':1,'country':country,'status':'RESEARCH_ONLY',
           'sourceReferenceIdentityRecovered':recovered,'unresolvedSourceReferences':unresolved,
-          'topicsReviewed':1300,'legalRulesApproved':0,'publications':0,
+          'topicsReviewed':1300,'topicConflictCount':conflict_slots,
+          'legalRulesApproved':0,'publications':0,
           'sourceIdentityIsNotLegalFact':True,'cases':cases}
     path=prepared/'source-reference-review.json'
     with path.open('x',encoding='utf-8') as out:
@@ -150,4 +179,5 @@ def reconcile(root:Path,country:str,passports:list[str],prepared:Path):
         os.fchmod(out.fileno(),0o600)
         json.dump(data,out,ensure_ascii=False,separators=(',',':'));out.write('\n')
     return {'reviewedSlots':1300,'recoveredRefs':recovered,'unresolvedRefs':unresolved,
+            'topicConflictCount':conflict_slots,
             'positiveLegalRules':0,'published':0}

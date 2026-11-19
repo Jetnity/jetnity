@@ -312,3 +312,13 @@ test('AT 50-person method proposal binds exact original nationality classes by p
  assert.match(matrixSignature,/visitor_unqualified_value<>'derzeit nicht verfügbar'/)
  assert.doesNotMatch(matrixSignature,/cron\.schedule|cron\.alter_job|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
 })
+
+const esScopedConflict=readFileSync(new URL('../../scripts/official-truth-source-ref-reconciliation-v1.py',import.meta.url),'utf8')
+test('ES source disagreement is quarantined only for funds while all unknown conflict forms remain fail-closed',()=>{
+ assert.match(esScopedConflict,/def affected_conflict_topics\(/)
+ assert.match(esScopedConflict,/financial_means/)
+ assert.match(esScopedConflict,/ES_30_FINANCIAL_MEANS_ONLY_CONFLICT_DRIFT/)
+ assert.match(esScopedConflict,/return frozenset\(AT_TOPICS\)/)
+ assert.match(esScopedConflict,/topicHasUnresolvedOriginalConflict/)
+ assert.match(esScopedConflict,/legalRulesApproved':0/)
+})
