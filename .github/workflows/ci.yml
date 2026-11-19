@@ -44,6 +44,28 @@ jobs:
           JETNITY_OPERATING_MODE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: npm run check:operating-mode
 
+      - name: Actual AT50 source-group browser endtest against Supabase Development
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1254 && github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' }}
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          NEXT_PUBLIC_SUPABASE_URL: https://yfvbxvijcorffwxbxahl.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
+          VERCEL_ENV: preview
+          VERCEL_PROJECT_ID: prj_wTTVawPItEO7a4HihEmaU3PsuaXM
+          VERCEL_GIT_REPO_OWNER: Jetnity
+          VERCEL_GIT_REPO_SLUG: jetnity
+          VERCEL_GIT_COMMIT_REF: feat/official-truth-universal-source-registry-dev-20261119
+        run: node scripts/official-truth-at-50-browser-dev/run.mjs
+
+      - name: Preserve real AT50 Dev browser evidence, including failures
+        if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.number == 1254 && github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-truth-at-50-dev-browser-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/official-truth-at-50-dev-browser/
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -77,28 +99,6 @@ jobs:
 
       - name: Production build
         run: npm run build
-
-      - name: Actual AT50 source-group browser endtest against Supabase Development
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1254 && github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' }}
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-          NEXT_PUBLIC_SUPABASE_URL: https://yfvbxvijcorffwxbxahl.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
-          VERCEL_ENV: preview
-          VERCEL_PROJECT_ID: prj_wTTVawPItEO7a4HihEmaU3PsuaXM
-          VERCEL_GIT_REPO_OWNER: Jetnity
-          VERCEL_GIT_REPO_SLUG: jetnity
-          VERCEL_GIT_COMMIT_REF: feat/official-truth-universal-source-registry-dev-20261119
-        run: node scripts/official-truth-at-50-browser-dev/run.mjs
-
-      - name: Preserve real AT50 Dev browser evidence, including failures
-        if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.number == 1254 && github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: official-truth-at-50-dev-browser-${{ github.run_id }}-${{ github.run_attempt }}
-          path: test-results/official-truth-at-50-dev-browser/
-          if-no-files-found: warn
-          retention-days: 14
 
   hosted_v3_native_pg17:
     name: Hosted V3 — native PostgreSQL 17 (${{ matrix.group }})
