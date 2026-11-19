@@ -189,6 +189,17 @@ Dies ist eine **Abstimmungs- und Priorisierungsempfehlung**, **keine** stille Ä
 
 **Verbindliche Priorität:** KI-Runtime abschliessen → während des Kontingent-Wartefensters Admin-Inventar Dev/Production prüfen → danach Reise-Integration/Anbieter-Evidence → dann Preview-Trennung, Consent, Mobile und E2E. Vorhandene Karte und `Jetzt wichtig` nicht neu bauen; Change Impact/What-if/Guardian später; Einreise ausschliesslich durch den anderen TL.
 
+### Nachtrag 19.11.2026 – Reiseintegration S1–S4 (Issue #1256, Quellkandidat)
+
+Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsübernahme** im selben Integrationsbranch fort. Er ersetzt keine aktuellen Gate-Nachweise und markiert keine Production- oder Browser-Abnahme:
+
+- **S1 Hotel #18 – `P`, Quellimplementierung erweitert:** Wiederholte/multiple Etappen verwenden nur belegte jeweilige Check-in-/Check-out-Daten; Hotel-Suche fragt Erwachsene, Kinder, Zimmer ausdrücklich statt `travellers` als Erwachsenenanzahl zu interpretieren. Unterschied zum Reisegesamtwert ist eine nicht blockierende Warnung. Kinderalter und Zimmeraufteilung werden nicht im Stay22-Link übertragen, sondern müssen beim Anbieter bestätigt werden. Echt-Provider-/Geräte-QA bleibt offen.
+- **S2 Externe Rückkehr #24 – `P`, begrenzter interner Rückweg:** `Organisieren` enthält eine sichere Rückkehr zum exakt gespeicherten Reiseplan (und nur falls vorhanden zum zuvor ausgewählten Reisetag). Die bestehende Workspace-URL-Validierung verhindert fremde/entfallene Tagreferenzen. Externe Partner erhalten keine Rückruf-/Buchungsautorität; Browser-Back, tatsächlicher Drittanbieter-Redirect und Konto/Gast nach Reload sind separat zu prüfen.
+- **S3 Merkliste/Angebote – `P`, Provenance und manuelle Preis-Nachprüfung:** Herkunft (`manual` vs. tatsächlich beim Speichern über DiscoverCars geprüfte Referenz), Ablaufstatus und `nur gemerkt, nicht gebucht` werden ausdrücklich angezeigt. Die gespeicherte Referenz enthält **keine** bestätigte aktuelle Preis-/Availability-Angabe; die vorhandene geprüfte HTTPS-Partnerweiterleitung bietet eine **vom Nutzer selbst** vorzunehmende neue Anbieterprüfung. Automatisches Requoting oder eine bestätigte Buchung bleiben **nicht implementiert**; neue Provider-/Preiscalls erfordern eigene Autorisierung und Quelle.
+- **S4 Mietwagen/Consent – `P`, Sicherheitsgrenze verschärft:** Das optionale externe DiscoverCars-Widget läuft nur nach **allen drei unabhängigen** geprüften Produktgates (CMP-Release, Vendor-Script-Release, dokumentierter Provider-Policy-Eintrag) sowie aktueller ausdrücklicher optionaler CMP-Einwilligung. Derzeit bleiben die Source-Gates **OFF**, selbst nach einem reinen Klick auf „Suchformular laden“; native Mietwagensuche und der erlaubte externe Affiliate-Link bleiben. Ob die konkrete Drittanbietereinbettung später rechtlich/vertraglich aktiviert werden darf, bleibt beim Owner und #1087.
+
+**Fertigstellungsnachweis nur nach** grünem CI-Lauf am exakten Integrations-PR-Head, Review, verifizierter Preview/Production-Trennung (#968), realen Gast-/Kontotests (Save→Reload, 320/390/Desktop, Fokus/Browser-Back) und separaten Anbieter-/Datenschutzbelegen. Kein KI-/Passkey-/Official-Truth- oder Production-Code in diesem Paket; keine neue Kosten-/Datenbank-/Schlüsselfreigabe. Der Quellcode kann trotz offenem funktionalem Endtest als sichere, noch **teilweise** Produktfunktion integriert werden, wenn die geltenden Owner-Release-Gates dies erlauben.
+
 ### Bestätigte Schutz-/Releasegrenzen
 
 - **GitHub Main vs jetnity.com:** \`main\` ist zum Berichtsstand neuer als das bewusst auf die Domain gepinnte Flug-Discovery-Deployment. Nicht als automatischen Fehler interpretieren; eine Umschaltung ist separater Owner-Release-Entscheid.
@@ -217,7 +228,7 @@ Dies ist eine **Abstimmungs- und Priorisierungsempfehlung**, **keine** stille Ä
 - **Import-/Guard-Konkurrenz:** Die Minutentakte von CH→DE-Import und 5-Minuten-Guard überschneiden sich. Production wurde ausschliesslich gelesen; die echte Dev-Korrektur im PR ist als zeitfenster- und transaktionsgebundene Schutzfunktion vorgesehen: bei laufendem Vorgänger oder Guard-Slot **überspringen**, ansonsten unveränderter Scheduler/Quota und kürzere Wartefrist; **kein Umbau** der geschützten BG1-Auditmethoden. Production-Variante separat und **unapplied** bis expliziter Owner-Freigabe; Rollback explizit geprüft.
 - **Folgeländer IT, FR, PT und ES:** Alle 50 Pässe × 26 Themen pro Ziel im privaten Register, pass-/zweckgebundene Rechtsqualifikation weiterhin offen. Für Spanien bleiben die **30 belegten Geldnachweis-Konfliktfälle** isoliert in „derzeit nicht verfügbar“, ohne eine ungeprüfte pauschale Freigabe der übrigen Felder. Release-Gate, Drei-Phasen-Plan und Produktvision unverändert.
 
-**Keine Änderung der ursprünglichen 55 Funktionsbewertungen durch eine Research-/Dev-Installation; kein V1-Release-PASS oder Production-Rollout.** 
+**Keine Änderung der ursprünglichen 55 Funktionsbewertungen durch eine Research-/Dev-Installation; kein V1-Release-PASS oder Production-Rollout.**
 
 ## 8. Nachweise
 

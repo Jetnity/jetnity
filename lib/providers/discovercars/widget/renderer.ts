@@ -1,4 +1,6 @@
 import { CMP_RELEASE_AUTHORIZED } from '@/lib/privacy/privacybee-cmp/vertrag'
+import { PRODUCTION_POLICY_TABLE } from '@/lib/privacy/privacybee-cmp/produktionspolitik'
+import { VENDOR_SCRIPT_EXECUTION_AUTHORIZED } from '@/lib/privacy/widget-consent/vertrag'
 import {
   DISCOVERCARS_WIDGET_SANDBOX,
   discoverCarsDatenschutzErlaubt,
@@ -7,22 +9,24 @@ import {
 } from './vertrag'
 
 export type DiscoverCarsWidgetPhase = 'laedt' | 'sichtbar' | 'fehler' | 'datenschutz'
-const CMP_GESEHEN = 'jetnity:discovercars-cmp-observed'
-let cmpGesehen = false
+/** All three independent production/provider gates must be reviewed before
+ * a vendor iframe can run. A mere display click is never marketing consent. */
+export function discoverCarsWidgetFreigegeben(): boolean {
+  return Boolean(CMP_RELEASE_AUTHORIZED)
+    && Boolean(VENDOR_SCRIPT_EXECUTION_AUTHORIZED)
+    && Boolean(PRODUCTION_POLICY_TABLE.discovercars)
+}
 
 function datenschutzErlaubt(): boolean {
-  cmpGesehen ||= window.PrivacyBee !== undefined
-  try {
-    cmpGesehen ||= window.sessionStorage.getItem(CMP_GESEHEN) === '1'
-    if (cmpGesehen) window.sessionStorage.setItem(CMP_GESEHEN, '1')
-  } catch { /* A failed storage access cannot undo the in-memory latch. */ }
-  return discoverCarsDatenschutzErlaubt(window.PrivacyBee, Boolean(CMP_RELEASE_AUTHORIZED) || cmpGesehen)
+  return discoverCarsDatenschutzErlaubt(window.PrivacyBee, true)
 }
 
 /** Called only after the user's display action. Disposal also removes listeners. */
 export function discoverCarsWidgetLaden(host: HTMLElement, status: (phase: DiscoverCarsWidgetPhase) => void): () => void {
-  const src = discoverCarsWidgetAdresse(window.location.origin)
+  // The release decision precedes URL construction and any DOM/network work.
+  if (!discoverCarsWidgetFreigegeben()) { status('datenschutz'); return () => {} }
   if (!datenschutzErlaubt()) { status('datenschutz'); return () => {} }
+  const src = discoverCarsWidgetAdresse(window.location.origin)
   if (!src) { status('fehler'); return () => {} }
 
   const frame = document.createElement('iframe')

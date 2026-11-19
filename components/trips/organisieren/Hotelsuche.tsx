@@ -5,10 +5,25 @@ import { BedDouble, CalendarDays, ChevronDown, MapPin, MapPinned, Search, Slider
 import OrtSuche from '@/components/places/OrtSuche'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
 import { ortBestaetigen } from '@/lib/places/aktionen'
-import { hotelDaten } from '@/lib/trips/organisieren/katalog'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { hotelPlanOrte, hotelPosition } from '@/lib/trips/hotel-suchkontext'
+import {
+  hotelBelegungHinweis,
+  hotelBelegungPruefen,
+  hotelBelegungSetzen,
+  hotelBelegungZahl,
+  hotelBelegungZurueck,
+  HOTEL_ERWACHSENE_MAX,
+  HOTEL_KINDER_MAX,
+  HOTEL_ZIMMER_MAX,
+  hotelEtappenName,
+  hotelGaesteText,
+  hotelSuchtermine,
+  hotelSuchvorlage,
+  hotelTerminHinweis,
+  type HotelBelegungsfelder,
+} from '@/lib/trips/hotel-suchbelegung'
 import { STAY22_FILTER, STAY22_WAEHRUNGEN, stay22OrtAusEtappe, stay22Suche, type Stay22Fehlerfeld, type Stay22Filter, type Stay22Ort, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import type { Trip, TripStage } from '@/types/trips'
 import { Feld } from './Suchfelder'
@@ -17,8 +32,8 @@ import { datumVerschieben } from '@/lib/trips/suchkalender'
 import Stay22Ergebnisse from './Stay22Ergebnisse'
 import useHotelUmgebung from './useHotelUmgebung'
 
-type Entwurf = {
-  anreise: string; abreise: string; erwachsene: number; kinder: number; zimmer: number; waehrung: string
+type Entwurf = HotelBelegungsfelder & {
+  anreise: string; abreise: string; waehrung: string
   filter: Stay22Filter; umgebung: string; ortstext: string; karteMitPlan: boolean
   andererOrt: OrtAuswahl | null; suchOrt: Stay22Ort | null
 }
@@ -33,22 +48,25 @@ export default function Hotelsuche({ reise, start, startOrt, auswahlVersion, eta
   }
   const stageId = auswahl.eingang === eingang ? auswahl.stageId : startId
   const stage = reise.stages.find(s => s.id === stageId)
+  const etappenGeordnet = [...reise.stages].sort((a, b) => a.position - b.position)
   const [kontextOffen, setKontextOffen] = useState(false)
+  const vorlage = hotelSuchvorlage(reise, stage)
   const initial: Entwurf = entwuerfe[stageId] ?? {
-    ...hotelDaten(reise, stage), erwachsene: Math.max(1, reise.travellers), kinder: 0, zimmer: 1,
+    anreise: vorlage.anreise, abreise: vorlage.abreise, ...hotelBelegungZurueck(),
     waehrung: (STAY22_WAEHRUNGEN as readonly string[]).includes(reise.currency) ? reise.currency : 'CHF',
     filter: { ...STAY22_FILTER }, umgebung: stageId === startId && startOrt ? startOrt : 'etappe', ortstext: '', karteMitPlan: true, andererOrt: null, suchOrt: null,
   }
   return <>
     <div className="stay22-stagebar" role="group" aria-label="Aufenthalt wählen">
-      {[...reise.stages].sort((a, b) => a.position - b.position).map((s, index) => {
-        const d = hotelDaten(reise, s)
+      {etappenGeordnet.map((s, index) => {
+        const termine = hotelSuchtermine(reise, s)
+        const zeit = etappenZeitraumAnzeigen(termine.anreise, termine.abreise)
         return <button key={s.id} type="button" aria-pressed={stageId === s.id} onClick={() => setAuswahl({ eingang, stageId: s.id })}>
-          <span className="stay22-stage-number">{index + 1}</span><span><b>{s.name}</b><small>{etappenZeitraumAnzeigen(d.anreise, d.abreise) || 'Zeitraum offen'}</small></span>
+          <span className="stay22-stage-number">{index + 1}</span><span><b>{s.name}</b><small>{zeit || (termine.herkunft === 'ungueltig' ? 'Daten prüfen' : 'Zeitraum offen')}</small></span>
         </button>
       })}
     </div>
-    <HotelSuchformular key={stageId + ':' + eingang} reise={reise} stage={stage} stageId={stageId}
+    <HotelSuchformular key={stageId + ':' + eingang} reise={reise} stage={stage} stageId={stageId} etappenGeordnet={etappenGeordnet}
       d={initial}
       waehlen={id => setAuswahl({ eingang, stageId: id })}
       merken={wert => setEntwuerfe(alt => ({ ...alt, [stageId]: { ...(alt[stageId] ?? initial), ...wert } }))} />
@@ -56,8 +74,8 @@ export default function Hotelsuche({ reise, start, startOrt, auswahlVersion, eta
   </>
 }
 
-function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
-  reise: Trip; stage?: TripStage; stageId: string; d: Entwurf; waehlen: (id: string) => void; merken: (wert: Partial<Entwurf>) => void
+function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen, merken }: {
+  reise: Trip; stage?: TripStage; stageId: string; etappenGeordnet: TripStage[]; d: Entwurf; waehlen: (id: string) => void; merken: (wert: Partial<Entwurf>) => void
 }) {
   const id = useId()
   const [andererOrt, setAndererOrt] = useState(d.andererOrt)
@@ -65,7 +83,8 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
   const [ortFehler, setOrtFehler] = useState('')
   const ortAnfrage = useRef(0)
   useEffect(() => () => { ortAnfrage.current += 1 }, [])
-  const [gaesteOffen, setGaesteOffen] = useState(false)
+  const belegungOffen = d.erwachsene === null || d.kinder === null || d.zimmer === null
+  const [gaesteOffen, setGaesteOffen] = useState(belegungOffen)
   const [fehler, setFehler] = useState('')
   const [fehlerfeld, setFehlerfeld] = useState<Stay22Fehlerfeld | null>(null)
   const [ergebnis, setErgebnis] = useState<Stay22Suche | null>(null)
@@ -77,7 +96,10 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
   const patch = (wert: Partial<Entwurf>) => {
     reset()
     setGeaendert(true)
-    merken(wert)
+    const belegung = 'erwachsene' in wert || 'kinder' in wert || 'zimmer' in wert
+      ? hotelBelegungSetzen(d, wert)
+      : null
+    merken(belegung ? { ...wert, ...belegung } : wert)
   }
   const ortWaehlen = async (auswahl: OrtAuswahl | null) => {
     setAndererOrt(auswahl)
@@ -98,9 +120,11 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
       if (lauf === ortAnfrage.current) setOrtLaedt(false)
     }
   }
-  const personen = `${d.erwachsene} ${d.erwachsene === 1 ? 'Erwachsener' : 'Erwachsene'}${d.kinder ? `, ${d.kinder} ${d.kinder === 1 ? 'Kind' : 'Kinder'}` : ''}`
-  const planDaten = hotelDaten(reise, stage)
-  const datumsabweichung = stage && (d.anreise !== planDaten.anreise || d.abreise !== planDaten.abreise)
+  const vorlage = hotelSuchvorlage(reise, stage)
+  const personen = hotelGaesteText(vorlage.reisende, d)
+  const belegungHinweis = hotelBelegungHinweis(vorlage.reisende, d)
+  const datumsabweichung = stage && (d.anreise !== vorlage.anreise || d.abreise !== vorlage.abreise)
+  const belegungAngefasst = d.erwachsene !== null || d.kinder !== null || d.zimmer !== null
   return <>
     <form className="org-form stay22-search" onSubmit={e => {
       e.preventDefault()
@@ -119,7 +143,18 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
       const basis = stage && hotelPosition(stage)
       if (d.karteMitPlan && basis) kartenorte.unshift({ name: stage.placeId ? stage.name : 'Dein Reiseziel', latitude: basis.lat, longitude: basis.lon })
       if (d.karteMitPlan && umgebung.ort && hotelPosition(umgebung.ort)) kartenorte.push({ name: anker.find(a => a.key === d.umgebung)?.kartenname || umgebung.ort.name, latitude: umgebung.ort.latitude!, longitude: umgebung.ort.longitude! })
-      const result = stay22Suche({ ort, ...d, kartenorte, umgebung: d.umgebung !== 'etappe' })
+      const belegung = hotelBelegungPruefen(d)
+      if (!belegung.ok) {
+        setFehler(belegung.fehler)
+        setFehlerfeld('gaeste')
+        setGaesteOffen(true)
+        e.currentTarget.querySelector<HTMLElement>('[name="gaeste"]')?.focus()
+        return
+      }
+      const result = stay22Suche({
+        ort, ...d, erwachsene: belegung.erwachsene, kinder: belegung.kinder, zimmer: belegung.zimmer,
+        kartenorte, umgebung: d.umgebung !== 'etappe',
+      })
       if ('fehler' in result) {
         setFehler(result.fehler)
         setFehlerfeld(result.feld)
@@ -137,24 +172,33 @@ function HotelSuchformular({ reise, stage, stageId, d, waehlen, merken }: {
       <div className="org-formtop"><h2>Finde deine Unterkunft</h2></div>
       <div className="org-fields">
         <Feld label="Reiseziel"><select name="ort" aria-invalid={fehlerfeld === 'ort'} aria-describedby={fehlerfeld === 'ort' ? `${id}-fehler` : undefined} value={stageId} onChange={e => waehlen(e.target.value)}>
-          {reise.stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+          {etappenGeordnet.map(s => <option key={s.id} value={s.id}>{hotelEtappenName(reise, s)}</option>)}
           <option value="anderer-ort">Anderen Ort suchen</option>
         </select></Feld>
         <Suchkalender start={d.anreise} ende={d.abreise} startLabel="Anreise" endeLabel="Abreise"
           startName="anreise" endeName="abreise" fehler={fehlerfeld} fehlerId={`${id}-fehler`}
           min={heutigesDatum()} max={datumVerschieben(heutigesDatum(), 730)} minTage={1} maxTage={90} naechte
           setzen={(anreise, abreise) => patch({ anreise, abreise })} />
-        <button type="button" name="gaeste" aria-describedby={fehlerfeld === 'gaeste' ? `${id}-fehler` : undefined} className="org-field stay22-guestbutton" aria-expanded={gaesteOffen} aria-controls={`${id}-gaeste`} onClick={() => setGaesteOffen(v => !v)}><span>Gäste</span><b>{personen} <ChevronDown size={15} aria-hidden="true" /></b></button>
-        <Feld label="Zimmer"><select value={d.zimmer} onChange={e => patch({ zimmer: Number(e.target.value) })}>{Array.from({ length: Math.min(d.erwachsene, 8) }, (_, i) => <option key={i} value={i + 1}>{i + 1} Zimmer</option>)}</select></Feld>
+        <button type="button" name="gaeste" aria-describedby={fehlerfeld === 'gaeste' ? `${id}-belegung ${id}-fehler` : `${id}-belegung`} className="org-field stay22-guestbutton" aria-expanded={gaesteOffen} aria-controls={`${id}-gaeste`} onClick={() => setGaesteOffen(v => !v)}><span>Gäste</span><b>{personen} <ChevronDown size={15} aria-hidden="true" /></b></button>
+        <Feld label="Zimmer"><select aria-describedby={`${id}-belegung`} value={d.zimmer ?? ''} onChange={e => patch({ zimmer: hotelBelegungZahl(e.target.value) })}>
+          <option value="">Bitte wählen</option>
+          {Array.from({ length: d.erwachsene === null ? HOTEL_ZIMMER_MAX : Math.min(d.erwachsene, HOTEL_ZIMMER_MAX) }, (_, i) => <option key={i} value={i + 1}>{i + 1} Zimmer</option>)}
+        </select></Feld>
         <button type="submit" className="org-go" disabled={ortLaedt || umgebung.laedt}><Search aria-hidden="true" /> {ergebnis ? 'Suche aktualisieren' : 'Suchen'}</button>
       </div>
       {stageId === 'anderer-ort' ? <div className="stay22-other-place"><label htmlFor={`${id}-ort`}>Stadt, Insel oder Region</label><OrtSuche rolle="ziel" variante="field" value={andererOrt} inputId={`${id}-ort`} ungueltig={fehlerfeld === 'ort' || Boolean(ortFehler)} describedBy={fehlerfeld === 'ort' ? `${id}-fehler` : ortFehler ? `${id}-ortfehler` : undefined} placeholder="Wohin möchtest du reisen?" inputClassName="stay22-placeinput" onChange={ortWaehlen} /><p>Diese Suche ändert deine Reiseetappen nicht.</p>{ortLaedt ? <p role="status">Reiseziel wird bestätigt …</p> : null}{ortFehler ? <p role="alert" id={`${id}-ortfehler`}>{ortFehler}</p> : null}</div> : null}
       {gaesteOffen ? <fieldset id={`${id}-gaeste`} className="stay22-guests"><legend>Belegung für die Suche</legend>
-        <Feld label="Erwachsene"><select value={d.erwachsene} onChange={e => { const n = Number(e.target.value); patch({ erwachsene: n, zimmer: Math.min(n, d.zimmer) }) }}>{d.erwachsene > 9 ? <option value={d.erwachsene} disabled>{d.erwachsene} – Gruppe aufteilen</option> : null}{Array.from({ length: 9 }, (_, i) => <option key={i} value={i + 1}>{i + 1}</option>)}</select></Feld>
-        <Feld label="Kinder"><select value={d.kinder} onChange={e => patch({ kinder: Number(e.target.value) })}>{Array.from({ length: 9 }, (_, i) => <option key={i} value={i}>{i}</option>)}</select></Feld>
-        <p>Bitte prüfe die Aufteilung deiner Reisegruppe. Kinderalter und genaue Zimmerbelegung bestätigst du beim Buchungsanbieter.</p>
+        <Feld label="Erwachsene"><select value={d.erwachsene ?? ''} onChange={e => patch({ erwachsene: hotelBelegungZahl(e.target.value) })}>
+          <option value="">Bitte wählen</option>
+          {Array.from({ length: HOTEL_ERWACHSENE_MAX }, (_, i) => <option key={i} value={i + 1}>{i + 1}</option>)}
+        </select></Feld>
+        <Feld label="Kinder"><select value={d.kinder ?? ''} onChange={e => patch({ kinder: hotelBelegungZahl(e.target.value) })}>
+          <option value="">Bitte wählen</option>
+          {Array.from({ length: HOTEL_KINDER_MAX + 1 }, (_, i) => <option key={i} value={i}>{i}</option>)}
+        </select></Feld>
       </fieldset> : null}
-      {stage ? <div className="stay22-datecontext"><CalendarDays size={15} aria-hidden="true" />{datumsabweichung ? <>Eigener Suchzeitraum <button type="button" onClick={() => patch(planDaten)}>Reisedaten übernehmen</button></> : planDaten.anreise && planDaten.abreise ? 'Aufenthaltsdaten aus deinem Reiseplan' : 'Ergänze die Aufenthaltsdaten für diese Etappe.'}</div> : null}
+      <p className="stay22-datecontext stay22-belegung" id={`${id}-belegung`}>{belegungHinweis}{belegungAngefasst ? <> <button type="button" onClick={() => { setGaesteOffen(true); patch(hotelBelegungZurueck()) }}>Belegung zurücksetzen</button></> : null}</p>
+      {stage ? <div className="stay22-datecontext"><CalendarDays size={15} aria-hidden="true" />{datumsabweichung ? <>Eigener Suchzeitraum <button type="button" onClick={() => patch({ anreise: vorlage.anreise, abreise: vorlage.abreise })}>Reisedaten übernehmen</button></> : hotelTerminHinweis(vorlage.herkunft)}</div> : null}
       <div className="stay22-location">
         <div className="stay22-location-title"><MapPin size={19} aria-hidden="true" /><div><strong>Die passende Lage für deine Reise</strong><p>Rund um dein Ziel oder nahe einem bestimmten Ort suchen.</p></div></div>
         <div className="stay22-location-fields"><label>Suchumgebung<select value={d.umgebung} onChange={e => patch({ umgebung: e.target.value })}>
