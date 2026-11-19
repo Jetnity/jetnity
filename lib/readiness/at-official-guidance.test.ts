@@ -20,7 +20,8 @@ test('Austria official links show each direct form, cost and fake-site warning w
  assert.match(html,/Österreichisches Sozialministerium/)
  assert.doesNotMatch(html,/\bETIAS-Antrag stellen\b/)
  const page=readFileSync(new URL('../../components/readiness/EinreiseLaenderpruefer.tsx',import.meta.url),'utf8')
- assert.match(page,/sicht\.zielCode === 'AT' \? <AtOfficialGuidance citizenshipCodes=\{sicht\.anzeige\.paare\.map/)
+ assert.match(page,/sicht\.zielCode === 'AT' \? <AtOfficialGuidance citizenshipCodes=\{sicht\.citizenshipCodes\}/)
+ assert.doesNotMatch(page,/citizenshipCodes=\{sicht\.anzeige\.paare\.map/)
 })
 
 test('BMI-group guidance is per answered passport, source-only and never a positive personal visa fact',()=>{
