@@ -19,6 +19,7 @@ const contracts = [
   ]],
   ['admin_cms_inspiration_confirm_v1', cmsSql, [['p_request_id', 'uuid', 'string', false]]],
   ['cms_inspiration_published_v1', cmsSql, []],
+  ['cms_inspiration_published_v2', 'scripts/db/admin-service-recovery-20261119/candidate.sql', []],
   ['admin_marketing_drafts_apply_v1', marketingSql, [['input', 'jsonb', 'Json', false]]],
   ['admin_marketing_drafts_read_v1', marketingSql, [['input', 'jsonb', 'Json', false]]],
 ] as const
