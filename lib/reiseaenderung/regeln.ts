@@ -10,7 +10,7 @@
 
 import { GRENZEN } from '@/lib/trips/schema'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
-import { AENDERUNG_GRENZEN, AENDERUNG_ARTEN } from '@/lib/reiseaenderung/schema'
+import { AENDERUNG_GRENZEN, KI_AENDERUNG_ARTEN } from '@/lib/reiseaenderung/schema'
 import { TRIP_INTERESTS, TRIP_ITEM_KINDS, TRIP_PACES } from '@/types/trips'
 import type { ReisefuerModell } from '@/lib/reiseaenderung/snapshot'
 
@@ -23,7 +23,7 @@ const INTERESSE_LISTE = TRIP_INTERESTS.map(
 ).join(', ')
 
 const ART_LISTE = TRIP_ITEM_KINDS.join(', ')
-const OP_LISTE = AENDERUNG_ARTEN.join(', ')
+const OP_LISTE = KI_AENDERUNG_ARTEN.join(', ')
 
 export function aenderungsregeln(heute: string, reise: ReisefuerModell): string {
   return [

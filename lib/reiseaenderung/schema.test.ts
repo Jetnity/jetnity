@@ -10,6 +10,7 @@ import assert from 'node:assert/strict'
 import { ANTWORT_ZU_DRITT, aenderungAntwort, leereOperation } from '@/lib/reiseaenderung/fixtures/antworten'
 import {
   AENDERUNG_ARTEN,
+  KI_AENDERUNG_ARTEN,
   AENDERUNG_FASSUNG,
   AENDERUNG_GRENZEN,
   AENDERUNG_JSON_SCHEMA,
@@ -113,7 +114,9 @@ describe('JSON-Schema und Zod sagen dasselbe', () => {
 
   test('dieselben Aufzählungen', () => {
     const op = AENDERUNG_JSON_SCHEMA.properties.operationen.items
-    assert.deepEqual([...op.properties.art.enum], [...AENDERUNG_ARTEN])
+    assert.deepEqual([...op.properties.art.enum], [...KI_AENDERUNG_ARTEN])
+    assert.equal(AENDERUNG_ARTEN.includes('punkt_entfernen'), true)
+    assert.equal(op.properties.art.enum.includes('punkt_entfernen'), false)
     assert.deepEqual([...op.properties.tempo.enum], [...TRIP_PACES, null])
     assert.deepEqual([...op.properties.punktArt.enum], [...TRIP_ITEM_KINDS, null])
   })
