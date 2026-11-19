@@ -116,7 +116,7 @@ describe('JSON-Schema und Zod sagen dasselbe', () => {
     const op = AENDERUNG_JSON_SCHEMA.properties.operationen.items
     assert.deepEqual([...op.properties.art.enum], [...KI_AENDERUNG_ARTEN])
     assert.equal(AENDERUNG_ARTEN.includes('punkt_entfernen'), true)
-    assert.equal(op.properties.art.enum.includes('punkt_entfernen'), false)
+    assert.equal((op.properties.art.enum as readonly string[]).includes('punkt_entfernen'), false)
     assert.deepEqual([...op.properties.tempo.enum], [...TRIP_PACES, null])
     assert.deepEqual([...op.properties.punktArt.enum], [...TRIP_ITEM_KINDS, null])
   })
