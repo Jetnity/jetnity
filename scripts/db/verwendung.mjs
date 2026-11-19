@@ -75,6 +75,11 @@ export const LOCAL_UNAPPLIED_RPCS = Object.freeze([
     sourcePath: 'lib/admin/content/cms-editor-2/server.ts',
     sqlPath: 'scripts/db/admin-editorial-cms-1/functions-candidate.sql',
   })),
+  Object.freeze({
+    name: 'cms_inspiration_published_v2',
+    sourcePath: 'lib/admin/content/cms-editor-2/server.ts',
+    sqlPath: 'scripts/db/admin-service-recovery-20261119/candidate.sql',
+  }),
   ...['admin_marketing_drafts_apply_v1', 'admin_marketing_drafts_read_v1'].map(name => Object.freeze({
     name,
     sourcePath: 'lib/admin/marketing/drafts/server.ts',

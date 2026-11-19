@@ -139,11 +139,12 @@ export async function kontingentBeanspruchen(
   })
 
   if (error) {
-    // `53400` und `22023` tragen Meldungen, die für Reisende geschrieben sind –
+    // `PT429` (neuer HTTP-429-Vertrag), altes `53400` und `22023` tragen
+    // Meldungen, die für Reisende geschrieben sind –
     // erschöpftes Kontingent, fehlende Sitzungskennung, unbekanntes Modell.
     // Alles andere ist ein Defekt oder ein Ausfall und bekommt den allgemeinen
     // Satz; die Begründung der Datenbank gehört dann nicht in den Browser.
-    if (error.code === '53400' || error.code === '22023' || error.code === 'P0001') {
+    if (error.code === 'PT429' || error.code === '53400' || error.code === '22023' || error.code === 'P0001') {
       return { ok: false, meldung: error.message }
     }
 
