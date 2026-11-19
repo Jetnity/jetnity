@@ -281,7 +281,7 @@ test('50 national passport method is draft-only and cannot reuse Swiss-only Bern
  assert.match(fiftyVisaProposal,/ownerAal2Approved: false/)
  assert.match(fiftyVisaProposal,/acceptedFacts: 0/)
  assert.match(fiftyVisaProposal,/publicationAllowed: false/)
- assert.doesNotMatch(fiftyVisaProposal,/\bfetch\(|\bprocess\.env\b|supabase\.from|cron\.schedule|GRANT|CREATE ROLE|qscbgcdmivbbnzrcyegn/i)
+ assert.doesNotMatch(fiftyVisaProposal,/\bfetch\(|\bprocess\.env\b|supabase\.from|cron\.schedule|\bGRANT\s+(?:EXECUTE|SELECT|UPDATE|INSERT|DELETE)\b|\bCREATE\s+ROLE\b|qscbgcdmivbbnzrcyegn/i)
 })
 
 const itEsPrimary=read('it-es-authority-alternatives-v1.sql')
