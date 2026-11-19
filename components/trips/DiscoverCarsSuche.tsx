@@ -4,7 +4,7 @@ import * as React from 'react'
 import { ExternalLink, Loader2 } from 'lucide-react'
 import { DISCOVERCARS_GENERISCH_HREF } from '@/lib/providers/discovercars/affiliate/ziel'
 import { DISCOVERCARS_DATENSCHUTZ } from '@/lib/providers/discovercars/widget/vertrag'
-import { discoverCarsWidgetLaden, type DiscoverCarsWidgetPhase } from '@/lib/providers/discovercars/widget/renderer'
+import { discoverCarsWidgetLaden, discoverCarsWidgetFreigegeben, type DiscoverCarsWidgetPhase } from '@/lib/providers/discovercars/widget/renderer'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 
 const AKTION = 'inline-flex min-h-11 w-full min-w-0 max-w-full items-center justify-center gap-2 whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
@@ -17,6 +17,7 @@ export default function DiscoverCarsSuche() {
   const [phase, setPhase] = React.useState<DiscoverCarsWidgetPhase>('laedt')
   const host = React.useRef<HTMLDivElement>(null)
   const id = React.useId()
+  const widgetFreigegeben = discoverCarsWidgetFreigegeben()
 
   React.useEffect(() => {
     if (!anzeigen || !host.current) return
@@ -39,9 +40,13 @@ export default function DiscoverCarsSuche() {
             Verbindungsdaten wie deine IP-Adresse und kann Cookies oder ähnliche Technologien nutzen.
             Deine gespeicherte Reise wird nicht übermittelt.
           </p>
-          <button type="button" onClick={() => { setPhase('laedt'); setAnzeigen(true) }} aria-describedby={`${id}-hinweis`} aria-controls={`${id}-formular`} className={`${AKTION} mt-4 bg-brand-800 text-white hover:bg-brand-900`}>
-            Suchformular laden
-          </button>
+          {widgetFreigegeben ? (
+            <button type="button" onClick={() => { setPhase('laedt'); setAnzeigen(true) }} aria-describedby={`${id}-hinweis`} aria-controls={`${id}-formular`} className={`${AKTION} mt-4 bg-brand-800 text-white hover:bg-brand-900`}>
+              Suchformular laden
+            </button>
+          ) : (
+            <p role="status" className="mt-3">Die zusätzliche Anbieter-Einbettung ist bis zur geprüften Datenschutzfreigabe ausgeschaltet. Nutze die vorhandene Mietwagensuche oder den direkten Partnerlink.</p>
+          )}
         </div>
       ) : (
         <div className="mt-4">
