@@ -233,3 +233,12 @@ Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsüber
 ---
 
 **STOP NACH DOKUMENTATIONSABNAHME:** Dieser Bericht startet keinen Runtime-/Agenten-Slice. Weitergehende Änderungen, insbesondere eine fundamentale Änderung der verbindlichen Bau-Reihenfolge und jede Production-Aktion, benötigen die dazugehörige neue ausdrückliche Owner-Entscheidung.
+
+### Nachtrag 19.11.2026 – Admin- und KI-Betrieb (PR zum Issue #1258)
+
+- **#1252 und #1257 sind auf main gemergt**, S1–S4 bleibt mangels echtem Gast-/Konto-/Provider-Browserlauf **P**, kein Production-Abnahmesignal. #1256 ist geschlossen. Der Konto-KI-Test wird nach regulärer 24h-Quotenerneuerung am 20.11. nachgeholt; keine Quota-Umgehung.
+- **Production-Cron:** `sync_profile_emails_hourly` bleibt aktiv und schlug im lesenden 24h-Check 24-mal fehl. `sync_creator_profile_core()` wurde mit der generischen Profilbereinigung bewusst entfernt. Gebündelter Owner-Schritt: verwaisten Cron nach exaktem Check ausplanen, **nicht** eine unnötige privilegierte Funktion wieder öffnen. SQL-Skript liegt **UNAPPLIED** im Admin-PR.
+- **CMS-Quellenkopplung:** Das vorhandene öffentliche `cms_inspiration_published_v1()` nutzt zweimal den gemeinsamen geschützten Admin-/Official-Truth-Lock. Um die fremde Guard-/Katalog-Baseline nicht zu ändern, liefert Dev jetzt eine **separate, nur veröffentlichte Revisionen lesende** `cms_inspiration_published_v2()` mit kontrolliertem `anon/authenticated`-EXECUTE ohne Guard-Lock; die App wechselt im Admin-PR auf v2. Echter `anon`-SQL-Readback in Dev bestand. Das alte v1 bleibt unverändert, seine kontrollierte Stilllegung ist ein getrennter künftiger Gate-Schritt. Production-DB und App **UNAPPLIED**.
+- **KI-Kontingent:** Dieselbe server-only-Reservierungsfunktion behält Limits, Sperre und Rechte; nur fünf explizite Quotenausnahmen liefern in Dev nun `PT429` statt `53400`. Ein isolierter 429-Datenbanklauf wurde zurückgerollt; das bestehende Konto-/Gastkontingent wurde nicht aufgefüllt oder umgangen. Production-Installation mit Owner-Freigabe offen.
+- **Reisebegleiter-Migration:** Production-Constraint `model_usage_funktion_werte` erlaubt nur Erstellung und Änderung, Dev auch `reisebegleiter`. Production-DB-Migration bleibt ein eigener gebündelter Owner-Schritt.
+- **Passkeys:** #1240 weiterhin Draft, noch nicht serverseitig aktiviert. SDK-/Re-Auth-/TOTP-/Sprach-/Gerätetest-Gates bleiben bis zu belegtem Exact-Head-CI und Owner-Autorisierung offen.
