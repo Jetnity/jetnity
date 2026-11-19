@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
@@ -321,4 +322,17 @@ test('ES source disagreement is quarantined only for funds while all unknown con
  assert.match(esScopedConflict,/return frozenset\(AT_TOPICS\)/)
  assert.match(esScopedConflict,/topicHasUnresolvedOriginalConflict/)
  assert.match(esScopedConflict,/legalRulesApproved':0/)
+})
+
+test('ES topic-scoped research conflict uses actual offline synthetic Python negatives', {timeout: 20000}, ()=>{
+ const fixture='scripts/official-truth-source-ref-reconciliation-v1.test.py'
+ const result=spawnSync('python3',[fixture,'-q'],{
+   encoding:'utf8',timeout:15000,maxBuffer:256*1024,cwd:process.cwd(),
+   env:{PATH:process.env.PATH||'/usr/bin:/bin',PYTHONNOUSERSITE:'1',PYTHONDONTWRITEBYTECODE:'1',PYTHONUTF8:'1'}
+ })
+ assert.equal(result.error,undefined)
+ assert.equal(result.signal,null)
+ assert.equal(result.status,0,(result.stderr||'').slice(-1400))
+ assert.match(result.stderr||'',/Ran 6 tests/)
+ assert.match(result.stderr||'',/\bOK\b/)
 })
