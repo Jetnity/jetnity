@@ -38,7 +38,7 @@ describe('DiscoverCars offizieller Widget-Vertrag', () => {
   test('bestehende Ablehnungen, inkonsistente CMP und verlorene API verhindern Anzeigen', () => {
     const consents: Record<string, boolean> = Object.fromEntries(CMP_CATEGORIES.map(category => [category, true]))
     const api = { getAllConsents: () => consents, getConsent: (category: string) => consents[category], hasExplicitConsent: () => true }
-    assert.equal(discoverCarsDatenschutzErlaubt(undefined, false), true)
+    assert.equal(discoverCarsDatenschutzErlaubt(undefined, false), false, 'display click alone is never explicit consent')
     assert.equal(discoverCarsDatenschutzErlaubt(undefined, true), false)
     assert.equal(discoverCarsDatenschutzErlaubt(null, false), false)
     assert.equal(discoverCarsDatenschutzErlaubt({}, false), false)
