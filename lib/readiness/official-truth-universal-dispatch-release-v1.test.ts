@@ -207,3 +207,17 @@ test('50 Austrian ministry visa candidate classes remain conditional and unpubli
  assert.match(atVisaCandidate,/REVOKE ALL/)
  assert.doesNotMatch(atVisaCandidate,/cron\.alter_job|cron\.schedule|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
 })
+
+const genericUnifiedRead=read('register-generic-observations-v2.sql')
+test('the source register reads actual GENERIC observation receipts while publication remains closed',()=>{
+ assert.match(genericUnifiedRead,/^-- DEV ONLY/)
+ assert.match(genericUnifiedRead,/REGISTRY-READ-V2/)
+ assert.match(genericUnifiedRead,/CREATE OR REPLACE VIEW jetnity_source_registry_private\.latest_research_status_v1/)
+ assert.match(genericUnifiedRead,/FROM jetnity_source_dispatch_private\.observations_v1/)
+ assert.match(genericUnifiedRead,/GENERIC_CHANGED_PENDING_LEGAL_REVIEW/)
+ assert.match(genericUnifiedRead,/GENERIC_SOURCE_UNAVAILABLE/)
+ assert.match(genericUnifiedRead,/GENERIC_OBSERVED_UNQUALIFIED/)
+ assert.match(genericUnifiedRead,/LEGACY_AT_PROTECTED_MONITOR_UNTOUCHED/)
+ assert.match(genericUnifiedRead,/REGISTRY_READ_V2_POSTCHECK_ROLLBACK/)
+ assert.doesNotMatch(genericUnifiedRead,/cron\.alter_job|cron\.schedule|CREATE ROLE|GRANT EXECUTE|qscbgcdmivbbnzrcyegn/i)
+})
