@@ -1,5 +1,7 @@
 # Jetnity – Roadmap
 
+> **Verbindliche Pflichtlektüre:** [Jetnity-Gesamtplan vom 18.11.2026 – Funktionen, Drei-Phasen-Strategie und Restarbeiten](docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md). Jeder Chat liest ihn zuerst und ergänzt fertiggestellte Funktionen im selben PR.
+
 > 18.11.2026: Flight discovery and country-aware airport autocomplete: implemented as an isolated preview; review and coordinated widget/app release remain. [Status](docs/FLIGHT_DISCOVERY_2026-11-18.md).
 
 ## Aktuell: CH→DE-Fortsetzung korrigieren; regelmäßigen Dev-Import abnehmen — 14.11.2026
