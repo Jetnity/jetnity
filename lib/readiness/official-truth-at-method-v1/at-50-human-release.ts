@@ -14,7 +14,7 @@ export type At50PreviewSelection = Readonly<{
  repoOwner: string | undefined
  repoSlug: string | undefined
  branch: string | undefined
- getSupabaseUrl: () => string
+ getSupabaseUrl: () => string | undefined
 }>
 
 /** Pure, strict target check; do not even read the Supabase URL until the
