@@ -35,8 +35,9 @@ def stage(archive: Path, output: Path):
     source = archive.stat()
     require(stat.S_ISREG(source.st_mode) and 0 < source.st_size <= 8 * 1024 * 1024,
             "source_archive_size_refused")
-    require(hashlib.file_digest(archive.open("rb"), "sha256").hexdigest() == ARCHIVE_SHA,
-            "original_archive_identity_refused")
+    with archive.open("rb") as original:
+        require(hashlib.file_digest(original, "sha256").hexdigest() == ARCHIVE_SHA,
+                "original_archive_identity_refused")
     parent = output.parent.resolve(strict=True)
     require(parent.is_dir() and not output.exists() and not output.is_symlink()
             and output.name not in ("", ".", ".."), "new_private_output_required")
@@ -57,7 +58,7 @@ def stage(archive: Path, output: Path):
             seen = set()
             catalog = {}
             for item in entries:
-                name = item.name
+                name = item.name.rstrip("/") if item.isdir() else item.name
                 require(name not in seen and (name == "entry-requirements"
                         or name.startswith(PREFIX))
                         and not name.startswith("/")
@@ -138,7 +139,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
-        print(json.dumps(stage(args.archive.resolve(strict=True), args.output),
+        print(json.dumps(stage(args.archive, args.output),
                          separators=(",", ":")))
     except (OSError, ValueError, KeyError, TypeError, RuntimeError, tarfile.TarError):
         raise SystemExit("OFFICIAL_TRUTH_PRIVATE_BUNDLE_REFUSED accepted=0 published=0")

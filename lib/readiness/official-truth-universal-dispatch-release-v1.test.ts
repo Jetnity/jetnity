@@ -132,7 +132,7 @@ test('Austria missing topic source candidates preserve all Dev-only and unavaila
  assert.match(atGaps,/fraud_warnings/)
  assert.match(atGaps,/AT_SOURCE_GAPS_PREDECESSOR_REFUSED/)
  assert.match(atGaps,/AT_SOURCE_GAPS_POSTCHECK_ROLLBACK/)
- assert.match(atGaps,/NOT EXISTS\(SELECT 1 FROM jetnity_global_research_private\.cases_v1/)
+ assert.match(atGaps,/OR EXISTS\(SELECT 1 FROM jetnity_global_research_private\.cases_v1/)
  assert.match(atGaps,/customer_answer<>'derzeit nicht verfügbar'/)
  assert.doesNotMatch(atGaps,/\bCREATE ROLE\b|\bGRANT EXECUTE\b|\bcron\.schedule\s*\(|\bcron\.alter_job\s*\(|\bCREATE OR REPLACE FUNCTION\s+public\.|qscbgcdmivbbnzrcyegn/i)
 })
