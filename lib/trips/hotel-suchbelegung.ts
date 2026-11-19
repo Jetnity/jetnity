@@ -169,7 +169,14 @@ export function hotelBelegungHinweis(reisende: number | null, belegung: HotelBel
       : ''
     return `${hotelReisegruppeText(reisende)} Alter und Zimmer sind nicht belegt. Bitte lege Erwachsene, Kinder und Zimmer für diese Suche fest.${grenze}`
   }
-  return hotelAnbieterHinweis(belegung) ?? HOTEL_HINWEIS_SUCHE
+  // The trip's headcount is not an adult/child allocation. A hotel search
+  // may intentionally cover a subset, so disagreement is advisory, not a gate.
+  const suchGaeste = belegung.erwachsene + belegung.kinder
+  const abweichung = reisende !== null && suchGaeste !== reisende
+    ? `Deine Reisegruppe umfasst ${reisende} ${reisende === 1 ? 'Person' : 'Personen'}, diese Hotelsuche ${suchGaeste} ${suchGaeste === 1 ? 'Person' : 'Personen'}. Das kann beabsichtigt sein, wenn nur ein Teil deiner Reisegruppe hier übernachtet. Bitte prüfe die Belegung.`
+    : null
+  const anbieterHinweis = hotelAnbieterHinweis(belegung) ?? HOTEL_HINWEIS_SUCHE
+  return abweichung ? `${abweichung} ${anbieterHinweis}` : anbieterHinweis
 }
 
 export function hotelGaesteText(reisende: number | null, belegung: HotelBelegungsfelder): string {

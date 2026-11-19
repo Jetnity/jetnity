@@ -121,6 +121,26 @@ describe('Hotel-Suchbelegung', () => {
     assert.equal(hotelAnbieterHinweis({ kinder: 0, zimmer: 1 }), null)
   })
 
+  test('abweichende Teilgruppe zeigt nur einen Hinweis und bewahrt Anbieterhinweise', () => {
+    const teilgruppe = { erwachsene: 2, kinder: 1, zimmer: 1 }
+    const message = hotelBelegungHinweis(4, teilgruppe)
+    assert.match(message, /Reisegruppe umfasst 4 Personen/)
+    assert.match(message, /Hotelsuche 3 Personen/)
+    assert.match(message, /nur ein Teil deiner Reisegruppe/)
+    assert.match(message, /Bitte prüfe die Belegung/)
+    assert.match(message, /Kinderalter.*beim Anbieter bestätigen/)
+    assert.equal(hotelBelegungPruefen(teilgruppe).ok, true, 'eine mögliche Teilgruppenbuchung bleibt erlaubt')
+    const ohneKind = hotelBelegungHinweis(4, { erwachsene: 2, kinder: 0, zimmer: 1 })
+    assert.match(ohneKind, /Hotelsuche 2 Personen/)
+    assert.match(ohneKind, /Diese Belegung gilt nur für die Suche/)
+    const komplett = hotelBelegungHinweis(4, { erwachsene: 2, kinder: 2, zimmer: 2 })
+    assert.doesNotMatch(komplett, /nur ein Teil deiner Reisegruppe/)
+    assert.match(komplett, /Kinderalter und die Aufteilung/)
+    assert.equal(hotelBelegungHinweis(1, { erwachsene: 1, kinder: 0, zimmer: 1 }), HOTEL_HINWEIS_SUCHE)
+    assert.equal(hotelBelegungHinweis(null, teilgruppe), HOTEL_HINWEIS_ALTER)
+    assert.match(hotelBelegungHinweis(4, { erwachsene: 2, kinder: null, zimmer: 1 }), /Alter und Zimmer sind nicht belegt/)
+  })
+
   test('mehr Zimmer als Erwachsene werden begrenzt und ungültige Zahlen bleiben draussen', () => {
     assert.deepEqual(
       hotelBelegungSetzen({ erwachsene: 2, kinder: 1, zimmer: 2 }, { erwachsene: 1 }),
