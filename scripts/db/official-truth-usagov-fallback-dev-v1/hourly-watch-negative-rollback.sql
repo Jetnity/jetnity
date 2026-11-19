@@ -30,7 +30,9 @@ BEGIN
  END;
  BEGIN
   TRUNCATE jetnity_usagov_watch_private.requests_v1;
- EXCEPTION WHEN SQLSTATE 'P7990' THEN t:=true;
+ EXCEPTION
+  WHEN SQLSTATE 'P7990' THEN t:=true;
+  WHEN SQLSTATE '0A000' THEN t:=true; -- FK child stops TRUNCATE before trigger
  END;
  IF NOT u OR NOT d OR NOT t THEN
   RAISE EXCEPTION 'USAGOV_WATCH_REQUESTS_MUTABLE'; END IF;
