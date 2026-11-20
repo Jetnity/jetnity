@@ -12,7 +12,7 @@ export async function deliverProof({env=process.env,fetchImpl=globalThis.fetch}=
   env.GITHUB_HEAD_REF!==HEAD||env.GITHUB_EVENT_PULL_REQUEST_NUMBER!=='1254')
     return {status:'refused',reason:'not_exact_pr'}
   const token=env.GITHUB_TOKEN
-  if(typeof token!=='string'||!token.match(/^[A-Za-z0-9_-]{20,1000}$/)||typeof fetchImpl!=='function')
+  if(typeof token!=='string'||(token.length<20||token.length>4096||/[\\s\\x00-\\x1f]/.test(token))||typeof fetchImpl!=='function')
     return {status:'refused',reason:'token_or_transport'}
   const headers={Authorization:'Bearer '+token,Accept:'application/vnd.github+json',
     'X-GitHub-Api-Version':'2022-11-28'}
@@ -45,6 +45,6 @@ export async function deliverProof({env=process.env,fetchImpl=globalThis.fetch}=
 }
 if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
  const r=await deliverProof()
- process.stdout.write(r.status+'\n')
+ process.stdout.write(r.status+':'+(r.reason??'checked')+'\n')
  process.exitCode=r.status==='verified'?0:1
 }
