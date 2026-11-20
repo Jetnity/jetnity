@@ -33,6 +33,34 @@ export const AT_VISA_APPLICATION_BMEIA_TERMS=Object.freeze({
   connectingVisaIfRequiredAndTicketsMentioned:true as const,
   visaAEligibilityMustBeDecidedSeparately:true as const,
  }),
+ // For VISA APPLICATIONS only: jurisdiction, submission and processing
+ // reported by BMEIA; never individualized without residence, main
+ // destination, visa class, consular evidence and the protected owner gates.
+ consularFilingResearch:Object.freeze({
+  earliestApplicationMonthsBeforePlannedTravel:6,
+  latestOrdinaryApplicationDaysBeforePlannedTravel:15,
+  mainSchengenDestinationDeterminesResponsibleMemberState:true as const,
+  firstPlannedSchengenEntryIfNoMainDestination:true as const,
+  austrianConsularPostDependsOnLawfulResidence:true as const,
+  representedByOtherSchengenConsulateMayApply:true as const,
+  authorizedExternalSubmissionProviderMayChargeExtraFee:true as const,
+  specificConsularPostOrOfficialApplicationForm:null,
+ }),
+ supportingDocumentsResearch:Object.freeze({
+  signedApplicationFormMentioned:true as const,
+  icaoPhotoMentioned:true as const,
+  priorSchengenFingerprintsLookbackMonths:59,
+  transportReservationOrBookingAcceptedAsEvidence:true as const,
+  paidTransportTicketNotRequired:true as const,
+  translationMayBeRequestedByConsularAuthority:true as const,
+  individualMissionDocumentRequirementsMustBeChecked:true as const,
+ }),
+ processingResearch:Object.freeze({
+  ordinarySchengenCalendarDays:15,
+  extendedSchengenCalendarDays:45,
+  nationalVisaDDecisionMonths:6,
+  individualApprovalOrTurnaroundGuaranteed:false as const,
+ }),
  // BMEIA published BASIC application fees; age, facilitation agreement,
  // family freedom of movement and exemption status are unresolved per person.
  // Do not output one of these numbers as an individual price.
@@ -54,6 +82,10 @@ export type AtVisaApplicationEvidenceResearch=Readonly<{
  terms:typeof AT_VISA_APPLICATION_BMEIA_TERMS;
  applicationRequiredForThisPersonVerified:false;
  actualPassportIssueExpiryAndBlankPagesVerified:false;
+ actualResidenceMainDestinationAndResponsibleConsulateVerified:false;
+ actualVisaCategoryAndFilingDeadlineVerified:false;
+ actualMissionFormAndBiometricsExceptionVerified:false;
+ actualProcessingTimeAndPurposeVerified:false;
  financialPurposeAndReturnEvidenceVerified:false;
  actualInsuranceExceptionChecked:false;
  minorGuardianContextVerified:false;
@@ -66,6 +98,9 @@ export type AtVisaApplicationEvidenceResearch=Readonly<{
  personalFinancialMeansAnswer:'derzeit nicht verfügbar';
  personalMinorConsentAnswer:'derzeit nicht verfügbar';
  personalHealthInsuranceAnswer:'derzeit nicht verfügbar';
+ personalConsularPost:'derzeit nicht verfügbar';
+ personalFilingDeadline:'derzeit nicht verfügbar';
+ personalProcessingTime:'derzeit nicht verfügbar';
  personalFeeAmountEur:null;
  personalApplicationFormUrl:null;
  publicationAllowed:false;
@@ -79,6 +114,10 @@ export function atVisaApplicationEvidenceResearch(passportResearchCode:string):A
   terms:AT_VISA_APPLICATION_BMEIA_TERMS,
   applicationRequiredForThisPersonVerified:false,
   actualPassportIssueExpiryAndBlankPagesVerified:false,
+  actualResidenceMainDestinationAndResponsibleConsulateVerified:false,
+  actualVisaCategoryAndFilingDeadlineVerified:false,
+  actualMissionFormAndBiometricsExceptionVerified:false,
+  actualProcessingTimeAndPurposeVerified:false,
   financialPurposeAndReturnEvidenceVerified:false,
   actualInsuranceExceptionChecked:false,
   minorGuardianContextVerified:false,
@@ -91,6 +130,9 @@ export function atVisaApplicationEvidenceResearch(passportResearchCode:string):A
   personalFinancialMeansAnswer:'derzeit nicht verfügbar',
   personalMinorConsentAnswer:'derzeit nicht verfügbar',
   personalHealthInsuranceAnswer:'derzeit nicht verfügbar',
+  personalConsularPost:'derzeit nicht verfügbar',
+  personalFilingDeadline:'derzeit nicht verfügbar',
+  personalProcessingTime:'derzeit nicht verfügbar',
   personalFeeAmountEur:null,personalApplicationFormUrl:null,
   publicationAllowed:false,
  })

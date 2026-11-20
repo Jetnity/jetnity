@@ -20,6 +20,22 @@ test('BMEIA visa application page is AT-only: two blank pages and months of vali
  assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.meansAndPurpose.fixedUniversalCashAmount,null)
  assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.minor.exactCustodyAndGuardianEvidenceNeedsCheck,true)
  assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.transit.visaAEligibilityMustBeDecidedSeparately,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.earliestApplicationMonthsBeforePlannedTravel,6)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.latestOrdinaryApplicationDaysBeforePlannedTravel,15)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.mainSchengenDestinationDeterminesResponsibleMemberState,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.firstPlannedSchengenEntryIfNoMainDestination,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.austrianConsularPostDependsOnLawfulResidence,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.representedByOtherSchengenConsulateMayApply,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.authorizedExternalSubmissionProviderMayChargeExtraFee,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.consularFilingResearch.specificConsularPostOrOfficialApplicationForm,null)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.supportingDocumentsResearch.priorSchengenFingerprintsLookbackMonths,59)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.supportingDocumentsResearch.paidTransportTicketNotRequired,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.supportingDocumentsResearch.transportReservationOrBookingAcceptedAsEvidence,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.supportingDocumentsResearch.translationMayBeRequestedByConsularAuthority,true)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.processingResearch.ordinarySchengenCalendarDays,15)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.processingResearch.extendedSchengenCalendarDays,45)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.processingResearch.nationalVisaDDecisionMonths,6)
+ assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.processingResearch.individualApprovalOrTurnaroundGuaranteed,false)
  assert.equal(AT_VISA_APPLICATION_BMEIA_TERMS.fraudNotice.officialAuthorityWarnsAgainstExpensiveVisaAgencies,true)
 })
 test('All AT50 passport categories remain unavailable for individual BMEIA documentary, fee and family requirements',()=>{
@@ -33,6 +49,10 @@ test('All AT50 passport categories remain unavailable for individual BMEIA docum
   assert.equal(evidence.scope,'AUSTRIAN_VISA_APPLICATIONS_ONLY')
   for(const name of ['applicationRequiredForThisPersonVerified',
    'actualPassportIssueExpiryAndBlankPagesVerified',
+   'actualResidenceMainDestinationAndResponsibleConsulateVerified',
+   'actualVisaCategoryAndFilingDeadlineVerified',
+   'actualMissionFormAndBiometricsExceptionVerified',
+   'actualProcessingTimeAndPurposeVerified',
    'financialPurposeAndReturnEvidenceVerified','actualInsuranceExceptionChecked',
    'minorGuardianContextVerified','airportTransitVsEntryVerified',
    'applicantAgeFeeExemptionsAndVisaCategoryChecked',
@@ -40,7 +60,8 @@ test('All AT50 passport categories remain unavailable for individual BMEIA docum
    'publicationAllowed'] as const) assert.equal(evidence[name],false)
   for(const name of ['personalPassportValidityAnswer','personalBlankPagesAnswer',
    'personalFinancialMeansAnswer','personalMinorConsentAnswer',
-   'personalHealthInsuranceAnswer'] as const) assert.equal(evidence[name],'derzeit nicht verfügbar')
+   'personalHealthInsuranceAnswer','personalConsularPost',
+   'personalFilingDeadline','personalProcessingTime'] as const) assert.equal(evidence[name],'derzeit nicht verfügbar')
   assert.equal(evidence.personalFeeAmountEur,null)
   assert.equal(evidence.personalApplicationFormUrl,null)
   assert.equal(row.individualVisaQualified,false)
