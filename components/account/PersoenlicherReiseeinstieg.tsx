@@ -31,7 +31,7 @@ export default function PersoenlicherReiseeinstieg({
           <h2 className="mt-2 break-words text-2xl font-semibold tracking-tight sm:text-3xl">
             {fortsetzung ? fortsetzung.title : erstesMal ? 'Beginne deine erste Reise.' : nurArchiv ? 'Wohin geht deine nächste Reise?' : 'Dein Plan. Dein nächster Schritt.'}
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/90">
+          <p className="mt-3 max-w-prose text-sm leading-6 text-white/90">
             {fortsetzung
               ? `Hier hast du zuletzt weitergeplant${zeitraum ? ` · ${zeitraum}` : ''}. Öffne deinen Reiseplan und mache dort weiter.`
               : erstesMal

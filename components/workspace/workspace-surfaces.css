@@ -207,7 +207,7 @@
 .workspace-content [data-workspace-trip-parts] { border-radius: 1rem; }
 .workspace-trip-parts-kopf { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--workspace-edge); }
 .workspace-trip-parts-kopf h3 { font-size: 1.125rem; font-weight: 650; letter-spacing: -.02em; color: var(--workspace-ink); }
-.workspace-trip-parts-kopf p { font-size: .8125rem; color: var(--workspace-muted); margin-top: .25rem; overflow-wrap: anywhere; }
+.workspace-trip-parts-kopf p { max-width: 65ch; font-size: .8125rem; color: var(--workspace-muted); margin-top: .25rem; overflow-wrap: anywhere; }
 .workspace-content [data-workspace-trip-parts] ul button { padding: 1rem 1.5rem; min-height: 90px; }
 .workspace-content :where([data-attention-punkt], .workspace-route-overview button, [data-workspace-trip-parts] ul button):focus-visible { outline-offset: -4px; }
 @media (max-width: 40rem) {

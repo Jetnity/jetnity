@@ -29,7 +29,7 @@ export function Seitenkopf({
       <div className="min-w-0 max-w-3xl">
         {kicker ? <p className="text-kicker uppercase text-muted-foreground">{kicker}</p> : null}
         <h1 className="mt-1 text-display text-foreground [overflow-wrap:anywhere]">{titel}</h1>
-        {children ? <div className="mt-2 max-w-2xl text-body text-muted-foreground">{children}</div> : null}
+        {children ? <div className="mt-2 max-w-prose text-body text-muted-foreground">{children}</div> : null}
       </div>
       {aktion ? <div className="min-w-0 shrink-0">{aktion}</div> : null}
     </header>

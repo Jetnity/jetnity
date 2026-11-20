@@ -262,7 +262,7 @@ export default function Reisevorbereitung({
               : `${anwendbareSlots.length} ${anwendbareSlots.length === 1 ? 'Person' : 'Personen'}`
           }
         >
-          <p className="text-xs leading-5 text-ink-800">
+          <p className="max-w-prose text-xs leading-5 text-ink-800">
             Mehrere Staatsbürgerschaften und Reisedokumente sind möglich. Jetnity fragt nur notwendige Angaben.
             Keine Passnummern, keine Gesundheitsdaten.
           </p>
@@ -648,7 +648,7 @@ function ReisendenKarte({
             <ChevronDown className="h-4 w-4 group-open/traveller:rotate-180" aria-hidden="true" />
           </summary>
           <form
-            className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&>*]:min-w-0 [&>*]:max-w-full [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1 [&_select]:max-w-full [&_input]:max-w-full"
+            className="mt-2 grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&>*]:min-w-0 [&>*]:max-w-full [&>p]:max-w-prose [&_.grid]:w-full [&_.grid]:min-w-0 [&_.grid]:max-w-full [&_.grid]:grid-cols-1 [&_select]:max-w-full [&_input]:max-w-full"
             onSubmit={(event) => {
               event.preventDefault()
               steuerung.speichern(slot.clientRef)

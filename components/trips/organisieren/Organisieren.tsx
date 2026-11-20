@@ -203,7 +203,7 @@ export default function Organisieren({
         <h2 id="workspace-organisieren-titel" data-workspace-modus-heading tabIndex={-1} className="sr-only">
           {titel} organisieren
         </h2>
-        <p className="text-meta text-[color:var(--org-muted)]">Anbieter öffnen sich separat. Deine gespeicherte Reise bleibt bei Jetnity; eine externe Buchung wird nicht automatisch übernommen.</p>
+        <p className="max-w-prose text-meta text-[color:var(--org-muted)]">Anbieter öffnen sich separat. Deine gespeicherte Reise bleibt bei Jetnity; eine externe Buchung wird nicht automatisch übernommen.</p>
         <a href={providerZurReiseplanUrl(reise, rueckkehrTagId)} className="org-rueckkehr" data-provider-rueckkehr="plan">Zurück zu meinem Reiseplan</a>
       </div>
       <div className="org-wrap org-body">

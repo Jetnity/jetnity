@@ -147,7 +147,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             Direktflüge
           </label>
         </div>
-        <p className="org-note mt-3">
+        <p className="org-note mt-3 max-w-prose">
           Flüge und Preise öffnen sich bei Booking.com in einem neuen Tab. Bei einer Buchung kann Jetnity eine
           Provision erhalten.
         </p>

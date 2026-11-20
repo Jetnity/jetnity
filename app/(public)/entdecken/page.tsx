@@ -35,7 +35,7 @@ export default async function EntdeckenSeite({ searchParams }: {
             : 'Entdecke veröffentlichte Reiseideen. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.'}</p>
         </header>
         <InspirationExplorer initial={initial} ziele={inspiration.ziele} status={inspiration.status} />
-        <p className="mt-8 max-w-2xl text-sm leading-6 text-ink-950">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
+        <p className="mt-8 max-w-prose text-sm leading-6 text-ink-950">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
       </div>
     </main>
   )

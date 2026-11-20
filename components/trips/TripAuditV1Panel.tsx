@@ -104,7 +104,7 @@ export default function TripAuditV1Panel({ reise, ungeplantePunkte, integriert =
       <div className={integriert ? 'workspace-audit-intro' : undefined}>
       <div>
       <h3 className="font-semibold text-brand-800">Gespeicherten Reiseplan prüfen</h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800">
+      <p className="mt-1 max-w-prose text-sm leading-6 text-ink-800">
         Unterkunftsnächte, Zeiten und Verbindungen gemeinsam ansehen. Die Prüfung liest deinen Plan und ändert nichts.
         Ausgewählt bedeutet nicht gebucht; auch deine Buchungsmarkierungen sind keine Bestätigung durch einen Anbieter.
       </p>
