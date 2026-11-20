@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import {test} from 'node:test'
 import {readFileSync} from 'node:fs'
 const base=new URL('../../../../',import.meta.url)
-const file=p=>readFileSync(new URL(p,base),'utf8')
+const file=(p:string)=>readFileSync(new URL(p,base),'utf8')
 const sql=file('scripts/db/official-truth-bg1-self-heal-dev-1/rehearse-protected-successor-v3-with-five-minute-alarm.ROLLBACK.sql')
 const dto=file('scripts/db/official-truth-bg1-self-heal-dev-1/bg1-five-minute-alarm-kind-v2.CANDIDATE.sql')
 const workflow=file('.github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml')
