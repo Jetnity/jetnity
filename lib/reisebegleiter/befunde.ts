@@ -185,6 +185,16 @@ export const BEFUNDE = [
     bezugsart: 'etappe',
   },
 
+  // ---- Curated non-official day ideas --------------------------------------
+  // Closed suggestions, NOT provider/price/availability/official claims.
+  // The model can only select this key for the exact Krabi/Thailand stage.
+  {
+    schluessel: 'schritt_krabi_tagesidee',
+    rolle: 'schritt',
+    text: 'Für einen Tag in Krabi bietet sich als unverbindliche Idee ein Vormittag an einem Strand, ein Nachmittag mit Natur oder einer Bootstour bei geeignetem Wetter und ein Abend mit lokaler Küche an. Transfers, Wetter und Verfügbarkeit bitte eigenständig prüfen.',
+    bezugsart: 'etappe',
+  },
+
   // --- Reisende ------------------------------------------------------------
   {
     schluessel: 'reisende_ohne_dokument',
@@ -409,6 +419,10 @@ export function angeboteneBefunde(kontext: AssistantTruthContext): Befundangebot
       zu('etappe_ohne_land', ref)
       zu('schritt_etappenland_ergaenzen', ref)
       etwasOffen = true
+    }
+
+    if (stage.countryCode === 'TH' && stage.name?.trim().toLocaleLowerCase('de') === 'krabi') {
+      zu('schritt_krabi_tagesidee', ref)
     }
 
     if (stage.name === null) {

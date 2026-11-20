@@ -22,6 +22,7 @@ import { modellZustand } from '@/lib/modell/konfiguration'
 import { kontingentBeanspruchen, nutzungAbschliessen } from '@/lib/modell/kontingent'
 import { operationenAnwenden, type KennungFn } from '@/lib/reiseaenderung/anwenden'
 import { reiseaenderungErzeugen, type Aenderungsergebnis } from '@/lib/reiseaenderung/erzeugen'
+import { kiGraphSicherheit } from '@/lib/reiseaenderung/ki-schutz'
 import { aenderungAlsNutzlast } from '@/lib/reiseaenderung/nutzlast'
 import { modellFuerReiseaenderung } from '@/lib/reiseaenderung/routing'
 import { reiseaenderungSchema } from '@/lib/reiseaenderung/schema'
@@ -200,6 +201,11 @@ export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionserg
     kontoKennung,
   )
   if (!angewandt.ok) return { ok: false, meldung: angewandt.fehler.meldung }
+
+  // Recheck against the current server-loaded trip, never trusting the
+  // browser's prior preview or a replayed collection of model operations.
+  const sicher = kiGraphSicherheit(tageEtappenZuordnen(aktuell), angewandt.reise)
+  if (!sicher.ok) return { ok: false, meldung: sicher.meldung }
 
   const orte = await reiseOrteKanonisieren(angewandt.reise)
   if (!orte.ok) return orte
