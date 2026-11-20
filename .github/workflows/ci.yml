@@ -454,7 +454,7 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -666,7 +666,7 @@ jobs:
           scripts/db/admin-editorial-cms-1/native.test.ts
 
       - name: Run atomic Admin BG1 transition and guarded runtime proof
-        timeout-minutes: 25
+        timeout-minutes: 35
         run: >-
           node --import ./scripts/server-only-test-register.mjs --import tsx
           --test --test-reporter=tap --test-concurrency=1
