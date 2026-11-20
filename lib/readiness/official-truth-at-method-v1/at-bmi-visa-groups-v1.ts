@@ -2,6 +2,7 @@ import {atWesternBalkanIssuerReview,type AtWesternBalkanIssuerReview} from './at
 import {atGbBmiCategoryReview,type AtGbBmiCategoryReview} from './at-gb-bmi-nationality-categories-v1'
 import {atAirportTransitVisaAResearch,type AtAirportTransitVisaAResearch} from './at-airport-transit-visa-a-research-v1'
 import {atBmiDocumentRecognitionResearch,type AtBmiDocumentRecognitionResearch} from './at-bmi-document-recognition-research-v1'
+import {atVisaApplicationEvidenceResearch,type AtVisaApplicationEvidenceResearch} from './at-visa-application-evidence-research-v1'
 
 // Checked only against Austrian BMI source-category list (06.11.2026) and
 // BMEIA visa conditions (19.11.2026). This is NOT an individualized rule,
@@ -68,7 +69,8 @@ export type AtBmiSourceReview=Readonly<{code:string;group:AtBmiGroup;label:strin
  personalVisaEffect:null;verifiedPrice:null;issuerDocumentCrosscheck:AtWesternBalkanIssuerReview|null;
  britishPassportCategoryCrosscheck:AtGbBmiCategoryReview|null;
  airportTransitVisaAResearch:AtAirportTransitVisaAResearch;
- passportRecognitionSourceReview:AtBmiDocumentRecognitionResearch|null}>
+ passportRecognitionSourceReview:AtBmiDocumentRecognitionResearch|null;
+ visaApplicationEvidenceResearch:AtVisaApplicationEvidenceResearch}>
 export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
  if(!/^[A-Z]{2}$/.test(code))return null
  const group=groups.get(code);if(!group)return null
@@ -89,5 +91,6 @@ export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
   britishPassportCategoryCrosscheck:atGbBmiCategoryReview(code),
   airportTransitVisaAResearch:atAirportTransitVisaAResearch(code),
   passportRecognitionSourceReview:atBmiDocumentRecognitionResearch(code),
+  visaApplicationEvidenceResearch:atVisaApplicationEvidenceResearch(code),
  })
 }
