@@ -42,12 +42,12 @@ BEGIN
  OR (SELECT count(*) FROM jsonb_array_elements_text(sn->'setconfig') t WHERE t='session_preload_libraries=supautils, safeupdate')<>1
  THEN RAISE EXCEPTION 'BG1_PROD_V3_PRELOAD_SCOPE_CHANGED' USING ERRCODE='P7991';END IF;
  FOR v IN SELECT * FROM (VALUES
-    ('official_v3_guard_private.assert_catalog_v1', 'c0f4f9704a7eec6a0a43c6c2b27990ee9a5488db462aa0377f7b4ae8e30c09cf'),
-    ('official_v3_guard_private.audit_v1', '7f9acc800b3b01ad755d608029bd88bf3533496e4602037641b7568c1ce64312'),
-    ('official_v3_guard_private.catalog_status_v1', '6880695c2a5986fee7d5b4357612875b449240ea03020831ba691826509a0101'),
-    ('official_v3_guard_private.latch_incident_v1', '4c85722cb02ca77332f8292f6ec32eb891b17b3fcb6bfc44a1c36d13acf5645f'),
-    ('official_v3_guard_private.require_open_v1', 'ad7ebc80c5d50a7c8a6cfad475ed55001b1b8e519db6c9a2afecbed2ed61f1bb'),
-    ('public.official_v3_guard_alarm_status_v1', '7b1c8e34dd4db19b1d3552424ec442e7a3e741feedb4855137337d09e77c8537')) AS expected(signature,digest) LOOP
+    ('official_v3_guard_private.assert_catalog_v1()', 'c0f4f9704a7eec6a0a43c6c2b27990ee9a5488db462aa0377f7b4ae8e30c09cf'),
+    ('official_v3_guard_private.audit_v1()', '7f9acc800b3b01ad755d608029bd88bf3533496e4602037641b7568c1ce64312'),
+    ('official_v3_guard_private.catalog_status_v1()', '6880695c2a5986fee7d5b4357612875b449240ea03020831ba691826509a0101'),
+    ('official_v3_guard_private.latch_incident_v1(timestamp with time zone,text)', '4c85722cb02ca77332f8292f6ec32eb891b17b3fcb6bfc44a1c36d13acf5645f'),
+    ('official_v3_guard_private.require_open_v1()', 'ad7ebc80c5d50a7c8a6cfad475ed55001b1b8e519db6c9a2afecbed2ed61f1bb'),
+    ('public.official_v3_guard_alarm_status_v1()', '7b1c8e34dd4db19b1d3552424ec442e7a3e741feedb4855137337d09e77c8537')) AS expected(signature,digest) LOOP
  IF encode(sha256(convert_to(pg_get_functiondef(to_regprocedure(v.signature)),'UTF8')),'hex') IS DISTINCT FROM v.digest
  THEN RAISE EXCEPTION 'BG1_PROD_V3_OLD_FUNCTION_CHANGED: %',v.signature USING ERRCODE='P7991';END IF;
  END LOOP;
