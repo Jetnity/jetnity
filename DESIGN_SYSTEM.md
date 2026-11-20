@@ -326,21 +326,41 @@ Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe flache Kop
 
 | Abschnitt | Baustein | Datei | Stand |
 |---|---|---|---|
-| 6.3 | Karte | – | Etappe 2 |
+| 6.3 | Karte | `components/ui/karte.tsx` | aktiv |
 | 6.4 | Statussiegel | `components/ui/status-siegel.tsx` | aktiv |
-| 6.5 | Preis | – | Etappe 2 |
+| 6.5 | Preis | `components/ui/preis.tsx` | aktiv |
 | 6.6 | Ladeplatzhalter | `components/ui/ladeplatzhalter.tsx` | aktiv |
 | 6.7 | Leerzustand | `components/ui/leerzustand.tsx` | aktiv |
 | 6.8 | Hinweis | – | Etappe 3 |
-| 6.9 | Abschnitt | – | Etappe 2 |
+| 6.9 | Abschnitt | `components/ui/abschnitt.tsx` | aktiv |
 
-Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:exports`).
+Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:exports`). Die ältere `components/ui/card.tsx` (shadcn) wird nicht mehr neu verwendet.
+
+**6.3 Karte.** `rounded-card`, feiner Rand (`border-border`), `bg-card`, `shadow-card`. Nur semantische Farben, damit dieselbe Karte auf Weiss-Mint und im grünen Arbeitsbereich lesbar bleibt. Den Innenabstand setzt der Inhalt, damit Listen bis an den Rand laufen können.
 
 **6.4 Statussiegel.** Vier Töne: `gebucht` (volle grüne Fläche mit Haken – nur „von dir als gebucht markiert“), `gewaehlt` (gestrichelter Rand – ausgewählt, nicht gebucht), `offen` (leerer Kreis), `hinweis` (Fragezeichen, gedämpfte Fläche). Der Zustand steht immer als Wort im Siegel; Form und Symbol unterscheiden zusätzlich, Farbe allein nie (7.5a). `BuchungsSiegel` bildet die Buchungs- und Abdeckungszustände auf diese Töne ab.
+
+**6.5 Preis.** Immer mit Währung (`CHF 2’640`), gleich breite Ziffern, ganze Einheiten mit ’ als Tausendertrennung (`betragLesbar`), kein Umbruch zwischen Währung und Betrag. Der Stand steht als Statussiegel daneben (`Gebucht` voll, `Ausgewählt` gestrichelt), nie nur als Farbe des Betrags. Ein gespeicherter Preis ist der Preis beim Auswählen; Summen heissen deshalb „Geplant ca.“. Verschiedene Währungen stehen nebeneinander und werden nie umgerechnet.
 
 **6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still.
 
 **6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037).
+
+**6.9 Abschnitt.** Eine Karte mit Überschrift (`text-subtitle`), höchstens einem Satz Einordnung (`text-meta`) und höchstens einer Aktion rechts. Die Überschrift benennt den Abschnitt (`aria-labelledby`) und ist Fokusziel, wenn eine Leiste oder ein Link dorthin springt.
+
+### 6.10 Zwei Wege, einer sichtbar (`/planen`)
+
+Wo es zwei gleichwertige Wege zum selben Ziel gibt, zeigt die Seite einen davon und einen Segmentschalter darüber (`PlanenWegWahl` in `components/trips/PlanenEinstiegNavigation.tsx`). Der Schalter besteht aus zwei Links mit `aria-current`; der verborgene Weg ist `hidden`, bleibt aber gerendert, damit Eingaben beim Umschalten erhalten bleiben. Standard ist „In eigenen Worten“ (PO-Entscheid); wer mit einem gewählten Ziel aus Entdecken kommt, startet in „Schritt für Schritt“, wo das Ziel schon eingetragen ist. Die Anker `#reise-beschreiben` und `#manuell-planen` öffnen den jeweiligen Weg.
+
+### 6.11 Übersicht einer Reise
+
+Reihenfolge: Reisekopf → **Als Nächstes** (höchstens drei Gruppen, ruhige Karte ohne Alarmfarbe) → **Deine Route** (Etappen mit Datum und, wenn der Unterkunftsstand eindeutig ist, offenen oder abgedeckten Nächten pro Etappe) → **Kosten** → Einreise und Reiseziele → **Gut organisiert** (vier Bereiche, darunter die Reiseprüfung) → Wünsche. Ab `xl` stehen je zwei Karten nebeneinander (Als Nächstes | Route, Kosten | Einreise und Ziele); die DOM-Reihenfolge bleibt die Lesereihenfolge, „Gut organisiert“ läuft über beide Spalten.
+
+Kosten (`TripWorkspaceKosten`, Rechnung in `lib/trips/kostenbild.ts`): pro Währung „Geplant ca.“ mit den Anteilen Gebucht und Ausgewählt; Budget nur verglichen, wenn alle Preise in der Budgetwährung stehen; Punkte ohne Preis werden gezählt und genannt („nicht mitgerechnet“), nie mit null gerechnet; unlesbare oder widersprüchliche Preise werden als solche genannt. Gebuchte Punkte erscheinen hier, mit oder ohne Preis; eine eigene Buchungsliste gibt es in der Übersicht nicht mehr.
+
+### 6.12 Kostenleiste auf Handy und Tablet
+
+Unter 64rem liegt über der unteren Leiste eine einzeilige Kostenzeile („Geplant ca. CHF 2’640 · Budget CHF 4’200“), wenn mindestens ein Preis oder ein Budget gespeichert ist. Sie bildet mit der Leiste eine Einheit (gleiche Fläche, Trennlinie), ist 44 px hoch und bricht bei mehreren Währungen um, statt abzuschneiden. Antippen öffnet die Übersicht beim Abschnitt Kosten. Bei offenem Planpunkt-Detail ist sie ausgeblendet; wo die Leiste in den Fluss wechselt (grosse Schrift, unter 360 px, niedrige Höhe), steht auch die Kostenzeile im Fluss. Den Abstand für Inhalt und „Nach oben“ liefert `--ux-u1a-nav-offset` (Leiste plus Kostenzeile).
 
 ---
 

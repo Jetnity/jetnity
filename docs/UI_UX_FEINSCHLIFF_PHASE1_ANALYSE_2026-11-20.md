@@ -159,8 +159,8 @@ PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Absc
 | Etappe | Stand | Inhalt |
 |---|---|---|
 | 1 Design-System | umgesetzt | Stufen für Schrift, Ecken, Schatten; Statussiegel, Seitenkopf, Leerzustand, Ladeplatzhalter; flacher Reisekopf in allen fünf Ansichten; einzeilige Kopfzeile bis 1023 px; ein Grundton für alle öffentlichen Seiten; `DESIGN_SYSTEM.md` und ADR-0229 |
-| 2 Planen, Übersicht, Kostenbild | als Nächstes | ein Weg in `/planen`, neue Reihenfolge der Übersicht, Kostenbild (reine Funktion, Tests), Kostenleiste unten auf dem Handy; Bausteine Karte, Preis, Abschnitt |
-| 3 Detailansichten | offen | «Das hast du schon», einklappbare Unterkunftsfilter, Vorbereitung pro Land, Planpunkt und Flug-Bestand, bewusste Entscheidungen, Baustein Hinweis; Einreise erst nach #1254. Dazu: seitliches Scrollen bei 320 px in der Flugsuche («Economy»-Auswahl) und die sehr kleine Schrift der Organisieren-Reiter |
+| 2 Planen, Übersicht, Kostenbild | umgesetzt | ein Weg in `/planen`; Übersicht: Als Nächstes → Route mit Unterkunft pro Etappe → Kosten → Einreise und Ziele → Gut organisiert, ab `xl` zweispaltig; `kostenbild()` und `laufUnterkunftLeser()` als reine Funktionen mit Tests; Kostenzeile über der unteren Leiste; Bausteine Karte, Preis, Abschnitt; `DESIGN_SYSTEM.md` 6.3–6.12 und ADR-0230 |
+| 3 Detailansichten | als Nächstes | «Das hast du schon», einklappbare Unterkunftsfilter, Vorbereitung pro Land, Planpunkt und Flug-Bestand, bewusste Entscheidungen, Baustein Hinweis; Einreise erst nach #1254. Dazu: seitliches Scrollen bei 320 px in der Flugsuche («Economy»-Auswahl) und die sehr kleine Schrift der Organisieren-Reiter |
 | 4 Feinschliff, Zustände, Konto | offen | Ladeplatzhalter und Leerzustände überall, Übergänge, Kontoseiten mit Seitenkopf, 4K, Schlussmessung 280–2560 und Querformat mit Video; Logo bei 280 px |
 
 Abweichungen vom Plan in Etappe 1, mit Grund:
@@ -168,6 +168,14 @@ Abweichungen vom Plan in Etappe 1, mit Grund:
 - **Mond/Sonne bleibt in der Handy-Kopfzeile.** Ein erster Entwurf legte den Schalter ins Menü. Das widerspricht der Owner-Vorgabe „Grün per Header-Schalter“ und brach drei bestehende Browser-Tests. Stattdessen entfällt unter 640 px „Reise fortsetzen“ aus der Kopfzeile; es steht im Menü, und die Seiten selbst bieten den Weg zurück zur Reise an.
 - **Karte, Preis, Abschnitt und Hinweis** entstehen mit ihrer ersten Verwendung in Etappe 2 und 3, damit kein ungenutzter Code entsteht (`check:dead`, `check:exports`).
 - **Foto-Köpfe entfallen** in Reiseplan und Organisieren. Die Stadtbilder in den Etappenkarten und ihre Bildnachweise bleiben.
+
+Abweichungen vom Plan in Etappe 2, mit Grund:
+
+- **Die Handyleiste zeigt nur die Kostenzeile, nicht zusätzlich den nächsten Schritt.** Zwei feste Zeilen über der unteren Leiste hätten auf kleinen Geräten zu viel Höhe gekostet. Der nächste Schritt ist die erste Karte der Übersicht; die Kostenzeile führt mit einem Tippen dorthin.
+- **Die Liste „Buchungen dieser Reise“ entfällt in der Übersicht.** Gebuchte Punkte stehen im Kostenbild, mit Siegel „Gebucht“, mit oder ohne Preis.
+- **Die Reiseprüfung steht unter „Gut organisiert“** statt unter der ersten Karte, damit „Als Nächstes“ kurz bleibt.
+- **Unterkunft pro Etappe nur bei eindeutigem Stand.** Fehlen Check-in oder Check-out einer Unterkunft, sagt die Route nichts dazu; die Karte „Als Nächstes“ meldet den unklaren Stand wie bisher.
+- **Ab 1280 px zweispaltig** (in Etappe 4 geplant, hier vorgezogen, weil die neue Reihenfolge sonst auf dem Desktop sehr lang wird).
 
 ## Belege
 
