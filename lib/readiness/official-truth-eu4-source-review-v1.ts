@@ -59,6 +59,8 @@ export type Eu4PassportCase=Readonly<{
  frenchTerritoryScopeNeedsCheck:boolean;spanishFinancialConflictLookupRequired:boolean;
  issuerDocumentCrosscheckRequired:boolean;visitorCountryCodeUnsupported:boolean;
  britishNationalityCategoryCrosscheckRequired:boolean;
+ // Austrian evidence never stands in for an Italian/French/Spanish/Portuguese issuer.
+ britishNationalityAustrianResearchSource:string|null;
  issuerDocumentLegalSource:string|null;
  sourceLinksChecked:true;destinationSpecificSourceOriginalSealed:false;
  legalApplicabilityVerified:false;documentsVerified:false;
@@ -94,8 +96,9 @@ export function eu4PassportCase(destination:Eu4Country,passport:string):Eu4Passp
   spanishFinancialConflictLookupRequired:destination==='ES',
   issuerDocumentCrosscheckRequired:reviewed.issuerDocumentCrosscheck!==null||reviewed.britishPassportCategoryCrosscheck!==null,
   britishNationalityCategoryCrosscheckRequired:reviewed.britishPassportCategoryCrosscheck!==null,
+  britishNationalityAustrianResearchSource:reviewed.britishPassportCategoryCrosscheck?.bmiSource??null,
   visitorCountryCodeUnsupported:reviewed.issuerDocumentCrosscheck?.visitorCountryCodeSupported===false,
-  issuerDocumentLegalSource:reviewed.issuerDocumentCrosscheck?.euLegalSource??reviewed.britishPassportCategoryCrosscheck?.bmiSource??null,
+  issuerDocumentLegalSource:reviewed.issuerDocumentCrosscheck?.euLegalSource??null,
   sourceLinksChecked:true,destinationSpecificSourceOriginalSealed:false,
   legalApplicabilityVerified:false,documentsVerified:false,routeAndDurationVerified:false,
   ownerMa1Aal2Authorized:false,publicationAllowed:false,
