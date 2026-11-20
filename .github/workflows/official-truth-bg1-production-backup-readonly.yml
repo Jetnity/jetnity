@@ -40,7 +40,8 @@ jobs:
               try {
                 response=await fetch(url,{method:'GET',redirect:'error',signal:ctrl.signal,
                   cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/json'}})
-                if(response.status!==200||response.redirected) throw Error('management_api_permission_or_transport')
+                if(response.redirected)throw Error('management_api_redirect_refused')
+                if(response.status!==200)throw Error('management_api_http_'+response.status)
                 const contentLength=response.headers.get('content-length')
                 if(contentLength && Number(contentLength)>131072)throw Error('response_size_limit')
                 const raw=await response.text()

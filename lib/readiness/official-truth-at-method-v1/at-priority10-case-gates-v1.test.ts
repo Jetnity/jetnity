@@ -67,7 +67,7 @@ test('EU5 national ID and passport are separate, Art. 5-dependent evidence paths
  const eu5=['DE','PL','IT','RO','FR']
  for(const code of eu5){
   const card={...evidence(code),actualOrdinaryNationalPassportProved:false,
-   actualEuNationalIdentityCardProved:true,actualEuIdIssuerMatchesNationalityProved:true,
+   actualEuNationalIdentityCardProved:true,actualEuIdDocumentForm:'verified_physical_travel_id' as const,actualEuIdIssuerMatchesNationalityProved:true,
    actualEuIdNotExpiredAtEntryProved:true,actualEuIdArticle5TravelValidityProved:true,
    actualSchengenStayWithin90In180:null,passportIssueWithin10Years:null,
    passportExpiryAtLeast3MonthsAfterExit:null}
@@ -96,5 +96,32 @@ test('EU5 national ID and passport are separate, Art. 5-dependent evidence paths
    actualEuIdNotExpiredAtEntryProved:true,actualEuIdArticle5TravelValidityProved:true}
   assert.equal(reviewAtPriority10StandardCase(bad).cause,
    'SPECIAL_DOCUMENT_OR_EXCEPTION_NEEDS_INDIVIDUAL_REVIEW')
+ }
+})
+
+test('Five EU5 nontravel or ambiguous historical ID forms remain unavailable even if other booleans claim success',()=>{
+ const blocked=[
+  ['IT','italian_paper_nontravel'],
+  ['RO','romanian_simple_nontravel'],
+  ['FR','french_face_expired_legacy_unresolved'],
+  ['PL','mobile_only'],
+  ['DE','unclassified'],
+ ] as const
+ for(const [code,form] of blocked){
+  const input={...evidence(code),actualOrdinaryNationalPassportProved:false,
+   actualEuNationalIdentityCardProved:true,actualEuIdDocumentForm:form,
+   actualEuIdIssuerMatchesNationalityProved:true,actualEuIdNotExpiredAtEntryProved:true,
+   actualEuIdArticle5TravelValidityProved:true}
+  const output=reviewAtPriority10StandardCase(input)
+  assert.equal(output.cause,'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN',code)
+  assert.equal(output.visitorPassportValidStatement,null)
+  assert.equal(output.publicationAllowed,false)
+ }
+ for(const code of ['DE','PL','IT','RO','FR']){
+  const unknown=reviewAtPriority10StandardCase({...evidence(code),
+   actualOrdinaryNationalPassportProved:false,actualEuNationalIdentityCardProved:true,
+   actualEuIdIssuerMatchesNationalityProved:true,actualEuIdNotExpiredAtEntryProved:true,
+   actualEuIdArticle5TravelValidityProved:true})
+  assert.equal(unknown.cause,'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN')
  }
 })
