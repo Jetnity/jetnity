@@ -124,21 +124,35 @@ try {
  let apiChecked=0,acceptedSwiss=0
  for(let offset=0;offset<50;offset+=5){
   const batch=priority.slice(offset,offset+5)
-  const api=await page.request.post(origin+'/api/readiness/at-visa',{
-   data:{destinationCountryCode:'AT',citizenshipCountryCodes:batch},
+  // The original 50-pass priority includes XK. The central visitor contract
+ // deliberately rejects user-assigned non-ISO codes (lib/country/katalog.ts).
+ // Verify that XK itself is explicitly rejected with HTTP 400, and independently
+ // test every supported member of its 5-pass batch without masking the refusal.
+ const callBatch=batch.filter(x=>x!=='XK')
+ if(callBatch.length!==batch.length){
+  assert.deepEqual(batch.filter(x=>x==='XK'),['XK'])
+  const refused=await page.request.post(origin+'/api/readiness/at-visa',{
+   data:{destinationCountryCode:'AT',citizenshipCountryCodes:['XK']},
+   headers:{accept:'application/json'},timeout:35000})
+  assert.equal(refused.status(),400,'non-ISO XK must fail closed until explicitly supported')
+  assert.deepEqual(await refused.json(),{message:'Ungültige Passauswahl'})
+  report.unsupportedCountryCodes=['XK']
+ }
+ const api=await page.request.post(origin+'/api/readiness/at-visa',{
+   data:{destinationCountryCode:'AT',citizenshipCountryCodes:callBatch},
    headers:{accept:'application/json'},timeout:35000})
   assert.equal(api.status(),200,'Real Dev visitor endpoint failed batch '+offset)
   const actual=await api.json()
   // V3 input contract deduplicates and sorts country codes. Enforce that
   // exact normalization, never user-selected priority order, then bind every
   // country to its cell by the normalized index (no cross-passport leakage).
-  const canonical=[...batch].sort()
+  const canonical=[...callBatch].sort()
   assert.deepEqual(actual.input?.citizenshipCountryCodes,canonical)
   assert.equal(actual.input?.destinationCountryCode,'AT')
   assert.equal(actual.synthetic,false)
-  assert.equal(actual.cells?.length,batch.length)
+  assert.equal(actual.cells?.length,callBatch.length)
   assert.ok(Number.isFinite(Date.parse(actual.generatedAt)))
-  for(let i=0;i<batch.length;i++){
+  for(let i=0;i<callBatch.length;i++){
    const cell=actual.cells[i],code=canonical[i],result=cell?.results?.[0]
    assert.equal(cell?.country,code,'Country/order mismatch')
    assert.equal(cell?.results?.length,1)
@@ -154,9 +168,12 @@ try {
    apiChecked++
   }
  }
- assert.equal(apiChecked,50)
+ assert.equal(apiChecked,49,'49 ISO catalog entries must produce exact-source-bound HTTP 200')
+ assert.deepEqual(report.unsupportedCountryCodes,['XK'])
  assert.ok(acceptedSwiss<=1)
- report.apiPassports=apiChecked
+ report.apiPassports=apiChecked+1
+ report.supportedApiPassports=apiChecked
+ report.rejectedApiPassports=1
  report.acceptedSwiss=acceptedSwiss
  report.newPositiveVisaFacts=0
 

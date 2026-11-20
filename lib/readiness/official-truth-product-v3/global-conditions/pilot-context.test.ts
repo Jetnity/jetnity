@@ -232,6 +232,18 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(nextSecurityPatch.map(row => row.path), ['.github/workflows/ci.yml', 'package.json', 'package-lock.json'])
   assert.equal(new Set(nextSecurityPatch.map(row => row.path)).size, 3)
+  // The 2026-11-20 AT50 browser/Dev HTTP addition belongs exclusively to the
+  // existing branch-gated Auth job. Root CI, U1 no-secret, PG17, quota and
+  // aggregator families remain intact. Never normalize to arbitrary workspace
+  // bytes: exact predecessor and successor are both independently pinned.
+  const at50CiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 50018, sha256: 'd2999d128b254d36491aeb34409a24b19373c8de83b337ac81bc4fc358377d23' },
+      reviewed: { bytes: 51712, sha256: '15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779' } },
+  ] as const
+  assert.deepEqual(at50CiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(at50CiSuccessor.map(row => row.path)).size, 1)
+  let reviewedAt50Rows = 0
   let reviewedNextPatchRows = 0
   let reviewedAdminRuntimeCiRows = 0
   let reviewedAdminCiRows = 0
@@ -319,7 +331,14 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
         nextPatchChanged.previousReviewed, row.path)
       reviewedNextPatchRows++
     }
-    const expected = nextPatchChanged?.reviewed ?? reviewedBeforePatch
+    const expectedBeforeAt50 = nextPatchChanged?.reviewed ?? reviewedBeforePatch
+    const at50Changed = at50CiSuccessor.find(file => file.path === row.path)
+    if (at50Changed) {
+      assert.deepEqual({ bytes: expectedBeforeAt50.bytes, sha256: expectedBeforeAt50.sha256 },
+        at50Changed.previousReviewed, row.path)
+      reviewedAt50Rows++
+    }
+    const expected = at50Changed?.reviewed ?? expectedBeforeAt50
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -336,4 +355,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedAdminCiRows, 1)
   assert.equal(reviewedAdminRuntimeCiRows, 1)
   assert.equal(reviewedNextPatchRows, 3)
+  assert.equal(reviewedAt50Rows, 1)
 })
