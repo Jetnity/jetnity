@@ -16,6 +16,7 @@ test('AT EU5 HRS2 source-bound candidate has no install or public success path',
  assert.match(src,/binding#>'\{context,scope,citizenship,countryCodes\}'='\["DE","PL","IT","RO","FR"\]'::jsonb/)
  assert.match(src,/RAISE EXCEPTION 'AT EU5 source-rule\/legal\/MA1 issuer NOT INSTALLED'/)
  assert.match(src,/IF count_refusals<>19/)
+ assert.match(src,/AT_EU5_SOURCEBOUND_ISSUER_UNINSTALLED_19_NEGATIVE_ROLLBACK_PASS/)
  assert.match(src,/FALSE AS installed_issuer,FALSE AS visitor_publication/)
 })
 test('Archived exact source bytes and research monitor cannot be mistaken for legal issuer receipts',()=>{
