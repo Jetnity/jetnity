@@ -5,6 +5,7 @@ import {atAirportTransitVisaAResearch,type AtAirportTransitVisaAResearch} from '
 import {atBmiDocumentRecognitionResearch,type AtBmiDocumentRecognitionResearch} from './at-bmi-document-recognition-research-v1'
 import {atVisaApplicationEvidenceResearch,type AtVisaApplicationEvidenceResearch} from './at-visa-application-evidence-research-v1'
 import {atDualDocumentResearch,type AtDualDocumentResearch} from './at-multiple-citizenship-documents-research-v1'
+import {atEuFamilyEntryResearch,type AtEuFamilyEntryResearch} from './at-eu-family-residence-visa-research-v1'
 
 // Checked only against Austrian BMI source-category list (06.11.2026) and
 // BMEIA visa conditions (19.11.2026). This is NOT an individualized rule,
@@ -74,7 +75,8 @@ export type AtBmiSourceReview=Readonly<{code:string;group:AtBmiGroup;label:strin
  passportRecognitionSourceReview:AtBmiDocumentRecognitionResearch|null;
  visaApplicationEvidenceResearch:AtVisaApplicationEvidenceResearch;
  euIdentityCardResearch:AtEuIdentityCardResearch|null;
- dualDocumentResearch:AtDualDocumentResearch}>
+ dualDocumentResearch:AtDualDocumentResearch;
+ euFamilyEntryResearch:AtEuFamilyEntryResearch|null}>
 export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
  if(!/^[A-Z]{2}$/.test(code))return null
  const group=groups.get(code);if(!group)return null
@@ -98,5 +100,6 @@ export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
   visaApplicationEvidenceResearch:atVisaApplicationEvidenceResearch(code),
   euIdentityCardResearch:atEuIdentityCardResearch(code),
   dualDocumentResearch:atDualDocumentResearch(code,group),
+  euFamilyEntryResearch:atEuFamilyEntryResearch(code,group),
  })
 }
