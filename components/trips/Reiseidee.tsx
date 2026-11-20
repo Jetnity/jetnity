@@ -241,7 +241,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
           </span>
         </div>
 
-        <h1 className="mt-4 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
+        <h1 className="mt-4 max-w-full break-words text-display text-brand-900">
           Beginnen wir mit deiner Reise.
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">

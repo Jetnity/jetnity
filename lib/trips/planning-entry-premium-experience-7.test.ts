@@ -59,11 +59,15 @@ describe('Planning Entry premium experience 7 – Wegnavigation', () => {
     assert.equal(planenIdeeZielAnsteuern(undefined), false)
   })
 
-  test('beide Wege bleiben sichtbar und lösen keinen Modell- oder Speichervertrag aus', () => {
+  test('beide Wege bleiben erreichbar, einer ist sichtbar, und keiner löst einen Modell- oder Speichervertrag aus', () => {
     const helfer = quelle('../../components/trips/PlanenEinstiegNavigation.tsx')
     const page = quelle('../../app/(public)/planen/page.tsx')
     assert.match(helfer, /In eigenen Worten/)
-    assert.match(helfer, /Schritt für Schritt planen/)
+    assert.match(helfer, /Schritt für Schritt/)
+    assert.match(helfer, /aria-label="Schritt für Schritt planen"/)
+    assert.match(helfer, /hidden=\{weg !== 'idee'\}/)
+    assert.match(helfer, /hidden=\{weg !== 'manuell'\}/)
+    assert.match(helfer, /aria-current=\{weg === 'idee' \? 'true' : undefined\}/)
     assert.match(helfer, /href=\{`#\$\{PLANEN_IDEE_ZIEL_ID\}`\}/)
     assert.match(helfer, /href=\{`#\$\{PLANEN_MANUELL_ZIEL_ID\}`\}/)
     assert.match(helfer, /scrollVerhalten/)
@@ -77,7 +81,8 @@ describe('Planning Entry premium experience 7 – Wegnavigation', () => {
     assert.equal(page.includes('localStorage'), false)
     assert.equal(page.includes('vorschlagErzeugen'), false)
     assert.match(page, /<PlanenIdeeZiel>/)
-    assert.match(page, /<PlanenIdeeZeiger/)
+    assert.match(page, /<PlanenWegWahl start=\{startWeg\}>/)
+    assert.ok(page.indexOf('<PlanenWegWahl') < page.indexOf('<PlanenManuellZeiger'))
     assert.ok(page.indexOf('<PlanenManuellZeiger') < page.indexOf('<Reiseidee'))
     assert.ok(page.indexOf('<Reiseidee') < page.indexOf('<PlanenManuellZiel>'))
     assert.equal(PLANEN_MANUELL_ZIEL_ID, 'manuell-planen')
