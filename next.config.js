@@ -42,9 +42,9 @@ const nextConfig = {
   async headers() {
     return [
       { source: '/:path*', headers: COMMON_SECURITY_HEADERS },
-      // API HTML frames own nonce/hash CSPs; applying the shell CSP to them
+      // API and /embed HTML frames own nonce/hash CSPs; applying shell CSP to them
       // would block the Google map and vendor widgets by policy intersection.
-      { source: '/((?!api/).*)', headers: [
+      { source: '/((?!api/|embed/).*)', headers: [
         { key: 'Content-Security-Policy', value: PAGE_CSP },
       ] },
     ];

@@ -50,7 +50,7 @@ test('page headers enforce bounded CSP while nonce-bearing provider/map API HTML
   assert.equal(config.poweredByHeader, false)
   const entries = await config.headers()
   const shared = entries.find(row => row.source === '/:path*')
-  const page = entries.find(row => row.source === '/((?!api/).*)')
+  const page = entries.find(row => row.source === '/((?!api/|embed/).*)')
   assert.ok(shared && page)
   const values = Object.fromEntries(shared.headers.map(row => [row.key.toLowerCase(), row.value]))
   assert.equal(values['x-frame-options'], 'SAMEORIGIN')
@@ -72,7 +72,14 @@ test('page headers enforce bounded CSP while nonce-bearing provider/map API HTML
   assert.match(csp, /worker-src 'self' blob:/)
   // These routes set stricter nonce/hash CSP themselves; global page policy
   // must not intersect with them and block Google Maps/Viator/GYG frames.
-  assert.equal(page.source.includes('(?!api/)'), true)
+  assert.equal(page.source.includes('(?!api/|embed/)'), true)
+  // Real map/GYG/Viator routes are /embed, not /api. Their CSP has a
+  // request nonce/hash, and must not intersect the page hydration CSP.
+  for (const path of ['lib/maps/frame.ts', 'lib/activities/getyourguide/dokument.ts',
+    'lib/activities/viator-widget/dokument.ts']) {
+    const source = readFileSync(path, 'utf8')
+    assert.match(source, /['"](?:Content-Security-Policy|content-security-policy)['"]\s*:/)
+  }
   assert.equal(shared.headers.some(row => row.key === 'Content-Security-Policy'), false)
 })
 
