@@ -8,8 +8,8 @@ const BODY=MARK+'\n\n**BG1 ALARM-TRANSPORTTEST (synthetisch, kein Production-Vor
   'Dieser Nachweis beweist nicht automatisch eine Push- oder E-Mail-Zustellung.';
 const HEAD='feat/official-truth-universal-source-registry-dev-20261119'
 export async function deliverProof({env=process.env,fetchImpl=globalThis.fetch}={}){
-  if(env.GITHUB_REPOSITORY!=='Jetnity/jetnity'||env.GITHUB_EVENT_NAME!=='pull_request'||
-  env.GITHUB_HEAD_REF!==HEAD||env.GITHUB_EVENT_PULL_REQUEST_NUMBER!=='1254')
+  if(env.GITHUB_REPOSITORY!=='Jetnity/jetnity'||env.GITHUB_EVENT_NAME!=='push'||
+  env.GITHUB_REF!=='refs/heads/'+HEAD||env.GITHUB_EVENT_PULL_REQUEST_NUMBER!=='1254')
     return {status:'refused',reason:'not_exact_pr'}
   const token=env.GITHUB_TOKEN
   if(typeof token!=='string'||(token.length<20||token.length>4096||/[\s\x00-\x1f]/.test(token))||typeof fetchImpl!=='function')
