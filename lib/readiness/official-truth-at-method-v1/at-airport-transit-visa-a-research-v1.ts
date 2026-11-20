@@ -32,6 +32,12 @@ export const AT_VISA_A_BMI_ARCHIVE_ROW_CHECK=Object.freeze({
  checkedAt:'2026-11-20' as const,
  sourceOnly:true as const,
  yesCodes:Object.freeze(['SY','AF','IQ','IR','PK','ER','SO','NG','LK'] as const),
+ // Complete pinned Dev original-cell vector, priority.csv order, SOURCE_ONLY.
+ // J=Ja, N=Nein, F=EU free movement, H=AT home/null. Never a personal decision.
+ priorityCodes:Object.freeze('IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'.split(' ')),
+ visaASourceOnlySignature:'NNNFFFNNFFFNHFFJFJFNFFJFFNFJFJJNJNFJNNNJFNNNNFNNNN' as const,
+ // SHA256 of `rank:code:flag` concatenated with `|`, Dev SELECT-only proof.
+ rowsetVisaASha256:'be0fa26b156f921b6109518a0b997cda24c53d721a9c86e8858939095ab7b21a' as const,
 })
 
 export type AtAirportTransitVisaAResearch=Readonly<{

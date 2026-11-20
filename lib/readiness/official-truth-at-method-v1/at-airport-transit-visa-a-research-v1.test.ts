@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import {createHash} from 'node:crypto'
 import {test} from 'node:test'
 import {AT_BMI_GROUPS,atBmiSourceReview} from './at-bmi-visa-groups-v1'
 import {AT_VISA_A_BMI_SOURCE,AT_VISA_A_CONDITIONAL_EXCEPTIONS,AT_VISA_A_BMI_ARCHIVE_ROW_CHECK} from './at-airport-transit-visa-a-research-v1'
@@ -66,6 +67,34 @@ test('All 50 pinned BMI Visa A archive rows retain 9 yes, 21 no, 19 free movemen
   assert.ok(review)
   assert.equal(review.airportTransitVisaAResearch.actualBmiPassportRowVisaAFlag,null)
   assert.equal(review.airportTransitVisaAResearch.sourceOriginalSealed,false)
+  assert.equal(review.airportTransitVisaAResearch.personalTransitVisaAnswer,'derzeit nicht verfügbar')
+ }
+})
+
+test('all 50 ranked original Visa A cells are pinned exactly, but never published as a personal rule',()=>{
+ const audit=AT_VISA_A_BMI_ARCHIVE_ROW_CHECK
+ const codes=audit.priorityCodes
+ const flags=audit.visaASourceOnlySignature
+ assert.equal(codes.length,50)
+ assert.equal(flags.length,50)
+ assert.equal(new Set(codes).size,50)
+ assert.match(flags,/^[JNFH]{50}$/)
+ const auditLine=codes.map((code,index)=>`${index+1}:${code}:${flags[index]}`).join('|')
+ assert.equal(createHash('sha256').update(auditLine).digest('hex'),audit.rowsetVisaASha256)
+ const groups=Object.fromEntries(Object.entries(AT_BMI_GROUPS).flatMap(([kind,items])=>items.map(code=>[code,kind])))
+ assert.deepEqual(codes.filter((_,i)=>flags[i]==='J').sort(),[...audit.yesCodes].sort())
+ assert.deepEqual({J:[...flags].filter(x=>x==='J').length,N:[...flags].filter(x=>x==='N').length,F:[...flags].filter(x=>x==='F').length,H:[...flags].filter(x=>x==='H').length},{J:9,N:21,F:19,H:1})
+ for (let index=0;index<codes.length;index++){
+  const code=codes[index],flag=flags[index],group=groups[code]
+  assert.ok(group, `unknown pinned passport ${code}`)
+  assert.equal(flag==='F',group==='F')
+  assert.equal(flag==='H',group==='H')
+  assert.equal(flag==='J'||flag==='N',group==='V'||group==='E')
+  const review=atBmiSourceReview(code)
+  assert.ok(review)
+  assert.equal(review.airportTransitVisaAResearch.actualBmiPassportRowVisaAFlag,null)
+  assert.equal(review.airportTransitVisaAResearch.sourceOriginalSealed,false)
+  assert.equal(review.airportTransitVisaAResearch.hrs2Ma1OwnerAal2Approved,false)
   assert.equal(review.airportTransitVisaAResearch.personalTransitVisaAnswer,'derzeit nicht verfügbar')
  }
 })
