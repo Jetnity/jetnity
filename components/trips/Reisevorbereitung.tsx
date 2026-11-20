@@ -6,6 +6,7 @@ import { AlertCircle, Check, ChevronDown, RotateCcw } from 'lucide-react'
 import LandFeld from '@/components/country/LandFeld'
 import { landAnzeigeText, landPraefixText } from '@/lib/country/darstellung'
 import EigeneReisevorbereitung from '@/components/trips/EigeneReisevorbereitung'
+import { Hinweis } from '@/components/ui/hinweis'
 import type { PersonalSteuerung } from '@/components/trips/usePersonalPreparationLifecycle'
 import type { TripTravellerSteuerung } from '@/components/trips/useTripTravellerSnapshotLifecycle'
 import { travellerDraftBlocksOfficial,officialTravellerDraftMessage } from '@/lib/readiness/official-truth-accepted-store-trip-integration-1/traveller-draft-guard'
@@ -30,10 +31,11 @@ import {
   PREPARATION_DISCLAIMER,
   PREPARATION_PREMIUM_EXPERIENCE,
   preparationPersoenlichAufteilen,
+  preparationStandSatz,
   preparationUebersichtStatus,
   type PreparationBereichId,
 } from '@/lib/readiness/preparation-premium-experience-5'
-import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
+import { readinessAnsicht } from '@/lib/readiness/status'
 import {
   readinessWorkspaceSichtbar,
   readinessWorkspaceZusammenfassung,
@@ -190,37 +192,39 @@ export default function Reisevorbereitung({
       <h3 id="reisevorbereitung-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         Was diese Reise offiziell und persönlich braucht
       </h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800">{readinessZusammenfassungText(sichtbareZusammenfassung)}</p>
-
-      <dl className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-        <Zahl label="Offen" wert={sichtbareZusammenfassung.open} />
-        <Zahl label="Erledigt" wert={sichtbareZusammenfassung.done} />
-        <Zahl label="Erneut prüfen" wert={sichtbareZusammenfassung.stale} />
-        <Zahl label="Nicht relevant" wert={sichtbareZusammenfassung.skipped} />
-      </dl>
-
-      <p className="mt-3 rounded-xl bg-surface-25 px-[12px] py-2 text-xs leading-5 text-ink-800" role="status">
-        {uebersichtStatus}. {PREPARATION_DISCLAIMER}
+      <p className="mt-1 text-sm leading-6 text-ink-800" data-preparation-stand>
+        {preparationStandSatz(sichtbareZusammenfassung)}
       </p>
 
-      {reisendeLage === 'hinweis' ? (
-        <p className="mt-2 text-xs leading-5 text-ink-800" data-mehrere-reisende="hinweis">
-          {MEHRERE_REISENDE_HINWEIS}
-        </p>
-      ) : null}
-      {reisendeLage === 'widerspruch' ? (
-        <p className="mt-2 text-xs leading-5 text-ink-800" data-mehrere-reisende="unklar">
-          {KOPFZAHL_WIDERSPRUCH}
-        </p>
-      ) : null}
-      {summary.unknownCountryContext && (
-        <p className="mt-2 text-xs leading-5 text-ink-800">
-          Für mindestens eine Etappe ist der Länderkontext nicht vollständig bestimmbar.
-        </p>
-      )}
+      <Hinweis
+        className="mt-3"
+        role="status"
+        titel={`${uebersichtStatus}.`}
+        aktion={
+          fehlendeFakten.length > 0 && onTravellerSetzen ? (
+            <a
+              href="#preparation-reisende-dokumente"
+              onClick={(event) => {
+                event.preventDefault()
+                onZiel('reisende-dokumente')
+              }}
+              className="inline-flex min-h-[44px] items-center font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            >
+              Angaben ergänzen
+            </a>
+          ) : null
+        }
+      >
+        <p>{PREPARATION_DISCLAIMER}</p>
+        {reisendeLage === 'hinweis' ? <p data-mehrere-reisende="hinweis">{MEHRERE_REISENDE_HINWEIS}</p> : null}
+        {reisendeLage === 'widerspruch' ? <p data-mehrere-reisende="unklar">{KOPFZAHL_WIDERSPRUCH}</p> : null}
+        {summary.unknownCountryContext ? (
+          <p>Für mindestens eine Etappe ist der Länderkontext nicht vollständig bestimmbar.</p>
+        ) : null}
+      </Hinweis>
 
       <div id="reisevorbereitung-detail" className="mt-4 grid w-full min-w-0 max-w-full grid-cols-1 gap-3">
-        <nav aria-label="Bereiche der Vorbereitung" className="grid w-full min-w-0 max-w-full grid-cols-1 gap-2 [&>*]:min-w-0 [&>*]:max-w-full">
+        <nav aria-label="Bereiche der Vorbereitung" className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
           {PREPARATION_BEREICHE.map((bereich) => (
             <a
               key={bereich.id}
@@ -229,12 +233,7 @@ export default function Reisevorbereitung({
                 event.preventDefault()
                 onZiel(bereich.id)
               }}
-              className={cn(
-                'block min-h-[44px] w-full min-w-0 break-words rounded-2xl px-[12px] py-[10px] text-sm font-semibold leading-5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                bereich.id === 'offizielle-anforderungen'
-                  ? 'bg-brand-800 text-white'
-                  : 'border border-line-200 text-brand-800',
-              )}
+              className="inline-flex min-h-[44px] max-w-full items-center break-words rounded-full border border-line-200 px-4 py-2 text-meta font-semibold leading-5 text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
             >
               {bereich.titel}
             </a>
@@ -249,7 +248,7 @@ export default function Reisevorbereitung({
           hinweis={einreise.satz}
         >
           <div data-official-group={checkliste.map((gruppe) => gruppe.id).join(' ')}>
-            <EinreiseKundenanzeige anzeige={einreise} />
+            <EinreiseKundenanzeige anzeige={einreise} satzZeigen={false} />
           </div>
         </Bereich>
 
@@ -463,23 +462,29 @@ function Vorbereitungspunkt({
         </div>
       </div>
       {onSetzen && item.currentness !== 'not_applicable' && (
-        <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-          <StatusKnopf aktiv={item.userStatus === 'open' && item.currentness === 'current'} onClick={() => setzen(item, 'open')}>
-            Offen
-          </StatusKnopf>
-          <StatusKnopf aktiv={item.userStatus === 'done' && item.currentness === 'current'} onClick={() => setzen(item, 'done')}>
-            Erledigt
-          </StatusKnopf>
-          <StatusKnopf
-            aktiv={item.userStatus === 'skipped' && item.currentness === 'current'}
-            onClick={() => setzen(item, 'skipped')}
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+          <div
+            role="group"
+            aria-label="Dein Stand"
+            className="grid w-full min-w-0 grid-cols-3 gap-1 rounded-full border border-line-200 bg-surface-25 p-1 sm:w-auto sm:min-w-[20rem]"
           >
-            Nicht relevant
-          </StatusKnopf>
+            <StatusKnopf aktiv={item.userStatus === 'open' && item.currentness === 'current'} onClick={() => setzen(item, 'open')}>
+              Offen
+            </StatusKnopf>
+            <StatusKnopf aktiv={item.userStatus === 'done' && item.currentness === 'current'} onClick={() => setzen(item, 'done')}>
+              Erledigt
+            </StatusKnopf>
+            <StatusKnopf
+              aktiv={item.userStatus === 'skipped' && item.currentness === 'current'}
+              onClick={() => setzen(item, 'skipped')}
+            >
+              Nicht relevant
+            </StatusKnopf>
+          </div>
           {item.kind === 'preparation' && onEntfernen && (
             <button
               type="button"
-              className="flex min-h-[44px] w-full items-center justify-center break-words rounded-full px-[12px] text-center text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto"
+              className="flex min-h-[44px] items-center justify-center break-words rounded-full px-[12px] text-center text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
               onClick={async () => {
                 setMeldung('')
                 const fehler = await onEntfernen(item.clientRef)
@@ -492,15 +497,6 @@ function Vorbereitungspunkt({
         </div>
       )}
     </li>
-  )
-}
-
-function Zahl({ label, wert }: { label: string; wert: number }) {
-  return (
-    <div className="min-w-0 rounded-xl bg-surface-25 px-[12px] py-2">
-      <dt className="text-xs text-ink-800">{label}</dt>
-      <dd className="text-base font-semibold text-brand-800">{wert}</dd>
-    </div>
   )
 }
 
@@ -554,16 +550,23 @@ function ReisendenZusammenfassung({
   const codes = citizenships.map((eintrag) => eintrag.countryCode)
   const dokumente = slot.traveller?.documents ?? []
   const wohnsitz = slot.traveller?.residenceCountryCode
+  const nochNichts = !wohnsitz && codes.length === 0 && dokumente.length === 0
   return (
     <div className="grid min-w-0 gap-1" data-traveller-summary={slot.clientRef}>
       <h5 tabIndex={-1} className="break-words text-sm font-semibold text-brand-800 outline-none">{slot.label}</h5>
-      <p className="break-words text-xs leading-5 text-ink-800">
-        {wohnsitz ? landPraefixText('Wohnsitz', wohnsitz) : 'Wohnsitz nicht hinterlegt'}
-      </p>
-      <p className="break-words text-xs leading-5 text-ink-800">
-        Staatsbürgerschaften: {staatsbuergerschaftenText(codes)}
-      </p>
-      {dokumente.length === 0 ? (
+      {nochNichts ? (
+        <p className="break-words text-xs leading-5 text-ink-800">Noch keine Angaben hinterlegt.</p>
+      ) : (
+        <>
+          <p className="break-words text-xs leading-5 text-ink-800">
+            {wohnsitz ? landPraefixText('Wohnsitz', wohnsitz) : 'Wohnsitz nicht hinterlegt'}
+          </p>
+          <p className="break-words text-xs leading-5 text-ink-800">
+            Staatsbürgerschaften: {staatsbuergerschaftenText(codes)}
+          </p>
+        </>
+      )}
+      {nochNichts ? null : dokumente.length === 0 ? (
         <p className="text-xs leading-5 text-ink-800">Keine Reisedokument-Metadaten hinterlegt.</p>
       ) : (
         <ul className="grid gap-2">
@@ -904,9 +907,10 @@ function StatusKnopf({
       type="button"
       aria-pressed={aktiv}
       onClick={onClick}
+      data-wahl=""
       className={cn(
-        'flex min-h-[44px] w-full min-w-0 items-center justify-center break-words rounded-full px-[12px] text-center text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:inline-flex sm:w-auto',
-        aktiv ? 'bg-brand-800 text-white' : 'border border-line-200 text-brand-800',
+        'flex min-h-[44px] min-w-0 items-center justify-center break-words rounded-full px-[6px] text-center text-xs font-semibold leading-tight focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+        aktiv ? 'bg-brand-800 text-white shadow-card' : 'text-brand-800 hover:bg-white',
       )}
     >
       {children}

@@ -10,6 +10,7 @@ import {
   type EinreisePaar,
   type EinreiseThema,
 } from '@/lib/readiness/einreise-kundenanzeige'
+import { Hinweis } from '@/components/ui/hinweis'
 import { cn } from '@/lib/utils'
 
 function Ampel({ art, text }: { art: EinreiseAmpel; text: string }) {
@@ -107,7 +108,7 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
           <div className="border-t border-line-200 px-3 py-3">
             <p className="text-sm leading-6 text-ink-900">
               {paar.platzhalter ? `${EINREISE_PLATZHALTER}. ` : ''}
-              Für diese Themen gilt derzeit nicht verfügbar.
+              Für diese Themen liegt derzeit keine geprüfte Angabe vor.
             </p>
             <ul className="mt-2 flex flex-wrap gap-2">
               {paar.ungeprueft.map((name) => (
@@ -121,29 +122,40 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
   )
 }
 
-export default function EinreiseKundenanzeige({ anzeige }: { anzeige: EinreiseAnzeige }) {
+export default function EinreiseKundenanzeige({
+  anzeige,
+  satzZeigen = true,
+}: {
+  anzeige: EinreiseAnzeige
+  /** Aus, wo die Zusammenfassung schon direkt darüber steht. */
+  satzZeigen?: boolean
+}) {
   const todos = anzeige.paare.flatMap((paar) => paar.todos.map((todo) => ({ paar, todo })))
   return (
     <div className="grid min-w-0 gap-3" data-einreise-kundenanzeige="ein">
-      <p className="break-words text-sm leading-6 text-ink-900">{anzeige.satz}</p>
+      {satzZeigen ? <p className="break-words text-sm leading-6 text-ink-900">{anzeige.satz}</p> : null}
       {todos.length > 0 ? (
         <ul className="grid gap-2">
           {todos.map(({ paar, todo }) => (
-            <li key={`${paar.id}:${todo.id}`} className="min-w-0 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-3">
-              <p className="break-words text-sm font-semibold text-amber-950">
-                {paar.reisende} · {paar.land}: {todo.label}
-              </p>
-              <p className="mt-1 break-words text-sm leading-6 text-amber-950">{todo.text}</p>
-              {todo.href && todo.hrefLabel ? (
-                <a
-                  href={todo.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                >
-                  {todo.hrefLabel}
-                </a>
-              ) : null}
+            <li key={`${paar.id}:${todo.id}`} className="min-w-0">
+              <Hinweis
+                ton="aufgabe"
+                titel={`${paar.reisende} · ${paar.land}: ${todo.label}`}
+                aktion={
+                  todo.href && todo.hrefLabel ? (
+                    <a
+                      href={todo.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    >
+                      {todo.hrefLabel}
+                    </a>
+                  ) : null
+                }
+              >
+                <p>{todo.text}</p>
+              </Hinweis>
             </li>
           ))}
         </ul>

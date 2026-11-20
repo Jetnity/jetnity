@@ -125,6 +125,13 @@
 :where([data-workspace-theme="green"]) .workspace-content [data-u1c-kante][aria-pressed="true"] :where(strong, span) {
   color: rgb(var(--jet-brand-900));
 }
+/* Segment and filter choices: the chosen one carries the citrus fill, like the selected day. */
+:where([data-workspace-theme="green"]) .workspace-content [data-wahl][aria-pressed="true"] {
+  background-color: rgb(var(--jet-citrus-400));
+  border-color: rgb(var(--jet-citrus-400));
+  color: rgb(var(--jet-brand-900));
+}
+:where([data-workspace-theme="green"]) .workspace-content [data-wahl][aria-pressed="false"]:hover { background-color: var(--workspace-soft); }
 :where([data-workspace-theme="green"]) .workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
 :where([data-workspace-theme="green"]) .workspace-content :where(.shadow-brand) { box-shadow: none; }
 /* Keep the existing companion readable in the narrow workspace and at larger
