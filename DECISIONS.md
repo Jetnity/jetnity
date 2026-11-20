@@ -6383,3 +6383,17 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Begründung:** Ein Platzhalter in der Form des Ergebnisses sagt, was kommt, und hält das Layout ruhig. Ein Lesefehler ist keine Abmeldung und keine leere Liste (AGENTS.md 15). Grössere Grundschrift auf sehr breiten Bildschirmen hält die Zeichen pro Zeile und macht Text lesbar, ohne Layouts zu verändern.
 
 **Konsequenzen:** Keine Daten-, API-, Auth- oder DB-Änderung, keine neuen Kosten oder Abhängigkeiten. `savedOffersList` liefert bei fehlender Anmeldung zusätzlich `anmeldung: true`. Der Test `buchungen-abfrage` erwartet ohne Buchungen keinen Filter mehr (6.14). Neue Audit-Ansichten `/ui-audit/account?ansicht=start` und `?ansicht=merkliste` (Production 404). Textänderungen mit Bedeutung stehen einzeln im PR.
+
+## ADR-0233 – Öffentliche Seiten, Rechtliches, Fehlerseiten und Meine Welt (UI/UX-Feinschliff, Etappe 5)
+
+**Datum:** 20. November 2026. **Status:** Teil des PO-Go in Draft-PR #1264; Ready/Merge erst nach ausdrücklichem PO-Go am Schluss.
+
+**Kontext:** Impressum, Datenschutz, AGB und Datenquellen hatten je eigene Schriftgrössen und Linkfarben; der AGB-Titel ragte bei 390 px seitlich heraus. Mehrere öffentliche Seiten setzten `bg-surface-75` auf `main`, was in Weiss-Mint als zweites Mintband erschien. Die 404 ausserhalb von `app/(public)` hatte weder Kopf- noch Fusszeile. Die öffentliche Fehlerseite versprach «Deine gespeicherten Reisen sind davon nicht betroffen», ohne das prüfen zu können. Auf Meine Welt war der Lesefehler der Besuche ein Kasten in der Seitenfarbe und damit unsichtbar; Hinweise und Startseitentexte liefen über 85 Zeichen.
+
+**Entscheidung:** (1) Rechtliche Seiten als Lesespalte mit `max-w-prose`, Kicker «Rechtliches» und den Text-Tokens (`DESIGN_SYSTEM.md` 6.18). (2) Kein eigener Hintergrund auf öffentlichen `main`-Flächen. (3) 404- und Fehlerseiten als eine Karte mit Primär- und Nebenknopf; `app/not-found.tsx` rendert im `PublicChrome`. (4) Der unbelegte Satz auf der öffentlichen Fehlerseite entfällt. (5) Meine Welt mit `Seitenkopf`, sichtbarem Fehlerkasten (Rand in `destructive`), Leerzustand als gestrichelte Karte. (6) Lesebreite für die restlichen langen Absätze (Startseite, Besuchsformular, Länderfeld). `EinreiseLaenderpruefer` bleibt wegen #1254 unverändert, `/einreise` erhält nur den Seitenrahmen.
+
+**Alternativen:** (1) Breitere Spalte für Datenschutz und Impressum wegen der eingebetteten PrivacyBee-Fassung – die Fassung ist Fliesstext, ihr Slot scrollt breite Tabellen selbst; eine Spaltenbreite für alle Rechtsseiten ist ruhiger. Abgelehnt. (2) Den Satz über gespeicherte Reisen behalten, weil Fehler meist nur die Darstellung betreffen – die Seite weiss es nicht; Jetnity behauptet nichts Unbelegtes. Abgelehnt. (3) Eine eigene 404 ohne Rahmen für unbekannte Adressen – lässt Besucher ohne Navigation stehen. Abgelehnt.
+
+**Begründung:** Eine einheitliche Lesespalte macht lange Rechtstexte auf jedem Gerät gleich gut lesbar. Fehlerseiten sollen zurück in die Reise führen und nur sagen, was feststeht.
+
+**Konsequenzen:** Keine Daten-, API-, Auth- oder DB-Änderung, keine neuen Kosten oder Abhängigkeiten. Rechtstexte selbst sind unverändert; geändert sind Anrede «Schreib uns an» im PrivacyBee-Ersatztext, der Kicker «Rechtliches» und der entfallene Satz auf der Fehlerseite (einzeln im PR aufgeführt).

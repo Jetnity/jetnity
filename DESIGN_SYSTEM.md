@@ -384,7 +384,15 @@ Ein Ansichtswechsel im Arbeitsbereich, ein geöffnetes Planpunkt-Detail und der 
 
 ### 6.17 Kontoseiten
 
-Alle Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen) beginnen mit dem `Seitenkopf` (Kicker „Konto“) und nutzen `Karte`, `Leerzustand`, `Hinweis` und `Ladeplatzhalter`. Der Kopf steht beim Laden schon da, damit nichts springt (`ReisendeKopf`). Auf der Kontoübersicht gibt es genau eine dunkelgrüne Fläche (der nächste Reiseschritt); Profil und Verwaltung stehen darunter in einer hellen Karte. `/account/security` und die Kontolöschung bleiben in diesem Schritt unverändert.
+Alle Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen, Meine Welt) beginnen mit dem `Seitenkopf` (Kicker „Konto“) und nutzen `Karte`, `Leerzustand`, `Hinweis` und `Ladeplatzhalter`. Der Kopf steht beim Laden schon da, damit nichts springt (`ReisendeKopf`). Auf der Kontoübersicht gibt es genau eine dunkelgrüne Fläche (der nächste Reiseschritt); Profil und Verwaltung stehen darunter in einer hellen Karte. `/account/security` und die Kontolöschung bleiben in diesem Schritt unverändert.
+
+### 6.18 Öffentliche Seiten, Rechtliches und Fehlerseiten
+
+Öffentliche Seiten setzen keinen eigenen Hintergrund auf `main`: Die Fläche kommt aus `PublicChrome`. Ein verschachteltes `bg-surface-75` wird in Weiss-Mint zur Navigationsfarbe und erzeugt sichtbare Bänder. Aus demselben Grund braucht ein Fehlerhinweis auf dieser Fläche Rand und `bg-card`, sonst verschwindet er.
+
+Rechtliche Seiten (Impressum, Datenschutz, AGB, Datenquellen) sind eine Lesespalte: `article` mit `max-w-prose` und `text-body`, Kicker „Rechtliches“, `h1` in `text-display`, Abschnittstitel in `text-title`, Text in `text-muted-foreground`, Links in `text-foreground` mit Unterstreichung und Fokusring. Lange Wörter im Titel trennen (`lang="de"`, `hyphens:auto`), damit bei 320 px nichts seitlich herausragt. Die eingebettete Fassung von PrivacyBee bleibt in ihrem Slot und scrollt bei breiten Tabellen selbst.
+
+404- und Fehlerseiten sind eine Karte (`rounded-panel`, `bg-card`, `shadow-card`) mit Symbol in `bg-muted`, `h1` in `text-display`, einem Hauptknopf in `bg-primary` und einem Nebenknopf mit `border-input`. Jede 404 steht im öffentlichen Rahmen mit Kopf- und Fusszeile, auch ausserhalb von `app/(public)`. Fehlertexte sagen nur, was feststeht: kein Versprechen über Daten, die die Seite nicht geprüft hat.
 
 ---
 

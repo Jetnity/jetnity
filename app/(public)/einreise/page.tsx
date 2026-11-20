@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default function EinreisePage() {
-  return <main className="min-h-screen bg-surface-75 px-4 py-8 text-brand-800 sm:px-6 sm:py-12">
+  return <main className="min-h-[70dvh] px-4 py-8 text-foreground sm:px-6 sm:py-12">
     <OfficialTruthChDe />
   </main>
 }

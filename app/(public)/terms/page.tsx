@@ -11,64 +11,64 @@ export const metadata: Metadata = {
 }
 
 const abschnittClass = 'space-y-4'
-const abschnittTitelClass = 'text-2xl font-semibold tracking-[-0.03em] text-brand-900 sm:text-3xl'
-const textClass = 'text-base leading-8 text-brand-800/80'
+const abschnittTitelClass = 'text-title text-foreground'
+const textClass = 'text-body text-muted-foreground'
 const linkClass =
-  'font-medium text-brand-900 underline decoration-brand-900/25 underline-offset-4 transition hover:decoration-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-900/15'
+  'font-medium text-foreground underline decoration-foreground/25 underline-offset-4 transition hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 export default function TermsPage() {
   return (
-    <main className="bg-surface-75 text-brand-800">
-      <article className="mx-auto w-full max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
-        <header className="border-b border-brand-900/10 pb-8 sm:pb-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-700">
+    <main className="px-5 text-foreground sm:px-8">
+      <article className="mx-auto w-full max-w-prose py-12 text-body sm:py-16">
+        <header className="border-b border-border pb-8 sm:pb-10">
+          <p className="text-kicker uppercase text-muted-foreground">
             Rechtliches
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-[-0.045em] text-brand-900 sm:text-5xl">
+          <h1 lang="de" className="mt-1 text-display text-foreground [hyphens:auto] [overflow-wrap:anywhere]">
             Jetnity Nutzungsbedingungen / AGB
           </h1>
-          <dl className="mt-6 grid gap-2 text-sm leading-6 text-brand-800/70 sm:grid-cols-3 sm:gap-6">
-            <div>
-              <dt className="font-semibold text-brand-900">Version</dt>
+          <dl className="mt-5 grid gap-1 text-meta text-muted-foreground sm:grid-cols-3 sm:gap-6">
+            <div className="flex flex-wrap gap-x-2 sm:block">
+              <dt className="font-semibold text-foreground">Version</dt>
               <dd>CH-DE 1.0</dd>
             </div>
-            <div>
-              <dt className="font-semibold text-brand-900">Stand</dt>
+            <div className="flex flex-wrap gap-x-2 sm:block">
+              <dt className="font-semibold text-foreground">Stand</dt>
               <dd>28. September 2026</dd>
             </div>
-            <div>
-              <dt className="font-semibold text-brand-900">Inkrafttreten</dt>
+            <div className="flex flex-wrap gap-x-2 sm:block">
+              <dt className="font-semibold text-foreground">Inkrafttreten</dt>
               <dd>28. September 2026</dd>
             </div>
           </dl>
         </header>
 
-        <div className="mt-10 space-y-12 sm:mt-12 sm:space-y-14">
+        <div className="mt-10 space-y-10 sm:mt-12 sm:space-y-12">
           <section className={abschnittClass}>
             <h2 className={abschnittTitelClass}>1. Betreiber und Kontakt</h2>
             <p className={textClass}>
               Jetnity wird von Feirov Global Trading, Einzelunternehmen, betrieben (nachfolgend
               «Jetnity» oder «wir»).
             </p>
-            <div className="rounded-2xl border border-brand-900/10 bg-white/65 p-5 text-sm leading-7 text-brand-800/80 sm:p-6">
+            <div className="rounded-card border border-border bg-card p-5 text-body text-muted-foreground shadow-card sm:p-6">
               <p>
-                <strong className="font-semibold text-brand-900">Postadresse:</strong>{' '}
+                <strong className="font-semibold text-foreground">Postadresse:</strong>{' '}
                 Meilipromenade 14, 6032 Emmen, Schweiz
               </p>
               <p>
-                <strong className="font-semibold text-brand-900">
+                <strong className="font-semibold text-foreground">
                   Unternehmens-Identifikationsnummer:
                 </strong>{' '}
                 CHE-432.441.385
               </p>
               <p>
-                <strong className="font-semibold text-brand-900">E-Mail:</strong>{' '}
+                <strong className="font-semibold text-foreground">E-Mail:</strong>{' '}
                 <a className={linkClass} href="mailto:info@jetnity.ch">
                   info@jetnity.ch
                 </a>
               </p>
               <p>
-                <strong className="font-semibold text-brand-900">Website:</strong>{' '}
+                <strong className="font-semibold text-foreground">Website:</strong>{' '}
                 <a className={linkClass} href="https://jetnity.com">
                   https://jetnity.com
                 </a>
@@ -290,7 +290,7 @@ export default function TermsPage() {
               Du darfst Jetnity im Rahmen der angebotenen Funktionen und des geltenden Rechts nutzen.
               Unzulässig sind insbesondere:
             </p>
-            <ul className="list-disc space-y-3 pl-6 text-base leading-8 text-brand-800/80 marker:text-brand-700">
+            <ul className="list-disc space-y-2 pl-6 text-body text-muted-foreground marker:text-muted-foreground">
               <li>
                 rechtswidrige, betrügerische, diskriminierende oder bedrohende Handlungen und Inhalte
                 sowie Verletzungen fremder Persönlichkeits-, Datenschutz- oder Immaterialgüterrechte;

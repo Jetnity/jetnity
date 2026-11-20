@@ -19,12 +19,12 @@ export function HomeUnterschied() {
               <Symbol className={`h-7 w-7 ${index === 1 ? 'text-citrus-400' : 'text-brand-600'}`} aria-hidden="true" />
               <p className={`mt-6 text-xs font-semibold uppercase tracking-[0.12em] ${index === 1 ? 'text-ink-300' : 'text-brand-600'}`}>{punkt.thema}</p>
               <h3 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.035em] text-balance">{punkt.titel}</h3>
-              <p className={`mb-7 mt-4 text-sm leading-7 ${index === 1 ? 'text-ink-300' : 'text-ink-800'}`}>{punkt.text}</p>
+              <p className={`mb-7 mt-4 max-w-prose text-sm leading-7 ${index === 1 ? 'text-ink-300' : 'text-ink-800'}`}>{punkt.text}</p>
               <div className={`mt-auto border-t pt-5 ${index === 1 ? 'border-white/20' : 'border-line-200'}`}>
                 <p className="text-sm font-semibold leading-6">{punkt.beispiel}</p>
                 <div className="mt-3 flex items-start gap-2">
                   <ArrowRight className={`mt-1 h-4 w-4 shrink-0 ${index === 1 ? 'text-citrus-400' : 'text-brand-600'}`} aria-hidden="true" />
-                  <p className={`min-w-0 text-sm leading-6 ${index === 1 ? 'text-ink-300' : 'text-ink-800'}`}>{punkt.ergebnis}</p>
+                  <p className={`min-w-0 max-w-prose text-sm leading-6 ${index === 1 ? 'text-ink-300' : 'text-ink-800'}`}>{punkt.ergebnis}</p>
                 </div>
               </div>
             </article>

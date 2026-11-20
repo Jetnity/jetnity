@@ -26,28 +26,29 @@ export default async function PrivacyPage() {
   })
 
   return (
-    <main className="bg-surface-75 text-brand-800">
-      <article className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="px-5 text-foreground sm:px-8">
+      <article className="mx-auto w-full max-w-prose py-12 text-body sm:py-16">
+        <p className="mb-1 text-kicker uppercase text-muted-foreground">Rechtliches</p>
         <PrivacyBeeEinbettung flaeche="datenschutz" einbetten={einbetten} />
-        <section aria-label="Stay22" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Unterkunftssuche mit Stay22</h2>
+        <section aria-label="Stay22" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Unterkunftssuche mit Stay22</h2>
           <p className="mt-3">Wenn du in der Unterkunftssuche „Suchen“ wählst, lädt Jetnity die offizielle Stay22-Karte mit Unterkunftsangeboten in einem getrennten Rahmen. Stay22 erhält das öffentliche Reiseziel, gegebenenfalls dessen Koordinaten, An- und Abreise, Anzahl der Erwachsenen, Kinder und Zimmer sowie Sprache, Währung und Partnerkennung. Dabei fallen Verbindungsdaten wie die IP-Adresse an. Stay22 und seine Dienstleister können Cookies oder ähnliche Technologien verwenden. Private Reise-IDs, Namen der Reisenden und Buchungsunterlagen werden dafür nicht übergeben.</p>
           <p className="mt-3">Für die Suche in einer bestimmten Umgebung erhält Stay22 auch den von dir gewählten Ort oder eingegebenen Suchtext sowie die gewählten Suchfilter. Wenn du Reiseorte auf der Karte einblendest, werden deren bekannte Koordinaten und öffentliche oder allgemeine Ortsbezeichnungen übermittelt. Private Notizen und Buchungsreferenzen gehören nicht dazu.</p>
           <p className="mt-3">Bei Änderung der Suchangaben, Ausblenden oder Verlassen der Unterkunftssuche entfernt Jetnity die Einbindung. Bereits übermittelte Angaben werden dadurch nicht zurückgenommen. Vorhandene Ablehnungen oder Widerrufe in den Datenschutzeinstellungen werden respektiert. Die Anzeigeentscheidung wird nicht für spätere Besuche gespeichert. Buchung und Bezahlung erfolgen beim angezeigten Anbieter; eine vermittelte Buchung kann Jetnity eine Provision einbringen.</p>
-          <p className="mt-3"><a href="https://www.stay22.com/privacy" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4">Datenschutzhinweise von Stay22</a></p>
+          <p className="mt-3"><a href="https://www.stay22.com/privacy" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Datenschutzhinweise von Stay22</a></p>
         </section>
-        <section aria-label="Booking.com" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Unterkünfte und Flüge bei Booking.com</h2>
+        <section aria-label="Booking.com" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Unterkünfte und Flüge bei Booking.com</h2>
           <p className="mt-3">Wenn du «Auf Booking.com suchen» wählst, öffnet sich die Partnersuche über CJ. Bei der Unterkunftssuche übergeben wir Reiseziel, gewählte Daten, Erwachsene, Zimmer und Währung. Bei Flügen übergeben wir Flughäfen, Flugtermine, Erwachsene, Reiseklasse, Währung und deine Auswahl zu Direktflügen.</p>
           <p className="mt-3">CJ und Booking.com erhalten eine Partnerkennung, über die eine Buchung Jetnity zugeordnet werden kann. Jetnity kann dafür eine Provision erhalten.</p>
         </section>
-        <section aria-label="Omio" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Verbindungen mit Omio</h2>
+        <section aria-label="Omio" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Verbindungen mit Omio</h2>
           <p className="mt-3">Jetnity vergleicht Streckenwerte aus dem Schweizer Omio-Katalog. Vormerkungen liegen im jeweiligen Browser. Beim Öffnen eines Partnerlinks erhalten Impact und Omio Start, Ziel, Reisedatum, gegebenenfalls das Verkehrsmittel sowie Sprache, Währung und Partnerkennung. Eine vermittelte Buchung kann Jetnity eine Provision einbringen.</p>
           <p className="mt-3">Die Kartenübersicht nutzt OpenStreetMap. Google Maps lädt beim Auswählen der Google-Ansicht den gewählten Standort. Beim Laden von Karten fallen beim Kartendienst Verbindungsdaten wie die IP-Adresse an. Über „Route öffnen“ übergibst du Start und Ziel an Google Maps.</p>
         </section>
-        <section aria-label="DiscoverCars" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Mietwagensuche mit DiscoverCars</h2>
+        <section aria-label="DiscoverCars" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Mietwagensuche mit DiscoverCars</h2>
           <p className="mt-3">
             Das offizielle Suchformular von DiscoverCars wird erst geladen, wenn du „Suchformular laden“ wählst.
             Es läuft auf der Anbieter-Domain in einem getrennten Rahmen. Dabei erhält DiscoverCars Verbindungsdaten wie die IP-Adresse,
@@ -62,11 +63,11 @@ export default async function PrivacyPage() {
             Die Anzeigeentscheidung wird nicht für andere Reisen oder spätere Besuche gespeichert. Bei einer vermittelten Buchung kann Jetnity eine Provision erhalten.
           </p>
           <p className="mt-3">
-            <a href="https://www.discovercars.com/de/privacy" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4">Datenschutzhinweise von DiscoverCars</a>
+            <a href="https://www.discovercars.com/de/privacy" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Datenschutzhinweise von DiscoverCars</a>
           </p>
         </section>
-        <section aria-label="Aktivitätenangebote" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Externe Aktivitätenangebote</h2>
+        <section aria-label="Aktivitätenangebote" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Externe Aktivitätenangebote</h2>
           <p className="mt-3">
             Jetnity kann offizielle Widgets von Viator und GetYourGuide für das bestätigte Reiseziel anzeigen.
             Beim Öffnen des Aktivitätenbereichs werden Angebote zum ausgewählten Ziel automatisch geladen, sofern sie nicht ausgeblendet sind.
@@ -76,19 +77,19 @@ export default async function PrivacyPage() {
             Die Anzeigepräferenz „Ausblenden“ wird für die aktuelle Browsersitzung gespeichert und erteilt keine Zustimmung.
           </p>
         </section>
-        <section aria-label="Viator" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">Viator</h2>
+        <section aria-label="Viator" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">Viator</h2>
           <p className="mt-3">
             Das Viator-Widget wird in einem getrennten Rahmen geladen. Jetnity übergibt den bestätigten öffentlichen Zielnamen sowie Deutsch und CHF als Anzeigeeinstellungen.
             Private Reisebezeichnungen, Reisedaten und Teilnehmerangaben werden dafür nicht übergeben. Buchung und Bezahlung erfolgen bei Viator.
           </p>
           <p className="mt-3">
             <a href="https://www.viator.com/support/privacyPolicy" target="_blank" rel="noopener noreferrer"
-              className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4">Datenschutzhinweise von Viator</a>
+              className="inline-flex min-h-11 items-center font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Datenschutzhinweise von Viator</a>
           </p>
         </section>
-        <section aria-label="GetYourGuide" className="mt-10 border-t border-line-200 pt-6 text-sm leading-6 text-ink-800">
-          <h2 className="text-lg font-semibold text-brand-800">GetYourGuide</h2>
+        <section aria-label="GetYourGuide" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">
+          <h2 className="text-title text-foreground">GetYourGuide</h2>
           <p className="mt-3">
             Jetnity lädt das offizielle Aktivitäten-Widget und den Integration Analyzer von GetYourGuide in einem getrennten Rahmen. Der Analyzer dient GetYourGuide zur Auswertung der Einbindung und ihrer Nutzung. Dabei entsteht eine Verbindung zu GetYourGuide. Jetnity übergibt dafür den bestätigten öffentlichen Ortsnamen und das Land, keine privaten Reisedaten. Buchung und Bezahlung erfolgen bei GetYourGuide.
           </p>
@@ -97,7 +98,7 @@ export default async function PrivacyPage() {
               href="https://www.getyourguide.com/c/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4"
+              className="inline-flex min-h-11 items-center font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Datenschutzhinweise von GetYourGuide
             </a>

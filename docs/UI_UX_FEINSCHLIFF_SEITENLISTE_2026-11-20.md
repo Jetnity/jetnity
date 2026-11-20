@@ -12,10 +12,10 @@ Blog, eine eigene Suchseite und eine Seite Hilfe/Kontakt gibt es im Code nicht. 
 
 ## Startseite, Inspiration, Einreise
 
-- [ ] `/` Startseite – Etappe 5 (Grundton in Etappe 1, Lesebreite in Etappe 4)
-- [ ] `/entdecken` Inspiration entdecken, mit Leer- und Fehlerzustand – Etappe 5
-- [ ] `/einreise` Einreise und Visum prüfen (öffentlich) – Etappe 5; `EinreiseLaenderpruefer` bleibt wegen #1254 unverändert
-- [ ] `/datenquellen` Datenquellen & Lizenzen – Etappe 5
+- [x] `/` Startseite – Etappe 5 (Grundton in Etappe 1, Lesebreite in Etappe 4 und 5)
+- [x] `/entdecken` Inspiration entdecken, mit Leer- und Fehlerzustand – Etappe 5
+- [x] `/einreise` Einreise und Visum prüfen (öffentlich) – Etappe 5, nur Seitenrahmen; `EinreiseLaenderpruefer` bleibt wegen #1254 unverändert
+- [x] `/datenquellen` Datenquellen & Lizenzen – Etappe 5
 
 ## Reise planen bis fertige Reise
 
@@ -62,7 +62,7 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] `/account/travellers` Reisende (lädt, leer, Fehler) – Etappe 4
 - [x] `/account/bookings` Bestätigte Buchungen (lädt, leer, Fehler) – Etappe 4
 - [x] `/account/settings` Einstellungen – Etappe 4 (Kontolöschung unverändert)
-- [ ] `/account/welt` Meine Welt – Etappe 5
+- [x] `/account/welt` Meine Welt (mit Besuchen, leer, Fehler) – Etappe 5
 - [ ] `/account/security` Anmeldung & Sicherheit, nur Aussehen – Etappe 6
 
 ## Anmeldung (nur Aussehen)
@@ -76,16 +76,16 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 
 ## Rechtliches
 
-- [ ] `/impressum` – Etappe 5
-- [ ] `/privacy` Datenschutzerklärung – Etappe 5
-- [ ] `/terms` Nutzungsbedingungen / AGB – Etappe 5
+- [x] `/impressum` – Etappe 5
+- [x] `/privacy` Datenschutzerklärung – Etappe 5
+- [x] `/terms` Nutzungsbedingungen / AGB – Etappe 5
 
 ## Fehler- und Leerseiten
 
-- [ ] `app/not-found.tsx` (404 ausserhalb der öffentlichen Gruppe) – Etappe 5
-- [ ] `app/(public)/not-found.tsx` (404) – Etappe 5
-- [ ] `app/(public)/error.tsx` – Etappe 5
-- [ ] `app/account/error.tsx` – Etappe 5
+- [x] `app/not-found.tsx` (404 ausserhalb der öffentlichen Gruppe, jetzt mit Kopf- und Fusszeile) – Etappe 5
+- [x] `app/(public)/not-found.tsx` (404) – Etappe 5
+- [x] `app/(public)/error.tsx` – Etappe 5
+- [x] `app/account/error.tsx` – Etappe 5
 - [ ] `app/(admin)/admin/error.tsx` – Etappe 7
 - [ ] `app/(admin)/admin/not-found.tsx` – Etappe 7
 - [ ] `app/(admin)/admin/loading.tsx` – Etappe 7
