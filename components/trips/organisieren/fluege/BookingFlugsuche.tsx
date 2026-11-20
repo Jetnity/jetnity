@@ -81,7 +81,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
   return (
     <>
       <form
-        className="org-form"
+        className="org-form org-aktion-ende"
         action={BOOKING_FLUG_PARTNERLINK}
         method="get"
         target="_blank"

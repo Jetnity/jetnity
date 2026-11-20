@@ -112,7 +112,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const categories = [...new Set(result?.offers.map(o => o.car.category).filter((c): c is string => !!c) ?? [])]
   return <section aria-label="Mietwagen suchen und vergleichen" data-discovercars-native="1" className="grid min-w-0 gap-7">
     <div className={zentral ? 'org-form' : ORGANISIEREN_FLAECHE_KLASSE}>
-      {zentral ? <form onSubmit={submit} onChangeCapture={invalidate}>
+      {zentral ? <form onSubmit={submit} onChangeCapture={invalidate} className="org-aktion-ende">
         <div className="org-formtop"><h2>Mietwagen suchen</h2><label className="org-check"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)}/> Andere Rückgabestation</label></div>
         <div className={'org-fields org-rentalfields ' + (oneWay ? 'org-four' : '')}>
           <div className="org-station"><StationField nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>

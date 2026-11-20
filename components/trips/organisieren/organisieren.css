@@ -766,6 +766,37 @@ button.org-bestand-zeile:hover {
   .org-fields .org-go {
     padding: 0 11px;
   }
+  /* Auf dem Handy steht die Suche nach allen Feldern, auch nach den Zusatzfeldern darunter. */
+  .org-aktion-ende {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 6px;
+  }
+  .org-aktion-ende > :not(.org-fields):not(.org-sub) {
+    grid-column: 1 / -1;
+  }
+  .org-aktion-ende > .org-fields,
+  .org-aktion-ende > .org-sub {
+    display: contents;
+  }
+  .org-aktion-ende .org-go {
+    order: 1;
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+  .org-aktion-ende > :is(.org-note, p[role='alert']) {
+    order: 2;
+  }
+  .org-aktion-ende .org-rentalsub > label {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .org-aktion-ende .org-rentalsub > label > :is(input, select) {
+    width: 100%;
+    max-width: none;
+    min-height: 44px;
+  }
   .org-results {
     margin-top: 19px;
   }
