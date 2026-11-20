@@ -63,3 +63,34 @@ test('the nine original BMI special visa-duty entries remain passport-class-spec
  }
  assert.equal(AT_BMI_GROUPS.V.length,20)
 })
+
+test('Five original Austrian bilateral exceptions have distinct maximum stay and passport categories, not automatic Schengen-wide waivers',()=>{
+ const expected={
+  BR:/gewöhnlicher brasilianischer Reisepass 3 Monate.*Diplomaten-\/Dienstpässe 6 Monate/,
+  KR:/gewöhnlicher südkoreanischer Reisepass 90 Tage.*Diplomaten-\/Dienstpass 180 Tage/,
+  JP:/6 Monate.*österreichische nationale Ausnahme/,
+  CA:/3 Monate.*angeführten Passkategorien/,
+  IL:/3 Monate.*Änderungsurkunde/,
+ }
+ for(const [passport,pattern] of Object.entries(expected)){
+  const result=atBmiSourceReview(passport)
+  assert.ok(result)
+  assert.equal(result.group,'E')
+  assert.match(result.special??'',pattern)
+  assert.match(result.special??'',/bilaterale nationale Ausnahme/)
+  assert.equal(result.individualVisaQualified,false)
+  assert.equal(result.personalVisaEffect,null)
+  assert.equal(result.ownerAal2Approved,false)
+  assert.equal(result.verifiedPrice,null)
+ }
+})
+test('Original BMI biometric exception must not be interpreted as a non-biometric ordinary passport waiver',()=>{
+ assert.match(atBmiSourceReview('UA')?.special??'',/nichtbiometrischen Diplomatenpass/)
+ assert.match(atBmiSourceReview('RS')?.special??'',/nichtbiometrischen Diplomatenpass/)
+ assert.match(atBmiSourceReview('RS')?.special??'',/Koordinationsdirektion/)
+ assert.doesNotMatch(atBmiSourceReview('XK')?.special??'',/nichtbiometrischen Diplomatenpass/)
+ for(const code of ['UA','RS','XK']){
+  assert.match(atBmiSourceReview(code)?.special??'',/nichtbiometrischer gewöhnlicher Pass ist dadurch nicht automatisch visumfrei/)
+  assert.equal(atBmiSourceReview(code)?.individualVisaQualified,false)
+ }
+})

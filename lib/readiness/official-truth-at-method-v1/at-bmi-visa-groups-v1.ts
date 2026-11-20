@@ -33,6 +33,16 @@ const scope=Object.freeze({
 })
 const biometric=new Set(['UA','XK','RS'])
 const bilateral=new Set(['BR','KR','JP','CA','IL'])
+// Exact differentiated BMI visa-exception cells, 06.11.2026 edition. These
+// are Austrian exceptional bilateral terms, NOT universally portable Schengen
+// permissions, not an automatic override of EU 90/180 or the EU EES.
+const nationalBilateralTerms:Readonly<Record<string,string>>=Object.freeze({
+ BR:'BMI Österreich-Altabkommen: gewöhnlicher brasilianischer Reisepass 3 Monate; nur Diplomaten-/Dienstpässe 6 Monate. Bei mehr als 90 Tagen europäische/österreichische Sonderbedingungen getrennt prüfen.',
+ KR:'BMI Österreich-Altabkommen: gewöhnlicher südkoreanischer Reisepass 90 Tage, Diplomaten-/Dienstpass 180 Tage; keine allgemeine EU-Schengen-180-Tage-Visafreiheit daraus ableiten.',
+ JP:'BMI Österreich-Altabkommen: 6 Monate für die angegebenen Passkategorien, jedoch eine ausdrücklich österreichische nationale Ausnahme; Schengen-Tage, Reisezweck und Aufenthaltsstatus separat prüfen.',
+ CA:'BMI Österreich-Altabkommen: 3 Monate für die angeführten Passkategorien. Die Sonderregel darf nicht ungeprüft als 90/180-EU-Regel oder andere Zielstaatenregel umgedeutet werden.',
+ IL:'BMI Österreich-Altabkommen: 3 Monate für die angeführten Passkategorien, mit eigener Änderungsurkunde; nicht automatisch auf andere Schengenstaaten übertragbar.',
+})
 // Individual BMİ row EXCEPTIONS, checked against original Nov-6 Austrian BMI
 // national/EU waiver fields on 20.11.2026. These are conditions, never a
 // personal result; special/diplomatic documents are NOT ordinary passports.
@@ -55,9 +65,11 @@ export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
  if(!/^[A-Z]{2}$/.test(code))return null
  const group=groups.get(code);if(!group)return null
  let special:string|null=null
- if(biometric.has(code))special='Für diese Staatsangehörigkeit erfordert die BMI-Visumbefreiung einen biometrischen Reisepass. Ein nichtbiometrischer gewöhnlicher Pass ist dadurch nicht automatisch visumfrei.'
+ if(biometric.has(code))special='Für diese Staatsangehörigkeit erfordert die BMI-Visumbefreiung eines gewöhnlichen Reisepasses einen biometrischen Reisepass. Ein nichtbiometrischer gewöhnlicher Pass ist dadurch nicht automatisch visumfrei.'+
+  (code==='UA'||code==='RS'?' Die BMI-Originalzeile beschreibt eine eigenständige Ausnahme für einen nichtbiometrischen Diplomatenpass; sie gilt nicht für den gewöhnlichen Pass.':'')+
+  (code==='RS'?' Die genaue serbische Koordinationsdirektion-Passkategorie muss separat anhand der BMI-Originalzeile geprüft werden.':'')
  else if(code==='GB')special='Die BMI-Liste unterscheidet mehrere britische Staatsangehörigkeits- und Passkategorien, die im konkreten Fall geprüft werden müssen.'
- else if(bilateral.has(code))special='Zusätzliche österreichische bilaterale Aufenthaltserleichterungen können gelten; keine pauschale Verlängerung des EU-Kurzaufenthalts annehmen.'
+ else if(bilateral.has(code))special=nationalBilateralTerms[code]+' Die BMI-Liste kennzeichnet EES-Sonderregelung Altabkommen als bilaterale nationale Ausnahme; nicht als EU-Allgemeinbefreiung ausgeben.'
  else if(group==='V')special=specialVisaDuty[code]??null
  return Object.freeze({
   code,group,label:scope[group].label,text:scope[group].text,special,
