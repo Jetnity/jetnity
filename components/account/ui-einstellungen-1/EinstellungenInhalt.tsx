@@ -10,6 +10,7 @@ import type { UiEinstellungenLesen } from '@/lib/account/ui-einstellungen-1/vert
 import type { UiSprache } from '@/lib/localization/ui-sprache'
 import { einstellungenText } from '@/lib/localization/einstellungen-texte'
 import { Seitenkopf } from '@/components/ui/seitenkopf'
+import { cn } from '@/lib/utils'
 
 type Eigenschaften = KontospracheAktionen & {
   initial: UiEinstellungenLesen
@@ -22,21 +23,13 @@ function Inhalt({ initial, bereich, loeschungAngeboten = false, ...aktionen }: E
   const loeschBereich = loeschungAngeboten ? <KontoLoeschen sprache={sprache} /> : null
   const titelPraefix = bereich === 'admin' ? 'admin' : 'account'
   return (
-    <div lang={sprache} data-einstellungen-hub="" className="min-w-0 px-4 py-6 [overflow-wrap:anywhere] sm:px-6 sm:py-8">
+    <div lang={sprache} data-einstellungen-hub="" className={cn('min-w-0 [overflow-wrap:anywhere]', bereich === 'konto' && 'px-4 py-6 sm:px-6 sm:py-8')}>
       <div className="mx-auto max-w-5xl">
-        {bereich === 'admin' ? (
-          <header className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80">{einstellungenText(sprache, `${titelPraefix}.eyebrow`)}</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">{einstellungenText(sprache, `${titelPraefix}.title`)}</h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-foreground/80">{einstellungenText(sprache, `${titelPraefix}.intro`)}</p>
-          </header>
-        ) : (
-          <Seitenkopf kicker={einstellungenText(sprache, `${titelPraefix}.eyebrow`)} titel={einstellungenText(sprache, `${titelPraefix}.title`)}>
-            <p>{einstellungenText(sprache, `${titelPraefix}.intro`)}</p>
-          </Seitenkopf>
-        )}
+        <Seitenkopf kicker={einstellungenText(sprache, `${titelPraefix}.eyebrow`)} titel={einstellungenText(sprache, `${titelPraefix}.title`)}>
+          <p>{einstellungenText(sprache, `${titelPraefix}.intro`)}</p>
+        </Seitenkopf>
         <Kontosprache initial={initial} sprache={sprache} waehlen={setSprache} bereich={bereich} {...aktionen} />
-        {bereich === 'admin' ? <p className="mt-4 text-sm leading-6 text-foreground/80">{einstellungenText(sprache, 'admin.scope')}</p> : (
+        {bereich === 'admin' ? <p className="mt-4 max-w-prose text-sm leading-6 text-foreground/80">{einstellungenText(sprache, 'admin.scope')}</p> : (
           <>
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Link href="/account/security" className="flex min-h-11 flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 motion-reduce:transition-none sm:flex-row sm:items-start sm:p-5">

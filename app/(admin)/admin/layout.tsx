@@ -187,7 +187,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* App shell */}
-        <div className={`mx-auto grid ${gridCols} lg:gap-0`} role="application" aria-label="Jetnity Admin">
+        <div className={`mx-auto grid ${gridCols} lg:gap-0`}>
           {/* Desktop sidebar */}
           {/* Keep the complementary landmark; collapse only changes its visual density. */}
           <aside
@@ -210,9 +210,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <main
               id="admin-content"
               tabIndex={-1}
-              role="main"
-              aria-live="polite"
-              className="p-4 lg:p-6 outline-none"
+              className="px-4 pb-10 pt-6 outline-none sm:px-6 lg:px-8 lg:pt-8"
             >
               {children}
             </main>

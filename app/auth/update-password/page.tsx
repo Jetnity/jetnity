@@ -185,14 +185,8 @@ export default function UpdatePasswordPage() {
           </div>
         )}
 
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Speichern…
-            </>
-          ) : (
-            'Passwort speichern'
-          )}
+        <Button type="submit" isLoading={loading} loadingText="Speichern…" className="w-full">
+          Passwort speichern
         </Button>
       </form>
     </div>

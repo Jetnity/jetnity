@@ -159,7 +159,7 @@ html {
     --secondary-foreground: var(--jet-brand-800);
 
     --muted: var(--jet-surface-100);
-    --muted-foreground: var(--jet-ink-800);
+    --muted-foreground: var(--jet-ink-900);
 
     --accent: var(--jet-surface-100);
     --accent-foreground: var(--jet-brand-800);

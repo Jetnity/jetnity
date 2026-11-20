@@ -86,32 +86,32 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] `app/(public)/not-found.tsx` (404) – Etappe 5
 - [x] `app/(public)/error.tsx` – Etappe 5
 - [x] `app/account/error.tsx` – Etappe 5
-- [ ] `app/(admin)/admin/error.tsx` – Etappe 7
-- [ ] `app/(admin)/admin/not-found.tsx` – Etappe 7
-- [ ] `app/(admin)/admin/loading.tsx` – Etappe 7
+- [x] `app/(admin)/admin/error.tsx` – Etappe 7
+- [x] `app/(admin)/admin/not-found.tsx` (greift bei `notFound()` innerhalb des Admin; eine unbekannte Admin-Adresse zeigt die allgemeine 404) – Etappe 7
+- [x] `app/(admin)/admin/loading.tsx` – Etappe 7
 - [x] `app/account/bookings/loading.tsx`, `app/account/travellers/loading.tsx` – Etappe 4
 
 ## Admin
 
-- [ ] `/admin/login` (nur Aussehen) – Etappe 7
-- [ ] `/admin/mfa` (nur Aussehen) – Etappe 7
-- [ ] `/admin` Übersicht – Etappe 7
-- [ ] `/admin/analytics` – Etappe 7
-- [ ] `/admin/content` – Etappe 7
-- [ ] `/admin/content/editor` – Etappe 7
-- [ ] `/admin/localization` – Etappe 7
-- [ ] `/admin/marketing` – Etappe 7
-- [ ] `/admin/official-truth/at-method` – Etappe 7
-- [ ] `/admin/official-truth/guard` – Etappe 7
-- [ ] `/admin/official-truth/import` – Etappe 7
-- [ ] `/admin/official-truth/method` – Etappe 7
-- [ ] `/admin/payments` – Etappe 7
-- [ ] `/admin/provider-ops` – Etappe 7
-- [ ] `/admin/security` – Etappe 7
-- [ ] `/admin/settings` – Etappe 7
-- [ ] `/admin/system-health` – Etappe 7
-- [ ] `/admin/users` – Etappe 7
-- [ ] `/einreise/betrieb` Schutzprüfung der Einreiseauskunft (nur Owner) – Etappe 7
+- [x] `/admin/login` (nur Aussehen; Formular, Fehler, Magic Link gesendet) – Etappe 7
+- [x] `/admin/mfa` (nur Aussehen; prüft, Fehler, Einrichtung nötig) – Etappe 7
+- [x] `/admin` Übersicht – Etappe 7
+- [x] `/admin/analytics` – Etappe 7
+- [x] `/admin/content` – Etappe 7
+- [x] `/admin/content/editor` – Etappe 7
+- [x] `/admin/localization` (auf dem Handy als Liste statt Tabelle) – Etappe 7
+- [x] `/admin/marketing` – Etappe 7
+- [x] `/admin/official-truth/at-method` – Etappe 7
+- [x] `/admin/official-truth/guard` – Etappe 7
+- [x] `/admin/official-truth/import` – Etappe 7
+- [x] `/admin/official-truth/method` – Etappe 7
+- [x] `/admin/payments` – Etappe 7
+- [x] `/admin/provider-ops` – Etappe 7
+- [x] `/admin/security` – Etappe 7
+- [x] `/admin/settings` – Etappe 7
+- [x] `/admin/system-health` – Etappe 7
+- [x] `/admin/users` – Etappe 7
+- [x] `/einreise/betrieb` Schutzprüfung der Einreiseauskunft (nur Owner) – Etappe 7
 
 ## Ausgenommen
 

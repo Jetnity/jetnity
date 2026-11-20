@@ -106,12 +106,14 @@ export default function AdminSidebar({ className }: { className?: string }) {
             </p>
             <NavListe items={ready} pathname={pathname} />
           </div>
-          <div>
-            <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              In Planung
-            </p>
-            <NavListe items={later} pathname={pathname} />
-          </div>
+          {later.length > 0 ? (
+            <div>
+              <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                In Planung
+              </p>
+              <NavListe items={later} pathname={pathname} />
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-6 group-data-[collapsed=true]/admin-nav:hidden border-t border-border pt-3 text-[11px] text-muted-foreground">

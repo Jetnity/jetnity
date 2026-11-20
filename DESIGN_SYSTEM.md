@@ -216,7 +216,7 @@ Die shadcn-Namen definieren **keine eigenen Farben**. Sie verweisen auf die Pale
 | `--primary-foreground` | `surface-0` | Aufschrift darauf, 12,5:1 |
 | `--secondary` | `surface-200` | ruhige gefüllte Fläche |
 | `--muted` | `surface-100` | gedämpfte Fläche |
-| `--muted-foreground` | `ink-800` | Nebentext, 4,53:1 – erfüllt AA |
+| `--muted-foreground` | `ink-900` | Nebentext, 6,2:1 auf der Grundfläche, 5,9:1 auf `muted` |
 | `--accent` | `surface-100` | Zeigen-Zustand in Menüs |
 | `--border`, `--input` | `line-200` | Rahmen und Felder |
 | `--ring` | `brand-600` | Fokusring |
@@ -403,6 +403,14 @@ Seiten, die nur einen Zustand melden (404, Anmeldung abschliessen, Link ungülti
 Registrierung und Passwortformular teilen die Formularsprache des Logins: Titel, Felder mit Symbol im Label, Hilfen in `text-meta`, Fehler als `Hinweis` oder Feldfehler (7.6a), Erfolg als Karte mit `border-primary/40`. Seite und Formular von `/login` sowie `/account/security` folgen nach dem Merge von #1240, weil ihre Dateien dort geändert werden; bis dahin wirkt dort nur das gemeinsame Eingabefeld (7.6).
 
 ---
+
+### 6.20 Admin-Seiten
+
+Der Admin bleibt in der Creme-Palette und hat als einzige Fläche ein dunkles Thema (3a.1). Jede Admin-Seite beginnt mit dem `Seitenkopf`: Kicker „Administration“ (gilt in beiden Sprachen), bei den amtlichen Quellen und `/einreise/betrieb` „Amtliche Quellen“; darin steht die einzige `h1` der Seite in `text-display`. Die Kopfleiste zeigt nur den Ort (Name und Pfad, keine Überschrift). Zwischenstufen ohne eigene Seite im Pfad sind Text, keine Links; die Links im Pfad sind mit Maus 24 px hoch.
+
+Abschnitte unter dem Kopf beginnen mit `h2`. Erklärende Absätze, Nachweise („Datenqualität & Nachweis“) und Beschreibungen stehen in `max-w-prose`, auch in breiten Karten. Die amtlichen Quellen sind eine Lesespalte in `max-w-2xl`. Fehler-, 404- und Ladeansicht des Admin nutzen `Statuskarte` (6.19) und `Ladeplatzhalter`; der Fehler zeigt die technische Meldung nur ausserhalb von Production. Admin-Anmeldung und MFA-Schritt sind eine Karte wie das Login, nur das Aussehen ist neu.
+
+Bedienflächen sind auf Touch 44 px hoch, mit Maus mindestens 24 px (7.5); Auswahlfelder folgen dem `Input`. Der Sprachkatalog steht auf dem Handy als Liste (Schlüssel, Deutsch, Englisch untereinander) und ab `sm` als Tabelle. Leere Navigationsgruppen werden nicht angezeigt.
 
 ## 7. Responsive-Regeln
 

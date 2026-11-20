@@ -1,6 +1,7 @@
 import { ANALYTICS_RANGES, type AnalyticsSource, type TravelAnalyticsReport } from '@/lib/admin/analytics/report'
 import AdminSnapshotRefresh from '@/components/admin/AdminSnapshotRefresh'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { analyticsText } from '@/lib/localization/analytics-texte'
 import type { UiSprache } from '@/lib/localization/ui-sprache'
 
@@ -26,16 +27,14 @@ export default function TravelAnalytics({ report, invalidRange = false, sprache 
 
   return (
     <div lang={sprache} className="mx-auto grid min-w-0 max-w-7xl grid-cols-1 gap-5 [overflow-wrap:anywhere]">
-      <header className="min-w-0">
-        <p className="text-sm font-medium text-muted-foreground">{analyticsText(sprache, 'analytics.eyebrow')}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{analyticsText(sprache, 'analytics.title')}</h1>
-        <p className="mt-2 max-w-3xl text-sm text-muted-foreground">{analyticsText(sprache, 'analytics.intro')}</p>
-      </header>
+      <Seitenkopf kicker={analyticsText(sprache, 'analytics.eyebrow')} titel={analyticsText(sprache, 'analytics.title')}>
+        <p>{analyticsText(sprache, 'analytics.intro')}</p>
+      </Seitenkopf>
       <AdminSnapshotRefresh observedAt={report.observedAt} sprache={sprache} />
 
       <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6" aria-labelledby="analytics-metrics">
         <h2 id="analytics-metrics" className="text-lg font-semibold">{analyticsText(sprache, 'analytics.metricsTitle')}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{analyticsText(sprache, 'analytics.metricsHint')}</p>
+        <p className="mt-1 max-w-prose text-sm text-muted-foreground">{analyticsText(sprache, 'analytics.metricsHint')}</p>
         <div className="mt-4">
           {report.metrics.kind === 'ready' ? (
             <dl className="grid min-w-0 gap-3 sm:grid-cols-3">
@@ -58,7 +57,7 @@ export default function TravelAnalytics({ report, invalidRange = false, sprache 
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 max-w-full">
             <h2 id="analytics-series" className="text-lg font-semibold">{analyticsText(sprache, 'analytics.seriesTitle')}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">{analyticsText(sprache, 'analytics.period', { days: report.range })}</p>
+            <p className="mt-1 max-w-prose text-sm text-muted-foreground">{analyticsText(sprache, 'analytics.period', { days: report.range })}</p>
           </div>
           <nav aria-label={analyticsText(sprache, 'analytics.rangeLabel')} className="flex flex-wrap gap-2">
             {ANALYTICS_RANGES.map((range) => (
@@ -98,13 +97,13 @@ export default function TravelAnalytics({ report, invalidRange = false, sprache 
             </>
           ) : <MissingSource source={report.series} sprache={sprache} />}
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">{analyticsText(sprache, 'analytics.dayBoundary')}</p>
+        <p className="mt-4 max-w-prose text-xs text-muted-foreground">{analyticsText(sprache, 'analytics.dayBoundary')}</p>
       </section>
 
       <aside className="min-w-0 rounded-2xl border border-border bg-card p-4 text-sm sm:p-6" aria-labelledby="analytics-source">
         <h2 id="analytics-source" className="font-semibold">{analyticsText(sprache, 'analytics.sourceTitle')}</h2>
-        <p className="mt-2 text-muted-foreground">{analyticsText(sprache, 'analytics.source')}</p>
-        <p className="mt-2 text-muted-foreground">{analyticsText(sprache, 'analytics.limits')}</p>
+        <p className="mt-2 max-w-prose text-muted-foreground">{analyticsText(sprache, 'analytics.source')}</p>
+        <p className="mt-2 max-w-prose text-muted-foreground">{analyticsText(sprache, 'analytics.limits')}</p>
       </aside>
     </div>
   )

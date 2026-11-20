@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import ProviderOpsBoard from '@/components/admin/provider-ops/ProviderOpsBoard'
 import { ladeProviderOpsBoardFuerSeite } from '@/lib/admin/provider-ops-board/runtime'
 import { requireAdminPage } from '@/lib/auth/admin-guard'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 
 export default async function ProviderOpsPage() {
   await requireAdminPage({ surface: 'provider-ops', capability: 'betrieb-lesen' })
@@ -10,12 +11,9 @@ export default async function ProviderOpsPage() {
 
   return (
     <section className="mx-auto max-w-7xl space-y-6">
-      <header>
-        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">Provider & Kosten</h2>
-        <p className="text-sm text-muted-foreground">
-          Nutzungsprotokoll, Provider-Status und technische Grundlagen im Überblick.
-        </p>
-      </header>
+      <Seitenkopf kicker="Administration" titel="Provider & Kosten">
+        <p>Nutzungsprotokoll, Provider-Status und technische Grundlagen im Überblick.</p>
+      </Seitenkopf>
       <ProviderOpsBoard anfang={bericht} />
     </section>
   )

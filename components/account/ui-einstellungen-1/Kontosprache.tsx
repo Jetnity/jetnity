@@ -165,7 +165,7 @@ export default function Kontosprache({ initial, sprache, waehlen, speichern, neu
         <span className={`flex h-11 w-11 shrink-0 items-center justify-center ${admin ? 'rounded-2xl text-card-foreground' : 'rounded-control text-foreground'} bg-muted`}><Languages aria-hidden="true" className="h-5 w-5" /></span>
         <div className="min-w-0 flex-1">
           <h2 id="konto-sprache-titel" className={admin ? `text-lg font-semibold tracking-[-0.03em] ${titelFarbe}` : 'text-subtitle text-foreground'}>{einstellungenText(sprache, 'language.title')}</h2>
-          <p id="konto-sprache-umfang" className={`mt-1 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.scope')}</p>
+          <p id="konto-sprache-umfang" className={`mt-1 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.scope')}</p>
           <form onSubmit={(event) => void absenden(event)} className="mt-4 max-w-2xl" aria-busy={beschaeftigt}>
             <label className={`block text-sm font-semibold ${titelFarbe}`} htmlFor="konto-sprache-auswahl">{einstellungenText(sprache, 'language.label')}</label>
             <select id="konto-sprache-auswahl" value={sprache} disabled={beschaeftigt || stand.status !== 'bereit' || erstLesen} aria-describedby="konto-sprache-umfang konto-sprache-status" className={`mt-2 min-h-11 w-full min-w-0 rounded-2xl border px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-60 sm:max-w-xs border-input bg-card ${admin ? 'text-card-foreground' : 'text-foreground'}`} onChange={(event) => {
@@ -185,9 +185,9 @@ export default function Kontosprache({ initial, sprache, waehlen, speichern, neu
                 : <button type="button" disabled={beschaeftigt} className={`${KNOPF} ${nebenKnopf}`} onClick={() => void erneutLesen()}>{einstellungenText(sprache, 'language.reload')}</button>}
             </div>
           </form>
-          <p id="konto-sprache-status" role={sichtbarerFehler ? 'alert' : 'status'} className={`mt-3 break-words text-sm leading-6 ${sichtbarerFehler ? 'text-destructive' : textFarbe}`}>{einstellungenText(sprache, meldung)}</p>
-          <p className={`mt-3 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.persistence')}</p>
-          <p className={`mt-1 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.browser')}</p>
+          <p id="konto-sprache-status" role={sichtbarerFehler ? 'alert' : 'status'} className={`mt-3 max-w-prose break-words text-sm leading-6 ${sichtbarerFehler ? 'text-destructive' : textFarbe}`}>{einstellungenText(sprache, meldung)}</p>
+          <p className={`mt-3 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.persistence')}</p>
+          <p className={`mt-1 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.browser')}</p>
         </div>
       </div>
     </section>

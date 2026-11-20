@@ -87,7 +87,7 @@ function HealthKarte({ item }: { item: SystemHealthItem }) {
     >
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-3 pb-3">
         <div className="min-w-0 break-words">
-          <h3 className="break-words text-base font-semibold">{item.name}</h3>
+          <h2 className="break-words text-base font-semibold">{item.name}</h2>
           <p className="mt-1 break-words text-sm text-muted-foreground">{kurztext(item)}</p>
         </div>
         <p className={cn('rounded-md border px-2 py-1 text-xs font-medium', statusKlassen(item))}>

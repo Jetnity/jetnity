@@ -12,6 +12,7 @@ import { createCmsEditor, type CmsIssue, type CmsNotice } from '@/lib/admin/cont
 import { protectCmsNavigation } from '@/lib/admin/content/cms-editor-2/navigation'
 import { cmsText, type CmsTextKey } from '@/lib/localization/cms-editor-texte'
 import type { UiSprache } from '@/lib/localization/ui-sprache'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 
 const BUTTON = 'inline-flex min-h-11 max-w-full items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium whitespace-normal text-left hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed'
 const INPUT = 'min-h-11 w-full min-w-0 rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60'
@@ -59,12 +60,13 @@ export default function CmsEditor({ sprache, initialEntryId, runtime, recovery, 
   const canPublish = !!entry?.draftRevision && entry.publishedRevision !== entry.draftRevision && !entry.archived && !state.dirty && !locked
 
   return <div data-cms-editor data-cms-runtime={runtime} lang={sprache} className="mx-auto grid min-w-0 max-w-6xl gap-5 [overflow-wrap:anywhere]">
-    <header className="min-w-0">
+    <div className="min-w-0">
       <a href="/admin/content" className={BUTTON}>{t('back')}</a>
-      <h1 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">{t('title')}</h1>
-      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">{t('intro')}</p>
-      <p className="mt-2 text-sm text-muted-foreground">{t('language')}</p>
-    </header>
+      <Seitenkopf className="mt-4" kicker="Administration" titel={t('title')}>
+        <p>{t('intro')}</p>
+        <p className="mt-2">{t('language')}</p>
+      </Seitenkopf>
+    </div>
     {leaveWarning && blockedLeave ? <p role="alert" className="text-sm">{t('leave')}</p> : null}
     <div className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6">
       <label htmlFor="cms-entry" className="mb-2 block text-sm font-medium">{t('choose')}</label>
@@ -74,10 +76,10 @@ export default function CmsEditor({ sprache, initialEntryId, runtime, recovery, 
       </select>
       <h2 className="mt-4 font-semibold">{reference.name}</h2>
       <p className="mt-1 text-sm">{reference.country} · {t('contentLanguage')}</p>
-      <p className="mt-2 text-sm text-muted-foreground">{t('reference')}</p>
+      <p className="mt-2 max-w-prose text-sm text-muted-foreground">{t('reference')}</p>
     </div>
 
-    <div ref={statusRef} tabIndex={-1} role={state.issue ? 'alert' : 'status'} aria-live="polite" className="min-w-0 rounded-xl border border-border bg-card p-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+    <div ref={statusRef} tabIndex={-1} role={state.issue ? 'alert' : 'status'} aria-live="polite" className="min-w-0 rounded-xl border border-border bg-card p-4 text-sm focus-visible:outline-none [&_p]:max-w-prose focus-visible:ring-2 focus-visible:ring-ring">
       {state.phase === 'loading' ? <p>{t('loading')}</p> : null}
       {state.phase === 'unavailable' ? <h2 className="font-semibold">{t('unavailable')}</h2> : null}
       {state.phase === 'busy' ? <p>{t('busy')}</p> : null}
