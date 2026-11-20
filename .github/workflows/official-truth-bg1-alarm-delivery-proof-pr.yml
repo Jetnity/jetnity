@@ -1,0 +1,39 @@
+name: BG1 alarm delivery proof (synthetic, PR only)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: bg1-alarm-delivery-proof-pr-1254
+  cancel-in-progress: false
+
+jobs:
+  delivery-proof:
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.event.repository.private == false &&
+      github.event.pull_request.number == 1254 &&
+      github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' &&
+      github.event.pull_request.head.ref == 'feat/official-truth-universal-source-registry-dev-20261119'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Synthetic GitHub bot comment delivery and exact readback (never Production)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_EVENT_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: node scripts/official-truth-bg1-alarm-delivery-proof.mjs
