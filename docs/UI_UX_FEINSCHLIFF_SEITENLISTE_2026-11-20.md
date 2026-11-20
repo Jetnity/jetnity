@@ -42,18 +42,18 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] Planpunkt-Detail (Panel rechts, auf dem Handy eigene Fläche) – Etappe 3
 - [x] Kostenleiste über der unteren Leiste – Etappe 2
 - [x] Untere Leiste und Kopfzeile unter 360 px, im Querformat und bei grosser Schrift – Etappe 4
-- [ ] Reise ändern (`TripWorkspaceEditSurface`) – Etappe 8
-- [ ] Reisebegleiter (`Reisebegleiter`) – Etappe 8
-- [ ] Stopp hinzufügen und Stopp-Vorschau (`StoppForm`, `StoppVorschau`) – Etappe 8
-- [ ] Reiseprüfung (`TripAuditV1Panel`) – Etappe 8
-- [ ] Reiseänderung mit Vorher/Nachher (`ReiseAenderungManuell`, `ReiseAenderungAuswirkungen`) – Etappe 8
-- [ ] Datumsauswahl (`Suchkalender`) – Etappe 8
-- [ ] Flugergebnisse, Unterkunftsergebnisse, Mietwagen-Details (Dialoge der Anbieter) – Etappe 8
-- [ ] Karte im Vollbild (`Reisekarte`) – Etappe 8
-- [ ] Einwilligung für Anbieter-Inhalte (`WidgetConsentChoice`) – Etappe 8
-- [ ] Archivieren einer Reise (`KontoReiseArchivAktion`) – Etappe 8
-- [ ] Menü (Handy) und Kontomenü – Etappe 8
-- [ ] Leer, lädt und Fehler in jeder Ansicht und jedem Bereich – Etappe 8 (Ladeplatzhalter in Such- und Anbieterflächen seit Etappe 4)
+- [x] Reise ändern (`TripWorkspaceEditSurface`, `ReiseAenderung`, `AenderungVorschau`) mit Umschalter «Direkt bearbeiten» / «In eigenen Worten» – Etappe 8
+- [x] Reisebegleiter (`Reisebegleiter`), Frage und Auskunft – Etappe 8
+- [x] Stopp hinzufügen und Stopp-Vorschau (`StoppForm`, `StoppVorschau`) – Etappe 8
+- [x] Reiseprüfung (`TripAuditV1Panel`) – Etappe 8
+- [x] Reiseänderung mit Vorher/Nachher (`ReiseAenderungManuell`, `ReiseAenderungAuswirkungen`) – Etappe 8
+- [x] Datumsauswahl (`Suchkalender`) in Unterkunft und Flug – Etappe 8
+- [x] Suchmasken, Gäste- und Lagefelder, «Angebot selbst merken», Ladeplatzhalter und Fehlermeldungen der Anbieterflächen – Etappe 8. Die Ergebnisse selbst zeigen die Anbieter in ihren eigenen Fenstern; Jetnity gestaltet sie nicht
+- [x] Karte im Vollbild (`components/trips/reisekarte/Reisekarte.tsx`) – Etappe 8, nur im Code: Sie öffnet sich aus Anbieterergebnissen («Auf Karte ansehen») und läuft nur mit dem Google-Maps-Schlüssel der Production. Lokal nicht erreichbar; korrigiert wurde die fehlende Farbvariable im Stil
+- [x] Einwilligung für Anbieter-Inhalte (`WidgetConsentChoice`) – nicht eingebunden: Die Komponente ist in keiner Seite verwendet, nur in Testskripten
+- [x] Archivieren einer Reise (`KontoReiseArchivAktion`), Menü und Rückmeldung – Etappe 8
+- [x] Menü (Handy) und Kontomenü – Etappe 8
+- [x] Leer, lädt und Fehler in jeder Ansicht und jedem Bereich – Etappe 8 (Gastreise leer, beschädigt und unbekannt; Meine Reisen leer, Fehler, Archiv; Konto-Reise leer; Ladeplatzhalter in Such- und Anbieterflächen seit Etappe 4)
 
 ## Konto
 

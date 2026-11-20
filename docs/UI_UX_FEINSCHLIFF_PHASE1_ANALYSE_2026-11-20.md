@@ -167,7 +167,7 @@ PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Absc
 | 5 Öffentliche Seiten | umgesetzt | Rechtliche Seiten als eine Lesespalte mit Kicker «Rechtliches» und Text-Tokens, AGB-Titel trennt bei 320 px; kein eigener Hintergrund auf öffentlichen Seiten (keine Mintbänder); 404 überall mit Kopf- und Fusszeile, 404 und Fehlerseiten als eine Karte; unbelegter Satz auf der Fehlerseite entfernt; Entdecken mit Token-Karten und Leerzustand; Meine Welt mit Seitenkopf, sichtbarem Fehlerkasten und Leerzustand; restliche lange Absätze auf 65 Zeichen; `/einreise` nur Seitenrahmen (#1254); `DESIGN_SYSTEM.md` 6.17, 6.18 und ADR-0233 |
 | 6 Anmeldung (nur Aussehen) | umgesetzt, Login und Sicherheit teilweise | Baustein `Statuskarte` für 404, Anmeldung abschliessen, Passwort-Link, kein Zugriff und Konto gelöscht; Callback und Passwort mit `Markenrahmen` (Marke ohne Sitzungsabfrage); `/unauthorized` im öffentlichen Rahmen; Passwortformular mit einem Anzeigen-Knopf pro Feld statt zwei; gemeinsames Eingabefeld auf Touch 44 px über die ganze Höhe, ein Fokusrahmen; Registrierung mit Text-Tokens. Login-Seite und Sicherheit nur über das Eingabefeld, Rest nach dem Merge von #1240; `DESIGN_SYSTEM.md` 6.19, 7.6 und ADR-0234 |
 | 7 Admin | umgesetzt | jede Admin-Seite mit `Seitenkopf` und genau einer Überschrift erster Ordnung, Kopfleiste nur als Ort, Pfad ohne tote Zwischenlinks; Lesebreite für Absätze und Nachweise; Sprachkatalog auf dem Handy als Liste; Fehler, 404 und Laden mit `Statuskarte` und `Ladeplatzhalter`; Admin-Anmeldung und MFA als Karte (Logik unverändert); `/einreise/betrieb` und amtliche Quellen als Lesespalte; Nebentext der Creme-Palette auf AA (`ink-900`). Dateien von #1254 unverändert; `DESIGN_SYSTEM.md` 3 und 6.20, ADR-0235 |
-| 8 Workspace vollständig und Schlussmessung | offen | jedes Panel, jeder Dialog und jeder Zustand (leer, lädt, Fehler) im Workspace einzeln; Schlussmessung 280–2560 px und Querformat, beide Themen, Screenshots und Video |
+| 8 Workspace vollständig und Schlussmessung | umgesetzt | 35 Panels, Dialoge und Zustände einzeln geöffnet und bei 320/390/768/1280/1920 px hell und grün gemessen: Reise ändern mit Segmentumschalter, Freitext und Vorher/Nachher, Reisebegleiter, Stopp und Stopp-Vorschau, Reiseprüfung, Kalender, Gäste, Lage und Filter, Angebot merken, Archivieren, Menüs, Gast- und Kontozustände; lesbare Daten (`datumMitJahr`, `<time>`), Einzahl/Mehrzahl, Lesebreite, 44-px-Flächen auf Tablets (Reiter, Kalendertage, Zusatzfelder, Verbindungszeilen), Reiseziel der Unterkunftssuche in eigener Zeile, Test gegen Symbole als Button-Kind; Schlussmessung aller Seiten (öffentlich, Workspace hell und grün, Konto, Admin hell und dunkel) bei 280, 320, 360, 375, 390, 430, 768, 1024, 1280, 1440, 1920 und 2560 px sowie quer 667×375, 844×390 und 1180×820; dabei zusätzlich behoben: Nummern der Kartenpins nicht mittig, Kartenwerkzeuge und Pins sowie Pfad und Markenlink im Admin auf Touch-Tablets zu klein, Hinweistexte und Vorbereitungsbereiche bis 860 px breit; übrig sind nur die unten genannten Abweichungen und die einzeilige Gast-Hinweiszeile; `DESIGN_SYSTEM.md` 6.21 und ADR-0236 |
 
 Abweichungen vom Plan in Etappe 1, mit Grund:
 
@@ -194,6 +194,13 @@ Abweichungen vom Plan in Etappe 6, mit Grund:
 
 - **Login und Anmeldung & Sicherheit nur teilweise.** Seite, Formular und Sicherheitsfläche liegen in Dateien, die der offene PR #1240 ändert. Hier wirkt nur das gemeinsame Eingabefeld; Kartenrahmen und Lesebreite folgen nach dessen Merge.
 - **Callback und Passwort ohne öffentliche Navigation.** Deren Sitzungsabfrage liefe parallel zum Abschluss der Anmeldung. Die Seiten zeigen stattdessen eine Kopfzeile nur mit der Marke.
+
+Abweichungen vom Plan in Etappe 8, mit Grund:
+
+- **Vollbildkarte nur im Code geprüft.** Sie öffnet sich nur aus Anbieterergebnissen und läuft nur mit dem Google-Maps-Schlüssel der Production; lokal ist sie nicht erreichbar. Korrigiert wurde die fehlende Farbvariable in ihrem Stil.
+- **`WidgetConsentChoice` nicht poliert.** Die Komponente ist in keiner Seite eingebunden.
+- **Zwei `h1` in der Workspace-Ansicht Einreise.** Die zweite kommt aus `EinreiseLaenderpruefer.tsx`, den #1254 ändert; folgt nach dessen Merge.
+- **Lange Zeilen in Konto löschen und Anmeldung & Sicherheit** liegen in Dateien von #1240 und folgen nach dessen Merge.
 
 Abweichungen vom Plan in Etappe 3, mit Grund:
 

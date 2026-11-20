@@ -412,6 +412,20 @@ Abschnitte unter dem Kopf beginnen mit `h2`. Erklärende Absätze, Nachweise (�
 
 Bedienflächen sind auf Touch 44 px hoch, mit Maus mindestens 24 px (7.5); Auswahlfelder folgen dem `Input`. Der Sprachkatalog steht auf dem Handy als Liste (Schlüssel, Deutsch, Englisch untereinander) und ab `sm` als Tabelle. Leere Navigationsgruppen werden nicht angezeigt.
 
+---
+
+### 6.21 Workspace-Dialoge, Panels und Zustände
+
+Ein Umschalter zwischen zwei Arbeitsweisen (etwa «Direkt bearbeiten» / «In eigenen Worten») ist eine Segmentgruppe: `role="group"` mit Namen, `rounded-full`, Knöpfe mit `aria-pressed`, aktiv `aria-pressed:bg-primary aria-pressed:text-primary-foreground`, ohne eigene Textfarbe im Grundzustand. Auswahlknöpfe tragen `border-line-*` nur im nicht gewählten Zustand: Weiss-Mint setzt Knöpfe mit diesem Rahmen auf eine weisse Fläche, die gewählte Fläche verschwände sonst.
+
+Formulare und Antworten in Panels sind Karten (`rounded-3xl`, `border-line-200`, weisse Fläche, ohne eigenen Schatten); Überschriften `text-title` oder `text-lg`/`sm:text-xl`, Fliesstext und Listen `max-w-prose`. Innerhalb der hellen Etappenkarten (`.et-*`) stehen Flächen als Komponenten-CSS mit `rgb(var(--jet-…))`, nicht als Tailwind-Flächenklassen: das grüne Thema färbt diese Klassen dunkel um, die Karte selbst bleibt hell. CSS-Variablen `--color-*` gibt es nicht; ohne Fallback fällt der Rahmen weg.
+
+Kalendertage werden für Menschen geschrieben: `datumKurz` («12. Sept.») im Fluss, `datumMitJahr` («12. Sept. 2026») in Berichten, als `<time dateTime="2026-09-12">`. ISO-Daten aus gespeicherten Sätzen werden erst bei der Anzeige umgeschrieben. Einzahl und Mehrzahl stimmen («1 Nacht», «1 Tag · 1 Etappe»). Fehlende Werte heissen «noch offen» oder «Belegung offen», nie 0.
+
+Symbole in `Button` stehen in `leftIcon`/`rightIcon`, nie als Kind neben der Aufschrift: Preflight setzt `svg` auf `display:block`, das Symbol stünde über dem Text (`lib/ui/knopf-symbol.test.ts`). In Suchmasken bekommt ein Auswahlfeld, das Ort und Daten zusammen nennt, bis 1439 px eine eigene Zeile, damit das native Feld nichts abschneidet.
+
+Text in `Hinweis` und in den aufklappbaren Bereichen der Reisevorbereitung endet bei `max-w-prose`, auch wenn der Kasten breiter ist. Kartenwerkzeuge (Etappen, Mit Anreise, Zentrieren) sind auf Touch 44 px hoch, mit Maus 40 px. Kartenpins bleiben 31 px; auf Touch vergrössert ein unsichtbarer Ring (`::before`, 7 px) die Trefferfläche auf 45 px, ohne die Karte zu verdecken. Eigene Leaflet-Symbole wählen mit `.leaflet-marker-icon.<klasse>`, weil Leaflet `display:block` bei gleicher Spezifität setzt und sonst die Ladereihenfolge entscheidet. Textlinks, die mit Maus 24 px hoch bleiben (Pfad in der Admin-Kopfleiste, Markenlink der Seitenleiste), erhalten auf Touch dieselbe unsichtbare Trefferfläche: `relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-['']`.
+
 ## 7. Responsive-Regeln
 
 Verbindlich für alle V2-Oberflächen. Referenzbreiten: **280, 320, 360, 375, 390, 430, 768, 1280 px**, dazu Landscape (844×390 und 667×375).
