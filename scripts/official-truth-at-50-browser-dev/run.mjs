@@ -129,13 +129,17 @@ try {
    headers:{accept:'application/json'},timeout:35000})
   assert.equal(api.status(),200,'Real Dev visitor endpoint failed batch '+offset)
   const actual=await api.json()
-  assert.deepEqual(actual.input?.citizenshipCountryCodes,batch)
+  // V3 input contract deduplicates and sorts country codes. Enforce that
+  // exact normalization, never user-selected priority order, then bind every
+  // country to its cell by the normalized index (no cross-passport leakage).
+  const canonical=[...batch].sort()
+  assert.deepEqual(actual.input?.citizenshipCountryCodes,canonical)
   assert.equal(actual.input?.destinationCountryCode,'AT')
   assert.equal(actual.synthetic,false)
   assert.equal(actual.cells?.length,batch.length)
   assert.ok(Number.isFinite(Date.parse(actual.generatedAt)))
   for(let i=0;i<batch.length;i++){
-   const cell=actual.cells[i],code=batch[i],result=cell?.results?.[0]
+   const cell=actual.cells[i],code=canonical[i],result=cell?.results?.[0]
    assert.equal(cell?.country,code,'Country/order mismatch')
    assert.equal(cell?.results?.length,1)
    assert.ok(result?.status==='unavailable'||result?.status==='accepted')
