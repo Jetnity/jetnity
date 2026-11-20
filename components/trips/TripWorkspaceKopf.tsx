@@ -86,7 +86,7 @@ export default function TripWorkspaceKopf({
           <div><CalendarDays aria-hidden="true" /><dt className="sr-only">Zeitraum</dt><dd>{uebersicht.zeitraum}</dd></div>
           <div><MapPin aria-hidden="true" /><dt className="sr-only">Route</dt><dd>{uebersicht.orte}</dd></div>
           <div><Users aria-hidden="true" /><dt className="sr-only">Reisende</dt><dd>{uebersicht.personen.text}</dd></div>
-          <div><WalletCards aria-hidden="true" /><dt className="sr-only">Budget</dt><dd>Budget {betrag(reise.budgetAmount, reise.currency)}</dd></div>
+          <div><WalletCards aria-hidden="true" /><dt className="sr-only">Budget</dt><dd>{reise.budgetAmount === null ? 'Budget noch offen' : `Budget ${betrag(reise.budgetAmount, reise.currency)}`}</dd></div>
         </dl>
         {uebersichtKopf ? (
           <div className="workspace-trip-storage text-meta">
