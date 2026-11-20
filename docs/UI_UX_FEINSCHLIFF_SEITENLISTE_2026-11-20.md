@@ -63,16 +63,16 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] `/account/bookings` Bestätigte Buchungen (lädt, leer, Fehler) – Etappe 4
 - [x] `/account/settings` Einstellungen – Etappe 4 (Kontolöschung unverändert)
 - [x] `/account/welt` Meine Welt (mit Besuchen, leer, Fehler) – Etappe 5
-- [ ] `/account/security` Anmeldung & Sicherheit, nur Aussehen – Etappe 6
+- [ ] `/account/security` Anmeldung & Sicherheit, nur Aussehen – teilweise in Etappe 6: Eingabefelder auf Touch 44 px. Kartenrahmen und Lesebreite (Zeilen bis 122 Zeichen) liegen in Dateien von #1240 und folgen nach dessen Merge
 
 ## Anmeldung (nur Aussehen)
 
-- [ ] `/login` – Etappe 6
-- [ ] `/register` – Etappe 6
-- [ ] `/auth/update-password` – Etappe 6
-- [ ] `/auth/callback` Anmeldung wird abgeschlossen – Etappe 6
-- [ ] `/konto-geloescht` – Etappe 6
-- [ ] `/unauthorized` – Etappe 6
+- [ ] `/login` – teilweise in Etappe 6: Eingabefelder auf Touch 44 px, ein Fokusrahmen pro Feld. Seite und Formular liegen in Dateien von #1240 und folgen nach dessen Merge
+- [x] `/register` – Etappe 6
+- [x] `/auth/update-password` (prüft, kein Link, Formular, Fehler, gespeichert) – Etappe 6
+- [x] `/auth/callback` Anmeldung wird abgeschlossen (lädt, angemeldet, Fehler) – Etappe 6
+- [x] `/konto-geloescht` – Etappe 6
+- [x] `/unauthorized` (kein Zugriff, Prüfung fehlgeschlagen) – Etappe 6
 
 ## Rechtliches
 

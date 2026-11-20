@@ -6397,3 +6397,17 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Begründung:** Eine einheitliche Lesespalte macht lange Rechtstexte auf jedem Gerät gleich gut lesbar. Fehlerseiten sollen zurück in die Reise führen und nur sagen, was feststeht.
 
 **Konsequenzen:** Keine Daten-, API-, Auth- oder DB-Änderung, keine neuen Kosten oder Abhängigkeiten. Rechtstexte selbst sind unverändert; geändert sind Anrede «Schreib uns an» im PrivacyBee-Ersatztext, der Kicker «Rechtliches» und der entfallene Satz auf der Fehlerseite (einzeln im PR aufgeführt).
+
+## ADR-0234 – Statuskarte, Anmeldeseiten und 44-px-Eingabefelder (UI/UX-Feinschliff, Etappe 6)
+
+**Datum:** 20. November 2026. **Status:** Teil des PO-Go in Draft-PR #1264; Ready/Merge erst nach ausdrücklichem PO-Go am Schluss.
+
+**Kontext:** Die Seiten rund um die Anmeldung waren nackt oder uneinheitlich: `/auth/callback` zeigte nur «Authentifiziere…» ohne Marke und ohne Weg zurück, `/auth/update-password` ohne Link meldete «Session erforderlich», `/unauthorized` stand ohne Kopf- und Fusszeile, `/konto-geloescht` war ein freier Textblock. Das Passwortformular zeigte pro Feld zwei übereinanderliegende Anzeigen-Knöpfe (eigener plus der des `Input`). Das gemeinsame `Input` war auf Touch 40 px hoch, das Eingabeelement darin nur 24 px; ein Tipp an den Feldrand traf nicht. In Weiss-Mint malte eine globale Regel das innere Element weiss und gab ihm einen zweiten Fokusrahmen. Login- und Sicherheitsseite liegen in Dateien von #1240 und dürfen hier nicht geändert werden.
+
+**Entscheidung:** (1) Neuer Baustein `Statuskarte` für alle Seiten, die nur einen Zustand melden; 404, Callback, Passwort-Link, kein Zugriff und Konto gelöscht nutzen ihn (`DESIGN_SYSTEM.md` 6.19). (2) `/auth/callback` und `/auth/update-password` bleiben ohne `PublicChrome` (dessen Navigation fragt die Sitzung ab), erhalten aber mit `Markenrahmen` eine Kopfzeile mit der Marke. `/unauthorized` steht im öffentlichen Rahmen. (3) Der doppelte Anzeigen-Knopf im Passwortformular entfällt; es gilt der des `Input`. (4) `Input` `md` auf Touch 44 px, mit Maus 40 px, Eingabeelement über die ganze Höhe; in Weiss-Mint trägt nur der Feldrahmen Fläche und Fokus (`DESIGN_SYSTEM.md` 7.6). (5) Logik bleibt unverändert: Codeaustausch, Weiterleitung, Passwortprüfung, `updateUser`, Abmelden und Kontolöschung sind nicht angefasst.
+
+**Alternativen:** (1) `PublicChrome` auch für Callback und Passwort – die Sitzungsabfrage der Navigation liefe parallel zum Codeaustausch. Abgelehnt. (2) Die Feldhöhe nur auf den Anmeldeseiten anheben – Admin- und Kontoformulare hätten weiter 40-px-Felder auf Touch; ein gemeinsamer Baustein ist ehrlicher. Abgelehnt. (3) Login und Sicherheit trotz #1240 anpassen – würde einen offenen PR kreuzen. Abgelehnt; Nachzug nach dessen Merge.
+
+**Begründung:** Wer aus einer E-Mail kommt, soll sofort sehen, wo er ist, was passiert und wie es weitergeht. Ein Feld muss überall dort reagieren, wo es aussieht wie ein Feld.
+
+**Konsequenzen:** Keine Daten-, API-, Auth-Logik- oder DB-Änderung, keine neuen Kosten oder Abhängigkeiten. Die geänderten Texte (Callback, Passwort-Link, Kicker) sind einzeln im PR aufgeführt. Offen bis nach #1240: Kartenrahmen und Lesebreite von `/login` und `/account/security`.

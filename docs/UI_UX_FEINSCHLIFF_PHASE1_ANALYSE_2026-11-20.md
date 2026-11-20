@@ -165,7 +165,7 @@ PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Absc
 | 3 Detailansichten | umgesetzt | Organisieren zeigt zuerst «Das hast du schon» (Zeilen öffnen den Punkt im Plan), lesbare Reiter, einklappbare Unterkunftsfilter, Such-Button auf dem Handy nach allen Feldern; Vorbereitung mit einem Satz zum eigenen Stand, einem Hinweis statt Kacheln und Auswahlen als Segmente, Thailand einmal pro reisender Person statt pro Etappe; Einreise nimmt die Länder der Reise (minimal, wegen #1254); Planpunkt-Detail mit Siegel, Zeitpunkt und «Preis beim Auswählen»; Bestandsbereiche mit gemeinsamer Typografie und einem Satz zur Bedeutung von «Gebucht»; Entfernen eines Planpunkts mit Bestätigung in der Zeile; Baustein Hinweis; `DESIGN_SYSTEM.md` 6.8, 6.13–6.15 und ADR-0231 |
 | 4 Zustände, Konto, Breiten | umgesetzt | Ladeplatzhalter mit sichtbarem Status in Such- und Anbieterflächen; Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen) mit Seitenkopf, Karte, Leerzustand, Hinweis; Merkliste unterscheidet Lesefehler und Abmeldung; untere Leiste unter 360 px und quer als Raster, Kopfzeile bei 280 px ohne Überlappung; Einblenden 160 ms (aus bei reduzierter Bewegung); Fliesstext höchstens 65 Zeichen; Grundschrift ab 2400 px grösser; Seitenliste mit Test; `DESIGN_SYSTEM.md` 6.1, 6.6, 6.7, 6.16, 6.17, 7.13, 7.14 und ADR-0232 |
 | 5 Öffentliche Seiten | umgesetzt | Rechtliche Seiten als eine Lesespalte mit Kicker «Rechtliches» und Text-Tokens, AGB-Titel trennt bei 320 px; kein eigener Hintergrund auf öffentlichen Seiten (keine Mintbänder); 404 überall mit Kopf- und Fusszeile, 404 und Fehlerseiten als eine Karte; unbelegter Satz auf der Fehlerseite entfernt; Entdecken mit Token-Karten und Leerzustand; Meine Welt mit Seitenkopf, sichtbarem Fehlerkasten und Leerzustand; restliche lange Absätze auf 65 Zeichen; `/einreise` nur Seitenrahmen (#1254); `DESIGN_SYSTEM.md` 6.17, 6.18 und ADR-0233 |
-| 6 Anmeldung (nur Aussehen) | offen | Login, Registrierung, Passwort setzen, Anmeldung abschliessen, Konto gelöscht, kein Zugriff, Anmeldung & Sicherheit |
+| 6 Anmeldung (nur Aussehen) | umgesetzt, Login und Sicherheit teilweise | Baustein `Statuskarte` für 404, Anmeldung abschliessen, Passwort-Link, kein Zugriff und Konto gelöscht; Callback und Passwort mit `Markenrahmen` (Marke ohne Sitzungsabfrage); `/unauthorized` im öffentlichen Rahmen; Passwortformular mit einem Anzeigen-Knopf pro Feld statt zwei; gemeinsames Eingabefeld auf Touch 44 px über die ganze Höhe, ein Fokusrahmen; Registrierung mit Text-Tokens. Login-Seite und Sicherheit nur über das Eingabefeld, Rest nach dem Merge von #1240; `DESIGN_SYSTEM.md` 6.19, 7.6 und ADR-0234 |
 | 7 Admin | offen | alle 20 Admin-Seiten inklusive Admin-Login und MFA (nur Aussehen), Fehler-, Lade- und 404-Seite |
 | 8 Workspace vollständig und Schlussmessung | offen | jedes Panel, jeder Dialog und jeder Zustand (leer, lädt, Fehler) im Workspace einzeln; Schlussmessung 280–2560 px und Querformat, beide Themen, Screenshots und Video |
 
@@ -189,6 +189,11 @@ Abweichungen vom Plan in Etappe 4, mit Grund:
 - **`/reisen` ohne Reise bekommt keine zweite Leer-Karte.** Der grüne Einstieg direkt darüber sagt schon «Beginne deine erste Reise.» mit genau einem Knopf.
 - **Übergänge nur mit Deckkraft.** Ein Versatz hätte während der Animation fixierte Leisten in der Fläche verschoben.
 - **Titel «Bestätigte Buchungen» bleibt.** Er ist in Menü, Tests und Übersetzung verankert; «Als gebucht markiert» wäre genauer und steht als Empfehlung im Bericht.
+
+Abweichungen vom Plan in Etappe 6, mit Grund:
+
+- **Login und Anmeldung & Sicherheit nur teilweise.** Seite, Formular und Sicherheitsfläche liegen in Dateien, die der offene PR #1240 ändert. Hier wirkt nur das gemeinsame Eingabefeld; Kartenrahmen und Lesebreite folgen nach dessen Merge.
+- **Callback und Passwort ohne öffentliche Navigation.** Deren Sitzungsabfrage liefe parallel zum Abschluss der Anmeldung. Die Seiten zeigen stattdessen eine Kopfzeile nur mit der Marke.
 
 Abweichungen vom Plan in Etappe 3, mit Grund:
 

@@ -394,6 +394,14 @@ Rechtliche Seiten (Impressum, Datenschutz, AGB, Datenquellen) sind eine Lesespal
 
 404- und Fehlerseiten sind eine Karte (`rounded-panel`, `bg-card`, `shadow-card`) mit Symbol in `bg-muted`, `h1` in `text-display`, einem Hauptknopf in `bg-primary` und einem Nebenknopf mit `border-input`. Jede 404 steht im öffentlichen Rahmen mit Kopf- und Fusszeile, auch ausserhalb von `app/(public)`. Fehlertexte sagen nur, was feststeht: kein Versprechen über Daten, die die Seite nicht geprüft hat.
 
+### 6.19 Statusseiten und Anmeldung
+
+Seiten, die nur einen Zustand melden (404, Anmeldung abschliessen, Link ungültig, kein Zugriff, Konto gelöscht), nutzen `Statuskarte` (`components/ui/statuskarte.tsx`): Karte wie in 6.18, Symbol, optionaler Kicker, die einzige `h1` der Seite in `text-display`, kurzer Text mit `max-w-md`, höchstens zwei Aktionen (`statusAktionHaupt`, `statusAktionNeben`; ab `sm` nebeneinander und mindestens 12rem breit) und darunter ruhige Textlinks (`statusFussLink`, 44 px hoch). `ton="laedt"` dreht das Symbol nur ohne reduzierte Bewegung, `ton="fehler"` färbt nur das Symbol; der Text sagt, was zu tun ist. Lade- und Erfolgsmeldungen tragen `role="status"`, Fehler `role="alert"`.
+
+`/auth/callback` und `/auth/update-password` laufen ohne `PublicChrome`, weil dessen Navigation die Sitzung abfragt und den Abschluss der Anmeldung nicht stören darf. Sie nutzen `Markenrahmen` (`components/layout/Markenrahmen.tsx`): dieselbe weisse Kopfzeile, nur mit der Marke.
+
+Registrierung und Passwortformular teilen die Formularsprache des Logins: Titel, Felder mit Symbol im Label, Hilfen in `text-meta`, Fehler als `Hinweis` oder Feldfehler (7.6a), Erfolg als Karte mit `border-primary/40`. Seite und Formular von `/login` sowie `/account/security` folgen nach dem Merge von #1240, weil ihre Dateien dort geändert werden; bis dahin wirkt dort nur das gemeinsame Eingabefeld (7.6).
+
 ---
 
 ## 7. Responsive-Regeln
@@ -448,6 +456,8 @@ Buchungs- und Abdeckungsstatus im Trip Workspace tragen immer einen lesbaren Tex
 Felder tragen unterhalb `sm` mindestens **16 px** Schriftgröße (`text-base sm:text-sm`). Kleinere Werte lösen auf iOS beim Fokus einen automatischen Zoom aus, der das Layout verschiebt.
 
 Jedes Feld hat genau ein Bedienelement pro Funktion. Das `Input`-Primitiv bringt für `type="password"` bereits einen Umschalter mit; Formulare bauen keinen zweiten daneben.
+
+`Input` in Grösse `md` ist auf Touch 44 px hoch und mit Maus 40 px (`pointer-fine:h-10`), wie `Button`. Das Eingabeelement füllt die ganze Feldhöhe, damit jeder Tipp auf das Feld trifft; Anzeigen- und Leeren-Knopf sind auf Touch 44 × 44 px. In Weiss-Mint zeichnet der Feldrahmen Fläche und Fokus: Das innere Element bleibt durchsichtig und ohne eigenen Fokusrahmen (`data-eingabefeld` in `styles/white-mint.css`), sonst stehen zwei Rechtecke ineinander.
 
 ### 7.6a Feldfehler
 
