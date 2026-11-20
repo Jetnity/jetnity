@@ -68,6 +68,15 @@ test('page headers enforce bounded CSP while nonce-bearing provider/map API HTML
   assert.match(csp, /img-src[^;]*https:/)
   assert.match(csp, /frame-src[^;]*https:\/\/maps\.google\.com/)
   assert.match(csp, /frame-src[^;]*https:\/\/widget\.discovercars\.com/)
+  // Incident 20.11.: page-level frame-src blocked both existing approved
+  // cross-origin supplier frames, producing the browser's grey error pane.
+  // Stay22 and the dedicated Flight Widget must be listed as exact hosts,
+  // not a wildcard, while their own provider CSP/sandbox still applies.
+  assert.match(csp, /frame-src[^;]*https:\/\/www\.stay22\.com(?:\s|;|$)/)
+  assert.match(csp, /frame-src[^;]*https:\/\/jetnity-flight-widget\.vercel\.app(?:\s|;|$)/)
+  const frameSrc = csp.split('; ').find(part => part.startsWith('frame-src ')) ?? ''
+  assert.doesNotMatch(frameSrc, /https:\/\/\*|https:\/\/\*\./)
+  assert.doesNotMatch(frameSrc, /https:\/\/tpwgts\.com|https:\/\/api\.openweathermap\.org/)
   assert.match(csp, /connect-src[^;]*https:\/\/[^;]*supabase\.co/)
   assert.match(csp, /worker-src 'self' blob:/)
   // These routes set stricter nonce/hash CSP themselves; global page policy
