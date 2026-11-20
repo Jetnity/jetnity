@@ -14,7 +14,7 @@ Blog, eine eigene Suchseite und eine Seite Hilfe/Kontakt gibt es im Code nicht. 
 
 - [x] `/` Startseite – Etappe 5 (Grundton in Etappe 1, Lesebreite in Etappe 4 und 5)
 - [x] `/entdecken` Inspiration entdecken, mit Leer- und Fehlerzustand – Etappe 5
-- [x] `/einreise` Einreise und Visum prüfen (öffentlich) – Etappe 5, nur Seitenrahmen; `EinreiseLaenderpruefer` bleibt wegen #1254 unverändert
+- [x] `/einreise` Einreise und Visum prüfen (öffentlich) – Etappe 5 Seitenrahmen; Etappe 8 nach dem Merge von #1254: Kicker, Überschrift und Lesebreite in den Schriftstufen
 - [x] `/datenquellen` Datenquellen & Lizenzen – Etappe 5
 
 ## Reise planen bis fertige Reise
@@ -33,7 +33,7 @@ Blog, eine eigene Suchseite und eine Seite Hilfe/Kontakt gibt es im Code nicht. 
 - [x] `/reisen/[tripId]?ansicht=organisieren&kategorie=mietwagen` – Etappe 3, Ladeplatzhalter Etappe 4
 - [x] `/reisen/[tripId]?ansicht=organisieren&kategorie=verbindungen` – Etappe 3, Ladeplatzhalter Etappe 4
 - [x] `/reisen/[tripId]?ansicht=vorbereitung` vier Bereiche: Einreise & Visum, Reisende & Dokumente, Tickets & Buchungsbestätigungen, Eigene Vorbereitung – Etappe 3
-- [x] `/reisen/[tripId]?ansicht=einreise` – Etappe 3, minimal wegen #1254
+- [x] `/reisen/[tripId]?ansicht=einreise` – Etappe 3; Etappe 8 nach dem Merge von #1254: eine `h1`, der Prüfer beginnt im Workspace mit `h2`
 
 ### Workspace – Panels, Dialoge, Zustände
 
@@ -101,6 +101,7 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] `/admin/content/editor` – Etappe 7
 - [x] `/admin/localization` (auf dem Handy als Liste statt Tabelle) – Etappe 7
 - [x] `/admin/marketing` – Etappe 7
+- [x] `/admin/official-truth/at-50-method` – Etappe 8 (mit #1254 auf main gekommen; Seitenkopf und Lesespalte wie die übrigen amtlichen Quellen)
 - [x] `/admin/official-truth/at-method` – Etappe 7
 - [x] `/admin/official-truth/guard` – Etappe 7
 - [x] `/admin/official-truth/import` – Etappe 7

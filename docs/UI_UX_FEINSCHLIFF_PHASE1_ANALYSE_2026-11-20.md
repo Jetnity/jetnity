@@ -199,14 +199,14 @@ Abweichungen vom Plan in Etappe 8, mit Grund:
 
 - **Vollbildkarte nur im Code geprüft.** Sie öffnet sich nur aus Anbieterergebnissen und läuft nur mit dem Google-Maps-Schlüssel der Production; lokal ist sie nicht erreichbar. Korrigiert wurde die fehlende Farbvariable in ihrem Stil.
 - **`WidgetConsentChoice` nicht poliert.** Die Komponente ist in keiner Seite eingebunden.
-- **Zwei `h1` in der Workspace-Ansicht Einreise.** Die zweite kommt aus `EinreiseLaenderpruefer.tsx`, den #1254 ändert; folgt nach dessen Merge.
+- **Einreise nachgezogen, nachdem #1254 gemergt wurde.** `main` ist in den PR übernommen (ohne Konflikte). `EinreiseLaenderpruefer` beginnt im Workspace mit `h2` (`eingebettet`), öffentlich mit Kicker und `h1` in den Schriftstufen. Die mit #1254 neue Admin-Seite `/admin/official-truth/at-50-method` hat den `Seitenkopf` der übrigen amtlichen Quellen.
 - **Lange Zeilen in Konto löschen und Anmeldung & Sicherheit** liegen in Dateien von #1240 und folgen nach dessen Merge.
 
 Abweichungen vom Plan in Etappe 3, mit Grund:
 
 - **«Als gebucht markieren» bekommt keinen Bestätigungsschritt.** Jetnity bucht nichts selbst; die Markierung ist ein lokaler Status, den ein Tippen auf «Buchung korrigieren» zurücknimmt. Ein Zwischenschritt würde jede Markierung verdoppeln, ohne eine Folge zu verhindern. Stattdessen sagt jeder Bestandsbereich in einem Satz, was «Gebucht» heisst. Bestätigt wird, was sich nicht zurücknehmen lässt: das Entfernen eines Planpunkts. Reiseänderungen (Vorher/Nachher mit «Änderung übernehmen») und neue Stopps (Vorschau) hatten ihren Bestätigungsschritt schon.
 - **Keine Anzeige für Flugänderungen.** Jetnity erhält keine Flugstatus-Daten von Anbietern; eine solche Anzeige würde etwas behaupten, das nicht geprüft ist. Fristen erscheinen weiter ruhig in «Als Nächstes» (Etappe 2). Kommt später ein Flugstatus, nutzt er den Baustein Hinweis.
-- **Einreise nur minimal.** Die Ansicht übernimmt die Länder der Reise; die Auswahl pro Land bleibt bis zum Merge von #1254 unverändert (`EinreiseLaenderpruefer.tsx` nicht angefasst).
+- **Einreise nur minimal.** Die Ansicht übernimmt die Länder der Reise; die Auswahl pro Land blieb bis zum Merge von #1254 unverändert (`EinreiseLaenderpruefer.tsx` nicht angefasst); Überschrift und Lesebreite sind in Etappe 8 nachgezogen.
 - **Fehlermeldungen in den Bestandsbereichen bleiben die bestehenden roten Zeilen.** Das grüne Thema färbt sie bereits passend um; ein Umbau auf den Hinweis hätte nur Churn erzeugt.
 
 ## Belege
