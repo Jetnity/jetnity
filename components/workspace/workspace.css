@@ -117,9 +117,6 @@
 .workspace-content > main { min-height: calc(100dvh - 10rem); }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; padding-bottom: 2rem; }
 .workspace-content [data-unified-workspace] > div > a:first-child { display: none; } /* Replaced by the persistent Meine Reisen link. */
-.workspace-content [data-workspace-identity] { margin: 0 0 1.5rem; border-radius: 1rem; box-shadow: none; }
-.workspace-content [data-workspace-identity] > div:first-child { padding: 1rem 1.25rem .5rem; }
-.workspace-content [data-workspace-identity] h1 { font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
 .workspace-content [data-workspace-modus-heading] { scroll-margin-top: calc(var(--jet-header-h) + 1rem); }
 .workspace-credit { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .75rem; padding: 1.5rem; font-size: .75rem; color: rgb(var(--jet-ink-800)); }
 .workspace-credit a { text-decoration: underline; }
@@ -223,4 +220,45 @@
 }
 @media (max-height: 500px) and (max-width: 63.99rem) {
   .workspace-header { position: static; }
+}
+/* One header row up to tablet width (DESIGN_SYSTEM.md 7.13). The trip title
+   lives in the trip head, so the context label leaves the bar. Enlarged text
+   (data-flow) keeps the wrapping layout above. */
+.workspace-drawer-extras { display: grid; gap: .25rem; margin-bottom: .75rem; }
+@media (min-width: 64rem) {
+  .workspace-drawer-extras { display: none; }
+}
+@media (max-width: 63.999rem) {
+  .workspace-header:not([data-flow="true"]) { flex-wrap: nowrap; }
+  .workspace-header:not([data-flow="true"]) .workspace-context { display: none; }
+  .workspace-header:not([data-flow="true"]) .workspace-header-actions { order: initial; width: auto; flex: 0 1 auto; margin-left: auto; }
+  .workspace-header:not([data-flow="true"]) .workspace-header-global { flex: 0 0 auto; flex-wrap: nowrap; margin-left: auto; }
+  .workspace-header:not([data-flow="true"]) .workspace-header-actions:not(:empty) + .workspace-header-global { margin-left: 0; }
+  .workspace-header:not([data-flow="true"]) .workspace-header-actions [data-workspace-aktionen] > div { display: flex; flex-wrap: nowrap; }
+  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary > span {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary { width: 2.75rem; min-width: 44px; padding: .5rem; }
+  /* „Reise fortsetzen“ inside the open trip only repeats where the user already is. */
+  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary:not(:has(svg)) { display: none; }
+}
+@media (max-width: 47.999rem) {
+  .workspace-header:not([data-flow="true"]) .workspace-aktion-text {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .workspace-header:not([data-flow="true"]) .workspace-header-actions [data-workspace-aktionen] button { width: 2.75rem; min-width: 44px; padding: .5rem; border-radius: 999px; }
+}
+/* Mond/Sonne stays in the bar (owner decision). The plan link moves to the menu
+   inside an open trip, and „Reise fortsetzen“ has no icon form. */
+@media (max-width: 40rem) {
+  .workspace-header:not([data-flow="true"]) .workspace-primary > span {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .workspace-header:not([data-flow="true"]) .workspace-primary { width: 2.75rem; min-width: 44px; padding: .5rem; }
+  .workspace-header:not([data-flow="true"]) .workspace-primary:not(:has(svg)),
+  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary { display: none; }
+}
+@media (max-width: 22.5rem) {
+  .workspace-header:not([data-flow="true"]) { padding-inline: .5rem; gap: .375rem; }
+  .workspace-header:not([data-flow="true"]) .workspace-header-brand img { width: 4.25rem; }
 }

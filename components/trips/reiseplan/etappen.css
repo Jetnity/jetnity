@@ -2,21 +2,6 @@
   color: var(--color-brand-800, #173b32);
   min-width: 0;
 }
-.et-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-  padding: clamp(1.5rem, 3vw, 3.2rem);
-  background-position:
-    center,
-    center 48%;
-  background-size: cover;
-  color: #fff;
-}
-.et-eyebrow,
-.et-routepath,
-.et-meta,
-.et-meta span,
 .et-primary,
 .et-secondary,
 .et-back,
@@ -27,41 +12,6 @@
 .et-icon {
   display: flex;
   align-items: center;
-}
-.et-eyebrow {
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.17em;
-  color: #ddedb8;
-}
-.et-hero h1 {
-  margin: 0.45rem 0;
-  font-size: clamp(2.35rem, 4.2vw, 4.6rem);
-  line-height: 1.04;
-  letter-spacing: -0.055em;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-  color: white;
-}
-.et-routepath {
-  gap: 0.53rem;
-  flex-wrap: wrap;
-  font-weight: 600;
-}
-.et-routepath svg {
-  opacity: 0.65;
-}
-.et-meta,
-.et-meta span {
-  gap: 0.45rem;
-}
-.et-meta {
-  flex-wrap: wrap;
-  gap: 1.1rem;
-  color: #eaf3ed;
-  font-size: 0.88rem;
-  margin-top: 0.9rem;
 }
 .et-board {
   display: grid;
@@ -424,9 +374,6 @@
   display: none;
 }
 @media (max-width: 840px) {
-  .et-hero {
-    border-radius: 17px;
-  }
   .et-board {
     display: block;
     margin-top: 0.6rem;
@@ -474,12 +421,6 @@
   .et-stage {
     gap: 0.45rem;
   }
-}
-.et-hero {
-  padding-block: clamp(1.05rem, 1.5vw, 1.6rem);
-  background-position:
-    center,
-    center 57%;
 }
 .et-stages {
   position: relative;

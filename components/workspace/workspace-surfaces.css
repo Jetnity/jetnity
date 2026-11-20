@@ -136,26 +136,28 @@
 .workspace-content #reisebegleiter button .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.75rem; }
 .workspace-content [data-workspace-identity].workspace-trip-heading {
-  background: none; color: var(--workspace-ink); margin: 0 0 1.5rem; border: 0; border-radius: 0; overflow: visible;
+  background: none; color: var(--workspace-ink); margin: 0; border: 0; border-radius: 0; overflow: visible;
 }
-.workspace-content [data-workspace-identity].workspace-trip-heading > div:first-child { padding: 0; }
-.workspace-trip-heading-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .75rem; }
-.workspace-eyebrow { font-size: .6875rem; letter-spacing: .17em; text-transform: uppercase; font-weight: 650; color: var(--workspace-muted); margin-bottom: .5rem; }
-.workspace-content .workspace-trip-heading h1 { font-size: clamp(1.6rem, 2.4vw, 2rem); letter-spacing: -.035em; line-height: 1.2; font-weight: 650; overflow-wrap: anywhere; }
-.workspace-status { border: 1px solid var(--workspace-edge); border-radius: .5rem; padding: .35rem .65rem; font-size: .75rem; color: var(--workspace-muted); }
-.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .65rem 1.25rem; margin-top: 1rem; color: var(--workspace-muted); font-size: .875rem; }
-.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .5rem; }
+.workspace-trip-kopf { margin-bottom: 1.5rem; }
+.workspace-eyebrow { color: var(--workspace-muted); margin-bottom: .375rem; }
+.workspace-content .workspace-trip-heading h1 { color: var(--workspace-ink); overflow-wrap: anywhere; hyphens: auto; }
+.workspace-status { border: 1px solid var(--workspace-edge); border-radius: 999px; padding: .3rem .75rem; color: var(--workspace-ink); background: var(--workspace-panel); }
+.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .375rem 1.25rem; margin-top: .75rem; color: var(--workspace-muted); }
+.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .4rem; }
 .workspace-trip-meta dd { overflow-wrap: anywhere; min-width: 0; }
-.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .15rem; }
-.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; font-size: .75rem; color: var(--workspace-muted); margin-top: .75rem; }
-.workspace-trip-storage > span { display: flex; align-items: center; gap: .5rem; }
-.workspace-reiseoptionen { margin-top: .75rem; border-top: 1px solid var(--workspace-edge); }
+.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .125rem; }
+.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; color: var(--workspace-muted); margin-top: .875rem; }
+.workspace-trip-storage > span { display: flex; align-items: center; gap: .4rem; }
 .workspace-reiseoptionen > summary {
   display: flex; align-items: center; min-height: 44px; cursor: pointer; list-style: none;
-  font-size: .875rem; font-weight: 650; color: var(--workspace-ink);
+  font-weight: 600; color: var(--workspace-ink); text-decoration: underline; text-underline-offset: 4px;
 }
 .workspace-reiseoptionen > summary::-webkit-details-marker { display: none; }
 .workspace-reiseoptionen > summary:focus-visible { outline: 3px solid var(--workspace-ink); outline-offset: 3px; }
+.workspace-reiseoptionen[open] { flex-basis: 100%; }
+:where([data-workspace-theme="green"]) [data-status-siegel="gebucht"] { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) [data-status-siegel="gewaehlt"] { border-color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) [data-status-siegel="offen"] { border-color: var(--workspace-edge); }
 .workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
 /* These legacy header slots were white on a dark hero. Only recolour them
    inside the compact, transparent heading; keep dark action buttons intact. */
@@ -198,14 +200,14 @@
 .workspace-content :where([data-attention-punkt], .workspace-route-overview button, [data-workspace-trip-parts] button):focus-visible { outline-offset: -4px; }
 @media (max-width: 40rem) {
   .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; }
-  .workspace-trip-meta { display: grid; gap: .65rem; }
+  .workspace-trip-kopf { margin-bottom: 1.25rem; }
+  .workspace-trip-meta { gap: .25rem 1rem; margin-top: .5rem; }
   .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading,
   .workspace-content [data-workspace-attention="integrated"] [data-attention-punkt],
   .workspace-content [data-workspace-audit="integrated"],
   .workspace-route-overview > header, .workspace-route-overview li button,
   .workspace-content [data-workspace-trip-parts] button { padding: 1rem; }
   .workspace-audit-intro > button { width: 100%; }
-  .workspace-trip-heading-top > div { min-width: 0; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }

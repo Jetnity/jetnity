@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   BedDouble,
-  CalendarDays,
   ChevronRight,
   ListTree,
   Map as MapIcon,
@@ -13,7 +12,6 @@ import {
   Plane,
   Plus,
   Route,
-  Users,
   NotebookPen,
   Ticket,
   BusFront,
@@ -21,7 +19,7 @@ import {
 import type { Trip, TripItemKind, TripSource } from '@/types/trips'
 import { landName } from '@/lib/country/darstellung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
-import { StadtbildMiniatur, StadtbildNachweis, useStadtbild } from '@/components/trips/organisieren/Stadtbild'
+import { StadtbildMiniatur, StadtbildNachweis } from '@/components/trips/organisieren/Stadtbild'
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { RouteZeile } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
@@ -93,7 +91,6 @@ export default function Etappenplan({
   const [platzieren, setPlatzieren] = useState(false)
   const [ohneTage, setOhneTage] = useState<string | null>(null)
   const stages = [...reise.stages].sort((a, b) => a.position - b.position)
-  const heroBild = useStadtbild(stages[0])
   const activeDay = !ohneTage && !focusRoute && tagId ? reise.days.find((d) => d.id === tagId) : undefined
   const activeStage = stages.find((s) => s.id === (ohneTage || activeDay?.stageId))
   const activeRun = activeDay && route.find((r) => r.art === 'lauf' && r.tagIds.includes(activeDay.id))
@@ -107,11 +104,6 @@ export default function Etappenplan({
   const eintraege = days.reduce((anzahl, tag) => anzahl + tag.items.length, ohneTag.length)
   const head = activeStage?.name || (activeRun?.art === 'lauf' && activeRun.name) || 'Reisetag'
   const country = activeStage?.countryCode ? landName(activeStage.countryCode, 'de') : ''
-  const allCountry =
-    stages.length && stages[0]?.countryCode && stages.every((s) => s.countryCode === stages[0].countryCode)
-      ? landName(stages[0].countryCode, 'de')
-      : null
-  const hero = reise.title === stages[0]?.name && stages.length > 1 && allCountry ? allCountry : reise.title
   const legs = mobilitaetsAbdeckung(reise, reise.ohneTag).kanten
   const outbound = legs.find((l) => l.art === 'outbound')
   const inbound = legs.find((l) => l.art === 'return')
@@ -185,38 +177,6 @@ export default function Etappenplan({
   }
   return (
     <div className="et-atlas" data-trip-atlas>
-      <div
-        className="et-hero"
-        style={{
-          backgroundImage:
-            'linear-gradient(90deg,rgba(11,49,42,.98) 0%,rgba(13,48,41,.91) 35%,rgba(13,48,41,.20) 100%),url(' +
-            heroBild.src +
-            ')',
-        }}
-      >
-        <span className="et-eyebrow">
-          <Route size={16} /> REISEPLAN
-        </span>
-        <h1>{hero}</h1>
-        <div className="et-routepath">
-          {stages.map((s, i) => (
-            <Fragment key={s.id}>
-              {i > 0 && <ArrowRight size={15} />}
-              <span>{s.name}</span>
-            </Fragment>
-          ))}
-        </div>
-        <div className="et-meta">
-          <span>
-            <CalendarDays size={16} />
-            {etappenZeitraumAnzeigen(reise.startDate, reise.endDate) || 'Reisedaten offen'}
-          </span>
-          <span>
-            <Users size={16} />
-            {reise.travellers} {reise.travellers === 1 ? 'Person' : 'Reisende'}
-          </span>
-        </div>
-      </div>
       <div className="et-mobile-tabs">
         <button type="button" aria-pressed={ansicht === 'plan'} onClick={() => setAnsicht('plan')}>
           <ListTree size={17} /> Reiseplan

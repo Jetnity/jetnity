@@ -6,6 +6,7 @@ import { CalendarDays, MapPin, ShieldCheck, Users, WalletCards } from 'lucide-re
 import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
+import { WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { cn } from '@/lib/utils'
 import type { Trip, TripSource } from '@/types/trips'
 
@@ -43,6 +44,7 @@ export default function TripWorkspaceKopf({
   reiseoptionen,
   workspace = false,
   uebersichtAktiv = false,
+  ansicht = 'uebersicht',
 }: {
   reise: Trip
   quelle: TripSource
@@ -52,36 +54,54 @@ export default function TripWorkspaceKopf({
   reiseoptionen?: ReactNode
   workspace?: boolean
   uebersichtAktiv?: boolean
+  ansicht?: WorkspaceAnsicht
 }) {
   const gast = quelle === 'guest'
   const dichte = useKopfDichte()
 
   if (workspace) {
+    // Ein flacher Kopf fuer alle fuenf Ansichten (DESIGN_SYSTEM.md 6.2). Stand,
+    // Speicherort und Reiseoptionen gehoeren zur Uebersicht; die anderen
+    // Ansichten zeigen nur Einordnung, damit ihr Inhalt auf dem Handy oben steht.
+    // Ein Speicherfehler (`kopfzeile`) bleibt in jeder Ansicht sichtbar.
+    const uebersichtKopf = ansicht === 'uebersicht'
     return (
-      <section data-workspace-identity data-save-truth={gast ? 'device' : 'account'} className="workspace-trip-heading">
-        <div className="workspace-trip-heading-top">
-          <div>
-            <p className="workspace-eyebrow">Deine Reise auf einen Blick</p>
-            <h1 tabIndex={-1} data-workspace-modus-heading={uebersichtAktiv ? '' : undefined}>{uebersicht.titel}</h1>
-          </div>
-          <span className="workspace-status">{uebersicht.lageText}</span>
-        </div>
-        <dl className="workspace-trip-meta">
+      <section
+        data-workspace-identity
+        data-workspace-kopf={ansicht}
+        data-save-truth={gast ? 'device' : 'account'}
+        className="workspace-trip-heading"
+      >
+        <p className="workspace-eyebrow text-kicker uppercase">
+          {ansicht === 'einreise' ? 'Deine Reise' : WORKSPACE_ANSICHT_LABEL[ansicht]}
+        </p>
+        <h1
+          tabIndex={-1}
+          data-workspace-modus-heading={uebersichtAktiv ? '' : undefined}
+          className="text-display outline-none"
+        >
+          {uebersicht.titel}
+        </h1>
+        <dl className="workspace-trip-meta text-meta">
           <div><CalendarDays aria-hidden="true" /><dt className="sr-only">Zeitraum</dt><dd>{uebersicht.zeitraum}</dd></div>
           <div><MapPin aria-hidden="true" /><dt className="sr-only">Route</dt><dd>{uebersicht.orte}</dd></div>
           <div><Users aria-hidden="true" /><dt className="sr-only">Reisende</dt><dd>{uebersicht.personen.text}</dd></div>
           <div><WalletCards aria-hidden="true" /><dt className="sr-only">Budget</dt><dd>Budget {betrag(reise.budgetAmount, reise.currency)}</dd></div>
         </dl>
-        <div className="workspace-trip-storage">
-          <span><ShieldCheck aria-hidden="true" />{gast ? 'Nur auf diesem Gerät' : 'Im Konto gespeichert'}</span>
-          {kopfzeile ? <div className="workspace-storage-options">{kopfzeile}</div> : null}
-        </div>
-        {reiseoptionen ? (
-          <details data-reiseoptionen className="workspace-reiseoptionen">
-            <summary>Reiseoptionen</summary>
-            <div className="workspace-storage-options">{reiseoptionen}</div>
-          </details>
+        {uebersichtKopf ? (
+          <div className="workspace-trip-storage text-meta">
+            <span className="workspace-status">{uebersicht.lageText}</span>
+            {/* Fuer Gaeste sagt der Gast-Hinweis darunter dasselbe, mit dem Weg ins Konto. */}
+            <span className={gast ? 'sr-only' : undefined}><ShieldCheck aria-hidden="true" />{gast ? 'Nur auf diesem Gerät' : 'Im Konto gespeichert'}</span>
+            {reiseoptionen ? (
+              <details data-reiseoptionen className="workspace-reiseoptionen">
+                <summary>Reiseoptionen</summary>
+                <div className="workspace-storage-options">{reiseoptionen}</div>
+              </details>
+            ) : null}
+          </div>
         ) : null}
+        {kopfzeile ? <div className="workspace-storage-options mt-3">{kopfzeile}</div> : null}
       </section>
     )
   }

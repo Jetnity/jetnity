@@ -72,7 +72,7 @@ export function TripWorkspaceAktionen({
           )}
         >
           <PenLine className="h-4 w-4 shrink-0" aria-hidden="true" />
-          {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
+          <span className="workspace-aktion-text">{aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}</span>
         </button>
         {begleiterVorhanden ? (
           <button
@@ -87,7 +87,7 @@ export function TripWorkspaceAktionen({
             )}
           >
             <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
+            <span className="workspace-aktion-text">{begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}</span>
           </button>
         ) : null}
       </div>

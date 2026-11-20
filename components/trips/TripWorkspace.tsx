@@ -19,6 +19,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
 import { cn } from '@/lib/utils'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 import { hinweisAktualisieren, hinweisGleich, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
 
 import {
@@ -1328,6 +1329,7 @@ export default function TripWorkspace({
       reiseoptionen={reiseoptionen}
       workspace={Boolean(shell)}
       uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
+      ansicht={modus.ansicht}
     />
   )
 
@@ -1348,9 +1350,13 @@ export default function TripWorkspace({
         </Link>
 
         <WorkspacePortal slot="title"><span>{organisierenStart ? 'Reiseplanung › Organisieren' : reise.title}</span></WorkspacePortal>
-        {hinweis}
 
-        {modusBereit && modus.ansicht === 'uebersicht' && identitaet}
+        {modusBereit ? (
+          <div className={cn('workspace-trip-kopf', organisierenStart && 'org-wrap pt-5 sm:pt-7')}>
+            {identitaet}
+            {hinweis}
+          </div>
+        ) : hinweis}
 
         {modusBereit ? (
           <>
@@ -1376,16 +1382,11 @@ export default function TripWorkspace({
             </div>
           </>
         ) : (
-          <div
+          <Ladeplatzhalter
             data-workspace-modus-ausstehend=""
-            role="status"
-            aria-live="polite"
-            aria-busy="true"
-            inert
-            className="mt-6 text-sm leading-6 text-ink-800"
-          >
-            Die Reiseansicht wird vorbereitet.
-          </div>
+            status="Die Reiseansicht wird vorbereitet."
+            className="mt-6"
+          />
         )}
 
         {kompakt && detailOffen ? (
@@ -1473,7 +1474,7 @@ export default function TripWorkspace({
                 id="workspace-vorbereitung-titel"
                 tabIndex={-1}
                 data-workspace-modus-heading
-                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+                className={cn('text-title text-brand-800 outline-none', shell && 'sr-only')}
               >
                 Vorbereitung
               </h2>
