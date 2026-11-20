@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {test} from 'node:test'
 import {AT_BMI_GROUPS,atBmiSourceReview} from './at-bmi-visa-groups-v1'
-import {AT_VISA_A_BMI_SOURCE,AT_VISA_A_CONDITIONAL_EXCEPTIONS} from './at-airport-transit-visa-a-research-v1'
+import {AT_VISA_A_BMI_SOURCE,AT_VISA_A_CONDITIONAL_EXCEPTIONS,AT_VISA_A_BMI_ARCHIVE_ROW_CHECK} from './at-airport-transit-visa-a-research-v1'
 import {EU4_200_VISA_RESEARCH_CASES} from '../official-truth-eu4-source-review-v1'
 
 test('Austrian BMI footnote 3 has exactly eight document-/route-bound research exception classes',()=>{
@@ -45,5 +45,27 @@ test('Austrian airside exception footnote never serves as EU4 destination-specif
   assert.equal(row.ownerMa1Aal2Authorized,false)
   assert.equal(row.entryVisaAnswer,'derzeit nicht verfügbar')
   assert.equal(row.entryVaccineAnswer,'derzeit nicht verfügbar')
+ }
+})
+
+test('All 50 pinned BMI Visa A archive rows retain 9 yes, 21 no, 19 free movement, 1 home; none is a personal answer',()=>{
+ const yes=new Set<string>(AT_VISA_A_BMI_ARCHIVE_ROW_CHECK.yesCodes)
+ assert.equal(yes.size,9)
+ assert.deepEqual([...yes].sort(),['AF','ER','IQ','IR','LK','NG','PK','SO','SY'])
+ assert.match(AT_VISA_A_BMI_ARCHIVE_ROW_CHECK.originalSha256,/^[a-f0-9]{64}$/)
+ assert.equal(AT_VISA_A_BMI_ARCHIVE_ROW_CHECK.sourceOnly,true)
+ const V=[...AT_BMI_GROUPS.V]
+ const E=[...AT_BMI_GROUPS.E]
+ assert.equal(V.length+E.length,30)
+ assert.equal([...V,...E].filter(code=>yes.has(code)).length,9)
+ assert.equal([...V,...E].filter(code=>!yes.has(code)).length,21)
+ assert.equal(AT_BMI_GROUPS.F.length,19)
+ assert.equal(AT_BMI_GROUPS.H.length,1)
+ for(const code of [...V,...E,...AT_BMI_GROUPS.F,...AT_BMI_GROUPS.H]){
+  const review=atBmiSourceReview(code)
+  assert.ok(review)
+  assert.equal(review.airportTransitVisaAResearch.actualBmiPassportRowVisaAFlag,null)
+  assert.equal(review.airportTransitVisaAResearch.sourceOriginalSealed,false)
+  assert.equal(review.airportTransitVisaAResearch.personalTransitVisaAnswer,'derzeit nicht verfügbar')
  }
 })

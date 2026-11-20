@@ -22,6 +22,18 @@ export const AT_VISA_A_CONDITIONAL_EXCEPTIONS=Object.freeze([
  Object.freeze({id:'chicago_convention_aircrew',proof:'Qualifying aircraft crew member and Chicago Convention contracting-state nationality verified'}),
 ] as const)
 
+// Read-only crosscheck of all 50 pinned Dev archive rows on 20.11.2026:
+// 9 "Ja", 21 "Nein", 19 EU free movement, 1 Austrian home row.
+// All nine "Ja" rows were also checked against the current official BMI HTML
+// (same edition). These archive-only flags MUST NOT feed personal visa output.
+export const AT_VISA_A_BMI_ARCHIVE_ROW_CHECK=Object.freeze({
+ originalSha256:'fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778',
+ sourceEdition:'2026-11-06' as const,
+ checkedAt:'2026-11-20' as const,
+ sourceOnly:true as const,
+ yesCodes:Object.freeze(['SY','AF','IQ','IR','PK','ER','SO','NG','LK'] as const),
+})
+
 export type AtAirportTransitVisaAResearch=Readonly<{
  passportResearchCode:string;destination:'AT';sourceUrl:string;sourceEdition:'2026-11-06';
  footnote:'3';austrianAirsideOnly:true;otherSchengenTransitRuleTransferAllowed:false;
