@@ -25,6 +25,7 @@ const PFAD_LABEL: Record<string, string> = {
   editor: 'Editor',
   'official-truth': 'Amtliche Quellen',
   'at-method': 'Österreich-Methode',
+  'at-50-method': 'Österreich: 50 Pässe',
   guard: 'Schutzprüfung',
   import: 'Quellenlauf',
   method: 'Methode',

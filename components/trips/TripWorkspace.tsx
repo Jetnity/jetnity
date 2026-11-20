@@ -1512,7 +1512,7 @@ export default function TripWorkspace({
               data-workspace-modus="einreise"
               className="mt-4 min-w-0 outline-none"
             >
-              <EinreiseLaenderpruefer />
+              <EinreiseLaenderpruefer eingebettet />
             </section>
           ) : null}
 
