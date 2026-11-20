@@ -26,11 +26,6 @@ export type HubLeiste = {
 
 export const MEINE_REISEN_HAUPT = 'bg-surface-75 px-4 py-8 sm:px-6 sm:py-10'
 export const MEINE_REISEN_INNEN = 'mx-auto min-w-0 max-w-6xl'
-export const MEINE_REISEN_KOPF =
-  'mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'
-export const MEINE_REISEN_TITEL =
-  'mt-1 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-4xl'
-export const MEINE_REISEN_LEAD = 'mt-2 max-w-2xl text-sm leading-6 text-ink-700'
 export const MEINE_REISEN_NEU =
   'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:w-auto'
 export const MEINE_REISEN_SUCHE =

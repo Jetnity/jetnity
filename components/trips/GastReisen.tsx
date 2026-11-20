@@ -33,6 +33,7 @@ import {
 } from '@/components/trips/GastReiseLesefehler'
 import { tripAlsUebersicht } from '@/lib/trips/reise-orte'
 import Reisekarte from '@/components/trips/Reisekarte'
+import { Leerzustand } from '@/components/ui/leerzustand'
 
 const primaerKlasse =
   'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto'
@@ -86,25 +87,20 @@ export default function GastReisen() {
 
   if (lese.art === 'fehlend') {
     return (
-      <section
+      <Leerzustand
         data-gast-leseart="fehlend"
-        className="min-w-0 max-w-full rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10"
+        symbol={MapPin}
+        titel="Deine erste Reise beginnt hier."
+        aktion={
+          <Link href={primaer.href as Route} data-gast-fokus="weiter" className={primaerKlasse}>
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            {primaer.label}
+          </Link>
+        }
       >
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-          <MapPin className="h-5 w-5" aria-hidden="true" />
-        </span>
-        <h2 className="mt-5 min-w-0 max-w-full break-words text-2xl font-semibold tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">
-          Deine erste Reise beginnt hier.
-        </h2>
-        <p className="mx-auto mt-3 max-w-md break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere]">
-          Erstelle kostenlos einen privaten Entwurf. Er bleibt zunächst auf diesem Gerät gespeichert und
-          wandert bei einer Anmeldung in dein Konto.
-        </p>
-        <Link href={primaer.href as Route} data-gast-fokus="weiter" className={`${primaerKlasse} mt-6`}>
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          {primaer.label}
-        </Link>
-      </section>
+        Erstelle kostenlos einen privaten Entwurf. Er bleibt zunächst auf diesem Gerät gespeichert und
+        wandert bei einer Anmeldung in dein Konto.
+      </Leerzustand>
     )
   }
 
