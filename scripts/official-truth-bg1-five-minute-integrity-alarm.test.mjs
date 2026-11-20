@@ -88,6 +88,7 @@ test('Workflow stays on main, gated by explicit Owner variable, uses public key 
  assert.match(code,/JETNITY_BG1_FIVE_MIN_ALARM == 'production:qscbgcdmivbbnzrcyegn:integrity-only-v2'/)
  assert.match(code,/github.event.repository.private == false/)
  assert.match(code,/issues: write/)
+ assert.match(code,/pull-requests: write/)
  assert.match(code,/JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY/)
  assert.doesNotMatch(code,/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_DB_PASSWORD|personal_access_token|secret_role/i)
 })

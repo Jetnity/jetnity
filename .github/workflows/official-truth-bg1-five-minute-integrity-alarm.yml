@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
   issues: write
+  # GitHub's PR timeline API currently also requires this for Actions tokens,
+  # despite REST docs presenting Issues:write as an alternative.
+  # See GitHub rest-api-description #6994; no new tokens or paid services.
+  pull-requests: write
 
 concurrency:
   group: jetnity-bg1-production-integrity-alarm-v2

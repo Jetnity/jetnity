@@ -12,6 +12,7 @@ test('Real transport proof is strictly synthetic and PR-1254-only',()=>{
  assert.match(workflow,/github.ref == 'refs\/heads\/feat\/official-truth-universal-source-registry-dev-20261119'/)
  assert.match(workflow,/persist-credentials: false/)
  assert.match(workflow,/issues: write/)
+ assert.match(workflow,/pull-requests: write/)
  assert.doesNotMatch(workflow,/SUPABASE|VERCEL|production:qscb|service_role|secrets\./i)
  assert.doesNotMatch(script,/supabase\.co|vercel\.app|ALTER ROLE|UPDATE .*state_v1|service_role/i)
  assert.match(script,/github-actions\[bot\]/)
