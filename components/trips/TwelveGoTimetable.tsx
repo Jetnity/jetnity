@@ -74,7 +74,7 @@ export default function TwelveGoTimetable({ reise }: { reise: Trip }) {
   const edge = edges.find((item) => item.id === selected) ?? edges[0]
   const context = edge ? [reise.id, edge.id, edge.vonName, edge.nachName, edge.vonLand, edge.nachLand, edge.vonPlaceId, edge.nachPlaceId, edge.geplantesDatum].join('|') : ''
   return <section aria-label="12Go-Streckeninformationen" data-organisieren-flaeche="twelve-go" data-twelve-go-timetable="1" className={ORGANISIEREN_FLAECHE_KLASSE}>
-    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterwegs mit 12Go</p>
+    <p className="text-kicker uppercase text-brand-600">Unterwegs mit 12Go</p>
     <h2 className="mt-1 text-xl font-semibold tracking-tight text-brand-800 sm:text-2xl">Verbindungen für deine Route</h2>
     <p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Verkehrsmittel und allgemeine Fahrplanangaben für deine Weiterreise. Buchung und Bezahlung erfolgen bei 12Go. Die Links sind Affiliate-Links.</p>
     {edges.length ? <>

@@ -65,8 +65,8 @@ function BestehendeHotelBereich({
         className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterkunft</p>
-        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        <p className="text-kicker uppercase text-brand-600">Unterkunft</p>
+        <h2 className="mt-1 text-title text-brand-800">
           Gegend für diese Reise
         </h2>
         <p className="mt-4 text-sm leading-6 text-ink-800">
@@ -190,8 +190,8 @@ function HotelEtappe({
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterkunft</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+          <p className="text-kicker uppercase text-brand-600">Unterkunft</p>
+          <h2 className="mt-1 text-title text-brand-800">
             {etappe.name}
           </h2>
           <p className="mt-3 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3 text-sm leading-6 text-ink-800">

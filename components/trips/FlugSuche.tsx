@@ -165,8 +165,8 @@ function BestehendeFlugSuche({
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Flüge</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+          <p className="text-kicker uppercase text-brand-600">Flüge</p>
+          <h2 className="mt-1 text-title text-brand-800">
             Verbindungen für diese Reise
           </h2>
         </div>

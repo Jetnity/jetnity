@@ -237,7 +237,7 @@ export function KanteDetail({
   return (
     <div data-u1c-kante-detail={zeile.occurrenceKey} className="mt-4 min-w-0 rounded-[20px] border border-line-200 bg-surface-50 p-3 sm:p-4">
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">Verbindung</p>
-      <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">{zeile.titel}</h3>
+      <h3 className="mt-1 text-title text-brand-800 [overflow-wrap:anywhere]">{zeile.titel}</h3>
       <p className="mt-2 text-sm leading-6 text-ink-800">{zeile.datumText}</p>
       <p className="mt-1 text-sm leading-6 text-ink-800">{zeile.dauerText}</p>
       <p className="mt-1 text-sm leading-6 text-ink-800">{zeile.planText}</p>

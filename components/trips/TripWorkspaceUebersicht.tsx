@@ -150,7 +150,7 @@ export default function TripWorkspaceUebersicht({
           id="workspace-uebersicht-titel"
           tabIndex={-1}
           data-workspace-modus-heading={!workspace ? '' : undefined}
-          className="break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
+          className="break-words text-title text-brand-800 outline-none [overflow-wrap:anywhere]"
         >
           Deine Reise auf einen Blick
         </h2>

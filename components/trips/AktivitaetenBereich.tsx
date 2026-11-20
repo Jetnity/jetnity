@@ -433,8 +433,8 @@ export default function AktivitaetenBereich({
         <span className="block h-1 bg-citrus-400" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
-        <h2 className="mt-1 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        <p className="text-kicker uppercase text-brand-600">Aktivitäten</p>
+        <h2 className="mt-1 break-words text-title text-brand-800">
           {gewaehlt?.name ?? 'Reiseziel'}
         </h2>
         <p className="mt-1 text-sm text-ink-800">Anbieter: GetYourGuide und Viator</p>

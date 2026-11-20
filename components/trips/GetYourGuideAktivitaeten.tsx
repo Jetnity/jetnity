@@ -437,7 +437,7 @@ function Flaeche({
       data-gyg-ausgeblendet={ausgeblendet ? 'ja' : 'nein'}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Anbieter</p>
+      <p className="text-kicker uppercase text-brand-600">Anbieter</p>
       <h3 className="mt-1 min-w-0 max-w-full text-lg font-semibold leading-tight tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">
         GetYourGuide
       </h3>

@@ -29,8 +29,8 @@ export default function TwelveGoAffiliateLinks({ reise }: { reise: Trip }) {
       data-twelve-go-affiliate="1"
       className={ORGANISIEREN_FLAECHE_KLASSE}
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Extern</p>
-      <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+      <p className="text-kicker uppercase text-brand-600">Extern</p>
+      <h2 className="mt-1 text-title text-brand-800">
         Verbindungen bei 12Go suchen
       </h2>
       <p className="mt-1 text-sm leading-6 text-ink-800">{TWELVE_GO_HINWEIS}.</p>

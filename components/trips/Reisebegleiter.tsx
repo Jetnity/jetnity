@@ -198,7 +198,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
           aria-labelledby="reisebegleiter-auskunft-titel"
           className="rounded-[28px] border border-line-200 bg-surface-0 p-5 sm:p-7"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+          <p className="text-kicker uppercase text-brand-600">
             Generierter Vorschlag
           </p>
           <h3
