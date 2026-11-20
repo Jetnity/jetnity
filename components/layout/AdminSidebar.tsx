@@ -92,7 +92,7 @@ export default function AdminSidebar({ className }: { className?: string }) {
       )}
     >
       <div className="flex h-14 items-center border-b border-border px-4">
-        <Link href="/admin" className="text-base font-extrabold tracking-tight" aria-label="Steuerzentrale">
+        <Link href="/admin" className="text-base font-extrabold tracking-tight relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-['']" aria-label="Steuerzentrale">
           <span className="group-data-[collapsed=true]/admin-nav:hidden">Jetnity Steuerzentrale</span>
           <span aria-hidden className="hidden group-data-[collapsed=true]/admin-nav:inline">J</span>
         </Link>

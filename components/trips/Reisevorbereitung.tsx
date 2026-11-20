@@ -396,7 +396,7 @@ function Bereich({
         </span>
         <ChevronDown className="h-4 w-4 shrink-0 text-brand-800 group-open/bereich:rotate-180" aria-hidden="true" />
       </summary>
-      <div className="grid w-full min-w-0 grid-cols-1 gap-3 border-t border-line-200 px-[8px] py-3">{children}</div>
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3 border-t border-line-200 px-[8px] py-3 [&>p]:max-w-prose">{children}</div>
     </details>
   )
 }

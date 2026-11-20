@@ -309,7 +309,8 @@
 .et-canvas.picking .leaflet-interactive {
   cursor: crosshair;
 }
-.et-pin {
+/* Leaflet sets .leaflet-marker-icon to display: block at equal specificity; load order must not decide. */
+.leaflet-marker-icon.et-pin {
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -344,12 +345,27 @@
   gap: 2px;
 }
 .et-map-tools button {
-  min-height: 40px;
-  min-width: 40px;
+  min-height: 44px;
+  min-width: 44px;
   font-size: 0.8rem;
   padding: 0.35rem 0.65rem;
   border-radius: 9px;
   font-weight: 650;
+}
+@media (pointer: fine) {
+  .et-map-tools button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+/* Pins stay 31 px; on touch an invisible ring widens the hit area to 45 px. */
+@media (pointer: coarse) {
+  .et-pin::before {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+  }
 }
 .et-map-note {
   left: 0.72rem;

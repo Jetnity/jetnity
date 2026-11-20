@@ -116,7 +116,7 @@ export default function AdminTopbar({
                     {i < crumbs.length - 1 && SEITEN_MIT_ZIEL.has(c.href) ? (
                       <Link
                         href={c.href}
-                        className="inline-flex min-h-6 items-center rounded-sm hover:text-foreground hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex min-h-6 items-center rounded-sm relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-[''] hover:text-foreground hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         {c.label}
                       </Link>

@@ -48,7 +48,7 @@ export function Hinweis({
       className={cn('flex min-w-0 max-w-full gap-3 rounded-card border px-4 py-3 text-meta text-foreground', flaeche, className)}
     >
       <Symbol className={cn('mt-0.5 h-4 w-4 shrink-0', farbe)} aria-hidden="true" />
-      <div className="grid min-w-0 flex-1 gap-1 [overflow-wrap:anywhere]">
+      <div className="grid min-w-0 flex-1 gap-1 [overflow-wrap:anywhere] [&_p]:max-w-prose">
         {titel ? <p className="font-semibold">{titel}</p> : null}
         {children}
         {aktion ? <div className="-mb-2 flex flex-wrap gap-x-4">{aktion}</div> : null}
