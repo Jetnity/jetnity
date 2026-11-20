@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
+import {test} from 'node:test'
+const root=new URL('../../../../',import.meta.url)
+const load=(file:string)=>readFileSync(new URL(file,root),'utf8')
+const original=load('scripts/db/official-truth-v3-background-guard-1/parts/audit.sql')
+const candidate=load('scripts/db/official-truth-bg1-self-heal-dev-1/audit-v2-function-bodies.CANDIDATE.sql')
+const pg17=load('scripts/db/official-truth-bg1-self-heal-dev-1/simulate-pg17-rollback.sql')
+const preflight=load('scripts/db/official-truth-bg1-self-heal-dev-1/production-exact-drift-readonly.sql')
+test('Candidate changes ONLY protected audit/latch policy, not established proof, metadata or public grants',()=>{
+ assert.match(original,/CREATE FUNCTION official_v3_guard_private\.audit_v1\(\)/)
+ assert.match(candidate,/CREATE OR REPLACE FUNCTION official_v3_guard_private\.audit_v1\(\)/)
+ assert.match(candidate,/CREATE OR REPLACE FUNCTION official_v3_guard_private\.latch_incident_v1\(/)
+ for(const name of ['check_control_v1','assert_catalog_v1','check_hma_v1','check_s1_v1','check_jobs_v1','check_hrs_v1','check_certificates_v1','check_retirements_v1'])
+  assert.ok(original.includes(name)&&candidate.includes(name))
+ assert.match(candidate,/WHEN query_canceled OR lock_not_available OR deadlock_detected OR serialization_failure/)
+ assert.match(candidate,/result='refused'/)
+ assert.match(candidate,/reason IN \('refused','clock'\)/)
+ assert.match(candidate,/old_valid_until/)
+ assert.match(candidate,/valid_until=due\+interval '5 minutes 30 seconds'/)
+ assert.doesNotMatch(candidate,/latch_incident_v1\(due,'gap'\)|latch_incident_v1\(due,result\)/)
+ assert.doesNotMatch(candidate,/GRANT .*\b(?:anon|authenticated|service_role)\b|ALTER ROLE|ALTER TABLE|TRUNCATE|DELETE FROM/i)
+ assert.match(candidate,/Do not execute in Production independently/)
+})
+test('Real PostgreSQL17 Dev test uses transient isolation, exact rollback, hard failure and dedup - no permanent writes',()=>{
+ assert.match(pg17,/BEGIN;/)
+ assert.ok(pg17.trimEnd().endsWith('ROLLBACK;'))
+ assert.match(pg17,/CREATE TEMP TABLE bg1_v2_rehearsal_state/)
+ assert.match(pg17,/CREATE FUNCTION pg_temp\.bg1_v2_rehearsal_tick/)
+ for(const id of ['BG1_R01_INITIAL_PROOF','BG1_R02_AUTO_RECOVER_MISSED_TICK','BG1_R03_BOUNDED_LEASE','BG1_R04_AUTO_RECOVER_TIMEOUT',
+ 'BG1_R05_TAMPER_MUST_LOCK','BG1_R06_FULL_PROOF_CANNOT_UNLATCH_INTEGRITY','BG1_R07_INTEGRITY_ALERT_DEDUP',
+ 'BG1_R08_FAKE_SUCCESS_CANNOT_RECOVER','BG1_R09_REPLAY_REFUSED'])assert.ok(pg17.includes(id),id)
+ assert.match(pg17,/DEV_PG17_TRANSIENT_RECOVERY_9_CASES_PASS/)
+ assert.doesNotMatch(pg17,/CREATE TABLE official_v3_guard_private|UPDATE official_v3_guard_private|ALTER ROLE|DROP TABLE official_v3_guard_private/)
+})
+test('Production predecessor exception is exactly the platform known authenticator preloaded library value, never arbitrary catalog diff',()=>{
+ assert.match(preflight,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/)
+ assert.ok(preflight.trimEnd().endsWith('ROLLBACK;'))
+ assert.match(preflight,/count\(\*\)=2/)
+ assert.match(preflight,/authenticator/)
+ assert.match(preflight,/session_preload_libraries=supautils, safeupdate/)
+ assert.match(preflight,/session_preload_libraries=safeupdate/)
+ assert.match(preflight,/all_other_role_attributes_unchanged/)
+ assert.match(preflight,/other_role_gucs_unchanged/)
+ assert.match(preflight,/other_setting_gucs_unchanged/)
+ assert.match(preflight,/false::boolean AS auto_accept_platform_config_change/)
+ assert.match(preflight,/false::boolean AS production_permission_to_resume/)
+})

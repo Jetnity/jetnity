@@ -47,6 +47,7 @@ function ergebnisLesen(result: V3VisitorView['cells'][number]['results'][number]
 export function einreisePrueferSicht(state: V3VisitorUiState): {
   zielCode: string
   zielLabel: string
+  citizenshipCodes: readonly string[]
   anzeige: EinreiseAnzeige
   synthetisch: boolean
   hinweis: string
@@ -64,6 +65,7 @@ export function einreisePrueferSicht(state: V3VisitorUiState): {
   return {
     zielCode: input.destinationCountryCode,
     zielLabel: landAnzeigeText(input.destinationCountryCode),
+    citizenshipCodes: input.citizenshipCountryCodes,
     anzeige: einreiseAusBesucher({ zielCode: input.destinationCountryCode, zielLabel: landAnzeigeText(input.destinationCountryCode), zellen }),
     synthetisch: state.view.synthetic === true,
     hinweis: state.message ?? '',

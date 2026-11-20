@@ -6,6 +6,7 @@ import LandFeld from '@/components/country/LandFeld'
 import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
 import AtOfficialGuidance from '@/components/readiness/AtOfficialGuidance'
 import FollowupOfficialGuidance from '@/components/readiness/FollowupOfficialGuidance'
+import NextEightOfficialGuidance from '@/components/readiness/NextEightOfficialGuidance'
 import { istKatalogLand, type Iso3166Alpha2 } from '@/lib/country/katalog'
 import { einreisePrueferLaden, einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
 import { loadChDeVisa } from '@/lib/readiness/official-truth-product-v3/visitor/ch-de-http'
@@ -120,8 +121,9 @@ export default function EinreiseLaenderpruefer() {
           ) : null}
           {sicht.hinweis ? <p role="status" className="text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
           <EinreiseKundenanzeige anzeige={sicht.anzeige} />
-          {sicht.zielCode === 'AT' ? <AtOfficialGuidance /> : null}
+          {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.citizenshipCodes} /> : null}
           {['IT','FR','ES','PT'].includes(sicht.zielCode) ? <FollowupOfficialGuidance country={sicht.zielCode} /> : null}
+          {['GR','HR','NL','GB','US','TR','TH','AE'].includes(sicht.zielCode) ? <NextEightOfficialGuidance country={sicht.zielCode} /> : null}
         </div>
       ) : null}
     </section>

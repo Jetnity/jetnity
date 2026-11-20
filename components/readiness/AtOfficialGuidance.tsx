@@ -1,6 +1,7 @@
 // General Austrian primary-source pointers only, NOT a passport-specific
 // Official Truth rule. Unverified obligations are never displayed as required.
 // Only the official fixed URL set is rendered; no third-party checkout.
+import { atBmiSourceReview, type AtBmiSourceReview } from '@/lib/readiness/official-truth-at-method-v1/at-bmi-visa-groups-v1'
 const OFFICIAL_VISA_C='https://www.bmeia.gv.at/fileadmin/user_upload/Allgemein/Formulare_ab_2023/Antragsformular_Visum_C1_Schengenvisum_DE-ES.pdf'
 const OFFICIAL_CC2='https://afs-formulare.bmf.gv.at/IDOC/FormServlet?fid=7306'
 const OFFICIAL_ETIAS='https://travel-europe.europa.eu/etias/faq'
@@ -16,7 +17,7 @@ const ITEMS:readonly Entry[]=Object.freeze([
    cost:'Formular kostenlos. Visum-Antragsgebühr bei Anwendbarkeit in der Regel 90 € (Erwachsene) bzw. 45 € (6–12 Jahre); Ausnahmen und externe Annahmegebühren möglich.',
    warning:WARNING}},
  {id:'eta',title:'ETIAS / elektronische Reisegenehmigung',
-  message:'Am 17.11.2026 laut EU noch nicht in Betrieb. Es können derzeit keine ETIAS-Anträge gestellt werden; keine Antragspflicht oder aktuelle Zahlung ableiten. Der zukünftige EU-Direktantrag kostet 20 €, mit Ausnahmen.',
+  message:'Stand 19.11.2026 laut EU: ETIAS ist noch nicht in Betrieb. Derzeit sind weder ein ETIAS-Antrag noch eine ETIAS-Zahlung möglich oder vorgeschrieben. Vor einer späteren Reise bitte den aktuellen Startstatus direkt bei der EU prüfen. Keine Preisangabe, solange es nicht gestartet ist.',
   url:OFFICIAL_ETIAS,source:'Europäische Union'},
  {id:'passport',title:'Reisepass und Gültigkeit',
   message:'Drittstaatsangehörige benötigen grundsätzlich einen Reisepass, der drei Monate über die Schengen-Ausreise hinaus gilt und in den letzten zehn Jahren ausgestellt wurde. Für EU/EWR/CH bestehen andere Regelungen; Sonderfälle individuell prüfen.',
@@ -25,11 +26,11 @@ const ITEMS:readonly Entry[]=Object.freeze([
   message:'Die Botschaft Bern verlangt für dortige Visa-C/D-Anträge grundsätzlich zwei freie Passseiten. Daraus folgt keine allgemeine Passseitenpflicht für visumfreie Reisende.',
   url:'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/',source:'Österreichische Botschaft Bern'},
  {id:'required-vaccination',title:'Pflichtimpfungen und Gesundheitsnachweise',
-  message:'Für den konkreten Reiseweg und jede Staatsangehörigkeit derzeit nicht verfügbar, sofern keine eindeutig einschlägige amtliche Einreisebestimmung bestätigt ist. Keine negative Schlussfolgerung aus allgemeinen Impfempfehlungen.',
-  url:null,source:'Keine passgenaue amtliche Quelle freigegeben'},
+  message:'Das österreichische Sozialministerium führt amtliche Einreisegesundheits- und Arzneimittelinformationen, enthält aber keinen ausdrücklichen generellen Nachweis zu Pflichtimpfungen für alle Pässe und Routen. Das deutsche Auswärtige Amt nennt unabhängig davon keine Einreise-Pflichtimpfungen. Bis zur geeigneten österreichischen Einreise-Primärregel bleibt die individuelle Pflichtimpfungs-Auskunft «derzeit nicht verfügbar». Empfehlungen sind keine Einreisevoraussetzungen.',
+  url:'https://www.sozialministerium.gv.at/Themen/Gesundheit/Reiseinformationen/Reisen-nach-%C3%96sterreich.html',source:'Österreichisches Sozialministerium (Einreisegesundheit)'},
  {id:'health',title:'Empfohlene Impfungen und Gesundheit',
-  message:'Reiseimpfungen, gesundheitliche Vorsorge und medizinische Anforderungen hängen von Person, Route und Aufenthaltsdauer ab. Diese Hinweise sind keine bestätigte Einreise-Impfpflicht.',
-  url:'https://www.gesundheit.gv.at/leben/gesundheitsvorsorge/auf-reisen/impfschutz-auf-reisen.html',source:'Österreichisches Gesundheitsportal'},
+  message:'Der amtliche Impfplan Österreich 2026/2027, Version 1.1 (Stand 14.10.2026), enthält medizinische Impfempfehlungen und keine individuelle Einreiseentscheidung. Impfempfehlungen sind keine allgemeine Einreisevoraussetzung und belegen auch keine Befreiung von möglichen Einreise-Nachweisen. Für deinen Pass und deine Route gilt ohne konkrete überprüfte Primärregel weiterhin «derzeit nicht verfügbar».',
+  url:'https://www.sozialministerium.gv.at/Themen/Gesundheit/Impfen/impfplan.html',source:'Österreichisches Sozialministerium (Impfplan)'},
  {id:'fees',title:'Gebühren, Geldnachweis und Unterkunft',
   message:'Für den Schengen-Visumantrag können die Visumgebühr, Finanzierungs- und Unterkunftsnachweise erforderlich sein. Eine allgemeine Geldgrenze oder eine Pflicht für jeden Pass ist nicht bestätigt.',
   url:'https://home-affairs.ec.europa.eu/policies/schengen/visa-policy/applying-schengen-visa_en',source:'Europäische Kommission'},
@@ -57,12 +58,27 @@ function AmtlicherLink({url,name}:{url:string;name:string}){
  return <a href={url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">{name}</a>
 }
 
-export default function AtOfficialGuidance(){
+export default function AtOfficialGuidance({citizenshipCodes=[]}:{citizenshipCodes?:readonly string[]}){
+ const sourceGroups=[...new Set(citizenshipCodes)].slice(0,5)
+   .map(atBmiSourceReview).filter((item):item is AtBmiSourceReview=>item!==null)
  return <section className="space-y-3" aria-labelledby="at-amtliche-hinweise" data-at-guidance="research-only">
   <header className="space-y-2">
    <h3 id="at-amtliche-hinweise" className="text-lg font-semibold">Österreich – amtliche Informationsseiten und direkte Formulare</h3>
    <p className="text-sm leading-6">Diese Quellenhinweise sind keine bestätigten Pflichten für deinen Pass. Individuell nicht geprüfte Themen bleiben «derzeit nicht verfügbar».</p>
   </header>
+  {sourceGroups.length>0?<div className="grid gap-3" data-at-bmi-source-groups="conditional-only">
+    <p className="text-sm leading-6 font-semibold">Amtlich geprüfte BMI-Visagruppen (Grundregeln vom 06.11.2026)</p>
+    {sourceGroups.map(item=><article key={item.code}
+      data-at-bmi-source-group={item.group} data-at-bmi-passport={item.code}
+      data-at-personal-visa-accepted="false"
+      className="rounded-2xl border border-line-200 bg-white p-4 space-y-2">
+      <h4 className="text-sm font-semibold">Pass {item.code}: {item.label}</h4>
+      <p className="text-sm leading-6">{item.text}</p>
+      {item.special?<p className="text-sm leading-6">{item.special}</p>:null}
+      <p className="text-xs leading-5">Die Quellenklasse ist anhand der amtlichen BMI-Matrix 06.11.2026 und der BMEIA-Visumvoraussetzungen am 19.11.2026 geprüft. Das ist keine persönliche Einreise- oder Visumfreigabe. Ohne konkret autorisierte Pass-, Dokument-, Aufenthalts- und Routenauskunft gilt weiterhin «derzeit nicht verfügbar».</p>
+      <p className="text-xs"><AmtlicherLink url={item.bmiUrl} name="BMI-Visaliste"/> · <AmtlicherLink url={item.bmeiaUrl} name="BMEIA-Visumvoraussetzungen"/></p>
+    </article>)}
+   </div>:null}
   <div className="grid gap-3 md:grid-cols-2">
    {ITEMS.map(item=><article key={item.id} className="rounded-2xl border border-line-200 bg-white p-4 space-y-2" data-at-info-topic={item.id}>
     <h4 className="text-base font-semibold">{item.title}</h4>

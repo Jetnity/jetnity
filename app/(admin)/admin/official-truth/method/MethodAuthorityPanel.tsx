@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { scopedMethodJournalStorage, AT_HUMAN_METHOD_STORAGE_KEY } from '@/lib/readiness/official-truth-at-method-v1/at-journal-storage'
+import { scopedMethodJournalStorage, AT_HUMAN_METHOD_STORAGE_KEY, AT50_HUMAN_METHOD_STORAGE_KEY } from '@/lib/readiness/official-truth-at-method-v1/at-journal-storage'
 import {
   HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY, appendHumanOperation, createHumanOperationId,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome, readHumanRelease,
@@ -38,7 +38,8 @@ async function outcomeBody(response: Response): Promise<unknown> {
 export default function MethodAuthorityPanel({ release }: { release: HumanRelease | null }) {
   const selected = readHumanRelease(release), selectedId = selected?.selectionId ?? null
   const atMethod = selected?.scope.destination === 'AT'
-  const storageKey = atMethod ? AT_HUMAN_METHOD_STORAGE_KEY : HUMAN_METHOD_STORAGE_KEY
+  const storageKey = selected?.methodId === 'jetnity-at-priority50-visa'
+    ? AT50_HUMAN_METHOD_STORAGE_KEY : atMethod ? AT_HUMAN_METHOD_STORAGE_KEY : HUMAN_METHOD_STORAGE_KEY
   const [journal, setJournal] = useState<HumanJournal | null>(null)
   const [confirmed, setConfirmed] = useState<HumanOperation | null>(null)
   const [storageBlocked, setStorageBlocked] = useState(false)
