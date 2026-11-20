@@ -53,6 +53,11 @@ jobs:
       - name: Tests
         run: npm run test:core
 
+      # Standalone native Node tests must run explicitly: the pinned V3 core
+      # selector intentionally does not glob arbitrary scripts/*.test.mjs.
+      - name: BG1 five-minute integrity alarm – strict offline tests
+        run: node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs
+
       # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
       # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
       # prüfen – diese Kontrolle stellt sicher, dass keine ungeschützt bleibt.
