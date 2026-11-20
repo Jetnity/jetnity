@@ -1,0 +1,41 @@
+name: BG1 Production integrity alarm (5-minute, candidate)
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+# GitHub notification is a comment in the existing PR #1254, not a new issue.
+# The workflow is scheduled only after a normal, Owner-approved main merge.
+# No paid connector and no new service-role key / user session / database writes.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: jetnity-bg1-production-integrity-alarm-v2
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/main' &&
+      github.event.repository.private == false &&
+      vars.JETNITY_BG1_FIVE_MIN_ALARM == 'production:qscbgcdmivbbnzrcyegn:integrity-only-v2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Read only fixed public BG1 integrity status, deduplicate and notify
+        env:
+          JETNITY_BG1_FIVE_MIN_ALARM: ${{ vars.JETNITY_BG1_FIVE_MIN_ALARM }}
+          SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/official-truth-bg1-five-minute-integrity-alarm.mjs
