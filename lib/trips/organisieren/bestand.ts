@@ -4,7 +4,7 @@
 // schon in der Reise stehen. Stand und Preis kommen aus denselben Regeln wie
 // das Kostenbild, damit beide Stellen nie verschieden urteilen.
 
-import { datumKurz, etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
+import { planpunktWann } from '@/lib/trips/datum-anzeige'
 import { gespeicherterPreis, kostenStand, type GespeicherterPreis, type KostenStand } from '@/lib/trips/kostenbild'
 import { inventar } from '@/lib/trips/trip-plan-integrated/day'
 import type { Suchkategorie } from '@/lib/trips/workspace-mode'
@@ -31,16 +31,6 @@ function tagDatum(punkt: TripItem, tage: ReadonlyMap<string, string | null>): st
   return punkt.startsOn ?? (punkt.dayId ? tage.get(punkt.dayId) ?? null : null)
 }
 
-function wannLesbar(punkt: TripItem, datum: string | null): string | null {
-  if (punkt.kind === 'stay' || punkt.kind === 'rental_car') {
-    const zeitraum = etappenZeitraumAnzeigen(datum, punkt.endsOn)
-    if (zeitraum) return zeitraum
-  }
-  if (!datum) return null
-  const tag = datumKurz(datum)
-  return punkt.startsAt ? `${tag} · ${punkt.startsAt}` : tag
-}
-
 export function organisierenBestand(
   reise: Trip,
   ohneTag: readonly TripItem[],
@@ -64,6 +54,6 @@ export function organisierenBestand(
       titel: punkt.title,
       stand: kostenStand(punkt),
       preis: gespeicherterPreis(punkt),
-      wann: wannLesbar(punkt, datum),
+      wann: planpunktWann(punkt, datum),
     }))
 }

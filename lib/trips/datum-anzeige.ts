@@ -74,3 +74,20 @@ export function etappenZeitraumAnzeigen(
   const format = mitJahr ? etappenDatumMitJahr : etappenDatumOhneJahr
   return `${format.format(start!.zeit)} – ${format.format(ende!.zeit)}`
 }
+
+/**
+ * Wann ein Planpunkt stattfindet, so kurz wie möglich: Zeitraum für
+ * Unterkunft und Mietwagen, sonst Tag und gespeicherte Uhrzeit.
+ */
+export function planpunktWann(
+  punkt: { kind: string; startsAt: string | null; endsOn: string | null },
+  datum: string | null,
+): string | null {
+  if (punkt.kind === 'stay' || punkt.kind === 'rental_car') {
+    const zeitraum = etappenZeitraumAnzeigen(datum, punkt.endsOn)
+    if (zeitraum) return zeitraum
+  }
+  if (!datum) return null
+  const tag = datumKurz(datum)
+  return punkt.startsAt ? `${tag} · ${punkt.startsAt}` : tag
+}
