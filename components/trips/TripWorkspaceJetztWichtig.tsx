@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
-import { AlertTriangle, BellRing, ChevronRight, Clock3, Info } from 'lucide-react'
+import { useState } from 'react'
+import { AlertTriangle, ChevronRight, Clock3, Info } from 'lucide-react'
 
 import type {
   AttentionAbleitung,
@@ -35,16 +35,19 @@ const EBENE_TEXT: Record<AttentionEbene, string> = {
   person: 'Reisende Person',
 }
 
+/**
+ * Im Arbeitsbereich heisst die Karte „Als Nächstes“ (DESIGN_SYSTEM.md 6.11):
+ * höchstens drei Gruppen, ruhige Fläche, keine Alarmfarbe. Ausserhalb bleibt
+ * die bisherige Fassung „Jetzt wichtig“.
+ */
 export default function TripWorkspaceJetztWichtig({
   attention,
   onAktion,
-  footer,
-  zusammenfassung,
+  integriert = false,
 }: {
   attention: AttentionAbleitung
   onAktion: (aktion: AttentionAktion) => void
-  footer?: ReactNode
-  zusammenfassung?: string
+  integriert?: boolean
 }) {
   const [weitereOffen, setWeitereOffen] = useState(false)
   const gruppen = attentionGruppieren(attention.punkte)
@@ -55,8 +58,8 @@ export default function TripWorkspaceJetztWichtig({
 
   return (
     <section
-      aria-label="Jetzt wichtig"
-      data-workspace-attention={footer ? 'integrated' : undefined}
+      aria-label={integriert ? 'Als Nächstes' : 'Jetzt wichtig'}
+      data-workspace-attention={integriert ? 'integrated' : undefined}
       data-attention-leerstand={attention.leerstand ?? undefined}
       data-attention-safety={attention.orchestrierung.safety}
       data-attention-seasonal={attention.orchestrierung.seasonal}
@@ -64,10 +67,9 @@ export default function TripWorkspaceJetztWichtig({
     >
       <div className="lg:grid lg:grid-cols-[minmax(14rem,0.34fr)_minmax(0,1fr)]">
         <div className="workspace-attention-heading bg-brand-800 px-4 py-4 text-white lg:px-5">
-          {footer ? <>
-            <h3 className="flex items-center gap-3 text-lg font-semibold"><BellRing className="h-5 w-5 shrink-0" aria-hidden="true" />Jetzt wichtig</h3>
-            <p className="mt-1 text-sm">Was für deine Reise Aufmerksamkeit braucht</p>
-            {zusammenfassung ? <p className="mt-2 text-xs">{zusammenfassung}</p> : null}
+          {integriert ? <>
+            <h3 className="text-subtitle">Als Nächstes</h3>
+            <p className="mt-1 text-meta">Was deine Reise jetzt weiterbringt</p>
           </> : <>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-citrus-400">Jetzt wichtig</p>
           <h3 className="mt-1 hyphens-auto break-words text-lg font-semibold tracking-[-0.03em]">
@@ -106,12 +108,13 @@ export default function TripWorkspaceJetztWichtig({
             >
               {weitereOffen
                 ? 'Weniger anzeigen'
-                : `${weitereAnzahl === 1 ? '1 weitere Hinweisgruppe' : `${weitereAnzahl} weitere Hinweisgruppen`} anzeigen`}
+                : integriert
+                  ? `${weitereAnzahl === 1 ? '1 weiterer Punkt' : `${weitereAnzahl} weitere Punkte`} anzeigen`
+                  : `${weitereAnzahl === 1 ? '1 weitere Hinweisgruppe' : `${weitereAnzahl} weitere Hinweisgruppen`} anzeigen`}
             </button>
           )}
         </div>
       </div>
-      {footer}
     </section>
   )
 }

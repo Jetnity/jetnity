@@ -155,6 +155,19 @@
   }
 }
 .workspace-page:has(.workspace-bottom-nav) { padding-bottom: var(--ux-u1a-nav-offset, 5rem); }
+/* Sits on the bottom navigation as one dock; static wherever that nav is in flow. */
+.workspace-cost-bar {
+  position: fixed; left: 0; right: 0; bottom: var(--workspace-bottom-nav-hoehe, 4.5rem); z-index: 30;
+  display: flex; align-items: center; gap: .625rem; width: 100%; min-height: 44px; padding: .5rem 1rem;
+  border-top: 1px solid var(--workspace-edge); color: var(--workspace-ink); text-align: left;
+  font-size: .8125rem; line-height: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  background: var(--workspace-glass); backdrop-filter: blur(18px) saturate(125%); -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+.workspace-cost-bar > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.workspace-cost-bar svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--workspace-muted); }
+.workspace-cost-bar:hover { background: var(--workspace-soft); }
+.workspace-cost-bar:focus-visible { outline-offset: -3px; }
+.workspace-cost-bar[data-flow="true"] { position: static; border-top: 0; border-bottom: 1px solid var(--workspace-edge); }
 .workspace-page [data-back-to-top] { bottom: calc(var(--ux-u1a-nav-offset, 0px) + 1.5rem + env(safe-area-inset-bottom)); }
 @media (max-width: 30rem) {
   .workspace-header { padding: .625rem .75rem; gap: .5rem; }
@@ -199,6 +212,7 @@
 }
 @media (prefers-reduced-transparency: reduce) {
   .workspace-bottom-nav { backdrop-filter: none; background: rgb(var(--jet-surface-100)); }
+  .workspace-cost-bar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--workspace-panel); }
 }
 @media (forced-colors: active) {
   .workspace-nav-link[aria-current="page"] { outline: 2px solid Highlight; }

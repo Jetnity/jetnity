@@ -75,6 +75,7 @@ import Organisieren from './organisieren/Organisieren'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
 import WorkspaceTripChrome, { WorkspacePortal } from '@/components/workspace/WorkspaceTripChrome'
+import { kostenbild, kostenZeile } from '@/lib/trips/kostenbild'
 import { useWorkspaceShell } from '@/components/workspace/WorkspaceContext'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
@@ -1056,6 +1057,9 @@ export default function TripWorkspace({
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const begleiterSichtbar = begleiterIstSichtbar(begleiterOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
+  const kosten = React.useMemo(() => kostenbild(reise, ungeplantePunkte), [reise, ungeplantePunkte])
+  const [kostenAnsteuern, setKostenAnsteuern] = React.useState(false)
+  const kostenAngesteuert = React.useCallback(() => setKostenAnsteuern(false), [])
   const destinationEssentials = destinationEssentialsAbleiten({
     reise,
     officialEvaluations,
@@ -1366,6 +1370,13 @@ export default function TripWorkspace({
               kompakt={kompakt}
               detailOffen={detailOffen}
               onWechsel={onModus}
+              kostenLeiste={!detailOffen && (kosten.summen.length > 0 || kosten.budget) ? {
+                text: kostenZeile(kosten),
+                onOeffnen: () => {
+                  if (modus.ansicht !== 'uebersicht') onModus('uebersicht', false)
+                  setKostenAnsteuern(true)
+                },
+              } : null}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
               <WorkspacePortal slot="actions"><TripWorkspaceAktionen
@@ -1422,6 +1433,9 @@ export default function TripWorkspace({
                 onLuecke={oeffneGap}
                 onAttention={onAttention}
                 workspace={Boolean(shell)}
+                kosten={kosten}
+                kostenAnsteuern={kostenAnsteuern}
+                onKostenAngesteuert={kostenAngesteuert}
                 onRoute={(tagId) => {
                   modusTastaturRef.current = true
                   modusSetzen({ ansicht: 'plan', bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
