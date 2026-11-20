@@ -1,0 +1,31 @@
+{
+  "kind": "exact_protected_ci_workflow_successor_v1",
+  "reviewed_utc": "2026-11-20",
+  "path": ".github/workflows/ci.yml",
+  "prior": {
+    "commit": "ee60df701d332672d770194bb1d42e71adfd78ae",
+    "bytes": 50018,
+    "sha256": "d2999d128b254d36491aeb34409a24b19373c8de83b337ac81bc4fc358377d23",
+    "gitBlob": "b974d0225a504fd9ed00e8b472eefcca7bd3d98a"
+  },
+  "reviewed": {
+    "commit": "1aa73fabb4d449fc1af56d3bee2f4884baf256b1",
+    "bytes": 51712,
+    "sha256": "15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779",
+    "gitBlob": "4938527301d87e12a9a0f4ee736d89763753f60e"
+  },
+  "delta": {
+    "bytesAdded": 1694,
+    "bytesRemoved": 0,
+    "purpose": "AT50 Chromium + Dev public RPC check in existing Auth CI job, never no-secret U1",
+    "secrets": "existing publishable-only Dev key; same-repository PR + exact branch only",
+    "required_jobs": "unchanged",
+    "source_hashes": "historical source chain preserved and exact new successor pinned by independent native tests"
+  },
+  "guardrails": [
+    "No auth/research/MA1/BG1 release",
+    "No prod SQL/credentials/Owner AAL2",
+    "XK non-ISO code remains explicitly rejected by visitor contract",
+    "One-source negative evidence never becomes positive visa or vaccination advice"
+  ]
+}

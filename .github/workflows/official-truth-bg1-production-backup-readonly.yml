@@ -1,0 +1,71 @@
+# Exact PR-only read of existing Supabase Management API backup inventory.
+# Never restores, never enables PITR, never creates a paid project or reads
+# database contents; only status and time of completed physical backups.
+name: BG1 Production backup inventory (DISABLED; Owner dashboard evidence)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bg1-backup-inventory-pr1254
+  cancel-in-progress: false
+jobs:
+  production-backup-inventory:
+    # Owner explicitly declined expanding the CI token for Production backups.
+    # The dashboard screenshot is the accepted inventory evidence instead.
+    # Preserve the GET-only script for audit, but make the job impossible to run.
+    if: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: One GET to existing Production backup inventory (no restore or token output)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        shell: bash
+        run: |
+          node --input-type=module <<'BACKUP_READ_ONLY'
+          const url = 'https://api.supabase.com/v1/projects/qscbgcdmivbbnzrcyegn/database/backups'
+          const token = process.env.SUPABASE_ACCESS_TOKEN
+          const fail = reason => {process.stderr.write('backup_inventory_unverified:'+reason+'\n');process.exitCode=1}
+          if (typeof token !== 'string' || token.length<16 || /[\s\x00-\x1f]/.test(token)) {
+            fail('existing_secret_unavailable')
+          } else {
+            try {
+              const ctrl=new AbortController()
+              const timer=setTimeout(()=>ctrl.abort(),12000)
+              let response
+              try {
+                response=await fetch(url,{method:'GET',redirect:'error',signal:ctrl.signal,
+                  cache:'no-store',headers:{Authorization:'Bearer '+token,Accept:'application/json'}})
+                if(response.redirected)throw Error('management_api_redirect_refused')
+                if(response.status!==200)throw Error('management_api_http_'+response.status)
+                const contentLength=response.headers.get('content-length')
+                if(contentLength && Number(contentLength)>131072)throw Error('response_size_limit')
+                const raw=await response.text()
+                if(Buffer.byteLength(raw,'utf8')>131072)throw Error('response_size_limit')
+                const parsed=JSON.parse(raw)
+                if(!parsed||!Array.isArray(parsed.backups)||typeof parsed.pitr_enabled!=='boolean')throw Error('response_schema')
+                const all=parsed.backups.filter(b=>b&&b.status==='COMPLETED'&&b.is_physical_backup===true&&
+                  typeof b.inserted_at==='string'&&Number.isFinite(Date.parse(b.inserted_at)))
+                  .sort((a,b)=>Date.parse(b.inserted_at)-Date.parse(a.inserted_at))
+                if(!all.length)throw Error('completed_physical_backup_missing')
+                const latest=all[0]
+                const ageHours=Math.round((Date.now()-Date.parse(latest.inserted_at))/3600000)
+                if(ageHours<0||ageHours>48)throw Error('physical_backup_not_recent')
+                process.stdout.write(JSON.stringify({
+                  project:'qscbgcdmivbbnzrcyegn',
+                  providerReportedPhysicalBackup:'COMPLETED',
+                  physicalBackupCount:all.length,
+                  latestCompletedAtUTC:latest.inserted_at,
+                  ageHours,
+                  pitrEnabled:parsed.pitr_enabled,
+                  walgEnabled:parsed.walg_enabled===true,
+                  liveRestoreTested:false,
+                  requestedHttpMethod:'GET',
+                  productionWritePerformed:false,
+                  newCostCreated:false
+                })+'\n')
+              } finally {clearTimeout(timer);ctrl.abort()}
+            } catch(e){fail(e instanceof Error?e.message:'unknown_response')}
+          }
+          BACKUP_READ_ONLY
