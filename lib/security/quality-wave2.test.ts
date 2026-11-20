@@ -31,7 +31,13 @@ test('#1139 candidate refuses owner grants without active account AND live sessi
   assert.match(db, /public\.hat_rolle_mindestens\('owner'\)/)
   assert.match(db, /public\.aktuelles_admin_aal2\(\)/)
   assert.match(role, /'active', 'pending', 'disabled', 'banned'/)
-  assert.doesNotMatch(db, /session.*(revok|current)|profile.*status|status\s*=\s*'active'/i)
+  // Inspect only the actual SQL capability expression, never prose/comments:
+  // its documentation legitimately says "session ... current AAL2".
+  const capabilitySql = db.match(/\bas\s+\$\$([\s\S]*?)\$\$;/i)?.[1]
+  assert.ok(capabilitySql, 'historical owner capability SQL body must be present')
+  assert.match(capabilitySql, /^\s*select\s+public\.hat_rolle_mindestens\('owner'\)\s+and\s+public\.aktuelles_admin_aal2\(\)\s*$/i)
+  // Exact historical body has no active-account or live-session witness.
+  // A future real DB change must revise this negative-evidence contract.
 })
 
 test('#1087 widget script/iframe remains fail-closed without separated optional consent', async () => {
