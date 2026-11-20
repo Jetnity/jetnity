@@ -3,6 +3,7 @@
 // and EU Annex I/II are NOT an individual destination/passport legal approval.
 // Never publish travel permission from an Austrian bilateral exception.
 import {AT_BMI_GROUPS,atBmiSourceReview,type AtBmiGroup} from './official-truth-at-method-v1/at-bmi-visa-groups-v1'
+import {PT_VISA_C_FEE_CONFLICT_V1} from './official-truth-pt-visa-c-fee-conflict-v1'
 export const EU4_COUNTRIES=['IT','FR','ES','PT'] as const
 export type Eu4Country=typeof EU4_COUNTRIES[number]
 const SCHENGEN_VISA='https://home-affairs.ec.europa.eu/policies/schengen/schengen-visas/eu-visa-policy_en'
@@ -57,6 +58,7 @@ export type Eu4PassportCase=Readonly<{
  contextConditions:string;
  austrianNationalWaiverNonportable:boolean;euDiplomaticExceptionNeedsSeparateCheck:boolean;needsBiometricCheck:boolean;
  frenchTerritoryScopeNeedsCheck:boolean;spanishFinancialConflictLookupRequired:boolean;
+ portugalVisaCFeeSourceConflict:typeof PT_VISA_C_FEE_CONFLICT_V1|null;
  issuerDocumentCrosscheckRequired:boolean;visitorCountryCodeUnsupported:boolean;
  britishNationalityCategoryCrosscheckRequired:boolean;
  // Austrian evidence never stands in for an Italian/French/Spanish/Portuguese issuer.
@@ -94,6 +96,7 @@ export function eu4PassportCase(destination:Eu4Country,passport:string):Eu4Passp
   needsBiometricCheck:['UA','XK','RS'].includes(passport),
   frenchTerritoryScopeNeedsCheck:destination==='FR',
   spanishFinancialConflictLookupRequired:destination==='ES',
+  portugalVisaCFeeSourceConflict:destination==='PT'?PT_VISA_C_FEE_CONFLICT_V1:null,
   issuerDocumentCrosscheckRequired:reviewed.issuerDocumentCrosscheck!==null||reviewed.britishPassportCategoryCrosscheck!==null,
   britishNationalityCategoryCrosscheckRequired:reviewed.britishPassportCategoryCrosscheck!==null,
   britishNationalityAustrianResearchSource:reviewed.britishPassportCategoryCrosscheck?.bmiSource??null,

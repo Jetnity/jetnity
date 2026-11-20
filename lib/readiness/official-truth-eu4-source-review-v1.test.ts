@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {test} from 'node:test'
 import {AT_BMI_GROUPS} from './official-truth-at-method-v1/at-bmi-visa-groups-v1'
 import {EU4_200_VISA_RESEARCH_CASES,EU4_COUNTRIES,EU4_CROSSCHECKS,EU4_OFFICIAL_PRIMARIES,eu4PassportCase} from './official-truth-eu4-source-review-v1'
+import {PT_VISA_C_FEE_CONFLICT_V1} from './official-truth-pt-visa-c-fee-conflict-v1'
 
 test('IT FR ES PT use genuine country government visa portals in addition to EU Annexes, not a borrowed Austrian issuer',()=>{
  assert.deepEqual(EU4_COUNTRIES,['IT','FR','ES','PT'])
@@ -88,5 +89,36 @@ test('EU4 research never treats non-ISO Kosovo code as an accepted visitor passp
    assert.equal(item.entryVisaAnswer,'derzeit nicht verfügbar')
   }
   assert.equal(eu4PassportCase(dest,'CH')?.issuerDocumentCrosscheckRequired,false)
+ }
+})
+
+test('PT short-stay fee discrepancy is research-only for all 50 PT passports; ES conflicts stay separate',()=>{
+ const conflict=PT_VISA_C_FEE_CONFLICT_V1
+ assert.equal(conflict.portuguesePrimary.displayedOrdinaryAdultEur,80)
+ assert.equal(conflict.portuguesePrimary.displayedAge6ToUnder12Eur,40)
+ assert.equal(conflict.directlyApplicableEuLaw.ordinaryAdultEur,90)
+ assert.equal(conflict.directlyApplicableEuLaw.ordinaryAge6ToUnder12Eur,45)
+ assert.equal(conflict.directlyApplicableEuLaw.inForceFrom,'2024-06-11')
+ assert.equal(conflict.sourceConflict,'PT_OFFICIAL_SERVICE_PAGE_VS_EU_2024_1415')
+ assert.equal(conflict.destinationLegalOriginalSealed,false)
+ assert.equal(conflict.hrs2Ma1Bg1OwnerAal2Approved,false)
+ assert.equal(conflict.personalFeeAmountEur,null)
+ assert.equal(conflict.personalOfficialPaymentUrl,null)
+ assert.equal(conflict.personalFeeAnswer,'derzeit nicht verfügbar')
+ assert.equal(conflict.publicationAllowed,false)
+ const portugal=EU4_200_VISA_RESEARCH_CASES.filter(x=>x.destination==='PT')
+ assert.equal(portugal.length,50)
+ for(const record of portugal){
+  assert.equal(record.portugalVisaCFeeSourceConflict,conflict)
+  assert.equal(record.spanishFinancialConflictLookupRequired,false)
+  assert.equal(record.feeAmount,null)
+  assert.equal(record.entryVisaAnswer,'derzeit nicht verfügbar')
+  assert.equal(record.publicationAllowed,false)
+ }
+ for(const record of EU4_200_VISA_RESEARCH_CASES.filter(x=>x.destination!=='PT')){
+  assert.equal(record.portugalVisaCFeeSourceConflict,null)
+  assert.equal(record.spanishFinancialConflictLookupRequired,record.destination==='ES')
+  assert.equal(record.feeAmount,null)
+  assert.equal(record.publicationAllowed,false)
  }
 })
