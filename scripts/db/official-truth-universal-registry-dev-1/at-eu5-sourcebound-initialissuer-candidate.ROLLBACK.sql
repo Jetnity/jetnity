@@ -37,8 +37,8 @@ BEGIN
  OR p_document IS NULL OR p_document NOT IN ('ordinary_national_passport','national_eu_identity_card')
  THEN RAISE EXCEPTION 'AT EU5 unknown country/document' USING ERRCODE='42501'; END IF;
  IF p_document='national_eu_identity_card' AND
- (p_id_form IS DISTINCT FROM 'verified_physical_travel_id' OR p_code='FR')
- THEN RAISE EXCEPTION 'AT EU5 unqualified Article-5 ID or FR addendum' USING ERRCODE='42501'; END IF;
+ p_id_form IS DISTINCT FROM 'verified_physical_travel_id'
+ THEN RAISE EXCEPTION 'AT EU5 unqualified Article-5 ID or unresolved document' USING ERRCODE='42501'; END IF;
  IF p_document='ordinary_national_passport' AND p_id_form IS NOT NULL
  THEN RAISE EXCEPTION 'AT EU5 ID/passport evidence mixed' USING ERRCODE='42501'; END IF;
  -- Actual independent DB-backed session witness, never user/fixture booleans.
@@ -75,13 +75,26 @@ BEGIN
    END;
   END LOOP;
  END LOOP;
+ -- FR is NOT categorically excluded: a separately verified current compliant
+ -- physical French national ID can reach the protected session gate; an
+ -- unresolved old/facially expired card remains rejected by the ID-form gate.
+ -- This extra negative must fail because there is no real Owner session.
+ BEGIN
+  PERFORM pg_temp.at_eu5_sourcebound_initialissuer_candidate_v1('FR','national_eu_identity_card','verified_physical_travel_id');
+  RAISE EXCEPTION 'AT_EU5_REVIEW_BYPASS' USING ERRCODE='P7981';
+ EXCEPTION WHEN SQLSTATE '42501' THEN
+  IF SQLERRM LIKE 'AT EU5 unqualified Article-5 ID%' THEN
+   RAISE EXCEPTION 'AT_EU5_VALID_FR_CARD_INCORRECTLY_BLANKET_BLOCKED' USING ERRCODE='P7981';
+  END IF;
+  count_refusals:=count_refusals+1;
+ END;
  SELECT generation INTO STRICT g1 FROM official_v3_guard_private.state_v1 WHERE singleton;
- IF count_refusals<>18 OR g0<>g1
+ IF count_refusals<>19 OR g0<>g1
  OR has_function_privilege('anon','pg_temp.at_eu5_sourcebound_initialissuer_candidate_v1(text,text,text)','EXECUTE')
  OR has_function_privilege('authenticated','pg_temp.at_eu5_sourcebound_initialissuer_candidate_v1(text,text,text)','EXECUTE')
  THEN RAISE EXCEPTION 'AT_EU5_PRIVILEGE_OR_ROLLBACK_PROOF_FAILED' USING ERRCODE='P7981'; END IF;
  PERFORM official_v3_guard_private.assert_catalog_v1();
 END $negative$;
 SELECT 'AT_EU5_SOURCEBOUND_ISSUER_UNINSTALLED_18_NEGATIVE_ROLLBACK_PASS' AS result,
- 18 AS rejected, FALSE AS authorized_legal_fact,FALSE AS installed_issuer,FALSE AS visitor_publication;
+ 19 AS rejected, FALSE AS authorized_legal_fact,FALSE AS installed_issuer,FALSE AS visitor_publication;
 ROLLBACK;
