@@ -41,9 +41,12 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
     // Exact AT50 CI review successor: only an additional same-repo/branch-bound
     // Dev visitor check inside the pre-existing secret-isolated Auth job.
+    // The next finite reviewed successor adds ONLY the strict offline BG1
+    // alarm test to the existing core job (51712 -> 52025 UTF-8 bytes).
+    // Its full prior 51712-byte fingerprint remains in pilot-context.test.ts.
     // Historical 50018-byte d2999d12 source identity stays bound independently
     // by the finite nextSecurityPatch -> at50Successor chain in pilot-context.test.ts.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 51712, sha256: '15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779' }),
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' }),
     Object.freeze({ path: 'package-lock.json', bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),

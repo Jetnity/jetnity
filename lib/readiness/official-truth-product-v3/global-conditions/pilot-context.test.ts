@@ -243,6 +243,22 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(at50CiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set(at50CiSuccessor.map(row => row.path)).size, 1)
+  // Reviewed BG1 five-minute alarm test successor. The original AT50
+  // 51712-byte workflow remains immutable as the immediate predecessor.
+  // Exactly one guarded offline alarm step was added; existing CI families,
+  // native tests, timeouts and fail-closed aggregator must remain active.
+  const bg1AlarmCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 51712, sha256: '15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779' },
+      reviewed: { bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' } },
+  ] as const
+  assert.deepEqual(bg1AlarmCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(bg1AlarmCiSuccessor.map(row => row.path)).size, 1)
+  const bg1AlarmWorkflowSource = readFileSync('.github/workflows/ci.yml', 'utf8')
+  assert.equal(bg1AlarmWorkflowSource.split('node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs').length, 2)
+  assert.match(bg1AlarmWorkflowSource,/\bnpm run test:core\b/)
+  assert.match(bg1AlarmWorkflowSource,/\bname: Hosted V3 — native PostgreSQL 17/)
+  let reviewedBg1AlarmRows = 0
   let reviewedAt50Rows = 0
   let reviewedNextPatchRows = 0
   let reviewedAdminRuntimeCiRows = 0
@@ -338,7 +354,12 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
         at50Changed.previousReviewed, row.path)
       reviewedAt50Rows++
     }
-    const expected = at50Changed?.reviewed ?? expectedBeforeAt50
+    const bg1AlarmChanged = bg1AlarmCiSuccessor.find(file => file.path === row.path)
+    if (bg1AlarmChanged) {
+      assert.deepEqual(bg1AlarmChanged.previousReviewed,at50Changed?.reviewed ?? expectedBeforeAt50,row.path)
+      reviewedBg1AlarmRows++
+    }
+    const expected = bg1AlarmChanged?.reviewed ?? at50Changed?.reviewed ?? expectedBeforeAt50
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -356,4 +377,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedAdminRuntimeCiRows, 1)
   assert.equal(reviewedNextPatchRows, 3)
   assert.equal(reviewedAt50Rows, 1)
+  assert.equal(reviewedBg1AlarmRows, 1)
 })
