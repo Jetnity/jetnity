@@ -144,6 +144,11 @@ async function formular(page, name) {
   return form
 }
 
+async function entfernenBestaetigen(page, label) {
+  await page.getByRole('button', { name: label }).click()
+  await page.locator('[data-plan-entfernen-frage]').getByRole('button', { name: 'Endgültig entfernen' }).click()
+}
+
 async function einKnopf(page, label) {
   await page.waitForFunction((label) =>
     [...document.querySelectorAll('button')].filter((button) => button.getAttribute('aria-label') === label).length === 1,
@@ -512,7 +517,7 @@ try {
   })
   merke('guest target exists once before delete', zielVorher.dom === 1 && zielVorher.speicher === 1 && zielVorher.deleteCalls === 0)
   await einKnopf(page, 'Marktbesuch entfernen')
-  await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
+  await entfernenBestaetigen(page, 'Marktbesuch entfernen')
   await page.waitForFunction((id) => document.querySelectorAll(`[data-plan-punkt="${CSS.escape(id)}"]`).length === 0, zielVorher.id)
   const zielNachher = await page.evaluate((id) => {
     const roh = JSON.parse(window.__plan.speicher())
@@ -532,7 +537,7 @@ try {
     roh.title = 'Eine andere Fassung'
     window.localStorage.setItem('jetnity:reise:v3', JSON.stringify(roh))
   })
-  await page.getByRole('button', { name: 'Hinweis mit einem sehr langen Namen für den Tagesplan entfernen' }).click()
+  await entfernenBestaetigen(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan entfernen')
   const meldung = page.locator('[data-plan-meldung]')
   await meldung.waitFor()
   await page.waitForFunction(() => document.activeElement?.hasAttribute('data-plan-meldung') === true)
@@ -546,14 +551,14 @@ try {
   await page.evaluate(() => window.__plan.gastLoeschen(false))
   await page.evaluate(() => window.__plan.ohneTage())
   await einKnopf(page, 'Marktbesuch entfernen')
-  await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
+  await entfernenBestaetigen(page, 'Marktbesuch entfernen')
   await page.waitForFunction(() => window.__plan.aufrufe().some((aufruf) => aufruf.art === 'delete'))
   await page.evaluate(() => window.__plan.andereReise())
   await page.evaluate(() => window.__plan.loesen('zu spät'))
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   merke('pending delete error does not alert the newer trip', await page.locator('[data-plan-meldung]').count() === 0)
   await einKnopf(page, 'Marktbesuch entfernen')
-  await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
+  await entfernenBestaetigen(page, 'Marktbesuch entfernen')
   await page.waitForFunction(() => window.__plan.aufrufe().filter((aufruf) => aufruf.art === 'delete').length === 2)
   await page.evaluate(() => window.__plan.loesen(null))
   merke('newer delete is not left locked', true)
@@ -561,7 +566,7 @@ try {
   await page.evaluate(() => window.__plan.gastLoeschen(false))
   await page.evaluate(() => window.__plan.ohneTage())
   await einKnopf(page, 'Marktbesuch entfernen')
-  await page.getByRole('button', { name: 'Marktbesuch entfernen' }).click()
+  await entfernenBestaetigen(page, 'Marktbesuch entfernen')
   await page.waitForFunction(() => window.__plan.offen().length === 1)
   const alteLoeschung = await page.evaluate(() => window.__plan.offen()[0])
   await bearbeiten(page, 'Hinweis mit einem sehr langen Namen für den Tagesplan')

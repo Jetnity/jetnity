@@ -161,6 +161,7 @@ try {
     await page.waitForFunction(() => window.auditGraph().ohneTag.some(p => p.id === 'b'))
     assert.equal(await page.evaluate(() => window.auditGraph().ohneTag.some(p => p.id === 'b')), true)
     await page.getByRole('button', { name: 'Zweiter Termin am Flughafen entfernen', exact: true }).click()
+    await page.getByRole('button', { name: 'Endgültig entfernen', exact: true }).click()
     await page.waitForFunction(() => !window.auditGraph().ohneTag.some(p => p.id === 'b'))
     assert.deepEqual(await page.evaluate(() => window.auditEvents.at(-1)), { action: 'delete', dayId: '', id: 'b' })
     assert.equal(await review(page).locator('[data-zeitpruefung-punkt="b"]').count(), 0)
