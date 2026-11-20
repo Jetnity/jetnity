@@ -18,7 +18,7 @@ const AKTION =
   'inline-block min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
 const PRIMAR = 'bg-brand-800 text-white hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60'
 const SEKUNDAER = 'border border-line-200 bg-white text-brand-800 hover:border-line-500'
-const TEXT = 'min-w-0 break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
+const TEXT = 'min-w-0 max-w-prose break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
 
 type Phase = 'ruhend' | 'laeuft' | 'anzeige' | 'fehler'
 

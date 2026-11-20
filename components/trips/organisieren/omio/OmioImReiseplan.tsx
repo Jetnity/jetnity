@@ -35,7 +35,7 @@ export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Tr
           Omio-Katalog vorübergehend nicht verfügbar.{' '}
           <button
             type="button"
-            className="underline"
+            className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4 pointer-fine:min-h-6"
             onClick={() => {
               setFehler(false)
               setVersuch((v) => v + 1)

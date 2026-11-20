@@ -1,5 +1,6 @@
 .stay22-guestbutton {text-align:left;align-items:stretch}
 .stay22-guestbutton b {display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:14px;font-weight:620;line-height:1.45}
+.stay22-guestbutton b svg {flex-shrink:0}
 .stay22-guests {display:grid;grid-template-columns:160px 160px minmax(0,1fr);align-items:center;gap:12px;margin-top:18px;padding:12px 0 0;border-top:1px solid var(--org-line)}
 .stay22-guests legend {font-size:12px;font-weight:650;padding-right:10px;color:var(--org-muted)}
 .stay22-guests p,.stay22-other-place p {font-size:12px;line-height:1.6;color:var(--org-muted)}
@@ -35,7 +36,7 @@
 .stay22-smallbutton {display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:6px 8px;border-radius:8px;font-size:12px;font-weight:600;color:var(--org-ink)}
 .stay22-iconbutton {flex-shrink:0;width:44px}
 .stay22-smallbutton:hover {background:var(--org-bg)}
-.stay22-error {margin-top:12px;font-size:13px;font-weight:600}
+.stay22-error {margin-top:12px;max-width:44rem;font-size:13px;font-weight:600}
 /* The floating page shortcut would cover Stay22's own map controls. */
 .workspace-page:has(.stay22-search) [data-back-to-top] {display:none}
 @media(max-width:700px){
@@ -54,7 +55,7 @@
 .stay22-stages-more {margin-top:28px}
 .stay22-stages-more>summary {cursor:pointer;min-height:44px;padding:12px 0;font-size:13px;font-weight:650}
 .stay22-datecontext {display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;color:var(--org-muted);font-size:12px}
-.stay22-belegung {align-items:flex-start;max-width:68ch;color:var(--org-ink);font-weight:500;line-height:1.55}
+.stay22-belegung {align-items:flex-start;max-width:min(68ch,44rem);color:var(--org-ink);font-weight:500;line-height:1.55}
 .stay22-datecontext button {text-decoration:underline;min-height:44px;padding:0 8px;font-weight:650}
 .stay22-location {margin-top:20px;border:1px solid var(--org-line);border-radius:14px;padding:18px;background:var(--org-bg)}
 .stay22-location-title {display:flex;gap:10px;align-items:flex-start}
@@ -122,4 +123,12 @@
 @media(max-width:700px) and (max-height:700px){
   .workspace-shell:has(.stay22-search) .workspace-header {position:static}
   .stay22-results {--jet-header-h:0px}
+}
+/* The stay select carries place and dates; in one shared row a native select would cut them off. */
+@media(min-width:701px) and (max-width:1439px){
+  .stay22-search .org-fields {grid-template-columns:repeat(4,minmax(0,1fr)) auto}
+  .stay22-search .org-fields>:first-child {grid-column:1/-1}
+}
+@media(min-width:1440px){
+  .stay22-search .org-fields {grid-template-columns:minmax(0,1.7fr) repeat(4,minmax(0,1fr)) auto}
 }

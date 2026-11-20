@@ -106,7 +106,7 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
             <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
           </summary>
           <div className="border-t border-line-200 px-3 py-3">
-            <p className="text-sm leading-6 text-ink-900">
+            <p className="max-w-prose text-sm leading-6 text-ink-900">
               {paar.platzhalter ? `${EINREISE_PLATZHALTER}. ` : ''}
               Für diese Themen liegt derzeit keine geprüfte Angabe vor.
             </p>
@@ -163,7 +163,7 @@ export default function EinreiseKundenanzeige({
       <div className="grid gap-3">
         {anzeige.paare.map((paar) => <PaarKarte key={paar.id} paar={paar} />)}
       </div>
-      <p className="break-words text-xs leading-5 text-ink-800">{anzeige.standSatz}</p>
+      <p className="max-w-prose break-words text-xs leading-5 text-ink-800">{anzeige.standSatz}</p>
     </div>
   )
 }

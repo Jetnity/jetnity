@@ -151,7 +151,7 @@ export function PrivacyBeeAnsicht({
   return (
     <div data-privacybee-phase={zeigeVendor ? phase : einbetten ? 'warten' : 'aus'}>
       {zeigeEigeneUeberschrift ? (
-        <h1 className="text-display text-foreground">{ueberschrift}</h1>
+        <h1 lang="de" className="text-display text-foreground [hyphens:auto] [overflow-wrap:anywhere]">{ueberschrift}</h1>
       ) : null}
       {zeigeLaden ? (
         <p className="mt-4 text-body text-muted-foreground" role="status">

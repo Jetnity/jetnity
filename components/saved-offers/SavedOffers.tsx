@@ -33,7 +33,7 @@ export default function SavedOffers({ offers }: { offers: SavedOffer[] }) {
           <div><dt className="font-semibold">Gültigkeit der gespeicherten Referenz</dt><dd>{evidence.frist}</dd></div>
           <div><dt className="font-semibold">Buchungsstand</dt><dd>{evidence.buchung}</dd></div>
         </dl>
-        <p className="mt-3 text-xs leading-5 text-ink-600">Die Merkliste speichert keine aktuelle Preiszusage. Prüfe beim Anbieter selbst das konkrete Angebot mit Datum, Personen und Bedingungen. Ein Klick oder eine Übernahme in den Reiseplan ist keine Buchung.</p>
+        <p className="mt-3 max-w-prose text-xs leading-5 text-ink-600">Die Merkliste speichert keine aktuelle Preiszusage. Prüfe beim Anbieter selbst das konkrete Angebot mit Datum, Personen und Bedingungen. Ein Klick oder eine Übernahme in den Reiseplan ist keine Buchung.</p>
         {url ? <a href={url} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="mt-3 inline-flex min-h-11 items-center rounded-full border border-line-200 px-5 text-sm font-semibold text-brand-800">Preis und Verfügbarkeit beim Anbieter neu prüfen<span className="sr-only">, neuer Tab</span></a> : <p className="mt-3 text-sm">Der gespeicherte Link kann nicht sicher geöffnet werden. Bitte starte eine neue Suche beim Anbieter.</p>}
         <OfferPlan offer={o} />
       </li>

@@ -34,7 +34,7 @@ export function useStadtbild(ziel?: Ziel) {
 export function StadtbildNachweis({ ziel }: { ziel?: Ziel }) {
   const { photo } = useStadtbild(ziel)
   if (!photo) return null
-  return <p className="break-words text-xs leading-5 text-ink-600">Foto {ziel?.name}: <a href={photo.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{photo.title}</a> · {photo.author} · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{photo.license}</a>. Bildausschnitt je nach Darstellung.</p>
+  return <p className="max-w-prose break-words text-xs leading-5 text-ink-600">Foto {ziel?.name}: <a href={photo.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{photo.title}</a> · {photo.author} · <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{photo.license}</a>. Bildausschnitt je nach Darstellung.</p>
 }
 
 export function StadtbildMiniatur({ ziel, className }: { ziel?: Ziel; className: string }) {
