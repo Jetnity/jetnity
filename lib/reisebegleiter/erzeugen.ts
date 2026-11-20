@@ -233,6 +233,19 @@ export async function begleiterauskunftErzeugen(
     return abgelehnt('schema', MELDUNGEN.schema)
   }
 
+  // #1237: A selected reference to “Krabi” alone is not advice. Never
+  // present an empty/context-only selection as a successful generated tip.
+  // The model cannot invent prose or bypass the finite, source-owned catalog.
+  const wünschtTagesidee = /\btag(?:es)?\b/i.test(frage.data)
+    && /empfiehl|empfehl|ideen?|vorschl[aä]g|tipps?|unternehmen/i.test(frage.data)
+  if (wünschtTagesidee && !geprueft.data.befunde.some(
+    eintrag => eintrag.schluessel === 'schritt_krabi_tagesidee',
+  )) {
+    await beenden('verweigert')
+    return abgelehnt('verweigert',
+      'Der Reisebegleiter konnte für diese Frage keine konkrete Tagesidee auswählen. Deine Reise bleibt unverändert.')
+  }
+
   await beenden('erfolg')
 
   const gezeigt = new Set(geprueft.data.bezuege)

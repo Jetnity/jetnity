@@ -91,6 +91,8 @@ export function begleiterregeln(heute: string, kontext: string): string {
     '',
     'QUALITÄT',
     '- Wenige passende Aussagen sind besser als viele, die das Thema nur streifen.',
+    '- Fragt der Nutzer nach einer Idee für einen Tag in Krabi und ist schritt_krabi_tagesidee im angebot der Krabi-Etappe vorhanden, wähle genau dieses Paar aus Schlüssel und Etappen-ref.',
+    '- Bei Fragen nach Tagesideen ist nur eine wirklich angebotene Tagesidee eine passende Antwort; bloss ein Etappenbezug ohne Befund beantwortet die Frage nicht.',
     '- Ist die Frage aus dem angebot nicht beantwortbar, wähle die Einträge, die am ehesten',
     '  zeigen, was dafür fehlt – oder gib eine leere Auswahl zurück. Eine leere Auswahl ist',
     '  eine ehrliche Antwort; eine unpassende ist keine.',
