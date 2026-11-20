@@ -21,7 +21,7 @@ const PAGE_CSP = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
   `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://app.privacybee.io`,
-  "frame-src 'self' https://maps.google.com https://www.google.com https://widget.getyourguide.com https://www.viator.com https://widget.discovercars.com",
+  "frame-src 'self' https://maps.google.com https://www.google.com https://widget.getyourguide.com https://www.viator.com https://widget.discovercars.com https://www.stay22.com https://jetnity-flight-widget.vercel.app",
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "upgrade-insecure-requests",
