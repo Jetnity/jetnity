@@ -59,8 +59,13 @@ test('EU4 comparison never carries over national Austrian waivers, guesses a vis
  }
  for(const dest of EU4_COUNTRIES){
   for(const pass of ['UA','XK','RS'])assert.equal(eu4PassportCase(dest,pass)?.needsBiometricCheck,true)
-  for(const pass of ['BR','KR','JP','CA','IL','TR','IN','CN','PK','TH','EG','PH','MA','RU'])
-   assert.equal(eu4PassportCase(dest,pass)?.foreignBilateralIsNotPortable,true)
-  assert.equal(eu4PassportCase(dest,'US')?.foreignBilateralIsNotPortable,false)
+  for(const pass of ['BR','KR','JP','CA','IL','TR','IN','PK','TH','EG','PH','MA'])
+   assert.equal(eu4PassportCase(dest,pass)?.austrianNationalWaiverNonportable,true)
+  for(const pass of ['CN','RU']) {
+   assert.equal(eu4PassportCase(dest,pass)?.austrianNationalWaiverNonportable,false)
+   assert.equal(eu4PassportCase(dest,pass)?.euDiplomaticExceptionNeedsSeparateCheck,true)
+  }
+  assert.equal(eu4PassportCase(dest,'US')?.austrianNationalWaiverNonportable,false)
+  assert.equal(eu4PassportCase(dest,'US')?.euDiplomaticExceptionNeedsSeparateCheck,false)
  }
 })

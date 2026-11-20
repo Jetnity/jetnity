@@ -25,6 +25,8 @@ test('EU4 200 candidates do not port Austria bilateral waivers, publish unsuppor
  assert.match(sql,/c\.destination_code='ES' AS check_specific_es_financial_means_before_rule/)
  assert.match(sql,/f\.topic='financial_means' AND f\.unresolved_original_conflict/)
  assert.match(sql,/do_not_port_austrian_national_passport_exceptions/)
+ assert.match(sql,/separate_eu_diplomatic_exception_or_suspension_check/)
+ assert.match(sql,/c\.citizenship_code IN \('CN','RU'\)/)
  assert.match(sql,/false AS destination_passport_original_digest_sealed/)
  assert.match(sql,/false AS destination_visa_legal_rule_qualified/)
  assert.match(sql,/false AS ma1_owner_aal2_approved/)

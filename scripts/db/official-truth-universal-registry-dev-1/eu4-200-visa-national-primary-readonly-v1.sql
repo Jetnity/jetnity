@@ -71,8 +71,9 @@ SELECT c.destination_code,c.citizenship_code,c.priority_rank,
  c.financial_conflict_only AS original_financial_means_conflict_quarantined,
  c.citizenship_code='AT' AND c.destination_code<>'AT' AS austrian_national_is_eu_visitor_not_at_home,
  c.citizenship_code IN ('UA','XK','RS') AS biometric_passport_caveat,
- c.citizenship_code IN ('BR','KR','JP','CA','IL','TR','IN','CN','PK','TH','EG','PH','MA','RU')
+ c.citizenship_code IN ('BR','KR','JP','CA','IL','TR','IN','PK','TH','EG','PH','MA')
    AS do_not_port_austrian_national_passport_exceptions,
+ c.citizenship_code IN ('CN','RU') AS separate_eu_diplomatic_exception_or_suspension_check,
  CASE WHEN guard.bg1='current'
     AND current_database()='postgres' AND current_setting('server_version_num')::int/10000=17
     AND (evidence.total,evidence.destinations,evidence.visa_baselines,

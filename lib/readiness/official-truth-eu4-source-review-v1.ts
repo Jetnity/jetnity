@@ -55,7 +55,7 @@ export type Eu4PassportCase=Readonly<{
  destinationCandidateGroup:Group;
  sourceUrls:Readonly<{primary:string;otherGovernment:string;euVisaPolicy:string;euAnnexes:string}>
  contextConditions:string;
- foreignBilateralIsNotPortable:boolean;needsBiometricCheck:boolean;
+ austrianNationalWaiverNonportable:boolean;euDiplomaticExceptionNeedsSeparateCheck:boolean;needsBiometricCheck:boolean;
  frenchTerritoryScopeNeedsCheck:boolean;spanishFinancialConflictLookupRequired:boolean;
  sourceLinksChecked:true;destinationSpecificSourceOriginalSealed:false;
  legalApplicabilityVerified:false;documentsVerified:false;
@@ -68,6 +68,9 @@ export function eu4PassportCase(destination:Eu4Country,passport:string):Eu4Passp
  const rank=rankCodes.indexOf(passport)
  const prior=countryKinds.get(passport)
  if(rank<0||!prior)return null
+ // Austrian national/diplomatic waivers are nonportable. CN is a conditional EU
+ // diplomatic-passport exception, RU a suspended EU concession; neither may
+ // be incorrectly labelled an Austrian bilateral agreement or a positive waiver.
  // Every destination is its own national home case. Crucially the original
  // Austrian H row means EU free movement in IT/FR/ES/PT; NEVER AT home.
  const group:Group=passport===destination?'H':prior==='H'?'F':prior
@@ -80,8 +83,9 @@ export function eu4PassportCase(destination:Eu4Country,passport:string):Eu4Passp
   sourceUrls:Object.freeze({primary:links.visa,otherGovernment:links.conditions,
    euVisaPolicy:SCHENGEN_VISA,euAnnexes:RULE_2018_1806}),
   contextConditions:links.distinction,
-  foreignBilateralIsNotPortable:reviewed.group==='E'&&reviewed.special?.includes('bilaterale')===true
-   ||reviewed.group==='V'&&['IN','TR','CN','PK','TH','EG','PH','MA','RU'].includes(passport),
+  austrianNationalWaiverNonportable:reviewed.group==='E'&&reviewed.special?.includes('bilaterale')===true
+   ||reviewed.group==='V'&&['IN','TR','PK','TH','EG','PH','MA'].includes(passport),
+  euDiplomaticExceptionNeedsSeparateCheck:['CN','RU'].includes(passport),
   needsBiometricCheck:['UA','XK','RS'].includes(passport),
   frenchTerritoryScopeNeedsCheck:destination==='FR',
   spanishFinancialConflictLookupRequired:destination==='ES',
