@@ -20,8 +20,8 @@ const RETURN_FAILURE =
   'Planpunkte enthält. Prüfe zuerst die Rückreise und die Tagesaufteilung; nichts wurde gespeichert.'
 
 function allePunkte(graph: Reisegraph): Map<string, TripItem> {
-  return new Map([...graph.days.flatMap(day => day.items), ...graph.ohneTag]
-    .map(item => [item.id, item]))
+  return new Map<string, TripItem>([...graph.days.flatMap(day => day.items), ...graph.ohneTag]
+    .map((item): [string, TripItem] => [item.id, item]))
 }
 
 /** Validate both the preview and the *server-side* replay before any save. */
