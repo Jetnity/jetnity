@@ -35,3 +35,31 @@ test('Conditional biometrics, British categories and bilateral exceptions never 
  assert.equal(atBmiSourceReview('aa'),null)
  assert.equal(atBmiSourceReview('AQ'),null)
 })
+
+test('the nine original BMI special visa-duty entries remain passport-class-specific, never ordinary unconditional exemptions',()=>{
+ const exceptions={
+  IN:/Diplomatenpass/,
+  TR:/Diplomaten-, Dienst- und Spezialpässe/,
+  CN:/EU-Zeile.*Diplomatenpässe/,
+  RU:/ausgesetzt/,
+  PK:/Diplomaten- und Dienstpässe.*Flughafentransitvisum/,
+  TH:/Diplomaten- und Dienstpässe/,
+  EG:/Diplomaten-, Dienst- und Spezialpässe/,
+  PH:/Diplomaten- und Dienstpässe/,
+  MA:/Diplomaten- und Dienstpässe/,
+ }
+ for(const [code,pattern] of Object.entries(exceptions)){
+  const review=atBmiSourceReview(code)
+  assert.ok(review)
+  assert.equal(review.group,'V')
+  assert.match(review.special??'',pattern)
+  assert.equal(review.personalVisaEffect,null)
+  assert.equal(review.individualVisaQualified,false)
+  assert.equal(review.ownerAal2Approved,false)
+ }
+ for(const code of AT_BMI_GROUPS.V.filter(c=>!Object.keys(exceptions).includes(c))){
+  assert.equal(atBmiSourceReview(code)?.group,'V')
+  assert.equal(atBmiSourceReview(code)?.special,null)
+ }
+ assert.equal(AT_BMI_GROUPS.V.length,20)
+})

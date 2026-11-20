@@ -33,6 +33,20 @@ const scope=Object.freeze({
 })
 const biometric=new Set(['UA','XK','RS'])
 const bilateral=new Set(['BR','KR','JP','CA','IL'])
+// Individual BMİ row EXCEPTIONS, checked against original Nov-6 Austrian BMI
+// national/EU waiver fields on 20.11.2026. These are conditions, never a
+// personal result; special/diplomatic documents are NOT ordinary passports.
+const specialVisaDuty:Readonly<Record<string,string>>=Object.freeze({
+ IN:'BMI: Nur der Diplomatenpass besitzt die genannte österreichische Sonder-Visumbefreiung. Normale Reisepässe sind davon nicht erfasst.',
+ TR:'BMI: Die österreichische Sonderbefreiung betrifft Diplomaten-, Dienst- und Spezialpässe; nicht jeden türkischen gewöhnlichen Reisepass.',
+ CN:'BMI: Die in der EU-Zeile genannte Ausnahme gilt nur für Diplomatenpässe, nicht gewöhnliche chinesische Reisepässe.',
+ RU:'BMI: Die frühere EU-Visaerleichterung für russische Diplomatenpässe ist ausgesetzt. Daraus keine heutige Sonderbefreiung ableiten.',
+ PK:'BMI: Nur Diplomaten- und Dienstpässe haben die angegebene nationale Ausnahme; Flughafentransitvisum A zusätzlich separat prüfen.',
+ TH:'BMI: Die nationale Sonderbefreiung gilt nur für Diplomaten- und Dienstpässe, nicht allgemein für Thailand.',
+ EG:'BMI: Diplomaten-, Dienst- und Spezialpässe sind die begrenzten österreichischen Sonderfälle.',
+ PH:'BMI: Diplomaten- und Dienstpässe haben eine eigene Sonderregel; gewöhnliche Pässe nicht pauschal.',
+ MA:'BMI: Diplomaten- und Dienstpässe besitzen die erwähnte nationale Sonderregel. Gewöhnliche Pässe sind keine Ausnahme.',
+})
 export type AtBmiSourceReview=Readonly<{code:string;group:AtBmiGroup;label:string;text:string;
  special:string|null;sourceEdition:string;reviewedAt:string;bmiUrl:string;bmeiaUrl:string;
  groupSourceVerified:true;individualVisaQualified:false;ownerAal2Approved:false;
@@ -44,6 +58,7 @@ export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
  if(biometric.has(code))special='Für diese Staatsangehörigkeit erfordert die BMI-Visumbefreiung einen biometrischen Reisepass. Ein nichtbiometrischer gewöhnlicher Pass ist dadurch nicht automatisch visumfrei.'
  else if(code==='GB')special='Die BMI-Liste unterscheidet mehrere britische Staatsangehörigkeits- und Passkategorien, die im konkreten Fall geprüft werden müssen.'
  else if(bilateral.has(code))special='Zusätzliche österreichische bilaterale Aufenthaltserleichterungen können gelten; keine pauschale Verlängerung des EU-Kurzaufenthalts annehmen.'
+ else if(group==='V')special=specialVisaDuty[code]??null
  return Object.freeze({
   code,group,label:scope[group].label,text:scope[group].text,special,
   sourceEdition:AT_BMI_REVIEW_SOURCES.sourceEdition,reviewedAt:AT_BMI_REVIEW_SOURCES.reviewedAt,
