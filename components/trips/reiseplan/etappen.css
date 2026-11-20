@@ -80,7 +80,7 @@
 .et-secondary,
 .et-icon {
   border: 1px solid var(--color-line-300, #d1dfd7);
-  color: var(--color-brand-800);
+  color: rgb(var(--jet-brand-800));
   background: var(--color-white, #fff);
 }
 .et-secondary {
@@ -170,7 +170,7 @@
   padding-left: 0.35rem;
   gap: 0.55rem;
   font-size: 0.78rem;
-  color: var(--color-ink-700);
+  color: rgb(var(--jet-ink-700));
   font-weight: 550;
 }
 .et-leg svg:last-child {
@@ -179,7 +179,7 @@
 }
 .et-back {
   margin-bottom: 0.6rem;
-  color: var(--color-brand-700);
+  color: rgb(var(--jet-brand-700));
 }
 .et-detail-title {
   display: flex;
@@ -201,7 +201,7 @@
   flex-wrap: wrap;
 }
 .et-tabs {
-  border-bottom: 1px solid var(--color-line-200);
+  border-bottom: 1px solid rgb(var(--jet-line-200));
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -219,7 +219,7 @@
 }
 .et-days button {
   min-height: 44px;
-  border: 1px solid var(--color-line-200);
+  border: 1px solid rgb(var(--jet-line-200));
   border-radius: 10px;
   padding: 0.3rem 0.55rem;
   font-size: 0.85rem;
@@ -248,7 +248,7 @@
   align-items: center;
   gap: 0.35rem;
   min-height: 44px;
-  border: 1px solid var(--color-line-200);
+  border: 1px solid rgb(var(--jet-line-200));
   padding: 0.55rem 0.65rem;
   border-radius: 10px;
   font-weight: 600;
@@ -279,7 +279,7 @@
   min-width: 0;
   width: 100%;
   min-height: 44px;
-  border: 1px solid var(--color-line-300);
+  border: 1px solid rgb(var(--jet-line-300));
   background: var(--color-white, #fff);
   padding: 0.5rem 0.65rem;
   border-radius: 9px;
@@ -381,7 +381,7 @@
   .et-mobile-tabs {
     display: flex;
     padding: 0.25rem;
-    border: 1px solid var(--color-line-200);
+    border: 1px solid rgb(var(--jet-line-200));
     border-radius: 13px;
     margin-top: 0.7rem;
     background: var(--color-white, #fff);
@@ -488,17 +488,22 @@
   background: var(--color-surface-50, #eff7f1);
 }
 .et-end span {
-  color: var(--color-ink-700);
+  color: rgb(var(--jet-ink-700));
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .et-end b {
-  color: var(--color-brand-800);
+  color: rgb(var(--jet-brand-800));
   margin-right: 0.15rem;
 }
 .et-leg {
   padding-left: 2.5rem;
-  min-height: 34px;
+  min-height: 44px;
+}
+@media (pointer: fine) {
+  .et-leg {
+    min-height: 34px;
+  }
 }
 .et-leg.et-journey {
   font-size: 0.73rem;
@@ -554,11 +559,24 @@
   min-height: 44px;
   border: 1px solid var(--line, #bfd1c8);
   border-radius: .75rem;
-  background: var(--surface);
+  background: transparent;
   color: inherit;
   font-weight: 600;
   font-size: .85rem;
 }
 .et-angebote button:hover {
   background: var(--surface-soft, #e3efe9);
+}
+/* Eigene Klassen statt Tailwind-Flächen: Die Etappenkarte bleibt auch im grünen
+   Workspace hell, die Farb-Umschaltung des Themas greift nur Tailwind-Klassen. */
+.et-vorschau-ort {
+  border: 1px solid rgb(var(--jet-line-200));
+  border-radius: 0.75rem;
+  background: rgb(var(--jet-surface-50));
+  padding: 0.75rem;
+}
+.et-vorschau-tage {
+  border: 1px solid rgb(var(--jet-line-200));
+  border-radius: 0.5rem;
+  padding: 0 0.75rem;
 }

@@ -41,7 +41,7 @@ export default function StoppVorschau({ vorschau }: { vorschau: ManuelleVorschau
     trip.endDate ? etappenZeitraumAnzeigen(trip.endDate, trip.endDate) : 'Datum offen'
   return (
     <section className="grid gap-3" aria-label="Auswirkungen des neuen Stopps">
-      <div className="rounded-xl border border-line-200 bg-surface-50 p-3">
+      <div className="et-vorschau-ort">
         <h4>{neu.name}</h4>
         <p className="mt-1 flex items-center gap-2">
           <CalendarDays size={15} aria-hidden="true" />
@@ -72,7 +72,7 @@ export default function StoppVorschau({ vorschau }: { vorschau: ManuelleVorschau
         </p>
       </div>
       {verschobeneTage.length > 0 && (
-        <details className="rounded-lg border border-line-200 px-3">
+        <details className="et-vorschau-tage">
           <summary className="cursor-pointer py-3 text-sm font-semibold">
             {verschobeneTage.length}{' '}
             {verschobeneTage.length === 1
