@@ -8,7 +8,8 @@
 
 import * as React from 'react'
 import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
-import { ArrowRightLeft, Loader2 } from 'lucide-react'
+import { ArrowRightLeft } from 'lucide-react'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
@@ -327,10 +328,7 @@ export default function MobilitaetBereich({
           Bahn, Bus, Fähre und Transfer
         </h2>
         {sucht ? (
-          <p className="mt-5 flex min-h-[4.5rem] items-center gap-2 text-sm leading-6 text-ink-800">
-            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-            Verbindungen werden geprüft …
-          </p>
+          <Ladeplatzhalter sichtbar zeilen={2} status="Verbindungen werden geprüft …" className="mt-5" />
         ) : (
           <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
             {suche?.message ?? (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED === 'true'

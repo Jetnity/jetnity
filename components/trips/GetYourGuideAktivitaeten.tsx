@@ -52,7 +52,7 @@ import { ortBestaetigen } from '@/lib/places/aktionen'
 import { cn } from '@/lib/utils'
 import type { Ort } from '@/lib/places/domain'
 import type { Trip } from '@/types/trips'
-import { Loader2 } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 
 const AKTION =
   'inline-block min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
@@ -493,10 +493,7 @@ function Flaeche({
           </p>
         ) : null}
         {angepasst.phase === 'laeuft' ? (
-          <p aria-busy="true" className={cn(TEXT, 'flex items-start gap-3')}>
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
-            GetYourGuide wird geladen.
-          </p>
+          <p aria-busy="true" className={TEXT}>GetYourGuide wird geladen.</p>
         ) : null}
         {angepasst.phase === 'fehler' ? <p className={TEXT}>{angepasst.fehler}</p> : null}
         {angepasst.phase === 'anzeige' ? (
@@ -635,6 +632,7 @@ function Flaeche({
         </p>
       ) : null}
 
+      {angepasst.phase === 'laeuft' ? <Ladeflaeche className="mt-4 h-48 rounded-card" /> : null}
       <div
         ref={hostRef}
         data-gyg-montage={montageSichtbar ? 'sichtbar' : 'leer'}

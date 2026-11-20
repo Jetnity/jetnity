@@ -9,25 +9,45 @@ import { cn } from '@/lib/utils'
 export function Ladeplatzhalter({
   status,
   zeilen = 3,
+  form = 'karten',
+  sichtbar = false,
   className,
   ...daten
 }: {
   /** Kurzer, ehrlicher Satz, was geladen wird. */
   status: string
   zeilen?: number
+  /** `karten`: kommende Liste; `flaeche`: eine Fläche, wo eine Einbindung erscheint. */
+  form?: 'karten' | 'flaeche'
+  /** Statussatz sichtbar statt nur für Screenreader – für Suchen, die einige Sekunden dauern. */
+  sichtbar?: boolean
   className?: string
 } & { [key: `data-${string}`]: string | undefined }) {
   return (
-    <div {...daten} role="status" aria-live="polite" aria-busy="true" className={cn('grid min-w-0 gap-3', className)}>
-      <span className="sr-only">{status}</span>
+    <div {...daten} role="status" aria-busy="true" aria-live="polite" className={cn('grid min-w-0 gap-3', className)}>
+      {sichtbar ? <div className="text-meta text-muted-foreground">{status}</div> : <span className="sr-only">{status}</span>}
       <div aria-hidden="true" className="grid gap-3">
-        <span className={cn(FLAECHE, 'h-7 w-2/5 rounded-control')} />
-        {Array.from({ length: Math.max(1, zeilen) }, (_, index) => (
-          <span key={index} className={cn(FLAECHE, 'h-16 rounded-card', index === zeilen - 1 && 'w-4/5')} />
-        ))}
+        {form === 'flaeche' ? (
+          <span className={cn(FLAECHE, 'h-48 rounded-card sm:h-64')} />
+        ) : (
+          <>
+            {sichtbar ? null : <span className={cn(FLAECHE, 'h-7 w-2/5 rounded-control')} />}
+            {Array.from({ length: Math.max(1, zeilen) }, (_, index) => (
+              <span key={index} className={cn(FLAECHE, 'h-16 rounded-card', index === zeilen - 1 && 'w-4/5')} />
+            ))}
+          </>
+        )}
       </div>
     </div>
   )
+}
+
+/**
+ * Nur die Schimmerfläche, ohne Statustext: deckt eine Anbieter-Einbindung ab,
+ * solange sie lädt. Den Zustand nennt die Statuszeile der Einbindung.
+ */
+export function Ladeflaeche({ className }: { className?: string }) {
+  return <span aria-hidden="true" data-ladeflaeche="" className={cn(FLAECHE, className)} />
 }
 
 const FLAECHE =

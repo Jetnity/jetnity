@@ -12,7 +12,7 @@ import { VIATOR_DATENSCHUTZ_HREF } from '@/lib/activities/viator-widget/dokument
 import { viatorAnwendungsRenderer } from '@/lib/activities/viator-widget/renderer'
 import { viatorSuchname } from '@/lib/activities/viator-widget/suche'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 
 const AKTION =
   'inline-block min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
@@ -94,10 +94,7 @@ export default function ViatorWidgetAktivitaeten({
           </p>
         ) : null}
         {phase === 'laeuft' && sichtbar && !ausgeblendet ? (
-          <p aria-busy="true" className={cn(TEXT, 'flex items-start gap-3')}>
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
-            Viator wird geladen.
-          </p>
+          <p aria-busy="true" className={TEXT}>Viator wird geladen.</p>
         ) : null}
         {phase === 'fehler' ? <p className={TEXT}>Viator konnte gerade nicht geladen werden.</p> : null}
         {phase === 'anzeige' ? (
@@ -133,6 +130,7 @@ export default function ViatorWidgetAktivitaeten({
           Ausblenden beendet die weitere Einbindung, bis sie erneut angezeigt wird. Die Buchung erfolgt bei Viator.
         </p>
       ) : null}
+      {phase === 'laeuft' && sichtbar && !ausgeblendet ? <Ladeflaeche className="mt-4 h-48 rounded-card" /> : null}
       <div ref={hostRef} data-viator-montage={zeigen ? 'sichtbar' : 'leer'} hidden={!zeigen} className="mt-4 min-w-0" />
     </section>
   )

@@ -1,7 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { ExternalLink, Loader2 } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 import { DISCOVERCARS_GENERISCH_HREF } from '@/lib/providers/discovercars/affiliate/ziel'
 import { DISCOVERCARS_DATENSCHUTZ } from '@/lib/providers/discovercars/widget/vertrag'
 import { discoverCarsWidgetLaden, discoverCarsWidgetFreigegeben, type DiscoverCarsWidgetPhase } from '@/lib/providers/discovercars/widget/renderer'
@@ -51,7 +52,7 @@ export default function DiscoverCarsSuche() {
       ) : (
         <div className="mt-4">
           <div role="status" className="text-sm leading-6 text-ink-800">
-            {phase === 'laedt' ? <p className="flex items-center gap-2"><Loader2 className="h-4 w-4 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />Suchformular wird geladen …</p> : null}
+            {phase === 'laedt' ? <p>Suchformular wird geladen …</p> : null}
             {phase === 'sichtbar' ? <p>Bitte prüfe die vorgeschlagenen Mietdaten, das Alter und den Wohnsitz des Fahrers. CHF ist die Anzeigeeinstellung dieses Formulars.</p> : null}
             {phase === 'fehler' ? <p>Das Suchformular konnte gerade nicht geladen werden. Du kannst die Suche direkt bei DiscoverCars öffnen oder es erneut versuchen.</p> : null}
             {phase === 'datenschutz' ? <p>Deine Datenschutzeinstellungen verhindern das Laden. Der direkte Link zu DiscoverCars bleibt verfügbar.</p> : null}
@@ -61,6 +62,7 @@ export default function DiscoverCarsSuche() {
           </button>
         </div>
       )}
+      {anzeigen && phase === 'laedt' ? <Ladeflaeche className="mt-4 h-48 rounded-card" /> : null}
       <div id={`${id}-formular`} ref={host} hidden={!anzeigen || fehlgeschlagen} className="mt-4 min-w-0 max-w-full" />
       <div className="mt-4 flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <a href={DISCOVERCARS_GENERISCH_HREF} target="_blank" rel="noopener noreferrer sponsored" referrerPolicy="no-referrer" className={SEKUNDAER}>

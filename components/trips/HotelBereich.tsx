@@ -5,13 +5,14 @@
 // Hotel- und Quartierbereich im Reise-Arbeitsbereich. Kein Demo, keine Fake-Hotels.
 
 import * as React from 'react'
-import { AlertCircle, BedDouble, Loader2, MapPin } from 'lucide-react'
+import { AlertCircle, BedDouble, MapPin } from 'lucide-react'
 
 import type { HotelOptionSichtbar, HotelSucheAntwort } from '@/lib/hotels/client-sicht'
 import { HOTEL_ABDECKUNGSHINWEIS } from '@/lib/hotels/domain'
 import { HOTELZEITRAUM_OFFEN, hotelSucheEingabeAusReise, naechteZwischen } from '@/lib/hotels/quartier-kontext'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import HotelKarte from '@/components/trips/HotelKarte'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripStage } from '@/types/trips'
@@ -212,10 +213,7 @@ function HotelEtappe({
       </div>
 
       {sucheAktiv && laeuft && (
-        <p aria-busy="true" className="mt-5 flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
-          <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" />
-          Jetnity ordnet die Gegend für diese Etappe ein.
-        </p>
+        <Ladeplatzhalter sichtbar zeilen={2} status="Jetnity ordnet die Gegend für diese Etappe ein." className="mt-5" />
       )}
 
       {sucheAktiv && !laeuft && antwort && (

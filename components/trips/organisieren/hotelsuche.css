@@ -25,6 +25,8 @@
 }
 .stay22-panel {overflow:hidden;border:1px solid var(--org-line);border-radius:18px;background:var(--org-white);margin-top:14px;box-shadow:0 8px 30px #112f2208}
 .stay22-badge {font-size:11px;font-weight:650;border-radius:30px;background:var(--org-bg);padding:7px 10px;white-space:nowrap}
+.stay22-hostrahmen {position:relative;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+.stay22-hostrahmen[hidden] {display:none}
 .stay22-host {flex:1;min-width:0;min-height:0;background:#f5f7f2}
 .stay22-frame {display:block;border:0;width:100%;height:100%;min-height:0;max-width:100%;color-scheme:light;scroll-margin-top:calc(var(--jet-header-h, 100px) + 20px);scroll-margin-bottom:calc(var(--ux-u1a-nav-offset, 0px) + 20px)}
 .stay22-status {flex-shrink:0}

@@ -109,7 +109,7 @@ import TripComSuche from '@/components/trips/TripComSuche'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
 
 const EinreiseLaenderpruefer = dynamic(() => import('@/components/readiness/EinreiseLaenderpruefer'), {
-  loading: () => <p role="status">Einreiseprüfung wird geladen.</p>,
+  loading: () => <Ladeplatzhalter status="Einreiseprüfung wird geladen." className="mt-6" />,
 })
 
 function kompakteAnsichtAbonnieren(melden: () => void) {
