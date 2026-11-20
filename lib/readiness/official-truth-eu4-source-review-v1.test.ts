@@ -5,7 +5,8 @@ import {EU4_200_VISA_RESEARCH_CASES,EU4_COUNTRIES,EU4_CROSSCHECKS,EU4_OFFICIAL_P
 
 test('IT FR ES PT use genuine country government visa portals in addition to EU Annexes, not a borrowed Austrian issuer',()=>{
  assert.deepEqual(EU4_COUNTRIES,['IT','FR','ES','PT'])
- assert.match(EU4_CROSSCHECKS.annexes,/eur-lex\.europa\.eu\/eli\/reg\/2018\/1806\/oj/)
+ assert.match(EU4_CROSSCHECKS.annexes,/eur-lex\.europa\.eu\/eli\/reg\/2018\/1806\/2025-12-30\/eng/)
+ assert.equal(EU4_CROSSCHECKS.consolidatedAsOf,'2025-12-30')
  assert.match(EU4_CROSSCHECKS.visa,/home-affairs\.ec\.europa\.eu/)
  assert.equal(EU4_CROSSCHECKS.reviewedAt,'2026-11-20')
  assert.match(EU4_OFFICIAL_PRIMARIES.IT.application??'',/vistoperitalia\.esteri\.it/)

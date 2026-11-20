@@ -1,5 +1,5 @@
 -- Development only; 20.11.2026, PR #1254. Four national primary portals
--- + EU Regulation 2018/1806 -> 4x50 visa source review from EXISTING private
+-- + EU Regulation 2018/1806 (consolidated 2025-12-30) -> 4x50 visa source review from EXISTING private
 -- research. This is a SELECT-only evidence CROSSCHECK, not a 200-fact issuer.
 -- Austria's bilateral visa waivers are NEVER portable to Italy/France/Spain/
 -- Portugal. In France the territory (mainland vs overseas) MUST be known.
@@ -63,7 +63,7 @@ SELECT c.destination_code,c.citizenship_code,c.priority_rank,
  c.official_portal_link_registered,c.required_official_primary,
  'https://home-affairs.ec.europa.eu/policies/schengen/schengen-visas/eu-visa-policy_en'::text
    AS eu_visa_annex_i_ii_official_crosscheck,
- 'https://eur-lex.europa.eu/eli/reg/2018/1806/oj'::text AS eu_regulation_2018_1806_source,
+ 'https://eur-lex.europa.eu/eli/reg/2018/1806/2025-12-30/eng'::text AS eu_regulation_2018_1806_source,
  c.source_last_seen_at AS registered_research_link_seen_at_not_an_original_receipt,
  c.source_snapshot_class,
  c.destination_code='FR' AS distinguish_france_overseas_territory_before_rule,

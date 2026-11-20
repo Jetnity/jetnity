@@ -10,6 +10,7 @@ test('EU4 200-passport source evidence uses an exact PostgreSQL17 read-only snap
  assert.match(sql,/registered_official_urls @> ARRAY\[p\.required_official_primary\]::text\[\]/)
  assert.match(sql,/source_snapshot_class='RESEARCH_ONLY_UNVERIFIED_CONTENT'/)
  assert.match(sql,/\(200,4,80,76,40,4\)/)
+ assert.match(sql,/2018\/1806\/2025-12-30\/eng/)
  assert.match(sql,/\(5200,0\)/)
  assert.match(sql,/es_financial_conflict_cases=30/)
  assert.match(sql,/other_financial_conflicts=0/)

@@ -6,7 +6,7 @@ import {AT_BMI_GROUPS,atBmiSourceReview,type AtBmiGroup} from './official-truth-
 export const EU4_COUNTRIES=['IT','FR','ES','PT'] as const
 export type Eu4Country=typeof EU4_COUNTRIES[number]
 const SCHENGEN_VISA='https://home-affairs.ec.europa.eu/policies/schengen/schengen-visas/eu-visa-policy_en'
-const RULE_2018_1806='https://eur-lex.europa.eu/eli/reg/2018/1806/oj'
+const RULE_2018_1806='https://eur-lex.europa.eu/eli/reg/2018/1806/2025-12-30/eng'
 export const EU4_OFFICIAL_PRIMARIES=Object.freeze({
  IT:Object.freeze({
   government:'Italian Ministry of Foreign Affairs',
@@ -37,7 +37,7 @@ export const EU4_OFFICIAL_PRIMARIES=Object.freeze({
   distinction:'Visa C is nationality-dependent, valid stay maximum 90 days in Schengen; documentation, resident status, travel purpose and children without parental accompaniment checked separately.',
  }),
 } satisfies Record<Eu4Country,{government:string;visa:string;conditions:string;application:string|null;distinction:string}>)
-export const EU4_CROSSCHECKS=Object.freeze({visa:SCHENGEN_VISA,annexes:RULE_2018_1806,reviewedAt:'2026-11-20'})
+export const EU4_CROSSCHECKS=Object.freeze({visa:SCHENGEN_VISA,annexes:RULE_2018_1806,consolidatedAsOf:'2025-12-30',reviewedAt:'2026-11-20'})
 
 const rankCodes='IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'.split(' ')
 type Group=AtBmiGroup
