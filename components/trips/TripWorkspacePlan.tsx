@@ -784,7 +784,8 @@ function Planpunkt({
         ) : (
           <div className="flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start py-1">{inhalt}</div>
         )}
-        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-left text-sm text-brand-800 [overflow-wrap:anywhere]',fokusRing)}
+        <div className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end">
+        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-left text-sm text-brand-800 underline underline-offset-4 [overflow-wrap:anywhere]',fokusRing)}
           onClick={()=>onPreparation(hinweis.ziel)}>{hinweis.title}</button>}
         {onBearbeiten && <button type="button" onClick={onBearbeiten} aria-label={`${punkt.title} bearbeiten`}
           className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-sm font-semibold text-brand-800 [overflow-wrap:anywhere]', fokusRing)}>Bearbeiten</button>}
@@ -797,12 +798,13 @@ function Planpunkt({
           aria-label={`${punkt.title} entfernen`}
           aria-expanded={fragen}
           className={cn(
-            'ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
             fokusRing,
           )}
         >
           <Trash2 className="h-4 w-4" />
         </button>
+        </div>
         {fragen ? (
           <div
             role="group"
