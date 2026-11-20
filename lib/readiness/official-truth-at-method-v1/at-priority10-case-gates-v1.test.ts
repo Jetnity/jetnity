@@ -62,3 +62,39 @@ test('US/UA require full third-country passport and Schengen terms; biometric is
  assert.equal(reviewAtPriority10StandardCase({...evidence('US'),biometricOrdinaryPassportProved:false}).cause,'CONDITIONAL_STANDARD_CASE_NEEDS_HRS2_MA1_OWNER')
  assert.equal(reviewAtPriority10StandardCase({...evidence('CN'),actualOrdinaryNationalPassportProved:false}).cause,'SPECIAL_DOCUMENT_OR_EXCEPTION_NEEDS_INDIVIDUAL_REVIEW')
 })
+
+test('EU5 national ID and passport are separate, Art. 5-dependent evidence paths; neither publishes',()=>{
+ const eu5=['DE','PL','IT','RO','FR']
+ for(const code of eu5){
+  const card={...evidence(code),actualOrdinaryNationalPassportProved:false,
+   actualEuNationalIdentityCardProved:true,actualEuIdIssuerMatchesNationalityProved:true,
+   actualEuIdNotExpiredAtEntryProved:true,actualEuIdArticle5TravelValidityProved:true,
+   actualSchengenStayWithin90In180:null,passportIssueWithin10Years:null,
+   passportExpiryAtLeast3MonthsAfterExit:null}
+  const acceptedForReview=reviewAtPriority10StandardCase(card)
+  assert.equal(acceptedForReview.cause,'CONDITIONAL_STANDARD_CASE_NEEDS_HRS2_MA1_OWNER')
+  assert.equal(acceptedForReview.visitorVisaStatement,null)
+  assert.equal(acceptedForReview.visitorPassportValidStatement,null)
+  assert.equal(acceptedForReview.publicationAllowed,false)
+  for(const flag of ['actualEuIdIssuerMatchesNationalityProved',
+   'actualEuIdNotExpiredAtEntryProved','actualEuIdArticle5TravelValidityProved'] as const){
+   assert.equal(reviewAtPriority10StandardCase({...card,[flag]:false}).cause,
+    'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN')
+  }
+  assert.equal(reviewAtPriority10StandardCase({...card,actualOrdinaryNationalPassportProved:true}).cause,
+   'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN')
+  assert.equal(reviewAtPriority10StandardCase({...card,actualEuNationalIdentityCardProved:false}).cause,
+   'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN')
+  assert.equal(reviewAtPriority10StandardCase({...card,bg1Current:false}).cause,
+   'OFFICIAL_SOURCE_OR_BG1_MISSING')
+  assert.equal(reviewAtPriority10StandardCase({...card,independentlySealedDestinationSpecificWitness:false}).cause,
+   'DESTINATION_WITNESS_UNSEALED')
+ }
+ for(const code of ['IN','TR','CN','US','UA']){
+  const bad={...evidence(code),actualOrdinaryNationalPassportProved:false,
+   actualEuNationalIdentityCardProved:true,actualEuIdIssuerMatchesNationalityProved:true,
+   actualEuIdNotExpiredAtEntryProved:true,actualEuIdArticle5TravelValidityProved:true}
+  assert.equal(reviewAtPriority10StandardCase(bad).cause,
+   'SPECIAL_DOCUMENT_OR_EXCEPTION_NEEDS_INDIVIDUAL_REVIEW')
+ }
+})

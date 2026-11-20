@@ -8,6 +8,13 @@ import {AT_PRIORITY10_VISA_PASSPORT_REVIEW,type AtPriority10Passport} from './at
 export type Top10ScopeEvidence=Readonly<{
  passportCode:string
  actualOrdinaryNationalPassportProved:boolean
+ // For the five EU freedom-of-movement cases only: a presented national ID
+ // card is distinct from a passport. All three Article-5 assessments must
+ // come from an independently trusted exact-document review, never a guess.
+ actualEuNationalIdentityCardProved?:boolean
+ actualEuIdIssuerMatchesNationalityProved?:boolean
+ actualEuIdNotExpiredAtEntryProved?:boolean
+ actualEuIdArticle5TravelValidityProved?:boolean
  nationalityAndPresentedDocumentMatch:boolean
  actualDocumentValidForEntry:boolean
  shortStayTourismAndDirectBorderEntryProved:boolean
@@ -56,11 +63,23 @@ export function reviewAtPriority10StandardCase(e:Top10ScopeEvidence):Top10Review
   return unconfirmed(e.passportCode,'OFFICIAL_SOURCE_OR_BG1_MISSING',item.baselineVisaRule)
  if(!e.independentlySealedDestinationSpecificWitness)
   return unconfirmed(e.passportCode,'DESTINATION_WITNESS_UNSEALED',item.baselineVisaRule)
- if(!e.actualOrdinaryNationalPassportProved
-   ||!e.specialDiplomaticServiceOrDualPassportExcluded
-   ||!e.actualResidenceOrFamilyVisaExemptionExcluded)
+ // No automated selection between two documents or citizenships. A verified
+ // EU national ID is eligible for the five EU cases only when its own issuer,
+ // expiry and Art. 5 (including any applicable grandfather exception) were
+ // independently proved. This does NOT classify EU IDs as ordinary passports.
+ const euIdPresented=e.actualEuNationalIdentityCardProved===true
+ if(!e.specialDiplomaticServiceOrDualPassportExcluded
+   ||!e.actualResidenceOrFamilyVisaExemptionExcluded
+   ||(!item.euFreeMovement&&!e.actualOrdinaryNationalPassportProved)
+   ||(!item.euFreeMovement&&euIdPresented))
   return unconfirmed(e.passportCode,'SPECIAL_DOCUMENT_OR_EXCEPTION_NEEDS_INDIVIDUAL_REVIEW',item.baselineVisaRule)
- if(!e.nationalityAndPresentedDocumentMatch||!e.actualDocumentValidForEntry
+ const ordinaryPassportOnly=e.actualOrdinaryNationalPassportProved===true&&!euIdPresented
+ const provedEuIdOnly=item.euFreeMovement&&e.actualOrdinaryNationalPassportProved!==true
+   &&euIdPresented&&e.actualEuIdIssuerMatchesNationalityProved===true
+   &&e.actualEuIdNotExpiredAtEntryProved===true
+   &&e.actualEuIdArticle5TravelValidityProved===true
+ if(!(ordinaryPassportOnly||provedEuIdOnly)
+   ||!e.nationalityAndPresentedDocumentMatch||!e.actualDocumentValidForEntry
    ||!e.shortStayTourismAndDirectBorderEntryProved)
   return unconfirmed(e.passportCode,'DOCUMENT_OR_TRAVEL_CONTEXT_UNPROVEN',item.baselineVisaRule)
  if(!item.euFreeMovement){
