@@ -36,7 +36,8 @@ async function seen(fetchImpl,token,generation){
   if(r.status!==200)throw Error('github read')
   const comments=JSON.parse(r.text)
   if(!Array.isArray(comments)||comments.length>100)throw Error('github shape')
-  if(comments.some(v=>typeof v?.body==='string'&&v.body.includes(MARK+generation)))return true
+  if(comments.some(v=>v?.user?.login==='github-actions[bot]'&&v?.user?.type==='Bot'
+   &&typeof v.body==='string'&&v.body.startsWith(MARK+generation+'\n\n')))return true
   if(comments.length<100)return false
  }
  throw Error('github comments too numerous')

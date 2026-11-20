@@ -55,10 +55,21 @@ test('Replayed integrity generation never creates a second comment',async()=>{
  let posts=0
  const r=await observeBg1FiveMinuteIntegrity({env,fetchImpl:async(url,opts)=>{
   if(url.includes('supabase.co'))return response(dto('integrity_locked',22))
-  if(opts.method==='GET')return response([{body:'jetnity_bg1_integrity_alarm_v2:generation:22'}])
+  if(opts.method==='GET')return response([{user:{login:'github-actions[bot]',type:'Bot'},body:'jetnity_bg1_integrity_alarm_v2:generation:22\n\nAlarm'}])
   posts++;return response({id:2},201)
  }})
  assert.equal(r.status,'deduplicated');assert.equal(posts,0)
+})
+test('A public PR commenter cannot spoof a GitHub Actions integrity alarm to suppress delivery',async()=>{
+ let posted=0
+ const r=await observeBg1FiveMinuteIntegrity({env,fetchImpl:async(url,opts)=>{
+  if(url.includes('supabase.co'))return response(dto('integrity_locked',24))
+  if(opts.method==='GET')return response([{user:{login:'someone-else',type:'User'},
+    body:'jetnity_bg1_integrity_alarm_v2:generation:24\n\nFake'}])
+  posted++;return response({id:4},201)
+ }})
+ assert.equal(r.status,'integrity_alert_posted')
+ assert.equal(posted,1)
 })
 test('Malformed/redirect/non-json responses and wrong project cannot forge a hard integrity claim',async()=>{
  for(const p of [{...dto('current'),extra:true},{schema:1,status:'integrity_locked',incidentGeneration:'22'},
