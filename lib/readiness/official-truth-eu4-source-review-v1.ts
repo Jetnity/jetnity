@@ -57,6 +57,8 @@ export type Eu4PassportCase=Readonly<{
  contextConditions:string;
  austrianNationalWaiverNonportable:boolean;euDiplomaticExceptionNeedsSeparateCheck:boolean;needsBiometricCheck:boolean;
  frenchTerritoryScopeNeedsCheck:boolean;spanishFinancialConflictLookupRequired:boolean;
+ issuerDocumentCrosscheckRequired:boolean;visitorCountryCodeUnsupported:boolean;
+ issuerDocumentLegalSource:string|null;
  sourceLinksChecked:true;destinationSpecificSourceOriginalSealed:false;
  legalApplicabilityVerified:false;documentsVerified:false;
  routeAndDurationVerified:false;ownerMa1Aal2Authorized:false;
@@ -89,6 +91,9 @@ export function eu4PassportCase(destination:Eu4Country,passport:string):Eu4Passp
   needsBiometricCheck:['UA','XK','RS'].includes(passport),
   frenchTerritoryScopeNeedsCheck:destination==='FR',
   spanishFinancialConflictLookupRequired:destination==='ES',
+  issuerDocumentCrosscheckRequired:reviewed.issuerDocumentCrosscheck!==null,
+  visitorCountryCodeUnsupported:reviewed.issuerDocumentCrosscheck?.visitorCountryCodeSupported===false,
+  issuerDocumentLegalSource:reviewed.issuerDocumentCrosscheck?.euLegalSource??null,
   sourceLinksChecked:true,destinationSpecificSourceOriginalSealed:false,
   legalApplicabilityVerified:false,documentsVerified:false,routeAndDurationVerified:false,
   ownerMa1Aal2Authorized:false,publicationAllowed:false,

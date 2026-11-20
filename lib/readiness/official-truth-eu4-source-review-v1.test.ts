@@ -70,3 +70,23 @@ test('EU4 comparison never carries over national Austrian waivers, guesses a vis
   assert.equal(eu4PassportCase(dest,'US')?.euDiplomaticExceptionNeedsSeparateCheck,false)
  }
 })
+
+test('EU4 research never treats non-ISO Kosovo code as an accepted visitor passport or Serbian special issuer as Kosovo',()=>{
+ for(const dest of EU4_COUNTRIES){
+  const kosovo=eu4PassportCase(dest,'XK'),serbia=eu4PassportCase(dest,'RS')
+  assert.ok(kosovo&&serbia)
+  assert.equal(kosovo.issuerDocumentCrosscheckRequired,true)
+  assert.equal(kosovo.visitorCountryCodeUnsupported,true)
+  assert.match(kosovo.issuerDocumentLegalSource??'',/2023\/850/)
+  assert.equal(serbia.issuerDocumentCrosscheckRequired,true)
+  assert.equal(serbia.visitorCountryCodeUnsupported,false)
+  assert.match(serbia.issuerDocumentLegalSource??'',/2024\/2495/)
+  for(const item of [kosovo,serbia]){
+   assert.equal(item.legalApplicabilityVerified,false)
+   assert.equal(item.destinationSpecificSourceOriginalSealed,false)
+   assert.equal(item.ownerMa1Aal2Authorized,false)
+   assert.equal(item.entryVisaAnswer,'derzeit nicht verfügbar')
+  }
+  assert.equal(eu4PassportCase(dest,'CH')?.issuerDocumentCrosscheckRequired,false)
+ }
+})

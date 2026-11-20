@@ -94,3 +94,16 @@ test('Original BMI biometric exception must not be interpreted as a non-biometri
   assert.equal(atBmiSourceReview(code)?.individualVisaQualified,false)
  }
 })
+
+test('Western Balkan XK and RS source conditions distinguish passport issuer and reject individual grants',()=>{
+ for(const code of ['XK','RS']){
+  const row=atBmiSourceReview(code)
+  assert.ok(row?.issuerDocumentCrosscheck)
+  assert.equal(row.issuerDocumentCrosscheck.personalVisaDecision,'derzeit nicht verfügbar')
+  assert.equal(row.issuerDocumentCrosscheck.ma1OwnerAal2Approved,false)
+  assert.equal(row.personalVisaEffect,null)
+ }
+ assert.equal(atBmiSourceReview('XK')?.issuerDocumentCrosscheck?.visitorCountryCodeSupported,false)
+ assert.equal(atBmiSourceReview('RS')?.issuerDocumentCrosscheck?.visitorCountryCodeSupported,true)
+ assert.equal(atBmiSourceReview('DE')?.issuerDocumentCrosscheck,null)
+})
