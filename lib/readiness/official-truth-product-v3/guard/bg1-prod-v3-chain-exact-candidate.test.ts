@@ -39,7 +39,7 @@ test('Production v3 preview must remain visitor-unavailable until a future full 
 })
 
 test('All six previous Production function SHA-256 pins resolve by complete pg_regprocedure identity',()=>{
-  const pairs=[...executable.matchAll(/\\('((?:official_v3_guard_private|public)\\.[a-z0-9_]+\\([^']*\\))', '([a-f0-9]{64})'\\)/g)]
+  const pairs=[...executable.matchAll(/\('((?:official_v3_guard_private|public)\.[a-z0-9_]+\([^']*\))', '([a-f0-9]{64})'\)/g)]
   assert.equal(pairs.length,6,'no previous-function SHA pin may be silently skipped')
   const expected=[
     'official_v3_guard_private.assert_catalog_v1()',
@@ -50,5 +50,5 @@ test('All six previous Production function SHA-256 pins resolve by complete pg_r
     'public.official_v3_guard_alarm_status_v1()'
   ]
   assert.deepEqual(pairs.map(m=>m[1]).sort(),expected.sort())
-  assert.match(executable,/pg_get_functiondef\\(to_regprocedure\\(v\\.signature\\)\\)/)
+  assert.match(executable,/pg_get_functiondef\(to_regprocedure\(v\.signature\)\)/)
 })
