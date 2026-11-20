@@ -38,6 +38,7 @@ import Begleiterfortschritt from '@/components/trips/Begleiterfortschritt'
 import { begleiterFragen } from '@/lib/reisebegleiter/aktionen'
 import type { Begleiterauskunft } from '@/lib/reisebegleiter/erzeugen'
 import { BEGLEITER_GRENZEN } from '@/lib/reisebegleiter/schema'
+import { datumMitJahr } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
 
@@ -65,6 +66,11 @@ const ART_TITEL: Record<Begleiterauskunft['bezuege'][number]['art'], string> = {
   official: 'Offizielle Anforderung',
   safety: 'Sicherheitslage',
   seasonal: 'Reisezeit',
+}
+
+/** Gespeicherte Kalendertage lesbar zeigen; der Text der Lage bleibt sonst unverändert. */
+function lageLesbar(text: string): string {
+  return text.replace(/\b\d{4}-\d{2}-\d{2}\b/g, (tag) => datumMitJahr(tag) ?? tag)
 }
 
 export default function Reisebegleiter({ reise, anfangsAuskunft }: ReisebegleiterProps) {
@@ -120,14 +126,14 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
     <div className="mt-6 grid gap-6">
       <form
         onSubmit={fragen}
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-7"
+        className="rounded-3xl border border-line-200 bg-white p-5 sm:p-7"
       >
         <span className="inline-flex items-center gap-2 rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
           <Compass className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
           Generierter Vorschlag
         </span>
 
-        <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-brand-900 sm:text-3xl">
+        <h2 className="mt-4 text-title text-brand-900">
           Frag den Reisebegleiter
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-900">
@@ -186,7 +192,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white transition hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
             {laeuft ? 'Auskunft wird zusammengestellt …' : 'Frage stellen'}
           </button>
@@ -196,7 +202,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
       {auskunft && (
         <section
           aria-labelledby="reisebegleiter-auskunft-titel"
-          className="rounded-[28px] border border-line-200 bg-surface-0 p-5 sm:p-7"
+          className="rounded-3xl border border-line-200 bg-surface-0 p-5 sm:p-7 [&_li]:max-w-prose [&_p]:max-w-prose"
         >
           <p className="text-kicker uppercase text-brand-600">
             Generierter Vorschlag
@@ -311,7 +317,7 @@ export default function Reisebegleiter({ reise, anfangsAuskunft }: Reisebegleite
                         bezug.belegt ? 'text-ink-800' : 'text-ink-700',
                       )}
                     >
-                      {bezug.lage}
+                      {lageLesbar(bezug.lage)}
                       {bezug.belegt ? null : (
                         <span className="ml-1 whitespace-nowrap text-xs font-medium text-brand-700">
                           · nicht geprüft

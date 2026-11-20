@@ -106,12 +106,12 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
     finally { flight.current = false; if (alive.current) setPending(false) }
   }
   if (erfolg) return <div ref={root} className="mt-5 grid gap-4 rounded-3xl bg-white p-5 sm:p-7">
-    <h2 ref={heading} tabIndex={-1} className="text-xl font-semibold text-brand-900 sm:text-2xl">Änderung gespeichert und bestätigt</h2>
+    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">Änderung gespeichert und bestätigt</h2>
     <p role="status">„{erfolg.title}“ wurde erneut aus {quelle === 'guest' ? 'diesem Browserspeicher' : 'deinem Konto'} gelesen. Der Arbeitsbereich zeigt den bestätigten Stand mit {erfolg.days.length} Tagen.</p>
     <div className="flex flex-wrap gap-3">{surface && <button type="button" className={`${button} bg-brand-800 text-white`} onClick={surface.close}>Zur gespeicherten Reise</button>}<button type="button" className={button} onClick={onNeu}>Weitere Änderung vorbereiten</button></div>
   </div>
-  return <div ref={root} data-aenderung-sperre={pending || ungewiss ? 'true' : 'false'} className="mt-5 min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5">
-    <h2 ref={heading} tabIndex={-1} className="text-xl font-semibold text-brand-900 sm:text-2xl">{vorschau ? 'Auswirkungen prüfen' : 'Reise direkt bearbeiten'}</h2>
+  return <div ref={root} data-aenderung-sperre={pending || ungewiss ? 'true' : 'false'} className="mt-5 min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5 [&_p]:max-w-prose">
+    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">{vorschau ? 'Auswirkungen prüfen' : 'Reise direkt bearbeiten'}</h2>
     <p className="mt-2 text-sm leading-6">{vorschau ? 'Noch nicht gespeichert. Prüfe alle Auswirkungen, bevor du bestätigst.' : 'Wähle einen Bereich. Du kannst mehrere Bereiche vor der Vorschau ändern.'}</p>
     {stale && <p role="alert" className="mt-4 text-red-700">Die Reise hat sich inzwischen geändert. Deine Eingaben bleiben sichtbar; diese Vorschau kann nicht mehr übernommen werden. <button className={button} disabled={pending} onClick={onNeu}>Aktuellen Stand laden und neu beginnen</button></p>}
     {pending && <p role="status" className="mt-4">{vorschau ? 'Speicherung wird geprüft …' : 'Vorschau wird vorbereitet …'}</p>}
@@ -127,9 +127,9 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
       <fieldset disabled={pending || stale} className="grid min-w-0 gap-5">
         <legend className="sr-only">Reisedaten bearbeiten</legend>
         <div aria-label="Bearbeitungsbereiche" className="grid min-w-0 grid-cols-3 gap-2">
-          {(['grunddaten', 'zeitraum', 'etappen'] as const).map((value, index) => <button key={value} type="button" aria-label={`${index + 1}. ${value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}`} aria-current={gruppe === value ? 'step' : undefined} aria-controls={`edit-group-${value}`} onClick={() => selectGroup(value)} className={`min-h-11 min-w-0 rounded-2xl border border-line-200 px-1 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50 ${gruppe === value ? 'bg-brand-800 text-white' : 'bg-surface-25 text-brand-800'}`}><span aria-hidden="true" className="block text-xs opacity-80">{index + 1}</span>{value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}</button>)}
+          {(['grunddaten', 'zeitraum', 'etappen'] as const).map((value, index) => <button key={value} type="button" aria-label={`${index + 1}. ${value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}`} aria-current={gruppe === value ? 'step' : undefined} aria-controls={`edit-group-${value}`} onClick={() => selectGroup(value)} className={`min-h-11 min-w-0 rounded-2xl border px-1 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50 ${gruppe === value ? 'border-transparent bg-primary text-primary-foreground' : 'border-line-200 bg-surface-25 text-brand-800'}`}><span aria-hidden="true" className="block text-xs opacity-80">{index + 1}</span>{value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}</button>)}
         </div>
-        <h3 ref={groupHeading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none">{gruppe === 'grunddaten' ? 'Grunddaten' : gruppe === 'zeitraum' ? 'Zeitraum' : 'Vorhandene Etappen'}</h3>
+        <h3 ref={groupHeading} tabIndex={-1} className="text-base font-semibold text-brand-900 outline-none">{gruppe === 'grunddaten' ? 'Grunddaten' : gruppe === 'zeitraum' ? 'Zeitraum' : 'Vorhandene Etappen'}</h3>
         <div id="edit-group-grunddaten" hidden={gruppe !== 'grunddaten'} inert={gruppe !== 'grunddaten'} className={gruppe === 'grunddaten' ? 'grid min-w-0 gap-5' : undefined}>
         <label className="grid min-w-0 grid-cols-1 gap-2">Reisetitel<input data-aenderung-start className={input} value={form.title} maxLength={GRENZEN.titel} aria-invalid={invalid('title')} aria-describedby={invalid('title') ? errorId : undefined} onChange={e => update({ ...form, title: e.target.value })} /></label>
         <div className="grid min-w-0 items-start gap-5 sm:grid-cols-2">
