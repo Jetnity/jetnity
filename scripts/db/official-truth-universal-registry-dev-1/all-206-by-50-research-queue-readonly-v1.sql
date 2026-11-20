@@ -48,7 +48,7 @@ WITH queue_order AS (
  sum(rank_mismatches) AS rank_mismatches,
  sum(invalid_archive_path) AS invalid_archive_path,
  sum(unreviewed_status_corruptions) AS status_failures,
- count(*) FILTER(WHERE destination_code=ANY((SELECT selected FROM queue_order))) AS priority_destinations
+ count(*) FILTER(WHERE destination_code IN('AT','IT','FR','ES','PT','GR','HR','NL','GB','US','TR','TH','AE')) AS priority_destinations
  FROM custody
 ), safety AS (
  SELECT (t.destinations=206 AND t.rows=10300 AND t.ordinary_destinations=204
