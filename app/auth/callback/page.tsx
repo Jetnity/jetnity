@@ -1,5 +1,6 @@
 // app/auth/callback/page.tsx
 import type { Metadata } from 'next'
+import { Markenrahmen } from '@/components/layout/Markenrahmen'
 import CallbackClient from './CallbackClient'
 
 export const metadata: Metadata = {
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="container mx-auto max-w-lg px-4 py-16">
+    <Markenrahmen>
       <CallbackClient />
-    </main>
+    </Markenrahmen>
   )
 }
