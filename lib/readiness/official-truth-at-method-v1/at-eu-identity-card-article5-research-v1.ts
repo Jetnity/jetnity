@@ -1,6 +1,6 @@
 // RESEARCH_ONLY — Austrian BMI primary and EU Regulation 2025/1208 Art. 5,
 // crosschecked 20.11.2026. Only EU member-state national identity cards,
-// not passports, Swiss/UK cards or third-country residence documents.
+// not passports, Swiss/UK/Danish cards or third-country residence documents.
 // No private MRZ/photo/age data collected. No visitor decision or grant.
 export const AT_EU_ID_SOURCES=Object.freeze({
  bmi:'https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/',
@@ -8,9 +8,11 @@ export const AT_EU_ID_SOURCES=Object.freeze({
  reviewedAt:'2026-11-20' as const,
 })
 // Exactly the EU nationals in the official AT50 passport-priority archive.
-// Swiss CH free movement and British GB nationality ARE NOT EU ID-card issuers.
-export const AT_EU_ID_PRIORITY_CODES=Object.freeze('AT DE PL IT RO FR NL ES HU CZ HR BE PT BG GR SK SE DK LT'.split(' '))
+// Swiss CH and British GB are not EU ID-card issuers; Denmark DK is not bound
+// by Regulation 2025/1208 (Protocol 22). Never infer DK traveller status.
+export const AT_EU_ID_PRIORITY_CODES=Object.freeze('AT DE PL IT RO FR NL ES HU CZ HR BE PT BG GR SK SE LT'.split(' '))
 export const AT_EU_ID_ART5=Object.freeze({
+ denmarkProtocol22NotBoundBy2025_1208:true as const,
  noFunctionalMrzOrIcaoMinimumCeasesBy:'2026-08-03' as const,
  otherNonConformingNationalIdCeasesBy:'2031-08-03' as const,
  earlierActualDocumentExpiryControls:true as const,

@@ -15,12 +15,13 @@ test('Current Austrian primary and EU 2025/1208 Art 5 distinguish MRZ, expiry an
  assert.equal(AT_EU_ID_ART5.grandfatherNeedsFunctionalMrzAndIcaoMinimum,true)
  assert.equal(AT_EU_ID_ART5.grandfatherValidOnlyToActualDocumentExpiry,true)
  assert.equal(AT_EU_ID_ART5.notApplicableToPassport,true)
+ assert.equal(AT_EU_ID_ART5.denmarkProtocol22NotBoundBy2025_1208,true)
 })
-test('19 EU card categories but no single AT50 personal document or visitor release',()=>{
+test('18 EU card categories but no single AT50 personal document or visitor release',()=>{
  const all=Object.values(AT_BMI_GROUPS).flat()
  assert.equal(all.length,50)
- assert.equal(AT_EU_ID_PRIORITY_CODES.length,19)
- assert.equal(new Set(AT_EU_ID_PRIORITY_CODES).size,19)
+ assert.equal(AT_EU_ID_PRIORITY_CODES.length,18)
+ assert.equal(new Set(AT_EU_ID_PRIORITY_CODES).size,18)
  for(const code of all){
   const record=atBmiSourceReview(code)
   assert.ok(record)
@@ -36,7 +37,7 @@ test('19 EU card categories but no single AT50 personal document or visitor rele
   assert.equal(r.personalVisaEffect,null)
   assert.equal(record.individualVisaQualified,false)
  }
- for(const code of ['CH','GB','XK','US','ZZ'])assert.equal(atEuIdentityCardResearch(code),null)
+ for(const code of ['CH','GB','DK','XK','US','ZZ'])assert.equal(atEuIdentityCardResearch(code),null)
 })
 test('No Austrian identity-card research releases EU4 passport rules',()=>{
  for(const r of EU4_200_VISA_RESEARCH_CASES){
