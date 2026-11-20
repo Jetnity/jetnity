@@ -232,6 +232,13 @@
   .workspace-bottom-nav[data-flow="true"] { grid-template-columns: minmax(0, 1fr); }
   .workspace-bottom-nav[data-flow="true"] .workspace-nav-link { flex-direction: row; justify-content: flex-start; gap: .75rem; padding-inline: .75rem; }
 }
+/* In flow only for width, height or keyboard (normal text size): a compact
+   grid instead of five full rows above the content (DESIGN_SYSTEM.md 7.14).
+   Enlarged text keeps the one-column rows above. */
+.workspace-bottom-nav[data-flow-raster] .workspace-nav-link { flex-direction: column; justify-content: center; gap: .3rem; min-height: 52px; padding: .45rem .25rem; text-align: center; }
+.workspace-bottom-nav[data-flow-raster="zwei"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.workspace-bottom-nav[data-flow-raster="zwei"] > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.workspace-bottom-nav[data-flow-raster="fuenf"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 @media (max-height: 500px) and (max-width: 63.99rem) {
   .workspace-header { position: static; }
 }
@@ -257,6 +264,9 @@
   .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary:not(:has(svg)) { display: none; }
 }
 @media (max-width: 47.999rem) {
+  /* Round action buttons keep their width; the logo gives way instead of a
+     button sliding under Mond/Sonne. */
+  .workspace-header:not([data-flow="true"]) .workspace-header-actions { flex-shrink: 0; }
   .workspace-header:not([data-flow="true"]) .workspace-aktion-text {
     position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
@@ -275,4 +285,9 @@
 @media (max-width: 22.5rem) {
   .workspace-header:not([data-flow="true"]) { padding-inline: .5rem; gap: .375rem; }
   .workspace-header:not([data-flow="true"]) .workspace-header-brand img { width: 4.25rem; }
+}
+/* Below 320 px with two trip actions the logo would shrink to a smudge; it
+   stays in the menu panel and the footer. */
+@media (max-width: 19.999rem) {
+  .workspace-header:not([data-flow="true"]):has([data-workspace-aktionen] button + button) .workspace-header-brand { display: none; }
 }

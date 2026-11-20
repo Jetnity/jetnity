@@ -28,6 +28,8 @@ export default function WorkspaceTripChrome(props: {
   const bottomRef = useRef<HTMLElement>(null)
   const leisteRef = useRef<HTMLButtonElement>(null)
   const [flow, setFlow] = useState(false)
+  /** Nur wenn die Leiste wegen Breite, Höhe oder Tastatur im Fluss steht, nicht wegen grosser Schrift. */
+  const [raster, setRaster] = useState<'zwei' | 'fuenf' | null>(null)
   const leisteDa = Boolean(props.kostenLeiste)
 
   useEffect(() => {
@@ -39,8 +41,10 @@ export default function WorkspaceTripChrome(props: {
     const measure = () => {
       const font = parseFloat(getComputedStyle(root).fontSize)
       const keyboard = window.visualViewport && window.visualViewport.height < window.innerHeight * .75
-      const nextFlow = font >= 24 || window.innerWidth < 360 || window.innerHeight < 500 || Boolean(keyboard)
+      const grosseSchrift = font >= 24
+      const nextFlow = grosseSchrift || window.innerWidth < 360 || window.innerHeight < 500 || Boolean(keyboard)
       setFlow(nextFlow)
+      setRaster(nextFlow && !grosseSchrift ? (window.innerWidth >= 544 ? 'fuenf' : 'zwei') : null)
       const fest = !nextFlow && window.innerWidth < 1024
       const nav = fest ? bottomRef.current?.getBoundingClientRect().height ?? 0 : 0
       const height = nav + (fest ? leisteRef.current?.getBoundingClientRect().height ?? 0 : 0)
@@ -76,7 +80,7 @@ export default function WorkspaceTripChrome(props: {
         if (props.ansicht === view && !props.detailOffen) shell.closeNavigation()
         else shell.finishNavigation()
       }}>
-      <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{!rail && !flow && view === 'einreise' ? 'Einreise' : label}</span>
+      <Icon aria-hidden="true" /><span className={rail ? 'workspace-nav-label' : undefined}>{!rail && (!flow || raster === 'fuenf') && view === 'einreise' ? 'Einreise' : label}</span>
     </button>
     return <div key={view}>{button}</div>
   })
@@ -91,7 +95,7 @@ export default function WorkspaceTripChrome(props: {
         </button>
       ) : null}
       <nav ref={bottomRef} aria-label="Reisebereiche" className="workspace-bottom-nav"
-        data-flow={flow} data-shell-nav={flow ? 'flow' : 'bottom'} data-workspace-mode-nav="mobile">{buttons(false)}</nav>
+        data-flow={flow} data-flow-raster={raster ?? undefined} data-shell-nav={flow ? 'flow' : 'bottom'} data-workspace-mode-nav="mobile">{buttons(false)}</nav>
     </>, shell.mobile)}
   </>
 }
