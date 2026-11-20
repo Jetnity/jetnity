@@ -21,9 +21,9 @@ export default function PersoenlicherReiseeinstieg({
   const zeitraum = fortsetzung ? etappenZeitraumAnzeigen(fortsetzung.startDate, fortsetzung.endDate) : null
 
   return (
-    <section aria-label="Dein nächster Schritt" className="rounded-[26px] bg-brand-800 px-5 py-7 text-white sm:px-8 sm:py-8">
+    <section aria-label="Dein nächster Schritt" className="rounded-panel bg-brand-800 px-5 py-7 text-white sm:px-8 sm:py-8">
       <div className="flex min-w-0 items-start gap-4">
-        <span className="hidden h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/20 sm:grid">
+        <span className="hidden h-11 w-11 shrink-0 place-items-center rounded-control border border-white/20 sm:grid">
           <MapPinned className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">

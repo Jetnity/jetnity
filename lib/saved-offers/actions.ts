@@ -7,7 +7,7 @@ import { createRentalSearch, rentalAccess } from '@/lib/providers/discovercars/s
 import { offerInput, offerTimingInput, type OfferInput, type SavedOffer } from './contract'
 import { offerReference } from './reference'
 
-type Result<T> = { ok: true; value: T } | { ok: false; message: string }
+type Result<T> = { ok: true; value: T } | { ok: false; message: string; anmeldung?: true }
 const LOGIN = 'Bitte melde dich an, um Angebote in deinem Konto zu merken.'
 const FAILURE = 'Die Merkliste konnte nicht gespeichert werden. Bitte versuche es erneut.'
 
@@ -19,7 +19,7 @@ async function account() {
 
 export async function savedOffersList(): Promise<Result<SavedOffer[]>> {
   const { db, user } = await account()
-  if (!user) return { ok: false, message: LOGIN }
+  if (!user) return { ok: false, message: LOGIN, anmeldung: true }
   const { data, error } = await db.from('saved_offers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(501)
   if (error) return { ok: false, message: 'Die Merkliste konnte nicht geladen werden. Bitte versuche es erneut.' }
   if (data.length > 500) return { ok: false, message: 'Deine Merkliste enthält mehr als 500 Angebote. Bitte wende dich an den Support.' }

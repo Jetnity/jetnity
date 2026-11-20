@@ -25,6 +25,7 @@ export const BUCHUNGEN_COPY = {
   leerTitel: 'Noch keine bestätigten Buchungen.',
   leerText:
     'Sobald du einen Flug, eine Unterkunft, eine Verbindung oder einen Mietwagen in einer Reise ausdrücklich als gebucht markierst, erscheint er hier.',
+  leerAktion: 'Zu meinen Reisen',
   fehlerTitel: 'Deine Buchungen konnten nicht geladen werden.',
   fehler500: 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.',
   fehler503: 'Wir konnten deinen aktuellen Stand gerade nicht prüfen; bitte lade später neu.',
@@ -36,8 +37,7 @@ export const BUCHUNGEN_COPY = {
   reiseBezug: 'Reise',
   einstieg: 'Bestätigte Buchungen ansehen',
   einstiegHinweis: 'Nur ausdrücklich in Jetnity bestätigte Buchungen – ohne Beträge und ohne Partnerbestätigung.',
-  ordnungHinweis:
-    'Sortiert nach deiner eigenen Bestätigung, die neueste zuerst. Ein späterer Seitenaufruf ist keine Momentaufnahme.',
+  ordnungHinweis: 'Die zuletzt bestätigte Buchung steht oben.',
   keineTrefferTitel: 'Keine Buchung passt zu dieser Suche.',
   keineTrefferText: 'Ändere Titel, Art oder Archiv, oder setze die Filter zurück.',
   fortsetzungEndeTitel: 'In diesem Stand gibt es hier keine weitere Buchung.',
@@ -60,7 +60,6 @@ export const BUCHUNGEN_COPY = {
   zuruecksetzen: 'Filter zurücksetzen',
   seitenEnde: 'Das sind alle Buchungen dieser Ansicht.',
   ladenTitel: 'Buchungen werden geladen.',
-  ladenText: 'Einen Moment, wir lesen die bestätigten Buchungen deines Kontos.',
 } as const
 
 export type KontoBuchung = {

@@ -8,8 +8,8 @@ import { CATEGORIES, type OfferInput } from '@/lib/saved-offers/contract'
 import { saveManualOffer } from '@/lib/saved-offers/actions'
 
 const field = 'min-h-11 w-full rounded-xl border border-line-200 bg-white px-3 py-2 text-base text-brand-800'
-export default function ManualOffer({ category = 'stay', destination = '', startsOn = '', endsOn = '', onSaved }: {
-  category?: OfferInput['category']; destination?: string; startsOn?: string; endsOn?: string; onSaved?: () => void
+export default function ManualOffer({ category = 'stay', destination = '', startsOn = '', endsOn = '', onSaved, merklisteLink = true }: {
+  category?: OfferInput['category']; destination?: string; startsOn?: string; endsOn?: string; onSaved?: () => void; merklisteLink?: boolean
 }) {
   const id = useId()
   const [open, setOpen] = useState(false)
@@ -21,7 +21,7 @@ export default function ManualOffer({ category = 'stay', destination = '', start
   return <section className="min-w-0 rounded-2xl border border-line-200 bg-white p-4 sm:p-5" aria-label="Konkretes Angebot merken">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <button type="button" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-brand-800"><Heart className="h-4 w-4" aria-hidden="true" />Angebot selbst merken</button>
-      <Link href="/account/merkliste" className="inline-flex min-h-11 items-center px-3 text-sm text-brand-800 underline underline-offset-4">Meine Merkliste</Link>
+      {merklisteLink ? <Link href="/account/merkliste" className="inline-flex min-h-11 items-center px-3 text-sm text-brand-800 underline underline-offset-4">Meine Merkliste</Link> : null}
     </div>
     {open && <form id={id} className="mt-4 grid gap-4" onSubmit={async event => {
       event.preventDefault()

@@ -12,12 +12,15 @@ import AccountBesuche from '@/components/account/AccountBesuche'
 import AccountBuchungen from '@/components/account/AccountBuchungen'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import AccountUebersicht from '@/components/account/AccountUebersicht'
+import KontoStart from '@/components/account/KontoStart'
+import MerklisteSeite from '@/components/saved-offers/MerklisteSeite'
 import type { Besuch } from '@/lib/account/besuche'
 import type { KontoBuchung } from '@/lib/account/buchungen'
 import { naechsteReiseAus } from '@/lib/account/naechste-reise'
 import { weltBesuchtAbleiten } from '@/lib/account/welt-ansicht'
 import { weltLaenderAbleiten, type WeltGeometrie } from '@/lib/account/welt-laender'
 import { worldMapAbleiten } from '@/lib/account/world-map'
+import type { SavedOffer } from '@/lib/saved-offers/contract'
 import type { TripSummary } from '@/types/trips'
 
 const REISE: TripSummary = {
@@ -331,6 +334,33 @@ const ARCHIV_BUCHUNG: KontoBuchung = {
   tripArchived: true,
 }
 
+const GEMERKT: SavedOffer = {
+  id: '55555555-5555-4555-8555-555555555555',
+  user_id: '66666666-6666-4666-8666-666666666666',
+  category: 'stay',
+  title: 'Casa do Largo, Doppelzimmer mit Frühstück',
+  destination: 'Lissabon',
+  provider: 'example.com',
+  source: 'manual',
+  url: 'https://example.com/hotel/casa-do-largo',
+  offer_ref: 'manual:example.com/hotel/casa-do-largo',
+  starts_on: '2026-09-12',
+  starts_at: null,
+  start_timezone: null,
+  ends_on: '2026-09-16',
+  ends_at: null,
+  end_timezone: null,
+  expires_at: null,
+  created_at: '2026-08-20T10:00:00.000Z',
+}
+
+function merklisteFixture(zustand: string) {
+  if (zustand === 'leer') return { ok: true as const, value: [] }
+  if (zustand === 'fehler') return { ok: false as const, message: 'Die Merkliste konnte nicht geladen werden. Bitte versuche es erneut.' }
+  if (zustand === 'anmeldung') return { ok: false as const, message: 'Bitte melde dich an, um Angebote in deinem Konto zu merken.', anmeldung: true as const }
+  return { ok: true as const, value: [GEMERKT] }
+}
+
 export default function AccountAuditClient({
   geometrie,
   zustand,
@@ -408,6 +438,14 @@ export default function AccountAuditClient({
     geplant: welt.laenderCodes,
     geometrie,
   })
+
+  if (ansicht === 'start' || ansicht === 'merkliste') {
+    return (
+      <div data-account-audit={zustand} className="min-h-screen bg-surface-75">
+        {ansicht === 'start' ? <KontoStart name="Sasa Muster" email="sasa@example.com" initiale="S" /> : <MerklisteSeite ergebnis={merklisteFixture(zustand)} />}
+      </div>
+    )
+  }
 
   return (
     <div data-account-audit={zustand} className="min-h-screen bg-surface-75">
