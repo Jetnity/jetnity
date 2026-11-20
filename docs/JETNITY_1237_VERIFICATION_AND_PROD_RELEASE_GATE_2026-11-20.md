@@ -37,3 +37,28 @@ Der bestehende modellvalidierte `punktSchema`-Prüfer in `lib/reisevorschlag/sch
 **Sofort-Rollback bei einer Regression:** Die beiden Domain-Aliase über Vercels **Rollback/Promote des zuvor bekannten guten** Deployments `dpl_8fitMFHnsYX2RPYBGtPXJGkJFwaA` zurückschalten, beide Zuweisungen unabhängig rücklesen und Karte/Wetter/Login erneut testen. Ein Git-Revert allein oder ein Source-Merge setzt Vercel-Aliase nicht zuverlässig zurück. **Datenbankänderungen werden dadurch nicht rückgängig gemacht**; falls die separate Migration später bewilligt wird, braucht sie eine eigene transaktionale Rollback-Freigabe. HSTS im Browser bleibt u. U. zwischengespeichert und wird nicht durch einen Alias-Rollback gelöscht; eine Deaktivierung erfordert bei Bedarf `Strict-Transport-Security: max-age=0` über gültiges HTTPS.
 
 **Status:** `PREPARED / UNAPPLIED / NO PRODUCTION DEPLOY`. Owner entscheidet separat über Production-Build, mögliche Begleiter-Migration, Kostengates und Login/2FA.
+
+## 5. Gebündelte Owner-Freigaben (Stand 20.11.2026, 15:40 Zürich)
+
+**Ist-Zustand Production (öffentlicher Header-Readback 20.11.):** `jetnity.com` sendet weiterhin `X-Powered-By: Next.js`, keine CSP und die Vercel-Standard-HSTS ohne `includeSubDomains`; `www.jetnity.com` leitet per 308 auf `jetnity.com`. Damit ist **#1260 nachweislich nicht live**. Die Vercel-API für Alias-/Deployment-Lesen ist diesem Agenten-Zugang verweigert (403/404); die Alias-Zuordnung auf `dpl_8fitMFHnsYX2RPYBGtPXJGkJFwaA` stammt aus dem letzten dokumentierten Readback und ist vor dem Deploy im Vercel-Dashboard einmal abzulesen.
+
+**Was mit dem Deploy live geht:** alle seit dem gepinnten Build auf `main` gemergten PRs, nach Git-Historie #1252 (KI-Schutz), #1255, #1257 (Reiseintegration S1–S4: Hotel-Gäste/Zimmer, Rückweg zur Reise, Merkliste-Herkunft, Mietwagen-Consent), #1259 (Admin/CMS, Production weiter auf CMS-v1, `JETNITY_CMS_PUBLIC_V2_ENABLED` aus), #1260 (Next 16.4.6, Security-Header), #1261 (Qualitätsschritt 2), #1262 und #1263 (KI-Korrekturen). Die Prüfliste in §4 ergänzt deshalb einen Punkt: **Hotel/Merkliste** – Hotelsuche aus einer Etappe öffnen (Erwachsene/Kinder/Zimmer sichtbar), Angebot merken, „nur gemerkt, nicht gebucht“ sichtbar, „Zur Reise zurück“ führt zum richtigen Reiseplan.
+
+### Freigabe A – Production-Deploy (Vercel, durch Owner oder mit erteiltem Vercel-Zugang)
+1. Voraussetzung: Main-CI auf dem Merge-Commit von #1263 vollständig grün.
+2. Vercel → `jetnity-app` → Deployments → **Create Deployment** → Branch `main`, exakt dieser Commit, Ziel Production. Da `main`-Autodeploy aus ist und die Domains bisher nicht automatisch umgehängt wurden, bleibt `jetnity.com` dabei zunächst auf dem alten Build.
+3. Prüfliste §4 (Karte, Wetter, Mietwagen, Login/2FA, KI, Hotel/Merkliste, Header) **zuerst auf der Deployment-URL** des neuen Builds (gleiche Production-Variablen), dann **Promote to Production**.
+4. Nach Promote: Kurzcheck auf `jetnity.com` (Startseite, eine Reise öffnen, Login, Header).
+5. Rollback: Vercel **Instant Rollback** auf `dpl_8fitMFHnsYX2RPYBGtPXJGkJFwaA`, beide Domains rücklesen. Kein Git-Revert nötig.
+
+### Freigabe B – Production-Datenbank für den Live-Reisebegleiter (eine additive Prüfbedingung)
+- **Inhalt:** ausschliesslich die vorhandene Migration `supabase/migrations/20260917090000_modell_reisebegleiter.sql`: Prüfbedingung `model_usage_funktion_werte` erlaubt zusätzlich `reisebegleiter`. Keine Änderung an RLS, Rechten, Reservierungsfunktion, Preisen oder Deckeln; der Begleiter teilt das bestehende gemeinsame Tageskontingent und den bestehenden Tageskostendeckel. **Keine neuen Kosten über den bestehenden Deckel hinaus.**
+- **Vorher (SELECT):** `pg_get_constraintdef` von `model_usage_funktion_werte` zeigt genau `reisevorschlag`, `reiseaenderung`; Version `20260917090000` fehlt in `supabase_migrations.schema_migrations`.
+- **Ausführung (eine Transaktion):** Migrationsdatei unverändert ausführen und Version `20260917090000` / Name `modell_reisebegleiter` in `supabase_migrations.schema_migrations` eintragen.
+- **Nachher (SELECT):** Prüfbedingung enthält genau die drei Werte; keine weiteren Objekte verändert.
+- **Rollback (eine Transaktion):** Prüfbedingung entfernen und mit den zwei alten Werten als `NOT VALID` neu anlegen (blockiert neue Begleiter-Zeilen, bereits gezählte Nutzung bleibt für den Kostendeckel erhalten), Versionseintrag entfernen.
+- **Reihenfolge:** B vor dem KI-Punkt der Prüfliste. Ohne B bleibt der dritte KI-Pfad in Production **BLOCKED** (ehrliche Fehlermeldung, keine Reise beschädigt), nicht PASS.
+
+### Freigabe C – KI in Production (nur Kontrolle durch Owner, kein Agenten-Eingriff)
+- In Vercel Production-Scope nur **Existenz** prüfen: `JETNITY_MODELL_AKTIV` (genau `true`/`1`), `OPENAI_API_KEY`, `JETNITY_MODELL_NAME`, `JETNITY_MODELL_AUFWAND`, `SUPABASE_SERVICE_ROLE_KEY`. Fehlt eine davon, bleibt die KI auf jetnity.com aus und der KI-Punkt ist BLOCKED. Werte niemals in Chat/PR.
+- Notbremse nach Aktivierung: `JETNITY_MODELL_AKTIV` entfernen bzw. auf einen anderen Wert setzen und neu deployen; Reisen bleiben unverändert.
