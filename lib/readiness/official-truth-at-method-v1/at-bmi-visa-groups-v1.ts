@@ -1,3 +1,4 @@
+import {atEuIdentityCardResearch,type AtEuIdentityCardResearch} from './at-eu-identity-card-article5-research-v1'
 import {atWesternBalkanIssuerReview,type AtWesternBalkanIssuerReview} from './at-western-balkan-issuer-conditions-v1'
 import {atGbBmiCategoryReview,type AtGbBmiCategoryReview} from './at-gb-bmi-nationality-categories-v1'
 import {atAirportTransitVisaAResearch,type AtAirportTransitVisaAResearch} from './at-airport-transit-visa-a-research-v1'
@@ -70,7 +71,8 @@ export type AtBmiSourceReview=Readonly<{code:string;group:AtBmiGroup;label:strin
  britishPassportCategoryCrosscheck:AtGbBmiCategoryReview|null;
  airportTransitVisaAResearch:AtAirportTransitVisaAResearch;
  passportRecognitionSourceReview:AtBmiDocumentRecognitionResearch|null;
- visaApplicationEvidenceResearch:AtVisaApplicationEvidenceResearch}>
+ visaApplicationEvidenceResearch:AtVisaApplicationEvidenceResearch;
+ euIdentityCardResearch:AtEuIdentityCardResearch|null}>
 export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
  if(!/^[A-Z]{2}$/.test(code))return null
  const group=groups.get(code);if(!group)return null
@@ -92,5 +94,6 @@ export function atBmiSourceReview(code:string):AtBmiSourceReview|null{
   airportTransitVisaAResearch:atAirportTransitVisaAResearch(code),
   passportRecognitionSourceReview:atBmiDocumentRecognitionResearch(code),
   visaApplicationEvidenceResearch:atVisaApplicationEvidenceResearch(code),
+  euIdentityCardResearch:atEuIdentityCardResearch(code),
  })
 }
