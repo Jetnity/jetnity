@@ -15,7 +15,7 @@ test('AT 50: EU-family entry is conditional, never an automatic visa/fee or card
   for(const code of members){
    const r=atBmiSourceReview(code)
    assert.ok(r,code)
-   assert.equal(r.euFamilyEntryResearch,atEuFamilyEntryResearch(code,group as 'V'|'F'|'E'|'H'))
+   assert.deepEqual(r.euFamilyEntryResearch,atEuFamilyEntryResearch(code,group as 'V'|'F'|'E'|'H'))
    if(group==='F'||group==='H'){assert.equal(r.euFamilyEntryResearch,null);continue}
    const f=r.euFamilyEntryResearch
    assert.ok(f,code)
