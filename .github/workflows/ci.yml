@@ -440,6 +440,30 @@ jobs:
       - name: Actual isolated browser audit
         run: node --import ./scripts/server-only-test-register.mjs --import tsx scripts/official-truth-product-v3-ui/run.mjs
 
+      # Existing PR branch only; no new key, no Owner session and no Production
+      # writes. Real Chromium UI (3 representative source categories) plus all
+      # 50 genuine public Dev API readbacks, each fail-closed if unapproved.
+      - name: Actual AT 50-passport Dev visitor readback
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/official-truth-universal-source-registry-dev-20261119' }}
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://yfvbxvijcorffwxbxahl.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
+          VERCEL_ENV: preview
+          VERCEL_PROJECT_ID: prj_wTTVawPItEO7a4HihEmaU3PsuaXM
+          VERCEL_GIT_REPO_OWNER: Jetnity
+          VERCEL_GIT_REPO_SLUG: jetnity
+          VERCEL_GIT_COMMIT_REF: feat/official-truth-universal-source-registry-dev-20261119
+        run: node scripts/official-truth-at-50-browser-dev/run.mjs
+
+      - name: Retain actual AT50 Dev visitor evidence, including failures
+        if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/official-truth-universal-source-registry-dev-20261119' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-truth-at50-dev-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/official-truth-at-50-dev-browser/
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Preserve actual synthetic evidence, including failures
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

@@ -28,7 +28,7 @@ const origin='http://127.0.0.1:'+port
 const out=join(process.cwd(),'test-results/official-truth-at-50-dev-browser')
 await mkdir(out,{recursive:true})
 const report={scope:'Actual Chromium UI and real Dev Supabase source-bound API; no personal or production grant',
- head:process.env.GITHUB_SHA,dev:'yfvbxvijcorffwxbxahl',passports:3,
+ head:process.env.GITHUB_SHA,dev:'yfvbxvijcorffwxbxahl',passports:3,uiPassports:3,apiPassports:0,
  screenshotPaths:[],status:'not_started'}
 let browser
 const next=spawn(process.execPath,[require.resolve('next/dist/bin/next'),'dev','--hostname','127.0.0.1','--port',String(port)],{
@@ -112,6 +112,50 @@ try {
   report.screenshotPaths.push(name)
  }
  assert.deepEqual(errors,[],'Browser JS runtime errors')
+
+ // Exercise the *actual* public Next API through the browser's same-origin
+ // request context, five passports at a time. This is not a simulated DB
+ // result and is not an individual visa-law approval: all 49 previously
+ // unauthorised passports MUST fail closed; CH may be accepted only while
+ // its separately owner-authorised source-bound method is current.
+ const priority='IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL'.split(' ')
+ assert.equal(priority.length,50)
+ assert.equal(new Set(priority).size,50)
+ let apiChecked=0,acceptedSwiss=0
+ for(let offset=0;offset<50;offset+=5){
+  const batch=priority.slice(offset,offset+5)
+  const api=await page.request.post(origin+'/api/readiness/at-visa',{
+   data:{destinationCountryCode:'AT',citizenshipCountryCodes:batch},
+   headers:{accept:'application/json'},timeout:35000})
+  assert.equal(api.status(),200,'Real Dev visitor endpoint failed batch '+offset)
+  const actual=await api.json()
+  assert.deepEqual(actual.input?.citizenshipCountryCodes,batch)
+  assert.equal(actual.input?.destinationCountryCode,'AT')
+  assert.equal(actual.synthetic,false)
+  assert.equal(actual.cells?.length,batch.length)
+  assert.ok(Number.isFinite(Date.parse(actual.generatedAt)))
+  for(let i=0;i<batch.length;i++){
+   const cell=actual.cells[i],code=batch[i],result=cell?.results?.[0]
+   assert.equal(cell?.country,code,'Country/order mismatch')
+   assert.equal(cell?.results?.length,1)
+   assert.ok(result?.status==='unavailable'||result?.status==='accepted')
+   if(code!=='CH')assert.equal(result.status,'unavailable','Unapproved passport '+code+' was published')
+   else if(result.status==='accepted'){
+    acceptedSwiss++
+    assert.equal(result.visaAssessment?.effect,'not_required')
+    assert.equal(result.source?.href,
+     'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/')
+    assert.ok(Date.parse(result.expiresAt)>Date.parse(actual.generatedAt))
+   }
+   apiChecked++
+  }
+ }
+ assert.equal(apiChecked,50)
+ assert.ok(acceptedSwiss<=1)
+ report.apiPassports=apiChecked
+ report.acceptedSwiss=acceptedSwiss
+ report.newPositiveVisaFacts=0
+
  report.status='pass';report.groups=['F','V','E'];report.newPositiveVisaFacts=0
 } catch(error){
  report.status='fail';report.reason=String(error?.message??error).slice(0,250)
