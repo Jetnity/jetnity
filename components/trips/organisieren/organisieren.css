@@ -122,6 +122,90 @@
   background: var(--org-white);
   box-shadow: 0 7px 25px #112f220c;
 }
+.org-bestand {
+  padding: 16px 22px 10px;
+  border: 1px solid var(--org-line);
+  border-top: 0;
+  background: var(--org-white);
+}
+.org-bestand:not(:has(+ .org-form)) {
+  margin-bottom: 14px;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 7px 25px #112f220c;
+}
+.org-bestand + .org-form {
+  border-top: 1px solid var(--org-line);
+}
+.org-bestand-kopf h3 {
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
+.org-bestand-kopf p,
+.org-bestand-text small {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--org-muted);
+}
+.org-bestand ul {
+  display: grid;
+  margin-top: 6px;
+}
+.org-bestand li + li {
+  border-top: 1px solid var(--org-line);
+}
+.org-bestand-zeile {
+  display: flex;
+  align-items: center;
+  gap: 8px 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  text-align: left;
+}
+button.org-bestand-zeile:hover {
+  background: var(--org-bg);
+}
+.org-bestand-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.org-bestand-text b {
+  font-size: 15px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.org-bestand-stand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  font-size: 14px;
+}
+.org-bestand-pfeil {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--org-muted);
+}
+@media (min-width: 701px) {
+  .org-bestand-stand > :last-child {
+    min-width: 5.5rem;
+    text-align: right;
+  }
+}
+.org-bestand-mehr {
+  min-height: 44px;
+  padding-inline: 6px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 .org-formtop,
 .org-sectionhead,
 .org-cardactions,
@@ -264,10 +348,11 @@
   max-width: 9rem;
 }
 .org-sub .org-field input {
+  min-height: 40px;
   border: 1px solid var(--org-line);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
 }
 .org-sub input[type='checkbox'] {
   accent-color: #153a33;
@@ -572,20 +657,28 @@
     width: calc(100% - 24px);
   }
   .org-tabs {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    padding: 7px 5px;
-    gap: 1px;
+    padding: 6px 3px;
+    gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .org-tabs::-webkit-scrollbar {
+    display: none;
   }
   .org-tabs button {
+    flex: 1 0 auto;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
-    padding: 4px 0;
-    font-size: clamp(8.5px, 2.2vw, 11px);
-    min-height: 46px;
-    border-radius: 7px;
-    letter-spacing: -0.04em;
+    gap: 3px;
+    min-width: 3rem;
+    padding: 6px 3px;
+    font-size: 12px;
+    min-height: 52px;
+    border-radius: 10px;
+    letter-spacing: -0.01em;
+    scroll-snap-align: start;
   }
   .org-tabs svg {
     width: 17px;
@@ -593,6 +686,22 @@
   }
   .org-form {
     padding: 14px 11px;
+  }
+  .org-bestand {
+    padding: 14px 11px 6px;
+  }
+  .org-bestand-zeile {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: 2px;
+  }
+  .org-bestand-stand {
+    grid-column: 1;
+    justify-content: flex-start;
+  }
+  .org-bestand-pfeil {
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
   .org-formtop h2,
   .org-sectionhead h2,
@@ -620,7 +729,39 @@
     font-size: 13px;
   }
   .org-sub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
     gap: 8px 10px;
+  }
+  .org-sub > .org-field {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-height: 54px;
+    padding: 7px 9px;
+    border: 1px solid var(--org-line);
+  }
+  .org-sub .org-field > div {
+    max-width: none;
+  }
+  .org-sub .org-field input {
+    min-height: 24px;
+    border: 0;
+    border-radius: 0;
+    padding: 1px 0;
+    font-size: 13px;
+  }
+  .org-sub > label {
+    min-height: 44px;
+    gap: 8px;
+    color: var(--org-ink);
+    font-size: 13px;
+  }
+  .org-sub input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
   }
   .org-fields .org-go {
     padding: 0 11px;
@@ -688,6 +829,13 @@
   }
   .org-mapcanvas {
     height: 230px;
+  }
+}
+@media (max-width: 359px) {
+  .org-tabs button {
+    padding-inline: 2px;
+    font-size: 11.5px;
+    letter-spacing: -0.02em;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -78,6 +78,22 @@ function preisLesen(punkt: Pick<TripItem, 'priceAmount' | 'priceCurrency'>): Les
   return wert === null ? { art: 'ungueltig' } : { art: 'preis', rappen: wert, waehrung: punkt.priceCurrency }
 }
 
+/** «gebucht» nur, wenn du den Punkt als gebucht markiert hast; sonst gilt er als ausgewählt. */
+export function kostenStand(punkt: TripItem): KostenStand {
+  return kannBuchungMarkieren(punkt) && istGebucht(punkt) ? 'gebucht' : 'ausgewaehlt'
+}
+
+export type GespeicherterPreis =
+  | { art: 'ohne' }
+  | { art: 'ungueltig' }
+  | { art: 'preis'; betrag: number; waehrung: string }
+
+/** Der beim Auswählen gespeicherte Preis eines Punkts, nach denselben Regeln wie im Kostenbild. */
+export function gespeicherterPreis(punkt: Pick<TripItem, 'priceAmount' | 'priceCurrency'>): GespeicherterPreis {
+  const lesung = preisLesen(punkt)
+  return lesung.art === 'preis' ? { art: 'preis', betrag: lesung.rappen / 100, waehrung: lesung.waehrung } : lesung
+}
+
 function gebuchtZuerst(a: { stand: KostenStand }, b: { stand: KostenStand }): number {
   return a.stand === b.stand ? 0 : a.stand === 'gebucht' ? -1 : 1
 }
@@ -91,7 +107,7 @@ export function kostenbild(reise: Trip, ohneTag: readonly TripItem[] = reise.ohn
 
   for (const punkt of items) {
     const lesung = preisLesen(punkt)
-    const stand: KostenStand = kannBuchungMarkieren(punkt) && istGebucht(punkt) ? 'gebucht' : 'ausgewaehlt'
+    const stand = kostenStand(punkt)
     if (lesung.art === 'ohne') {
       if (PREISARTEN.has(punkt.kind)) ohnePreis.push({ id: punkt.id, titel: punkt.title, art: punkt.kind, stand })
       continue

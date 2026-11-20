@@ -1474,6 +1474,8 @@ export default function TripWorkspace({
               rueckkehrTagId={historyEltern?.ansicht === 'plan' ? historyEltern.tagId : undefined}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}
+              ohneTag={ungeplantePunkte}
+              onItem={oeffneItem}
               kategorieWaehlen={(kategorie, etappeId) => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'replace')}
             />
           ) : null}
