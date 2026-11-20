@@ -156,12 +156,18 @@ Erledigt: Das «Go» kam am 20.11.2026 (siehe Abschnitt 10).
 
 PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Abschnitt 8: 1 ja, 2 ja, 3 ja, 4 heutige Schrift beibehalten. Qualität vor Tempo; nach jeder Etappe kurze Meldung mit Screenshots. Kein Merge ohne ausdrückliches Go am Schluss.
 
+**Erweiterung durch den PO am 20.11.2026 (abends):** Der Feinschliff gilt für jede bestehende Seite, inklusive des ganzen Workspace mit allen Bereichen, Unterseiten, Dialogen, Panels und Zuständen (leer, lädt, Fehler), Admin, Anmeldung (nur Aussehen) sowie Fehler- und Leerseiten. Die vollständige Liste steht in `docs/UI_UX_FEINSCHLIFF_SEITENLISTE_2026-11-20.md` und wird pro Seite abgehakt; `lib/ui/seitenliste.test.ts` hält sie mit dem Code in Einklang. Weitere Etappen kommen in denselben PR. Login-Logik, 2FA, Datenbank und Production bleiben unberührt. Blog, Suche und Hilfe/Kontakt existieren nicht als Seiten; eigene Seiten wären neuer Produktumfang (PO-Entscheid nötig).
+
 | Etappe | Stand | Inhalt |
 |---|---|---|
 | 1 Design-System | umgesetzt | Stufen für Schrift, Ecken, Schatten; Statussiegel, Seitenkopf, Leerzustand, Ladeplatzhalter; flacher Reisekopf in allen fünf Ansichten; einzeilige Kopfzeile bis 1023 px; ein Grundton für alle öffentlichen Seiten; `DESIGN_SYSTEM.md` und ADR-0229 |
 | 2 Planen, Übersicht, Kostenbild | umgesetzt | ein Weg in `/planen`; Übersicht: Als Nächstes → Route mit Unterkunft pro Etappe → Kosten → Einreise und Ziele → Gut organisiert, ab `xl` zweispaltig; `kostenbild()` und `laufUnterkunftLeser()` als reine Funktionen mit Tests; Kostenzeile über der unteren Leiste; Bausteine Karte, Preis, Abschnitt; `DESIGN_SYSTEM.md` 6.3–6.12 und ADR-0230 |
 | 3 Detailansichten | umgesetzt | Organisieren zeigt zuerst «Das hast du schon» (Zeilen öffnen den Punkt im Plan), lesbare Reiter, einklappbare Unterkunftsfilter, Such-Button auf dem Handy nach allen Feldern; Vorbereitung mit einem Satz zum eigenen Stand, einem Hinweis statt Kacheln und Auswahlen als Segmente, Thailand einmal pro reisender Person statt pro Etappe; Einreise nimmt die Länder der Reise (minimal, wegen #1254); Planpunkt-Detail mit Siegel, Zeitpunkt und «Preis beim Auswählen»; Bestandsbereiche mit gemeinsamer Typografie und einem Satz zur Bedeutung von «Gebucht»; Entfernen eines Planpunkts mit Bestätigung in der Zeile; Baustein Hinweis; `DESIGN_SYSTEM.md` 6.8, 6.13–6.15 und ADR-0231 |
-| 4 Feinschliff, Zustände, Konto | als Nächstes | Ladeplatzhalter und Leerzustände überall, Übergänge, Kontoseiten mit Seitenkopf, 4K, Schlussmessung 280–2560 und Querformat mit Video; Logo bei 280 px; gestapelte Leiste unter 360 px |
+| 4 Zustände, Konto, Breiten | umgesetzt | Ladeplatzhalter mit sichtbarem Status in Such- und Anbieterflächen; Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen) mit Seitenkopf, Karte, Leerzustand, Hinweis; Merkliste unterscheidet Lesefehler und Abmeldung; untere Leiste unter 360 px und quer als Raster, Kopfzeile bei 280 px ohne Überlappung; Einblenden 160 ms (aus bei reduzierter Bewegung); Fliesstext höchstens 65 Zeichen; Grundschrift ab 2400 px grösser; Seitenliste mit Test; `DESIGN_SYSTEM.md` 6.1, 6.6, 6.7, 6.16, 6.17, 7.13, 7.14 und ADR-0232 |
+| 5 Öffentliche Seiten | als Nächstes | Startseite, Entdecken, Einreise (öffentlich), Datenquellen, Impressum, Datenschutz, AGB, Meine Welt, 404- und Fehlerseiten |
+| 6 Anmeldung (nur Aussehen) | offen | Login, Registrierung, Passwort setzen, Anmeldung abschliessen, Konto gelöscht, kein Zugriff, Anmeldung & Sicherheit |
+| 7 Admin | offen | alle 20 Admin-Seiten inklusive Admin-Login und MFA (nur Aussehen), Fehler-, Lade- und 404-Seite |
+| 8 Workspace vollständig und Schlussmessung | offen | jedes Panel, jeder Dialog und jeder Zustand (leer, lädt, Fehler) im Workspace einzeln; Schlussmessung 280–2560 px und Querformat, beide Themen, Screenshots und Video |
 
 Abweichungen vom Plan in Etappe 1, mit Grund:
 
@@ -176,6 +182,13 @@ Abweichungen vom Plan in Etappe 2, mit Grund:
 - **Die Reiseprüfung steht unter „Gut organisiert“** statt unter der ersten Karte, damit „Als Nächstes“ kurz bleibt.
 - **Unterkunft pro Etappe nur bei eindeutigem Stand.** Fehlen Check-in oder Check-out einer Unterkunft, sagt die Route nichts dazu; die Karte „Als Nächstes“ meldet den unklaren Stand wie bisher.
 - **Ab 1280 px zweispaltig** (in Etappe 4 geplant, hier vorgezogen, weil die neue Reihenfolge sonst auf dem Desktop sehr lang wird).
+
+Abweichungen vom Plan in Etappe 4, mit Grund:
+
+- **Schlussmessung und Video wandern in Etappe 8**, weil der Umfang auf die ganze App erweitert wurde; gemessen wird einmal am Ende über alle Seiten.
+- **`/reisen` ohne Reise bekommt keine zweite Leer-Karte.** Der grüne Einstieg direkt darüber sagt schon «Beginne deine erste Reise.» mit genau einem Knopf.
+- **Übergänge nur mit Deckkraft.** Ein Versatz hätte während der Animation fixierte Leisten in der Fläche verschoben.
+- **Titel «Bestätigte Buchungen» bleibt.** Er ist in Menü, Tests und Übersetzung verankert; «Als gebucht markiert» wäre genauer und steht als Empfehlung im Bericht.
 
 Abweichungen vom Plan in Etappe 3, mit Grund:
 

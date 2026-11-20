@@ -314,7 +314,7 @@ Pillen bleiben `rounded-full`. Bestehende `rounded-lg`/`xl`/`2xl` und `shadow-e1
 
 Alle öffentlichen Seiten, die Startseite und der helle Arbeitsbereich stehen auf derselben Weiss-Mint-Fläche (`styles/white-mint.css`). `PublicChrome` setzt `data-white-mint="home"` deshalb auf jede öffentliche Seite, nicht nur auf `/`. Dieselbe Datei setzt in diesen Bereichen die semantischen Kanäle (`--background`, `--card`, `--muted`, `--muted-foreground`, `--border`) auf die Weiss-Mint-Werte, damit Bausteine mit `bg-card` oder `text-muted-foreground` nicht in die Creme-Palette zurückfallen. Das grüne Arbeitsbereich-Thema setzt dieselben Kanäle auf seine Werte. Der Admin bleibt unverändert.
 
-Seitenbreite: Inhalte zentriert bis `max-w-7xl`; Lesetext höchstens `max-w-2xl` bis `max-w-3xl`.
+Seitenbreite: Inhalte zentriert bis `max-w-7xl`; Fliesstext höchstens `max-w-prose` (65 Zeichen), auch im `Seitenkopf`. Ausnahme ist die einzeilige Gast-Hinweiszeile (6.2). Steht ein Absatz in einem Container mit `[&>*]:max-w-full`, setzt der Container `[&>p]:max-w-prose`, weil die Variante eine einfache Klasse überstimmt.
 
 ### 6.2 Seitenkopf und Reisekopf
 
@@ -342,9 +342,9 @@ Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:ex
 
 **6.5 Preis.** Immer mit Währung (`CHF 2’640`), gleich breite Ziffern, ganze Einheiten mit ’ als Tausendertrennung (`betragLesbar`), kein Umbruch zwischen Währung und Betrag. Der Stand steht als Statussiegel daneben (`Gebucht` voll, `Ausgewählt` gestrichelt), nie nur als Farbe des Betrags. Ein gespeicherter Preis ist der Preis beim Auswählen; Summen heissen deshalb „Geplant ca.“. Verschiedene Währungen stehen nebeneinander und werden nie umgerechnet.
 
-**6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still.
+**6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still. `sichtbar` zeigt den Statustext als Zeile über den Flächen (für Suchen, die spürbar dauern); `form="flaeche"` ist eine einzige grosse Fläche statt Zeilen. `Ladeflaeche` legt sich über einen Anbieter-Host, der selbst einen Text trägt (Stay22, Flugsuche, Viator, GetYourGuide, DiscoverCars), damit der Text nicht doppelt angesagt wird. Drehsymbole bleiben nur in Knöpfen und Feldern, die gerade etwas absenden oder vorschlagen.
 
-**6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037).
+**6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037). Steht der nächste Schritt schon direkt darüber (z. B. „Erste Reise beginnen“ im grünen Einstieg von `/reisen`), bleibt es bei einer Statuszeile statt einer zweiten Karte. Ein Lesefehler zeigt einen `Hinweis` mit „Erneut laden“; „Zur Anmeldung“ nur, wenn wirklich niemand angemeldet ist.
 
 **6.8 Hinweis.** Ein ruhiger Kasten mit Symbol, optionalem Titel, Text und höchstens einer Aktion als Link. Drei Töne: `info` (gedämpfte Fläche, Info-Symbol), `aufgabe` (Rand in `primary`, Listen-Symbol – etwas ist für dich zu tun) und `dringend` (Rand in `destructive`, Warndreieck – nur wenn ein Versäumnis echte Folgen hat). Nur semantische Farben, damit er auf Weiss-Mint und im grünen Arbeitsbereich gleich lesbar ist. Kein Hinweis ohne Grund: Ein Satz, der nichts verändert, bleibt weg. Verwendet in der Vorbereitung (Stand der Prüfung, Angaben ergänzen) und bei Einreise-Aufgaben pro reisender Person und Land.
 
@@ -377,6 +377,14 @@ Filter und Statuswahl sind Knöpfe mit `aria-pressed` und dem Attribut `data-wah
 ### 6.15 Suchformulare auf dem Handy
 
 In Organisieren steht der Such-Button auf dem Handy nach allen Feldern, auch nach den Zusatzfeldern. Formulare mit einer Zusatzzeile tragen dafür `org-aktion-ende`: unter 701 px lösen sich Feld- und Zusatzzeile in ein zweispaltiges Raster auf, der Button folgt am Ende über die volle Breite. Beschriftungen von Zusatzfeldern stehen dort über dem Feld, damit Uhrzeit, Alter oder Land nicht abgeschnitten werden. Auf dem Desktop bleibt die Suchleiste mit dem Button rechts.
+
+### 6.16 Übergänge
+
+Ein Ansichtswechsel im Arbeitsbereich, ein geöffnetes Planpunkt-Detail und der Inhalt eines aufgeklappten `<details>` blenden in 160 ms ein (`jet-einblenden` in `styles/globals.css`). Nur Deckkraft, kein Versatz und keine bleibende Füllung: ein `transform` oder ein dauerhaftes `opacity` würde fixierte Leisten in der Fläche verschieben oder ihre Ebene ändern. Die Regel steht in `:where()`, damit eigene Animationen (z. B. der Schimmer) vorgehen. Bei „Bewegung reduzieren“ gibt es keinen Übergang.
+
+### 6.17 Kontoseiten
+
+Alle Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen) beginnen mit dem `Seitenkopf` (Kicker „Konto“) und nutzen `Karte`, `Leerzustand`, `Hinweis` und `Ladeplatzhalter`. Der Kopf steht beim Laden schon da, damit nichts springt (`ReisendeKopf`). Auf der Kontoübersicht gibt es genau eine dunkelgrüne Fläche (der nächste Reiseschritt); Profil und Verwaltung stehen darunter in einer hellen Karte. `/account/security` und die Kontolöschung bleiben in diesem Schritt unverändert.
 
 ---
 
@@ -489,7 +497,17 @@ Die HTML-Eigenschaft `hidden` allein reicht nicht, wenn derselbe Knoten eine Tai
 
 ### 7.13 Eine Kopfzeile, auf dem Handy einzeilig
 
-Die Kopfzeile des Arbeitsbereichs (`/planen`, `/reisen`, Reise, Konto) bleibt bis 1023 px eine Zeile: Menü, Logo, Reiseaktionen, Konto. Der Kontext-Titel entfällt dort, weil der Reisekopf ihn trägt. Bis 767 px sind „Reise ändern“ und „Reisebegleiter“ runde Symbolknöpfe; ihr Text bleibt als zugänglicher Name erhalten. Bis 640 px wandern Mond/Sonne und „Reise planen“ in das Menü (vor „Entdecken“, damit die Fokusfalle unverändert endet). In einer geöffneten Reise entfällt „Reise fortsetzen“ unter 1024 px, weil es nur wiederholt, wo man schon ist. Bei vergrösserter Schrift (`data-flow`) gilt weiter das umbrechende Layout. Geprüft bei 320, 375, 390 und 768 px: Kopfzeile 72 px hoch, kein seitliches Scrollen.
+Die Kopfzeile des Arbeitsbereichs (`/planen`, `/reisen`, Reise, Konto) bleibt bis 1023 px eine Zeile: Menü, Logo, Reiseaktionen, Konto. Der Kontext-Titel entfällt dort, weil der Reisekopf ihn trägt. Bis 767 px sind „Reise ändern“ und „Reisebegleiter“ runde Symbolknöpfe; ihr Text bleibt als zugänglicher Name erhalten. Bis 640 px wird „Reise planen“ ein runder Symbolknopf; in einer geöffneten Reise steht es nur noch im Menü (vor „Entdecken“, damit die Fokusfalle unverändert endet). Mond/Sonne bleibt in der Kopfzeile (Owner-Entscheid). In einer geöffneten Reise entfällt „Reise fortsetzen“ unter 1024 px, weil es nur wiederholt, wo man schon ist. Bei vergrösserter Schrift (`data-flow`) gilt weiter das umbrechende Layout. Geprüft bei 320, 375, 390 und 768 px: Kopfzeile 72 px hoch, kein seitliches Scrollen.
+
+---
+
+### 7.14 Sehr schmal, quer und sehr breit
+
+Die untere Leiste wechselt bei grosser Schrift (ab 24 px), unter 360 px Breite, unter 500 px Höhe und bei offener Tastatur in den Fluss. Ohne grosse Schrift ordnet sie sich dort als Raster (`data-flow-raster`): unter 544 px zwei Spalten (die fünfte Taste über die volle Breite), ab 544 px (Querformat) fünf Spalten mit Symbol über dem Wort. Bei grosser Schrift bleibt die gestapelte Liste.
+
+Die Reiseaktionen der Kopfzeile schrumpfen unter 768 px nicht; unter 320 px mit zwei Reiseaktionen entfällt das Logo in der Kopfzeile (es steht im Menü und in der Fusszeile), damit nichts überlappt.
+
+Ab 2400 px Breite wächst die Grundschrift auf 112,5 %, ab 3200 px auf 125 % (in Prozent, damit eine eigene Schriftgrösse im Browser erhalten bleibt). Alles in `rem` wächst mit, die Zeichen pro Zeile bleiben gleich; die Werte liegen unter der Schwelle für „grosse Schrift“ (24 px), damit die Leisten nicht in den Fluss wechseln. Geprüft bei 1920, 2560 und 3840 px.
 
 ---
 
