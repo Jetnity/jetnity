@@ -1,5 +1,9 @@
 # Jetnity – Active Work Status
 
+## Aktueller Writer — UI/UX-Feinschliff der ganzen App
+
+20. November 2026. Branch `cursor/ui-ux-feinschliff-2ba1`, ein einziger Draft-PR für alle Etappen. Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Phase 1 (nur Analyse, kein Code) ist abgeschlossen: `docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md` mit 5 Hebeln, 4 Etappen (zuerst gemeinsames Design-System) und 4 offenen Product-Owner-Entscheidungen. Blockiert bis zum «Go» des Product Owners. Keine Datenbank, keine Production, keine neuen Kosten, Login/2FA unberührt. Einreise-Teil wartet auf #1254, Login- und Sicherheitsseiten warten auf #1240. Kein Ready, kein Merge. Nächster Schritt nach «Go»: Etappe 1 im selben Branch.
+
 ## Aktueller Writer — KI-Reiseänderung Datenverlustschutz 1
 
 19. November 2026. Draft PR #1252, Branch `fix/ki-reiseaenderung-datenverlust-1-20261119`, Issue #1247. Cursor-Agent **Jetnity KI Datenverlustschutz 1**, Generation 1, Session [bc-8bcd33df-ceae-48b0-b81e-ee1de890e6f5](https://cursor.com/agents/bc-8bcd33df-ceae-48b0-b81e-ee1de890e6f5), Modell `grok-4.7-high-fast`. Strukturelle KI-Kürzung behält Planpunkte ungeplant. `punkt_entfernen` neben einer Tages- oder Etappenänderung wird vor dem Apply abgelehnt. Kein Merge, kein Ready. Nächster Schritt: unabhängiger Exact-Head-Review. Handoff: `docs/JETNITY_KI_REISEAENDERUNG_DATENVERLUST_1_HANDOFF_2026-11-19.md`.
