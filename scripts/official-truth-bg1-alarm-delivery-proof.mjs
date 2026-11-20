@@ -12,7 +12,7 @@ export async function deliverProof({env=process.env,fetchImpl=globalThis.fetch}=
   env.GITHUB_HEAD_REF!==HEAD||env.GITHUB_EVENT_PULL_REQUEST_NUMBER!=='1254')
     return {status:'refused',reason:'not_exact_pr'}
   const token=env.GITHUB_TOKEN
-  if(typeof token!=='string'||(token.length<20||token.length>4096||/[\\s\\x00-\\x1f]/.test(token))||typeof fetchImpl!=='function')
+  if(typeof token!=='string'||(token.length<20||token.length>4096||/[\s\x00-\x1f]/.test(token))||typeof fetchImpl!=='function')
     return {status:'refused',reason:'token_or_transport'}
   const headers={Authorization:'Bearer '+token,Accept:'application/vnd.github+json',
     'X-GitHub-Api-Version':'2022-11-28'}
