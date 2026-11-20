@@ -19,15 +19,42 @@ module.exports = {
         // vorher gesetzte `sm:`-Hoehe uebersteuern kann.
         short: { raw: '(max-height: 560px)' },
       },
+      // Feste Schriftstufen (DESIGN_SYSTEM.md 4.1). Groesse, Zeilenhoehe,
+      // Laufweite und Gewicht gehoeren zusammen, damit eine Ueberschrift nicht
+      // je Ansicht neu zusammengesetzt wird. Namen sind in lib/utils.ts fuer
+      // tailwind-merge registriert; sonst hielte es `text-title` fuer eine Farbe.
+      fontSize: {
+        display: ['clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem)', { lineHeight: '1.08', letterSpacing: '-0.035em', fontWeight: '700' }],
+        title: ['clamp(1.25rem, 1.12rem + 0.55vw, 1.5rem)', { lineHeight: '1.25', letterSpacing: '-0.025em', fontWeight: '600' }],
+        subtitle: ['1.0625rem', { lineHeight: '1.4', letterSpacing: '-0.012em', fontWeight: '600' }],
+        body: ['0.9375rem', { lineHeight: '1.6' }],
+        meta: ['0.8125rem', { lineHeight: '1.45' }],
+        kicker: ['0.75rem', { lineHeight: '1.3', letterSpacing: '0.14em', fontWeight: '700' }],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         xl: 'calc(var(--radius) + 4px)',     // edlere Cards
         '2xl': 'calc(var(--radius) + 10px)', // Hero/Surfaces
+        // Drei Formstufen fuer neue Bausteine (DESIGN_SYSTEM.md 5.2).
+        control: '0.875rem',
+        card: '1.25rem',
+        panel: '1.75rem',
       },
       boxShadow: {
         e1: '0 1px 2px rgb(0 0 0 / 0.05), 0 1px 8px rgb(0 0 0 / 0.04)',
+        card: '0 1px 2px rgb(var(--jet-brand-900) / 0.04), 0 12px 32px -20px rgb(var(--jet-brand-900) / 0.2)',
+        raised: '0 2px 8px rgb(var(--jet-brand-900) / 0.06), 0 24px 48px -24px rgb(var(--jet-brand-900) / 0.3)',
+      },
+      keyframes: {
+        schimmer: {
+          '0%': { backgroundPosition: '100% 0' },
+          '100%': { backgroundPosition: '-100% 0' },
+        },
+      },
+      animation: {
+        schimmer: 'schimmer 1.6s ease-in-out infinite',
       },
       colors: {
         // Jetnity V2 – Markenpalette. Werte in styles/globals.css.

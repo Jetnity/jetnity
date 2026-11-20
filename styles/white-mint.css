@@ -20,6 +20,24 @@ html:has(.workspace-shell[data-workspace-theme="light"]) {
   background-color: var(--white-mint-canvas);
 }
 
+/* Dieselben Flaechen als semantische RGB-Kanaele. Bausteine aus components/ui
+   (bg-card, text-muted-foreground, border-border) fallen sonst auf der
+   weiss-mintfarbenen Flaeche in die Creme-Palette zurueck. Die Kanaele sind
+   die Hex-Werte von oben; --primary und --ring bleiben die Markenwerte. */
+[data-white-mint="home"],
+.workspace-shell[data-workspace-theme="light"] {
+  --background: 247 252 249;
+  --foreground: 20 62 51;
+  --card: 255 255 255;
+  --card-foreground: 20 62 51;
+  --popover: 255 255 255;
+  --popover-foreground: 20 62 51;
+  --muted: 225 241 232;
+  --accent: 225 241 232;
+  --muted-foreground: 58 86 76;
+  --border: 220 233 225;
+}
+
 html:has([data-white-mint="home"]) body::before,
 html:has(.workspace-shell[data-workspace-theme="light"]) body::before {
   opacity: 0;
