@@ -363,10 +363,14 @@ export function einreiseKundenanzeige(input: {
       const optionen: Array<Option | null> = slot.traveller ? credentialOptionsAus(slot.traveller) : [null]
       for (const option of optionen) {
         const ref = option?.optionRef ?? ''
+        // Without stored traveller details the engine evaluates the canonical
+        // "no document" option; any other credential keeps its own card below.
+        const ohneDokument = option ? null : `${slot.clientRef}:none`
         const evaluations = input.evaluations.filter((evaluation) => {
           if (!betrifftLand(evaluation, land.code)) return false
           if ((evaluation.travellerClientRef ?? '') !== slot.clientRef) return false
-          return (evaluation.credentialOptionRef ?? '') === ref
+          const optionRef = evaluation.credentialOptionRef ?? ''
+          return optionRef === ref || (ohneDokument !== null && optionRef === ohneDokument)
         })
         for (const evaluation of evaluations) verwendet.add(evaluation)
         paare.push(paarBauen({

@@ -226,6 +226,42 @@ test('leere Themen stehen in genau einer Liste und erfinden keine Pflicht', () =
   assert.doesNotMatch(anzeige.paare[0]?.ungeprueft.join(' '), /erforderlich|visumfrei/i)
 })
 
+test('Reisende ohne gespeicherte Angaben erscheinen pro Land genau einmal', () => {
+  const slots: EinreiseSlot[] = [
+    { clientRef: 'traveller:1', label: 'Reisende 1', applicable: true, traveller: null },
+    { clientRef: 'traveller:2', label: 'Reisende 2', applicable: true, traveller: null },
+  ]
+  const ohne = (travellerClientRef: string) => evaluation({
+    travellerClientRef,
+    credentialOptionRef: `${travellerClientRef}:none`,
+    destinationCountryCode: 'TH',
+    requirementType: 'visa',
+    result: 'unknown',
+  })
+  const anzeige = einreiseKundenanzeige({
+    evaluations: [ohne('traveller:1'), ohne('traveller:2')],
+    party: [],
+    slots,
+    laender: ['TH', 'TH'],
+  })
+  assert.deepEqual(anzeige.paare.map((paar) => paar.reisende), ['Reisende 1', 'Reisende 2'])
+  assert.equal(anzeige.paare.every((paar) => !paar.ungeprueft.includes('Visum')), true)
+})
+
+test('eine andere Pass-Option bleibt ohne gespeicherte Angaben eine eigene Karte', () => {
+  const anzeige = einreiseKundenanzeige({
+    evaluations: [
+      evaluation({ credentialOptionRef: 'traveller:1:none', destinationCountryCode: 'TH', requirementType: 'visa', result: 'unknown' }),
+      evaluation({ credentialOptionRef: 'traveller:1:pass-ch', destinationCountryCode: 'TH', requirementType: 'visa', result: 'not_required', visaMode: 'visa_exempt' }),
+    ],
+    party: [],
+    slots: [{ clientRef: 'traveller:1', label: 'Reisende 1', applicable: true, traveller: null }],
+    laender: ['TH'],
+  })
+  assert.equal(anzeige.paare.length, 2)
+  assert.deepEqual(anzeige.paare.map((paar) => paar.ampel), ['neutral', 'gruen'])
+})
+
 test('Besucheransicht erkennt nur den geschlossenen amtlichen Wortlaut', () => {
   const frei = einreiseAusBesucher({
     zielCode: 'DE',
