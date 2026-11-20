@@ -1,5 +1,17 @@
 # Jetnity – Design-System
 
+> **PO-Go, 20.11.2026 – UI/UX-Feinschliff der ganzen App, Etappe 1 (gemeinsames Design-System):**
+> Feste Stufen für Schrift (4.1), Ecken und Schatten (5.2), ein Grundton für alle
+> Seiten (6.1), gemeinsame Bausteine in `components/ui` (6.2–6.9) und eine
+> einzeilige Kopfzeile bis zur Tablet-Breite (7.13). Die heutige Systemschrift
+> bleibt (PO-Entscheid). Alle fünf Reise-Ansichten tragen denselben flachen
+> Reisekopf; die Foto-Köpfe von Reiseplan und Organisieren entfallen. Diese
+> Regel ersetzt die frühere Review-Korrektur „Sehr schmale Header geben dem
+> Reisetitel eine eigene Zeile“: Der Titel steht jetzt im Reisekopf. Menü bleibt
+> beschriftet, Konto und Mond/Sonne bleiben reine Symbole mit zugänglichem Namen.
+> [Analyse und Plan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) ·
+> [DECISIONS.md](DECISIONS.md) ADR-0229.
+
 > **10.11.2026 – Reiseplan und Atlas:** Auf grossen Bildschirmen stehen Etappenliste und Reisekarte nebeneinander. Auf schmalen Bildschirmen wechselt man zwischen Plan und Karte. Im persönlichen Atlas zeigen Flächen und Muster besuchte und geplante Länder. Die Länderauswahl öffnet neben der Karte oder am unteren Bildschirmrand die zugehörigen Besuche und Reisen.
 
 > **Owner-Auftrag, 02.11.2026 – Mietwagen Layout 1:** Suche zuerst in einer weißen Karte mit zwei mintfarbenen Gruppen für Stationen und Mietzeitraum, darunter Fahrerangaben und primäre Suchaktion. Ergebnisse bilden ein eigenes Raster: eine Spalte mobil, zwei ab 640px, drei ab 1280px, vier ab 1536px. Gleiche Bildflächen, lesbarer Gesamtpreis und ausgerichtete Aktionen unterstützen den Vergleich. Datum und Uhrzeit stehen unter 1024px untereinander. Fehlende Anbieterbilder erhalten einen neutralen Platzhalter. Angebotsdetails gruppieren Bild/Preis, Bedingungen und Stationen; zusätzliche Angaben sind aufklappbar. Leerer Bestand bleibt kurz, manuelle Erfassung startet geschlossen. Die vier Organisationskategorien bleiben oberhalb des Inhalts. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md).
@@ -236,6 +248,21 @@ Die Notation ist durchgehend RGB-Kanäle (`rgb(var(--token) / <alpha-value>)` in
 - Textfarbe auf dunkelgrünem Grund: `ink-300` oder `ink-400`, nicht reines Weiß, außer bei Buttons und Logo.
 - Keine dekorativen Schriftschnitte, keine Sperrung als Effekt.
 
+### 4.1 Schriftstufen
+
+Sechs Stufen in `tailwind.config.js` (`fontSize`). Jede Stufe bringt Zeilenhöhe, Laufweite und Gewicht mit; eine Überschrift wird nicht mehr pro Ansicht aus `text-3xl`, `tracking-[…]` und `font-semibold` zusammengesetzt. Schrift bleibt die Systemschrift.
+
+| Klasse | Größe | Verwendung |
+|---|---|---|
+| `text-display` | 28–44 px, fliessend | genau eine h1 pro Seite (Seitenkopf, Reisekopf) |
+| `text-title` | 20–24 px, fliessend | Abschnittsüberschrift, Leerzustand |
+| `text-subtitle` | 17 px | Kartentitel |
+| `text-body` | 15 px | Fliesstext |
+| `text-meta` | 13 px | Zeitraum, Route, Status, Hinweiszeilen |
+| `text-kicker` | 12 px, gesperrt | Oberzeile; immer mit `uppercase` |
+
+Eingabefelder bleiben bei 16 px (7.4). Die Namen sind in `lib/utils.ts` für `tailwind-merge` registriert; ohne diese Angabe hielte `cn()` `text-title` für eine Textfarbe und verwürfe es neben `text-brand-800`.
+
 ---
 
 ## 5. Form und Interaktion
@@ -261,6 +288,19 @@ Das Primitiv führt nur, was auch gezeigt wird. Weitere Varianten kommen dazu, w
 
 Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit Maus erhalten über `pointer-fine` die kompaktere Höhe. `min-h` statt `h`, damit eine umbrechende Aufschrift nicht über den Rand läuft. Der Radius liegt **nur** an der Größe – setzen Variante und Größe beide `rounded-*`, entscheidet die Auflösungsreihenfolge von `twMerge`.
 
+
+### 5.2 Formstufen: Ecken und Schatten
+
+| Klasse | Wert | Verwendung |
+|---|---|---|
+| `rounded-control` | 14 px | Felder, Schaltflächen mit Ecken, Ladeplatzhalter-Zeilen |
+| `rounded-card` | 20 px | Karten und Listenkarten |
+| `rounded-panel` | 28 px | grosse Flächen, Leerzustand |
+| `shadow-card` | sehr leicht, grüngetönt | ruhende Karte |
+| `shadow-raised` | deutlicher | angehobene Fläche (Dialog, schwebende Leiste) |
+
+Pillen bleiben `rounded-full`. Bestehende `rounded-lg`/`xl`/`2xl` und `shadow-e1` gelten weiter; neue Bausteine verwenden die drei Formstufen und die zwei Schatten. Auf der Weiss-Mint-Fläche dämpft `styles/white-mint.css` Schatten weiterhin.
+
 ---
 
 ## 6. Layout
@@ -269,6 +309,38 @@ Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit
 - zentrierte Inhaltsbreite mit `max-w-7xl` und großzügigem Innenabstand (`px-5` mobil, `px-8` ab `sm`)
 - viel Weißraum zwischen Sektionen; im Zweifel mehr Abstand statt mehr Inhalt
 - keine Kartenteppiche: wenige, große, klare Elemente statt vieler kleiner
+
+### 6.1 Grundton und Seitenbreite
+
+Alle öffentlichen Seiten, die Startseite und der helle Arbeitsbereich stehen auf derselben Weiss-Mint-Fläche (`styles/white-mint.css`). `PublicChrome` setzt `data-white-mint="home"` deshalb auf jede öffentliche Seite, nicht nur auf `/`. Dieselbe Datei setzt in diesen Bereichen die semantischen Kanäle (`--background`, `--card`, `--muted`, `--muted-foreground`, `--border`) auf die Weiss-Mint-Werte, damit Bausteine mit `bg-card` oder `text-muted-foreground` nicht in die Creme-Palette zurückfallen. Das grüne Arbeitsbereich-Thema setzt dieselben Kanäle auf seine Werte. Der Admin bleibt unverändert.
+
+Seitenbreite: Inhalte zentriert bis `max-w-7xl`; Lesetext höchstens `max-w-2xl` bis `max-w-3xl`.
+
+### 6.2 Seitenkopf und Reisekopf
+
+`Seitenkopf` (`components/ui/seitenkopf.tsx`): Kicker, genau eine h1 in `text-display`, ein Satz Einordnung, höchstens eine Hauptaktion. Flach, ohne Bild.
+
+Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe flache Kopf in allen fünf Reise-Ansichten. Kicker = Name der Ansicht (bei Einreise „Deine Reise“, weil die Prüfung darunter ihren eigenen Kopf trägt), h1 = Reisetitel, eine Metazeile mit Zeitraum, Route, Reisenden und Budget. Stand, Speicherort und Reiseoptionen stehen nur in der Übersicht. Ein Speicherfehler bleibt in jeder Ansicht sichtbar. Für Gäste folgt darunter eine einzige Hinweiszeile ohne Kasten („Nur in diesem Browser gespeichert. Konto erstellen oder anmelden – …“). Jede Ansicht behält ihre eigene (teils nur für Screenreader sichtbare) Überschrift als Fokusziel beim Ansichtswechsel.
+
+### 6.3–6.9 Bausteine
+
+| Abschnitt | Baustein | Datei | Stand |
+|---|---|---|---|
+| 6.3 | Karte | – | Etappe 2 |
+| 6.4 | Statussiegel | `components/ui/status-siegel.tsx` | aktiv |
+| 6.5 | Preis | – | Etappe 2 |
+| 6.6 | Ladeplatzhalter | `components/ui/ladeplatzhalter.tsx` | aktiv |
+| 6.7 | Leerzustand | `components/ui/leerzustand.tsx` | aktiv |
+| 6.8 | Hinweis | – | Etappe 3 |
+| 6.9 | Abschnitt | – | Etappe 2 |
+
+Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:exports`).
+
+**6.4 Statussiegel.** Vier Töne: `gebucht` (volle grüne Fläche mit Haken – nur „von dir als gebucht markiert“), `gewaehlt` (gestrichelter Rand – ausgewählt, nicht gebucht), `offen` (leerer Kreis), `hinweis` (Fragezeichen, gedämpfte Fläche). Der Zustand steht immer als Wort im Siegel; Form und Symbol unterscheiden zusätzlich, Farbe allein nie (7.5a). `BuchungsSiegel` bildet die Buchungs- und Abdeckungszustände auf diese Töne ab.
+
+**6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still.
+
+**6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037).
 
 ---
 
@@ -378,6 +450,10 @@ Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft, Aktivitäten und Mobil
 Besuchte Mobile-Bereiche im Trip Workspace bleiben eingehängt, damit ein Tabwechsel keine neue Suche auslöst. Sie tragen `hidden` und `inert`.
 
 Die HTML-Eigenschaft `hidden` allein reicht nicht, wenn derselbe Knoten eine Tailwind-Display-Klasse trägt (`grid`, `flex`, `block`). Utilities überschreiben Preflight `[hidden] { display: none }`. Deshalb trägt ein verborgener Bereich nur `hidden`, niemals zusätzlich eine Display-Utility. Sichtbarkeit wird über `getComputedStyle` und Layoutbox geprüft, nicht nur über das Attribut.
+
+### 7.13 Eine Kopfzeile, auf dem Handy einzeilig
+
+Die Kopfzeile des Arbeitsbereichs (`/planen`, `/reisen`, Reise, Konto) bleibt bis 1023 px eine Zeile: Menü, Logo, Reiseaktionen, Konto. Der Kontext-Titel entfällt dort, weil der Reisekopf ihn trägt. Bis 767 px sind „Reise ändern“ und „Reisebegleiter“ runde Symbolknöpfe; ihr Text bleibt als zugänglicher Name erhalten. Bis 640 px wandern Mond/Sonne und „Reise planen“ in das Menü (vor „Entdecken“, damit die Fokusfalle unverändert endet). In einer geöffneten Reise entfällt „Reise fortsetzen“ unter 1024 px, weil es nur wiederholt, wo man schon ist. Bei vergrösserter Schrift (`data-flow`) gilt weiter das umbrechende Layout. Geprüft bei 320, 375, 390 und 768 px: Kopfzeile 72 px hoch, kein seitliches Scrollen.
 
 ---
 

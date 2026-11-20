@@ -262,6 +262,8 @@ Integriert:
 
 TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gegated. TW-9 nicht automatisch starten.
 
+In Arbeit (20.11.2026): **UI/UX-Feinschliff der ganzen App** in Draft-PR #1264, vier Etappen, PO-Go erteilt, Merge nur nach ausdrücklichem PO-Go. Etappe 1 (gemeinsames Design-System, ADR-0229) ist umgesetzt; als Nächstes Etappe 2 (Planen, Übersicht, Kostenbild). Plan und Fortschritt: [Analyse und Gesamtplan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) §6 und §10.
+
 Separate Search-/Homepage-Themen:
 
 - Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 auf `main @ ade03511` integriert. Live Production API smoke PASS. Technical Lead hat #109 **CLOSED / COMPLETED**. Residual P2: Mobile Safari Real-Device. PR #178 ist nur Docs/Continuity-Träger; Live-Zustand prüfen. Auf `main` ist die Pre-Merge-#178-Klausel historisch.

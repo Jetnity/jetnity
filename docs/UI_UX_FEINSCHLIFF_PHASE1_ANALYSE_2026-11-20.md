@@ -1,6 +1,6 @@
 # UI/UX-Feinschliff der ganzen App — Phase 1: Analyse
 
-Stand: 20. November 2026. Branch `cursor/ui-ux-feinschliff-2ba1`. Nur Analyse, kein Code.
+Stand: 20. November 2026. Branch `cursor/ui-ux-feinschliff-2ba1`. Phase 1 war nur Analyse; der Fortschritt der Umsetzung steht in Abschnitt 10.
 Auftrag des Product Owners: Feinschliff ab «Reise planen» auf dem Niveau von Airbnb, Linear und Stripe, erweitert auf alle Seiten, beginnend mit einem gemeinsamen Design-System. Alle Etappen kommen in einen einzigen PR. Nach Phase 1 wird auf das «Go» gewartet.
 
 ## 1. Wie geprüft wurde
@@ -150,7 +150,24 @@ Jede Etappe ist eine eigene Commit-Gruppe im selben Draft-PR. Nach jeder Etappe 
 
 ## 9. Nächster Schritt
 
-Auf das «Go» des Product Owners warten. Danach beginnt Etappe 1 im selben Branch und im selben Draft-PR.
+Erledigt: Das «Go» kam am 20.11.2026 (siehe Abschnitt 10).
+
+## 10. Gesamtplan und Fortschritt nach dem Go
+
+PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Abschnitt 8: 1 ja, 2 ja, 3 ja, 4 heutige Schrift beibehalten. Qualität vor Tempo; nach jeder Etappe kurze Meldung mit Screenshots. Kein Merge ohne ausdrückliches Go am Schluss.
+
+| Etappe | Stand | Inhalt |
+|---|---|---|
+| 1 Design-System | umgesetzt | Stufen für Schrift, Ecken, Schatten; Statussiegel, Seitenkopf, Leerzustand, Ladeplatzhalter; flacher Reisekopf in allen fünf Ansichten; einzeilige Kopfzeile bis 1023 px; ein Grundton für alle öffentlichen Seiten; `DESIGN_SYSTEM.md` und ADR-0229 |
+| 2 Planen, Übersicht, Kostenbild | als Nächstes | ein Weg in `/planen`, neue Reihenfolge der Übersicht, Kostenbild (reine Funktion, Tests), Kostenleiste unten auf dem Handy; Bausteine Karte, Preis, Abschnitt |
+| 3 Detailansichten | offen | «Das hast du schon», einklappbare Unterkunftsfilter, Vorbereitung pro Land, Planpunkt und Flug-Bestand, bewusste Entscheidungen, Baustein Hinweis; Einreise erst nach #1254. Dazu: seitliches Scrollen bei 320 px in der Flugsuche («Economy»-Auswahl) und die sehr kleine Schrift der Organisieren-Reiter |
+| 4 Feinschliff, Zustände, Konto | offen | Ladeplatzhalter und Leerzustände überall, Übergänge, Kontoseiten mit Seitenkopf, 4K, Schlussmessung 280–2560 und Querformat mit Video; Logo bei 280 px |
+
+Abweichungen vom Plan in Etappe 1, mit Grund:
+
+- **Mond/Sonne bleibt in der Handy-Kopfzeile.** Ein erster Entwurf legte den Schalter ins Menü. Das widerspricht der Owner-Vorgabe „Grün per Header-Schalter“ und brach drei bestehende Browser-Tests. Stattdessen entfällt unter 640 px „Reise fortsetzen“ aus der Kopfzeile; es steht im Menü, und die Seiten selbst bieten den Weg zurück zur Reise an.
+- **Karte, Preis, Abschnitt und Hinweis** entstehen mit ihrer ersten Verwendung in Etappe 2 und 3, damit kein ungenutzter Code entsteht (`check:dead`, `check:exports`).
+- **Foto-Köpfe entfallen** in Reiseplan und Organisieren. Die Stadtbilder in den Etappenkarten und ihre Bildnachweise bleiben.
 
 ## Belege
 

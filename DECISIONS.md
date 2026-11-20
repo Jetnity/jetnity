@@ -6326,3 +6326,17 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Alternativen:** `travellers` weiter als Erwachsene zu zeigen wäre für Solo-Reisen bequem und für Familien falsch. Eine neue Party-Altersspalte wäre eine Datenwahrheit ohne Auftrag. Kinderalter in die Stay22-URL zu schreiben wäre eine unbelegte Provider-Semantik.
 
 **Konsequenzen:** Eine Suche startet erst nach gesetzter Belegung. Die Reise selbst speichert diese Belegung nicht. S2 bis S4 und der Technical-Lead-Review bleiben offen. [Scope](docs/TRAVEL_INTEGRATION_S1_HOTEL_BELEGUNG_2026-11-19.md).
+
+## ADR-0229 – Gemeinsames Design-System für die ganze App (UI/UX-Feinschliff, Etappe 1)
+
+**Datum:** 20. November 2026. **Status:** PO-Go für alle vier Etappen in Draft-PR #1264; Ready/Merge erst nach ausdrücklichem PO-Go am Schluss.
+
+**Kontext:** Die Phase-1-Analyse ([Dokument](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md)) fand 23 verschiedene Eckenradien (pro Ansicht bis zu 11), kein Grössensystem für Schrift (Reiseplan auf dem Desktop: 18 Schriftgrössen), zwei Grundtöne, drei verschiedene Reiseköpfe (Übersicht flach, Reiseplan und Organisieren mit grossem Foto) und auf dem Handy eine mehrzeilige Kopfzeile. In «Organisieren» begann das Suchformular auf dem Handy erst bei etwa 700 px.
+
+**Entscheidung:** Sechs feste Schriftstufen, drei Formstufen und zwei Schatten als Tailwind-Tokens; Namen in `lib/utils.ts` für `tailwind-merge` registriert. Gemeinsame Bausteine in `components/ui` entstehen mit ihrer ersten Verwendung (Statussiegel, Seitenkopf, Leerzustand, Ladeplatzhalter in Etappe 1; Karte, Preis, Abschnitt, Hinweis folgen). Ein flacher Reisekopf in allen fünf Reise-Ansichten ersetzt die Foto-Köpfe. Die Arbeitsbereich-Kopfzeile bleibt bis 1023 px einzeilig. Alle öffentlichen Seiten stehen auf der Weiss-Mint-Fläche; die semantischen Kanäle folgen dieser Fläche. Die Systemschrift bleibt (PO-Entscheid).
+
+**Alternativen:** (1) Eine Webschrift einführen – vom PO abgelehnt; kostet Ladezeit und verändert die Marke. (2) Bestehende Klassen nur angleichen, ohne Tokens – jede neue Ansicht würde wieder eigene Grössen setzen. (3) Eine externe Komponentenbibliothek – unnötige Abhängigkeit, eigene Optik. (4) Foto-Köpfe behalten und nur verkleinern – drei Kopfmuster blieben, und Bildnachweise müssten pro Kopf geführt werden.
+
+**Begründung:** Feste Stufen machen Hierarchie lesbar und verhindern Drift. Ein Kopf für alle Ansichten gibt Orientierung („wo bin ich, welche Reise“) bei minimaler Höhe. Symbolknöpfe mit zugänglichem Namen halten die Kopfzeile schmal, ohne Funktion zu verstecken: alles bleibt erreichbar, Theme und „Reise planen“ stehen im Menü.
+
+**Konsequenzen:** Keine Daten-, API-, Auth- oder DB-Änderung, keine neuen Kosten oder Abhängigkeiten. Bestehende Farb-Tokens bleiben; keine neue Farbe. Die gemessene Kopfzeile ist auf 320–768 px 72 px hoch. Tests, die Markup des alten Buchungssiegels lasen, lesen jetzt `data-status-siegel`. Die Einreise-Ansicht zeigt bis Etappe 3 noch den eigenen Kopf der Prüfung unter dem Reisekopf (wartet auf #1254). Bildnachweise der Stadtbilder bleiben unverändert sichtbar.
