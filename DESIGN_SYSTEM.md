@@ -331,7 +331,7 @@ Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe flache Kop
 | 6.5 | Preis | `components/ui/preis.tsx` | aktiv |
 | 6.6 | Ladeplatzhalter | `components/ui/ladeplatzhalter.tsx` | aktiv |
 | 6.7 | Leerzustand | `components/ui/leerzustand.tsx` | aktiv |
-| 6.8 | Hinweis | – | Etappe 3 |
+| 6.8 | Hinweis | `components/ui/hinweis.tsx` | aktiv |
 | 6.9 | Abschnitt | `components/ui/abschnitt.tsx` | aktiv |
 
 Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:exports`). Die ältere `components/ui/card.tsx` (shadcn) wird nicht mehr neu verwendet.
@@ -345,6 +345,8 @@ Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:ex
 **6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still.
 
 **6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037).
+
+**6.8 Hinweis.** Ein ruhiger Kasten mit Symbol, optionalem Titel, Text und höchstens einer Aktion als Link. Drei Töne: `info` (gedämpfte Fläche, Info-Symbol), `aufgabe` (Rand in `primary`, Listen-Symbol – etwas ist für dich zu tun) und `dringend` (Rand in `destructive`, Warndreieck – nur wenn ein Versäumnis echte Folgen hat). Nur semantische Farben, damit er auf Weiss-Mint und im grünen Arbeitsbereich gleich lesbar ist. Kein Hinweis ohne Grund: Ein Satz, der nichts verändert, bleibt weg. Verwendet in der Vorbereitung (Stand der Prüfung, Angaben ergänzen) und bei Einreise-Aufgaben pro reisender Person und Land.
 
 **6.9 Abschnitt.** Eine Karte mit Überschrift (`text-subtitle`), höchstens einem Satz Einordnung (`text-meta`) und höchstens einer Aktion rechts. Die Überschrift benennt den Abschnitt (`aria-labelledby`) und ist Fokusziel, wenn eine Leiste oder ein Link dorthin springt.
 
@@ -361,6 +363,20 @@ Kosten (`TripWorkspaceKosten`, Rechnung in `lib/trips/kostenbild.ts`): pro Währ
 ### 6.12 Kostenleiste auf Handy und Tablet
 
 Unter 64rem liegt über der unteren Leiste eine einzeilige Kostenzeile („Geplant ca. CHF 2’640 · Budget CHF 4’200“), wenn mindestens ein Preis oder ein Budget gespeichert ist. Sie bildet mit der Leiste eine Einheit (gleiche Fläche, Trennlinie), ist 44 px hoch und bricht bei mehreren Währungen um, statt abzuschneiden. Antippen öffnet die Übersicht beim Abschnitt Kosten. Bei offenem Planpunkt-Detail ist sie ausgeblendet; wo die Leiste in den Fluss wechselt (grosse Schrift, unter 360 px, niedrige Höhe), steht auch die Kostenzeile im Fluss. Den Abstand für Inhalt und „Nach oben“ liefert `--ux-u1a-nav-offset` (Leiste plus Kostenzeile).
+
+### 6.13 Bewusste Entscheidungen
+
+Was sich nicht zurücknehmen lässt, fragt einmal nach – in der Zeile, ohne Dialog: Frage mit Titel („Diesen Punkt entfernen: …?“), ein Satz zur Folge („Das lässt sich nicht rückgängig machen.“ und bei gebuchten Punkten „Eine Buchung beim Anbieter bleibt davon unberührt.“), dann „Endgültig entfernen“ (gefüllt in `danger-600`) und „Abbrechen“. Der Fokus liegt auf „Abbrechen“, Escape bricht ab und gibt den Fokus an den auslösenden Knopf zurück. Die Frage erscheint unter der Zeile, nie unter dem auslösenden Knopf, damit ein doppeltes Tippen nichts löscht. Gleiches Muster wie bei eigenen Vorbereitungspunkten.
+
+Was sich mit einem Tippen zurücknehmen lässt, bekommt keinen Zwischenschritt, aber eine klare Bedeutung: „Als gebucht markieren“ ist ein eigener Status, den „Buchung korrigieren“ zurücknimmt; jeder Bestandsbereich sagt in einem Satz, was „Gebucht“ heisst (`BUCHUNG_BEDEUTUNG`). Reiseänderungen zeigen weiter Vorher und Nachher vor „Änderung übernehmen“.
+
+### 6.14 Auswahlen als Chips und Segmente
+
+Filter und Statuswahl sind Knöpfe mit `aria-pressed` und dem Attribut `data-wahl`: Chips (`rounded-full`, 44 px hoch) für Filter, ein Segment aus drei gleich breiten Teilen für den eigenen Stand eines Vorbereitungspunkts. Gewählt ist auf Weiss-Mint die volle Fläche in `brand-800` mit weisser Schrift, im grünen Arbeitsbereich die volle Fläche in `citrus-400` mit `brand-900`-Schrift (`workspace-surfaces.css`). Suche und Filter erscheinen erst, wenn es etwas zu durchsuchen gibt.
+
+### 6.15 Suchformulare auf dem Handy
+
+In Organisieren steht der Such-Button auf dem Handy nach allen Feldern, auch nach den Zusatzfeldern. Formulare mit einer Zusatzzeile tragen dafür `org-aktion-ende`: unter 701 px lösen sich Feld- und Zusatzzeile in ein zweispaltiges Raster auf, der Button folgt am Ende über die volle Breite. Beschriftungen von Zusatzfeldern stehen dort über dem Feld, damit Uhrzeit, Alter oder Land nicht abgeschnitten werden. Auf dem Desktop bleibt die Suchleiste mit dem Button rechts.
 
 ---
 

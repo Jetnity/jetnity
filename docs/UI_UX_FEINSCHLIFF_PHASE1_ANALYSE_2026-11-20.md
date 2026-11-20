@@ -160,8 +160,8 @@ PO-Go am 20.11.2026 für alle vier Etappen in Draft-PR #1264. Antworten auf Absc
 |---|---|---|
 | 1 Design-System | umgesetzt | Stufen für Schrift, Ecken, Schatten; Statussiegel, Seitenkopf, Leerzustand, Ladeplatzhalter; flacher Reisekopf in allen fünf Ansichten; einzeilige Kopfzeile bis 1023 px; ein Grundton für alle öffentlichen Seiten; `DESIGN_SYSTEM.md` und ADR-0229 |
 | 2 Planen, Übersicht, Kostenbild | umgesetzt | ein Weg in `/planen`; Übersicht: Als Nächstes → Route mit Unterkunft pro Etappe → Kosten → Einreise und Ziele → Gut organisiert, ab `xl` zweispaltig; `kostenbild()` und `laufUnterkunftLeser()` als reine Funktionen mit Tests; Kostenzeile über der unteren Leiste; Bausteine Karte, Preis, Abschnitt; `DESIGN_SYSTEM.md` 6.3–6.12 und ADR-0230 |
-| 3 Detailansichten | als Nächstes | «Das hast du schon», einklappbare Unterkunftsfilter, Vorbereitung pro Land, Planpunkt und Flug-Bestand, bewusste Entscheidungen, Baustein Hinweis; Einreise erst nach #1254. Dazu: seitliches Scrollen bei 320 px in der Flugsuche («Economy»-Auswahl) und die sehr kleine Schrift der Organisieren-Reiter |
-| 4 Feinschliff, Zustände, Konto | offen | Ladeplatzhalter und Leerzustände überall, Übergänge, Kontoseiten mit Seitenkopf, 4K, Schlussmessung 280–2560 und Querformat mit Video; Logo bei 280 px |
+| 3 Detailansichten | umgesetzt | Organisieren zeigt zuerst «Das hast du schon» (Zeilen öffnen den Punkt im Plan), lesbare Reiter, einklappbare Unterkunftsfilter, Such-Button auf dem Handy nach allen Feldern; Vorbereitung mit einem Satz zum eigenen Stand, einem Hinweis statt Kacheln und Auswahlen als Segmente, Thailand einmal pro reisender Person statt pro Etappe; Einreise nimmt die Länder der Reise (minimal, wegen #1254); Planpunkt-Detail mit Siegel, Zeitpunkt und «Preis beim Auswählen»; Bestandsbereiche mit gemeinsamer Typografie und einem Satz zur Bedeutung von «Gebucht»; Entfernen eines Planpunkts mit Bestätigung in der Zeile; Baustein Hinweis; `DESIGN_SYSTEM.md` 6.8, 6.13–6.15 und ADR-0231 |
+| 4 Feinschliff, Zustände, Konto | als Nächstes | Ladeplatzhalter und Leerzustände überall, Übergänge, Kontoseiten mit Seitenkopf, 4K, Schlussmessung 280–2560 und Querformat mit Video; Logo bei 280 px; gestapelte Leiste unter 360 px |
 
 Abweichungen vom Plan in Etappe 1, mit Grund:
 
@@ -176,6 +176,13 @@ Abweichungen vom Plan in Etappe 2, mit Grund:
 - **Die Reiseprüfung steht unter „Gut organisiert“** statt unter der ersten Karte, damit „Als Nächstes“ kurz bleibt.
 - **Unterkunft pro Etappe nur bei eindeutigem Stand.** Fehlen Check-in oder Check-out einer Unterkunft, sagt die Route nichts dazu; die Karte „Als Nächstes“ meldet den unklaren Stand wie bisher.
 - **Ab 1280 px zweispaltig** (in Etappe 4 geplant, hier vorgezogen, weil die neue Reihenfolge sonst auf dem Desktop sehr lang wird).
+
+Abweichungen vom Plan in Etappe 3, mit Grund:
+
+- **«Als gebucht markieren» bekommt keinen Bestätigungsschritt.** Jetnity bucht nichts selbst; die Markierung ist ein lokaler Status, den ein Tippen auf «Buchung korrigieren» zurücknimmt. Ein Zwischenschritt würde jede Markierung verdoppeln, ohne eine Folge zu verhindern. Stattdessen sagt jeder Bestandsbereich in einem Satz, was «Gebucht» heisst. Bestätigt wird, was sich nicht zurücknehmen lässt: das Entfernen eines Planpunkts. Reiseänderungen (Vorher/Nachher mit «Änderung übernehmen») und neue Stopps (Vorschau) hatten ihren Bestätigungsschritt schon.
+- **Keine Anzeige für Flugänderungen.** Jetnity erhält keine Flugstatus-Daten von Anbietern; eine solche Anzeige würde etwas behaupten, das nicht geprüft ist. Fristen erscheinen weiter ruhig in «Als Nächstes» (Etappe 2). Kommt später ein Flugstatus, nutzt er den Baustein Hinweis.
+- **Einreise nur minimal.** Die Ansicht übernimmt die Länder der Reise; die Auswahl pro Land bleibt bis zum Merge von #1254 unverändert (`EinreiseLaenderpruefer.tsx` nicht angefasst).
+- **Fehlermeldungen in den Bestandsbereichen bleiben die bestehenden roten Zeilen.** Das grüne Thema färbt sie bereits passend um; ein Umbau auf den Hinweis hätte nur Churn erzeugt.
 
 ## Belege
 

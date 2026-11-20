@@ -262,7 +262,7 @@ Integriert:
 
 TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gegated. TW-9 nicht automatisch starten.
 
-In Arbeit (20.11.2026): **UI/UX-Feinschliff der ganzen App** in Draft-PR #1264, vier Etappen, PO-Go erteilt, Merge nur nach ausdrücklichem PO-Go. Etappe 1 (gemeinsames Design-System, ADR-0229) und Etappe 2 (Planen mit einem Weg, neue Übersicht mit Kostenbild und Unterkunft pro Etappe, Kostenleiste auf dem Handy, ADR-0230) sind umgesetzt; als Nächstes Etappe 3 (Detailansichten). Plan und Fortschritt: [Analyse und Gesamtplan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) §6 und §10.
+In Arbeit (20.11.2026): **UI/UX-Feinschliff der ganzen App** in Draft-PR #1264, vier Etappen, PO-Go erteilt, Merge nur nach ausdrücklichem PO-Go. Etappe 1 (gemeinsames Design-System, ADR-0229), Etappe 2 (Planen mit einem Weg, neue Übersicht mit Kostenbild und Unterkunft pro Etappe, Kostenleiste auf dem Handy, ADR-0230) und Etappe 3 (Detailansichten: «Das hast du schon» zuerst, Vorbereitung mit einem Satz, Baustein Hinweis, Entfernen mit Nachfrage, ADR-0231) sind umgesetzt; als Nächstes Etappe 4 (Zustände, Kontoseiten, Schlussmessung). Verschoben bis ein Flugstatus vom Anbieter existiert: Anzeige von Flugänderungen. Plan und Fortschritt: [Analyse und Gesamtplan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) §6 und §10.
 
 Separate Search-/Homepage-Themen:
 
