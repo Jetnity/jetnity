@@ -14,7 +14,7 @@ test('Production lineage preflight is strictly read-only and never authorizes re
  assert.match(check,/fail_closed_before_owner_go/)
 })
 test('All six complete Production regprocedure SHA pins are copied exactly, not loosened',()=>{
- const rx=/\('((?:official_v3_guard_private|public)\.[a-z0-9_]+\([^']*\))', '([a-f0-9]{64})'\)/g
+ const rx=/\('((?:official_v3_guard_private|public)\.[a-z0-9_]+\([^']*\))',\s*'([a-f0-9]{64})'\)/g
  const expected=[...candidate.matchAll(rx)].map(x=>x[1]+'='+x[2]).sort()
  const actual=[...check.matchAll(rx)].map(x=>x[1]+'='+x[2]).sort()
  assert.equal(expected.length,6)
