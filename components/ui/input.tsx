@@ -109,12 +109,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       inputRef.current.focus()
     }
 
+    // `md` ist auf Touch 44 px hoch (DESIGN_SYSTEM.md 7.5), mit Maus kompakter
+    // wie `Button`; das Eingabefeld füllt die ganze Höhe als Tippfläche.
     const sizeCls =
       fieldSize === 'sm'
         ? { h: 'h-9', text: 'text-base pointer-fine:text-sm', px: 'px-3', gap: 'gap-2', icon: 'h-4 w-4', padX: 'px-2' }
         : fieldSize === 'lg'
         ? { h: 'h-12', text: 'text-base', px: 'px-4', gap: 'gap-3', icon: 'h-5 w-5', padX: 'px-3' }
-        : { h: 'h-10', text: 'text-base pointer-fine:text-sm', px: 'px-3.5', gap: 'gap-2.5', icon: 'h-4.5 w-4.5', padX: 'px-2.5' }
+        : { h: 'h-11 pointer-fine:h-10', text: 'text-base pointer-fine:text-sm', px: 'px-3.5', gap: 'gap-2.5', icon: 'h-4.5 w-4.5', padX: 'px-2.5' }
 
     return (
       <div className={cn(fullWidth && 'w-full', 'space-y-1.5', containerClassName)}>
@@ -125,6 +127,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         <div
+          data-eingabefeld={error ? 'fehler' : 'ok'}
           className={cn(
             'group/input relative flex min-w-0 items-center',
             sizeCls.h,
@@ -145,7 +148,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={inputRef}
             type={effectiveType}
             className={cn(
-              'peer block w-full min-w-0 bg-transparent placeholder:text-muted-foreground outline-none',
+              'peer block w-full min-w-0 self-stretch bg-transparent placeholder:text-muted-foreground outline-none',
               sizeCls.text,
               inputClassName
             )}
@@ -165,7 +168,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setReveal((v) => !v)}
-              className="-mr-1 ml-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-fine:h-8 pointer-fine:w-8"
+              className="-my-px -mr-2 ml-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-fine:my-0 pointer-fine:-mr-1 pointer-fine:h-8 pointer-fine:w-8"
               aria-label={reveal ? 'Passwort verbergen' : 'Passwort anzeigen'}
             >
               {reveal ? <EyeOff className={sizeCls.icon} /> : <Eye className={sizeCls.icon} />}
@@ -176,7 +179,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={clear}
-              className="-mr-1 ml-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-fine:h-8 pointer-fine:w-8"
+              className="-my-px -mr-2 ml-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-fine:my-0 pointer-fine:-mr-1 pointer-fine:h-8 pointer-fine:w-8"
               aria-label="Eingabe löschen"
             >
               <X className={sizeCls.icon} />
