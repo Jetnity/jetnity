@@ -458,3 +458,8 @@ Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsüber
 ### Ergänzung 20.11.2026 – EU5-HRS2-Initialissuer: reale Scope-/Owner-Session-Lücke
 
 #1254 Dev-EU5-HRS2/Owner-Negativnachweis: 5/5 Prioritätspässe DE/PL/IT/RO/FR; 0 positive/unklare Visa-/Pass-/MA1-Freigaben. Der reale HRS2-Result-Binding ist **CH→DE** und nicht nach AT/EU5 übertragbar; aktiver Owner-Sessionwitness existiert, wird aber vom alten Owner-MA1-Funktionspfad nicht direkt gebunden. BG1 Dev \`current\`, Production bei getrenntem Read-only-Check \`unavailable\`. Neu \`scripts/db/official-truth-universal-registry-dev-1/at-eu5-hrs2-initialissuer-gap-readonly-v1.sql\` (nur SELECT mit ROLLBACK) und drei Negativ-Vertragstests; **kein Issuer, kein persönlicher E2E, keine automatische Freigabe oder Datenbankänderung**. **Nächster Schritt:** AT-EU5-spezifische source-bound HRS2/MA1/Session-Initialissuer-Gates mit Negativtests als unveröffentlichten Kandidaten entwerfen; Owner/Production/AAL2 erst nach Source-/Methoden-/BG1-/CI-/Dev-E2E-Nachweisen. Der akzeptierte AT10-Plan bleibt unverändert verbindlich.
+
+
+### BG1 Rollback-Nachfolger 20.11.2026 – natives Dev-v3→v4-Rehearsal
+
+- Echter Supabase Dev PG17-Transaktionstest v3-Installation→append-only v4-Safe-Mode: v3-Original und Katalog erhalten, originales Audit/Latch zurückgelesen, v4 RLS privat und Kundenabfrage absichtlich `unavailable`; vollständiges ROLLBACK. Gesonderte Production-v4-Vorgängerdatei im Sammel-PR mit `at_batch_switch_baseline_v2` statt Dev-Quellkette. **Nicht** als erfolgreichen Post-Commit-Restore oder erfolgreiches Folgecron-E2E deklarieren; vor Owner-Go bleibt eigenes Verifikationsgate.
