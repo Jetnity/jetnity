@@ -34,7 +34,7 @@ async function main() {
 
   const ergebnis = befund(dev.config, live)
   ergebnis.abweichungen = ergebnis.abweichungen.map((abweichung) => {
-    if (abweichung.api === 'uri_allow_list') return { ...abweichung, quelle: dev.herkunft.quelle }
+    if (abweichung.api === 'uri_allow_list') return { ...abweichung, quelle: dev.geraetetestRedirectHerkunft.quelle }
     if (abweichung.api === 'passkey_enabled') return { ...abweichung, quelle: dev.passkeyHerkunft.quelle }
     return abweichung
   })
@@ -45,6 +45,7 @@ async function main() {
       roheKonfigurationVollstaendig: dev.roheKonfigurationVollstaendig,
     },
     devPasskeyVertrag: dev.passkeyHerkunft,
+    devGeraetetestRedirectVertrag: dev.geraetetestRedirectHerkunft,
   }
 
   if (process.argv.includes('--json')) {
@@ -52,6 +53,7 @@ async function main() {
   } else {
     console.log(`Dev-Redirect-Vertrag: ${dev.herkunft.vertrag}; Ziel ${dev.herkunft.projektRef}; Quelle #${dev.herkunft.sourcePr}@${dev.herkunft.sourceCommit}.`)
     console.log(`Dev-Passkey-Vertrag: ${dev.passkeyHerkunft.vertrag}; enabled=true; Owner-Freigabe ${dev.passkeyHerkunft.freigabeDatum}, #${dev.passkeyHerkunft.sourcePr}.`)
+    console.log(`Dev-Gerätetest-Redirect: ${dev.geraetetestRedirectHerkunft.zusaetzlicheUrl}; nur Dev-Lese-Sollwert, #${dev.geraetetestRedirectHerkunft.sourcePr}.`)
     console.log(bericht(ergebnis))
   }
 

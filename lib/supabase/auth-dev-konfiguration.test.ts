@@ -11,6 +11,7 @@ import { befund } from '@/lib/supabase/auth-bericht'
 const REF = 'yfvbxvijcorffwxbxahl'
 const CALLBACK = 'https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen'
 const RECOVERY = 'https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password'
+const DEVICE = 'https://dev.jetnity.com/**'
 const RAW = readFileSync(join(process.cwd(), 'supabase/config.toml'), 'utf8')
 
 function config(redirects: unknown = [CALLBACK]): TomlTabelle {
@@ -72,6 +73,7 @@ describe('Strict approved Development redirect contract', () => {
     ['duplicate callback', [CALLBACK, CALLBACK]],
     ['duplicate recovery', [CALLBACK, RECOVERY, RECOVERY]],
     ['extra URL', [CALLBACK, RECOVERY, 'https://unreviewed.example/auth/callback']],
+    ['Dev device URL in raw baseline', [CALLBACK, RECOVERY, DEVICE]],
     ['wildcard', [CALLBACK, 'https://*.vercel.app/**']],
     ['changed callback escaping', [CALLBACK.replace('\\?', '?')]],
     ['reordered addresses', [RECOVERY, CALLBACK]],
@@ -125,7 +127,7 @@ describe('Strict approved Development redirect contract', () => {
 })
 
 describe('Owner-approved Dev passkey read expectations', () => {
-  test('only the read expectation enables passkeys; input, shared baseline and writer remain false', () => {
+  test('only the read expectation enables passkeys and the exact Dev device redirect; input and writer stay unchanged', () => {
     const input = config([CALLBACK, RECOVERY])
     const before = structuredClone(input)
     Object.freeze((input.auth as TomlTabelle).passkey)
@@ -135,13 +137,38 @@ describe('Owner-approved Dev passkey read expectations', () => {
     const baseline = live(devAuthKonfiguration(input, REF).config)
     const effective = live(read.config)
     assert.deepEqual(input, before)
-    assert.deepEqual(Object.keys(baseline).filter((key) => baseline[key] !== effective[key]), ['passkey_enabled'])
+    assert.deepEqual(Object.keys(baseline).filter((key) => baseline[key] !== effective[key]), ['uri_allow_list', 'passkey_enabled'])
     assert.equal(effective.passkey_enabled, true)
+    assert.equal(effective.uri_allow_list, [CALLBACK, RECOVERY, DEVICE].join(','))
     assert.equal(baseline.passkey_enabled, false)
+    assert.equal(baseline.uri_allow_list, [CALLBACK, RECOVERY].join(','))
     assert.equal(live(devAuthPushKonfiguration(input, REF).config).passkey_enabled, false)
+    assert.equal(live(devAuthPushKonfiguration(input, REF).config).uri_allow_list, [CALLBACK, RECOVERY].join(','))
     assert.equal(live(leseToml(RAW)).passkey_enabled, false)
     assert.equal(read.passkeyHerkunft.sourcePr, 1240)
     assert.equal(read.passkeyHerkunft.enabled, true)
+    assert.equal(read.geraetetestRedirectHerkunft.zusaetzlicheUrl, DEVICE)
+    assert.equal(read.geraetetestRedirectHerkunft.sourcePr, 1240)
+  })
+
+  test('the Dev reader requires all three exact redirects and rejects other hosts, wider wildcards and paths', () => {
+    const effective = devAuthPruefkonfiguration(config(), REF).config
+    for (const urls of [
+      [CALLBACK, RECOVERY],
+      [CALLBACK, DEVICE],
+      [RECOVERY, DEVICE],
+      [CALLBACK, RECOVERY, 'https://*.jetnity.com/**'],
+      [CALLBACK, RECOVERY, 'https://jetnity.com/**'],
+      [CALLBACK, RECOVERY, 'https://dev.jetnity.com/auth/callback'],
+      [CALLBACK, RECOVERY, DEVICE, 'https://unreviewed.example/**'],
+      [CALLBACK, RECOVERY, DEVICE, DEVICE],
+      [DEVICE, CALLBACK, RECOVERY],
+    ]) {
+      const report = befund(effective, { ...live(effective), uri_allow_list: urls.join(',') })
+      assert.equal(report.sauber, false, urls.join(','))
+      assert.deepEqual(report.abweichungen.map((entry) => entry.api), ['uri_allow_list'])
+    }
+    assert.equal(befund(effective, live(effective)).sauber, true)
   })
 
   for (const value of [true, 'false', 0, undefined]) {
@@ -181,7 +208,7 @@ function runCli(
     rawConfig: raw(options.redirects ?? [CALLBACK]),
     live: {
       ...live(config([CALLBACK, RECOVERY])),
-      ...(name === 'pruefen' ? { passkey_enabled: true } : {}),
+      ...(name === 'pruefen' ? { passkey_enabled: true, uri_allow_list: [CALLBACK, RECOVERY, DEVICE].join(',') } : {}),
       ...options.liveChanges,
     },
     projectStatus: options.projectStatus ?? 404,
@@ -228,6 +255,7 @@ describe('Actual Auth CLI entrypoints with isolated transport', () => {
     assert.equal(report.devRedirectVertrag.roheKonfigurationVollstaendig, false)
     assert.equal(report.devPasskeyVertrag.enabled, true)
     assert.equal(report.devPasskeyVertrag.sourcePr, 1240)
+    assert.equal(report.devGeraetetestRedirectVertrag.zusaetzlicheUrl, DEVICE)
     assert.deepEqual(result.calls, { projectReads: 1, branchReads: 1, authReads: 1, subprocesses: 0, patches: 0, unexpected: 0 })
   })
 
@@ -261,6 +289,7 @@ describe('Actual Auth CLI entrypoints with isolated transport', () => {
     assert.equal(report.sauber, false)
     assert.deepEqual(report.abweichungen.map((entry: { api: string }) => entry.api), ['uri_allow_list'])
     assert.match(report.abweichungen[0].quelle, /auth-dev-konfiguration/)
+    assert.match(report.abweichungen[0].quelle, /Dev-Dashboard-Lesung 2026-11-21/)
     assert.equal(result.calls.patches, 0)
     assert.equal(result.calls.subprocesses, 0)
   })

@@ -8,6 +8,7 @@ const CALLBACK =
 const PASSWORT_ZIEL =
   'https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password'
 const REDIRECTS = [CALLBACK, PASSWORT_ZIEL] as const
+const GERAETETEST_REDIRECT = 'https://dev.jetnity.com/**'
 
 const HERKUNFT = Object.freeze({
   vertrag: 'jetnity.dev-auth-redirects.2026-11-15',
@@ -26,6 +27,14 @@ const PASSKEY_HERKUNFT = Object.freeze({
   sourcePr: 1240,
   enabled: true,
   quelle: 'Owner-Freigabe 2026-11-21 (#1240) + lib/supabase/auth-dev-konfiguration.ts; nur Dev-Leseprüfung',
+})
+
+const GERAETETEST_REDIRECT_HERKUNFT = Object.freeze({
+  vertrag: 'jetnity.dev-auth-device-redirects.2026-11-21',
+  projektRef: DEV_REF,
+  sourcePr: 1240,
+  zusaetzlicheUrl: GERAETETEST_REDIRECT,
+  quelle: 'Owner-bestätigter Dev-Gerätetest (#1240), Dev-Dashboard-Lesung 2026-11-21 + lib/supabase/auth-dev-konfiguration.ts; nur Dev-Leseprüfung',
 })
 
 /**
@@ -70,7 +79,12 @@ export function devAuthPruefkonfiguration(config: TomlTabelle, ref: string) {
   }
   const auth = dev.config.auth as TomlTabelle
   ;(auth.passkey as TomlTabelle).enabled = true
-  return { ...dev, passkeyHerkunft: PASSKEY_HERKUNFT }
+  auth.additional_redirect_urls = [...REDIRECTS, GERAETETEST_REDIRECT]
+  return {
+    ...dev,
+    passkeyHerkunft: PASSKEY_HERKUNFT,
+    geraetetestRedirectHerkunft: GERAETETEST_REDIRECT_HERKUNFT,
+  }
 }
 
 /** The CLI reads raw TOML: never let it remove the already active extra URL. */
