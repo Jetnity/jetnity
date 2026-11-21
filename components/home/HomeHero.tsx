@@ -10,8 +10,8 @@ export function HomeHero() {
       className="px-3 pt-3 sm:px-5 sm:pt-5"
       aria-labelledby="start-titel"
     >
-      <div className="mx-auto grid max-w-[1450px] items-stretch rounded-[28px] bg-brand-800 text-white lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:rounded-[36px]">
-        <div className="min-w-0 px-5 py-7 sm:px-10 sm:py-12 lg:px-12 lg:py-16">
+      <div className="mx-auto grid max-w-[1450px] items-stretch rounded-[28px] bg-brand-800 text-white shadow-raised lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:rounded-[36px]">
+        <div className="min-w-0 rounded-[28px] px-5 py-7 [background-image:radial-gradient(90%_70%_at_0%_0%,rgb(var(--jet-brand-600)/0.38),transparent_70%)] sm:px-10 sm:py-12 lg:rounded-l-[36px] lg:rounded-r-none lg:px-12 lg:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-citrus-400">
             Eine Reise. Ein Zusammenhang.
           </p>
@@ -23,9 +23,9 @@ export function HomeHero() {
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-ink-300">{FINAL_HOMEPAGE_DEFINITION}</p>
           <StartzielForm />
-          <p className="mt-3 text-sm text-ink-300">Ohne Konto beginnen. Deine Wünsche geben die Richtung vor.</p>
+          <p className="mt-3 text-sm text-ink-300">Ohne Konto starten. Du siehst deinen Entwurf, bevor etwas gespeichert wird.</p>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm leading-6 text-ink-300">
-            {['Versteht deine Reise', 'Erkennt, was wichtig wird', 'Passt deinen Plan an'].map((text) => (
+            {['Flug, Unterkunft und Tage in einem Plan', 'Einreise für jede reisende Person im Blick', 'Buchungen bestätigst du selbst'].map((text) => (
               <li key={text} className="flex items-start gap-2">
                 <Check className="mt-1 h-4 w-4 shrink-0 text-citrus-400" aria-hidden="true" />
                 {text}
@@ -43,6 +43,7 @@ export function HomeHero() {
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" aria-hidden="true" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-brand-800/45 via-transparent to-transparent lg:block" aria-hidden="true" />
           <p className="absolute bottom-5 left-5 flex items-center gap-2 text-sm font-medium text-white sm:bottom-7 sm:left-7">
             <MapPin className="h-4 w-4" aria-hidden="true" /> Bali, Indonesien
           </p>
