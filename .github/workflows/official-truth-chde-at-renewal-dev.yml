@@ -22,4 +22,81 @@ jobs:
         with:
           node-version: 22.x
       - name: Offline safety gates (native Dev PG17 probes separately evidenced)
-        run: node --test scripts/official-truth-chde-at-renewal-dev-20261121.test.mjs
+        run: node --test scripts/official-truth-chde-at-renewal-dev-20261121.test.mjs scripts/official-truth-dev-cycle5-readback.test.mjs
+
+  native_sequence:
+    needs: safety
+    name: Native PG17 sequence concurrency and rollback (isolated fixture)
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/fix/official-truth-chde-at-renewal-dev-20261121'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17.6-bookworm
+        env:
+          POSTGRES_DB: jetnity_sequence_rehearsal_20261121
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: disposable-sequence-ci-only
+        ports:
+          - 127.0.0.1:55439:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d jetnity_sequence_rehearsal_20261121"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify native rollback and concurrent allocation
+        env:
+          JETNITY_SEQUENCE_TEST_DATABASE: jetnity_sequence_rehearsal_20261121
+          JETNITY_SEQUENCE_TEST_HOST: 127.0.0.1
+          JETNITY_SEQUENCE_TEST_PORT: '55439'
+          JETNITY_SEQUENCE_TEST_USER: postgres
+          JETNITY_SEQUENCE_TEST_PASSWORD: disposable-sequence-ci-only
+          PGHOST: 127.0.0.1
+          PGPORT: '55439'
+          PGUSER: postgres
+          PGDATABASE: jetnity_sequence_rehearsal_20261121
+          PGPASSWORD: disposable-sequence-ci-only
+        run: |
+          set -euo pipefail
+          command -v psql >/dev/null
+          mkdir -p test-results/official-truth-renewal
+          psql --no-psqlrc --set=ON_ERROR_STOP=1 --file=scripts/db/official-truth-chde-at-renewal-dev-20261121/at-dev-lock-first-sequence-rollback.ROLLBACK.sql > test-results/official-truth-renewal/sequence-savepoint.txt
+          python3 scripts/official-truth-sequence-concurrency.py --candidate scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-sequence.CANDIDATE-ROLLBACK.sql | tee test-results/official-truth-renewal/sequence-concurrency.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: official-truth-native-sequence-${{ github.run_id }}
+          path: test-results/official-truth-renewal/
+          retention-days: 14
+          if-no-files-found: error
+
+  dev_readback:
+    needs: safety
+    name: Actual Dev read-only Cycle5 and BG1 verification
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/fix/official-truth-chde-at-renewal-dev-20261121'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Actual public Dev guard status
+        env:
+          SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
+          SUPABASE_ACCESS_TOKEN: ''
+        run: node scripts/official-truth-dev-guard-alarm.mjs
+      - name: Exact independent Dev receipt readback (no writes or auth action)
+        env:
+          SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: node scripts/official-truth-dev-cycle5-readback.mjs
