@@ -50,7 +50,11 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     // remains pinned in pilot-context.test.ts; no historical pin is overwritten.
     // Historical 50018-byte d2999d12 source identity stays bound independently
     // by the finite nextSecurityPatch -> at50Successor chain in pilot-context.test.ts.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' }),
+    // Public CMS reader release 2026-11-21: one mandatory isolated native proof
+    // and its typecheck root join the existing CMS job. All prior gates and
+    // budgets stay intact; the 52696-byte predecessor remains independently
+    // pinned in the append-only pilot-context.test.ts successor chain.
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53070, sha256: 'ca656990f3b14f97895087155b59eb30dc2bd4a77941f0fa9cb578e7b523cdef' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' }),
     Object.freeze({ path: 'package-lock.json', bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),

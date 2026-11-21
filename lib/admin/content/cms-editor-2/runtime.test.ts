@@ -17,7 +17,7 @@ const command: CmsCommand = { requestId: CMS_TEST_ID, entryId: CMS_TEST_ENTRY, e
 const marker: CmsRecoveryMarker = { requestId: command.requestId, entryId: command.entryId, expectedVersion: command.expectedVersion }
 type RpcResult = { data: unknown; error: { code: string } | null }
 type Fixture = {
-  enabled: boolean; publicPreview?: boolean; grant: string; denial: number | null; clients: number; admissions: number; identities: number
+  enabled: boolean; publicPreview?: boolean; target?: 'development' | 'production'; grant: string; denial: number | null; clients: number; admissions: number; identities: number
   calls: Array<{ name: string; args: Record<string, unknown> }>
   identity: () => Promise<{ data: { user: { id: string; is_anonymous: boolean } | null }; error: null }>
   result: (name: string, args: Record<string, unknown>) => Promise<RpcResult>
@@ -35,7 +35,7 @@ before(async () => {
       builder.onResolve({ filter: /^(server-only|@\/lib\/(supabase\/server|auth\/admin-guard|admin\/hosted-runtime-activation|inspiration\/cms-preview-read))$/ }, args => ({ path: args.path, namespace: 'cms-boundary' }))
       builder.onLoad({ filter: /.*/, namespace: 'cms-boundary' }, args => ({ contents:
         args.path === 'server-only' ? 'export {}'
-          : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __cmsFixture.enabled} export function adminHostedRuntimeTarget(){return __cmsFixture.enabled ? "development" : "unavailable"}'
+          : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __cmsFixture.enabled} export function adminHostedRuntimeTarget(){return __cmsFixture.enabled ? (__cmsFixture.target ?? "development") : "unavailable"}'
             : args.path.endsWith('cms-preview-read') ? 'export function isCmsPreviewReadEnabled(){return __cmsFixture.publicPreview===true}'
             : args.path.endsWith('admin-guard') ? `export async function requireAdminApi(options){
               __cmsFixture.admissions++; if(options.capability!=='inhalte-moderieren')throw Error('wrong capability');
@@ -103,8 +103,36 @@ test('public-only preview reads the published v2 RPC while Admin routes and cook
   assert.deepEqual(f.calls.map(call => call.name), ['cms_inspiration_published_v2'])
   assert.equal(f.identities, 0); assert.equal(f.admissions, 0)
   assert.equal((await routes.POST(request(envelope))).status, 503)
-  assert.equal((await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))).status, 503)
-  assert.equal(f.calls.length, 1); assert.equal(f.clients, 1)
+  const publicResponse = await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))
+  assert.equal(publicResponse.status, 200)
+  assert.match(publicResponse.headers.get('cache-control') ?? '', /no-store/)
+  assert.deepEqual(await publicResponse.json(), { ok: true, value: { schema: 1, items: [] } })
+  assert.equal((await routes.GET(new Request(ORIGIN + '/api/cms/inspiration?draft=true'))).status, 503)
+  assert.deepEqual(f.calls.map(call => call.name), ['cms_inspiration_published_v2', 'cms_inspiration_published_v2'])
+  assert.equal(f.clients, 2); assert.equal(f.identities, 0); assert.equal(f.admissions, 0)
+})
+
+test('Production selects v2 only with the exact release flag and can return to v1 without changing writers', async () => {
+  const previous = process.env.JETNITY_CMS_PUBLIC_V2_ENABLED
+  const f = fixture(); f.target = 'production'
+  f.result = async () => ({ data: { schema: 1, items: [] }, error: null })
+  const routes = compiled(f)
+  try {
+    for (const [flag, rpc] of [
+      [undefined, 'cms_inspiration_published_v1'], ['false', 'cms_inspiration_published_v1'],
+      ['TRUE', 'cms_inspiration_published_v1'], ['true ', 'cms_inspiration_published_v1'],
+      ['true', 'cms_inspiration_published_v2'], ['false', 'cms_inspiration_published_v1'],
+    ] as const) {
+      if (flag === undefined) delete process.env.JETNITY_CMS_PUBLIC_V2_ENABLED
+      else process.env.JETNITY_CMS_PUBLIC_V2_ENABLED = flag
+      assert.equal((await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))).status, 200)
+      assert.equal(f.calls.at(-1)?.name, rpc)
+    }
+    assert.equal(f.identities, 0); assert.equal(f.admissions, 0)
+  } finally {
+    if (previous === undefined) delete process.env.JETNITY_CMS_PUBLIC_V2_ENABLED
+    else process.env.JETNITY_CMS_PUBLIC_V2_ENABLED = previous
+  }
 })
 
 test('central admission, persisted write grant and current cookie identity remain independent gates', async () => {

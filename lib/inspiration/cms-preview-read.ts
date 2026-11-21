@@ -11,7 +11,8 @@ export function cmsPreviewReadEnabled(env: AdminDevRuntimeEnv, capturedUrl: stri
     && env.VERCEL === '1'
     && env.VERCEL_ENV === 'preview'
     && (env.VERCEL_TARGET_ENV === undefined || env.VERCEL_TARGET_ENV === 'preview')
-    && env.VERCEL_GIT_COMMIT_REF === 'fix/inspiration-catalog-under-eight-dev-20261121'
+    && (env.VERCEL_GIT_COMMIT_REF === 'fix/inspiration-catalog-under-eight-dev-20261121'
+      || env.VERCEL_GIT_COMMIT_REF === 'fix/cms-public-reader-release-20261121')
     && env.VERCEL_PROJECT_ID === 'prj_wTTVawPItEO7a4HihEmaU3PsuaXM'
     && env.NEXT_PUBLIC_SUPABASE_URL === 'https://yfvbxvijcorffwxbxahl.supabase.co'
     && capturedUrl === 'https://yfvbxvijcorffwxbxahl.supabase.co'
