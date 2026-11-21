@@ -327,6 +327,7 @@ Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [do
 | kein eigener SMTP-Server; zwei E-Mails je Stunde | **Production geschlossen durch Gate #582.** Custom SMTP über Infomaniak ist aktiv; Zustellung und Auth-Redirects wurden verifiziert. Der historische 2/h-Snapshot beschreibt nur den Zustand vor #582. |
 | `auth_db_connections_absolute` (Performance-Advisor) | Kapazitätsplanung vor dem Launch, kein Sicherheitsbefund |
 | Production ist kein config-as-code-Ziel | Absicht. `auth:pruefen` / `auth:anwenden` verwalten nur Development. Abschnitt 12 ist ein GET-only Allowlist-Nachweis, kein Write-Pfad und kein vollständiger Abgleich |
+| Passkeys in Production | Nicht eingeschaltet. Ein Merge von `config.toml` schreibt den Production-Auth-Server nicht. Paket, Reihenfolge und Rückweg: Abschnitt 13. Nichts davon ist ausgeführt |
 | Die CI-Prüfung braucht `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` als Repository-Secrets | fehlen sie, schlägt der Job fehl. Fail-closed, siehe Abschnitt 2 – nur ein Pull Request aus einem Fork überspringt sich |
 | Leaked Password Protection hängt am Pro Plan | Abschnitt 5. Kein Handlungsbedarf, solange die Organisation auf Pro läuft; ein Rückfall auf Free würde den Schutz mitnehmen |
 
@@ -361,3 +362,22 @@ Unabhängig gelesen vom Technical Lead aus CI-Job `105603875234` (Head `66ee5fe5
 **SMTP — historischer Snapshot vom 18. September 2026.** Zu diesem Zeitpunkt gab es keinen production-fähigen SMTP. **Update 27. September 2026:** Gate #582 aktivierte Production Custom SMTP über Infomaniak mit `no-reply@jetnity.com`; Reset- und Bestätigungs-E-Mail wurden zugestellt. Nach PR #583 bestand der physische Erstlade-Retest des Bestätigungslinks ohne Refresh. Der P0-SMTP-Blocker ist damit technisch geschlossen. Die getrennte PrivacyBee-Rechtsgrundlagenformulierung für Infomaniak wird in Issue #585 verfolgt und ist keine SMTP-Rollback-Anweisung.
 
 **Admin-AAL2-Datenplane.** `aktuelles_admin_aal2()` ist live; die Alignment-Migration ist angewendet. Kein zweiter Apply. Siehe [docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md](QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md).
+
+---
+
+## 13. Passkeys-Production-Paket, nicht ausgeführt
+
+Stand 21. November 2026. Der Gerätetest auf `https://dev.jetnity.com` hat einen Passkey angelegt und die Anmeldung damit bestätigt. Dieses Paket ist nur die spätere Reihenfolge. Es ist nicht ausgeführt. Ein Merge ist kein Go.
+
+`supabase/config.toml` beschreibt den Development-Branch. `[auth.passkey] enabled = true` ist dort der Dev-Schalter, den die App liest. Es gibt keinen `[remotes.*]`-Block. `npm run auth:anwenden` bricht ab, wenn das Ziel kein Development-Branch ist. Ein Merge überträgt diese Datei in `main`, ruft Supabase aber nicht auf und setzt `passkey_enabled` am Production-Projekt nicht.
+
+Die App zeigt den Button, sobald diese Datei im Deploy `enabled = true` sagt. Ein Production-Deploy dieses Commits würde den Button auf `https://jetnity.com` zeigen, während der Production-Auth-Server aus bleibt. Das ist kein eingeschalteter Production-Passkey. Die Anmeldung bliebe dort geschlossen, bis das separate Production-Go den Server setzt.
+
+Nur nach einem eigenen Go, und nur am Production-Projekt, nicht per `config push` der ganzen Datei (`site_url` darin ist `http://localhost:3000`):
+
+1. GET-only lesen: `npm run auth:produktion:lesen -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn`. Erwartet vorher: `passkey_enabled` aus. Passwort, TOTP und AAL2 bleiben die gelesenen Werte.
+2. Am Production-Auth-Server nur `passkey_enabled = true` setzen. RP-ID `jetnity.com`. Erlaubte Adressen nur `https://jetnity.com` und `https://www.jetnity.com`. Nicht `https://dev.jetnity.com`, nicht `*.vercel.app`, nicht localhost.
+3. Danach den App-Deploy, der den Button zeigt. Passwort-Login und TOTP bleiben. Ein Passkey ist nur der erste Faktor. Ein Konto mit TOTP braucht danach denselben Step-up.
+4. Gerätetest nur auf `https://jetnity.com/login`: Button **Mit Passkey anmelden**, Systemdialog, bei bestehendem TOTP der bisherige Code, Landung in der Reise.
+
+Rückweg, ebenfalls nur nach Go: `passkey_enabled` am Production-Projekt wieder auf `false`. Der Button verschwindet mit dem nächsten Deploy, der die Datei wieder auf aus setzt, oder bleibt sichtbar und der Server lehnt ab, solange die Datei an ist. Passwort und TOTP bleiben. Bereits angelegte Production-Passkeys werden durch das Ausschalten nicht gelöscht. Sie sind erst wieder nutzbar, wenn der Server erneut an ist. Keine Migration.
