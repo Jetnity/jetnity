@@ -488,7 +488,7 @@ jobs:
           const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile)
           const parsed = ts.parseJsonConfigFileContent(config.config ?? {}, ts.sys, process.cwd())
           const program = ts.createProgram({
-            rootNames: ['scripts/db/admin-editorial-cms-1/fixture.ts', 'scripts/db/admin-editorial-cms-1/native.test.ts', 'scripts/db/admin-runtime-bg1-1/native.test.ts'],
+            rootNames: ['scripts/db/admin-editorial-cms-1/fixture.ts', 'scripts/db/admin-editorial-cms-1/native.test.ts', 'scripts/db/admin-runtime-bg1-1/native.test.ts', 'scripts/db/cms-public-reader-release-20261121/native.test.ts'],
             options: { ...parsed.options, incremental: false, noEmit: true },
           })
           const diagnostics = [...(config.error ? [config.error] : []), ...parsed.errors, ...ts.getPreEmitDiagnostics(program)]
@@ -669,6 +669,13 @@ jobs:
           node --import ./scripts/server-only-test-register.mjs --import tsx
           --test --test-reporter=tap --test-concurrency=1
           scripts/db/admin-editorial-cms-1/native.test.ts
+
+      - name: Run isolated public CMS reader release proof
+        timeout-minutes: 10
+        run: >-
+          node --import ./scripts/server-only-test-register.mjs --import tsx
+          --test --test-reporter=tap --test-concurrency=1
+          scripts/db/cms-public-reader-release-20261121/native.test.ts
 
       - name: Run atomic Admin BG1 transition and guarded runtime proof
         timeout-minutes: 35

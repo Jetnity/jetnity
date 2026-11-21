@@ -3,6 +3,10 @@
 **Stand:** 18. September 2026 · Phase 1.4c, Abschnitt 10 aus Phase 1.5, Abschnitt 12 Production-Nachweis
 **Gilt für:** den Supabase-**Development-Branch** als config-as-code. Production wird von hier aus nicht verwaltet. Abschnitt 12 ist ein GET-only Snapshot, kein Write-Pfad.
 
+**Owner-Entscheidung vom 21. November 2026:** Passkeys bleiben nach dem vom Owner bestätigten Gerätetest auf `dev.jetnity.com` ([PR #1240](https://github.com/Jetnity/jetnity/pull/1240)) in Dev aktiviert. Ausschließlich der lesende `auth:pruefen`-Pfad erwartet deshalb für den fest gebundenen Dev-Ref `yfvbxvijcorffwxbxahl` jetzt `passkey_enabled=true`. Der gesonderte `devAuthPruefkonfiguration`-Vertrag dokumentiert diese Herkunft und übernimmt keine Live-Werte als Sollwerte. `false`, fehlende oder falsche Typen bleiben Fehler; MFA-, Passwort-, Anbieter-, Redirect- und unbekannte Schlüsselprüfungen bleiben vollständig erhalten.
+
+Die gemeinsame Rohkonfiguration `supabase/config.toml` und der Schreibpfad bleiben bei `auth.passkey.enabled=false`; der neue Dev-Lesevertrag ist kein Auth-Push und aktiviert nichts. Production bleibt laut Owner bei `false`, wird durch diesen Auftrag weder gelesen noch verändert und vom Dev-Leser vor dem Auth-GET abgewiesen. Die historische Tabelle in Abschnitt 3 bleibt als Beobachtung vom 17. August erhalten. Ein späterer Auth-Push muss die inzwischen genehmigte Dev-Abweichung separat berücksichtigen und ist hier nicht freigegeben.
+
 Diese Datei beantwortet drei Fragen: Wie ist die Anmeldung des Branches eingestellt, woher stammt jeder dieser Werte, und woran würde auffallen, wenn er sich ändert. Abschnitt 10 kommt hinzu: was eine erfolgreiche Anmeldung mit einem Reiseentwurf macht, der ohne Konto entstanden ist.
 
 Für Rollen, Policies und Datenzugriff gilt [docs/DATENBANK.md](DATENBANK.md); für das Reisemodell und die Übernahme selbst [docs/REISEN.md](REISEN.md); für den Aufbau der Zugriffsschichten [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 4.

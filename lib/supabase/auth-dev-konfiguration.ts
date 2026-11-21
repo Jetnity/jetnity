@@ -19,6 +19,15 @@ const HERKUNFT = Object.freeze({
   quelle: 'supabase/config.toml + lib/supabase/auth-dev-konfiguration.ts',
 })
 
+const PASSKEY_HERKUNFT = Object.freeze({
+  vertrag: 'jetnity.dev-auth-passkeys.2026-11-21',
+  projektRef: DEV_REF,
+  freigabeDatum: '2026-11-21',
+  sourcePr: 1240,
+  enabled: true,
+  quelle: 'Owner-Freigabe 2026-11-21 (#1240) + lib/supabase/auth-dev-konfiguration.ts; nur Dev-Leseprüfung',
+})
+
 /**
  * Only the two reviewed raw states are accepted. All other Auth expectations
  * remain the caller's original values and are still compared with the service.
@@ -49,6 +58,19 @@ export function devAuthKonfiguration(config: TomlTabelle, ref: string) {
     roheKonfigurationVollstaendig: integriert,
     herkunft: HERKUNFT,
   }
+}
+
+/** Read-only expectations for the Owner-approved Dev passkey device test. */
+export function devAuthPruefkonfiguration(config: TomlTabelle, ref: string) {
+  const dev = devAuthKonfiguration(config, ref)
+  // The shared raw baseline and writer stay false. Do not learn from live Auth
+  // or silently accept a different/missing baseline in this read-only overlay.
+  if (tomlWert(dev.config, 'auth.passkey.enabled') !== false) {
+    throw new Error('Der Dev-Passkey-Prüfvertrag verlangt auth.passkey.enabled = false in der unveränderten Rohkonfiguration.')
+  }
+  const auth = dev.config.auth as TomlTabelle
+  ;(auth.passkey as TomlTabelle).enabled = true
+  return { ...dev, passkeyHerkunft: PASSKEY_HERKUNFT }
 }
 
 /** The CLI reads raw TOML: never let it remove the already active extra URL. */

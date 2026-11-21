@@ -21,7 +21,7 @@ import { join } from 'node:path'
 
 import { leseToml } from '@/lib/supabase/config-toml'
 import { alsJson, befund, bericht } from '@/lib/supabase/auth-bericht'
-import { devAuthKonfiguration } from '@/lib/supabase/auth-dev-konfiguration'
+import { devAuthPruefkonfiguration } from '@/lib/supabase/auth-dev-konfiguration'
 
 import { authKonfiguration, ziel } from './ziel'
 
@@ -29,27 +29,29 @@ const CONFIG = join(process.cwd(), 'supabase', 'config.toml')
 
 async function main() {
   const z = await ziel()
-  const dev = devAuthKonfiguration(leseToml(readFileSync(CONFIG, 'utf8')), z.ref)
+  const dev = devAuthPruefkonfiguration(leseToml(readFileSync(CONFIG, 'utf8')), z.ref)
   const live = await authKonfiguration(z)
 
   const ergebnis = befund(dev.config, live)
-  ergebnis.abweichungen = ergebnis.abweichungen.map((abweichung) =>
-    abweichung.api === 'uri_allow_list'
-      ? { ...abweichung, quelle: dev.herkunft.quelle }
-      : abweichung,
-  )
+  ergebnis.abweichungen = ergebnis.abweichungen.map((abweichung) => {
+    if (abweichung.api === 'uri_allow_list') return { ...abweichung, quelle: dev.herkunft.quelle }
+    if (abweichung.api === 'passkey_enabled') return { ...abweichung, quelle: dev.passkeyHerkunft.quelle }
+    return abweichung
+  })
   const mitHerkunft = {
     ...ergebnis,
     devRedirectVertrag: {
       ...dev.herkunft,
       roheKonfigurationVollstaendig: dev.roheKonfigurationVollstaendig,
     },
+    devPasskeyVertrag: dev.passkeyHerkunft,
   }
 
   if (process.argv.includes('--json')) {
     process.stdout.write(`${alsJson(mitHerkunft)}\n`)
   } else {
     console.log(`Dev-Redirect-Vertrag: ${dev.herkunft.vertrag}; Ziel ${dev.herkunft.projektRef}; Quelle #${dev.herkunft.sourcePr}@${dev.herkunft.sourceCommit}.`)
+    console.log(`Dev-Passkey-Vertrag: ${dev.passkeyHerkunft.vertrag}; enabled=true; Owner-Freigabe ${dev.passkeyHerkunft.freigabeDatum}, #${dev.passkeyHerkunft.sourcePr}.`)
     console.log(bericht(ergebnis))
   }
 
