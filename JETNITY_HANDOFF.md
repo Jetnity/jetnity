@@ -1,5 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
+## 21.11.2026 — CMS, Small und BG1 in Production nachgewiesen
+
+Der [CMS-/Small-Abschluss](docs/JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md) belegt die vier öffentlichen Reiseideen, den einmaligen freigegebenen Compute-Wechsel und die früheren Prüfungen der bestehenden Anmeldung und „Meine Reisen“. Nach vollständig grüner CI wurde #1273 separat gemergt und sein BG1-SQL-Paket installiert. Der reguläre Lauf um **21:55 UTC** bestand intern mit `complete`, öffentlichem Status `current` und unverändertem Incident/Resume **108/108**; die öffentliche CMS-API, Startseite und Entdecken bestanden den erneuten anonymen Nachtest. [SQL-Abnahme, genaue Zeiten und Grenzen](docs/JETNITY_BG1_QUERY_COST_2026-11-21.md).
+
+Login/2FA und das öffentliche App-Deployment blieben beim SQL-Schritt unverändert; kein neuer Credential-Test, kein Rollback und keine weiteren Kosten. Belegt ist weniger temporäre Sortier-I/O, keine Beschleunigung oder RAM-/OOM-Ursache. Die bisherigen Profile-/AT-Enqueue-Fehler und das gesonderte AT-HTTP-ID-Gate bleiben offen. Dieser Nachtrag dokumentiert ausschliesslich den abgeschlossenen Runtime-Release; sein eigener PR-/CI-/Review-Status ist auf GitHub nachzulesen. Er erteilt keine weitere Runtime- oder Konfigurationsfreigabe. #1240/#1272 bleiben eigenständig. [Gesamtstand](docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md) zuerst lesen; ältere datierte Übergaben darunter bleiben historische Evidence ihrer jeweiligen Aufträge.
+
 <!-- OFFICIAL_TRUTH_V3_M04_POINTER_BEGIN -->
 
 **12. November 2026 — M04 R41: tatsächlicher Main-Lauf fehlgeschlagen; unmittelbarer Review-Fix in derselben Generation4-Sitzung.** Main ist `4313049c2a8c276f2a63101dda8df996327230e0`, Tree `5a331f1a8846e8dc07a3e0a6de033fcf8da7400f`. #1190 ist gemergt, sein eigener [Push-Lauf 43150141948 / #4117 / Versuch 1](https://github.com/Jetnity/jetnity/actions/runs/43150141948) ist **FAILURE**. M04 erreicht 24 vollständige Prüfgruppen; Gruppe 25 überschreitet das feste 240-Sekunden-Budget beim 64. Start, sechs weitere Gruppen werden nicht ausgeführt. Die übrigen sechs CI-Jobs sind erfolgreich; Core und Aggregate schlagen fehl. Sauberes Cleanup ersetzt die fehlenden Prüfungen nicht. [Vollständige Root-Fehlerevidence](https://github.com/Jetnity/jetnity/pull/1190#issuecomment-6814174877).

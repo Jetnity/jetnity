@@ -1,5 +1,11 @@
 # BG1 query cost — bounded implementation task, 21 November 2026
 
+> **Actual release status, 21 November 2026, 21:55 UTC:** #1273 is merged and
+> the exact SQL package is installed in Production. The first strictly later
+> normal BG1 run passed internally with the existing incident state unchanged.
+> The final section records the actual release; earlier preparation and author
+> STOP statements are historical. This documentation closure has separate gates.
+
 ## Authority, ownership and baseline
 
 The current owner instruction authorizes the prepared CMS release, targeted
@@ -42,9 +48,10 @@ native proof and this record. Any CI wiring and architecture/decision updates
 must be explicit in the final diff. No application API or trip-graph contract
 changes are planned. There are no new dependencies or service costs.
 
-## Evidence already obtained
+## Evidence obtained before Production application
 
-Only bounded, read-only Dev queries have executed. The final catalog aggregate
+The author's Dev verification before installation used only bounded, read-only
+queries. The final catalog aggregate
 contains 8,289 input rows / 8,268 distinct keys. Its 21 duplicate dependency keys
 each have one distinct complete JSONB value. Removing only the final
 `jsonb_object_agg` object-key `ORDER BY` produced equal JSONB and canonical SHA.
@@ -65,7 +72,7 @@ Production read captured the current exact definitions. No guard was called:
 | `assert_catalog_v1()` | `392ea8733d60115b7e2c0135e21c76116f9f4d066988dda860e5129d427553fa` |
 | `audit_v1()` | `b6f56232b998dea7868bf9767f8e9012282a43512a1e5fd622c9824e62fd2fff` |
 
-Production currently ends at `bg1_transient_baseline_v3`, retaining the chain
+At that pre-install observation, Production ended at `bg1_transient_baseline_v3`, retaining the chain
 through status, rolling quota, admin runtime, saved offers, weather, AT source
 monitor and AT batch switch. Dev has a different lineage and catalog scope;
 an installer may not pretend they are interchangeable.
@@ -83,7 +90,7 @@ invariants; simply assuming unique keys is insufficient:
 <https://www.postgresql.org/docs/17/datatype-json.html>
 <https://www.postgresql.org/docs/17/functions-aggregate.html>
 
-## Acceptance / STOP
+## Historical acceptance criteria and author STOP before #1273
 
 - Exact catalog equality and canonical digest are proved with real PG17.
 - Catalog mutations to bodies, privileges, roles, dependencies and protected
@@ -151,16 +158,107 @@ speedup, OOM root cause or full-audit resource reduction is claimed.
   `dccf4eb097e4f6a4ffd040df6edb6933912a1a61e53dca06e14e6dc6d4a0fd67`.
 - `rollback-provider-body.sql` SHA-256:
   `bf59e0001e8c3cb51ed630432cf0663fa14abbc05b2b3580ae7dfd23102c51b1`.
-- Main was checked fresh at handoff and remains
+- The pre-publication main checked at the author handoff was
   `276fe3c4e066ea433cc6bea1c16b7ee90da103a0`.
 - Independent static/native review of the full pattern reported no blocking
   finding; final exact-head CI, Technical-Lead verdict and live readback remain
   separate gates. The final table-ACL check is included in the 14/14 run.
 
-**Current state:** package and focused native proof complete; no PR opened by
+**Historical author handoff before #1273:** package and focused native proof complete; no PR opened by
 this writer and no hosted optimized routine installed. Only read-only Dev and
 the single coordinated Production metadata call were performed by this writer.
 Next actor: Technical Lead publishes the frozen package in the available PR
 slot, obtains exact-head green CI/review, then controls the separately authorized
 Production application and bounded rollback. Do not deploy a new app build for
 this SQL-only change. The completed CMS/Small receipt is included separately.
+
+## Actual Production closeout — 21 November 2026
+
+[PR #1273](https://github.com/Jetnity/jetnity/pull/1273) passed independent review
+and all 12 jobs in [CI run 44951372448, attempt 1](https://github.com/Jetnity/jetnity/actions/runs/44951372448)
+on `bb795ef1540a173d87d2a1884e4ccc1ab705ce56`. The separate Vercel check also passed.
+It merged at **21:52:02 UTC** as `bce92099b4bcb785573d80df24fb5588060574d3`.
+The CI contract corrections preserved every historical source pin and required
+gate, adding the finite workflow successor for the new mandatory proof.
+
+The exact native CI proof passed **14/14**, zero failures or skips, in 40.37 s.
+Both pairs removed temporary reads/writes **387/388 → 0/0**, while full-assertion
+times were **531.375→586.913 ms** and **539.303→598.574 ms**: both candidate
+measurements were slower. The supported benefit remains avoided temporary sort
+I/O. Peak RAM, an OOM cause, a guaranteed speedup and full-audit resource savings
+were not established.
+
+The fresh Production preflight at **21:52:29.414261 UTC** confirmed the exact old
+functions, no query-cost baseline, four CMS publications and a current guard.
+The Technical Lead requested `bg1_query_cost_release_20261121` for
+`qscbgcdmivbbnzrcyegn` at **21:53:29 UTC**, using the frozen provider SHA above.
+The provider reported success; the first database marker after confirmed commit
+was **21:53:59.250755 UTC**. That marker is an observation after commit, not a
+claimed exact commit timestamp. The packaged read-only full assertion and
+definition/owner/ACL readback passed. The two changed routine fingerprints are:
+
+| Routine | Installed SHA-256 of `pg_get_functiondef` |
+| --- | --- |
+| `catalog_status_v1()` | `7831174f514c657fcae44d8125e517f810e6271cbc128642cdcbc1df27b2a402` |
+| `assert_catalog_v1()` | `6b71c91f8498c4001f1f81fa01ba4c440681ec6166fbb2bccaae760602c59d39` |
+
+Both remain postgres-owned `SECURITY DEFINER` functions with exactly
+`{postgres=X/postgres}` execution ACLs. `audit_v1()` retains its original
+fingerprint and both complete catalog assertions. The installed immutable
+`query_cost_baseline_v1` uses `jsonb_unique_narrow_dependency_distinct_v1`:
+
+| Baseline field | SHA-256 |
+| --- | --- |
+| `predecessor_catalog_digest` | `7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e` |
+| `predecessor_baseline_digest` | `a7266c41fc77ab63b8ce2878d10890c7d5b395a3a33d8fe6c5331bf68f7e2bd0` |
+| `catalog_digest` | `ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24` |
+
+The separate **21:54:36.800600 UTC** metadata readback matched the preflight
+fingerprints for roles, memberships, settings, all six cron definitions and all
+three CMS tables. The complete guard state was still identical before the next
+normal tick. The postmaster start remained **20:25:51.211541 UTC**, from the
+earlier Small upgrade. Security-advisor findings were identical after excluding
+only their observation timestamps; existing findings remain. The inspected
+post-install runtime Error/Fatal query returned no entries.
+
+The first normal due slot strictly after the commit marker was **21:55:00 UTC**.
+It entered at **21:55:00.026007**, began its proof at **21:55:00.029581** and
+finished at **21:55:04.549996 UTC**. At **21:55:44.570209 UTC**, its internal
+`runs_v1.outcome` was **`complete`**, the public alarm was **`current`**, and proof
+generation had advanced from **1607 to 1608**. Incident/resume generations stayed
+**108/108**; `incident_at` stayed **2026-11-20 22:50:00.060246 UTC**. All four
+acceptance booleans passed: a full proof after installation, unchanged sticky
+head, no new incident and current public status. The audit ran on its existing
+schedule; no manual audit or incident release was performed. This establishes
+the internal result, not merely a successful cron invocation.
+
+The independent public readback at **21:54:38–21:54:46 UTC** made one anonymous,
+queryless GET per API, home and Entdecken route. All returned **200**. The API
+was `no-store` and returned exactly the same four published snapshots/revisions;
+both pages contained the four approved destinations and expected image
+references, with complete approved descriptions on Entdecken and no empty or
+fallback message. This was an HTML/data check, not a new browser interaction
+or image-download test. Client wall times include network/TLS and are not SQL
+timings or an SLA measurement.
+
+The public app deployment remained unchanged; this SQL release required no
+app promotion. No rollback was needed. The completed Small/CMS release, its
+**5.15 USD/month estimated compute increase before taxes**, and the earlier
+existing-session Login/Meine Reisen checks remain in the
+[separate release receipt](JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md).
+There was no fresh credential/2FA login test or additional configuration,
+Auth, provider, restart or cost change in this SQL release. The static catalog
+fallback and under-eight supplement remain present.
+
+Two pre-existing cron failures remain separate: `sync_profile_emails_hourly`
+(21:00 UTC, 0.47 ms) and `jetnity-at-production-source-enqueue-v1`
+(21:50 UTC, 14.97 ms). These recorded runs preceded the SQL installation;
+this release does not declare those jobs repaired. The separate AT HTTP-ID
+step remains gated and was not authorized or executed by this task. Production
+now ends at `query_cost_baseline_v1`; any unapplied HTTP-ID or other protected
+catalog package prepared against the former v3 head requires a fresh predecessor
+and source comparison plus independent review. Its old pins must not be silently
+reused. This amendment records the completed runtime release only. Its own
+documentation PR, CI and review status must be read from GitHub; it grants no
+additional runtime or configuration activation. #1240 and #1272 remain
+independent work.
