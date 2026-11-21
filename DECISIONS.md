@@ -6469,3 +6469,14 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Begründung:** Das Ortsbild ist das, was eine Reise auf den ersten Blick wie die eigene aussehen lässt; ohne es wirkte die Preview leerer als live. Ein Kopf mit Bildvariante hält die Vereinheitlichung und bringt das Bild zurück.
 
 **Konsequenzen:** Keine Logik-, Daten-, API-, Auth- oder DB-Änderung, keine neuen Kosten; Bildnachweise bleiben unter der Ansicht. Production-Befund ausserhalb dieses PR: jetnity.com zeigt auf der Startseite und unter `/entdecken` «Reiseideen derzeit nicht verfügbar», weil Production die CMS-Veröffentlichung liest und diese Abfrage scheitert (Zustand «nicht verfügbar», nicht «leer»); die Preview zeigt den statischen Katalog.
+
+## Reiseideen: vorhandenen Katalog unter acht Veröffentlichungen ergänzen — 21.11.2026
+
+**Owner-Entscheidung:** Startseite und `/entdecken` ergänzen bei weniger als acht eindeutigen, validiert veröffentlichten Ideen den vorhandenen statischen Katalog. Nach `placeId` wird dedupliziert; die veröffentlichte Fassung gewinnt vollständig. Bei einem CMS-Ausfall bleiben die statischen Ideen mit einem ehrlichen Verfügbarkeitshinweis sichtbar. Diese ausdrückliche Anweisung ersetzt ausschließlich die frühere No-Fallback-Regel der öffentlichen Auswahl.
+
+**Grenzen:** Der strenge Vierer-CMS-Vertrag und die Trennung von Veröffentlichung und Entwurf bleiben bestehen. Der derzeitige Katalog liefert bei null Veröffentlichungen vier Ziele; acht ist die Ergänzungsschwelle, keine zugesagte Kartenzahl. Die vier CMS-Einträge werden erst nach separatem Owner-Go je Eintrag veröffentlicht. Der Auftrag gilt nur für Dev; Production, Login und 2FA bleiben unverändert. Drei PR-Slots sind belegt, daher erfolgt die Arbeit auf `fix/inspiration-catalog-under-eight-dev-20261121` ohne vierten PR. Die Preview-Abnahme steht aus. [Auftrag und tatsächlicher Prüfstand](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
+
+
+### Reiseideen-Nachtrag 21.11.2026: separater Release nach #1264
+
+Owner-Go: Katalogergänzung nach dem tatsächlichen #1264-Livewechsel einzeln ausliefern, bei neuen Fehlern zurückrollen. Nur Bali erhält eine Publikationsfreigabe; die anderen drei vollständigen Vorschläge bleiben zur Einzelabnahme unveröffentlicht. Bestehende CMS-AAL2-/Rollenprüfung und Login bleiben erhalten; keine BG1-SQL-/Konfigurationsschritte. Der frühere Dev-only-/PR-Slot-Zwischenstand ist durch diesen Folgeauftrag und den freien dritten PR-Slot überholt. [Fortlaufender Nachweis](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).

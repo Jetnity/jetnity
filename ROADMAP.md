@@ -571,3 +571,13 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 - Native Flugsuche im vorhandenen Reiter mit Reisevorbelegung, Hin-/Rück-/Gabelflug, Flughafenwahl, Belegung und Economy/Business. Originalangebote in CHF, Anbieterfilter und Buchungsweiterleitung im getrennten Rahmen.
 - Desktop und mobile Chrome-Emulation mit echten Ergebnissen geprüft, einschliesslich Dialog-Vergrösserung, Einwilligungswiderruf, gemeinsamem Hotel-/Flugkalender und verankerten Auswahllisten. Veröffentlichung vom Owner ausdrücklich beauftragt. Separates HTTPS-Widget und geschützte App-Vorschau mit echten Angeboten und Preis-/Dauersortierung nachgewiesen; jetnity.com noch nicht umgestellt.
 - PR #1187: CSS-Importfehler aus der Gesamtprüfung durch Laden im bestehenden Reise-Layout korrigiert; 97 betroffene Workspace-Regressionstests erfolgreich. Zusätzlich scheitert der bestehende M04-Nativtest am 240-Sekunden-Budget, auch im unveränderten Main-Lauf 42955908361. Erforderliche CI bleibt Freigabevoraussetzung; keine fremde M04-Recovery integriert und keine Prüfung abgeschwächt. Anbieterfeld `citizenship: RU` und physisches Safari/iPhone bleiben offen. [Nachweise](docs/TRAVELPAYOUTS_FLUGSUCHE_2026-11-11.md).
+
+## Reiseideen-Katalog: Dev-Auftrag — 21.11.2026
+
+- Owner-Auftrag: Bei weniger als acht eindeutigen veröffentlichten Ideen den vorhandenen statischen Katalog ergänzen; veröffentlichte Fassung gewinnt. CMS-Ausfälle zeigen die statische Auswahl mit ehrlichem Hinweis. Die vier CMS-Einträge bleiben bis zum jeweiligen Owner-Go unveröffentlicht.
+- Dev-Kandidat auf `fix/inspiration-catalog-under-eight-dev-20261121`; drei PR-Slots belegt, kein vierter PR. Preview-Abnahme noch offen, keine Production-Freigabe und keine Änderung an Login/2FA. [Auftrag, Prüfstand und nächster Schritt](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
+
+
+### Reiseideen-Nachtrag 21.11.2026: separater Release nach #1264
+
+Owner-Go: Katalogergänzung nach dem tatsächlichen #1264-Livewechsel einzeln ausliefern, bei neuen Fehlern zurückrollen. Nur Bali erhält eine Publikationsfreigabe; die anderen drei vollständigen Vorschläge bleiben zur Einzelabnahme unveröffentlicht. Bestehende CMS-AAL2-/Rollenprüfung und Login bleiben erhalten; keine BG1-SQL-/Konfigurationsschritte. Der frühere Dev-only-/PR-Slot-Zwischenstand ist durch diesen Folgeauftrag und den freien dritten PR-Slot überholt. [Fortlaufender Nachweis](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
