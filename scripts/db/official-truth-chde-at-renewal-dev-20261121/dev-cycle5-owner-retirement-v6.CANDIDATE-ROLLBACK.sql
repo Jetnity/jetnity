@@ -63,6 +63,15 @@ CREATE TRIGGER immutable_truncate BEFORE TRUNCATE ON official_v3_guard_private.b
 REVOKE ALL ON official_v3_guard_private.bg1_dev_cycle5_baseline_v6 FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user;
 GRANT ot_v3_jobs_owner TO postgres WITH INHERIT FALSE, SET TRUE;
 SET LOCAL ROLE ot_v3_jobs_owner;
+CREATE FUNCTION official_v3_jobs_private.cycle5_history_v1()
+ RETURNS boolean LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path=pg_catalog
+ AS $history$
+ BEGIN
+  PERFORM official_v3_jobs_private.assert_history_v1('research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513');
+  RETURN true;
+ END $history$;
+REVOKE ALL ON FUNCTION official_v3_jobs_private.cycle5_history_v1() FROM PUBLIC,anon,authenticated,service_role;
+GRANT EXECUTE ON FUNCTION official_v3_jobs_private.cycle5_history_v1() TO postgres;
 CREATE FUNCTION official_v3_jobs_private.cycle5_close_v1(evidence jsonb)
 RETURNS void LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path=pg_catalog
 AS $body$
@@ -126,7 +135,7 @@ BEGIN
  OR s.current_job->>'state'<>'leased' OR s.terminal_credit_claim<>'op3_7ce17fa04e974e9991dc15e9dd55caf8'
  OR (s.current_job#>>'{lease,expiresAt}')::timestamptz>=clock_timestamp()
  THEN RAISE EXCEPTION 'CYCLE5_CURRENT_ATTEMPT_CHANGED' USING ERRCODE='P7906';END IF;
- PERFORM official_v3_jobs_private.assert_history_v1(s.job_key);
+ PERFORM official_v3_jobs_private.cycle5_history_v1();
  SELECT * INTO STRICT t FROM official_v3_jobs_private.execution_starts_v1 WHERE attempt_key=s.open_attempt;
  SELECT * INTO STRICT c FROM official_v3_jobs_private.queue_operations_v1 WHERE operation_id=t.claim_operation_id;
  IF t.claim_operation_id<>'op3_7ce17fa04e974e9991dc15e9dd55caf8' OR t.job_key<>s.job_key OR t.leased_job IS DISTINCT FROM s.current_job
@@ -209,7 +218,7 @@ BEGIN
  OR EXISTS(SELECT 1 FROM official_v3_jobs_private.execution_results_v1 WHERE attempt_key=r.attempt_key)
  OR EXISTS(SELECT 1 FROM official_v3_jobs_private.execution_dispositions_v1 WHERE attempt_key=r.attempt_key)
  THEN RAISE EXCEPTION 'CYCLE5_ARCHIVED_SOURCE_OR_CLOSED_JOB_CHANGED' USING ERRCODE='P7906';END IF;
- PERFORM official_v3_jobs_private.assert_history_v1(s.job_key);
+ PERFORM official_v3_jobs_private.cycle5_history_v1();
 END $body$;
 
 CREATE OR REPLACE FUNCTION public.official_v3_guard_review_v1()
