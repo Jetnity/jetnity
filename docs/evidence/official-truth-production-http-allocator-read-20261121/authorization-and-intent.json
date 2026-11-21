@@ -1,0 +1,31 @@
+{
+  "schema": "jetnity-prod-http-allocator-read-execution-v1",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_READ_20261121",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "approved_package": "PROD_HTTP_ALLOCATOR_PACKAGE_20261121",
+  "approved_manifest_sha256": "ef166a30a16cbb9cb6ca33702b51c659f0ce0400668b54d1e6dddbf820086d65",
+  "approved_commit": "e4bab62e6d0e4e902056d78581128c675da7391c",
+  "maximum_calls": 2,
+  "maximum_uses_per_file": 1,
+  "maximum_wall_ms": 300000,
+  "maximum_combined_result_bytes": 1056768,
+  "read_only": true,
+  "transaction_end": "ROLLBACK",
+  "retry_allowed": false,
+  "production_write_permission": false,
+  "started_ms": 1795293590444,
+  "started_at": "2026-11-21T20:39:50.444Z",
+  "attempts": [
+    {
+      "ordinal": 1,
+      "file": "00-at-enqueue-diagnosis.READONLY.sql",
+      "sha256": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+      "bytes": 15042,
+      "invoked_at": "2026-11-21T20:39:50.449Z",
+      "status": "INVOKING"
+    }
+  ],
+  "status": "00_INVOKED",
+  "deadline_ms": 1795293890444,
+  "deadline_at": "2026-11-21T20:44:50.444Z"
+}

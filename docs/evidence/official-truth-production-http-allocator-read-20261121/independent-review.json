@@ -1,0 +1,38 @@
+{
+  "schema": "jetnity-production-read-independent-review-v1",
+  "reviewer_tasks": [
+    "/root/verify_dev_receipts",
+    "/root/sequence_renewal_review"
+  ],
+  "reviewed_execution": "execution.json",
+  "conclusion": "PASS_SCOPED_EXECUTION_AND_HONEST_STOP; NO_WRITER_BINDING",
+  "preflight": {
+    "exact_approved_file_hashes": true,
+    "exact_manifest_hash": true,
+    "read_only_repeatable_read_rollback": true,
+    "no_product_http_source_or_write_calls_in_sql": true,
+    "conditional_00_then_01": true
+  },
+  "actual_execution": {
+    "raw_and_parsed_results_identical": true,
+    "exactly_two_calls": true,
+    "no_retry": true,
+    "combined_result_row_json_bytes": 12020,
+    "total_ms": 34519,
+    "maximum_ms": 300000,
+    "rollback_in_exact_sql": true
+  },
+  "stop_interpretation": {
+    "three_logged_request_id_unique_violations": true,
+    "actual_sqlstate_not_observed": true,
+    "no_stored_duplicate_rows_or_causation_claim": true,
+    "default_sha_matches_expected": true,
+    "remaining_live_queue_predicate_cause_unknown": true,
+    "native_transport_digest_not_constructed": true,
+    "rehearsal_and_write_binding_blocked": true
+  },
+  "timing_note": "The original elapsed_ms values 588/526 measure connector calls; envelope times are 1583/1128 ms. execution.json now explicitly records both scopes. Total execution window is 34519 ms.",
+  "offline_template_review": "The approved 01 queue expectations (method text; headers NOT NULL) conflict with the pinned official pg_net 0.19.5 creation DDL (method net.http_method; nullable headers). This identifies template assumptions, not the complete hosted schema.",
+  "reviewer_database_calls": 0,
+  "production_changes": 0
+}

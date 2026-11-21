@@ -1,0 +1,126 @@
+{
+  "schema": "jetnity-production-http-allocator-read-interpretation-v1",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_READ_20261121",
+  "outcome": "READ_EXECUTED_STOP_REBINDING_BLOCKED",
+  "production_read_call_count": 2,
+  "total_wall_ms": 34519,
+  "actual_sql_files": [
+    {
+      "file": "00-at-enqueue-diagnosis.READONLY.sql",
+      "sha256": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+      "bytes": 15042,
+      "result": "PROD_THREE_HISTORICAL_CRON_FAILURE_SIGNATURES_OBSERVED",
+      "observed_at": "2026-11-21T20:39:51.973688+00:00",
+      "read_only": true,
+      "transaction_end_in_exact_sql": "ROLLBACK"
+    },
+    {
+      "file": "01-required-bindings.READONLY.sql",
+      "sha256": "688def1ae033992cc9f36ea26145722bd869dfe1db971e86c00b231b7aa10ce5",
+      "bytes": 16685,
+      "result": "STOP_QUEUE_SHAPE_OR_LEGACY_DEFAULT_CHANGED",
+      "observed_at": "2026-11-21T20:40:24.87163+00:00",
+      "read_only": true,
+      "transaction_end_in_exact_sql": "ROLLBACK"
+    }
+  ],
+  "at_findings": {
+    "retained_runids": [
+      "23758",
+      "23767",
+      "23776"
+    ],
+    "logged_failures": 3,
+    "fixed_signature": "UNIQUE_VIOLATION_AT_REQUEST_ID",
+    "actual_sqlstate_observed": false,
+    "reference_sqlstate": "23505",
+    "actual_stored_duplicate_rows_proven": false,
+    "managed_sequence_reset_as_cause_proven": false,
+    "meaning": "The three historical enqueue attempts logged a request-ID uniqueness violation. This establishes the reported failure category only, not stored duplicate rows, all causal steps, or present health."
+  },
+  "binding_stop": {
+    "result": "STOP_QUEUE_SHAPE_OR_LEGACY_DEFAULT_CHANGED",
+    "context_ok": true,
+    "caps_ok": true,
+    "exact_four_id_paths": true,
+    "queue_shape_check": false,
+    "legacy_default_sha256_observed": "fffafa169a89e0a8f0017a62f90dd0051226a9a49c231dc9e98957f990860f36",
+    "legacy_default_expression_expected": "nextval('net.http_request_queue_id_seq'::regclass)",
+    "legacy_default_sha256_matches_expected": true,
+    "native_transport_sha256": null,
+    "transport_digest_gated_before_construction": true,
+    "repair_or_installation_permission": false,
+    "unknown": "The grouped false does not identify which live shape predicate(s) failed and does not prove a recent Production schema change."
+  },
+  "offline_template_review": {
+    "source": "https://github.com/supabase/pg_net/blob/a7792bfd913c7859e14025d606624982706c2a7f/sql/pg_net.sql",
+    "source_commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "source_git_blob_sha": "09d6bc72fbf7922a7660dc0ea0261a303b5d86a2",
+    "source_version": "v0.19.5",
+    "scope": "Official upstream DDL only; not an independent observation of the hosted table or upgrade path.",
+    "template_assumptions_not_supported_by_that_ddl": [
+      {
+        "column": "method",
+        "approved_01_expected_type": "pg_catalog.text",
+        "upstream_0195_type": "net.http_method"
+      },
+      {
+        "column": "headers",
+        "approved_01_required_not_null": true,
+        "upstream_0195_required_not_null": false
+      }
+    ],
+    "approved_files_modified": false,
+    "source_evidence_file": "pg-net-0.19.5-sql-source.txt",
+    "source_sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+    "source_bytes": 9487,
+    "source_git_blob_recomputed_matches": true,
+    "http_method_type_kind": "DOMAIN over pg_catalog.text; not an enum",
+    "type_constraint_scope": "The upstream domain limits text to case-insensitive get/post/delete. Hosted domain metadata and constraint bindings have not yet been observed."
+  },
+  "function_comparison": {
+    "definition_and_body_fingerprints_identical_for_all_11_comparable_v2_functions": true,
+    "other_function_fingerprints_newly_recorded": 6,
+    "config_sha_comparison_warning": "V2 uses array_to_json(proconfig)::text; 01 uses to_jsonb(proconfig)::text. Multi-element array formatting changes the digest. Two differing config hashes are not evidence of configuration drift when the calculation differs.",
+    "complete_transport_coverage_available": false,
+    "unfamiliar_consumer_repair_permission": false
+  },
+  "independent_review": {
+    "reviewer": "/root/verify_dev_receipts",
+    "raw_parsed_exact_match": true,
+    "approved_hashes_and_bytes_exact": true,
+    "result_row_json_bytes": [
+      2750,
+      9270
+    ],
+    "combined_result_row_json_bytes": 12020,
+    "db_observation_within_each_invocation": true,
+    "total_window_ms": 34519,
+    "timing_fields_clarified": true,
+    "reviewer_scope": "Local existing SQL/evidence only; no reviewer DB calls."
+  },
+  "next_step": {
+    "new_separate_go_required": true,
+    "reason": "The authorized two-file one-time read is consumed and the Owner required STOP/no retry. A different detail query is outside that authorization.",
+    "proposed_authorization_id": "PROD_HTTP_ALLOCATOR_QUEUE_REVIEW_20261121",
+    "planned_single_file": "02-queue-shape-and-bindings.READONLY.sql",
+    "status": "PREPARATION_ONLY_NOT_EXECUTED",
+    "purpose": "Expose the bounded individual catalog predicates and any bounded transport fingerprint for substantive review; never turn an unknown shape or an opaque digest into permission to write.",
+    "writer_rebinding_status": "BLOCKED; no native_transport_sha256 is available to bind safely.",
+    "prior_install_rehearsal_fence_files_unchanged": true,
+    "installed_successor_canonical_sha256": null
+  },
+  "boundaries": {
+    "production_mutation": false,
+    "http_or_source_action": false,
+    "owner_step": false,
+    "login_or_2fa_change": false,
+    "new_role_or_secret": false,
+    "new_cost": false,
+    "rehearsal": false,
+    "installation": false,
+    "retry": false,
+    "additional_production_read": false,
+    "expired_facts_label": "derzeit nicht verfügbar"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "jetnity-production-queue-detail-preparation-review-v1",
+  "reviewed_at_utc": "2026-11-21T20:52:23.409767+00:00",
+  "sql_sha256": "8efb206f61498e808c49225f82dcff7f1ddd4e316e8e0a4e180927eb90a7cfb1",
+  "sql_bytes": 27936,
+  "old_native_transport_expression_byte_exact": true,
+  "original_transport_function_fingerprints_block_exact": true,
+  "only_one_readonly_repeatable_read_transaction": true,
+  "ends_rollback": true,
+  "lexical_forbidden_mutation_and_side_effect_calls_absent": true,
+  "top_level_statement_count": 10,
+  "catalog_only_manual_review": true,
+  "old_and_upstream_shape_separate": true,
+  "domain_is_not_enum": true,
+  "opaque_digest_or_shape_does_not_grant_writer": true,
+  "original_00_01_or_other_package_bytes_not_modified": true,
+  "no_native_sql_parser_available": true,
+  "native_sql_parser_pass_claimed": false,
+  "runtime_pass_claimed": false,
+  "database_calls_for_new_query": 0,
+  "needs_new_exact_owner_go": true
+}

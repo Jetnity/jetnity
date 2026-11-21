@@ -1,0 +1,22 @@
+{
+  "schema": "jetnity-production-queue-read-independent-review-v1",
+  "reviewer": "/root/verify_dev_receipts",
+  "sql_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/02-queue-shape-and-bindings.READONLY.sql",
+  "sql_sha256": "8efb206f61498e808c49225f82dcff7f1ddd4e316e8e0a4e180927eb90a7cfb1",
+  "sql_bytes": 27936,
+  "verdict": "STATIC_PASS_NEW_SEPARATE_GO_REQUIRED",
+  "catalog_only": true,
+  "read_only_repeatable_read_rollback": true,
+  "fixed_time_and_one_mib_result_caps": true,
+  "missing_or_unsafe_objects_stop": true,
+  "old_and_upstream_comparison_separate": true,
+  "method_domain_not_enum": true,
+  "nullable_headers_matches_primary_source": true,
+  "domain_constraint_semantics_unverified": true,
+  "original_native_transport_and_fingerprints_byte_exact": true,
+  "no_digest_or_shape_writer_approval": true,
+  "evidence_reference_verified": true,
+  "database_calls": 0,
+  "native_sql_parser_pass": false,
+  "runtime_pass": false
+}

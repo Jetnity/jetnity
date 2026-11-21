@@ -1,0 +1,90 @@
+{
+  "schema": "jetnity-production-http-allocator-queue-review-manifest-v1",
+  "package": "PROD_HTTP_ALLOCATOR_QUEUE_REVIEW_20261121",
+  "created_at_utc": "2026-11-21T20:52:23.412341+00:00",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "status": "PREPARED_ONLY_NEW_GO_REQUIRED_NOT_EXECUTED",
+  "basis_commit": "6a694d041de33b245a7ee5f7d263c7d416d67809",
+  "prior_read_authorization": "PROD_HTTP_ALLOCATOR_READ_20261121",
+  "prior_read_status": "CONSUMED_STOP_AFTER_01_NO_RETRY",
+  "prior_execution_evidence_path": "docs/evidence/official-truth-production-http-allocator-read-20261121/execution.json",
+  "prior_execution_sha256": "9b3afcc043fb4692457d4371bfc7cdfb7c092230f616f80cdc5faef6612c2992",
+  "files": [
+    {
+      "file": "02-queue-shape-and-bindings.READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/02-queue-shape-and-bindings.READONLY.sql",
+      "sha256": "8efb206f61498e808c49225f82dcff7f1ddd4e316e8e0a4e180927eb90a7cfb1",
+      "bytes": 27936,
+      "executable_sql": true,
+      "executed": false
+    },
+    {
+      "file": "REVIEW.md",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/REVIEW.md",
+      "sha256": "fd30574c7d9f9b3cbfd58eae53f213dde213999323fb03f390d2a9fc0dcc5abc",
+      "bytes": 3835,
+      "executable_sql": false,
+      "executed": false
+    },
+    {
+      "file": "preparation-review.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/preparation-review.json",
+      "sha256": "4e73fc09de8d248214e3cf3871bc4c31e125e3f28d078e3eb8335741fd367b39",
+      "bytes": 957,
+      "executable_sql": false,
+      "executed": false
+    }
+  ],
+  "sql_file_count": 1,
+  "execution_contract": {
+    "authorization_received": false,
+    "maximum_transactions": 1,
+    "maximum_calls": 1,
+    "maximum_uses_per_file": 1,
+    "outer_wall_timeout_seconds": 300,
+    "statement_timeout_seconds": 12,
+    "transaction_timeout_seconds": 20,
+    "idle_timeout_seconds": 20,
+    "lock_timeout_ms": 500,
+    "result_byte_cap": 1048576,
+    "isolation": "REPEATABLE READ",
+    "read_only": true,
+    "transaction_end": "ROLLBACK",
+    "ordered_files": [
+      "02-queue-shape-and-bindings.READONLY.sql"
+    ],
+    "observation_result": "QUEUE_SHAPE_AND_BINDINGS_OBSERVED_REVIEW_REQUIRED_NO_WRITE_PERMISSION",
+    "stop": "Any SQL/service error, timeout, missing required object, unsafe bound, changed ID inventory, unknown result form or STOP result ends the one-time read. No retry, fallback or additional Production call.",
+    "post_read_review": "A returned digest and an upstream column match are review evidence only. Unknown types, domain constraints or function fingerprints cannot be accepted automatically for writer binding.",
+    "not_authorized": [
+      "repeat of prior 00 or 01",
+      "rehearsal",
+      "installation",
+      "fence",
+      "Production write",
+      "HTTP/source/Publisher/audit/Owner action",
+      "login/2FA",
+      "role/secret change",
+      "new costs",
+      "publication",
+      "automatic follow-up query"
+    ]
+  },
+  "current_writer_binding": {
+    "native_transport_sha256": null,
+    "installed_successor_canonical_sha256": null,
+    "prior_write_files_unchanged": true,
+    "new_bound_write_package_available": false
+  },
+  "primary_source": {
+    "version": "pg_net v0.19.5",
+    "commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "path": "sql/pg_net.sql",
+    "git_blob_sha": "09d6bc72fbf7922a7660dc0ea0261a303b5d86a2",
+    "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+    "current_hosted_shape_verified": false
+  },
+  "new_query_execution_count": 0,
+  "native_sql_parser_or_runtime_tested": false,
+  "manifest_excludes_itself": true
+}

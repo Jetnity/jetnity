@@ -1,0 +1,104 @@
+{
+  "schema": "jetnity-production-http-allocator-read-result-delivery-v1",
+  "recorded_at_utc": "2026-11-21T20:53:51.694573+00:00",
+  "parent_commit": "6a694d041de33b245a7ee5f7d263c7d416d67809",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_READ_20261121",
+  "read_outcome": "STOP_AFTER_SECOND_READ_NO_RETRY",
+  "production_calls": 2,
+  "completed_wall_ms": 34519,
+  "retry": false,
+  "production_mutations": false,
+  "original_sql_files_and_manifest_unchanged": true,
+  "original_delivery_files_preserved": {
+    "same_path_count": 31,
+    "overall_plan_archived_byte_exact": "docs/evidence/official-truth-production-http-allocator-read-20261121/overall-plan-before-read-6a694d0.md",
+    "overall_plan_append_only": true
+  },
+  "writer_binding_available": false,
+  "native_transport_sha256": null,
+  "write_files_executed": false,
+  "new_read_package": "PROD_HTTP_ALLOCATOR_QUEUE_REVIEW_20261121",
+  "new_read_manifest_sha256": "3e15e55d2f1d53444bd65df68426336de353bfb906add719c7de605e04d5e714",
+  "new_read_sql_sha256": "8efb206f61498e808c49225f82dcff7f1ddd4e316e8e0a4e180927eb90a7cfb1",
+  "new_read_authorized": false,
+  "new_read_executed": false,
+  "native_parser_or_runtime_pass_claimed": false,
+  "manifest_excludes_itself": true,
+  "files": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "sha256": "21848056ed5fecf6bbc4be66fc348cd4bdd9ddfd43c947932273c72b3dd0536a",
+      "bytes": 192418
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_QUEUE_REVIEW_GO_2026-11-21.md",
+      "sha256": "428eee6510b26a1410fff0cc86b73863d2908d9cf6fef94280124d5b3a2fac72",
+      "bytes": 6585
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_READ_RESULT_2026-11-21.md",
+      "sha256": "89629c0f66bee5fccb3847aab936c3b43fcb90fca2cc5de349f4bf954dda50c7",
+      "bytes": 9128
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/00-result-and-01-intent.json",
+      "sha256": "92ee890063bf7d5e2ee780993ba7f09dd7346832b1b5b6a866c58ecc298dbb69",
+      "bytes": 9224
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/authorization-and-intent.json",
+      "sha256": "d28df85723ea4e603eda154af0640a79ee032a50e0bcdc994634d826bb2833a6",
+      "bytes": 1103
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/execution.json",
+      "sha256": "9b3afcc043fb4692457d4371bfc7cdfb7c092230f616f80cdc5faef6612c2992",
+      "bytes": 34914
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/independent-review.json",
+      "sha256": "2fb5aff0c7f26834f75196f5f6dd2af22ab9afc83e200fbac2d15c598a3df9f9",
+      "bytes": 1694
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/interpretation.json",
+      "sha256": "51cb24d8318b5a7132406765db916402e8b1ae4879dca873275c7824e26a6e7d",
+      "bytes": 5821
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/new-query-independent-review.json",
+      "sha256": "1e287ac0d3e3b34384f571bb95bd52a87a03fb91801184c6e95376c123a38b96",
+      "bytes": 1007
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/overall-plan-before-read-6a694d0.md",
+      "sha256": "f5ff067e7cce60ac14b1f79fc01b5a6ab2fd78c99dd03a434daaded9a6fde037",
+      "bytes": 189646
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/pg-net-0.19.5-sql-source.txt",
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+      "bytes": 9487
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/02-queue-shape-and-bindings.READONLY.sql",
+      "sha256": "8efb206f61498e808c49225f82dcff7f1ddd4e316e8e0a4e180927eb90a7cfb1",
+      "bytes": 27936
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/MANIFEST.json",
+      "sha256": "3e15e55d2f1d53444bd65df68426336de353bfb906add719c7de605e04d5e714",
+      "bytes": 3866
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/REVIEW.md",
+      "sha256": "fd30574c7d9f9b3cbfd58eae53f213dde213999323fb03f390d2a9fc0dcc5abc",
+      "bytes": 3835
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-queue-review-20261121/preparation-review.json",
+      "sha256": "4e73fc09de8d248214e3cf3871bc4c31e125e3f28d078e3eb8335741fd367b39",
+      "bytes": 957
+    }
+  ]
+}
