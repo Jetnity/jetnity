@@ -42,7 +42,8 @@ test('Production preflight is read-only and displays every stopping condition',(
 test('Production candidate cannot modify sequence unless qualified legal sources and protected v4 successor exist',()=>{
  const s=file('production-at-sequence.CANDIDATE-ROLLBACK.sql')
  assert.match(s,/source_total<>3 OR approved<>3/)
- assert.match(s,/bg1_transient_correction_baseline_v4/)
+ assert.match(s,/at_legal_source_guard_baseline_v4/)
+ assert.doesNotMatch(s,/to_regclass\('official_v3_guard_private\.bg1_transient_correction_baseline_v4'\)/)
  assert.match(s,/pg_try_advisory_xact_lock\(771112,1\)/)
  assert.match(s,/ALTER SEQUENCE net\.http_request_queue_id_seq RESTART WITH/)
  assert.match(s,/assert_catalog_v1\(\)/)

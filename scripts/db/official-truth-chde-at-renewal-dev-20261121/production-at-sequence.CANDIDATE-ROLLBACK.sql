@@ -22,9 +22,11 @@ BEGIN
  -- Current Production fails this gate: 0/3 qualified.
  IF source_total<>3 OR approved<>3
  THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_SOURCE_NOT_QUALIFIED' USING ERRCODE='P7998';END IF;
- -- A future protected v4 successor of renew_ch_v1 must independently require
+ -- A future NORMAL protected source-admission successor of renew_ch_v1
+ -- must not be the EMERGENCY bg1_transient_correction_baseline_v4 (restores old audit).
+ -- This distinct source-guard baseline must independently require
  -- the same exact legal-source-to-rule/Document/MA1/Owner gate.
- IF to_regclass('official_v3_guard_private.bg1_transient_correction_baseline_v4') IS NULL
+ IF to_regclass('official_v3_guard_private.at_legal_source_guard_baseline_v4') IS NULL
  THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_PROTECTED_V4_GUARD_MISSING' USING ERRCODE='P7998';END IF;
  SELECT last_value INTO STRICT now_value FROM net.http_request_queue_id_seq;
  SELECT greatest(coalesce((SELECT max(request_id) FROM official_v3_at_production_private.watch_requests_v1),0),
