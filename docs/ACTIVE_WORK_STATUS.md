@@ -1,6 +1,14 @@
 # Jetnity – Active Work Status
 
-## Aktueller Writer — Erstbesucher-Funktionen
+## Abgeschlossen — Erstbesucher-Funktionen #1268 gemergt und live
+
+- **Merge:** PR [#1268](https://github.com/Jetnity/jetnity/pull/1268) am 21.11. um 19:34 MEZ vom PO gemergt (Merge-Commit `1acee55c4`, Baum identisch mit dem geprüften Head `614bca2aa`, CI 14/14). Der Agent hatte den PR auf PO-Go auf Ready gesetzt; sein Merge-Versuch scheiterte erneut an der fehlenden GitHub-Berechtigung (403).
+- **Production-Deploy auf PO-Go:** Deployment `dpl_4KySqFCx4qgvLn7bhP9uRLeKJwt1` (`jetnity-34gmxuzgd-jetnity-e1b93c82.vercel.app`) aus `main` `1acee55c4` über die Vercel-API gebaut, ohne Domains umzuschalten. Auf der Deployment-URL mit Production-Daten geprüft: Seiten, Gastreise, Ortsbilder, CSP und alle acht Punkte (A, E, J, B, I, D, H, C). Um 19:47 MEZ auf `jetnity.com` und `www.jetnity.com` umgeschaltet.
+- **Live-Prüfung auf jetnity.com (mit Video, 390 und 1280 px):** alle acht Punkte wie lokal (A 15 Tage bleiben 15, verteilt 6/5/4; E BSL/LIS aus dem Production-Flughafenbestand; D Ziel PT, Pässe CH/RS/DE, drei Karten; I je Land eine Karte; H, J, B, C wie erwartet), dazu echte Stay22-Hotelsuche mit Preisen und Flug-Widget mit Preiskarten. Konsole: nur die bekannten Permissions-Policy-Hinweise. Keine 5xx auf jetnity.com nach dem Umschalten; vorher eine einzelne 503 der unveränderten Ortssuche auf der Deployment-URL (die alte Live-Version zeigt ähnliche gelegentliche 503 beim CMS). Keine Datenbank, keine Variablen geändert. Teilen-Link widerrufen, Vercel-CLI abgemeldet.
+- **Rollback-Ziel:** `dpl_BRvrnHtZUkiUYDaLZbwPYZzXdtq2` (#1267, `ff668f215`, vorher live). Rollback per Instant Rollback / Promote dieses Deployments; kein Git-Revert nötig.
+- **Offen:** F (deutsche Ortsnamen, braucht Migration) und K (intelligente Planung, Kostenentscheid) als eigene PO-Entscheide; «Übernachtungsintervalle» im Unterkunftsbestand als möglicher Folgepunkt.
+
+## Abgeschlossen — Erstbesucher-Funktionen (Writer-Protokoll)
 
 21. November 2026. Branch `cursor/erstbesucher-funktionen-2ba1` von `main` `48fe0d21f`, Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Hürden A, B, C, D, E, H, I, J aus `docs/UI_UX_ERSTBESUCHER_PERSPEKTIVE_2026-11-21.md`, zuerst kurzer Plan mit Reihenfolge.
 
@@ -9,7 +17,7 @@
 - **Stand 21.11., abends: alle acht Punkte umgesetzt** in Draft-PR [#1268](https://github.com/Jetnity/jetnity/pull/1268), je ein Commit mit Tests: A `cab1ec5a0`, E `9b4e0fa91`, J `6e0a069af`, B `5a85de4be`, I `edeef8a21`, D `67a6e59c7`, H `90391ca2e`, C `099507922`; `main` `ff668f215` (#1267) eingemischt in `2ce45beff`. Entscheidung und Abweichungen vom Plan: ADR-0239 (E belegt auch «Von» vor und schlägt nur `large`-Flughäfen vor; D übergibt auch die Länder der Etappen).
 - **Lokales Gate auf `2ce45beff`:** `typecheck` 0, `lint` 0 Fehler (Warnungen nur bestehende), `check:dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`/`operating-mode` 0, `npm run build` 0. `test:core`: 10 423 bestanden, 22 fehlgeschlagen. 21 davon sind native PostgreSQL-Nachweise, die lokal blockiert sind (keine PG16-Binaries bzw. `local_proof_connection_override_forbidden`), unabhängig von diesem PR. Einer (`workspace-browser.test.ts`, «Alle Etappen» von der Seitenleiste verdeckt) scheiterte nur, solange parallel der Build lief; danach viermal grün, auch auf `main`. CI muss beides bestätigen.
 - **Browser (lokal, Dev-Supabase, Gastreise) mit Video, 390 und 1280 px:** A 15 Tage bleiben 15, verteilt 6/5/4, Fehler bei 19; E BSL/LIS als Vorschlag mit Hinweis; J drei ausführbare Punkte oben, zwei unter «Gut zu wissen»; B Text im Feld «Wünsche», eigener Text bleibt; I je Land eine Karte «Gleiche Angabe für alle 3 Einträge»; D Ziel PT, Pässe CH/RS/DE, Chip Marokko, drei Karten, Knopf öffnet «Reisende & Dokumente»; H neue Sätze; C beide Hinweise, bei 1 Person mit Zusatz. Konsole: nur die Dev-eval-Meldung.
-- **Nächster Schritt:** PO-Review von #1268. Merge nur nach PO-Go. Danach offen: F (deutsche Ortsnamen, Migration) und K (intelligente Planung, Kosten) als eigene Entscheide; «Übernachtungsintervalle» im Unterkunftsbestand als möglicher Folgepunkt.
+- **Nächster Schritt (erledigt 21.11., 19:34/19:47 MEZ):** PO-Review von #1268, Merge und Production-Deploy auf PO-Go. Danach offen: F (deutsche Ortsnamen, Migration) und K (intelligente Planung, Kosten) als eigene Entscheide; «Übernachtungsintervalle» im Unterkunftsbestand als möglicher Folgepunkt.
 
 ## Abgeschlossen — UI/UX-Feinschliff #1264 gemergt und live
 

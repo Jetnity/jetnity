@@ -35,3 +35,4 @@ Sortiert nach Nutzen für die erste Reise, dann nach Risiko. Kleine Punkte laufe
 - 21.11.: Plan erstellt.
 - 21.11., 17:38 MEZ: PO gibt Plan und Reihenfolge frei und erlaubt den PR als vierten Draft.
 - 21.11., abends: Alle acht Punkte umgesetzt, je mit Tests (ADR-0239). Abweichungen vom Plan: In E wird auch «Von» (Abflugort) vorbelegt, wenn der Startort im Katalog ist; nur Flughäfen der Klasse `large` werden vorgeschlagen. D übergibt neben den Pässen auch die Länder der Etappen. Offen: Review und Merge-Entscheid des PO.
+- 21.11., 19:34 MEZ: PO-Endtest bestanden, #1268 gemergt (`1acee55c4`). 19:47 MEZ: Production-Deployment `dpl_4KySqFCx4qgvLn7bhP9uRLeKJwt1` auf jetnity.com; alle acht Punkte live geprüft. Rollback-Ziel `dpl_BRvrnHtZUkiUYDaLZbwPYZzXdtq2`.
