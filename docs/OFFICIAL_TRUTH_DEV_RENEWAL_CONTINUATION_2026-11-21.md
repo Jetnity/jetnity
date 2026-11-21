@@ -168,3 +168,39 @@ oder gegebenenfalls 2FA braucht gemäß dem ausdrücklichen Owner-Auftrag sein
 Go. Vor diesem Go wurde keine Authentifizierung begonnen. Auch ein solches
 Go wäre ausschließlich Zugang für die noch offene Dev-Nachlesung und den
 bereits vorbereiteten Dev-Test, keine Production-, Kosten- oder Quellenfreigabe.
+
+
+## Owner-Anmeldung erledigt, lesende Nachprüfung technisch blockiert – 21.11., 13:57 Zürich
+
+Der Owner hat die Dev-Anmeldung ausdrücklich freigegeben, selbst übernommen
+und anschließend „angemeldet“ bestätigt. Eine frisch geöffnete Dev-Seite zeigt
+den positiven angemeldeten Zustand **Jetnity / develop Preview** unter der
+festen Projektref `yfvbxvijcorffwxbxahl`. Dieser Zugang ist jetzt belegt;
+**keine weitere Anmeldung oder erneute Schließung des Quellenversuchs verlangen**.
+
+Die unveränderte, nochmals unabhängig auf Spalten/JOINs und echte
+READ-ONLY-Kompatibilität kontrollierte Datei
+`dev-cycle5-independent-readback.READONLY.sql` (SHA256
+`aa674ad533c9c99082aeb82c1255b1e53ab36654ca9ca6303a718c30235cab20`)
+wurde im angemeldeten **Dev-SQL-Editor** mit `REPEATABLE READ READ ONLY` und
+abschließendem `ROLLBACK` abgesetzt. Der Editor meldet:
+
+> Failed to run sql query: Connection terminated due to connection timeout
+
+Es gibt **kein erfolgreiches SQL-Ergebnis**, somit weiterhin keine neue
+unabhängige 7/7-Quittungs-, Original-/Historien- oder BG1-Bestätigung.
+Die Anmeldung hat diesen Verbindungsfehler nicht behoben. Die frühere
+Management-API-Verweigerung HTTP 403 wird dadurch ebenfalls nicht aufgehoben.
+
+Zusätzliche rein lesende Dev-Betriebsdiagnose, Fenster **12:48:00–12:55:46 UTC**:
+Der vereinheitlichte Logstrom lieferte zwei `edge_logs`, beide mit HTTP **522**;
+in diesem Fenster keine PostgreSQL-Logzeilen. Der Health Advisor lieferte
+keine Lints. Das reicht nicht für eine konkrete Ursachenbehauptung und ist
+kein Beleg einer gesunden Datenbankverbindung. Keine erneute SQL-Versuchsserie.
+
+[Strukturierter Originalbefund](evidence/official-truth-renewal-20261121/dev-dashboard-readback-20261121T125739Z.json)
+ist versioniert. Keine Jetnity-Owner-Mutation, kein Publisher-Aufruf, kein
+Quellenlauf, kein Neustart, kein Reset und keine Konfigurations-/Schlüsseländerung.
+Production wurde nicht aufgerufen. Nächster technischer Blocker ist die
+**Dev-Datenbankverbindung**; das Live-Abnahmegate bleibt ausdrücklich gesperrt.
+Die erfolgreiche persönliche Anmeldung bleibt als erledigter Schritt stehen.

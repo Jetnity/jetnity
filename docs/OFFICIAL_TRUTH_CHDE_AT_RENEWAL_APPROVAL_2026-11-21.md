@@ -1,6 +1,6 @@
 # Official Truth CH→DE / AT Renewal – Production approval gate, 21 November 2026
 
-> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; unabhängige Hosted-Dev-Rücklesung durch bestätigtes HTTP 403 und öffentlichen Timeout blockiert, reale AT-Publisherprüfung nicht ausgeführt. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
+> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; persönliche Dev-Anmeldung inzwischen bestätigt, Hosted-Rücklesung auch im angemeldeten SQL-Editor durch Verbindungs-Timeout blockiert; reale AT-Publisherprüfung nicht ausgeführt. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
 
 **Status: NOT Production release-ready.** Scope is strictly the Dev branch `fix/official-truth-chde-at-renewal-dev-20261121`, no fourth PR (currently three other open PRs), no site deployment, no Production write, no new source/visitor approvals. All expired facts remain **„derzeit nicht verfügbar“**.
 
@@ -167,3 +167,19 @@ Zeitpunkt, Umgebung, vollständigem Commit und tatsächlichem Ergebnis einzutrag
 [Lauf #44904870027](https://github.com/Jetnity/jetnity/actions/runs/44904870027), Head `1d08419470233a3663b949027b8ddd408425ef77`: Safety 21/21 und isolierte native PG17-Sequenzfälle 11/11 PASS; öffentlicher Dev-Status Timeout, separate feste READ-ONLY-Management-Abfrage **HTTP 403**. Gesamtstatus **FAIL**. Die Owner-Meldung 13:17 bleibt erhalten, eine neue Live-Bestätigung ist nicht vorgetäuscht. Nach 403 keine automatischen weiteren Live-Aufrufe; Hosted-Gate ausdrücklich BLOCKED/FAIL bis zum geklärten Zugang. Production-Prüfpaket liegt zur inhaltlichen Prüfung vor, **keine Ausführungsfreigabe**.
 
 Der nächste erforderliche persönliche Entscheidungspunkt ist ausschließlich das vom Owner vorbehaltene **Go für Dev-Anmeldung/gegebenenfalls 2FA** am bestehenden Supabase-Sign-in. Nach erfolgreichem Zugang zuerst unveränderten Abschluss nachlesen, dann echten frischen AT-Quellenbatch und tatsächlichen Publisher mit ROLLBACK prüfen. Die Herkunfts- und Qualifikationsgrenzen sowie alle Production-STOP-Gates der Matrix bleiben unverändert.
+
+
+## Nachtrag 21.11., 13:57 Zürich – Login erledigt, Datenbankverbindung offen
+
+Der zuvor angeforderte persönliche Zugang ist **erledigt und positiv bestätigt**
+(Jetnity / develop Preview, feste Dev-Ref). Die unveränderte schreibgeschützte
+Abschlussprüfung wurde anschließend über den angemeldeten SQL-Editor abgesetzt
+und erhielt einen **Datenbank-Verbindungs-Timeout**. Zusätzlich zwei HTTP-522-
+Einträge in den Dev-Logs; keine konkrete Root Cause belegt.
+[Beleg](evidence/official-truth-renewal-20261121/dev-dashboard-readback-20261121T125739Z.json).
+
+**Keine erneute Login-/2FA-Anforderung und keine Wiederholung des Owner-Abschlusses.**
+Die technische Dev-Verbindung ist der verbleibende Blocker. Das Production-
+Prüfpaket bleibt zur Prüfung vorhanden und zur Ausführung gesperrt; keine
+Production-Aktion. Die echte AT-Publisherprüfung und die unabhängige erneute
+Bestätigung der Quittungen sind weiterhin offen.

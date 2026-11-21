@@ -1,0 +1,45 @@
+{
+  "recorded_at_utc": "2026-11-21T12:57:39Z",
+  "code_head": "ab9e886e350d5c6e4c219df9a0fad62ab1ffa401",
+  "environment": "development",
+  "project_ref": "yfvbxvijcorffwxbxahl",
+  "owner_authorization": "Owner explicitly authorized Dev sign-in, completed authentication personally, and requested read-only verification; Production remains excluded.",
+  "dashboard_authentication_confirmed": true,
+  "dashboard_evidence": {
+    "title": "SQL Editor | Jetnity's Project (develop) | Jetnity | Supabase",
+    "branch_label": "develop Preview",
+    "project_url": "https://supabase.com/dashboard/project/yfvbxvijcorffwxbxahl/sql/new"
+  },
+  "query": {
+    "file": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-independent-readback.READONLY.sql",
+    "sha256": "aa674ad533c9c99082aeb82c1255b1e53ab36654ca9ca6303a718c30235cab20",
+    "transaction": "REPEATABLE READ READ ONLY; ROLLBACK",
+    "submitted_via": "authenticated Dev dashboard SQL Editor",
+    "result": "connection_timeout",
+    "visible_error": "Failed to run sql query: Connection terminated due to connection timeout",
+    "successful_result_rows": 0,
+    "retirement_verified": false,
+    "current_bg1_verified": false,
+    "originals_verified": false
+  },
+  "read_only_operational_diagnostics": {
+    "window_start": "2026-11-21T12:48:00Z",
+    "window_end": "2026-11-21T12:55:46Z",
+    "sources_present": [
+      "edge_logs"
+    ],
+    "edge_http_522_count": 2,
+    "health_advisor_lints": 0,
+    "root_cause_proven": false,
+    "note": "No PostgreSQL log rows returned in this window; an empty health advisor is not proof of a working database connection."
+  },
+  "jetnity_owner_action_executed": false,
+  "new_source_run_started": false,
+  "publisher_called": false,
+  "database_configuration_changed": false,
+  "restart_or_reset_performed": false,
+  "credentials_changed": false,
+  "production_accessed": false,
+  "next_authentication_request_needed_now": false,
+  "hosted_acceptance": "BLOCKED; successful dashboard sign-in does not replace the missing database readback or resolve CI Management API HTTP 403"
+}
