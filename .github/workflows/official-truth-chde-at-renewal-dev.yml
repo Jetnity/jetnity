@@ -96,6 +96,9 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ''
         run: node scripts/official-truth-dev-guard-alarm.mjs
       - name: Exact independent Dev receipt readback (no writes or auth action)
+        # The public endpoint and Management API are independent read paths.
+        # Diagnose a public timeout without changing its failed job outcome.
+        if: ${{ !cancelled() }}
         env:
           SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

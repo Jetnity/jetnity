@@ -1,0 +1,34 @@
+BEGIN
+SET
+SET
+SET
+DO
+CREATE TABLE
+INSERT 0 5
+CREATE SEQUENCE
+CREATE SEQUENCE
+ nextval 
+---------
+      77
+(1 row)
+
+CREATE TABLE
+INSERT 0 1
+INSERT 0 1
+SAVEPOINT
+ALTER SEQUENCE
+ALTER SEQUENCE
+DO
+ROLLBACK
+DO
+SAVEPOINT
+ALTER SEQUENCE
+DO
+ROLLBACK
+DO
+                        result                         | called_state_restored | uncalled_state_restored | ledger_restored | repeat_moves_forward | exhaustion_refused | hosted_pgnet_changed | two_session_concurrency_proven | facts_published 
+-------------------------------------------------------+-----------------------+-------------------------+-----------------+----------------------+--------------------+----------------------+--------------------------------+-----------------
+ PG17_TEMP_SEQUENCE_LOCK_FIRST_SAVEPOINT_ROLLBACK_PASS | t                     | t                       | t               | t                    | t                  | f                    | f                              | f
+(1 row)
+
+ROLLBACK

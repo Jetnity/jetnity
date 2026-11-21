@@ -101,3 +101,32 @@ keine neue Rechtefreigabe oder Token-Erstellung. Nur aggregierte Prüffelder.
 Dev-Rücklesung, der echte frische Quellen-/Publisherlauf, die Mehrsitzungs-
 und Rollbackbelege sowie aktuelle CI-Ergebnisse werden nach Ausführung
 hier ergänzt. Keine vorweggenommene positive Erneuerung und kein Quelllauf.
+
+## Tatsächlich ausgeführte CI-Prüfung – 21.11., 13:36 Uhr Zürich
+
+[Lauf 44904622137](https://github.com/Jetnity/jetnity/actions/runs/44904622137)
+auf `a78f9e97a44d76c51b231c74ac5699dce96c9312` hat drei getrennte Jobs:
+
+- `safety`: **PASS, 21/21** Offline-Sicherheitsverträge.
+- `native_sequence`: **PASS auf PostgreSQL 17.6**, wirklicher Savepoint-Rollback
+  für benutzte und unbenutzte Sequenz einschließlich Historienvergleich sowie
+  **11/11 Mehrsitzungsfälle**. Die alte Read-first-Variante erzeugt nachweislich
+  eine Unique-Violation; die gelieferte Lock-first-Variante blockiert
+  konkurrierende Produzenten und übernimmt bereits reservierte IDs korrekt.
+  Kandidaten-SHA256 `c01e8bfe70684ff23357c003b2c27beb2be5fefde8c7040d7ca68b2e4aedbb2e`.
+- `dev_readback`: **FAIL**. Der öffentliche Dev-Status antwortete innerhalb
+  seiner festen Zehn-Sekunden-Grenze nicht (`alarm/timeout`). Die nachfolgende
+  private Rücklesung wurde deshalb in diesem ersten Lauf **nicht ausgeführt**.
+  Gesamt-CI bleibt rot; kein behaupteter Hosted-/Owner-Abschluss-PASS.
+
+Das Originalartefakt `14707686236` wurde heruntergeladen und sein ZIP-SHA256
+`6b4de23f9b7573d94136cad849c488d8d031f93ac138e841e34dc6c2dd839e6c` unabhängig geprüft.
+Unveränderte Ergebnisse und Herkunft sind unter
+[`docs/evidence/official-truth-renewal-20261121/run-44904622137/`](evidence/official-truth-renewal-20261121/run-44904622137/)
+versioniert. Das isolierte Fixture ersetzt ausdrücklich keine echte
+Dev-Publisherprüfung oder Production-spezifische Schutzkettenprüfung.
+
+Der folgende Workflowstand lässt die **separate reine Management-API-Lesung**
+auch nach einem öffentlichen Timeout zu Diagnosezwecken laufen. Ein Fehler
+des öffentlichen Gates bleibt unverändert ein fehlgeschlagener Job; kein
+`continue-on-error`, keine Abschwächung der SQL-Gates und kein Write-Fallback.

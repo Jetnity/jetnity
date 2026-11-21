@@ -1,5 +1,7 @@
 # Official Truth CH→DE / AT Renewal – Production approval gate, 21 November 2026
 
+> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; unabhängige Hosted-Dev-Rücklesung und reale AT-Publisherprüfung weiter offen. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
+
 **Status: NOT Production release-ready.** Scope is strictly the Dev branch `fix/official-truth-chde-at-renewal-dev-20261121`, no fourth PR (currently three other open PRs), no site deployment, no Production write, no new source/visitor approvals. All expired facts remain **„derzeit nicht verfügbar“**.
 
 ## Current independent snapshots
@@ -94,3 +96,67 @@ Die ältere `recovery_jobs_v1()`-/`close_jobs_v1()`-Kette ist strikt auf die fr�
 - Exakter Dev-PG17-Readback 21.11.2026 **13:10:32 Uhr Zürich**: natürlicher Fünfminuten-`pg_cron`-Lauf Due 13:10, `official_v3_guard_private.runs_v1.outcome=complete`, Generation **2048** erreicht die notwendige v7-Pflichtgeneration; `public.official_v3_guard_alarm_status_v1()=` **`current`**, immutable v7-Katalog exakt. Die originale einzige Rollenmitgliedschaft des `postgres` bei `ot_v3_jobs_owner` hat `grantor=supabase_admin` und unveränderte `ADMIN=true/INHERIT=false/SET=false`; keine zusätzliche Grantor-Mitgliedschaft verblieben. Die zuvor festgestellte Rollenabweichung ist in Dev damit vollständig korrigiert und revisionssicher als append-only v7 nachweisbar.
 - Die neue `ch_de_cycle5_unknown`-Review-/Retire-Kette ist installiert. Ihre private Quelle lieferte im **eigenständigen Post-Commit PG17-Test** den exakten aktuellen Versuch mit archivalischen zwei Originalreferenzen, einer rechtlichen Vorgänger-Verifikation, null neuen Accepted Versions und allen sechs alten unveränderten Owner-Quittungen. Kein unautorisierter Owner-Write, kein neuer visueller Rechtsfakt. Die echte GitHub Actions Dev-Sicherheitsprüfung ist für den **vollständigen zuletzt getesteten Programmkopf** grün; reine Dokumentationsfortschreibung erfordert erneut Exact-Head-CI.
 - **Ab jetzt Owner-AAL2 zulässig, NUR DEV** unter `https://jetnity-jlm7y0xey-jetnity-e1b93c82.vercel.app/admin/official-truth/guard`: mit 2FA anmelden; `Gespeicherten Dev-Stand lesen`; nur wenn der aktuelle Fall `reviewable` und BG1 `current` ist, Prüfhaken setzen und `Abgelaufenen Quellenversuch schließen`; danach `Diesen Vorgang unabhängig bestätigen`. Work kann nach der persönlichen Anmeldung die UI-Schritte ausführen. Das nachfolgende 7/7 Owner-Quittungs-/Jobs-CAS-/BG1-Readback ist erforderlich, ehe die Recherche neu angestossen werden kann. Sollte das UI `unavailable` anzeigen, **keine** Wiederaufnahme erzwingen. Der Vorgang wird nicht automatisch per Installationsskript geschlossen. Production bleibt unverändert und CH→DE/AT-Frischeangaben bleiben `derzeit nicht verfügbar`.
+
+
+# Nachtrag: Production-Prüfmatrix zur Prüfung – 21.11.2026
+
+**Production bleibt gesperrt; kein aktueller Hosted-PASS.** Diese Matrix
+ist ein datierter Nachtrag. Frühere Belege bleiben unverändert erhalten.
+Grundlage des unabhängigen Reviews: `docs/OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md`; keine neuen
+Datenbankaufrufe des Reviewers. Neuere Root-Ausführungsbelege sind einzeln mit
+Zeitpunkt, Umgebung, vollständigem Commit und tatsächlichem Ergebnis einzutragen.
+
+## Belege und offene Gates
+
+| Prüfpaket | Beleg vorhanden | Noch offen / notwendiges PASS-Kriterium |
+| --- | --- | --- |
+| Dev Cycle5 Owner-Abschluss | Owner meldet 21.11., 13:17 Zürich: Abschluss und getrennte UI-Lesebestätigung. Installierte v6/v7-Kette und früherer Safety-Lauf #44902670456 sind dokumentiert. | Aktuelle unabhängige `dev-cycle5-independent-readback.READONLY.sql`: genau ein neuer Abschluss, sechs unveränderte Vorgänger, sieben Retirement-Quittungen, 15/53-Historie, Originalbytes, kein Folgeversuch; BG1/current, ursprüngliche einzige Rollenmitgliedschaft. Der damalige UI-Klick erzeugt keinen separaten DB-Datensatz und wird durch Readback nicht rückwirkend bewiesen. |
+| Natürlicher Dev-BG1-Folgecron | Historischer 13:10-Zürich-Proof Generation 2048 dokumentiert. | Aktuellen vollständigen Proof mit `state_v1`, `runs_v1` und erfolgreichem `cron.job_run_details` exakt verbinden. Eine bloße Zahl kompletter Prüfungen beweist keinen natürlichen Cron. |
+| Installierter AT-Quellenschutz | Dev-v4-Publisher enthält Early Return bei unqualifizierten Originalen; reale Originaltabellen erzwingen Research-only. Neuer Test ruft den tatsächlichen Publisher auf. | `at-dev-real-source-guard.ROLLBACK.sql` auf verifiziertem Dev ausführen: echter letzter frischer 3/3-HTTP-/Journalbatch, exakte Originalbytes, zweimal Rückgabewert 0, unveränderte Fakten/Historie und Fact-ID-Sequenz. Fehlender/frischer Quellenbatch ist STOP, keine Fixture-Ersatzfreigabe. |
+| HTTP-ID-Reparatur | Production-Kandidat zuerst mit globalem Sequenzlock, danach neuem READ-COMMITTED-Snapshot; kontrolliert CACHE 1, INCREMENT 1, NO CYCLE, Bereich und alle benannten IDs. Ausschließlich ROLLBACK. | **Native PG17.6-Prüfung inzwischen PASS:** Lauf #44904622137 auf a78f9e97a44d76c51b231c74ac5699dce96c9312, Savepoint-Originalzustand und 11/11 echte Mehrsitzungsfälle; Originalartefakt 14707686236 unverändert versioniert. Dies belegt nur den gelieferten Sequenzalgorithmus mit ausdrücklich benannten BG1-Testfunktionen. Echte Production-Inventur sämtlicher dauerhafter pg_net-ID-Verbraucher bleibt erforderlich. |
+| Normale AT-Production-v4 | `production-at-legal-v4.CANDIDATE-ROLLBACK.sql` als separater uninstalled Nachfolger vorbereitet; alte Production-Katalog-/Funktionsdigests gepinnt. | Frische Production-spezifische Vorgänger-/Digest-/Privilegienprüfung und freigegebener nativer ROLLBACK-Lauf fehlen. Dev besitzt eine andere Schutzkette; Dev-Erfolg beweist keine ausführbare Production-Installation. |
+| CH→DE Production-Nachfolger | Historischer immutable blocked-Cycle mit acht ausgeschöpften Resume-Versuchen und signierten Antworten dokumentiert; reiner Read-only-Prüfweg vorbereitet. | Exakt darauf gebundener append-only technischer Review-/Scheduler-Nachfolger, frische aktuelle Quellen-/Methodenbelege, native Queue-CAS-Prüfung und gesonderte Production-Ausführung fehlen. Dev-Retirement ist keine Freigabe des Production-Cycles. |
+| Sicherung und Rückfall | Historischer Owner-Screenshot: physische Supabase-Sicherung 20.11., 01:48:03 UTC; Restore-Option sichtbar. Kein Restore-Test. | Aktuelle Sicherungsverfügbarkeit im genehmigten Verfahren bestätigen; genauer getesteter Rückfall pro Commit-Grenze. Kein neuer kostenpflichtiger Restore und keine Wiederholung verweigerten Management-Zugriffs. Backup ist keine Zusage verlustfreier Rücksicherung. |
+| CI und Release | #44902670456 belegt einen Safety-Job auf b378c39b, kein umfassendes Hosted-Endtest-PASS. | #44904622137: Safety 21/21 und native Sequenz PASS; öffentlicher Dev-Status Timeout, Gesamtstatus FAIL. Vollständige tatsächlich benötigte Prüfungen auf exakt dem finalen Paket-Head; Native-/Hosted-Prüfungen jeweils separat ausweisen. Drei fremde PRs bleiben unberührt; kein vierter PR, kein automatischer Website-Deploy. |
+| Positiver Erneuerungs-/Besuchernachweis | **Nicht vorhanden und durch dieses Sicherheitsreparaturpaket nicht erteilt.** | Aktuell drei unqualifizierte AT-Originale: null neue positive Fakten ist die erwartete korrekte Wirkung. Eine spätere positive Erneuerung verlangt echte aktuelle Source→Rule-/Dokument-/Gültigkeits-/Methoden-/Owner-Zulassung und eigenen Besuchertest. Bis dahin `derzeit nicht verfügbar`. |
+
+## Reihenfolge des späteren, genau begrenzten Production-Go
+
+1. **Vor dem Go das Paket fertigstellen:** obige Dev-Nachweise und aktuelle CI
+   ergänzen; endgültige Skripte/Commit, betroffene Objekte, reale aktuelle
+   Production-Voraussetzungen und Rückfallpfade festhalten. Solange diese
+   fehlen: STOP, keine vorzeitige Owner-Freigabeaufforderung.
+2. **Ein konkretes Owner-Go für die belegten Production-Schritte:** nur die
+   final geprüften Skripte und ihre Reihenfolge genehmigen lassen. CH→DE nur
+   aufnehmen, wenn dessen eigener Nachfolger vollständig bereit ist. Login/2FA
+   separat am tatsächlichen geschützten Schritt durch den Owner; weder Dev-Go
+   noch ein früherer AAL2-Abschluss überträgt Production-Autorität.
+3. **AT zuerst sicher sperren:** genaue Production-Vorgängerkette prüfen,
+   normale AT-v4 transaktional proben und den genehmigten Schutz installieren;
+   anschließend einen neuen natürlichen vollständigen BG1-Proof abwarten und
+   unabhängig nachlesen. Quellenstatus unverändert unqualifiziert. Die
+   Notfall-`bg1_transient_correction_baseline_v4` ist kein normaler Ersatz.
+4. **Erst danach die HTTP-ID-Folge reparieren:** innerhalb begrenzter
+   Transaktion alle Consumer-Höchststände nach globalem Sequenzlock lesen,
+   ausschließlich vorwärts auf eine noch nie vergebene ID setzen, genaue
+   Postchecks und aktuellen Schutz prüfen. Jeder Fehlbefund vor COMMIT führt
+   zu ROLLBACK. Nach COMMIT niemals eine ID zurücksetzen oder wiederverwenden.
+5. **Realen Betrieb beobachten:** nächster natürlicher Quellenlauf mit neuen
+   HTTP-IDs, tatsächlichen Antworten und unveränderten oder korrekt als geändert
+   markierten Originalen; erneuter natürlicher BG1-Proof, null neue positive
+   Fakten aus unqualifizierten Quellen und unabhängiger Besucher-Readback.
+   CH→DE nur über seinen eigens genehmigten Review-/CAS-Nachfolger fortsetzen;
+   alte Versuche, Originale, Quoten und terminale Belege bleiben erhalten.
+
+## Rückfallgrenzen und Bezeichnungsregel
+
+- **Vor COMMIT:** transaktionales ROLLBACK mit eigenständiger Nachlesung.
+  `nextval()` ist nicht transaktional; deswegen kein künstlicher Produktions-
+  HTTP-/nextval-Test vor COMMIT und keine nachträgliche Rückwärtskorrektur.
+- **Nach COMMIT:** vorher geprüfter append-only Schutz-/Korrekturweg; Ausgabe
+  bleibt gesperrt. Ein physischer Restore kann spätere Daten verlieren und
+  Verfügbarkeit unterbrechen; er braucht einen eigenen konkreten Owner-Go.
+- Erfolgreiches Monitoring und Publisher-Ergebnis **0** heißen
+  **„Quellenüberwachung funktionsfähig, unqualifizierte Veröffentlichung
+  verhindert“**. Sie heißen niemals „AT erneuert“, „rechtlich freigegeben“ oder
+  „Production vollständig abgenommen“.

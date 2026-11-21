@@ -1,0 +1,11 @@
+{
+  "workflow_run": 44904622137,
+  "native_job": 136847551930,
+  "head_sha": "a78f9e97a44d76c51b231c74ac5699dce96c9312",
+  "artifact_id": 14707686236,
+  "artifact_sha256": "6b4de23f9b7573d94136cad849c488d8d031f93ac138e841e34dc6c2dd839e6c",
+  "native_job_conclusion": "success",
+  "overall_workflow_conclusion": "failure",
+  "hosted_dev_readback": "not executed: public Dev status timeout stopped subsequent step",
+  "production_write": false
+}
