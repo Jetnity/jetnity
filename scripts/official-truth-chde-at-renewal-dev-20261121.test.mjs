@@ -133,7 +133,7 @@ test('Cycle5 owner-retirement v6 preserves all six receipts and only closes the 
  assert.match(s,/CREATE TRIGGER immutable_truncate/)
  assert.match(s,/FORCE ROW LEVEL SECURITY/)
  assert.match(s,/GRANT ot_v3_jobs_owner TO postgres WITH INHERIT FALSE, SET TRUE/)
- assert.match(s,/GRANT ot_v3_jobs_owner TO postgres WITH INHERIT FALSE, SET FALSE/)
+ assert.match(s,/REVOKE ot_v3_jobs_owner FROM postgres GRANTED BY postgres/)
  assert.match(s,/CYCLE5_JOBS_OWNER_MEMBERSHIP_NOT_RESTORED/)
  assert.match(s,/DEV_CYCLE5_EXACT_HISTORY_AND_AAL2_FAILCLOSED_ROLLBACK_PASS/)
  assert.ok(s.trim().endsWith('ROLLBACK;'))
