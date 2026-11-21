@@ -21,7 +21,7 @@ export async function signOutBrowserFallback(
     const { error } = await auth.signOut()
     if (error) return failed
     const session = await auth.getSession()
-    if (session.error || session.data?.session) return failed
+    if (session.error || session.data?.session !== null) return failed
     navigate(ziel)
     return { ok: true, ziel }
   } catch {
