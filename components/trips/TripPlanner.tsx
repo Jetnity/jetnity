@@ -74,6 +74,7 @@ import {
   gastCreateGateMeldung,
   gastCreateJetztPruefen,
   wunschAusIdee,
+  wunschHinweise,
 } from '@/lib/trips/create-entry'
 import {
   GastreiseBelegtOhneKennungFehler,
@@ -215,6 +216,7 @@ export default function TripPlanner({
     mitnahmeStand.text !== null && travelWish === mitnahmeStand.text
       ? `${mitnahmeStand.gekuerzt ? `Die ersten ${GRENZEN.reisewunsch} Zeichen deines Textes` : 'Dein Text'} aus «In eigenen Worten» ${mitnahmeStand.gekuerzt ? 'stehen' : 'steht'} jetzt unter «Wünsche». Ziele, Daten und Reisende trägst du hier selbst ein.`
       : ''
+  const hinweise = wunschHinweise(travelWish)
   const [zuordnungAktiv, setZuordnungAktiv] = React.useState(false)
   const [zuordnung, setZuordnung] = React.useState<TageszuordnungAnspruch[]>([])
   const [zuordnungHinweis, setZuordnungHinweis] = React.useState('')
@@ -1008,6 +1010,28 @@ export default function TripPlanner({
         <p id="wunsch-hinweis" className="max-w-full break-words text-xs leading-5 text-ink-700">
           Jetnity speichert deinen Wunsch als Notiz in der Reiseübersicht.
         </p>
+        <div aria-live="polite" className="min-w-0">
+          {hinweise.kinder || hinweise.paesse ? (
+            <div data-wunsch-hinweise className="grid min-w-0 gap-2 rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-sm leading-6 text-ink-800">
+              <p className="font-semibold text-brand-800">Wo diese Angaben hingehören</p>
+              <ul className="grid list-disc gap-1 pl-5">
+                {hinweise.kinder ? (
+                  <li data-wunsch-hinweis="kinder" className="break-words">
+                    Kinder zählst du oben bei «Reisende» mit{travellers === 1 ? '; dort steht im Moment 1 Person' : ''}. Wie viele
+                    davon Kinder oder Babys sind, gibst du später bei der Flug- und Unterkunftssuche an.
+                  </li>
+                ) : null}
+                {hinweise.paesse ? (
+                  <li data-wunsch-hinweis="paesse" className="break-words">
+                    Pässe, Staatsangehörigkeiten und Einreise trägst du nach dem Erstellen unter «Vorbereitung» → «Reisende &
+                    Dokumente» für jede Person einzeln ein.
+                  </li>
+                ) : null}
+              </ul>
+              <p className="text-xs leading-5 text-ink-700">Jetnity liest deinen Wunschtext dafür nicht automatisch aus.</p>
+            </div>
+          ) : null}
+        </div>
           </Planungsgruppe>
         </div>
 

@@ -303,6 +303,17 @@ export function wunschAusIdee(eingabe: {
   return { wunsch, gekuerzt: wunsch.length < idee.length }
 }
 
+const KINDER_WORTE = /\b(?:kind(?:er|ern|es)?|kinderwagen|kleinkind\w*|kids?|child(?:ren)?|bab(?:y|ys|ies)|säugling\w*|sohn|söhnen?|tochter|töchtern?|enkel\w*)\b/i
+const PASS_WORTE = /\b(?:pass|pässen?|reisepass\w*|reisepässen?|ausweis\w*|identitätskarte\w*|staatsangehörigkeit\w*|staatsbürgerschaft\w*|nationalität\w*|doppelbürger\w*|visum|visa|einreise\w*)\b/i
+
+/**
+ * Nur Wortsuche, keine Auswertung: Nennt der Wunsch Kinder oder Pässe, zeigt das Formular, wo diese Angaben hingehören.
+ * Anzahl, Alter oder Staatsangehörigkeit werden daraus nicht abgeleitet.
+ */
+export function wunschHinweise(wunsch: string): { kinder: boolean; paesse: boolean } {
+  return { kinder: KINDER_WORTE.test(wunsch), paesse: PASS_WORTE.test(wunsch) }
+}
+
 export function planenVorbelegung(eingabe: {
   zielId?: string | null
   zielName?: string | null

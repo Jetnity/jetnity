@@ -22,6 +22,7 @@ import {
   planenCreateGateSicht,
   planenVorbelegung,
   wunschAusIdee,
+  wunschHinweise,
 } from '@/lib/trips/create-entry'
 
 const hier = dirname(fileURLToPath(import.meta.url))
@@ -625,5 +626,44 @@ describe('Text aus «In eigenen Worten» landet beim Wechsel unter «Wünsche»'
     assert.match(uebernahme, /setTravelWish\(uebernahme\.wunsch\)/)
     for (const geraten of ['setDestination', 'setStartDate', 'setEndDate', 'setTravellers', 'setBudget', 'setOrigin']) assert.equal(uebernahme.includes(geraten), false, geraten)
     assert.match(uebernahme, /Ziele, Daten und Reisende trägst du hier selbst ein\./)
+  })
+})
+
+describe('Wunschtext: Hinweis, wo Kinder- und Pass-Angaben hingehören', () => {
+  test('erkennt Kinder ohne Anzahl oder Alter abzuleiten', () => {
+    for (const text of [
+      'Familienreise nach Südtirol, zwei Erwachsene und zwei Kinder, eine Woche Natur.',
+      'Wir reisen mit unserem Sohn (4) und Kinderwagen',
+      'mit Baby und Kleinkind',
+      'Ferien mit den Enkelkindern',
+      'travelling with kids',
+    ]) assert.deepEqual(wunschHinweise(text), { kinder: true, paesse: false }, text)
+  })
+
+  test('erkennt Pässe, Staatsangehörigkeit und Visum', () => {
+    for (const text of [
+      'Ich habe einen Schweizer und einen serbischen Pass.',
+      'Zwei Pässe, brauchen wir ein Visum für Marokko?',
+      'Doppelbürgerin, Staatsangehörigkeit DE und CH',
+      'Reisepässe laufen bald ab',
+    ]) assert.equal(wunschHinweise(text).paesse, true, text)
+  })
+
+  test('kein Hinweis bei unverwandten Wörtern', () => {
+    for (const text of [
+      'lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer.',
+      'Umsteigen in Passau, Kindle mitnehmen, Kompass kaufen',
+      'Passagierschiff und Passeggiata',
+      '',
+    ]) assert.deepEqual(wunschHinweise(text), { kinder: false, paesse: false }, text)
+  })
+
+  test('Formular zeigt den Hinweis unter «Wünsche» und sagt, dass der Text nicht ausgewertet wird', () => {
+    const quelle = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../../components/trips/TripPlanner.tsx'), 'utf8')
+    assert.match(quelle, /const hinweise = wunschHinweise\(travelWish\)/)
+    assert.match(quelle, /data-wunsch-hinweis="kinder"/)
+    assert.match(quelle, /data-wunsch-hinweis="paesse"/)
+    assert.match(quelle, /Jetnity liest deinen Wunschtext dafür nicht automatisch aus\./)
+    assert.ok(quelle.indexOf('id="wunsch-hinweis"') < quelle.indexOf('data-wunsch-hinweise'))
   })
 })
