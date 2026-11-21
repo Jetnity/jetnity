@@ -53,4 +53,4 @@ Bewusst nicht geändert: die gemeinsame Kontingent-Meldung (`lib/modell/kontinge
 
 ## Prüfungen
 
-Typprüfung, Lint (0 Fehler), die fünf Hygiene-Checks, Production-Build, 29 betroffene Testdateien (540 Tests) und die Browser-Tests Workspace (Weiss-Mint, Routen-Ausrichtung), Aktivitäten, Viator und Reiseprüfung grün. Durchlauf als Video bei 390 px. Keine Datenbank, keine Production, keine neuen Kosten.
+Typprüfung, Lint (0 Fehler), die fünf Hygiene-Checks, Production-Build, 29 betroffene Testdateien (540 Tests) und die Browser-Tests Workspace (Weiss-Mint, Routen-Ausrichtung), Aktivitäten, Viator und Reiseprüfung grün. Kein seitliches Scrollen bei 320, 390, 768 und 1280 px in Planen (beide Wege), Übersicht, Reiseplan, Organisieren und Vorbereitung. Durchlauf als Video bei 390 px. Keine Datenbank, keine Production, keine neuen Kosten.
