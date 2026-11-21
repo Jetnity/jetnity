@@ -106,6 +106,17 @@ describe('Strict approved Development redirect contract', () => {
     assert.equal(befund(effective, live(effective)).sauber, true)
   })
 
+  test('zusätzliche jetnity.com-Adressen auf dem Dev-Branch bleiben erlaubt', () => {
+    const effective = devAuthKonfiguration(config(), REF).config
+    const basis = String(live(effective).uri_allow_list)
+    for (const extra of ['https://jetnity.com', 'https://*.jetnity.com', 'https://dev.jetnity.com/auth/callback**']) {
+      const report = befund(effective, { ...live(effective), uri_allow_list: `${basis},${extra}` })
+      assert.equal(report.sauber, true, extra)
+    }
+    const fremd = befund(effective, { ...live(effective), uri_allow_list: `${basis},https://evil.example/auth/callback` })
+    assert.equal(fremd.sauber, false)
+  })
+
   test('MFA, password, unexpected provider and unknown-key drift still fail together', () => {
     const effective = devAuthKonfiguration(config(), REF).config
     const report = befund(effective, {

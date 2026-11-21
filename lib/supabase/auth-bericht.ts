@@ -73,6 +73,18 @@ function kurz(wert: unknown): string {
   return text.length > 60 ? `${text.slice(0, 57)}…` : text
 }
 
+function jetnityAdresse(eintrag: string): boolean {
+  return /^https:\/\/(\*\.)?([a-z0-9-]+\.)*jetnity\.com(\/.*)?$/.test(eintrag.replace(/\\/g, ''))
+}
+
+/** Die zwei freigegebenen Dev-Ziele bleiben Pflicht. Zusätze dürfen nur jetnity.com sein. */
+function uriListePasst(erwartet: unknown, gefunden: unknown): boolean {
+  if (erwartet === gefunden) return true
+  if (typeof erwartet !== 'string' || typeof gefunden !== 'string') return false
+  if (!gefunden.startsWith(`${erwartet},`)) return false
+  return gefunden.slice(erwartet.length + 1).split(',').every(jetnityAdresse)
+}
+
 function vergleiche(erwartungen: Erwartung[], live: Record<string, unknown>) {
   const abweichungen: Abweichung[] = []
   const fehlend: string[] = []
@@ -82,6 +94,7 @@ function vergleiche(erwartungen: Erwartung[], live: Record<string, unknown>) {
       fehlend.push(e.api)
       continue
     }
+    if (e.api === 'uri_allow_list' && uriListePasst(e.wert, live[e.api])) continue
     if (live[e.api] !== e.wert) {
       abweichungen.push({
         api: e.api,

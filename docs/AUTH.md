@@ -369,7 +369,7 @@ Unabhängig gelesen vom Technical Lead aus CI-Job `105603875234` (Head `66ee5fe5
 
 Stand 21. November 2026. Der Gerätetest auf `https://dev.jetnity.com` hat einen Passkey angelegt und die Anmeldung damit bestätigt. Dieses Paket ist nur die spätere Reihenfolge. Es ist nicht ausgeführt. Ein Merge ist kein Go.
 
-`supabase/config.toml` beschreibt den Development-Branch. `[auth.passkey] enabled = true` ist dort der Dev-Schalter, den die App liest. Es gibt keinen `[remotes.*]`-Block. `npm run auth:anwenden` bricht ab, wenn das Ziel kein Development-Branch ist. Ein Merge überträgt diese Datei in `main`, ruft Supabase aber nicht auf und setzt `passkey_enabled` am Production-Projekt nicht.
+Zusätzliche Redirect-Adressen unter `jetnity.com` auf dem Development-Branch ändern Production nicht. `supabase/config.toml` beschreibt den Development-Branch. `[auth.passkey] enabled = true` ist dort der Dev-Schalter, den die App liest. Es gibt keinen `[remotes.*]`-Block. `npm run auth:anwenden` bricht ab, wenn das Ziel kein Development-Branch ist. Ein Merge überträgt diese Datei in `main`, ruft Supabase aber nicht auf und setzt `passkey_enabled` am Production-Projekt nicht.
 
 Die App zeigt den Button, sobald diese Datei im Deploy `enabled = true` sagt. Ein Production-Deploy dieses Commits würde den Button auf `https://jetnity.com` zeigen, während der Production-Auth-Server aus bleibt. Das ist kein eingeschalteter Production-Passkey. Die Anmeldung bliebe dort geschlossen, bis das separate Production-Go den Server setzt.
 
