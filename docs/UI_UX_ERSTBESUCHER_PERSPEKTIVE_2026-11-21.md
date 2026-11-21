@@ -51,6 +51,13 @@ Bewusst nicht geändert: die gemeinsame Kontingent-Meldung (`lib/modell/kontinge
 | J | «Als Nächstes» führt nicht ausführbare Punkte («… derzeit nicht verfügbar») unter «Was deine Reise jetzt weiterbringt» | Reihung der Hinweise ist Logik | nicht ausführbare Punkte unter «Gut zu wissen» |
 | K | Die intelligente Planung ist in Dev gesperrt; ihre Vorschau konnte nicht live geprüft werden | Schlüssel/Kosten (PO) | Prüfung in Preview mit Freigabe |
 
+### PO-Entscheide vom 21. November 2026
+
+- **G – bleibt.** Startseite unverändert, inklusive Feinschliff aus #1264. Die Hinweise auf Einreiseprüfung und Flugänderungen bleiben bewusst, weil diese Funktionen noch kommen.
+- **F – neuer Umfang, nicht in #1264.** `public.places` speichert einen Namen pro Ort (GeoNames-Hauptname, z. B. «Lisbon»). «Lissabon» steht zwar unter den Alternativnamen, aber die GeoNames-Hauptdatei sagt nicht, in welcher Sprache. Deutsche Namen ohne Änderung gespeicherter Reisen brauchen deshalb sprachmarkierte Namen im Ortskatalog (GeoNames-Sprachnamen, Import und neue Spalte, also eine Migration) und eine Anzeigefunktion an allen Stellen, die Ziel- und Etappennamen zeigen. Eine handgepflegte Liste wäre eine zweite Namenstabelle; der beim Erstellen gespeicherte Titel («Lisbon») bliebe ohnehin englisch.
+- **A, B, C, D, E, H, I, J – eigener PR «Erstbesucher-Funktionen»** nach dem Go für #1264, mit kurzem Plan zur Reihenfolge vor dem Bauen. Keine Änderung an Login/2FA, Production oder Kosten.
+- **K – offen.**
+
 ## Prüfungen
 
 Typprüfung, Lint (0 Fehler), die fünf Hygiene-Checks, Production-Build, 29 betroffene Testdateien (540 Tests) und die Browser-Tests Workspace (Weiss-Mint, Routen-Ausrichtung), Aktivitäten, Viator und Reiseprüfung grün. Kein seitliches Scrollen bei 320, 390, 768 und 1280 px in Planen (beide Wege), Übersicht, Reiseplan, Organisieren und Vorbereitung. Durchlauf als Video bei 390 px. Keine Datenbank, keine Production, keine neuen Kosten.
