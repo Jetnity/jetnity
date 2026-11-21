@@ -1,0 +1,407 @@
+{
+  "schema": "jetnity-bg1-dev-auth-schedule-pause-completion-v1",
+  "recorded_at_utc": "2026-11-21 20:31:19 UTC",
+  "repository": "Jetnity/jetnity",
+  "scope": "Owner-approved Dev read-only Auth expectation adjustment and normal merge of PR #1269; Production HTTP-ID package remains unexecuted.",
+  "owner_decision": {
+    "date": "2026-11-21",
+    "dev_passkeys_enabled": true,
+    "production_passkeys_required": false,
+    "device_test": "Owner-reported successful on dev.jetnity.com; PR #1240. No new physical device test performed in this task.",
+    "auth_settings_changes_authorized": false,
+    "production_changes_authorized": false,
+    "http_id_package_go_received": false
+  },
+  "merge": {
+    "pull_request": 1269,
+    "url": "https://github.com/Jetnity/jetnity/pull/1269",
+    "merged": true,
+    "merged_at_utc": "2026-11-21T20:27:06Z",
+    "merged_at_europe_zurich": "2026-11-21 21:27:06 CET",
+    "merge_commit": "276fe3c4e066ea433cc6bea1c16b7ee90da103a0",
+    "tested_head": "5ee3684e5b5603adf44db460b6564c727ad9c94a",
+    "tested_tree": "3105d88873b6dd45dc1b38272c129c5b2a82049f",
+    "base_before_merge": "5bb0d5909e675de09eb6c7659c3132187e66abf9",
+    "method": "normal merge with expected-head check",
+    "ruleset_bypass": false,
+    "force_push": false
+  },
+  "ci": {
+    "run_id": 44943807444,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/44943807444",
+    "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a",
+    "status": "completed",
+    "conclusion": "success",
+    "completed_run_updated_at_utc": "2026-11-21T20:25:37Z",
+    "actions_jobs_passed": 12,
+    "actions_jobs_total": 12,
+    "check_runs": [
+      {
+        "id": 136973969151,
+        "name": "Typecheck, Lint & Build",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966753760,
+        "name": "Vercel Preview Comments",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692170,
+        "name": "Admin marketing drafts — isolated native proof",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692156,
+        "name": "Official truth V3 — isolated UI",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692138,
+        "name": "Atomic version refresh — native",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692127,
+        "name": "Repository verification",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692110,
+        "name": "Persisted canonical read — native",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692094,
+        "name": "Hosted V3 — native PostgreSQL 17 (quota)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692079,
+        "name": "Admin editorial CMS — isolated native proof",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692078,
+        "name": "Auth-Konfiguration gegen config.toml",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692073,
+        "name": "Accepted store trip integration — native (store)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966692053,
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      },
+      {
+        "id": 136966691896,
+        "name": "Hosted V3 — native PostgreSQL 17 (main)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+      }
+    ],
+    "commit_statuses": [
+      {
+        "context": "Vercel",
+        "state": "success",
+        "target_url": "https://vercel.com/jetnity-e1b93c82/jetnity-app/AE9vPmupEGYevVtvBPN4rA7VZg5g"
+      }
+    ],
+    "repository_tests": {
+      "total": 10696,
+      "passed": 10694,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "skip_scope": "Two existing UI layout audits were not executed; no UI audit PASS claimed."
+    },
+    "auth_cli_tests_with_isolated_transport": {
+      "passed": 14,
+      "failed": 0
+    },
+    "local_pure_auth_tests": {
+      "passed": 103,
+      "failed": 0
+    },
+    "local_workflow_contracts": {
+      "passed": 10,
+      "failed": 0
+    },
+    "local_cli_limit": "The local esbuild binary was unavailable; real CLI entrypoint tests ran successfully in CI.",
+    "production_runtime_tests_performed": false
+  },
+  "dev_readback": {
+    "auth_job": 136966692078,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/44943807444/job/136966692078",
+    "target_ref": "yfvbxvijcorffwxbxahl",
+    "auth_checked_at_utc": "2026-11-21T20:00:28.9524334Z",
+    "values_checked": 56,
+    "keys_checked": 244,
+    "passkeys_expected": true,
+    "passkeys_observed": true,
+    "redirect_count": 3,
+    "redirect_evidence": "https://github.com/Jetnity/jetnity/blob/5ee3684e5b5603adf44db460b6564c727ad9c94a/docs/evidence/bg1-dev-auth-read-expectations-20261121.json",
+    "bg1_observed_at_utc": "2026-11-21T20:00:29.8660716Z",
+    "bg1_status": "current",
+    "statement_scope": "Actual existing CI readback at the listed time; not a new present-time or Production status assertion.",
+    "relevant_redacted_log_excerpt": [
+      "2026-11-21T20:00:28.9521295Z Dev-Redirect-Vertrag: jetnity.dev-auth-redirects.2026-11-15; Ziel ***; Quelle #1197@70a3cb09204e74f6bcd4a5b481e942e526a6102f.",
+      "2026-11-21T20:00:28.9522229Z Dev-Passkey-Vertrag: jetnity.dev-auth-passkeys.2026-11-21; enabled=true; Owner-Freigabe 2026-11-21, #1240.",
+      "2026-11-21T20:00:28.9523529Z Dev-Gerätetest-Redirect: https://dev.jetnity.com/**; nur Dev-Lese-Sollwert, #1240.",
+      "2026-11-21T20:00:28.9524334Z Auth-Konfiguration geprüft: 56 Werte, 244 Schlüssel am Branch.",
+      "2026-11-21T20:00:29.8660716Z {\"schema\":1,\"status\":\"current\",\"code\":\"current\"}"
+    ]
+  },
+  "main_readback": {
+    "main_commit": "276fe3c4e066ea433cc6bea1c16b7ee90da103a0",
+    "merge_parents": [
+      "5bb0d5909e675de09eb6c7659c3132187e66abf9",
+      "5ee3684e5b5603adf44db460b6564c727ad9c94a"
+    ],
+    "merged_tree": "3105d88873b6dd45dc1b38272c129c5b2a82049f",
+    "tree_equals_tested_head": true,
+    "schedule_present": false,
+    "workflow_dispatch_present": true,
+    "only_semantic_workflow_delta": "remove on.schedule",
+    "workflow_sha256": "941bf527fab004d35a6b52441f6557d78d90ac5b17d49a6d85edcbcc699272c5",
+    "protected_paths_byte_identical": [
+      "supabase/config.toml",
+      "scripts/auth/anwenden.ts",
+      "scripts/auth/produktion-lesen.ts",
+      "scripts/auth/ziel.ts",
+      "lib/supabase/auth-erwartung.ts",
+      "lib/supabase/auth-produktion-lesen.ts",
+      ".github/workflows/ci.yml",
+      "vercel.json",
+      "scripts/official-truth-bg1-five-minute-integrity-alarm.mjs"
+    ],
+    "main_automatic_website_deployment": false,
+    "changed_files": [
+      ".github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml",
+      "docs/AUTH.md",
+      "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "docs/OFFICIAL_TRUTH_BG1_SCHEDULE_PAUSE_2026-11-21.md",
+      "docs/evidence/bg1-dev-auth-read-expectations-20261121.json",
+      "lib/readiness/official-truth-product-v3/guard/bg1-v3-five-minute-alarm-native-contract.test.ts",
+      "lib/supabase/auth-dev-konfiguration.test.ts",
+      "lib/supabase/auth-dev-konfiguration.ts",
+      "scripts/auth/pruefen.ts",
+      "scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs"
+    ]
+  },
+  "schedule_readback": {
+    "endpoint": "https://api.github.com/repos/Jetnity/jetnity/actions/runs?event=schedule&per_page=30",
+    "page_size": 30,
+    "all_repository_schedule_runs_on_returned_page": 30,
+    "matching_alarm_runs": [
+      {
+        "id": 44945975404,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44945975404",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T20:22:52Z",
+        "updated_at": "2026-11-21T20:23:19Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44945272840,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44945272840",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T20:15:04Z",
+        "updated_at": "2026-11-21T20:15:30Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44944719468,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44944719468",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T20:09:03Z",
+        "updated_at": "2026-11-21T20:09:27Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44943690211,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44943690211",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:57:34Z",
+        "updated_at": "2026-11-21T19:58:03Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44943177745,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44943177745",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:51:35Z",
+        "updated_at": "2026-11-21T19:51:55Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44942582809,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44942582809",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:44:56Z",
+        "updated_at": "2026-11-21T19:45:19Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44942014157,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44942014157",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:38:31Z",
+        "updated_at": "2026-11-21T19:38:57Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44941468869,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44941468869",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:32:24Z",
+        "updated_at": "2026-11-21T19:32:44Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44940863163,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44940863163",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:25:31Z",
+        "updated_at": "2026-11-21T19:26:01Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44940294497,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44940294497",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:19:15Z",
+        "updated_at": "2026-11-21T19:19:41Z",
+        "head_sha": "5bb0d5909e675de09eb6c7659c3132187e66abf9"
+      },
+      {
+        "id": 44939639750,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44939639750",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:11:55Z",
+        "updated_at": "2026-11-21T19:12:30Z",
+        "head_sha": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4"
+      },
+      {
+        "id": 44938928081,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44938928081",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T19:04:14Z",
+        "updated_at": "2026-11-21T19:05:28Z",
+        "head_sha": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4"
+      },
+      {
+        "id": 44938181403,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44938181403",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T18:55:57Z",
+        "updated_at": "2026-11-21T18:56:25Z",
+        "head_sha": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4"
+      },
+      {
+        "id": 44937623375,
+        "html_url": "https://github.com/Jetnity/jetnity/actions/runs/44937623375",
+        "status": "completed",
+        "conclusion": "failure",
+        "event": "schedule",
+        "created_at": "2026-11-21T18:49:37Z",
+        "updated_at": "2026-11-21T18:50:58Z",
+        "head_sha": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4"
+      }
+    ],
+    "matching_queued_or_in_progress": 0,
+    "matching_created_at_or_after_merge": 0,
+    "limit": "First page only at readback. No claim about e-mail delivery or cancellation of prior notifications; no workflow dispatched, rerun or cancelled.",
+    "initial_workflow_scoped_endpoint": "The connector rejected /actions/workflows/{filename}/runs as unsupported; the supported repository-run endpoint supplied the listed metadata."
+  },
+  "unchanged_boundaries": {
+    "auth_settings_writes": 0,
+    "production_database_reads": 0,
+    "production_database_writes": 0,
+    "production_auth_reads": 0,
+    "source_or_http_actions": 0,
+    "owner_actions": 0,
+    "login_or_2fa_actions": 0,
+    "role_or_secret_changes": 0,
+    "production_website_deploys": 0,
+    "new_cost_authorizations": 0,
+    "other_pr_1240_changed": false,
+    "production_passkey_expectation_false_unchanged": true,
+    "production_passkey_live_state_rechecked": false,
+    "raw_config_and_auth_writer_unchanged": true
+  },
+  "frozen_http_id_package": {
+    "commit": "e4bab62e6d0e4e902056d78581128c675da7391c",
+    "sql_file_count": 8,
+    "sql_manifest_sha256": "ef166a30a16cbb9cb6ca33702b51c659f0ce0400668b54d1e6dddbf820086d65",
+    "delivery_manifest_sha256": "a4aab89622047ea3411d65a041c6427a8ed4942825c42f85c7b824f2444e81a7",
+    "delivery_files_verified_byte_exact": 32,
+    "executed": false,
+    "new_separate_owner_go_required": true,
+    "diagnosis_go_received": false,
+    "expired_data_label": "derzeit nicht verfügbar"
+  },
+  "resumption": {
+    "automatic": false,
+    "required": "Owner BG1 release, repair/verification of known monitor credential configuration and separately authorized successful manual proof, then restore the original five-minute schedule through the normal workflow review.",
+    "runbook": "https://github.com/Jetnity/jetnity/blob/276fe3c4e066ea433cc6bea1c16b7ee90da103a0/docs/OFFICIAL_TRUTH_BG1_SCHEDULE_PAUSE_2026-11-21.md"
+  },
+  "completion_storage": {
+    "kind": "Additive completion record; all 32 frozen HTTP-ID preparation files retained byte-for-byte.",
+    "overall_plan": "https://github.com/Jetnity/jetnity/blob/276fe3c4e066ea433cc6bea1c16b7ee90da103a0/docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md"
+  }
+}
