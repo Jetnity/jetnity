@@ -37,19 +37,23 @@ export default function GlobalesAbmeldenForm({
   ziel = '/',
   children,
 }: Props) {
-  // Keep the established server Action as the first authority. If it reports
-  // failure, retry once with the *browser's own* existing authenticated
-  // session. The browser uses the same unscoped/global logout, never a
-  // local-only best-effort logout that could wrongly promise revocation.
+  // The browser owns the live Supabase session/cookie store and must also
+  // receive SIGNED_OUT; a server-only revoke can succeed while its persistent
+  // browser client still restores a stale session on the next navigation.
+  // Try the same GLOBAL revocation in the browser first. A successful result
+  // requires both remote confirmation and getSession() === null. Keep the
+  // existing server Action as a second authority if the browser attempt fails.
   const execute = React.useCallback(async (vorher: GlobalesSignOutErgebnis | null, formular: FormData) => {
-    const result = await action(vorher, formular)
-    if (result.ok) return result // server action handles redirect itself
     try {
-      return await signOutBrowserFallback(result, createBrowserClient().auth, ziel,
+      const placeholder: GlobalesSignOutErgebnis = {
+        ok: false,
+        fehler: { code: 'failed', text: 'Die Abmeldung konnte nicht bestätigt werden.' },
+      }
+      const browser = await signOutBrowserFallback(placeholder, createBrowserClient().auth, ziel,
         path => window.location.replace(path))
-    } catch {
-      return result
-    }
+      if (browser.ok) return browser
+    } catch { /* Browser client unavailable; the existing Server Action remains safe. */ }
+    return action(vorher, formular)
   }, [action, ziel])
   const [zustand, formAction, pending] = useActionState(execute, ANFANG)
   const fehlerId = React.useId()
