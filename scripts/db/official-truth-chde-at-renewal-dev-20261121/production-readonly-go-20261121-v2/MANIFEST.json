@@ -1,0 +1,331 @@
+{
+  "schema_version": 2,
+  "authorization_id": "PROD_READONLY_BASELINE_20261121_V2",
+  "status": "PREPARED_UNEXECUTED_REQUIRES_EXPLICIT_PRODUCTION_READ_GO",
+  "fixed_target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "prepared_from_repository_commit": "f94eab0ce3ca8051dd8c2dfa7db3f54a803d2986",
+  "previous_authorization_id": "PROD_READONLY_BASELINE_20261121",
+  "previous_package_changed": false,
+  "production_accessed_during_preparation": false,
+  "execution_count": 0,
+  "writes_authorized": false,
+  "available_sql_file_count": 17,
+  "max_sql_invocations": 16,
+  "max_wall_clock_minutes": 5,
+  "automatic_retry_allowed": false,
+  "max_transaction_seconds": 12,
+  "optional_transaction_seconds": 5,
+  "total_transaction_budget_seconds": 101,
+  "lock_timeout_ms": 500,
+  "max_returned_json_bytes_total": 99328,
+  "phase_output_caps_bytes": {
+    "catalog": 65536,
+    "bg1_at_cron": 16384,
+    "selected_core": 4096,
+    "each_optional": 1024
+  },
+  "known_id_paths_total": 18,
+  "required_id_paths": [
+    "official_v3_at_production_private.watch_requests_v1.request_id",
+    "jetnity_prod_import_scheduler.dispatches_v1.net_request_id",
+    "net.http_request_queue.id",
+    "net._http_response.id"
+  ],
+  "optional_id_paths": [
+    "supabase_functions.hooks.request_id",
+    "jetnity_dev_import_scheduler.dispatches_v1.net_request_id",
+    "jetnity_dev_import_scheduler.preview_dispatches_v1.net_request_id",
+    "official_v3_at_source_watch_private.reads_v1.request_id",
+    "official_v3_source_renewal_private.observations_v1.request_id",
+    "jetnity_followup_source_monitor_private.items_v1.request_id",
+    "jetnity_followup_source_monitor_private.items_v2.pgnet_request_id",
+    "jetnity_followup_source_monitor_private.items_v3.request_id",
+    "jetnity_global_source_monitor_private.requests_v1.request_id",
+    "jetnity_usagov_fallback_private.original_v1.request_id",
+    "jetnity_usagov_watch_private.requests_v1.request_id",
+    "jetnity_usagov_watch_private.observations_v1.request_id",
+    "jetnity_source_dispatch_private.requests_v1.request_id",
+    "jetnity_source_dispatch_private.observations_v1.request_id"
+  ],
+  "phase_order": [
+    "01-catalog.READONLY.sql",
+    "02-bg1-at-cron.READONLY.sql",
+    "EXACTLY_ONE_CORE_VARIANT",
+    "PRESENT_FIXED_OPTIONAL_FILES_ONLY"
+  ],
+  "core_variant_selection": {
+    "selector_file": "01-catalog.READONLY.sql",
+    "required_catalog_status": "READY_FOR_FIXED_READ_PHASES_ONLY",
+    "required_data_phase_allowed": true,
+    "file_field": "selected_core_query_file",
+    "status_field": "optional_hooks.status",
+    "maximum_selected_files": 1,
+    "execute_both_forbidden": true,
+    "automatic_switch_or_retry_forbidden": true,
+    "choices": {
+      "ABSENT_RELATION": {
+        "file": "03-core-id-maxima-without-hooks.READONLY.sql",
+        "expected_path_maxima": 4,
+        "display": "nicht vorhanden"
+      },
+      "PRESENT_FIXED": {
+        "file": "03-core-id-maxima-with-hooks.READONLY.sql",
+        "expected_path_maxima": 5,
+        "display": "vorhanden"
+      }
+    }
+  },
+  "optional_files": [
+    {
+      "file": "04-extra-01.READONLY.sql",
+      "exact_schema": "jetnity_dev_import_scheduler",
+      "exact_relation": "dispatches_v1",
+      "exact_bigint_column": "net_request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-02.READONLY.sql",
+      "exact_schema": "jetnity_dev_import_scheduler",
+      "exact_relation": "preview_dispatches_v1",
+      "exact_bigint_column": "net_request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-03.READONLY.sql",
+      "exact_schema": "official_v3_at_source_watch_private",
+      "exact_relation": "reads_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-04.READONLY.sql",
+      "exact_schema": "official_v3_source_renewal_private",
+      "exact_relation": "observations_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-05.READONLY.sql",
+      "exact_schema": "jetnity_followup_source_monitor_private",
+      "exact_relation": "items_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-06.READONLY.sql",
+      "exact_schema": "jetnity_followup_source_monitor_private",
+      "exact_relation": "items_v2",
+      "exact_bigint_column": "pgnet_request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-07.READONLY.sql",
+      "exact_schema": "jetnity_followup_source_monitor_private",
+      "exact_relation": "items_v3",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-08.READONLY.sql",
+      "exact_schema": "jetnity_global_source_monitor_private",
+      "exact_relation": "requests_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-09.READONLY.sql",
+      "exact_schema": "jetnity_usagov_fallback_private",
+      "exact_relation": "original_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-10.READONLY.sql",
+      "exact_schema": "jetnity_usagov_watch_private",
+      "exact_relation": "requests_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-11.READONLY.sql",
+      "exact_schema": "jetnity_usagov_watch_private",
+      "exact_relation": "observations_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-12.READONLY.sql",
+      "exact_schema": "jetnity_source_dispatch_private",
+      "exact_relation": "requests_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    },
+    {
+      "file": "04-extra-13.READONLY.sql",
+      "exact_schema": "jetnity_source_dispatch_private",
+      "exact_relation": "observations_v1",
+      "exact_bigint_column": "request_id",
+      "expected_persistence": "p",
+      "run_only_if_01_present_and_fixed_shape": true
+    }
+  ],
+  "stop_after_any_error_or_unknown_shape": true,
+  "missing_optional_relation_is_stop": false,
+  "missing_required_relation_is_stop": true,
+  "existing_optional_wrong_shape_or_rights_is_stop": true,
+  "absent_semantics": "Only missing optional relation is ABSENT_RELATION / nicht vorhanden; never zero or a read NULL maximum.",
+  "scope_exclusions": [
+    "Production writes",
+    "product-function calls",
+    "HTTP/source actions",
+    "owner actions",
+    "role changes",
+    "login or 2FA",
+    "publication",
+    "sequence advance",
+    "explicit locks"
+  ],
+  "files": [
+    {
+      "path": "01-catalog.READONLY.sql",
+      "bytes": 23707,
+      "sha256": "fa1cd42d879210ab02eb15697748a3a065b0f0b655436a4b34971fccbd662ed4"
+    },
+    {
+      "path": "02-bg1-at-cron.READONLY.sql",
+      "bytes": 7564,
+      "sha256": "b5c959c5464e9c70f81e73fe2651c710cedd99974b19def5e28e47bda6406db9"
+    },
+    {
+      "path": "03-core-id-maxima-with-hooks.READONLY.sql",
+      "bytes": 5675,
+      "sha256": "d0656da1a63a0ad28fc09183fdc5eb5e8cdf5f7bbdd0ae63d166ea504964f470"
+    },
+    {
+      "path": "03-core-id-maxima-without-hooks.READONLY.sql",
+      "bytes": 5115,
+      "sha256": "9fb016f967cc614185ee025984daec4550acf4124db8f394a1ce09ae23793086"
+    },
+    {
+      "path": "04-extra-01.READONLY.sql",
+      "bytes": 2824,
+      "sha256": "cd748a84fdcd5e132c4af7e2723cde4c047f0da14b08e1f118ef64a9650f88f2"
+    },
+    {
+      "path": "04-extra-02.READONLY.sql",
+      "bytes": 2856,
+      "sha256": "ecd529292449580fcfcd0e7b8d00f02794981711083ddcefe3ad3e5df6ed5558"
+    },
+    {
+      "path": "04-extra-03.READONLY.sql",
+      "bytes": 2816,
+      "sha256": "59ffeb05e98e84884d35b402b390919eb8fd0691d67377d0bfbd51422cd66e27"
+    },
+    {
+      "path": "04-extra-04.READONLY.sql",
+      "bytes": 2840,
+      "sha256": "5b6644f6b06eeb3ccd70597a34b2eefdd397dca51e7c2af1894550b30999103c"
+    },
+    {
+      "path": "04-extra-05.READONLY.sql",
+      "bytes": 2832,
+      "sha256": "22f3bd7ad2d86937756faedd77e3ef95184031be2df507c4a94f876d26758797"
+    },
+    {
+      "path": "04-extra-06.READONLY.sql",
+      "bytes": 2856,
+      "sha256": "e641fbca44b2af7675058a746f5c8ad314ba150cb5b5401b0b5d31e9ddfa30fe"
+    },
+    {
+      "path": "04-extra-07.READONLY.sql",
+      "bytes": 2832,
+      "sha256": "0d8ccdb4066f79a67279e2f52853c5553479e01f5c9bcbcfeafedc6e5065b607"
+    },
+    {
+      "path": "04-extra-08.READONLY.sql",
+      "bytes": 2836,
+      "sha256": "b9c55ca57b6ac06967763502b67b35f6d9e30dc303c36118762091affe82810c"
+    },
+    {
+      "path": "04-extra-09.READONLY.sql",
+      "bytes": 2812,
+      "sha256": "9249024e71cb5687beb5cad006eee325045168bc8beb7662541fc08634d33b28"
+    },
+    {
+      "path": "04-extra-10.READONLY.sql",
+      "bytes": 2800,
+      "sha256": "a65a2a284d97025ced35a1c49610206ce6bc589c6c952590a5f31ece5aeab040"
+    },
+    {
+      "path": "04-extra-11.READONLY.sql",
+      "bytes": 2816,
+      "sha256": "0145fb9d8999dc2d233f5da69bcaf8b10b7a9d3d74da8c01a688d063995a054d"
+    },
+    {
+      "path": "04-extra-12.READONLY.sql",
+      "bytes": 2812,
+      "sha256": "e22dc3d01f1aa10a77fd8bc8787fb494e886c0de7cfa5f95d8a20658864d1543"
+    },
+    {
+      "path": "04-extra-13.READONLY.sql",
+      "bytes": 2828,
+      "sha256": "7bc436523ad5eb5be51e273bad531918528d6f6f2600800a7ec917fada52309c"
+    }
+  ],
+  "byte_identical_to_v1_files": [
+    "02-bg1-at-cron.READONLY.sql",
+    "04-extra-01.READONLY.sql",
+    "04-extra-02.READONLY.sql",
+    "04-extra-03.READONLY.sql",
+    "04-extra-04.READONLY.sql",
+    "04-extra-05.READONLY.sql",
+    "04-extra-06.READONLY.sql",
+    "04-extra-07.READONLY.sql",
+    "04-extra-08.READONLY.sql",
+    "04-extra-09.READONLY.sql",
+    "04-extra-10.READONLY.sql",
+    "04-extra-11.READONLY.sql",
+    "04-extra-12.READONLY.sql",
+    "04-extra-13.READONLY.sql"
+  ],
+  "review_description": {
+    "path": "README.md",
+    "bytes": 1375,
+    "sha256": "76d60bda019ad49d0ac3a25a1e76d0b7eaf90eadedf84efda93f0162027786f3"
+  },
+  "owner_review_document": {
+    "repository_path": "docs/OFFICIAL_TRUTH_PRODUCTION_READONLY_GO_V2_2026-11-21.md",
+    "bytes": 10051,
+    "sha256": "bf50af26165f4e1e8ac3b5802e7eb9908d3c995fe1eec0366ce2cf53661d557a"
+  },
+  "static_review": {
+    "root_review_complete": true,
+    "independent_review_complete": true,
+    "four_named_required_paths": true,
+    "fourteen_optional_paths_checked_if_present": true,
+    "without_hooks_has_no_static_hooks_relation_reference": true,
+    "core_choice_rechecked_in_own_snapshot": true,
+    "schema_usage_and_relation_read_privileges_checked": true,
+    "native_parser_execution": false,
+    "database_execution": false,
+    "runtime_pass_claimed": false
+  },
+  "historical_catalog_source": {
+    "path": "docs/evidence/official-truth-production-readonly-20261121/execution.json",
+    "observed_at": "2026-11-21T16:27:49.255986Z",
+    "fresh_v2_evidence": false
+  },
+  "delivery_binding": "Containing Git commit binds prepared V2 files; no self-referential commit hash."
+}

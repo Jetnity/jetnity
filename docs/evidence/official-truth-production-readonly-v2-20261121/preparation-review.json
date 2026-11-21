@@ -1,0 +1,156 @@
+{
+  "schema": "production-readonly-v2-preparation-review-v1",
+  "status": "PASS_STATIC_CHECKS_ONLY",
+  "authorization_id": "PROD_READONLY_BASELINE_20261121_V2",
+  "package_manifest_sha256": "f1ae986842e67e8e2d5e9d96493d7a78b44bc0276839625d5b312210c04ae8c7",
+  "production_or_dev_queries_during_preparation": 0,
+  "native_sql_parser_or_runtime_executed": false,
+  "independent_sql_review": "No concrete syntax or safety issue found in01 and both03 variants; qualified static review only.",
+  "independent_scope_review": "17 available files, exactly one03, at most16 calls/5minutes, same101s/99328byte bounds.",
+  "all_original_v1_package_files_and_go_document_unchanged": true,
+  "byte_identical_sql_files_from_v1": 14,
+  "historical_catalog_observed_at": "2026-11-21T16:27:49.255986+00:00",
+  "historical_required_four_paths_match": true,
+  "historical_hooks_absent": true,
+  "historical_data_is_not_fresh_v2_execution": true,
+  "without_hooks_static_relation_reference_absent": true,
+  "with_hooks_single_aggregate_reference": true,
+  "file_checks": [
+    {
+      "file": "01-catalog.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "02-bg1-at-cron.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "03-core-id-maxima-with-hooks.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "03-core-id-maxima-without-hooks.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-01.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-02.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-03.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-04.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-05.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-06.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-07.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-08.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-09.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-10.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-11.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-12.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    },
+    {
+      "file": "04-extra-13.READONLY.sql",
+      "bytes_and_sha_exact": true,
+      "readonly_rollback_form": true,
+      "mutation_and_product_function_tokens_absent": true,
+      "delimiters_balanced": true,
+      "timeouts_exact": true
+    }
+  ]
+}
