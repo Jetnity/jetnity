@@ -100,3 +100,18 @@ test('Production V4 normal protected AT guard remains distinct from emergency v4
  assert.doesNotMatch(s,/SET resumed_generation|\bALTER ROLE\b/)
  assert.ok(s.trim().endsWith('ROLLBACK;'))
 })
+
+test('Exact CHDE Production terminal transport review is READ ONLY and cannot renew an expired legal fact',()=>{
+ const s=file('production-chde-terminal-history.READONLY.sql')
+ assert.match(s,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY;/)
+ assert.match(s,/queued_starts<>1 OR stats\.failed_resumes<>8 OR stats\.total_dispatches<>9/)
+ assert.match(s,/stats\.new_projections<>0 OR stats\.new_versions<>0/)
+ assert.match(s,/stats\.new_execution_results<>0/)
+ assert.match(s,/stats\.new_dispositions<>0 OR stats\.new_escalations<>0/)
+ assert.match(s,/EXACT_IMMUTABLE_HISTORY_REVIEWABLE_ONLY__NOT_RELEASE_AUTHORITY/)
+ assert.match(s,/false AS owner_session_authenticated/)
+ assert.match(s,/false AS source_rule_reapproved/)
+ assert.match(s,/false AS new_scheduler_cycle_authorized/)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+ assert.doesNotMatch(s,/\b(?:UPDATE|DELETE|INSERT|CREATE|ALTER|TRUNCATE|GRANT|COMMIT)\s/i)
+})
