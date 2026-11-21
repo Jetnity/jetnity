@@ -18,16 +18,27 @@ BEGIN
  THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_PREREQUISITE' USING ERRCODE='P7998'; END IF;
  SELECT count(*),count(*) FILTER(WHERE source_qualified AND NOT research_only)
  INTO source_total,approved FROM official_v3_at_production_private.source_pins_v1;
- -- Research-only physical originals must NEVER turn into positive customer facts.
- -- Current Production fails this gate: 0/3 qualified.
- IF source_total<>3 OR approved<>3
- THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_SOURCE_NOT_QUALIFIED' USING ERRCODE='P7998';END IF;
+ -- The HARD V4 publisher guard must already be catalog-protected; then it
+ -- is safe to restore RAW SOURCE MONITORING even while all originals remain
+ -- research-only. The source guard will still refuse ALL positive AT facts.
+ -- Require exactly the current preapproved research-only inventory, not a
+ -- guessed new legal qualification or a source list changed since review.
+ IF source_total<>3 OR approved<>0
+ OR (SELECT count(*) FROM official_v3_at_production_private.source_pins_v1
+    WHERE research_only AND NOT source_qualified)<>3
+ THEN RAISE EXCEPTION 'AT_SEQUENCE_SOURCE_INVENTORY_CHANGED' USING ERRCODE='P7998';END IF;
  -- A future NORMAL protected source-admission successor of renew_ch_v1
  -- must not be the EMERGENCY bg1_transient_correction_baseline_v4 (restores old audit).
  -- This distinct source-guard baseline must independently require
  -- the same exact legal-source-to-rule/Document/MA1/Owner gate.
  IF to_regclass('official_v3_guard_private.at_legal_source_guard_baseline_v4') IS NULL
  THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_PROTECTED_V4_GUARD_MISSING' USING ERRCODE='P7998';END IF;
+ PERFORM official_v3_guard_private.assert_catalog_v1();
+ IF NOT EXISTS(SELECT 1 FROM official_v3_guard_private.at_legal_source_guard_baseline_v4 v
+    WHERE singleton AND v.catalog=official_v3_guard_private.catalog_status_v1()
+      AND v.publisher_function_digest=
+       encode(sha256(convert_to(pg_get_functiondef('official_v3_at_production_private.renew_ch_v1()'::regprocedure),'UTF8')),'hex'))
+ THEN RAISE EXCEPTION 'AT_SEQUENCE_RELEASE_STOP_SOURCE_PUBLISHER_UNVERIFIED' USING ERRCODE='P7998';END IF;
  SELECT last_value INTO STRICT now_value FROM net.http_request_queue_id_seq;
  SELECT greatest(coalesce((SELECT max(request_id) FROM official_v3_at_production_private.watch_requests_v1),0),
   coalesce((SELECT max(net_request_id) FROM jetnity_prod_import_scheduler.dispatches_v1),0),

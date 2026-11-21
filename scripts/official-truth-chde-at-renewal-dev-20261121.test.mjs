@@ -41,7 +41,9 @@ test('Production preflight is read-only and displays every stopping condition',(
 })
 test('Production candidate cannot modify sequence unless qualified legal sources and protected v4 successor exist',()=>{
  const s=file('production-at-sequence.CANDIDATE-ROLLBACK.sql')
- assert.match(s,/source_total<>3 OR approved<>3/)
+ assert.match(s,/source_total<>3 OR approved<>0/)
+ assert.match(s,/AT_SEQUENCE_SOURCE_INVENTORY_CHANGED/)
+ assert.match(s,/AT_SEQUENCE_RELEASE_STOP_SOURCE_PUBLISHER_UNVERIFIED/)
  assert.match(s,/at_legal_source_guard_baseline_v4/)
  assert.doesNotMatch(s,/to_regclass\('official_v3_guard_private\.bg1_transient_correction_baseline_v4'\)/)
  assert.match(s,/pg_try_advisory_xact_lock\(771112,1\)/)
@@ -82,3 +84,19 @@ test('Installed Dev BG1 v4 exact weather ACL catalog successor never weakens ful
  assert.doesNotMatch(s,/GRANT EXECUTE ON FUNCTION public\.reisewetter_reservieren_v1/i)
  assert.ok(s.trim().endsWith('ROLLBACK;'))
 });
+
+test('Production V4 normal protected AT guard remains distinct from emergency v4 and preserves ROLLBACK',()=>{
+ const s=file('production-at-legal-v4.CANDIDATE-ROLLBACK.sql')
+ assert.match(s,/at_legal_source_guard_baseline_v4/)
+ assert.match(s,/bg1_transient_baseline_v3/)
+ assert.match(s,/at_batch_switch_baseline_v2/)
+ assert.match(s,/research_only OR NOT source_qualified/)
+ assert.match(s,/PROD_AT_V4_UNEXPECTED_CATALOG_OR_SOURCE/)
+ assert.match(s,/PROD_AT_V4_CODE_CHANGED/)
+ assert.match(s,/PROD_AT_V4_POSTCHECK_REFUSED/)
+ assert.match(s,/CREATE TRIGGER immutable_rows/)
+ assert.match(s,/FORCE ROW LEVEL SECURITY/)
+ assert.doesNotMatch(s,/source_renewal_baseline_v1\) IS NULL/)
+ assert.doesNotMatch(s,/SET resumed_generation|\bALTER ROLE\b/)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+})
