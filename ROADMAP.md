@@ -583,3 +583,10 @@ Die größere lokale Datenbankfunktion ist kein Live-Pilot und keine zusätzlich
 ### Reiseideen-Nachtrag 21.11.2026: separater Release nach #1264
 
 Owner-Go: Katalogergänzung nach dem tatsächlichen #1264-Livewechsel einzeln ausliefern, bei neuen Fehlern zurückrollen. Nur Bali erhält eine Publikationsfreigabe; die anderen drei vollständigen Vorschläge bleiben zur Einzelabnahme unveröffentlicht. Bestehende CMS-AAL2-/Rollenprüfung und Login bleiben erhalten; keine BG1-SQL-/Konfigurationsschritte. Der frühere Dev-only-/PR-Slot-Zwischenstand ist durch diesen Folgeauftrag und den freien dritten PR-Slot überholt. [Fortlaufender Nachweis](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
+
+
+### Reiseideen-Nachtrag 21.11.2026: alle vier veröffentlicht, öffentlicher Leser separat
+
+Der spätere Owner-Auftrag hat Bali, Lissabon, Zermatt und Amsterdam einzeln in der gemeinsamen Freigabe bestätigt. Alle vier sind in Production veröffentlicht und am 21.11.2026 um 17:45:47 UTC unabhängig mit den freigegebenen Texten und Bildern abgeglichen. Diese Inhalte werden nicht erneut geschrieben. #1267 hat die Katalogergänzung getrennt nach #1264 ausgeliefert.
+
+Der aktuelle Folgeauftrag erlaubt die separate öffentliche CMS-Korrektur mit Dev-Prüfung, eigenem PR, vollständiger grüner CI, Merge und Live-Prüfung samt Rücknahme bei Fehlern. Der veröffentlichungsbezogene v2-Leser vermeidet die beim öffentlichen v1-Aufruf auftretenden Admin-Guard-Timeouts; der statische Katalog bleibt bei Abfragefehlern erhalten. Login/2FA, Admin-Schreiben und BG1 bleiben unverändert. Supabase-Ressourcen und Neustarts werden nur lesend untersucht; kein Upgrade und keine neuen Kosten. Der tatsächliche Prüf-/Release-Stand steht im [separaten Release-Nachweis](docs/JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md); dieser Nachtrag behauptet noch keinen neuen Live-Erfolg.

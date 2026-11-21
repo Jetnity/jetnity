@@ -26,6 +26,15 @@ test('only the explicitly enabled public preview and captured Dev target are adm
   assert.equal(cmsPreviewReadEnabled({ ...admitted, CI: '1' }, devUrl), true)
 })
 
+test('the separate public-reader release preview uses Dev without acquiring Admin admission', () => {
+  const release = { ...admitted, VERCEL_GIT_COMMIT_REF: 'fix/cms-public-reader-release-20261121' }
+  assert.equal(cmsPreviewReadEnabled(release, devUrl), true)
+  assert.equal(adminDevRuntimeEnabled(release, devUrl), false)
+  assert.equal(cmsPreviewReadEnabled({ ...release, VERCEL_ENV: 'production' }, devUrl), false)
+  assert.equal(cmsPreviewReadEnabled({ ...release, NEXT_PUBLIC_SUPABASE_URL: productionUrl }, productionUrl), false)
+  assert.equal(cmsPreviewReadEnabled({ ...release, VERCEL_GIT_COMMIT_REF: `${release.VERCEL_GIT_COMMIT_REF}-other` }, devUrl), false)
+})
+
 test('public read admission never admits the same preview to the actual Admin runtime', () => {
   for (const env of [admitted, { ...admitted, VERCEL_TARGET_ENV: 'preview' }, { ...admitted, CI: '1' }]) {
     assert.equal(cmsPreviewReadEnabled(env, devUrl), true)

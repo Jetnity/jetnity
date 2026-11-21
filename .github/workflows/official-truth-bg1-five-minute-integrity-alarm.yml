@@ -1,12 +1,11 @@
 name: BG1 Production integrity alarm (5-minute, candidate)
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 # GitHub notification is a comment in the existing PR #1254, not a new issue.
-# The workflow is scheduled only after a normal, Owner-approved main merge.
+# Schedule paused 2026-11-21; manual execution and all Owner gates stay available.
+# Reactivation: docs/OFFICIAL_TRUTH_BG1_SCHEDULE_PAUSE_2026-11-21.md.
 # No paid connector and no new service-role key / user session / database writes.
 permissions:
   contents: read
