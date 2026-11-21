@@ -52,7 +52,6 @@ Alle Texte sind Deutsch in Schweizer Schreibweise. Es wurde keine Aussage zu Ein
 | «Pass 1/2/3» ohne Zuordnung zu Personen | T7 | Eine Zuordnung im öffentlichen Prüfer braucht einen Umbau je Person (neue Funktion) |
 | Ortssuche liefert für Madrid und Barcelona in Dev philippinische Treffer; Production nicht geprüft | – | Ortskatalog/Ranking (GeoNames-Import) – Priorität P1 für Spanien-Reisen |
 | Reisetitel folgt dem ersten Ziel auf Englisch («Lisbon» bei vier Zielen in drei Ländern) | – | Titel-Logik und deutsche Ortsnamen (F, Migration) |
-| Rote CI-Prüfung «Auth-Konfiguration gegen config.toml» | – | Dev-Supabase hat Passkeys eingeschaltet, `supabase/config.toml` nicht; Passkeys liegen bei #1240 |
 
 ## D. Prüfstand
 
