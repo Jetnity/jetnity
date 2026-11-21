@@ -1,0 +1,376 @@
+{
+  "schema": 1,
+  "project": "Jetnity",
+  "environment": "Development",
+  "project_ref": "yfvbxvijcorffwxbxahl",
+  "date": "2026-11-21",
+  "authority": "User requested actual AT renewal check in Dev and Production review packet; no Production action authorized.",
+  "scope": {
+    "production_read": false,
+    "production_write": false,
+    "new_login": false,
+    "new_roles_or_grants": false,
+    "new_http_request_started_by_this_check": false,
+    "persistent_database_change": false
+  },
+  "baseline_commit": "2cce996bc94091fe7618772bc21772ae05ab29ee",
+  "actual_monitor": [
+    {
+      "bg1": "current",
+      "source_monitor": {
+        "status": "CHANGED_REQUIRES_REVIEW",
+        "changed": 1,
+        "sources": 3,
+        "accepted": 0,
+        "published": 0,
+        "requestedAt": "2026-11-21T13:10:00.218021+00:00",
+        "exactOrAssetOnly": 2
+      },
+      "latest_two_real_source_batches": [
+        {
+          "changed": 1,
+          "pending": 0,
+          "batch_id": 99,
+          "receipts": 3,
+          "asset_only": 0,
+          "unavailable": 0,
+          "last_http_id": 6,
+          "requested_at": "2026-11-21T13:10:00.218021+00:00",
+          "first_http_id": 2,
+          "latest_response": "2026-11-21T13:15:00.20149+00:00",
+          "unchanged_exact": 2,
+          "earliest_response": "2026-11-21T13:15:00.170389+00:00"
+        },
+        {
+          "changed": 1,
+          "pending": 0,
+          "batch_id": 98,
+          "receipts": 3,
+          "asset_only": 0,
+          "unavailable": 0,
+          "last_http_id": 1799,
+          "requested_at": "2026-11-21T11:40:00.175456+00:00",
+          "first_http_id": 1793,
+          "latest_response": "2026-11-21T11:45:00.186751+00:00",
+          "unchanged_exact": 2,
+          "earliest_response": "2026-11-21T11:45:00.159795+00:00"
+        }
+      ],
+      "original_qualification": {
+        "unqualified": 3,
+        "original_count": 3,
+        "exact_originals": 3
+      },
+      "fact_state": {
+        "total": 71,
+        "unexpired": 0,
+        "last_fact_expiry": "2026-11-20T13:32:01.284398+00:00",
+        "all_fact_history_digest": "fefe812a3062bd05a84d08cc4d4ae71334cdee35f84df4c8f5eab3fca8bf2b38",
+        "latest_fact_verified_at": "2026-11-20T12:32:01.284398+00:00"
+      },
+      "sealed_source_batches": [
+        {
+          "batch": 99,
+          "sealed": "2026-11-21T13:17:02.426929+00:00",
+          "outcome": "changed",
+          "requested": "2026-11-21T13:10:00.218021+00:00"
+        },
+        {
+          "batch": 98,
+          "sealed": "2026-11-21T11:47:01.684059+00:00",
+          "outcome": "changed",
+          "requested": "2026-11-21T11:40:00.175456+00:00"
+        }
+      ],
+      "new_source_run_started": false,
+      "positive_renewal_proven": false
+    }
+  ],
+  "actual_source_bodies": {
+    "observed_at": "2026-11-21 13:41:51.596885+00",
+    "database_started_at": "2026-11-21 13:01:42.863753+00",
+    "sources": [
+      {
+        "url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+        "state": "changed",
+        "batch_id": 99,
+        "source_id": "bmeia-bern-how-to-apply",
+        "pinned_sha": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+        "request_id": 2,
+        "observed_at": "2026-11-21T13:15:00.170389+00:00",
+        "observed_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+        "requested_at": "2026-11-21T13:10:00.218021+00:00",
+        "canonical_sha": "b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55",
+        "expected_bytes": 172460,
+        "observed_bytes": 172428
+      },
+      {
+        "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+        "state": "unchanged_exact",
+        "batch_id": 99,
+        "source_id": "bmi-general-entry",
+        "pinned_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+        "request_id": 5,
+        "observed_at": "2026-11-21T13:15:00.177983+00:00",
+        "observed_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+        "requested_at": "2026-11-21T13:10:00.218021+00:00",
+        "canonical_sha": null,
+        "expected_bytes": 91655,
+        "observed_bytes": 91655
+      },
+      {
+        "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+        "state": "unchanged_exact",
+        "batch_id": 99,
+        "source_id": "bmi-visa-nationality-matrix",
+        "pinned_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+        "request_id": 6,
+        "observed_at": "2026-11-21T13:15:00.20149+00:00",
+        "observed_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+        "requested_at": "2026-11-21T13:10:00.218021+00:00",
+        "canonical_sha": null,
+        "expected_bytes": 498415,
+        "observed_bytes": 498415
+      }
+    ]
+  },
+  "exact_http_id_inventory": [
+    {
+      "observed_at": "2026-11-21 13:42:18.864008+00",
+      "database_started_at": "2026-11-21 13:01:42.863753+00",
+      "all_consumer_highwaters": [
+        {
+          "ledger": "jetnity_dev_import_scheduler.dispatches_v1.net_request_id",
+          "highwater": "45"
+        },
+        {
+          "ledger": "jetnity_dev_import_scheduler.preview_dispatches_v1.net_request_id",
+          "highwater": "1547"
+        },
+        {
+          "ledger": "jetnity_followup_source_monitor_private.items_v1.request_id",
+          "highwater": "47"
+        },
+        {
+          "ledger": "jetnity_followup_source_monitor_private.items_v2.pgnet_request_id",
+          "highwater": "53"
+        },
+        {
+          "ledger": "jetnity_followup_source_monitor_private.items_v3.request_id",
+          "highwater": "1798"
+        },
+        {
+          "ledger": "jetnity_global_source_monitor_private.requests_v1.request_id",
+          "highwater": "1792"
+        },
+        {
+          "ledger": "jetnity_source_dispatch_private.observations_v1.request_id",
+          "highwater": "1781"
+        },
+        {
+          "ledger": "jetnity_source_dispatch_private.requests_v1.request_id",
+          "highwater": "1781"
+        },
+        {
+          "ledger": "jetnity_usagov_fallback_private.original_v1.request_id",
+          "highwater": "558"
+        },
+        {
+          "ledger": "jetnity_usagov_watch_private.observations_v1.request_id",
+          "highwater": "1800"
+        },
+        {
+          "ledger": "jetnity_usagov_watch_private.requests_v1.request_id",
+          "highwater": "1800"
+        },
+        {
+          "ledger": "net._http_response.id",
+          "highwater": "20"
+        },
+        {
+          "ledger": "net.http_request_queue.id",
+          "highwater": null
+        },
+        {
+          "ledger": "official_v3_at_source_watch_private.reads_v1.request_id",
+          "highwater": "1799"
+        },
+        {
+          "ledger": "official_v3_source_renewal_private.observations_v1.request_id",
+          "highwater": "1799"
+        },
+        {
+          "ledger": "supabase_functions.hooks.request_id",
+          "highwater": null
+        }
+      ],
+      "highest_reserved": "1800",
+      "sequence_value": {
+        "is_called": true,
+        "last_value": "20"
+      },
+      "sequence_parameters": {
+        "max": "9223372036854775807",
+        "min": "1",
+        "cache": "1",
+        "cycle": false,
+        "increment": "1"
+      },
+      "bg1": "current"
+    }
+  ],
+  "actual_changed_source_publisher_rollback": [
+    {
+      "result": "DEV_AT_REAL_CHANGED_BATCH_PUBLISHER_REFUSAL_ROLLBACK_PASS",
+      "real_publisher_calls": 2,
+      "genuine_http_journal_bindings": 3,
+      "exact_research_only_originals": 3,
+      "new_facts": 0,
+      "source_and_history_hashes_unchanged": true,
+      "fact_sequence_unchanged": true,
+      "research_only_barrier_isolated": false,
+      "positive_renewal_proven": false
+    }
+  ],
+  "changed_probe_time_bound": {
+    "after_inventory_utc": "2026-11-21T13:42:18.864008Z",
+    "before_independent_readback_utc": "2026-11-21T13:44:53.242430Z",
+    "note": "The probe result itself did not emit a clock. No fabricated exact execution timestamp."
+  },
+  "sequence_authorization_preflight": [
+    {
+      "observed_at": "2026-11-21 13:48:55.090167+00",
+      "sequence_owner": "supabase_admin",
+      "relpersistence": "u",
+      "role_usage": false,
+      "bg1": "current"
+    }
+  ],
+  "actual_sequence_rehearsal_attempt": {
+    "error": {
+      "name": "HttpException",
+      "message": "Failed to run sql query: ERROR:  42501: must be owner of sequence http_request_queue_id_seq\n"
+    }
+  },
+  "sequence_attempt_time_bound": {
+    "after_utc": "2026-11-21T13:48:55.090167Z",
+    "before_utc": "2026-11-21T13:50:24.415511Z"
+  },
+  "anonymous_rpc_readback": [
+    {
+      "role": "anon",
+      "checked": 5,
+      "safely_unavailable": 5,
+      "unauthorized_positive": 0,
+      "passports": "DE PL IT RO FR",
+      "legal_rule_approved": false,
+      "hsr2_issuer_installed": false
+    }
+  ],
+  "independent_post_attempt_readback": [
+    {
+      "observed_at": "2026-11-21 13:50:24.415511+00",
+      "bg1": {
+        "schema": 1,
+        "status": "current"
+      },
+      "http_sequence": {
+        "is_called": true,
+        "last_value": "21"
+      },
+      "historical_facts": 71,
+      "facts_history_sha": "fefe812a3062bd05a84d08cc4d4ae71334cdee35f84df4c8f5eab3fca8bf2b38",
+      "exact_research_only_originals": 3
+    }
+  ],
+  "logs_before_attempt": {
+    "window_start_utc": "2026-11-21T13:00:00Z",
+    "window_end_utc": "2026-11-21T13:49:00Z",
+    "result": {
+      "result": [
+        {
+          "duplicate_key_rows": 0,
+          "postgres_log_rows": 296,
+          "recovery_keyword_rows": 0
+        }
+      ]
+    },
+    "limit": "Keyword counts only; not proof of exact restart cause."
+  },
+  "advisors_before_attempt": [
+    {
+      "type": "health",
+      "lints": []
+    },
+    {
+      "type": "security",
+      "lints": [
+        {
+          "name": "rls_enabled_no_policy",
+          "level": "INFO",
+          "count": 38,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+        },
+        {
+          "name": "pg_graphql_anon_table_exposed",
+          "level": "WARN",
+          "count": 2,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0026_pg_graphql_anon_table_exposed"
+        },
+        {
+          "name": "pg_graphql_authenticated_table_exposed",
+          "level": "WARN",
+          "count": 22,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0027_pg_graphql_authenticated_table_exposed"
+        },
+        {
+          "name": "anon_security_definer_function_executable",
+          "level": "WARN",
+          "count": 6,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+        },
+        {
+          "name": "authenticated_security_definer_function_executable",
+          "level": "WARN",
+          "count": 23,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+        }
+      ]
+    },
+    {
+      "type": "performance",
+      "lints": [
+        {
+          "name": "unindexed_foreign_keys",
+          "level": "INFO",
+          "count": 71,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys"
+        },
+        {
+          "name": "unused_index",
+          "level": "INFO",
+          "count": 35,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+        },
+        {
+          "name": "auth_db_connections_absolute",
+          "level": "INFO",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/deployment/going-into-prod"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "changed_source_refusal_proven": true,
+    "research_only_barrier_isolated": false,
+    "positive_renewal_proven": false,
+    "hosted_sequence_rollback_proven": false,
+    "sequence_repair_committed": false,
+    "public_unavailable_five_passports_proven": true,
+    "production_execution_authorized": false
+  },
+  "precision_note": "Bigint sequence parameters/high-water values in exact_http_id_inventory are database-cast text, avoiding JSON IEEE-754 rounding.",
+  "rights_limit": "Actual SQLSTATE 42501 at the first ALTER SEQUENCE. Existing caller postgres has no effective usage of sequence owner supabase_admin. No rights/ownership workaround.",
+  "durability_limit": "The live pg_net sequence is UNLOGGED. Forward alignment alone does not prove crash durability. No LOGGED conversion attempted."
+}

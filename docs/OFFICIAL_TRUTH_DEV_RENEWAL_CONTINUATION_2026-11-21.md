@@ -243,3 +243,18 @@ die getrennte CI-Management-API-Verweigerung HTTP 403; der erfolgreiche
 Connector-Readback macht diese Prüfungen nicht automatisch grün. Die frühere
 Zugriffsstörung und die erfolgreich erledigte Anmeldung bleiben als
 Historie erhalten. Die Production-Ausführung bleibt ohne Owner-Go gesperrt.
+
+
+## Echte AT-Erneuerungsprüfung und konkreter Sequenz-Blocker – 21.11.2026, 14:50 Zürich
+
+Owner-Auftrag: echte AT-Erneuerungsprüfung in Dev, danach Production-Paket zur eigenen Prüfung; weiterhin kein Production-Go. Der reale frische Batch **99** (14:10 angefordert, 14:17 versiegelt) hat **2 unveränderte Quellen / 1 veränderte Quelle**. Alle drei archivierten Originale sind byte-/SHA-exakt und weiterhin unqualifiziert `RESEARCH_ONLY`. 71 historische Fakten sind sämtlich abgelaufen. Die geänderte BMEIA-Antwort hat 172428 statt 172460 Bytes; keine Schlussfolgerung auf eine bestimmte Rechtsänderung und keine Anpassung der Pins.
+
+**Tatsächlich ausgeführter Publisher-Negativtest PASS:** `DEV_AT_REAL_CHANGED_BATCH_PUBLISHER_REFUSAL_ROLLBACK_PASS`, zwei Aufrufe des unveränderten installierten Publishers, beide **0 neue Fakten**, drei echte HTTP200-Antwortkörper über Zeitpunkt und SHA/Bytes an den realen Batch gebunden. Quellen-/Fakten-/Originalhistorie und Fact-ID-Sequenz unverändert; echter abschließender ROLLBACK. Diese Verweigerung wird vor der Research-only-Barriere ausgelöst: **kein isolierter Qualifikationsbeleg und keine positive Erneuerung**. Der vorbereitete ursprüngliche 3/3-unverändert-Test wurde deshalb nicht als bestanden ausgegeben.
+
+Die tatsächliche HTTP-ID-Folge lag nach dem gemeldeten Neustart bei **20** hinter reservierten IDs bis **1800**; exakt **16** BIGINT-ID-Pfade inventarisiert. Die echte globale Sperr-/Savepoint-Probe scheiterte **am ersten ALTER SEQUENCE** mit **SQLSTATE 42501: must be owner of sequence http_request_queue_id_seq**. Eigentümer ist `supabase_admin`, effektive Owner-Berechtigung des Aufrufers `postgres` fehlt. Kein vorhandener legitimer Owner-Wrapper gefunden; keine Rollen-, Owner-, ACL- oder Sequenzänderung. **Kein Hosted-Rollback-PASS, kein COMMIT.** Die unverändert versuchte Originaldatei bleibt erhalten; zwei separat versionierte Folge-Kandidaten prüfen die Eigentümerberechtigung vor jeder temporären DDL und wurden nicht erneut ausgeführt. Die richtige bestehende Jobs-Mitgliedschaft ist `postgres` bei `ot_v3_jobs_owner`, Grantor `supabase_admin`; daraus folgt keine Mitgliedschaft bei `supabase_admin`.
+
+**Unabhängiger Nachweis 13:50:24.415511 UTC / 14:50:24 Zürich:** BG1 `current`, unverändert 71 Fakten mit Historien-SHA `fefe812a3062bd05a84d08cc4d4ae71334cdee35f84df4c8f5eab3fca8bf2b38`, drei exakte Research-only-Originale. Die HTTP-Sequenz stand inzwischen auf **21 / called=true**; kein konstanter HTTP-Sequenzwert behauptet. Echte `anon`-Prüfung beider Besucher-RPCs für DE/PL/IT/RO/FR: **5/5 derzeit nicht verfügbar, 0 positive Auskunft**. Kein künstlicher Quellenlauf.
+
+Der Live-Generator ist **UNLOGGED**. Eine einmalige Vorwärtskorrektur wäre kein Beleg dauerhafter Crashfestigkeit; genaue Neustartursache nicht bewiesen. Die vorhandene Management-CI-Verweigerung HTTP403 bleibt getrennt offen. Production wurde in diesem Schritt weder gelesen noch verändert.
+
+[Abgeschlossenes Production-Reviewpaket mit Ausführungs-STOP](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md), [vollständige echte Dev-Ergebnisse](evidence/official-truth-renewal-20261121/dev-at-real-renewal-20261121.json) und [exakte Datei-/SHA-Zuordnung](evidence/official-truth-renewal-20261121/dev-at-review-manifest-20261121.json). Kein erneuter Dev-Login oder Wiederholen des bestätigten Owner-Abschlusses gefordert.

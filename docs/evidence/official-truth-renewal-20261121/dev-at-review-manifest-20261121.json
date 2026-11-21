@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "repository": "Jetnity/jetnity",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "baseline_commit": "2cce996bc94091fe7618772bc21772ae05ab29ee",
+  "new_candidate_shared_core_sha256": "7b017fe1da3e4d699cb247b4002ec5adfbd15c53f08d324fb4ea39f4632ebbd9",
+  "production_authorized": false,
+  "files": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/at-dev-real-changed-source-refusal.ROLLBACK.sql",
+      "sha256": "bfa71a75b46dd7fe4881c78deaceee5ca2f8106f59d6b856d3964fd7f048dd4d",
+      "evidence_status": "Tatsächlich ausgeführt: CHANGED-Verweigerung PASS, final ROLLBACK."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-pgnet-sequence-rehearsal.CANDIDATE-ROLLBACK.ATTEMPTED-20261121T1349Z.sql",
+      "sha256": "3e20af3e9e31fb199931732096498af2ada533dde1b1d3fd483fbcde9632c7a7",
+      "evidence_status": "Originalversuch: am ersten ALTER mit 42501 abgewiesen; Dateizeit nur ungefähr."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-pgnet-sequence-rehearsal.CANDIDATE-ROLLBACK.sql",
+      "sha256": "b55341bad01453cfd741223352d87491f0f44d7ae2cb36441a559d92a79cb93c",
+      "evidence_status": "Nachträglich um frühen Eigentümer-Precheck ergänzter Kandidat; NICHT ausgeführt."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-pgnet-sequence-install.CANDIDATE-DEV-COMMIT.sql",
+      "sha256": "3a17c0bffd96a5d93e41809b753c514e550d21de9b161a2738bb48b6c1bc5ca0",
+      "evidence_status": "Separater Dev-COMMIT-Kandidat; NICHT ausgeführt, aktuell gesperrt."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/at-eu5-anon-visitor.READONLY.sql",
+      "sha256": "1bdc308020a17591ad996c9d04cab4eedb65126068ec63cdd38e261f6acffb9c",
+      "evidence_status": "Tatsächlich ausgeführt: beide RPCs für fünf Pässe unavailable."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-legal-v4.CANDIDATE-ROLLBACK.sql",
+      "sha256": "112357becb80112d72057707e6b44f824a4ad6616b9709a660be0e16805d19fa",
+      "evidence_status": "Uninstallierter Production-Quellenschutzkandidat, endet ROLLBACK."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-sequence.CANDIDATE-ROLLBACK.sql",
+      "sha256": "c01e8bfe70684ff23357c003b2c27beb2be5fefde8c7040d7ca68b2e4aedbb2e",
+      "evidence_status": "Uninstallierter Production-Sequenzkandidat; exakte Production-Inventur weiterhin offen."
+    },
+    {
+      "path": "docs/evidence/official-truth-renewal-20261121/dev-at-real-renewal-20261121.json",
+      "sha256": "699bd62cedc2364ce61c1e2ac0e2299d1c270ed7374c416b3d1af8483e821c01",
+      "evidence_status": "Strukturierte tatsächliche Dev-Ergebnisse einschließlich Verweigerung."
+    }
+  ],
+  "shared_core_extraction": {
+    "encoding": "UTF-8",
+    "start_inclusive": "first BEGIN TRANSACTION",
+    "end_exclusive": "-- END SHARED REPAIR CORE.",
+    "scope": "Entire transaction prefix: early authority gate, inventory, protected-state functions, preflight, global sequence lock, locked snapshot, savepoint, and repair block. File headers and differing endings are excluded."
+  }
+}

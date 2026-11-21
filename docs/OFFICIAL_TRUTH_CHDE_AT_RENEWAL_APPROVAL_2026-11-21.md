@@ -1,6 +1,6 @@
 # Official Truth CH→DE / AT Renewal – Production approval gate, 21 November 2026
 
-> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; persönliche Dev-Anmeldung und unabhängiger Dev-Abschluss-Readback inzwischen bestätigt (14:09 Zürich: 7/7 Quittungen, 2/2 Originale, BG1 current); reale AT-Publisherprüfung und gesonderter CI-Zugriffsweg weiterhin offen. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
+> **Neuester Prüfstand dieser Fortsetzung (14:50 Zürich):** [Abgeschlossenes Production-Reviewpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md). Echter AT-CHANGED-Publisher-Negativtest und anon-Besucherprüfung 5/5 bestanden; BG1 current, Historie erhalten. Positive Erneuerung nicht bewiesen. Tatsächliche Dev-Sequenzprobe am ersten ALTER mit SQLSTATE42501 (fehlendes Sequenzeigentümerrecht) abgewiesen; kein Hosted-Rollback-PASS/COMMIT. Der getrennte CI-403 bleibt offen. Ältere Zeitstände bleiben Historie. **Production-Ausführung STOP.**
 
 **Status: NOT Production release-ready.** Scope is strictly the Dev branch `fix/official-truth-chde-at-renewal-dev-20261121`, no fourth PR (currently three other open PRs), no site deployment, no Production write, no new source/visitor approvals. All expired facts remain **„derzeit nicht verfügbar“**.
 
@@ -202,3 +202,8 @@ Owner-Abschluss** und **natürlicher Dev-BG1-Folgecron** für diesen Zeitpunkt
 erfüllt. Keine erneute Anmeldung oder Schließung nötig. Die reale AT-
 Publisherprüfung, Production-spezifische Gates und der gesonderte CI-HTTP-403-
 Zugriffsweg bleiben offen. Kein neuer Quellenlauf oder Production-Zugriff.
+
+
+## Aktueller Reviewabschluss – 21.11.2026, 14:50 Zürich
+
+Der reale Quellen-/Publisher- und Besucherstand ist jetzt tatsächlich geprüft und im [abgeschlossenen Reviewpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md) mit [Original-Ergebnisaggregat](evidence/official-truth-renewal-20261121/dev-at-real-renewal-20261121.json) sowie [Dateihashes](evidence/official-truth-renewal-20261121/dev-at-review-manifest-20261121.json) gebunden. Der korrekte CHANGED-Negativtest erzeugt keine positive Quellenfreigabe. Die echte Hosted-Sequenzprobe scheiterte am ersten ALTER an Eigentümerrechten; kein Rechte-Bypass und keine ID-Korrektur. Die frühere native PG17-Mehrsessionprüfung bleibt ein isolierter Algorithmusbeleg. Das Reviewpaket ist damit konkret prüfbar; die Ausführung bleibt wegen der darin einzeln belegten offenen Gates gesperrt. Production wurde in dieser Fortsetzung weder gelesen noch verändert.
