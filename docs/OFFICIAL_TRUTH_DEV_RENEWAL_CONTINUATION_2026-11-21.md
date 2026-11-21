@@ -258,3 +258,14 @@ Die tatsächliche HTTP-ID-Folge lag nach dem gemeldeten Neustart bei **20** hint
 Der Live-Generator ist **UNLOGGED**. Eine einmalige Vorwärtskorrektur wäre kein Beleg dauerhafter Crashfestigkeit; genaue Neustartursache nicht bewiesen. Die vorhandene Management-CI-Verweigerung HTTP403 bleibt getrennt offen. Production wurde in diesem Schritt weder gelesen noch verändert.
 
 [Abgeschlossenes Production-Reviewpaket mit Ausführungs-STOP](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md), [vollständige echte Dev-Ergebnisse](evidence/official-truth-renewal-20261121/dev-at-real-renewal-20261121.json) und [exakte Datei-/SHA-Zuordnung](evidence/official-truth-renewal-20261121/dev-at-review-manifest-20261121.json). Kein erneuter Dev-Login oder Wiederholen des bestätigten Owner-Abschlusses gefordert.
+
+
+## Ausdrückliche Dev-Rechtefreigabe geprüft – 21.11.2026, 15:04 Zürich
+
+Der Owner hat die notwendige Dev-Rechteerweiterung ausdrücklich erneut bestätigt und die Sequenzkorrektur samt echtem Rollback-Test beauftragt. Diese Autorisierung wurde angewendet; keine erneute allgemeine Dev-Rechtefreigabe ist nötig. Live-Autoritätsprüfung 14:01:09 UTC: postgres hat CREATEROLE, aber kein SUPERUSER und keine MEMBER/USAGE/SET-Kante zu supabase_admin; diese Superuserrolle besitzt die UNLOGGED-Sequenz und die per OWNED BY gekoppelte net-Queue. USAGE/UPDATE auf der Sequenz sind bereits vorhanden und reichen nicht für ALTER.
+
+**Tatsächliche Eigentumsübertragungsprobe:** `dev-pgnet-owner-transfer-authority.ROLLBACK.sql` versuchte eng begrenzt OWNER TO postgres, Dev-identitäts-/BG1-gebunden und ohne COMMIT. Wieder **SQLSTATE42501: must be owner of sequence http_request_queue_id_seq**, daher keine wirksame Änderung. Die aktuelle offizielle Supabase-KB bestätigt die providerseitige Grenze der reservierten Administratorrolle und der verwalteten pg_net-Objekte. Keine pauschale Administrator-Mitgliedschaft oder Umgehung ausprobiert.
+
+Unabhängiger Readback **14:04:27.855285 UTC / 15:04:27 Zürich**: BG1 current; v7-Katalog und relevante Rollenmitgliedschaften exakt; 71 Fakten mit unverändertem SHA, 3 exakte Research-only-Originale, Sequenz23/called. Kein Hosted-Restart-/Rollback-PASS und keine Reparatur. Die bereits bestandene AT-CHANGED-Verweigerung bleibt erhalten.
+
+[Autoritätsbelege](evidence/official-truth-renewal-20261121/dev-sequence-owner-authority-20261121.json), [aktualisiertes Production-Prüfpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md) und [sendefertige Supportanfrage](Supabase-Dev-Sequenz-Supportanfrage_2026-11-21.md). Supportnachricht noch nicht gesendet; benötigt dafür ausdrücklich das Go zum externen Senden. Keine Anmeldung, keine neue Kostenfreigabe und keine Production-Aktion angefordert oder ausgeführt.

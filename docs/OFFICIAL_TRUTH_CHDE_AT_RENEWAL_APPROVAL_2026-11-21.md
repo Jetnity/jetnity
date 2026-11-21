@@ -1,6 +1,6 @@
 # Official Truth CH→DE / AT Renewal – Production approval gate, 21 November 2026
 
-> **Neuester Prüfstand dieser Fortsetzung (14:50 Zürich):** [Abgeschlossenes Production-Reviewpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md). Echter AT-CHANGED-Publisher-Negativtest und anon-Besucherprüfung 5/5 bestanden; BG1 current, Historie erhalten. Positive Erneuerung nicht bewiesen. Tatsächliche Dev-Sequenzprobe am ersten ALTER mit SQLSTATE42501 (fehlendes Sequenzeigentümerrecht) abgewiesen; kein Hosted-Rollback-PASS/COMMIT. Der getrennte CI-403 bleibt offen. Ältere Zeitstände bleiben Historie. **Production-Ausführung STOP.**
+> **Neuester Prüfstand (15:04 Zürich):** [Aktualisiertes Production-Reviewpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md). Dev-Rechteerweiterung ausdrücklich freigegeben; tatsächliche eng begrenzte OWNER-TO-Probe dennoch SQLSTATE42501. Reservierte Supabase-Administratorrolle als technische Grenze belegt. BG1 current, Katalog/Rollen/Fakten/Originale erhalten. [Supportanfrage sendefertig](Supabase-Dev-Sequenz-Supportanfrage_2026-11-21.md), noch nicht gesendet. AT-Negativbeleg bleibt gültig; kein positiver Erneuerungs-/Hosted-Reparaturbeleg. **Production-Ausführung STOP.**
 
 **Status: NOT Production release-ready.** Scope is strictly the Dev branch `fix/official-truth-chde-at-renewal-dev-20261121`, no fourth PR (currently three other open PRs), no site deployment, no Production write, no new source/visitor approvals. All expired facts remain **„derzeit nicht verfügbar“**.
 

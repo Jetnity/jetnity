@@ -1,0 +1,571 @@
+{
+  "schema": 1,
+  "project_ref": "yfvbxvijcorffwxbxahl",
+  "environment": "Development",
+  "baseline_commit": "fe5d52ec1b63b05f200eb23631a1837d166b9576",
+  "explicit_user_authority": "Owner explicitly authorizes necessary Dev rights extensions, sequence-owner repair, transactional rollback proof and ID repair. No Production authorization. External support message not yet authorized.",
+  "live_authority": {
+    "observed_at": "2026-11-21 14:01:09.873638+00",
+    "current_user": "postgres",
+    "session_user": "postgres",
+    "bg1": {
+      "schema": 1,
+      "status": "current"
+    },
+    "roles": [
+      {
+        "role": "postgres",
+        "login": true,
+        "inherit": true,
+        "create_db": true,
+        "superuser": false,
+        "create_role": true
+      },
+      {
+        "role": "supabase_admin",
+        "login": true,
+        "inherit": true,
+        "create_db": true,
+        "superuser": true,
+        "create_role": true
+      }
+    ],
+    "sequence_authority": {
+      "name": "http_request_queue_id_seq",
+      "owner": "supabase_admin",
+      "usage": false,
+      "member": false,
+      "schema": "net",
+      "update": true,
+      "can_set": false,
+      "persistence": "u",
+      "sequence_usage": true
+    },
+    "relevant_memberships": [
+      {
+        "set": true,
+        "role": "pg_monitor",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_signal_backend",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_data",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_create_subscription",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "anon",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "service_role",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticator",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "supabase_privileged_role",
+        "admin": false,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "supabase_functions_admin",
+        "admin": false,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": false,
+        "role": "ot_v3_method_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_method_reader",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_caller",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_writer",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_reader",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_verifier",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_caller",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      }
+    ],
+    "extensions": [
+      {
+        "name": "supabase_vault",
+        "owner": "supabase_admin",
+        "schema": "vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "pg_net",
+        "owner": "supabase_admin",
+        "schema": "extensions",
+        "version": "0.20.4"
+      }
+    ],
+    "sequence_value": {
+      "is_called": true,
+      "last_value": "23"
+    }
+  },
+  "owned_by_dependencies": [
+    {
+      "type": "a",
+      "dependent": "net.http_request_queue_id_seq",
+      "refcolumn": "id",
+      "reference": "net.http_request_queue",
+      "reference_owner": "supabase_admin"
+    }
+  ],
+  "relevant_provider_functions": [
+    {
+      "args": "",
+      "name": "extensions.grant_pg_net_access",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "",
+      "name": "net.check_worker_is_up",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "request_id bigint",
+      "name": "net._await_response",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "string character varying",
+      "name": "net._urlencode_string",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "url text, params_array text[]",
+      "name": "net._encode_url_with_params_array",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "",
+      "name": "net.worker_restart",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "",
+      "name": "net.wait_until_running",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "",
+      "name": "net.wake",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "url text, params jsonb, headers jsonb, timeout_milliseconds integer",
+      "name": "net.http_get",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer",
+      "name": "net.http_post",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "url text, params jsonb, headers jsonb, timeout_milliseconds integer, body jsonb",
+      "name": "net.http_delete",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "request_id bigint, async boolean",
+      "name": "net._http_collect_response",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    },
+    {
+      "args": "request_id bigint, async boolean",
+      "name": "net.http_collect_response",
+      "owner": "supabase_admin",
+      "caller_execute": true,
+      "security_definer": false
+    }
+  ],
+  "actual_owner_transfer_probe": {
+    "error": {
+      "name": "HttpException",
+      "message": "Failed to run sql query: ERROR:  42501: must be owner of sequence http_request_queue_id_seq\n"
+    }
+  },
+  "actual_probe_script": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-pgnet-owner-transfer-authority.ROLLBACK.sql",
+  "independent_post_probe": {
+    "observed_at": "2026-11-21 14:04:27.855285+00",
+    "bg1": {
+      "schema": 1,
+      "status": "current"
+    },
+    "sequence_owner": "supabase_admin",
+    "admin_membership": false,
+    "admin_usage": false,
+    "admin_set": false,
+    "sequence_state": {
+      "is_called": true,
+      "last_value": "23"
+    },
+    "historical_facts": 71,
+    "facts_history_sha": "fefe812a3062bd05a84d08cc4d4ae71334cdee35f84df4c8f5eab3fca8bf2b38",
+    "exact_research_only_originals": 3,
+    "v7_catalog_exact": true,
+    "relevant_memberships": [
+      {
+        "set": true,
+        "role": "pg_monitor",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_signal_backend",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_read_all_data",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "pg_create_subscription",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "anon",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "service_role",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "authenticator",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "supabase_privileged_role",
+        "admin": false,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": true,
+        "role": "supabase_functions_admin",
+        "admin": false,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": true
+      },
+      {
+        "set": false,
+        "role": "ot_v3_method_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_transport_login",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_method_reader",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_intake_caller",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_writer",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_reader",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_result_verifier",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_owner",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      },
+      {
+        "set": false,
+        "role": "ot_v3_jobs_caller",
+        "admin": true,
+        "member": "postgres",
+        "grantor": "supabase_admin",
+        "inherit": false
+      }
+    ]
+  },
+  "relevant_role_memberships_exact": true,
+  "interpretation": {
+    "owner_authorization_missing": false,
+    "platform_execution_authority_missing": true,
+    "postgres_is_superuser": false,
+    "sequence_usage_and_update_already_available": true,
+    "supabase_admin_member": false,
+    "supabase_admin_set": false,
+    "sequence_owner_transfer_failed_sqlstate": "42501",
+    "rights_change_committed": false,
+    "sequence_repair_committed": false,
+    "real_sequence_restart_rollback_proven": false,
+    "external_support_sent": false,
+    "production_accessed": false
+  },
+  "official_sources": [
+    "https://supabase.com/kb/troubleshooting/cant-revoke-a-role-membership-granted-by-supabase_admin-d08922",
+    "https://supabase.com/kb/troubleshooting/revoking-access-to-pg_net-objects-has-no-effect-0bbc16",
+    "https://supabase.com/docs/guides/database/postgres/roles-superuser",
+    "https://www.postgresql.org/docs/17/sql-grant.html",
+    "https://github.com/supabase/supautils"
+  ],
+  "next_step": "Ask Supabase for an officially supported Dev-only maintenance proposal for transactional sequence restart/rollback and recurrence prevention. Do not request blanket supabase_admin membership. Provider execution would require a reviewed provider-role-specific script; current candidates require postgres.",
+  "actual_probe_script_sha256": "005562725c6dbada4be74b622ae930f3f266d468c12cd8fcf32bf92f1b379efa"
+}
