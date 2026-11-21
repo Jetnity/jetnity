@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {test} from 'node:test'
-const root='../../scripts/db/official-truth-chde-at-renewal-dev-20261121/'
+const root='./db/official-truth-chde-at-renewal-dev-20261121/'
 function file(name){return readFileSync(new URL(root+name,import.meta.url),'utf8')}
 test('Dev AT pg_net repair is isolated, transactional and monotonically advances beyond history',()=>{
  const s=file('at-dev-temporary-sequence-restart.ROLLBACK.sql')
