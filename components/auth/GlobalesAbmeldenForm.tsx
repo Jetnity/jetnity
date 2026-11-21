@@ -4,7 +4,9 @@ import * as React from 'react'
 import { useActionState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GlobalesSignOutErgebnis } from '@/lib/auth/globales-sign-out'
+import { createBrowserClient } from '@/lib/supabase/client'
+import { signOutBrowserFallback } from '@/lib/auth/globales-sign-out-browser'
+import type { GlobalesSignOutErgebnis, GlobalesSignOutZiel } from '@/lib/auth/globales-sign-out'
 
 export type GlobalesAbmeldenAktion = (
   vorher: GlobalesSignOutErgebnis | null,
@@ -15,6 +17,8 @@ type Props = {
   action: GlobalesAbmeldenAktion
   className?: string
   fehlerClassName?: string
+  /** Hard-coded public or admin destination; never read from request/query. */
+  ziel?: GlobalesSignOutZiel
   children: React.ReactNode
 }
 
@@ -30,9 +34,24 @@ export default function GlobalesAbmeldenForm({
   action,
   className,
   fehlerClassName,
+  ziel = '/',
   children,
 }: Props) {
-  const [zustand, formAction, pending] = useActionState(action, ANFANG)
+  // Keep the established server Action as the first authority. If it reports
+  // failure, retry once with the *browser's own* existing authenticated
+  // session. The browser uses the same unscoped/global logout, never a
+  // local-only best-effort logout that could wrongly promise revocation.
+  const execute = React.useCallback(async (vorher: GlobalesSignOutErgebnis | null, formular: FormData) => {
+    const result = await action(vorher, formular)
+    if (result.ok) return result // server action handles redirect itself
+    try {
+      return await signOutBrowserFallback(result, createBrowserClient().auth, ziel,
+        path => window.location.replace(path))
+    } catch {
+      return result
+    }
+  }, [action, ziel])
+  const [zustand, formAction, pending] = useActionState(execute, ANFANG)
   const fehlerId = React.useId()
   const fehler = zustand && !zustand.ok ? zustand.fehler : null
 
