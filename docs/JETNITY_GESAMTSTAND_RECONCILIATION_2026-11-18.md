@@ -610,3 +610,10 @@ Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsüber
 - **Quelle:** [Dev/Live-Unterschiedsliste](JETNITY_DEV_LIVE_KONFIGURATION_DIFF_2026-11-21.md) enthält nach erneutem read-only Abgleich die tatsächliche Production-Wetter-Quoteninstallation, getrennte Supabase-Migrationslisten (Prod 68 / Dev 129; 72 Dev-exklusiv, 11 Prod-exklusiv) und den expliziten Schutz, keine Forschungs-/Kundendaten blind zwischen den Datenbanken zu kopieren.
 - **Karten-Dev-Sourcevertrag:** `lib/maps/config.ts` akzeptiert den stabilen Incident-QA-Origin nur in **Preview** des exakten Branches und weiterhin ausschliesslich mit bestehender ein-Stunden-Gültigkeit, ausdrücklichem Anbieter-Flag, passender Origin und validem Browser-Key/Map-ID. Kein kostenpflichtiger Kartenaufruf kann durch diese reine Codeänderung allein starten; Provider-Key-Bindung und Deckel bleiben separat geprüft/gesperrt.
 - **Production:** keine Änderung durch diese Dev-Lane; Release/Website-Promotion und BG1-Production-Installation bleiben getrennte, neu ausdrücklich freizugebende Owner-Aktionen. Keine neue Abrechnung, kein Secret-Export.
+
+
+### Nachtrag 21.11.2026 – Ortsbilder, geheime Anbieterwerte, BG1-CI-Scope
+
+- Neu verifizierter Ortsbild-Defekt: Custom-Domain-GET mit Vercel-Share-Query 400 statt 200, normale direkte Deployment-URL 200; negative Commons-Antworten waren zu lange gecached. Korrekturen und Browser-Nachtest-Bedingungen: [Dev/Live-Paritätsliste](JETNITY_DEV_LIVE_KONFIGURATION_DIFF_2026-11-21.md).
+- Bestehende DiscoverCars-/OpenWeather-Sensitive-Keys sind im alten Dev-Branch vorhanden, aber per Connector nicht sichtbar/duplizierbar. Kein Secret-Export, kein globales Preview, keine neuen Zugänge. Für QA nötig: geschützte Dev-Branch-Zuweisung durch Vercel-Owner.
+- BG1-Dev Alarm ist **real** (Incident 14 vs Resume 13, zusätzlicher Wetter-ACL-Katalogeintrag). #1265 Auth-/Offline-CI ist jetzt von *fremder lebender BG1-Überwachung* getrennt; die Backend-BG1-Wettersperre und main/BG1-PR-Prüfungen bleiben unverändert Pflicht. Website und BG1-Production strikt getrennt.
