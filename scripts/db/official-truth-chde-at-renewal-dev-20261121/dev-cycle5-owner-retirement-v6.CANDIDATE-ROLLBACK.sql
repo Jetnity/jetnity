@@ -294,7 +294,7 @@ BEGIN
   IF encode(sha256(convert_to(snapshot::text,'UTF8')),'hex') IS DISTINCT FROM p_selection THEN
     RAISE EXCEPTION 'bg1 reviewed state changed' USING ERRCODE='P7906'; END IF;
   n:=(snapshot#>>'{job,leasedJob,attempt}')::integer;
-  IF n=1 AND snapshot->>'kind' NOT IN ('ch_de_refresh_unknown','ch_de_cycle4_unknown') AND EXISTS(SELECT 1 FROM official_v3_guard_private.retired_attempts_v1) THEN
+  IF n=1 AND snapshot->>'kind' NOT IN ('ch_de_refresh_unknown','ch_de_cycle4_unknown','ch_de_cycle5_unknown') AND EXISTS(SELECT 1 FROM official_v3_guard_private.retired_attempts_v1) THEN
     RAISE EXCEPTION 'bg1 first attempt already closed' USING ERRCODE='P7906'; END IF;
   instant:=clock_timestamp();
   receipt_value:=jsonb_build_object('schema',1,'status','recorded','action','retire_unknown','operationId',p_operation_id,'selection',p_selection,
