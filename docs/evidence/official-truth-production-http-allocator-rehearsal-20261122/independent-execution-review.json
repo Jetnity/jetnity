@@ -1,0 +1,154 @@
+{
+  "schema": "jetnity-production-http-allocator-rehearsal-independent-execution-review-v1",
+  "reviewer": "verify_dev_receipts",
+  "recorded_at_utc": "2026-11-21T23:49:41.828472+00:00",
+  "status": "EVIDENCE_CONSISTENT_STOP_REQUIRED_NO_REHEARSAL_PASS",
+  "execution_verdict": "STOP_FILE_10_SQL_ERROR_NO_FOLLOWUP",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_REHEARSAL_20261122",
+  "approved_commit": "07b1d9993ea9559e2009f9e889b5cc6bb932303f",
+  "recorded_target_project": "qscbgcdmivbbnzrcyegn",
+  "execution_evidence": {
+    "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/execution.json",
+    "bytes": 2883,
+    "sha256": "6e2e02a6258bd75f8fde52e3727747b1914472976432e33050af5cd1863254f3"
+  },
+  "authorization_intent": {
+    "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/authorization-and-intent.json",
+    "bytes": 1647,
+    "sha256": "9db46a875c2f408e40456761ea23bdf02b540678c636b3bef256378c839b2a67"
+  },
+  "preserved_historical_preflight_scope_review": {
+    "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/preflight-scope-review.json",
+    "bytes": 3081,
+    "sha256": "e419bcf74c69917df1a0a4d2f3b1705ea4865bfa6328ab5b2ab54343d97d246a"
+  },
+  "approved_manifest": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+    "bytes": 19172,
+    "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67"
+  },
+  "reviewed_execution_sql": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "bytes": 101801,
+    "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457"
+  },
+  "approved_sql_files_unchanged": [
+    {
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457",
+      "bytes": 101801,
+      "matches_manifest": true
+    },
+    {
+      "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "sha256": "4a0f90f485c5241c9532994c0260659dcfeb4f3e86165232ffa003a31a0621f2",
+      "bytes": 24857,
+      "matches_manifest": true
+    },
+    {
+      "file": "20-production-http-id.INSTALL-COMMIT.sql",
+      "sha256": "3efbd3186483212c575c0d3cb53e6f2c5a1e4fb34e9ab1343ecd8c0504dda539",
+      "bytes": 94890,
+      "matches_manifest": true
+    },
+    {
+      "file": "30-production-http-id.FENCE-ROLLBACK.sql",
+      "sha256": "453255008bc93b39571772c8b5e6a6a6ee7a40949900918310ab3e32bae3d546",
+      "bytes": 29584,
+      "matches_manifest": true
+    },
+    {
+      "file": "40-production-http-id.FENCE-COMMIT.sql",
+      "sha256": "4af27e195bb91200bab301356b341d51b1079340a7d24cfec473e9a6e651cc34",
+      "bytes": 29074,
+      "matches_manifest": true
+    },
+    {
+      "file": "50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "sha256": "74caf24ea8870c5ea95f82b67598427b2f2ee11aa8066250b448b12a79ab4431",
+      "bytes": 7670,
+      "matches_manifest": true
+    }
+  ],
+  "consistency_checks": {
+    "exactly_one_recorded_file_10_attempt": true,
+    "manifest_matches_approved_hash": true,
+    "file_10_hash_matches_approval_and_manifest": true,
+    "file_10_bytes_match": true,
+    "recorded_target_matches_manifest": true,
+    "negative_probe_exception_recorded": true,
+    "raw_is_error": true,
+    "raw_has_only_error_not_result": true,
+    "error_text_exactly_matches_parsed_fields": true,
+    "no_success_result_rows": true,
+    "raw_serialized_bytes_239": true,
+    "raw_below_per_file_output_cap": true,
+    "wall_timestamps_match_recorded_window": true,
+    "deadline_is_five_minutes_after_start": true,
+    "within_outer_window": true,
+    "connector_duration_not_confused_with_envelope": true,
+    "file_11_not_executed": true,
+    "all_remaining_uses_zero_after_stop": true,
+    "conditional_11_revoked": true,
+    "authorization_consumed_and_further_calls_forbidden": true,
+    "no_rehearsal_or_full_rollback_pass_recorded": true,
+    "no_publisher_result_observed": true
+  },
+  "observed_error": {
+    "connector_is_error": true,
+    "connector_structured_error_code": "INVALID_ARGUMENT",
+    "sqlstate_observed_in_returned_error": "42501",
+    "message_observed": "permission denied for table job",
+    "reported_table_name": "job",
+    "reported_schema": null,
+    "statement_context_present": false,
+    "raw_compact_json_bytes": 239,
+    "raw_compact_json_sha256": "837b13e69bad60e423aaa03adc0cc7a05a2a2758d449917e4704e9cc79063113",
+    "raw_hash_definition": "UTF-8 JSON serialization of the complete stored raw tool object, separators comma/colon, ensure_ascii=false, no added newline.",
+    "parsed_fields_match_raw": true,
+    "successful_result_rows": 0
+  },
+  "timing": {
+    "started_at": "2026-11-21T23:45:22.355Z",
+    "returned_at": "2026-11-21T23:46:05.967Z",
+    "invocation_envelope_ms": 43612,
+    "connector_call_elapsed_ms": 43069,
+    "maximum_window_ms": 300000,
+    "statement_timeout_seconds_configured_in_approved_sql": 25,
+    "transaction_timeout_seconds_configured_in_approved_sql": 90,
+    "interpretation": "Overall and connector elapsed times are not individual SQL-statement runtimes. The returned error is permission denial, not an observed statement/transaction timeout."
+  },
+  "scope_and_stop": {
+    "observed_attempts": 1,
+    "attempted_file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "negative_publisher_probe_was_authorized": true,
+    "negative_publisher_probe_result_observed": null,
+    "negative_publisher_probe_completion_confirmed": false,
+    "file_11_condition_satisfied": false,
+    "file_11_executed": false,
+    "remaining_authorized_calls": 0,
+    "retry_authorized": false,
+    "additional_read_authorized": false,
+    "installation_or_fence_authorized": false,
+    "historical_preflight_note": "The preserved preflight document describes the earlier scope conflict before the Owner expressly allowed the negative zero probe. It remains historical evidence; the later intent/execution record contains that clarified authorization."
+  },
+  "evidence_limits": [
+    "The error has no statement or PL/pgSQL context. It does not by itself identify the failing SQL statement, prove that the reported table is in a particular schema, or prove the reached execution phase.",
+    "No negative publisher result of zero was returned or independently confirmed.",
+    "No DDL-rehearsal, full rollback, or complete original-state-restoration PASS was observed.",
+    "The script declares ROLLBACK as its intended end, but the error response is not evidence that the final ROLLBACK statement ran or that the complete proof reached its result SELECT.",
+    "No independent post-error database state, current BG1 status, source qualification, HTTP operation or permanent installation state was queried in this review.",
+    "Local source analysis may explain candidate failure points; it must remain separate from statement localization actually observed in the error.",
+    "No retry, permission change, alternative SQL or later read is authorized by this review."
+  ],
+  "required_decision": "Keep STOP. File11 is not permitted because File10 did not fully pass. Installation is not approvable from this attempt.",
+  "actions_by_this_independent_review": {
+    "database_calls": 0,
+    "production_or_dev_calls": 0,
+    "browser_or_network_calls": 0,
+    "sql_or_builder_executions": 0,
+    "existing_file_edits": 0,
+    "new_review_file_only": true
+  },
+  "execution_permission_granted": false
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "jetnity-production-http-allocator-rehearsal-interpretation-v1",
+  "execution": {
+    "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/execution.json",
+    "bytes": 2883,
+    "sha256": "6e2e02a6258bd75f8fde52e3727747b1914472976432e33050af5cd1863254f3"
+  },
+  "independent_review": {
+    "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/independent-execution-review.json",
+    "bytes": 7606,
+    "sha256": "7abe7655d1146189169711a2da7012a80ce17f546b37d4311bee938b62e56e4a"
+  },
+  "authorization_id": "PROD_HTTP_ALLOCATOR_REHEARSAL_20261122",
+  "negative_publisher_exception_was_explicitly_confirmed": true,
+  "actual_calls": 1,
+  "actual_sqlstate": "42501",
+  "actual_server_message": "permission denied for table job",
+  "raw_envelope_bytes": 239,
+  "total_window_ms": 43612,
+  "within_requested_outer_window": true,
+  "file_11_executed": false,
+  "no_additional_production_calls": true,
+  "observed_success_result": false,
+  "observed_publisher_result": null,
+  "confirmed_complete_rollback_pass": false,
+  "installation_decision": "NO_GO_REHEARSAL_NOT_PASSED",
+  "scope_stop_consumes_the_one_time_order": true,
+  "unchanged_sql_requires_new_authorization_for_any_new_attempt": true,
+  "static_failure_analysis": {
+    "first_direct_job_operation": "LOCK TABLE cron.job IN SHARE MODE NOWAIT;",
+    "line": 169,
+    "first_temp_ddl_line": 171,
+    "first_own_schema_ddl_line": 450,
+    "exact_existing_guard_status_definitions_reviewed_for_prior_job_access": true,
+    "prior_reviewed_guard_status_definitions_access_job": false,
+    "later_protected_snapshots_also_select_cron_job": true,
+    "most_likely_failure_location": "Initial SHARE lock on cron.job",
+    "statement_context_returned_by_server": false,
+    "pre_ddl_failure_proven": false,
+    "live_acl_read_or_repair_performed": false
+  },
+  "primary_reference": {
+    "url": "https://www.postgresql.org/docs/17/sql-lock.html",
+    "section": "Notes",
+    "finding": "SELECT permits ACCESS SHARE; SHARE needs MAINTAIN, UPDATE, DELETE or TRUNCATE. This describes the privilege rule, not the currently unread exact ACL."
+  },
+  "not_claimed": [
+    "Actual current Production BG1 status",
+    "Current complete grant/ACL listing for cron.job",
+    "Publisher returned0",
+    "DDL rehearsal or complete rollback passed",
+    "Successful independent post-rehearsal read",
+    "Positive source renewal or installation readiness"
+  ],
+  "no_commit_fence_installation_or_role_secret_login_2fa_change_invoked": true,
+  "next_required_work_before_new_production_go": [
+    "Review a supported least-privilege cron metadata protection path and preserve source/allocator/guard guarantees",
+    "Validate any correction in Dev under its existing authorization and freeze a separate exact SQL/manifest version",
+    "Obtain a new narrowly scoped rehearsal Go; never reuse the stopped one-time order",
+    "Require actual successful rehearsal plus independent readback before presenting an installation Go"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "jetnity-production-http-allocator-rehearsal-execution-v1",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_REHEARSAL_20261122",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "approved_commit": "07b1d9993ea9559e2009f9e889b5cc6bb932303f",
+  "approved_manifest_sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+  "negative_publisher_probe_explicitly_authorized": true,
+  "required_publisher_result": 0,
+  "on_publisher_result_not_zero": "STOP inside exact SQL; no later call",
+  "maximum_transactions": 2,
+  "maximum_window_ms": 300000,
+  "maximum_result_bytes_per_file": 65536,
+  "maximum_combined_result_bytes": 131072,
+  "no_retry": true,
+  "no_additional_production_read": true,
+  "no_commit_installation_fence_or_positive_publisher_authorized": true,
+  "status": "STOP_FILE_10_SQL_ERROR_NO_FOLLOWUP",
+  "started_ms": 1795304722355,
+  "started_at": "2026-11-21T23:45:22.355Z",
+  "deadline_ms": 1795305022355,
+  "deadline_at": "2026-11-21T23:50:22.355Z",
+  "attempt_count": 1,
+  "authorized_uses_remaining": {
+    "file_10": 0,
+    "file_11": 0
+  },
+  "file_11_conditional_on_complete_10_pass": true,
+  "steps": [
+    {
+      "step": 10,
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457",
+      "bytes": 101801,
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "idle_in_transaction_timeout_seconds": 30,
+      "lock_timeout_ms": 2000,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "status": "SQL_ERROR_STOP",
+      "invoked_at": "2026-11-21T23:45:22.355Z",
+      "returned_at": "2026-11-21T23:46:05.967Z",
+      "call_elapsed_ms": 43069,
+      "raw": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for table job\\n\"}}"
+          }
+        ],
+        "structuredContent": {
+          "error_code": "INVALID_ARGUMENT"
+        },
+        "isError": true
+      },
+      "error_sqlstate_observed": "42501",
+      "error_message_observed": "permission denied for table job",
+      "success_result_rows_observed": 0,
+      "full_rehearsal_pass": false,
+      "publisher_result_observed": null,
+      "negative_publisher_probe_completion_confirmed": false
+    }
+  ],
+  "returned_at": "2026-11-21T23:46:05.967Z",
+  "total_window_ms": 43612,
+  "authorization_consumed": true,
+  "no_more_production_calls": true,
+  "file_11_executed": false,
+  "file_11_skip_reason": "File10 returned SQL error; conditional authorization not satisfied. No retry/additional read.",
+  "complete_rollback_pass_observed": false,
+  "installation_decision": "NOT_APPROVABLE_NO_SUCCESSFUL_REHEARSAL_OR_INDEPENDENT_READBACK",
+  "conditional_file_11_use_revoked_by_stop": true
+}

@@ -1,0 +1,95 @@
+{
+  "schema": "jetnity-production-http-allocator-rehearsal-result-manifest-v1",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_REHEARSAL_20261122",
+  "approved_package_commit": "07b1d9993ea9559e2009f9e889b5cc6bb932303f",
+  "approved_manifest_sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+  "status": "STOP_AFTER_ONE_FILE_10_SQL_ERROR_NO_FOLLOWUP",
+  "production_calls": 1,
+  "file_11_executed": false,
+  "raw_response_bytes": 239,
+  "observed_sqlstate": "42501",
+  "observed_error": "permission denied for table job",
+  "sql_statement_context_observed": false,
+  "publisher_zero_result_or_complete_rollback_pass_observed": false,
+  "installation_decision": "NO_GO",
+  "first_scoping_preflight_395d928f_preserved": true,
+  "all_22_approved_package_records_unchanged": true,
+  "overall_plan_archive_exact_append_only": true,
+  "result_document_local_links_resolve": true,
+  "files": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 200907,
+      "sha256": "947bbecb2f509cafc93cdb566f5d2c6f7e4547163fe2b616b3ed7bf05b14551f"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_REHEARSAL_RESULT_2026-11-22.md",
+      "bytes": 6588,
+      "sha256": "19bf20fb898cc351c44b821fb90c2122e6e791b9b6b0f8a41d5ab79d4e4f8f7a"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/authorization-and-intent.json",
+      "bytes": 1647,
+      "sha256": "9db46a875c2f408e40456761ea23bdf02b540678c636b3bef256378c839b2a67"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/execution-plan-archive-binding.json",
+      "bytes": 470,
+      "sha256": "20e0d1559b60b0c05d2abdfc77a6bee30c82971a7cde9a5f2602c39f48730ccf"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/execution.json",
+      "bytes": 2883,
+      "sha256": "6e2e02a6258bd75f8fde52e3727747b1914472976432e33050af5cd1863254f3"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/independent-execution-review.json",
+      "bytes": 7606,
+      "sha256": "7abe7655d1146189169711a2da7012a80ce17f546b37d4311bee938b62e56e4a"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/interpretation.json",
+      "bytes": 3041,
+      "sha256": "3c68640aa676cc17db10ef9faf7b891dd1ca91fae65ce7e889870567cefb0fc4"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/overall-plan-archive-binding.json",
+      "bytes": 470,
+      "sha256": "858a19ea9340e31019ce38f1ce6e83f26c41ae1589a73cc316ac04c4753d4c2a"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/overall-plan-before-rehearsal-execution-395d928f.md",
+      "bytes": 198301,
+      "sha256": "5291549eaad3e2ec46645ceb92c482f345dafe92bf244230fc5b47e46aa82883"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/overall-plan-before-rehearsal-preflight-07b1d999.md",
+      "bytes": 196334,
+      "sha256": "20ceb7ae9222473c9338e971f6af3ee05eff88028c1aa81385593b08551cc5e8"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-rehearsal-20261122/preflight-scope-review.json",
+      "bytes": 3081,
+      "sha256": "e419bcf74c69917df1a0a4d2f3b1705ea4865bfa6328ab5b2ab54343d97d246a"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 101801,
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 24857,
+      "sha256": "4a0f90f485c5241c9532994c0260659dcfeb4f3e86165232ffa003a31a0621f2"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+      "bytes": 19172,
+      "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67"
+    }
+  ],
+  "file_count_excluding_manifest": 14,
+  "no_sql_or_manifest_rewrite": true,
+  "no_retry_additional_read_or_rights_expansion": true,
+  "manifest_excludes_itself": true
+}
