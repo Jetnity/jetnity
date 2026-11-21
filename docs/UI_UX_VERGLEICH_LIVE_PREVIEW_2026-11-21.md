@@ -77,7 +77,7 @@ Nicht gesetzt, weil Schlüssel nicht ohne PO-Freigabe in andere Branches kopiert
 
 ## (d) – aus anderen PRs in `main` seit dem Live-Stand
 
-- **CSP-Kopfzeile (#1260):** `frame-src` erlaubt weder `https://www.stay22.com` noch `https://jetnity-flight-widget.vercel.app`. Folge in jeder Umgebung mit `main`-Stand, auch in dieser Preview: die Stay22-Hotelergebnisse (Rahmen `https://www.stay22.com/embed/gm`) und das Flug-Widget werden vom Browser blockiert. Live hat noch keine CSP und ist nicht betroffen. Die Korrektur liegt im offenen PR #1265 (`fix/release1260-csp-ki-wetter-logout-cancel-dev-20261120`). **Muss vor dem nächsten Production-Deploy von `main` gemergt sein.**
+- **CSP-Kopfzeile (#1260):** `frame-src` erlaubt weder `https://www.stay22.com` noch `https://jetnity-flight-widget.vercel.app`. Folge in jeder Umgebung mit `main`-Stand, auch in dieser Preview: die Stay22-Hotelergebnisse (Rahmen `https://www.stay22.com/embed/gm`) und das Flug-Widget werden vom Browser blockiert. Live hat noch keine CSP und ist nicht betroffen. Die Korrektur liegt im offenen PR #1265 (`fix/release1260-csp-ki-wetter-logout-cancel-dev-20261120`). **Muss vor dem nächsten Production-Deploy von `main` gemergt sein.** – *Nachtrag 21.11. nachmittags:* #1265 ist gemergt und seit 15:24 MEZ live; `main` (`b533c178a`) ist in #1264 übernommen, `frame-src` erlaubt jetzt Stay22 und das Flug-Widget. Das Flug-Widget erscheint in der Preview trotzdem erst mit `NEXT_PUBLIC_TRAVELPAYOUTS_FRAME_ORIGIN` für diesen Branch (b).
 - «Zurück zu meinem Reiseplan» und der Hinweis «Anbieter öffnen sich separat» in Organisieren.
 - Unterkunft: Belegung muss gewählt werden («Belegung offen» statt «2 Erwachsene»).
 

@@ -134,5 +134,7 @@ Diese Seiten antworten in Production immer mit 404 und dienen nur als Messfläch
 - `/ui-audit/admin-provider-ops`
 - `/ui-audit/admin-system-health`
 - `/ui-audit/flight-discovery`
+- `/ui-audit/hotel-discovery` (aus #1265)
 - `/ui-audit/meine-reisen`
+- `/ui-audit/runtime` (aus #1265, nur im QA-Branch von #1265, sonst 404)
 - `/ui-audit/trip-workspace`
