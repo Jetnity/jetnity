@@ -432,6 +432,21 @@ button.org-bestand-zeile:hover {
   color: var(--org-muted);
   font-size: 12px;
 }
+.flug-vorschlaege {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--org-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.flug-vorschlaege strong {
+  color: var(--org-ink);
+  font-weight: 620;
+}
 .org-stages,
 .org-actgrid {
   display: grid;

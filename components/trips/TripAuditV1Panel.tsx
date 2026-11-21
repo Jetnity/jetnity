@@ -47,16 +47,24 @@ export function TripAuditFinding({ finding }: { finding: AuditFinding }) {
   )
 }
 
+/** «Grenze oder Fehler» only when one exists; a section with nothing to evaluate yet is neither. */
+export function auditBerichtStatus(report: Pick<TripAuditReport, 'evaluation' | 'limitReasons' | 'sections'>): string {
+  if (report.evaluation === 'incomplete') {
+    return report.limitReasons.length || report.sections.some(section => section.coverage === 'error')
+      ? 'Auswertung unvollständig: Eine Grenze oder ein Fehler verhindert den vollständigen Bericht.'
+      : 'Auswertung unvollständig: Für mindestens einen Bereich stehen noch keine auswertbaren Angaben im Plan.'
+  }
+  return report.evaluation === 'partial' ? 'Dein gespeicherter Plan ist nur teilweise bewertbar.'
+    : 'Die gespeicherten Angaben wurden ausgewertet. Das ist keine Bestätigung, dass die Reise problemlos durchführbar ist.'
+}
+
 function Results({ report }: { report: TripAuditReport }) {
   const [visible, setVisible] = useState(PAGE_SIZE)
   const shown = report.findings.slice(0, visible)
   return (
     <div className="mt-4 grid min-w-0 gap-4 [&_.list-disc]:max-w-prose [&_p]:max-w-prose">
       <p role="status" className="text-sm leading-6 text-ink-800">
-        {report.evaluation === 'incomplete' ? 'Auswertung unvollständig: Eine Grenze oder ein Fehler verhindert den vollständigen Bericht.'
-          : report.evaluation === 'partial' ? 'Dein gespeicherter Plan ist nur teilweise bewertbar.'
-            : 'Die gespeicherten Angaben wurden ausgewertet. Das ist keine Bestätigung, dass die Reise problemlos durchführbar ist.'}
-        {' '}Der geöffnete Bericht wird bei Änderungen am Reiseplan neu berechnet.
+        {auditBerichtStatus(report)} Der geöffnete Bericht wird bei Änderungen am Reiseplan neu berechnet.
       </p>
       {report.limitReasons.length ? (
         <p className="rounded-xl border border-line-200 bg-surface-50 p-3 text-sm leading-6 text-ink-800">

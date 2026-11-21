@@ -279,6 +279,17 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(incidentAppCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set(incidentAppCiSuccessor.map(row => row.path)).size, 1)
+  // The separate public CMS reader release adds one mandatory native proof
+  // and its exact typecheck root inside the existing CMS job. Its predecessor
+  // and every earlier source identity remain immutable; no runner, budget,
+  // Auth/BG1 gate or required family is replaced or made optional.
+  const publicCmsReaderCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' },
+      reviewed: { bytes: 53070, sha256: 'ca656990f3b14f97895087155b59eb30dc2bd4a77941f0fa9cb578e7b523cdef' } },
+  ] as const
+  assert.deepEqual(publicCmsReaderCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(publicCmsReaderCiSuccessor.map(row => row.path)).size, 1)
   const bg1AlarmWorkflowSource = readFileSync('.github/workflows/ci.yml', 'utf8')
   assert.equal(bg1AlarmWorkflowSource.split('node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs').length, 2)
   assert.match(bg1AlarmWorkflowSource,/\bnpm run test:core\b/)
@@ -287,6 +298,7 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.ok(bg1AlarmWorkflowSource.includes("github.event_name != 'pull_request'"))
   assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'feat/official-truth-')"))
   assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'fix/bg1-')"))
+  let reviewedPublicCmsReaderCiRows = 0
   let reviewedIncidentAppCiRows = 0
   let reviewedBg1AlarmRows = 0
   let reviewedAt50Rows = 0
@@ -395,7 +407,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual(incidentAppChanged.previousReviewed, previousIncident, row.path)
       reviewedIncidentAppCiRows++
     }
-    const previousPasskey = incidentAppChanged?.reviewed ?? previousIncident
+    const previousPublicCmsReader = incidentAppChanged?.reviewed ?? previousIncident
+    const publicCmsReaderChanged = publicCmsReaderCiSuccessor.find(file => file.path === row.path)
+    if (publicCmsReaderChanged) {
+      assert.deepEqual(publicCmsReaderChanged.previousReviewed, previousPublicCmsReader, row.path)
+      reviewedPublicCmsReaderCiRows++
+    }
+    const previousPasskey = publicCmsReaderChanged?.reviewed ?? previousPublicCmsReader
     const passkeySdkChanged = passkeySdkSourceAmendment.find(file => file.path === row.path)
     if (passkeySdkChanged) {
       assert.deepEqual({ bytes: previousPasskey.bytes, sha256: previousPasskey.sha256 }, passkeySdkChanged.previousReviewed, row.path)
@@ -421,5 +439,6 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedAt50Rows, 1)
   assert.equal(reviewedBg1AlarmRows, 1)
   assert.equal(reviewedIncidentAppCiRows, 1)
+  assert.equal(reviewedPublicCmsReaderCiRows, 1)
   assert.equal(reviewedPasskeySdkRows, 2)
 })

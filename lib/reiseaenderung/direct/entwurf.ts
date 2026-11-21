@@ -4,6 +4,7 @@ import { operationenAnwenden, type KennungFn } from '@/lib/reiseaenderung/anwend
 import { AENDERUNG_GRENZEN, type Modelloperation } from '@/lib/reiseaenderung/schema'
 import { GRENZEN } from '@/lib/trips/schema'
 import { TRIP_INTERESTS, TRIP_PACES, type Trip } from '@/types/trips'
+import { tageVerteilen } from './verteilung'
 
 const text = (max: number, mehrzeilig = false) => z.string().min(1, 'Bitte einen Wert eingeben.').max(max)
   .refine(s => s === s.trim() && !(mehrzeilig ? /[\u0000-\u0008\u000b-\u001f\u007f]/ : /[\u0000-\u001f\u007f]/).test(s), 'Bitte Text ohne Rand-Leerzeichen oder Steuerzeichen eingeben.')
@@ -36,6 +37,8 @@ export const manuellSchema = z.object({
     stoppRahmen.extend({ ortId: z.string().max(80).refine(istOrtId) }).strict(),
   ]).optional(),
   stages: z.array(etappe).max(GRENZEN.etappenJeReise).optional(),
+  verteilung: z.array(z.object({ id, days: z.number().int().min(0).max(GRENZEN.reisetageJeReise) }).strict())
+    .min(1).max(GRENZEN.etappenJeReise).optional(),
 }).strict()
 export type ManuellerEntwurf = z.infer<typeof manuellSchema>
 export type EntwurfErgebnis =
@@ -67,6 +70,13 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
   if (v.travelWish !== undefined && v.travelWish !== vorher.travelWish) basic.reisewunsch = v.travelWish
   if (v.startDate !== undefined && v.startDate !== vorher.startDate) basic.startdatum = v.startDate
   if (Object.entries(basic).some(([key, value]) => key !== 'art' && value !== null)) ops.push(basic)
+  if (v.verteilung) {
+    if (v.stages?.length || v.neuerStopp || (v.duration !== undefined && v.duration !== vorher.days.length))
+      return fehler('Verteile die Tage bitte in einem eigenen Schritt, ohne gleichzeitig die Dauer oder die Ziele zu ändern.', 'verteilung')
+    const verteilt = tageVerteilen(vorher, v.verteilung)
+    if (!verteilt.ok) return fehler(verteilt.meldung, 'verteilung')
+    for (const block of verteilt.bloecke) ops.push(operation('tage_zuordnen', block))
+  }
   const stages = v.stages ?? []
   if (new Set(stages.map(s => s.id)).size !== stages.length) return fehler('Eine Etappe wurde mehrfach angegeben.', 'stages')
   if (stages.some(s => !vorher.stages.some(t => t.id === s.id))) return fehler('Eine gewählte Etappe gehört nicht mehr zu dieser Reise.', 'stages')

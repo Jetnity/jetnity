@@ -8,6 +8,7 @@ import { manuelleAenderungVorschau, manuelleAenderungUebernehmen } from '@/lib/r
 import { manuellVorschau, type ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
 import { gastManuellSpeichern } from '@/lib/reiseaenderung/direct/gast'
 import { manuellerEntwurf, vorschauKennungen, type ManuellerEntwurf } from '@/lib/reiseaenderung/direct/entwurf'
+import { tageVerteilen, verteilungsZiele } from '@/lib/reiseaenderung/direct/verteilung'
 import { UNGEWISS } from '@/lib/reiseaenderung/direct/bestaetigung'
 import { TEMPO_BEZEICHNUNG, INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { GRENZEN } from '@/lib/trips/schema'
@@ -25,8 +26,9 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
   const ohneZiel = basis.days.filter(d => !d.stageId).length
   const [form, setForm] = React.useState(() => ({ title: reise.title, budgetAmount: reise.budgetAmount?.toString() ?? '', pace: reise.pace,
     interests: reise.interests, travelWish: reise.travelWish ?? '', startDate: reise.startDate ?? '', duration: String(reise.days.length),
-    stages: reise.stages.map(s => ({ id: s.id, days: String(reise.days.filter(d => d.stageId === s.id).length), remove: false })) }))
-  const [dauerArt, setDauerArt] = React.useState<'gesamt' | 'etappen'>('gesamt')
+    stages: reise.stages.map(s => ({ id: s.id, days: String(reise.days.filter(d => d.stageId === s.id).length), remove: false })),
+    verteilung: reise.stages.map(s => ({ id: s.id, days: String(reise.days.filter(d => d.stageId === s.id).length) })) }))
+  const [dauerArt, setDauerArt] = React.useState<'gesamt' | 'etappen' | 'verteilen'>('gesamt')
   const [vorschau, setVorschau] = React.useState<ManuelleVorschau | null>(null)
   const [pending, setPending] = React.useState(false)
   const [ungewiss, setUngewiss] = React.useState(false)
@@ -54,8 +56,12 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
   if (form.travelWish !== (basis.travelWish ?? '')) eingabe.travelWish = form.travelWish
   if (form.startDate !== (basis.startDate ?? '')) eingabe.startDate = form.startDate
   let total = basis.days.length
+  const verteilung = form.verteilung.map(v => ({ id: v.id, days: v.days.trim() === '' ? NaN : Number(v.days) }))
+  const verteilungsPlan = tageVerteilen(basis, verteilung.map(v => ({ ...v, days: Number.isInteger(v.days) && v.days >= 0 ? v.days : 0 })))
   if (dauerArt === 'gesamt') {
     if (form.duration !== String(basis.days.length)) eingabe.duration = form.duration.trim() === '' ? NaN : Number(form.duration)
+  } else if (dauerArt === 'verteilen') {
+    eingabe.verteilung = verteilung
   } else {
     eingabe.stages = form.stages.flatMap<NonNullable<ManuellerEntwurf['stages']>[number]>(s => {
       const days = basis.days.filter(d => d.stageId === s.id).length
@@ -65,6 +71,17 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
     })
     eingabe.duration = total
   }
+  const tageSortiert = [...basis.days].sort((a, b) => a.dayIndex - b.dayIndex)
+  const zielJeTag = verteilungsZiele(basis, verteilung.map(v => ({ ...v, days: Number.isInteger(v.days) && v.days >= 0 ? v.days : 0 })))
+  const verteiltSumme = verteilung.reduce((s, v) => s + (Number.isFinite(v.days) ? v.days : 0), 0)
+  const bereich = (stageId: string | null) => {
+    const stellen = zielJeTag.flatMap((z, i) => z === stageId ? [i] : [])
+    const a = tageSortiert[stellen[0] ?? -1], b = tageSortiert[stellen.at(-1) ?? -1]
+    if (!a || !b) return null
+    const zeitraum = etappenZeitraumAnzeigen(a.dayDate, b.dayDate)
+    return `${a.id === b.id ? `Tag ${a.dayIndex}` : `Tag ${a.dayIndex}–${b.dayIndex}`}${zeitraum ? ` · ${zeitraum}` : ''}`
+  }
+  const verteilungGeaendert = !verteilungsPlan.ok || verteilungsPlan.bloecke.length > 0
   const validation = manuellerEntwurf(basis, eingabe, vorschauKennungen(probeSeed), quelle)
   const errorId = React.useId()
   const invalid = (field: string) => versucht && !validation.ok && validation.feld === field
@@ -78,7 +95,7 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
     if (!validation.ok) {
       if (['title', 'budgetAmount', 'pace', 'interests', 'travelWish'].includes(validation.feld)) setGruppe('grunddaten')
       else if (validation.feld === 'startDate' || validation.feld === 'duration') setGruppe('zeitraum')
-      else if (validation.feld === 'stages') setGruppe('etappen')
+      else if (validation.feld === 'stages' || validation.feld === 'verteilung') setGruppe('etappen')
       requestAnimationFrame(() => workspaceEditFocus(root.current?.querySelector<HTMLElement>('[aria-invalid="true"]') ?? document.getElementById(errorId)))
       return
     }
@@ -149,19 +166,29 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
           startFehler={invalid('startDate')} startBeschrieben={invalid('startDate') ? errorId : undefined}
           kontext="Deine Reise" setzen={wert => update({ ...form, startDate: wert })} />
           <p className="text-xs">Kalenderdatum. Geschützte Buchungstermine bleiben fest. Ein gesetztes Datum kann hier nicht geleert werden.</p></div>
-        <label className="grid min-w-0 grid-cols-1 gap-2">Dauer bearbeiten<select className={input} value={dauerArt} onChange={e => { generation.current++; setDauerArt(e.target.value as typeof dauerArt); setVersucht(false) }}><option value="gesamt">Gesamtdauer</option><option value="etappen">Dauer der bestehenden Etappen</option></select></label>
+        <label className="grid min-w-0 grid-cols-1 gap-2">Dauer bearbeiten<select className={input} value={dauerArt} onChange={e => { generation.current++; setDauerArt(e.target.value as typeof dauerArt); setVersucht(false) }}><option value="gesamt">Gesamtdauer</option><option value="etappen">Dauer der bestehenden Etappen</option>{basis.stages.length > 0 && <option value="verteilen">Tage auf Ziele verteilen (Dauer bleibt)</option>}</select></label>
         {dauerArt === 'gesamt' ? <label className="grid min-w-0 grid-cols-1 gap-2">Gesamtdauer in Tagen<input type="number" min="1" max={GRENZEN.reisetageJeReise} className={input} value={form.duration} aria-invalid={invalid('duration')} aria-describedby={invalid('duration') ? errorId : undefined} onChange={e => update({ ...form, duration: e.target.value })} /><span className="text-xs leading-5">Verlängern fügt am Ende Tage hinzu. Verkürzen entfernt die letzten Tage samt normalen Planpunkten; geschützte Punkte bleiben ungeplant erhalten. Höchstens 30 Tage Unterschied je Änderung.</span></label>
-          : <p className="text-sm leading-6">Die Dauer wird über die Etappen bestimmt. <button type="button" className={button} onClick={() => selectGroup('etappen')}>Etappen bearbeiten</button></p>}
+          : <p className="text-sm leading-6">{dauerArt === 'verteilen' ? `Die Reise bleibt ${basis.days.length} Tage. Wie viele davon du an welchem Ziel bist, legst du bei den Etappen fest.` : 'Die Dauer wird über die Etappen bestimmt.'} <button type="button" className={button} onClick={() => selectGroup('etappen')}>Etappen bearbeiten</button></p>}
         </div>
         <div id="edit-group-etappen" hidden={gruppe !== 'etappen'} inert={gruppe !== 'etappen'} className={gruppe === 'etappen' ? 'grid min-w-0 gap-5' : undefined}>
-          <p className="text-sm leading-6">Ändere die Dauer vorhandener Etappen oder entferne eine Etappe. Geschützte Buchungen bleiben erhalten. Die Vorschau zeigt alle Folgen.</p>
-          {ohneZiel > 0 && <p className="text-sm leading-6">{ohneZiel === 1 ? '1 Reisetag ist' : `${ohneZiel} Reisetage sind`} noch keinem Ziel zugeordnet. {ohneZiel === 1 ? 'Er bleibt' : 'Sie bleiben'} dabei bestehen und {ohneZiel === 1 ? 'zählt' : 'zählen'} zur Gesamtdauer.</p>}
-          <label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={dauerArt === 'etappen'} onChange={e => { generation.current++; setDauerArt(e.target.checked ? 'etappen' : 'gesamt'); setVersucht(false) }} />Dauer über Etappen bearbeiten</label>
-          <fieldset disabled={dauerArt !== 'etappen'} className="grid min-w-0 gap-3"><legend className="sr-only">Etappendauer und Entfernung</legend><p>Ergebnis der Etappen: {Number.isFinite(total) ? total : '—'} Tage insgesamt.</p>{basis.stages.map(s => { const d = form.stages.find(v => v.id === s.id)!; return <fieldset key={s.id} className="grid min-w-0 gap-3 rounded-2xl border border-line-200 p-4"><legend className="max-w-full px-1 font-semibold [overflow-wrap:anywhere]">Etappe {s.position}: {s.name}</legend><p className="text-sm">Bisher {etappenZeitraumAnzeigen(s.arrivalDate, s.departureDate) ?? 'Zeitraum offen'}</p><label className="grid min-w-0 grid-cols-1 gap-2">Tage für Etappe {s.position}<input className={input} type="number" min="1" max={GRENZEN.reisetageJeReise} disabled={d.remove} value={d.days} aria-invalid={invalid('stages')} aria-describedby={invalid('stages') ? errorId : undefined} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, days: e.target.value } : v) })} /></label><label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={d.remove} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, remove: e.target.checked } : v) })} />Etappe {s.position} entfernen</label></fieldset> })}</fieldset>
+          <p className="text-sm leading-6">Verteile die vorhandenen Tage auf deine Ziele, ändere die Dauer einzelner Etappen oder entferne eine Etappe. Geschützte Buchungen bleiben erhalten. Die Vorschau zeigt alle Folgen.</p>
+          {ohneZiel > 0 && <p className="text-sm leading-6">{ohneZiel === 1 ? '1 Reisetag ist' : `${ohneZiel} Reisetage sind`} noch keinem Ziel zugeordnet. {basis.stages.length > 0 ? `Mit «Tage auf Ziele verteilen» ordnest du ${ohneZiel === 1 ? 'ihn' : 'sie'} zu, ohne dass die Reise länger wird.` : `${ohneZiel === 1 ? 'Er bleibt' : 'Sie bleiben'} bestehen und ${ohneZiel === 1 ? 'zählt' : 'zählen'} zur Gesamtdauer.`}</p>}
+          <fieldset className="grid min-w-0 gap-2"><legend className="mb-1 font-semibold">Was möchtest du an den Etappen ändern?</legend>
+            {([['gesamt', 'Nichts an den Etappen ändern', null],
+              ...(basis.stages.length > 0 ? [['verteilen', 'Tage auf Ziele verteilen', `Die Reise bleibt ${basis.days.length} Tage. Du legst fest, wie viele davon du an jedem Ziel bist.`] as const] : []),
+              ['etappen', 'Dauer über Etappen bearbeiten', 'Die Reise wird dabei länger oder kürzer. Du kannst auch eine Etappe entfernen.']] as const).map(([wert, titel, hilfe]) =>
+              <div key={wert} className="grid min-w-0 gap-1"><label className="flex min-h-11 items-center gap-3"><input type="radio" name="etappen-art" value={wert} checked={dauerArt === wert} aria-describedby={hilfe ? `etappen-art-${wert}` : undefined} onChange={() => { generation.current++; setDauerArt(wert); setVorschau(null); setMeldung(''); setVersucht(false) }} />{titel}</label>{hilfe && <p id={`etappen-art-${wert}`} className="pl-8 text-xs leading-5">{hilfe}</p>}</div>)}
+          </fieldset>
+          {dauerArt === 'verteilen' && <fieldset className="grid min-w-0 gap-3 rounded-2xl border border-line-200 p-4"><legend className="max-w-full px-1 font-semibold">Tage auf Ziele verteilen</legend>
+            <p className="text-sm leading-6">Die Tage werden in der Reihenfolge deiner Ziele vergeben. Tage, die du keinem Ziel gibst, bleiben am Ende ohne Ziel. Es entstehen keine neuen Tage, und Planpunkte bleiben an ihrem Tag.</p>
+            {basis.stages.map(s => { const d = form.verteilung.find(v => v.id === s.id)!; const b = bereich(s.id); return <div key={s.id} className="grid min-w-0 gap-1"><label className="grid min-w-0 grid-cols-1 gap-2">Tage für Ziel {s.position}: {s.name}<input className={input} type="number" inputMode="numeric" min="0" max={basis.days.length} value={d.days} aria-invalid={invalid('verteilung')} aria-describedby={invalid('verteilung') ? errorId : `verteilung-${s.id}`} onChange={e => update({ ...form, verteilung: form.verteilung.map(v => v.id === s.id ? { ...v, days: e.target.value } : v) })} /></label><p id={`verteilung-${s.id}`} className="text-xs leading-5">{b ?? 'Keine Tage'}</p></div> })}
+            <p role="status" aria-live="polite" className="text-sm font-semibold text-brand-900">Verteilt: {verteiltSumme} von {basis.days.length} Tagen{verteiltSumme < basis.days.length ? ` · ${basis.days.length - verteiltSumme} ohne Ziel (${bereich(null) ?? ''})` : ''}</p>
+          </fieldset>}
+          {dauerArt !== 'verteilen' && <fieldset disabled={dauerArt !== 'etappen'} className="grid min-w-0 gap-3"><legend className="sr-only">Etappendauer und Entfernung</legend><p>Ergebnis der Etappen: {Number.isFinite(total) ? total : '—'} Tage insgesamt.</p>{basis.stages.map(s => { const d = form.stages.find(v => v.id === s.id)!; return <fieldset key={s.id} className="grid min-w-0 gap-3 rounded-2xl border border-line-200 p-4"><legend className="max-w-full px-1 font-semibold [overflow-wrap:anywhere]">Etappe {s.position}: {s.name}</legend><p className="text-sm">Bisher {etappenZeitraumAnzeigen(s.arrivalDate, s.departureDate) ?? 'Zeitraum offen'}</p><label className="grid min-w-0 grid-cols-1 gap-2">Tage für Etappe {s.position}<input className={input} type="number" min="1" max={GRENZEN.reisetageJeReise} disabled={d.remove} value={d.days} aria-invalid={invalid('stages')} aria-describedby={invalid('stages') ? errorId : undefined} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, days: e.target.value } : v) })} /></label><label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={d.remove} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, remove: e.target.checked } : v) })} />Etappe {s.position} entfernen</label></fieldset> })}</fieldset>}
         </div>
       </fieldset>
       {versucht && !validation.ok && <p id={errorId} tabIndex={-1} role="alert" className="text-red-700">{validation.meldung}</p>}
-      <p role="status" className="text-sm text-ink-900">{Object.keys(eingabe).some(k => k !== 'stages' && k !== 'duration') || (dauerArt === 'etappen' ? !!eingabe.stages?.length : 'duration' in eingabe) ? 'Entwurf · noch nicht gespeichert' : 'Bisher keine Eingaben geändert'}</p>
+      <p role="status" className="text-sm text-ink-900">{Object.keys(eingabe).some(k => k !== 'stages' && k !== 'duration' && k !== 'verteilung') || (dauerArt === 'etappen' ? !!eingabe.stages?.length : dauerArt === 'verteilen' ? verteilungGeaendert : 'duration' in eingabe) ? 'Entwurf · noch nicht gespeichert' : 'Bisher keine Eingaben geändert'}</p>
       <div className="flex flex-wrap gap-3"><button type="button" className={button} disabled={pending} onClick={onNeu}>Eingaben verwerfen</button><button type="submit" className={`${button} bg-brand-800 text-white`} disabled={pending || stale}>Auswirkungen ansehen</button></div>
     </form>}
   </div>

@@ -39,9 +39,8 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
-    // Exact AT50 / BG1 / #1265 CI successors stay in pilot-context.test.ts.
-    // Package identity here is that chain plus supabase-js 2.119.2.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' }),
+    // Public CMS reader CI successor plus supabase-js 2.119.2 package identity.
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53070, sha256: 'ca656990f3b14f97895087155b59eb30dc2bd4a77941f0fa9cb578e7b523cdef' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: 'b72ed28b71bd9a351eaef3637b6b56f2a28844c3e7f4dc6ac3f9a28bb96e540e' }),
     Object.freeze({ path: 'package-lock.json', bytes: 325113, sha256: 'da769bf15ec9a5349e88cb7420267a5dedd70953c15f8e93ec6a6a802e24dfb4' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),

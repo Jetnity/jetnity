@@ -149,6 +149,55 @@ function einreiseAmpelAggregieren(lichter: readonly EinreiseAmpel[]): EinreiseAm
   return 'neutral'
 }
 
+export type EinreiseLandKarte = {
+  id: string
+  land: string
+  landCode: string
+  ampel: EinreiseAmpel
+  ampelText: string
+  /** Alle Personen und Pässe haben für dieses Land dieselbe Aussage. */
+  einheitlich: boolean
+  paare: EinreisePaar[]
+}
+
+function paarAussage(paar: EinreisePaar): string {
+  return JSON.stringify([paar.ampel, paar.ampelText, paar.antragHref, paar.antragLabel, paar.themen, paar.ungeprueft, paar.platzhalter])
+}
+
+/**
+ * Eine Karte pro Land. Der Status ist die Zusammenfassung über alle Personen
+ * und Pässe: orange, sobald eine Person ein Visum/eine ETA braucht, grün nur,
+ * wenn alle grün sind. Weichen die Aussagen ab, bleiben alle Paare einzeln
+ * erhalten und werden nicht zu einer Aussage verschmolzen.
+ */
+export function einreiseNachLand(anzeige: EinreiseAnzeige): EinreiseLandKarte[] {
+  const reihenfolge: string[] = []
+  const nachLand = new Map<string, EinreisePaar[]>()
+  for (const paar of anzeige.paare) {
+    const schluessel = paar.landCode || paar.land
+    const bisher = nachLand.get(schluessel)
+    if (bisher) bisher.push(paar)
+    else {
+      reihenfolge.push(schluessel)
+      nachLand.set(schluessel, [paar])
+    }
+  }
+  return reihenfolge.map((schluessel) => {
+    const paare = nachLand.get(schluessel) ?? []
+    const erste = paare[0]!
+    const ampel = einreiseAmpelAggregieren(paare.map((paar) => paar.ampel))
+    return {
+      id: `land:${schluessel || 'ohne-land'}`,
+      land: erste.land,
+      landCode: erste.landCode,
+      ampel,
+      ampelText: EINREISE_AMPEL_TEXT[ampel],
+      einheitlich: paare.every((paar) => paarAussage(paar) === paarAussage(erste)),
+      paare,
+    }
+  })
+}
+
 export function einreiseUebersicht(anzeige: EinreiseAnzeige): EinreiseUebersichtZeile[] {
   const reihenfolge: string[] = []
   const nachLand = new Map<string, EinreisePaar[]>()
@@ -340,6 +389,10 @@ function laenderAus(codes: readonly (string | null)[]): Land[] {
 
 function dokumentname(option: Option | null, party: readonly TripTraveller[]): string {
   if (!option) return 'noch nicht angegeben'
+  if (!option.document) {
+    const staaten = option.citizenshipCountryCodes.map((code) => landAnzeigeText(code)).join(', ')
+    return staaten ? `noch nicht angegeben · Staatsangehörigkeit ${staaten}` : 'noch nicht angegeben'
+  }
   return officialCredentialLabel(
     { travellerClientRef: option.travellerClientRef, credentialOptionRef: option.optionRef },
     party,
