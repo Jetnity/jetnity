@@ -25,7 +25,7 @@ export const EINREISE_AMPEL_TEXT = {
 
 export type EinreiseAmpel = keyof typeof EINREISE_AMPEL_TEXT
 
-export const EINREISE_WEITERE_THEMEN = 'Weitere Themen werden noch geprüft'
+export const EINREISE_WEITERE_THEMEN = 'Weitere Themen ohne geprüfte Angabe'
 export const EINREISE_PLATZHALTER = 'Einreiseanforderungen noch nicht prüfbar'
 const EINREISE_UNBEKANNT_LAND = 'Zielland noch nicht bestätigt'
 
@@ -339,7 +339,7 @@ function laenderAus(codes: readonly (string | null)[]): Land[] {
 }
 
 function dokumentname(option: Option | null, party: readonly TripTraveller[]): string {
-  if (!option) return 'Reisedokument-Option'
+  if (!option) return 'noch nicht angegeben'
   return officialCredentialLabel(
     { travellerClientRef: option.travellerClientRef, credentialOptionRef: option.optionRef },
     party,
