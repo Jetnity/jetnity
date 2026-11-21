@@ -93,4 +93,4 @@ jetnity.com zeigt auf der Startseite und unter `/entdecken` «Reiseideen derzeit
 
 ## Nachher
 
-Nach dem Push wird die neue Preview erneut erfasst (Reiseplan und Flüge, Desktop und Handy) und im PR-Text als `vergleich-live-preview/nachher/<seite>.webp` angehängt.
+Neue Preview `dpl_3kp6QJi1BAVAcUuuvysH3W7Po1hN` (Head `754462879`) mit derselben Gastreise erneut erfasst: Reiseplan und alle Organisieren-Reiter tragen wieder das Ortsbild (Desktop und Handy), Übersicht bleibt flach wie live. Bildpaare im PR-Text als `vergleich-live-preview/nachher/<seite>.webp` und `…/nachher-mobil/<seite>.webp`.
