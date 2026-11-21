@@ -17,10 +17,15 @@ export type MapEnvironment = {
 }
 
 export const APP_MAP_ORIGIN = 'https://jetnity-app-git-feat-private-travel-ux-3aad50-jetnity-e1b93c82.vercel.app'
+export const INCIDENT_DEV_MAP_ORIGIN = 'https://jetnity-app-git-fix-release1260-csp-ki-b917c2-jetnity-e1b93c82.vercel.app'
+
 
 export function tripServicesOrigin(env: MapEnvironment) {
   if (env.VERCEL_ENV === 'production' && env.VERCEL_GIT_COMMIT_REF === 'main') return 'https://jetnity.com'
   if (env.VERCEL_ENV === 'preview' && env.VERCEL_GIT_COMMIT_REF === 'feat/private-travel-ux-20261113') return APP_MAP_ORIGIN
+  // Dev incident parity: exact approved QA origin only, still requires a one-hour
+  // preview permit, explicit opt-in and valid vendor keys/map ID. No new cost by default.
+  if (env.VERCEL_ENV === 'preview' && env.VERCEL_GIT_COMMIT_REF === 'fix/release1260-csp-ki-wetter-logout-cancel-dev-20261120') return INCIDENT_DEV_MAP_ORIGIN
   return null
 }
 
