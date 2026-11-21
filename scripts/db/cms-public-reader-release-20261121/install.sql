@@ -146,4 +146,3 @@ $cms_reader_definition$;
   END IF;
 END $cms_public_reader_release$;
 COMMIT;
-

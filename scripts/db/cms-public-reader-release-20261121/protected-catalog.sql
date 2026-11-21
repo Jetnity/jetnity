@@ -21,4 +21,3 @@ SELECT encode(sha256(convert_to(jsonb_build_object(
         AND d.refobjid <> 'postgres'::regrole
         AND d.dbid IN (0,(SELECT oid FROM pg_database WHERE datname=current_database())))
   )::text, 'UTF8')), 'hex') AS protected_catalog_sha256;
-

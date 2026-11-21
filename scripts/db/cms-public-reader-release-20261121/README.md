@@ -110,4 +110,3 @@ Native-Start scheitert explizit mit `local_postgresql_not_available`; dies gilt
 nicht als bestandene Datenbankprüfung. Hosted-Dev-, CI- und Release-Evidence
 werden im übergeordneten Release-Dokument und PR nach tatsächlicher Ausführung
 festgehalten.
-

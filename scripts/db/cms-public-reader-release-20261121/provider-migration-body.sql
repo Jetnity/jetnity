@@ -145,4 +145,3 @@ $cms_reader_definition$;
     RAISE EXCEPTION 'CMS public reader changed a protected function, role, table boundary or role dependency';
   END IF;
 END $cms_public_reader_release$;
-

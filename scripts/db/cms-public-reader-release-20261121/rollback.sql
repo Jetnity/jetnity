@@ -98,4 +98,3 @@ BEGIN
   END IF;
 END $cms_public_reader_rollback$;
 COMMIT;
-

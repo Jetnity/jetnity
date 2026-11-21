@@ -118,4 +118,3 @@ SELECT 'passed' AS proof, current_user AS caller,
   jsonb_array_length(public.cms_inspiration_published_v2()->'items') AS published_count,
   current_setting('jetnity.cms_reader_fixture_elapsed_ms')::numeric AS elapsed_ms;
 ROLLBACK;
-

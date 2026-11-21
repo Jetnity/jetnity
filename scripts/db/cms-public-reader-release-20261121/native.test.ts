@@ -175,4 +175,3 @@ test('CMS reader release: real publication boundaries, least privilege, unchange
       context.diagnostic(JSON.stringify({ schema: 'jetnity.cms-public-reader-release.cleanup.v1', ...cleanup }))
     }
   })
-

@@ -115,4 +115,3 @@ SELECT current_user AS caller, result.payload->>'schema' AS schema,
   round((extract(epoch FROM clock_timestamp()-started.at)*1000)::numeric,2) AS elapsed_ms
 FROM started CROSS JOIN result;
 ROLLBACK;
-
