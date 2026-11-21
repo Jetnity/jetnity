@@ -1,0 +1,16 @@
+# CH→DE / AT stale renewals – independent read-only triage (21 November 2026)
+
+**Not part of the BG1 alarm activation.** This is Dev code/research, not a request to change Production cron/sequence/data or publish immigration advice. A separate Owner release gate is mandatory.
+
+## CH→DE – issuer and display are different from BG1
+
+- The real BG1 5-minute database integrity proof is `current`, and Incident 108 is resumed. However, **the last public CH→DE projection expired on 16 November**, its source lease expired 17 November, `official_v3_result_private.monitor_schedule_v1` has a past-due `next_check_at` since 12 November and no current monitoring generation.
+- The independent Production import scheduler `jetnity_prod_import_scheduler.state_v1` reports **`operator_review_required`** with the latest `cycles_v1` in `blocked` after `retry_budget_exhausted` (8 attempts, 16 November). The public status RPC returns `unavailable` even when `pg_cron` command itself returns `succeeded`. **Do not** silently change `next_due_at`, delete the blocked cycle, reset budget, replay an old fact, or call Owner-resume without an approved recovery method. Correct next step: a new Dev-only, owner-authorized *append-only* cycle-closure/renewal procedure with history and source/method/lease proofs, then a real live browser check. No positive claim until evidence actually valid.
+
+## AT – network request ID collision rather than BG1 failure
+
+- Production `official_v3_at_production_private.enqueue_v1()` inserts the return value of `net.http_get()` into `watch_requests_v1.request_id`, which has a **global UNIQUE constraint**. Latest failed `pg_cron` runs show duplicate IDs. A read-only catalog check found `net.http_request_queue_id_seq.last_value` **behind** the maximum persisted historical request ID; this reliably explains the recurring conflicts after a sequence rewind/recreation, without proving *why* the sequence went backward.
+- **Fail-closed recovery plan:** investigate the owner of the net sequence and recent Supabase extension changes; test recovery under a native PG17 isolated Dev transaction, with locks against other `pg_net` users and exact maximum across protected watch history / pending requests. Do not drop the UNIQUE index, do not use `ON CONFLICT DO NOTHING` to hide lost HTTP requests, and do not use a nontransactional `setval` as a pretend rollback. Any sequence adjustment is a **new Production mutation requiring explicit separate Owner-Go** and a fresh BG1 catalog check and source-to-rule evidence chain. On success, confirm a genuinely new 3/3 HTTP result batch and conditional `renew_ch_v1()` fact, not just a green cron status.
+- AT visitor/research remains `derzeit nicht verfügbar` until a legal primary source/version is explicitly qualified, relevant passport/document restrictions are proved, and the associated MA1/HRS2/owner witness legitimately authorizes publication.
+
+The script `scripts/db/official-truth-bg1-self-heal-dev-1/ch-de-at-renewal-preflight.READONLY.sql` is a **reproducible, non-mutating** paired diagnosis; this Dev branch has only an offline SQL-shape test. The Production query may be executed read-only by a Technical Lead, but is not a repair. Neither this branch nor the separate legacy-anon alarm Dev branch is merged into `main` until a PR slot becomes available and all gates pass.

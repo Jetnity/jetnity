@@ -1,0 +1,23 @@
+name: CHDE AT renewal read-only Dev contract
+on:
+  push:
+    branches:
+      - fix/ch-de-at-renewal-gates-dev-20261121
+permissions:
+  contents: read
+jobs:
+  offline-proof:
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/fix/ch-de-at-renewal-gates-dev-20261121'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Fail-closed offline renewal query contract (no network/keys)
+        run: node --test scripts/ch-de-at-renewal-readonly-contract.test.mjs
