@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-> **22.11.2026 — Owner-Priorität:** Main-CI nach #1274 durch einen reinen Atomic-Claim-Testfix wieder grün machen und den neuen Main-Push-Lauf prüfen. Danach hier kein weiterer Merge vor #1272; Profile-Cron bleibt pausiert. [Belege und Grenzen](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md).
+> **22.11.2026 — Owner-Priorität:** Main-CI nach #1274 durch einen reinen Atomic-Claim-Testfix wieder grün machen und den neuen Main-Push-Lauf prüfen. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind; Profile-Cron bleibt pausiert. [Belege und Grenzen](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md).
 
 > **Verbindliche Pflichtlektüre:** [Jetnity-Gesamtplan vom 18.11.2026 – Funktionen, Drei-Phasen-Strategie und Restarbeiten](docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md). Jeder Chat liest ihn zuerst und ergänzt fertiggestellte Funktionen im selben PR.
 

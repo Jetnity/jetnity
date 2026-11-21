@@ -1,6 +1,6 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-> **22.11.2026 — aktuelle Owner-Reihenfolge:** Zuerst [Main-CI nach #1274 reparieren und den neuen Main-Lauf prüfen](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md); danach hier keine weiteren Merges vor #1272. Der Fix betrifft nur den isolierten Test-Harness. Ältere datierte Statusblöcke bleiben historische Evidence.
+> **22.11.2026 — aktuelle Owner-Reihenfolge:** Zuerst [Main-CI nach #1274 reparieren und den neuen Main-Lauf prüfen](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md); danach hier keine weiteren Merges, bis sowohl #1240 als auch #1272 gemergt sind. Der Fix betrifft nur den isolierten Test-Harness. Ältere datierte Statusblöcke bleiben historische Evidence.
 
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 

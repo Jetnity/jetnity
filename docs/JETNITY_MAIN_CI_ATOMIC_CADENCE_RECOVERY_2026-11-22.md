@@ -8,7 +8,7 @@ PR-/Merge-/Main-Ergebnisse werden im zugehörigen PR fortgeschrieben.
 Der Owner priorisiert den roten Main-Lauf nach #1274: Ursache beheben, eigene
 PR-CI vollständig bestehen, normal mergen und danach den neuen Push-Lauf auf
 `main` vollständig prüfen. **Nach diesem notwendigen CI-Fix erfolgt in diesem
-Arbeitsstrang kein weiterer Merge, bevor #1272 gemergt ist.** #1272 und #1240
+Arbeitsstrang kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind.** #1272 und #1240
 werden hier weder geändert noch gemergt. Maximal drei offene PRs bleiben bindend.
 
 Die Profile-Cron-Korrektur ist vor PR/Commit/Hosted-SQL eingefroren. Der aktive
@@ -93,5 +93,5 @@ Unabhängiges adversariales Quellreview bestätigt die Platzierung vor BEGIN,
 Rollenwechsel und Fault-Prefix sowie den unveränderten Voll-Digest. Eine grüne
 PR-CI allein ist kein Abschluss: Der eigene nachfolgende Main-Push-Lauf muss
 ebenfalls vollständig grün sein. Nach diesem Gate bleibt die oben festgelegte
-Merge-Reihenfolge zugunsten #1272 bestehen. Spätere CI-/Merge-Belege stehen im
+Merge-Reihenfolge zugunsten #1240 und #1272 bestehen. Spätere CI-/Merge-Belege stehen im
 PR; kein zusätzlicher Dokumentations-Merge umgeht diese Reihenfolge.
