@@ -623,14 +623,15 @@ export default function TripPlanner({
               Selbst ausfüllen
             </span>
             <span className="inline-flex max-w-full break-words rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
-              {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
+              {angemeldet ? 'Reise in deinem Konto' : 'Ohne Konto möglich'}
             </span>
           </div>
           <h1 className="mt-4 max-w-full break-words text-display text-brand-900">
             Deine Reise Schritt für Schritt.
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
-            Ein paar Angaben genügen. Du kannst jeden Teil später gemeinsam mit deinen Mitreisenden verfeinern.
+            Ein paar Angaben genügen. Jetnity legt daraus deine Reise mit Etappen und Tagen an. Flüge, Unterkünfte
+            und die Vorbereitung ergänzt du danach im selben Plan.
           </p>
           <p className="mt-4 max-w-full break-words rounded-2xl border border-line-200 bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800 xl:hidden">
             Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.
@@ -809,7 +810,7 @@ export default function TripPlanner({
               </button>
               <p id="weitere-ziele-hinweis" className="text-xs leading-5 text-ink-700">
                 {destinationOrt
-                  ? 'Optional. Die Reihenfolge bleibt die Eingabereihenfolge. Aufenthalte werden hier nicht festgelegt.'
+                  ? 'Optional. Jetnity übernimmt die Ziele in dieser Reihenfolge; mit «Nach oben» und «Nach unten» änderst du sie. Wie lange du wo bleibst, kannst du festlegen, sobald Abreise und Rückreise feststehen.'
                   : 'Zuerst das Reiseziel wählen. Weitere Ziele sind optional.'}
               </p>
             </div>
@@ -903,7 +904,7 @@ export default function TripPlanner({
               inputMode="numeric"
               value={travellers}
               aria-invalid={Boolean(feldfehler.travellers) || undefined}
-              aria-describedby={feldfehler.travellers ? feldFehlerId('feld-reisende') : undefined}
+              aria-describedby={feldfehler.travellers ? `${feldFehlerId('feld-reisende')} reisende-hinweis` : 'reisende-hinweis'}
               aria-required="true"
               disabled={laeuft}
               onChange={(ereignis) => {
@@ -922,7 +923,7 @@ export default function TripPlanner({
 
           <Feld
             id="feld-budget"
-            label="Ungefähres Gesamtbudget"
+            label="Ungefähres Gesamtbudget in CHF"
             optional
             className={feldReflowClass}
             fehler={feldfehler.budget}
@@ -946,11 +947,14 @@ export default function TripPlanner({
                 setBudget(ereignis.target.value)
                 feldKorrigieren('budget')
               }}
-              placeholder="CHF, optional"
+              placeholder="z. B. 3000"
               className={cn(fieldClass, feldfehler.budget && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
             </div>
+            <p id="reisende-hinweis" className="max-w-full break-words text-xs leading-5 text-ink-700">
+              Pass-Angaben trägst du nach dem Erstellen unter «Vorbereitung» für jede Person einzeln ein.
+            </p>
           </Planungsgruppe>
 
           <Planungsgruppe id="planen-gruppe-wuensche" titel="Wünsche">
@@ -966,9 +970,13 @@ export default function TripPlanner({
             rows={4}
             maxLength={GRENZEN.reisewunsch}
             placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."
+            aria-describedby="wunsch-hinweis"
             className="w-full min-w-0 max-w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>
+        <p id="wunsch-hinweis" className="max-w-full break-words text-xs leading-5 text-ink-700">
+          Jetnity speichert deinen Wunsch als Notiz in der Reiseübersicht.
+        </p>
           </Planungsgruppe>
         </div>
 
@@ -1027,8 +1035,8 @@ export default function TripPlanner({
         <ol className="mt-6 space-y-6">
           {[
             ['01', 'Entwurf anlegen', 'Deine Eckdaten werden zu einer übersichtlichen Reise.'],
-            ['02', 'Gemeinsam verfeinern', 'Füge Tagespunkte, Buchungen und Mitreisende hinzu.'],
-            ['03', 'Entspannt reisen', 'Später begleiten dich Live-Hinweise und wichtige Erinnerungen.'],
+            ['02', 'Ausbauen', 'Ergänze Flüge, Unterkünfte, Tagespunkte und die Angaben der Reisenden.'],
+            ['03', 'Nichts vergessen', 'Jetnity zeigt dir, was noch fehlt und was vor der Abreise zu erledigen ist.'],
           ].map(([nummer, titel, beschreibung]) => (
             <li key={nummer} className="grid grid-cols-[36px_1fr] gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xs font-semibold text-ink-300">

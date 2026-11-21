@@ -101,7 +101,7 @@ describe('Planning Entry premium experience 7 – Darstellung ohne Vertragsände
     assert.match(route, /Reiseziel/)
     assert.match(route, /Abreise ab/)
     assert.match(route, /Weiteres Ziel hinzufügen/)
-    assert.match(route, /Aufenthalte werden hier nicht festgelegt/)
+    assert.match(route, /Wie lange du wo bleibst, kannst du festlegen, sobald Abreise und Rückreise feststehen/)
     assert.match(route, /ziel-reihenfolge-1-runter/)
     assert.match(route, /ziel-reihenfolge-2-hoch/)
     assert.match(zeit, /feld-start/)
