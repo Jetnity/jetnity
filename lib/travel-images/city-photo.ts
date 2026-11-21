@@ -85,6 +85,13 @@ export async function cityPhoto(place: string, country: string): Promise<CityPho
   if (existing && existing.until > Date.now()) return existing.value
   if (cache.size >= 256) cache.delete(cache.keys().next().value!)
   const value = resolvePhoto(place.slice(9), country)
+  // A short Wikidata/Commons outage must not become an hour of missing photos.
+  // Positive rights-verified photos remain cached for one hour. Negative or
+  // unavailable results are cached briefly to bound repeated public lookups.
   cache.set(key, { until: Date.now() + 3600000, value })
+  void value.then(photo => {
+    if (!photo && cache.get(key)?.value === value)
+      cache.set(key, { until: Date.now() + 60_000, value })
+  })
   return value
 }

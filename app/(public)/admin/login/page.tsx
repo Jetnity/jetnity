@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
           </div>
         </form>
 
-        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} className="mt-6">
+        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} ziel="/admin/login" className="mt-6">
           <button type="submit" className="inline-flex min-h-11 items-center text-xs text-muted-foreground underline underline-offset-4 pointer-fine:min-h-0">
             Abmelden (falls angemeldet)
           </button>

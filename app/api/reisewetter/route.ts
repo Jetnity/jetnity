@@ -1,4 +1,5 @@
-import { tripServicesOrigin } from '@/lib/maps/config'
+import { weatherRequestOrigin } from '@/lib/reisewetter/request-origin'
+import { weatherProviderConfigured } from '@/lib/reisewetter/provider-config'
 import { reserveGlobalWeatherRequest } from '@/lib/reisewetter/global-quota-server'
 import { weatherConsentPresent } from '@/lib/reisewetter/quota-contract'
 import { vorhersageLesen, type Vorhersage } from '@/lib/reisewetter/vorhersage'
@@ -47,7 +48,7 @@ async function laden(lat: string, lon: string, key: string) {
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const key = process.env.OPENWEATHER_API_KEY
-  if (!key || url.origin !== tripServicesOrigin(process.env)) return fehler(404)
+  if (!weatherProviderConfigured(key) || url.origin !== weatherRequestOrigin(process.env)) return fehler(404)
   if (!weatherConsentPresent(request.headers)) return fehler(403, 'zustimmung-fehlt')
   const lat = koordinate(url.searchParams, 'lat', 90)
   const lon = koordinate(url.searchParams, 'lon', 180)

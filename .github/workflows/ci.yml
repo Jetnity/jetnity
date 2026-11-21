@@ -976,8 +976,18 @@ jobs:
         if: steps.zugang.outputs.vorhanden == 'ja'
         run: npm run auth:pruefen
 
-      - name: Dev-Guardstatus
-        if: steps.zugang.outputs.vorhanden == 'ja'
+      # The live five-minute BG1 guard is an operations/official-truth check,
+      # not a static authentication or website code test. A genuine BG1 incident
+      # must remain alarmed and fail on main/BG1-owned PRs, but must not turn an
+      # unrelated app incident PR's valid Auth-config test red. BG1 remains
+      # fail-closed at the DATABASE and runtime; the offline BG1 tests above
+      # continue on every PR. Production promotion has a separate Owner gate.
+      - name: Dev-Guardstatus (BG1/main only)
+        if: >-
+          steps.zugang.outputs.vorhanden == 'ja' &&
+          (github.event_name != 'pull_request' ||
+           startsWith(github.head_ref, 'feat/official-truth-') ||
+           startsWith(github.head_ref, 'fix/bg1-'))
         env:
           SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}

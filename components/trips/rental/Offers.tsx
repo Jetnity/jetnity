@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import { ArrowRight, Car, ExternalLink, Gauge, Luggage, ShieldCheck, Star, Users } from 'lucide-react'
 import type { RentalOffer } from '@/lib/providers/discovercars/search/contract'
+import { cancellationText } from '@/lib/providers/discovercars/search/cancellation'
 import { BUTTON, CATEGORY, money, PRIMARY, TRANSMISSION } from './client'
 
 const UNKNOWN = 'Nicht angegeben'
@@ -10,11 +11,7 @@ function range(value: RentalOffer['deposit']) {
   if (value?.min == null || value.max == null) return UNKNOWN
   return value.min === value.max ? money(value.min, value.currency) : `${money(value.min, value.currency)} – ${money(value.max, value.currency)}`
 }
-function cancellation(o: RentalOffer) {
-  if (o.cancellation?.type !== 'free') return o.cancellation?.type === 'non_refundable' ? 'Nicht erstattbar' : 'Siehe Mietbedingungen'
-  const hours = o.cancellation.details?.hours_before_pickup
-  return hours == null ? 'Kostenfrei gemäss Mietbedingungen' : `Kostenfrei bis ${hours} Std. vor Abholung`
-}
+
 function mileage(o: RentalOffer) {
   if (o.mileage?.unlimited === true) return 'Alle Kilometer frei'
   return o.mileage?.included_limit != null && o.mileage.unit ? `${o.mileage.included_limit} ${o.mileage.unit} inklusive` : UNKNOWN
@@ -26,7 +23,7 @@ function facts(o: RentalOffer) {
     ['Kilometer', mileage(o)],
     ['Tankregelung', o.car.fuel === 'full_to_full' ? 'Voll / voll' : o.car.fuel === 'same_to_same' ? 'Gleicher Tankstand' : 'Siehe Mietbedingungen'],
     ['Kaution', range(o.deposit)], ['Selbstbeteiligung', range(o.excess)],
-    ['Stornierung', cancellation(o)],
+    ['Stornierung', cancellationText(o.cancellation)],
   ]
 }
 export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, saveAction }: { offer: RentalOffer; selected: boolean; onCompare: () => void; onDetails: () => void; expired: boolean; saveAction?: ReactNode }) {
@@ -49,7 +46,7 @@ export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, s
       </div>
       <div className="mt-3 grid gap-2 text-xs leading-5 text-brand-800">
         <p className="flex items-start gap-2"><Gauge className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />{mileage(o)}</p>
-        <p className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />{cancellation(o)}</p>
+        <p className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />{cancellationText(o.cancellation)}</p>
       </div>
     </div>
     <div className="mt-5 border-t border-line-200 pt-4">

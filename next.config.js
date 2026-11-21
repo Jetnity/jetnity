@@ -10,6 +10,23 @@ try {
 // The page shell needs inline hydration/CMP bootstrap until a reviewed
 // per-request nonce rollout. API HTML frames (Maps, GYG, Viator, privacy)
 // already generate stricter request-scoped CSPs: never replace their policy.
+// Dedicated flight widget Dev Preview for the one incident QA branch only.
+// Production always retains the single reviewed static public widget origin.
+// Never allow a wildcard or an arbitrary environment URL into the page CSP.
+const DEV_FLIGHT_FRAME_ORIGIN = (() => {
+  if (process.env.VERCEL_ENV !== 'preview' ||
+      process.env.VERCEL_GIT_COMMIT_REF !== 'fix/release1260-csp-ki-wetter-logout-cancel-dev-20261120') return ''
+  const value = process.env.NEXT_PUBLIC_TRAVELPAYOUTS_FRAME_ORIGIN
+  if (!value) return ''
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && url.origin === value &&
+      !url.username && !url.password &&
+      /^jetnity-flight-widget-[a-z0-9]+-jetnity-e1b93c82\.vercel\.app$/.test(url.hostname)
+      ? url.origin : ''
+  } catch { return '' }
+})()
+
 const PAGE_CSP = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -21,7 +38,7 @@ const PAGE_CSP = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
   `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://app.privacybee.io`,
-  "frame-src 'self' https://maps.google.com https://www.google.com https://widget.getyourguide.com https://www.viator.com https://widget.discovercars.com",
+  `frame-src 'self' https://maps.google.com https://www.google.com https://widget.getyourguide.com https://www.viator.com https://widget.discovercars.com https://www.stay22.com https://jetnity-flight-widget.vercel.app${DEV_FLIGHT_FRAME_ORIGIN ? ' ' + DEV_FLIGHT_FRAME_ORIGIN : ''}`,
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "upgrade-insecure-requests",

@@ -44,9 +44,13 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     // The next finite reviewed successor adds ONLY the strict offline BG1
     // alarm test to the existing core job (51712 -> 52025 UTF-8 bytes).
     // Its full prior 51712-byte fingerprint remains in pilot-context.test.ts.
+    // Reviewed incident-app CI-scope successor #1265: only the Dev BG1 live
+    // guard changes trigger scope, while offline BG1 tests, Auth-config checks
+    // and all required jobs remain mandatory. The 52025-byte predecessor
+    // remains pinned in pilot-context.test.ts; no historical pin is overwritten.
     // Historical 50018-byte d2999d12 source identity stays bound independently
     // by the finite nextSecurityPatch -> at50Successor chain in pilot-context.test.ts.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' }),
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' }),
     Object.freeze({ path: 'package-lock.json', bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),
