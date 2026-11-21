@@ -5,8 +5,10 @@ import { AlertCircle, Check, Circle, ChevronDown } from 'lucide-react'
 import {
   EINREISE_PLATZHALTER,
   EINREISE_WEITERE_THEMEN,
+  einreiseNachLand,
   type EinreiseAmpel,
   type EinreiseAnzeige,
+  type EinreiseLandKarte,
   type EinreisePaar,
   type EinreiseThema,
 } from '@/lib/readiness/einreise-kundenanzeige'
@@ -84,6 +86,66 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
       <div className="mt-3">
         <Ampel art={paar.ampel} text={paar.ampelText} />
       </div>
+      <PaarInhalt paar={paar} />
+    </article>
+  )
+}
+
+function LandKarte({ karte }: { karte: EinreiseLandKarte }) {
+  const einzeln = karte.paare.length === 1 ? karte.paare[0]! : null
+  const erste = karte.paare[0]!
+  return (
+    <article
+      className="min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3"
+      data-einreise-land={karte.landCode || 'ohne'}
+      data-einreise-ampel={karte.ampel}
+      data-einreise-eintraege={karte.paare.length}
+      data-einreise-einheitlich={karte.einheitlich ? 'ja' : 'nein'}
+      aria-label={karte.land}
+    >
+      <h5 className="break-words text-sm font-semibold text-brand-800">{karte.land}</h5>
+      <p className="mt-0.5 break-words text-xs leading-5 text-ink-800">
+        {einzeln
+          ? `${einzeln.reisende} · Pass: ${einzeln.dokument}`
+          : karte.einheitlich
+            ? `Gleiche Angabe für alle ${karte.paare.length} Einträge (Person und Pass)`
+            : 'Die Angaben unterscheiden sich je Person oder Pass. Details stehen darunter.'}
+      </p>
+      <div className="mt-3">
+        <Ampel art={karte.ampel} text={karte.ampelText} />
+      </div>
+      {karte.einheitlich ? <PaarInhalt paar={erste} /> : null}
+      {einzeln ? null : (
+        <details open={!karte.einheitlich} className="mt-3 rounded-2xl border border-line-200 bg-white" data-einreise-je-person>
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+            Je Person und Pass ({karte.paare.length})
+            <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
+          </summary>
+          <ul className="grid gap-2 border-t border-line-200 px-3 py-3">
+            {karte.paare.map((paar) => (
+              <li key={paar.id} className="min-w-0" data-einreise-person-ampel={paar.ampel}>
+                <p className="break-words text-sm font-semibold text-brand-800">{paar.reisende}</p>
+                <p className="break-words text-xs leading-5 text-ink-800">Pass: {paar.dokument}</p>
+                {karte.einheitlich ? null : (
+                  <>
+                    <div className="mt-2">
+                      <Ampel art={paar.ampel} text={paar.ampelText} />
+                    </div>
+                    <PaarInhalt paar={paar} />
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </article>
+  )
+}
+
+function PaarInhalt({ paar }: { paar: EinreisePaar }) {
+  return (
+    <>
       {paar.antragHref && paar.antragLabel ? (
         <a
           href={paar.antragHref}
@@ -118,17 +180,20 @@ function PaarKarte({ paar }: { paar: EinreisePaar }) {
           </div>
         </details>
       ) : null}
-    </article>
+    </>
   )
 }
 
 export default function EinreiseKundenanzeige({
   anzeige,
   satzZeigen = true,
+  nachLand = false,
 }: {
   anzeige: EinreiseAnzeige
   /** Aus, wo die Zusammenfassung schon direkt darüber steht. */
   satzZeigen?: boolean
+  /** Eine Karte pro Land statt pro Person, Pass und Land (Reisevorbereitung). */
+  nachLand?: boolean
 }) {
   const todos = anzeige.paare.flatMap((paar) => paar.todos.map((todo) => ({ paar, todo })))
   return (
@@ -161,7 +226,9 @@ export default function EinreiseKundenanzeige({
         </ul>
       ) : null}
       <div className="grid gap-3">
-        {anzeige.paare.map((paar) => <PaarKarte key={paar.id} paar={paar} />)}
+        {nachLand
+          ? einreiseNachLand(anzeige).map((karte) => <LandKarte key={karte.id} karte={karte} />)
+          : anzeige.paare.map((paar) => <PaarKarte key={paar.id} paar={paar} />)}
       </div>
       <p className="max-w-prose break-words text-xs leading-5 text-ink-800">{anzeige.standSatz}</p>
     </div>

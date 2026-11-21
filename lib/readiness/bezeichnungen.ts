@@ -62,6 +62,27 @@ export function officialFreshnessText(freshness: OfficialFreshness): string {
   return 'Automatische Einreiseprüfung derzeit nicht verfügbar'
 }
 
+const OFFICIAL_ANGABEN_UND_PROVIDER_FEHLEN =
+  'Für die automatische Prüfung fehlen noch Angaben · Automatische Einreiseprüfung derzeit nicht verfügbar'
+
+/**
+ * Ein Status für Oberflächen, die fehlende Angaben daneben als eigene Aufgabe
+ * nennen («Angaben ergänzen»). Ist die automatische Prüfung für alle Fälle
+ * nicht verfügbar, ist das der Status; die fehlenden Angaben gehen nicht
+ * verloren, sondern stehen als Aufgabe da.
+ */
+export function officialPruefungEinStatus(lagen: Parameters<typeof officialPruefungAusLage>[0]): {
+  status: string
+  angabenFehlen: boolean
+} {
+  const text = officialPruefungAusLage(lagen)
+  const angabenFehlen = lagen.some((eintrag) => eintrag.status === 'insufficient_context' || eintrag.missingFacts.length > 0)
+  if (text === OFFICIAL_ANGABEN_UND_PROVIDER_FEHLEN) {
+    return { status: officialFreshnessText('provider_unavailable'), angabenFehlen }
+  }
+  return { status: text, angabenFehlen }
+}
+
 export function officialPruefungAusLage(
   lagen: readonly {
     freshness: OfficialFreshness
@@ -79,9 +100,7 @@ export function officialPruefungAusLage(
     (eintrag) => eintrag.status === 'insufficient_context' || eintrag.missingFacts.length > 0,
   )
   const providerFehlt = lagen.length > 0 && lagen.every((eintrag) => eintrag.freshness === 'provider_unavailable')
-  if (fehlenAngaben && providerFehlt) {
-    return 'Für die automatische Prüfung fehlen noch Angaben · Automatische Einreiseprüfung derzeit nicht verfügbar'
-  }
+  if (fehlenAngaben && providerFehlt) return OFFICIAL_ANGABEN_UND_PROVIDER_FEHLEN
   if (fehlenAngaben) return 'Für die automatische Prüfung fehlen noch Angaben'
   if (lagen.some((eintrag) => eintrag.freshness === 'current')) {
     return officialFreshnessText('current')
