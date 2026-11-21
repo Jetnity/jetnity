@@ -38,6 +38,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [unavailable, setUnavailable] = useState(false)
+  const providerUnavailable = useCallback(() => setUnavailable(true), [])
   const [transmission, setTransmission] = useState('')
   const [category, setCategory] = useState('')
   const [order, setOrder] = useState('price')
@@ -116,8 +117,8 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
       {zentral ? <form onSubmit={submit} onChangeCapture={invalidate} className="org-aktion-ende">
         <div className="org-formtop"><h2>Mietwagen suchen</h2><label className="org-check"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)}/> Andere Rückgabestation</label></div>
         <div className={'org-fields org-rentalfields ' + (oneWay ? 'org-four' : '')}>
-          <div className="org-station"><StationField nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
-          {oneWay&&<div className="org-station"><StationField nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
+          <div className="org-station"><StationField onUnavailable={providerUnavailable} nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
+          {oneWay&&<div className="org-station"><StationField onUnavailable={providerUnavailable} nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
           <Suchkalender start={pickupDate} ende={dropoffDate} startLabel="Abholung" endeLabel="Rückgabe"
             min={heutigesDatum()} max="9999-12-31" minTage={0} maxTage={365} dauerAnzeigen={false} kontext="Dein Mietzeitraum"
             setzen={(start, ende) => { invalidate(); setPickupDate(start); setDropoffDate(ende) }} />
@@ -147,8 +148,8 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
               <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-brand-800"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)} className="h-4 w-4 shrink-0 accent-brand-800" />Andere Rückgabestation</label>
             </div>
             <div className={`grid min-w-0 gap-3 ${oneWay ? 'sm:grid-cols-2' : ''}`}>
-              <StationField label="Abholstation" query={pickupQuery} value={pickup} onQuery={s => { invalidate(); setPickupQuery(s); setPickup(null) }} onSelect={s => { invalidate(); setPickup(s); setPickupQuery(s.name) }} />
-              {oneWay ? <StationField label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={s => { invalidate(); setDropoffQuery(s); setDropoff(null) }} onSelect={s => { invalidate(); setDropoff(s); setDropoffQuery(s.name) }} /> : null}
+              <StationField onUnavailable={providerUnavailable} label="Abholstation" query={pickupQuery} value={pickup} onQuery={s => { invalidate(); setPickupQuery(s); setPickup(null) }} onSelect={s => { invalidate(); setPickup(s); setPickupQuery(s.name) }} />
+              {oneWay ? <StationField onUnavailable={providerUnavailable} label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={s => { invalidate(); setDropoffQuery(s); setDropoff(null) }} onSelect={s => { invalidate(); setDropoff(s); setDropoffQuery(s.name) }} /> : null}
             </div>
             {reise.stages.length ? <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-xs text-ink-600">Deine Reiseorte:</span>{reise.stages.map(s => <button key={s.id} type="button" className="min-h-11 rounded-full px-3 text-sm font-semibold text-brand-700 underline decoration-line-300 underline-offset-4 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600" onClick={() => { invalidate(); setPickup(null); setPickupQuery(s.name); setPickupDate(s.arrivalDate ?? reise.startDate ?? ''); setDropoffDate(s.departureDate ?? reise.endDate ?? '') }}>{s.name}</button>)}</div> : null}
           </fieldset>

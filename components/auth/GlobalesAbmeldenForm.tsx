@@ -4,7 +4,9 @@ import * as React from 'react'
 import { useActionState } from 'react'
 
 import { cn } from '@/lib/utils'
-import type { GlobalesSignOutErgebnis } from '@/lib/auth/globales-sign-out'
+import { createBrowserClient } from '@/lib/supabase/client'
+import { signOutBrowserFallback } from '@/lib/auth/globales-sign-out-browser'
+import type { GlobalesSignOutErgebnis, GlobalesSignOutZiel } from '@/lib/auth/globales-sign-out'
 
 export type GlobalesAbmeldenAktion = (
   vorher: GlobalesSignOutErgebnis | null,
@@ -15,6 +17,8 @@ type Props = {
   action: GlobalesAbmeldenAktion
   className?: string
   fehlerClassName?: string
+  /** Hard-coded public or admin destination; never read from request/query. */
+  ziel?: GlobalesSignOutZiel
   children: React.ReactNode
 }
 
@@ -30,9 +34,28 @@ export default function GlobalesAbmeldenForm({
   action,
   className,
   fehlerClassName,
+  ziel = '/',
   children,
 }: Props) {
-  const [zustand, formAction, pending] = useActionState(action, ANFANG)
+  // The browser owns the live Supabase session/cookie store and must also
+  // receive SIGNED_OUT; a server-only revoke can succeed while its persistent
+  // browser client still restores a stale session on the next navigation.
+  // Try the same GLOBAL revocation in the browser first. A successful result
+  // requires both remote confirmation and getSession() === null. Keep the
+  // existing server Action as a second authority if the browser attempt fails.
+  const execute = React.useCallback(async (vorher: GlobalesSignOutErgebnis | null, formular: FormData) => {
+    try {
+      const placeholder: GlobalesSignOutErgebnis = {
+        ok: false,
+        fehler: { code: 'failed', text: 'Die Abmeldung konnte nicht bestätigt werden.' },
+      }
+      const browser = await signOutBrowserFallback(placeholder, createBrowserClient().auth, ziel,
+        path => window.location.replace(path))
+      if (browser.ok) return browser
+    } catch { /* Browser client unavailable; the existing Server Action remains safe. */ }
+    return action(vorher, formular)
+  }, [action, ziel])
+  const [zustand, formAction, pending] = useActionState(execute, ANFANG)
   const fehlerId = React.useId()
   const fehler = zustand && !zustand.ok ? zustand.fehler : null
 

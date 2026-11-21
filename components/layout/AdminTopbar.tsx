@@ -174,6 +174,7 @@ export default function AdminTopbar({
 
             <GlobalesAbmeldenForm
               action={signOutToAdminLoginAction}
+              ziel="/admin/login"
               fehlerClassName="mt-2 max-w-[14rem] text-xs"
             >
               {userOpen ? (

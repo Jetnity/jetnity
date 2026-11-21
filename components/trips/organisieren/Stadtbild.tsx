@@ -13,6 +13,9 @@ function request(key: string): Promise<CityPhoto | null> {
   if (pending.size >= 200) pending.delete(pending.keys().next().value!)
   const value = fetch('/api/travel-images?' + key).then(async r => r.ok ? (await r.json()).photo as CityPhoto | null : null).catch(() => null)
   pending.set(key, value)
+  // Never pin a network failure or a no-photo response for this whole browser
+  // visit. The original Map kept Promise<null> until the tab was closed.
+  void value.then(photo => { if (!photo && pending.get(key) === value) pending.delete(key) })
   return value
 }
 
@@ -24,8 +27,19 @@ export function useStadtbild(ziel?: Ziel) {
   useEffect(() => {
     if (!key) return
     let active = true
-    void request(key).then(photo => { if (active) setResult({ key, photo }) })
-    return () => { active = false }
+    let retry: ReturnType<typeof setTimeout> | null = null
+    void request(key).then(photo => {
+      if (!active) return
+      setResult({ key, photo })
+      // One bounded retry permits the user to see newly recovered licensed
+      // Commons imagery without refreshing the entire travel workspace.
+      // No loop, no extra retry for successful requests, no paid provider.
+      if (!photo) retry = setTimeout(() => {
+        if (!active) return
+        void request(key).then(next => { if (active) setResult({ key, photo: next }) })
+      }, 75_000)
+    })
+    return () => { active = false; if (retry !== null) clearTimeout(retry) }
   }, [key])
   const photo = result?.key === key ? result.photo : null
   return { src: photo?.src ?? local, photo }

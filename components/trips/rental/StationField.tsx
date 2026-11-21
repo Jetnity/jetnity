@@ -4,8 +4,9 @@ import { Check, MapPin } from 'lucide-react'
 import type { RentalStation } from '@/lib/providers/discovercars/search/contract'
 import { FIELD, rentalRequest } from './client'
 
-export default function StationField({ label, value, query, onQuery, onSelect, nurBeiFokus = false }: {
+export default function StationField({ label, value, query, onQuery, onSelect, nurBeiFokus = false, onUnavailable }: {
   nurBeiFokus?: boolean
+  onUnavailable?: () => void
   label: string; value: RentalStation | null; query: string
   onQuery: (value: string) => void; onSelect: (value: RentalStation) => void
 }) {
@@ -26,11 +27,14 @@ export default function StationField({ label, value, query, onQuery, onSelect, n
         if (controller.signal.aborted) return
         if (data.status === 'ok' && data.kind === 'locations') {
           setOptions(data.locations); setMessage(data.locations.length ? '' : 'Keine Mietstation gefunden. Versuche eine nahe Stadt oder einen Flughafen.')
-        } else if (data.status !== 'ok') setMessage(data.message)
+        } else if (data.status !== 'ok') {
+          setMessage(data.message)
+          if (data.status === 'unavailable') onUnavailable?.()
+        }
       } catch { if (!controller.signal.aborted) setMessage('Orte konnten nicht geladen werden. Bitte gib den Ort erneut ein.') }
     }, 350)
     return () => { clearTimeout(timer); controller.abort() }
-  }, [query, value, sucheAktiv])
+  }, [query, value, sucheAktiv, onUnavailable])
   const select = (station: RentalStation) => { onSelect(station); setOptions([]); setOpen(false); setMessage(''); setActive(-1); input.current?.focus() }
   return <div className="relative min-w-0" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}>
     <label htmlFor={id} className="mb-1 block text-sm font-medium text-brand-800">{label}</label>

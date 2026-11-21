@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
           <SubmitBtn variant="outline">Magic Link senden</SubmitBtn>
         </form>
 
-        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} className="mt-6 border-t border-border pt-4">
+        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} ziel="/admin/login" className="mt-6 border-t border-border pt-4">
           <button type="submit" className="inline-flex min-h-11 items-center rounded-control text-meta text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             Abmelden (falls angemeldet)
           </button>

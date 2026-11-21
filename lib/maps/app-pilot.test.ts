@@ -2,7 +2,7 @@ import { planstrecken, abreiseId } from './planstrecken'
 import { routeModell } from '@/lib/trips/ux-u1c-route-design-alignment-1/route'
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { APP_MAP_ORIGIN, mapPilotConfig } from './config'
+import { APP_MAP_ORIGIN, INCIDENT_DEV_MAP_ORIGIN, mapPilotConfig } from './config'
 import { PARIS_ORTE, reiseKarteninhalt, wegauswahl } from './reisekarte'
 import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 
@@ -66,4 +66,30 @@ test('Bangkok itinerary, selected leg, missing coordinates and optional return u
   assert.deepEqual(all.map(e => [e.von, e.nach]), [[start, 0], [0, 1], [1, 2], [2, start]])
   orte[1].position = null
   assert.deepEqual(planstrecken(orte, route), [])
+})
+
+test('incident QA map can mirror live only with exact Preview origin, deliberate activation and short expiry', () => {
+  const now = Date.parse('2026-11-21T09:00:00Z')
+  const origin = INCIDENT_DEV_MAP_ORIGIN
+  const env = {
+    VERCEL_ENV: 'preview',
+    VERCEL_GIT_COMMIT_REF: 'fix/release1260-csp-ki-wetter-logout-cancel-dev-20261120',
+    JETNITY_MAPS_ENABLED: 'true',
+    JETNITY_MAPS_ALLOWED_ORIGIN: origin,
+    JETNITY_MAPS_PILOT_EXPIRES_AT: new Date(now + 30 * 60_000).toISOString(),
+    GOOGLE_MAPS_BROWSER_KEY: 'test-qa-placeholder-never-sent',
+    GOOGLE_MAPS_MAP_ID: '12345678abcdef00',
+  }
+  assert.ok(mapPilotConfig(env, origin, now))
+  for (const patch of [
+    { VERCEL_ENV: 'production' },
+    { VERCEL_GIT_COMMIT_REF: 'main' },
+    { VERCEL_GIT_COMMIT_REF: 'feat/unrelated' },
+    { JETNITY_MAPS_ENABLED: 'false' },
+    { JETNITY_MAPS_ALLOWED_ORIGIN: 'https://jetnity.com' },
+    { GOOGLE_MAPS_BROWSER_KEY: undefined },
+    { GOOGLE_MAPS_MAP_ID: undefined },
+    { JETNITY_MAPS_PILOT_EXPIRES_AT: new Date(now + 2 * 3600_000).toISOString() },
+  ]) assert.equal(mapPilotConfig({ ...env, ...patch }, origin, now), null)
+  assert.equal(mapPilotConfig(env, 'https://jetnity.com', now), null)
 })

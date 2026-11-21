@@ -254,10 +254,27 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(bg1AlarmCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set(bg1AlarmCiSuccessor.map(row => row.path)).size, 1)
+  // Independent, append-only successor for incident app PR #1265. The prior
+  // AT50/BG1 source identities stay immutable and are checked above.
+  // This pins the *exact* scope-only change for the live Dev BG1 alarm: it is
+  // required on main and BG1-/Official-Truth PRs, while Auth configuration
+  // and strict offline BG1 negative tests still run on every PR.
+  const incidentAppCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' },
+      reviewed: { bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' } },
+  ] as const
+  assert.deepEqual(incidentAppCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(incidentAppCiSuccessor.map(row => row.path)).size, 1)
   const bg1AlarmWorkflowSource = readFileSync('.github/workflows/ci.yml', 'utf8')
   assert.equal(bg1AlarmWorkflowSource.split('node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs').length, 2)
   assert.match(bg1AlarmWorkflowSource,/\bnpm run test:core\b/)
   assert.match(bg1AlarmWorkflowSource,/\bname: Hosted V3 — native PostgreSQL 17/)
+  assert.match(bg1AlarmWorkflowSource, /\bname: Dev-Guardstatus \(BG1\/main only\)/)
+  assert.ok(bg1AlarmWorkflowSource.includes("github.event_name != 'pull_request'"))
+  assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'feat/official-truth-')"))
+  assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'fix/bg1-')"))
+  let reviewedIncidentAppCiRows = 0
   let reviewedBg1AlarmRows = 0
   let reviewedAt50Rows = 0
   let reviewedNextPatchRows = 0
@@ -359,7 +376,13 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual(bg1AlarmChanged.previousReviewed,at50Changed?.reviewed ?? expectedBeforeAt50,row.path)
       reviewedBg1AlarmRows++
     }
-    const expected = bg1AlarmChanged?.reviewed ?? at50Changed?.reviewed ?? expectedBeforeAt50
+    const previousIncident = bg1AlarmChanged?.reviewed ?? at50Changed?.reviewed ?? expectedBeforeAt50
+    const incidentAppChanged = incidentAppCiSuccessor.find(file => file.path === row.path)
+    if (incidentAppChanged) {
+      assert.deepEqual(incidentAppChanged.previousReviewed, previousIncident, row.path)
+      reviewedIncidentAppCiRows++
+    }
+    const expected = incidentAppChanged?.reviewed ?? previousIncident
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -378,4 +401,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedNextPatchRows, 3)
   assert.equal(reviewedAt50Rows, 1)
   assert.equal(reviewedBg1AlarmRows, 1)
+  assert.equal(reviewedIncidentAppCiRows, 1)
 })

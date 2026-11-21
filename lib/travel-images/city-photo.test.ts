@@ -34,3 +34,20 @@ test('non-canonical names and invalid country identifiers never invoke external 
   assert.equal(await cityPhoto('geonames:2988507', 'France'), null)
   assert.equal(await cityPhoto('geonames:1"; malicious', 'FR'), null)
 })
+
+test('failed Commons lookups expire after one minute instead of hiding a city image for an hour', async (t) => {
+  let now = 2_000_000_000_000
+  let calls = 0
+  t.mock.method(Date, 'now', () => now)
+  t.mock.method(globalThis, 'fetch', async () => {
+    calls += 1
+    throw new Error('temporary provider failure')
+  })
+  const place = 'geonames:987654321'
+  assert.equal(await cityPhoto(place, 'ZZ'), null)
+  assert.equal(await cityPhoto(place, 'ZZ'), null)
+  assert.equal(calls, 1, 'do not flood Wikimedia on immediate failure')
+  now += 61_000
+  assert.equal(await cityPhoto(place, 'ZZ'), null)
+  assert.equal(calls, 2, 'a real retry is allowed after the bounded negative cache')
+})
