@@ -60,7 +60,7 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
     assert.deepEqual(job.steps.find((step) => step.name === provisionName), existingProvision)
     const typecheck = job.steps.find((step) => step.name === 'Typecheck native proof')?.run ?? ''
     const roots = [`scripts/db/${directory}/fixture.ts`, `scripts/db/${directory}/native.test.ts`]
-    if (family === 'cms_native') roots.push('scripts/db/admin-runtime-bg1-1/native.test.ts')
+    if (family === 'cms_native') roots.push('scripts/db/admin-runtime-bg1-1/native.test.ts', 'scripts/db/cms-public-reader-release-20261121/native.test.ts')
     assert.ok(typecheck.includes(`rootNames: [${roots.map(path => `'${path}'`).join(', ')}]`))
     assert.ok(typecheck.includes('...ts.getPreEmitDiagnostics(program)'))
     assert.ok(typecheck.includes('process.exitCode = 1'))
@@ -71,7 +71,14 @@ test('Admin native jobs preserve complete typed PostgreSQL 17 proofs in the requ
       assert.equal(transition.name, 'Run atomic Admin BG1 transition and guarded runtime proof')
       assert.equal(transition['timeout-minutes'], 35)
       assert.equal(transition.run, 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/admin-runtime-bg1-1/native.test.ts')
-      assert.equal(job.steps.at(-2).run, originalCommand)
+      const publicReader = {
+        name: 'Run isolated public CMS reader release proof',
+        'timeout-minutes': 10,
+        run: 'node --import ./scripts/server-only-test-register.mjs --import tsx --test --test-reporter=tap --test-concurrency=1 scripts/db/cms-public-reader-release-20261121/native.test.ts',
+      }
+      assert.deepEqual(job.steps.at(-2), publicReader)
+      assert.equal(job.steps.filter(step => step.run === publicReader.run).length, 1)
+      assert.equal(job.steps.at(-3).run, originalCommand)
     } else assert.equal(job.steps.at(-1).run, originalCommand)
     assert.equal(JSON.stringify(job).includes('secrets.'), false)
   }
