@@ -7,7 +7,7 @@ import { publicInspiration } from '@/lib/inspiration/cms-public-server'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
 
-const beschreibung = 'Entdecke vier ausgewählte Reiseziele, finde deine Reiseidee und passe sie in der Jetnity-Planung an.'
+const beschreibung = 'Entdecke ausgewählte Reiseziele, finde deine Reiseidee und passe sie in der Jetnity-Planung an.'
 const canonical = new URL('/entdecken', oeffentlicheMetadataOrigin()).href
 export const metadata: Metadata = {
   title: 'Reiseinspiration entdecken',
@@ -30,9 +30,7 @@ export default async function EntdeckenSeite({ searchParams }: {
         <header className="pb-8 pt-6 sm:pb-10 sm:pt-8">
           <p className="text-kicker uppercase text-muted-foreground">Deine nächste Reise beginnt mit einer Idee</p>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.045em] text-balance sm:text-6xl">Wohin geht deine Neugier?</h1>
-          <p className="mt-5 max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">{inspiration.status === 'static'
-            ? 'Bali, Lissabon, Zermatt und Amsterdam: vier ausgewählte Ziele zum Entdecken. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.'
-            : 'Entdecke veröffentlichte Reiseideen. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.'}</p>
+          <p className="mt-5 max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">Entdecke ausgewählte Reiseideen. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.</p>
         </header>
         <InspirationExplorer initial={initial} ziele={inspiration.ziele} status={inspiration.status} />
         <p className="mt-8 max-w-prose text-meta text-muted-foreground">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
