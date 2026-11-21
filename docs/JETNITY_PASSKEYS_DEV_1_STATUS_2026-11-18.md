@@ -85,6 +85,14 @@ CI [44588883820](https://github.com/Jetnity/jetnity/actions/runs/44588883820) au
 
 Nicht gelaufen und deshalb nicht grün genannt: die frische GitHub-CI dieses Heads, Hosted-Preview-Login, echtes WebAuthn auf Chrome, Safari, Android oder iOS.
 
+## Nachtrag 20.11.2026 – Main-Stand zusammengeführt
+
+`main` (Next.js 16.4.6, Security-Header, KI-Korrekturen) ist in diesen Draft gemergt. Die einzigen Konflikte lagen in den zwei Official-Truth-Fingerabdruckdateien für `package.json`/`package-lock.json`. Die Kette von `main` bleibt unverändert; das Passkey-SDK-Glied hängt jetzt **hinter** dem Next-16.4.6-Glied und nennt die tatsächlichen Werte der zusammengeführten Paketdateien. Die Lockfile-Änderung gegenüber `main` ist zeilengleich mit der bisherigen Draft-Änderung (nur `@supabase/*` 2.119.2 samt Abhängigkeiten). `ci.yml` ist byte-identisch mit `main`.
+
+Lokal auf dem zusammengeführten Stand: Fingerabdruck-, Passkey- und Callback-Tests 106/106, `npm run typecheck` Exit 0, ESLint 0 Fehler, `check:dead`/`check:exports`/`check:deps`/`check:api-schutz`/`check:operating-mode` grün. Frische GitHub-CI auf diesem Head ist die nächste Prüfung.
+
+Unverändert beim Owner: Entscheidung über das supabase-js-Update, Login/2FA, Dev-Passkey-Enable mit RP-ID/Origins, echter Gerätetest. `supabase/config.toml` bleibt `[auth.passkey] enabled=false`.
+
 ## Nicht angefasst
 
 `supabase/**`, Migrationen, Rollen, RLS, AAL2-Guards, CI-Workflows, Secrets, Vercel, Production, Einreise-Inhalte, `ROADMAP.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `AGENTS.md`, PR #1238, PR #1235. Official-Truth-Beweise sind nicht umgeschrieben. Nur die Paket- und Loader-Identität folgt `2.119.2`.
