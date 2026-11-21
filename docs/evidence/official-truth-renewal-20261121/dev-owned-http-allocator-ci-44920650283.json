@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-21T15:44:04Z",
+  "repository": "Jetnity/jetnity",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "implementation_commit": "d849a5f7852fb0654bba2c26401b8a55573c07db",
+  "run_id": 44920650283,
+  "run_url": "https://github.com/Jetnity/jetnity/actions/runs/44920650283",
+  "run_status": "completed",
+  "run_conclusion": "failure",
+  "jobs": [
+    {
+      "id": 136895721545,
+      "name": "safety",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44920650283,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Offline safety gates (native Dev PG17 probes separately evidenced)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        }
+      ]
+    },
+    {
+      "id": 136895807182,
+      "name": "Actual Dev verification blocked by observed access denial",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44920650283,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Preserve blocked hosted acceptance without retrying denied access",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 2
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        }
+      ]
+    },
+    {
+      "id": 136895807194,
+      "name": "Native PG17 sequence concurrency and rollback (isolated fixture)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44920650283,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify native rollback and concurrent allocation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    }
+  ],
+  "interpretation": "Safety and isolated native PG17 rollback/concurrency jobs passed. The livejob deliberately fails closed to preserve the earlier actual Management API HTTP403; no new denied API or secret call is attempted. This overall run is FAILURE, not all green. Actual hosted Dev R1-R4 and natural transport observations are separately evidenced.",
+  "hosted_dev_evidence": "docs/evidence/official-truth-renewal-20261121/dev-owned-http-allocator-20261121.json",
+  "production_accessed": false,
+  "support_request_sent": false
+}
+

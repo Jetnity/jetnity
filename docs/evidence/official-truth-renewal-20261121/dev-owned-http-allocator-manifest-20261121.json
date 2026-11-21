@@ -3,7 +3,6 @@
   "purpose": "Dev-only own LOGGED HTTP allocator: actual execution/result byte binding and Production review; no Production authorization",
   "dev_project": "yfvbxvijcorffwxbxahl",
   "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
-  "parent_commit": "1a3ff227800668e50bfa2c62de98c7bda6bf2f6b",
   "delivery_commit_binding": "The Git commit containing this manifest binds all listed bytes. The manifest intentionally excludes its own hash and its containing commit hash to avoid self-reference.",
   "final_observation_utc": "2026-11-21T15:30:24.961198Z",
   "final_observation_zurich": "2026-11-21T16:30:24.961198+01:00",
@@ -23,9 +22,18 @@
   },
   "ci": {
     "offline_local_safety": "21/21 PASS before final documentation",
-    "isolated_pg17_cases": "Previous11/11; delivery-commit Actions results must be checked separately",
+    "isolated_pg17_cases": "The isolated PG17 rollback/concurrency job succeeded on implementation commit d849a5f; actual Hosted allocator probes remain separate evidence.",
     "hosted_gate": "Explicit BLOCKED/FAIL; preserves historical ManagementAPI403 without new secret/API calls",
-    "application_build": "Not run for this scoped Dev SQL/evidence delivery; no global release PASS"
+    "application_build": "Not run for this scoped Dev SQL/evidence delivery; no global release PASS",
+    "delivery_implementation_run_id": 44920650283,
+    "delivery_implementation_run_url": "https://github.com/Jetnity/jetnity/actions/runs/44920650283",
+    "delivery_implementation_head": "d849a5f7852fb0654bba2c26401b8a55573c07db",
+    "delivery_implementation_jobs": {
+      "safety": "success",
+      "native_sequence": "success",
+      "dev_readback": "failure"
+    },
+    "delivery_implementation_overall": "failure"
   },
   "artifacts": [
     {
@@ -54,8 +62,8 @@
     },
     {
       "path": "docs/OFFICIAL_TRUTH_DEV_HTTP_ID_ALLOCATOR_2026-11-21.md",
-      "bytes": 29875,
-      "sha256": "388cd821768c851576cb81240bb63fa2c4b936cd8b00d458bafdf31f73fc8fa3",
+      "bytes": 30460,
+      "sha256": "55710d10bf737374df6b775fb3a4b7c3196a1c6844da84d64853629fb076f87d",
       "status": "REVIEW_OR_DATED_CONTINUITY_RECORD"
     },
     {
@@ -66,8 +74,8 @@
     },
     {
       "path": "docs/OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md",
-      "bytes": 22122,
-      "sha256": "dea24b4d124b188f1da1aeb8c0374378717d67936a35c131a64f12d2c0f9b58c",
+      "bytes": 23054,
+      "sha256": "f3dd61c1a922b9131b95c63cb2bf6fcf0756f6f029106fe86b34633606d5b6eb",
       "status": "REVIEW_OR_DATED_CONTINUITY_RECORD"
     },
     {
@@ -93,6 +101,12 @@
       "bytes": 75665,
       "sha256": "0cab63a23e9b75a05c3af9e2b90f10d116fdcc7e096b56d6a5678c0e95053f2e",
       "status": "PRESERVED_OBSERVATION_OR_SOURCE_EVIDENCE"
+    },
+    {
+      "path": "docs/evidence/official-truth-renewal-20261121/dev-owned-http-allocator-ci-44920650283.json",
+      "status": "ACTUAL_IMPLEMENTATION_COMMIT_CI_RESULTS_OVERALL_FAILURE",
+      "bytes": 4527,
+      "sha256": "3884dbca346b2c52fd36fb36924e0ed0f0f723a42b05037eb27dce1e420ba96b"
     },
     {
       "path": "docs/evidence/official-truth-renewal-20261121/dev-pgnet-owned-allocator-v8-initial-readback.sql",
@@ -251,5 +265,8 @@
       "status": "ACTUAL_R3_FULL_REHEARSAL_AND_NEGATIVE_ROLLBACK_PASS",
       "actual_evidence": "docs/evidence/official-truth-renewal-20261121/dev-owned-http-allocator-20261121.json#/proofs/dev_allocator_v8_r3_corrected_retry_result"
     }
-  ]
+  ],
+  "implementation_parent_commit": "1a3ff227800668e50bfa2c62de98c7bda6bf2f6b",
+  "implementation_commit": "d849a5f7852fb0654bba2c26401b8a55573c07db",
+  "documentation_parent_commit": "d849a5f7852fb0654bba2c26401b8a55573c07db"
 }
