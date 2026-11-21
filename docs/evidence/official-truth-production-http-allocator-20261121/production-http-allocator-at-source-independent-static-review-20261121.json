@@ -1,0 +1,148 @@
+{
+  "schema": "jetnity-production-http-allocator-independent-at-source-static-review-v1",
+  "reviewed_at_utc": "2026-11-21",
+  "reviewer": "/root/at_source_guard",
+  "declared_target": "qscbgcdmivbbnzrcyegn",
+  "mode": "LOCAL_FILES_ONLY",
+  "verdict": "NO_ADDITIONAL_CONCRETE_BLOCKER_FOUND_IN_REVIEWED_BYTES",
+  "candidate_status": "PREPARED_ONLY_MISSING_INDEPENDENT_BINDINGS",
+  "postgres_parser_or_runtime_executed": false,
+  "production_or_dev_access_performed": false,
+  "api_browser_or_network_access_performed_during_this_review": false,
+  "database_or_git_mutation_performed": false,
+  "execution_permission": false,
+  "positive_renewal_proven": false,
+  "package_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121",
+  "reviewed_sql_files": {
+    "00-at-enqueue-diagnosis.READONLY.sql": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+    "01-required-bindings.READONLY.sql": "688def1ae033992cc9f36ea26145722bd869dfe1db971e86c00b231b7aa10ce5",
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql": "fd2d4f68c38a70b57fa758b80b6d17dc5267e9b085808dab92fc3e4132929a93",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql": "ad09339c8e64a55867a97edb2ebe20ba8c66429edf92c77f273c4896bc378f2f",
+    "20-production-http-id.INSTALL-COMMIT.sql": "2072474ac1b356f8dbd1e324a68d1d7646359611926086b964b40190a9063921",
+    "30-production-http-id.FENCE-ROLLBACK.sql": "0d52a4c1696fd57d727d2c50c4622f7a35e606cd83a266609d08417dd02f3818",
+    "40-production-http-id.FENCE-COMMIT.sql": "6a2e85ee20693cef589fe68dcc8c1ffa4f4f5b703f2a0ccaf66dcb7a1dbec9e3",
+    "50-production-http-id.POSTCOMMIT-READONLY.sql": "abb899e6d17b871f37af5a4532fd1021ffd55f799c9d10f6bba25727fcb04941"
+  },
+  "supporting_file_sha256": {
+    "source-provenance.json": "445b2ce56db8f86e745866f9eee89d1f8ea869b829f5604de186685db498da07",
+    "required-production-bindings.json": "0ff92b31b37477574d0d27a83321a46ab6fd3b66c9f69fa9526602fa3a64b7b2",
+    "build-candidates.py": "9c0b7f3234c50c99bcd6e246218316568a7c29b3b0e50e316ccd67034c8b24b3",
+    "reviewed-net-api-definitions.json": "6a403e5f825ac48525fd8c6b9665c52472bee1cfc24fbef23b60e977211c8333",
+    "00-at-enqueue-diagnosis.static-review.json": "13a322d75eea8cd1342a8561e266d9345aa5405b4a83638a4afbdeae7a954bd2",
+    "docs/evidence/official-truth-production-readonly-v2-20261121/execution.json": "8342931920800ebcfa926b20225c6e381843da930ce02bd9d527b896334db724",
+    "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json": "7ec6c65732acc5681a3f79d4cd612276461289576c5a8582a2bd1044d15fdef2"
+  },
+  "independent_byte_checks": {
+    "original_functions_checked": 8,
+    "original_source_file_hashes_match_provenance": true,
+    "original_bodies_match_existing_actual_v2_prosrc_hashes": true,
+    "original_native_definition_hashes_match_existing_actual_v2": true,
+    "reviewed_native_net_api_definitions": 3,
+    "all_three_native_net_api_definition_and_body_hashes_match_existing_actual_v2": true,
+    "final_10_20_delta_is_exactly_one_no_unexpired_fact_precondition_each": true,
+    "publisher_change_is_only_prepended_qualification_and_original_identity_barrier": true,
+    "original_publisher_body_after_inserted_barrier_unchanged": true,
+    "rehearsal_and_installation_prefix_before_probe_tail_identical": true,
+    "fence_rehearsal_and_commit_prefix_before_tail_identical": true,
+    "helper_body_sha256": "5074ea591410f77e797956b6c37b7379edee30c534707779d690c0ff56d2d1e1",
+    "fence_body_sha256": "007862ae47509d8408f4a2b1665e8fa7bbf2e3e4baa36e7c71f2c8a8025f96a6",
+    "sql_runtime_inference_from_byte_checks": false
+  },
+  "findings": [
+    {
+      "id": "AT_SOURCE_BARRIER",
+      "result": "STATICALLY_CLOSED_FOR_EXISTING_UNQUALIFIED_ORIGINALS",
+      "evidence": [
+        "The versioned Production stage1 installer enforces source_pins research_only=true and source_qualified=false with NOT NULL/CHECK constraints.",
+        "first_originals legal_source_approved and customer_rule_approved are NOT NULL/CHECK false; raw_sha and raw_bytes are generated from the immutable body.",
+        "The new pinned renew_ch_v1 body first checks the postgres session/current-user context, exactly three pins and originals, every qualification flag using IS DISTINCT FROM, and a three-row source_id/original-hash/byte-count join with a freshly calculated raw-body SHA.",
+        "The prior publisher logic, including the changed-source-history stop, is byte-preserved after the inserted barrier.",
+        "The final 10/20 precondition additionally requires no unexpired AT fact. Removing that single added predicate recreates the previously reviewed bytes exactly. This prevents renewed BG1 availability from exposing any meanwhile fresh unqualified old fact.",
+        "No source qualification, original mutation, fact expiry extension, presenter change or normalization widening is in the candidate."
+      ],
+      "limitation": "The existing publisher catch-all RETURN 0 remains. A zero result alone is not positive renewal evidence or independent branch instrumentation. This review did not execute the proposed zero-result/state-preservation probe."
+    },
+    {
+      "id": "PRODUCTION_V3_SUCCESSOR",
+      "result": "STATIC_APPEND_ONLY_CHAIN_PRESERVED",
+      "evidence": [
+        "The predecessor catalog is pinned to 7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e, required_generation 1344 and proof_not_before 2026-11-20T22:51:44.959438Z.",
+        "Exactly five old function definitions may change: catalog_status, assert_catalog, require_open, public alarm status and AT renew_ch. Existing function attributes/owners/ACLs/configuration remain compared.",
+        "The audit/control/retirement leaves and original baseline/Owner/state/history rows are retained; new catalog keys are limited to the new successor and allocator dependencies.",
+        "The new baseline has explicit logged postgres ownership, owner-only ACL check, forced RLS, exact postgres policy and exact immutable UPDATE/DELETE/TRUNCATE triggers.",
+        "Required generation advances above current state and the predecessor; proof_not_before advances. The candidate requires unavailable status and refuses require_open before a fresh full proof.",
+        "Transport metadata binds native net APIs/default/owner/extension, replication settings, allocator owner/ACL/parameters/function and exact global trigger."
+      ]
+    },
+    {
+      "id": "ID_TRANSPORT",
+      "result": "STATIC_UPSTREAM_CONTRACT_SUPPORTED_HOSTED_RUNTIME_OPEN",
+      "evidence": [
+        "A queue-wide ShareRowExclusive lock and fixed NOWAIT journal/history barriers precede the fresh legacy-value and four-path MAX reads.",
+        "The inventory requires the two actual Production journals plus queue/response, exact bigint ordinary relations and absence of known Dev/hook paths.",
+        "First new ID is greatest(211, locked legacy last_value, locked four-path history maximum)+1025, with overflow headroom. 211 alone is never used as a seed.",
+        "The bounded SECURITY DEFINER helper has fully qualified pg_catalog casts/functions, fixed search_path, exact TG checks and only a fully qualified nextval on its own logged sequence.",
+        "The ordinary BEFORE INSERT trigger overwrites incoming/default IDs. New schema/sequence/helper ACLs must be postgres-only; native SQL APIs and managed owner/default stay unchanged.",
+        "Existing exact-tag upstream evidence for supabase/pg_net v0.19.5 commit a7792bfd913c7859e14025d606624982706c2a7f traces queue.id through CurlData.id to both response insertion paths.",
+        "The pre-existing primary-source evidence records PostgreSQL 17 RETURNING semantics for trigger-modified rows."
+      ],
+      "limits": [
+        "This review made no new web or hosted access; it revalidated the saved primary-source evidence hash.",
+        "Ordinary origin/local INSERT producers only. The O trigger does not cover replica sessions, direct UPDATE of queue IDs or hostile owner/admin actions.",
+        "The saved upstream code is not an attestation of the hosted binary, a production worker execution proof, a crash/failover test or a positive renewal proof.",
+        "The safety gap is reserved range separation, not evidence about unknown deleted or external ID histories."
+      ]
+    },
+    {
+      "id": "BEFORE_COMMIT_ROLLBACK",
+      "result": "STATICALLY_SCOPED_NATIVE_REHEARSAL_PREPARED",
+      "evidence": [
+        "10 uses explicit incoming IDs for real INSERT RETURNING probes, avoiding the legacy nextval default, and never calls net.http_* or net.wake.",
+        "Savepoints cover own-sequence ALTER RESTART, dependency-exact removal of the uncommitted helper/sole trigger, helper-drift refusal and baseline immutability.",
+        "The whole installation rolls back to the original snapshot before the result row, including native metadata, all protected row multisets, source/fact/Owner/history, fact sequence and legacy sequence.",
+        "20 shares the reviewed installation prefix but omits all queue/allocation probes and verifies its own sequence remains uncalled before COMMIT.",
+        "11 independently checks old pinned definitions/chain, exact queue shape and absence of allocator/trigger/successor. It correctly allows natural progress between transactions."
+      ],
+      "limitation": "No SQL parser/runtime/service completion was observed in this review. A SELECT result preceding COMMIT cannot prove successful COMMIT."
+    },
+    {
+      "id": "AFTER_COMMIT_FENCE",
+      "result": "STATICALLY_PRESERVES_COMMITTED_IDS_AND_LINEAGE",
+      "evidence": [
+        "30/40 require an independently obtained actually committed successor canonical SHA and exact normal helper/guard/publisher definitions before mutation.",
+        "Only the own helper body becomes a fixed exception. Namespace, sequence values/parameters, trigger, old transport, source/fact/Owner/history and baseline stay compared.",
+        "The proposed explicit-ID INSERT denial occurs before own nextval and avoids the managed default. The exact exception message and direct assert_catalog P7905 refusal are checked.",
+        "30 rolls the helper change back and verifies restoration; 40 commits only the fence after the same checks.",
+        "No drop, rewind, blind reseal, latch reset, fake audit or source qualification is used as postcommit recovery."
+      ],
+      "limits": [
+        "Already queued work is retained and may still be delivered.",
+        "The public alarm is not claimed to change instantly; natural audit/freshness observation remains required.",
+        "The fence is a stop for new captured inserts and requires a later reviewed forward repair; it is not restoration to the legacy allocator."
+      ]
+    },
+    {
+      "id": "READBACK_AND_DIAGNOSIS_BOUNDARIES",
+      "result": "BOUNDED_READ_CANDIDATES_WITH_EXPLICIT_LIMITS",
+      "evidence": [
+        "00 remains the previously reviewed exact three-cron-failure diagnosis hash; it returns bounded classifications and hashes, not raw error/credential contents.",
+        "01 uses one finite READ ONLY catalog transaction, exact queue/default/type and four-path predicates, capped function inventories and safe fingerprints. Unknown producer definitions must remain STOP until matched to reviewed source.",
+        "50 verifies the new function pins and catalog before capturing the committed successor digest, allocator counter and public status.",
+        "50 reports fresh_complete_state_run_count and public_guard_status; OBSERVED is not itself PASS, and the count can be zero. Acceptance requires the appropriate current status and exactly one bound fresh complete run. A natural cron.job_run_details binding and actual AT request/response/journal delivery evidence remain separately open.",
+        "50 explicitly reports natural HTTP operational proof and positive source renewal as false."
+      ]
+    }
+  ],
+  "unresolved_execution_gates": [
+    "native_transport_sha256 is deliberately NULL. 10/20 must stop before TEMP creation/DDL until a separately approved 01 read is substantively reviewed and exact candidates rebuilt.",
+    "installed_successor_canonical_sha256 is deliberately NULL. 30/40 must stop before DDL until an actual committed successor has been independently read and reviewed.",
+    "No Production SQL syntax/runtime, privileges, lock behavior, transaction restoration, install COMMIT or fence behavior is proved by this offline review.",
+    "A separate exact owner Go is required for each scoped Production read/rehearsal/install/fence operation. Earlier read permissions and this review do not authorize follow-ups.",
+    "Natural full BG1 cron/run/state binding and actual AT response/journal delivery remain later bounded operational acceptance evidence.",
+    "RESEARCH_ONLY and expired data remain currently unavailable. A positive AT renewal is not authorized or proved."
+  ],
+  "files_written_by_reviewer_only": [
+    "docs/evidence/official-truth-production-http-allocator-20261121/production-http-allocator-at-source-independent-static-review-20261121.json",
+    "docs/evidence/official-truth-production-http-allocator-20261121/production-http-allocator-at-source-independent-static-review-20261121.md"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "reviewed_at_utc": "2026-11-21T18:03:22Z",
+  "scope": "Existing GitHub Actions evidence and source review only. No new workflow run, Production or Dev request, login, or database action.",
+  "repository": "Jetnity/jetnity",
+  "reviewed_main_sha": "ff668f21510cd904dbed9aff64f50cdddeef3e9c",
+  "workflow": {
+    "id": 425511967,
+    "path": ".github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml",
+    "url": "https://github.com/Jetnity/jetnity/actions/workflows/official-truth-bg1-five-minute-integrity-alarm.yml",
+    "source_blob_sha": "f09cfaf365639121fc3deca2e9ce8860ed0c9e0e",
+    "schedule": "*/5 * * * *",
+    "manual_trigger": "workflow_dispatch",
+    "pause_requested": true,
+    "pause_verified_by_this_review": false,
+    "pause_verification_note": "Root will separately record the actual Actions disable result. This file does not claim the workflow is already disabled.",
+    "full_workflow_disable_scope": "Disables scheduled and manual dispatch execution until re-enabled; it does not remove or change the YAML file.",
+    "reenable_scope": "The unchanged YAML retains the five-minute schedule. Enabling the whole workflow is not a manual-only test."
+  },
+  "script": {
+    "path": "scripts/official-truth-bg1-five-minute-integrity-alarm.mjs",
+    "source_blob_sha": "1297525c342841775e85408bee7c6419889690e7",
+    "expected_arm": "production:qscbgcdmivbbnzrcyegn:integrity-only-v2",
+    "expected_repository": "Jetnity/jetnity",
+    "expected_ref": "refs/heads/main",
+    "expected_project_ref": "qscbgcdmivbbnzrcyegn",
+    "credentials_invalid_conditions": {
+      "publishable_key": "typeof key === 'string' && /^sb_publishable_[A-Za-z0-9_-]{6,3000}$/.test(key)",
+      "github_token": "typeof token === 'string' && token.length >= 20 && token.length < 1000 && /^[A-Za-z0-9_-]+$/.test(token)",
+      "fetch_implementation": "typeof fetchImpl === 'function'",
+      "failure": "If any of these checks fails, return monitor_failed/credentials_invalid before the first fetch call."
+    },
+    "monitor_failed_exit_code": 1,
+    "unknown_reason": "The compact log does not identify which credential/function condition failed. No secret value was read from repository settings or included in this evidence.",
+    "error_semantics_preserved": "Do not convert a real or unknown failure into success, current, transient, or continue-on-error."
+  },
+  "existing_failed_runs": [
+    {
+      "run_id": 44932937908,
+      "run_number": 143,
+      "run_attempt": 1,
+      "event": "schedule",
+      "created_at": "2026-11-21T17:58:33Z",
+      "updated_at": "2026-11-21T17:58:59Z",
+      "conclusion": "failure",
+      "head_sha": "ff668f21510cd904dbed9aff64f50cdddeef3e9c",
+      "run_url": "https://github.com/Jetnity/jetnity/actions/runs/44932937908",
+      "job_id": 136933315834,
+      "job_name": "alert",
+      "failed_step": "Read only fixed public BG1 integrity status, deduplicate and notify",
+      "sanitized_stdout": {
+        "status": "monitor_failed",
+        "code": "credentials_invalid",
+        "generation": null
+      },
+      "process_exit_code": 1,
+      "first_monitor_fetch_reached": false,
+      "production_health_proven": false,
+      "genuine_integrity_incident_proven": false
+    },
+    {
+      "run_id": 44932392117,
+      "run_number": 142,
+      "run_attempt": 1,
+      "event": "schedule",
+      "created_at": "2026-11-21T17:52:18Z",
+      "updated_at": "2026-11-21T17:52:38Z",
+      "conclusion": "failure",
+      "head_sha": "ff668f21510cd904dbed9aff64f50cdddeef3e9c",
+      "run_url": "https://github.com/Jetnity/jetnity/actions/runs/44932392117",
+      "job_id": 136931638720,
+      "job_name": "alert",
+      "failed_step": "Read only fixed public BG1 integrity status, deduplicate and notify",
+      "sanitized_stdout": {
+        "status": "monitor_failed",
+        "code": "credentials_invalid",
+        "generation": null
+      },
+      "process_exit_code": 1,
+      "first_monitor_fetch_reached": false,
+      "production_health_proven": false,
+      "genuine_integrity_incident_proven": false
+    },
+    {
+      "run_id": 44931802806,
+      "run_number": 141,
+      "run_attempt": 1,
+      "event": "schedule",
+      "created_at": "2026-11-21T17:45:43Z",
+      "updated_at": "2026-11-21T17:46:01Z",
+      "conclusion": "failure",
+      "head_sha": "ff668f21510cd904dbed9aff64f50cdddeef3e9c",
+      "run_url": "https://github.com/Jetnity/jetnity/actions/runs/44931802806",
+      "job_id": 136929829531,
+      "job_name": "alert",
+      "failed_step": "Read only fixed public BG1 integrity status, deduplicate and notify",
+      "sanitized_stdout": {
+        "status": "monitor_failed",
+        "code": "credentials_invalid",
+        "generation": null
+      },
+      "process_exit_code": 1,
+      "first_monitor_fetch_reached": false,
+      "production_health_proven": false,
+      "genuine_integrity_incident_proven": false
+    }
+  ],
+  "github_mutations_performed_by_reviewer": false,
+  "production_or_dev_calls_performed_by_reviewer": false,
+  "raw_secret_values_included": false
+}
+

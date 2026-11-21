@@ -1,0 +1,35 @@
+{
+  "schema": "jetnity-production-http-package-root-review-v1",
+  "recorded_at_utc": "2026-11-21T18:38:02.329063+00:00",
+  "scope": "Frozen preparation bytes only; no database calls",
+  "manifest_sha256": "ef166a30a16cbb9cb6ca33702b51c659f0ce0400668b54d1e6dddbf820086d65",
+  "sql_files": 8,
+  "manifest_file_hash_and_byte_inventory_exact": true,
+  "first_two_readonly_scope_static_scan": "PASS",
+  "fixed_target": "qscbgcdmivbbnzrcyegn",
+  "missing_execution_bindings_intentionally_preserved": true,
+  "pre_ddl_pin_stop": true,
+  "queue_lock_before_fresh_counter_and_max": "PASS",
+  "unused_id_gap": 1024,
+  "fresh_positive_at_facts_refuse_install": true,
+  "source_provenance_file_hashes_rechecked": true,
+  "python_ast": "PASS",
+  "sql_native_parse_or_runtime": false,
+  "production_actions_during_preparation": 0,
+  "reviewed_manually": [
+    "00 fixed three-run classifications, no raw errors or original SQLSTATE claim",
+    "01 fixed catalog read, safe fingerprints, exact queue/default shape and fourteen explicit absent relations",
+    "10/20 fixed old chain, normal authority, queue barriers, current high water, owner-only SD helper, append-only successor, source barrier, no data/Owner resets, actual rollback design",
+    "11 independent original-lineage/object-restoration readback",
+    "30/40 exact committed pin, helper-only denial and preserved queues/counters/history; no instant public alarm claim",
+    "50 observed metadata/status/count only; no natural cron/HTTP or positive-source proof"
+  ],
+  "static_checker_note": "An initial simple keyword scan matched SQL string literals used for privilege/default metadata. The scanner was corrected to ignore quoted strings; no SQL was changed for that false positive. This remains a lexical check, not a SQL parser.",
+  "limits": [
+    "Writing SQL is not executing it",
+    "Missing pins and separate owner authorization remain required",
+    "No Production native parser, privileges, concurrency, rollback, COMMIT, crash, failover or HTTP proof in this preparation",
+    "No actual root cause of the three AT cron failures has been read yet",
+    "50 result OBSERVED is not an operational PASS; natural cron and HTTP evidence remain separately open"
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "schema": "jetnity-production-http-allocator-preparation-manifest-v1",
+  "package": "PROD_HTTP_ALLOCATOR_PACKAGE_20261121",
+  "created_at_utc": "2026-11-21T18:36:18.221998+00:00",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "status": "PREPARED_ONLY_NO_PRODUCTION_EXECUTION_AUTHORIZATION",
+  "basis_commit": "400351da45a4a208dac47d4b9ec12261166edf3f",
+  "basis_v2_execution_sha256": "8342931920800ebcfa926b20225c6e381843da930ce02bd9d527b896334db724",
+  "prior_one_time_go_status": "V1 and V2 completed; neither authorizes this package",
+  "sql_file_count": 8,
+  "sql_files": [
+    {
+      "file": "00-at-enqueue-diagnosis.READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/00-at-enqueue-diagnosis.READONLY.sql",
+      "sha256": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+      "bytes": 15042,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [],
+      "available_for_first_proposed_read_go": true,
+      "statement_timeout_seconds": 8,
+      "transaction_timeout_seconds": 12,
+      "lock_timeout_ms": 500
+    },
+    {
+      "file": "01-required-bindings.READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/01-required-bindings.READONLY.sql",
+      "sha256": "688def1ae033992cc9f36ea26145722bd869dfe1db971e86c00b231b7aa10ce5",
+      "bytes": 16685,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [],
+      "available_for_first_proposed_read_go": true,
+      "statement_timeout_seconds": 12,
+      "transaction_timeout_seconds": 20,
+      "lock_timeout_ms": 500
+    },
+    {
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "fd2d4f68c38a70b57fa758b80b6d17dc5267e9b085808dab92fc3e4132929a93",
+      "bytes": 92538,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [
+        "native_transport_sha256"
+      ],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "lock_timeout_ms": 2000
+    },
+    {
+      "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "sha256": "ad09339c8e64a55867a97edb2ebe20ba8c66429edf92c77f273c4896bc378f2f",
+      "bytes": 13375,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 15,
+      "transaction_timeout_seconds": 20,
+      "lock_timeout_ms": 500
+    },
+    {
+      "file": "20-production-http-id.INSTALL-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/20-production-http-id.INSTALL-COMMIT.sql",
+      "sha256": "2072474ac1b356f8dbd1e324a68d1d7646359611926086b964b40190a9063921",
+      "bytes": 85627,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [
+        "native_transport_sha256"
+      ],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "lock_timeout_ms": 2000
+    },
+    {
+      "file": "30-production-http-id.FENCE-ROLLBACK.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/30-production-http-id.FENCE-ROLLBACK.sql",
+      "sha256": "0d52a4c1696fd57d727d2c50c4622f7a35e606cd83a266609d08417dd02f3818",
+      "bytes": 25994,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "lock_timeout_ms": 2000
+    },
+    {
+      "file": "40-production-http-id.FENCE-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/40-production-http-id.FENCE-COMMIT.sql",
+      "sha256": "6a2e85ee20693cef589fe68dcc8c1ffa4f4f5b703f2a0ccaf66dcb7a1dbec9e3",
+      "bytes": 25484,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "lock_timeout_ms": 2000
+    },
+    {
+      "file": "50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "sha256": "abb899e6d17b871f37af5a4532fd1021ffd55f799c9d10f6bba25727fcb04941",
+      "bytes": 4629,
+      "prepared_only": true,
+      "executed": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_new_exact_go": true,
+      "deliberately_missing_bindings": [],
+      "available_for_first_proposed_read_go": false,
+      "statement_timeout_seconds": 15,
+      "transaction_timeout_seconds": 20,
+      "lock_timeout_ms": 500
+    }
+  ],
+  "supporting_files": [
+    {
+      "file": "00-at-enqueue-diagnosis.static-review.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/00-at-enqueue-diagnosis.static-review.json",
+      "sha256": "13a322d75eea8cd1342a8561e266d9345aa5405b4a83638a4afbdeae7a954bd2",
+      "bytes": 3775
+    },
+    {
+      "file": "build-candidates.py",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/build-candidates.py",
+      "sha256": "9c0b7f3234c50c99bcd6e246218316568a7c29b3b0e50e316ccd67034c8b24b3",
+      "bytes": 105972
+    },
+    {
+      "file": "required-production-bindings.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/required-production-bindings.json",
+      "sha256": "0ff92b31b37477574d0d27a83321a46ab6fd3b66c9f69fa9526602fa3a64b7b2",
+      "bytes": 3336
+    },
+    {
+      "file": "reviewed-net-api-definitions.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/reviewed-net-api-definitions.json",
+      "sha256": "6a403e5f825ac48525fd8c6b9665c52472bee1cfc24fbef23b60e977211c8333",
+      "bytes": 4863
+    },
+    {
+      "file": "source-provenance.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/source-provenance.json",
+      "sha256": "445b2ce56db8f86e745866f9eee89d1f8ea869b829f5604de186685db498da07",
+      "bytes": 6770
+    },
+    {
+      "file": "offline-verification.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/offline-verification.json",
+      "sha256": "9be45794288053e2732c6308d7e1a7488b04db8b85bca6febfc16c603f6023ca",
+      "bytes": 3213
+    }
+  ],
+  "first_proposed_go": {
+    "id": "PROD_HTTP_ID_DIAGNOSE_BINDINGS_20261121",
+    "authorization_received": false,
+    "ordered_files": [
+      "00-at-enqueue-diagnosis.READONLY.sql",
+      "01-required-bindings.READONLY.sql"
+    ],
+    "maximum_transactions": 2,
+    "maximum_uses_per_file": 1,
+    "outer_wall_timeout_seconds": 300,
+    "maximum_combined_result_bytes": 1056768,
+    "per_file_result_byte_cap": {
+      "00-at-enqueue-diagnosis.READONLY.sql": 8192,
+      "01-required-bindings.READONLY.sql": 1048576
+    },
+    "00_accepted_result": "PROD_THREE_HISTORICAL_CRON_FAILURE_SIGNATURES_OBSERVED",
+    "01_accepted_result": "BINDINGS_READ_REVIEW_REQUIRED_NO_EXECUTION_PERMISSION",
+    "conditional_order": "01 only after accepted known 00 result and with count/time budget remaining",
+    "on_error_unknown_missing_or_limit": "STOP; no retry, fallback, modified SQL or additional tool query",
+    "allowed": "Fixed historical cron failure classifications and fixed catalog/transport/producer fingerprints only",
+    "not_allowed": [
+      "Production mutation",
+      "HTTP/source action",
+      "Publisher/audit/Owner action",
+      "role or credential change",
+      "login/2FA",
+      "new costs",
+      "publication",
+      "automatic rehearsal/install/fence"
+    ]
+  },
+  "allocator_contract": {
+    "historical_floor": 211,
+    "unused_gap": 1024,
+    "first_id_formula": "greatest(211, locked legacy last_value, locked four-path MAX)+1025",
+    "lowest_example_if_actual_max_still_211": 1236,
+    "known_id_paths": 4,
+    "known_optional_relations_required_absent": 14,
+    "own_sequence_owner": "postgres",
+    "own_sequence_persistence": "LOGGED",
+    "managed_sequence_or_default_change": false,
+    "qualification_or_owner_recovery": false,
+    "production_successor": "v3 -> bg1_production_http_allocator_v4"
+  },
+  "native_sql_parser_or_runtime_tested": false,
+  "production_actions_in_this_preparation": 0,
+  "manifest_is_not_execution_evidence": true
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "jetnity-production-http-allocator-required-bindings-v1",
+  "status": "PREPARED_ONLY_MISSING_INDEPENDENT_BINDINGS",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "old_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+  "native_transport_sha256": null,
+  "installed_successor_canonical_sha256": null,
+  "pg_net_0195_worker_review": {
+    "evidence_path": "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json",
+    "sha256": "7ec6c65732acc5681a3f79d4cd612276461289576c5a8582a2bd1044d15fdef2",
+    "upstream_commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "static_id_transport_review_complete": true,
+    "hosted_binary_identity_or_runtime_proof": false
+  },
+  "resolve_before_rehearsal": [
+    "Obtain a separate exact Go for 01-required-bindings.READONLY.sql; one bounded catalog read, no automatic retry or mutation.",
+    "Independently inspect the safe queue/default/type predicates and returned function fingerprints; match unfamiliar producer definitions to reviewed local source bytes. Unknown or unmatched definitions remain STOP.",
+    "Bind only native_transport_sha256 from that reviewed result. Do not accept an opaque current digest without the substantive shape/function review; no automatic live snapshot acceptance.",
+    "Rebuild and review the exact candidate bytes and matching source provenance. The verified V2 catalog anchors existing control leaves; complete locked before/after comparison preserves current history.",
+    "Obtain a separate bounded Production ROLLBACK rehearsal Go. Neither the first READ Go nor a static source review authorizes that rehearsal or any COMMIT."
+  ],
+  "resolve_before_install": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql must actually pass in the approved Production scope; no isolated/native/static substitute is claimed.",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql must independently confirm restoration of the original definitions/chain and absence of new own objects.",
+    "Review the exact 20 installation bytes and actual rehearsal/readback evidence; obtain a separate explicit COMMIT Go. The immutable snapshots are not hand-edited to match current drift."
+  ],
+  "resolve_before_fence": [
+    "Pin the actually committed successor canonical SHA from an independent readback, not from this unexecuted draft.",
+    "Review the exact fail-closed scope; obtain the specifically approved fence rehearsal or fence COMMIT authorization."
+  ],
+  "required_before_rehearsal": [
+    "native_transport_sha256"
+  ],
+  "safely_replaced_by_existing_pinned_chain": {
+    "control_retirement_immutable_pins": "Taken only from old catalog after fixed V2 catalog SHA, pinned catalog/assert definitions, complete equality and original lineage checks pass.",
+    "history_and_owner_frozen_hashes": "No prior live digest is required. Complete locked row multisets and counters are compared before/after; natural appended history is not silently deleted or rejected merely for being newer.",
+    "old_baseline_canonical_digest": "Known V2 catalog SHA, required_generation=1344 and proof_not_before=2026-11-20T22:51:44.959438Z plus all unchanged original chain checks anchor the predecessor; its full canonical row is bound transactionally to the new successor."
+  }
+}

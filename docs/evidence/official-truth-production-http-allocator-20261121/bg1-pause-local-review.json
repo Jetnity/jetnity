@@ -1,0 +1,45 @@
+{
+  "schema": "jetnity-bg1-schedule-pause-local-review-v1",
+  "recorded_at_utc": "2026-11-21T18:34:08.402211+00:00",
+  "basis_main": "ff668f21510cd904dbed9aff64f50cdddeef3e9c",
+  "reviewed_head": "24b0c057c4d24a99e54e601cb83fe80902a37586",
+  "only_yaml_semantic_change": "Removed on.schedule; workflow_dispatch and entire remaining document equal",
+  "runtime_byte_unchanged": true,
+  "actual_test_command": "node --experimental-strip-types --test lib/readiness/official-truth-product-v3/guard/bg1-v3-five-minute-alarm-native-contract.test.ts scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs",
+  "actual_test_runtime": "v24.22.3",
+  "actual_test_summary": {
+    "pass": 10,
+    "fail": 0,
+    "skipped": 0
+  },
+  "git_diff_check": "PASS",
+  "network_calls_from_tests": "Only local synthetic fetch fixtures; no live monitor dispatch",
+  "full_head_ci": "Separate evidence required; not established by local tests",
+  "files": [
+    {
+      "path": ".github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml",
+      "bytes": 1706,
+      "sha256": "941bf527fab004d35a6b52441f6557d78d90ac5b17d49a6d85edcbcc699272c5"
+    },
+    {
+      "path": "scripts/official-truth-bg1-five-minute-integrity-alarm.mjs",
+      "bytes": 5287,
+      "sha256": "53915be0d14584e3fb319d53a766b6c4e99317c2c78afcbffdba4ce37c62826d"
+    },
+    {
+      "path": "scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs",
+      "bytes": 5185,
+      "sha256": "d2f60ae66946fa16b9ed625bf24e0736a593183bc6fb3a4dcb0657019bdb806d"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/guard/bg1-v3-five-minute-alarm-native-contract.test.ts",
+      "bytes": 3166,
+      "sha256": "9e798b428fcee8ca011b1fbcc88983d61e4c326925bc9d4838a67c75a815524e"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_BG1_SCHEDULE_PAUSE_2026-11-21.md",
+      "bytes": 5818,
+      "sha256": "aaad6f54823658a0316d11ae8ce4b3104ef55bca68b17f509bf7dfc4bb8a60b1"
+    }
+  ]
+}

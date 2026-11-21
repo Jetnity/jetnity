@@ -1,0 +1,26 @@
+{
+  "schema": "production-pg-net-public-api-source-bindings-v1",
+  "purpose": "Review material only; these existing managed definitions are not changed or installed.",
+  "source": "Previously archived native API definitions; independently matched in full to actual Production V2 definition digests. Identical API text does not prove an identical C worker binary.",
+  "production_binding": "docs/evidence/official-truth-production-readonly-v2-20261121/execution.json",
+  "definitions": [
+    {
+      "signature": "net.http_get(text,jsonb,jsonb,integer)",
+      "definition_sha256": "7012c5582cd0ab8d38f546af6633ea3c531950fb009f07127b99f8a1640eac1a",
+      "production_v2_body_sha256": "fac801ed417ff4ecda0f86a0bef9874d4b749fa34cc9000153aa4546b2cc8bac",
+      "native_definition": "CREATE OR REPLACE FUNCTION net.http_get(url text, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{}'::jsonb, timeout_milliseconds integer DEFAULT 5000)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\nbegin\n    select coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into params_array\n    from jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, timeout_milliseconds)\n    values (\n        'GET',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n"
+    },
+    {
+      "signature": "net.http_post(text,jsonb,jsonb,jsonb,integer)",
+      "definition_sha256": "ee3ec5bc54158b60b6c4e3a966a07a33dc009788fad8f6b7480ad1c45acdfe78",
+      "production_v2_body_sha256": "b7cde4add3ffb30c3a667d6038d223bbb03bac6cd5d181dab62f48c79c34f362",
+      "native_definition": "CREATE OR REPLACE FUNCTION net.http_post(url text, body jsonb DEFAULT '{}'::jsonb, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{\"Content-Type\": \"application/json\"}'::jsonb, timeout_milliseconds integer DEFAULT 5000)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\n    content_type text;\nbegin\n\n    -- Exctract the content_type from headers\n    select\n        header_value into content_type\n    from\n        jsonb_each_text(coalesce(headers, '{}'::jsonb)) r(header_name, header_value)\n    where\n        lower(header_name) = 'content-type'\n    limit\n        1;\n\n    -- If the user provided new headers and omitted the content type\n    -- add it back in automatically\n    if content_type is null then\n        select headers || '{\"Content-Type\": \"application/json\"}'::jsonb into headers;\n    end if;\n\n    -- Confirm that the content-type is set as \"application/json\"\n    if content_type <> 'application/json' then\n        raise exception 'Content-Type header must be \"application/json\"';\n    end if;\n\n    select\n        coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into\n        params_array\n    from\n        jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, body, timeout_milliseconds)\n    values (\n        'POST',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        convert_to(body::text, 'UTF8'),\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n"
+    },
+    {
+      "signature": "net.http_delete(text,jsonb,jsonb,integer,jsonb)",
+      "definition_sha256": "1f2b6fc5ccc1511e77737a95c71228bed710482133a95a87cdb672d80373617b",
+      "production_v2_body_sha256": "7c4bd9c47e2d30bf80cf93bf71b1f5236c28de2e9f31b72aac047554ded974ae",
+      "native_definition": "CREATE OR REPLACE FUNCTION net.http_delete(url text, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{}'::jsonb, timeout_milliseconds integer DEFAULT 5000, body jsonb DEFAULT NULL::jsonb)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\nbegin\n    select coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into params_array\n    from jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, body, timeout_milliseconds)\n    values (\n        'DELETE',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        convert_to(body::text, 'UTF8'),\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n"
+    }
+  ]
+}

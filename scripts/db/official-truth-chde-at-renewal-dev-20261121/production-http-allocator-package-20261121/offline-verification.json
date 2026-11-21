@@ -1,0 +1,76 @@
+{
+  "schema": "production-http-allocator-local-static-verification-v1",
+  "outcome": "STATIC_INTEGRITY_CHECKS_PASSED_ONLY",
+  "database_or_sql_execution": false,
+  "network_access": false,
+  "python_builder_ast_valid": true,
+  "rebuild_byte_identical": true,
+  "all_sql_quote_dollar_and_parenthesis_structure_balanced": true,
+  "rehearsal_and_install_common_prefix_identical": true,
+  "fence_rehearsal_and_commit_common_prefix_identical": true,
+  "lock_precedes_fresh_counter_and_max_reads": true,
+  "missing_transport_pin_stops_before_temp_or_ddl": true,
+  "unavailable_native_tools": {
+    "psql": true,
+    "postgres": true,
+    "pglast": true
+  },
+  "native_postgresql_parser_or_runtime_checked": false,
+  "files": [
+    {
+      "file": "01-required-bindings.READONLY.sql",
+      "sha256": "688def1ae033992cc9f36ea26145722bd869dfe1db971e86c00b231b7aa10ce5",
+      "bytes": 16685,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "ROLLBACK"
+    },
+    {
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "fd2d4f68c38a70b57fa758b80b6d17dc5267e9b085808dab92fc3e4132929a93",
+      "bytes": 92538,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "ROLLBACK"
+    },
+    {
+      "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "sha256": "ad09339c8e64a55867a97edb2ebe20ba8c66429edf92c77f273c4896bc378f2f",
+      "bytes": 13375,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "ROLLBACK"
+    },
+    {
+      "file": "20-production-http-id.INSTALL-COMMIT.sql",
+      "sha256": "2072474ac1b356f8dbd1e324a68d1d7646359611926086b964b40190a9063921",
+      "bytes": 85627,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "COMMIT"
+    },
+    {
+      "file": "30-production-http-id.FENCE-ROLLBACK.sql",
+      "sha256": "0d52a4c1696fd57d727d2c50c4622f7a35e606cd83a266609d08417dd02f3818",
+      "bytes": 25994,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "ROLLBACK"
+    },
+    {
+      "file": "40-production-http-id.FENCE-COMMIT.sql",
+      "sha256": "6a2e85ee20693cef589fe68dcc8c1ffa4f4f5b703f2a0ccaf66dcb7a1dbec9e3",
+      "bytes": 25484,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "COMMIT"
+    },
+    {
+      "file": "50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "sha256": "abb899e6d17b871f37af5a4532fd1021ffd55f799c9d10f6bba25727fcb04941",
+      "bytes": 4629,
+      "quote_dollar_parenthesis_structure": "balanced",
+      "last_outer_statement": "ROLLBACK"
+    }
+  ],
+  "verification_note": "The first lexical arrow/minus pattern also matched legal arrow chains. That local checker false positive was corrected with a negative lookahead; SQL was not altered for it.",
+  "limitations": [
+    "This lexical check is not a PostgreSQL parser or semantic/type/catalog/privilege check.",
+    "Production SQL, COMMIT/ROLLBACK behavior, runtime transport, concurrent sessions, natural audit/HTTP and positive renewal are not proved.",
+    "The missing reviewed transport pin and separate exact execution authorizations remain required."
+  ]
+}

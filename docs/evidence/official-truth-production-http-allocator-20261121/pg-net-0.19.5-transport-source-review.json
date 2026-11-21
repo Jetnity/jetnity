@@ -1,0 +1,214 @@
+{
+  "schema": "jetnity-pg-net-transport-primary-source-review-v1",
+  "reviewed_at_utc": "2026-11-21T18:17:55Z",
+  "status": "UPSTREAM_STATIC_ID_CONTRACT_DOCUMENTED_NO_PROJECT_OR_RUNTIME_TEST",
+  "requested_scope": "pg_net 0.19.5 Production-version contract versus 0.20.4 Dev-version contract, plus PostgreSQL 17 BEFORE INSERT / RETURNING semantics.",
+  "version_assignment_source": "Production 0.19.5 / Dev 0.20.4 supplied by Root from earlier evidence; no project access was made in this review.",
+  "tags": [
+    {
+      "version": "0.19.5",
+      "ref": "refs/tags/v0.19.5",
+      "commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+      "object_type": "commit",
+      "official_api_url": "https://api.github.com/repos/supabase/pg_net/git/ref/tags/v0.19.5"
+    },
+    {
+      "version": "0.20.4",
+      "ref": "refs/tags/v0.20.4",
+      "commit": "698fb055f666366a78c112b0578b0a5652ddbcfa",
+      "object_type": "commit",
+      "official_api_url": "https://api.github.com/repos/supabase/pg_net/git/ref/tags/v0.20.4"
+    }
+  ],
+  "pg_net_0_19_5": {
+    "sources": [
+      {
+        "path": "src/core.c",
+        "git_blob_sha": "f095cdbd563202f9a1bd8b8aeed7b499a734fac2",
+        "commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+        "url": "https://github.com/supabase/pg_net/blob/a7792bfd913c7859e14025d606624982706c2a7f/src/core.c"
+      },
+      {
+        "path": "src/worker.c",
+        "git_blob_sha": "cec0b5e3ec5df6f30975e224cdce3645234fa0a1",
+        "commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+        "url": "https://github.com/supabase/pg_net/blob/a7792bfd913c7859e14025d606624982706c2a7f/src/worker.c"
+      }
+    ],
+    "trace": [
+      {
+        "file": "src/worker.c",
+        "lines": [
+          297,
+          338
+        ],
+        "finding": "The actual worker calls consume_request_queue and then insert_curl_responses."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          230,
+          276
+        ],
+        "finding": "The queue consumer deletes selected rows with RETURNING q.id first, reads that first SPI column as int64, and passes that same value into init_curl_handle."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          52,
+          56
+        ],
+        "finding": "init_curl_handle assigns the received id directly to cdata->id."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          115,
+          322
+        ],
+        "finding": "The CurlData pointer is retained as CURLOPT_PRIVATE and recovered through CURLINFO_PRIVATE on completion."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          172,
+          186
+        ],
+        "finding": "The transport-failure path inserts its received id as the first INT8 parameter into net._http_response.id."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          197,
+          205
+        ],
+        "finding": "The transport-success path inserts cdata->id as the first INT8 parameter into net._http_response.id."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          324,
+          335
+        ],
+        "finding": "Both completion paths consume the same preserved CurlData identity."
+      }
+    ],
+    "worker_id_reallocation_in_reviewed_path": false,
+    "queue_id_preserved_in_response_id": true,
+    "meaning": "Identity is preserved when this upstream worker writes a response; this does not promise successful delivery, retention, or exactly-once effects."
+  },
+  "pg_net_0_20_4_comparison": {
+    "sources": [
+      {
+        "path": "src/core.c",
+        "git_blob_sha": "dd6c93c67485f72e9d665972972a1d52881d52fc",
+        "commit": "698fb055f666366a78c112b0578b0a5652ddbcfa",
+        "url": "https://github.com/supabase/pg_net/blob/698fb055f666366a78c112b0578b0a5652ddbcfa/src/core.c"
+      },
+      {
+        "path": "src/core.h",
+        "git_blob_sha": "dff2f6715053bef964a4e0cd2fdfa162b62837d5",
+        "commit": "698fb055f666366a78c112b0578b0a5652ddbcfa",
+        "url": "https://github.com/supabase/pg_net/blob/698fb055f666366a78c112b0578b0a5652ddbcfa/src/core.h"
+      },
+      {
+        "path": "src/worker.c",
+        "git_blob_sha": "c014c30227664eae3b591b67b7813128f48fbe6a",
+        "commit": "698fb055f666366a78c112b0578b0a5652ddbcfa",
+        "url": "https://github.com/supabase/pg_net/blob/698fb055f666366a78c112b0578b0a5652ddbcfa/src/worker.c"
+      }
+    ],
+    "trace": [
+      {
+        "file": "src/core.c",
+        "lines": [
+          161,
+          216
+        ],
+        "finding": "The queue DELETE still returns q.id first; get_request_queue_row reads it as int64 into RequestQueueRow.id."
+      },
+      {
+        "file": "src/core.h",
+        "lines": [
+          21,
+          42
+        ],
+        "finding": "RequestQueueRow and CurlHandle both retain the identifier as int64."
+      },
+      {
+        "file": "src/worker.c",
+        "lines": [
+          328,
+          330
+        ],
+        "finding": "The worker passes each get_request_queue_row result directly into init_curl_handle."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          47,
+          48
+        ],
+        "finding": "init_curl_handle copies row.id into handle->id."
+      },
+      {
+        "file": "src/worker.c",
+        "lines": [
+          374,
+          376
+        ],
+        "finding": "On completion the same private handle is passed into insert_response."
+      },
+      {
+        "file": "src/core.c",
+        "lines": [
+          240,
+          300
+        ],
+        "finding": "insert_response puts handle->id into vals[0], which supplies net._http_response.id."
+      }
+    ],
+    "same_identifier_forwarding_contract": true,
+    "whole_source_or_binary_equivalence_claimed": false
+  },
+  "postgresql_17_semantics": {
+    "sources": [
+      {
+        "url": "https://www.postgresql.org/docs/17/trigger-definition.html",
+        "section": "37.1 Overview of Trigger Behavior",
+        "finding": "A row-level BEFORE INSERT trigger may return a modified row; that returned row is the row inserted."
+      },
+      {
+        "url": "https://www.postgresql.org/docs/17/dml-returning.html",
+        "section": "6.4 Returning Data from Modified Rows",
+        "finding": "RETURNING observes the row as modified by triggers."
+      }
+    ],
+    "conclusion": "Provided the BEFORE INSERT trigger fires and returns NEW, INSERT ... RETURNING id receives the final trigger-assigned id. The reviewed pg_net worker subsequently preserves the stored queue id as response id.",
+    "assumptions": [
+      "The correct BEFORE INSERT row trigger actually fires.",
+      "The trigger returns the modified NEW row rather than NULL.",
+      "No later trigger changes the id again."
+    ],
+    "sql_api_definitions": "Root reports their exact installed V2 hashes already checked; this review did not execute SQL or independently re-query their installed definitions."
+  },
+  "limits": {
+    "hosted_binary_build_identity_verified": false,
+    "production_runtime_test_performed": false,
+    "database_calls_performed": 0,
+    "jetnity_or_supabase_project_requests_performed": 0,
+    "software_installed": false,
+    "production_write_or_http_request_enqueued": false,
+    "source_qualification_granted": false,
+    "deployment_or_repair_authorized": false,
+    "role_replication_mode_or_trigger_bypass_protection_proven_by_this_source_review": false,
+    "crash_failover_delivery_or_sequence_durability_proven_by_this_source_review": false
+  },
+  "retrieval": {
+    "method": "Official public GitHub repository connector, immutable commit-pinned files and tag refs; official PostgreSQL 17 documentation via web.",
+    "exact_tag_publicly_available": true,
+    "github_web_renderer_limit": "Web rendering of release/raw-code URLs returned DisabledError. Exact tag refs and code were successfully retrieved through the official public GitHub read connector; no guessed tag or fallback version was used.",
+    "primary_source_only": true
+  }
+}
+

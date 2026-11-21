@@ -1,0 +1,212 @@
+{
+  "schema": "jetnity-bg1-schedule-pause-outcome-v1",
+  "observed_at_utc": "2026-11-21T19:13:09Z",
+  "observed_at_zurich": "2026-11-21T20:13:09+01:00",
+  "status": "NOT_PAUSED_REQUIRED_AUTH_CHECK_FAILED",
+  "production_actions_by_this_preparation": 0,
+  "production_sql_executed": false,
+  "direct_auth_configuration_changed": false,
+  "workflow_pr": {
+    "number": 1269,
+    "url": "https://github.com/Jetnity/jetnity/pull/1269",
+    "head": "9060567a0f1329eb7a6de61a49698e907fa28fd7",
+    "base": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4",
+    "merged": false,
+    "draft": false,
+    "changed_files": 5
+  },
+  "main_schedule_observation": {
+    "source": "https://api.github.com/repos/Jetnity/jetnity/contents/.github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml?ref=main",
+    "cron": "*/5 * * * *",
+    "workflow_dispatch_present": true,
+    "pause_effective": false
+  },
+  "prior_ci": {
+    "head": "24b0c057c4d24a99e54e601cb83fe80902a37586",
+    "run": 44936117463,
+    "actions_jobs_success": 12,
+    "checks_success": 13,
+    "vercel_commit_status": "success",
+    "historical_only": true
+  },
+  "strict_integration": {
+    "rejected_normal_merge_http_status": 405,
+    "reason": "Main advanced; three required current checks expected",
+    "main_integrated": "1acee55c412ed1ccb3bba6e6c5919e5ffc57f5d4",
+    "true_two_parent_head": "9060567a0f1329eb7a6de61a49698e907fa28fd7",
+    "tree": "dcfc99f7e7c2ede7932aa8b491be6aa933eaf4a7",
+    "independent_git_merge_tree_exact": true,
+    "five_reviewed_files_byte_identical": true,
+    "parallel_main_files": 44,
+    "overlap_with_five_files": 0,
+    "main_automatic_website_deployment": false,
+    "ruleset_id": 21875372,
+    "ruleset_source": "https://github.com/Jetnity/jetnity/rules/21875372",
+    "required_status_check_rule": {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          {
+            "context": "Typecheck, Lint & Build",
+            "integration_id": 15368
+          },
+          {
+            "context": "Auth-Konfiguration gegen config.toml",
+            "integration_id": 15368
+          },
+          {
+            "context": "Vercel",
+            "integration_id": 8329
+          }
+        ]
+      }
+    },
+    "bypass": false,
+    "force_push": false
+  },
+  "current_ci": {
+    "run": 44938919274,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/44938919274",
+    "head": "9060567a0f1329eb7a6de61a49698e907fa28fd7",
+    "status_at_observation": "in_progress",
+    "jobs": [
+      {
+        "name": "Atomic version refresh — native",
+        "id": 136951590039,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Accepted store trip integration — native (lifecycle)",
+        "id": 136951590348,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Official truth V3 — isolated UI",
+        "id": 136951590356,
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-21T19:05:52Z"
+      },
+      {
+        "name": "Repository verification",
+        "id": 136951590374,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Hosted V3 — native PostgreSQL 17 (quota)",
+        "id": 136951590382,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Persisted canonical read — native",
+        "id": 136951590416,
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-21T19:09:10Z"
+      },
+      {
+        "name": "Auth-Konfiguration gegen config.toml",
+        "id": 136951590420,
+        "status": "completed",
+        "conclusion": "failure",
+        "completed_at": "2026-11-21T19:06:36Z"
+      },
+      {
+        "name": "Accepted store trip integration — native (store)",
+        "id": 136951590439,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Admin editorial CMS — isolated native proof",
+        "id": 136951590454,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      },
+      {
+        "name": "Admin marketing drafts — isolated native proof",
+        "id": 136951590457,
+        "status": "completed",
+        "conclusion": "success",
+        "completed_at": "2026-11-21T19:07:27Z"
+      },
+      {
+        "name": "Hosted V3 — native PostgreSQL 17 (main)",
+        "id": 136951590478,
+        "status": "in_progress",
+        "conclusion": null,
+        "completed_at": null
+      }
+    ],
+    "auth_failure": {
+      "job": 136951590420,
+      "step": "Abgleich",
+      "url": "https://github.com/Jetnity/jetnity/actions/runs/44938919274/job/136951590420",
+      "api_field": "passkey_enabled",
+      "expected": false,
+      "observed": true,
+      "source": "config.toml: auth.passkey.enabled",
+      "values_checked": 56,
+      "keys_seen": 244,
+      "exit_code": 1,
+      "http_error_code_reported": false,
+      "target_literal_in_log": "***",
+      "dev_target_contract": "jetnity.dev-auth-redirects.2026-11-15",
+      "target_explanation": "The CLI first rejects a non-branch target; the fixed Dev redirect helper rejects any ref other than yfvbxvijcorffwxbxahl before the Auth GET. No target secret is disclosed.",
+      "log_excerpt": [
+        "2026-11-21T19:06:33.1317837Z > node --import tsx scripts/auth/pruefen.ts",
+        "2026-11-21T19:06:33.1318062Z ",
+        "2026-11-21T19:06:34.4781258Z Dev-Redirect-Vertrag: jetnity.dev-auth-redirects.2026-11-15; Ziel ***; Quelle #1197@70a3cb09204e74f6bcd4a5b481e942e526a6102f.",
+        "2026-11-21T19:06:34.4782631Z Auth-Konfiguration geprüft: 56 Werte, 244 Schlüssel am Branch.",
+        "2026-11-21T19:06:34.4782972Z ",
+        "2026-11-21T19:06:34.4783340Z   ✗ 1 Abweichung(en):",
+        "2026-11-21T19:06:34.4783690Z       passkey_enabled",
+        "2026-11-21T19:06:34.4784108Z         erwartet: false",
+        "2026-11-21T19:06:34.4784575Z         gefunden: true",
+        "2026-11-21T19:06:34.4785003Z         Quelle:   config.toml: auth.passkey.enabled",
+        "2026-11-21T19:06:34.4785705Z   ✓ kein Anmeldedienst und kein Hook eingeschaltet, den config.toml nicht nennt",
+        "2026-11-21T19:06:34.4786408Z   ✓ jeder Schlüssel der API ist im Repository eingeordnet",
+        "2026-11-21T19:06:34.4787036Z   ✓ die Passwortregel der Formulare entspricht config.toml",
+        "2026-11-21T19:06:34.4920285Z ##[error]Process completed with exit code 1.",
+        "2026-11-21T19:06:34.5065824Z Post job cleanup.",
+        "2026-11-21T19:06:34.5773126Z [command]/usr/bin/git version"
+      ]
+    }
+  },
+  "concurrent_passkey_context": {
+    "pr": 1240,
+    "head": "e5f6588f78109eb2ec56a9df6380c16dd90bfc8d",
+    "comment_url": "https://github.com/Jetnity/jetnity/pull/1240#issuecomment-7066786470",
+    "comment_created_at": "2026-11-21T17:50:37Z",
+    "relevant_original_text": "[auth.passkey] bleibt false, bis die CI dieses Heads grün ist. Danach nur Dev, nicht Production. Kein Merge.",
+    "interpretation": "A separate Dev passkey activation was planned; this alone does not establish who changed the live value or the current intended end state. Do not reset the other workstream or change the expected config merely to satisfy CI."
+  },
+  "performed_narrow_workflow_change": "Only on.schedule removed; workflow_dispatch and executable monitor unchanged; two existing schedule contract tests adjusted; runbook and overall plan recorded.",
+  "not_performed": [
+    "No successful merge of #1269",
+    "No workflow dispatch",
+    "No ruleset change or bypass",
+    "No Dev passkey toggle or config.toml change",
+    "No new Production read, write, source, HTTP, Owner, role or login action",
+    "No full Actions disable"
+  ],
+  "automatic_approval_rejection": {
+    "action": "Disable entire workflow",
+    "reason": "Would also remove manual execution; only automatic schedule pause authorized",
+    "executed": false,
+    "alternative": "Normal narrow PR removing on.schedule only"
+  },
+  "next_step": "Resolve the intended Dev passkey state with the parallel passkey workstream under explicit Owner direction, make repository expectation and live Dev state consistent without weakening checks, run current required checks, then normal merge and independent main readback. Existing pause authorization persists."
+}

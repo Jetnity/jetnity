@@ -1,0 +1,73 @@
+{
+  "schema": "jetnity-production-at-enqueue-diagnosis-static-review-v1",
+  "status": "PREPARED_UNEXECUTED_STATIC_REVIEW_ONLY",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "execution_requires_separate_exact_owner_go": true,
+  "sql_file": "00-at-enqueue-diagnosis.READONLY.sql",
+  "sql_sha256": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+  "sql_bytes": 15042,
+  "basis_execution_file": "docs/evidence/official-truth-production-readonly-v2-20261121/execution.json",
+  "basis_execution_sha256": "8342931920800ebcfa926b20225c6e381843da930ce02bd9d527b896334db724",
+  "basis_authorization_id": "PROD_READONLY_BASELINE_20261121_V2",
+  "basis_observed_at": "2026-11-21T17:43:04.695814+00:00",
+  "fixed_failed_runids": [
+    "23758",
+    "23767",
+    "23776"
+  ],
+  "expected_run_start_and_end_times_verified_locally": true,
+  "fixed_command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+  "enqueue_current_definition_sha256_pin": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+  "enqueue_body_sha256_matches_versioned_stage1_install": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+  "jobid_limit": "V2 omitted numeric jobid; resolve exactly one unchanged current job and bind every retained run to it.",
+  "limits": {
+    "transactions": 1,
+    "result_rows": 1,
+    "statement_timeout_ms": 8000,
+    "lock_timeout_ms": 500,
+    "transaction_timeout_ms": 12000,
+    "idle_timeout_ms": 12000,
+    "raw_messages_max": 3,
+    "raw_message_bytes_max_each": 8192,
+    "result_bytes_max": 8192,
+    "retries": 0,
+    "time_window_fallbacks": 0
+  },
+  "checks": {
+    "only_begin_set_local_one_select_rollback": true,
+    "mutating_sql_tokens_absent_outside_literals_and_comments": true,
+    "three_exact_saved_run_bindings": true,
+    "missing_or_nonunique_job_is_stop": true,
+    "missing_retained_run_is_stop": true,
+    "changed_metadata_or_definition_is_stop": true,
+    "missing_overlong_or_unclassified_error_is_stop": true,
+    "bounded_full_message_hash_only": true,
+    "raw_message_detail_context_command_or_values_returned": false,
+    "original_sqlstate_claimed_observed": false,
+    "sqlstate_signature_reference_explicitly_separate": true,
+    "postgresql_parser_validation": false,
+    "runtime_validation": false,
+    "database_calls_performed": 0
+  },
+  "native_error_policy": "Missing fixed objects/columns or incompatible shapes can raise during parse/planning; every SQL/service/timeout error is STOP, no retry, and no raw service error body is published.",
+  "result_scope": "Logged historical error signatures only. No stored-duplicate proof, sequence/root-cause chain, current BG1 health, source qualification, repair permission or follow-up authority.",
+  "independent_review_pending": false,
+  "independent_review": {
+    "reviewer": "at_source_guard",
+    "reviewed_sql_sha256": "d3b3a83fd36e295978b2e670549a3bce9132402ec7ca81764b95b16a39392397",
+    "result": "NO_CONCRETE_STATIC_SYNTAX_OR_SAFETY_BLOCKER",
+    "exact_saved_run_times_and_command_hash_confirmed": true,
+    "fixed_production_bg1_message_reference_confirmed": true,
+    "parser_or_runtime_validation": false,
+    "database_browser_network_calls": 0,
+    "files_modified_by_reviewer": false
+  },
+  "earlier_independent_review": {
+    "reviewer": "sequence_renewal_review",
+    "reviewed_sql_sha256": "0fa947b5ad141c7aa0a8e97a266e5a2c1bf35d62800f0e7090f9de0f5f10b4f1",
+    "result": "NO_CONCRETE_STATIC_SYNTAX_OR_SAFETY_BLOCKER",
+    "parser_or_runtime_validation": false,
+    "one_subsequent_delta": "Added exact known Production BG1 message signature plus reference P7905; no runtime authority implied.",
+    "reference_source": "scripts/db/official-truth-at-production-stage1/install.sql"
+  }
+}

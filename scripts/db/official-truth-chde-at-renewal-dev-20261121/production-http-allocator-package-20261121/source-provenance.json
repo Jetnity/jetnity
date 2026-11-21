@@ -1,0 +1,103 @@
+{
+  "schema": "production-http-allocator-offline-source-bindings-v1",
+  "v2_execution_path": "docs/evidence/official-truth-production-readonly-v2-20261121/execution.json",
+  "v2_execution_sha256": "8342931920800ebcfa926b20225c6e381843da930ce02bd9d527b896334db724",
+  "production_originals": [
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "source": "scripts/db/official-truth-bg1-self-heal-dev-1/production-bg1-v3-chain-exact.CANDIDATE-ROLLBACK.sql",
+      "source_sha256": "440c466f8fb074f956ec404ab1949b6146a1356760fb45473e7162d82b1bb673",
+      "body_sha256": "c605e1e83245e11124219cdd95d732d8d3474125def2bbda15305796dc54b615",
+      "v2_definition_sha256": "037ca263eeeed28c4c6402f7fca4a751db56f73ff8ada7e71656576f27b22f3f",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_guard_private.assert_catalog_v1()",
+      "source": "scripts/db/official-truth-bg1-self-heal-dev-1/production-bg1-v3-chain-exact.CANDIDATE-ROLLBACK.sql",
+      "source_sha256": "440c466f8fb074f956ec404ab1949b6146a1356760fb45473e7162d82b1bb673",
+      "body_sha256": "887afaf4d96fabbb7b7a19e4aaee26c5fa65e5b901711eb710f378b5510a2d63",
+      "v2_definition_sha256": "392ea8733d60115b7e2c0135e21c76116f9f4d066988dda860e5129d427553fa",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_guard_private.audit_v1()",
+      "source": "scripts/db/official-truth-bg1-self-heal-dev-1/production-bg1-v3-chain-exact.CANDIDATE-ROLLBACK.sql",
+      "source_sha256": "440c466f8fb074f956ec404ab1949b6146a1356760fb45473e7162d82b1bb673",
+      "body_sha256": "303aa0c7c60b74e36b445dca0508e0c4f5f1c84a379832d8905ab8f501b8c5ae",
+      "v2_definition_sha256": "b6f56232b998dea7868bf9767f8e9012282a43512a1e5fd622c9824e62fd2fff",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_guard_private.require_open_v1()",
+      "source": "scripts/db/official-truth-bg1-self-heal-dev-1/production-bg1-v3-chain-exact.CANDIDATE-ROLLBACK.sql",
+      "source_sha256": "440c466f8fb074f956ec404ab1949b6146a1356760fb45473e7162d82b1bb673",
+      "body_sha256": "d86badf708baa17eccb6771d87c072e054e84f9b06b5497395cd6dc39ad5a5af",
+      "v2_definition_sha256": "9ce675e839dc71ee19ddba5f44503472e2f1caa07add90d5709df4f5164a20e5",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "source": "scripts/db/official-truth-bg1-self-heal-dev-1/production-bg1-v3-chain-exact.CANDIDATE-ROLLBACK.sql",
+      "source_sha256": "440c466f8fb074f956ec404ab1949b6146a1356760fb45473e7162d82b1bb673",
+      "body_sha256": "ac7a2addd6e51cb33d5308cfc7f4e2fd3dcd869057d36a84a63d6ed5ed4a34c3",
+      "v2_definition_sha256": "d60554d4a4d902b76c51f9e5b1f2f718692732bcda614f0f1783a154ba7677ec",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_at_production_private.enqueue_v1()",
+      "source": "scripts/db/official-truth-at-production-stage1/install.sql",
+      "source_sha256": "8adfe4df7da08677e42849f28f8458e48f5284b25127bd4ce5c5815e1aed982f",
+      "body_sha256": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+      "v2_definition_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_at_production_private.collect_v1()",
+      "source": "scripts/db/official-truth-at-production-stage1/install.sql",
+      "source_sha256": "8adfe4df7da08677e42849f28f8458e48f5284b25127bd4ce5c5815e1aed982f",
+      "body_sha256": "920f4b870a072d854c86b351439c9ce5f5ac6dd1ea7be5ed9d3f19fad9c4c8b2",
+      "v2_definition_sha256": "3e681172f296ba3c4202dbf8108552201f613f8de345e6c339288f8680683422",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    },
+    {
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "source": "scripts/db/official-truth-at-production-schedule-v2/batch-switch-v3.CANDIDATE.sql",
+      "source_sha256": "48743b5d94c615906f328456bd7f32ef29f8c384e05cfdc5f25f2393b516cfbf",
+      "body_sha256": "f6acadd6730b206ee52053b8642f60ed883b19cdd920827cd9dd429bd6d5fb2f",
+      "v2_definition_sha256": "5171785c2b114a816c13c5e2dc26cc2a397c6837fccfcbda2974f706b10b5f76",
+      "body_exactly_matches_actual_v2": true,
+      "source_statement_is_not_claimed_to_be_native_pg_get_functiondef_format": true
+    }
+  ],
+  "existing_net_api_source": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/reviewed-net-api-definitions.json",
+    "sha256": "6a403e5f825ac48525fd8c6b9665c52472bee1cfc24fbef23b60e977211c8333",
+    "all_three_definitions_exactly_match_production_v2": true,
+    "existing_managed_api_definitions_modified": false
+  },
+  "new_body_sha256": {
+    "official_v3_guard_private.catalog_status_v1()": "a0a50ad3ecc7433d99685b1eb232b3d811d7eb6fe1cc5ea55643420aba9a72d3",
+    "official_v3_guard_private.assert_catalog_v1()": "826ba2a7ef4dd29f6aefa8c88323d22f93e181224f472422e289ef5b9756bb2f",
+    "official_v3_guard_private.require_open_v1()": "de352dc414b5a5545cc0cb0edc245ed2312777d73b250adcdc9b93ca804ebcae",
+    "public.official_v3_guard_alarm_status_v1()": "74c42a03ffa33e850383eaa995af8f935e6686aa4f445719faa3313971fc488f",
+    "official_v3_at_production_private.renew_ch_v1()": "572a243b45785800f67f372c0667397d448e1eea5769c74065d4709a59e3b562"
+  },
+  "helper_body_sha256": "5074ea591410f77e797956b6c37b7379edee30c534707779d690c0ff56d2d1e1",
+  "fence_body_sha256": "007862ae47509d8408f4a2b1665e8fa7bbf2e3e4baa36e7c71f2c8a8025f96a6",
+  "audit_and_control_definition_changes": false,
+  "pg_net_upstream_static_review": {
+    "evidence_path": "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json",
+    "sha256": "7ec6c65732acc5681a3f79d4cd612276461289576c5a8582a2bd1044d15fdef2",
+    "upstream_commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "static_id_transport_review_complete": true,
+    "hosted_binary_identity_or_runtime_proof": false
+  },
+  "actual_postgres_parse_or_execution": false
+}

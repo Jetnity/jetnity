@@ -1,0 +1,29 @@
+{
+  "schema": "jetnity-bg1-schedule-pause-first-ci-failure-v1",
+  "run_id": 44934380723,
+  "job_id": 136937711378,
+  "head_sha": "b61bb8a9d65b417cd7f63e086249f10db7d1fe48",
+  "source_url": "https://github.com/Jetnity/jetnity/actions/runs/44934380723/job/136937711378",
+  "scope": "Retained exact failure lines and test totals, not the full job log.",
+  "failure_excerpt": [
+    "2026-11-21T18:26:01.3904676Z not ok 2435 - Alarm workflow uses an existing public-only key and GitHub-run token, stays disabled until exact Production Owner arm",
+    "2026-11-21T18:26:01.3904763Z   ---",
+    "2026-11-21T18:26:01.3904849Z   duration_ms: 1.415294",
+    "2026-11-21T18:26:01.3904939Z   type: 'test'",
+    "2026-11-21T18:26:01.3905492Z   location: '/home/runner/work/jetnity/jetnity/lib/readiness/official-truth-product-v3/guard/bg1-v3-five-minute-alarm-native-contract.test.ts:2:3703'",
+    "2026-11-21T18:26:01.3905633Z   failureType: 'testCodeFailure'",
+    "2026-11-21T18:26:01.3905727Z   error: |-",
+    "2026-11-21T18:26:01.3905992Z     The input did not match the regular expression /cron: '\\*\\/5 \\* \\* \\* \\*'/. Input:",
+    "2026-11-21T18:26:01.3906079Z     ",
+    "2026-11-21T18:26:01.3906535Z     'name: BG1 Production integrity alarm (5-minute, candidate)\\n' +"
+  ],
+  "summary_excerpt": [
+    "2026-11-21T18:28:12.7693505Z # tests 10639",
+    "2026-11-21T18:28:12.7693638Z # pass 10636",
+    "2026-11-21T18:28:12.7693705Z # fail 1",
+    "2026-11-21T18:28:12.7693833Z # skipped 2"
+  ],
+  "cause": "A second existing workflow contract still required cron */5; only this stale schedule expectation was aligned with the authorized pause.",
+  "resolution_head_sha": "24b0c057c4d24a99e54e601cb83fe80902a37586",
+  "assertions_on_runtime_alarm_owner_keys_and_target_removed": false
+}
