@@ -17,7 +17,7 @@ export function nativeProductRuntime(state:NativeRuntimeState) {
   // These are the ACTUAL packages in CI. Absence is failure, never a skip or a
   // replacement Auth response. Native Node22/SSR0.6.1 is independently asserted.
   assert.equal(JSON.parse(readFileSync('node_modules/@supabase/ssr/package.json','utf8')).version,'0.6.1')
-  assert.equal(JSON.parse(readFileSync('node_modules/@supabase/supabase-js/package.json','utf8')).version,'2.57.2')
+  assert.equal(JSON.parse(readFileSync('node_modules/@supabase/supabase-js/package.json','utf8')).version,'2.119.2')
   const cache=new Map<string,{exports:unknown}>()
   const fixtureExtractors={...extractors,OFFICIAL_TRUTH_TRUSTED_FACT_EXTRACTOR_REGISTRY:Object.freeze([fixtureExtractor]),
     officialTruthTrustedFactExtrahieren:(input:unknown)=>extractors.officialTruthTrustedFactExtrahierenMitDefinitionen(input,[fixtureExtractor])}

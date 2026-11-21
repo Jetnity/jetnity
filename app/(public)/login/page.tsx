@@ -2,6 +2,8 @@
 import { redirect } from 'next/navigation'
 
 import LoginForm from '@/components/auth/LoginForm'
+import { passkeysServerAktiviertLesen } from '@/lib/auth/account-security-passkeys-lesen'
+import { kontoAnzeigesprache } from '@/lib/localization/konto-anzeigesprache'
 import { anmeldeSeiteZiel } from '@/lib/auth/naechstes-ziel'
 import { oauthFreigabeLesen } from '@/lib/auth/oauth-anbieter-lesen'
 import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
@@ -22,6 +24,7 @@ export default async function LoginPage({
 }: {
   searchParams: PageRequestParam<LoginSearchParams>
 }) {
+  const sprache = await kontoAnzeigesprache()
   const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()
   const params = await leseRequestParam(searchParams)
@@ -30,7 +33,7 @@ export default async function LoginPage({
 
   return (
     <main className="min-h-[70dvh] container mx-auto px-4 py-10 flex items-center justify-center">
-      <LoginForm next={params.next ?? null} oauth={oauthFreigabeLesen()} />
+      <LoginForm next={params.next ?? null} oauth={oauthFreigabeLesen()} sprache={sprache} passkeysServerAktiviert={passkeysServerAktiviertLesen()} />
     </main>
   )
 }

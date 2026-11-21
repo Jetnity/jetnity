@@ -29,8 +29,13 @@ function getSupabaseBrowser(): SupabaseClient<Database> {
     merkeCallbackLage(document.cookie, window.location.href, url);
   }
 
-  // Typ-Stabilisierung zwischen @supabase/ssr und supabase-js unter TS5/strict:
-  const sb = _createBrowserClient(url, anon) as unknown as SupabaseClient<Database>;
+  // Ein Browser-Client. `experimental.passkey` ist die einmalige Opt-in-Stelle.
+  // Ab supabase-js 2.119 ignoriert die Bibliothek das Flag, weil die Methoden
+  // im Client standardmässig vorhanden sind. Der Server bleibt die Sperre:
+  // `[auth.passkey] enabled = false`. Kein zweiter Client, keine zweite Sitzung.
+  const sb = _createBrowserClient(url, anon, {
+    auth: { experimental: { passkey: true } },
+  }) as unknown as SupabaseClient<Database>;
   verknuepfeCallbackSitzung(url, sb);
   _sb = sb;
   return sb;

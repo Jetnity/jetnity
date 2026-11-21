@@ -9,6 +9,16 @@
 **Main-CI:** [Run 44333651972](https://github.com/Jetnity/jetnity/actions/runs/44333651972) \`SUCCESS\` auf dem oben genannten Main-Commit.  
 **Wichtig:** Dieser Bericht ist weder ein neuer V1 Release-Readiness-PASS noch eine Genehmigung, Code, Datenbanken, Produktion oder Anbieter zu ändern.
 
+## Nachtrag 19. November 2026 — Passkeys Dev 1
+
+Draft [#1240](https://github.com/Jetnity/jetnity/pull/1240) hat `main` bis `9f065a555754c76c64a4f02868797c70f1f49310` übernommen. Abgeschlossen in diesem Draft, nicht live:
+
+- `@supabase/supabase-js` `2.119.2` im bestehenden Browser-Singleton, einmal `auth.experimental.passkey`. `@supabase/ssr` bleibt `0.6.1`. `[auth.passkey] enabled` bleibt `false`. RP-ID geplant `jetnity.com`. `*.vercel.app` und Loopback bleiben geschlossen.
+- Hinzufügen, Umbenennen und Entfernen verlangen am Schreibzugang einen frischen Passwort-Nachweis oder, wenn ein bestätigter TOTP-Faktor existiert, einen verifizierten AAL2-Schritt. `getUser()` allein reicht nicht.
+- Ein Passkey-Login, der einen TOTP-Step-up braucht, beendet die AAL1-Sitzung bei Abbruch, Fehler, fehlender Challenge und fehlender AAL-Lesung. Nur erfolgreiches TOTP führt weiter.
+
+Nicht abgeschlossen und weiter Owner-Gate: Server-Enable, echte RP-/Origin-Freigabe, Geräte-Smoke. `MOCK_PASS`. `HOSTED_E2E_NOT_RUN`. Kein Production-Passkey. Die Tabelle vom 18.11. bleibt der damalige Stand.
+
 ## 1. Verbindliche Dokumentenhierarchie und unveränderte Vision
 
 Die bestehenden verbindlichen Quellen bleiben unverändert und gehen diesem datierten Abgleich für **Zielbild, rechtliche/technische Gates und Produktphasen** vor:

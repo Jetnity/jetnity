@@ -310,8 +310,8 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     const js = JSON.parse(readFileSync(join(hier, '../../node_modules/@supabase/supabase-js/package.json'), 'utf8')) as { version: string }
     const auth = JSON.parse(readFileSync(join(hier, '../../node_modules/@supabase/auth-js/package.json'), 'utf8')) as { version: string }
     assert.equal(ssr.version, '0.6.1')
-    assert.equal(js.version, '2.57.2')
-    assert.equal(auth.version, '2.71.1')
+    assert.equal(js.version, '2.119.2')
+    assert.equal(auth.version, '2.119.2')
   })
 
   test('der Browser-Client schaltet die URL-Erkennung nicht ab', () => {
@@ -336,10 +336,9 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     const callback = client(url)
     const zweiter = await callback.auth.exchangeCodeForSession('erster-code')
     const sitzungDanach = await callback.auth.getSession()
-    assert.equal(pkce.length, 2)
+    assert.equal(pkce.length, 1)
     assert.equal(pkce[0]?.verifierLeer, false)
-    assert.equal(pkce[1]?.verifierLeer, true)
-    assert.equal(zweiter.error?.message, LEERER_VERIFIER)
+    assert.equal(zweiter.error?.name, 'AuthPKCECodeVerifierMissingError')
     assert.equal(Boolean(sitzungDanach.data.session), true)
     assert.equal(new URL(href).searchParams.has('code'), false)
     await anhalten()
@@ -379,7 +378,7 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
       (globalThis as { document: { cookie: string } }).document.cookie,
       url,
     )
-    assert.equal(gelesen?.split('/')[1], 'PASSWORD_RECOVERY')
+    assert.equal(gelesen?.split('/')[1], 'recovery')
     href = 'https://jetnity.test/auth/callback?code=recovery-code&next=%2Freisen'
     const ergebnis = await schliesseAuthCallbackAb(eingabe(url, () => client(url)))
     assert.deepEqual(ergebnis, { art: 'ok', ziel: PASSWORT_AKTUALISIEREN })
@@ -550,8 +549,8 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
       assert.equal(zweite.meldung, CALLBACK_MELDUNG_UNGUELTIG)
       assert.equal(zweite.meldung.includes('gleicher-code'), false)
     }
-    assert.equal(pkce.length, 1)
-    assert.equal(pkce[0]?.verifierLeer, true)
+    // 2.119 sendet keinen leeren Verifier mehr. Der Fehler bleibt lokal.
+    assert.equal(pkce.length, 0)
     assert.equal(offeneCallbackLaeufe(), 0)
     await anhalten()
   })
@@ -610,8 +609,8 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
       freigabe = resolve
     })
     const sdk = client(url)
-    for (let i = 0; i < 20 && !pkceAngekommen; i += 1) {
-      await new Promise((resolve) => setTimeout(resolve, 0))
+    for (let i = 0; i < 40 && !pkceAngekommen; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 5))
     }
     assert.equal(pkceAngekommen, true)
     jar.clear()
@@ -716,8 +715,8 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
     })
     const sdk = client(url)
     const laufA = schliesseAuthCallbackAb(eingabe(url, () => sdk))
-    for (let i = 0; i < 20 && !pkceAngekommen; i += 1) {
-      await new Promise((resolve) => setTimeout(resolve, 0))
+    for (let i = 0; i < 40 && !pkceAngekommen; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 5))
     }
     assert.equal(pkceAngekommen, true)
     href = 'https://jetnity.test/auth/callback?code=tl-invalid-B&next=%2Freisen'
@@ -732,7 +731,10 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
       assert.equal(b.meldung, CALLBACK_MELDUNG_UNGUELTIG)
       assert.equal(b.meldung.includes('tl-invalid-B'), false)
     }
-    assert.equal(pkce.some((eintrag) => eintrag.code === 'tl-invalid-B'), true)
+    // 2.119 hält den Verifier während des ersten Tauschs. Der zweite Code
+    // scheitert dann lokal, ohne einen leeren Verifier zu senden.
+    assert.equal(pkce.filter((eintrag) => eintrag.code === 'tl-valid-A').length, 1)
+    assert.equal(pkce.some((eintrag) => eintrag.code === 'tl-invalid-B' && eintrag.verifierLeer === false), false)
     assert.equal(offeneCallbackLaeufe(), 0)
     await anhalten()
   })
@@ -853,8 +855,8 @@ describe('Auth-Callback PKCE', { concurrency: 1 }, () => {
       })
       const sdk = client(url)
       const lauf = schliesseAuthCallbackAb(eingabe(url, () => sdk))
-      for (let i = 0; i < 20 && !pkceAngekommen; i += 1) {
-        await new Promise((resolve) => setTimeout(resolve, 0))
+      for (let i = 0; i < 40 && !pkceAngekommen; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 5))
       }
       assert.equal(pkceAngekommen, true)
       const roh = feld === 'error' ? 'access_denied' : feld === 'error_description' ? 'roher-fehlertext' : 'otp_expired'

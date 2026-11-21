@@ -53,6 +53,18 @@ before(async () => {
       absWorkingDir: process.cwd(), entryPoints: ['scripts/account-language-settings-1/harness.tsx'],
       bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic',
       alias: { '@': process.cwd() },
+      plugins: [{
+        name: 'drop-auth-admin-secret-comment',
+        setup(build) {
+          build.onLoad({ filter: /GoTrueAdminApi\.js$/ }, (args) => {
+            const text = readFileSync(args.path, 'utf8')
+            return {
+              contents: text.replaceAll('process.env.SUPABASE_SECRET_KEY', '""'),
+              loader: 'js',
+            }
+          })
+        },
+      }],
       define: {
         'process.env.NODE_ENV': '"development"',
         // Next normally replaces these next/link build constants. This bare
@@ -68,6 +80,9 @@ before(async () => {
         // No real Supabase URL, token or browser Auth session enters the proof.
         'process.env.NEXT_PUBLIC_SUPABASE_URL': '"http://127.0.0.1:54321"',
         'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': '"synthetic-not-a-credential"',
+        // supabase-js 2.119 documents the secret only inside a comment in the
+        // admin client. The browser bundle must not keep a live process.env.
+        'process.env.SUPABASE_SECRET_KEY': '""',
       },
       banner: { js: 'var __name=(target)=>target;' },
     }),
