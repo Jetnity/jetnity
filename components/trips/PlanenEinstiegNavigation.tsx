@@ -6,7 +6,10 @@
 // eingehängt (`hidden`), damit Eingaben beim Wechsel erhalten bleiben.
 // Nur Navigation: kein Absenden, keine Persistenz, kein Modell- oder
 // Provideraufruf. Eine Aktivierung darf nur umschalten, fokussieren und
-// scrollen. Reduced Motion kommt aus `scrollVerhalten`.
+// scrollen. Reduced Motion kommt aus `scrollVerhalten`. Beim Wechsel von
+// «In eigenen Worten» zu «Schritt für Schritt» reicht sie den Text im Speicher
+// der Seite weiter (`usePlanenMitnahme`); ob er übernommen wird, entscheidet
+// das Formular.
 
 import * as React from 'react'
 import type { MouseEvent, ReactNode } from 'react'
@@ -83,9 +86,13 @@ function wegAusHash(hash: string): PlanenWeg | null {
 
 type Ansteuerung = 'fokus' | 'scrollen'
 
+export type PlanenMitnahme = { text: string; nr: number }
+
 type WegKontext = {
   weg: PlanenWeg
   waehlen: (weg: PlanenWeg, ansteuerung: Ansteuerung) => void
+  ideeMelden: (text: string) => void
+  mitnahme: PlanenMitnahme | null
 }
 
 const PlanenWegKontext = React.createContext<WegKontext | null>(null)
@@ -94,6 +101,19 @@ function useWeg(): WegKontext {
   const kontext = React.useContext(PlanenWegKontext)
   if (!kontext) throw new Error('PlanenWegWahl fehlt')
   return kontext
+}
+
+/** Meldet den aktuellen Text aus «In eigenen Worten». Ausserhalb von /planen wirkungslos. */
+export function usePlanenIdeeMelden(text: string) {
+  const melden = React.useContext(PlanenWegKontext)?.ideeMelden
+  React.useEffect(() => {
+    melden?.(text)
+  }, [melden, text])
+}
+
+/** Der beim letzten Wechsel zu «Schritt für Schritt» mitgenommene Text; `nr` zählt die Wechsel. */
+export function usePlanenMitnahme(): PlanenMitnahme | null {
+  return React.useContext(PlanenWegKontext)?.mitnahme ?? null
 }
 
 /**
@@ -105,9 +125,20 @@ export function PlanenWegWahl({ start, children }: { start: PlanenWeg; children:
   // Gilt nur für den Weg, für den es gesetzt wurde: Der erste Effektlauf sieht
   // noch den alten Weg und darf die Ansteuerung nicht verbrauchen.
   const ansteuern = React.useRef<{ weg: PlanenWeg; art: Ansteuerung } | null>(null)
+  const ideeText = React.useRef('')
+  const aktuellerWeg = React.useRef<PlanenWeg>(start)
+  const [mitnahme, setMitnahme] = React.useState<PlanenMitnahme | null>(null)
+  const ideeMelden = React.useCallback((text: string) => {
+    ideeText.current = text
+  }, [])
 
   const waehlen = React.useCallback((naechster: PlanenWeg, art: Ansteuerung) => {
     ansteuern.current = { weg: naechster, art }
+    const text = ideeText.current.trim()
+    if (aktuellerWeg.current === 'idee' && naechster === 'manuell' && text) {
+      setMitnahme((bisher) => ({ text, nr: (bisher?.nr ?? 0) + 1 }))
+    }
+    aktuellerWeg.current = naechster
     setWeg(naechster)
   }, [])
 
@@ -139,7 +170,7 @@ export function PlanenWegWahl({ start, children }: { start: PlanenWeg; children:
     if (window.location.hash !== `#${id}`) window.history.replaceState(null, '', `#${id}`)
   }, [weg])
 
-  const wert = React.useMemo(() => ({ weg, waehlen }), [weg, waehlen])
+  const wert = React.useMemo(() => ({ weg, waehlen, ideeMelden, mitnahme }), [weg, waehlen, ideeMelden, mitnahme])
   return <PlanenWegKontext.Provider value={wert}>{children}</PlanenWegKontext.Provider>
 }
 

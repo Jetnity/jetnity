@@ -282,6 +282,38 @@ export function genericCreateCtaFuerSitzung(eingabe: {
 }
 
 /** Homepage-/Planen-Vorbelegung: nur wirklich vorhandene Felder. */
+/**
+ * Text aus «In eigenen Worten» für das Feld «Wünsche» beim Wechsel zu
+ * «Schritt für Schritt». Nur in ein leeres Feld oder über den zuletzt
+ * übernommenen, unveränderten Text; Eigenes der Person bleibt stehen.
+ * Ziele, Daten und Reisende werden daraus nicht abgeleitet.
+ */
+export function wunschAusIdee(eingabe: {
+  wunsch: string
+  zuletztUebernommen: string | null
+  idee: string
+  maximum: number
+}): { wunsch: string; gekuerzt: boolean } | null {
+  const idee = eingabe.idee.trim()
+  if (!idee) return null
+  const frei = eingabe.wunsch.trim() === '' || eingabe.wunsch === eingabe.zuletztUebernommen
+  if (!frei) return null
+  const wunsch = idee.slice(0, eingabe.maximum).trimEnd()
+  if (wunsch === eingabe.wunsch) return null
+  return { wunsch, gekuerzt: wunsch.length < idee.length }
+}
+
+const KINDER_WORTE = /\b(?:kind(?:er|ern|es)?|kinderwagen|kleinkind\w*|kids?|child(?:ren)?|bab(?:y|ys|ies)|säugling\w*|sohn|söhnen?|tochter|töchtern?|enkel\w*)\b/i
+const PASS_WORTE = /\b(?:pass|pässen?|reisepass\w*|reisepässen?|ausweis\w*|identitätskarte\w*|staatsangehörigkeit\w*|staatsbürgerschaft\w*|nationalität\w*|doppelbürger\w*|visum|visa|einreise\w*)\b/i
+
+/**
+ * Nur Wortsuche, keine Auswertung: Nennt der Wunsch Kinder oder Pässe, zeigt das Formular, wo diese Angaben hingehören.
+ * Anzahl, Alter oder Staatsangehörigkeit werden daraus nicht abgeleitet.
+ */
+export function wunschHinweise(wunsch: string): { kinder: boolean; paesse: boolean } {
+  return { kinder: KINDER_WORTE.test(wunsch), paesse: PASS_WORTE.test(wunsch) }
+}
+
 export function planenVorbelegung(eingabe: {
   zielId?: string | null
   zielName?: string | null

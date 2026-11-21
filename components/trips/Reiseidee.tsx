@@ -49,6 +49,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
+import { usePlanenIdeeMelden } from '@/components/trips/PlanenEinstiegNavigation'
 import Planungsfortschritt from '@/components/trips/Planungsfortschritt'
 import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
@@ -89,6 +90,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   const lifecycle = usePlanningCreationLifecycle()
   const { laeuft } = lifecycle
   const [freitext, setFreitext] = React.useState(initialIdee)
+  usePlanenIdeeMelden(freitext)
   const [vorschlag, setVorschlag] = React.useState<Reisevorschlag | null>(null)
   const [warnungen, setWarnungen] = React.useState<string[]>([])
   const [meldung, setMeldung] = React.useState('')

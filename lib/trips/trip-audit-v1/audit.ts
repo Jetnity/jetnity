@@ -64,6 +64,30 @@ const NOT_CHECKED = [
   'Zahlungen und Vertragsbedingungen',
 ] as const
 const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
+const OFFEN_HINWEIS = 'Offene Abschnitte sind keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.'
+const naechte = (anzahl: number | null) => `${anzahl ?? 'unbekannt viele'} ${anzahl === 1 ? 'Nacht' : 'Nächte'}`
+
+function abschnitte(selected: number, booked: number): string {
+  if (selected === 0 && booked === 0) return 'Noch kein Abschnitt ausgewählt oder von dir als gebucht markiert.'
+  return `${selected} ${selected === 1 ? 'Abschnitt' : 'Abschnitte'} ausgewählt; ${booked} von dir als gebucht markiert.`
+}
+
+/** Wording only; the counts are the canonical coverage of `tripZeitpruefung`. */
+function zeitDetail(coverage: Zeitpruefung['coverage']): string {
+  const schluss = 'Kein Gesamturteil über die Reise.'
+  if (coverage.eligiblePairs === null) return `Die gespeicherten Zeiten konnten nicht ausgewertet werden. ${schluss}`
+  if (coverage.state === 'not_run' && coverage.eligiblePairs === 0 && coverage.unassessedEvents === 0) {
+    return `Noch nichts zu vergleichen: Im Plan stehen keine zwei Planpunkte mit festen Zeiten. ${schluss}`
+  }
+  const teile = [coverage.evaluatedPairs === 0
+    ? 'Noch kein Zeitvergleich bewertet'
+    : `${coverage.evaluatedPairs} ${coverage.evaluatedPairs === 1 ? 'Zeitvergleich' : 'Zeitvergleiche'} zwischen Planpunkten bewertet`]
+  if (coverage.unevaluablePairs !== 0) teile.push(`${coverage.unevaluablePairs ?? 'unbekannt viele'} nicht bewertbar`)
+  if (coverage.unassessedEvents !== 0) {
+    teile.push(`${coverage.unassessedEvents ?? 'unbekannt viele'} ${coverage.unassessedEvents === 1 ? 'Zeitangabe' : 'Zeitangaben'} nicht einbezogen`)
+  }
+  return `${teile.join('; ')}. ${schluss}`
+}
 const id = (domain: AuditDomain, key: unknown) => JSON.stringify(['trip-audit/v1', domain, key])
 
 /** Display only, from the validated bounded snapshot. Never use identity as a
@@ -172,13 +196,13 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
     const zuordnungUnbekannt = view.stages.length > 1 && !result.bekannt
     const aussenHinweis = result.ausserhalb.length === 0
       ? ''
-      : ` ${result.ausserhalb.length} ${result.ausserhalb.length === 1 ? 'Etappenintervall liegt' : 'Etappenintervalle liegen'} ausserhalb der Reise und ${result.ausserhalb.length === 1 ? 'zählt' : 'zählen'} nicht als zusätzliche Reisenächte.`
+      : ` ${result.ausserhalb.length} ${result.ausserhalb.length === 1 ? 'Etappenzeitraum liegt' : 'Etappenzeiträume liegen'} ausserhalb der Reise und ${result.ausserhalb.length === 1 ? 'zählt' : 'zählen'} nicht als zusätzliche Reisenächte.`
     if (safeGaps) for (const gap of result.luecken) {
       if (uebergang(gap)) {
         add({
           id: id('lodging', ['transition', gap.start, gap.end]), domain: 'lodging', state: 'unknown',
           title: 'Übergangsnacht ohne Unterkunftszuordnung',
-          detail: `${datumKurz(gap.start)} bis ${datumKurz(gap.end)} · ${gap.naechte} ${gap.naechte === 1 ? 'Übernachtungsintervall' : 'Übernachtungsintervalle'} ausserhalb der Etappen. Das ist keine festgestellte Hotelpflicht und keine Buchung.`,
+          detail: `${datumKurz(gap.start)} bis ${datumKurz(gap.end)} · ${naechte(gap.naechte)} ausserhalb der Etappen. Daraus folgt keine Hotelpflicht und keine Buchung.`,
           source: 'unterkunftAbdeckung', refs: {}, evidence: { ...gap },
         })
         continue
@@ -196,9 +220,9 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       detail: lodgingComplete
         ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
         : safeGaps && uebergangsNaechte > 0
-          ? `${result.naechteGesamt} Übernachtungsintervalle im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
+          ? `${naechte(result.naechteGesamt)} im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
           : zuordnungUnbekannt && result.kalenderNaechte !== null
-            ? `${result.kalenderNaechte} Übernachtungsintervalle im Reisekalender sind bekannt. Welche Etappe sie besitzt, ist unbekannt. Es wird keine Hotelpflicht angenommen.`
+            ? `${naechte(result.kalenderNaechte)} ${result.kalenderNaechte === 1 ? 'steht' : 'stehen'} im Reisekalender. Zu welcher Etappe sie gehören, steht noch nicht fest. Daraus folgt keine Hotelpflicht.`
             : 'Unterkunftsstand teilweise oder unbekannt. Fehlende Zeiträume oder Zuordnungen erlauben keine vollständige Nachtbilanz.',
       reasons: lodgingComplete ? [] : ['incomplete_lodging'],
     }
@@ -217,7 +241,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
     report.time = { contractVersion: result.contractVersion, coverage: { ...result.coverage, reasons: [...result.coverage.reasons] }, pairCounts }
     if (result.coverage.reasons.includes('work_limit')) report.limitReasons.push('temporal_work_limit')
     return { coverage: result.coverage.state,
-      detail: `${result.coverage.evaluatedPairs} zeitliche Vergleiche bewertet; ${result.coverage.unevaluablePairs ?? 'unbekannt'} nicht bewertbar; ${result.coverage.unassessedEvents ?? 'unbekannt'} Ereignisse nicht erfasst. Kein Gesamturteil über die Reise.`,
+      detail: zeitDetail(result.coverage),
       reasons: [...result.coverage.reasons] }
   })
 
@@ -228,6 +252,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
     let selected = 0
     let booked = 0
     let groundCount = 0
+    let offen = 0
     for (const connection of [...connections].sort((a, b) => compare(a.id, b.id))) {
       const raw = connectionFindingState(connection.status, determinable && unassigned.length === 0, connection.date)
       const adjustment: F05FlightGapAdjustment = raw === 'known_gap' && domain === 'flights' && adjustFlightGap
@@ -238,7 +263,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       booked += Number(connection.status === 'booked')
       if (!state) continue
       if (state === 'unknown') unknown = true
-      const place = `${connection.originName} → ${connection.destinationName} · ${connection.date ?? 'Datum unbekannt'}`
+      const place = `${connection.originName} → ${connection.destinationName} · ${connection.date ? datumKurz(connection.date) : 'Datum unbekannt'}`
       if (adjustment.kind === 'ground') {
         groundCount += 1
         add({ id: id(domain, connection.id), domain, state, source,
@@ -248,10 +273,11 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
           evidence: { status: 'open', date: connection.date, reasons: [adjustment.userMarkedBooked ? 'ground_user_marked_booked' : 'ground_selected', 'flight_necessity_unknown'] } })
         continue
       }
+      offen += 1
       add({ id: id(domain, connection.id), domain, state, source,
         title: state === 'unknown' ? 'Verbindung nicht vollständig bewertbar'
           : domain === 'flights' ? 'Kein Flug für diesen Abschnitt im Plan' : 'Keine Verbindung für diesen Abschnitt im Plan',
-        detail: `${place}. Dies ist keine Aufforderung zu einer Buchung; die passende Reiseart bleibt deine Entscheidung.`,
+        detail: `${place}.`,
         refs: { sectionId: connection.id },
         evidence: adjustment.kind === 'withhold'
           ? { status: connection.status, date: connection.date, reasons: ['flight_obligation_not_established'] }
@@ -264,7 +290,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       ? `${groundCount} ${groundCount === 1 ? 'Abschnitt hat eine gespeicherte Bodenverbindung' : 'Abschnitte haben eine gespeicherte Bodenverbindung'}; ein Flugbedarf ist daraus nicht belegt. `
       : ''
     return { coverage: !determinable ? 'unavailable' : unknown ? 'partial' : 'complete',
-      detail: `${selected} Abschnitte ausgewählt; ${booked} von dir als gebucht markiert. ${groundSentence}${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}Keine externe Bestätigung geprüft.`,
+      detail: `${abschnitte(selected, booked)} ${groundSentence}${unknown ? 'Die Zuordnung ist nicht vollständig bewertbar. ' : ''}${offen > 0 ? `${OFFEN_HINWEIS} ` : ''}Keine externe Bestätigung geprüft.`,
       reasons: unknown ? ['incomplete_connections'] : [] }
   }
   section('flights', 'flugAbdeckung', () => {

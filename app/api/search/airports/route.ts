@@ -11,6 +11,8 @@ import { problemAntwort } from '@/lib/api/antwort'
 import { lese } from '@/lib/api/datenbank-lesen'
 import { FLUGHAFEN_ABFRAGE, flughaefenOrdnen, sucheFilter } from '@/lib/airports/suche'
 import { flughafenLaender } from '@/lib/airports/laendersuche'
+import { naechsterFlughafen, suchfenster } from '@/lib/airports/naechster'
+import { istOrtId } from '@/lib/places/domain'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -29,7 +31,41 @@ function orFilter(teile: string[]): string {
     .join(',')
 }
 
+const OHNE_SPEICHER = { 'cache-control': 'no-store', 'content-type': 'application/json; charset=utf-8' }
+
+/** Nächster großer Flughafen zu einem Katalogort. `vorschlag: null` heißt: keiner im Radius. */
+async function naechsterZuOrt(ortId: string): Promise<Response> {
+  if (!istOrtId(ortId)) return new Response(null, { status: 404 })
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()) {
+    return problemAntwort({ status: 503, message: 'Die Flughafensuche ist gerade nicht erreichbar.' })
+  }
+  const client = await createRouteHandlerClient()
+  const ort = await lese(() => client.from('places').select('lat, lon').eq('id', ortId).limit(1))
+  if (ort.problem) return problemAntwort(ort.problem)
+  const zeile = ort.zeilen[0]
+  if (!zeile) return new Response(null, { status: 404 })
+  if (typeof zeile.lat !== 'number' || typeof zeile.lon !== 'number') {
+    return NextResponse.json({ vorschlag: null }, { headers: OHNE_SPEICHER })
+  }
+  const position = { lat: zeile.lat, lon: zeile.lon }
+  const fenster = suchfenster(position)
+  const flughaefen = await lese(() => {
+    const abfrage = client
+      .from('airports')
+      .select('iata, name, klasse, lat, lon')
+      .eq('klasse', 'large')
+      .not('iata', 'is', null)
+      .gte('lat', fenster.lat.min)
+      .lte('lat', fenster.lat.max)
+    return (fenster.lon ? abfrage.gte('lon', fenster.lon.min).lte('lon', fenster.lon.max) : abfrage).limit(200)
+  })
+  if (flughaefen.problem) return problemAntwort(flughaefen.problem)
+  return NextResponse.json({ vorschlag: naechsterFlughafen(position, flughaefen.zeilen) }, { headers: OHNE_SPEICHER })
+}
+
 export async function GET(req: Request) {
+  const naechster = new URL(req.url).searchParams.get('naechster')
+  if (naechster !== null) return naechsterZuOrt(naechster.trim())
   const code = new URL(req.url).searchParams.get('position')
   if (code !== null) {
     if (new URL(req.url).origin !== tripServicesOrigin(process.env) || !/^[A-Z]{3}$/.test(code)) return new Response(null, { status: 404 })

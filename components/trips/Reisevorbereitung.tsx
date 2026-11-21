@@ -18,7 +18,7 @@ import {
   SENSITIVE_HINWEIS,
   nutzerstandText,
   officialFehlendeAngabenText,
-  officialPruefungAusEvaluations,
+  officialPruefungEinStatus,
   officialStatusText,
 } from '@/lib/readiness/bezeichnungen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
@@ -146,8 +146,9 @@ export default function Reisevorbereitung({
   const persoenlich = preparationPersoenlichAufteilen(sichtbareItems)
   const anwendbareSlots = slots.filter((slot) => slot.applicable)
   const fehlendeFakten = [...new Set(anwendbareSlots.flatMap((slot) => slot.missingFacts))]
-  const pruefung = officialPruefungAusEvaluations(evaluations)
-  const uebersichtStatus = preparationUebersichtStatus(pruefung, officialStatusText(summary.officialStatus))
+  const pruefung = officialPruefungEinStatus(evaluations)
+  const uebersichtStatus = preparationUebersichtStatus(pruefung.status, officialStatusText(summary.officialStatus))
+  const angabenAufgabe = fehlendeFakten.length > 0 ? officialFehlendeAngabenText(fehlendeFakten) : pruefung.angabenFehlen ? 'Für die Prüfung fehlen noch Angaben zu den Reisenden' : ''
   const reisendeLage = mehrereReisendeLage(reise)
 
   const setzen = async (
@@ -201,7 +202,7 @@ export default function Reisevorbereitung({
         role="status"
         titel={`${uebersichtStatus}.`}
         aktion={
-          fehlendeFakten.length > 0 && onTravellerSetzen ? (
+          angabenAufgabe && onTravellerSetzen ? (
             <a
               href="#preparation-reisende-dokumente"
               onClick={(event) => {
@@ -215,6 +216,7 @@ export default function Reisevorbereitung({
           ) : null
         }
       >
+        {angabenAufgabe ? <p data-preparation-angaben-fehlen>{angabenAufgabe}.</p> : null}
         <p>{PREPARATION_DISCLAIMER}</p>
         {reisendeLage === 'hinweis' ? <p data-mehrere-reisende="hinweis">{MEHRERE_REISENDE_HINWEIS}</p> : null}
         {reisendeLage === 'widerspruch' ? <p data-mehrere-reisende="unklar">{KOPFZAHL_WIDERSPRUCH}</p> : null}
@@ -248,7 +250,7 @@ export default function Reisevorbereitung({
           hinweis={einreise.satz}
         >
           <div data-official-group={checkliste.map((gruppe) => gruppe.id).join(' ')}>
-            <EinreiseKundenanzeige anzeige={einreise} satzZeigen={false} />
+            <EinreiseKundenanzeige anzeige={einreise} satzZeigen={false} nachLand />
           </div>
         </Bereich>
 

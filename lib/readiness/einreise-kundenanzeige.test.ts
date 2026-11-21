@@ -10,6 +10,7 @@ import {
   EINREISE_WEITERE_THEMEN,
   einreiseAusBesucher,
   einreiseKundenanzeige,
+  einreiseNachLand,
   einreiseUebersicht,
   type EinreiseSlot,
 } from '@/lib/readiness/einreise-kundenanzeige'
@@ -312,4 +313,92 @@ test('CH→DE und ein zweiter Pass bleiben in der Beschriftung getrennt', () => 
   assert.doesNotMatch(html, /Gewählter Pass/)
   assert.equal(html.split(EINREISE_WEITERE_THEMEN).length - 1, 2)
   assert.doesNotMatch(html, />Zoll</)
+})
+
+function ohnePass(clientRef: string, label: string): TripTraveller {
+  return { ...person(clientRef, label, 'x'), documents: [] }
+}
+
+test('Vorbereitung: drei Reisende ohne Pass und zwei Länder ergeben zwei Karten mit je einem Status', () => {
+  const reisende = [ohnePass('traveller:1', 'Reisende 1'), ohnePass('traveller:2', 'Reisende 2'), ohnePass('traveller:3', 'Reisende 3')]
+  const anzeige = einreiseKundenanzeige({ evaluations: [], party: reisende, slots: reisende.map(slot), laender: ['PT', 'PT', 'MA'] })
+  assert.equal(anzeige.paare.length, 6)
+  const karten = einreiseNachLand(anzeige)
+  assert.deepEqual(karten.map((karte) => karte.landCode), ['PT', 'MA'])
+  for (const karte of karten) {
+    assert.equal(karte.einheitlich, true)
+    assert.equal(karte.paare.length, 3)
+    assert.equal(karte.ampel, 'neutral')
+    assert.equal(karte.ampelText, EINREISE_AMPEL_TEXT.neutral)
+  }
+  const html = renderToStaticMarkup(React.createElement(EinreiseKundenanzeige, { anzeige, satzZeigen: false, nachLand: true }))
+  assert.equal((html.match(/<article/g) ?? []).length, 2)
+  assert.equal((html.match(new RegExp(EINREISE_AMPEL_TEXT.neutral, 'g')) ?? []).length, 2)
+  assert.equal((html.match(/Gleiche Angabe für alle 3 Einträge/g) ?? []).length, 2)
+  assert.equal((html.match(/Je Person und Pass \(3\)/g) ?? []).length, 2)
+  for (const name of ['Reisende 1', 'Reisende 2', 'Reisende 3']) assert.equal((html.match(new RegExp(name, 'g')) ?? []).length, 2)
+  assert.match(html, /Pass: noch nicht angegeben/)
+  assert.doesNotMatch(html, /<details open=""[^>]*data-einreise-je-person/)
+})
+
+test('Vorbereitung: abweichende Person wird nicht verdeckt, die Liste je Person steht offen', () => {
+  const ch = person('traveller:1', 'Reisende 1', 'pass-ch')
+  const rs = person('traveller:2', 'Reisende 2', 'pass-rs')
+  const anzeige = einreiseKundenanzeige({
+    evaluations: [
+      evaluation({ requirementType: 'visa', result: 'not_required', visaMode: 'visa_exempt' }),
+      evaluation({
+        travellerClientRef: 'traveller:2',
+        credentialOptionRef: 'traveller:2:pass-rs',
+        requirementType: 'visa',
+        result: 'required',
+        visaMode: 'visa_before_travel',
+        action: { kind: 'open_official_action', purpose: 'application', href: 'https://example.test/antrag' },
+      }),
+    ],
+    party: [ch, rs],
+    slots: [slot(ch), slot(rs)],
+    laender: ['ID'],
+  })
+  const [karte] = einreiseNachLand(anzeige)
+  assert.equal(karte?.einheitlich, false)
+  assert.equal(karte?.ampel, 'orange')
+  assert.deepEqual(karte?.paare.map((paar) => paar.ampel), ['gruen', 'orange'])
+  const html = renderToStaticMarkup(React.createElement(EinreiseKundenanzeige, { anzeige, satzZeigen: false, nachLand: true }))
+  assert.equal((html.match(/<article/g) ?? []).length, 1)
+  assert.match(html, /Die Angaben unterscheiden sich je Person oder Pass/)
+  assert.match(html, /<details open=""[^>]*data-einreise-je-person/)
+  assert.match(html, /data-einreise-person-ampel="gruen"[\s\S]*Kein Visum nötig/)
+  assert.match(html, /data-einreise-person-ampel="orange"[\s\S]*https:\/\/example\.test\/antrag/)
+})
+
+test('Vorbereitung: alle grün und gleich ergibt grün; ohne nachLand bleibt die Karte je Person', () => {
+  const a = person('traveller:1', 'Reisende 1', 'pass-ch')
+  const b = person('traveller:2', 'Reisende 2', 'pass-ch2')
+  const anzeige = einreiseKundenanzeige({
+    evaluations: [
+      evaluation({ requirementType: 'visa', result: 'not_required', visaMode: 'visa_exempt' }),
+      evaluation({ travellerClientRef: 'traveller:2', credentialOptionRef: 'traveller:2:pass-ch2', requirementType: 'visa', result: 'not_required', visaMode: 'visa_exempt' }),
+    ],
+    party: [a, b],
+    slots: [slot(a), slot(b)],
+    laender: ['ID'],
+  })
+  const [karte] = einreiseNachLand(anzeige)
+  assert.equal(karte?.einheitlich, true)
+  assert.equal(karte?.ampel, 'gruen')
+  const jePerson = renderToStaticMarkup(React.createElement(EinreiseKundenanzeige, { anzeige, satzZeigen: false }))
+  assert.equal((jePerson.match(/<article/g) ?? []).length, 2)
+})
+
+test('gespeicherte Person ohne Dokument: «noch nicht angegeben», bekannte Staatsangehörigkeit wird genannt', () => {
+  const ohne = ohnePass('traveller:1', 'Reisende 1')
+  const mitStaat: TripTraveller = {
+    ...ohnePass('traveller:2', 'Reisende 2'),
+    citizenships: [{ id: 'c', clientRef: 'c', countryCode: 'DE', createdAt: ZEIT, updatedAt: ZEIT }],
+  }
+  const anzeige = einreiseKundenanzeige({ evaluations: [], party: [ohne, mitStaat], slots: [slot(ohne), slot(mitStaat)], laender: ['PT'] })
+  assert.equal(anzeige.paare[0]?.dokument, 'noch nicht angegeben')
+  assert.match(anzeige.paare[1]?.dokument ?? '', /^noch nicht angegeben · Staatsangehörigkeit .*Deutschland$/)
+  assert.doesNotMatch(anzeige.paare.map((paar) => paar.dokument).join(' '), /Reisedokument-Option/)
 })

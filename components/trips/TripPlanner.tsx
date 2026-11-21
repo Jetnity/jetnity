@@ -73,6 +73,8 @@ import {
   CREATE_PERSISTENZ_TEMPO,
   gastCreateGateMeldung,
   gastCreateJetztPruefen,
+  wunschAusIdee,
+  wunschHinweise,
 } from '@/lib/trips/create-entry'
 import {
   GastreiseBelegtOhneKennungFehler,
@@ -86,6 +88,7 @@ import {
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 import { usePlanningCreationLifecycle } from '@/components/trips/usePlanningCreationLifecycle'
+import { usePlanenMitnahme } from '@/components/trips/PlanenEinstiegNavigation'
 
 const TRANSPORT =
   'Die Reise konnte gerade nicht erstellt werden. Deine Angaben bleiben hier. Bitte versuche es erneut.'
@@ -187,6 +190,33 @@ export default function TripPlanner({
   const [travellers, setTravellers] = React.useState<number | ''>(2)
   const [budget, setBudget] = React.useState('')
   const [travelWish, setTravelWish] = React.useState(initialIdea)
+  const mitnahme = usePlanenMitnahme()
+  const [mitnahmeStand, setMitnahmeStand] = React.useState<{ nr: number; text: string | null; gekuerzt: boolean }>({
+    nr: 0,
+    text: null,
+    gekuerzt: false,
+  })
+  if (mitnahme && mitnahme.nr !== mitnahmeStand.nr) {
+    const uebernahme = laeuft
+      ? null
+      : wunschAusIdee({
+          wunsch: travelWish,
+          zuletztUebernommen: mitnahmeStand.text,
+          idee: mitnahme.text,
+          maximum: GRENZEN.reisewunsch,
+        })
+    setMitnahmeStand(
+      uebernahme
+        ? { nr: mitnahme.nr, text: uebernahme.wunsch, gekuerzt: uebernahme.gekuerzt }
+        : { ...mitnahmeStand, nr: mitnahme.nr },
+    )
+    if (uebernahme) setTravelWish(uebernahme.wunsch)
+  }
+  const wunschAusIdeeHinweis =
+    mitnahmeStand.text !== null && travelWish === mitnahmeStand.text
+      ? `${mitnahmeStand.gekuerzt ? `Die ersten ${GRENZEN.reisewunsch} Zeichen deines Textes` : 'Dein Text'} aus «In eigenen Worten» ${mitnahmeStand.gekuerzt ? 'stehen' : 'steht'} jetzt unter «Wünsche». Ziele, Daten und Reisende trägst du hier selbst ein.`
+      : ''
+  const hinweise = wunschHinweise(travelWish)
   const [zuordnungAktiv, setZuordnungAktiv] = React.useState(false)
   const [zuordnung, setZuordnung] = React.useState<TageszuordnungAnspruch[]>([])
   const [zuordnungHinweis, setZuordnungHinweis] = React.useState('')
@@ -636,6 +666,9 @@ export default function TripPlanner({
           <p className="mt-4 max-w-full break-words rounded-2xl border border-line-200 bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800 xl:hidden">
             Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.
           </p>
+          <p role="status" data-wunsch-aus-idee={wunschAusIdeeHinweis ? 'true' : undefined} className={cn('max-w-full break-words text-sm leading-6 text-ink-800', wunschAusIdeeHinweis && 'mt-4 rounded-2xl border border-line-200 bg-surface-0 px-4 py-3')}>
+            {wunschAusIdeeHinweis}
+          </p>
         </div>
 
         <div className="grid min-w-0 gap-8">
@@ -977,6 +1010,28 @@ export default function TripPlanner({
         <p id="wunsch-hinweis" className="max-w-full break-words text-xs leading-5 text-ink-700">
           Jetnity speichert deinen Wunsch als Notiz in der Reiseübersicht.
         </p>
+        <div aria-live="polite" className="min-w-0">
+          {hinweise.kinder || hinweise.paesse ? (
+            <div data-wunsch-hinweise className="grid min-w-0 gap-2 rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-sm leading-6 text-ink-800">
+              <p className="font-semibold text-brand-800">Wo diese Angaben hingehören</p>
+              <ul className="grid list-disc gap-1 pl-5">
+                {hinweise.kinder ? (
+                  <li data-wunsch-hinweis="kinder" className="break-words">
+                    Kinder zählst du oben bei «Reisende» mit{travellers === 1 ? '; dort steht im Moment 1 Person' : ''}. Wie viele
+                    davon Kinder oder Babys sind, gibst du später bei der Flug- und Unterkunftssuche an.
+                  </li>
+                ) : null}
+                {hinweise.paesse ? (
+                  <li data-wunsch-hinweis="paesse" className="break-words">
+                    Pässe, Staatsangehörigkeiten und Einreise trägst du nach dem Erstellen unter «Vorbereitung» → «Reisende &
+                    Dokumente» für jede Person einzeln ein.
+                  </li>
+                ) : null}
+              </ul>
+              <p className="text-xs leading-5 text-ink-700">Jetnity liest deinen Wunschtext dafür nicht automatisch aus.</p>
+            </div>
+          ) : null}
+        </div>
           </Planungsgruppe>
         </div>
 

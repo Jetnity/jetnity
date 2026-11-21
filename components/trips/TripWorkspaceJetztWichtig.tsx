@@ -11,7 +11,7 @@ import type {
   AttentionPunkt,
   AttentionSchwere,
 } from '@/lib/trips/attention'
-import { attentionGruppieren } from '@/lib/trips/attention-presentation'
+import { attentionGruppieren, attentionNachAusfuehrbarkeit } from '@/lib/trips/attention-presentation'
 import { attentionAktionAlsDetail } from '@/lib/trips/detail'
 import { WORKSPACE_ANSICHT_LABEL } from '@/lib/trips/workspace-mode'
 import { cn } from '@/lib/utils'
@@ -39,8 +39,8 @@ const EBENE_TEXT: Record<AttentionEbene, string> = {
 
 /**
  * Im Arbeitsbereich heisst die Karte „Als Nächstes“ (DESIGN_SYSTEM.md 6.11):
- * höchstens drei Gruppen, ruhige Fläche, keine Alarmfarbe. Ausserhalb bleibt
- * die bisherige Fassung „Jetzt wichtig“.
+ * höchstens drei ausführbare Gruppen, der Rest unter „Gut zu wissen“, ruhige
+ * Fläche, keine Alarmfarbe. Ausserhalb bleibt die bisherige Fassung „Jetzt wichtig“.
  */
 export default function TripWorkspaceJetztWichtig({
   attention,
@@ -52,11 +52,16 @@ export default function TripWorkspaceJetztWichtig({
   integriert?: boolean
 }) {
   const [weitereOffen, setWeitereOffen] = useState(false)
-  const gruppen = attentionGruppieren(attention.punkte)
+  const alleGruppen = attentionGruppieren(attention.punkte)
+  const aufgeteilt = integriert ? attentionNachAusfuehrbarkeit(alleGruppen) : { jetzt: alleGruppen, gutZuWissen: [] }
+  const gruppen = aufgeteilt.jetzt
   // Das bestehende Limit gilt hier für Gruppen; die kanonischen Listen bleiben unverändert.
   const limit = attention.sichtbar.length
   const sichtbare = weitereOffen ? gruppen : gruppen.slice(0, limit)
   const weitereAnzahl = Math.max(0, gruppen.length - limit)
+  const leerstandZeigen = Boolean(
+    attention.leerstand && (attention.leerstand !== 'nichts_dringend_geprueft' || attention.punkte.length === 0),
+  )
 
   return (
     <section
@@ -80,10 +85,14 @@ export default function TripWorkspaceJetztWichtig({
           </>}
         </div>
         <div className="min-w-0 px-3 py-3 sm:px-4">
-          {attention.leerstand &&
-          (attention.leerstand !== 'nichts_dringend_geprueft' || attention.punkte.length === 0) ? (
+          {leerstandZeigen && attention.leerstand ? (
             <p className="hyphens-auto break-words text-sm leading-6 text-ink-800">
               {LEERSTAND_TEXT[attention.leerstand]}
+            </p>
+          ) : null}
+          {!leerstandZeigen && gruppen.length === 0 && aufgeteilt.gutZuWissen.length > 0 ? (
+            <p className="hyphens-auto break-words text-sm leading-6 text-ink-800">
+              Im Moment gibt es hier keinen Schritt, den du selbst erledigen kannst.
             </p>
           ) : null}
 
@@ -115,6 +124,30 @@ export default function TripWorkspaceJetztWichtig({
                   ? `${weitereAnzahl === 1 ? '1 weiterer Punkt' : `${weitereAnzahl} weitere Punkte`} anzeigen`
                   : `${weitereAnzahl === 1 ? '1 weitere Hinweisgruppe' : `${weitereAnzahl} weitere Hinweisgruppen`} anzeigen`}
             </button>
+          )}
+
+          {aufgeteilt.gutZuWissen.length > 0 && (
+            <details data-attention-gut-zu-wissen className="group mt-3 min-w-0">
+              <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center gap-2 rounded-xl text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 [&::-webkit-details-marker]:hidden">
+                <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-open:rotate-90" aria-hidden="true" />
+                Gut zu wissen<span className="sr-only">:</span>
+                <span className="font-normal text-ink-700">
+                  {aufgeteilt.gutZuWissen.length === 1 ? '1 Hinweis' : `${aufgeteilt.gutZuWissen.length} Hinweise`} ohne eigenen Schritt
+                </span>
+              </summary>
+              <ul className="mt-2 grid min-w-0 grid-cols-1 gap-px overflow-hidden rounded-2xl bg-line-100">
+                {aufgeteilt.gutZuWissen.map((eintrag) => (
+                  <AttentionZeile
+                    key={eintrag.punkt.id}
+                    punkt={eintrag.punkt}
+                    anzahl={eintrag.anzahl}
+                    zuerst={false}
+                    zielZeigen
+                    onAktion={onAktion}
+                  />
+                ))}
+              </ul>
+            </details>
           )}
         </div>
       </div>
