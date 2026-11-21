@@ -1,0 +1,334 @@
+{
+  "schema": "production-readonly-v2-interpretation-v1",
+  "basis": "Only the three stored authorized read-only query results; no additional database reads.",
+  "observation_window": {
+    "start": "2026-11-21T17:42:30.893Z",
+    "end": "2026-11-21T17:43:40.309Z",
+    "elapsed_ms": 69417,
+    "transactions": 3
+  },
+  "completion": {
+    "sql_and_service_errors": 0,
+    "all_required_paths_accounted_for": 4,
+    "optional_relations_absent": 14,
+    "selected_core": "03-core-id-maxima-without-hooks.READONLY.sql",
+    "other_core_executed": false,
+    "extra_queries_executed": 0,
+    "skipped_extra_files": 13
+  },
+  "bg1": {
+    "metadata_observed_at": "2026-11-21T17:43:04.695814+00:00",
+    "timestamp_freshness_only": true,
+    "state_run_match_count": 1,
+    "generation": 1564,
+    "incident_generation": 108,
+    "resumed_generation": 108,
+    "last_due": "2026-11-21T17:40:00+00:00",
+    "valid_until": "2026-11-21T17:45:30+00:00",
+    "matching_complete_run": {
+      "due_at": "2026-11-21T17:40:00+00:00",
+      "outcome": "complete",
+      "generation": 1564,
+      "started_at": "2026-11-21T17:40:00.230623+00:00",
+      "finished_at": "2026-11-21T17:40:11.782775+00:00",
+      "proof_started_at": "2026-11-21T17:40:00.239144+00:00"
+    },
+    "correlated_successful_cron": {
+      "runid": "23774",
+      "status": "succeeded",
+      "jobname": "jetnity-official-truth-production-guard-v1",
+      "end_time": "2026-11-21T17:40:11.822555+00:00",
+      "start_time": "2026-11-21T17:40:00.230442+00:00",
+      "postgres_role": true,
+      "command_sha256": "8ae86f70caca6fcf890eb66de93873b0f13c49bd689e8c8cd6993c4bef561863",
+      "expected_database": true,
+      "matches_current_job_command": true
+    },
+    "recent_bg1_rows": 4,
+    "recent_bg1_complete_rows": 4,
+    "full_catalog_or_public_status_validation_performed": false
+  },
+  "cron": {
+    "active_jobs": 5,
+    "expected_jobs": 5,
+    "sampled_runs": 15,
+    "succeeded": 12,
+    "failed": 3,
+    "failed_job": "jetnity-at-production-source-enqueue-v1",
+    "failed_runs": [
+      {
+        "runid": "23776",
+        "status": "failed",
+        "jobname": "jetnity-at-production-source-enqueue-v1",
+        "end_time": "2026-11-21T17:40:00.30849+00:00",
+        "start_time": "2026-11-21T17:40:00.227902+00:00",
+        "postgres_role": true,
+        "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+        "expected_database": true,
+        "matches_current_job_command": true
+      },
+      {
+        "runid": "23767",
+        "status": "failed",
+        "jobname": "jetnity-at-production-source-enqueue-v1",
+        "end_time": "2026-11-21T17:35:00.315101+00:00",
+        "start_time": "2026-11-21T17:35:00.243776+00:00",
+        "postgres_role": true,
+        "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+        "expected_database": true,
+        "matches_current_job_command": true
+      },
+      {
+        "runid": "23758",
+        "status": "failed",
+        "jobname": "jetnity-at-production-source-enqueue-v1",
+        "end_time": "2026-11-21T17:30:00.110757+00:00",
+        "start_time": "2026-11-21T17:30:00.061561+00:00",
+        "postgres_role": true,
+        "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+        "expected_database": true,
+        "matches_current_job_command": true
+      }
+    ],
+    "failure_texts_or_codes_read": false,
+    "failure_cause_proven": false,
+    "successful_job_status_does_not_prove_accepted_fact_or_source_refresh": true
+  },
+  "at": {
+    "sources": 3,
+    "qualified_sources": 0,
+    "research_sources": 3,
+    "originals": 3,
+    "legally_approved_originals": 0,
+    "customer_approved_originals": 0,
+    "historical_ch_visa_facts": 62,
+    "unexpired_facts": 0,
+    "positive_qualification_proven": false,
+    "visitor_end_to_end_test_performed": false,
+    "qualified_source_count_predicate": "source_qualified AND NOT research_only",
+    "research_source_count_predicate": "research_only OR NOT source_qualified",
+    "individual_source_flag_counts_separately_observed": false
+  },
+  "http_ids": {
+    "observed_at": "2026-11-21T17:43:40.217957+00:00",
+    "legacy_sequence": {
+      "is_called": true,
+      "last_value": "3"
+    },
+    "path_maxima": [
+      {
+        "path": "jetnity_prod_import_scheduler.dispatches_v1.net_request_id",
+        "max_id": "46"
+      },
+      {
+        "path": "net._http_response.id",
+        "max_id": null
+      },
+      {
+        "path": "net.http_request_queue.id",
+        "max_id": null
+      },
+      {
+        "path": "official_v3_at_production_private.watch_requests_v1.request_id",
+        "max_id": "211"
+      }
+    ],
+    "observed_maximum": "211",
+    "sequence_below_observed_history": true,
+    "sequence_catalog": {
+      "kind": "S",
+      "owner": "supabase_admin",
+      "present": true,
+      "table_name": "http_request_queue_id_seq",
+      "acl_over_64": false,
+      "persistence": "u",
+      "schema_name": "net",
+      "acl_at_most_65": [
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "USAGE"
+        }
+      ],
+      "current_select": true,
+      "relispartition": false,
+      "relrowsecurity": false,
+      "current_trigger": null,
+      "current_owner_set": false,
+      "current_owner_usage": false,
+      "relforcerowsecurity": false,
+      "sequence_parameters": {
+        "max": "9223372036854775807",
+        "min": "1",
+        "type": "bigint",
+        "cache": "1",
+        "cycle": false,
+        "start": "1",
+        "increment": "1"
+      }
+    },
+    "queue_catalog": {
+      "kind": "r",
+      "owner": "supabase_admin",
+      "present": true,
+      "table_name": "http_request_queue",
+      "acl_over_64": false,
+      "persistence": "u",
+      "schema_name": "net",
+      "acl_at_most_65": [
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "grantee": "PUBLIC",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "grantee": "supabase_admin",
+          "grantor": "supabase_admin",
+          "grantable": false,
+          "privilege": "UPDATE"
+        }
+      ],
+      "current_select": true,
+      "relispartition": false,
+      "relrowsecurity": false,
+      "current_trigger": true,
+      "current_owner_set": false,
+      "current_owner_usage": false,
+      "relforcerowsecurity": false,
+      "sequence_parameters": null
+    },
+    "own_allocator_present": false,
+    "own_allocator_helper_present": false,
+    "queue_trigger_count": 0,
+    "actual_id_collision_proven": false,
+    "cron_failure_causal_link_proven": false,
+    "globally_locked_snapshot": false,
+    "approved_or_computed_repair_seed": false,
+    "max_null_means": "No non-NULL ID was observed in the present path; not an absent relation and not a proved row count."
+  },
+  "boundaries": {
+    "production_changes": false,
+    "retry": false,
+    "new_login_or_2fa": false,
+    "manual_http_source_or_publisher": false,
+    "roles_changed": false,
+    "new_costs": false,
+    "expired_data_policy": "derzeit nicht verfügbar"
+  }
+}
