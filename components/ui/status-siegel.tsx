@@ -10,7 +10,8 @@ import { cn } from '@/lib/utils'
  * eine bestaetigte Buchung auf einen Blick von einer blossen Auswahl abweicht.
  *
  * - `gebucht`: von dir als gebucht markiert
- * - `gewaehlt`: ausgewaehlt, aber noch nicht gebucht (gestrichelt)
+ * - `gewaehlt`: ausgewaehlt, aber noch nicht gebucht (gestrichelt, sandfarben:
+ *   der gespeicherte Preis ist eine Schaetzung, keine Bestaetigung)
  * - `offen`: noch nichts gewaehlt
  * - `hinweis`: nicht vollstaendig bestimmbar oder anders abgedeckt
  */
@@ -18,9 +19,9 @@ export type StatusSiegelTon = 'gebucht' | 'gewaehlt' | 'offen' | 'hinweis'
 
 const TON: Record<StatusSiegelTon, string> = {
   gebucht: 'border-transparent bg-brand-800 text-white',
-  gewaehlt: 'border-dashed border-brand-700 bg-white text-brand-800',
+  gewaehlt: 'border-dashed border-status-schaetzung-line bg-status-schaetzung-soft text-status-schaetzung',
   offen: 'border-line-300 bg-white text-ink-800',
-  hinweis: 'border-transparent bg-surface-100 text-ink-800',
+  hinweis: 'border-transparent bg-status-neutral-soft text-status-neutral',
 }
 
 const SYMBOL = {

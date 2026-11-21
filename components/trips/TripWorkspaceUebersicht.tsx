@@ -144,7 +144,7 @@ export default function TripWorkspaceUebersicht({
   const bild = workspace ? kosten ?? kostenbild(reise, ungeplantePunkte) : null
 
   return (
-    <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className={cn('mt-2 grid min-w-0 max-w-full gap-2', workspace && 'xl:grid-cols-2')}>
+    <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className={cn('mt-2 grid min-w-0 max-w-full gap-3', workspace && 'xl:grid-cols-2 xl:items-start xl:gap-5')}>
       <header className={workspace ? 'sr-only' : 'min-w-0 max-w-full'}>
         <h2
           id="workspace-uebersicht-titel"
@@ -171,7 +171,7 @@ export default function TripWorkspaceUebersicht({
 
       {bild ? <TripWorkspaceKosten bild={bild} onItem={onItem} ansteuern={kostenAnsteuern} onAngesteuert={onKostenAngesteuert} /> : null}
 
-      <div className={workspace ? 'grid min-w-0 content-start gap-6' : 'contents'}>
+      <div className={workspace ? 'grid min-w-0 content-start gap-3 xl:gap-5' : 'contents'}>
         {einreiseZeilen.length > 0 ? <EinreiseUebersichtZeilen zeilen={einreiseZeilen} onOeffnen={onEinreise} /> : null}
         <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} />
       </div>

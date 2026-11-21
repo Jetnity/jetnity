@@ -88,6 +88,28 @@ module.exports = {
           400: 'rgb(var(--jet-danger-400) / <alpha-value>)',
           600: 'rgb(var(--jet-danger-600) / <alpha-value>)',
         },
+        status: {
+          ok: {
+            DEFAULT: 'rgb(var(--jet-status-ok) / <alpha-value>)',
+            soft: 'rgb(var(--jet-status-ok-soft) / <alpha-value>)',
+            line: 'rgb(var(--jet-status-ok-line) / <alpha-value>)',
+          },
+          schaetzung: {
+            DEFAULT: 'rgb(var(--jet-status-schaetzung) / <alpha-value>)',
+            soft: 'rgb(var(--jet-status-schaetzung-soft) / <alpha-value>)',
+            line: 'rgb(var(--jet-status-schaetzung-line) / <alpha-value>)',
+          },
+          achtung: {
+            DEFAULT: 'rgb(var(--jet-status-achtung) / <alpha-value>)',
+            soft: 'rgb(var(--jet-status-achtung-soft) / <alpha-value>)',
+            line: 'rgb(var(--jet-status-achtung-line) / <alpha-value>)',
+          },
+          neutral: {
+            DEFAULT: 'rgb(var(--jet-status-neutral) / <alpha-value>)',
+            soft: 'rgb(var(--jet-status-neutral-soft) / <alpha-value>)',
+            line: 'rgb(var(--jet-status-neutral-line) / <alpha-value>)',
+          },
+        },
         ink: {
           300: 'rgb(var(--jet-ink-300) / <alpha-value>)',
           400: 'rgb(var(--jet-ink-400) / <alpha-value>)',

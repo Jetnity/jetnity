@@ -269,7 +269,7 @@ function BestehendeFlugSuche({
       {antwort && (
         <div className="mt-6">
           {antwort.status === 'partial' && (
-            <p className="mb-3 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+            <p className="mb-3 rounded-2xl border border-status-schaetzung-line bg-status-schaetzung-soft px-4 py-3 text-sm leading-6 text-status-schaetzung">
               {antwort.message}
             </p>
           )}

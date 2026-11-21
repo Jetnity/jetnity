@@ -80,7 +80,7 @@ export default function Reisekarte({
                 {STATUS_BEZEICHNUNG[reise.status]}
               </span>
               {quelle === 'guest' ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-status-schaetzung-line bg-status-schaetzung-soft px-2.5 py-1 text-[11px] font-semibold text-status-schaetzung">
                   <CloudOff className="h-3 w-3" />
                   Nur auf diesem Gerät
                 </span>
