@@ -4,7 +4,7 @@
 
 Der Owner hat am 21.11.2026 die Entwicklung und Prüfung in Dev freigegeben: Bei weniger als acht veröffentlichten Reiseideen soll der vorhandene statische Katalog zusätzlich angezeigt werden. Erstbesucher sollen auch ohne CMS-Veröffentlichung eine nutzbare Auswahl erhalten. Production, Login/2FA und die Veröffentlichung der vier CMS-Einträge bleiben unverändert; jede Veröffentlichung benötigt ein eigenes Owner-Go.
 
-Die drei offenen PRs #1240, #1264 und #1266 bleiben unangetastet. Dieser Slice erhält einen eigenen Dev-Branch mit Preview, vorerst keinen vierten PR und keinen Merge. Der vorangegangene Website-Release #1265 ist abgeschlossen und wird hier nicht erneut ausgeführt.
+Zum Arbeitsbeginn waren die drei PR-Slots durch #1240, #1264 und #1266 belegt. Dieser Slice erhielt einen eigenen Dev-Branch mit Preview, keinen vierten PR und keinen Merge. Keiner dieser bestehenden PRs wurde in diesem Auftrag verändert. Der vorangegangene Website-Release #1265 ist abgeschlossen und wird hier nicht erneut ausgeführt; der parallel erfolgte spätere #1264-Merge ist unten abgegrenzt.
 
 ## Nur lesend geprüfte CMS-Einträge
 
@@ -56,5 +56,7 @@ Nur `Preview` und dieser exakte Branch erhalten `NEXT_PUBLIC_SUPABASE_URL`, `NEX
 ## Änderungen, Freigaben und nächster Schritt
 
 Die drei genannten Vercel-Variablen wurden ausschliesslich für Preview und den eigenen Branch erstellt und danach im selben Scope zurückgelesen. Keine bestehenden Einträge anderer Branches wurden überschrieben. Die Live-Aliase `jetnity.com` und `www.jetnity.com` zeigten nach dem Preview-Build weiterhin auf den bisherigen Release `dpl_6ADk112pL7VsxiCWSxdzA5pxa4ba`.
+
+Beim abschliessenden Readback war `main` durch den parallel erfolgten Merge von #1264 auf `48fe0d21fff8dd2bf40819ca86fd154aaac4580f` fortgeschritten. Dieser Merge wurde nicht von diesem Auftrag ausgeführt. Beide Live-Aliase zeigten auch danach weiterhin auf den bisherigen #1265-Release. Die geprüfte Preview bleibt bewusst an die tatsächliche Live-Basis `b533c178aef87bb167d477f5a724a121cb683852` plus dieser Katalogergänzung gebunden; die UI-/Auth-Änderungen von #1264 wurden nicht nachträglich in den geprüften Kandidaten eingebaut. Die Hinweise auf drei belegte PR-Slots in den begleitenden Entscheidungsnachträgen beschreiben den Arbeitsbeginn. Vor einem späteren PR/Merge sind der Abgleich mit dem dann aktuellen `main` und dessen vollständige CI erforderlich; ein inzwischen freier Slot ist keine Production-Freigabe.
 
 Der Owner kann diese Preview prüfen. Die vier CMS-Einträge bleiben unveröffentlicht; jeder Eintrag benötigt weiterhin ein eigenes Go. Production, Login und 2FA sind unverändert. Es gab keine neue Datenbankmigration, Rolle, Berechtigung, Schlüsselrotation, Anbieterregistrierung oder neue laufende Kosten. Es gibt keinen Merge, keinen Production-Deploy und keinen vierten PR. Die vollständige CI-Abnahme sowie ein ausdrückliches späteres Production-Go bleiben getrennte Gates.
