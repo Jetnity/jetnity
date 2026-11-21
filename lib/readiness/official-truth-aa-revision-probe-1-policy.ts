@@ -54,7 +54,10 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     // and its typecheck root join the existing CMS job. All prior gates and
     // budgets stay intact; the 52696-byte predecessor remains independently
     // pinned in the append-only pilot-context.test.ts successor chain.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53070, sha256: 'ca656990f3b14f97895087155b59eb30dc2bd4a77941f0fa9cb578e7b523cdef' }),
+    // BG1 query-cost release adds two exact typecheck roots and one mandatory
+    // native proof to that same CMS job. The full 53070-byte predecessor stays
+    // pinned in pilot-context.test.ts; no run selection or earlier gate changes.
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53497, sha256: '88e45eaf54b0b26c5e35b4a17dfdfc43c7417d8aa05fd40d9e56ba35247f55b3' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' }),
     Object.freeze({ path: 'package-lock.json', bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),
