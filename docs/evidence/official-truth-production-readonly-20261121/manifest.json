@@ -1,0 +1,43 @@
+{
+  "schema": "jetnity-production-readonly-result-manifest-v1",
+  "authorization_id": "PROD_READONLY_BASELINE_20261121",
+  "approved_commit": "a36e31a35a69e182d9991a52bd79be151ce19ed0",
+  "parent_commit": "a36e31a35a69e182d9991a52bd79be151ce19ed0",
+  "approved_manifest_sha256": "a5966772cd006472bd38fdeae2ff80be2d970c0f3b8711e51c191b74f6fec8f9",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "outcome": "STOP_AFTER_FIRST_CATALOG_READ",
+  "production_transactions_attempted": 1,
+  "production_transactions_after_stop": 0,
+  "approved_sql_files_modified": 0,
+  "production_mutations_performed": false,
+  "receipt_observed_at": "2026-11-21T16:27:49.255986+00:00",
+  "delivery_binding": "Containing result Git commit; original approved package remains byte-identical to approved_commit.",
+  "manifest_omits_self": true,
+  "files": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 179954,
+      "sha256": "bb333d59cd1c59df44767fd32d0a86fe39f4a192179089b729840e48ab4d52c5"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md",
+      "bytes": 28136,
+      "sha256": "25098f8b748c2589f3e11623cc81de270a91e8c2a083da284460a740369bf890"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_READONLY_RESULT_2026-11-21.md",
+      "bytes": 5383,
+      "sha256": "98c364c51a68ce01cf85f15ffcc8f93ff6ea53b3d0034c98ca26dc00c03da376"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-readonly-20261121/execution.json",
+      "bytes": 195988,
+      "sha256": "d64c7cadcbc83c30e2c4a3e73679d4810bc2a54c2f60832e726a2429f6d3dd47"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-readonly-20261121/production-review-package-prior-a36e31a.md",
+      "bytes": 26582,
+      "sha256": "cede2a7f1b2f18832d07c9706f394930e37afcbbfffb46472596decc7d8f047c"
+    }
+  ]
+}
