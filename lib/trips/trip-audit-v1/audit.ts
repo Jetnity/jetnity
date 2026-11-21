@@ -5,6 +5,7 @@ import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten
 import { f05AdjustFlightKnownGap, type F05FlightGapAdjustment } from './f05-ground-flight'
 import { tripZeitpruefung, type Zeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { AUDIT_LIMITS, boundedSnapshot, lodgingBudget, snapshotProblem } from './limits'
+import { datumKurz } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripItem } from '@/types/trips'
 
 export type AuditDomain = 'lodging' | 'time' | 'flights' | 'mobility'
@@ -177,7 +178,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
         add({
           id: id('lodging', ['transition', gap.start, gap.end]), domain: 'lodging', state: 'unknown',
           title: 'Übergangsnacht ohne Unterkunftszuordnung',
-          detail: `${gap.start} bis ${gap.end} · ${gap.naechte} ${gap.naechte === 1 ? 'Übernachtungsintervall' : 'Übernachtungsintervalle'} ausserhalb der Etappen. Das ist keine festgestellte Hotelpflicht und keine Buchung.`,
+          detail: `${datumKurz(gap.start)} bis ${datumKurz(gap.end)} · ${gap.naechte} ${gap.naechte === 1 ? 'Übernachtungsintervall' : 'Übernachtungsintervalle'} ausserhalb der Etappen. Das ist keine festgestellte Hotelpflicht und keine Buchung.`,
           source: 'unterkunftAbdeckung', refs: {}, evidence: { ...gap },
         })
         continue
@@ -185,7 +186,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       add({
         id: id('lodging', [gap.stageId, gap.start, gap.end]), domain: 'lodging', state: 'known_gap',
         title: 'Geplante Unterkunftsnacht fehlt',
-        detail: `${gap.stageName ?? 'Reise'}: ${gap.start} bis ${gap.end} · ${gap.naechte} Nächte ohne zugeordnete Unterkunft im Plan.`,
+        detail: `${gap.stageName ?? 'Reise'}: ${datumKurz(gap.start)} bis ${datumKurz(gap.end)} · ${gap.naechte} ${gap.naechte === 1 ? 'Nacht' : 'Nächte'} ohne zugeordnete Unterkunft im Plan.`,
         source: 'unterkunftAbdeckung', refs: gap.stageId ? { stageId: gap.stageId } : {}, evidence: { ...gap },
       })
     }

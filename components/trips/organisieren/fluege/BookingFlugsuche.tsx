@@ -81,7 +81,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
   return (
     <>
       <form
-        className="org-form"
+        className="org-form org-aktion-ende"
         action={BOOKING_FLUG_PARTNERLINK}
         method="get"
         target="_blank"
@@ -102,6 +102,11 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             { wert: 'gabel', text: 'Gabelflug' }, { wert: 'retour', text: 'Hin- und Rückflug' }, { wert: 'einfach', text: 'Nur Hinflug' },
           ]} />
         </div>
+        {art === 'gabel' ? (
+          <p className="-mt-2 mb-3 max-w-prose text-xs leading-5 text-[color:var(--org-muted)]">
+            Gabelflug: Hinflug an einen Ort, Rückflug von einem anderen – passend für Reisen mit mehreren Zielen.
+          </p>
+        ) : null}
         <div className={'org-fields ' + (art === 'einfach' ? 'org-four' : '')}>
           <FlughafenFeld
             label="Von"
@@ -147,7 +152,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             Direktflüge
           </label>
         </div>
-        <p className="org-note mt-3">
+        <p className="org-note mt-3 max-w-prose">
           Flüge und Preise öffnen sich bei Booking.com in einem neuen Tab. Bei einer Buchung kann Jetnity eine
           Provision erhalten.
         </p>

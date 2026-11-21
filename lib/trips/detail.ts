@@ -10,6 +10,8 @@
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { BUCHUNGSSTATUS_BEZEICHNUNG } from '@/lib/trips/buchung'
+import { planpunktWann } from '@/lib/trips/datum-anzeige'
+import { gespeicherterPreis, kostenStand, type GespeicherterPreis, type KostenStand } from '@/lib/trips/kostenbild'
 import {
   bereichStatus,
   planpunkteSammeln,
@@ -109,8 +111,14 @@ export type ItemDetailAbleitung = {
   bookingStatusText: string
   priceAmount: number | null
   priceCurrency: string | null
+  /** Stand wie im Kostenbild; Notizen haben keinen. */
+  stand: KostenStand | null
+  preis: GespeicherterPreis
+  wann: string | null
   trust: ItemTrust
   trustText: string
+  /** Gebucht trotz Anbieterangaben: der Status bleibt deine eigene Markierung. */
+  buchungsHinweis: string | null
   domain: DetailDomain | null
   sucheAnbietbar: boolean
 }
@@ -126,10 +134,10 @@ const KIND_DOMAIN: Record<TripItemKind, DetailDomain | null> = {
 
 const TRUST_TEXT: Record<ItemTrust, string> = {
   notiz: 'Persönliche Notiz. Kein Buchungs- oder Anbieterkontext.',
-  manuell: 'Manuell erfasst. Das ist kein nachgewiesenes Anbieterangebot.',
-  'manuell-gebucht': 'Von dir als gebucht bestätigt. Keine Provider-Bestätigung.',
+  manuell: 'Von dir eingetragen. Jetnity hat dazu kein Angebot beim Anbieter geprüft.',
+  'manuell-gebucht': 'Von dir als gebucht markiert. Jetnity prüft Buchungen nicht beim Anbieter.',
   'herkunft-vorhanden':
-    'Es liegen gespeicherte Herkunftsfelder vor. Das ist kein geprüfter Live-Nachweis.',
+    'Mit Anbieterangaben gespeichert. Jetnity hat sie nicht live beim Anbieter geprüft.',
 }
 
 function istDetailDomain(wert: string): wert is DetailDomain {
@@ -286,6 +294,7 @@ export function itemDetailAbleiten(
   )
   const domain = detailDomainFuerKind(punkt.kind)
   const trust = itemTrust(punkt)
+  const tagDatum = tagExistiert ? (reise.days.find((tag) => tag.id === punkt.dayId)?.dayDate ?? null) : null
 
   return {
     itemId: punkt.id,
@@ -302,8 +311,13 @@ export function itemDetailAbleiten(
     bookingStatusText: BUCHUNGSSTATUS_BEZEICHNUNG[punkt.bookingStatus],
     priceAmount: punkt.priceAmount,
     priceCurrency: punkt.priceCurrency,
+    stand: punkt.kind === 'note' ? null : kostenStand(punkt),
+    preis: gespeicherterPreis(punkt),
+    wann: planpunktWann(punkt, punkt.startsOn ?? tagDatum),
     trust,
     trustText: TRUST_TEXT[trust],
+    buchungsHinweis:
+      trust === 'herkunft-vorhanden' && punkt.bookingStatus === 'booked' ? TRUST_TEXT['manuell-gebucht'] : null,
     domain,
     sucheAnbietbar: domain !== null && domain !== 'mobilitaet',
   }

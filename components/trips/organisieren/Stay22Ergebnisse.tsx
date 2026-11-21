@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Columns2, List, Loader2, Map, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
+import { Columns2, List, Map, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 import { stay22Rahmen, type Stay22Phase } from '@/lib/providers/stay22/rahmen'
 import { stay22Ansicht, type Stay22Ansicht, type Stay22Suche } from '@/lib/providers/stay22/suche'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
@@ -87,12 +88,15 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
         </div>
       </div>
       <div role="status" className="stay22-status">
-        {phase === 'laedt' ? <p><Loader2 size={17} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> Stay22 wird geöffnet …</p> : null}
+        {phase === 'laedt' ? <p>Stay22 wird geöffnet …</p> : null}
         {phase === 'langsam' ? <p>Die Anzeige braucht länger. Du kannst sie erneut laden.</p> : null}
         {phase === 'fehler' ? <p>Die Hotelanzeige konnte nicht geöffnet werden. Bitte versuche es erneut.</p> : null}
         {phase === 'datenschutz' ? <p>Deine Datenschutzeinstellungen verhindern das Laden von Stay22.</p> : null}
       </div>
-      <div ref={host} hidden={blockiert} className="stay22-host" />
+      <div hidden={blockiert} className="stay22-hostrahmen">
+        {phase === 'laedt' ? <Ladeflaeche className="absolute inset-0 z-[1]" /> : null}
+        <div ref={host} className="stay22-host" />
+      </div>
     </dialog>
   </section>
 }

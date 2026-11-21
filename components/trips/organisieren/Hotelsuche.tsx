@@ -120,6 +120,20 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
       if (lauf === ortAnfrage.current) setOrtLaedt(false)
     }
   }
+  const [mehrStart] = useState(() => d.umgebung !== 'etappe' || d.filter.sterne > 0 || d.filter.bewertung > 0)
+  const ortName = stage?.name || d.suchOrt?.name || 'dein Reiseziel'
+  const mehrText = [
+    d.umgebung === 'etappe' ? `Rund um ${ortName}` : d.umgebung === 'text' ? 'Eigene Adresse' : `Nahe ${anker.find(a => a.key === d.umgebung)?.name ?? 'einem Ort im Reiseplan'}`,
+    d.filter.sterne > 0 ? (d.filter.sterne === 5 ? '5 Sterne' : `Ab ${d.filter.sterne} Sternen`) : null,
+    d.filter.bewertung > 0 ? `Ab ${d.filter.bewertung}/10` : null,
+    d.filter.preis === 'nightly' ? 'Pro Nacht' : 'Gesamtpreis',
+    d.waehrung,
+  ].filter(Boolean).join(' · ')
+  const fokussieren = (feld: HTMLElement | null | undefined) => {
+    const umschlag = feld?.closest('details')
+    if (umschlag && !umschlag.open) umschlag.open = true
+    feld?.focus()
+  }
   const vorlage = hotelSuchvorlage(reise, stage)
   const personen = hotelGaesteText(vorlage.reisende, d)
   const belegungHinweis = hotelBelegungHinweis(vorlage.reisende, d)
@@ -132,7 +146,7 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
       if (d.umgebung === 'text' && !d.ortstext.trim()) {
         setFehler('Bitte gib eine Adresse oder einen Ort für die Suchumgebung ein.')
         setFehlerfeld('ort')
-        e.currentTarget.querySelector<HTMLInputElement>('[name=umgebungstext]')?.focus()
+        fokussieren(e.currentTarget.querySelector<HTMLInputElement>('[name=umgebungstext]'))
         return
       }
       let ort = stageId === 'anderer-ort' ? d.suchOrt : stay22OrtAusEtappe(stage)
@@ -161,7 +175,7 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
         const feld = result.feld === 'ort' && stageId === 'anderer-ort'
           ? document.getElementById(`${id}-ort`)
           : e.currentTarget.querySelector<HTMLElement>(`[name="${result.feld}"]`)
-        feld?.focus()
+        fokussieren(feld)
         return
       }
       setGaesteOffen(false)
@@ -199,6 +213,8 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
       </fieldset> : null}
       <p className="stay22-datecontext stay22-belegung" id={`${id}-belegung`}>{belegungHinweis}{belegungAngefasst ? <> <button type="button" onClick={() => { setGaesteOffen(true); patch(hotelBelegungZurueck()) }}>Belegung zurücksetzen</button></> : null}</p>
       {stage ? <div className="stay22-datecontext"><CalendarDays size={15} aria-hidden="true" />{datumsabweichung ? <>Eigener Suchzeitraum <button type="button" onClick={() => patch({ anreise: vorlage.anreise, abreise: vorlage.abreise })}>Reisedaten übernehmen</button></> : hotelTerminHinweis(vorlage.herkunft)}</div> : null}
+      <details className="stay22-mehr" open={mehrStart}>
+      <summary><SlidersHorizontal aria-hidden="true" /><span><strong>Lage und Filter</strong><small>{mehrText}</small></span><ChevronDown className="stay22-mehr-pfeil" aria-hidden="true" /></summary>
       <div className="stay22-location">
         <div className="stay22-location-title"><MapPin size={19} aria-hidden="true" /><div><strong>Die passende Lage für deine Reise</strong><p>Rund um dein Ziel oder nahe einem bestimmten Ort suchen.</p></div></div>
         <div className="stay22-location-fields"><label>Suchumgebung<select value={d.umgebung} onChange={e => patch({ umgebung: e.target.value })}>
@@ -217,6 +233,7 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
         <label>Währung<select name="waehrung" value={d.waehrung} onChange={e => patch({ waehrung: e.target.value })}>{STAY22_WAEHRUNGEN.map(w => <option key={w}>{w}</option>)}</select></label>
         {d.filter.sterne > 0 || d.filter.bewertung > 0 ? <button type="button" className="stay22-smallbutton" onClick={() => patch({ filter: { ...d.filter, sterne: 0, bewertung: 0 } })}>Filter zurücksetzen</button> : null}
       </div>
+      </details>
       {ergebnis && geaendert ? <p role="status" className="stay22-datecontext">Deine Auswahl ist geändert. Die bisherigen Ergebnisse bleiben sichtbar, bis du „Suche aktualisieren“ wählst.</p> : null}
       {fehler ? <p role="alert" id={`${id}-fehler`} className="stay22-error">{fehler}</p> : null}
     </form>

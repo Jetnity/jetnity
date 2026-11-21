@@ -14,6 +14,7 @@ import {
   preparationPersoenlichAufteilen,
   preparationPlatzhalterGruppe,
   preparationPlatzhalterZeile,
+  preparationStandSatz,
   preparationUebersichtStatus,
 } from '@/lib/readiness/preparation-premium-experience-5'
 import type { ReadinessKind } from '@/types/trips'
@@ -43,6 +44,23 @@ describe('Preparation premium experience 5', () => {
       'Offizielle Anforderungen wurden geprüft. Nicht verfügbar',
     )
     assert.equal(preparationUebersichtStatus('', 'Nicht verfügbar'), 'Nicht verfügbar')
+  })
+
+  test('nennt den eigenen Stand in einem Satz ohne amtliche Aussage', () => {
+    assert.equal(preparationStandSatz({ open: 0, done: 0, stale: 0, skipped: 0 }), 'Noch keine Vorbereitungspunkte.')
+    assert.equal(preparationStandSatz({ open: 2, done: 0, stale: 0, skipped: 0 }), '0 von 2 Punkten erledigt.')
+    assert.equal(preparationStandSatz({ open: 0, done: 1, stale: 0, skipped: 0 }), '1 von 1 Punkt erledigt.')
+    assert.equal(
+      preparationStandSatz({ open: 1, done: 2, stale: 1, skipped: 1 }),
+      '2 von 4 Punkten erledigt · 1 erneut prüfen · 1 nicht relevant.',
+    )
+    assert.equal(preparationStandSatz({ open: 0, done: 0, stale: 0, skipped: 3 }), 'Alle Punkte als nicht relevant markiert.')
+    for (const satz of [
+      preparationStandSatz({ open: 0, done: 3, stale: 0, skipped: 0 }),
+      preparationStandSatz({ open: 0, done: 0, stale: 0, skipped: 2 }),
+    ]) {
+      assert.doesNotMatch(satz, /bereit|bestätigt|geprüft|Visum|Einreise/i)
+    }
   })
 
   test('teilt persönliche Punkte verlustfrei und ohne Amtsanspruch', () => {

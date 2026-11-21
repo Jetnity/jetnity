@@ -48,7 +48,8 @@ import { ortBestaetigen } from '@/lib/places/aktionen'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
 import { cn } from '@/lib/utils'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 const kurzesDatum = new Intl.DateTimeFormat('de-CH', {
   day: '2-digit',
@@ -433,8 +434,8 @@ export default function AktivitaetenBereich({
         <span className="block h-1 bg-citrus-400" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
-        <h2 className="mt-1 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        <p className="text-kicker uppercase text-brand-600">Aktivitäten</p>
+        <h2 className="mt-1 break-words text-title text-brand-800">
           {gewaehlt?.name ?? 'Reiseziel'}
         </h2>
         <p className="mt-1 text-sm text-ink-800">Anbieter: GetYourGuide und Viator</p>
@@ -554,10 +555,7 @@ export default function AktivitaetenBereich({
 
       <div className="mt-5 min-h-[4rem] min-w-0" aria-live="polite">
         {suchLaeuft && (
-          <p aria-busy="true" className="flex items-start gap-3 text-sm text-ink-800">
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
-            Angebote für {gewaehlt?.name ?? 'dieses Ziel'} werden geladen.
-          </p>
+          <Ladeplatzhalter sichtbar status={`Angebote für ${gewaehlt?.name ?? 'dieses Ziel'} werden geladen.`} />
         )}
 
         {!suchLaeuft && antwort && (

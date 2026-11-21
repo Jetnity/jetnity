@@ -42,7 +42,7 @@ export default function ReisezeitHinweise({
       }
       className="rounded-2xl border border-line-200 bg-white px-4 py-4"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Reisezeit & Saison</p>
+      <p className="text-kicker uppercase text-brand-600">Reisezeit & Saison</p>
       <h3 id="reise-zeit-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         Typischer saisonaler Kontext für diese Reise
       </h3>

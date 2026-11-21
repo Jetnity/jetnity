@@ -4,6 +4,7 @@ import { requireAdminPage } from '@/lib/auth/admin-guard'
 import { getServerSupabaseUrl } from '@/lib/supabase/server'
 import { HUMAN_METHOD_PRODUCTION_URL } from '@/lib/readiness/official-truth-product-v3/method/human-contract'
 import { getHumanRelease } from '@/lib/readiness/official-truth-product-v3/method/human-release'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import DevOwnerImportPanel from './DevOwnerImportPanel'
 
 export const dynamic = 'force-dynamic'
@@ -17,13 +18,12 @@ export default async function DevOwnerImportPage() {
     if (gate.role !== 'owner' || gate.grant !== 'role') redirect('/unauthorized?grund=owner_required')
   }
   return (
-    <section className="mx-auto max-w-3xl space-y-6 px-4 py-6">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold">Amtliche Visumquelle: {environment}-Import</h1>
+    <section className="mx-auto max-w-2xl space-y-6">
+      <Seitenkopf kicker="Amtliche Quellen" titel={`Amtliche Visumquelle: ${environment}-Import`}>
         <p>Ein manueller Quellenlauf für Schweizer Reisepässe bei direkter Einreise nach Deutschland.</p>
-      </header>
+      </Seitenkopf>
       {selected ? <DevOwnerImportPanel environment={environment} /> : <p role="status">Der manuelle Quellenimport ist für diese Umgebung nicht verfügbar.</p>}
-      <p><Link className="underline" href="/admin/official-truth/method">Zur ausgewählten Methode und ihrem Freigabeverlauf</Link></p>
+      <p><Link className="inline-flex min-h-11 items-center underline underline-offset-4" href="/admin/official-truth/method">Zur ausgewählten Methode und ihrem Freigabeverlauf</Link></p>
     </section>
   )
 }

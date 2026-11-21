@@ -75,16 +75,16 @@ export default function TripStageDayAllocation({
         id="planen-gruppe-tage"
         className="min-w-0 max-w-full break-words border-b border-line-200 pb-2 text-base font-semibold tracking-[-0.02em] text-brand-900"
       >
-        Tage den Zielen zuordnen
+        Wie lange bleibst du wo?
       </h3>
       <p className="max-w-full break-words text-sm leading-6 text-ink-800">
-        Optional. Ohne diese Wahl bleiben die Tage ohne Ziel. Kalendertage sind keine Hotel-Nächte
-        und keine Flug- oder Transferzeiten.
+        Optional, am einfachsten aber gleich hier: Wenn jedes Ziel seine Tage hat, zeigt Jetnity pro
+        Ziel, was noch fehlt, etwa die Unterkunft für diese Nächte. Ohne Verteilung bleiben die Tage
+        vorerst ohne Ziel. Gebucht oder festgelegt wird dabei nichts, auch keine Flugzeiten.
       </p>
       {!zeitraumBereit ? (
         <p className="max-w-full break-words text-sm leading-6 text-ink-700">
-          Sobald Abreise und Rückreise festliegen, kannst du die vorhandenen Tage auf die bestätigten
-          Ziele verteilen.
+          Sobald Abreise und Rückreise feststehen, kannst du hier die Tage auf deine Ziele verteilen.
         </p>
       ) : (
         <>
@@ -99,14 +99,14 @@ export default function TripStageDayAllocation({
               aria-describedby="zuordnung-stand"
               onChange={(ereignis) => onAktiv(ereignis.target.checked)}
             />
-            <span className="min-w-0 flex-1">Vorhandene Tage ausdrücklich auf die Ziele verteilen</span>
+            <span className="min-w-0 flex-1">Tage jetzt auf die Ziele verteilen</span>
           </label>
           <p id="zuordnung-stand" className="max-w-full break-words text-sm leading-6 text-ink-800" aria-live="polite">
             {zeitraumZuLang
               ? 'Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.'
               : aktiv
                 ? `${zugeordnet} Tage zugeordnet, ${ohneZiel} ohne Ziel. Die Reise bleibt ${reisetage} Tage.`
-                : `Noch keine Tageszuordnung. Die Reise hat ${reisetage} Tage.`}
+                : `Noch nicht verteilt. Die Reise hat ${reisetage} Tage.`}
           </p>
           {aktiv ? (
             <div className="tageszuordnung-liste">

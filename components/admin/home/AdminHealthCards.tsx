@@ -54,7 +54,7 @@ export default async function AdminHealthCards() {
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-medium">Security · Datenzugriff</h3>
-        <Link href="/admin/security" className="text-xs underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">Security öffnen</Link>
+        <Link href="/admin/security" className="-my-3 inline-flex min-h-11 items-center rounded-control px-1 text-xs underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-fine:my-0 pointer-fine:min-h-6">Security öffnen</Link>
       </div>
       <div className="grid grid-cols-2 gap-3">
         {karten.map((karte) => (

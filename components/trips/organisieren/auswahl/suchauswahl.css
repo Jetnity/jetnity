@@ -162,6 +162,11 @@
 }
 [data-workspace-theme='green'] .reise-monat td > button.reise-tag-gewaehlt,
 [data-workspace-theme='green'] .reise-kalender .reise-uebernehmen { background: #ddf578; color: #153f35; }
+@media (pointer: coarse) and (min-width: 641px) {
+  .reise-monat td { height: 46px; }
+  .reise-monat td > button { width: min(44px, 100%); height: 44px; }
+  .reise-monat .reise-tag-bereich { background: linear-gradient(transparent 1px, var(--kal-soft) 1px, var(--kal-soft) 45px, transparent 45px); }
+}
 @media (max-width: 640px) {
   .reise-auswahl { display: block; flex: 1; }
   .reise-auswahl-trigger { width: 100%; margin-top: 6px; gap: 8px; font-size: 13px; padding-inline: 10px; }

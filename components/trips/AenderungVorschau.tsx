@@ -52,7 +52,7 @@ export default function AenderungVorschau({
   return (
     <section
       aria-label="Änderungsvorschlag"
-      className="min-w-0 rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
+      className="min-w-0 rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5"
     >
       <div className="flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
@@ -61,7 +61,7 @@ export default function AenderungVorschau({
         <span className="text-xs text-ink-700">Noch nicht gespeichert.</span>
       </div>
 
-      <h2 className="mt-4 break-words text-2xl font-semibold tracking-[-0.03em] text-brand-900 sm:text-3xl">
+      <h2 className="mt-4 break-words text-lg font-semibold text-brand-900 sm:text-xl">
         {vorschau.aenderung.zusammenfassung}
       </h2>
       <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-ink-800">
@@ -182,7 +182,7 @@ export default function AenderungVorschau({
             aria-describedby={plan.strukturell ? 'aenderung-plan' : undefined}
             className={cn(
               'inline-flex h-12 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white',
-              'shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900',
+              'transition hover:bg-brand-900',
               'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800',
               'disabled:pointer-events-none disabled:opacity-60',
             )}

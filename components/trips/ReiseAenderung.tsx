@@ -125,14 +125,14 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
     <div data-aenderung-sperre={laeuft ? 'true' : 'false'} className="mt-6 grid gap-6">
       <form
         onSubmit={erzeugen}
-        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-7"
+        className="rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5"
       >
         <span className="inline-flex items-center gap-2 rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
           <Sparkles className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
           Änderung in eigenen Worten
         </span>
 
-        <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-brand-900 sm:text-3xl">
+        <h2 className="mt-4 text-lg font-semibold text-brand-900 sm:text-xl">
           Was möchtest du an deiner Reise ändern?
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-900">
@@ -189,7 +189,7 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
           <button
             type="submit"
             disabled={laeuft}
-            className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white transition hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
             {plant ? 'Änderung entsteht …' : 'Änderung vorschlagen'}
           </button>
@@ -222,6 +222,8 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
   )
 }
 
+const MODUS_KNOPF = 'min-h-11 min-w-0 rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50 aria-pressed:bg-primary aria-pressed:text-primary-foreground'
+
 export default function ReiseAenderung(props: ReiseAenderungProps) {
   return <AenderungsSitzung key={`${props.quelle}:${props.reise.id}`} {...props} />
 }
@@ -232,9 +234,9 @@ function AenderungsSitzung(props: ReiseAenderungProps) {
   const [sperre, setSperre] = React.useState(false)
   React.useLayoutEffect(() => { surface?.setBusy(sperre); return () => surface?.setBusy(false) }, [sperre, surface])
   return <section aria-label="Reise ändern" data-aenderung-sperre={sperre ? 'true' : 'false'}>
-    <div className="mt-5 flex flex-wrap gap-2" aria-label="Bearbeitungsart">
-      <button data-aenderung-start type="button" disabled={sperre} aria-pressed={modus === 'direkt'} className="min-h-11 rounded-full border border-line-200 bg-white px-5 py-3 focus-visible:ring-2" onClick={() => setModus('direkt')}>Direkt bearbeiten</button>
-      <button type="button" disabled={sperre} aria-pressed={modus === 'text'} className="min-h-11 rounded-full border border-line-200 bg-white px-5 py-3 focus-visible:ring-2" onClick={() => setModus('text')}>In eigenen Worten</button>
+    <div role="group" className="grid grid-cols-2 gap-1 rounded-full border border-line-200 bg-white p-1 sm:inline-grid" aria-label="Bearbeitungsart">
+      <button data-aenderung-start type="button" disabled={sperre} aria-pressed={modus === 'direkt'} className={MODUS_KNOPF} onClick={() => setModus('direkt')}>Direkt bearbeiten</button>
+      <button type="button" disabled={sperre} aria-pressed={modus === 'text'} className={MODUS_KNOPF} onClick={() => setModus('text')}>In eigenen Worten</button>
     </div>
     {modus === 'direkt' ? <Manuell key={generation} {...props} onSperre={setSperre} onNeu={() => setGeneration(n => n + 1)} /> : <FreitextAenderung {...props} onSperre={setSperre} />}
   </section>

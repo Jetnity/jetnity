@@ -9,10 +9,11 @@
 // nach dem Absenden.
 //
 // Seit Phase 2.1 gibt es zwei Einstiege, und ihre Reihenfolge ist eine Aussage:
-// Die freie Beschreibung steht oben, das Formular darunter. Das Formular bleibt
-// vollständig – es ist der Weg, der ohne Modell funktioniert, und genau deshalb
-// wird er nicht ersetzt. Ist die intelligente Planung nicht freigegeben, sagt der
-// obere Teil das und der untere trägt die Reise weiter.
+// Die freie Beschreibung kommt zuerst, das Formular ist der zweite Weg. Sichtbar
+// ist immer nur einer; ein Umschalter wechselt (DESIGN_SYSTEM.md 6.10). Das
+// Formular bleibt vollständig – es ist der Weg, der ohne Modell funktioniert, und
+// genau deshalb wird er nicht ersetzt. Ist die intelligente Planung nicht
+// freigegeben, sagt der erste Weg das und der zweite trägt die Reise weiter.
 //
 // `zielIds` ist transienter Routeneinstieg. Fehlt eine Bestätigung, entsteht
 // keine Teilroute und kein Erfolgspfad.
@@ -24,10 +25,10 @@ import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/requ
 import { createServerComponentClient } from '@/lib/supabase/server'
 import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
 import {
-  PlanenIdeeZeiger,
   PlanenIdeeZiel,
   PlanenManuellZeiger,
   PlanenManuellZiel,
+  PlanenWegWahl,
 } from '@/components/trips/PlanenEinstiegNavigation'
 import RouteZielHandoffFehler from '@/components/places/RouteZielHandoffFehler'
 import Reiseidee from '@/components/trips/Reiseidee'
@@ -137,6 +138,9 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
     weitereZiele,
   })
 
+  // Wer mit einem gewählten Ziel kommt, startet in dem Weg, in dem es schon eingetragen ist.
+  const startWeg = !vor.idee && (vor.destination || vor.weitereZiele.length > 0) ? 'manuell' : 'idee'
+
   return (
     <main className="min-h-screen bg-surface-75 pb-[max(2.5rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-8 sm:pb-[max(3.5rem,env(safe-area-inset-bottom))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] sm:pt-12">
       <div className="mx-auto grid w-full min-w-0 max-w-6xl gap-8 sm:gap-10">
@@ -144,7 +148,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
           {handoffFehler ? (
             <RouteZielHandoffFehler meldung={handoffFehler} wiederholen={handoffWiederholen} />
           ) : (
-            <>
+            <PlanenWegWahl start={startWeg}>
               <div className="grid min-w-0 gap-4">
                 <PlanenManuellZeiger />
                 <PlanenIdeeZiel>
@@ -153,30 +157,18 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
                     initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
                   />
                 </PlanenIdeeZiel>
+                <PlanenManuellZiel>
+                  <TripPlanner
+                    angemeldet={angemeldet}
+                    initialDestination={vor.destination}
+                    initialDestinationId={vor.destinationId}
+                    initialDestinationDescription={zielOrt ? ortAnzeigeKontext(zielOrt) : undefined}
+                    initialIdea={vor.idee}
+                    initialWeitereZiele={vor.weitereZiele}
+                  />
+                </PlanenManuellZiel>
               </div>
-
-              <div className="flex min-w-0 items-center gap-4">
-                <span className="h-px min-w-4 flex-1 bg-line-200" />
-                <span className="min-w-0 max-w-[70%] shrink break-words text-center text-xs font-semibold uppercase tracking-[0.14em] text-ink-700">
-                  Oder Schritt für Schritt
-                </span>
-                <span className="h-px min-w-4 flex-1 bg-line-200" />
-              </div>
-
-              <PlanenManuellZiel>
-                <div className="mb-4 min-w-0">
-                  <PlanenIdeeZeiger />
-                </div>
-                <TripPlanner
-                  angemeldet={angemeldet}
-                  initialDestination={vor.destination}
-                  initialDestinationId={vor.destinationId}
-                  initialDestinationDescription={zielOrt ? ortAnzeigeKontext(zielOrt) : undefined}
-                  initialIdea={vor.idee}
-                  initialWeitereZiele={vor.weitereZiele}
-                />
-              </PlanenManuellZiel>
-            </>
+            </PlanenWegWahl>
           )}
         </PlanenCreateGate>
       </div>

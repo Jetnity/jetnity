@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, Bus, Car, Clock3, Loader2, Plane, Ship, TrainFront } from 'lucide-react'
+import { ArrowUpRight, Bus, Car, Clock3, Plane, Ship, TrainFront } from 'lucide-react'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 import { lade, type Ladung } from '@/lib/admin/ladezustand'
 import { twelveGoKantenFuerReise, type TwelveGoKante } from '@/lib/providers/twelve-go/affiliate/kanten'
 import { timetableAnfrageFuerKante, timetableAntwortSchema, timetableVerkehrsmittel, type TimetableAnfrage, type TimetableAntwort } from '@/lib/providers/twelve-go/timetable/schema'
@@ -50,7 +51,7 @@ export function TimetableDetails({ request }: { request: TimetableAnfrage }) {
     }).finally(() => clearTimeout(timer))
     return () => { disposed = true; clearTimeout(timer); controller.abort() }
   }, [from, to, country, fromPlaceId, toPlaceId, retry])
-  if (!result) return <div role="status" className="flex min-h-32 items-center gap-3 rounded-2xl bg-surface-25 p-5 text-sm text-brand-800"><Loader2 className="motion-safe:animate-spin" aria-hidden="true" />12Go-Streckeninformationen werden geladen …</div>
+  if (!result) return <Ladeplatzhalter sichtbar zeilen={2} status="12Go-Streckeninformationen werden geladen …" />
   if (result.fehler) return <div role="status" className="rounded-2xl border border-line-200 p-4"><p className="text-sm leading-6 text-ink-800">{result.fehler.meldung}</p>{result.fehler.wiederholbar ? <button type="button" className={`${BUTTON} mt-3`} onClick={() => { setResult(null); setRetry((n) => n + 1) }}>Erneut versuchen</button> : null}</div>
   return <TimetableCards data={result.daten} />
 }
@@ -74,7 +75,7 @@ export default function TwelveGoTimetable({ reise }: { reise: Trip }) {
   const edge = edges.find((item) => item.id === selected) ?? edges[0]
   const context = edge ? [reise.id, edge.id, edge.vonName, edge.nachName, edge.vonLand, edge.nachLand, edge.vonPlaceId, edge.nachPlaceId, edge.geplantesDatum].join('|') : ''
   return <section aria-label="12Go-Streckeninformationen" data-organisieren-flaeche="twelve-go" data-twelve-go-timetable="1" className={ORGANISIEREN_FLAECHE_KLASSE}>
-    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Unterwegs mit 12Go</p>
+    <p className="text-kicker uppercase text-brand-600">Unterwegs mit 12Go</p>
     <h2 className="mt-1 text-xl font-semibold tracking-tight text-brand-800 sm:text-2xl">Verbindungen für deine Route</h2>
     <p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Verkehrsmittel und allgemeine Fahrplanangaben für deine Weiterreise. Buchung und Bezahlung erfolgen bei 12Go. Die Links sind Affiliate-Links.</p>
     {edges.length ? <>

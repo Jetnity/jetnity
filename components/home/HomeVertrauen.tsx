@@ -46,7 +46,7 @@ export function HomeVertrauen() {
                   <span className="min-w-0 flex-1">{eintrag.frage}</span>
                   <ChevronDown className="h-5 w-5 shrink-0 motion-safe:transition-transform group-open:rotate-180" aria-hidden="true" />
                 </summary>
-                <p className="max-w-3xl pb-5 pr-4 text-sm leading-7 text-ink-800">{eintrag.antwort}</p>
+                <p className="max-w-prose pb-5 pr-4 text-sm leading-7 text-ink-800">{eintrag.antwort}</p>
               </details>
             ))}
           </div>

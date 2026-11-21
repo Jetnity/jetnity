@@ -206,7 +206,7 @@ export default function TripWorkspaceDestinationEssentials({
           : 'min-w-0 rounded-[24px] border border-line-200 bg-white px-4 py-4'
       }
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Wichtig für deine Ziele</p>
+      <p className="text-kicker uppercase text-brand-600">Wichtig für deine Ziele</p>
       <h3 id="reiseziele-essentials-titel" className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">
         {essentials.titel}
       </h3>

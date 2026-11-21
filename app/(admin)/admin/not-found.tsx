@@ -1,16 +1,21 @@
-// app/(admin)/admin/not-found.tsx
 import Link from 'next/link'
+import { Compass, LayoutDashboard } from 'lucide-react'
+import { Statuskarte, statusAktionHaupt } from '@/components/ui/statuskarte'
 
 export default function AdminNotFound() {
   return (
-    <div className="rounded-2xl border border-border p-6 bg-card">
-      <h1 className="text-lg font-semibold">Seite nicht gefunden</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Diese Admin-Seite existiert (noch) nicht.
-      </p>
-      <div className="mt-4">
-        <Link href="/admin" className="underline">Zurück zum Dashboard</Link>
-      </div>
-    </div>
+    <Statuskarte
+      symbol={Compass}
+      kicker="Administration"
+      titel="Seite nicht gefunden"
+      aktionen={
+        <Link href="/admin" className={statusAktionHaupt}>
+          <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+          Zurück zum Dashboard
+        </Link>
+      }
+    >
+      <p>Diese Admin-Seite existiert (noch) nicht.</p>
+    </Statuskarte>
   )
 }

@@ -1,11 +1,13 @@
 'use client'
 
+import { StatusSiegel, type StatusSiegelTon } from '@/components/ui/status-siegel'
 import { BUCHUNGSSTATUS_BEZEICHNUNG } from '@/lib/trips/buchung'
-import { cn } from '@/lib/utils'
 import type { BewegungsStatus } from '@/lib/mobility/kanten'
 import type { FlugAbschnittStatus } from '@/lib/trips/flug-abdeckung'
 
-const TEXT: Record<FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked', string> = {
+type Status = FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked'
+
+const TEXT: Record<Status, string> = {
   booked: BUCHUNGSSTATUS_BEZEICHNUNG.booked,
   selected: BUCHUNGSSTATUS_BEZEICHNUNG.unconfirmed,
   open: 'Noch offen',
@@ -13,24 +15,14 @@ const TEXT: Record<FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked'
   covered_by_flight: 'Über Flug abgedeckt',
 }
 
-export default function BuchungsSiegel({
-  status,
-}: {
-  status: FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked'
-}) {
-  const text = TEXT[status]
-  return (
-    <span
-      className={cn(
-        'inline-flex min-h-8 items-center rounded-full px-2.5 text-xs font-semibold',
-        status === 'booked' && 'bg-surface-100 text-brand-800',
-        status === 'selected' && 'bg-surface-25 text-ink-800',
-        status === 'open' && 'border border-line-300 bg-white text-ink-800',
-        status === 'unknown' && 'bg-surface-25 text-ink-700',
-        status === 'covered_by_flight' && 'bg-surface-25 text-ink-800',
-      )}
-    >
-      {text}
-    </span>
-  )
+const TON: Record<Status, StatusSiegelTon> = {
+  booked: 'gebucht',
+  selected: 'gewaehlt',
+  open: 'offen',
+  unknown: 'hinweis',
+  covered_by_flight: 'hinweis',
+}
+
+export default function BuchungsSiegel({ status }: { status: Status }) {
+  return <StatusSiegel ton={TON[status]}>{TEXT[status]}</StatusSiegel>
 }

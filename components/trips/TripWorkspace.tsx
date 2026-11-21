@@ -19,6 +19,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { darfFokussieren, naechsteAnordnung, type U1bAnordnung } from '@/lib/trips/ux-u1b-route-detail-1/anordnung'
 import { cn } from '@/lib/utils'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 import { hinweisAktualisieren, hinweisGleich, type Hinweis } from '@/lib/trips/ux-u1b-route-detail-1/hinweis'
 
 import {
@@ -74,6 +75,7 @@ import Organisieren from './organisieren/Organisieren'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
 import WorkspaceTripChrome, { WorkspacePortal } from '@/components/workspace/WorkspaceTripChrome'
+import { kostenbild, kostenZeile } from '@/lib/trips/kostenbild'
 import { useWorkspaceShell } from '@/components/workspace/WorkspaceContext'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
@@ -107,7 +109,7 @@ import TripComSuche from '@/components/trips/TripComSuche'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
 
 const EinreiseLaenderpruefer = dynamic(() => import('@/components/readiness/EinreiseLaenderpruefer'), {
-  loading: () => <p role="status">Einreiseprüfung wird geladen.</p>,
+  loading: () => <Ladeplatzhalter status="Einreiseprüfung wird geladen." className="mt-6" />,
 })
 
 function kompakteAnsichtAbonnieren(melden: () => void) {
@@ -1055,6 +1057,9 @@ export default function TripWorkspace({
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const begleiterSichtbar = begleiterIstSichtbar(begleiterOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
+  const kosten = React.useMemo(() => kostenbild(reise, ungeplantePunkte), [reise, ungeplantePunkte])
+  const [kostenAnsteuern, setKostenAnsteuern] = React.useState(false)
+  const kostenAngesteuert = React.useCallback(() => setKostenAnsteuern(false), [])
   const destinationEssentials = destinationEssentialsAbleiten({
     reise,
     officialEvaluations,
@@ -1328,6 +1333,7 @@ export default function TripWorkspace({
       reiseoptionen={reiseoptionen}
       workspace={Boolean(shell)}
       uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
+      ansicht={modus.ansicht}
     />
   )
 
@@ -1348,9 +1354,13 @@ export default function TripWorkspace({
         </Link>
 
         <WorkspacePortal slot="title"><span>{organisierenStart ? 'Reiseplanung › Organisieren' : reise.title}</span></WorkspacePortal>
-        {hinweis}
 
-        {modusBereit && modus.ansicht === 'uebersicht' && identitaet}
+        {modusBereit ? (
+          <div className={cn('workspace-trip-kopf', organisierenStart && 'org-wrap pt-5 sm:pt-7')}>
+            {identitaet}
+            {hinweis}
+          </div>
+        ) : hinweis}
 
         {modusBereit ? (
           <>
@@ -1360,6 +1370,13 @@ export default function TripWorkspace({
               kompakt={kompakt}
               detailOffen={detailOffen}
               onWechsel={onModus}
+              kostenLeiste={!detailOffen && (kosten.summen.length > 0 || kosten.budget) ? {
+                text: kostenZeile(kosten),
+                onOeffnen: () => {
+                  if (modus.ansicht !== 'uebersicht') onModus('uebersicht', false)
+                  setKostenAnsteuern(true)
+                },
+              } : null}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
               <WorkspacePortal slot="actions"><TripWorkspaceAktionen
@@ -1376,16 +1393,11 @@ export default function TripWorkspace({
             </div>
           </>
         ) : (
-          <div
+          <Ladeplatzhalter
             data-workspace-modus-ausstehend=""
-            role="status"
-            aria-live="polite"
-            aria-busy="true"
-            inert
-            className="mt-6 text-sm leading-6 text-ink-800"
-          >
-            Die Reiseansicht wird vorbereitet.
-          </div>
+            status="Die Reiseansicht wird vorbereitet."
+            className="mt-6"
+          />
         )}
 
         {kompakt && detailOffen ? (
@@ -1421,6 +1433,9 @@ export default function TripWorkspace({
                 onLuecke={oeffneGap}
                 onAttention={onAttention}
                 workspace={Boolean(shell)}
+                kosten={kosten}
+                kostenAnsteuern={kostenAnsteuern}
+                onKostenAngesteuert={kostenAngesteuert}
                 onRoute={(tagId) => {
                   modusTastaturRef.current = true
                   modusSetzen({ ansicht: 'plan', bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')
@@ -1459,6 +1474,8 @@ export default function TripWorkspace({
               rueckkehrTagId={historyEltern?.ansicht === 'plan' ? historyEltern.tagId : undefined}
               partnerAktivitaeten={aktivitaetensuche}
               tab={modus.kategorie ?? kategorieFuerBereich(modus.bereich)}
+              ohneTag={ungeplantePunkte}
+              onItem={oeffneItem}
               kategorieWaehlen={(kategorie, etappeId) => modusSetzen({ ansicht: 'organisieren', bereich: null, kategorie, etappeId, urlAnpassen: false }, 'replace')}
             />
           ) : null}
@@ -1473,7 +1490,7 @@ export default function TripWorkspace({
                 id="workspace-vorbereitung-titel"
                 tabIndex={-1}
                 data-workspace-modus-heading
-                className="text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none"
+                className={cn('text-title text-brand-800 outline-none', shell && 'sr-only')}
               >
                 Vorbereitung
               </h2>
@@ -1495,7 +1512,7 @@ export default function TripWorkspace({
               data-workspace-modus="einreise"
               className="mt-4 min-w-0 outline-none"
             >
-              <EinreiseLaenderpruefer />
+              <EinreiseLaenderpruefer eingebettet />
             </section>
           ) : null}
 

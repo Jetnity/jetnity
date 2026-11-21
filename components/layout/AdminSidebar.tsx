@@ -92,7 +92,7 @@ export default function AdminSidebar({ className }: { className?: string }) {
       )}
     >
       <div className="flex h-14 items-center border-b border-border px-4">
-        <Link href="/admin" className="text-base font-extrabold tracking-tight" aria-label="Steuerzentrale">
+        <Link href="/admin" className="text-base font-extrabold tracking-tight relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-['']" aria-label="Steuerzentrale">
           <span className="group-data-[collapsed=true]/admin-nav:hidden">Jetnity Steuerzentrale</span>
           <span aria-hidden className="hidden group-data-[collapsed=true]/admin-nav:inline">J</span>
         </Link>
@@ -106,12 +106,14 @@ export default function AdminSidebar({ className }: { className?: string }) {
             </p>
             <NavListe items={ready} pathname={pathname} />
           </div>
-          <div>
-            <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              In Planung
-            </p>
-            <NavListe items={later} pathname={pathname} />
-          </div>
+          {later.length > 0 ? (
+            <div>
+              <p className="mb-1 px-2 group-data-[collapsed=true]/admin-nav:hidden text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                In Planung
+              </p>
+              <NavListe items={later} pathname={pathname} />
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-6 group-data-[collapsed=true]/admin-nav:hidden border-t border-border pt-3 text-[11px] text-muted-foreground">

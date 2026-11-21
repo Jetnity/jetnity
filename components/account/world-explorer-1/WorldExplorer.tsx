@@ -73,8 +73,8 @@ export default function WorldExplorer({ welt, besucht, laender, aktion, fenster,
       {welt.lage !== 'fehler' ? <span>Geplant · {geplanteAussage({ fenster, lage: welt.lage, kennzahl: welt.geplantKennzahl, leertext: welt.leerText, leerStattKennzahl: false })}</span> : null}
     </div>
     {fenster?.lage === 'grenze' ? <p className="mt-1 text-sm text-ink-800">Die geplanten Ziele stammen aus deinen {fenster.anzahl} zuletzt geänderten Reisen. <Link href="/reisen" className="underline">Alle Reisen</Link></p> : null}
-    {besucht.fehlerText ? <div role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950"><p>{besucht.fehlerText}</p>{neuLadenHref ? <SeiteNeuLaden href={neuLadenHref} /> : null}</div> : null}
-    {welt.lage === 'fehler' ? <p role="alert" className="mt-3 rounded-xl bg-surface-75 p-3 text-sm text-ink-950">{welt.fehlerText} Der Planungsstand ist unbekannt.</p> : null}
+    {besucht.fehlerText ? <div role="alert" className="mt-3 rounded-card border border-destructive/40 bg-card p-4 text-sm leading-6 text-foreground"><p className="max-w-prose">{besucht.fehlerText}</p>{neuLadenHref ? <SeiteNeuLaden href={neuLadenHref} /> : null}</div> : null}
+    {welt.lage === 'fehler' ? <div role="alert" className="mt-3 rounded-card border border-destructive/40 bg-card p-4 text-sm leading-6 text-foreground"><p className="max-w-prose">{welt.fehlerText} Der Planungsstand ist unbekannt.</p></div> : null}
     <div className="jetnity-atlas-tools">
       <label htmlFor={`${id}-suche`} className="sr-only">Länder und Orte in deinem Konto suchen</label>
       <div className="jetnity-atlas-search">
@@ -107,8 +107,8 @@ export default function WorldExplorer({ welt, besucht, laender, aktion, fenster,
       </ul>
       {matches.length > limit ? <button type="button" className="mt-3 min-h-11 rounded-full border border-line-300 px-5 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setLimit((v) => v + PAGE_SIZE)}>Weitere Einträge zeigen ({Math.min(limit, matches.length)} von {matches.length} sichtbar)</button> : null}
     </div>
-    <details data-world-map-herkunft="ein" className="mt-5 space-y-2 border-t border-line-100 pt-3 text-xs leading-5 text-ink-800">
-      <summary className="cursor-pointer font-semibold">Kartenquellen und Hinweise</summary>
+    <details data-world-map-herkunft="ein" className="mt-5 space-y-2 border-t border-line-100 pt-1 text-xs leading-5 text-ink-800 [&>p]:max-w-prose">
+      <summary className="min-h-11 cursor-pointer rounded-control py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Kartenquellen und Hinweise</summary>
       {laender.ohneFlaeche.length ? <p>Kleine Länder erscheinen auf der Karte als Punkte. Einträge ohne Kartenposition findest du in der Liste.</p> : null}
       {besucht.ohneLandHinweis ? <p>{besucht.ohneLandHinweis}</p> : null}
       <p>{WORLD_MAP_GRUNDKARTE_HINWEIS} Relief und Länderbeschriftung aus Natural Earth.</p>

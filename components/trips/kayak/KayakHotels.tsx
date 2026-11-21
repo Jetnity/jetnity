@@ -25,7 +25,7 @@ export default function KayakHotels({ reise }: { reise: Trip }) {
   const coordinates = stage && Number.isFinite(stage.latitude) && Number.isFinite(stage.longitude) && stage.latitude !== null && stage.longitude !== null
   return <section aria-label="Hotels mit KAYAK entdecken" className="grid min-w-0 gap-5">
     <div className={panelClass}>
-      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><BedDouble aria-hidden="true" className="h-6 w-6" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Dein Aufenthalt</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Ein guter Ort zum Ankommen.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Entdecke Unterkünfte und vergleiche Lage, Ausstattung und Preise in einer Übersicht.</p></div></div>
+      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><BedDouble aria-hidden="true" className="h-6 w-6" /></span><div><p className="text-kicker uppercase text-brand-600">Dein Aufenthalt</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Ein guter Ort zum Ankommen.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Entdecke Unterkünfte und vergleiche Lage, Ausstattung und Preise in einer Übersicht.</p></div></div>
       <PreviewNotice />
       <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
         event.preventDefault()

@@ -20,6 +20,24 @@ html:has(.workspace-shell[data-workspace-theme="light"]) {
   background-color: var(--white-mint-canvas);
 }
 
+/* Dieselben Flaechen als semantische RGB-Kanaele. Bausteine aus components/ui
+   (bg-card, text-muted-foreground, border-border) fallen sonst auf der
+   weiss-mintfarbenen Flaeche in die Creme-Palette zurueck. Die Kanaele sind
+   die Hex-Werte von oben; --primary und --ring bleiben die Markenwerte. */
+[data-white-mint="home"],
+.workspace-shell[data-workspace-theme="light"] {
+  --background: 247 252 249;
+  --foreground: 20 62 51;
+  --card: 255 255 255;
+  --card-foreground: 20 62 51;
+  --popover: 255 255 255;
+  --popover-foreground: 20 62 51;
+  --muted: 225 241 232;
+  --accent: 225 241 232;
+  --muted-foreground: 58 86 76;
+  --border: 220 233 225;
+}
+
 html:has([data-white-mint="home"]) body::before,
 html:has(.workspace-shell[data-workspace-theme="light"]) body::before {
   opacity: 0;
@@ -80,6 +98,27 @@ main[data-white-mint="home"].bg-surface-75 {
   border-color: var(--white-mint-control);
   background-color: var(--white-mint-card);
   color: var(--white-mint-ink);
+}
+
+/* `Input` zeichnet das Feld am Rahmen; das innere Eingabeelement bleibt
+   durchsichtig, sonst steht ein zweites weisses Rechteck im Feld. */
+[data-white-mint="home"] [data-eingabefeld="ok"] {
+  background-color: var(--white-mint-card);
+}
+
+[data-white-mint="home"] [data-eingabefeld] input {
+  background-color: transparent;
+}
+
+[data-white-mint="home"] [data-eingabefeld] input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+[data-white-mint="home"] [data-eingabefeld]:has(> input:focus-visible) {
+  outline: 3px solid var(--white-mint-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--white-mint-focus-halo);
 }
 
 [data-white-mint="home"] header a[aria-current="page"] {

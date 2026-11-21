@@ -3,21 +3,21 @@
 import * as React from 'react'
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
+import { CheckCircle2, KeyRound, Mail } from 'lucide-react'
 import type { AuthState } from './actions'
 import { signInWithPasswordAction, sendMagicLinkAction } from './actions'
 import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-function SubmitBtn({ children }: { children: React.ReactNode }) {
+function SubmitBtn({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'outline' }) {
   const { pending } = useFormStatus()
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-card px-4 py-2 text-sm hover:bg-muted disabled:opacity-60 pointer-fine:min-h-0"
-    >
-      {pending ? 'Bitte warten…' : children}
-    </button>
+    <Button type="submit" variant={variant} isLoading={pending} loadingText="Bitte warten…" className="w-full">
+      {children}
+    </Button>
   )
 }
 
@@ -30,76 +30,78 @@ export default function AdminLoginPage() {
   const magicSent = Boolean(otpState?.ok && otpState?.magicSent)
 
   return (
-    <main className="min-h-dvh grid place-items-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6">
-        <div className="mb-5">
-          <h1 className="text-xl font-semibold">Jetnity Admin – Anmeldung</h1>
-          <p className="text-sm text-muted-foreground">Zugriff nur für freigegebene Konten.</p>
+    <main className="min-h-[70dvh] px-4 pb-14 pt-6 sm:px-6 sm:pb-20 sm:pt-10">
+      <div className="mx-auto w-full max-w-md rounded-panel border border-border bg-card p-6 shadow-card sm:p-8">
+        <div className="mb-6">
+          <p className="text-kicker uppercase text-muted-foreground">Administration</p>
+          <h1 className="mt-2 text-title text-foreground">Jetnity Admin – Anmeldung</h1>
+          <p className="mt-2 text-meta text-muted-foreground">Zugriff nur für freigegebene Konten.</p>
         </div>
 
         {/* Passwort-Login */}
-        <form action={pwAction} className="space-y-3" aria-label="Passwort Anmeldung">
-          <label className="block text-sm">
-            <span className="text-foreground/80">E-Mail</span>
-            <input
+        <form action={pwAction} className="space-y-4" aria-label="Passwort Anmeldung">
+          <div className="space-y-2">
+            <Label htmlFor="admin-login-email" icon={<Mail className="h-4 w-4" />}>E-Mail</Label>
+            <Input
+              id="admin-login-email"
               type="email"
               name="email"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="you@example.com"
               autoComplete="email"
             />
-          </label>
+          </div>
 
-          <label className="block text-sm">
-            <span className="text-foreground/80">Passwort</span>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="admin-login-passwort" icon={<KeyRound className="h-4 w-4" />}>Passwort</Label>
+            <Input
+              id="admin-login-passwort"
               type="password"
               name="password"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="••••••••"
               autoComplete="current-password"
             />
-          </label>
-
-          {pwState?.error && <p className="text-sm text-destructive">{pwState.error}</p>}
-
-          <div className="mt-2">
-            <SubmitBtn>Anmelden</SubmitBtn>
           </div>
+
+          {pwState?.error && <p role="alert" className="text-meta text-destructive">{pwState.error}</p>}
+
+          <SubmitBtn>Anmelden</SubmitBtn>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="my-6 flex items-center gap-3 text-meta text-muted-foreground">
           <span className="h-px w-full bg-border" />
           oder
           <span className="h-px w-full bg-border" />
         </div>
 
         {/* Magic-Link-Login */}
-        <form action={otpAction} className="space-y-3" aria-label="Magic Link anfordern">
-          <label className="block text-sm">
-            <span className="text-foreground/80">E-Mail</span>
-            <input
+        <form action={otpAction} className="space-y-4" aria-label="Magic Link anfordern">
+          <div className="space-y-2">
+            <Label htmlFor="admin-magic-email" icon={<Mail className="h-4 w-4" />}>E-Mail</Label>
+            <Input
+              id="admin-magic-email"
               type="email"
               name="email"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="you@example.com"
               autoComplete="email"
             />
-          </label>
-
-          {otpState?.error && <p className="text-sm text-destructive">{otpState.error}</p>}
-          {magicSent && <p className="text-sm text-emerald-600">Magic Link gesendet. Bitte E-Mail prüfen.</p>}
-
-          <div className="mt-2">
-            <SubmitBtn>Magic Link senden</SubmitBtn>
           </div>
+
+          {otpState?.error && <p role="alert" className="text-meta text-destructive">{otpState.error}</p>}
+          {magicSent && (
+            <div role="status" className="flex items-start gap-2 rounded-card border border-primary/40 bg-card px-4 py-3 text-meta text-foreground">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <p>Magic Link gesendet. Bitte E-Mail prüfen.</p>
+            </div>
+          )}
+
+          <SubmitBtn variant="outline">Magic Link senden</SubmitBtn>
         </form>
 
-        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} ziel="/admin/login" className="mt-6">
-          <button type="submit" className="inline-flex min-h-11 items-center text-xs text-muted-foreground underline underline-offset-4 pointer-fine:min-h-0">
+        <GlobalesAbmeldenForm action={signOutToAdminLoginAction} ziel="/admin/login" className="mt-6 border-t border-border pt-4">
+          <button type="submit" className="inline-flex min-h-11 items-center rounded-control text-meta text-muted-foreground underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             Abmelden (falls angemeldet)
           </button>
         </GlobalesAbmeldenForm>

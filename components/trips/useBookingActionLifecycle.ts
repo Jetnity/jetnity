@@ -7,6 +7,9 @@
 
 export const BUCHUNG_WIRD_GESPEICHERT = 'Buchungsstatus wird gespeichert.'
 
+export const BUCHUNG_BEDEUTUNG =
+  'Gebucht heisst: du hast selbst beim Anbieter gebucht und es hier markiert. Jetnity prüft das nicht beim Anbieter.'
+
 export const BUCHUNG_ABGELEHNT =
   'Der Buchungsstatus konnte nicht gespeichert werden. Du kannst es erneut versuchen.'
 

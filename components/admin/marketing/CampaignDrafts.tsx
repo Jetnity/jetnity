@@ -50,7 +50,7 @@ export default function CampaignDrafts({ sprache, enabled, port, uuid }: Props) 
   }
 
   return <section data-campaign-drafts lang={sprache} aria-labelledby="campaign-drafts-title" className="min-w-0 space-y-5 text-foreground [overflow-wrap:anywhere]">
-    <header className="space-y-2"><h2 id="campaign-drafts-title" className="text-2xl font-semibold">{text('title')}</h2><p className="leading-7">{text('intro')}</p><p className="text-sm text-muted-foreground">{text('scope')}</p></header>
+    <header className="max-w-prose space-y-2"><h2 id="campaign-drafts-title" className="text-title">{text('title')}</h2><p className="leading-7">{text('intro')}</p><p className="text-sm text-muted-foreground">{text('scope')}</p></header>
     {(!enabled || state.status === 'unavailable') && <section role="status" className={panel}><h3 className="font-semibold">{text('unavailable')}</h3><p>{text('unavailableHint')}</p>{enabled && <button type="button" disabled={busy || !!state.pending} onClick={() => void controller.list()} className={button}>{text('refresh')}</button>}</section>}
     {denied && <section role="alert" className={panel}><h3 className="font-semibold">{text('denied')}</h3><p>{text('deniedHint')}</p></section>}
     {state.pending && <section aria-labelledby="campaign-pending-title" className={`${panel} border-primary/40`}>

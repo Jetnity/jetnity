@@ -35,8 +35,7 @@
   },
   "git": {
     "deploymentEnabled": {
-      "main": false,
-      "fix/inspiration-catalog-under-eight-dev-20261121": false
+      "main": false
     }
   }
 }

@@ -2,6 +2,7 @@
 
 import { useId, useState } from 'react'
 import { tripAuditV1, type AuditDomain, type AuditFinding, type TripAuditReport } from '@/lib/trips/trip-audit-v1/audit'
+import { datumMitJahr } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripItem } from '@/types/trips'
 
 const DOMAIN: Record<AuditDomain, string> = { lodging: 'Unterkunftsnächte', time: 'Gespeicherte Zeiten', flights: 'Flugplanung', mobility: 'Verbindungsplanung' }
@@ -9,6 +10,12 @@ const COVERAGE = { complete: 'Auswertung vollständig', partial: 'Teilweise bewe
 const STATE = { known_gap: 'Planungslücke', proven_conflict: 'Belegter Konflikt', possible_conflict: 'Möglicher Konflikt', not_evaluable: 'Nicht bewertbar', unknown: 'Unbekannt' }
 const BUTTON = 'min-h-11 rounded-full border border-brand-800 px-4 py-2 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800'
 const PAGE_SIZE = 6
+
+function Tag({ wert }: { wert: string | null }) {
+  if (!wert) return <>Datum unbekannt</>
+  const lesbar = datumMitJahr(wert)
+  return lesbar ? <time dateTime={wert}>{lesbar}</time> : <>{wert}</>
+}
 
 export function TripAuditFinding({ finding }: { finding: AuditFinding }) {
   const pair = 'comparisonBasis' in finding.evidence ? finding.evidence : null
@@ -24,8 +31,8 @@ export function TripAuditFinding({ finding }: { finding: AuditFinding }) {
             {finding.items.map((item, index) => (
               <li key={index}>
                 <p className="font-semibold">{item.title ?? 'Bezeichnung unbekannt'}</p>
-                <p>Beginn: {item.startsOn ?? 'Datum unbekannt'} · {item.startsAt ?? 'Uhrzeit unbekannt'}</p>
-                <p>Ende: {item.endsOn ?? 'Datum unbekannt'} · {item.endsAt ?? 'Uhrzeit unbekannt'}</p>
+                <p>Beginn: <Tag wert={item.startsOn} /> · {item.startsAt ?? 'Uhrzeit unbekannt'}</p>
+                <p>Ende: <Tag wert={item.endsOn} /> · {item.endsAt ?? 'Uhrzeit unbekannt'}</p>
               </li>
             ))}
           </ul>
@@ -44,7 +51,7 @@ function Results({ report }: { report: TripAuditReport }) {
   const [visible, setVisible] = useState(PAGE_SIZE)
   const shown = report.findings.slice(0, visible)
   return (
-    <div className="mt-4 grid min-w-0 gap-4">
+    <div className="mt-4 grid min-w-0 gap-4 [&_.list-disc]:max-w-prose [&_p]:max-w-prose">
       <p role="status" className="text-sm leading-6 text-ink-800">
         {report.evaluation === 'incomplete' ? 'Auswertung unvollständig: Eine Grenze oder ein Fehler verhindert den vollständigen Bericht.'
           : report.evaluation === 'partial' ? 'Dein gespeicherter Plan ist nur teilweise bewertbar.'
@@ -104,9 +111,10 @@ export default function TripAuditV1Panel({ reise, ungeplantePunkte, integriert =
       <div className={integriert ? 'workspace-audit-intro' : undefined}>
       <div>
       <h3 className="font-semibold text-brand-800">Gespeicherten Reiseplan prüfen</h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800">
-        Unterkunftsnächte, Zeiten und Verbindungen gemeinsam ansehen. Die Prüfung liest deinen Plan und ändert nichts.
-        Ausgewählt bedeutet nicht gebucht; auch deine Buchungsmarkierungen sind keine Bestätigung durch einen Anbieter.
+      <p className="mt-1 max-w-prose text-sm leading-6 text-ink-800">
+        Jetnity legt Unterkunftsnächte, Zeiten und Verbindungen nebeneinander und zeigt, wo etwas fehlt oder nicht
+        zusammenpasst. Dein Plan bleibt dabei unverändert. «Ausgewählt» heisst nicht gebucht, und deine Markierung
+        «gebucht» ist keine Bestätigung des Anbieters.
       </p>
       </div>
       <button type="button" aria-expanded={open} aria-controls={controls} onClick={() => setOpen(value => !value)} className={`${BUTTON} mt-3`}>

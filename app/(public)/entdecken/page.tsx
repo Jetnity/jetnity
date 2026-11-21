@@ -24,16 +24,16 @@ export default async function EntdeckenSeite({ searchParams }: {
   const [query, inspiration] = await Promise.all([leseOptionalRequestParam(searchParams), publicInspiration()])
   const initial = entdeckerParams(query ?? {})
   return (
-    <main className="break-words bg-surface-75 px-5 pb-[max(4rem,env(safe-area-inset-bottom))] pt-6 text-brand-800 sm:px-8 sm:pt-10">
+    <main className="break-words px-5 pb-[max(4rem,env(safe-area-inset-bottom))] pt-6 text-foreground sm:px-8 sm:pt-10">
       <div className="mx-auto max-w-6xl">
-        <Link href="/#entdecken" prefetch={false} className="inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"><ArrowLeft className="h-4 w-4" aria-hidden="true" />Zur Startseite</Link>
+        <Link href="/#entdecken" prefetch={false} className="inline-flex min-h-11 items-center gap-2 rounded-control text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"><ArrowLeft className="h-4 w-4" aria-hidden="true" />Zur Startseite</Link>
         <header className="pb-8 pt-6 sm:pb-10 sm:pt-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Deine nächste Reise beginnt mit einer Idee</p>
+          <p className="text-kicker uppercase text-muted-foreground">Deine nächste Reise beginnt mit einer Idee</p>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.045em] text-balance sm:text-6xl">Wohin geht deine Neugier?</h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-ink-950 sm:text-lg">Entdecke ausgewählte Reiseideen. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.</p>
+          <p className="mt-5 max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">Entdecke ausgewählte Reiseideen. Finde eine Idee, die zu dir passt, und mache in der Planung deine eigene Reise daraus.</p>
         </header>
         <InspirationExplorer initial={initial} ziele={inspiration.ziele} status={inspiration.status} />
-        <p className="mt-8 max-w-2xl text-sm leading-6 text-ink-950">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
+        <p className="mt-8 max-w-prose text-meta text-muted-foreground">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
       </div>
     </main>
   )

@@ -27,23 +27,22 @@ export default function Error({
   const id = oeffentlicheFehlerId(error?.digest, React.useId())
 
   return (
-    <main className="min-h-[70dvh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">
+    <main className="min-h-[70dvh] px-4 py-14 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-2xl">
-        <div className="rounded-[30px] border border-black/5 bg-white p-6 shadow-[0_20px_60px_rgba(15,46,42,0.07)] sm:p-10">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+        <div className="rounded-panel border border-border bg-card p-6 shadow-card sm:p-10">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-foreground">
             <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           </span>
-          <h1 className="mt-5 text-2xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-3xl">
+          <h1 className="mt-5 text-display text-foreground [overflow-wrap:anywhere]">
             Das hat gerade nicht funktioniert.
           </h1>
-          <p className="mt-4 text-sm leading-6 text-ink-800">
+          <p className="mt-4 max-w-prose text-body text-muted-foreground">
             Die Seite konnte nicht geladen werden. Das kann an einer instabilen Verbindung oder an
-            einem kurzfristigen Serverproblem liegen. Deine gespeicherten Reisen sind davon nicht
-            betroffen.
+            einem kurzfristigen Serverproblem liegen.
           </p>
 
           {process.env.NODE_ENV !== 'production' && (
-            <pre className="mt-5 max-h-48 overflow-auto rounded-2xl bg-surface-50 p-4 text-xs leading-5 text-ink-900">
+            <pre className="mt-5 max-h-48 overflow-auto rounded-control bg-muted p-4 text-xs leading-5 text-foreground">
               {String(error?.message ?? 'Unbekannter Fehler')}
             </pre>
           )}
@@ -52,28 +51,28 @@ export default function Error({
             <button
               type="button"
               onClick={() => reset()}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-900"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <RefreshCw className="h-4 w-4" aria-hidden="true" />
               Erneut versuchen
             </button>
             <Link
               href="/reisen"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-line-300 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-line-500"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-input bg-card px-5 text-sm font-semibold text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <MapPin className="h-4 w-4" aria-hidden="true" />
               Meine Reisen
             </Link>
           </div>
 
-          <p className="mt-6 break-words text-xs text-ink-700">
+          <p className="mt-6 break-words text-meta text-muted-foreground">
             Fehler-ID: <span className="font-mono">{id}</span>
           </p>
-          <p className="mt-3 text-xs leading-5 text-ink-700">
+          <p className="mt-3 text-meta text-muted-foreground">
             Du kannst uns unter{' '}
             <a
               href="mailto:info@jetnity.ch"
-              className="font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-2 hover:decoration-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="font-semibold text-foreground underline decoration-foreground/30 underline-offset-2 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               info@jetnity.ch
             </a>{' '}

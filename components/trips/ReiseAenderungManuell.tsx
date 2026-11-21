@@ -11,6 +11,7 @@ import { manuellerEntwurf, vorschauKennungen, type ManuellerEntwurf } from '@/li
 import { UNGEWISS } from '@/lib/reiseaenderung/direct/bestaetigung'
 import { TEMPO_BEZEICHNUNG, INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import { GRENZEN } from '@/lib/trips/schema'
+import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { TRIP_PACES, TRIP_INTERESTS, type Trip, type TripSource } from '@/types/trips'
 
 const input = 'w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-3 text-base text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-600 disabled:opacity-60'
@@ -21,6 +22,7 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
   const surface = useWorkspaceEditSurface()
   const [gruppe, setGruppe] = React.useState<'grunddaten' | 'zeitraum' | 'etappen'>('grunddaten')
   const [basis] = React.useState(reise)
+  const ohneZiel = basis.days.filter(d => !d.stageId).length
   const [form, setForm] = React.useState(() => ({ title: reise.title, budgetAmount: reise.budgetAmount?.toString() ?? '', pace: reise.pace,
     interests: reise.interests, travelWish: reise.travelWish ?? '', startDate: reise.startDate ?? '', duration: String(reise.days.length),
     stages: reise.stages.map(s => ({ id: s.id, days: String(reise.days.filter(d => d.stageId === s.id).length), remove: false })) }))
@@ -106,12 +108,12 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
     finally { flight.current = false; if (alive.current) setPending(false) }
   }
   if (erfolg) return <div ref={root} className="mt-5 grid gap-4 rounded-3xl bg-white p-5 sm:p-7">
-    <h2 ref={heading} tabIndex={-1} className="text-xl font-semibold text-brand-900 sm:text-2xl">Änderung gespeichert und bestätigt</h2>
+    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">Änderung gespeichert und bestätigt</h2>
     <p role="status">„{erfolg.title}“ wurde erneut aus {quelle === 'guest' ? 'diesem Browserspeicher' : 'deinem Konto'} gelesen. Der Arbeitsbereich zeigt den bestätigten Stand mit {erfolg.days.length} Tagen.</p>
     <div className="flex flex-wrap gap-3">{surface && <button type="button" className={`${button} bg-brand-800 text-white`} onClick={surface.close}>Zur gespeicherten Reise</button>}<button type="button" className={button} onClick={onNeu}>Weitere Änderung vorbereiten</button></div>
   </div>
-  return <div ref={root} data-aenderung-sperre={pending || ungewiss ? 'true' : 'false'} className="mt-5 min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5">
-    <h2 ref={heading} tabIndex={-1} className="text-xl font-semibold text-brand-900 sm:text-2xl">{vorschau ? 'Auswirkungen prüfen' : 'Reise direkt bearbeiten'}</h2>
+  return <div ref={root} data-aenderung-sperre={pending || ungewiss ? 'true' : 'false'} className="mt-5 min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5 [&_p]:max-w-prose">
+    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">{vorschau ? 'Auswirkungen prüfen' : 'Reise direkt bearbeiten'}</h2>
     <p className="mt-2 text-sm leading-6">{vorschau ? 'Noch nicht gespeichert. Prüfe alle Auswirkungen, bevor du bestätigst.' : 'Wähle einen Bereich. Du kannst mehrere Bereiche vor der Vorschau ändern.'}</p>
     {stale && <p role="alert" className="mt-4 text-red-700">Die Reise hat sich inzwischen geändert. Deine Eingaben bleiben sichtbar; diese Vorschau kann nicht mehr übernommen werden. <button className={button} disabled={pending} onClick={onNeu}>Aktuellen Stand laden und neu beginnen</button></p>}
     {pending && <p role="status" className="mt-4">{vorschau ? 'Speicherung wird geprüft …' : 'Vorschau wird vorbereitet …'}</p>}
@@ -127,9 +129,9 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
       <fieldset disabled={pending || stale} className="grid min-w-0 gap-5">
         <legend className="sr-only">Reisedaten bearbeiten</legend>
         <div aria-label="Bearbeitungsbereiche" className="grid min-w-0 grid-cols-3 gap-2">
-          {(['grunddaten', 'zeitraum', 'etappen'] as const).map((value, index) => <button key={value} type="button" aria-label={`${index + 1}. ${value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}`} aria-current={gruppe === value ? 'step' : undefined} aria-controls={`edit-group-${value}`} onClick={() => selectGroup(value)} className={`min-h-11 min-w-0 rounded-2xl border border-line-200 px-1 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50 ${gruppe === value ? 'bg-brand-800 text-white' : 'bg-surface-25 text-brand-800'}`}><span aria-hidden="true" className="block text-xs opacity-80">{index + 1}</span>{value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}</button>)}
+          {(['grunddaten', 'zeitraum', 'etappen'] as const).map((value, index) => <button key={value} type="button" aria-label={`${index + 1}. ${value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}`} aria-current={gruppe === value ? 'step' : undefined} aria-controls={`edit-group-${value}`} onClick={() => selectGroup(value)} className={`min-h-11 min-w-0 rounded-2xl border px-1 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50 ${gruppe === value ? 'border-transparent bg-primary text-primary-foreground' : 'border-line-200 bg-surface-25 text-brand-800'}`}><span aria-hidden="true" className="block text-xs opacity-80">{index + 1}</span>{value === 'grunddaten' ? 'Grunddaten' : value === 'zeitraum' ? 'Zeitraum' : 'Etappen'}</button>)}
         </div>
-        <h3 ref={groupHeading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none">{gruppe === 'grunddaten' ? 'Grunddaten' : gruppe === 'zeitraum' ? 'Zeitraum' : 'Vorhandene Etappen'}</h3>
+        <h3 ref={groupHeading} tabIndex={-1} className="text-base font-semibold text-brand-900 outline-none">{gruppe === 'grunddaten' ? 'Grunddaten' : gruppe === 'zeitraum' ? 'Zeitraum' : 'Vorhandene Etappen'}</h3>
         <div id="edit-group-grunddaten" hidden={gruppe !== 'grunddaten'} inert={gruppe !== 'grunddaten'} className={gruppe === 'grunddaten' ? 'grid min-w-0 gap-5' : undefined}>
         <label className="grid min-w-0 grid-cols-1 gap-2">Reisetitel<input data-aenderung-start className={input} value={form.title} maxLength={GRENZEN.titel} aria-invalid={invalid('title')} aria-describedby={invalid('title') ? errorId : undefined} onChange={e => update({ ...form, title: e.target.value })} /></label>
         <div className="grid min-w-0 items-start gap-5 sm:grid-cols-2">
@@ -153,8 +155,9 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
         </div>
         <div id="edit-group-etappen" hidden={gruppe !== 'etappen'} inert={gruppe !== 'etappen'} className={gruppe === 'etappen' ? 'grid min-w-0 gap-5' : undefined}>
           <p className="text-sm leading-6">Ändere die Dauer vorhandener Etappen oder entferne eine Etappe. Geschützte Buchungen bleiben erhalten. Die Vorschau zeigt alle Folgen.</p>
+          {ohneZiel > 0 && <p className="text-sm leading-6">{ohneZiel === 1 ? '1 Reisetag ist' : `${ohneZiel} Reisetage sind`} noch keinem Ziel zugeordnet. {ohneZiel === 1 ? 'Er bleibt' : 'Sie bleiben'} dabei bestehen und {ohneZiel === 1 ? 'zählt' : 'zählen'} zur Gesamtdauer.</p>}
           <label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={dauerArt === 'etappen'} onChange={e => { generation.current++; setDauerArt(e.target.checked ? 'etappen' : 'gesamt'); setVersucht(false) }} />Dauer über Etappen bearbeiten</label>
-          <fieldset disabled={dauerArt !== 'etappen'} className="grid min-w-0 gap-3"><legend className="sr-only">Etappendauer und Entfernung</legend><p>Ergebnis der Etappen: {Number.isFinite(total) ? total : '—'} Tage insgesamt.</p>{basis.stages.map(s => { const d = form.stages.find(v => v.id === s.id)!; return <fieldset key={s.id} className="grid min-w-0 gap-3 rounded-2xl border border-line-200 p-4"><legend className="max-w-full px-1 font-semibold [overflow-wrap:anywhere]">Etappe {s.position}: {s.name}</legend><p className="text-sm">Bisher {s.arrivalDate ?? 'Datum offen'} – {s.departureDate ?? 'Datum offen'}</p><label className="grid min-w-0 grid-cols-1 gap-2">Tage für Etappe {s.position}<input className={input} type="number" min="1" max={GRENZEN.reisetageJeReise} disabled={d.remove} value={d.days} aria-invalid={invalid('stages')} aria-describedby={invalid('stages') ? errorId : undefined} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, days: e.target.value } : v) })} /></label><label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={d.remove} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, remove: e.target.checked } : v) })} />Etappe {s.position} entfernen</label></fieldset> })}</fieldset>
+          <fieldset disabled={dauerArt !== 'etappen'} className="grid min-w-0 gap-3"><legend className="sr-only">Etappendauer und Entfernung</legend><p>Ergebnis der Etappen: {Number.isFinite(total) ? total : '—'} Tage insgesamt.</p>{basis.stages.map(s => { const d = form.stages.find(v => v.id === s.id)!; return <fieldset key={s.id} className="grid min-w-0 gap-3 rounded-2xl border border-line-200 p-4"><legend className="max-w-full px-1 font-semibold [overflow-wrap:anywhere]">Etappe {s.position}: {s.name}</legend><p className="text-sm">Bisher {etappenZeitraumAnzeigen(s.arrivalDate, s.departureDate) ?? 'Zeitraum offen'}</p><label className="grid min-w-0 grid-cols-1 gap-2">Tage für Etappe {s.position}<input className={input} type="number" min="1" max={GRENZEN.reisetageJeReise} disabled={d.remove} value={d.days} aria-invalid={invalid('stages')} aria-describedby={invalid('stages') ? errorId : undefined} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, days: e.target.value } : v) })} /></label><label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={d.remove} onChange={e => update({ ...form, stages: form.stages.map(v => v.id === s.id ? { ...v, remove: e.target.checked } : v) })} />Etappe {s.position} entfernen</label></fieldset> })}</fieldset>
         </div>
       </fieldset>
       {versucht && !validation.ok && <p id={errorId} tabIndex={-1} role="alert" className="text-red-700">{validation.meldung}</p>}

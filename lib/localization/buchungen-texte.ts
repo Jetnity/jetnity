@@ -23,6 +23,7 @@ const en: Record<BuchungenTextSchluessel, string> = {
   hinweis: 'Unconfirmed plan items remain in their respective trip and do not appear here.',
   leerTitel: 'No confirmed bookings yet.',
   leerText: 'When you explicitly mark a flight, accommodation, connection or rental car as booked in a trip, it appears here.',
+  leerAktion: 'Go to my trips',
   fehlerTitel: 'Your bookings could not be loaded.',
   fehler500: 'This is an error on our side, not in your data. Please reload the page.',
   fehler503: 'We could not check your current records just now; please reload later.',
@@ -34,7 +35,7 @@ const en: Record<BuchungenTextSchluessel, string> = {
   reiseBezug: 'Trip',
   einstieg: 'View confirmed bookings',
   einstiegHinweis: 'Only bookings explicitly confirmed in Jetnity — without amounts or supplier confirmation.',
-  ordnungHinweis: 'Sorted by your own confirmation, newest first. Loading another page does not preserve a snapshot.',
+  ordnungHinweis: 'Your most recently confirmed booking is at the top.',
   keineTrefferTitel: 'No booking matches this search.',
   keineTrefferText: 'Change the title, type or archive selection, or reset the filters.',
   fortsetzungEndeTitel: 'There are no further bookings here in the current records.',
@@ -56,7 +57,6 @@ const en: Record<BuchungenTextSchluessel, string> = {
   zuruecksetzen: 'Reset filters',
   seitenEnde: 'These are all the bookings in this view.',
   ladenTitel: 'Loading bookings.',
-  ladenText: 'One moment while we read the confirmed bookings in your account.',
   metadatenBeschreibung: 'Trip items you have explicitly marked as booked in Jetnity.',
   'art.flight': 'Flight',
   'art.stay': 'Accommodation',
@@ -83,12 +83,12 @@ export function buchungenZeitAnzeigen(buchung: Pick<KontoBuchung, 'startsOn' | '
 // Only keys actually rendered by this route. Shared Account entry links and
 // unused grouping copy are not claimed as translated catalog coverage.
 export const BUCHUNGEN_SCHLUESSEL = [
-  'seitenEyebrow', 'seitenTitel', 'seitenLead', 'hinweis', 'leerTitel', 'leerText',
+  'seitenEyebrow', 'seitenTitel', 'seitenLead', 'hinweis', 'leerTitel', 'leerText', 'leerAktion',
   'fehlerTitel', 'fehler500', 'fehler503', 'archivKennzeichen', 'planpunktOeffnen',
   'reiseBezug', 'ordnungHinweis', 'keineTrefferTitel', 'keineTrefferText',
   'fortsetzungEndeTitel', 'fortsetzungEndeText', 'ersteSeite', 'weitere',
   'ungueltigTitel', 'ungueltigText', 'wiederholen', 'filterLegende', 'titelLabel',
   'artLabel', 'archivLabel', 'artAlle', 'archivAktiv', 'archivArchiviert',
-  'archivAlle', 'suchen', 'zuruecksetzen', 'seitenEnde', 'ladenTitel', 'ladenText',
+  'archivAlle', 'suchen', 'zuruecksetzen', 'seitenEnde', 'ladenTitel',
   'metadatenBeschreibung', 'art.flight', 'art.stay', 'art.transfer', 'art.rental_car',
 ] as const satisfies readonly BuchungenTextSchluessel[]

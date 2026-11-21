@@ -3,7 +3,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useSuchbereichAktiv } from '../SuchbereichKontext'
 import {
-  Loader2,
   Maximize2,
   Minimize2,
   RotateCcw,
@@ -12,6 +11,7 @@ import {
   flugRahmen,
   type FlugRahmenPhase,
 } from '@/lib/providers/travelpayouts/rahmen'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 
 export interface FlugSuchauftrag {
   url: string
@@ -129,10 +129,7 @@ export default function Flugergebnisse({ suche }: { suche: FlugSuchauftrag }) {
       {phase !== 'bereit' && (
         <div className="flug-status" role="status">
           {phase === 'laedt' && (
-            <>
-              <Loader2 className="animate-spin" size={20} /> Flugsuche wird
-              geöffnet …
-            </>
+            'Flugsuche wird geöffnet …'
           )}
           {phase === 'langsam' &&
             'Das Laden dauert länger. Du kannst die Suche erneut laden.'}
@@ -142,7 +139,10 @@ export default function Flugergebnisse({ suche }: { suche: FlugSuchauftrag }) {
             'Die Flugsuche ist durch deine Datenschutzeinstellungen deaktiviert. Passe sie an und lade die Suche erneut.'}
         </div>
       )}
-      <div ref={host} className="flug-frame-host" />
+      <div className="flug-frame-rahmen">
+        {phase === 'laedt' ? <Ladeflaeche className="absolute inset-0 z-[1]" /> : null}
+        <div ref={host} className="flug-frame-host" />
+      </div>
     </dialog>
   )
 }

@@ -119,7 +119,7 @@ export default function LandFeld({
       {aktuell.art === 'unbekannt' ? (
         <p className="text-xs font-normal leading-5 text-ink-700">{COUNTRY_COPY.bestehendHinweis}</p>
       ) : null}
-      {hinweis ? <p className="text-xs font-normal leading-5 text-ink-700">{hinweis}</p> : null}
+      {hinweis ? <p className="max-w-prose text-xs font-normal leading-5 text-ink-700">{hinweis}</p> : null}
     </div>
   )
 }

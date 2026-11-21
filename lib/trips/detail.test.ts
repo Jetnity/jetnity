@@ -466,6 +466,33 @@ describe('Item Details', () => {
       'herkunft-vorhanden',
     )
   })
+
+  test('gebucht mit Anbieterangaben bleibt deine eigene Markierung, mit Preis zum Auswahlzeitpunkt', () => {
+    const aktuell = reise({
+      days: [
+        {
+          id: 'day-1',
+          stageId: 'stage-1',
+          dayIndex: 1,
+          dayDate: '2026-09-12',
+          title: null,
+          items: [
+            punkt({ id: 'flug-1', kind: 'flight', title: 'Flug', provider: 'duffel', startsAt: '13:05', priceAmount: 80, priceCurrency: 'CHF', bookingStatus: 'booked' }),
+            punkt({ id: 'flug-2', kind: 'flight', title: 'Flug zurück', provider: 'duffel' }),
+          ],
+        },
+      ],
+    })
+    const gebucht = itemDetailAbleiten(aktuell, [], 'flug-1')
+    assert.equal(gebucht?.trust, 'herkunft-vorhanden')
+    assert.match(gebucht?.buchungsHinweis ?? '', /Von dir als gebucht markiert\. Jetnity prüft Buchungen nicht beim Anbieter\./)
+    assert.equal(gebucht?.stand, 'gebucht')
+    assert.deepEqual(gebucht?.preis, { art: 'preis', betrag: 80, waehrung: 'CHF' })
+    assert.equal(gebucht?.wann, '12. Sept. · 13:05')
+    const offen = itemDetailAbleiten(aktuell, [], 'flug-2')
+    assert.equal(offen?.buchungsHinweis, null)
+    assert.equal(offen?.preis.art, 'ohne')
+  })
 })
 
 describe('Ungeplante Items', () => {
