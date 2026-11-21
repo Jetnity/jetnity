@@ -59,17 +59,7 @@ CREATE TRIGGER immutable_rows BEFORE UPDATE OR DELETE ON official_v3_guard_priva
 CREATE TRIGGER immutable_truncate BEFORE TRUNCATE ON official_v3_guard_private.bg1_dev_weather_acl_baseline_v4
  FOR EACH STATEMENT EXECUTE FUNCTION official_v3_guard_private.immutable_v1();
 REVOKE ALL ON official_v3_guard_private.bg1_dev_weather_acl_baseline_v4 FROM PUBLIC,anon,authenticated,service_role,supabase_read_only_user;
--- Append-only dedicated Dev operator-maintenance receipt, NOT an Owner session.
--- Only the one approved Dev weather-ACL incident may be reconciled after a
--- real post-v4 full proof. No Production code or public EXECUTE is installed.
-CREATE TABLE official_v3_guard_private.dev_acl_reconciliation_receipts_v4(
- ticket text PRIMARY KEY CHECK(ticket='dev_weather_acl_20261121'),
- incident_generation bigint NOT NULL CHECK(incident_generation=14),
- previous_resumed_generation bigint NOT NULL CHECK(previous_resumed_generation=13),
- proof_generation bigint NOT NULL CHECK(proof_generation>=1919),
- approved_dependency_key text NOT NULL CHECK(approved_dependency_key='shared:5:1255:91879:0:1260:16485:a'),
- approved_at timestamptz NOT NULL,
- exact_catalog_digest text NOT NULL CHECK(exact_catalog_digest ~ '^[a-f0-9]{64}CREATE OR REPLACE FUNCTION official_v3_source_renewal_private.renew_approved_batch_v1(p_destination_code text, p_source_batch_id bigint)
+CREATE OR REPLACE FUNCTION official_v3_source_renewal_private.renew_approved_batch_v1(p_destination_code text, p_source_batch_id bigint)
  RETURNS integer
  LANGUAGE plpgsql
  SET search_path TO 'pg_catalog'
