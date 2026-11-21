@@ -3,7 +3,7 @@
  * as an active provider. The presence check remains conservative, while the
  * provider response and BG1 admission are still required for real data.
  */
-export function weatherProviderConfigured(value: string | undefined): boolean {
+export function weatherProviderConfigured(value: string | undefined): value is string {
   const key = value?.trim()
   return Boolean(key && !key.startsWith('intentionally-invalid'))
 }
