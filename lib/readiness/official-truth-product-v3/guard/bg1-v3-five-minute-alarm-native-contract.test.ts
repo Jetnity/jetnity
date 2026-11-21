@@ -32,8 +32,10 @@ test('BG1 notifier RPC returns only coarse status/incident generation, cannot ex
  assert.match(dto,/GRANT EXECUTE ON FUNCTION public\.jetnity_bg1_alarm_kind_v2\(\) TO anon/)
  assert.doesNotMatch(dto,/UPDATE |DELETE |INSERT |TRUNCATE |ALTER ROLE|owner_aal2|source_body|password/i)
 })
-test('Alarm workflow uses an existing public-only key and GitHub-run token, stays disabled until exact Production Owner arm',()=>{
- assert.match(workflow,/cron: '\*\/5 \* \* \* \*'/)
+test('Paused alarm workflow preserves manual dispatch, public-only key and exact Production Owner arm',()=>{
+ assert.match(workflow,/^  workflow_dispatch:/m)
+ assert.doesNotMatch(workflow,/^  schedule:/m)
+ assert.doesNotMatch(workflow,/^\s*-?\s*cron:/m)
  assert.match(workflow,/github.repository == 'Jetnity\/jetnity'/)
  assert.match(workflow,/github.ref == 'refs\/heads\/main'/)
  assert.match(workflow,/vars\.JETNITY_BG1_FIVE_MIN_ALARM == 'production:qscbgcdmivbbnzrcyegn:integrity-only-v2'/)

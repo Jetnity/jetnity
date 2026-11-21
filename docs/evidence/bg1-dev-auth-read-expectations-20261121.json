@@ -1,0 +1,66 @@
+{
+  "schema": "jetnity-dev-auth-read-expectations-v1",
+  "recorded_at_utc": "2026-11-21T19:57:03Z",
+  "owner_decision_date_zurich": "2026-11-21",
+  "owner_statement": "Passkeys remain enabled in Dev after successful device test on dev.jetnity.com, PR #1240. Adjust the Dev Auth check, keep Production false and actual Auth settings unchanged; merge #1269 after required checks. HTTP-ID package remains unexecuted.",
+  "target": "yfvbxvijcorffwxbxahl",
+  "first_adjusted_reader": {
+    "head": "3a9a226871487b72f871387fec1f29b2eacf7d21",
+    "run": 44943148402,
+    "auth_job": 136964546974,
+    "url": "https://github.com/Jetnity/jetnity/actions/runs/44943148402/job/136964546974",
+    "passkey_contract_enabled": true,
+    "checked_values": 56,
+    "observed_keys": 244,
+    "only_reported_mismatch": "uri_allow_list",
+    "raw_uri_values_in_log": "truncated; insufficient to identify exact difference"
+  },
+  "read_only_dashboard_observation": {
+    "source_url": "https://supabase.com/dashboard/project/yfvbxvijcorffwxbxahl/auth/url-configuration",
+    "page_title": "URL Configuration | Authentication | Jetnity's Project (develop) | Jetnity | Supabase",
+    "branch_label": "develop PREVIEW",
+    "site_url": "http://localhost:3000",
+    "total_redirect_urls": 3,
+    "redirect_urls": [
+      "https://jetnity-app-git-feat-dev-security-event-0ab098-jetnity-e1b93c82.vercel.app/auth/callback\\?next=%2Freisen",
+      "https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password",
+      "https://dev.jetnity.com/**"
+    ],
+    "interaction": "Page navigation and visible accessibility read only. No Add URL, checkbox, Save changes, Passkey toggle or login interaction."
+  },
+  "interpretation": "The sole extra exact URL is on the Owner-confirmed Dev device-test hostname. The check uses this explicit reviewed constant only; it does not learn unknown expected values from the service. The observation does not establish who added this address or when.",
+  "code_scope": {
+    "read_wrapper_only": true,
+    "fixed_dev_ref": true,
+    "passkey_expected": true,
+    "exact_three_redirects_required": true,
+    "baseline_raw_passkey_expected": false,
+    "base_two_redirect_helper_unchanged": true,
+    "writer_unchanged": true,
+    "production_reader_unchanged": true,
+    "generic_auth_mapping_unchanged": true,
+    "remaining_drift_checks_preserved": true
+  },
+  "negative_cases": [
+    "Production and unreviewed refs rejected before Auth GET",
+    "Raw passkey true, missing or wrong-type refused for this baseline",
+    "Live passkeys false, missing or wrong-type fail",
+    "Missing prior redirect or missing Dev device URL fails",
+    "Additional/duplicate URLs, wider wildcard *.jetnity.com, Production hostname or changed paths fail",
+    "Existing MFA, password, provider and unknown-key failures remain failures"
+  ],
+  "external_mutations": {
+    "auth_settings": 0,
+    "production_reads_by_this_task": 0,
+    "production_writes": 0,
+    "login_or_2fa": 0,
+    "http_id_sql_execution": 0,
+    "credential_changes": 0
+  },
+  "limits": [
+    "Owner reports the successful physical device test; this task did not repeat WebAuthn or read registered credentials.",
+    "No Production live Auth value was fetched; false is the retained Owner requirement and raw baseline.",
+    "Full current CI and normal merge plus independent Main schedule readback remain required.",
+    "The shared Auth writer is unchanged and must not be run blindly against the now intentionally different Dev read expectation."
+  ]
+}
