@@ -23,3 +23,7 @@
 
 ### GitHub PR queue / alarm
 The separately prepared legacy-anon BG1 alarm branch remains ready. At present #1265/#1264/#1240 occupy all three permitted PR slots; **do not open a fourth**. When one closes, open the alarm PR first, review, merge with Vercel Main auto-deploy still disabled, then Owner arms GitHub variable. The already connected secret `JETNITY_BG1_PROD_ANON_KEY` has passed an actual GitHub Actions public read-only status RPC. New publishable key migration is already scheduled for 8 December 2026 with separate Owner Go.
+
+### AT10 native visitor confirmation – 21.11.2026
+- The exact reproducible `at-eu5-anon-visitor.READONLY.sql` on real Supabase **Development PG17** uses `SET LOCAL ROLE anon`, `READ COMMITTED READ ONLY`, and `ROLLBACK`, calling the actual two existing public visitor RPCs for DE/PL/IT/RO/FR. Result: **5/5 `derzeit nicht verfügbar`**, **0 accepted**. This is a DB RPC check, not a visual authenticated browser test or a legally approved travel document/visa.
+- The saved exact Dev-BMI archive remains 5/5/2 original-digest matches, but the live source-pair status is `unavailable` because Dev-BG1 is legitimately locked by a protected weather ACL change in the other Dev lane; neither this branch nor the rollout rewrites that catalog. No new Source→Document→HRS2/MA1/Owner-Session legal proof was created.

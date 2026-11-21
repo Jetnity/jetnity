@@ -49,3 +49,16 @@ test('Production candidate cannot modify sequence unless qualified legal sources
  assert.ok(s.trim().endsWith('ROLLBACK;'))
  assert.doesNotMatch(s,/\bCOMMIT\s*;/)
 })
+
+test('AT10 public Dev RPCs remain strict anon read-only for exactly five passports',()=>{
+ const s=file('at-eu5-anon-visitor.READONLY.sql')
+ assert.match(s,/BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED READ ONLY/)
+ assert.match(s,/SET LOCAL ROLE anon;/)
+ assert.match(s,/public\.jetnity_at_visa_v3\(code\)/)
+ assert.match(s,/public\.jetnity_source_bound_at_visa_v1\(code\)/)
+ assert.match(s,/\('DE',4\),\('PL',5\),\('IT',6\),\('RO',9\),\('FR',10\)/)
+ assert.match(s,/safely_unavailable/)
+ assert.match(s,/unauthorized_positive/)
+ assert.ok(s.trimEnd().endsWith('ROLLBACK;'))
+ assert.doesNotMatch(s,/\b(?:INSERT|UPDATE|DELETE|ALTER|CREATE|DROP|GRANT)\s/i)
+})
