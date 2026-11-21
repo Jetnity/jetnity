@@ -1,0 +1,25 @@
+name: Official Truth CHDE AT Renewal Dev Safety
+on:
+  push:
+    branches: [fix/official-truth-chde-at-renewal-dev-20261121]
+permissions:
+  contents: read
+concurrency:
+  group: official-truth-chde-at-renewal-dev
+  cancel-in-progress: true
+jobs:
+  safety:
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/fix/official-truth-chde-at-renewal-dev-20261121'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Offline safety gates (native Dev PG17 probes separately evidenced)
+        run: node --test scripts/official-truth-chde-at-renewal-dev-20261121.test.mjs

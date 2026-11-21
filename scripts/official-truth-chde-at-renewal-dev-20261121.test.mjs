@@ -1,0 +1,51 @@
+import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
+import {test} from 'node:test'
+const root='../../scripts/db/official-truth-chde-at-renewal-dev-20261121/'
+function file(name){return readFileSync(new URL(root+name,import.meta.url),'utf8')}
+test('Dev AT pg_net repair is isolated, transactional and monotonically advances beyond history',()=>{
+ const s=file('at-dev-temporary-sequence-restart.ROLLBACK.sql')
+ assert.match(s,/CREATE TEMP SEQUENCE pg_temp\.at_recovery_seq/)
+ assert.match(s,/ALTER SEQUENCE pg_temp\.at_recovery_seq RESTART WITH/)
+ assert.match(s,/greatest\(observed_max,before_value\)\+1/)
+ assert.match(s,/AT_IDEMPOTENT_RESTART_NOT_MONOTONIC/)
+ assert.match(s,/DEV_AT_SEQUENCE_TRANSACTIONAL_RECOVERY_PASS/)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+ assert.doesNotMatch(s,/net\.http_request_queue_id_seq/)
+ assert.doesNotMatch(s,/\bCOMMIT\s*;/i)
+})
+test('Dev CHDE blocked-cycle handling requires actual Owner session and never erases a terminal cycle',()=>{
+ const s=file('chde-dev-owner-cycle-negative.ROLLBACK.sql')
+ assert.match(s,/owner_session_v1\(\)/)
+ assert.match(s,/CHDE_NEW_ATTESTED_SCHEDULER_SUCCESSOR_NOT_INSTALLED/)
+ assert.match(s,/DEV_CHDE_OPERATOR_REVIEW_FAIL_CLOSED_PG17_ROLLBACK_PASS/)
+ assert.match(s,/CREATE TEMP TABLE pg_temp\.chde_blocked_cycle_fixture/)
+ assert.doesNotMatch(s,/UPDATE jetnity_prod_import_scheduler\.cycles_v1|DELETE FROM jetnity_prod_import_scheduler|DROP TABLE jetnity_prod_import_scheduler/i)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+})
+test('Dev AT source/legal negative cannot turn research-only rows into visitor facts',()=>{
+ const s=file('at-dev-source-qualification-negative.ROLLBACK.sql')
+ assert.match(s,/research_only OR NOT source_qualified/)
+ assert.match(s,/owner_session_v1\(\)/)
+ assert.match(s,/AT_DOCUMENT_HRS2_MA1_LEGAL_ISSUER_NOT_INSTALLED/)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+})
+test('Production preflight is read-only and displays every stopping condition',()=>{
+ const s=file('production-renewal-preflight.READONLY.sql')
+ assert.match(s,/BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY/)
+ for(const reason of ['STOP_CHDE_OWNER_SCHEDULER_REVIEW','STOP_EXPIRED_RESEARCH_ATTEMPT_RECLAIM',
+  'STOP_NO_FRESH_PUBLIC_PROJECTION','STOP_AT_RESEARCH_ONLY_CANNOT_AUTO_PUBLISH','STOP_AT_PGNET_SEQUENCE_BEHIND_HISTORY'])
+  assert.ok(s.includes(reason),reason)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+ assert.doesNotMatch(s,/\b(?:INSERT|UPDATE|DELETE|ALTER|CREATE|DROP|TRUNCATE|GRANT)\s/i)
+})
+test('Production candidate cannot modify sequence unless qualified legal sources and protected v4 successor exist',()=>{
+ const s=file('production-at-sequence.CANDIDATE-ROLLBACK.sql')
+ assert.match(s,/source_total<>3 OR approved<>3/)
+ assert.match(s,/bg1_transient_correction_baseline_v4/)
+ assert.match(s,/pg_try_advisory_xact_lock\(771112,1\)/)
+ assert.match(s,/ALTER SEQUENCE net\.http_request_queue_id_seq RESTART WITH/)
+ assert.match(s,/assert_catalog_v1\(\)/)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+ assert.doesNotMatch(s,/\bCOMMIT\s*;/)
+})
