@@ -8,6 +8,7 @@ import {
   officialFreshnessText,
   officialListeHinweis,
   officialPruefungAusLage,
+  officialPruefungEinStatus,
   officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
 import { visaModeLesen, type OfficialEvaluation } from '@/lib/readiness/official'
@@ -61,6 +62,22 @@ describe('Official-Copy folgt Status und Freshness', () => {
       ]),
       /fehlen noch Angaben/,
     )
+  })
+
+  test('ein Status: nicht verfügbare Prüfung ist der Status, fehlende Angaben bleiben als Aufgabe erhalten', () => {
+    const lagen = [
+      { freshness: 'provider_unavailable' as const, status: 'insufficient_context', missingFacts: ['nationality'] },
+      { freshness: 'provider_unavailable' as const, status: 'unavailable', missingFacts: [] },
+    ]
+    assert.match(officialPruefungAusLage(lagen), /fehlen noch Angaben · /)
+    const ein = officialPruefungEinStatus(lagen)
+    assert.equal(ein.status, 'Automatische Einreiseprüfung derzeit nicht verfügbar')
+    assert.doesNotMatch(ein.status, /·/)
+    assert.equal(ein.angabenFehlen, true)
+    const nurAngaben = officialPruefungEinStatus([{ freshness: 'never_checked', status: 'insufficient_context', missingFacts: ['nationality'] }])
+    assert.equal(nurAngaben.status, 'Für die automatische Prüfung fehlen noch Angaben')
+    const aktuell = officialPruefungEinStatus([{ freshness: 'current', status: 'current', missingFacts: [] }])
+    assert.deepEqual(aktuell, { status: officialFreshnessText('current'), angabenFehlen: false })
   })
 
   test('current Evidence behauptet nicht unavailable', () => {

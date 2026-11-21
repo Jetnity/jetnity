@@ -136,9 +136,9 @@ test('F05: selected rail on one canonical stage edge removes only that false fli
   const flights = report.sections.find((section) => section.domain === 'flights')!
   const mobility = report.sections.find((section) => section.domain === 'mobility')!
   assert.equal(flights.coverage, 'partial')
-  assert.match(flights.detail, /0 Abschnitte ausgewählt; 0 von dir als gebucht markiert/)
+  assert.match(flights.detail, /Noch kein Abschnitt ausgewählt oder von dir als gebucht markiert/)
   assert.match(flights.detail, /1 Abschnitt hat eine gespeicherte Bodenverbindung/)
-  assert.match(mobility.detail, /1 Abschnitte ausgewählt; 0 von dir als gebucht markiert/)
+  assert.match(mobility.detail, /1 Abschnitt ausgewählt; 0 von dir als gebucht markiert/)
   assert.equal(report.findings.some((finding) => finding.domain === 'mobility' && finding.refs.sectionId === 'connection:stage-1:stage-2'), false)
   assert.deepEqual(
     tripAuditV1(bare).findings.filter((finding) => finding.domain === 'lodging'),
@@ -160,7 +160,7 @@ test('F05: user-marked booked rail stays a user mark and does not book the fligh
   const covered = flightFinding(report, 'connection:stage-1:stage-2')
   assert.match(covered?.detail ?? '', /von dir als gebucht markiert/)
   assert.deepEqual(covered?.evidence, { status: 'open', date: '2026-09-15', reasons: ['ground_user_marked_booked', 'flight_necessity_unknown'] })
-  assert.match(report.sections.find((section) => section.domain === 'flights')!.detail, /0 Abschnitte ausgewählt; 0 von dir als gebucht markiert/)
+  assert.match(report.sections.find((section) => section.domain === 'flights')!.detail, /Noch kein Abschnitt ausgewählt oder von dir als gebucht markiert/)
   assert.match(report.sections.find((section) => section.domain === 'mobility')!.detail, /0 Abschnitte ausgewählt; 1 von dir als gebucht markiert/)
 })
 
@@ -287,7 +287,7 @@ test('F05: a conflicting or genuinely selected flight stays flight evidence', ()
   const selected = tripAuditV1(stored)
   assert.equal(selected.evaluation === 'incomplete', false)
   assert.equal(flugAbdeckung(stored).abschnitte.find((row) => row.id === 'outbound:stage-1')?.status, 'selected')
-  assert.match(selected.sections.find((section) => section.domain === 'flights')!.detail, /1 Abschnitte ausgewählt; 0 von dir als gebucht markiert/)
+  assert.match(selected.sections.find((section) => section.domain === 'flights')!.detail, /1 Abschnitt ausgewählt; 0 von dir als gebucht markiert/)
   assert.equal(selected.findings.some((finding) => finding.domain === 'flights' && (finding.title.startsWith('Bodenverbindung geplant') || finding.refs.sectionId === 'outbound:stage-1')), false)
   stored.days[0].items[0].bookingStatus = 'booked'
   stored.days[0].items[0].bookingSource = 'user'

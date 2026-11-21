@@ -48,11 +48,15 @@ export const AENDERUNG_ARTEN = [
   'punkt_entfernen',
   'punkt_hinzufuegen',
   'punkt_anpassen',
+  'tage_zuordnen',
 ] as const
 
 // Alte Lösch-Operationen bleiben für die sichere Prüfung historischer Vorschläge
 // im internen Schema erkennbar. Neue Modellantworten dürfen sie nicht erzeugen.
-export const KI_AENDERUNG_ARTEN = AENDERUNG_ARTEN.filter((art) => art !== 'punkt_entfernen')
+// `tage_zuordnen` entsteht nur aus der direkten Bearbeitung und nie aus einem Modell.
+export const KI_AENDERUNG_ARTEN = AENDERUNG_ARTEN.filter(
+  (art) => art !== 'punkt_entfernen' && art !== 'tage_zuordnen',
+)
 
 export type AenderungArt = (typeof AENDERUNG_ARTEN)[number]
 
@@ -192,6 +196,13 @@ function operationPruefen(op: z.infer<typeof operationRoh>, ctx: z.RefinementCtx
       break
     case 'punkt_anpassen':
       braucht('punktId', 'Welcher Planpunkt soll angepasst werden?')
+      break
+    case 'tage_zuordnen':
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [...pfad],
+        message: 'Reisetage werden nur in der direkten Bearbeitung auf Ziele verteilt',
+      })
       break
   }
 }

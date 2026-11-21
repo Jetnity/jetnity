@@ -68,6 +68,8 @@ Umlaute werden gefaltet (`Zürich` trifft `Zurich`). Städte mit mehreren Flugh�
 
 Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 6 relevante Optionen plus optional eine Stadtzeile. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
 
+**Nächster Flughafen zu einem Ort (ADR-0239):** `GET /api/search/airports?naechster=<ortId>` liest die Koordinaten des Katalogorts aus `public.places` und antwortet mit dem nächsten Flughafen der Klasse `large` mit IATA innerhalb von 120 km (`lib/airports/naechster.ts`), sonst `{ vorschlag: null }`. Nur `large`, weil `public.airports` kein `scheduled_service` speichert und `medium` auch Militär- und Sportplätze ohne Linienverkehr enthält (Cascais, Torrejón, Lugano). Unbekannte Ort-ID: 404; fehlende Konfiguration: 503; Lesefehler: Problemantwort, nie ein leerer Vorschlag. Die Flugsuche belegt damit «Von», «Nach» und «Rückflug ab» vor, solange das Feld leer ist; der Vorschlag ist änderbar und wird als solcher genannt.
+
 ---
 
 ## 5. Import

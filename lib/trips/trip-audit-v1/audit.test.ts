@@ -3,7 +3,7 @@ import test from 'node:test'
 import { readFileSync } from 'node:fs'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import TripAuditV1Panel, { TripAuditFinding } from '@/components/trips/TripAuditV1Panel'
+import TripAuditV1Panel, { TripAuditFinding, auditBerichtStatus } from '@/components/trips/TripAuditV1Panel'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
@@ -116,7 +116,7 @@ test('T04: unknown stay dates or assignment suppress definitive gaps and zero-ni
   incomplete.stages[1].departureDate = null
   const incompleteReport = tripAuditV1(incomplete)
   assert.equal(incompleteReport.sections[0].coverage, 'partial')
-  assert.match(incompleteReport.sections[0].detail, /Welche Etappe sie besitzt, ist unbekannt/)
+  assert.match(incompleteReport.sections[0].detail, /Zu welcher Etappe sie gehören, steht noch nicht fest/)
   assert.match(incompleteReport.sections[0].detail, /keine Hotelpflicht/)
   assert.doesNotMatch(incompleteReport.sections[0].detail, /Übergang/)
   assert(!incompleteReport.findings.some(f => f.domain === 'lodging' && f.state === 'known_gap'))
@@ -131,7 +131,7 @@ test('T04: unknown stay dates or assignment suppress definitive gaps and zero-ni
   assert.equal(unterkunftAbdeckung(undated).kalenderNaechte, 4)
   assert.equal(unterkunftAbdeckung(undated).naechteGesamt, null)
   assert.equal(undatedReport.sections[0].coverage, 'partial')
-  assert.match(undatedReport.sections[0].detail, /4 Übernachtungsintervalle im Reisekalender sind bekannt/)
+  assert.match(undatedReport.sections[0].detail, /4 Nächte stehen im Reisekalender/)
   assert.doesNotMatch(undatedReport.sections[0].detail, /Übergang/)
   assert(!undatedReport.findings.some(f => f.domain === 'lodging' && (f.state === 'known_gap' || /Übergang/.test(f.title))))
 })
@@ -366,4 +366,44 @@ test('T09/T10: guest and account use common Workspace; additive selected-list mo
   const runtime = ['lib/trips/trip-audit-v1/audit.ts', 'lib/trips/trip-audit-v1/f05-ground-flight.ts', 'lib/trips/trip-audit-v1/limits.ts', 'components/trips/TripAuditV1Panel.tsx'].map(source).join('\n')
   assert.doesNotMatch(runtime, /\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|document\.cookie|sendBeacon|Date\.now|new Date\(\)|useEffect|useMemo|supabase|console\./)
   assert.doesNotMatch(runtime, /from ['"].*(?:readiness\/provider|safety|seasonal|auth|payment|server)/)
+})
+
+test('H: Bericht in Alltagssprache – lesbare Daten, Hinweis einmal je Bereich, keine Nullreihen', () => {
+  const input = trip()
+  const report = tripAuditV1(input)
+  const time = report.sections.find(section => section.domain === 'time')!
+  assert.equal(time.coverage, 'not_run')
+  assert.equal(time.detail, 'Noch nichts zu vergleichen: Im Plan stehen keine zwei Planpunkte mit festen Zeiten. Kein Gesamturteil über die Reise.')
+  assert.doesNotMatch(report.sections.map(section => section.detail).join(' '), /Übernachtungsintervall|zeitliche Vergleiche|Ereignisse nicht erfasst|\b0 Abschnitte ausgewählt; 0/)
+  const offen = report.findings.filter(finding => finding.domain === 'flights' || finding.domain === 'mobility')
+  assert(offen.length > 0)
+  for (const finding of offen) {
+    assert.doesNotMatch(finding.detail, /\d{4}-\d{2}-\d{2}/)
+    assert.doesNotMatch(finding.detail, /Aufforderung zu einer Buchung/)
+    if ('date' in finding.evidence && finding.evidence.date) assert.match(finding.evidence.date, /^\d{4}-\d{2}-\d{2}$/)
+  }
+  for (const domain of ['flights', 'mobility'] as const) {
+    const detail = report.sections.find(section => section.domain === domain)!.detail
+    const anzahl = (detail.match(/keine Aufforderung zu einer Buchung/g) ?? []).length
+    assert.equal(anzahl, report.findings.some(finding => finding.domain === domain && !/Bodenverbindung/.test(finding.title) && finding.title !== 'Planpunkte nicht eindeutig zugeordnet') ? 1 : 0)
+  }
+})
+
+test('H: Zeitvergleich mit Zahlen bleibt vollständig, nur ohne Prüfjargon', () => {
+  const report = tripAuditV1(trip([item('a'), item('b', { startsAt: '10:30', endsAt: '11:30' })]))
+  const time = report.sections.find(section => section.domain === 'time')!
+  const canonical = tripZeitpruefung(trip([item('a'), item('b', { startsAt: '10:30', endsAt: '11:30' })])).coverage
+  assert.match(time.detail, canonical.evaluatedPairs === 0 ? /Noch kein Zeitvergleich bewertet/ : new RegExp(`${canonical.evaluatedPairs} Zeitvergleich`))
+  if (canonical.unevaluablePairs) assert.match(time.detail, new RegExp(`${canonical.unevaluablePairs} nicht bewertbar`))
+  if (canonical.unassessedEvents) assert.match(time.detail, new RegExp(`${canonical.unassessedEvents} Zeitangabe`))
+  assert.match(time.detail, /Kein Gesamturteil über die Reise\.$/)
+})
+
+test('H: «Grenze oder Fehler» nur, wenn es eine gibt', () => {
+  const ohneGrenze = { evaluation: 'incomplete' as const, limitReasons: [], sections: [{ domain: 'time' as const, source: 'tripZeitpruefung' as const, coverage: 'not_run' as const, detail: '', reasons: [] }] }
+  assert.match(auditBerichtStatus(ohneGrenze), /noch keine auswertbaren Angaben/)
+  assert.doesNotMatch(auditBerichtStatus(ohneGrenze), /Grenze oder ein Fehler/)
+  assert.match(auditBerichtStatus({ ...ohneGrenze, limitReasons: ['output_limit'] }), /Grenze oder ein Fehler/)
+  assert.match(auditBerichtStatus({ ...ohneGrenze, sections: [{ ...ohneGrenze.sections[0]!, coverage: 'error' as const }] }), /Grenze oder ein Fehler/)
+  assert.match(auditBerichtStatus({ ...ohneGrenze, evaluation: 'partial' }), /nur teilweise bewertbar/)
 })

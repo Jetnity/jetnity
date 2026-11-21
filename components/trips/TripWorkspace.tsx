@@ -60,6 +60,7 @@ import {
   type WorkspaceRueckkehr,
 } from '@/lib/trips/detail'
 import { einreiseKundenanzeige, einreiseUebersicht } from '@/lib/readiness/einreise-kundenanzeige'
+import { einreisePrueferVorbelegung } from '@/lib/readiness/einreise-pruefer-vorbelegung'
 import { travellerSlots } from '@/lib/readiness/party'
 import { destinationEssentialsAbleiten } from '@/lib/trips/destination-essentials'
 import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
@@ -1512,7 +1513,14 @@ export default function TripWorkspace({
               data-workspace-modus="einreise"
               className="mt-4 min-w-0 outline-none"
             >
-              <EinreiseLaenderpruefer eingebettet />
+              <EinreiseLaenderpruefer
+                eingebettet
+                vorbelegung={einreisePrueferVorbelegung({
+                  laender: reise.stages.map((etappe) => etappe.countryCode),
+                  slots: travellerSlots(reise),
+                })}
+                onAngabenErgaenzen={() => preparationOeffnen({ bereich: 'reisende-dokumente' })}
+              />
             </section>
           ) : null}
 

@@ -13,6 +13,8 @@ import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { tageUtc } from '@/lib/activities/zeit'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
+import { useFlughafenVorschlag } from './useFlughafenVorschlag'
+import FlughafenHinweise from './FlughafenHinweise'
 import {
   flugVergleichUrl,
   type FlugVergleichEingabe,
@@ -30,10 +32,12 @@ function FlughafenFeld({
   label,
   wert,
   setzen,
+  hinweisId,
 }: {
   label: string
   wert: FlughafenAuswahl | null
   setzen: (v: FlughafenAuswahl | null) => void
+  hinweisId?: string
 }) {
   const id = useId()
   return (
@@ -45,6 +49,7 @@ function FlughafenFeld({
         onChange={setzen}
         placeholder="Stadt, Land oder Flughafen"
         inputClassName="org-air-input"
+        describedBy={hinweisId}
       />
     </div>
   )
@@ -66,23 +71,19 @@ export default function Flugvergleich({
 }) {
   const erste = reise.stages[0],
     letzte = reise.stages.at(-1)
-  const [von, setVon] = useState(() =>
+  const [von, setVon, vonHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(reise.originPlaceId, reise.origin),
+    { placeId: reise.originPlaceId, name: reise.origin },
   )
-  const [nach, setNach] = useState(() =>
-    vorgeschlagenerFlughafen(
-      erste?.placeId ?? null,
-      erste?.name ?? null,
-      erste,
-    ),
+  const [nach, setNach, nachHinweis] = useFlughafenVorschlag(
+    vorgeschlagenerFlughafen(erste?.placeId ?? null, erste?.name ?? null, erste),
+    { placeId: erste?.placeId, name: erste?.name },
   )
-  const [zurueck, setZurueck] = useState(() =>
-    vorgeschlagenerFlughafen(
-      letzte?.placeId ?? null,
-      letzte?.name ?? null,
-      letzte,
-    ),
+  const [zurueck, setZurueck, zurueckHinweis] = useFlughafenVorschlag(
+    vorgeschlagenerFlughafen(letzte?.placeId ?? null, letzte?.name ?? null, letzte),
+    { placeId: letzte?.placeId, name: letzte?.name },
   )
+  const hinweisBasis = useId()
   const [art, setArt] = useState<FlugVergleichEingabe['art']>(
     !reise.endDate
       ? 'einfach'
@@ -187,7 +188,7 @@ export default function Flugvergleich({
           className={'flug-fields' + (art === 'einfach' ? ' flug-oneway' : '')}
         >
           <div className="flug-airports">
-            <FlughafenFeld label="Von" wert={von} setzen={setVon} />
+            <FlughafenFeld label="Von" wert={von} setzen={setVon} hinweisId={vonHinweis ? `${hinweisBasis}-von` : undefined} />
             <button
               type="button"
               className="flug-swap"
@@ -200,7 +201,7 @@ export default function Flugvergleich({
             >
               <ArrowLeftRight size={17} />
             </button>
-            <FlughafenFeld label="Nach" wert={nach} setzen={setNach} />
+            <FlughafenFeld label="Nach" wert={nach} setzen={setNach} hinweisId={nachHinweis ? `${hinweisBasis}-nach` : undefined} />
           </div>
           <Suchkalender start={hin} ende={rueck} startLabel="Hinflug" endeLabel="Rückflug"
             min={heute} max={max ?? heute} minTage={0} einzeln={art === 'einfach'}
@@ -210,6 +211,11 @@ export default function Flugvergleich({
             <Search size={20} aria-hidden="true" /> Flüge suchen
           </button>
         </div>
+        <FlughafenHinweise hinweise={[
+          { id: `${hinweisBasis}-von`, feld: 'Von', text: vonHinweis },
+          { id: `${hinweisBasis}-nach`, feld: 'Nach', text: nachHinweis },
+          { id: `${hinweisBasis}-zurueck`, feld: 'Rückflug ab', text: art === 'gabel' ? zurueckHinweis : null },
+        ]} />
         <FlughafenKartenknopf reise={reise} iata={nach?.iata} />
         {art === 'gabel' && (
           <div className="flug-openjaw">
@@ -217,6 +223,7 @@ export default function Flugvergleich({
               label="Rückflug ab"
               wert={zurueck}
               setzen={setZurueck}
+              hinweisId={zurueckHinweis ? `${hinweisBasis}-zurueck` : undefined}
             />
             <p>
               <Plane size={17} aria-hidden="true" /> Zurück nach{' '}

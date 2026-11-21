@@ -5,7 +5,11 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 import type { AttentionAbleitung, AttentionPunkt } from '@/lib/trips/attention'
-import { attentionGruppieren } from '@/lib/trips/attention-presentation'
+import {
+  attentionAusfuehrbar,
+  attentionGruppieren,
+  attentionNachAusfuehrbarkeit,
+} from '@/lib/trips/attention-presentation'
 
 function punkt(id: string, teil: Partial<AttentionPunkt> = {}): AttentionPunkt {
   return {
@@ -24,7 +28,7 @@ function flood(): AttentionPunkt[] {
   return Array.from({ length: 64 }, (_, index) => punkt(`opaque-member-${index}`))
 }
 
-function htmlAus(punkte: AttentionPunkt[], limit = 3, leerstand: AttentionAbleitung['leerstand'] = null) {
+function htmlAus(punkte: AttentionPunkt[], limit = 3, leerstand: AttentionAbleitung['leerstand'] = null, integriert = false) {
   return renderToStaticMarkup(createElement(TripWorkspaceJetztWichtig, {
     attention: {
       punkte,
@@ -34,6 +38,7 @@ function htmlAus(punkte: AttentionPunkt[], limit = 3, leerstand: AttentionAbleit
       orchestrierung: { safety: 'angebunden', seasonal: 'angebunden' },
     },
     onAktion: () => assert.fail('Rendering darf keine Aktion auslösen'),
+    integriert,
   }))
 }
 
@@ -179,6 +184,77 @@ describe('Jetzt wichtig: gerenderte Gruppen', () => {
     const html = htmlAus([], 3, 'nichts_dringend_geprueft')
     assert.match(html, /Im Moment nichts Dringendes/)
     assert.doesNotMatch(html, /<li[ >]|<button[ >]/)
+  })
+})
+
+describe('Als Nächstes: oben nur Ausführbares, der Rest unter «Gut zu wissen»', () => {
+  const flugLuecke = punkt('coverage:fluege', { signal: 'coverage.fluege', lage: 'known_gap', titel: 'Flugstrecke noch offen', aktion: { art: 'bereich', bereich: 'fluege' } })
+  const unterkunftUnklar = punkt('coverage:unterkunft', { signal: 'coverage.unterkunft', schwere: 'bald', lage: 'unknown', titel: 'Unterkunftsstand noch unklar', aktion: { art: 'bereich', bereich: 'unterkunft' } })
+  const passFehlt = punkt('official:insufficient_context', { signal: 'official.insufficient_context', ebene: 'person', lage: 'insufficient_context', titel: 'Offizielle Prüfung noch nicht möglich', aktion: { art: 'bereich', bereich: 'uebersicht', preparationZiel: { bereich: 'reisende-dokumente' } } })
+  const sicherheitWeg = punkt('safety:x:unavailable', { signal: 'safety.unavailable', titel: 'Sicherheitsprüfung derzeit nicht verfügbar', aktion: null })
+  const reisezeitWeg = punkt('seasonal:x:unavailable', { signal: 'seasonal.unavailable', titel: 'Reisezeitprüfung derzeit nicht verfügbar', aktion: null })
+  const einreiseWeg = punkt('official:unavailable:a')
+  const sicherheitUnklar = punkt('safety:x:unknown', { signal: 'safety.unknown', lage: 'unknown', titel: 'Sicherheitslage ist unklar', aktion: null })
+  const reisezeitUngeprueft = punkt('seasonal:ungeprueft', { signal: 'seasonal.ungeprueft', lage: 'ungeprueft', titel: 'Reisezeit noch nicht geprüft', aktion: null })
+  const kritisch = punkt('safety:x:critical', { signal: 'safety.critical_warning', schwere: 'blockierend', lage: 'warning', titel: 'Sicherheitslage braucht Aufmerksamkeit', aktion: null })
+  const fehler = punkt('safety:x:error', { signal: 'safety.error', schwere: 'bald', lage: 'error', titel: 'Sicherheitsprüfung ist fehlgeschlagen', aktion: null })
+  const termin = punkt('item.date_mismatch:i', { signal: 'item.date_mismatch', schwere: 'bald', lage: 'stale', ebene: 'item', titel: 'Tour: 3. Juni 2027 weicht vom geplanten Tag 5. Juni 2027 ab', aktion: null })
+
+  test('nicht verfügbare Prüfungen sind nie ausführbar, auch mit Sprungziel', () => {
+    for (const eintrag of [sicherheitWeg, reisezeitWeg, einreiseWeg]) assert.equal(attentionAusfuehrbar(eintrag), false, eintrag.titel)
+    for (const eintrag of [sicherheitUnklar, reisezeitUngeprueft]) assert.equal(attentionAusfuehrbar(eintrag), false, eintrag.titel)
+    for (const eintrag of [flugLuecke, unterkunftUnklar, passFehlt]) assert.equal(attentionAusfuehrbar(eintrag), true, eintrag.titel)
+  })
+
+  test('Warnungen, Fehler und Terminabweichungen bleiben oben, auch ohne Sprungziel', () => {
+    for (const eintrag of [kritisch, fehler, termin]) assert.equal(attentionAusfuehrbar(eintrag), true, eintrag.titel)
+  })
+
+  test('Aufteilung verliert keine Gruppe und behält die kanonische Reihenfolge', () => {
+    const punkte = [kritisch, unterkunftUnklar, flugLuecke, passFehlt, sicherheitWeg, reisezeitWeg, einreiseWeg, { ...einreiseWeg, id: 'official:unavailable:b' }]
+    const gruppen = attentionGruppieren(punkte)
+    const { jetzt, gutZuWissen } = attentionNachAusfuehrbarkeit(gruppen)
+    assert.deepEqual(jetzt.map((gruppe) => gruppe.punkt.id), [kritisch.id, unterkunftUnklar.id, flugLuecke.id, passFehlt.id])
+    assert.deepEqual(gutZuWissen.map((gruppe) => gruppe.punkt.id), [sicherheitWeg.id, reisezeitWeg.id, einreiseWeg.id])
+    assert.equal(gutZuWissen[2]!.anzahl, 2)
+    assert.deepEqual([...jetzt, ...gutZuWissen].flatMap((gruppe) => gruppe.mitglieder).map((m) => m.id).sort(), punkte.map((p) => p.id).sort())
+  })
+
+  test('Erstbesucher-Fall: «derzeit nicht verfügbar» steht nicht mehr unter «Was deine Reise jetzt weiterbringt»', () => {
+    const html = htmlAus([unterkunftUnklar, flugLuecke, passFehlt, sicherheitWeg, reisezeitWeg], 3, null, true)
+    const [oben, unten] = html.split('data-attention-gut-zu-wissen')
+    assert.ok(unten, 'Gut zu wissen fehlt')
+    assert.match(oben!, /Was deine Reise jetzt weiterbringt/)
+    for (const titel of ['Unterkunftsstand noch unklar', 'Flugstrecke noch offen', 'Offizielle Prüfung noch nicht möglich']) assert.match(oben!, new RegExp(titel))
+    assert.doesNotMatch(oben!, /derzeit nicht verfügbar/)
+    assert.match(unten, /Gut zu wissen/)
+    assert.match(unten, /2 Hinweise<!-- --> ohne eigenen Schritt|2 Hinweise ohne eigenen Schritt/)
+    assert.match(unten, /Sicherheitsprüfung derzeit nicht verfügbar[\s\S]*Reisezeitprüfung derzeit nicht verfügbar/)
+    assert.match(html, /<details data-attention-gut-zu-wissen="true"/)
+    assert.doesNotMatch(html, /<details[^>]*\bopen\b/)
+    assert.doesNotMatch(html, /weitere Punkte anzeigen/)
+  })
+
+  test('das Limit zählt nur Ausführbares; Gut zu wissen verdrängt keinen Schritt', () => {
+    const viele = [flugLuecke, unterkunftUnklar, passFehlt, kritisch, sicherheitWeg]
+    const html = htmlAus(viele, 3, null, true)
+    const [oben] = html.split('data-attention-gut-zu-wissen')
+    assert.equal((oben!.match(/<li[ >]/g) ?? []).length, 3)
+    assert.match(oben!, /1 weiterer Punkt anzeigen/)
+  })
+
+  test('nur Nicht-Ausführbares: ehrlicher Satz statt leerer Karte', () => {
+    const html = htmlAus([sicherheitUnklar, reisezeitWeg], 3, null, true)
+    assert.match(html, /Im Moment gibt es hier keinen Schritt, den du selbst erledigen kannst/)
+    const mitLeerstand = htmlAus([sicherheitWeg, reisezeitWeg], 3, 'pruefung_nicht_verfuegbar', true)
+    assert.match(mitLeerstand, /Einzelne Prüfungen sind derzeit nicht verfügbar/)
+    assert.doesNotMatch(mitLeerstand, /keinen Schritt, den du selbst erledigen kannst/)
+  })
+
+  test('die Fassung «Jetzt wichtig» ausserhalb des Arbeitsbereichs bleibt unverändert', () => {
+    const html = htmlAus([flugLuecke, sicherheitWeg], 3)
+    assert.doesNotMatch(html, /Gut zu wissen/)
+    assert.equal((html.match(/<li[ >]/g) ?? []).length, 2)
   })
 })
 
