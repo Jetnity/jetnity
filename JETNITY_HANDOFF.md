@@ -1,5 +1,9 @@
 # Jetnity – Handoff und nächste Schritte
 
+## 22.11.2026 — Main-CI zuerst; danach Merge-Reihenfolge #1272
+
+Der rote Main-Lauf nach #1274 wird ausschliesslich im isolierten Atomic-Claim-Test repariert: echte BG1-Taktpflege zwischen vollständigen Rollback-Fällen. [Ursache, realer Slotwechsel und offene PR-/Main-Gates](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Nach dem notwendigen CI-Fix hier kein weiterer Merge vor #1272. Profile-Cron pausiert vor Hosted-SQL/PR; AT/Official Truth bleibt bei Hauptplan 97. Keine Production-, Login-, 2FA- oder Passkey-Änderung.
+
 ## 21.11.2026 — CMS, Small und BG1 in Production nachgewiesen
 
 Der [CMS-/Small-Abschluss](docs/JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md) belegt die vier öffentlichen Reiseideen, den einmaligen freigegebenen Compute-Wechsel und die früheren Prüfungen der bestehenden Anmeldung und „Meine Reisen“. Nach vollständig grüner CI wurde #1273 separat gemergt und sein BG1-SQL-Paket installiert. Der reguläre Lauf um **21:55 UTC** bestand intern mit `complete`, öffentlichem Status `current` und unverändertem Incident/Resume **108/108**; die öffentliche CMS-API, Startseite und Entdecken bestanden den erneuten anonymen Nachtest. [SQL-Abnahme, genaue Zeiten und Grenzen](docs/JETNITY_BG1_QUERY_COST_2026-11-21.md).
