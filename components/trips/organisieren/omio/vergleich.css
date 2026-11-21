@@ -1,10 +1,10 @@
 .ov {
-  --ov-ink: #143e33;
-  --ov-body: #354e43;
-  --ov-muted: #52665b;
-  --ov-line: #d5e0d5;
+  --ov-ink: #1b2a26;
+  --ov-body: #33443e;
+  --ov-muted: #4a5f57;
+  --ov-line: #d3e0d8;
   --ov-white: #fff;
-  --ov-soft: #edf3eb;
+  --ov-soft: #e9f1ec;
   --ov-action: #153f34;
   font: inherit;
   color: var(--ov-ink);
@@ -692,7 +692,7 @@
 }
 .ov-bestehend {
   margin: 16px 0 0;
-  border-top: 1px solid #d5e0d5;
+  border-top: 1px solid #d3e0d8;
   padding: 12px 0;
 }
 .ov-bestehend > summary {
