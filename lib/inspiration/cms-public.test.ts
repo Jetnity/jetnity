@@ -16,7 +16,7 @@ const idea = 'Eine bestätigte redaktionelle Reiseidee mit eigener Planung'
 const item = { entryId: CMS_TEST_ENTRY, revision: '1', publishedAt: CMS_TEST_AT,
   content: { ...fixtureRevision('1').content, beschreibung: description, idea, themen: ['stadt-kultur'] } }
 const result: CmsPortResult = { ok: true, value: { schema: 1, items: [item] } }
-type Fixture = { enabled: boolean; calls: number; connections: number; result: CmsPortResult }
+type Fixture = { enabled: boolean; publicPreview?: boolean; calls: number; connections: number; result: CmsPortResult }
 type Pages = { HomePage(): Promise<ReactNode>; EntdeckenSeite(props: { searchParams?: Promise<Record<string, string>> }): Promise<ReactNode> }
 let pages: (fixture: Fixture) => Pages
 
@@ -25,7 +25,7 @@ before(async () => {
     external: ['react', 'react/jsx-runtime', 'lucide-react'], stdin: { resolveDir: process.cwd(), contents:
       "export { default as HomePage } from './app/(public)/page'; export { default as EntdeckenSeite } from './app/(public)/entdecken/page';" },
     plugins: [{ name: 'public-cms-boundaries', setup(builder) {
-      builder.onResolve({ filter: /^(server-only|next\/(server|link)|@\/lib\/(admin\/hosted-runtime-activation|admin\/content\/cms-editor-2\/server))$/ }, args => ({ path: args.path, namespace: 'cms-public' }))
+      builder.onResolve({ filter: /^(server-only|next\/(server|link)|\.\/cms-preview-read|@\/lib\/(admin\/hosted-runtime-activation|admin\/content\/cms-editor-2\/server))$/ }, args => ({ path: args.path, namespace: 'cms-public' }))
       builder.onResolve({ filter: /^@\/components\// }, args => ({ path: args.path, namespace: 'cms-component' }))
       builder.onLoad({ filter: /.*/, namespace: 'cms-component' }, args => {
         const name = args.path.split('/').at(-1)!
@@ -36,6 +36,7 @@ before(async () => {
           : args.path === 'next/link' ? "export default 'a'"
             : args.path === 'next/server' ? 'export async function connection(){__publicCms.connections++}'
               : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __publicCms.enabled}'
+                : args.path.endsWith('cms-preview-read') ? 'export function isCmsPreviewReadEnabled(){return __publicCms.publicPreview===true}'
                 : 'export async function readCmsPublished(signal){if(!(signal instanceof AbortSignal))throw Error("missing deadline");__publicCms.calls++;return __publicCms.result}',
       }))
     } }],
@@ -82,18 +83,22 @@ test('unavailable, untrusted and empty published states remain distinct without 
   ]) assert.deepEqual(cmsPublishedInspiration({ ok: true, value }), { status: 'unavailable', ziele: [] })
 })
 
-test('both actual public pages consume the active reader and propagate its source state', async () => {
+test('both actual public pages add missing static goals and preserve the published planning handoff', async () => {
   const f: Fixture = { enabled: true, calls: 0, connections: 0, result }
   const entry = pages(f)
   const home = find(await entry.HomePage(), 'HomeInspiration')
   const explorer = find(await entry.EntdeckenSeite({ searchParams: Promise.resolve({ thema: 'stadt-kultur' }) }), 'InspirationExplorer')
   assert.ok(home); assert.ok(explorer)
-  assert.equal(home.status, 'published'); assert.equal(explorer.status, 'published')
-  assert.equal((home.ziele as unknown[]).length, 1); assert.equal((explorer.ziele as unknown[]).length, 1)
+  assert.equal(home.status, 'supplemented'); assert.equal(explorer.status, 'supplemented')
+  assert.equal((home.ziele as unknown[]).length, 4); assert.equal((explorer.ziele as unknown[]).length, 4)
   assert.equal(new URL((home.ziele as Array<{ href: string }>)[0].href, 'https://example.test').searchParams.get('idee'), idea)
   assert.equal(f.calls, 2); assert.equal(f.connections, 2)
   f.result = { ok: true, value: { schema: 1, items: [] } }
-  assert.deepEqual(find(await entry.HomePage(), 'HomeInspiration')?.ziele, [])
+  const emptyHome = find(await entry.HomePage(), 'HomeInspiration')
+  const emptyExplorer = find(await entry.EntdeckenSeite({}), 'InspirationExplorer')
+  assert.equal(emptyHome?.status, 'supplemented'); assert.equal(emptyExplorer?.status, 'supplemented')
+  assert.equal((emptyHome?.ziele as unknown[]).length, 4)
+  assert.deepEqual(emptyExplorer?.ziele, ENTDECKEN_ZIELE)
 })
 
 test('closed Dev gate preserves the four original public cards and performs no request-time or database work', async () => {
@@ -108,12 +113,52 @@ test('closed Dev gate preserves the four original public cards and performs no r
   assert.equal(f.calls, 0); assert.equal(f.connections, 0)
 })
 
-test('both public pages expose missing installation as unavailable instead of claiming empty publication', async () => {
-  const f: Fixture = { enabled: true, calls: 0, connections: 0, result: { ok: false, code: 'unavailable' } }
-  const entry = pages(f)
-  for (const props of [find(await entry.HomePage(), 'HomeInspiration'), find(await entry.EntdeckenSeite({}), 'InspirationExplorer')]) {
-    assert.ok(props); assert.equal(props.status, 'unavailable'); assert.deepEqual(props.ziele, [])
+test('errors, timeouts and untrusted drafts fall back only to the known catalogue without claiming empty publication', async () => {
+  for (const badResult of [
+    { ok: false, code: 'unavailable' },
+    { ok: false, code: 'timeout' },
+    { ok: true, value: { schema: 1, items: [{ ...item, draftRevision: '2', content: { ...item.content, idea: 'UNPUBLISHED_SECRET_DRAFT' } }] } },
+  ] satisfies CmsPortResult[]) {
+    const f: Fixture = { enabled: true, calls: 0, connections: 0, result: badResult }
+    const entry = pages(f)
+    const home = find(await entry.HomePage(), 'HomeInspiration')
+    const explorer = find(await entry.EntdeckenSeite({}), 'InspirationExplorer')
+    assert.equal(home?.status, 'fallback'); assert.equal(explorer?.status, 'fallback')
+    assert.equal((home?.ziele as unknown[]).length, 4)
+    assert.deepEqual(explorer?.ziele, ENTDECKEN_ZIELE)
+    assert.doesNotMatch(JSON.stringify([home, explorer]), /UNPUBLISHED_SECRET_DRAFT|draftRevision/)
   }
+})
+
+test('the explicit public-only Dev preview reads CMS without enabling the Admin runtime', async () => {
+  const f: Fixture = { enabled: false, publicPreview: true, calls: 0, connections: 0, result }
+  const entry = pages(f)
+  const home = find(await entry.HomePage(), 'HomeInspiration')
+  const explorer = find(await entry.EntdeckenSeite({}), 'InspirationExplorer')
+  assert.equal(home?.status, 'supplemented'); assert.equal(explorer?.status, 'supplemented')
+  assert.equal(f.calls, 2); assert.equal(f.connections, 2)
+  assert.equal(new URL((home?.ziele as Array<{ href: string }>)[0].href, 'https://example.test').searchParams.get('idee'), idea)
+})
+
+test('supplemented and fallback components show useful cards, details and honest source state', async () => {
+  const f: Fixture = { enabled: true, calls: 0, connections: 0, result }
+  const entry = pages(f)
+  const props = find(await entry.EntdeckenSeite({}), 'InspirationExplorer')!
+  const ziele = props.ziele as typeof ENTDECKEN_ZIELE
+  const markup = renderToStaticMarkup(createElement(InspirationExplorer, { initial: { q: '', thema: 'alle' }, ziele, status: 'supplemented' }))
+  assert.match(markup, /Bali/); assert.match(markup, /Lissabon/)
+  assert.ok(markup.includes(description)); assert.ok(markup.includes(idea))
+  assert.equal(entdeckerTreffer({ q: 'Kulturwege', thema: 'stadt-kultur' }, ziele).length, 1)
+  assert.equal(entdeckerTreffer({ q: 'Lissabon', thema: 'alle' }, ziele).length, 1)
+  assert.doesNotMatch(markup, /keine Reiseideen veröffentlicht|vorübergehend nicht verfügbar/)
+  const fallback = renderToStaticMarkup(createElement(InspirationExplorer, { initial: { q: '', thema: 'alle' }, ziele: ENTDECKEN_ZIELE, status: 'fallback' }))
+  assert.match(fallback, /Weitere Reiseideen sind vorübergehend nicht verfügbar/)
+  assert.match(fallback, /Bali/); assert.match(fallback, /Amsterdam/)
+  assert.doesNotMatch(fallback, /keine Reiseideen veröffentlicht/)
+  const home = renderToStaticMarkup(createElement(HomeInspiration, {
+    ziele: ENTDECKEN_ZIELE.map(ziel => ({ ...ziel, href: ziel.href! })), status: 'fallback',
+  }))
+  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /bali\.jpg/)
 })
 
 test('actual public components render published copy and honest absence in German without adding required caller props', () => {

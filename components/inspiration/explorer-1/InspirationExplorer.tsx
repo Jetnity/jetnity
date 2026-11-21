@@ -55,6 +55,10 @@ export default function InspirationExplorer({ initial, ziele = ENTDECKEN_ZIELE, 
 
   return (
     <div lang="de">
+      {status === 'fallback' && <div role="status" className="mb-5 rounded-2xl border border-line-200 bg-surface-0 p-5 text-sm leading-6 text-ink-950">
+        <p>Weitere Reiseideen sind vorübergehend nicht verfügbar. Entdecke inzwischen diese Auswahl.</p>
+        <a href="/entdecken" className="mt-2 inline-flex min-h-11 items-center rounded-lg px-3 font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600">Erneut laden</a>
+      </div>}
       <form action="/entdecken" method="get" role="search" aria-label="Reiseinspiration suchen"
         className="rounded-[28px] border border-line-200 bg-surface-0 p-5 sm:p-7"
         onSubmit={(event) => {

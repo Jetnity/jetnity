@@ -6326,3 +6326,9 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Alternativen:** `travellers` weiter als Erwachsene zu zeigen wäre für Solo-Reisen bequem und für Familien falsch. Eine neue Party-Altersspalte wäre eine Datenwahrheit ohne Auftrag. Kinderalter in die Stay22-URL zu schreiben wäre eine unbelegte Provider-Semantik.
 
 **Konsequenzen:** Eine Suche startet erst nach gesetzter Belegung. Die Reise selbst speichert diese Belegung nicht. S2 bis S4 und der Technical-Lead-Review bleiben offen. [Scope](docs/TRAVEL_INTEGRATION_S1_HOTEL_BELEGUNG_2026-11-19.md).
+
+## Reiseideen: vorhandenen Katalog unter acht Veröffentlichungen ergänzen — 21.11.2026
+
+**Owner-Entscheidung:** Startseite und `/entdecken` ergänzen bei weniger als acht eindeutigen, validiert veröffentlichten Ideen den vorhandenen statischen Katalog. Nach `placeId` wird dedupliziert; die veröffentlichte Fassung gewinnt vollständig. Bei einem CMS-Ausfall bleiben die statischen Ideen mit einem ehrlichen Verfügbarkeitshinweis sichtbar. Diese ausdrückliche Anweisung ersetzt ausschließlich die frühere No-Fallback-Regel der öffentlichen Auswahl.
+
+**Grenzen:** Der strenge Vierer-CMS-Vertrag und die Trennung von Veröffentlichung und Entwurf bleiben bestehen. Der derzeitige Katalog liefert bei null Veröffentlichungen vier Ziele; acht ist die Ergänzungsschwelle, keine zugesagte Kartenzahl. Die vier CMS-Einträge werden erst nach separatem Owner-Go je Eintrag veröffentlicht. Der Auftrag gilt nur für Dev; Production, Login und 2FA bleiben unverändert. Drei PR-Slots sind belegt, daher erfolgt die Arbeit auf `fix/inspiration-catalog-under-eight-dev-20261121` ohne vierten PR. Die Preview-Abnahme steht aus. [Auftrag und tatsächlicher Prüfstand](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
