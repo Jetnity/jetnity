@@ -102,9 +102,13 @@ END $body$;
 REVOKE ALL ON FUNCTION official_v3_jobs_private.cycle5_close_v1(jsonb) FROM PUBLIC,anon,authenticated,service_role;
 GRANT EXECUTE ON FUNCTION official_v3_jobs_private.cycle5_close_v1(jsonb) TO postgres;
 RESET ROLE;
-GRANT ot_v3_jobs_owner TO postgres WITH INHERIT FALSE, SET FALSE;
+-- Revoke ONLY the temporary self-grant, preserving the original
+-- supabase_admin-issued ADMIN/INHERIT/SET membership exactly as before.
+REVOKE ot_v3_jobs_owner FROM postgres GRANTED BY postgres;
 DO $rest$ BEGIN
- IF NOT EXISTS(SELECT 1 FROM pg_auth_members WHERE member='postgres'::regrole AND roleid='ot_v3_jobs_owner'::regrole AND admin_option AND NOT set_option AND NOT inherit_option)
+ IF (SELECT count(*) FROM pg_auth_members WHERE member='postgres'::regrole AND roleid='ot_v3_jobs_owner'::regrole)<>1
+ OR NOT EXISTS(SELECT 1 FROM pg_auth_members WHERE member='postgres'::regrole AND roleid='ot_v3_jobs_owner'::regrole
+ AND grantor='supabase_admin'::regrole AND admin_option AND NOT set_option AND NOT inherit_option)
  OR (SELECT pg_get_userbyid(proowner) FROM pg_proc WHERE oid='official_v3_jobs_private.cycle5_close_v1(jsonb)'::regprocedure)<>'ot_v3_jobs_owner'
  OR has_function_privilege('anon','official_v3_jobs_private.cycle5_close_v1(jsonb)','EXECUTE')
  OR has_function_privilege('authenticated','official_v3_jobs_private.cycle5_close_v1(jsonb)','EXECUTE')
