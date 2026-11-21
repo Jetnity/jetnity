@@ -1,6 +1,6 @@
 # Official Truth CH→DE / AT Renewal – Production approval gate, 21 November 2026
 
-> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; persönliche Dev-Anmeldung inzwischen bestätigt, Hosted-Rücklesung auch im angemeldeten SQL-Editor durch Verbindungs-Timeout blockiert; reale AT-Publisherprüfung nicht ausgeführt. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
+> **Neuester Prüfstand dieser Fortsetzung:** [Dev-Fortsetzung und tatsächliche CI-Belege](OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md). Native PG17-Sequenzprüfung bestanden; persönliche Dev-Anmeldung und unabhängiger Dev-Abschluss-Readback inzwischen bestätigt (14:09 Zürich: 7/7 Quittungen, 2/2 Originale, BG1 current); reale AT-Publisherprüfung und gesonderter CI-Zugriffsweg weiterhin offen. Die älteren Zeitstände unten bleiben als Historie erhalten. **Kein Production-Go.**
 
 **Status: NOT Production release-ready.** Scope is strictly the Dev branch `fix/official-truth-chde-at-renewal-dev-20261121`, no fourth PR (currently three other open PRs), no site deployment, no Production write, no new source/visitor approvals. All expired facts remain **„derzeit nicht verfügbar“**.
 
@@ -183,3 +183,22 @@ Die technische Dev-Verbindung ist der verbleibende Blocker. Das Production-
 Prüfpaket bleibt zur Prüfung vorhanden und zur Ausführung gesperrt; keine
 Production-Aktion. Die echte AT-Publisherprüfung und die unabhängige erneute
 Bestätigung der Quittungen sind weiterhin offen.
+
+
+## Nachtrag 21.11.2026, 14:09 Zürich – Dev-Abschluss unabhängig bestätigt
+
+Nach dem vom Owner gemeldeten Dev-Neustart durch den Arbeitsplan-Chat hat
+die unveränderte lesende Prüfung über den Supabase-Connector **PASS** ergeben:
+**ein abgeschlossener Cycle5-Versuch, 7/7 exakte Owner-Quittungen, 2/2 exakte
+Originale**, unveränderte 15/53-Historie, kein nachfolgender Quellenstart
+und keine neue akzeptierte Version/Projektion. **BG1 current**, v7-Katalog
+und ursprüngliche Rollenmitgliedschaft exakt; Generation **2050**,
+Incident/Resume **14/14**, echter natürlicher vollständiger Proof Due
+**14:05 Zürich** exakt mit Cron-Ausführung verbunden.
+[Ergebnisaggregat](evidence/official-truth-renewal-20261121/dev-cycle5-readback-20261121T130920Z.json).
+
+Damit sind in der obigen historischen Prüfmatrix die Gates **Dev Cycle5
+Owner-Abschluss** und **natürlicher Dev-BG1-Folgecron** für diesen Zeitpunkt
+erfüllt. Keine erneute Anmeldung oder Schließung nötig. Die reale AT-
+Publisherprüfung, Production-spezifische Gates und der gesonderte CI-HTTP-403-
+Zugriffsweg bleiben offen. Kein neuer Quellenlauf oder Production-Zugriff.

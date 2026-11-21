@@ -204,3 +204,42 @@ Quellenlauf, kein Neustart, kein Reset und keine Konfigurations-/Schlüsselände
 Production wurde nicht aufgerufen. Nächster technischer Blocker ist die
 **Dev-Datenbankverbindung**; das Live-Abnahmegate bleibt ausdrücklich gesperrt.
 Die erfolgreiche persönliche Anmeldung bleibt als erledigter Schritt stehen.
+
+
+## Erfolgreicher unabhängiger Dev-Readback – 21.11.2026, 14:09:20 Zürich
+
+Der Owner meldete einen inzwischen vom separaten Arbeitsplan-Chat
+ausgeführten Dev-Neustart und beauftragte ausdrücklich die erneute lesende
+Nachprüfung. Diese Fortsetzung führte selbst keinen Neustart aus. Der
+Supabase-Connector erreicht Dev wieder. Die **unveränderte gepinnte**
+`dev-cycle5-independent-readback.READONLY.sql` wurde als
+`REPEATABLE READ READ ONLY`/`ROLLBACK` erfolgreich ausgeführt.
+
+**Tatsächlicher Befund um 13:09:20.108266 UTC / 14:09:20 Zürich:**
+
+- `DEV_CYCLE5_RETIREMENT_AND_ARCHIVE_INDEPENDENT_READBACK_PASS`.
+- Genau **ein** gespeicherter Cycle5-Abschluss vom **12:16:29.200648 UTC**
+  (13:16:29 Zürich), sechs unveränderte Vorgänger und insgesamt **7/7**
+  Retirement-Owner-Quittungen; exakter Receipt-/Digest-Zusammenhang.
+- Geschlossener Auftrag, ursprüngliche **15 Starts / 53 Operationen**
+  unverändert; originale Intake-Bytes exakt, **2/2** archivalische
+  Originalbelege erneut mit tatsächlichen Bytes/Hashes bestätigt.
+- **0** spätere Quellenstarts, Accepted Versions, öffentliche Projektionen,
+  Ergebnisse oder Dispositionen zum zurückgezogenen Versuch.
+- Originale einzige Jobs-Rollenmitgliedschaft und v7-Katalog exakt.
+  **BG1 current**, Generation **2050**, Incident/Resume jeweils **14**.
+  Der aktuelle echte natürliche vollständige Cron-Proof ist über
+  `state_v1`, `runs_v1` und `cron.job_run_details` korreliert, Due
+  **13:05 UTC / 14:05 Zürich**, genau ein passender Nachweis.
+
+[Unverändertes Ergebnisaggregat mit Herkunft](evidence/official-truth-renewal-20261121/dev-cycle5-readback-20261121T130920Z.json).
+Der gespeicherte Abschluss ist damit **jetzt unabhängig bestätigt**. Der
+damalige gesonderte UI-Leseklick wird dadurch nicht rückwirkend bewiesen,
+weil er keinen zweiten DB-Beleg anlegt. Kein erneuter Owner-Vorgang nötig.
+
+Keine DB-Mutation, kein neuer Quellenlauf und kein Production-Zugriff.
+**Offen bleiben** die tatsächliche frische AT-Quellen-/Publisherprüfung und
+die getrennte CI-Management-API-Verweigerung HTTP 403; der erfolgreiche
+Connector-Readback macht diese Prüfungen nicht automatisch grün. Die frühere
+Zugriffsstörung und die erfolgreich erledigte Anmeldung bleiben als
+Historie erhalten. Die Production-Ausführung bleibt ohne Owner-Go gesperrt.
