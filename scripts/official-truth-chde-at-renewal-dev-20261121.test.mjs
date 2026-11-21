@@ -63,3 +63,22 @@ test('AT10 public Dev RPCs remain strict anon read-only for exactly five passpor
  assert.ok(s.trimEnd().endsWith('ROLLBACK;'))
  assert.doesNotMatch(s,/\b(?:INSERT|UPDATE|DELETE|ALTER|CREATE|DROP|GRANT)\s/i)
 })
+
+test('Installed Dev BG1 v4 exact weather ACL catalog successor never weakens fullproof, Owner AAL2 or AT legal gate',()=>{
+ const s=file('dev-bg1-wetter-acl-at-guard-v4.CANDIDATE-ROLLBACK.sql')
+ assert.match(s,/bg1_dev_weather_acl_baseline_v4/)
+ assert.match(s,/source_renewal_baseline_v1/)
+ assert.match(s,/DEV_V4_ACL_IS_NOT_THE_ONLY_DRIFT/)
+ assert.match(s,/DEV_V4_FUNCTION_DIGEST_MISMATCH/)
+ assert.match(s,/orig\.disposition='RESEARCH_ONLY'/)
+ assert.match(s,/orig\.accepted_fact_count<=0/)
+ assert.match(s,/orig\.body_digest IS DISTINCT FROM pinned\.raw_sha/)
+ assert.match(s,/CREATE TRIGGER immutable_truncate/)
+ assert.match(s,/FORCE ROW LEVEL SECURITY/)
+ assert.match(s,/required_generation/)
+ assert.match(s,/proof_not_before/)
+ assert.match(s,/DEV_BG1_WEATHER_ACL_V4_WITH_AT_GUARD_ROLLBACK_PASS/)
+ assert.doesNotMatch(s,/\b(?:UPDATE|DELETE)\s+official_v3_guard_private\.state_v1/i)
+ assert.doesNotMatch(s,/GRANT EXECUTE ON FUNCTION public\.reisewetter_reservieren_v1/i)
+ assert.ok(s.trim().endsWith('ROLLBACK;'))
+});

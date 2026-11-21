@@ -572,3 +572,9 @@ Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsüber
 
 ### CH→DE/AT gebündelte negative Dev-Beweise 21.11.2026
 - Existing Dev-recovery branch source-tested on Supabase PG17: `DEV_AT_SEQUENCE_TRANSACTIONAL_RECOVERY_PASS`, `DEV_CHDE_OPERATOR_REVIEW_FAIL_CLOSED_PG17_ROLLBACK_PASS` and `DEV_AT_SOURCE_QUALIFICATION_AND_OWNER_SESSION_NEGATIVE_PG17_PASS`, all in TEMP/ROLLBACK. AT10 public anonymous readback DE/PL/IT/RO/FR 5/5 unavailable, no accepted. Transactional `ALTER SEQUENCE RESTART` changes the temp sequence's relfilenode but a separate protected-catalog snapshot remained identical in isolated Dev tests; full exact Production BG1 reproof is nonetheless required. No actual Dev-live or Production renewal installation, code is release candidate only. Details in [the separate Dev runbook](OFFICIAL_TRUTH_CHDE_AT_RENEWAL_APPROVAL_2026-11-21.md).
+
+
+### 21.11. Dev BG1 / AT Source STOP correction (no Production)
+
+- Dev PostgreSQL17: migrated exact append-only `bg1_dev_weather_acl_baseline_v4` and function successor, acknowledges **only** previously authenticated weather EXECUTE dependency after exact code/ACL SHA review. Original audit/latch remain unchanged. Dev transaction and fully independent status/readback passed; new **natural 01:25 UTC** BG1 complete Fullproof generation **1919**. Current hard incident 14 **cannot** self-clear: Owner receipt required by unchanged `check_control_v1` and Dev interface unavailable; no direct resumed_generation override was attempted.
+- Same native Dev migration hardens `official_v3_source_renewal_private.renew_approved_batch_v1`: 3/3 `RESEARCH_ONLY` unqualified AT originals fail closed and cannot auto-create visa facts despite exact source bytes. No new customer facts. Production remains untouched, with old CH→DE blocked scheduler and misaligned AT HTTP ID sequence. [Full Dev gate and Owner/Production boundary](OFFICIAL_TRUTH_CHDE_AT_RENEWAL_APPROVAL_2026-11-21.md).
