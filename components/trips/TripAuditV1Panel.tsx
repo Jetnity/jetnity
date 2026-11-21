@@ -112,8 +112,9 @@ export default function TripAuditV1Panel({ reise, ungeplantePunkte, integriert =
       <div>
       <h3 className="font-semibold text-brand-800">Gespeicherten Reiseplan prüfen</h3>
       <p className="mt-1 max-w-prose text-sm leading-6 text-ink-800">
-        Unterkunftsnächte, Zeiten und Verbindungen gemeinsam ansehen. Die Prüfung liest deinen Plan und ändert nichts.
-        Ausgewählt bedeutet nicht gebucht; auch deine Buchungsmarkierungen sind keine Bestätigung durch einen Anbieter.
+        Jetnity legt Unterkunftsnächte, Zeiten und Verbindungen nebeneinander und zeigt, wo etwas fehlt oder nicht
+        zusammenpasst. Dein Plan bleibt dabei unverändert. «Ausgewählt» heisst nicht gebucht, und deine Markierung
+        «gebucht» ist keine Bestätigung des Anbieters.
       </p>
       </div>
       <button type="button" aria-expanded={open} aria-controls={controls} onClick={() => setOpen(value => !value)} className={`${BUTTON} mt-3`}>

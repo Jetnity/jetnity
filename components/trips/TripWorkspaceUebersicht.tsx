@@ -179,7 +179,7 @@ export default function TripWorkspaceUebersicht({
       <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className={cn('min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white', workspace && 'xl:col-span-2')}>
         {workspace ? (
           <header className="workspace-trip-parts-kopf">
-            <h3>Gut organisiert</h3>
+            <h3>Was schon organisiert ist</h3>
             <p>{uebersicht.fortschrittText} · {uebersicht.planText}</p>
           </header>
         ) : (

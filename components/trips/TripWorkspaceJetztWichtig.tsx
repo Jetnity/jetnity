@@ -12,6 +12,8 @@ import type {
   AttentionSchwere,
 } from '@/lib/trips/attention'
 import { attentionGruppieren } from '@/lib/trips/attention-presentation'
+import { attentionAktionAlsDetail } from '@/lib/trips/detail'
+import { WORKSPACE_ANSICHT_LABEL } from '@/lib/trips/workspace-mode'
 import { cn } from '@/lib/utils'
 
 const LEERSTAND_TEXT: Record<AttentionLeerstand, string> = {
@@ -93,6 +95,7 @@ export default function TripWorkspaceJetztWichtig({
                   punkt={eintrag.punkt}
                   anzahl={eintrag.anzahl}
                   zuerst={index === 0}
+                  zielZeigen={integriert}
                   onAktion={onAktion}
                 />
               ))}
@@ -119,15 +122,23 @@ export default function TripWorkspaceJetztWichtig({
   )
 }
 
+/** Nennt den Bereich, den der Klick öffnet, mit dem Namen aus der Bereichsleiste. */
+function zielText(aktion: AttentionAktion): string {
+  const ansicht = attentionAktionAlsDetail(aktion) === 'reise' ? 'vorbereitung' : 'organisieren'
+  return `Weiter in «${WORKSPACE_ANSICHT_LABEL[ansicht]}»`
+}
+
 function AttentionZeile({
   punkt,
   anzahl,
   zuerst,
+  zielZeigen,
   onAktion,
 }: {
   punkt: AttentionPunkt
   anzahl: number
   zuerst: boolean
+  zielZeigen: boolean
   onAktion: (aktion: AttentionAktion) => void
 }) {
   const Symbol = SCHWERE_SYMBOL[punkt.schwere]
@@ -158,6 +169,9 @@ function AttentionZeile({
             {anzahl} Einzelprüfungen betroffen
           </span>
         )}
+        {zielZeigen && punkt.aktion ? (
+          <span className="mt-1 block break-words text-xs font-medium text-ink-700">{zielText(punkt.aktion)}</span>
+        ) : null}
         <span className="sr-only">{({ unknown: 'Noch unklar', insufficient_context: 'Angaben fehlen', unavailable: 'Nicht verfügbar', stale: 'Erneut prüfen', error: 'Prüfung fehlgeschlagen', warning: 'Hinweis', known_gap: 'Im Plan offen', ungeprueft: 'Noch nicht geprüft' })[punkt.lage]}</span>
       </span>
       {punkt.aktion ? <ChevronRight className="h-4 w-4 shrink-0 text-brand-800" aria-hidden="true" /> : null}

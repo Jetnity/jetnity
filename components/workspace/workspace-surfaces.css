@@ -201,6 +201,7 @@
 .workspace-route-copy :where(strong, small) { display: block; }
 .workspace-route-copy small { font-size: .8125rem; color: var(--workspace-muted); margin-top: .2rem; }
 .workspace-route-empty { padding: 1rem 1.5rem; }
+.workspace-route-overview .workspace-route-ohne-tage { margin: 0; padding: 1rem 1.5rem; border-top: 1px solid var(--workspace-edge); overflow-wrap: anywhere; }
 .workspace-route-copy .workspace-route-stay { display: flex; align-items: center; gap: .375rem; margin-top: .375rem; }
 .workspace-route-copy .workspace-route-stay svg { width: .9rem; height: .9rem; }
 .workspace-route-copy .workspace-route-stay[data-route-unterkunft="offen"] { color: var(--workspace-ink); font-weight: 600; }
@@ -218,6 +219,7 @@
   .workspace-content [data-workspace-attention="integrated"] [data-attention-punkt],
   .workspace-content [data-workspace-audit="integrated"],
   .workspace-route-overview > header, .workspace-route-overview li button, .workspace-trip-parts-kopf,
+  .workspace-route-overview .workspace-route-ohne-tage,
   .workspace-content [data-workspace-trip-parts] ul button { padding: 1rem; }
   .workspace-audit-intro > button { width: 100%; }
 }

@@ -102,6 +102,11 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             { wert: 'gabel', text: 'Gabelflug' }, { wert: 'retour', text: 'Hin- und Rückflug' }, { wert: 'einfach', text: 'Nur Hinflug' },
           ]} />
         </div>
+        {art === 'gabel' ? (
+          <p className="-mt-2 mb-3 max-w-prose text-xs leading-5 text-[color:var(--org-muted)]">
+            Gabelflug: Hinflug an einen Ort, Rückflug von einem anderen – passend für Reisen mit mehreren Zielen.
+          </p>
+        ) : null}
         <div className={'org-fields ' + (art === 'einfach' ? 'org-four' : '')}>
           <FlughafenFeld
             label="Von"

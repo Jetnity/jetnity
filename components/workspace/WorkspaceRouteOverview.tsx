@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowUpRight, BedDouble, ChevronRight, MapPin } from 'lucide-react'
-import { chronologischeLaeufe, laufUntertitel } from '@/lib/trips/n12-chronology-1/laeufe'
+import { chronologischeLaeufe, laufUntertitel, ZUORDNUNG_OFFEN } from '@/lib/trips/n12-chronology-1/laeufe'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { laufUnterkunftLeser, laufUnterkunftText } from '@/lib/trips/reiselinie'
 import type { Trip, TripItem } from '@/types/trips'
@@ -14,9 +14,13 @@ export default function WorkspaceRouteOverview({ reise, ungeplantePunkte, onRout
 }) {
   const chronologie = chronologischeLaeufe(reise)
   const unterkunft = laufUnterkunftLeser(reise, ungeplantePunkte)
+  const ohneTage = [...reise.stages]
+    .filter((etappe) => !reise.days.some((tag) => tag.stageId === etappe.id))
+    .sort((a, b) => a.position - b.position)
+  const tageOhneZiel = reise.days.some((tag) => !tag.stageId)
   return (
     <section className="workspace-route-overview" aria-label="Deine Route">
-      <header><div><h3>Deine Route</h3><p>Etappen in gespeicherter Reihenfolge</p></div>
+      <header><div><h3>Deine Route</h3><p>Wo du an welchen Tagen bist</p></div>
         <button type="button" onClick={() => onRoute()}>Reiseplan öffnen<ArrowUpRight aria-hidden="true" /></button>
       </header>
       {!chronologie.gueltig ? <p className="workspace-route-empty">Die gespeicherte Tagesfolge ist nicht eindeutig. Öffne den Reiseplan, um die Zuordnung zu prüfen.</p>
@@ -40,6 +44,12 @@ export default function WorkspaceRouteOverview({ reise, ungeplantePunkte, onRout
               </li>
             )
           })}</ol>}
+      {chronologie.gueltig && ohneTage.length > 0 ? (
+        <p className="workspace-route-ohne-tage">
+          Noch ohne eigene Tage: {ohneTage.map((etappe) => etappe.name).join(', ')}.
+          {tageOhneZiel ? ` Deine Reisetage stehen vorerst unter «${ZUORDNUNG_OFFEN}».` : null}
+        </p>
+      ) : null}
     </section>
   )
 }
