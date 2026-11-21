@@ -49,6 +49,26 @@ export function preparationUebersichtStatus(pruefung: string, statusText: string
   return `${links}. ${rechts}`
 }
 
+/**
+ * Ein Satz zum eigenen Stand. Die amtliche Lage steht getrennt daneben,
+ * damit ein Häkchen nie wie eine Einreisebestätigung gelesen wird.
+ */
+export function preparationStandSatz(summary: {
+  open: number
+  done: number
+  stale: number
+  skipped: number
+}): string {
+  const zaehlbar = summary.done + summary.open + summary.stale
+  if (zaehlbar === 0) {
+    return summary.skipped > 0 ? 'Alle Punkte als nicht relevant markiert.' : 'Noch keine Vorbereitungspunkte.'
+  }
+  const teile = [`${summary.done} von ${zaehlbar} ${zaehlbar === 1 ? 'Punkt' : 'Punkten'} erledigt`]
+  if (summary.stale > 0) teile.push(`${summary.stale} erneut prüfen`)
+  if (summary.skipped > 0) teile.push(`${summary.skipped} nicht relevant`)
+  return `${teile.join(' · ')}.`
+}
+
 export function preparationPersoenlichAufteilen<T extends { kind: ReadinessKind }>(
   items: readonly T[],
 ): { tickets: T[]; eigene: T[]; weitere: T[] } {

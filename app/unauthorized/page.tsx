@@ -1,8 +1,12 @@
 // app/unauthorized/page.tsx
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ShieldX, TriangleAlert } from 'lucide-react'
+
 import { signOutAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import { Statuskarte, statusAktionHaupt, statusAktionNeben } from '@/components/ui/statuskarte'
+import PublicChrome from '@/components/workspace/PublicChrome'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 
@@ -27,25 +31,33 @@ export default async function UnauthorizedPage({
   const pruefungFehlgeschlagen = params?.grund === 'lookup-failed'
 
   return (
-    <main className="mx-auto max-w-xl p-8 text-center">
-      <h1 className="text-2xl font-bold">
-        {pruefungFehlgeschlagen ? 'Prüfung nicht möglich' : 'Kein Zugriff'}
-      </h1>
-      <p className="mt-2 text-muted-foreground">
-        {pruefungFehlgeschlagen
-          ? 'Deine Berechtigung konnte gerade nicht geprüft werden. Bitte versuche es in einigen Minuten erneut.'
-          : 'Dieses Konto hat keinen Zugang zur Administration. Bitte wende dich an eine Person mit Inhaber- oder Administrationsrolle.'}
-      </p>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6">
-        <Link className="inline-flex min-h-11 items-center underline" href="/">
-          Zur Startseite
-        </Link>
-        <GlobalesAbmeldenForm action={signOutAction}>
-          <button type="submit" className="inline-flex min-h-11 items-center underline">
-            Abmelden
-          </button>
-        </GlobalesAbmeldenForm>
-      </div>
-    </main>
+    <PublicChrome>
+      <main className="min-h-[70dvh] px-4 py-14 sm:px-6 sm:py-20">
+        <Statuskarte
+          symbol={pruefungFehlgeschlagen ? TriangleAlert : ShieldX}
+          ton={pruefungFehlgeschlagen ? 'fehler' : 'ruhig'}
+          kicker="Administration"
+          titel={pruefungFehlgeschlagen ? 'Prüfung nicht möglich' : 'Kein Zugriff'}
+          aktionen={
+            <>
+              <Link className={statusAktionHaupt} href="/">
+                Zur Startseite
+              </Link>
+              <GlobalesAbmeldenForm action={signOutAction}>
+                <button type="submit" className={`${statusAktionNeben} w-full`}>
+                  Abmelden
+                </button>
+              </GlobalesAbmeldenForm>
+            </>
+          }
+        >
+          <p>
+            {pruefungFehlgeschlagen
+              ? 'Deine Berechtigung konnte gerade nicht geprüft werden. Bitte versuche es in einigen Minuten erneut.'
+              : 'Dieses Konto hat keinen Zugang zur Administration. Bitte wende dich an eine Person mit Inhaber- oder Administrationsrolle.'}
+          </p>
+        </Statuskarte>
+      </main>
+    </PublicChrome>
   )
 }

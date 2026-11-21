@@ -5,6 +5,7 @@ import { reiseAbschnitte } from '@/lib/providers/omio/reise'
 import type { Register } from '@/lib/providers/omio/katalog'
 import OmioVergleich from './OmioVergleich'
 import Verbindungen from '../Verbindungen'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Trip; etappen: React.ReactNode; kanteId?: string }) {
   const [register, setRegister] = useState<Register | null>(null),
@@ -34,7 +35,7 @@ export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Tr
           Omio-Katalog vorübergehend nicht verfügbar.{' '}
           <button
             type="button"
-            className="underline"
+            className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4 pointer-fine:min-h-6"
             onClick={() => {
               setFehler(false)
               setVersuch((v) => v + 1)
@@ -47,11 +48,7 @@ export default function OmioImReiseplan({ reise, etappen, kanteId }: { reise: Tr
       </>
     )
   if (!register)
-    return (
-      <p className="ov-hint" role="status">
-        Streckenkatalog wird geladen …
-      </p>
-    )
+    return <Ladeplatzhalter sichtbar zeilen={2} status="Streckenkatalog wird geladen …" />
   return (
     <>
       {fehlt && <p className="ov-hint" role="status">Dieser Reiseabschnitt hat sich geändert. Wähle Start und Ziel erneut.</p>}

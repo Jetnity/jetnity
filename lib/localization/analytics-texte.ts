@@ -1,7 +1,7 @@
 import type { UiSprache } from './ui-sprache'
 
 const de = {
-  'analytics.eyebrow': 'Analytics · Jetnity',
+  'analytics.eyebrow': 'Administration',
   'analytics.title': 'Reiseaktivität',
   'analytics.intro': 'Wie viele Reisen in Jetnity angelegt wurden – als Gesamtzahlen, ohne private Reiseinhalte.',
   'analytics.unavailable': 'Für diese Sitzung sind keine Betriebszahlen verfügbar. Das ist keine Aussage über die Zahl der Reisen.',
@@ -35,7 +35,7 @@ const de = {
 export type AnalyticsTextSchluessel = keyof typeof de
 
 const en: Record<AnalyticsTextSchluessel, string> = {
-  'analytics.eyebrow': 'Analytics · Jetnity',
+  'analytics.eyebrow': 'Administration',
   'analytics.title': 'Trip activity',
   'analytics.intro': 'How many trips have been created in Jetnity — aggregate figures without private trip details.',
   'analytics.unavailable': 'Operational figures are unavailable for this session. This says nothing about the number of trips.',

@@ -88,11 +88,11 @@ export type Werkzeuge = {
 
 const GESPERRT: Record<string, string> = {
   abgeschaltet:
-    'Die intelligente Planung ist in dieser Umgebung noch nicht freigegeben. Deine Reise lässt sich unverändert über das Formular planen.',
+    'Die intelligente Planung ist noch nicht freigegeben. Deine Reise planst du stattdessen unter «Schritt für Schritt».',
   'kein-schluessel':
-    'Die intelligente Planung ist in dieser Umgebung noch nicht freigegeben. Deine Reise lässt sich unverändert über das Formular planen.',
+    'Die intelligente Planung ist noch nicht freigegeben. Deine Reise planst du stattdessen unter «Schritt für Schritt».',
   'unbekanntes-modell':
-    'Die intelligente Planung ist nicht richtig konfiguriert und wurde deshalb nicht ausgeführt. Deine Reise lässt sich unverändert über das Formular planen.',
+    'Die intelligente Planung ist nicht richtig konfiguriert und wurde deshalb nicht ausgeführt. Deine Reise planst du stattdessen unter «Schritt für Schritt».',
 }
 
 /**
@@ -108,7 +108,7 @@ const MELDUNGEN: Record<Ergebnisklasse, string> = {
     'Der Vorschlag hat zu lange gedauert und wurde abgebrochen. Bitte versuche es noch einmal – gern mit einer etwas kürzeren Beschreibung.',
   netz: 'Der Vorschlag konnte nicht erstellt werden, weil die Verbindung abgebrochen ist. Bitte versuche es in einem Moment erneut.',
   'anbieter-4xx':
-    'Die intelligente Planung ist gerade nicht verfügbar. Deine Reise lässt sich unverändert über das Formular planen.',
+    'Die intelligente Planung ist gerade nicht verfügbar. Deine Reise planst du stattdessen unter «Schritt für Schritt».',
   'anbieter-5xx':
     'Die intelligente Planung ist gerade überlastet. Bitte versuche es in einigen Minuten erneut.',
   verweigert:
@@ -116,9 +116,9 @@ const MELDUNGEN: Record<Ergebnisklasse, string> = {
   abgeschnitten:
     'Der Vorschlag ist zu lang geworden und blieb unvollständig. Bitte beschreibe eine kürzere Reise oder weniger Ziele.',
   'ungueltige-antwort':
-    'Der Vorschlag war nicht verwertbar. Bitte versuche es noch einmal oder plane die Reise über das Formular.',
+    'Der Vorschlag war nicht verwertbar. Bitte versuche es noch einmal oder plane die Reise unter «Schritt für Schritt».',
   schema:
-    'Der Vorschlag passte nicht zu einer Jetnity-Reise und wurde verworfen. Bitte versuche es noch einmal oder plane die Reise über das Formular.',
+    'Der Vorschlag passte nicht zu einer Jetnity-Reise und wurde verworfen. Bitte versuche es noch einmal oder plane die Reise unter «Schritt für Schritt».',
 }
 
 /** Liest die Modellantwort. `null`, wenn schon `JSON.parse` scheitert. */

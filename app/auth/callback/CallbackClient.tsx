@@ -2,17 +2,20 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { schliesseAuthCallbackAb } from '@/lib/auth/callback-abschluss'
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
+
+import { Statuskarte, statusAktionHaupt, statusFussLink } from '@/components/ui/statuskarte'
 
 const WEITERLEITUNG_MS = 600
 
 export default function CallbackClient() {
   const router = useRouter()
   const [state, setState] = React.useState<'processing' | 'ok' | 'error'>('processing')
-  const [message, setMessage] = React.useState<string>('Authentifiziere…')
+  const [message, setMessage] = React.useState<string>('Einen Moment, bitte.')
 
   React.useEffect(() => {
     let cancelled = false
@@ -54,28 +57,40 @@ export default function CallbackClient() {
     }
   }, [router])
 
+  if (state === 'processing') {
+    return (
+      <Statuskarte symbol={Loader2} ton="laedt" titel="Anmeldung wird abgeschlossen" data-anmeldung-abschluss="laedt">
+        <p role="status">{message}</p>
+      </Statuskarte>
+    )
+  }
+
+  if (state === 'ok') {
+    return (
+      <Statuskarte symbol={CheckCircle2} titel="Erfolgreich angemeldet" data-anmeldung-abschluss="ok">
+        <p role="status">Du wirst weitergeleitet …</p>
+      </Statuskarte>
+    )
+  }
+
   return (
-    <div className="min-h-[40vh] flex flex-col items-center justify-center text-center">
-      {state === 'processing' && (
-        <>
-          <Loader2 className="h-6 w-6 animate-spin mb-3" />
-          <p className="text-sm text-muted-foreground">{message}</p>
-        </>
-      )}
-
-      {state === 'ok' && (
-        <>
-          <CheckCircle2 className="h-6 w-6 mb-3 text-emerald-600" />
-          <p className="text-sm">Erfolgreich angemeldet – weiterleiten …</p>
-        </>
-      )}
-
-      {state === 'error' && (
-        <>
-          <AlertTriangle className="h-6 w-6 text-destructive mb-3" />
-          <p className="text-sm text-destructive">{message}</p>
-        </>
-      )}
-    </div>
+    <Statuskarte
+      symbol={AlertTriangle}
+      ton="fehler"
+      titel="Anmeldung nicht abgeschlossen"
+      data-anmeldung-abschluss="fehler"
+      aktionen={
+        <Link href="/login" className={statusAktionHaupt}>
+          Zur Anmeldung
+        </Link>
+      }
+      fuss={
+        <Link href="/" className={statusFussLink}>
+          Zur Startseite
+        </Link>
+      }
+    >
+      <p role="alert">{message}</p>
+    </Statuskarte>
   )
 }

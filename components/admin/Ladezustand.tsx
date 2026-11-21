@@ -69,9 +69,9 @@ export function Fehlerflaeche({ fehler, onWiederholen, laeuft, veraltet, classNa
           variant="outline"
           onClick={onWiederholen}
           disabled={laeuft}
-          className="shrink-0 gap-1 self-start"
+          leftIcon={<RefreshCw className={cn('h-4 w-4', laeuft && 'motion-safe:animate-spin')} aria-hidden="true" />}
+          className="shrink-0 self-start"
         >
-          <RefreshCw className={cn('h-4 w-4', laeuft && 'animate-spin')} aria-hidden="true" />
           {texte['adminRead.retry']}
         </Button>
       )}

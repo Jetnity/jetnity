@@ -17,12 +17,14 @@ import {
 import type { EinreiseUebersichtZeile } from '@/lib/readiness/einreise-kundenanzeige'
 import type { DestinationEssentialsAbleitung } from '@/lib/trips/destination-essentials'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
+import { kostenbild, type Kostenbild } from '@/lib/trips/kostenbild'
 import { cn } from '@/lib/utils'
 import type { Trip, TripItem } from '@/types/trips'
 import TripAuditV1Panel from '@/components/trips/TripAuditV1Panel'
 import EinreiseUebersichtZeilen from '@/components/trips/EinreiseUebersichtZeilen'
 import TripWorkspaceDestinationEssentials from '@/components/trips/TripWorkspaceDestinationEssentials'
 import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
+import TripWorkspaceKosten from '@/components/trips/TripWorkspaceKosten'
 import WorkspaceRouteOverview from '@/components/workspace/WorkspaceRouteOverview'
 
 const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], ComponentType<{ className?: string }>> = {
@@ -72,7 +74,7 @@ export function TripWorkspaceAktionen({
           )}
         >
           <PenLine className="h-4 w-4 shrink-0" aria-hidden="true" />
-          {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
+          <span className="workspace-aktion-text">{aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}</span>
         </button>
         {begleiterVorhanden ? (
           <button
@@ -87,7 +89,7 @@ export function TripWorkspaceAktionen({
             )}
           >
             <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}
+            <span className="workspace-aktion-text">{begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}</span>
           </button>
         ) : null}
       </div>
@@ -114,6 +116,9 @@ export default function TripWorkspaceUebersicht({
   workspace = false,
   onRoute,
   onItem,
+  kosten,
+  kostenAnsteuern = false,
+  onKostenAngesteuert,
 }: {
   reise: Trip
   ungeplantePunkte?: readonly TripItem[]
@@ -127,19 +132,25 @@ export default function TripWorkspaceUebersicht({
   workspace?: boolean
   onRoute?: (tagId?: string) => void
   onItem?: (itemId: string) => void
+  /** Vom Arbeitsbereich schon berechnet, weil auch die Kostenleiste es zeigt. */
+  kosten?: Kostenbild
+  kostenAnsteuern?: boolean
+  onKostenAngesteuert?: () => void
 }) {
   const praeferenzen = workspacePraeferenzSicht(reise)
-  const buchungen = [...reise.days.flatMap((tag) => tag.items), ...(ungeplantePunkte ?? reise.ohneTag)]
+  // Im Arbeitsbereich stehen gebuchte Punkte im Kostenbild, mit oder ohne Preis.
+  const buchungen = workspace ? [] : [...reise.days.flatMap((tag) => tag.items), ...(ungeplantePunkte ?? reise.ohneTag)]
     .filter((punkt) => kannBuchungMarkieren(punkt) && istGebucht(punkt))
+  const bild = workspace ? kosten ?? kostenbild(reise, ungeplantePunkte) : null
 
   return (
-    <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className="mt-2 grid min-w-0 max-w-full gap-2">
+    <section aria-label="Reiseübersicht" data-workspace-overview={workspace ? 'integrated' : undefined} className={cn('mt-2 grid min-w-0 max-w-full gap-2', workspace && 'xl:grid-cols-2')}>
       <header className={workspace ? 'sr-only' : 'min-w-0 max-w-full'}>
         <h2
           id="workspace-uebersicht-titel"
           tabIndex={-1}
           data-workspace-modus-heading={!workspace ? '' : undefined}
-          className="break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 outline-none [overflow-wrap:anywhere]"
+          className="break-words text-title text-brand-800 outline-none [overflow-wrap:anywhere]"
         >
           Deine Reise auf einen Blick
         </h2>
@@ -150,22 +161,32 @@ export default function TripWorkspaceUebersicht({
         </p>
       </header>
 
-      <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention}
-        zusammenfassung={workspace ? `${uebersicht.fortschrittText} · ${uebersicht.planText}` : undefined}
-        footer={workspace ? <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} integriert /> : undefined} />
+      {/* Reihenfolge im Arbeitsbereich (DESIGN_SYSTEM.md 6.11): Als Nächstes, Route, Kosten, Einreise und Vorbereitung, Bereiche.
+          Ab xl stehen je zwei nebeneinander; die DOM-Reihenfolge bleibt die Lesereihenfolge. */}
+      <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} integriert={workspace} />
 
       {!workspace ? <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} /> : null}
 
-      {workspace && onRoute ? <WorkspaceRouteOverview reise={reise} onRoute={onRoute} /> : null}
+      {workspace && onRoute ? <WorkspaceRouteOverview reise={reise} ungeplantePunkte={ungeplantePunkte} onRoute={onRoute} /> : null}
 
-      {einreiseZeilen.length > 0 ? <EinreiseUebersichtZeilen zeilen={einreiseZeilen} onOeffnen={onEinreise} /> : null}
+      {bild ? <TripWorkspaceKosten bild={bild} onItem={onItem} ansteuern={kostenAnsteuern} onAngesteuert={onKostenAngesteuert} /> : null}
 
-      {!workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} /> : null}
+      <div className={workspace ? 'grid min-w-0 content-start gap-6' : 'contents'}>
+        {einreiseZeilen.length > 0 ? <EinreiseUebersichtZeilen zeilen={einreiseZeilen} onOeffnen={onEinreise} /> : null}
+        <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} />
+      </div>
 
-      <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className="min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white">
-        <p className="border-b border-line-100 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
-          {workspace ? 'Gut organisiert' : 'Bereiche dieser Reise'}
-        </p>
+      <section aria-label="Bereiche dieser Reise" data-workspace-trip-parts className={cn('min-w-0 overflow-hidden rounded-[24px] border border-line-200 bg-white', workspace && 'xl:col-span-2')}>
+        {workspace ? (
+          <header className="workspace-trip-parts-kopf">
+            <h3>Was schon organisiert ist</h3>
+            <p>{uebersicht.fortschrittText} · {uebersicht.planText}</p>
+          </header>
+        ) : (
+          <p className="border-b border-line-100 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-600">
+            Bereiche dieser Reise
+          </p>
+        )}
         <ul className="grid gap-px bg-line-100 sm:grid-cols-2">
           {uebersicht.abdeckungen.map((eintrag) => {
             const Symbol = SYMBOL[eintrag.bereich]
@@ -192,6 +213,7 @@ export default function TripWorkspaceUebersicht({
             )
           })}
         </ul>
+        {workspace ? <TripAuditV1Panel key={reise.id} reise={reise} ungeplantePunkte={ungeplantePunkte} integriert /> : null}
       </section>
 
       {buchungen.length > 0 ? (
@@ -225,10 +247,8 @@ export default function TripWorkspaceUebersicht({
         </section>
       ) : null}
 
-      {workspace ? <TripWorkspaceDestinationEssentials essentials={destinationEssentials} einreiseZeile={einreiseZeilen.length > 0} /> : null}
-
       {workspacePraeferenzHatInhalt(praeferenzen) ? (
-        <div className="grid gap-3">
+        <div className={cn('grid gap-3', workspace && 'xl:col-span-2')}>
           {praeferenzen.reisewunsch ? (
             <section className="rounded-2xl border border-line-100 bg-surface-0 px-4 py-3">
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">

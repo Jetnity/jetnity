@@ -1,5 +1,18 @@
 # Jetnity – Design-System
 
+> **PO-Go, 20.11.2026 – UI/UX-Feinschliff der ganzen App, Etappe 1 (gemeinsames Design-System):**
+> Feste Stufen für Schrift (4.1), Ecken und Schatten (5.2), ein Grundton für alle
+> Seiten (6.1), gemeinsame Bausteine in `components/ui` (6.2–6.9) und eine
+> einzeilige Kopfzeile bis zur Tablet-Breite (7.13). Die heutige Systemschrift
+> bleibt (PO-Entscheid). Alle fünf Reise-Ansichten tragen denselben
+> Reisekopf; Reiseplan und Organisieren behalten darin ihr Ortsbild (PO-Rückmeldung
+> 21.11.: Live-Vergleich, Foto-Köpfe zurück, siehe 6.2). Diese
+> Regel ersetzt die frühere Review-Korrektur „Sehr schmale Header geben dem
+> Reisetitel eine eigene Zeile“: Der Titel steht jetzt im Reisekopf. Menü bleibt
+> beschriftet, Konto und Mond/Sonne bleiben reine Symbole mit zugänglichem Namen.
+> [Analyse und Plan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) ·
+> [DECISIONS.md](DECISIONS.md) ADR-0229.
+
 > **10.11.2026 – Reiseplan und Atlas:** Auf grossen Bildschirmen stehen Etappenliste und Reisekarte nebeneinander. Auf schmalen Bildschirmen wechselt man zwischen Plan und Karte. Im persönlichen Atlas zeigen Flächen und Muster besuchte und geplante Länder. Die Länderauswahl öffnet neben der Karte oder am unteren Bildschirmrand die zugehörigen Besuche und Reisen.
 
 > **Owner-Auftrag, 02.11.2026 – Mietwagen Layout 1:** Suche zuerst in einer weißen Karte mit zwei mintfarbenen Gruppen für Stationen und Mietzeitraum, darunter Fahrerangaben und primäre Suchaktion. Ergebnisse bilden ein eigenes Raster: eine Spalte mobil, zwei ab 640px, drei ab 1280px, vier ab 1536px. Gleiche Bildflächen, lesbarer Gesamtpreis und ausgerichtete Aktionen unterstützen den Vergleich. Datum und Uhrzeit stehen unter 1024px untereinander. Fehlende Anbieterbilder erhalten einen neutralen Platzhalter. Angebotsdetails gruppieren Bild/Preis, Bedingungen und Stationen; zusätzliche Angaben sind aufklappbar. Leerer Bestand bleibt kurz, manuelle Erfassung startet geschlossen. Die vier Organisationskategorien bleiben oberhalb des Inhalts. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md).
@@ -204,7 +217,7 @@ Die shadcn-Namen definieren **keine eigenen Farben**. Sie verweisen auf die Pale
 | `--primary-foreground` | `surface-0` | Aufschrift darauf, 12,5:1 |
 | `--secondary` | `surface-200` | ruhige gefüllte Fläche |
 | `--muted` | `surface-100` | gedämpfte Fläche |
-| `--muted-foreground` | `ink-800` | Nebentext, 4,53:1 – erfüllt AA |
+| `--muted-foreground` | `ink-900` | Nebentext, 6,2:1 auf der Grundfläche, 5,9:1 auf `muted` |
 | `--accent` | `surface-100` | Zeigen-Zustand in Menüs |
 | `--border`, `--input` | `line-200` | Rahmen und Felder |
 | `--ring` | `brand-600` | Fokusring |
@@ -236,6 +249,21 @@ Die Notation ist durchgehend RGB-Kanäle (`rgb(var(--token) / <alpha-value>)` in
 - Textfarbe auf dunkelgrünem Grund: `ink-300` oder `ink-400`, nicht reines Weiß, außer bei Buttons und Logo.
 - Keine dekorativen Schriftschnitte, keine Sperrung als Effekt.
 
+### 4.1 Schriftstufen
+
+Sechs Stufen in `tailwind.config.js` (`fontSize`). Jede Stufe bringt Zeilenhöhe, Laufweite und Gewicht mit; eine Überschrift wird nicht mehr pro Ansicht aus `text-3xl`, `tracking-[…]` und `font-semibold` zusammengesetzt. Schrift bleibt die Systemschrift.
+
+| Klasse | Größe | Verwendung |
+|---|---|---|
+| `text-display` | 28–44 px, fliessend | genau eine h1 pro Seite (Seitenkopf, Reisekopf) |
+| `text-title` | 20–24 px, fliessend | Abschnittsüberschrift, Leerzustand |
+| `text-subtitle` | 17 px | Kartentitel |
+| `text-body` | 15 px | Fliesstext |
+| `text-meta` | 13 px | Zeitraum, Route, Status, Hinweiszeilen |
+| `text-kicker` | 12 px, gesperrt | Oberzeile; immer mit `uppercase` |
+
+Eingabefelder bleiben bei 16 px (7.4). Die Namen sind in `lib/utils.ts` für `tailwind-merge` registriert; ohne diese Angabe hielte `cn()` `text-title` für eine Textfarbe und verwürfe es neben `text-brand-800`.
+
 ---
 
 ## 5. Form und Interaktion
@@ -261,6 +289,19 @@ Das Primitiv führt nur, was auch gezeigt wird. Weitere Varianten kommen dazu, w
 
 Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit Maus erhalten über `pointer-fine` die kompaktere Höhe. `min-h` statt `h`, damit eine umbrechende Aufschrift nicht über den Rand läuft. Der Radius liegt **nur** an der Größe – setzen Variante und Größe beide `rounded-*`, entscheidet die Auflösungsreihenfolge von `twMerge`.
 
+
+### 5.2 Formstufen: Ecken und Schatten
+
+| Klasse | Wert | Verwendung |
+|---|---|---|
+| `rounded-control` | 14 px | Felder, Schaltflächen mit Ecken, Ladeplatzhalter-Zeilen |
+| `rounded-card` | 20 px | Karten und Listenkarten |
+| `rounded-panel` | 28 px | grosse Flächen, Leerzustand |
+| `shadow-card` | sehr leicht, grüngetönt | ruhende Karte |
+| `shadow-raised` | deutlicher | angehobene Fläche (Dialog, schwebende Leiste) |
+
+Pillen bleiben `rounded-full`. Bestehende `rounded-lg`/`xl`/`2xl` und `shadow-e1` gelten weiter; neue Bausteine verwenden die drei Formstufen und die zwei Schatten. Auf der Weiss-Mint-Fläche dämpft `styles/white-mint.css` Schatten weiterhin.
+
 ---
 
 ## 6. Layout
@@ -270,7 +311,125 @@ Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit
 - viel Weißraum zwischen Sektionen; im Zweifel mehr Abstand statt mehr Inhalt
 - keine Kartenteppiche: wenige, große, klare Elemente statt vieler kleiner
 
+### 6.1 Grundton und Seitenbreite
+
+Alle öffentlichen Seiten, die Startseite und der helle Arbeitsbereich stehen auf derselben Weiss-Mint-Fläche (`styles/white-mint.css`). `PublicChrome` setzt `data-white-mint="home"` deshalb auf jede öffentliche Seite, nicht nur auf `/`. Dieselbe Datei setzt in diesen Bereichen die semantischen Kanäle (`--background`, `--card`, `--muted`, `--muted-foreground`, `--border`) auf die Weiss-Mint-Werte, damit Bausteine mit `bg-card` oder `text-muted-foreground` nicht in die Creme-Palette zurückfallen. Das grüne Arbeitsbereich-Thema setzt dieselben Kanäle auf seine Werte. Der Admin bleibt unverändert.
+
+Seitenbreite: Inhalte zentriert bis `max-w-7xl`; Fliesstext höchstens `max-w-prose` (65 Zeichen), auch im `Seitenkopf`. Ausnahme ist die einzeilige Gast-Hinweiszeile (6.2). Steht ein Absatz in einem Container mit `[&>*]:max-w-full`, setzt der Container `[&>p]:max-w-prose`, weil die Variante eine einfache Klasse überstimmt.
+
+### 6.2 Seitenkopf und Reisekopf
+
+`Seitenkopf` (`components/ui/seitenkopf.tsx`): Kicker, genau eine h1 in `text-display`, ein Satz Einordnung, höchstens eine Hauptaktion. Flach, ohne Bild.
+
+Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe Kopf in allen fünf Reise-Ansichten. Kicker = Name der Ansicht (bei Einreise „Deine Reise“, weil die Prüfung darunter ihren eigenen Kopf trägt), h1 = Reisetitel, eine Metazeile mit Zeitraum, Route, Reisenden und Budget. In Reiseplan und Organisieren steht derselbe Inhalt auf dem Ortsbild der ersten Etappe (`useStadtbild`, `data-workspace-kopfbild`): dunkelgrüner Verlauf von links, Text höchstens `40rem` breit auf der dunklen Seite, auf dem Handy ein durchgehender Verlauf; Übersicht, Vorbereitung und Einreise bleiben flach. Der Bildnachweis steht wie bisher unter der Ansicht. Stand, Speicherort und Reiseoptionen stehen nur in der Übersicht. Ein Speicherfehler bleibt in jeder Ansicht sichtbar. Für Gäste folgt darunter eine einzige Hinweiszeile ohne Kasten („Nur in diesem Browser gespeichert. Konto erstellen oder anmelden – …“). Jede Ansicht behält ihre eigene (teils nur für Screenreader sichtbare) Überschrift als Fokusziel beim Ansichtswechsel.
+
+### 6.3–6.9 Bausteine
+
+| Abschnitt | Baustein | Datei | Stand |
+|---|---|---|---|
+| 6.3 | Karte | `components/ui/karte.tsx` | aktiv |
+| 6.4 | Statussiegel | `components/ui/status-siegel.tsx` | aktiv |
+| 6.5 | Preis | `components/ui/preis.tsx` | aktiv |
+| 6.6 | Ladeplatzhalter | `components/ui/ladeplatzhalter.tsx` | aktiv |
+| 6.7 | Leerzustand | `components/ui/leerzustand.tsx` | aktiv |
+| 6.8 | Hinweis | `components/ui/hinweis.tsx` | aktiv |
+| 6.9 | Abschnitt | `components/ui/abschnitt.tsx` | aktiv |
+
+Ein Baustein entsteht erst mit seiner ersten Verwendung (`check:dead`, `check:exports`). Die ältere `components/ui/card.tsx` (shadcn) wird nicht mehr neu verwendet.
+
+**6.3 Karte.** `rounded-card`, feiner Rand (`border-border`), `bg-card`, `shadow-card`. Nur semantische Farben, damit dieselbe Karte auf Weiss-Mint und im grünen Arbeitsbereich lesbar bleibt. Den Innenabstand setzt der Inhalt, damit Listen bis an den Rand laufen können.
+
+**6.4 Statussiegel.** Vier Töne: `gebucht` (volle grüne Fläche mit Haken – nur „von dir als gebucht markiert“), `gewaehlt` (gestrichelter Rand – ausgewählt, nicht gebucht), `offen` (leerer Kreis), `hinweis` (Fragezeichen, gedämpfte Fläche). Der Zustand steht immer als Wort im Siegel; Form und Symbol unterscheiden zusätzlich, Farbe allein nie (7.5a). `BuchungsSiegel` bildet die Buchungs- und Abdeckungszustände auf diese Töne ab.
+
+**6.5 Preis.** Immer mit Währung (`CHF 2’640`), gleich breite Ziffern, ganze Einheiten mit ’ als Tausendertrennung (`betragLesbar`), kein Umbruch zwischen Währung und Betrag. Der Stand steht als Statussiegel daneben (`Gebucht` voll, `Ausgewählt` gestrichelt), nie nur als Farbe des Betrags. Ein gespeicherter Preis ist der Preis beim Auswählen; Summen heissen deshalb „Geplant ca.“. Verschiedene Währungen stehen nebeneinander und werden nie umgerechnet.
+
+**6.6 Ladeplatzhalter.** Zeigt die Form des kommenden Inhalts statt eines Drehsymbols. Die Flächen sind `aria-hidden`; den Zustand trägt ein Statustext (`role="status"`). Bei „Bewegung reduzieren“ steht der Schimmer still. `sichtbar` zeigt den Statustext als Zeile über den Flächen (für Suchen, die spürbar dauern); `form="flaeche"` ist eine einzige grosse Fläche statt Zeilen. `Ladeflaeche` legt sich über einen Anbieter-Host, der selbst einen Text trägt (Stay22, Flugsuche, Viator, GetYourGuide, DiscoverCars), damit der Text nicht doppelt angesagt wird. Drehsymbole bleiben nur in Knöpfen und Feldern, die gerade etwas absenden oder vorschlagen.
+
+**6.7 Leerzustand.** Nur für eine bestätigt leere Antwort, mit genau einem nächsten Schritt. Ein Lesefehler ist kein Leerzustand (AGENTS.md 15, ADR-0037). Steht der nächste Schritt schon direkt darüber (z. B. „Erste Reise beginnen“ im grünen Einstieg von `/reisen`), bleibt es bei einer Statuszeile statt einer zweiten Karte. Ein Lesefehler zeigt einen `Hinweis` mit „Erneut laden“; „Zur Anmeldung“ nur, wenn wirklich niemand angemeldet ist.
+
+**6.8 Hinweis.** Ein ruhiger Kasten mit Symbol, optionalem Titel, Text und höchstens einer Aktion als Link. Drei Töne: `info` (gedämpfte Fläche, Info-Symbol), `aufgabe` (Rand in `primary`, Listen-Symbol – etwas ist für dich zu tun) und `dringend` (Rand in `destructive`, Warndreieck – nur wenn ein Versäumnis echte Folgen hat). Nur semantische Farben, damit er auf Weiss-Mint und im grünen Arbeitsbereich gleich lesbar ist. Kein Hinweis ohne Grund: Ein Satz, der nichts verändert, bleibt weg. Verwendet in der Vorbereitung (Stand der Prüfung, Angaben ergänzen) und bei Einreise-Aufgaben pro reisender Person und Land.
+
+**6.9 Abschnitt.** Eine Karte mit Überschrift (`text-subtitle`), höchstens einem Satz Einordnung (`text-meta`) und höchstens einer Aktion rechts. Die Überschrift benennt den Abschnitt (`aria-labelledby`) und ist Fokusziel, wenn eine Leiste oder ein Link dorthin springt.
+
+### 6.10 Zwei Wege, einer sichtbar (`/planen`)
+
+Wo es zwei gleichwertige Wege zum selben Ziel gibt, zeigt die Seite einen davon und einen Segmentschalter darüber (`PlanenWegWahl` in `components/trips/PlanenEinstiegNavigation.tsx`). Der Schalter besteht aus zwei Links mit `aria-current`; der verborgene Weg ist `hidden`, bleibt aber gerendert, damit Eingaben beim Umschalten erhalten bleiben. Standard ist „In eigenen Worten“ (PO-Entscheid); wer mit einem gewählten Ziel aus Entdecken kommt, startet in „Schritt für Schritt“, wo das Ziel schon eingetragen ist. Die Anker `#reise-beschreiben` und `#manuell-planen` öffnen den jeweiligen Weg.
+
+### 6.11 Übersicht einer Reise
+
+Reihenfolge: Reisekopf → **Als Nächstes** (höchstens drei Gruppen, ruhige Karte ohne Alarmfarbe; jede Zeile mit Aktion nennt darunter den Bereich, den sie öffnet, mit dem Namen aus der Bereichsleiste: «Weiter in «Organisieren»») → **Deine Route** (Etappen mit Datum und, wenn der Unterkunftsstand eindeutig ist, offenen oder abgedeckten Nächten pro Etappe; Ziele ohne eigene Tage werden darunter genannt) → **Kosten** → Einreise und Reiseziele → **Was schon organisiert ist** (vier Bereiche, darunter die Reiseprüfung) → Wünsche. Ab `xl` stehen je zwei Karten nebeneinander (Als Nächstes | Route, Kosten | Einreise und Ziele); die DOM-Reihenfolge bleibt die Lesereihenfolge, „Was schon organisiert ist“ läuft über beide Spalten.
+
+Kosten (`TripWorkspaceKosten`, Rechnung in `lib/trips/kostenbild.ts`): pro Währung „Geplant ca.“ mit den Anteilen Gebucht und Ausgewählt; Budget nur verglichen, wenn alle Preise in der Budgetwährung stehen; Punkte ohne Preis werden gezählt und genannt („nicht mitgerechnet“), nie mit null gerechnet; unlesbare oder widersprüchliche Preise werden als solche genannt. Gebuchte Punkte erscheinen hier, mit oder ohne Preis; eine eigene Buchungsliste gibt es in der Übersicht nicht mehr.
+
+### 6.12 Kostenleiste auf Handy und Tablet
+
+Unter 64rem liegt über der unteren Leiste eine einzeilige Kostenzeile („Geplant ca. CHF 2’640 · Budget CHF 4’200“), wenn mindestens ein Preis oder ein Budget gespeichert ist. Sie bildet mit der Leiste eine Einheit (gleiche Fläche, Trennlinie), ist 44 px hoch und bricht bei mehreren Währungen um, statt abzuschneiden. Antippen öffnet die Übersicht beim Abschnitt Kosten. Bei offenem Planpunkt-Detail ist sie ausgeblendet; wo die Leiste in den Fluss wechselt (grosse Schrift, unter 360 px, niedrige Höhe), steht auch die Kostenzeile im Fluss. Den Abstand für Inhalt und „Nach oben“ liefert `--ux-u1a-nav-offset` (Leiste plus Kostenzeile).
+
+### 6.13 Bewusste Entscheidungen
+
+Was sich nicht zurücknehmen lässt, fragt einmal nach – in der Zeile, ohne Dialog: Frage mit Titel („Diesen Punkt entfernen: …?“), ein Satz zur Folge („Das lässt sich nicht rückgängig machen.“ und bei gebuchten Punkten „Eine Buchung beim Anbieter bleibt davon unberührt.“), dann „Endgültig entfernen“ (gefüllt in `danger-600`) und „Abbrechen“. Der Fokus liegt auf „Abbrechen“, Escape bricht ab und gibt den Fokus an den auslösenden Knopf zurück. Die Frage erscheint unter der Zeile, nie unter dem auslösenden Knopf, damit ein doppeltes Tippen nichts löscht. Gleiches Muster wie bei eigenen Vorbereitungspunkten.
+
+Was sich mit einem Tippen zurücknehmen lässt, bekommt keinen Zwischenschritt, aber eine klare Bedeutung: „Als gebucht markieren“ ist ein eigener Status, den „Buchung korrigieren“ zurücknimmt; jeder Bestandsbereich sagt in einem Satz, was „Gebucht“ heisst (`BUCHUNG_BEDEUTUNG`). Reiseänderungen zeigen weiter Vorher und Nachher vor „Änderung übernehmen“.
+
+### 6.14 Auswahlen als Chips und Segmente
+
+Filter und Statuswahl sind Knöpfe mit `aria-pressed` und dem Attribut `data-wahl`: Chips (`rounded-full`, 44 px hoch) für Filter, ein Segment aus drei gleich breiten Teilen für den eigenen Stand eines Vorbereitungspunkts. Gewählt ist auf Weiss-Mint die volle Fläche in `brand-800` mit weisser Schrift, im grünen Arbeitsbereich die volle Fläche in `citrus-400` mit `brand-900`-Schrift (`workspace-surfaces.css`). Suche und Filter erscheinen erst, wenn es etwas zu durchsuchen gibt.
+
+### 6.15 Suchformulare auf dem Handy
+
+In Organisieren steht der Such-Button auf dem Handy nach allen Feldern, auch nach den Zusatzfeldern. Formulare mit einer Zusatzzeile tragen dafür `org-aktion-ende`: unter 701 px lösen sich Feld- und Zusatzzeile in ein zweispaltiges Raster auf, der Button folgt am Ende über die volle Breite. Beschriftungen von Zusatzfeldern stehen dort über dem Feld, damit Uhrzeit, Alter oder Land nicht abgeschnitten werden. Auf dem Desktop bleibt die Suchleiste mit dem Button rechts.
+
+### 6.16 Übergänge
+
+Ein Ansichtswechsel im Arbeitsbereich, ein geöffnetes Planpunkt-Detail und der Inhalt eines aufgeklappten `<details>` blenden in 160 ms ein (`jet-einblenden` in `styles/globals.css`). Nur Deckkraft, kein Versatz und keine bleibende Füllung: ein `transform` oder ein dauerhaftes `opacity` würde fixierte Leisten in der Fläche verschieben oder ihre Ebene ändern. Die Regel steht in `:where()`, damit eigene Animationen (z. B. der Schimmer) vorgehen. Bei „Bewegung reduzieren“ gibt es keinen Übergang.
+
+### 6.17 Kontoseiten
+
+Alle Kontoseiten (Übersicht, Merkliste, Reisende, Buchungen, Einstellungen, Meine Welt) beginnen mit dem `Seitenkopf` (Kicker „Konto“) und nutzen `Karte`, `Leerzustand`, `Hinweis` und `Ladeplatzhalter`. Der Kopf steht beim Laden schon da, damit nichts springt (`ReisendeKopf`). Auf der Kontoübersicht gibt es genau eine dunkelgrüne Fläche (der nächste Reiseschritt); Profil und Verwaltung stehen darunter in einer hellen Karte. `/account/security` und die Kontolöschung bleiben in diesem Schritt unverändert.
+
+### 6.18 Öffentliche Seiten, Rechtliches und Fehlerseiten
+
+Öffentliche Seiten setzen keinen eigenen Hintergrund auf `main`: Die Fläche kommt aus `PublicChrome`. Ein verschachteltes `bg-surface-75` wird in Weiss-Mint zur Navigationsfarbe und erzeugt sichtbare Bänder. Aus demselben Grund braucht ein Fehlerhinweis auf dieser Fläche Rand und `bg-card`, sonst verschwindet er.
+
+Rechtliche Seiten (Impressum, Datenschutz, AGB, Datenquellen) sind eine Lesespalte: `article` mit `max-w-prose` und `text-body`, Kicker „Rechtliches“, `h1` in `text-display`, Abschnittstitel in `text-title`, Text in `text-muted-foreground`, Links in `text-foreground` mit Unterstreichung und Fokusring. Lange Wörter im Titel trennen (`lang="de"`, `hyphens:auto`), damit bei 320 px nichts seitlich herausragt. Die eingebettete Fassung von PrivacyBee bleibt in ihrem Slot und scrollt bei breiten Tabellen selbst.
+
+404- und Fehlerseiten sind eine Karte (`rounded-panel`, `bg-card`, `shadow-card`) mit Symbol in `bg-muted`, `h1` in `text-display`, einem Hauptknopf in `bg-primary` und einem Nebenknopf mit `border-input`. Jede 404 steht im öffentlichen Rahmen mit Kopf- und Fusszeile, auch ausserhalb von `app/(public)`. Fehlertexte sagen nur, was feststeht: kein Versprechen über Daten, die die Seite nicht geprüft hat.
+
+### 6.19 Statusseiten und Anmeldung
+
+Seiten, die nur einen Zustand melden (404, Anmeldung abschliessen, Link ungültig, kein Zugriff, Konto gelöscht), nutzen `Statuskarte` (`components/ui/statuskarte.tsx`): Karte wie in 6.18, Symbol, optionaler Kicker, die einzige `h1` der Seite in `text-display`, kurzer Text mit `max-w-md`, höchstens zwei Aktionen (`statusAktionHaupt`, `statusAktionNeben`; ab `sm` nebeneinander und mindestens 12rem breit) und darunter ruhige Textlinks (`statusFussLink`, 44 px hoch). `ton="laedt"` dreht das Symbol nur ohne reduzierte Bewegung, `ton="fehler"` färbt nur das Symbol; der Text sagt, was zu tun ist. Lade- und Erfolgsmeldungen tragen `role="status"`, Fehler `role="alert"`.
+
+`/auth/callback` und `/auth/update-password` laufen ohne `PublicChrome`, weil dessen Navigation die Sitzung abfragt und den Abschluss der Anmeldung nicht stören darf. Sie nutzen `Markenrahmen` (`components/layout/Markenrahmen.tsx`): dieselbe weisse Kopfzeile, nur mit der Marke.
+
+Registrierung und Passwortformular teilen die Formularsprache des Logins: Titel, Felder mit Symbol im Label, Hilfen in `text-meta`, Fehler als `Hinweis` oder Feldfehler (7.6a), Erfolg als Karte mit `border-primary/40`. Seite und Formular von `/login` sowie `/account/security` folgen nach dem Merge von #1240, weil ihre Dateien dort geändert werden; bis dahin wirkt dort nur das gemeinsame Eingabefeld (7.6).
+
 ---
+
+### 6.20 Admin-Seiten
+
+Der Admin bleibt in der Creme-Palette und hat als einzige Fläche ein dunkles Thema (3a.1). Jede Admin-Seite beginnt mit dem `Seitenkopf`: Kicker „Administration“ (gilt in beiden Sprachen), bei den amtlichen Quellen und `/einreise/betrieb` „Amtliche Quellen“; darin steht die einzige `h1` der Seite in `text-display`. Die Kopfleiste zeigt nur den Ort (Name und Pfad, keine Überschrift). Zwischenstufen ohne eigene Seite im Pfad sind Text, keine Links; die Links im Pfad sind mit Maus 24 px hoch.
+
+Abschnitte unter dem Kopf beginnen mit `h2`. Erklärende Absätze, Nachweise („Datenqualität & Nachweis“) und Beschreibungen stehen in `max-w-prose`, auch in breiten Karten. Die amtlichen Quellen sind eine Lesespalte in `max-w-2xl`. Fehler-, 404- und Ladeansicht des Admin nutzen `Statuskarte` (6.19) und `Ladeplatzhalter`; der Fehler zeigt die technische Meldung nur ausserhalb von Production. Admin-Anmeldung und MFA-Schritt sind eine Karte wie das Login, nur das Aussehen ist neu.
+
+Bedienflächen sind auf Touch 44 px hoch, mit Maus mindestens 24 px (7.5); Auswahlfelder folgen dem `Input`. Der Sprachkatalog steht auf dem Handy als Liste (Schlüssel, Deutsch, Englisch untereinander) und ab `sm` als Tabelle. Leere Navigationsgruppen werden nicht angezeigt.
+
+---
+
+### 6.21 Workspace-Dialoge, Panels und Zustände
+
+Ein Umschalter zwischen zwei Arbeitsweisen (etwa «Direkt bearbeiten» / «In eigenen Worten») ist eine Segmentgruppe: `role="group"` mit Namen, `rounded-full`, Knöpfe mit `aria-pressed`, aktiv `aria-pressed:bg-primary aria-pressed:text-primary-foreground`, ohne eigene Textfarbe im Grundzustand. Auswahlknöpfe tragen `border-line-*` nur im nicht gewählten Zustand: Weiss-Mint setzt Knöpfe mit diesem Rahmen auf eine weisse Fläche, die gewählte Fläche verschwände sonst.
+
+Formulare und Antworten in Panels sind Karten (`rounded-3xl`, `border-line-200`, weisse Fläche, ohne eigenen Schatten); Überschriften `text-title` oder `text-lg`/`sm:text-xl`, Fliesstext und Listen `max-w-prose`. Innerhalb der hellen Etappenkarten (`.et-*`) stehen Flächen als Komponenten-CSS mit `rgb(var(--jet-…))`, nicht als Tailwind-Flächenklassen: das grüne Thema färbt diese Klassen dunkel um, die Karte selbst bleibt hell. CSS-Variablen `--color-*` gibt es nicht; ohne Fallback fällt der Rahmen weg.
+
+Kalendertage werden für Menschen geschrieben: `datumKurz` («12. Sept.») im Fluss, `datumMitJahr` («12. Sept. 2026») in Berichten, als `<time dateTime="2026-09-12">`. ISO-Daten aus gespeicherten Sätzen werden erst bei der Anzeige umgeschrieben. Einzahl und Mehrzahl stimmen («1 Nacht», «1 Tag · 1 Etappe»). Fehlende Werte heissen «noch offen» oder «Belegung offen», nie 0.
+
+Symbole in `Button` stehen in `leftIcon`/`rightIcon`, nie als Kind neben der Aufschrift: Preflight setzt `svg` auf `display:block`, das Symbol stünde über dem Text (`lib/ui/knopf-symbol.test.ts`). In Suchmasken bekommt ein Auswahlfeld, das Ort und Daten zusammen nennt, bis 1439 px eine eigene Zeile, damit das native Feld nichts abschneidet.
+
+Text in `Hinweis` und in den aufklappbaren Bereichen der Reisevorbereitung endet bei `max-w-prose`, auch wenn der Kasten breiter ist. Kartenwerkzeuge (Etappen, Mit Anreise, Zentrieren) sind auf Touch 44 px hoch, mit Maus 40 px. Kartenpins bleiben 31 px; auf Touch vergrössert ein unsichtbarer Ring (`::before`, 7 px) die Trefferfläche auf 45 px, ohne die Karte zu verdecken. Eigene Leaflet-Symbole wählen mit `.leaflet-marker-icon.<klasse>`, weil Leaflet `display:block` bei gleicher Spezifität setzt und sonst die Ladereihenfolge entscheidet. Eine Komponente, die als eigene Seite und eingebettet vorkommt (etwa der Einreise-Prüfer), beginnt eingebettet mit `h2` und ohne Kicker (`eingebettet`), damit jede Seite genau eine `h1` hat. Textlinks, die mit Maus 24 px hoch bleiben (Pfad in der Admin-Kopfleiste, Markenlink der Seitenleiste), erhalten auf Touch dieselbe unsichtbare Trefferfläche: `relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-['']`.
+
+### 6.22 Erklärende Hinweise für Erstbesucher
+
+Ein Hinweis unter einem Feld oder einer Überschrift sagt in einem Satz, **was Jetnity mit der Angabe tut** und **wo es danach weitergeht** – nicht, was das Feld nicht kann. Beispiele: «Jetnity speichert deinen Wunsch als Notiz in der Reiseübersicht.», «Pass-Angaben trägst du nach dem Erstellen unter «Vorbereitung» für jede Person einzeln ein.» Verweise auf andere Bereiche nennen den Namen aus der Bereichsleiste in «» (`WORKSPACE_ANSICHT_LABEL`), Verweise auf einen Weg in `/planen` den Namen des Segmentschalters. Einheiten stehen in der Beschriftung («Ungefähres Gesamtbudget in CHF»), der Platzhalter zeigt ein Beispiel. Überschriften stellen die Frage des Nutzers («Wie lange bleibst du wo?») statt den Vorgang («Tage den Zielen zuordnen»). Der Hinweis ist mit `aria-describedby` an das Feld gebunden, `text-xs leading-5 text-ink-700`, und bricht um (`break-words`). Was noch fehlt, wird dort genannt, wo es auffällt (Route, Etappe, Reise ändern), mit dem gleichen Begriff wie in der Liste («Noch keinem Ziel zugeordnet»).
 
 ## 7. Responsive-Regeln
 
@@ -325,6 +484,8 @@ Felder tragen unterhalb `sm` mindestens **16 px** Schriftgröße (`text-base sm:
 
 Jedes Feld hat genau ein Bedienelement pro Funktion. Das `Input`-Primitiv bringt für `type="password"` bereits einen Umschalter mit; Formulare bauen keinen zweiten daneben.
 
+`Input` in Grösse `md` ist auf Touch 44 px hoch und mit Maus 40 px (`pointer-fine:h-10`), wie `Button`. Das Eingabeelement füllt die ganze Feldhöhe, damit jeder Tipp auf das Feld trifft; Anzeigen- und Leeren-Knopf sind auf Touch 44 × 44 px. In Weiss-Mint zeichnet der Feldrahmen Fläche und Fokus: Das innere Element bleibt durchsichtig und ohne eigenen Fokusrahmen (`data-eingabefeld` in `styles/white-mint.css`), sonst stehen zwei Rechtecke ineinander.
+
 ### 7.6a Feldfehler
 
 Fehler sitzen am betroffenen Feld, nicht nur in einer Meldung unter dem Formular. Beim Absenden werden **alle** ungültigen Felder markiert. Anschließend scrollt die Ansicht zum ersten Fehler und setzt den Fokus dorthin, damit auf dem Telefon niemand unterhalb der Absenden-Taste hängen bleibt.
@@ -378,6 +539,20 @@ Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft, Aktivitäten und Mobil
 Besuchte Mobile-Bereiche im Trip Workspace bleiben eingehängt, damit ein Tabwechsel keine neue Suche auslöst. Sie tragen `hidden` und `inert`.
 
 Die HTML-Eigenschaft `hidden` allein reicht nicht, wenn derselbe Knoten eine Tailwind-Display-Klasse trägt (`grid`, `flex`, `block`). Utilities überschreiben Preflight `[hidden] { display: none }`. Deshalb trägt ein verborgener Bereich nur `hidden`, niemals zusätzlich eine Display-Utility. Sichtbarkeit wird über `getComputedStyle` und Layoutbox geprüft, nicht nur über das Attribut.
+
+### 7.13 Eine Kopfzeile, auf dem Handy einzeilig
+
+Die Kopfzeile des Arbeitsbereichs (`/planen`, `/reisen`, Reise, Konto) bleibt bis 1023 px eine Zeile: Menü, Logo, Reiseaktionen, Konto. Der Kontext-Titel entfällt dort, weil der Reisekopf ihn trägt. Bis 767 px sind „Reise ändern“ und „Reisebegleiter“ runde Symbolknöpfe; ihr Text bleibt als zugänglicher Name erhalten. Bis 640 px wird „Reise planen“ ein runder Symbolknopf; in einer geöffneten Reise steht es nur noch im Menü (vor „Entdecken“, damit die Fokusfalle unverändert endet). Mond/Sonne bleibt in der Kopfzeile (Owner-Entscheid). In einer geöffneten Reise entfällt „Reise fortsetzen“ unter 1024 px, weil es nur wiederholt, wo man schon ist. Bei vergrösserter Schrift (`data-flow`) gilt weiter das umbrechende Layout. Geprüft bei 320, 375, 390 und 768 px: Kopfzeile 72 px hoch, kein seitliches Scrollen.
+
+---
+
+### 7.14 Sehr schmal, quer und sehr breit
+
+Die untere Leiste wechselt bei grosser Schrift (ab 24 px), unter 360 px Breite, unter 500 px Höhe und bei offener Tastatur in den Fluss. Ohne grosse Schrift ordnet sie sich dort als Raster (`data-flow-raster`): unter 544 px zwei Spalten (die fünfte Taste über die volle Breite), ab 544 px (Querformat) fünf Spalten mit Symbol über dem Wort. Bei grosser Schrift bleibt die gestapelte Liste.
+
+Die Reiseaktionen der Kopfzeile schrumpfen unter 768 px nicht; unter 320 px mit zwei Reiseaktionen entfällt das Logo in der Kopfzeile (es steht im Menü und in der Fusszeile), damit nichts überlappt.
+
+Ab 2400 px Breite wächst die Grundschrift auf 112,5 %, ab 3200 px auf 125 % (in Prozent, damit eine eigene Schriftgrösse im Browser erhalten bleibt). Alles in `rem` wächst mit, die Zeichen pro Zeile bleiben gleich; die Werte liegen unter der Schwelle für „grosse Schrift“ (24 px), damit die Leisten nicht in den Fluss wechseln. Geprüft bei 1920, 2560 und 3840 px.
 
 ---
 

@@ -6,15 +6,14 @@
 export const REGISTRY_COPY = {
   seitenEyebrow: 'Konto',
   seitenTitel: 'Reisende',
-  seitenLead:
-    'Hier liegen wiederverwendbare aktuelle Angaben zu Personen in deinem Konto. Bereits angelegte Reisen behalten ihre eigenen Reisenden-Snapshots und werden durch Änderungen hier nicht umgeschrieben.',
+  seitenLead: 'Angaben zu dir und deinen Mitreisenden, die du für neue Reisen wiederverwenden kannst.',
   dualAuthorityHinweis:
-    'Diese Registry ist kein Reiseplan. Eine konkrete Reise bleibt die einzige Current Truth für ihre Reisenden.',
+    'Änderungen hier verändern keine bestehende Reise. Für eine Reise gelten die Angaben, die du in diese Reise übernommen hast.',
   ladenTitel: 'Reisende werden geladen.',
   ladenText: 'Wir prüfen deinen aktuellen Speicherstand.',
   leerTitel: 'Noch keine Reisenden in deinem Konto.',
   leerText:
-    'Lege eine Person an, um Staatsbürgerschaften und Dokument-Metadaten wiederverwendbar zu hinterlegen. Das erzeugt noch keine Reise und ändert vorhandene Reisen nicht.',
+    'Lege eine Person an, damit ihre Staatsbürgerschaften und Angaben zu Reisedokumenten (ohne Nummer) für neue Reisen bereitstehen. Vorhandene Reisen ändern sich dadurch nicht.',
   fehlerTitel: 'Deine Reisenden konnten nicht geladen werden.',
   fehler503: 'Wir konnten deinen aktuellen Speicherstand gerade nicht prüfen; bitte lade später neu.',
   fehler500: 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.',
@@ -24,9 +23,9 @@ export const REGISTRY_COPY = {
   abbrechen: 'Abbrechen',
   aendern: 'Angaben ändern',
   loeschen: 'Löschen',
-  loeschenTitel: 'Registry-Eintrag löschen?',
+  loeschenTitel: 'Diesen Eintrag löschen?',
   loeschenText:
-    'Nur dieser Konto-Eintrag wird gelöscht. Bereits vorhandene Reisen und ihre Reisenden-Snapshots werden dadurch nicht umgeschrieben oder gelöscht.',
+    'Nur dieser Eintrag in deinem Konto wird gelöscht. Bereits vorhandene Reisen und die Angaben darin werden dadurch nicht umgeschrieben oder gelöscht.',
   loeschenBestaetigen: 'Eintrag löschen',
   ohneBezeichnung: 'Reisender ohne Bezeichnung',
   bezeichnungLabel: 'Bezeichnung',

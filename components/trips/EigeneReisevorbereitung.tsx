@@ -25,6 +25,7 @@ import {
 } from '@/lib/readiness/personal-preparation-workflow'
 import type { PersonalSteuerung } from '@/components/trips/usePersonalPreparationLifecycle'
 import type { ReadinessKind, ReadinessUserStatus, Trip } from '@/types/trips'
+import { cn } from '@/lib/utils'
 
 type Editor = {
   title: string
@@ -39,6 +40,8 @@ const KNOPF =
   'flex min-h-[44px] w-full min-w-0 items-center justify-center break-words rounded-full px-[12px] text-center text-sm font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
 const PRIMAER = `${KNOPF} bg-brand-800 text-white`
 const SEKUNDAER = `${KNOPF} border border-line-200 text-brand-800`
+const CHIP =
+  'inline-flex min-h-[44px] items-center justify-center rounded-full border px-4 text-meta font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
 
 export default function EigeneReisevorbereitung({
   reise,
@@ -166,35 +169,44 @@ export default function EigeneReisevorbereitung({
     else setTitel(wert)
   }
 
+  // Search and filters only help once there is something to narrow down. They stay
+  // visible while a filter or search is active so it can always be reset.
+  const werkzeugeSichtbar = eigene.length > 0 || schwebend.length > 0 || filter !== 'alle' || suche !== ''
+
   return (
     <div className="grid w-full min-w-0 gap-3" data-personal-preparation-root="">
-      <label className="grid gap-1 text-sm font-medium text-brand-800">
-        {PERSONAL_SUCHE_LABEL}
-        <input
-          value={suche}
-          onChange={(event) => setSuche(event.target.value)}
-          onFocus={() => steuerung?.interaktion()}
-          className={FELD}
-          data-personal-preparation-search=""
-        />
-      </label>
-      <div role="group" aria-label={PERSONAL_FILTER_LABEL} className="grid w-full min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-        {PERSONAL_FILTER.map(([wert, label]) => (
-          <button
-            key={wert}
-            type="button"
-            aria-pressed={filter === wert}
-            className={filter === wert ? PRIMAER : SEKUNDAER}
-            onClick={() => {
-              steuerung?.interaktion()
-              setFilter(wert)
-            }}
-            onFocus={() => steuerung?.interaktion()}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      {werkzeugeSichtbar ? (
+        <>
+          <label className="grid gap-1 text-sm font-medium text-brand-800">
+            {PERSONAL_SUCHE_LABEL}
+            <input
+              value={suche}
+              onChange={(event) => setSuche(event.target.value)}
+              onFocus={() => steuerung?.interaktion()}
+              className={FELD}
+              data-personal-preparation-search=""
+            />
+          </label>
+          <div role="group" aria-label={PERSONAL_FILTER_LABEL} className="flex w-full min-w-0 flex-wrap gap-2">
+            {PERSONAL_FILTER.map(([wert, label]) => (
+              <button
+                key={wert}
+                type="button"
+                aria-pressed={filter === wert}
+                data-wahl=""
+                className={cn(CHIP, filter === wert ? 'border-brand-800 bg-brand-800 text-white' : 'border-line-200 text-brand-800')}
+                onClick={() => {
+                  steuerung?.interaktion()
+                  setFilter(wert)
+                }}
+                onFocus={() => steuerung?.interaktion()}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
       {eigene.length === 0 ? <p className="break-words text-xs leading-5 text-ink-800">{PERSONAL_LEER}</p> : null}
       {eigene.length > 0 && sichtbar.length === 0 && schwebendSichtbar.length === 0 ? (
         <p className="break-words text-xs leading-5 text-ink-800">{PERSONAL_KEIN_TREFFER}</p>
@@ -346,7 +358,12 @@ export default function EigeneReisevorbereitung({
         </p>
       ) : null}
       {steuerung ? (
-        <button type="button" className={SEKUNDAER} onFocus={() => steuerung.interaktion()} onClick={() => steuerung.aktualisieren()}>
+        <button
+          type="button"
+          className="inline-flex min-h-[44px] items-center justify-self-start rounded-full text-meta font-semibold text-brand-800 underline underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          onFocus={() => steuerung.interaktion()}
+          onClick={() => steuerung.aktualisieren()}
+        >
           {PERSONAL_AKTUALISIEREN}
         </button>
       ) : null}

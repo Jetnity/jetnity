@@ -11,7 +11,7 @@ export default function AdminEvidenceDetails({ children, label = 'Datenqualität
         {label}
         <ChevronDown aria-hidden className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="space-y-2 break-words pb-3 leading-relaxed">{children}</div>
+      <div className="space-y-2 break-words pb-3 leading-relaxed [&_p]:max-w-prose">{children}</div>
     </details>
   )
 }

@@ -1,7 +1,9 @@
-// app/(admin)/admin/error.tsx
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
+import { AlertTriangle, LayoutDashboard, RefreshCw } from 'lucide-react'
+import { Statuskarte, statusAktionHaupt, statusAktionNeben } from '@/components/ui/statuskarte'
 import { oeffentlicheFehlerId } from '@/lib/next/oeffentliche-fehler-id'
 
 export default function AdminError({
@@ -16,21 +18,37 @@ export default function AdminError({
   const id = oeffentlicheFehlerId(error?.digest, React.useId())
 
   return (
-    <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6">
-      <h1 className="text-lg font-semibold text-destructive">Es ist ein Fehler aufgetreten</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+    <Statuskarte
+      symbol={AlertTriangle}
+      ton="fehler"
+      kicker="Administration"
+      titel="Es ist ein Fehler aufgetreten"
+      aktionen={
+        <>
+          <button type="button" onClick={() => reset()} className={statusAktionHaupt}>
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            Neu laden
+          </button>
+          <Link href="/admin" className={statusAktionNeben}>
+            <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+            Zum Dashboard
+          </Link>
+        </>
+      }
+    >
+      <p>
         Dieser Bereich konnte gerade nicht geladen werden. Du kannst es erneut versuchen oder zum
         Dashboard zurückkehren.
       </p>
       {process.env.NODE_ENV !== 'production' && (
-        <pre className="mt-3 max-h-48 overflow-auto rounded-md bg-muted p-3 text-xs leading-5 text-foreground">
+        <pre className="max-h-48 overflow-auto rounded-control bg-muted p-3 text-left text-xs leading-5 text-foreground">
           {String(error?.message ?? 'Unbekannter Fehler')}
         </pre>
       )}
-      <p className="mt-3 break-words text-xs text-muted-foreground">
+      <p className="break-words text-meta">
         Fehler-ID: <span className="font-mono">{id}</span>
       </p>
-      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+      <p className="text-meta">
         Du kannst uns unter{' '}
         <a
           href="mailto:info@jetnity.ch"
@@ -40,21 +58,6 @@ export default function AdminError({
         </a>{' '}
         schreiben und die angezeigte Fehler-ID angeben.
       </p>
-      <div className="mt-4 flex gap-3">
-        <button
-          type="button"
-          onClick={() => reset()}
-          className="inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-sm hover:bg-muted"
-        >
-          Neu laden
-        </button>
-        <a
-          href="/admin"
-          className="inline-flex items-center rounded-md border border-border bg-card px-3 py-1.5 text-sm hover:bg-muted"
-        >
-          Zum Dashboard
-        </a>
-      </div>
-    </div>
+    </Statuskarte>
   )
 }

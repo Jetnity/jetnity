@@ -22,6 +22,7 @@ import AccountBesuchFormular, {
   type BesuchFormularWert,
 } from '@/components/account/AccountBesuchFormular'
 import AccountWeltKarte from '@/components/account/AccountWeltKarte'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { useAccountVisitWorkflow } from '@/components/account/useAccountVisitWorkflow'
 import {
   BESUCH_VERWALTUNG_ANFANG,
@@ -349,11 +350,10 @@ export default function AccountBesuche({
 
   return (
     <div data-account-besuche={besucht.lage}>
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h1 className="min-w-0 break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
-          {BESUCHE_COPY.seitenTitel}
-        </h1>
-        {problem ? null : (
+      <Seitenkopf
+        kicker="Konto"
+        titel={BESUCHE_COPY.seitenTitel}
+        aktion={problem ? null : (
           <button
             ref={hinzufuegenKnopf}
             type="button"
@@ -362,12 +362,12 @@ export default function AccountBesuche({
             aria-expanded={formularOffen}
             aria-controls="account-besuch-anlegen"
             onClick={hinzufuegenUmschalten}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-auto"
           >
             <Plus size={17} aria-hidden /> {BESUCHE_COPY.hinzufuegenAktion}
           </button>
         )}
-      </div>
+      />
 
       <AccountWeltKarte welt={welt} besucht={besucht} laender={laender} />
 
@@ -379,12 +379,12 @@ export default function AccountBesuche({
         <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
           <h2
             id="account-besuche-liste"
-            className="text-xl font-semibold tracking-[-0.03em] text-brand-800"
+            className="text-title text-foreground"
           >
             {BESUCHE_COPY.listeTitel}
           </h2>
           {!problem && besucht.eintraege.length > 0 ? (
-            <p className="text-sm text-ink-700" data-besuch-gesamt={besucht.eintraege.length}>
+            <p className="text-meta text-muted-foreground" data-besuch-gesamt={besucht.eintraege.length}>
               {besuchEreignisZahlText(besucht.eintraege.length)}
             </p>
           ) : null}
@@ -410,13 +410,13 @@ export default function AccountBesuche({
         {problem ? (
           <div
             role="alert"
-            className="mt-4 rounded-[26px] border border-red-200 bg-red-50 px-6 py-8 text-center sm:px-10"
+            className="mt-4 rounded-panel border border-destructive/40 bg-card px-6 py-10 text-center sm:px-10"
           >
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-destructive">
               <AlertCircle className="h-5 w-5" aria-hidden="true" />
             </span>
-            <h3 className="mt-5 text-lg font-semibold text-red-800">{BESUCHE_COPY.fehlerTitel}</h3>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">
+            <h3 className="mt-5 text-title text-foreground">{BESUCHE_COPY.fehlerTitel}</h3>
+            <p className="mx-auto mt-3 max-w-md text-body text-muted-foreground">
               {problem.status === 503 ? BESUCHE_COPY.fehler503 : BESUCHE_COPY.fehler500}
             </p>
             {anlegenVorgang ? (
@@ -458,14 +458,14 @@ export default function AccountBesuche({
                 ) : null}
               </div>
             ) : (
-              <div className="mt-4 rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-8 text-center sm:px-10">
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+              <div className="mt-4 rounded-panel border border-dashed border-border bg-card px-6 py-12 text-center sm:px-10 sm:py-14">
+                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-foreground">
                   <MapPin className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h3 className="mt-5 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+                <h3 className="mt-5 text-title text-foreground">
                   {BESUCHE_COPY.leerTitel}
                 </h3>
-                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">
+                <p className="mx-auto mt-3 max-w-md text-body text-muted-foreground">
                   {BESUCHE_COPY.leerText}
                 </p>
               </div>

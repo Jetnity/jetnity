@@ -50,6 +50,12 @@ export function datumKurz(wert: string | null | undefined): string {
   return kurzesDatum.format(new Date(zeit))
 }
 
+/** Tag mit Jahr („12. Sept. 2026“); null, wenn der Wert kein gültiger Kalendertag ist. */
+export function datumMitJahr(wert: string | null | undefined): string | null {
+  const tag = tagLesen(wert)
+  return tag ? etappenDatumMitJahr.format(tag.zeit) : null
+}
+
 export function zeitraumKurz(start: string | null | undefined, ende: string | null | undefined): string {
   if (!start || !ende) return 'Zeitraum noch nicht bestimmbar'
   return `${datumKurz(start)} – ${datumKurz(ende)}`
@@ -73,4 +79,21 @@ export function etappenZeitraumAnzeigen(
   const mitJahr = start!.jahr !== ende!.jahr
   const format = mitJahr ? etappenDatumMitJahr : etappenDatumOhneJahr
   return `${format.format(start!.zeit)} – ${format.format(ende!.zeit)}`
+}
+
+/**
+ * Wann ein Planpunkt stattfindet, so kurz wie möglich: Zeitraum für
+ * Unterkunft und Mietwagen, sonst Tag und gespeicherte Uhrzeit.
+ */
+export function planpunktWann(
+  punkt: { kind: string; startsAt: string | null; endsOn: string | null },
+  datum: string | null,
+): string | null {
+  if (punkt.kind === 'stay' || punkt.kind === 'rental_car') {
+    const zeitraum = etappenZeitraumAnzeigen(datum, punkt.endsOn)
+    if (zeitraum) return zeitraum
+  }
+  if (!datum) return null
+  const tag = datumKurz(datum)
+  return punkt.startsAt ? `${tag} · ${punkt.startsAt}` : tag
 }

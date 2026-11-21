@@ -150,7 +150,7 @@ export default function AccountBesuchFormular({
             disabled={laeuft}
             onChange={(auswahl) => onWert({ ...wert, ort: auswahl })}
           />
-          <p id={`${basisId}-ort-hinweis`} className="text-xs leading-5 text-ink-700">
+          <p id={`${basisId}-ort-hinweis`} className="max-w-prose text-xs leading-5 text-ink-700">
             {BESUCHE_COPY.ortHinweis}
           </p>
         </div>

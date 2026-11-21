@@ -2,12 +2,15 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import { Loader2, ShieldCheck } from 'lucide-react'
 
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog'
 import { supabase } from '@/lib/supabase/client'
 import { starteTotpChallengeAnzeige } from '@/lib/auth/mfa'
 import { ADMIN_MFA_EINRICHTUNG } from '@/lib/auth/admin-aal'
 import { bestaetigeAdminAal2Action } from './actions'
+import { statusAktionHaupt, statusAktionNeben, statusFussLink } from '@/components/ui/statuskarte'
+import { cn } from '@/lib/utils'
 
 export function AdminMfaStepUp({
   ziel,
@@ -58,36 +61,45 @@ export function AdminMfaStepUp({
   }, [lookupFailed])
 
   return (
-    <main className="min-h-dvh grid place-items-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6">
-        <div className="mb-5">
-          <h1 className="text-xl font-semibold">Zwei-Faktor-Bestätigung</h1>
-          <p className="text-sm text-muted-foreground">
+    <main className="min-h-[70dvh] px-4 pb-14 pt-6 sm:px-6 sm:pb-20 sm:pt-10">
+      <div className="mx-auto w-full max-w-md rounded-panel border border-border bg-card p-6 shadow-card sm:p-8">
+        <div className="mb-6">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-foreground">
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="mt-5 text-kicker uppercase text-muted-foreground">Administration</p>
+          <h1 className="mt-2 text-title text-foreground">Zwei-Faktor-Bestätigung</h1>
+          <p className="mt-2 text-meta text-muted-foreground">
             Für den Administrationsbereich ist eine aktuelle Zwei-Faktor-Bestätigung nötig.
           </p>
         </div>
 
-        {busy ? <p className="text-sm text-muted-foreground">Prüfung wird vorbereitet…</p> : null}
+        {busy ? (
+          <p role="status" className="flex items-center gap-2 text-meta text-muted-foreground">
+            <Loader2 className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" />
+            Prüfung wird vorbereitet…
+          </p>
+        ) : null}
 
         {keinFaktor ? (
-          <div className="space-y-3 text-sm">
+          <div className="space-y-4 text-body text-foreground">
             <p>
               Für diesen Zugang fehlt ein bestätigter Authenticator. Richte TOTP zuerst unter
               Konto → Sicherheit ein. Ohne bestätigten zweiten Faktor bleibt der Administrationsbereich
               geschlossen.
             </p>
-            <Link className="inline-flex min-h-11 items-center underline" href={ADMIN_MFA_EINRICHTUNG}>
+            <Link className={statusAktionHaupt} href={ADMIN_MFA_EINRICHTUNG}>
               TOTP unter Sicherheit einrichten
             </Link>
           </div>
         ) : null}
 
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        {error ? <p role="alert" className="text-meta text-destructive">{error}</p> : null}
 
         {!busy && !keinFaktor && !lookupFailed ? (
           <button
             type="button"
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-card px-4 py-2 text-sm hover:bg-muted"
+            className={cn(statusAktionNeben, 'mt-4 w-full')}
             onClick={() => {
               setBusy(true)
               setError(null)
@@ -112,8 +124,8 @@ export function AdminMfaStepUp({
           </button>
         ) : null}
 
-        <p className="mt-6 text-xs text-muted-foreground">
-          <Link href="/admin/login" className="underline underline-offset-4">
+        <p className="mt-6 border-t border-border pt-4 text-meta">
+          <Link href="/admin/login" className={cn(statusFussLink, '-mx-2')}>
             Zur Admin-Anmeldung
           </Link>
         </p>

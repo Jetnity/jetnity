@@ -52,13 +52,13 @@ import { ortBestaetigen } from '@/lib/places/aktionen'
 import { cn } from '@/lib/utils'
 import type { Ort } from '@/lib/places/domain'
 import type { Trip } from '@/types/trips'
-import { Loader2 } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 
 const AKTION =
   'inline-block min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
 const PRIMAR = 'bg-brand-800 text-white hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60'
 const SEKUNDAER = 'border border-line-200 bg-white text-brand-800 hover:border-line-500'
-const TEXT = 'min-w-0 break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
+const TEXT = 'min-w-0 max-w-prose break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
 
 type Props = {
   reise: Trip
@@ -437,7 +437,7 @@ function Flaeche({
       data-gyg-ausgeblendet={ausgeblendet ? 'ja' : 'nein'}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Anbieter</p>
+      <p className="text-kicker uppercase text-brand-600">Anbieter</p>
       <h3 className="mt-1 min-w-0 max-w-full text-lg font-semibold leading-tight tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">
         GetYourGuide
       </h3>
@@ -493,10 +493,7 @@ function Flaeche({
           </p>
         ) : null}
         {angepasst.phase === 'laeuft' ? (
-          <p aria-busy="true" className={cn(TEXT, 'flex items-start gap-3')}>
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
-            GetYourGuide wird geladen.
-          </p>
+          <p aria-busy="true" className={TEXT}>GetYourGuide wird geladen.</p>
         ) : null}
         {angepasst.phase === 'fehler' ? <p className={TEXT}>{angepasst.fehler}</p> : null}
         {angepasst.phase === 'anzeige' ? (
@@ -635,6 +632,7 @@ function Flaeche({
         </p>
       ) : null}
 
+      {angepasst.phase === 'laeuft' ? <Ladeflaeche className="mt-4 h-48 rounded-card" /> : null}
       <div
         ref={hostRef}
         data-gyg-montage={montageSichtbar ? 'sichtbar' : 'leer'}

@@ -10,12 +10,19 @@ import { requireAdminPage } from '@/lib/auth/admin-guard'
 import { assignableRoles, canManageUsers } from '@/lib/auth/roles'
 import { displayedStoredRole, displayedStoredStatus, displayedStoredUserId } from '@/lib/admin/user-row-truth'
 import UsersTable, { type UserRow } from '@/components/admin/UsersTable'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { ausProblem } from '@/lib/admin/ladezustand'
 import { profilErstellt } from '@/lib/admin/profil-erstellt'
 import { problemAus } from '@/lib/api/datenbank-lesen'
 import { readUsersDirectory } from '@/lib/admin/users-directory-query'
 
 const PAGE_SIZE = 20
+
+const KOPF = (
+  <Seitenkopf kicker="Administration" titel="Benutzerverwaltung">
+    <p>Konten, Rollen und Zugriffsstatus verwalten.</p>
+  </Seitenkopf>
+)
 
 type SearchParams = { q?: string; page?: string; role?: string; status?: string }
 
@@ -70,10 +77,7 @@ export default async function UsersPage({
     const rawQ = rawQueryText(await leseOptionalRequestParam(searchParams), 'q')
     return (
       <section className="mx-auto max-w-7xl space-y-6">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Benutzerverwaltung</h1>
-          <p className="text-sm text-muted-foreground">Konten, Rollen und Zugriffsstatus verwalten.</p>
-        </div>
+        {KOPF}
         <UsersTable
           users={[]}
           page={1}
@@ -101,10 +105,7 @@ export default async function UsersPage({
     console.error('[admin/users] list error:', result.error)
     return (
       <section className="mx-auto max-w-7xl space-y-6">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Benutzerverwaltung</h1>
-          <p className="text-sm text-muted-foreground">Konten, Rollen und Zugriffsstatus verwalten.</p>
-        </div>
+        {KOPF}
         <UsersTable
           users={[]}
           page={query.page}
@@ -142,10 +143,7 @@ export default async function UsersPage({
 
   return (
     <section className="mx-auto max-w-7xl space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Benutzerverwaltung</h1>
-        <p className="text-sm text-muted-foreground">Konten, Rollen und Zugriffsstatus verwalten.</p>
-      </div>
+      {KOPF}
       <UsersTable
         users={users}
         page={query.page}

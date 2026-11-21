@@ -234,6 +234,12 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             </nav>
           </section>
           <div className="workspace-sidebar-end">
+            {/* In einer offenen Reise und als „Reise fortsetzen“ fehlt dieser Link auf schmalen Bildschirmen in der einzeiligen Kopfzeile. */}
+            <div className="workspace-drawer-extras">
+              <GastCreateLink createLabel="Reise planen" className="workspace-nav-link" onClick={finishNavigation}>
+                <Plus aria-hidden="true" /><span className="workspace-nav-label">Reise planen</span>
+              </GastCreateLink>
+            </div>
             <Link href="/entdecken" className="workspace-nav-link" aria-label="Entdecken" onClick={finishNavigation}>
               <Compass aria-hidden="true" /><span className="workspace-nav-label">Entdecken</span>
             </Link>

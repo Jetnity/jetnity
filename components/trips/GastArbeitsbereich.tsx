@@ -467,19 +467,18 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         ) : null
       }
       hinweis={
-        <p className="mt-3 flex items-start gap-2 rounded-xl border border-line-200 bg-white px-3 py-2 text-xs leading-5 text-ink-800">
-          <CloudOff className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
+        <p data-gast-hinweis className="mt-3 flex items-start gap-2 text-meta text-muted-foreground">
+          <CloudOff className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>
-            Dieser Entwurf liegt nur in diesem Browser. Mit einem Konto wird er dauerhaft gespeichert und
-            auf allen Geräten sichtbar –{' '}
-            <Link href="/register" className="font-semibold text-brand-800 underline underline-offset-2">
+            Nur in diesem Browser gespeichert.{' '}
+            <Link href="/register" className="font-semibold text-foreground underline underline-offset-2">
               Konto erstellen
             </Link>{' '}
             oder{' '}
-            <Link href="/login" className="font-semibold text-brand-800 underline underline-offset-2">
+            <Link href="/login" className="font-semibold text-foreground underline underline-offset-2">
               anmelden
             </Link>
-            . Deine Reise wird dabei übernommen.
+            {' '}– deine Reise wird übernommen und ist dann auf allen Geräten da.
           </span>
         </p>
       }

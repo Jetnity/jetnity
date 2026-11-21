@@ -30,7 +30,7 @@ export function HomeProduktfenster() {
         </div>
         <div className="min-w-0">
           <HomeReiseBeispiel beispiel={HOMEPAGE_PRODUKTFENSTER} />
-          <p className="mt-4 px-1 text-sm leading-6 text-ink-800">
+          <p className="mt-4 max-w-prose px-1 text-sm leading-6 text-ink-800">
             Dein Plan bleibt aktuell. Neue Buchungen, kostenpflichtige Umbuchungen und Stornierungen bestätigst du selbst.
           </p>
         </div>

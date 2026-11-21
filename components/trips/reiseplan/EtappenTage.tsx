@@ -6,6 +6,7 @@ import { ArrowRight, CalendarDays, ChevronDown, ChevronRight, TriangleAlert } fr
 import { useGeraetekalendertag } from '@/components/account/account-home-export-1/useGeraetekalendertag'
 import { etappenAgenda, offenerEtappentag, tagesKonflikte } from '@/lib/trips/etappen-tagesagenda'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { ZUORDNUNG_OFFEN } from '@/lib/trips/n12-chronology-1/laeufe'
 import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import type { Trip, TripDay } from '@/types/trips'
 
@@ -79,7 +80,10 @@ export default function EtappenTage({ days, reise, onDay }: {
           Tag {offen.index} planen <ArrowRight size={15} aria-hidden="true" />
         </button>}
       </header>
-      {tage.length === 0 ? <p className="et-agenda-leer">Dieser Etappe ist noch kein Reisetag zugeordnet.</p> : tagesliste(tage.slice(0, SICHTBARE_TAGE))}
+      {tage.length === 0 ? <p className="et-agenda-leer">
+        Dieser Etappe ist noch kein Reisetag zugeordnet.
+        {reise.days.some((tag) => !tag.stageId) ? ` Deine Reisetage stehen vorerst unter «${ZUORDNUNG_OFFEN}».` : null}
+      </p> : tagesliste(tage.slice(0, SICHTBARE_TAGE))}
       {weitere.length > 0 && <details className="et-agenda-weitere">
         <summary><ChevronDown size={16} aria-hidden="true" />{weitere.length === 1 ? 'Ein weiterer Tag' : weitere.length + ' weitere Tage'}</summary>
         {tagesliste(weitere)}

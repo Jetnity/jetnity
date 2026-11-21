@@ -261,7 +261,7 @@ test('English retry framing preserves the explicit action and pending disabled s
 for (const sprache of ['de', 'en'] as const) {
   test(`Bookings loading ${sprache} uses the actual route presentation at 320px and 200% text`, { timeout: 30_000 }, async (t) => {
     const { page } = await open(t, { surface: 'loading', sprache, width: 320 })
-    await page.getByRole('heading', { name: sprache === 'en' ? 'Loading bookings.' : 'Buchungen werden geladen.', exact: true }).waitFor()
+    await page.getByRole('status').getByText(sprache === 'en' ? 'Loading bookings.' : 'Buchungen werden geladen.', { exact: true }).waitFor()
     assert.equal(await page.locator('main').getAttribute('lang'), sprache)
     assert.equal(await page.locator('[aria-busy=true][aria-live=polite]').count(), 1)
     await scaleAndCheck(page, 2)

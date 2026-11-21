@@ -8,6 +8,7 @@ import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   BUCHUNG_AKTION_KLASSE,
+  BUCHUNG_BEDEUTUNG,
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
@@ -98,8 +99,8 @@ export default function UnterkunftBestand({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Deine Unterkunft</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+          <p className="text-kicker uppercase text-brand-600">Deine Unterkunft</p>
+          <h2 className="mt-1 text-title text-brand-800">
             Nächte-Abdeckung
           </h2>
           <p className="mt-1 text-sm leading-6 text-ink-800">{kopf}</p>
@@ -226,6 +227,9 @@ export default function UnterkunftBestand({
         </ul>
       )}
 
+      {onBuchungsstatus && abdeckung.aufenthalte.some((aufenthalt) => kannBuchungMarkieren(aufenthalt.item)) ? (
+        <p className="mt-3 text-meta text-ink-700">{BUCHUNG_BEDEUTUNG}</p>
+      ) : null}
       {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
       {meldung ? (
         <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">

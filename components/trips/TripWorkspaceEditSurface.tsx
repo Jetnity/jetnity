@@ -1,8 +1,10 @@
 'use client'
 
 import * as React from 'react'
+import { ChevronDown } from 'lucide-react'
 import type { Trip, TripSource } from '@/types/trips'
 import { WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
+import { datumKurz } from '@/lib/trips/datum-anzeige'
 
 const EditContext = React.createContext<{ close: () => void; setBusy: (value: boolean) => void } | null>(null)
 export const useWorkspaceEditSurface = () => React.useContext(EditContext)
@@ -74,16 +76,16 @@ export default function TripWorkspaceEditSurface({ reise, quelle, ansicht, onClo
     <EditContext.Provider value={context}>
       <div className="min-w-0 p-[16px] [overflow-wrap:anywhere] sm:p-5">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 id={titleId} data-edit-surface-title tabIndex={-1} className="text-xl font-semibold text-brand-900 outline-none">Reise ändern</h2>
-          <button type="button" disabled={busy} onClick={close} className="min-h-11 max-w-full rounded-full border border-line-300 bg-white px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50">Zurück zum Workspace</button>
+          <h2 id={titleId} data-edit-surface-title tabIndex={-1} className="text-title font-semibold text-brand-900 outline-none">Reise ändern</h2>
+          <button type="button" disabled={busy} onClick={close} className="min-h-11 max-w-full rounded-full border border-line-300 bg-white px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:border-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 disabled:opacity-50">Zurück zum Workspace</button>
         </div>
         <div className="mt-4 grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.7fr)]">
-          <aside id={contextId} aria-label="Gespeicherter Reisekontext" className="min-w-0 rounded-2xl bg-surface-100 p-3 sm:p-4">
-            <p className="text-xs font-semibold text-brand-700">{WORKSPACE_ANSICHT_LABEL[ansicht]} · {quelle === 'guest' ? 'Gastreise' : 'Kontoreise'}</p>
-            <p className="mt-2 font-semibold text-brand-900">{reise.title}</p>
-            <p className="mt-2 text-sm leading-6">{reise.startDate ?? 'Beginn offen'} – {reise.endDate ?? 'Ende offen'} · {reise.days.length} Tage · {reise.stages.length} Etappen</p>
-            <p className="mt-1 text-xs leading-5">Gespeicherter Stand</p>
-            <details className="mt-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-brand-600">Reiseziele ansehen</summary><ol className="grid gap-2 text-sm">{reise.stages.map(stage => <li key={stage.id}>{stage.position}. {stage.name}</li>)}</ol></details>
+          <aside id={contextId} aria-label="Gespeicherter Reisekontext" className="min-w-0 rounded-2xl bg-surface-100 p-4">
+            <p className="text-meta font-semibold text-brand-700">{WORKSPACE_ANSICHT_LABEL[ansicht]} · {quelle === 'guest' ? 'Gastreise' : 'Kontoreise'}</p>
+            <p className="mt-1.5 font-semibold text-brand-900">{reise.title}</p>
+            <p className="mt-1.5 text-sm leading-6 text-ink-900">{datumKurz(reise.startDate) || 'Beginn offen'} – {datumKurz(reise.endDate) || 'Ende offen'} · {reise.days.length} {reise.days.length === 1 ? 'Tag' : 'Tage'} · {reise.stages.length} {reise.stages.length === 1 ? 'Etappe' : 'Etappen'}</p>
+            <p className="mt-1 text-meta text-ink-800">Gespeicherter Stand</p>
+            <details className="group mt-2"><summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg text-sm font-semibold text-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 [&::-webkit-details-marker]:hidden">Reiseziele ansehen<ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" /></summary><ol className="grid gap-1.5 pb-1 text-sm text-ink-900">{reise.stages.map(stage => <li key={stage.id}>{stage.position}. {stage.name}</li>)}</ol></details>
           </aside>
           <div className="min-w-0">{children}</div>
         </div>

@@ -2,21 +2,6 @@
   color: var(--color-brand-800, #173b32);
   min-width: 0;
 }
-.et-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-  padding: clamp(1.5rem, 3vw, 3.2rem);
-  background-position:
-    center,
-    center 48%;
-  background-size: cover;
-  color: #fff;
-}
-.et-eyebrow,
-.et-routepath,
-.et-meta,
-.et-meta span,
 .et-primary,
 .et-secondary,
 .et-back,
@@ -27,41 +12,6 @@
 .et-icon {
   display: flex;
   align-items: center;
-}
-.et-eyebrow {
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.17em;
-  color: #ddedb8;
-}
-.et-hero h1 {
-  margin: 0.45rem 0;
-  font-size: clamp(2.35rem, 4.2vw, 4.6rem);
-  line-height: 1.04;
-  letter-spacing: -0.055em;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-  color: white;
-}
-.et-routepath {
-  gap: 0.53rem;
-  flex-wrap: wrap;
-  font-weight: 600;
-}
-.et-routepath svg {
-  opacity: 0.65;
-}
-.et-meta,
-.et-meta span {
-  gap: 0.45rem;
-}
-.et-meta {
-  flex-wrap: wrap;
-  gap: 1.1rem;
-  color: #eaf3ed;
-  font-size: 0.88rem;
-  margin-top: 0.9rem;
 }
 .et-board {
   display: grid;
@@ -130,7 +80,7 @@
 .et-secondary,
 .et-icon {
   border: 1px solid var(--color-line-300, #d1dfd7);
-  color: var(--color-brand-800);
+  color: rgb(var(--jet-brand-800));
   background: var(--color-white, #fff);
 }
 .et-secondary {
@@ -220,7 +170,7 @@
   padding-left: 0.35rem;
   gap: 0.55rem;
   font-size: 0.78rem;
-  color: var(--color-ink-700);
+  color: rgb(var(--jet-ink-700));
   font-weight: 550;
 }
 .et-leg svg:last-child {
@@ -229,7 +179,7 @@
 }
 .et-back {
   margin-bottom: 0.6rem;
-  color: var(--color-brand-700);
+  color: rgb(var(--jet-brand-700));
 }
 .et-detail-title {
   display: flex;
@@ -251,7 +201,7 @@
   flex-wrap: wrap;
 }
 .et-tabs {
-  border-bottom: 1px solid var(--color-line-200);
+  border-bottom: 1px solid rgb(var(--jet-line-200));
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -269,7 +219,7 @@
 }
 .et-days button {
   min-height: 44px;
-  border: 1px solid var(--color-line-200);
+  border: 1px solid rgb(var(--jet-line-200));
   border-radius: 10px;
   padding: 0.3rem 0.55rem;
   font-size: 0.85rem;
@@ -298,7 +248,7 @@
   align-items: center;
   gap: 0.35rem;
   min-height: 44px;
-  border: 1px solid var(--color-line-200);
+  border: 1px solid rgb(var(--jet-line-200));
   padding: 0.55rem 0.65rem;
   border-radius: 10px;
   font-weight: 600;
@@ -329,7 +279,7 @@
   min-width: 0;
   width: 100%;
   min-height: 44px;
-  border: 1px solid var(--color-line-300);
+  border: 1px solid rgb(var(--jet-line-300));
   background: var(--color-white, #fff);
   padding: 0.5rem 0.65rem;
   border-radius: 9px;
@@ -359,7 +309,8 @@
 .et-canvas.picking .leaflet-interactive {
   cursor: crosshair;
 }
-.et-pin {
+/* Leaflet sets .leaflet-marker-icon to display: block at equal specificity; load order must not decide. */
+.leaflet-marker-icon.et-pin {
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -394,12 +345,27 @@
   gap: 2px;
 }
 .et-map-tools button {
-  min-height: 40px;
-  min-width: 40px;
+  min-height: 44px;
+  min-width: 44px;
   font-size: 0.8rem;
   padding: 0.35rem 0.65rem;
   border-radius: 9px;
   font-weight: 650;
+}
+@media (pointer: fine) {
+  .et-map-tools button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+/* Pins stay 31 px; on touch an invisible ring widens the hit area to 45 px. */
+@media (pointer: coarse) {
+  .et-pin::before {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+  }
 }
 .et-map-note {
   left: 0.72rem;
@@ -424,9 +390,6 @@
   display: none;
 }
 @media (max-width: 840px) {
-  .et-hero {
-    border-radius: 17px;
-  }
   .et-board {
     display: block;
     margin-top: 0.6rem;
@@ -434,7 +397,7 @@
   .et-mobile-tabs {
     display: flex;
     padding: 0.25rem;
-    border: 1px solid var(--color-line-200);
+    border: 1px solid rgb(var(--jet-line-200));
     border-radius: 13px;
     margin-top: 0.7rem;
     background: var(--color-white, #fff);
@@ -474,12 +437,6 @@
   .et-stage {
     gap: 0.45rem;
   }
-}
-.et-hero {
-  padding-block: clamp(1.05rem, 1.5vw, 1.6rem);
-  background-position:
-    center,
-    center 57%;
 }
 .et-stages {
   position: relative;
@@ -547,17 +504,22 @@
   background: var(--color-surface-50, #eff7f1);
 }
 .et-end span {
-  color: var(--color-ink-700);
+  color: rgb(var(--jet-ink-700));
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .et-end b {
-  color: var(--color-brand-800);
+  color: rgb(var(--jet-brand-800));
   margin-right: 0.15rem;
 }
 .et-leg {
   padding-left: 2.5rem;
-  min-height: 34px;
+  min-height: 44px;
+}
+@media (pointer: fine) {
+  .et-leg {
+    min-height: 34px;
+  }
 }
 .et-leg.et-journey {
   font-size: 0.73rem;
@@ -613,11 +575,24 @@
   min-height: 44px;
   border: 1px solid var(--line, #bfd1c8);
   border-radius: .75rem;
-  background: var(--surface);
+  background: transparent;
   color: inherit;
   font-weight: 600;
   font-size: .85rem;
 }
 .et-angebote button:hover {
   background: var(--surface-soft, #e3efe9);
+}
+/* Eigene Klassen statt Tailwind-Flächen: Die Etappenkarte bleibt auch im grünen
+   Workspace hell, die Farb-Umschaltung des Themas greift nur Tailwind-Klassen. */
+.et-vorschau-ort {
+  border: 1px solid rgb(var(--jet-line-200));
+  border-radius: 0.75rem;
+  background: rgb(var(--jet-surface-50));
+  padding: 0.75rem;
+}
+.et-vorschau-tage {
+  border: 1px solid rgb(var(--jet-line-200));
+  border-radius: 0.5rem;
+  padding: 0 0.75rem;
 }

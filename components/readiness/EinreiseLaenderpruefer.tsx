@@ -18,8 +18,10 @@ const sekundär = 'inline-flex min-h-11 items-center justify-center rounded-full
 /**
  * Öffentlicher Länderprüfer. Nur die freigegebene CH→DE-Abfrage geht an den bestehenden Controller.
  * Jede andere Kombination bleibt „Noch nicht bestätigt“.
+ *
+ * `eingebettet`: im Workspace steht die `h1` schon im Reisekopf; der Prüfer beginnt dann mit `h2`.
  */
-export default function EinreiseLaenderpruefer() {
+export default function EinreiseLaenderpruefer({ eingebettet = false }: { eingebettet?: boolean } = {}) {
   const id = useId()
   const [ziel, setZiel] = useState('')
   const [paesse, setPaesse] = useState<string[]>([''])
@@ -60,11 +62,19 @@ export default function EinreiseLaenderpruefer() {
   return (
     <section className="mx-auto grid w-full min-w-0 max-w-3xl gap-6 text-brand-800" aria-labelledby={`${id}-titel`}>
       <header className="grid gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand-600">Einreise & Visum</p>
-        <h1 id={`${id}-titel`} className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-          Einreise und Visum prüfen
-        </h1>
-        <p className="max-w-2xl text-base leading-7 text-ink-900">
+        {eingebettet ? (
+          <h2 id={`${id}-titel`} className="text-title">
+            Einreise und Visum prüfen
+          </h2>
+        ) : (
+          <>
+            <p className="text-kicker uppercase text-brand-600">Einreise & Visum</p>
+            <h1 id={`${id}-titel`} className="text-display [overflow-wrap:anywhere]">
+              Einreise und Visum prüfen
+            </h1>
+          </>
+        )}
+        <p className="max-w-prose text-body text-ink-900">
           Wähle das Zielland und den Pass. Die Auskunft erscheint hier, für jeden Pass getrennt.
         </p>
       </header>
@@ -73,7 +83,7 @@ export default function EinreiseLaenderpruefer() {
         <fieldset className="grid gap-3">
           <legend className="mb-2 text-base font-semibold">Pass / Staatsangehörigkeit</legend>
           {paesse.map((pass, index) => (
-            <div key={index} className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <div key={index} className={paesse.length > 1 ? 'grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end' : 'grid gap-2'}>
               <LandFeld
                 id={`${id}-pass-${index}`}
                 label={`Pass ${index + 1}`}
@@ -108,10 +118,10 @@ export default function EinreiseLaenderpruefer() {
           {stand.phase === 'loading' ? 'Angaben werden geladen' : 'Einreise anzeigen'}
         </button>
       </form>
-      {stand.phase === 'error' ? <p role="alert" className="text-sm leading-6 text-ink-900">{stand.message}</p> : null}
+      {stand.phase === 'error' ? <p role="alert" className="max-w-prose text-sm leading-6 text-ink-900">{stand.message}</p> : null}
       {sicht ? (
         <div className="grid gap-3">
-          <h2 ref={ergebnisTitel} tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+          <h2 ref={ergebnisTitel} tabIndex={-1} className="text-title outline-none">
             Einreise nach {sicht.zielLabel}
           </h2>
           {sicht.synthetisch ? (
@@ -119,7 +129,7 @@ export default function EinreiseLaenderpruefer() {
               Synthetische Testdaten · Keine echte Einreiseauskunft
             </p>
           ) : null}
-          {sicht.hinweis ? <p role="status" className="text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
+          {sicht.hinweis ? <p role="status" className="max-w-prose text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
           <EinreiseKundenanzeige anzeige={sicht.anzeige} />
           {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.citizenshipCodes} /> : null}
           {['IT','FR','ES','PT'].includes(sicht.zielCode) ? <FollowupOfficialGuidance country={sicht.zielCode} /> : null}

@@ -8,7 +8,8 @@
 
 import * as React from 'react'
 import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
-import { ArrowRightLeft, Loader2 } from 'lucide-react'
+import { ArrowRightLeft } from 'lucide-react'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
@@ -25,6 +26,7 @@ import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   BUCHUNG_AKTION_KLASSE,
+  BUCHUNG_BEDEUTUNG,
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
@@ -218,10 +220,10 @@ export default function MobilitaetBereich({
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+            <p className="text-kicker uppercase text-brand-600">
               Deine Verbindungen
             </p>
-            <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+            <h2 className="mt-1 text-title text-brand-800">
               Bestand und Status
             </h2>
             <p className="mt-1 text-sm leading-6 text-ink-800">{abdeckung.zusammenfassung}</p>
@@ -302,6 +304,9 @@ export default function MobilitaetBereich({
           </ul>
         )}
 
+        {onBuchungsstatus && [...abdeckung.kanten.flatMap((kante) => (kante.mobilityItem ? [kante.mobilityItem] : [])), ...abdeckung.unzugeordnet].some(kannBuchungMarkieren) ? (
+          <p className="mt-3 text-meta text-ink-700">{BUCHUNG_BEDEUTUNG}</p>
+        ) : null}
         {pendingId ? <p role="status" className="mt-4 text-sm text-ink-800">{BUCHUNG_WIRD_GESPEICHERT}</p> : null}
         {meldung ? (
           <p role="alert" className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -318,15 +323,12 @@ export default function MobilitaetBereich({
         className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
       >
         <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-citrus-400" />
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Suche</p>
-        <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+        <p className="text-kicker uppercase text-brand-600">Suche</p>
+        <h2 className="mt-1 text-title text-brand-800">
           Bahn, Bus, Fähre und Transfer
         </h2>
         {sucht ? (
-          <p className="mt-5 flex min-h-[4.5rem] items-center gap-2 text-sm leading-6 text-ink-800">
-            <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-            Verbindungen werden geprüft …
-          </p>
+          <Ladeplatzhalter sichtbar zeilen={2} status="Verbindungen werden geprüft …" className="mt-5" />
         ) : (
           <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
             {suche?.message ?? (process.env.NEXT_PUBLIC_TWELVE_GO_TIMETABLE_ENABLED === 'true'

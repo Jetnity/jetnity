@@ -254,7 +254,7 @@ describe('Der Kill Switch', () => {
     assert.equal(ergebnis.ok, false)
     if (!ergebnis.ok) {
       assert.equal(ergebnis.klasse, 'gesperrt')
-      assert.match(ergebnis.meldung, /Formular/, 'der Weg über das Formular bleibt offen')
+      assert.match(ergebnis.meldung, /«Schritt für Schritt»/, 'der Weg über «Schritt für Schritt» bleibt offen')
     }
     assert.equal(werkzeug.beanspruchtWie(), 0)
     assert.equal(werkzeug.anfragen.length, 0)

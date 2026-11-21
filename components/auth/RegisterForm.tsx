@@ -214,11 +214,11 @@ export default function RegisterForm({
             id={REGISTER_ERFOLG_ID}
             ref={erfolgRef}
             tabIndex={-1}
-            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
+            className="flex items-start gap-2 rounded-xl border border-primary/40 bg-card p-3 text-sm text-foreground"
             role="status"
             aria-live="polite"
           >
-            <CheckCircle2 className="h-4 w-4 mt-0.5" aria-hidden="true" />
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <p>{REGISTER_NEUTRALE_ANTWORT}</p>
           </div>
         ) : infoMsg ? (
@@ -296,8 +296,8 @@ export default function RegisterForm({
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{staerkeText(s)}</p>
-            <ul className="mt-1 text-[11px] text-muted-foreground space-y-0.5">
+            <p className="mt-1 text-meta text-muted-foreground">{staerkeText(s)}</p>
+            <ul className="mt-1 space-y-0.5 text-meta text-muted-foreground">
               {RICHTLINIE_PUNKTE.map((punkt) => (
                 <li key={punkt}>• {punkt}</li>
               ))}

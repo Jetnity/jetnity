@@ -756,7 +756,7 @@ export default function UsersTable({
           <>
             <select
               aria-label="Rolle"
-              className="h-10 max-w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="h-11 max-w-full rounded-md border border-input bg-background px-3 text-base pointer-fine:h-10 pointer-fine:text-sm"
               value={roleOptions.some((option) => option.value === rawRole) ? rawRole : ''}
               onChange={(event) =>
                 commitFilters({ role: event.target.value === '' ? null : event.target.value })
@@ -771,7 +771,7 @@ export default function UsersTable({
             </select>
             <select
               aria-label="Status"
-              className="h-10 max-w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="h-11 max-w-full rounded-md border border-input bg-background px-3 text-base pointer-fine:h-10 pointer-fine:text-sm"
               value={statusOptions.some((option) => option.value === rawStatus) ? rawStatus : ''}
               onChange={(event) =>
                 commitFilters({ status: event.target.value === '' ? null : event.target.value })
@@ -808,7 +808,7 @@ export default function UsersTable({
             onClick={() => previousPage !== null && goto(previousPage)}
             aria-label="Vorherige Seite"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
           <span
             data-users-directory-page="true"
@@ -824,7 +824,7 @@ export default function UsersTable({
             onClick={() => nextPage !== null && goto(nextPage)}
             aria-label="Nächste Seite"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </Button>
           {showFirstLast && reachableLast !== null ? (
             <Button
@@ -856,7 +856,7 @@ export default function UsersTable({
 
       {read?.kind === 'invalid' ? (
         <div className="p-4">
-          <Link href={read.recoveryHref} className="text-sm underline">
+          <Link href={read.recoveryHref} className="inline-flex min-h-11 items-center text-sm underline underline-offset-4">
             Gültige Adresse öffnen
           </Link>
         </div>

@@ -27,7 +27,7 @@ export type PrivacyBeePhase = 'aus' | 'laden' | 'bereit' | 'fehler'
 const ladungen = new Map<string, Promise<void>>()
 
 const linkKlasse =
-  'inline-flex min-h-11 items-center font-semibold text-brand-800 underline decoration-brand-800/30 underline-offset-4 hover:decoration-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
+  'inline-flex min-h-11 items-center font-semibold text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 function schnappschussLesen(el: HTMLElement): PrivacyBeeDomSchnappschuss {
   return {
@@ -80,7 +80,7 @@ function ladePrivacyBeeSkript(src: string, tag: string): Promise<void> {
 function Fallback({ flaeche }: { flaeche: PrivacyBeeFlaeche }) {
   if (flaeche === 'datenschutz') {
     return (
-      <div data-privacybee-fallback="datenschutz" className="mt-4 max-w-xl space-y-3 text-sm leading-6 text-brand-800/80">
+      <div data-privacybee-fallback="datenschutz" className="mt-4 max-w-prose space-y-3 text-body text-muted-foreground">
         <p>{PRIVACYBEE_AUS_HINWEIS.datenschutz}</p>
         <a href={PRIVACYBEE_DATENSCHUTZ_URL} className={linkKlasse}>
           Datenschutzerklärung bei PrivacyBee
@@ -90,10 +90,10 @@ function Fallback({ flaeche }: { flaeche: PrivacyBeeFlaeche }) {
   }
 
   return (
-    <div data-privacybee-fallback="impressum" className="mt-4 max-w-xl space-y-3 text-sm leading-6 text-brand-800/80">
+    <div data-privacybee-fallback="impressum" className="mt-4 max-w-prose space-y-3 text-body text-muted-foreground">
       <p>{PRIVACYBEE_AUS_HINWEIS.impressum}</p>
       <p>
-        Schreiben Sie an{' '}
+        Schreib uns an{' '}
         <a href={`mailto:${PRIVACYBEE_KONTAKT}`} className={linkKlasse}>
           {PRIVACYBEE_KONTAKT}
         </a>
@@ -151,15 +151,15 @@ export function PrivacyBeeAnsicht({
   return (
     <div data-privacybee-phase={zeigeVendor ? phase : einbetten ? 'warten' : 'aus'}>
       {zeigeEigeneUeberschrift ? (
-        <h1 className="text-3xl font-semibold tracking-[-0.03em] text-brand-900 sm:text-4xl">{ueberschrift}</h1>
+        <h1 lang="de" className="text-display text-foreground [hyphens:auto] [overflow-wrap:anywhere]">{ueberschrift}</h1>
       ) : null}
       {zeigeLaden ? (
-        <p className="mt-4 text-sm leading-6 text-brand-800/70" role="status">
+        <p className="mt-4 text-body text-muted-foreground" role="status">
           {PRIVACYBEE_LADE_HINWEIS[flaeche]}
         </p>
       ) : null}
       {zeigeFehler ? (
-        <p className="mt-4 text-sm leading-6 text-brand-800" role="alert">
+        <p className="mt-4 text-body text-foreground" role="alert">
           {PRIVACYBEE_FEHLER_HINWEIS[flaeche]}
         </p>
       ) : null}
