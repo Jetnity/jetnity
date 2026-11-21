@@ -1,9 +1,9 @@
 import type { GlobalesSignOutErgebnis, GlobalesSignOutZiel } from './globales-sign-out'
 
 /**
- * The server Action remains primary and preserves its unscoped/global
- * revocation semantics. If it reports a failure, the already-signed-in
- * browser may retry the SAME global auth.signOut() with the session it owns.
+ * The browser owns the authenticated session and tries the same unscoped/
+ * global auth.signOut() first; the Server Action remains the fallback.
+ * Remote success alone is insufficient if the local browser remains signed in.
  * Neither local-only scope nor manual cookie deletion are acceptable:
  * a successful redirect needs confirmed remote revocation AND no local session.
  */
