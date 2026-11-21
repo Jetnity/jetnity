@@ -4,8 +4,7 @@
 
 21. November 2026. Branch `cursor/erstbesucher-funktionen-2ba1` von `main` `48fe0d21f`, Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Hürden A, B, C, D, E, H, I, J aus `docs/UI_UX_ERSTBESUCHER_PERSPEKTIVE_2026-11-21.md`, zuerst kurzer Plan mit Reihenfolge.
 
-- **Plan:** `docs/ERSTBESUCHER_FUNKTIONEN_PLAN_2026-11-21.md`. Reihenfolge A → E → J → B → I → D → H → C. Noch kein Code.
-- **Offen beim PO:** Rückmeldung zum Plan. Für den Arbeitsstand gilt «höchstens drei offene PRs»; offen sind #1240, #1266 und #1267. Der PR wird deshalb erst nach der Entscheidung des PO angelegt (als vierter PR oder sobald einer geschlossen ist).
+- **Plan:** `docs/ERSTBESUCHER_FUNKTIONEN_PLAN_2026-11-21.md`. Reihenfolge A → E → J → B → I → D → H → C. **PO 21.11., 17:38 MEZ: Plan freigegeben, PR als vierter Draft neben #1240, #1266 und #1267 erlaubt.**
 - **Grenzen:** keine Migration, keine Production, keine neuen Kosten, Login/2FA unberührt, keine neuen Einreiseregeln. Ready/Merge nur nach PO-Go.
 
 ## Abgeschlossen — UI/UX-Feinschliff #1264 gemergt und live

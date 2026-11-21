@@ -32,4 +32,5 @@ Sortiert nach Nutzen für die erste Reise, dann nach Risiko. Kleine Punkte laufe
 
 ## Stand
 
-- 21.11.: Plan erstellt, wartet auf PO-Rückmeldung. Noch kein Code.
+- 21.11.: Plan erstellt.
+- 21.11., 17:38 MEZ: PO gibt Plan und Reihenfolge frei und erlaubt den PR als vierten Draft.
