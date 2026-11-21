@@ -1,0 +1,39 @@
+{
+  "workflow_run": 44904870027,
+  "head_sha": "1d08419470233a3663b949027b8ddd408425ef77",
+  "safety": {
+    "job_id": 136848175153,
+    "conclusion": "success",
+    "tests_passed": 21
+  },
+  "native_sequence": {
+    "job_id": 136848286088,
+    "conclusion": "success",
+    "cases_passed": 11,
+    "candidate_sha256": "c01e8bfe70684ff23357c003b2c27beb2be5fefde8c7040d7ca68b2e4aedbb2e",
+    "artifact_id": 14707017806,
+    "scope": "isolated actual PostgreSQL 17.6; actual lock/restart candidate with local BG1 fixture functions; no hosted release proof"
+  },
+  "hosted_dev": {
+    "job_id": 136848285974,
+    "conclusion": "failure",
+    "public_result": {
+      "schema": 1,
+      "status": "alarm",
+      "code": "timeout"
+    },
+    "public_observed_at": "2026-11-21T12:38:55.4422264Z",
+    "private_error": "DEV_READBACK_STOP QUERY_HTTP_403",
+    "private_observed_at": "2026-11-21T12:38:56.6758939Z",
+    "fixed_dev_identity_status_gates_passed": true,
+    "api_read_only": true,
+    "error_body_read": false,
+    "independent_retirement_verified": false,
+    "source_guard_real_execution": false,
+    "new_source_run_started": false,
+    "login_or_2fa_started": false,
+    "production_write": false
+  },
+  "overall_workflow_conclusion": "failure",
+  "next_live_attempt": "blocked pending resolution of authorized access; no automatic repeat"
+}

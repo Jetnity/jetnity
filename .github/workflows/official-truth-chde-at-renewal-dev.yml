@@ -76,30 +76,16 @@ jobs:
 
   dev_readback:
     needs: safety
-    name: Actual Dev read-only Cycle5 and BG1 verification
+    name: Actual Dev verification blocked by observed access denial
     if: >-
       github.repository == 'Jetnity/jetnity' &&
       github.ref == 'refs/heads/fix/official-truth-chde-at-renewal-dev-20261121'
     runs-on: ubuntu-24.04
-    timeout-minutes: 3
+    timeout-minutes: 1
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-      - name: Actual public Dev guard status
-        env:
-          SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
-          SUPABASE_ACCESS_TOKEN: ''
-        run: node scripts/official-truth-dev-guard-alarm.mjs
-      - name: Exact independent Dev receipt readback (no writes or auth action)
-        # The public endpoint and Management API are independent read paths.
-        # Diagnose a public timeout without changing its failed job outcome.
-        if: ${{ !cancelled() }}
-        env:
-          SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: node scripts/official-truth-dev-cycle5-readback.mjs
+      - name: Preserve blocked hosted acceptance without retrying denied access
+        run: |
+          echo "DEV_READBACK_BLOCKED: QUERY_HTTP_403 observed in run 44904870027."
+          echo "Public Dev RPC also timed out. No API call or credential change is retried."
+          echo "Resolve the authorized Dev access path before restoring both real checks."
+          exit 1

@@ -130,3 +130,41 @@ Der folgende Workflowstand lässt die **separate reine Management-API-Lesung**
 auch nach einem öffentlichen Timeout zu Diagnosezwecken laufen. Ein Fehler
 des öffentlichen Gates bleibt unverändert ein fehlgeschlagener Job; kein
 `continue-on-error`, keine Abschwächung der SQL-Gates und kein Write-Fallback.
+
+## Abschließender Zugriffsbeleg – 21.11., 13:38:56 Uhr Zürich
+
+Der tatsächlich ausgeführte [Lauf 44904870027](https://github.com/Jetnity/jetnity/actions/runs/44904870027)
+auf `1d08419470233a3663b949027b8ddd408425ef77` bestätigt erneut Safety
+**21/21 PASS** und native PG17-Sequenzfälle **11/11 PASS**. Die Kandidatdatei
+und ihr SHA256 sind unverändert; eine unabhängige Zweitbegutachtung hat die
+Originalartefakte, alle Fälle und diese Bindung nochmals geprüft.
+
+Die beiden wirklichen Dev-Lesewege sind nun getrennt belegt:
+
+- Öffentlicher BG1-RPC: erneut `alarm/timeout` nach zehn Sekunden.
+- Management API: feste Dev-Identitätsgates `projects/Dev = 404` und
+  `branches/Dev = 200` bestanden; anschließend die gepinnte READ-ONLY-Abfrage
+  mit **HTTP 403 abgewiesen**, Ausgabe `DEV_READBACK_STOP QUERY_HTTP_403`.
+  Antwortkörper und Zugangsdaten wurden nicht ausgegeben. Kein Entfernen von
+  `read_only`, keine Rechteausweitung und kein alternativer Token.
+
+Der [strukturierte Befund](evidence/official-truth-renewal-20261121/run-44904870027.json)
+ist dauerhaft versioniert. Damit bleibt die unabhängige Live-Bestätigung des
+Owner-Abschlusses **OFFEN**; die beiden vorbereiteten echten AT-Lese-/Publisher-
+Dateien wurden nicht ausgeführt. Das ist kein neuer fehlgeschlagener
+Quellenlauf und kein Verlust der vom Owner gemeldeten Quittung.
+
+**Keine automatische Wiederholung nach 403:** Der anschließende reine
+Dokumentations-/Workflowstand führt keine weiteren Live-Abfragen aus. Sein
+Hosted-Dev-Job bleibt ausdrücklich **FAIL/BLOCKED** mit fester Begründung;
+Safety und native Sequenzprüfungen laufen unverändert. Die fertigen
+Prüfskripte bleiben erhalten. Nach geklärtem Zugang müssen beide echten
+Hosted-Prüfungen wieder eingesetzt und bestanden werden, bevor das Gate
+jemals grün werden darf. Keine Produktionsfreigabe aus dem isolierten Test.
+
+**Konkreter nächster geschützter Schritt:** Die vorhandene Cloud-Browserseite
+für den festen Dev-SQL-Editor steht an Supabase Sign-in. Eine neue Anmeldung
+oder gegebenenfalls 2FA braucht gemäß dem ausdrücklichen Owner-Auftrag sein
+Go. Vor diesem Go wurde keine Authentifizierung begonnen. Auch ein solches
+Go wäre ausschließlich Zugang für die noch offene Dev-Nachlesung und den
+bereits vorbereiteten Dev-Test, keine Production-, Kosten- oder Quellenfreigabe.
