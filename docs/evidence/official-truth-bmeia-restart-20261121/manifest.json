@@ -1,0 +1,320 @@
+{
+  "schema": "jetnity-step3-bmeia-normal-restart-step4-readonly-package-v1",
+  "prepared_at": "2026-11-21",
+  "timezone": "Europe/Zurich",
+  "repository": "Jetnity/jetnity",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "parent_commit": "cb135cdda139e6963789c7f8350ce4a35e46e781",
+  "delivery_binding": "Containing Git commit binds the final files; no self-referential commit SHA.",
+  "user_scope": "Step3 BMEIA source-delta decision and actual Dev normal restart test; prepare Step4 bounded Production read-only request for explicit Go.",
+  "bmeia": {
+    "status": "REVIEW_COMPLETE_NO_RULE_CHANGE_IN_COMPARED_VERSIONS",
+    "original_sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+    "observed_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+    "original_bytes": 172460,
+    "observed_bytes": 172428,
+    "asset_version_parameters_changed": 19,
+    "navigation_anchor_changed": 1,
+    "main_content_bytes": 42541,
+    "main_content_sha256": "9ed47f7fd1544d813a16b0f204b34a20174757b0dd58159646a695b0b052d83f",
+    "main_links_unchanged": 28,
+    "monitor_still_changed": true,
+    "qualification_changed": false,
+    "positive_renewal_proved": false,
+    "reproduction_exact": true
+  },
+  "dev_restart": {
+    "project_id": "yfvbxvijcorffwxbxahl",
+    "status": "PASS_NORMAL_DATABASE_RESTART",
+    "actual_action": "Dashboard Fast database reboot; existing authenticated Dev branch session",
+    "postmaster_before": "2026-11-21T13:01:42.863753Z",
+    "postmaster_after": "2026-11-21T15:57:38.734531Z",
+    "own_sequence_before": "1826/called",
+    "own_sequence_immediate_after": "1826/called",
+    "next_natural_request": "1827",
+    "http_status": 200,
+    "bg1_after_restart_generation": 2085,
+    "successful_correlated_cron_run": 20931,
+    "actual_readback_at": "2026-11-21T16:02:11.315318Z",
+    "bg1_status_at_readback": "current",
+    "immediate_exact_checks": {
+      "own_sequence": true,
+      "legacy_sequence": true,
+      "helper": true,
+      "queue_trigger": true,
+      "v8": true,
+      "v7_baseline_sha": true,
+      "publisher_definition_sha": true,
+      "facts": true,
+      "owner_receipts": true,
+      "at_originals": true,
+      "cron_config_sha": true,
+      "id_ledgers": true
+    },
+    "collector_append_reconciliation": "Single observation appended for already-reserved request1826; old137-ID prefix digest matches; original strict comparison difference preserved.",
+    "crash_failover_restore_tested": false
+  },
+  "production": {
+    "project_id": "qscbgcdmivbbnzrcyegn",
+    "authorization_id": "PROD_READONLY_BASELINE_20261121",
+    "status": "PREPARED_NOT_AUTHORIZED_NOT_EXECUTED",
+    "accessed": false,
+    "mutated": false,
+    "sql_invocations": 0,
+    "max_authorizable_sql_invocations": 16,
+    "max_wall_clock_minutes": 5,
+    "automatic_retry_allowed": false,
+    "sql_manifest_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/MANIFEST.json",
+    "static_independent_and_root_review_complete": true,
+    "static_token_and_hash_checks_passed": 16,
+    "native_parser_or_runtime_pass_claimed": false
+  },
+  "preserved_boundaries": {
+    "support_contacted": false,
+    "new_login_or_2fa": false,
+    "new_cost_commitment": false,
+    "new_pr_or_merge": false,
+    "source_pins_rewritten": false,
+    "expired_data": "derzeit nicht verfügbar"
+  },
+  "ci": {
+    "prior_implementation_commit": "d849a5f7852fb0654bba2c26401b8a55573c07db",
+    "prior_run": 44920650283,
+    "prior_overall": "FAIL",
+    "prior_safety": "PASS",
+    "prior_native_pg17": "PASS",
+    "prior_live_gate": "FAIL_BLOCKED_PRESERVED_MANAGEMENT_API_403",
+    "new_run_result_not_assumed": true
+  },
+  "files": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 177882,
+      "sha256": "46c9c997097ad2ab82ef948806619cf812d1e3824ab62a76dca87b2d211acfcf",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_BMEIA_FACHENTSCHEIDUNG_2026-11-21.md",
+      "bytes": 10926,
+      "sha256": "dbb17194292869de862fdd2d4ebc1723a5730d31dbc417b483dd61ce0f4c5ec8",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md",
+      "bytes": 26130,
+      "sha256": "6c85e1851b20024f405fdcefa9daf021d7723e9baf379178a58b5e3ef68429e2",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_DEV_RESTART_TEST_2026-11-21.md",
+      "bytes": 8895,
+      "sha256": "3effd0bab732c0833c440fce54d0f3af4116ef1ae52df07cd6b77cf9fbd7e42f",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_READONLY_GO_2026-11-21.md",
+      "bytes": 11743,
+      "sha256": "6fcc57256e29ee314115723e63bc47f3a44099601712ae65201951dcb6c951cf",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md",
+      "bytes": 26582,
+      "sha256": "cede2a7f1b2f18832d07c9706f394930e37afcbbfffb46472596decc7d8f047c",
+      "role": "repository documentation"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-input-metadata.json",
+      "bytes": 2196,
+      "sha256": "3ed65b283ead3cf886f5a15387d6df749156164191bd19996ad4e116542b1f66",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-input.READONLY.sql",
+      "bytes": 1413,
+      "sha256": "53cb5a3e4bea1ac7f180fb83121eb67f744bf9df8cb8df0407d60fedc3a1fef7",
+      "role": "actual Dev read-only evidence query"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-observed-batch105-20261121.html",
+      "bytes": 172428,
+      "sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "role": "immutable copied actual official HTML input"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-original-20261116.html",
+      "bytes": 172460,
+      "sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+      "role": "immutable copied actual official HTML input"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-raw-line-diff.txt",
+      "bytes": 5231,
+      "sha256": "eb69c287b8bd45516503ec64b9b995b00ee2fa5c201a0cc1652148d976d19d94",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-root-difference-check.json",
+      "bytes": 572,
+      "sha256": "4a1edecef8bc0c869e539f9053e29b1d306ed917e8532e610b91b2735640b33d",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-source-delta-compare.py",
+      "bytes": 7095,
+      "sha256": "bb6abad0a854d56337b224ee49d1b91dcb25f3215e6e65eba68c3360624924b8",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-source-delta-evidence.json",
+      "bytes": 10777,
+      "sha256": "86b6db2bd2c8191062cac2e49f3e5f5a7fb4cc9db13f948304aac28e7ecd507c",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/dev-restart-before.json",
+      "bytes": 37952,
+      "sha256": "4310d576b80d65d95a91ad6102f3015b4933e7b32c06ac5426ed2f04bc3b3d60",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/dev-restart-immediate-after.json",
+      "bytes": 39072,
+      "sha256": "28bc037f7fafc9bee442bccc203f8a2f6654e2228e5f291000303855a2fbc870",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/dev-restart-natural-proof.json",
+      "bytes": 24885,
+      "sha256": "1bc185f9828b09da24b844919d98b7086d59f30e279ca0b8345cbbdbd6a88ad2",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/production-review-package-prior-cb135cdd.md",
+      "bytes": 23054,
+      "sha256": "f3dd61c1a922b9131b95c63cb2bf6fcf0756f6f029106fe86b34633606d5b6eb",
+      "role": "actual Dev evidence, reproducible comparison or historical archive"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-http-id-restart.NATURAL-PROOF-READONLY.sql",
+      "bytes": 10339,
+      "sha256": "8269733f4b46df747ffedfff60f186324369b8566849625c8768841cf52e760b",
+      "role": "actual Dev read-only evidence query"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-http-id-restart.SNAPSHOT-READONLY.sql",
+      "bytes": 13904,
+      "sha256": "fbff91a763b6300e58afd35f4fbad015e3ac6ae41365d6788c031db7c27e4451",
+      "role": "actual Dev read-only evidence query"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/01-catalog.READONLY.sql",
+      "bytes": 21739,
+      "sha256": "be60971704fa33c3b958812878464893bb6df261e2167153c0f899e3bc70388b",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/02-bg1-at-cron.READONLY.sql",
+      "bytes": 7564,
+      "sha256": "b5c959c5464e9c70f81e73fe2651c710cedd99974b19def5e28e47bda6406db9",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/03-core-id-maxima.READONLY.sql",
+      "bytes": 3473,
+      "sha256": "77af17a58480d72fe97a94a1e573354d2aed583df0aa682d99668d874cb0cb12",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-01.READONLY.sql",
+      "bytes": 2824,
+      "sha256": "cd748a84fdcd5e132c4af7e2723cde4c047f0da14b08e1f118ef64a9650f88f2",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-02.READONLY.sql",
+      "bytes": 2856,
+      "sha256": "ecd529292449580fcfcd0e7b8d00f02794981711083ddcefe3ad3e5df6ed5558",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-03.READONLY.sql",
+      "bytes": 2816,
+      "sha256": "59ffeb05e98e84884d35b402b390919eb8fd0691d67377d0bfbd51422cd66e27",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-04.READONLY.sql",
+      "bytes": 2840,
+      "sha256": "5b6644f6b06eeb3ccd70597a34b2eefdd397dca51e7c2af1894550b30999103c",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-05.READONLY.sql",
+      "bytes": 2832,
+      "sha256": "22f3bd7ad2d86937756faedd77e3ef95184031be2df507c4a94f876d26758797",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-06.READONLY.sql",
+      "bytes": 2856,
+      "sha256": "e641fbca44b2af7675058a746f5c8ad314ba150cb5b5401b0b5d31e9ddfa30fe",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-07.READONLY.sql",
+      "bytes": 2832,
+      "sha256": "0d8ccdb4066f79a67279e2f52853c5553479e01f5c9bcbcfeafedc6e5065b607",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-08.READONLY.sql",
+      "bytes": 2836,
+      "sha256": "b9c55ca57b6ac06967763502b67b35f6d9e30dc303c36118762091affe82810c",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-09.READONLY.sql",
+      "bytes": 2812,
+      "sha256": "9249024e71cb5687beb5cad006eee325045168bc8beb7662541fc08634d33b28",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-10.READONLY.sql",
+      "bytes": 2800,
+      "sha256": "a65a2a284d97025ced35a1c49610206ce6bc589c6c952590a5f31ece5aeab040",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-11.READONLY.sql",
+      "bytes": 2816,
+      "sha256": "0145fb9d8999dc2d233f5da69bcaf8b10b7a9d3d74da8c01a688d063995a054d",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-12.READONLY.sql",
+      "bytes": 2812,
+      "sha256": "e22dc3d01f1aa10a77fd8bc8787fb494e886c0de7cfa5f95d8a20658864d1543",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/04-extra-13.READONLY.sql",
+      "bytes": 2828,
+      "sha256": "7bc436523ad5eb5be51e273bad531918528d6f6f2600800a7ec917fada52309c",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/MANIFEST.json",
+      "bytes": 8379,
+      "sha256": "a5966772cd006472bd38fdeae2ff80be2d970c0f3b8711e51c191b74f6fec8f9",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-readonly-go-20261121/README.md",
+      "bytes": 974,
+      "sha256": "ffe3e20de27f6550bb32c8ed54681aa2051ae2dea97c1a7bbdcf3f597b4fd8db",
+      "role": "prepared Production read-only package; NOT EXECUTED"
+    }
+  ],
+  "manifest_omits_self": true
+}

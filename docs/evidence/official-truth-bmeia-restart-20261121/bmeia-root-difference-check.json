@@ -1,0 +1,15 @@
+{
+  "old_sha": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+  "new_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+  "byte_delta": -32,
+  "theme_version_replacements": 19,
+  "old_theme_version": "1794830959",
+  "new_theme_version": "1795172470",
+  "menu_label_replacements": 1,
+  "menu_url_replacements": 1,
+  "other_changed_bytes": 0,
+  "whole_page_exact_after_only_these_three_replacements": true,
+  "no_rule_change_in_compared_documents": true,
+  "source_qualification_changed": false,
+  "public_facts_renewed": false
+}

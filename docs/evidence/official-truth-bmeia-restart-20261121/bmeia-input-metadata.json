@@ -1,0 +1,54 @@
+{
+  "dev_project": "yfvbxvijcorffwxbxahl",
+  "observed_at": "2026-11-21T15:51:09.192649+00:00",
+  "database": "postgres",
+  "database_role": "postgres",
+  "postmaster_started_at": "2026-11-21T13:01:42.863753+00:00",
+  "original": {
+    "source_id": "bmeia-bern-how-to-apply",
+    "actual_sha": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+    "body_bytes": 172460,
+    "importable": false,
+    "body_digest": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+    "disposition": "RESEARCH_ONLY",
+    "actual_bytes": 172460,
+    "official_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+    "editorial_edition": null,
+    "accepted_fact_count": 0,
+    "source_retrieved_at": "2026-11-16T19:45:39+00:00",
+    "body_file": "bmeia-original-20261116.html"
+  },
+  "watch": {
+    "state": "changed",
+    "batch_id": 105,
+    "source_id": "bmeia-bern-how-to-apply",
+    "request_id": 1805,
+    "observed_at": "2026-11-21T15:30:00.237429+00:00",
+    "observed_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+    "requested_at": "2026-11-21T15:25:00.224038+00:00",
+    "observed_bytes": 172428
+  },
+  "source_configuration": {
+    "role": "independent_official",
+    "raw_sha": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+    "source_id": "bmeia-bern-how-to-apply",
+    "official_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+    "canonical_sha": "b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55",
+    "normalization": "bmeia-theme-assets-v1",
+    "original_bytes": 172460,
+    "destination_code": "AT",
+    "authority_country_code": "AT"
+  },
+  "response": {
+    "id": "1805",
+    "created": "2026-11-21T15:25:00.479713+00:00",
+    "error_msg": null,
+    "timed_out": false,
+    "actual_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+    "status_code": 200,
+    "actual_bytes": 172428,
+    "content_type": "text/html; charset=utf-8",
+    "body_file": "bmeia-observed-batch105-20261121.html"
+  },
+  "production_accessed": false
+}
