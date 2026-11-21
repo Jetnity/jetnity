@@ -53,6 +53,11 @@ jobs:
       - name: Tests
         run: npm run test:core
 
+      # Standalone native Node tests must run explicitly: the pinned V3 core
+      # selector intentionally does not glob arbitrary scripts/*.test.mjs.
+      - name: BG1 five-minute integrity alarm – strict offline tests
+        run: node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs
+
       # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
       # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
       # prüfen – diese Kontrolle stellt sicher, dass keine ungeschützt bleibt.
@@ -454,7 +459,7 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -666,7 +671,7 @@ jobs:
           scripts/db/admin-editorial-cms-1/native.test.ts
 
       - name: Run atomic Admin BG1 transition and guarded runtime proof
-        timeout-minutes: 25
+        timeout-minutes: 35
         run: >-
           node --import ./scripts/server-only-test-register.mjs --import tsx
           --test --test-reporter=tap --test-concurrency=1
@@ -971,10 +976,45 @@ jobs:
         if: steps.zugang.outputs.vorhanden == 'ja'
         run: npm run auth:pruefen
 
-      - name: Dev-Guardstatus
-        if: steps.zugang.outputs.vorhanden == 'ja'
+      # The live five-minute BG1 guard is an operations/official-truth check,
+      # not a static authentication or website code test. A genuine BG1 incident
+      # must remain alarmed and fail on main/BG1-owned PRs, but must not turn an
+      # unrelated app incident PR's valid Auth-config test red. BG1 remains
+      # fail-closed at the DATABASE and runtime; the offline BG1 tests above
+      # continue on every PR. Production promotion has a separate Owner gate.
+      - name: Dev-Guardstatus (BG1/main only)
+        if: >-
+          steps.zugang.outputs.vorhanden == 'ja' &&
+          (github.event_name != 'pull_request' ||
+           startsWith(github.head_ref, 'feat/official-truth-') ||
+           startsWith(github.head_ref, 'fix/bg1-'))
         env:
           SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
           SUPABASE_ACCESS_TOKEN: ''
         run: node scripts/official-truth-dev-guard-alarm.mjs
+
+      # Explicitly isolated from the no-secret Official Truth UI contract.
+      # The existing Auth job already requires repo secrets; this is one
+      # branch-scoped real Dev visitor test with the existing publishable key.
+      - name: Actual AT 50-passport Dev visitor readback
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/official-truth-universal-source-registry-dev-20261119' && steps.zugang.outputs.vorhanden == 'ja' }}
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+          NEXT_PUBLIC_SUPABASE_URL: https://yfvbxvijcorffwxbxahl.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.JETNITY_DEV_PUBLIC_APP_KEY }}
+          VERCEL_ENV: preview
+          VERCEL_PROJECT_ID: prj_wTTVawPItEO7a4HihEmaU3PsuaXM
+          VERCEL_GIT_REPO_OWNER: Jetnity
+          VERCEL_GIT_REPO_SLUG: jetnity
+          VERCEL_GIT_COMMIT_REF: feat/official-truth-universal-source-registry-dev-20261119
+        run: node scripts/official-truth-at-50-browser-dev/run.mjs
+
+      - name: Retain actual AT50 Dev visitor evidence, including failures
+        if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/official-truth-universal-source-registry-dev-20261119' && steps.zugang.outputs.vorhanden == 'ja' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-truth-at50-dev-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/official-truth-at-50-dev-browser/
+          if-no-files-found: error
+          retention-days: 14

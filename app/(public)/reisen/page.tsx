@@ -18,19 +18,14 @@ import type { Metadata } from 'next'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import {
-  MEINE_REISEN_HAUPT,
-  MEINE_REISEN_INNEN,
-  MEINE_REISEN_KOPF,
-  MEINE_REISEN_LEAD,
-  MEINE_REISEN_TITEL,
-} from '@/lib/trips/my-trips-premium-hub-ux-1'
+import { MEINE_REISEN_HAUPT, MEINE_REISEN_INNEN } from '@/lib/trips/my-trips-premium-hub-ux-1'
 import type { SammlungSuchparameter } from '@/lib/trips/reisen-sammlung-abfrage'
 import { reisenSammlungAusParametern } from '@/lib/trips/reisen-sammlung-daten'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import GastReisen from '@/components/trips/GastReisen'
 import GastreiseBruecke from '@/components/trips/GastreiseBruecke'
 import MyTripsCollection from '@/components/trips/MyTripsCollection'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 
 export const metadata: Metadata = {
   title: 'Meine Reisen',
@@ -58,12 +53,11 @@ export default async function ReisenSeite({
       {angemeldet ? <AccountNavigation /> : null}
       <main className={MEINE_REISEN_HAUPT}>
         <div className={MEINE_REISEN_INNEN}>
-          <div className={MEINE_REISEN_KOPF}>
-            <div className="min-w-0">
-              <h1 className={MEINE_REISEN_TITEL}>Meine Reisen</h1>
-              {angemeldet ? null : <p className={MEINE_REISEN_LEAD}>Deine Gastreise ist in diesem Browser gespeichert. Melde dich an, um sie auf anderen Geräten zu öffnen.</p>}
-            </div>
-          </div>
+          <Seitenkopf titel="Meine Reisen" className="mb-6">
+            {angemeldet
+              ? 'In deinem Konto gespeichert und auf allen deinen Geräten sichtbar.'
+              : 'Ohne Konto bleibt deine Reise in diesem Browser. Mit einem Konto siehst du sie auf allen Geräten.'}
+          </Seitenkopf>
 
           {angemeldet ? <KontoReisen parameter={parameter} /> : <GastReisen />}
         </div>

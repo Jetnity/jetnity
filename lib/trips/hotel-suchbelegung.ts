@@ -181,7 +181,8 @@ export function hotelBelegungHinweis(reisende: number | null, belegung: HotelBel
 
 export function hotelGaesteText(reisende: number | null, belegung: HotelBelegungsfelder): string {
   if (!hotelBelegungVollstaendig(belegung)) {
-    return `${hotelReisegruppeText(reisende)} Belegung offen`
+    if (reisende === null) return 'Belegung offen'
+    return `${reisende} ${reisende === 1 ? 'Person' : 'Personen'} · Belegung offen`
   }
   const erwachsen = belegung.erwachsene === 1 ? '1 Erwachsener' : `${belegung.erwachsene} Erwachsene`
   const kind = belegung.kinder === 0 ? '' : belegung.kinder === 1 ? ', 1 Kind' : `, ${belegung.kinder} Kinder`

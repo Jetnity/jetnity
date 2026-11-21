@@ -107,7 +107,7 @@ function manuell(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
 const ZEITRAUM_UNKLAR = /Der Zeitraum fehlt oder ist unvollständig bzw\. ungültig/
 
 function siegeltexte(markup: string): string[] {
-  return [...markup.matchAll(/<span class="inline-flex min-h-8 items-center rounded-full px-2\.5 text-xs font-semibold[^"]*">([^<]*)<\/span>/g)].map(treffer => treffer[1])
+  return [...markup.matchAll(/<span data-status-siegel="[^"]*"[^>]*><svg[\s\S]*?<\/svg>([^<]*)<\/span>/g)].map(treffer => treffer[1])
 }
 
 function zeile(markup: string, titel: string) {

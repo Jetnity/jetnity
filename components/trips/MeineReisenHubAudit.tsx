@@ -12,13 +12,11 @@ import { AlertCircle, MapPin, Plus } from 'lucide-react'
 import AccountNavigation from '@/components/account/AccountNavigation'
 import KontoReisenGruppen from '@/components/trips/KontoReisenGruppen'
 import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import {
   MEINE_REISEN_HAUPT,
   MEINE_REISEN_INNEN,
-  MEINE_REISEN_KOPF,
-  MEINE_REISEN_LEAD,
   MEINE_REISEN_NEU,
-  MEINE_REISEN_TITEL,
 } from '@/lib/trips/my-trips-premium-hub-ux-1'
 import type { TripSummary } from '@/types/trips'
 
@@ -159,19 +157,19 @@ function fixtures(zustand: MeineReisenHubAuditZustand, heute: string): TripSumma
 
 function kopf() {
   return (
-    <div className={MEINE_REISEN_KOPF}>
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Dein Jetnity</p>
-        <h1 className={MEINE_REISEN_TITEL}>Meine Reisen</h1>
-        <p className={MEINE_REISEN_LEAD}>
-          Deine Reisen sind in deinem Konto gespeichert und auf allen Geräten sichtbar.
-        </p>
-      </div>
-      <Link href={'/planen' as Route} className={MEINE_REISEN_NEU}>
-        <Plus className="h-4 w-4" />
-        Neue Reise
-      </Link>
-    </div>
+    <Seitenkopf
+      kicker="Dein Jetnity"
+      titel="Meine Reisen"
+      className="mb-6"
+      aktion={
+        <Link href={'/planen' as Route} className={MEINE_REISEN_NEU}>
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          Neue Reise
+        </Link>
+      }
+    >
+      In deinem Konto gespeichert und auf allen deinen Geräten sichtbar.
+    </Seitenkopf>
   )
 }
 

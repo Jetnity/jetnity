@@ -126,13 +126,13 @@ export default function MarketingLinks({ sprache, headingLevel = 1, uuidErzeugen
   const parameters = url ? Array.from(new URL(url).searchParams.entries()) : []
   return (
     <section data-marketing-links lang={sprache} aria-labelledby="marketing-links-title" className="min-w-0 space-y-6 rounded-2xl border border-border bg-card p-4 text-card-foreground [overflow-wrap:anywhere] sm:p-6">
-      <header className="min-w-0 max-w-3xl space-y-2">
+      <header className="min-w-0 max-w-prose space-y-2">
         <p className="text-sm font-medium text-muted-foreground">{text('marketing.eyebrow')}</p>
-        <Heading id="marketing-links-title" className="text-2xl font-semibold">{text('marketing.title')}</Heading>
+        <Heading id="marketing-links-title" className="text-title">{text('marketing.title')}</Heading>
         <p className="text-base leading-7">{text('marketing.intro')}</p>
-        <p className="text-sm leading-6 text-muted-foreground">{text('marketing.scope')}</p>
-        <p className="text-sm leading-6 text-muted-foreground">{text('marketing.origin')}</p>
-        <p className="text-sm leading-6 text-muted-foreground">{text('marketing.language')}</p>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.scope')}</p>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.origin')}</p>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.language')}</p>
       </header>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <div className="min-w-0"><label htmlFor="marketing-destination" className="block text-sm font-medium">{text('marketing.destination')}</label><select id="marketing-destination" value={destination} onChange={(event) => { invalidate(); setDestination(event.target.value as MarketingZiel) }} className="mt-2 min-h-11 w-full min-w-0 rounded-xl border border-border bg-background px-3 py-2 text-base text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30">{MARKETING_ZIELE.map((choice) => <option key={choice} value={choice}>{text(`marketing.destination.${choice}`)}</option>)}</select></div>
@@ -140,7 +140,7 @@ export default function MarketingLinks({ sprache, headingLevel = 1, uuidErzeugen
       </div>
       <section aria-labelledby="marketing-identifiers" className="min-w-0 space-y-3 border-t border-border pt-5">
         <h2 id="marketing-identifiers" className="text-lg font-semibold">{text('marketing.identifiers')}</h2>
-        <p className="text-sm leading-6 text-muted-foreground">{text('marketing.identifiersHint')}</p>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.identifiersHint')}</p>
         <dl className="grid min-w-0 gap-4 sm:grid-cols-2">
           <div className="min-w-0"><dt className="text-sm font-medium">{text('marketing.campaignId')}</dt><dd data-marketing-campaign className="mt-1 break-all font-mono text-sm">{campaignId ?? text('marketing.noCampaign')}</dd></div>
           <div className="min-w-0"><dt className="text-sm font-medium">{text('marketing.contentId')}</dt><dd data-marketing-content className="mt-1 break-all font-mono text-sm">{contentId ?? text('marketing.noContent')}</dd></div>
@@ -158,7 +158,7 @@ export default function MarketingLinks({ sprache, headingLevel = 1, uuidErzeugen
       {error && <p role="alert" className="rounded-xl border border-border bg-muted p-3 text-sm leading-6">{text(`marketing.${error}`)}</p>}
       <section aria-labelledby="marketing-preview-title" className="min-w-0 space-y-3 border-t border-border pt-5">
         <h2 id="marketing-preview-title" className="text-lg font-semibold">{text('marketing.previewTitle')}</h2>
-        <p id="marketing-preview-hint" className="text-sm leading-6 text-muted-foreground">{text('marketing.previewHint')}</p>
+        <p id="marketing-preview-hint" className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.previewHint')}</p>
         {url ? <>
           <pre ref={urlElement} id="marketing-url" role="textbox" aria-label={text('marketing.url')} aria-readonly="true" aria-multiline="true" aria-describedby="marketing-preview-hint" tabIndex={0} className="m-0 min-h-11 min-w-0 max-w-full whitespace-pre-wrap break-all rounded-xl border border-border bg-background p-3 font-mono text-base leading-7 text-foreground [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30">{url}</pre>
           <div className="grid min-w-0 gap-2 sm:grid-cols-2">
@@ -170,7 +170,7 @@ export default function MarketingLinks({ sprache, headingLevel = 1, uuidErzeugen
         </> : <p className="rounded-xl border border-dashed border-border p-3 text-sm leading-6">{text('marketing.previewEmpty')}</p>}
         {copyStatus !== 'idle' && <p id="marketing-copy-status" role="status" className="text-sm leading-6">{text(`marketing.copy.${copyStatus}`)}</p>}
         {busy && <p id="marketing-pending-warning" role="status" className="rounded-xl border border-border bg-muted p-3 text-sm leading-6">{text('marketing.copy.outstanding')}</p>}
-        <p className="text-sm leading-6 text-muted-foreground">{text('marketing.reload')}</p>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{text('marketing.reload')}</p>
       </section>
     </section>
   )

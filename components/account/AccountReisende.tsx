@@ -4,6 +4,8 @@ import { AlertCircle, Plus, Users } from 'lucide-react'
 import { useRef, useState, type FormEvent } from 'react'
 
 import AccountReisendeKarte, { RegistryBelege } from '@/components/account/AccountReisendeKarte'
+import { ReisendeKopf } from '@/components/account/ReisendeKopf'
+import { Leerzustand } from '@/components/ui/leerzustand'
 import { useAccountRegistryWorkflow } from '@/components/account/useAccountRegistryWorkflow'
 import LandFeld from '@/components/country/LandFeld'
 import type { Problem } from '@/lib/api/datenbank-lesen'
@@ -76,25 +78,18 @@ export default function AccountReisende({
       className="min-w-0 [&_*]:[overflow-wrap:anywhere] [&_input]:!text-base [&_select]:!text-base"
       aria-busy={workflow.stand.lesen.offen}
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">
-        {REGISTRY_COPY.seitenEyebrow}
-      </p>
-      <h1 className="mt-2 text-balance break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
-        {REGISTRY_COPY.seitenTitel}
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-700">{REGISTRY_COPY.seitenLead}</p>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-700">{REGISTRY_COPY.dualAuthorityHinweis}</p>
+      <ReisendeKopf />
 
       {klasse !== 'gueltig' ? (
         <section
           role="alert"
-          className="mt-8 rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center sm:px-10"
+          className="mt-8 rounded-panel border border-destructive/40 bg-card px-6 py-10 text-center sm:px-10"
         >
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-destructive">
             <AlertCircle className="h-5 w-5" aria-hidden="true" />
           </span>
-          <h2 className="mt-5 text-xl font-semibold text-red-800">{REGISTRY_COPY.fehlerTitel}</h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">
+          <h2 className="mt-5 text-title text-foreground">{REGISTRY_COPY.fehlerTitel}</h2>
+          <p className="mx-auto mt-3 max-w-md text-body text-muted-foreground">
             {problem?.status === 503 ? REGISTRY_COPY.fehler503 : REGISTRY_COPY.fehler500}
           </p>
           <button
@@ -105,7 +100,7 @@ export default function AccountReisende({
           >
             {REGISTRY_COPY.erneutLesen}
           </button>
-          <p className="mt-2 text-sm text-red-800">{REGISTRY_COPY.erneutLesenHinweis}</p>
+          <p className="mt-2 text-meta text-muted-foreground">{REGISTRY_COPY.erneutLesenHinweis}</p>
         </section>
       ) : null}
 
@@ -135,9 +130,9 @@ export default function AccountReisende({
               data-registry-editor="anlegen"
               data-registry-epoche={anlegenSlot?.epoche ?? 0}
               onSubmit={anlegen}
-              className="mt-4 max-w-xl rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-6"
+              className="mt-4 max-w-xl rounded-card border border-border bg-card p-5 shadow-card sm:p-6"
             >
-              <h2 className="text-lg font-semibold tracking-[-0.03em] text-brand-800">
+              <h2 className="text-subtitle text-foreground">
                 {REGISTRY_COPY.reisendenHinzufuegen}
               </h2>
               <div className="mt-4 grid gap-4">
@@ -193,15 +188,9 @@ export default function AccountReisende({
           ) : null}
 
           {travellers && travellers.length === 0 ? (
-            <section className="mt-6 rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-10 text-center sm:px-10">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-                <Users className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">
-                {REGISTRY_COPY.leerTitel}
-              </h2>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">{REGISTRY_COPY.leerText}</p>
-            </section>
+            <Leerzustand symbol={Users} titel={REGISTRY_COPY.leerTitel} className="mt-6">
+              {REGISTRY_COPY.leerText}
+            </Leerzustand>
           ) : travellers ? (
             <ul className={verwaltetId ? 'mt-6 grid grid-cols-1 gap-4' : 'mt-6 grid grid-cols-1 gap-4 md:grid-cols-2'}>
               {travellers.map((traveller) => {

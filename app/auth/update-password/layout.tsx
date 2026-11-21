@@ -1,5 +1,6 @@
 // app/auth/update-password/layout.tsx
 import type { Metadata } from 'next';
+import { Markenrahmen } from '@/components/layout/Markenrahmen';
 
 export const metadata: Metadata = {
   title: 'Passwort aktualisieren',
@@ -11,5 +12,7 @@ export default function UpdatePasswordLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <Markenrahmen>{children}</Markenrahmen>
+  );
 }

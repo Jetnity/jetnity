@@ -17,6 +17,7 @@ import RentalHeart from '@/components/saved-offers/RentalHeart'
 import RentalHearts from '@/components/saved-offers/RentalHearts'
 import { OfferCard, OfferComparison, OfferDetails } from './Offers'
 import { BUTTON, CATEGORY, FIELD, PRIMARY, rentalDate, rentalRequest } from './client'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reise: Trip; zentral?: boolean }) {
   const id = useId()
@@ -37,6 +38,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [unavailable, setUnavailable] = useState(false)
+  const providerUnavailable = useCallback(() => setUnavailable(true), [])
   const [transmission, setTransmission] = useState('')
   const [category, setCategory] = useState('')
   const [order, setOrder] = useState('price')
@@ -112,11 +114,11 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const categories = [...new Set(result?.offers.map(o => o.car.category).filter((c): c is string => !!c) ?? [])]
   return <section aria-label="Mietwagen suchen und vergleichen" data-discovercars-native="1" className="grid min-w-0 gap-7">
     <div className={zentral ? 'org-form' : ORGANISIEREN_FLAECHE_KLASSE}>
-      {zentral ? <form onSubmit={submit} onChangeCapture={invalidate}>
+      {zentral ? <form onSubmit={submit} onChangeCapture={invalidate} className="org-aktion-ende">
         <div className="org-formtop"><h2>Mietwagen suchen</h2><label className="org-check"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)}/> Andere Rückgabestation</label></div>
         <div className={'org-fields org-rentalfields ' + (oneWay ? 'org-four' : '')}>
-          <div className="org-station"><StationField nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
-          {oneWay&&<div className="org-station"><StationField nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
+          <div className="org-station"><StationField onUnavailable={providerUnavailable} nurBeiFokus label="Abholstation" query={pickupQuery} value={pickup} onQuery={q=>{invalidate();setPickupQuery(q);setPickup(null)}} onSelect={s=>{invalidate();setPickup(s);setPickupQuery(s.name)}}/></div>
+          {oneWay&&<div className="org-station"><StationField onUnavailable={providerUnavailable} nurBeiFokus label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={q=>{invalidate();setDropoffQuery(q);setDropoff(null)}} onSelect={s=>{invalidate();setDropoff(s);setDropoffQuery(s.name)}}/></div>}
           <Suchkalender start={pickupDate} ende={dropoffDate} startLabel="Abholung" endeLabel="Rückgabe"
             min={heutigesDatum()} max="9999-12-31" minTage={0} maxTage={365} dauerAnzeigen={false} kontext="Dein Mietzeitraum"
             setzen={(start, ende) => { invalidate(); setPickupDate(start); setDropoffDate(ende) }} />
@@ -146,8 +148,8 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
               <label className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-brand-800"><input type="checkbox" checked={oneWay} onChange={e => setOneWay(e.target.checked)} className="h-4 w-4 shrink-0 accent-brand-800" />Andere Rückgabestation</label>
             </div>
             <div className={`grid min-w-0 gap-3 ${oneWay ? 'sm:grid-cols-2' : ''}`}>
-              <StationField label="Abholstation" query={pickupQuery} value={pickup} onQuery={s => { invalidate(); setPickupQuery(s); setPickup(null) }} onSelect={s => { invalidate(); setPickup(s); setPickupQuery(s.name) }} />
-              {oneWay ? <StationField label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={s => { invalidate(); setDropoffQuery(s); setDropoff(null) }} onSelect={s => { invalidate(); setDropoff(s); setDropoffQuery(s.name) }} /> : null}
+              <StationField onUnavailable={providerUnavailable} label="Abholstation" query={pickupQuery} value={pickup} onQuery={s => { invalidate(); setPickupQuery(s); setPickup(null) }} onSelect={s => { invalidate(); setPickup(s); setPickupQuery(s.name) }} />
+              {oneWay ? <StationField onUnavailable={providerUnavailable} label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={s => { invalidate(); setDropoffQuery(s); setDropoff(null) }} onSelect={s => { invalidate(); setDropoff(s); setDropoffQuery(s.name) }} /> : null}
             </div>
             {reise.stages.length ? <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-xs text-ink-600">Deine Reiseorte:</span>{reise.stages.map(s => <button key={s.id} type="button" className="min-h-11 rounded-full px-3 text-sm font-semibold text-brand-700 underline decoration-line-300 underline-offset-4 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600" onClick={() => { invalidate(); setPickup(null); setPickupQuery(s.name); setPickupDate(s.arrivalDate ?? reise.startDate ?? ''); setDropoffDate(s.departureDate ?? reise.endDate ?? '') }}>{s.name}</button>)}</div> : null}
           </fieldset>
@@ -203,7 +205,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
     <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-1 px-1"><p className="text-xs leading-5 text-ink-600">Partnerangebot · Jetnity kann bei einer Buchung eine Provision erhalten.</p><a href={DISCOVERCARS_GENERISCH_HREF} target="_blank" rel="noopener noreferrer sponsored" referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-brand-800 underline underline-offset-4">Direkt bei DiscoverCars suchen<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /><span className="sr-only">, neuer Tab</span></a></div>
     <dialog ref={dialog} aria-labelledby={`${id}-detail-title`} onCancel={close} onKeyDown={e => { if (e.key === 'Escape') e.stopPropagation() }} onClick={e => { if (e.target === e.currentTarget) close() }} className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-4xl overflow-y-auto rounded-3xl border border-line-200 bg-white p-0 backdrop:bg-brand-950/50">
       {selected ? <><div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line-200 bg-white px-5 py-3 sm:px-6"><div className="min-w-0"><p className="text-xs text-ink-600">{selected.supplier?.name} · Fahrzeugdetails</p><h3 id={`${id}-detail-title`} className="text-xl font-semibold text-brand-800">{selected.car.name}</h3></div><button type="button" onClick={close} className={`${BUTTON} shrink-0 px-3`} aria-label="Fahrzeugdetails schliessen"><X className="h-5 w-5" aria-hidden="true" /></button></div>
-        <div className="p-5 sm:p-6">{detailLoading ? <p role="status" className="flex items-center gap-2 py-6 text-brand-800"><Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" />Fahrzeugdetails werden geladen …</p> : detailMessage ? <div role="alert"><p className="text-sm text-ink-800">{detailMessage}</p><button type="button" className={`${BUTTON} mt-3`} onClick={() => void handleOfferDetails(selected)}>Erneut versuchen</button></div> : <OfferDetails offer={selected} expired={expired} expiresAt={result?.expiresAt ?? 0} onExpired={() => setNow(Date.now())} />}</div>
+        <div className="p-5 sm:p-6">{detailLoading ? <Ladeplatzhalter sichtbar zeilen={2} status="Fahrzeugdetails werden geladen …" /> : detailMessage ? <div role="alert"><p className="text-sm text-ink-800">{detailMessage}</p><button type="button" className={`${BUTTON} mt-3`} onClick={() => void handleOfferDetails(selected)}>Erneut versuchen</button></div> : <OfferDetails offer={selected} expired={expired} expiresAt={result?.expiresAt ?? 0} onExpired={() => setNow(Date.now())} />}</div>
       </> : null}
     </dialog>
   </section>

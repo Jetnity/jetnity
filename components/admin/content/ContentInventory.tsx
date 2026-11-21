@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import AdminSnapshotRefresh from '@/components/admin/AdminSnapshotRefresh'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { SUCHLAENGE, THEMEN, entdeckerHref } from '@/lib/inspiration/explorer-1/katalog'
 import type { ContentInventoryModel } from '@/lib/admin/content/inventory'
 
@@ -13,12 +14,9 @@ export default function ContentInventory({ inventory, observedAt }: {
   const { selection, entries, total } = inventory
   return (
     <div className="mx-auto grid min-w-0 max-w-7xl grid-cols-1 gap-5 [overflow-wrap:anywhere]">
-      <header className="min-w-0">
-        <p className="text-sm font-medium text-muted-foreground">Content · Jetnity</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Content-Inventar</h1>
-        <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Prüfe die vorhandenen Reiseideen, ihre Originaltexte und Bilder. Die Vorschau zeigt, wie Kunden die Inspiration finden.</p>
-        <a href="/admin/content/editor" className={`${actionClass} mt-4`}>CMS-Editor öffnen</a>
-      </header>
+      <Seitenkopf kicker="Administration" titel="Content-Inventar" aktion={<a href="/admin/content/editor" className={actionClass}>CMS-Editor öffnen</a>}>
+        <p>Prüfe die vorhandenen Reiseideen, ihre Originaltexte und Bilder. Die Vorschau zeigt, wie Kunden die Inspiration finden.</p>
+      </Seitenkopf>
 
       <AdminSnapshotRefresh observedAt={observedAt} />
 
@@ -60,7 +58,7 @@ export default function ContentInventory({ inventory, observedAt }: {
             <ul className="mt-3 flex flex-wrap gap-2" aria-label={`Themen für ${entry.name}`}>
               {entry.themen.map((id) => <li key={id} className="max-w-full rounded-lg bg-muted px-2 py-1 text-xs">{THEMEN.find((topic) => topic.id === id)?.label}</li>)}
             </ul>
-            <dl className="mt-4 grid gap-4 text-sm">
+            <dl className="mt-4 grid max-w-prose gap-4 text-sm">
               <div><dt className="font-medium">Beschreibung im Katalog</dt><dd className="mt-1 text-muted-foreground">{entry.beschreibung}</dd></div>
               <div><dt className="font-medium">Reiseidee für die Planung</dt><dd className="mt-1 text-muted-foreground">{entry.idea}</dd></div>
               <div><dt className="font-medium">Inhaltstyp und Zuordnung</dt><dd className="mt-1 text-muted-foreground">Kuratierte Inspiration · {entry.placeId}</dd></div>
@@ -80,8 +78,8 @@ export default function ContentInventory({ inventory, observedAt }: {
 
       <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6" aria-labelledby="content-evidence">
         <h2 id="content-evidence" className="text-lg font-semibold">Quelle und offene Nachweise</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Diese Ansicht liest den bestehenden Inspirationskatalog dieser Anwendungsversion. Sie umfasst die Reiseideen auf der Startseite und unter /entdecken, nicht alle Seiten von Jetnity. Die Momentaufnahme oben ist der Anzeigezeitpunkt, keine redaktionelle Prüfung.</p>
-        <dl className="mt-4 grid min-w-0 gap-4 text-sm sm:grid-cols-2">
+        <p className="mt-2 max-w-prose text-sm text-muted-foreground">Diese Ansicht liest den bestehenden Inspirationskatalog dieser Anwendungsversion. Sie umfasst die Reiseideen auf der Startseite und unter /entdecken, nicht alle Seiten von Jetnity. Die Momentaufnahme oben ist der Anzeigezeitpunkt, keine redaktionelle Prüfung.</p>
+        <dl className="mt-4 grid min-w-0 gap-4 text-sm sm:grid-cols-2 [&_dd]:max-w-prose">
           <div><dt className="font-medium">Originalquellen</dt><dd className="mt-1 text-muted-foreground [overflow-wrap:anywhere]">lib/places/inspiration.ts<br />lib/inspiration/explorer-1/katalog.ts</dd></div>
           <div><dt className="font-medium">Sprache und Markt</dt><dd className="mt-1 text-muted-foreground">Deutsch. Ein redaktioneller Zielmarkt ist nicht erfasst; das Land des Reiseziels ist keine Markteinstellung.</dd></div>
           <div><dt className="font-medium">Verantwortung und Zeitangaben</dt><dd className="mt-1 text-muted-foreground">Redaktioneller Owner sowie Veröffentlichungs-, Änderungs- und Prüfdatum sind im Katalog nicht erfasst.</dd></div>
@@ -89,7 +87,7 @@ export default function ContentInventory({ inventory, observedAt }: {
           <div><dt className="font-medium">Traffic und Conversion</dt><dd className="mt-1 text-muted-foreground">Für diese Inhalte liegen hier keine Messdaten vor. Fehlende Messdaten bedeuten nicht null Aufrufe oder Buchungen.</dd></div>
           <div><dt className="font-medium">Indexierung</dt><dd className="mt-1 text-muted-foreground">/entdecken ist in der Seitenkonfiguration als noindex/nofollow angelegt. Der tatsächliche Suchmaschinenindex wurde hier nicht geprüft. Technische SEO-Informationen findest du unter <a href="/admin/system-health" className="underline underline-offset-2">System Health</a>.</dd></div>
         </dl>
-        <p className="mt-5 text-sm text-muted-foreground">Inhalte werden derzeit im Quellbestand gepflegt. Diese Ansicht speichert, genehmigt und veröffentlicht keine Änderungen.</p>
+        <p className="mt-5 max-w-prose text-sm text-muted-foreground">Inhalte werden derzeit im Quellbestand gepflegt. Diese Ansicht speichert, genehmigt und veröffentlicht keine Änderungen.</p>
       </section>
     </div>
   )

@@ -90,7 +90,7 @@ for (const [name, version] of Object.entries({ ...pkg.dependencies, ...pkg.devDe
   }
 }
 for (const [name, version] of [
-  ['next', '16.4.1'],
+  ['next', '16.4.6'],
   ['react', '19.2.8'],
   ['react-dom', '19.2.8'],
 ]) {

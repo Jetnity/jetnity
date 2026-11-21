@@ -36,6 +36,9 @@ export function HomeInspiration({ ziele, status = 'static' }: {
           Deine Reise sollte es auch sein. Jetnity berücksichtigt deine Interessen, dein Tempo und die Menschen, mit denen du reist.
         </p>
       </div>
+      {status === 'fallback' && <p role="status" className="mt-6 text-sm leading-6 text-ink-950">
+        Weitere Reiseideen sind vorübergehend nicht verfügbar. Entdecke inzwischen diese Auswahl.
+      </p>}
       {status !== 'unavailable' && ziele.length ? <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {ziele.map((ziel) => (
           <li key={ziel.name} className="min-w-0">

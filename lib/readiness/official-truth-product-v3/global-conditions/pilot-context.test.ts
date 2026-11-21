@@ -217,19 +217,80 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   ] as const
   assert.deepEqual(adminRuntimeCiSourceAmendment.map(row => row.path), ['.github/workflows/ci.yml'])
   assert.equal(new Set(adminRuntimeCiSourceAmendment.map(row => row.path)).size, 1)
-  // Passkeys Dev 1 installs supabase-js 2.119.2. Only the package identity moves.
+  // Passkeys Dev 1 installs supabase-js 2.119.2 after the #1265 package identity.
   // Every earlier official-truth amendment stays on its reviewed hash.
   const passkeySdkSourceAmendment = [
     { path: 'package.json',
-      previousReviewed: { bytes: 6717, sha256: 'd0cc039b2dc2aa20b066c9421edc8df1ab03455caefcfa41396d504b6237df8f' },
-      reviewed: { bytes: 6717, sha256: '5cc96473998d3a76dcfc234c46ca36c1a4faa15fc8852f78179c5355c566c7a8' } },
+      previousReviewed: { bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' },
+      reviewed: { bytes: 6717, sha256: 'b72ed28b71bd9a351eaef3637b6b56f2a28844c3e7f4dc6ac3f9a28bb96e540e' } },
     { path: 'package-lock.json',
-      previousReviewed: { bytes: 326553, sha256: 'f763a124825aab57fcbed14c4913a18503dd3f3b03773c9877a340870695e37f' },
-      reviewed: { bytes: 324951, sha256: 'f24b42a38f10c65b1fd4899b066da4e4347e3c048015f44f9367c0f255aebe59' } },
+      previousReviewed: { bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' },
+      reviewed: { bytes: 325113, sha256: 'da769bf15ec9a5349e88cb7420267a5dedd70953c15f8e93ec6a6a802e24dfb4' } },
   ] as const
   assert.deepEqual(passkeySdkSourceAmendment.map(row => row.path), ['package.json', 'package-lock.json'])
   assert.equal(new Set(passkeySdkSourceAmendment.map(row => row.path)).size, 2)
   let reviewedPasskeySdkRows = 0
+  // Next.js 16.4.6 security patch: finite root-package successor only.
+  // Historical C1/MI1/R28/HMA1/Admin CI source identities remain unchanged.
+  const nextSecurityPatch = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 50018, sha256: '9060166e750251096b564b31eedc881398e116da55973cbd3f6c38606affa7f2' },
+      reviewed: { bytes: 50018, sha256: 'd2999d128b254d36491aeb34409a24b19373c8de83b337ac81bc4fc358377d23' } },
+    { path: 'package.json',
+      previousReviewed: { bytes: 6717, sha256: 'd0cc039b2dc2aa20b066c9421edc8df1ab03455caefcfa41396d504b6237df8f' },
+      reviewed: { bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' } },
+    { path: 'package-lock.json',
+      previousReviewed: { bytes: 326553, sha256: 'f763a124825aab57fcbed14c4913a18503dd3f3b03773c9877a340870695e37f' },
+      reviewed: { bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' } },
+  ] as const
+  assert.deepEqual(nextSecurityPatch.map(row => row.path), ['.github/workflows/ci.yml', 'package.json', 'package-lock.json'])
+  assert.equal(new Set(nextSecurityPatch.map(row => row.path)).size, 3)
+  // The 2026-11-20 AT50 browser/Dev HTTP addition belongs exclusively to the
+  // existing branch-gated Auth job. Root CI, U1 no-secret, PG17, quota and
+  // aggregator families remain intact. Never normalize to arbitrary workspace
+  // bytes: exact predecessor and successor are both independently pinned.
+  const at50CiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 50018, sha256: 'd2999d128b254d36491aeb34409a24b19373c8de83b337ac81bc4fc358377d23' },
+      reviewed: { bytes: 51712, sha256: '15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779' } },
+  ] as const
+  assert.deepEqual(at50CiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(at50CiSuccessor.map(row => row.path)).size, 1)
+  // Reviewed BG1 five-minute alarm test successor. The original AT50
+  // 51712-byte workflow remains immutable as the immediate predecessor.
+  // Exactly one guarded offline alarm step was added; existing CI families,
+  // native tests, timeouts and fail-closed aggregator must remain active.
+  const bg1AlarmCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 51712, sha256: '15232a13327e584209fb5a22cd0a2b08132bab7a3e5058ce91211e8768048779' },
+      reviewed: { bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' } },
+  ] as const
+  assert.deepEqual(bg1AlarmCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(bg1AlarmCiSuccessor.map(row => row.path)).size, 1)
+  // Independent, append-only successor for incident app PR #1265. The prior
+  // AT50/BG1 source identities stay immutable and are checked above.
+  // This pins the *exact* scope-only change for the live Dev BG1 alarm: it is
+  // required on main and BG1-/Official-Truth PRs, while Auth configuration
+  // and strict offline BG1 negative tests still run on every PR.
+  const incidentAppCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 52025, sha256: 'ac86cd4dadd177061b833673c92fff6baccbb465044185a774784e040e7f3de5' },
+      reviewed: { bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' } },
+  ] as const
+  assert.deepEqual(incidentAppCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(incidentAppCiSuccessor.map(row => row.path)).size, 1)
+  const bg1AlarmWorkflowSource = readFileSync('.github/workflows/ci.yml', 'utf8')
+  assert.equal(bg1AlarmWorkflowSource.split('node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs').length, 2)
+  assert.match(bg1AlarmWorkflowSource,/\bnpm run test:core\b/)
+  assert.match(bg1AlarmWorkflowSource,/\bname: Hosted V3 — native PostgreSQL 17/)
+  assert.match(bg1AlarmWorkflowSource, /\bname: Dev-Guardstatus \(BG1\/main only\)/)
+  assert.ok(bg1AlarmWorkflowSource.includes("github.event_name != 'pull_request'"))
+  assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'feat/official-truth-')"))
+  assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'fix/bg1-')"))
+  let reviewedIncidentAppCiRows = 0
+  let reviewedBg1AlarmRows = 0
+  let reviewedAt50Rows = 0
+  let reviewedNextPatchRows = 0
   let reviewedAdminRuntimeCiRows = 0
   let reviewedAdminCiRows = 0
   let reviewedImportDeadlineRows = 0
@@ -309,13 +370,38 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousAdminCi.bytes, sha256: previousAdminCi.sha256 }, adminRuntimeCiChanged.previousReviewed, row.path)
       reviewedAdminRuntimeCiRows++
     }
-    const previousRuntime = adminRuntimeCiChanged?.reviewed ?? previousAdminCi
+    const reviewedBeforePatch = adminRuntimeCiChanged?.reviewed ?? previousAdminCi
+    const nextPatchChanged = nextSecurityPatch.find(file => file.path === row.path)
+    if (nextPatchChanged) {
+      assert.deepEqual({ bytes: reviewedBeforePatch.bytes, sha256: reviewedBeforePatch.sha256 },
+        nextPatchChanged.previousReviewed, row.path)
+      reviewedNextPatchRows++
+    }
+    const expectedBeforeAt50 = nextPatchChanged?.reviewed ?? reviewedBeforePatch
+    const at50Changed = at50CiSuccessor.find(file => file.path === row.path)
+    if (at50Changed) {
+      assert.deepEqual({ bytes: expectedBeforeAt50.bytes, sha256: expectedBeforeAt50.sha256 },
+        at50Changed.previousReviewed, row.path)
+      reviewedAt50Rows++
+    }
+    const bg1AlarmChanged = bg1AlarmCiSuccessor.find(file => file.path === row.path)
+    if (bg1AlarmChanged) {
+      assert.deepEqual(bg1AlarmChanged.previousReviewed,at50Changed?.reviewed ?? expectedBeforeAt50,row.path)
+      reviewedBg1AlarmRows++
+    }
+    const previousIncident = bg1AlarmChanged?.reviewed ?? at50Changed?.reviewed ?? expectedBeforeAt50
+    const incidentAppChanged = incidentAppCiSuccessor.find(file => file.path === row.path)
+    if (incidentAppChanged) {
+      assert.deepEqual(incidentAppChanged.previousReviewed, previousIncident, row.path)
+      reviewedIncidentAppCiRows++
+    }
+    const previousPasskey = incidentAppChanged?.reviewed ?? previousIncident
     const passkeySdkChanged = passkeySdkSourceAmendment.find(file => file.path === row.path)
     if (passkeySdkChanged) {
-      assert.deepEqual({ bytes: previousRuntime.bytes, sha256: previousRuntime.sha256 }, passkeySdkChanged.previousReviewed, row.path)
+      assert.deepEqual({ bytes: previousPasskey.bytes, sha256: previousPasskey.sha256 }, passkeySdkChanged.previousReviewed, row.path)
       reviewedPasskeySdkRows++
     }
-    const expected = passkeySdkChanged?.reviewed ?? previousRuntime
+    const expected = passkeySdkChanged?.reviewed ?? previousPasskey
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -331,5 +417,9 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedImportDeadlineRows, 2)
   assert.equal(reviewedAdminCiRows, 1)
   assert.equal(reviewedAdminRuntimeCiRows, 1)
+  assert.equal(reviewedNextPatchRows, 3)
+  assert.equal(reviewedAt50Rows, 1)
+  assert.equal(reviewedBg1AlarmRows, 1)
+  assert.equal(reviewedIncidentAppCiRows, 1)
   assert.equal(reviewedPasskeySdkRows, 2)
 })

@@ -1,7 +1,9 @@
 'use client'
 
-import { useId, useLayoutEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import Reisefoto from './Reisefoto'
+import OrganisierenBestand from './OrganisierenBestand'
+import { organisierenBestand } from '@/lib/trips/organisieren/bestand'
 import { StadtbildNachweis } from './Stadtbild'
 import ManualOffer from '@/components/saved-offers/ManualOffer'
 import { providerZurReiseplanUrl } from '@/lib/trips/provider-rueckkehr'
@@ -11,17 +13,12 @@ import {
   Ticket,
   CarFront,
   Route,
-  BriefcaseBusiness,
-  CalendarDays,
-  Users,
-  Wallet,
   ArrowUpRight,
 } from 'lucide-react'
 import { hotelDaten, reiseFoto } from '@/lib/trips/organisieren/katalog'
-import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { landName } from '@/lib/country/darstellung'
-import type { Trip, TripStage } from '@/types/trips'
+import type { Trip, TripItem, TripStage } from '@/types/trips'
 import Flugsuche from './Flugsuche'
 import type { Suchkategorie } from '@/lib/trips/workspace-mode'
 import Hotelsuche from './Hotelsuche'
@@ -96,6 +93,8 @@ export default function Organisieren({
   hotelOrtKey,
   kanteId,
   rueckkehrTagId,
+  ohneTag,
+  onItem,
 }: {
   reise: Trip
   tab: Suchkategorie
@@ -105,8 +104,25 @@ export default function Organisieren({
   kanteId?: string
   rueckkehrTagId?: string
   partnerAktivitaeten?: ReactNode
+  /** Separat geladene ungeplante Punkte; ohne Angabe die der Reise. */
+  ohneTag?: readonly TripItem[]
+  onItem?: (itemId: string) => void
 }) {
   const uid = useId()
+  const ungeplant = ohneTag ?? reise.ohneTag
+  const bestand = useMemo(
+    () => Object.fromEntries(tabs.map((t) => [t.key, organisierenBestand(reise, ungeplant, t.key)])) as Record<Suchkategorie, ReturnType<typeof organisierenBestand>>,
+    [reise, ungeplant],
+  )
+  useEffect(() => {
+    const leiste = document.getElementById(uid + '-tabs')
+    const knopf = document.getElementById(uid + '-' + tab)
+    if (!leiste || !knopf || leiste.scrollWidth <= leiste.clientWidth) return
+    const links = knopf.offsetLeft - 4
+    const rechts = knopf.offsetLeft + knopf.offsetWidth + 4
+    if (links < leiste.scrollLeft) leiste.scrollLeft = links
+    else if (rechts > leiste.scrollLeft + leiste.clientWidth) leiste.scrollLeft = rechts - leiste.clientWidth
+  }, [tab, uid])
   const [auswahlVersion, setAuswahlVersion] = useState(0)
   // Resume a category's existing search. Only an explicit route/destination
   // request changes its entry context; ordinary tab navigation supplies none.
@@ -183,44 +199,13 @@ export default function Organisieren({
       data-workspace-modus="organisieren"
       aria-labelledby="workspace-organisieren-titel"
     >
-      <header className="org-hero">
-        <Reisefoto src={reiseFoto(erste, true)} ziel={erste} sofort breite={1200} hoehe={270} />
-        <div className="org-shade" />
-        <div className="org-wrap org-heading">
-          <p className="org-kicker">
-            <BriefcaseBusiness size={15} /> Reise organisieren
-          </p>
-          <h1 id="workspace-organisieren-titel" data-workspace-modus-heading tabIndex={-1}>
-            {titel}
-          </h1>
-          <a href={providerZurReiseplanUrl(reise, rueckkehrTagId)} className="mt-2 inline-flex min-h-11 max-w-full items-center rounded-full border border-white/70 px-4 py-2 text-sm font-semibold text-white underline decoration-white/60 underline-offset-4 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50" data-provider-rueckkehr="plan">Zurück zu meinem Reiseplan</a>
-          <p className="mt-1 text-xs text-white/90">Anbieter öffnen sich separat. Deine gespeicherte Reise bleibt bei Jetnity; eine externe Buchung wird nicht automatisch übernommen.</p>
-          <p className="org-route">
-            {reise.stages.map((s, i) => (
-              <span key={s.id}>
-                {i > 0 && <i aria-hidden="true"> → </i>}
-                {s.name}
-              </span>
-            ))}
-          </p>
-          <div className="org-meta">
-            <span>
-              <CalendarDays />
-              {etappenZeitraumAnzeigen(reise.startDate, reise.endDate) ?? 'Reisezeit offen'}
-            </span>
-            <span>
-              <Users />
-              {reise.travellers} Reisende
-            </span>
-            {reise.budgetAmount != null && (
-              <span>
-                <Wallet />
-                {betragLesbar(reise.budgetAmount, reise.currency)}
-              </span>
-            )}
-          </div>
-        </div>
-      </header>
+      <div className="org-wrap org-intro">
+        <h2 id="workspace-organisieren-titel" data-workspace-modus-heading tabIndex={-1} className="sr-only">
+          {titel} organisieren
+        </h2>
+        <p className="max-w-prose text-meta text-[color:var(--org-muted)]">Anbieter öffnen sich separat. Deine gespeicherte Reise bleibt bei Jetnity; eine externe Buchung wird nicht automatisch übernommen. Was du dort buchst, trägst du danach im Reiseplan ein, damit alles an einem Ort bleibt.</p>
+        <a href={providerZurReiseplanUrl(reise, rueckkehrTagId)} className="org-rueckkehr" data-provider-rueckkehr="plan">Zurück zu meinem Reiseplan</a>
+      </div>
       <div className="org-wrap org-body">
         <div className="org-tabs" role="tablist" id={uid + '-tabs'} aria-label="Reisekategorien">
           {tabs.map((t, i) => (
@@ -244,6 +229,7 @@ export default function Organisieren({
         <SuchbereichKontext.Provider key={t.key} value={tab === t.key}>
         <div id={uid + '-panel-' + t.key} role="tabpanel" aria-labelledby={uid + '-' + t.key}
           hidden={tab !== t.key} inert={tab !== t.key} data-suchbereich={t.key}>
+          <OrganisierenBestand kategorie={t.key} eintraege={bestand[t.key]} onItem={onItem} />
           {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {t.key === 'unterkunft' && (
             <Hotelsuche

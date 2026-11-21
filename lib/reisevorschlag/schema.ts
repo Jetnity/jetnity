@@ -148,12 +148,26 @@ const isoDatum = z
 
 const uhrzeit = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/)
 
+// This is a *classification* correction, not an extra hotel booking.
+// The model sometimes labels the final morning of a journey (e.g.
+// "Letzter Morgen in Krabi") as "stay", although the phrase describes
+// daylight/free time, not a night of lodging. The same parse is used
+// for model preview AND for untrusted account-save requests; no second
+// model call or special admin/DB repair is needed.
+const TAGESABSCHNITT_STATT_UNTERKUNFT =
+  /^(?:letzte[rns]?|last)\s+(?:morgen|vormittag|morning)(?:\s|$)/iu
+
 const punktSchema = z.object({
   art: z.enum(TRIP_ITEM_KINDS),
   titel: pflichttext(GRENZEN.titel),
   notiz: kanntext(GRENZEN.notiz),
   /** Ortszeit, ohne Zeitzone – wie `trip_items.starts_at`. */
   beginn: uhrzeit.nullable(),
+}).transform((punkt) => {
+  if (punkt.art !== 'stay' || !TAGESABSCHNITT_STATT_UNTERKUNFT.test(punkt.titel)) {
+    return punkt
+  }
+  return { ...punkt, art: 'activity' as const }
 })
 
 const tagSchema = z.object({

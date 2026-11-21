@@ -3,6 +3,7 @@ import { test } from 'node:test'
 
 import type { Ladung } from '@/lib/admin/ladezustand'
 import { EINREISE_AMPEL_TEXT } from '@/lib/readiness/einreise-kundenanzeige'
+import { atBmiSourceReview } from '@/lib/readiness/official-truth-at-method-v1/at-bmi-visa-groups-v1'
 import { einreisePrueferLaden, einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
 import { createV3VisitorController, type V3VisitorTimers, type V3VisitorUiState } from '@/lib/readiness/official-truth-product-v3/visitor/controller'
 import type { V3VisitorInput } from '@/lib/readiness/official-truth-product-v3/contract'
@@ -124,4 +125,26 @@ test('ein abgelaufenes akzeptiertes Ergebnis wird nicht mehr als visumfrei angez
   assert.match(abgelaufen?.hinweis ?? '', /abgelaufen/)
   assert.equal(JSON.stringify(abgelaufen?.anzeige).includes('Kein Visum nötig'), false)
   controller.dispose()
+})
+
+test('amtliche AT-Quellenhinweise verwenden die tatsächlich beantworteten Passcodes statt des Ziellands', () => {
+  const input: V3VisitorInput = { destinationCountryCode: 'AT', citizenshipCountryCodes: ['DE', 'IN', 'UA'] }
+  const state: V3VisitorUiState = {
+    phase: 'ready', refresh: 'off', focusResult: false, message: null,
+    view: { input, synthetic: false, generatedAt: '2026-11-19T19:30:00.000Z',
+      cells: input.citizenshipCountryCodes.map(country => ({
+        country, label: country,
+        results: [{ status: 'unavailable' as const, title: 'Derzeit nicht verfügbar', message: 'Noch nicht freigegeben' }],
+      })) },
+  }
+  const sicht = einreisePrueferSicht(state)
+  assert.ok(sicht)
+  assert.deepEqual(sicht.citizenshipCodes, ['DE', 'IN', 'UA'])
+  assert.deepEqual(sicht.citizenshipCodes.map(code => atBmiSourceReview(code)?.group), ['F', 'V', 'E'])
+  assert.equal(sicht.anzeige.paare.length, 3)
+  // The existing pair.landCode is the *destination* for trip UI consumers.
+  // It must never be repurposed as the passport for source reviews.
+  assert.deepEqual(sicht.anzeige.paare.map(paar => paar.landCode), ['AT', 'AT', 'AT'])
+  assert.equal(sicht.anzeige.paare.every(paar => paar.ampel === 'neutral'), true)
+  assert.equal(sicht.anzeige.paare.every(paar => paar.themen.length === 0), true)
 })

@@ -26,8 +26,9 @@ export default async function ImpressumPage() {
   })
 
   return (
-    <main className="bg-surface-75 text-brand-800">
-      <article className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="px-5 text-foreground sm:px-8">
+      <article className="mx-auto w-full max-w-prose py-12 text-body sm:py-16">
+        <p className="mb-1 text-kicker uppercase text-muted-foreground">Rechtliches</p>
         <PrivacyBeeEinbettung flaeche="impressum" einbetten={einbetten} />
       </article>
     </main>

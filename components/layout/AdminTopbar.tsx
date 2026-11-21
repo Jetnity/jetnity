@@ -11,6 +11,7 @@ import { globalesAbmeldenMenueOffen } from '@/lib/auth/globales-sign-out'
 import { useAdminShell } from '@/app/(admin)/admin/layout'
 import { AdminNavigationSearchTrigger } from '@/components/admin/AdminNavigationSearch'
 import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
+import { ADMIN_NAV_ITEMS } from '@/lib/admin/navigation'
 
 type Props = {
   title?: string
@@ -20,18 +21,18 @@ type Props = {
 }
 
 const PFAD_LABEL: Record<string, string> = {
-  admin: 'Steuerzentrale',
-  users: 'Nutzer',
-  payments: 'Zahlungen',
-  security: 'Security',
-  'system-health': 'System Health',
-  'provider-ops': 'Provider & Kosten',
-  analytics: 'Analytics',
-  content: 'Content',
-  marketing: 'Marketing',
-  settings: 'Einstellungen',
-  localization: 'Lokalisierung',
+  ...Object.fromEntries(ADMIN_NAV_ITEMS.map((item) => [item.href.split('/').at(-1) ?? 'admin', item.label])),
+  editor: 'Editor',
+  'official-truth': 'Amtliche Quellen',
+  'at-method': 'Österreich-Methode',
+  'at-50-method': 'Österreich: 50 Pässe',
+  guard: 'Schutzprüfung',
+  import: 'Quellenlauf',
+  method: 'Methode',
 }
+
+/** Zwischenstufen wie `/admin/official-truth` haben keine eigene Seite und bleiben Text. */
+const SEITEN_MIT_ZIEL = new Set(ADMIN_NAV_ITEMS.map((item) => item.href))
 
 function buildCrumbs(pathname: string) {
   const parts = (pathname || '/').split('/').filter(Boolean)
@@ -100,27 +101,28 @@ export default function AdminTopbar({
               aria-label="Sidebar umschalten"
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
           )}
 
           <div className="min-w-0">
-            <div className="flex shrink-0 items-center gap-2">
-              <h1 className="truncate text-sm font-semibold leading-6 sm:text-base">{heading}</h1>
-            </div>
+            {/* Die h1 trägt der Seitenkopf jeder Seite; hier steht nur der Ort. */}
+            <p className="truncate text-sm font-semibold leading-6 sm:text-base">{heading}</p>
 
             {crumbs.length > 1 ? <nav aria-label="Breadcrumb" className="mt-0.5 hidden text-xs sm:block">
               <ol className="flex flex-wrap items-center gap-1 text-muted-foreground">
                 {crumbs.map((c, i) => (
                   <li key={c.href} className="inline-flex items-center gap-1">
                     {i > 0 && <span aria-hidden>/</span>}
-                    {i < crumbs.length - 1 ? (
+                    {i < crumbs.length - 1 && SEITEN_MIT_ZIEL.has(c.href) ? (
                       <Link
                         href={c.href}
-                        className="hover:text-foreground hover:underline underline-offset-4"
+                        className="inline-flex min-h-6 items-center rounded-sm relative pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-2.5 pointer-coarse:before:content-[''] hover:text-foreground hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         {c.label}
                       </Link>
+                    ) : i < crumbs.length - 1 ? (
+                      <span>{c.label}</span>
                     ) : (
                       <span aria-current="page" className="text-foreground">
                         {c.label}
@@ -172,6 +174,7 @@ export default function AdminTopbar({
 
             <GlobalesAbmeldenForm
               action={signOutToAdminLoginAction}
+              ziel="/admin/login"
               fehlerClassName="mt-2 max-w-[14rem] text-xs"
             >
               {userOpen ? (

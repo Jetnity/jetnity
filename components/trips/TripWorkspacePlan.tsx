@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 
 import { abdeckungsKante, type AbdeckungsBand } from '@/lib/trips/cross-device-interaction-1'
+import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   ART_BEZEICHNUNG,
   betragLesbar,
@@ -377,10 +378,10 @@ export default function TripWorkspacePlan({
   const tagesKopf = tag && (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+        <p className="text-kicker uppercase text-brand-600">
           {laufDesTags?.name ?? `Tag ${tag.dayIndex}`}
         </p>
-        <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+        <h3 className="mt-1 text-title text-brand-800">
           {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
         </h3>
         {tag.items.length > 0 ? (
@@ -464,7 +465,7 @@ export default function TripWorkspacePlan({
 
   const ungeplant = (timeline.ungeplante.length > 0 || (formularOffen && bearbeiten?.dayId == null)) && (
         <div className="mt-5 border-t border-line-200 pt-5">
-          <p tabIndex={-1} data-plan-ungeplant className={cn('rounded text-xs font-semibold uppercase tracking-[0.16em] text-ink-700', fokusRing)}>
+          <p tabIndex={-1} data-plan-ungeplant className={cn('rounded text-kicker uppercase text-ink-700', fokusRing)}>
             Noch nicht eingeplant
           </p>
           <ol data-plan-timeline className="ml-1 mt-3 min-w-0 space-y-2 border-l border-line-300 pl-3 sm:pl-4">
@@ -708,6 +709,16 @@ function Planpunkt({
   mutationTag?: string
 }) {
   const Symbol = ART_SYMBOL[punkt.kind]
+  const [fragen, setFragen] = React.useState(false)
+  const entfernenKnopf = React.useRef<HTMLButtonElement>(null)
+  const abbrechenKnopf = React.useRef<HTMLButtonElement>(null)
+  React.useEffect(() => {
+    if (fragen) abbrechenKnopf.current?.focus()
+  }, [fragen])
+  const nichtEntfernen = () => {
+    setFragen(false)
+    entfernenKnopf.current?.focus()
+  }
   const inhalt = (
     <>
       <span className="min-w-0 flex-1">
@@ -773,23 +784,74 @@ function Planpunkt({
         ) : (
           <div className="flex min-h-11 min-w-0 flex-1 basis-[10rem] items-start py-1">{inhalt}</div>
         )}
-        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-left text-sm text-brand-800 [overflow-wrap:anywhere]',fokusRing)}
+        <div className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end">
+        {hinweis && onPreparation && <button type="button" className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-left text-sm text-brand-800 underline underline-offset-4 [overflow-wrap:anywhere]',fokusRing)}
           onClick={()=>onPreparation(hinweis.ziel)}>{hinweis.title}</button>}
         {onBearbeiten && <button type="button" onClick={onBearbeiten} aria-label={`${punkt.title} bearbeiten`}
           className={cn('min-h-11 min-w-0 max-w-full rounded-full px-3 text-sm font-semibold text-brand-800 [overflow-wrap:anywhere]', fokusRing)}>Bearbeiten</button>}
         <button
+          ref={entfernenKnopf}
           type="button"
-          onClick={onEntfernen}
+          onClick={() => setFragen((offen) => !offen)}
           data-plan-entfernen={`${mutationTag}:${punkt.id}`}
           disabled={gesperrt}
           aria-label={`${punkt.title} entfernen`}
+          aria-expanded={fragen}
           className={cn(
-            'ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 transition hover:bg-white hover:text-danger-600 disabled:pointer-events-none disabled:opacity-40',
             fokusRing,
           )}
         >
           <Trash2 className="h-4 w-4" />
         </button>
+        </div>
+        {fragen ? (
+          <div
+            role="group"
+            aria-label={`Diesen Punkt entfernen: ${punkt.title}?`}
+            data-plan-entfernen-frage={punkt.id}
+            className="grid min-w-0 basis-full gap-2 border-t border-line-200 px-1 pb-1 pt-3"
+            onKeyDown={(event) => {
+              if (event.key !== 'Escape') return
+              event.preventDefault()
+              event.stopPropagation()
+              nichtEntfernen()
+            }}
+          >
+            <div className="break-words text-sm font-semibold text-brand-800">Diesen Punkt entfernen: {punkt.title}?</div>
+            <div className="text-meta text-ink-800">
+              Er verschwindet aus deiner Reise. Das lässt sich nicht rückgängig machen.
+              {istGebucht(punkt) && kannBuchungMarkieren(punkt) ? ' Eine Buchung beim Anbieter bleibt davon unberührt.' : ''}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={gesperrt}
+                onClick={() => {
+                  setFragen(false)
+                  onEntfernen()
+                }}
+                className={cn(
+                  'inline-flex min-h-11 items-center rounded-full bg-danger-600 px-4 text-sm font-semibold text-white disabled:opacity-50',
+                  fokusRing,
+                )}
+              >
+                Endgültig entfernen
+              </button>
+              <button
+                ref={abbrechenKnopf}
+                type="button"
+                onClick={nichtEntfernen}
+                className={cn(
+                  'inline-flex min-h-11 items-center rounded-full border border-line-300 px-4 text-sm font-semibold text-brand-800',
+                  fokusRing,
+                )}
+              >
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </li>
   )

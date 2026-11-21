@@ -3,6 +3,10 @@ import Link from 'next/link'
 import { AlertCircle, ArrowRight, Ticket } from 'lucide-react'
 
 import BuchungenFilter from '@/components/account/BuchungenFilter'
+import { Karte } from '@/components/ui/karte'
+import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
+import { Leerzustand } from '@/components/ui/leerzustand'
+import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { buchungPlanpunktPfad, type KontoBuchung } from '@/lib/account/buchungen'
 import { buchungenAnsichtAus, type BuchungenAnsicht } from '@/lib/account/buchungen-abfrage'
 import type { Problem } from '@/lib/api/datenbank-lesen'
@@ -41,21 +45,23 @@ function ansichtAusAlt(alt: BuchungenAlt): BuchungenAnsicht {
 const textLink =
   'inline-flex min-h-11 w-full min-w-0 max-w-full flex-wrap items-center justify-center gap-2 whitespace-normal rounded-full px-5 text-center text-sm font-semibold [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 sm:w-auto'
 
+function Kopf({ sprache }: { sprache: UiSprache }) {
+  const texte = BUCHUNGEN_TEXTE[sprache]
+  return (
+    <Seitenkopf kicker={texte.seitenEyebrow} titel={texte.seitenTitel}>
+      <p>{texte.seitenLead}</p>
+      <p className="mt-2 text-meta">{texte.hinweis}</p>
+    </Seitenkopf>
+  )
+}
+
 /** The route's loading presentation, without a second locale read. */
 export function BuchungenLadeanzeige({ sprache }: { sprache: UiSprache }) {
-  const texte = BUCHUNGEN_TEXTE[sprache]
   return (
     <main lang={sprache} className="min-w-0 px-4 py-10 [overflow-wrap:anywhere] sm:px-6 sm:py-14">
       <div className="mx-auto min-w-0 max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">{texte.seitenEyebrow}</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">{texte.seitenTitel}</h1>
-        <section aria-busy="true" aria-live="polite" className="mt-10 rounded-[30px] border border-black/5 bg-white px-6 py-14 text-center sm:px-10">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-            <Ticket className="h-5 w-5" aria-hidden="true" />
-          </span>
-          <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em] text-brand-800">{texte.ladenTitel}</h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-700">{texte.ladenText}</p>
-        </section>
+        <Kopf sprache={sprache} />
+        <Ladeplatzhalter sichtbar status={BUCHUNGEN_TEXTE[sprache].ladenTitel} className="mt-8" />
       </div>
     </main>
   )
@@ -67,19 +73,19 @@ function BuchungsKarte({ buchung, sprache }: { buchung: KontoBuchung; sprache: U
   const planpunkt = buchungPlanpunktPfad(buchung.tripId, buchung.id)
 
   return (
-    <article className="min-w-0 max-w-full rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] [overflow-wrap:anywhere] sm:p-6">
+    <Karte as="article" className="p-5 [overflow-wrap:anywhere] sm:p-6">
       <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-        <p className="min-w-0 max-w-full text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 [overflow-wrap:anywhere]">{sprache === 'de' ? buchung.artBezeichnung : texte[`art.${buchung.kind}`]}</p>
+        <p className="min-w-0 max-w-full text-kicker uppercase text-brand-600 [overflow-wrap:anywhere]">{sprache === 'de' ? buchung.artBezeichnung : texte[`art.${buchung.kind}`]}</p>
         {buchung.tripArchived ? (
           <p className="rounded-full bg-surface-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700">
             {texte.archivKennzeichen}
           </p>
         ) : null}
       </div>
-      <h2 className="mt-3 min-w-0 max-w-full break-words text-xl font-semibold tracking-[-0.03em] text-brand-800 [overflow-wrap:anywhere]">{buchung.title}</h2>
-      {zeit ? <p className="mt-2 text-sm text-ink-800">{zeit}</p> : null}
+      <h2 className="mt-2 min-w-0 max-w-full break-words text-subtitle text-foreground [overflow-wrap:anywhere]">{buchung.title}</h2>
+      {zeit ? <p className="mt-2 text-meta text-foreground">{zeit}</p> : null}
       {buchung.tripTitle ? (
-        <p className="mt-2 break-words text-sm text-ink-700">
+        <p className="mt-1 break-words text-meta text-muted-foreground">
           {texte.reiseBezug}: {buchung.tripTitle}
         </p>
       ) : null}
@@ -92,7 +98,7 @@ function BuchungsKarte({ buchung, sprache }: { buchung: KontoBuchung; sprache: U
           <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
         </Link>
       ) : null}
-    </article>
+    </Karte>
   )
 }
 
@@ -114,23 +120,23 @@ function Hinweis({
       role={rolle}
       className={
         rolle === 'alert'
-          ? 'mt-8 min-w-0 max-w-full rounded-[26px] border border-red-200 bg-red-50 px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
-          : 'mt-8 min-w-0 max-w-full rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
+          ? 'mt-8 min-w-0 max-w-full rounded-panel border border-destructive/40 bg-card px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
+          : 'mt-8 min-w-0 max-w-full rounded-panel border border-dashed border-border bg-card px-6 py-10 text-center [overflow-wrap:anywhere] sm:px-10'
       }
     >
       {rolle === 'alert' ? (
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white text-red-600">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-destructive">
           <AlertCircle className="h-5 w-5" aria-hidden="true" />
         </span>
       ) : (
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-foreground">
           <Ticket className="h-5 w-5" aria-hidden="true" />
         </span>
       )}
-      <h2 className={`mt-5 min-w-0 max-w-full break-words text-xl font-semibold tracking-[-0.03em] [overflow-wrap:anywhere] ${rolle === 'alert' ? 'text-red-800' : 'text-brand-800'}`}>
+      <h2 className="mt-5 min-w-0 max-w-full break-words text-title text-foreground [overflow-wrap:anywhere]">
         {titel}
       </h2>
-      <p className={`mx-auto mt-3 min-w-0 max-w-full break-words text-sm leading-6 [overflow-wrap:anywhere] sm:max-w-md ${rolle === 'alert' ? 'text-red-700' : 'text-ink-700'}`}>
+      <p className="mx-auto mt-3 min-w-0 max-w-full break-words text-body text-muted-foreground [overflow-wrap:anywhere] sm:max-w-md">
         {text}
       </p>
       {href && aktion ? (
@@ -150,20 +156,18 @@ export default function AccountBuchungen(props: ({ ansicht: BuchungenAnsicht } |
 
   return (
     <div lang={sprache} className="min-w-0 max-w-full [overflow-wrap:anywhere]" data-buchungen={ansicht.zustand}>
-      <p className="max-w-full text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 [overflow-wrap:anywhere]">{texte.seitenEyebrow}</p>
-      <h1 className="mt-2 min-w-0 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-800 [overflow-wrap:anywhere] sm:text-5xl">{texte.seitenTitel}</h1>
-      <p className="mt-3 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.seitenLead}</p>
-      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.hinweis}</p>
-      <p className="mt-2 max-w-full break-words text-sm leading-6 text-ink-700 [overflow-wrap:anywhere] sm:max-w-xl">{texte.ordnungHinweis}</p>
+      <Kopf sprache={sprache} />
 
-      <BuchungenFilter
-        titel={ansicht.titel}
-        art={ansicht.art}
-        archiv={ansicht.archiv}
-        zurueckHref={ansicht.zurueckHref}
-        standHref={ansicht.wiederholenHref}
-        sprache={sprache}
-      />
+      {ansicht.zustand === 'leer' ? null : (
+        <BuchungenFilter
+          titel={ansicht.titel}
+          art={ansicht.art}
+          archiv={ansicht.archiv}
+          zurueckHref={ansicht.zurueckHref}
+          standHref={ansicht.wiederholenHref}
+          sprache={sprache}
+        />
+      )}
 
       {ansicht.zustand === 'ungueltig' ? (
         <Hinweis
@@ -178,7 +182,19 @@ export default function AccountBuchungen(props: ({ ansicht: BuchungenAnsicht } |
         <Hinweis rolle="alert" titel={texte.fehlerTitel} text={fehlerText} href={ansicht.wiederholenHref} aktion={texte.wiederholen} />
       ) : null}
       {ansicht.zustand === 'leer' ? (
-        <Hinweis rolle="status" titel={texte.leerTitel} text={texte.leerText} />
+        <div role="status" className="mt-8">
+          <Leerzustand
+            symbol={Ticket}
+            titel={texte.leerTitel}
+            aktion={
+              <Link href="/reisen" className={`${textLink} bg-brand-800 text-white hover:bg-brand-900`}>
+                {texte.leerAktion}
+              </Link>
+            }
+          >
+            {texte.leerText}
+          </Leerzustand>
+        </div>
       ) : null}
       {ansicht.zustand === 'keine' ? (
         <Hinweis rolle="status" titel={texte.keineTrefferTitel} text={texte.keineTrefferText} />
@@ -202,7 +218,10 @@ export default function AccountBuchungen(props: ({ ansicht: BuchungenAnsicht } |
       ) : null}
 
       {ansicht.buchungen.length > 0 ? (
-        <ul className="mt-8 space-y-4">
+        <p className="mt-8 text-meta text-muted-foreground">{texte.ordnungHinweis}</p>
+      ) : null}
+      {ansicht.buchungen.length > 0 ? (
+        <ul className="mt-3 space-y-4">
           {ansicht.buchungen.map((buchung) => (
             <li key={buchung.id}>
               <BuchungsKarte buchung={buchung} sprache={sprache} />
@@ -223,7 +242,7 @@ export default function AccountBuchungen(props: ({ ansicht: BuchungenAnsicht } |
       ) : null}
 
       {ansicht.endeZeigen ? (
-        <p role="status" className="mt-6 text-sm leading-6 text-ink-700">
+        <p role="status" className="mt-6 text-meta text-muted-foreground">
           {texte.seitenEnde}
         </p>
       ) : null}

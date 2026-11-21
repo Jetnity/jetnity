@@ -125,6 +125,13 @@
 :where([data-workspace-theme="green"]) .workspace-content [data-u1c-kante][aria-pressed="true"] :where(strong, span) {
   color: rgb(var(--jet-brand-900));
 }
+/* Segment and filter choices: the chosen one carries the citrus fill, like the selected day. */
+:where([data-workspace-theme="green"]) .workspace-content [data-wahl][aria-pressed="true"] {
+  background-color: rgb(var(--jet-citrus-400));
+  border-color: rgb(var(--jet-citrus-400));
+  color: rgb(var(--jet-brand-900));
+}
+:where([data-workspace-theme="green"]) .workspace-content [data-wahl][aria-pressed="false"]:hover { background-color: var(--workspace-soft); }
 :where([data-workspace-theme="green"]) .workspace-content :where(input, textarea)::placeholder { color: rgb(var(--jet-ink-500)); opacity: 1; }
 :where([data-workspace-theme="green"]) .workspace-content :where(.shadow-brand) { box-shadow: none; }
 /* Keep the existing companion readable in the narrow workspace and at larger
@@ -136,26 +143,39 @@
 .workspace-content #reisebegleiter button .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.75rem; }
 .workspace-content [data-workspace-identity].workspace-trip-heading {
-  background: none; color: var(--workspace-ink); margin: 0 0 1.5rem; border: 0; border-radius: 0; overflow: visible;
+  background: none; color: var(--workspace-ink); margin: 0; border: 0; border-radius: 0; overflow: visible;
 }
-.workspace-content [data-workspace-identity].workspace-trip-heading > div:first-child { padding: 0; }
-.workspace-trip-heading-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .75rem; }
-.workspace-eyebrow { font-size: .6875rem; letter-spacing: .17em; text-transform: uppercase; font-weight: 650; color: var(--workspace-muted); margin-bottom: .5rem; }
-.workspace-content .workspace-trip-heading h1 { font-size: clamp(1.6rem, 2.4vw, 2rem); letter-spacing: -.035em; line-height: 1.2; font-weight: 650; overflow-wrap: anywhere; }
-.workspace-status { border: 1px solid var(--workspace-edge); border-radius: .5rem; padding: .35rem .65rem; font-size: .75rem; color: var(--workspace-muted); }
-.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .65rem 1.25rem; margin-top: 1rem; color: var(--workspace-muted); font-size: .875rem; }
-.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .5rem; }
+.workspace-trip-kopf { margin-bottom: 1.5rem; }
+.workspace-eyebrow { color: var(--workspace-muted); margin-bottom: .375rem; }
+.workspace-content .workspace-trip-heading h1 { color: var(--workspace-ink); overflow-wrap: anywhere; hyphens: auto; }
+.workspace-status { border: 1px solid var(--workspace-edge); border-radius: 999px; padding: .3rem .75rem; color: var(--workspace-ink); background: var(--workspace-panel); }
+.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .375rem 1.25rem; margin-top: .75rem; color: var(--workspace-muted); }
+.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .4rem; }
 .workspace-trip-meta dd { overflow-wrap: anywhere; min-width: 0; }
-.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .15rem; }
-.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.25rem; font-size: .75rem; color: var(--workspace-muted); margin-top: .75rem; }
-.workspace-trip-storage > span { display: flex; align-items: center; gap: .5rem; }
-.workspace-reiseoptionen { margin-top: .75rem; border-top: 1px solid var(--workspace-edge); }
+.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .125rem; }
+.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; color: var(--workspace-muted); margin-top: .875rem; }
+.workspace-trip-storage > span { display: flex; align-items: center; gap: .4rem; }
+/* Ortsbild-Kopf in Reiseplan und Organisieren: Text steht immer auf der dunklen Seite des Verlaufs. */
+.workspace-content [data-workspace-identity].workspace-trip-heading[data-workspace-kopfbild] {
+  position: relative; overflow: hidden; border-radius: 1.5rem; padding: clamp(1.5rem, 3vw, 2.75rem);
+  color: #fff; background-color: rgb(var(--jet-brand-800));
+  background-image: linear-gradient(90deg, rgb(11 49 42 / .98) 0%, rgb(13 48 41 / .92) 45%, rgb(13 48 41 / .3) 100%), var(--workspace-kopfbild);
+  background-size: cover; background-position: center, center 52%;
+}
+[data-workspace-kopfbild] > * { max-width: 40rem; }
+[data-workspace-kopfbild] .workspace-eyebrow { color: rgb(var(--jet-citrus-300)); }
+.workspace-content [data-workspace-kopfbild].workspace-trip-heading h1 { color: #fff; }
+[data-workspace-kopfbild] .workspace-trip-meta { color: rgb(255 255 255 / .9); }
 .workspace-reiseoptionen > summary {
   display: flex; align-items: center; min-height: 44px; cursor: pointer; list-style: none;
-  font-size: .875rem; font-weight: 650; color: var(--workspace-ink);
+  font-weight: 600; color: var(--workspace-ink); text-decoration: underline; text-underline-offset: 4px;
 }
 .workspace-reiseoptionen > summary::-webkit-details-marker { display: none; }
 .workspace-reiseoptionen > summary:focus-visible { outline: 3px solid var(--workspace-ink); outline-offset: 3px; }
+.workspace-reiseoptionen[open] { flex-basis: 100%; }
+:where([data-workspace-theme="green"]) [data-status-siegel="gebucht"] { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
+:where([data-workspace-theme="green"]) [data-status-siegel="gewaehlt"] { border-color: var(--workspace-ink); }
+:where([data-workspace-theme="green"]) [data-status-siegel="offen"] { border-color: var(--workspace-edge); }
 .workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
 /* These legacy header slots were white on a dark hero. Only recolour them
    inside the compact, transparent heading; keep dark action buttons intact. */
@@ -165,7 +185,7 @@
 .workspace-content [data-workspace-overview="integrated"] { gap: 1.5rem; margin-top: 0; }
 .workspace-content [data-workspace-attention="integrated"] { border-radius: 1rem; }
 .workspace-content [data-workspace-attention="integrated"] > div:first-child { display: block; }
-.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading { padding: 1.25rem 1.5rem; background: var(--workspace-soft); color: var(--workspace-ink); }
+.workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading { padding: 1.25rem 1.5rem; background: var(--workspace-panel); color: var(--workspace-ink); border-bottom: 1px solid var(--workspace-edge); }
 .workspace-attention-heading p { color: var(--workspace-muted); }
 .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading + div { padding: 0; }
 .workspace-content [data-workspace-attention="integrated"] ul { border-radius: 0; margin: 0; }
@@ -192,20 +212,31 @@
 .workspace-route-copy :where(strong, small) { display: block; }
 .workspace-route-copy small { font-size: .8125rem; color: var(--workspace-muted); margin-top: .2rem; }
 .workspace-route-empty { padding: 1rem 1.5rem; }
+.workspace-route-overview .workspace-route-ohne-tage { margin: 0; padding: 1rem 1.5rem; border-top: 1px solid var(--workspace-edge); overflow-wrap: anywhere; }
+.workspace-route-copy .workspace-route-stay { display: flex; align-items: center; gap: .375rem; margin-top: .375rem; }
+.workspace-route-copy .workspace-route-stay svg { width: .9rem; height: .9rem; }
+.workspace-route-copy .workspace-route-stay[data-route-unterkunft="offen"] { color: var(--workspace-ink); font-weight: 600; }
 .workspace-content [data-workspace-trip-parts] { border-radius: 1rem; }
-.workspace-content [data-workspace-trip-parts] > p { padding: 1rem 1.5rem; font-size: 1.125rem; letter-spacing: -.02em; text-transform: none; }
-.workspace-content [data-workspace-trip-parts] button { padding: 1rem 1.5rem; min-height: 90px; }
-.workspace-content :where([data-attention-punkt], .workspace-route-overview button, [data-workspace-trip-parts] button):focus-visible { outline-offset: -4px; }
+.workspace-trip-parts-kopf { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--workspace-edge); }
+.workspace-trip-parts-kopf h3 { font-size: 1.125rem; font-weight: 650; letter-spacing: -.02em; color: var(--workspace-ink); }
+.workspace-trip-parts-kopf p { max-width: 65ch; font-size: .8125rem; color: var(--workspace-muted); margin-top: .25rem; overflow-wrap: anywhere; }
+.workspace-content [data-workspace-trip-parts] ul button { padding: 1rem 1.5rem; min-height: 90px; }
+.workspace-content :where([data-attention-punkt], .workspace-route-overview button, [data-workspace-trip-parts] ul button):focus-visible { outline-offset: -4px; }
 @media (max-width: 40rem) {
   .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; }
-  .workspace-trip-meta { display: grid; gap: .65rem; }
+  .workspace-trip-kopf { margin-bottom: 1.25rem; }
+  .workspace-trip-meta { gap: .25rem 1rem; margin-top: .5rem; }
+  .workspace-content [data-workspace-identity].workspace-trip-heading[data-workspace-kopfbild] {
+    border-radius: 1.0625rem; padding: 1.25rem;
+    background-image: linear-gradient(rgb(11 49 42 / .9), rgb(13 48 41 / .82)), var(--workspace-kopfbild);
+  }
   .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading,
   .workspace-content [data-workspace-attention="integrated"] [data-attention-punkt],
   .workspace-content [data-workspace-audit="integrated"],
-  .workspace-route-overview > header, .workspace-route-overview li button,
-  .workspace-content [data-workspace-trip-parts] button { padding: 1rem; }
+  .workspace-route-overview > header, .workspace-route-overview li button, .workspace-trip-parts-kopf,
+  .workspace-route-overview .workspace-route-ohne-tage,
+  .workspace-content [data-workspace-trip-parts] ul button { padding: 1rem; }
   .workspace-audit-intro > button { width: 100%; }
-  .workspace-trip-heading-top > div { min-width: 0; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }

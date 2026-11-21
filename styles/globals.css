@@ -14,6 +14,13 @@ html, body {
 * { -webkit-tap-highlight-color: transparent; }
 html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+/* Sehr breite Bildschirme (DESIGN_SYSTEM.md 7.14): alles in rem wächst leicht
+   mit, die Zeichen pro Zeile bleiben gleich. Prozent statt px, damit eine
+   eigene Schriftgrösse im Browser erhalten bleibt; unter der Schwelle für
+   „grosse Schrift“ (24 px), damit Leisten nicht in den Fluss wechseln. */
+@media (min-width: 2400px) { html { font-size: 112.5%; } }
+@media (min-width: 3200px) { html { font-size: 125%; } }
+
 /* -----------------------------------------------------------------------------
    Klebender Kopfbereich und vom Browser ausgeloestes Scrollen
 
@@ -40,6 +47,16 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Übergänge (DESIGN_SYSTEM.md 6.16): nur Deckkraft, kein Versatz und keine
+   bleibende Füllung, damit fixierte Leisten in der Fläche nicht springen.
+   :where hält die Spezifität bei null, eigene Animationen gehen vor. */
+@keyframes jet-einblenden { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  :where([data-arbeitsbereich]:not([hidden]), [data-workspace-modus]:not([hidden], .contents), .contents[data-workspace-modus]:not([hidden]) > *, details[open] > :not(summary)) {
+    animation: jet-einblenden 160ms ease-out;
   }
 }
 
@@ -142,7 +159,7 @@ html {
     --secondary-foreground: var(--jet-brand-800);
 
     --muted: var(--jet-surface-100);
-    --muted-foreground: var(--jet-ink-800);
+    --muted-foreground: var(--jet-ink-900);
 
     --accent: var(--jet-surface-100);
     --accent-foreground: var(--jet-brand-800);

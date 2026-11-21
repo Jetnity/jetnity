@@ -5,12 +5,13 @@ import { zielHref } from '@/lib/places/auswahl'
 import type { EntdeckenZiel } from './explorer-1/katalog'
 
 export type PublicInspiration = Readonly<{
-  status: 'static' | 'published' | 'unavailable'
+  status: 'static' | 'published' | 'supplemented' | 'fallback' | 'unavailable'
   ziele: readonly EntdeckenZiel[]
 }>
 
-/** Active CMS mode has no fallback to unpublished source copy. Every mutable
- * field comes from the validated published revision, including the plan URL. */
+/** Decode only confirmed published revisions. Every mutable CMS field comes
+ * from that revision, including the plan URL. The separate public selection
+ * may subsequently add existing static catalogue entries, never CMS drafts. */
 export function cmsPublishedInspiration(result: CmsPortResult): PublicInspiration {
   const published = result.ok ? parseCmsPublished(result.value) : null
   if (!published) return { status: 'unavailable', ziele: [] }

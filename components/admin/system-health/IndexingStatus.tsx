@@ -104,7 +104,7 @@ export default function IndexingStatus({ stand }: { stand: SeoStatusStand }) {
         </div>
       </dl>
 
-      <p className="mt-4 text-xs leading-5 text-muted-foreground">{stand.grenze}</p>
+      <p className="mt-4 max-w-prose text-xs leading-5 text-muted-foreground">{stand.grenze}</p>
       </AdminEvidenceDetails></div>
     </section>
   )

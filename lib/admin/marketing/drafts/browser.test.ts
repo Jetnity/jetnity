@@ -203,7 +203,11 @@ test('campaign CAS preserves input until explicit discard; authority denial remo
   await page.getByRole('button', { name: text.discard, exact: true }).click(); await page.getByRole('button', { name: text.discardConfirm, exact: true }).click()
   await page.waitForFunction(() => (document.getElementById('campaign-label') as HTMLInputElement)?.value === 'Initial synthetic')
   fixture.denied = true
-  await page.getByRole('button', { name: text.refresh, exact: true }).click(); await page.getByRole('heading', { name: text.denied, exact: true }).waitFor()
+  // Discard restores the previous draft asynchronously. Playwright waits until
+  // the accessible Reload list control is actionable, without bypassing disabled
+  // state during the server-backed recovery read.
+  await page.getByRole('button', { name: text.refresh, exact: true }).click({ timeout: 20_000 })
+  await page.getByRole('heading', { name: text.denied, exact: true }).waitFor()
   assert.equal(await page.getByRole('textbox', { name: text.label, exact: true }).count(), 0)
   assert.equal(await page.getByText('Initial synthetic', { exact: true }).count(), 0)
 })

@@ -5,7 +5,7 @@ import { build } from 'esbuild'
 import type { CmsCommand } from '../cms/contract'
 import { createCmsHttpPort } from './http'
 import { writeCmsIntentLocation } from './location'
-import type { CmsPort } from './port'
+import type { CmsPort, CmsPortResult } from './port'
 import { CMS_REQUEST_BYTES, cmsDuring, cmsJsonBody, parseCmsHttpRequest, parseCmsRecoveryMarker, type CmsRecoveryMarker } from './request'
 import { parseCmsPublished, parseCmsRecoveryConfirmation } from './responses'
 import { createCmsEditor } from './state'
@@ -17,12 +17,12 @@ const command: CmsCommand = { requestId: CMS_TEST_ID, entryId: CMS_TEST_ENTRY, e
 const marker: CmsRecoveryMarker = { requestId: command.requestId, entryId: command.entryId, expectedVersion: command.expectedVersion }
 type RpcResult = { data: unknown; error: { code: string } | null }
 type Fixture = {
-  enabled: boolean; grant: string; denial: number | null; clients: number; admissions: number; identities: number
+  enabled: boolean; publicPreview?: boolean; grant: string; denial: number | null; clients: number; admissions: number; identities: number
   calls: Array<{ name: string; args: Record<string, unknown> }>
   identity: () => Promise<{ data: { user: { id: string; is_anonymous: boolean } | null }; error: null }>
   result: (name: string, args: Record<string, unknown>) => Promise<RpcResult>
 }
-type Routes = { POST(request: Request): Promise<Response>; GET(request: Request): Promise<Response> }
+type Routes = { POST(request: Request): Promise<Response>; GET(request: Request): Promise<Response>; readCmsPublished(signal: AbortSignal): Promise<CmsPortResult> }
 let compiled: (fixture: Fixture) => Routes
 
 before(async () => {
@@ -30,12 +30,13 @@ before(async () => {
   // admission, deployment and cookie-client dependencies are controlled here.
   const output = await build({ absWorkingDir: process.cwd(), bundle: true, write: false, platform: 'node', format: 'cjs',
     external: ['next/server'], stdin: { resolveDir: process.cwd(), contents:
-      "export { POST } from './app/api/admin/content/cms/route'; export { GET } from './app/api/cms/inspiration/route';" },
+      "export { POST } from './app/api/admin/content/cms/route'; export { GET } from './app/api/cms/inspiration/route'; export { readCmsPublished } from './lib/admin/content/cms-editor-2/server';" },
     plugins: [{ name: 'cms-runtime-boundaries', setup(builder) {
-      builder.onResolve({ filter: /^(server-only|@\/lib\/(supabase\/server|auth\/admin-guard|admin\/hosted-runtime-activation))$/ }, args => ({ path: args.path, namespace: 'cms-boundary' }))
+      builder.onResolve({ filter: /^(server-only|@\/lib\/(supabase\/server|auth\/admin-guard|admin\/hosted-runtime-activation|inspiration\/cms-preview-read))$/ }, args => ({ path: args.path, namespace: 'cms-boundary' }))
       builder.onLoad({ filter: /.*/, namespace: 'cms-boundary' }, args => ({ contents:
         args.path === 'server-only' ? 'export {}'
           : args.path.endsWith('hosted-runtime-activation') ? 'export function isAdminHostedRuntimeEnabled(){return __cmsFixture.enabled} export function adminHostedRuntimeTarget(){return __cmsFixture.enabled ? "development" : "unavailable"}'
+            : args.path.endsWith('cms-preview-read') ? 'export function isCmsPreviewReadEnabled(){return __cmsFixture.publicPreview===true}'
             : args.path.endsWith('admin-guard') ? `export async function requireAdminApi(options){
               __cmsFixture.admissions++; if(options.capability!=='inhalte-moderieren')throw Error('wrong capability');
               return __cmsFixture.denial ? {ok:false,response:new Response('',{status:__cmsFixture.denial})}
@@ -91,6 +92,19 @@ test('actual routes refuse closed deployment and cross-origin access before Auth
   f.enabled = true
   assert.equal((await routes.POST(request(envelope, { origin: 'https://foreign.example' }))).status, 400)
   assert.equal(f.admissions, 0); assert.equal(f.clients, 0); assert.equal(f.calls.length, 0)
+})
+
+test('public-only preview reads the published v2 RPC while Admin routes and cookie identity stay closed', async () => {
+  const f = fixture()
+  f.enabled = false; f.publicPreview = true
+  f.result = async () => ({ data: { schema: 1, items: [] }, error: null })
+  const routes = compiled(f)
+  assert.deepEqual(await routes.readCmsPublished(new AbortController().signal), { ok: true, value: { schema: 1, items: [] } })
+  assert.deepEqual(f.calls.map(call => call.name), ['cms_inspiration_published_v2'])
+  assert.equal(f.identities, 0); assert.equal(f.admissions, 0)
+  assert.equal((await routes.POST(request(envelope))).status, 503)
+  assert.equal((await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))).status, 503)
+  assert.equal(f.calls.length, 1); assert.equal(f.clients, 1)
 })
 
 test('central admission, persisted write grant and current cookie identity remain independent gates', async () => {
@@ -155,7 +169,7 @@ test('RPC errors and malformed receipts never become fabricated writes or empty 
 test('public route admits only the fixed published response; private fields and DB failure are unavailable', async () => {
   const f = fixture(), routes = compiled(f)
   const item = { entryId: CMS_TEST_ENTRY, revision: '1', content: fixtureRevision('1').content, publishedAt: CMS_TEST_AT }
-  f.result = async name => { assert.equal(name, 'cms_inspiration_published_v1'); return { data: { schema: 1, items: [item] }, error: null } }
+  f.result = async name => { assert.equal(name, 'cms_inspiration_published_v2'); return { data: { schema: 1, items: [item] }, error: null } }
   const ok = await routes.GET(new Request(ORIGIN + '/api/cms/inspiration'))
   assert.equal(ok.status, 200); assert.match(ok.headers.get('cache-control') ?? '', /no-store/)
   assert.equal(f.identities, 0)

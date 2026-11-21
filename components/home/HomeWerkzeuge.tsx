@@ -12,7 +12,7 @@ export function HomeWerkzeuge() {
         <h2 id="werkzeuge-titel" className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
           {HOMEPAGE_UEBERSCHRIFTEN.werkzeuge}
         </h2>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-ink-800">
+        <p className="mt-4 max-w-prose text-base leading-7 text-ink-800">
           Ein Flug bestimmt deine Ankunft. Die Lage deines Hotels beeinflusst deine Wege. Jetnity stimmt die Teile aufeinander ab.
         </p>
       </div>

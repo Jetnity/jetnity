@@ -1,6 +1,18 @@
 // lib/utils.ts
 import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { extendTailwindMerge } from 'tailwind-merge'
+
+// Eigene Stufen aus tailwind.config.js. Ohne diese Angabe ordnet tailwind-merge
+// `text-title` den Textfarben zu und verwirft es neben `text-brand-800`.
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      'font-size': [{ text: ['display', 'title', 'subtitle', 'body', 'meta', 'kicker'] }],
+      rounded: [{ rounded: ['control', 'card', 'panel'] }],
+      shadow: [{ shadow: ['e1', 'card', 'raised'] }],
+    },
+  },
+})
 
 /**
  * Fuehrt Klassenlisten zusammen und laesst spaetere Tailwind-Klassen frueheren

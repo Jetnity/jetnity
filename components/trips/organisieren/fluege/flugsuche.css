@@ -297,6 +297,15 @@
   overflow: auto;
   background: #fff;
 }
+.flug-frame-rahmen {
+  position: relative;
+}
+.flug-results.flug-expanded .flug-frame-rahmen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .flug-results.flug-expanded .flug-frame-host {
   flex: 1;
   min-height: 0;

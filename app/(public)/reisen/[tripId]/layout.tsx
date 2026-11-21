@@ -13,16 +13,18 @@ import { headers } from 'next/headers'
 import { WetterRahmen } from '@/components/trips/wetter/Tageswetter'
 import ReisekartenRahmen from '@/components/trips/reisekarte/Reisekarte'
 import '@/components/trips/reisekarte/reisekarte.css'
-import { mapPilotConfig, tripServicesOrigin } from '@/lib/maps/config'
+import { mapPilotConfig } from '@/lib/maps/config'
+import { weatherRequestOrigin } from '@/lib/reisewetter/request-origin'
+import { weatherProviderConfigured } from '@/lib/reisewetter/provider-config'
 
 export default async function ReiseLayout({ children, params }: { children: ReactNode; params: Promise<{ tripId: string }> }) {
-  const origin = tripServicesOrigin(process.env)
+  const origin = weatherRequestOrigin(process.env)
   if (!origin) return children
   await connection()
   if ((await headers()).get('host') !== new URL(origin).host) return children
   const config = mapPilotConfig(process.env, origin)
   const { tripId } = await params
-  return <WetterRahmen aktiv={Boolean(process.env.OPENWEATHER_API_KEY)}>
+  return <WetterRahmen aktiv={weatherProviderConfigured(process.env.OPENWEATHER_API_KEY)}>
     {config || process.env.VERCEL_ENV === 'preview'
       ? <ReisekartenRahmen key={tripId} enabled={Boolean(config)} expiresAt={config?.expiresAt ?? null}>{children}</ReisekartenRahmen>
       : children}

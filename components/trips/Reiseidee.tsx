@@ -237,11 +237,11 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             Intelligente Planung
           </span>
           <span className="inline-flex max-w-full break-words rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
-            {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
+            {angemeldet ? 'Reise in deinem Konto' : 'Ohne Konto möglich'}
           </span>
         </div>
 
-        <h1 className="mt-4 max-w-full break-words text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
+        <h1 className="mt-4 max-w-full break-words text-display text-brand-900">
           Beginnen wir mit deiner Reise.
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
@@ -260,7 +260,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             }}
             rows={4}
             maxLength={VORSCHLAG_GRENZEN.freitextMaximum}
-            placeholder={BEISPIELE[0]}
+            placeholder={`z. B. ${BEISPIELE[0]}`}
             className="w-full min-w-0 max-w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>

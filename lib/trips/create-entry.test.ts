@@ -415,7 +415,7 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
 
     assert.match(planner, /Weiteres Ziel hinzufügen/)
     assert.match(planner, /weitereDestinationPlaceIds/)
-    assert.match(planner, /Aufenthalte werden hier nicht festgelegt/)
+    assert.match(planner, /Wie lange du wo bleibst, kannst du festlegen, sobald Abreise und Rückreise feststehen/)
     assert.equal(planner.includes('onDrag'), false)
     assert.equal(planner.includes('draggable'), false)
     assert.equal(planner.includes('vorschlagErzeugen'), false)

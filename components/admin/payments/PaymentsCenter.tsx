@@ -47,7 +47,7 @@ export default function PaymentsCenter() {
   if (denied) return (
     <section role="alert" className="min-w-0 break-words rounded-2xl border border-border bg-card p-4 sm:p-6">
       <h2 className="text-lg font-semibold">Zugriff auf Zahlungsdaten nicht mehr bestätigt</h2>
-      <p className="mt-2 text-sm text-muted-foreground">Die Sitzung ist abgelaufen oder die Berechtigung hat sich geändert. Zuvor geladene Zahlungsdaten wurden ausgeblendet.</p>
+      <p className="mt-2 max-w-prose text-sm text-muted-foreground">Die Sitzung ist abgelaufen oder die Berechtigung hat sich geändert. Zuvor geladene Zahlungsdaten wurden ausgeblendet.</p>
       <Button className="mt-4 h-auto min-h-11 min-w-0 max-w-full whitespace-normal transition-colors pointer-fine:h-auto pointer-fine:min-h-11 [&>span:last-child]:min-w-0 [&>span:last-child]:break-words" variant="outline" onClick={() => window.location.reload()}>Sitzung erneut prüfen</Button>
     </section>
   )
@@ -125,7 +125,7 @@ function OverviewCard({ onDenied }: { onDenied: () => void }) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <CreditCard className="h-4 w-4" />
-          <h3 className="text-sm font-semibold">Lokale Zahlungsdaten · 30 Tage</h3>
+          <h2 className="text-sm font-semibold">Lokale Zahlungsdaten · 30 Tage</h2>
         </div>
         <Button size="sm" variant="outline" onClick={load} disabled={loading} leftIcon={<RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />}>
           Aktualisieren
@@ -293,7 +293,7 @@ function TransactionsCard({ onDenied }: { onDenied: () => void }) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Activity className="h-4 w-4" />
-          <h3 className="text-sm font-semibold">Transaktionen</h3>
+          <h2 className="text-sm font-semibold">Transaktionen</h2>
         </div>
         <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto">
           <div className="relative min-w-0 flex-1">
@@ -430,7 +430,7 @@ function RefundCard() {
     <section className="rounded-2xl border bg-card p-4">
       <div className="mb-3 flex items-center gap-2">
         <RotateCcw className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">Erstattung lokal vermerken</h3>
+        <h2 className="text-sm font-semibold">Erstattung lokal vermerken</h2>
       </div>
       <p className="mb-3 text-sm text-muted-foreground">Dieser Eintrag ist eine lokale Notiz. Es wird kein Geld erstattet.</p>
       <div className="grid gap-3 sm:grid-cols-3">
@@ -502,7 +502,7 @@ function WebhooksCard({ onDenied }: { onDenied: () => void }) {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Webhook className="h-4 w-4" />
-          <h3 className="text-sm font-semibold">Aufgezeichnete Webhooks</h3>
+          <h2 className="text-sm font-semibold">Aufgezeichnete Webhooks</h2>
         </div>
         <Button variant="outline" size="sm" onClick={() => void load('replace')} disabled={loading}>Aktualisieren</Button>
       </div>

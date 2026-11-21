@@ -38,6 +38,11 @@ function rscCookiesAdapter(store: CookieStore) {
     remove(_name: string, _options: CookieOptions) {
       /* no-op in RSC */
     },
+    // @supabase/ssr 0.6.x prefers getAll/setAll. RSC cannot write cookies;
+    // the Proxy handles refresh. Keep RSC read-only.
+    setAll(_cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+      /* no-op in RSC */
+    },
   }
 }
 
@@ -53,11 +58,20 @@ function mutableCookiesAdapter(store: CookieStore) {
     set(name: string, value: string, options: CookieOptions) {
       store.set({ name, value, ...options })
     },
-    remove(name: string, _options: CookieOptions) {
+    remove(name: string, options: CookieOptions) {
+      // Expire the exact cookie scope/chunk provided by @supabase/ssr.
+      // Deleting by name alone can leave domain/path scoped auth cookies alive.
       try {
-        store.delete(name)
+        store.set({ name, value: '', ...options, maxAge: 0 })
       } catch {
-        store.set({ name, value: '', maxAge: 0, path: '/' })
+        store.delete(name)
+      }
+    },
+    // Server Actions / Route Handlers must persist *all* rotated and removed
+    // auth-token chunks; the legacy set/remove-only shape loses that contract.
+    setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+      for (const { name, value, options } of cookiesToSet) {
+        store.set({ name, value, ...options })
       }
     },
   }

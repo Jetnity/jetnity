@@ -35,9 +35,9 @@ export default function Kontosprache({ initial, sprache, waehlen, speichern, neu
   bereich?: 'konto' | 'admin'
 } & KontospracheAktionen) {
   const admin = bereich === 'admin'
-  const titelFarbe = admin ? 'text-card-foreground' : 'text-brand-800'
-  const textFarbe = admin ? 'text-muted-foreground' : 'text-ink-800'
-  const nebenKnopf = admin ? 'border border-border text-card-foreground hover:bg-muted' : 'border border-line-200 text-brand-800 hover:bg-surface-100'
+  const titelFarbe = admin ? 'text-card-foreground' : 'text-foreground'
+  const textFarbe = 'text-muted-foreground'
+  const nebenKnopf = `border border-border hover:bg-muted ${titelFarbe}`
   const [stand, setStand] = useState(initial)
   const [phase, setPhase] = useState<Phase>('bereit')
   const [fehler, setFehler] = useState<Fehlercode | null>(null)
@@ -160,15 +160,15 @@ export default function Kontosprache({ initial, sprache, waehlen, speichern, neu
         : phase === 'gespeichert' ? 'language.confirmed' : 'language.saved'
 
   return (
-    <section aria-labelledby="konto-sprache-titel" data-kontosprache-phase={phase} className={`mt-6 min-w-0 rounded-[26px] border p-4 shadow-[0_16px_50px_rgba(15,46,42,0.06)] sm:p-5 ${admin ? 'border-border bg-card text-card-foreground' : 'border-black/5 bg-white'}`}>
+    <section aria-labelledby="konto-sprache-titel" data-kontosprache-phase={phase} className={`mt-6 min-w-0 border border-border bg-card p-4 sm:p-5 ${admin ? 'rounded-[26px] text-card-foreground shadow-[0_16px_50px_rgba(15,46,42,0.06)]' : 'rounded-card shadow-card'}`}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${admin ? 'bg-muted text-card-foreground' : 'bg-surface-100 text-brand-600'}`}><Languages aria-hidden="true" className="h-5 w-5" /></span>
+        <span className={`flex h-11 w-11 shrink-0 items-center justify-center ${admin ? 'rounded-2xl text-card-foreground' : 'rounded-control text-foreground'} bg-muted`}><Languages aria-hidden="true" className="h-5 w-5" /></span>
         <div className="min-w-0 flex-1">
-          <h2 id="konto-sprache-titel" className={`text-lg font-semibold tracking-[-0.03em] ${titelFarbe}`}>{einstellungenText(sprache, 'language.title')}</h2>
-          <p id="konto-sprache-umfang" className={`mt-1 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.scope')}</p>
+          <h2 id="konto-sprache-titel" className={admin ? `text-lg font-semibold tracking-[-0.03em] ${titelFarbe}` : 'text-subtitle text-foreground'}>{einstellungenText(sprache, 'language.title')}</h2>
+          <p id="konto-sprache-umfang" className={`mt-1 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.scope')}</p>
           <form onSubmit={(event) => void absenden(event)} className="mt-4 max-w-2xl" aria-busy={beschaeftigt}>
             <label className={`block text-sm font-semibold ${titelFarbe}`} htmlFor="konto-sprache-auswahl">{einstellungenText(sprache, 'language.label')}</label>
-            <select id="konto-sprache-auswahl" value={sprache} disabled={beschaeftigt || stand.status !== 'bereit' || erstLesen} aria-describedby="konto-sprache-umfang konto-sprache-status" className={`mt-2 min-h-11 w-full min-w-0 rounded-2xl border px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-60 sm:max-w-xs ${admin ? 'border-input bg-card text-card-foreground' : 'border-black/15 bg-white text-brand-800'}`} onChange={(event) => {
+            <select id="konto-sprache-auswahl" value={sprache} disabled={beschaeftigt || stand.status !== 'bereit' || erstLesen} aria-describedby="konto-sprache-umfang konto-sprache-status" className={`mt-2 min-h-11 w-full min-w-0 rounded-2xl border px-3 text-base focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20 disabled:opacity-60 sm:max-w-xs border-input bg-card ${admin ? 'text-card-foreground' : 'text-foreground'}`} onChange={(event) => {
               const auswahl = uiSpracheLesen(event.target.value)
               if (!auswahl || laufend.current) return
               waehlen(auswahl)
@@ -185,9 +185,9 @@ export default function Kontosprache({ initial, sprache, waehlen, speichern, neu
                 : <button type="button" disabled={beschaeftigt} className={`${KNOPF} ${nebenKnopf}`} onClick={() => void erneutLesen()}>{einstellungenText(sprache, 'language.reload')}</button>}
             </div>
           </form>
-          <p id="konto-sprache-status" role={sichtbarerFehler ? 'alert' : 'status'} className={`mt-3 break-words text-sm leading-6 ${sichtbarerFehler ? (admin ? 'text-destructive' : 'text-red-800') : textFarbe}`}>{einstellungenText(sprache, meldung)}</p>
-          <p className={`mt-3 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.persistence')}</p>
-          <p className={`mt-1 max-w-2xl text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.browser')}</p>
+          <p id="konto-sprache-status" role={sichtbarerFehler ? 'alert' : 'status'} className={`mt-3 max-w-prose break-words text-sm leading-6 ${sichtbarerFehler ? 'text-destructive' : textFarbe}`}>{einstellungenText(sprache, meldung)}</p>
+          <p className={`mt-3 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.persistence')}</p>
+          <p className={`mt-1 max-w-prose text-sm leading-6 ${textFarbe}`}>{einstellungenText(sprache, 'language.browser')}</p>
         </div>
       </div>
     </section>

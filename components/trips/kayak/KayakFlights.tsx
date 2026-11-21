@@ -27,7 +27,7 @@ export default function KayakFlights({ reise, tagId }: { reise: Trip; tagId: str
   const flights = [...(preview.data?.flights ?? [])].filter((flight) => !direct || flight.legs.every((leg) => leg.stops === 0)).sort((a, b) => sort === 'duration' ? totalDuration(a.legs) - totalDuration(b.legs) : (a.price ?? Infinity) - (b.price ?? Infinity))
   return <section aria-label="Flüge mit KAYAK entdecken" className="grid min-w-0 gap-5">
     <div className={panelClass}>
-      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><Plane className="h-6 w-6" aria-hidden="true" /></span><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Deine Anreise</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Der passende Flug für deine Reise.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Flugzeiten, Zwischenstopps und Preise direkt in deiner Reiseübersicht.</p></div></div>
+      <div className="mb-5 flex items-start gap-3"><span className="rounded-2xl bg-surface-50 p-3 text-brand-800"><Plane className="h-6 w-6" aria-hidden="true" /></span><div><p className="text-kicker uppercase text-brand-600">Deine Anreise</p><h2 className="mt-1 text-2xl font-semibold tracking-tight text-brand-800">Der passende Flug für deine Reise.</h2><p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Flugzeiten, Zwischenstopps und Preise direkt in deiner Reiseübersicht.</p></div></div>
       <PreviewNotice />
       <form className="mt-5 grid gap-4" onChange={preview.reset} onSubmit={(event) => {
         event.preventDefault()

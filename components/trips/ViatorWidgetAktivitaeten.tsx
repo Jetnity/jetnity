@@ -12,13 +12,13 @@ import { VIATOR_DATENSCHUTZ_HREF } from '@/lib/activities/viator-widget/dokument
 import { viatorAnwendungsRenderer } from '@/lib/activities/viator-widget/renderer'
 import { viatorSuchname } from '@/lib/activities/viator-widget/suche'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
 
 const AKTION =
   'inline-block min-h-11 w-full min-w-0 max-w-full whitespace-normal rounded-full px-4 py-2 text-center text-sm font-semibold leading-6 [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto'
 const PRIMAR = 'bg-brand-800 text-white hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60'
 const SEKUNDAER = 'border border-line-200 bg-white text-brand-800 hover:border-line-500'
-const TEXT = 'min-w-0 break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
+const TEXT = 'min-w-0 max-w-prose break-words text-sm leading-6 text-ink-800 [overflow-wrap:anywhere]'
 
 type Phase = 'ruhend' | 'laeuft' | 'anzeige' | 'fehler'
 
@@ -73,7 +73,7 @@ export default function ViatorWidgetAktivitaeten({
       data-viator-ausgeblendet={ausgeblendet ? 'ja' : 'nein'}
       className="mt-6 min-w-0 border-t border-line-200 pt-5"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Anbieter</p>
+      <p className="text-kicker uppercase text-brand-600">Anbieter</p>
       <h3 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-brand-800">Viator</h3>
       <div className="mt-3 min-w-0" aria-live="polite">
         {!suchname ? (
@@ -94,10 +94,7 @@ export default function ViatorWidgetAktivitaeten({
           </p>
         ) : null}
         {phase === 'laeuft' && sichtbar && !ausgeblendet ? (
-          <p aria-busy="true" className={cn(TEXT, 'flex items-start gap-3')}>
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600 motion-reduce:animate-none" aria-hidden="true" />
-            Viator wird geladen.
-          </p>
+          <p aria-busy="true" className={TEXT}>Viator wird geladen.</p>
         ) : null}
         {phase === 'fehler' ? <p className={TEXT}>Viator konnte gerade nicht geladen werden.</p> : null}
         {phase === 'anzeige' ? (
@@ -133,6 +130,7 @@ export default function ViatorWidgetAktivitaeten({
           Ausblenden beendet die weitere Einbindung, bis sie erneut angezeigt wird. Die Buchung erfolgt bei Viator.
         </p>
       ) : null}
+      {phase === 'laeuft' && sichtbar && !ausgeblendet ? <Ladeflaeche className="mt-4 h-48 rounded-card" /> : null}
       <div ref={hostRef} data-viator-montage={zeigen ? 'sichtbar' : 'leer'} hidden={!zeigen} className="mt-4 min-w-0" />
     </section>
   )

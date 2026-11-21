@@ -21,6 +21,7 @@ import type { Modellname, Tokennutzung } from '@/lib/modell/preise'
 import { operationenAnwenden, type KennungFn } from '@/lib/reiseaenderung/anwenden'
 import { reiseDiff, type DiffEintrag } from '@/lib/reiseaenderung/diff'
 import { aenderungsregeln } from '@/lib/reiseaenderung/regeln'
+import { kiGraphSicherheit } from '@/lib/reiseaenderung/ki-schutz'
 import {
   AENDERUNG_FASSUNG,
   AENDERUNG_JSON_SCHEMA,
@@ -202,6 +203,11 @@ export async function reiseaenderungErzeugen(
   const angewandt = operationenAnwenden(reise, geplant.aenderung.operationen, werkzeuge.kennung)
   if (!angewandt.ok) {
     return { ok: false, klasse: 'schema', meldung: angewandt.fehler.meldung }
+  }
+
+  const sicher = kiGraphSicherheit(reise, angewandt.reise)
+  if (!sicher.ok) {
+    return { ok: false, klasse: 'schema', meldung: sicher.meldung }
   }
 
   const diff = reiseDiff(reise, angewandt.reise)

@@ -4,7 +4,9 @@ import type { RefObject } from 'react'
 import { ArrowLeft } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
-import { ART_BEZEICHNUNG, betragLesbar } from '@/lib/trips/bezeichnungen'
+import { Preis } from '@/components/ui/preis'
+import { StatusSiegel } from '@/components/ui/status-siegel'
+import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import {
   DETAIL_LAGE_TEXT,
   DETAIL_SUCHE_BEZEICHNUNG,
@@ -54,7 +56,7 @@ export default function TripWorkspaceDetail({
         lageInDerLeiste: kompakt ? null : DETAIL_LAGE_TEXT[gap.lage],
       })
     : null
-  const eyebrow = item ? 'Punkt' : folge?.eyebrow
+  const eyebrow = item ? ART_BEZEICHNUNG[item.kind] : folge?.eyebrow
   const mobilitaetKopf = auswahl.art !== 'item' && gap?.domain === 'mobilitaet'
 
   return (
@@ -74,11 +76,11 @@ export default function TripWorkspaceDetail({
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           {eyebrow ? (
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">{eyebrow}</p>
+            <p className="text-kicker uppercase text-brand-600">{eyebrow}</p>
           ) : null}
           <h2
             className={cn(
-              'text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto',
+              'text-title text-brand-800 break-words hyphens-auto',
               eyebrow && 'mt-1',
             )}
           >
@@ -104,12 +106,19 @@ export default function TripWorkspaceDetail({
 
       {item ? (
         <div className="mt-3 grid min-w-0 gap-2" data-organisieren-zustand>
-          <p className="text-xs leading-5 text-ink-700">{ART_BEZEICHNUNG[item.kind]}</p>
-          {item.kind !== 'note' ? <p className="text-xs leading-5 text-ink-700">{item.bookingStatusText}</p> : null}
+          {item.stand || item.wann ? (
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+              {item.stand ? (
+                <StatusSiegel ton={item.stand === 'gebucht' ? 'gebucht' : 'gewaehlt'}>
+                  {item.stand === 'gebucht' ? 'Gebucht' : 'Ausgewählt'}
+                </StatusSiegel>
+              ) : null}
+              {item.wann ? <p className="text-meta text-ink-800">{item.wann}</p> : null}
+            </div>
+          ) : null}
           {item.ungeplant ? (
             <p className="text-sm leading-6 text-ink-800">Noch nicht eingeplant. Es wird kein Tag oder keine Etappe erfunden.</p>
           ) : null}
-          {item.startsAt ? <p className="text-sm text-ink-800">{item.startsAt}</p> : null}
         </div>
       ) : null}
 
@@ -122,7 +131,12 @@ export default function TripWorkspaceDetail({
             <button
               type="button"
               onClick={(ereignis) => onSuche(ereignis.detail === 0)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto sm:justify-self-start"
+              className={cn(
+                'inline-flex min-h-11 w-full items-center justify-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 sm:w-auto sm:justify-self-start',
+                item
+                  ? 'border border-line-300 text-brand-800 hover:bg-surface-50'
+                  : 'bg-brand-800 text-white hover:bg-brand-900',
+              )}
             >
               {DETAIL_SUCHE_BEZEICHNUNG[sucheDomain]}
             </button>
@@ -133,13 +147,20 @@ export default function TripWorkspaceDetail({
       {item ? (
         <div className="mt-4 grid min-w-0 gap-2" data-organisieren-bestand>
           {item.note ? <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{item.note}</p> : null}
-          {item.priceAmount !== null && item.priceCurrency ? (
-            <p className="text-sm font-semibold text-brand-700">
-              {betragLesbar(item.priceAmount, item.priceCurrency)}
-              {item.kind === 'flight' ? ' · zum Auswahlzeitpunkt' : ''}
+          {item.preis.art === 'preis' ? (
+            <p className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+              <Preis betrag={item.preis.betrag} waehrung={item.preis.waehrung} className="text-subtitle text-brand-800" />
+              <span className="text-meta text-ink-700">Preis beim Auswählen</span>
+            </p>
+          ) : item.stand ? (
+            <p className="text-meta text-ink-700">
+              {item.preis.art === 'ungueltig' ? 'Gespeicherter Preis nicht lesbar' : 'Ohne gespeicherten Preis'}
             </p>
           ) : null}
-          <p className="text-sm leading-6 text-ink-800 break-words hyphens-auto">{item.trustText}</p>
+          <p className="text-meta text-ink-700 break-words hyphens-auto">{item.trustText}</p>
+          {item.buchungsHinweis ? (
+            <p className="text-meta text-ink-700 break-words hyphens-auto">{item.buchungsHinweis}</p>
+          ) : null}
         </div>
       ) : null}
     </section>

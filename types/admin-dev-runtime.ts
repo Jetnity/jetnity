@@ -17,6 +17,7 @@ export type AdminDevRuntimeFunctions = {
   }
   admin_cms_inspiration_confirm_v1: { Args: { p_request_id: string }; Returns: Json }
   cms_inspiration_published_v1: { Args: never; Returns: Json }
+  cms_inspiration_published_v2: { Args: never; Returns: Json }
   admin_marketing_drafts_apply_v1: { Args: { input: Json }; Returns: Json }
   admin_marketing_drafts_read_v1: { Args: { input: Json }; Returns: Json }
 }

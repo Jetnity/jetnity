@@ -253,7 +253,8 @@ describe('Buchungsabfrage', () => {
     faelle.forEach((ansicht, index) => {
       assert.equal(ansicht.zustand, namen[index])
       const html = renderToStaticMarkup(createElement(AccountBuchungen, { ansicht }))
-      assert.match(html, /method="get"/)
+      // Ohne Buchungen und ohne Filter gibt es nichts einzugrenzen (DESIGN_SYSTEM.md 6.14).
+      assert.equal(/method="get"/.test(html), ansicht.zustand !== 'leer')
       assert.equal(html.includes('name="weiter"'), false)
       assert.equal(html.includes('overflow-hidden'), false)
     })

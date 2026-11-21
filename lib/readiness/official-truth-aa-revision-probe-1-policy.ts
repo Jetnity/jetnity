@@ -39,9 +39,11 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 50018, sha256: '9060166e750251096b564b31eedc881398e116da55973cbd3f6c38606affa7f2' }),
-    Object.freeze({ path: 'package.json', bytes: 6717, sha256: '5cc96473998d3a76dcfc234c46ca36c1a4faa15fc8852f78179c5355c566c7a8' }),
-    Object.freeze({ path: 'package-lock.json', bytes: 324951, sha256: 'f24b42a38f10c65b1fd4899b066da4e4347e3c048015f44f9367c0f255aebe59' }),
+    // Exact AT50 / BG1 / #1265 CI successors stay in pilot-context.test.ts.
+    // Package identity here is that chain plus supabase-js 2.119.2.
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 52696, sha256: 'a0630a727aba38c0333192298cd2597bffb7eab568fc909dea8ebf10fb4146df' }),
+    Object.freeze({ path: 'package.json', bytes: 6717, sha256: 'b72ed28b71bd9a351eaef3637b6b56f2a28844c3e7f4dc6ac3f9a28bb96e540e' }),
+    Object.freeze({ path: 'package-lock.json', bytes: 325113, sha256: 'da769bf15ec9a5349e88cb7420267a5dedd70953c15f8e93ec6a6a802e24dfb4' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),
     Object.freeze({ path: 'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts', bytes: 6502, sha256: '6f6e1138dcffa7122007622d7cccb4a42edbc90b7146dfb23ed4d32dc8866b94' }),
     Object.freeze({ path: 'lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts', bytes: 9176, sha256: '74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572' }),
