@@ -4,8 +4,9 @@
 > Feste Stufen für Schrift (4.1), Ecken und Schatten (5.2), ein Grundton für alle
 > Seiten (6.1), gemeinsame Bausteine in `components/ui` (6.2–6.9) und eine
 > einzeilige Kopfzeile bis zur Tablet-Breite (7.13). Die heutige Systemschrift
-> bleibt (PO-Entscheid). Alle fünf Reise-Ansichten tragen denselben flachen
-> Reisekopf; die Foto-Köpfe von Reiseplan und Organisieren entfallen. Diese
+> bleibt (PO-Entscheid). Alle fünf Reise-Ansichten tragen denselben
+> Reisekopf; Reiseplan und Organisieren behalten darin ihr Ortsbild (PO-Rückmeldung
+> 21.11.: Live-Vergleich, Foto-Köpfe zurück, siehe 6.2). Diese
 > Regel ersetzt die frühere Review-Korrektur „Sehr schmale Header geben dem
 > Reisetitel eine eigene Zeile“: Der Titel steht jetzt im Reisekopf. Menü bleibt
 > beschriftet, Konto und Mond/Sonne bleiben reine Symbole mit zugänglichem Namen.
@@ -320,7 +321,7 @@ Seitenbreite: Inhalte zentriert bis `max-w-7xl`; Fliesstext höchstens `max-w-pr
 
 `Seitenkopf` (`components/ui/seitenkopf.tsx`): Kicker, genau eine h1 in `text-display`, ein Satz Einordnung, höchstens eine Hauptaktion. Flach, ohne Bild.
 
-Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe flache Kopf in allen fünf Reise-Ansichten. Kicker = Name der Ansicht (bei Einreise „Deine Reise“, weil die Prüfung darunter ihren eigenen Kopf trägt), h1 = Reisetitel, eine Metazeile mit Zeitraum, Route, Reisenden und Budget. Stand, Speicherort und Reiseoptionen stehen nur in der Übersicht. Ein Speicherfehler bleibt in jeder Ansicht sichtbar. Für Gäste folgt darunter eine einzige Hinweiszeile ohne Kasten („Nur in diesem Browser gespeichert. Konto erstellen oder anmelden – …“). Jede Ansicht behält ihre eigene (teils nur für Screenreader sichtbare) Überschrift als Fokusziel beim Ansichtswechsel.
+Reisekopf (Arbeitsbereich-Variante von `TripWorkspaceKopf`): derselbe Kopf in allen fünf Reise-Ansichten. Kicker = Name der Ansicht (bei Einreise „Deine Reise“, weil die Prüfung darunter ihren eigenen Kopf trägt), h1 = Reisetitel, eine Metazeile mit Zeitraum, Route, Reisenden und Budget. In Reiseplan und Organisieren steht derselbe Inhalt auf dem Ortsbild der ersten Etappe (`useStadtbild`, `data-workspace-kopfbild`): dunkelgrüner Verlauf von links, Text höchstens `40rem` breit auf der dunklen Seite, auf dem Handy ein durchgehender Verlauf; Übersicht, Vorbereitung und Einreise bleiben flach. Der Bildnachweis steht wie bisher unter der Ansicht. Stand, Speicherort und Reiseoptionen stehen nur in der Übersicht. Ein Speicherfehler bleibt in jeder Ansicht sichtbar. Für Gäste folgt darunter eine einzige Hinweiszeile ohne Kasten („Nur in diesem Browser gespeichert. Konto erstellen oder anmelden – …“). Jede Ansicht behält ihre eigene (teils nur für Screenreader sichtbare) Überschrift als Fokusziel beim Ansichtswechsel.
 
 ### 6.3–6.9 Bausteine
 

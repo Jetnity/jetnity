@@ -1,8 +1,9 @@
 'use client'
 
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 import { CalendarDays, MapPin, ShieldCheck, Users, WalletCards } from 'lucide-react'
 
+import { useStadtbild } from '@/components/trips/organisieren/Stadtbild'
 import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
@@ -58,9 +59,12 @@ export default function TripWorkspaceKopf({
 }) {
   const gast = quelle === 'guest'
   const dichte = useKopfDichte()
+  // Reiseplan und Organisieren tragen das Ortsbild der ersten Etappe (DESIGN_SYSTEM.md 6.2).
+  const bildKopf = workspace && (ansicht === 'plan' || ansicht === 'organisieren')
+  const kopfbild = useStadtbild(bildKopf ? reise.stages[0] : undefined)
 
   if (workspace) {
-    // Ein flacher Kopf fuer alle fuenf Ansichten (DESIGN_SYSTEM.md 6.2). Stand,
+    // Ein Kopf fuer alle fuenf Ansichten (DESIGN_SYSTEM.md 6.2). Stand,
     // Speicherort und Reiseoptionen gehoeren zur Uebersicht; die anderen
     // Ansichten zeigen nur Einordnung, damit ihr Inhalt auf dem Handy oben steht.
     // Ein Speicherfehler (`kopfzeile`) bleibt in jeder Ansicht sichtbar.
@@ -69,8 +73,10 @@ export default function TripWorkspaceKopf({
       <section
         data-workspace-identity
         data-workspace-kopf={ansicht}
+        data-workspace-kopfbild={bildKopf ? '' : undefined}
         data-save-truth={gast ? 'device' : 'account'}
         className="workspace-trip-heading"
+        style={bildKopf ? ({ '--workspace-kopfbild': `url(${JSON.stringify(kopfbild.src)})` } as CSSProperties) : undefined}
       >
         <p className="workspace-eyebrow text-kicker uppercase">
           {ansicht === 'einreise' ? 'Deine Reise' : WORKSPACE_ANSICHT_LABEL[ansicht]}
