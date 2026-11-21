@@ -82,7 +82,7 @@ export default function EtappenTage({ days, reise, onDay }: {
       </header>
       {tage.length === 0 ? <p className="et-agenda-leer">
         Dieser Etappe ist noch kein Reisetag zugeordnet.
-        {reise.days.some((tag) => !tag.stageId) ? ` Deine Reisetage stehen vorerst unter «${ZUORDNUNG_OFFEN}».` : null}
+        {reise.days.some((tag) => !tag.stageId) ? ` Bis du unter «Reise ändern» festlegst, wie lange du wo bleibst, stehen deine Reisetage unter «${ZUORDNUNG_OFFEN}».` : null}
       </p> : tagesliste(tage.slice(0, SICHTBARE_TAGE))}
       {weitere.length > 0 && <details className="et-agenda-weitere">
         <summary><ChevronDown size={16} aria-hidden="true" />{weitere.length === 1 ? 'Ein weiterer Tag' : weitere.length + ' weitere Tage'}</summary>

@@ -46,8 +46,8 @@ export default function WorkspaceRouteOverview({ reise, ungeplantePunkte, onRout
           })}</ol>}
       {chronologie.gueltig && ohneTage.length > 0 ? (
         <p className="workspace-route-ohne-tage">
-          Noch ohne eigene Tage: {ohneTage.map((etappe) => etappe.name).join(', ')}.
-          {tageOhneZiel ? ` Deine Reisetage stehen vorerst unter «${ZUORDNUNG_OFFEN}».` : null}
+          Noch ohne Tage: {ohneTage.map((etappe) => etappe.name).join(', ')}. Unter «Reise ändern» legst du fest, wie lange du wo bleibst.
+          {tageOhneZiel ? ` Bis dahin stehen deine Reisetage unter «${ZUORDNUNG_OFFEN}».` : null}
         </p>
       ) : null}
     </section>
