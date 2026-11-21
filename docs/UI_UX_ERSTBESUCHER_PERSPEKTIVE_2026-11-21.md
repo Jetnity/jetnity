@@ -40,7 +40,7 @@ Bewusst nicht geändert: die gemeinsame Kontingent-Meldung (`lib/modell/kontinge
 | # | Hürde | Warum nicht in diesem PR | Vorschlag |
 |---|---|---|---|
 | A | **Tage lassen sich nach dem Erstellen nicht mehr auf Ziele verteilen.** «Dauer über Etappen» fügt neue Tage hinzu (15 → 30), statt die vorhandenen zu verteilen. Wer die Verteilung im Planer überspringt, kommt im Workspace nicht mehr sauber dorthin. | neue Funktion bzw. Logikänderung in der Reiseänderung | Priorität hoch: «Tage auf Ziele verteilen» als Option in «Reise ändern», gleiche Regeln wie im Planer |
-| B | Text aus «In eigenen Worten» geht beim Wechsel zu «Schritt für Schritt» nach der Sperrmeldung verloren | Übernahme in Felder wäre Logik | Wunschtext ins Feld «Wünsche» übernehmen |
+| B | Was in «In eigenen Worten» steht, wird beim Wechsel zu «Schritt für Schritt» nicht übernommen; Ziele, Daten und Reisende müssen neu eingegeben werden | Übernahme in Felder wäre Logik | den Text mindestens ins Feld «Wünsche» übernehmen |
 | C | Der Wunschtext wird im Formularweg nicht ausgewertet: Kindesalter und Pässe müssen neu eingegeben werden | Auswertung wäre neue Funktion (bzw. die gesperrte intelligente Planung) | nach Freigabe der intelligenten Planung prüfen |
 | D | Einreise übernimmt die Länder der Reise, aber nicht die Pässe der Reisenden | Einreise-Logik (#1254) | nach #1254-Folgeslice |
 | E | Flugsuche: «Nach» und «Rückflug ab» bleiben für Lissabon/Marrakesch leer | Abdeckung des Ortskatalogs | Katalog-Slice |
