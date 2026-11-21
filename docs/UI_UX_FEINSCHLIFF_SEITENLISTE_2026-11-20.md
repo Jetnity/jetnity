@@ -25,7 +25,7 @@ Blog, eine eigene Suchseite und eine Seite Hilfe/Kontakt gibt es im Code nicht. 
 
 ### Workspace – Ansichten
 
-- [x] `/reisen/[tripId]?ansicht=uebersicht` Übersicht mit Als Nächstes, Route, Kosten, Einreise, Gut organisiert – Etappe 2
+- [x] `/reisen/[tripId]?ansicht=uebersicht` Übersicht mit Als Nächstes, Route, Kosten, Einreise, Was schon organisiert ist – Etappe 2, Texte für Erstbesucher im Abschluss
 - [x] `/reisen/[tripId]?ansicht=plan` Reiseplan mit Karte (geteilte Ansicht ab Desktop) – Etappe 1 und 3
 - [x] `/reisen/[tripId]?ansicht=organisieren&kategorie=fluege` – Etappe 3
 - [x] `/reisen/[tripId]?ansicht=organisieren&kategorie=unterkunft` – Etappe 3, Ladeplatzhalter Etappe 4
