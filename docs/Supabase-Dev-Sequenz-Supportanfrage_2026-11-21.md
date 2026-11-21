@@ -1,6 +1,8 @@
 # Supabase-Dev-Sequenz: vorbereitete Supportanfrage
 
-**Status:** Vollständig vorbereitet, noch nicht gesendet. Das Senden an Supabase benötigt Sasas ausdrückliches Go für diese externe Nachricht. Die Dev-Rechtekorrektur selbst ist bereits freigegeben; fehlend ist die technisch verfügbare Provider-Berechtigung.
+**Aktueller Status, 21.11.2026, 16:20 Zürich: ausdrücklich zurückgestellt und nicht gesendet.** Sasa hat angewiesen, zuerst ohne Support zu arbeiten. Der alternative Dev-Weg mit eigener LOGGED-Sequenz und begrenztem Trigger ist inzwischen tatsächlich geprüft und installiert; der neue natürliche BG1-Volltest ist bestanden. Die frühere Eigentümergrenze verhindert diese Lösung nicht. Maßgeblich ist das [aktualisierte Production-Prüfpaket](OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md).
+
+**Der folgende Text bleibt als historischer, ungesendeter Entwurf erhalten. Er ist kein aktueller Sendeauftrag.** Eine spätere externe Nachricht erfordert weiterhin Sasas ausdrückliches Go.
 
 **Empfänger:** Supabase Support über https://supabase.com/support  
 **Projekt:** Jetnity Development, `yfvbxvijcorffwxbxahl`  

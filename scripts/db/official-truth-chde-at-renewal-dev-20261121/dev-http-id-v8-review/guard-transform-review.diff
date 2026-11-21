@@ -1,0 +1,146 @@
+--- live-v7/official_v3_guard_private.assert_catalog_v1()
++++ candidate-v8/official_v3_guard_private.assert_catalog_v1()
+@@ -4,7 +4,8 @@
+  SECURITY DEFINER
+  SET search_path TO 'pg_catalog'
+ AS $function$
+-DECLARE restore_v7 official_v3_guard_private.bg1_dev_grantor_restore_v7%ROWTYPE;
++DECLARE transport_v8 official_v3_guard_private.bg1_dev_http_id_allocator_v8%ROWTYPE;
++ restore_v7 official_v3_guard_private.bg1_dev_grantor_restore_v7%ROWTYPE;
+  cycle5_v6 official_v3_guard_private.bg1_dev_cycle5_baseline_v6%ROWTYPE;
+  maintenance_v5 official_v3_guard_private.bg1_dev_maintenance_baseline_v5%ROWTYPE;
+  acl_v4 official_v3_guard_private.bg1_dev_weather_acl_baseline_v4%ROWTYPE;
+@@ -21,6 +22,9 @@
+   cycle4 official_v3_guard_private.cycle4_recovery_baseline_v1%ROWTYPE;
+   attempt2 official_v3_guard_private.cycle4_attempt2_baseline_v1%ROWTYPE;
+ BEGIN
++  IF pg_catalog.current_setting('session_replication_role') NOT IN('origin','local') THEN
++    RAISE EXCEPTION 'bg1 transport session context unavailable' USING ERRCODE='P7905'; END IF;
++  SELECT * INTO STRICT transport_v8 FROM official_v3_guard_private.bg1_dev_http_id_allocator_v8 WHERE singleton;
+   SELECT * INTO STRICT restore_v7 FROM official_v3_guard_private.bg1_dev_grantor_restore_v7 WHERE singleton;
+   SELECT * INTO STRICT cycle5_v6 FROM official_v3_guard_private.bg1_dev_cycle5_baseline_v6 WHERE singleton;
+   SELECT * INTO STRICT maintenance_v5 FROM official_v3_guard_private.bg1_dev_maintenance_baseline_v5 WHERE singleton;
+@@ -124,6 +128,13 @@
+     AND grantor='supabase_admin'::regrole AND admin_option AND NOT inherit_option AND NOT set_option)
+  OR restore_v7.required_generation<=cycle5_v6.required_generation
+  OR restore_v7.proof_not_before<=cycle5_v6.proof_not_before
+- OR restore_v7.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
++ OR transport_v8.predecessor_catalog_digest IS DISTINCT FROM encode(sha256(convert_to(restore_v7.catalog::text,'UTF8')),'hex')
++ OR transport_v8.predecessor_baseline_digest IS DISTINCT FROM encode(sha256(convert_to((to_jsonb(restore_v7)||
++   jsonb_build_object('proof_not_before',extract(epoch FROM restore_v7.proof_not_before)))::text,'UTF8')),'hex')
++ OR transport_v8.required_generation<=restore_v7.required_generation
++ OR transport_v8.proof_not_before<=restore_v7.proof_not_before
++ OR transport_v8.transport_metadata_digest IS DISTINCT FROM encode(sha256(convert_to(transport_v8.transport_metadata::text,'UTF8')),'hex')
++ OR transport_v8.transport_metadata IS DISTINCT FROM official_v3_guard_private.catalog_status_v1()->'transport:dev_http_id_allocator_v8'
++ OR transport_v8.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
+     RAISE EXCEPTION 'bg1 recovery protected catalog changed' USING ERRCODE='P7905'; END IF;
+ END $function$
+--- live-v7/official_v3_guard_private.catalog_status_v1()
++++ candidate-v8/official_v3_guard_private.catalog_status_v1()
+@@ -79,6 +79,65 @@
+     FROM pg_description d WHERE (d.classoid,d.objoid) IN (SELECT classid,objid FROM objects)
+   UNION ALL SELECT 'label:'||s.classoid||':'||s.objoid||':'||s.objsubid||':'||s.provider,to_jsonb(s)
+     FROM pg_seclabel s WHERE (s.classoid,s.objoid) IN (SELECT classid,objid FROM objects)
++  UNION ALL SELECT 'transport:dev_http_id_allocator_v8',jsonb_build_object('native',jsonb_build_object(
++ 'net_namespace',(SELECT to_jsonb(n) FROM pg_namespace n WHERE n.oid=to_regnamespace('net')),
++ 'pg_net_extension',(SELECT to_jsonb(e) FROM pg_extension e WHERE e.extname='pg_net'),
++ 'replication_parameter_acl',(SELECT coalesce(jsonb_agg(to_jsonb(a) ORDER BY a.oid),'[]'::pg_catalog.jsonb)
++   FROM pg_parameter_acl a WHERE a.parname='session_replication_role'),
++ 'replication_role_settings',(SELECT coalesce(jsonb_agg(to_jsonb(s) ORDER BY s.setdatabase,s.setrole),'[]'::pg_catalog.jsonb)
++   FROM pg_db_role_setting s WHERE EXISTS(SELECT 1 FROM unnest(s.setconfig) cfg WHERE cfg LIKE 'session_replication_role=%')),
++ 'replication_function_settings',(SELECT coalesce(jsonb_agg(to_jsonb(p)-ARRAY['prosrc','probin','prosqlbody'] ORDER BY p.oid),'[]'::pg_catalog.jsonb)
++   FROM pg_proc p WHERE EXISTS(SELECT 1 FROM unnest(p.proconfig) cfg WHERE cfg LIKE 'session_replication_role=%')),
++ 'supautils_settings',jsonb_build_object(
++   'privileged_role',current_setting('supautils.privileged_role',true),
++   'privileged_role_allowed_configs',current_setting('supautils.privileged_role_allowed_configs',true)),
++ 'queue_relation',(SELECT to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid']
++   FROM pg_class c WHERE c.oid=to_regclass('net.http_request_queue')),
++ 'queue_attributes',(SELECT coalesce(jsonb_agg(to_jsonb(a) ORDER BY a.attnum),'[]'::pg_catalog.jsonb)
++   FROM pg_attribute a WHERE a.attrelid=to_regclass('net.http_request_queue')),
++ 'queue_defaults',(SELECT coalesce(jsonb_agg(to_jsonb(d)||jsonb_build_object('expression',pg_get_expr(d.adbin,d.adrelid)) ORDER BY d.adnum),'[]'::pg_catalog.jsonb)
++   FROM pg_attrdef d WHERE d.adrelid=to_regclass('net.http_request_queue')),
++ 'queue_constraints',(SELECT coalesce(jsonb_agg(to_jsonb(c) ORDER BY c.oid),'[]'::pg_catalog.jsonb)
++   FROM pg_constraint c WHERE c.conrelid=to_regclass('net.http_request_queue')),
++ 'queue_triggers',(SELECT coalesce(jsonb_agg(to_jsonb(t) ORDER BY t.oid),'[]'::pg_catalog.jsonb)
++   FROM pg_trigger t WHERE t.tgrelid=to_regclass('net.http_request_queue')),
++ 'managed_sequence_relation',(SELECT to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid']
++   FROM pg_class c WHERE c.oid=to_regclass('net.http_request_queue_id_seq')),
++ 'managed_sequence_parameters',(SELECT to_jsonb(s) FROM pg_sequence s
++   WHERE s.seqrelid=to_regclass('net.http_request_queue_id_seq')),
++ 'net_functions',(SELECT coalesce(jsonb_agg((to_jsonb(p)-ARRAY['prosrc','probin','prosqlbody'])
++   ||jsonb_build_object('definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex')) ORDER BY p.oid),'[]'::pg_catalog.jsonb)
++   FROM pg_proc p WHERE p.pronamespace=to_regnamespace('net') AND p.prokind IN('f','p'))
++), 'allocator',jsonb_build_object(
++ 'namespace',(SELECT to_jsonb(n) FROM pg_namespace n WHERE n.oid=to_regnamespace('jetnity_pgnet_allocator_private')),
++ 'sequence_relation',(SELECT to_jsonb(c)-ARRAY['relpages','reltuples','relallvisible','relfrozenxid','relminmxid']
++   FROM pg_class c WHERE c.oid=to_regclass('jetnity_pgnet_allocator_private.http_request_id_v1')),
++ 'sequence_parameters',(SELECT to_jsonb(s) FROM pg_sequence s
++   WHERE s.seqrelid=to_regclass('jetnity_pgnet_allocator_private.http_request_id_v1')),
++ 'function',(SELECT (to_jsonb(p)-ARRAY['prosrc','probin','prosqlbody'])
++   ||jsonb_build_object('definition',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex'))
++   FROM pg_proc p WHERE p.oid=to_regprocedure('jetnity_pgnet_allocator_private.assign_request_id_v1()')),
++ 'global_trigger',(SELECT to_jsonb(t) FROM pg_trigger t
++   WHERE t.tgrelid=to_regclass('net.http_request_queue') AND t.tgname='jetnity_pgnet_request_id_v1'),
++ 'dependencies',(WITH owned_objects(classid,objid) AS (
++   VALUES ('pg_namespace'::pg_catalog.regclass::pg_catalog.oid,to_regnamespace('jetnity_pgnet_allocator_private')::pg_catalog.oid),
++    ('pg_class'::pg_catalog.regclass::pg_catalog.oid,to_regclass('jetnity_pgnet_allocator_private.http_request_id_v1')::pg_catalog.oid),
++    ('pg_proc'::pg_catalog.regclass::pg_catalog.oid,to_regprocedure('jetnity_pgnet_allocator_private.assign_request_id_v1()')::pg_catalog.oid)
++   UNION SELECT 'pg_trigger'::pg_catalog.regclass::pg_catalog.oid,t.oid FROM pg_trigger t
++    WHERE t.tgrelid=to_regclass('net.http_request_queue') AND t.tgname='jetnity_pgnet_request_id_v1')
++  SELECT coalesce(jsonb_agg(to_jsonb(d) ORDER BY d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.refobjsubid,d.deptype),'[]'::pg_catalog.jsonb)
++  FROM pg_depend d WHERE (d.classid,d.objid) IN(SELECT * FROM owned_objects)
++   OR (d.refclassid,d.refobjid) IN(SELECT * FROM owned_objects)),
++ 'shared_dependencies',(WITH owned_objects(classid,objid) AS (
++   VALUES ('pg_namespace'::pg_catalog.regclass::pg_catalog.oid,to_regnamespace('jetnity_pgnet_allocator_private')::pg_catalog.oid),
++    ('pg_class'::pg_catalog.regclass::pg_catalog.oid,to_regclass('jetnity_pgnet_allocator_private.http_request_id_v1')::pg_catalog.oid),
++    ('pg_proc'::pg_catalog.regclass::pg_catalog.oid,to_regprocedure('jetnity_pgnet_allocator_private.assign_request_id_v1()')::pg_catalog.oid)
++   UNION SELECT 'pg_trigger'::pg_catalog.regclass::pg_catalog.oid,t.oid FROM pg_trigger t
++    WHERE t.tgrelid=to_regclass('net.http_request_queue') AND t.tgname='jetnity_pgnet_request_id_v1')
++  SELECT coalesce(jsonb_agg(to_jsonb(d) ORDER BY d.dbid,d.classid,d.objid,d.objsubid,d.refclassid,d.refobjid,d.deptype),'[]'::pg_catalog.jsonb)
++  FROM pg_shdepend d WHERE d.dbid=(SELECT oid FROM pg_database WHERE datname=current_database())
++   AND (d.classid,d.objid) IN(SELECT * FROM owned_objects))
++))
+ )
+ SELECT jsonb_object_agg(key,value ORDER BY key COLLATE "C") FROM entries
+ $function$
+--- live-v7/official_v3_guard_private.require_open_v1()
++++ candidate-v8/official_v3_guard_private.require_open_v1()
+@@ -7,6 +7,8 @@
+ DECLARE s official_v3_guard_private.state_v1%ROWTYPE; instant timestamptz;
+   required_proof bigint; earliest_proof timestamptz;
+ BEGIN
++  IF pg_catalog.current_setting('session_replication_role') NOT IN('origin','local') THEN
++    RAISE EXCEPTION 'bg1 transport session context unavailable' USING ERRCODE='P7902'; END IF;
+   SELECT * INTO s FROM official_v3_guard_private.state_v1 WHERE singleton FOR SHARE;
+   instant:=clock_timestamp();
+   IF NOT FOUND OR s.generation=0 OR s.incident_generation<>s.resumed_generation
+@@ -31,6 +33,9 @@
+   SELECT greatest(required_proof,v.required_generation),greatest(earliest_proof,v.proof_not_before)
+    INTO STRICT required_proof,earliest_proof
+   FROM official_v3_guard_private.bg1_dev_grantor_restore_v7 v WHERE singleton;
++  SELECT greatest(required_proof,v.required_generation),greatest(earliest_proof,v.proof_not_before)
++   INTO STRICT required_proof,earliest_proof
++  FROM official_v3_guard_private.bg1_dev_http_id_allocator_v8 v WHERE singleton;
+   IF s.generation<required_proof OR s.last_proof_started<earliest_proof OR instant<earliest_proof
+     OR NOT EXISTS(SELECT 1 FROM official_v3_guard_private.runs_v1 run WHERE run.outcome='complete' AND run.generation=s.generation
+       AND run.due_at=s.last_due AND run.started_at=s.last_started AND run.proof_started_at=s.last_proof_started AND run.finished_at=s.last_finished) THEN
+--- live-v7/public.official_v3_guard_alarm_status_v1()
++++ candidate-v8/public.official_v3_guard_alarm_status_v1()
+@@ -7,6 +7,7 @@
+ DECLARE required_proof bigint; earliest_proof timestamptz; current_state official_v3_guard_private.state_v1%ROWTYPE;
+   unavailable_value jsonb:=jsonb_build_object('schema',1,'status','unavailable');
+ BEGIN
++  IF pg_catalog.current_setting('session_replication_role') NOT IN('origin','local') THEN RETURN unavailable_value; END IF;
+   IF official_v3_guard_private.alarm_status_v1() IS DISTINCT FROM jsonb_build_object('schema',1,'status','current') THEN RETURN unavailable_value; END IF;
+   SELECT greatest(renewal.required_generation,at_baseline.required_generation,admin.required_generation,a.required_generation,k.required_generation,f.required_generation,c.required_generation,q.required_generation,g.required_generation,r.required_generation,b.required_generation),greatest(renewal.proof_not_before,at_baseline.proof_not_before,admin.proof_not_before,a.proof_not_before,k.proof_not_before,f.proof_not_before,c.proof_not_before,q.proof_not_before,g.proof_not_before,r.proof_not_before,b.proof_not_before)
+     INTO STRICT required_proof,earliest_proof FROM official_v3_guard_private.source_renewal_baseline_v1 renewal CROSS JOIN official_v3_guard_private.at_hrs2_baseline_v1 at_baseline CROSS JOIN official_v3_guard_private.admin_runtime_baseline_v1 admin CROSS JOIN official_v3_guard_private.cycle4_attempt2_baseline_v1 a CROSS JOIN official_v3_guard_private.cycle4_recovery_baseline_v1 k CROSS JOIN official_v3_guard_private.refresh_retirement_baseline_v1 f CROSS JOIN official_v3_guard_private.customer_information_baseline_v1 c
+@@ -27,6 +28,9 @@
+   SELECT greatest(required_proof,v.required_generation),greatest(earliest_proof,v.proof_not_before)
+    INTO STRICT required_proof,earliest_proof
+   FROM official_v3_guard_private.bg1_dev_grantor_restore_v7 v WHERE singleton;
++  SELECT greatest(required_proof,v.required_generation),greatest(earliest_proof,v.proof_not_before)
++   INTO STRICT required_proof,earliest_proof
++  FROM official_v3_guard_private.bg1_dev_http_id_allocator_v8 v WHERE singleton;
+   IF current_state.generation<required_proof OR current_state.last_proof_started<earliest_proof
+     OR current_state.incident_generation<>current_state.resumed_generation
+     OR current_state.last_finished>current_state.last_started+interval '30 seconds'

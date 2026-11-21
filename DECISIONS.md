@@ -6326,3 +6326,13 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 **Alternativen:** `travellers` weiter als Erwachsene zu zeigen wäre für Solo-Reisen bequem und für Familien falsch. Eine neue Party-Altersspalte wäre eine Datenwahrheit ohne Auftrag. Kinderalter in die Stay22-URL zu schreiben wäre eine unbelegte Provider-Semantik.
 
 **Konsequenzen:** Eine Suche startet erst nach gesetzter Belegung. Die Reise selbst speichert diese Belegung nicht. S2 bis S4 und der Technical-Lead-Review bleiben offen. [Scope](docs/TRAVEL_INTEGRATION_S1_HOTEL_BELEGUNG_2026-11-19.md).
+
+## Dev-HTTP-IDs ohne reservierte Supabase-Eigentümerrechte — 21.11.2026
+
+**Kontext:** Nach dem gemeldeten Dev-Neustart lag die verwaltete UNLOGGED-pg_net-Sequenz hinter historisch reservierten IDs. Tatsächliche direkte ALTER-/OWNER- und Defaultumbindungsversuche scheiterten jeweils42501. Der Owner autorisiert Dev-Arbeit und verlangt zuerst einen regulären supportfreien Weg; Production bleibt ungeöffnet.
+
+**Entscheidung:** Eigene private LOGGED-Sequenz unter `postgres`, Start aus frischer Queue-gesperrter Inventur aller16 ID-Pfade, sowie einzelner BEFORE-INSERT-Trigger mit eng begrenztem SECURITY-DEFINER-Helper. Der bestehende Trigger-Rechteweg benötigt keine supabase_admin-Mitgliedschaft und keine neuen Caller-Grants. Unveränderliche BG1-v8-Folgebelege schützen den installierten Katalog und verlangen eine neue natürliche Vollprüfung.
+
+**Alternativen:** Die alten Owner-/Defaultwege bleiben tatsächlich verweigert und archiviert. Eine Erweiterung in die reservierte Providerrolle wird nicht versucht. Support ist für den belegten Dev-Weg nicht erforderlich. Alte IDs, Fakten, Quittungen und nicht transaktionale Sequenzlücken werden nicht zurückgesetzt. Ein einfaches Entfernen des neuen Triggers nach Betrieb würde wieder den rückständigen Generator verwenden; der vorbereitete Rückfallweg sperrt deshalb neue erfasste Inserts und erhält den eigenen Zähler für eine vorwärtsgerichtete Reparatur.
+
+**Begründung und Folgen:** R1–R4 samt Savepoint-/DDL-/Datenrücknahme, sieben tatsächlichen API-/Webhook-/Callerwegen und drei echten normalen HTTP-200-Antworten bestätigen die konkrete Dev-Lösung. Eigene LOGGED-Durabilität ist kein behaupteter physischer Crash-/Failovertest; gewöhnliches Triggerverhalten gilt nur origin/local. Keine Garantie gegen privilegierte Moduswechsel, direkte ID-Updates oder Provider-Upgrades. Technische Quellenwatch-Belege erneuern keine RESEARCH_ONLY-Originale oder abgelaufenen Fakten. Positive AT-Qualifikation, getrenntes CI-Livegate und Production-Prüfung bleiben eigene offene Gates. [Nachweise](docs/OFFICIAL_TRUTH_DEV_HTTP_ID_ALLOCATOR_2026-11-21.md) · [Production-Prüfpaket](docs/OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md).

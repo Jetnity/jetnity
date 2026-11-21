@@ -1,0 +1,40 @@
+{
+  "status": "SOURCE_REVIEW_DRAFT_NOT_EXECUTED_NOT_INSTALLED",
+  "input_live_file_sha256": "e65807a9162b45f570d1a4bb4fa053205714fda3dfee38d9376dd80f4196a1b5",
+  "input_transport_draft_sha256": "fae62e2bd9a5d5cd929d82b45726031a3954449f6ed9fb53bb13ea04f9843c5f",
+  "input_final_helper_sha256": "7a2fba345aeccef648d0c37a0092cc923a47e3e21557a98e0acc338c607a5c29",
+  "allocator_helper_prosrc_sha256": "16151e29d3859b8574afcc934c2fa4cc6709c82280697e34474b41f711801afa",
+  "expected_allocator_helper_security_mode": "definer",
+  "optional_allocator_usage_roles": [],
+  "modified_functions": [
+    "official_v3_guard_private.assert_catalog_v1()",
+    "official_v3_guard_private.catalog_status_v1()",
+    "official_v3_guard_private.require_open_v1()",
+    "public.official_v3_guard_alarm_status_v1()"
+  ],
+  "unchanged_audit_and_control": {
+    "official_v3_guard_private.audit_v1()": "b6f56232b998dea7868bf9767f8e9012282a43512a1e5fd622c9824e62fd2fff",
+    "official_v3_guard_private.check_control_v1()": "f1d8fdf3e64e88b2fd31dc72afff7ad035c2865056db97cebde1dc0e0d981f24"
+  },
+  "expected_after_definition_sha256": {
+    "official_v3_guard_private.assert_catalog_v1()": "d7560a9ab569830ecfc473b901ccd044dab052a93543fa491d75278e623d387b",
+    "official_v3_guard_private.audit_v1()": "b6f56232b998dea7868bf9767f8e9012282a43512a1e5fd622c9824e62fd2fff",
+    "official_v3_guard_private.catalog_status_v1()": "a37bdaaa546ab1bcf3baac301d83de3887765ae16532f149d421a9c1dd0780c4",
+    "official_v3_guard_private.check_control_v1()": "f1d8fdf3e64e88b2fd31dc72afff7ad035c2865056db97cebde1dc0e0d981f24",
+    "official_v3_guard_private.require_open_v1()": "15f9ac75fb870c8b13e7a3b7c7994343f4a7772f8cab0905a104c08211b9eaf7",
+    "public.official_v3_guard_alarm_status_v1()": "556248971a3765340ae1b273fc542addb409ad50f78b9d94baae9bd38d3dc884"
+  },
+  "pre_sha256": "e14228c68b153887e22a781e2b571b3858e20eb49b36a661842c86b68c718b51",
+  "post_sha256": "3bbfd98121a68cb755487ed31198465e6cc379ed4992c385f876e7d952c5c55e",
+  "requires": [
+    "actual TRIGGER authority proof",
+    "exact native allocator/cleanup ROLLBACK",
+    "reviewed seed above all 16 ID ledgers and native sequence",
+    "actual producer-role USAGE proof",
+    "native assembled v8 ROLLBACK",
+    "separate COMMIT decision and independent readback",
+    "fresh natural BG1 complete proof before current",
+    "later actual pg_net RETURNING and worker delivery proof"
+  ],
+  "runtime_limit": "Normal O trigger covers origin/local sessions, not session_replication_role=replica."
+}
