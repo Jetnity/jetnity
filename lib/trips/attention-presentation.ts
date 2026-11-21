@@ -1,4 +1,4 @@
-import type { AttentionPunkt } from '@/lib/trips/attention'
+import type { AttentionLage, AttentionPunkt } from '@/lib/trips/attention'
 
 export type AttentionGruppe = {
   punkt: AttentionPunkt
@@ -39,4 +39,31 @@ export function attentionGruppieren(punkte: readonly AttentionPunkt[]): Attentio
     }
   }
   return [...gruppen.values()]
+}
+
+const OHNE_SCHRITT: ReadonlySet<AttentionLage> = new Set(['unknown', 'insufficient_context', 'ungeprueft'])
+
+/**
+ * Ausführbar ist, was die reisende Person jetzt selbst weiterbringen kann.
+ * Eine Prüfung, die Jetnity gerade nicht liefern kann, ist es nie, auch mit
+ * Sprungziel. Warnungen, Fehler, veraltete Prüfungen und offene Lücken bleiben
+ * oben, auch ohne Sprungziel, weil sie Aufmerksamkeit brauchen.
+ */
+export function attentionAusfuehrbar(punkt: AttentionPunkt): boolean {
+  if (punkt.lage === 'unavailable') return false
+  if (punkt.aktion) return true
+  return !OHNE_SCHRITT.has(punkt.lage)
+}
+
+/** Teilt Gruppen ohne Umsortieren; jede Gruppe landet in genau einem Teil. */
+export function attentionNachAusfuehrbarkeit(gruppen: readonly AttentionGruppe[]): {
+  jetzt: AttentionGruppe[]
+  gutZuWissen: AttentionGruppe[]
+} {
+  const jetzt: AttentionGruppe[] = []
+  const gutZuWissen: AttentionGruppe[] = []
+  for (const gruppe of gruppen) {
+    ;(attentionAusfuehrbar(gruppe.punkt) ? jetzt : gutZuWissen).push(gruppe)
+  }
+  return { jetzt, gutZuWissen }
 }

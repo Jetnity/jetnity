@@ -435,6 +435,29 @@ function punktAnpassen(reise: Reisegraph, op: Modelloperation) {
   }
 }
 
+/**
+ * Ordnet die vorhandenen Tage von `tagId` bis `nachTagId` einem Ziel zu oder,
+ * ohne `etappeId`, keinem Ziel. Es entstehen und entfallen keine Tage.
+ * Normale Planpunkte folgen ihrem Tag; geschützte behalten ihre Zuordnung.
+ */
+function tageZuordnen(reise: Reisegraph, op: Modelloperation) {
+  const von = tagSuchen(reise, op.tagId, 'Der erste Tag der Zuordnung gehört nicht zur Reise.')
+  const bis = tagSuchen(reise, op.nachTagId, 'Der letzte Tag der Zuordnung gehört nicht zur Reise.')
+  if (von.dayIndex > bis.dayIndex) {
+    throw new ApplyError('ungueltig', 'Die Tageszuordnung endet vor ihrem Anfang.')
+  }
+  const stageId = op.etappeId
+    ? etappeSuchen(reise, op.etappeId, 'Dieses Ziel gehört nicht zur Reise.').id
+    : null
+  for (const tag of reise.days) {
+    if (tag.dayIndex < von.dayIndex || tag.dayIndex > bis.dayIndex) continue
+    tag.stageId = stageId
+    for (const punkt of tag.items) {
+      if (!istKommerziell(punkt)) punkt.stageId = stageId
+    }
+  }
+}
+
 function eineOperation(reise: Reisegraph, op: Modelloperation, kennung: KennungFn) {
   switch (op.art) {
     case 'stammdaten':
@@ -472,6 +495,9 @@ function eineOperation(reise: Reisegraph, op: Modelloperation, kennung: KennungF
       break
     case 'punkt_anpassen':
       punktAnpassen(reise, op)
+      break
+    case 'tage_zuordnen':
+      tageZuordnen(reise, op)
       break
   }
 }

@@ -11,6 +11,8 @@ import {
   type Flugart,
 } from '@/lib/trips/organisieren/booking-flug'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
+import { useFlughafenVorschlag } from './useFlughafenVorschlag'
+import FlughafenHinweise from './FlughafenHinweise'
 import type { Trip } from '@/types/trips'
 import { Personen } from '../Suchfelder'
 import Suchkalender from '../auswahl/Suchkalender'
@@ -22,10 +24,12 @@ function FlughafenFeld({
   label,
   wert,
   setzen,
+  hinweisId,
 }: {
   label: string
   wert: FlughafenAuswahl | null
   setzen: (v: FlughafenAuswahl | null) => void
+  hinweisId?: string
 }) {
   const id = useId()
   return (
@@ -37,6 +41,7 @@ function FlughafenFeld({
         onChange={setzen}
         placeholder="Stadt oder Flughafen"
         inputClassName="org-air-input"
+        describedBy={hinweisId}
       />
     </div>
   )
@@ -45,13 +50,19 @@ function FlughafenFeld({
 export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etappen: ReactNode }) {
   const erste = reise.stages[0],
     letzte = reise.stages.at(-1)
-  const [von, setVon] = useState(() => vorgeschlagenerFlughafen(reise.originPlaceId, reise.origin))
-  const [nach, setNach] = useState(() =>
+  const [von, setVon, vonHinweis] = useFlughafenVorschlag(
+    vorgeschlagenerFlughafen(reise.originPlaceId, reise.origin),
+    { placeId: reise.originPlaceId, name: reise.origin },
+  )
+  const [nach, setNach, nachHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(erste?.placeId ?? null, erste?.name ?? null, erste),
+    { placeId: erste?.placeId, name: erste?.name },
   )
-  const [zurueck, setZurueck] = useState(() =>
+  const [zurueck, setZurueck, zurueckHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(letzte?.placeId ?? null, letzte?.name ?? null, letzte),
+    { placeId: letzte?.placeId, name: letzte?.name },
   )
+  const hinweisBasis = useId()
   const [art, setArt] = useState<Flugart>(
     !reise.endDate
       ? 'einfach'
@@ -111,6 +122,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
           <FlughafenFeld
             label="Von"
             wert={von}
+            hinweisId={vonHinweis ? `${hinweisBasis}-von` : undefined}
             setzen={(v) => {
               setFehler('')
               setVon(v)
@@ -119,6 +131,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
           <FlughafenFeld
             label="Nach"
             wert={nach}
+            hinweisId={nachHinweis ? `${hinweisBasis}-nach` : undefined}
             setzen={(v) => {
               setFehler('')
               setNach(v)
@@ -137,6 +150,7 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             <FlughafenFeld
               label="Rückflug ab"
               wert={zurueck}
+              hinweisId={zurueckHinweis ? `${hinweisBasis}-zurueck` : undefined}
               setzen={(v) => {
                 setFehler('')
                 setZurueck(v)
@@ -152,6 +166,11 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
             Direktflüge
           </label>
         </div>
+        <FlughafenHinweise hinweise={[
+          { id: `${hinweisBasis}-von`, feld: 'Von', text: vonHinweis },
+          { id: `${hinweisBasis}-nach`, feld: 'Nach', text: nachHinweis },
+          { id: `${hinweisBasis}-zurueck`, feld: 'Rückflug ab', text: art === 'gabel' ? zurueckHinweis : null },
+        ]} />
         <p className="org-note mt-3 max-w-prose">
           Flüge und Preise öffnen sich bei Booking.com in einem neuen Tab. Bei einer Buchung kann Jetnity eine
           Provision erhalten.

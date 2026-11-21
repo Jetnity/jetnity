@@ -106,7 +106,7 @@ describe('Nächte und Hotelzeitraum', () => {
     assert.equal(gast.naechteGebucht, 2)
     assert.deepEqual(tripAuditV1(graph).sections[0], tripAuditV1(graph, graph.ohneTag).sections[0])
     assert.equal(tripAuditV1(graph).sections[0].coverage, 'partial')
-    assert.match(tripAuditV1(graph).sections[0].detail, /11 Übernachtungsintervalle/)
+    assert.match(tripAuditV1(graph).sections[0].detail, /11 Nächte im Reisekalender/)
     assert.match(tripAuditV1(graph).sections[0].detail, /2 davon Übergang/)
   })
 
@@ -149,7 +149,7 @@ describe('Nächte und Hotelzeitraum', () => {
     assert.deepEqual(gast.luecken, [])
     const audit = tripAuditV1(graph).sections[0]
     assert.equal(audit.coverage, 'partial')
-    assert.match(audit.detail, /11 Übernachtungsintervalle im Reisekalender sind bekannt/)
+    assert.match(audit.detail, /11 Nächte stehen im Reisekalender/)
     assert.doesNotMatch(audit.detail, /Übergang/)
     assert.equal(tripAuditV1(graph).findings.some((fund) => fund.domain === 'lodging' && /Übergang|Hotelpflicht fehlt|Geplante Unterkunftsnacht/.test(fund.title)), false)
     const bestand = renderToStaticMarkup(createElement(UnterkunftBestand, { reise: graph }))
