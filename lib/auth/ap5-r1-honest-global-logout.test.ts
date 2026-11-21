@@ -72,6 +72,13 @@ describe('AP-5-R1 Vertrag, Caller-Inventar und Accessibility', () => {
     assert.equal(formular.includes("role=\"alert\""), true)
     assert.equal(formular.includes('aria-live="assertive"'), true)
     assert.equal(formular.includes('useActionState'), true)
+    // The Dev incident showed a revoked server token but an authenticated
+    // browser after reload. Global browser revocation must be tried before
+    // the preserved Server Action fallback and must verify no session remains.
+    assert.equal(formular.includes('signOutBrowserFallback'), true)
+    assert.ok(formular.indexOf('signOutBrowserFallback(result') === -1)
+    assert.ok(formular.indexOf('signOutBrowserFallback(placeholder') < formular.indexOf('return action(vorher, formular)'))
+    assert.equal(formular.includes("scope: 'local'"), false)
     assert.equal(formular.includes('data-abmelden-lage'), true)
     assert.equal(formular.includes('fehler.text'), true)
     assert.equal(formular.includes('onErgebnis'), false)
