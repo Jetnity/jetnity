@@ -1,0 +1,44 @@
+{
+  "schema": "jetnity-native-header-root-offline-review-v1",
+  "database_calls": 0,
+  "native_parser_or_execution": false,
+  "definitions": [
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "old_native_exact": true,
+      "new_native_exact": true,
+      "only_body_replaced": true,
+      "new_definition_sha256": "4992ed1bf47185d46359852e81eed6c30c676c0586d6b9b4ad498c8077c01ded"
+    },
+    {
+      "signature": "official_v3_guard_private.assert_catalog_v1()",
+      "old_native_exact": true,
+      "new_native_exact": true,
+      "only_body_replaced": true,
+      "new_definition_sha256": "51527fcf925bb0314187d34c38796bb376230f44e4f36ae1801624a4b9141360"
+    },
+    {
+      "signature": "official_v3_guard_private.require_open_v1()",
+      "old_native_exact": true,
+      "new_native_exact": true,
+      "only_body_replaced": true,
+      "new_definition_sha256": "a83142cfd6e51926305171d60f41042792d249d7a4a92ddb7966c485c4dc526b"
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "old_native_exact": true,
+      "new_native_exact": true,
+      "only_body_replaced": true,
+      "new_definition_sha256": "484b9519d6fa2129c9fbaa916732fb93423368c4bedafcf448534f53b942239b"
+    },
+    {
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "old_native_exact": true,
+      "new_native_exact": true,
+      "only_body_replaced": true,
+      "new_definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e"
+    }
+  ],
+  "full_new_headers_bound_before_first_guard_call_in_50": true,
+  "original_artifacts_unmodified": true
+}

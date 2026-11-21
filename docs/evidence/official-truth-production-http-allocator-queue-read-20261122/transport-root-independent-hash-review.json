@@ -1,0 +1,102 @@
+{
+  "schema": "jetnity-transport-root-independent-hash-review-v1",
+  "offline_only": true,
+  "database_calls": 0,
+  "functions_verified": 15,
+  "source_review_sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+  "execution_sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+  "rows": [
+    {
+      "signature": "extensions.grant_pg_net_access()",
+      "full_sha256": "e38c4060751c9695123350596f1cb0d0c943015f3267a2a455d8efe02c711184",
+      "body_sha256": "754e58111dbe32030af4d91591dfd78cb3cf8e8f4f56a5fcc199bb0cf7f4ac2b",
+      "exact": true
+    },
+    {
+      "signature": "jetnity_prod_import_scheduler.tick_v1()",
+      "full_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe",
+      "body_sha256": "ebc518fc18e8c5057941c1d65890171b510fa67138dc85023ac1d95195f6bb3a",
+      "exact": true
+    },
+    {
+      "signature": "net._await_response(bigint)",
+      "full_sha256": "4c8e2c8e0f7d023cc615620398a1ed43d127b4ecb343158a60310f886daa6835",
+      "body_sha256": "12a130dd8e2e6403f1ac5d7938eedfc796899640c09b0d3b5240f5cdbec4f1bd",
+      "exact": true
+    },
+    {
+      "signature": "net._encode_url_with_params_array(text,text[])",
+      "full_sha256": "be4a42be0fb73ec674a042ffb11b2698bd80b7965153c843c346e7abfe776c7f",
+      "body_sha256": "5cb8b70700de75774ef30babbf0f06248266b71e0b91879c2d29735d5fba248d",
+      "exact": true
+    },
+    {
+      "signature": "net._http_collect_response(bigint,boolean)",
+      "full_sha256": "6f0275eb73cf42cc9e3b270b9133d31268bd4df3500a0895d20e79d11563b3d1",
+      "body_sha256": "e9d138360e40290da72383f3cebfd3329a0a79970f38a5fcebd2787b91148826",
+      "exact": true
+    },
+    {
+      "signature": "net._urlencode_string(character varying)",
+      "full_sha256": "3e9629db6729f01e07afc5cf40d3bbad255ef792fc3260bd6d666dbffc5c73ed",
+      "body_sha256": "d6ca8cc0ea90c627f061d8b8340f50794294a94e3961d93b910bf64a12537132",
+      "exact": true
+    },
+    {
+      "signature": "net.check_worker_is_up()",
+      "full_sha256": "5fdaadbdc7ebefc5cc47571369060b444c7aabad895cea6915c9c7caedc0cd86",
+      "body_sha256": "342ba857ac677ad7a39b7ee33a5f8cd4aaaaf7352a66c7904ed1ed61ed11a606",
+      "exact": true
+    },
+    {
+      "signature": "net.http_collect_response(bigint,boolean)",
+      "full_sha256": "870e86a00b7b573335672105c6e8889949258f1c19873a48f4094e79e6d1a1c0",
+      "body_sha256": "28a771108e4ef025ca42da0918f4773ce7e659346c0082036870cc593f8b4a54",
+      "exact": true
+    },
+    {
+      "signature": "net.http_delete(text,jsonb,jsonb,integer,jsonb)",
+      "full_sha256": "1f2b6fc5ccc1511e77737a95c71228bed710482133a95a87cdb672d80373617b",
+      "body_sha256": "7c4bd9c47e2d30bf80cf93bf71b1f5236c28de2e9f31b72aac047554ded974ae",
+      "exact": true
+    },
+    {
+      "signature": "net.http_get(text,jsonb,jsonb,integer)",
+      "full_sha256": "7012c5582cd0ab8d38f546af6633ea3c531950fb009f07127b99f8a1640eac1a",
+      "body_sha256": "fac801ed417ff4ecda0f86a0bef9874d4b749fa34cc9000153aa4546b2cc8bac",
+      "exact": true
+    },
+    {
+      "signature": "net.http_post(text,jsonb,jsonb,jsonb,integer)",
+      "full_sha256": "ee3ec5bc54158b60b6c4e3a966a07a33dc009788fad8f6b7480ad1c45acdfe78",
+      "body_sha256": "b7cde4add3ffb30c3a667d6038d223bbb03bac6cd5d181dab62f48c79c34f362",
+      "exact": true
+    },
+    {
+      "signature": "net.wait_until_running()",
+      "full_sha256": "2c475316a148b263530a1b641f241b1df14816d6ef1b6255169c7a308d9cc936",
+      "body_sha256": "92fe9eebbcd6ca1aeaa713d8a0bfdbec26ada4c8b9a45fe7cb1d9ace0f2e5638",
+      "exact": true
+    },
+    {
+      "signature": "net.wake()",
+      "full_sha256": "b7f9cb7d7cd9b5259c6a29b1cae29b451b325a6f43169cee18b7ff723fad9efc",
+      "body_sha256": "51391bf0ab33e8272bcfca0d61b5ab242391822f331fe51ac5930b58da8e5b25",
+      "exact": true
+    },
+    {
+      "signature": "net.worker_restart()",
+      "full_sha256": "620a4b3eba17ae830ea6bf9ec797e68c5fa7ec6286c3fa8603e1916e5e09b7af",
+      "body_sha256": "98b3582078f29dde65a380c076b7d6f2cf4355b2e0eedddaf0733e7f5f0c3cd9",
+      "exact": true
+    },
+    {
+      "signature": "official_v3_at_production_private.enqueue_v1()",
+      "full_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+      "body_sha256": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+      "exact": true
+    }
+  ],
+  "runtime_or_deployed_c_binary_proof": false,
+  "write_permission": false
+}

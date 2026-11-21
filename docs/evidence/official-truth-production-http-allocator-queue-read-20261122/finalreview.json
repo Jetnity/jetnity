@@ -1,0 +1,198 @@
+{
+  "schema": "jetnity-production-http-allocator-independent-static-review-v1",
+  "reviewer": "verify_dev_receipts",
+  "recorded_at_utc": "2026-11-21T23:23:28.492591+00:00",
+  "package": "PROD_HTTP_ALLOCATOR_BOUND_PACKAGE_20261122",
+  "declared_production_target": "qscbgcdmivbbnzrcyegn",
+  "status": "PASS_STATIC_REVIEW_ONLY_NO_EXECUTION_PERMISSION",
+  "review_method": "Local read-only inspection, comparison with the preserved prior template and fixed source/receipt bytes, and independent byte/hash comparisons. No builder imported or executed. No SQL parser, SQL engine, browser or external service used.",
+  "reviewed_sql_files": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 101801,
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 24857,
+      "sha256": "4a0f90f485c5241c9532994c0260659dcfeb4f3e86165232ffa003a31a0621f2"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 94890,
+      "sha256": "3efbd3186483212c575c0d3cb53e6f2c5a1e4fb34e9ab1343ecd8c0504dda539"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/30-production-http-id.FENCE-ROLLBACK.sql",
+      "bytes": 29584,
+      "sha256": "453255008bc93b39571772c8b5e6a6a6ee7a40949900918310ab3e32bae3d546"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/40-production-http-id.FENCE-COMMIT.sql",
+      "bytes": 29074,
+      "sha256": "4af27e195bb91200bab301356b341d51b1079340a7d24cfec473e9a6e651cc34"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 7670,
+      "sha256": "74caf24ea8870c5ea95f82b67598427b2f2ee11aa8066250b448b12a79ab4431"
+    }
+  ],
+  "evidence_bindings": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/expected-native-guard-definitions.json",
+      "bytes": 63484,
+      "sha256": "1e48a530d1a8f36f2650ba551fa9e0b34394502f784f3a68b068b07f3f7094e2"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/required-production-bindings.json",
+      "bytes": 7711,
+      "sha256": "f23cbb8325b4afb11c30141e62efb03311a7683b4251c7a9d1373ae3333019e8"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/inputs/queue-read-execution.json",
+      "bytes": 52011,
+      "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/inputs/query-cost-provider-migration-body.sql",
+      "bytes": 26914,
+      "sha256": "dccf4eb097e4f6a4ffd040df6edb6933912a1a61e53dca06e14e6dc6d4a0fd67"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/inputs/pg-net-0.19.5-sql-source.txt",
+      "bytes": 9487,
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5"
+    }
+  ],
+  "native_definition_checks": [
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "checks": {
+        "predecessor_definition_matches_actual_02": true,
+        "predecessor_body_matches_actual_02": true,
+        "successor_definition_digest_exact": true,
+        "only_body_replaced_header_and_suffix_identical": true,
+        "successor_body_matches_candidate_20": true,
+        "new_native_pin_in_30_40_50": true
+      },
+      "expected_successor_definition_sha256": "4992ed1bf47185d46359852e81eed6c30c676c0586d6b9b4ad498c8077c01ded"
+    },
+    {
+      "signature": "official_v3_guard_private.assert_catalog_v1()",
+      "checks": {
+        "predecessor_definition_matches_actual_02": true,
+        "predecessor_body_matches_actual_02": true,
+        "successor_definition_digest_exact": true,
+        "only_body_replaced_header_and_suffix_identical": true,
+        "successor_body_matches_candidate_20": true,
+        "new_native_pin_in_30_40_50": true
+      },
+      "expected_successor_definition_sha256": "51527fcf925bb0314187d34c38796bb376230f44e4f36ae1801624a4b9141360"
+    },
+    {
+      "signature": "official_v3_guard_private.require_open_v1()",
+      "checks": {
+        "predecessor_definition_matches_actual_02": true,
+        "predecessor_body_matches_actual_02": true,
+        "successor_definition_digest_exact": true,
+        "only_body_replaced_header_and_suffix_identical": true,
+        "successor_body_matches_candidate_20": true,
+        "new_native_pin_in_30_40_50": true
+      },
+      "expected_successor_definition_sha256": "a83142cfd6e51926305171d60f41042792d249d7a4a92ddb7966c485c4dc526b"
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "checks": {
+        "predecessor_definition_matches_actual_02": true,
+        "predecessor_body_matches_actual_02": true,
+        "successor_definition_digest_exact": true,
+        "only_body_replaced_header_and_suffix_identical": true,
+        "successor_body_matches_candidate_20": true,
+        "new_native_pin_in_30_40_50": true
+      },
+      "expected_successor_definition_sha256": "484b9519d6fa2129c9fbaa916732fb93423368c4bedafcf448534f53b942239b"
+    },
+    {
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "checks": {
+        "predecessor_definition_matches_actual_02": true,
+        "predecessor_body_matches_actual_02": true,
+        "successor_definition_digest_exact": true,
+        "only_body_replaced_header_and_suffix_identical": true,
+        "successor_body_matches_candidate_20": true,
+        "new_native_pin_in_30_40_50": true
+      },
+      "expected_successor_definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e"
+    }
+  ],
+  "common_10_20_install_prefix": {
+    "identical": true,
+    "bytes": 92487,
+    "sha256": "6ddd3a72ec5e8dfb24514205e5042c537a9cf877d36b08546d1a85802962e416"
+  },
+  "findings_resolved": [
+    {
+      "id": "READBACK_HEADER_BINDING",
+      "previous_gap": "50 checked only prosrc before invoking Guard routines.",
+      "resolution": "50 and both Fence files now verify full expected pg_get_functiondef hashes derived from actual 02 native predecessors with only the reviewed body replaced, plus owner, ACL, config, language and fixed argument/return shape before the first Guard invocation. The full native definition binds rendered STRICT/PARALLEL/LEAKPROOF/set-return and remaining header attributes."
+    },
+    {
+      "id": "POSTREHEARSAL_TRANSPORT_GATE",
+      "resolution": "11 requires the observed 60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f transport digest, current fixed query-cost predecessor, preserved v3 ancestry, exact domain/queue shape and new-object absence before its Guard assertion."
+    },
+    {
+      "id": "DOCUMENTED_SCOPE_PRECISION",
+      "resolution": "Owner document and README distinguish a legacy counter freshly read under queue/producer locks from a separately locked sequence; the exact source eligibility predicate from a claim that all sources are research_only; and the locked whole-state proof in 10 from the later lineage/object/metadata readback in 11."
+    }
+  ],
+  "static_review_findings": {
+    "entry_and_target_gates": "Future runs require the fixed external target plus postgres/PG17/session mode, exact current native/header/owner/ACL/config pins and documented query-cost/v3 lineage before installation. SQL markers alone do not authenticate project identity.",
+    "current_lineage_preservation": "Immediate predecessor is query_cost_baseline_v1. The new allocator is appended; the older rows and digest edges, unique JSON aggregation and narrow dependency deduplication are preserved. The common 10/20 prefix checks old catalog keys with only five reviewed definition deltas and bounded new-object additions.",
+    "locked_high_water": "Existing advisory locks, global queue SHARE ROW EXCLUSIVE and fixed NOWAIT history locks precede the fresh READ COMMITTED MAX statement. First ID is greatest(211, freshly read legacy last_value, four-path high water)+1025, with explicit bigint-range checks. No global lock of arbitrary direct nextval calls is claimed.",
+    "private_allocator": "Own LOGGED bigint sequence and fixed-context SECURITY DEFINER trigger helper with pg_catalog search_path, qualified fixed nextval target and owner-only ACL checks. Existing sequence owner/default and ordinary net APIs are not modified. Contract is ordinary origin/local INSERTs, not replica/direct privileged UPDATE/hostile DBA.",
+    "rollback_semantics": "10 uses two explicit incoming IDs so its probes avoid the managed default nextval. Own allocations disappear because the newly created own sequence and whole installation are rolled back. This does not claim general rollback of nextval. Owned RESTART and narrow helper dependency/savepoint probes are distinct from dropping a committed allocator.",
+    "no_http_probe": "The queue barrier and uncommitted rows keep synthetic probes from worker visibility; the SQL does not call net.http_*, net.wake or worker_restart. Existing unrelated in-flight network work is not claimed stopped.",
+    "source_barrier": "Preflight requires three source pins, no source_qualified AND NOT research_only row, no legal/customer-approved original, and no unexpired AT fact. The new publisher rejects before its old operational path unless all three sources/originals meet exact positive qualification and body-hash conditions. Its negative 0 probe preserves protected state; no positive renewal is established.",
+    "fresh_proof": "New baseline requires a later complete BG1 generation; preexisting open state is required on entry. No manual audit, reset, resume, Owner operation or artificial fresh proof is performed.",
+    "fence_limits": "30/40 retain a deliberately NULL independently committed successor pin and stop before DDL until separately reviewed and bound. Fence changes only the own helper, blocks future captured inserts, preserves existing queued work/counters/history and makes no instant public-alarm claim.",
+    "readback_limits": "11 and 50 are separate READ ONLY/ROLLBACK steps, not automatically authorized. 11 permits natural between-transaction progress and cannot restate all earlier frozen row/counter hashes. 50 provides committed lineage/sequence/Guard metadata, not native HTTP, restart or positive renewal proof.",
+    "authorization": "Preparation, source matching, a Git commit and any successful read are not execution authority. 10->11 requires its own bounded exact Go; 20->50 and each later Fence require separate authority."
+  },
+  "original_preservation": {
+    "original_manifest": {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/MANIFEST.json",
+      "bytes": 10179,
+      "sha256": "ef166a30a16cbb9cb6ca33702b51c659f0ce0400668b54d1e6dddbf820086d65"
+    },
+    "original_sql_files_count": 8,
+    "all_original_sql_hashes_and_bytes_match_original_manifest": true
+  },
+  "documentation_review": {
+    "paths": [
+      "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/README.md",
+      "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ID_BOUND_PACKAGE_2026-11-22.md"
+    ],
+    "scope": "Semantic authority, rollback, source-state and evidence-boundary wording reviewed. Final manifest/table population is a separate root packaging check."
+  },
+  "unresolved_static_blockers": [],
+  "not_established": [
+    "Native PostgreSQL parsing or execution success",
+    "Production ROLLBACK rehearsal, COMMIT or Fence success",
+    "Current live query_cost baseline row beyond the archived release receipt",
+    "Current BG1 openness or permission to repair a closed state",
+    "Hosted pg_net C binary identity or worker runtime behavior",
+    "Natural HTTP operation, restart durability or positive AT renewal"
+  ],
+  "actions_by_this_review": {
+    "sql_executions": 0,
+    "supabase_or_database_calls": 0,
+    "browser_or_web_calls": 0,
+    "builder_imports_or_executions": 0,
+    "production_mutations": 0,
+    "dev_mutations": 0,
+    "only_new_file_written": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/finalreview.json"
+  },
+  "execution_permission_granted": false
+}

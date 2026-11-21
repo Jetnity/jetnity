@@ -1,0 +1,132 @@
+{
+  "schema": "jetnity-production-http-allocator-offline-verification-v2",
+  "status": "STATIC_BINDING_AND_DETERMINISTIC_REBUILD_PASS_NOT_NATIVE_RUNTIME_PASS",
+  "source_main_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+  "sql_executed": false,
+  "database_or_browser_or_network_access_performed": false,
+  "postgresql_native_parser_or_runtime_executed": false,
+  "local_python_builder_second_run_only": true,
+  "deterministic_byte_identical_generated_files": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+    "20-production-http-id.INSTALL-COMMIT.sql",
+    "30-production-http-id.FENCE-ROLLBACK.sql",
+    "40-production-http-id.FENCE-COMMIT.sql",
+    "50-production-http-id.POSTCOMMIT-READONLY.sql",
+    "source-provenance.json",
+    "expected-native-guard-definitions.json"
+  ],
+  "old_approved_package_manifest_files_unchanged": [
+    "00-at-enqueue-diagnosis.READONLY.sql",
+    "01-required-bindings.READONLY.sql",
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+    "20-production-http-id.INSTALL-COMMIT.sql",
+    "30-production-http-id.FENCE-ROLLBACK.sql",
+    "40-production-http-id.FENCE-COMMIT.sql",
+    "50-production-http-id.POSTCOMMIT-READONLY.sql",
+    "00-at-enqueue-diagnosis.static-review.json",
+    "build-candidates.py",
+    "required-production-bindings.json",
+    "reviewed-net-api-definitions.json",
+    "source-provenance.json",
+    "offline-verification.json"
+  ],
+  "source_archive_count_verified": 9,
+  "preserved_byte_identical_components": {
+    "native_expr": true,
+    "qualification_barrier": true,
+    "helper_body": true
+  },
+  "optimized_catalog_original_entries_prefix_byte_identical": true,
+  "optimized_unique_aggregate_and_narrow_distinct_dependencies_preserved": true,
+  "every_original_historical_and_query_cost_assertion_clause_byte_identical": true,
+  "five_native_header_derivations": [
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_guard_private.assert_catalog_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_guard_private.require_open_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    }
+  ],
+  "postrehearsal_checks_current_predecessor_domain_and_native_transport_digest": true,
+  "fence_pin_deliberately_null_until_actual_committed_successor_readback": true,
+  "sql_files": {
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457",
+      "bytes": 101801
+    },
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "4a0f90f485c5241c9532994c0260659dcfeb4f3e86165232ffa003a31a0621f2",
+      "bytes": 24857
+    },
+    "20-production-http-id.INSTALL-COMMIT.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "3efbd3186483212c575c0d3cb53e6f2c5a1e4fb34e9ab1343ecd8c0504dda539",
+      "bytes": 94890
+    },
+    "30-production-http-id.FENCE-ROLLBACK.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "453255008bc93b39571772c8b5e6a6a6ee7a40949900918310ab3e32bae3d546",
+      "bytes": 29584
+    },
+    "40-production-http-id.FENCE-COMMIT.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "4af27e195bb91200bab301356b341d51b1079340a7d24cfec473e9a6e651cc34",
+      "bytes": 29074
+    },
+    "50-production-http-id.POSTCOMMIT-READONLY.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "74caf24ea8870c5ea95f82b67598427b2f2ee11aa8066250b448b12a79ab4431",
+      "bytes": 7670
+    }
+  },
+  "builder_sha256": "c849a9b3eaf06f07a755eb33389508eb8cd26bddfeb61f39a40ddd91e76be568",
+  "required_bindings_sha256": "f23cbb8325b4afb11c30141e62efb03311a7683b4251c7a9d1373ae3333019e8",
+  "source_provenance_sha256": "0d24092a667a4cf6e6f73ef5b2abbff99ce9ca27717a29aa38e6c938aa7a6f11",
+  "limits": [
+    "Lexical balance is not PostgreSQL parsing, installation, hosted rollback, or concurrency proof.",
+    "The actual current query-cost baseline row has not been read by this task; its documented exact contract remains a future pre-DDL check.",
+    "Domain owner/typmod/dimensions/default/collation additions are conservative source-derived future gates, not fields observed by 02.",
+    "Queue lock serializes ordinary queue DML. Direct external legacy nextval is not prevented; exact snapshot comparison can refuse observed foreign progress.",
+    "New sequence nextvals disappear only when the newly created sequence object is rolled back; no general nextval rollback is claimed.",
+    "Separate explicit authorization and actual evidence remain required for 10,11,20 and any later bound Fence; no HTTP, renewal, source qualification or Production repair is claimed."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "jetnity-production-http-allocator-root-packaging-review-v1",
+  "recorded_at_utc": "2026-11-21T23:24:29.486734+00:00",
+  "status": "PASS_STATIC_BINDING_AND_PACKAGING_ONLY_NO_EXECUTION_PERMISSION",
+  "package_manifest": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+    "bytes": 19172,
+    "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67"
+  },
+  "independent_review": {
+    "path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/finalreview.json",
+    "bytes": 12967,
+    "sha256": "7f20914a93197eaee4776f6c828d9916fd98d4575fdc593fb318224afecbf2a2"
+  },
+  "six_sql_hashes_match_independent_final_review": true,
+  "all_22_package_manifest_records_exact": true,
+  "native_transport_body_and_definition_hashes_verified": 15,
+  "native_old_to_new_only_body_changes_verified": 5,
+  "original_package_manifest_and_14_files_unchanged": true,
+  "approved_02_sql_and_manifest_unchanged": true,
+  "all_new_document_links_resolve": true,
+  "overall_plan_original_archive_byte_exact": true,
+  "overall_plan_update_is_append_only": true,
+  "only_existing_modified_file": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+  "new_package_sql_executions": 0,
+  "additional_database_calls_after_approved_02": 0,
+  "native_parser_or_runtime_test_performed": false,
+  "write_execution_permission": false,
+  "limitations": [
+    "Current BG1 open state and current query-cost baseline row are future preflight gates, not observations of02",
+    "Domain extra type properties are expected future gates, not separately observed fields",
+    "No actual rollback/installation/HTTP/source renewal/worker binary proof for this new package",
+    "30/40 installed canonical successor binding remains deliberately NULL"
+  ],
+  "owner_review_document": {
+    "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ID_BOUND_PACKAGE_2026-11-22.md",
+    "bytes": 19924,
+    "sha256": "85f08f18d45c591111f213f83ca178608ca601f0173e8afdb9a289ad22248cba"
+  },
+  "read_result_document": {
+    "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_QUEUE_READ_RESULT_2026-11-22.md",
+    "bytes": 7867,
+    "sha256": "ef189c6772f915b2d5227e2664dd3018433a00575a901068bdc78a2634dd668a"
+  }
+}

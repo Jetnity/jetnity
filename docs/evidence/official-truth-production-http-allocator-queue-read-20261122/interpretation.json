@@ -1,0 +1,36 @@
+{
+  "schema": "jetnity-production-queue-read-offline-interpretation-v1",
+  "read_authorization": "PROD_HTTP_ALLOCATOR_QUEUE_REVIEW_20261121",
+  "read_authorization_consumed": true,
+  "raw_result": {
+    "file": "execution.json",
+    "path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/execution.json",
+    "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+    "bytes": 52011
+  },
+  "actual_one_read_completed": true,
+  "one_read_only_transaction_with_rollback": true,
+  "additional_production_calls_after_02": 0,
+  "local_binding_review_complete": true,
+  "raw_result_and_original_flags_preserved": true,
+  "old_shape_assumptions_corrected": [
+    "method domain over text",
+    "headers nullable"
+  ],
+  "domain_semantic_evaluation_separate_and_exact": true,
+  "transport_body_and_full_definition_matches": 15,
+  "new_observation_is_not_current_guard_or_positive_at_proof": true,
+  "query_cost_baseline_not_newly_read": true,
+  "query_cost_optimized_definitions_from_02_preserved_as_immediate_predecessor": true,
+  "write_package": {
+    "file": "MANIFEST.json",
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+    "bytes": 19172,
+    "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67"
+  },
+  "package_status": "BOUND_FOR_REHEARSAL_REVIEW_ONLY_NO_EXECUTION_AUTHORIZATION",
+  "package_sql_executions": 0,
+  "write_permission": false,
+  "http_source_owner_role_secret_login_2fa_cost_publication_actions": 0,
+  "expired_information_label": "derzeit nicht verfügbar"
+}

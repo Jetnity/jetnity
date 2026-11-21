@@ -1,0 +1,29 @@
+{
+  "schema": "jetnity-production-queue-read-independent-result-review-v1",
+  "reviewer_task": "/root/verify_dev_receipts",
+  "conclusion": "ONE_APPROVED_READ_EXACTLY_COMPLETED; LOCAL_REBIND_REVIEW_REQUIRED",
+  "raw_parsed_match": true,
+  "exact_sql_and_manifest_hashes": true,
+  "result_rows": 1,
+  "result_row_json_bytes": 19595,
+  "total_window_ms": 1805,
+  "read_only": true,
+  "rollback_in_exact_sql": true,
+  "no_additional_read_or_retry": true,
+  "all_six_upstream_column_comparisons_passed": true,
+  "two_original_template_mismatches": [
+    "headers_nullability",
+    "method_domain_type"
+  ],
+  "domain_definition_hash_matches_readable_official_check": true,
+  "raw_offline_assessment_separated": true,
+  "changed_function_definitions_since01": [
+    "official_v3_guard_private.assert_catalog_v1()",
+    "official_v3_guard_private.catalog_status_v1()"
+  ],
+  "new_guard_predecessor_review_required": true,
+  "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+  "no_current_guard_health_or_positive_renewal_assertion": true,
+  "reviewer_database_calls": 0,
+  "write_permission": false
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "jetnity-production-http-allocator-required-bindings-v2",
+  "status": "BOUND_REVIEW_CANDIDATE_NO_SQL_EXECUTION_PERMISSION",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "old_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+  "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+  "installed_successor_canonical_sha256": null,
+  "pg_net_0195_worker_review": {
+    "evidence_path": "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json",
+    "sha256": "7ec6c65732acc5681a3f79d4cd612276461289576c5a8582a2bd1044d15fdef2",
+    "upstream_commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "static_id_transport_review_complete": true,
+    "hosted_binary_identity_or_runtime_proof": false
+  },
+  "resolve_before_rehearsal": [
+    "Completed: the authorized actual 02 receipt, source-correct queue/domain semantics and all 15 transport full-definition/body fingerprints are independently reviewed and archived. This does not authorize another READ, DDL or COMMIT.",
+    "Current catalog_status/assert native definition bytes exactly match the installed query-cost provider artifact at fixed main commit d8798dc2dee0a7f2cacb4f9def0605ee347f24c4.",
+    "Future exact preflight must verify the documented query_cost_baseline_v1 catalog/digest edges, original v3 row, current guard status, full ACL/config pins, locked transport/domain metadata and fresh high water. No current baseline-row observation or runtime PASS is claimed now.",
+    "Review the generated 22 November candidate bytes and provenance, then obtain separate bounded Production ROLLBACK rehearsal authorization. READ authorization never authorizes DDL or COMMIT."
+  ],
+  "resolve_before_install": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql must actually pass in the approved Production scope; no isolated/native/static substitute is claimed.",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql must independently confirm restoration of the original definitions/chain and absence of new own objects.",
+    "Review the exact 20 installation bytes and actual rehearsal/readback evidence; obtain a separate explicit COMMIT Go. The immutable snapshots are not hand-edited to match current drift."
+  ],
+  "resolve_before_fence": [
+    "Pin the actually committed successor canonical SHA from an independent readback, not from this unexecuted draft.",
+    "Review the exact fail-closed scope; obtain the specifically approved fence rehearsal or fence COMMIT authorization."
+  ],
+  "required_before_rehearsal": [
+    "native_transport_sha256",
+    "method_domain_constraint_definition_sha256",
+    "method_domain_constraint_catalog_sha256",
+    "immediate_predecessor_catalog_sha256"
+  ],
+  "safely_replaced_by_existing_pinned_chain": {
+    "control_retirement_immutable_pins": "Read only from the fixed ef4dcbe4\u2026 query_cost successor catalog after its exact source/definition and full catalog hash checks pass; historical v3 catalog SHA7b9418\u2026 and all older edges remain mandatory.",
+    "history_and_owner_frozen_hashes": "No prior live digest is required. Complete locked row multisets and counters are compared before/after; natural appended history is not silently deleted or rejected merely for being newer.",
+    "old_baseline_canonical_digest": "The immediate predecessor is query_cost_baseline_v1: its release-receipt catalog/algorithm/ancestry pins are checked in future preflight, then its complete unchanged row (no timestamp fields) is hashed into the appended HTTP successor. Its row has not been freshly read by this task."
+  },
+  "immediate_predecessor": "official_v3_guard_private.query_cost_baseline_v1",
+  "immediate_predecessor_catalog_sha256": "ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24",
+  "query_cost_predecessor_baseline_sha256": "a7266c41fc77ab63b8ce2878d10890c7d5b395a3a33d8fe6c5331bf68f7e2bd0",
+  "method_domain_oid": 289454,
+  "method_domain_constraint_definition": "CHECK (((VALUE ~~* 'get'::text) OR (VALUE ~~* 'post'::text) OR (VALUE ~~* 'delete'::text)))",
+  "method_domain_constraint_definition_sha256": "412b54e60167a01e5fe4856c3ed5cbf862b912b2f3ba01bce4a8661c5ba915de",
+  "method_domain_constraint_catalog_sha256": "63ece7f25171a578daae026a9e5501f99fbbf3e9677452ab470248e13f3ad856",
+  "source_archives": {
+    "inputs/query-cost-JETNITY_BG1_QUERY_COST_2026-11-21.md": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "docs/JETNITY_BG1_QUERY_COST_2026-11-21.md",
+      "sha256": "32863ab0c883692975cc042b58c850adb058649b1908a2082087be83c7c52b92",
+      "bytes": 16269
+    },
+    "inputs/query-cost-build.mjs": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/build.mjs",
+      "sha256": "5676b1d9b026a262e701ea6fde11b8b811a5fb131a04cc5e07682494af3d127a",
+      "bytes": 16227
+    },
+    "inputs/query-cost-install.sql": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/install.sql",
+      "sha256": "d2bfb68565c5446da98d1e27cceabf8171590fae36f5c247cf10221bc9a5e99a",
+      "bytes": 26929
+    },
+    "inputs/query-cost-provider-migration-body.sql": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/provider-migration-body.sql",
+      "sha256": "dccf4eb097e4f6a4ffd040df6edb6933912a1a61e53dca06e14e6dc6d4a0fd67",
+      "bytes": 26914
+    },
+    "inputs/query-cost-observed-production-functions.json": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/observed-production-functions.json",
+      "sha256": "abe10c96e22ab0554af163e52dc69a6d4d8a72cbe7cee1ff00cb9a433ea432c9",
+      "bytes": 20911
+    },
+    "inputs/queue-read-execution.json": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/execution.json",
+      "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+      "bytes": 52011
+    },
+    "inputs/pg-net-0.19.5-sql-source.txt": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-read-20261121/pg-net-0.19.5-sql-source.txt",
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+      "bytes": 9487
+    },
+    "inputs/transport-substantive-review.json": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/transport-substantive-review.json",
+      "sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+      "bytes": 43486
+    },
+    "inputs/transport-substantive-review.md": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/transport-substantive-review.md",
+      "sha256": "42b0e3795dd38b59d19723869a06244af1c93d2c7fc6db64fb25dc2424e2eabc",
+      "bytes": 6621
+    }
+  },
+  "source_main_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+  "queue_read_observed_at": "2026-11-21T23:06:49.362212+00:00",
+  "query_cost_row_observed_by_this_task": false,
+  "query_cost_row_contract_source": "Pinned merged release receipt; exact future preflight must verify the row and complete current catalog before DDL.",
+  "substantive_transport_review": {
+    "complete": true,
+    "review_path": "inputs/transport-substantive-review.json",
+    "sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+    "full_definition_and_body_matches": 15,
+    "new_database_or_http_action": false,
+    "runtime_proof": false
+  }
+}
