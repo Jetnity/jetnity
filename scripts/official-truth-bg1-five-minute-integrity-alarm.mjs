@@ -1,5 +1,5 @@
 // BG1 5-minute integrity-only Actions notification: UNARMED until Owner.
- // Fixed URLs and existing publishable key + ephemeral GitHub Actions token.
+ // Fixed URL, existing public legacy anon key and ephemeral GitHub Actions token.
 import {pathToFileURL} from 'node:url'
 const REF='qscbgcdmivbbnzrcyegn'
 const ARM='production:qscbgcdmivbbnzrcyegn:integrity-only-v2'
@@ -7,7 +7,32 @@ const RPC='https://'+REF+'.supabase.co/rest/v1/rpc/jetnity_bg1_alarm_kind_v2'
 const COMMENT_URL='https://api.github.com/repos/Jetnity/jetnity/issues/1254/comments'
 const MARK='jetnity_bg1_integrity_alarm_v2:generation:'
 const out=(status,code,generation=null)=>Object.freeze({status,code,generation})
-const validPub=k=>typeof k==='string'&&/^sb_publishable_[A-Za-z0-9_-]{6,3000}$/.test(k)
+// A strictly bounded *public* legacy anon JWT. This is shape/identity checking;
+// only Supabase can verify the HS256 signature at the fixed RPC endpoint.
+const validLegacyAnon=(k,now=Date.now())=>{
+ if(typeof k!=='string'||k.length<100||k.length>4096)return false
+ try{
+  const p=k.split('.');if(p.length!==3)return false
+  const a=p.map((s,i)=>{
+   if(!/^[A-Za-z0-9_-]+$/.test(s))throw Error('bad base64url')
+   const b=Buffer.from(s,'base64url')
+   if(b.length>[512,2048,32][i]||b.toString('base64url')!==s)throw Error('bad encoding')
+   return b
+  })
+  if(a[2].length!==32)return false
+  const [h,c]=a.slice(0,2).map(b=>{
+   const s=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(b)
+   const value=JSON.parse(s)
+   return JSON.stringify(value)===s?value:null
+  })
+  const sec=Math.floor(now/1000)
+  return exact(h,['alg','typ'])&&h.alg==='HS256'&&h.typ==='JWT'
+   &&exact(c,['iss','ref','role','iat','exp'])
+   &&c.iss==='supabase'&&c.ref===REF&&c.role==='anon'
+   &&Number.isSafeInteger(c.iat)&&c.iat>0&&c.iat<=sec
+   &&Number.isSafeInteger(c.exp)&&c.exp>sec&&c.exp>c.iat
+ }catch{return false}
+}
 const validGh=k=>typeof k==='string'&&k.length>=20&&k.length<1000&&/^[A-Za-z0-9_-]+$/.test(k)
 async function read(fetchImpl,url,options,max=1048576){
  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),10000)
@@ -46,8 +71,8 @@ export async function observeBg1FiveMinuteIntegrity({env=process.env,fetchImpl=g
  if(env.JETNITY_BG1_FIVE_MIN_ALARM!==ARM)return out('unarmed','not_activated')
  if(env.GITHUB_REPOSITORY!=='Jetnity/jetnity'||env.GITHUB_REF!=='refs/heads/main'
    ||env.SUPABASE_PROJECT_REF!==REF)return out('monitor_failed','target_refused')
- const key=env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,token=env.GITHUB_TOKEN
- if(!validPub(key)||!validGh(token)||typeof fetchImpl!=='function')
+ const key=env.JETNITY_BG1_PROD_ANON_KEY,token=env.GITHUB_TOKEN
+ if(!validLegacyAnon(key)||!validGh(token)||typeof fetchImpl!=='function')
   return out('monitor_failed','credentials_invalid')
  try{
   const r=await read(fetchImpl,RPC,{method:'POST',body:'{}',

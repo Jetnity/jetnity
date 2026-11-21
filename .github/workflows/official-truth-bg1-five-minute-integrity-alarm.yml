@@ -1,4 +1,4 @@
-name: BG1 Production integrity alarm (5-minute, candidate)
+name: BG1 Production integrity alarm (5-minute, legacy anon)
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 # GitHub notification is a comment in the existing PR #1254, not a new issue.
 # The workflow is scheduled only after a normal, Owner-approved main merge.
-# No paid connector and no new service-role key / user session / database writes.
+# Existing public anon JWT only; no service-role key, user session or database write.
 permissions:
   contents: read
   issues: write
@@ -40,6 +40,6 @@ jobs:
         env:
           JETNITY_BG1_FIVE_MIN_ALARM: ${{ vars.JETNITY_BG1_FIVE_MIN_ALARM }}
           SUPABASE_PROJECT_REF: qscbgcdmivbbnzrcyegn
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY }}
+          JETNITY_BG1_PROD_ANON_KEY: ${{ secrets.JETNITY_BG1_PROD_ANON_KEY }}
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/official-truth-bg1-five-minute-integrity-alarm.mjs

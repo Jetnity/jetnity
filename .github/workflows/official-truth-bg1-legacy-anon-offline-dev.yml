@@ -1,0 +1,28 @@
+name: BG1 legacy anon offline Dev proof
+on:
+  push:
+    branches:
+      - fix/bg1-alarm-legacy-anon-dev-20261121
+permissions:
+  contents: read
+concurrency:
+  group: bg1-legacy-anon-offline-dev
+  cancel-in-progress: true
+jobs:
+  validate:
+    if: >-
+      github.repository == 'Jetnity/jetnity' &&
+      github.ref == 'refs/heads/fix/bg1-alarm-legacy-anon-dev-20261121'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Offline syntax and key-contract tests (no Prod secrets or external calls)
+        run: |
+          node --check scripts/official-truth-bg1-five-minute-integrity-alarm.mjs
+          node --test scripts/official-truth-bg1-five-minute-integrity-alarm.test.mjs

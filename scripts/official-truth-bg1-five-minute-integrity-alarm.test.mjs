@@ -2,11 +2,17 @@ import assert from 'node:assert/strict'
 import {test} from 'node:test'
 import {readFileSync} from 'node:fs'
 import {observeBg1FiveMinuteIntegrity} from './official-truth-bg1-five-minute-integrity-alarm.mjs'
+// Fake offline fixture, *not* a real JWT signature or API key.
+const legacyAnon=(overrides={},header={alg:'HS256',typ:'JWT'})=>
+ [Buffer.from(JSON.stringify(header)).toString('base64url'),
+  Buffer.from(JSON.stringify({iss:'supabase',ref:'qscbgcdmivbbnzrcyegn',
+   role:'anon',iat:1600000000,exp:2000000000,...overrides})).toString('base64url'),
+  Buffer.alloc(32,7).toString('base64url')].join('.')
 const token='ghs_syntheticgithubactionstokenwithminimumlength'
 const env={
  JETNITY_BG1_FIVE_MIN_ALARM:'production:qscbgcdmivbbnzrcyegn:integrity-only-v2',
  SUPABASE_PROJECT_REF:'qscbgcdmivbbnzrcyegn',
- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_synthetic_monitor_only',
+ JETNITY_BG1_PROD_ANON_KEY:legacyAnon(),
  GITHUB_REPOSITORY:'Jetnity/jetnity',GITHUB_REF:'refs/heads/main',
  GITHUB_TOKEN:token,
 }
@@ -46,7 +52,7 @@ test('One genuine fixed hard incident produces one deduplicated GitHub PR commen
   assert.match(body,/jetnity_bg1_integrity_alarm_v2:generation:19/)
   assert.match(body,/https:\/\/jetnity.com\/einreise\/betrieb/)
   assert.equal(body.includes(token),false)
-  assert.equal(body.includes(env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),false)
+  assert.equal(body.includes(env.JETNITY_BG1_PROD_ANON_KEY),false)
   return response({id:1337},201)
  }})
  assert.equal(r.status,'integrity_alert_posted');assert.equal(r.generation,gen);assert.equal(post,1)
@@ -81,7 +87,7 @@ test('Malformed/redirect/non-json responses and wrong project cannot forge a har
   fetchImpl:async()=>{throw Error('should not send')}})
  assert.equal(r.code,'target_refused')
 })
-test('Workflow stays on main, gated by explicit Owner variable, uses public key and is five-minute only',()=>{
+test('Workflow stays on main, gated by explicit Owner variable, uses a strictly scoped legacy anon secret and is five-minute only',()=>{
  const code=readFileSync(new URL('../.github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml',import.meta.url),'utf8')
  assert.match(code,/cron: '\*\/5 \* \* \* \*'/)
  assert.match(code,/github.ref == 'refs\/heads\/main'/)
@@ -89,6 +95,39 @@ test('Workflow stays on main, gated by explicit Owner variable, uses public key 
  assert.match(code,/github.event.repository.private == false/)
  assert.match(code,/issues: write/)
  assert.match(code,/pull-requests: write/)
- assert.match(code,/JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY/)
+ assert.match(code,/secrets\.JETNITY_BG1_PROD_ANON_KEY/)
+ assert.doesNotMatch(code,/JETNITY_PROD_SUPABASE_PUBLISHABLE_KEY|sb_secret_\b/)
  assert.doesNotMatch(code,/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_DB_PASSWORD|personal_access_token|secret_role/i)
+})
+
+test('Non-anon, other-project, expired, non-HS256 and malformed JWTs fail with zero network calls',async()=>{
+ const candidates=[
+  legacyAnon({role:'service_role'}),legacyAnon({role:'authenticated'}),
+  legacyAnon({ref:'yfvbxvijcorffwxbxahl'}),legacyAnon({iss:'not-supabase'}),
+  legacyAnon({exp:1600000001}),legacyAnon({iat:2500000000}),
+  legacyAnon({},{alg:'none',typ:'JWT'}),'sb_secret_not_public',
+  'sb_publishable_requires_separate_future_migration','bad.jwt.sig',''
+ ]
+ for(const k of candidates){
+  let calls=0
+  const v=await observeBg1FiveMinuteIntegrity({env:{...env,JETNITY_BG1_PROD_ANON_KEY:k},
+   fetchImpl:async()=>{calls++;return response(dto('current'))}})
+  assert.equal(v.status,'monitor_failed');assert.equal(v.code,'credentials_invalid');assert.equal(calls,0)
+ }
+})
+test('Real transport receives only the exact public anon JWT in fixed apikey header',async()=>{
+ const v=await observeBg1FiveMinuteIntegrity({env,fetchImpl:async(url,opts)=>{
+  assert.equal(url,'https://qscbgcdmivbbnzrcyegn.supabase.co/rest/v1/rpc/jetnity_bg1_alarm_kind_v2')
+  assert.equal(opts.method,'POST');assert.equal(opts.credentials,'omit')
+  assert.equal(opts.headers.apikey,env.JETNITY_BG1_PROD_ANON_KEY)
+  assert.equal(opts.headers.Authorization,undefined)
+  return response(dto('current'))
+ }})
+ assert.equal(v.status,'current')
+})
+test('Missing secret refuses even a previously armed workflow',async()=>{
+ let calls=0
+ const v=await observeBg1FiveMinuteIntegrity({env:{...env,JETNITY_BG1_PROD_ANON_KEY:undefined},
+ fetchImpl:async()=>{calls++;return response(dto('current'))}})
+ assert.equal(v.code,'credentials_invalid');assert.equal(calls,0)
 })
