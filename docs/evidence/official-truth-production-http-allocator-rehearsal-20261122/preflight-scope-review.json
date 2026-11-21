@@ -1,0 +1,61 @@
+{
+  "schema": "jetnity-production-rehearsal-pre-execution-scope-review-v1",
+  "authorization_id": "PROD_HTTP_ALLOCATOR_REHEARSAL_20261122",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "checked_at_utc": "2026-11-21T23:35:16.238660+00:00",
+  "checked_at_europe_zurich": "2026-11-22T00:35:16.238660+01:00",
+  "approved_commit": "07b1d9993ea9559e2009f9e889b5cc6bb932303f",
+  "status": "NOT_STARTED_SCOPE_CLARIFICATION_REQUIRED",
+  "files": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 101801,
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457",
+      "matches_approved_commit": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 24857,
+      "sha256": "4a0f90f485c5241c9532994c0260659dcfeb4f3e86165232ffa003a31a0621f2",
+      "matches_approved_commit": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+      "bytes": 19172,
+      "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+      "matches_approved_commit": true
+    }
+  ],
+  "requested_order": [
+    "10",
+    "11"
+  ],
+  "requested_max_transactions": 2,
+  "requested_window_seconds": 300,
+  "runtime_window_started": false,
+  "production_tool_calls": 0,
+  "transaction_attempts": 0,
+  "file_10_executed": false,
+  "file_11_executed": false,
+  "scope_discrepancy": {
+    "current_user_restriction_verbatim": "kein HTTP-/Quellen-/Publisher-/Owner-Schritt",
+    "manifest_allowed_probe": "Pinned negative publisher path returning zero with protected-state equality",
+    "manifest_forbids": "positive publisher action",
+    "sql_block": "exact_successor_postcheck",
+    "sql_line": 1089,
+    "exact_sql_condition": "IF NOT original.source_unqualified OR official_v3_at_production_private.renew_ch_v1() IS DISTINCT FROM 0",
+    "function_actually_invoked_if_execution_reaches_this_probe": "official_v3_at_production_private.renew_ch_v1()",
+    "required_result": 0,
+    "not_a_positive_renewal_or_publication": true,
+    "negative_publisher_probe_explicitly_exempted_in_current_go": false
+  },
+  "independent_scope_reviewer": "verify_dev_receipts",
+  "independent_conclusion": "Exact file approval and unrestricted Publisher-step prohibition conflict; require explicit clarification for the already documented negative probe before first call.",
+  "next_clarification": "Die in Datei 10 enthaltene negative Publisher-Probe mit Sollwert 0 ist erlaubt; alle übrigen Grenzen bleiben unverändert.",
+  "approved_bytes_changed": false,
+  "existing_go_rehearsal_attempt_used": false,
+  "no_retry_or_additional_read_attempted": true,
+  "no_fallback_or_modified_sql": true,
+  "production_mutation": false,
+  "installation_decision_status": "NOT_READY_NO_ACTUAL_REHEARSAL_OR_READBACK_EVIDENCE"
+}
