@@ -32,7 +32,7 @@ function getSupabaseBrowser(): SupabaseClient<Database> {
   // Ein Browser-Client. `experimental.passkey` ist die einmalige Opt-in-Stelle.
   // Ab supabase-js 2.119 ignoriert die Bibliothek das Flag, weil die Methoden
   // im Client standardmässig vorhanden sind. Der Server bleibt die Sperre:
-  // `[auth.passkey] enabled = false`. Kein zweiter Client, keine zweite Sitzung.
+  // Die Serverfreigabe steht in config.toml. Kein zweiter Client, keine zweite Sitzung.
   const sb = _createBrowserClient(url, anon, {
     auth: { experimental: { passkey: true } },
   }) as unknown as SupabaseClient<Database>;

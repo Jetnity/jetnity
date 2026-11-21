@@ -303,10 +303,10 @@ redirect_uri = ""
 url = ""
 skip_nonce_check = false
 
-# Kein Passkey. Er verlangt eine gesetzte Relying-Party-Domain, und Jetnity hat
-# noch keine (ARCHITECTURE.md: jetnity.com löst nicht auf).
+# Dev-Auth-Server hat Passkeys an. Die App liest nur diesen Schalter.
+# Production wird von dieser Datei nicht geschrieben. RP-ID bleibt jetnity.com.
 [auth.passkey]
-enabled = false
+enabled = true
 
 # Keine Anmeldung mit einer Krypto-Wallet. Sie gehört zu keinem Weg, den
 # Jetnity vorsieht.

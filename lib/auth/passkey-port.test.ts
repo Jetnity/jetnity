@@ -334,6 +334,6 @@ describe('Passkey-Port, MOCK_PASS, kein Hosted-E2E', () => {
     assert.equal(port.includes("currentLevel = 'aal2'"), false)
     assert.equal(port.includes('signInWithPasskey('), true)
     assert.match(guard, /applyAdminAal/)
-    assert.match(config, /\[auth\.passkey\]\s*enabled = false/)
+    assert.match(config, /\[auth\.passkey\]\s*enabled = true/)
   })
 })

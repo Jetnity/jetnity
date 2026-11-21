@@ -33,7 +33,7 @@
 | `@supabase/auth-js` Lock | `2.119.2` | `registerPasskey` und `signInWithPasskey` sind vorhanden. Der Client ignoriert `experimental.passkey`, das Flag steht einmal am Singleton |
 | `@supabase/ssr` Lock | `0.6.1`, Peer `^2.43.4` | `2.119.2` liegt im Peer-Bereich. Es gibt weiter nur einen Browser-Client |
 | SSR-Browser-Client | `createBrowserClient` cached ein Singleton, sobald `isSingleton` fehlt | `experimental.passkey: true` steht beim ersten Aufruf in `lib/supabase/client.ts` |
-| Server | `supabase/config.toml` `[auth.passkey] enabled = false` | unverändert, nur gelesen |
+| Server | `supabase/config.toml` `[auth.passkey] enabled = true` | nur die Dev-Datei. Production wird nicht geschrieben |
 | Offizielle Doku, gelesen 18.11.2026 | [Passkeys](https://supabase.com/docs/guides/auth/passkeys), [Changelog](https://supabase.com/changelog/46458-passkeys-for-supabase-auth-beta) | experimentell, Opt-in `auth.experimental.passkey`, separates Server-Enable, RP-ID und Origins |
 
 Der Sprung von `2.57.2` auf `2.119.2` zieht `auth-js`, PostgREST, Realtime und Storage im Lock mit. Es bleibt ein Client und ein Cookie-Vertrag. Der Port ruft die Methoden nur, wenn das Laufzeitobjekt sie hat. Das Server-Flag bleibt aus, deshalb gibt es weiter keine Live-Schaltfläche. PKCE-Wiederherstellung erkennt den neuen Speicherwert `recovery` und den alten Wert `PASSWORD_RECOVERY`. Ein fehlender Verifier wird lokal abgelehnt und nicht mehr mit leerem Verifier gesendet.
