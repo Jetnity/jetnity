@@ -73,6 +73,7 @@ import {
   CREATE_PERSISTENZ_TEMPO,
   gastCreateGateMeldung,
   gastCreateJetztPruefen,
+  wunschAusIdee,
 } from '@/lib/trips/create-entry'
 import {
   GastreiseBelegtOhneKennungFehler,
@@ -86,6 +87,7 @@ import {
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 import { usePlanningCreationLifecycle } from '@/components/trips/usePlanningCreationLifecycle'
+import { usePlanenMitnahme } from '@/components/trips/PlanenEinstiegNavigation'
 
 const TRANSPORT =
   'Die Reise konnte gerade nicht erstellt werden. Deine Angaben bleiben hier. Bitte versuche es erneut.'
@@ -187,6 +189,32 @@ export default function TripPlanner({
   const [travellers, setTravellers] = React.useState<number | ''>(2)
   const [budget, setBudget] = React.useState('')
   const [travelWish, setTravelWish] = React.useState(initialIdea)
+  const mitnahme = usePlanenMitnahme()
+  const [mitnahmeStand, setMitnahmeStand] = React.useState<{ nr: number; text: string | null; gekuerzt: boolean }>({
+    nr: 0,
+    text: null,
+    gekuerzt: false,
+  })
+  if (mitnahme && mitnahme.nr !== mitnahmeStand.nr) {
+    const uebernahme = laeuft
+      ? null
+      : wunschAusIdee({
+          wunsch: travelWish,
+          zuletztUebernommen: mitnahmeStand.text,
+          idee: mitnahme.text,
+          maximum: GRENZEN.reisewunsch,
+        })
+    setMitnahmeStand(
+      uebernahme
+        ? { nr: mitnahme.nr, text: uebernahme.wunsch, gekuerzt: uebernahme.gekuerzt }
+        : { ...mitnahmeStand, nr: mitnahme.nr },
+    )
+    if (uebernahme) setTravelWish(uebernahme.wunsch)
+  }
+  const wunschAusIdeeHinweis =
+    mitnahmeStand.text !== null && travelWish === mitnahmeStand.text
+      ? `${mitnahmeStand.gekuerzt ? `Die ersten ${GRENZEN.reisewunsch} Zeichen deines Textes` : 'Dein Text'} aus «In eigenen Worten» ${mitnahmeStand.gekuerzt ? 'stehen' : 'steht'} jetzt unter «Wünsche». Ziele, Daten und Reisende trägst du hier selbst ein.`
+      : ''
   const [zuordnungAktiv, setZuordnungAktiv] = React.useState(false)
   const [zuordnung, setZuordnung] = React.useState<TageszuordnungAnspruch[]>([])
   const [zuordnungHinweis, setZuordnungHinweis] = React.useState('')
@@ -635,6 +663,9 @@ export default function TripPlanner({
           </p>
           <p className="mt-4 max-w-full break-words rounded-2xl border border-line-200 bg-surface-50 px-4 py-3 text-sm leading-6 text-ink-800 xl:hidden">
             Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.
+          </p>
+          <p role="status" data-wunsch-aus-idee={wunschAusIdeeHinweis ? 'true' : undefined} className={cn('max-w-full break-words text-sm leading-6 text-ink-800', wunschAusIdeeHinweis && 'mt-4 rounded-2xl border border-line-200 bg-surface-0 px-4 py-3')}>
+            {wunschAusIdeeHinweis}
           </p>
         </div>
 
