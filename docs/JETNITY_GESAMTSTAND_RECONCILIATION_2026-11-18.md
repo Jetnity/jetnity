@@ -637,3 +637,9 @@ Dieser datierte Nachtrag schreibt die Nummern **18, 22, 24 und die Angebotsüber
 ### Reiseideen-Nachtrag 21.11.2026: separater Release nach #1264
 
 Owner-Go: Katalogergänzung nach dem tatsächlichen #1264-Livewechsel einzeln ausliefern, bei neuen Fehlern zurückrollen. Nur Bali erhält eine Publikationsfreigabe; die anderen drei vollständigen Vorschläge bleiben zur Einzelabnahme unveröffentlicht. Bestehende CMS-AAL2-/Rollenprüfung und Login bleiben erhalten; keine BG1-SQL-/Konfigurationsschritte. Der frühere Dev-only-/PR-Slot-Zwischenstand ist durch diesen Folgeauftrag und den freien dritten PR-Slot überholt. [Fortlaufender Nachweis](docs/JETNITY_REISEIDEEN_KATALOG_DEV_2026-11-21.md).
+
+### Nachtrag 21.11.2026 – BG1-Actions-Zeitplanpause
+
+- **Enger Owner-Auftrag:** Nur den Fünf-Minuten-Zeitplan des BG1-Integritätsalarms entfernen; `workflow_dispatch`, ARM-/Zielbindung und echte Fehlerzustände bleiben erhalten. Vollständiges Deaktivieren wurde automatisch abgelehnt, weil es auch die manuelle Prüfung sperren würde, und nicht ausgeführt.
+- **Vorhandener Befund:** Drei geprüfte Schedule-Runs endeten mit `credentials_invalid` und Exit 1 vor dem ersten RPC. Daraus folgt weder ein echter Production-Integritätsvorfall noch ein gesunder Productionstatus. Keine Legacy-Key-, Secret-, Datenbank-, internen BG1-Cron- oder Websiteänderung.
+- **Konfiguration und Wiederaufnahme:** Dieser Änderungssatz enthält nur noch `workflow_dispatch`; der automatische Zeitplan ist nach normaler Main-Integration und unabhängigem Readback pausiert. Die bereits beauftragte Rückkehr zu `*/5 * * * *` gehört zum späteren BG1-Freigabeabschluss: erst nach Owner-BG1-Freigabe, bekannter Credential-Reparatur und autorisierter echter Probe über den erhaltenen manuellen Workflow. [Kurzrunbook und tatsächliche Prüfgrenzen](OFFICIAL_TRUTH_BG1_SCHEDULE_PAUSE_2026-11-21.md).
