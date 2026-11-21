@@ -81,9 +81,11 @@ test('Malformed/redirect/non-json responses and wrong project cannot forge a har
   fetchImpl:async()=>{throw Error('should not send')}})
  assert.equal(r.code,'target_refused')
 })
-test('Workflow stays on main, gated by explicit Owner variable, uses public key and is five-minute only',()=>{
+test('Workflow keeps manual main execution and Owner gates while the schedule is paused',()=>{
  const code=readFileSync(new URL('../.github/workflows/official-truth-bg1-five-minute-integrity-alarm.yml',import.meta.url),'utf8')
- assert.match(code,/cron: '\*\/5 \* \* \* \*'/)
+ assert.match(code,/^  workflow_dispatch:\s*$/m)
+ assert.doesNotMatch(code,/^\s*schedule\s*:/m)
+ assert.doesNotMatch(code,/^\s*-\s*cron\s*:/m)
  assert.match(code,/github.ref == 'refs\/heads\/main'/)
  assert.match(code,/JETNITY_BG1_FIVE_MIN_ALARM == 'production:qscbgcdmivbbnzrcyegn:integrity-only-v2'/)
  assert.match(code,/github.event.repository.private == false/)

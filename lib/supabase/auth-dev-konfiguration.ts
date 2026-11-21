@@ -8,6 +8,7 @@ const CALLBACK =
 const PASSWORT_ZIEL =
   'https://jetnity-app-git-feat-official-truth-hum-6fe0cd-jetnity-e1b93c82.vercel.app/auth/update-password'
 const REDIRECTS = [CALLBACK, PASSWORT_ZIEL] as const
+const GERAETETEST_REDIRECT = 'https://dev.jetnity.com/**'
 
 const HERKUNFT = Object.freeze({
   vertrag: 'jetnity.dev-auth-redirects.2026-11-15',
@@ -17,6 +18,23 @@ const HERKUNFT = Object.freeze({
   sourceCommit: '70a3cb09204e74f6bcd4a5b481e942e526a6102f',
   sourceDateien: ['supabase/config.toml', 'docs/AUTH.md'] as const,
   quelle: 'supabase/config.toml + lib/supabase/auth-dev-konfiguration.ts',
+})
+
+const PASSKEY_HERKUNFT = Object.freeze({
+  vertrag: 'jetnity.dev-auth-passkeys.2026-11-21',
+  projektRef: DEV_REF,
+  freigabeDatum: '2026-11-21',
+  sourcePr: 1240,
+  enabled: true,
+  quelle: 'Owner-Freigabe 2026-11-21 (#1240) + lib/supabase/auth-dev-konfiguration.ts; nur Dev-Leseprüfung',
+})
+
+const GERAETETEST_REDIRECT_HERKUNFT = Object.freeze({
+  vertrag: 'jetnity.dev-auth-device-redirects.2026-11-21',
+  projektRef: DEV_REF,
+  sourcePr: 1240,
+  zusaetzlicheUrl: GERAETETEST_REDIRECT,
+  quelle: 'Owner-bestätigter Dev-Gerätetest (#1240), Dev-Dashboard-Lesung 2026-11-21 + lib/supabase/auth-dev-konfiguration.ts; nur Dev-Leseprüfung',
 })
 
 /**
@@ -48,6 +66,24 @@ export function devAuthKonfiguration(config: TomlTabelle, ref: string) {
     config: effektiv,
     roheKonfigurationVollstaendig: integriert,
     herkunft: HERKUNFT,
+  }
+}
+
+/** Read-only expectations for the Owner-approved Dev passkey device test. */
+export function devAuthPruefkonfiguration(config: TomlTabelle, ref: string) {
+  const dev = devAuthKonfiguration(config, ref)
+  // The shared raw baseline and writer stay false. Do not learn from live Auth
+  // or silently accept a different/missing baseline in this read-only overlay.
+  if (tomlWert(dev.config, 'auth.passkey.enabled') !== false) {
+    throw new Error('Der Dev-Passkey-Prüfvertrag verlangt auth.passkey.enabled = false in der unveränderten Rohkonfiguration.')
+  }
+  const auth = dev.config.auth as TomlTabelle
+  ;(auth.passkey as TomlTabelle).enabled = true
+  auth.additional_redirect_urls = [...REDIRECTS, GERAETETEST_REDIRECT]
+  return {
+    ...dev,
+    passkeyHerkunft: PASSKEY_HERKUNFT,
+    geraetetestRedirectHerkunft: GERAETETEST_REDIRECT_HERKUNFT,
   }
 }
 
