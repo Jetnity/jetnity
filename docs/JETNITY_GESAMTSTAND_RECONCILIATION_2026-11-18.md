@@ -2,6 +2,8 @@
 
 > Jeder Chat liest diese Datei zuerst. Wer eine Funktion fertigstellt, trägt sie im selben PR hier nach.
 
+> **Nachtrag 21.11.2026 — CMS/Ressourcen und begrenzter BG1-Kandidat:** Der Owner hat den vorbereiteten öffentlichen CMS-Release und Micro→Small ausdrücklich freigegeben. Die tatsächlichen Live-Nachweise für die vier veröffentlichten Reiseideen, Login/Meine Reisen und den Ressourcenwechsel stehen im [Release-Protokoll](JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md). Die anschliessende BG1-SQL-Optimierung bleibt ein eigener geprüfter Schritt: gleiche vollständige Katalogabdeckung, unveränderte Cron-Fristen und unveränderte Login-/2FA-Verträge, keine automatische Incident-Freigabe. [Kandidat und offene Gates](JETNITY_BG1_QUERY_COST_2026-11-21.md). Historische Sperren darunter werden dadurch nur im Umfang dieses konkreten Owner-Auftrags überholt.
+
 **Stichtag:** 18. November 2026 (Europe/Zurich)  
 **Status:** DOCUMENTATION-ONLY / OWNER-UND-CODE-ABGLEICH / VORSCHLAG ZUR WEITEREN ABNAHME  
 **Referenz-Main:** \`f0f376fa2a65ff2276b665d2b549ec75ae9c5ae5\`  

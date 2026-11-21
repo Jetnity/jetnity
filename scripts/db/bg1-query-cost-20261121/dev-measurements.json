@@ -1,0 +1,32 @@
+{
+  "schema": "jetnity.bg1-query-cost.dev-observation.v1",
+  "date_utc": "2026-11-21",
+  "kind": "bounded read-only single-pair observation, not OOM proof or production benchmark",
+  "catalog_definition_sha256": "a37bdaaa546ab1bcf3baac301d83de3887765ae16532f149d421a9c1dd0780c4",
+  "input_rows": 8289,
+  "distinct_keys": 8268,
+  "duplicate_keys": 21,
+  "duplicate_category": "dependency",
+  "maximum_distinct_values_per_duplicate_key": 1,
+  "entries_value_bytes": 3230223,
+  "equality": {
+    "jsonb": true,
+    "canonical_text_sha256": true
+  },
+  "plans": [
+    {
+      "name": "original",
+      "planning_ms": 11.588,
+      "execution_ms": 203.009,
+      "temp_read_blocks": 435,
+      "temp_written_blocks": 436
+    },
+    {
+      "name": "unique_narrow_distinct",
+      "planning_ms": 11.888,
+      "execution_ms": 196.207,
+      "temp_read_blocks": 0,
+      "temp_written_blocks": 0
+    }
+  ]
+}
