@@ -8,6 +8,7 @@ import type { TestContext } from 'node:test'
 import { OwnedPersistentProof } from '../official-truth-v3-rolling-jobs-quota-1/persistent-backend'
 import { json, literal, readSql } from '../official-truth-v3-rolling-jobs-quota-1/local-proof'
 import { buildHistoryMemoFixture } from './history-fixture'
+import { historyGuardCadence } from './history-bg1-cadence-native'
 import { baseSetup, methodSeed } from './native'
 import { compileAtomicClaimDefinitions, ATOMIC_CLAIM_HELPER_SIGNATURE, ATOMIC_MUTATE_HELPER_SIGNATURE,
   ATOMIC_QUEUE_HELPER_SIGNATURES } from './atomic-claim-build.mjs'
@@ -69,13 +70,13 @@ async function prospective(raw: unknown, current: V3ResearchJobRecord, now: stri
 }
 
 /** Called on the already installed, original64/192 history before queueSql.
- * The one genuine local audit opens the successor's fresh-proof admission;
+ * Genuine local audits maintain due slots between complete rollback vectors;
  * neither a synthetic heartbeat nor a longer native deadline is installed. */
-export async function checkAtomicClaimNative(proof: OwnedPersistentProof, fixture: Fixture) {
+export async function checkAtomicClaimNative(t: TestContext, proof: OwnedPersistentProof, fixture: Fixture) {
   const compiled = compileAtomicClaimDefinitions(), original = fixture.original
   assert.equal((await proof.value<{ status: string }>('official_v3_guard_private.audit_v1()', creator)).status, 'current')
+  const guard = historyGuardCadence(t, proof)
   assert.equal(original.subjectRow.operation_count, 192)
-  const before = await proof.value<string>(digest, owner)
   const jobKey = original.jobKey
   const initial = original.subjectRow.current_job as V3ResearchJobRecord
   const work = { context: initial.context, method: initial.method, factKind: initial.research.factKind,
@@ -128,6 +129,11 @@ export async function checkAtomicClaimNative(proof: OwnedPersistentProof, fixtur
   let vectors = 0
   const run = async (tag: string, seeded: { sql: string }, body: string,
     options: { prefix?: string; role?: string; restore?: string } = {}): Promise<CaseResult> => {
+    // The socket-free backend has no cron worker. Admit only while idle, before
+    // any transaction, timed API call or fault injection. A real next-slot audit
+    // legitimately changes certificates, so bind rollback to this full snapshot.
+    await guard.admit('atomic claim: ' + tag, 30000)
+    const beforeVector = await proof.value<string>(digest, owner)
     const output = await proof.run(owner + 'BEGIN;' + fixtureScope
       + 'SELECT official_v3_guard_private.begin_jobs_v1();' + seeded.sql
       + 'SELECT official_v3_guard_private.seal_jobs_v1();' + (options.prefix ?? '')
@@ -147,7 +153,7 @@ export async function checkAtomicClaimNative(proof: OwnedPersistentProof, fixtur
       assert.equal(found.length, 1, 'one exact native oracle result')
       return JSON.parse(found[0][1]) as T
     }
-    assert.equal(await proof.value<string>(digest, owner), before, 'every native vector restores all original rows and certificates')
+    assert.equal(await proof.value<string>(digest, owner), beforeVector, 'every native vector restores all original rows and certificates')
     vectors++
     return { result: parsed<unknown>('ATOMIC_CLAIM_CASE'), counts: parsed<Counts>('ATOMIC_CLAIM_COUNTS') }
   }
@@ -486,6 +492,6 @@ export async function runAtomicClaimNative(t: TestContext) {
       + 'COMMIT;', 'unchanged rolling predecessor for isolated atomic oracle')
     await proof.run(creator + 'BEGIN;' + readSql('official-truth-v3-customer-information-1/provider-migration-body.sql')
       + 'COMMIT;', 'exact complete additive successor before isolated atomic oracle')
-    t.diagnostic(JSON.stringify(await checkAtomicClaimNative(proof, fixture)))
+    t.diagnostic(JSON.stringify(await checkAtomicClaimNative(t, proof, fixture)))
   } finally { await proof.close() }
 }

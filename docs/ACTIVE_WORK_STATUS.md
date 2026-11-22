@@ -1,5 +1,9 @@
 # Jetnity – Active Work Status
 
+## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
+
+Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
+
 ## Abgeschlossen — Erstbesucher-Funktionen #1268 gemergt und live
 
 - **Merge:** PR [#1268](https://github.com/Jetnity/jetnity/pull/1268) am 21.11. um 19:34 MEZ vom PO gemergt (Merge-Commit `1acee55c4`, Baum identisch mit dem geprüften Head `614bca2aa`, CI 14/14). Der Agent hatte den PR auf PO-Go auf Ready gesetzt; sein Merge-Versuch scheiterte erneut an der fehlenden GitHub-Berechtigung (403).
