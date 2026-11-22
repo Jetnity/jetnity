@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "package_id": "PROD_CH_AT_VISA_V2_ON_V1_REVIEW_20261122",
-  "status": "CHIEF_OF_STAFF_REVIEW_READY_FULL_DEV_SHADOW_PASS_INSTALL_GO_HOLD",
+  "status": "CHIEF_OF_STAFF_RECHECK_REQUIRED_P7905_CANONICAL_FIX_INSTALL_GO_HOLD",
   "production_project": "qscbgcdmivbbnzrcyegn",
   "dev_project": "yfvbxvijcorffwxbxahl",
   "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
@@ -86,14 +86,14 @@
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql",
-      "sha256": "cefcd3654d79d02bb0b7554d5724d36f43cbc5d0e8a32baa82e2cc0bf81c708d",
-      "bytes": 58316,
+      "sha256": "13f3957942ee51cccba650e973a164e782275dccd0ee65a8acd2084397e89ce4",
+      "bytes": 59704,
       "role": "production_prepared_sql_not_authorized"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql",
-      "sha256": "5003a23e8024908737d5b3e34f52cf192c5ba5c9ce256d2ad2db29c107f74612",
-      "bytes": 58314,
+      "sha256": "44f786089e8f881f34fa5d08e38bfc16367ea6c6d1c6c3743453730bca7cc274",
+      "bytes": 59702,
       "role": "production_prepared_sql_not_authorized"
     },
     {
@@ -152,39 +152,51 @@
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/65-DEV-PROD-V1-V4-V5-COMPOSITE.REHEARSAL-ROLLBACK.sql",
-      "sha256": "17f79e5272e0d37435f7dae0637bb7a65b10c2ae5ba4977567b86d77bc2691d4",
-      "bytes": 129221,
+      "sha256": "0409ffd5b376dd0f31c46bffeaa26d099c3a8779f434a13b4266630766d0fa3d",
+      "bytes": 133772,
       "role": "dev_pg17_native_v1_v4_bg1_shadow_pass"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/66-DEV-PROD-V1-V4-V5-V6-FULL.REHEARSAL-ROLLBACK.sql",
-      "sha256": "5191a38ba11ec8f86abb335260e683eeffb2dfedb7e45628f36b02a4504c3dd1",
-      "bytes": 156178,
+      "sha256": "bf7becda51ec6302fc1c954d4974778522a69454c0f43d3d972b63027ba5ac84",
+      "bytes": 160729,
       "role": "dev_full_pg17_v1_bg1_v5_v6_shadow_integrated_pass"
     },
     {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/67-DEV-V1-P7905-BMEIA-ASSET-CANONICAL.REHEARSAL-ROLLBACK.sql",
+      "sha256": "64563071ec7964fb8bfc3f4b0f689fc384bfb0e65c9a502a07a6d60849487168",
+      "bytes": 14794,
+      "role": "dev_pg17_canonical_BMEIA_fixture_pass"
+    },
+    {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/DEV_EVIDENCE.md",
-      "sha256": "b2aec50fd218e254ab5811d42f09b2df8b6ecf86a4b788f57680d468b9c136e2",
-      "bytes": 13596,
+      "sha256": "cbd54648df3d54247e12ad85fdd7f56b013b867497f2fa90b8a5f8a489fa514f",
+      "bytes": 15222,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/GO_SCOPE.md",
-      "sha256": "249b0f3c12b042f433a08f837a27716bd010df15574001d83186af38053ca0c7",
-      "bytes": 2810,
+      "sha256": "eff6c768dd981910ad5a095a6c719b2c37cb3f83adecc95d04281dc0926e5d90",
+      "bytes": 3906,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/INSTALL_SPEC.md",
-      "sha256": "e5d4100146f32f01fcd6d02e610c4c4e19f928e322a5d6adef396a0fe89594c4",
-      "bytes": 8825,
+      "sha256": "2cd987eaf1115479b545726d2a9aac96ba758a44c038436dcfa99a004692e2b7",
+      "bytes": 10529,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/NATIVE_VALIDATION_PLAN.md",
-      "sha256": "f8817cb8bbceb96b7c1a8fa1249f1877d3c6b6460f78cfb76ad5044429fcb664",
-      "bytes": 7827,
+      "sha256": "415436a83b80d756dbb6c66a5d5a67808e3a62a9471e27b0d743283cc7d5ed46",
+      "bytes": 9278,
       "role": "release_preparation_only"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/P7905_ROOT_CAUSE_AND_DEV_FIX_20261123.md",
+      "sha256": "85042ae0bc249c7726d9d4e39b1dbfeeded7ca16693e50ab40a2807ba95ab722",
+      "bytes": 6161,
+      "role": "one_prod_readonly_cause_no_sensitive_rows"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/PRODUCTION_PREFLIGHT_V1_FAILED.md",
@@ -194,14 +206,14 @@
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/README.md",
-      "sha256": "ea4db3026164b16ef71c31f38bd8efacc7d4bbe6b83c75e64115c1fa42cec0f9",
-      "bytes": 3581,
+      "sha256": "0be1476052b06a8a8a3d28c176ea5fa1e4ac84fcf3d91039819a0feb816d850f",
+      "bytes": 4686,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/ROLLBACK_PLAN.md",
-      "sha256": "70d0a9fdb5280da990000123ed821fc26ff710e7906930c1da8055268ba555ce",
-      "bytes": 4423,
+      "sha256": "c771658af7f563c67d70972e075d0bea6f7b9c823fc61a1dfbaccfec3676c0c3",
+      "bytes": 5176,
       "role": "release_preparation_only"
     },
     {
@@ -222,5 +234,28 @@
   "dev_full_v1_shadow_catalog_exact_body_alias_compiled": true,
   "unchanged_unmapped_production_sql_executed_in_dev": false,
   "chief_of_staff_review_done": false,
-  "production_install_approved": false
+  "production_install_approved": false,
+  "production_readonly_diagnosis_20261122_231700UTC": true,
+  "production_diagnosis_one_read": true,
+  "production_diagnosis_sources_total": 3,
+  "production_diagnosis_historic_raw_sha_equal": 2,
+  "production_diagnosis_cron_exact": 3,
+  "production_diagnosis_root_cause": "V1 BMEIA first_original stored as valid unchanged_asset_version_only with raw_SHA distinct from pin, old preflight improperly required raw SHA equal for all three originals",
+  "production_reads_in_this_turn": 1,
+  "production_probe_executed_in_this_turn": false,
+  "previous_chief_approval_superseded_by_new_exact_files": true,
+  "previous_owner_install_go_consumed_on_P7905_preDDL_STOP": true,
+  "corrected_prod_source_CAS_only_files": [
+    "30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql",
+    "31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql"
+  ],
+  "new_dev_native_pg17_pass": [
+    "67",
+    "65",
+    "66"
+  ],
+  "dev_native_67_asset_19_canonical_pass": true,
+  "dev_native_65_prod_v1_bg1_shadow_pass": true,
+  "dev_native_66_prod_v1_bg1_rollback_shadow_pass": true,
+  "dev_BG1_real_state_unchanged_after_tests": true
 }
