@@ -1,0 +1,184 @@
+{
+  "schema": "jetnity-production-http-allocator-installation-execution-manifest-v1",
+  "status": "INSTALLATION_COMMITTED_AND_INDEPENDENT_READBACK_PASS_OPERATIONAL_ACCEPTANCE_PENDING",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "normal_order": [
+    "20",
+    "50"
+  ],
+  "actual_production_calls": 2,
+  "file20_attempts": 1,
+  "file50_attempts": 1,
+  "file30_attempts": 0,
+  "file40_attempts": 0,
+  "retries": 0,
+  "extra_production_reads": 0,
+  "overall_call_window_ms": 53817,
+  "allowed_window_ms": 300000,
+  "sql_and_prepared_manifest_bytes_unchanged": true,
+  "commit_confirmation": "Complete successful exact file20 execution plus independent file50 readback of the same committed canonical successor; no separate COMMIT command tag exposed.",
+  "committed_successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+  "observed_at_utc": "2026-11-22T10:28:02.549288+00:00",
+  "observed_at_zurich": "2026-11-22T11:28:02.549288+01:00",
+  "bg1_status_at_only_read": "unavailable",
+  "fresh_complete_state_run_count": 0,
+  "natural_at_transport_and_chde_completion_proven": false,
+  "positive_source_renewal_proven": false,
+  "at_display": "derzeit nicht verfügbar",
+  "independent_runtime_review_verdict": "PASS_INSTALLATION_COMMIT_AND_INDEPENDENT_READBACK_OPERATIONAL_ACCEPTANCE_PENDING",
+  "publication_or_merge_performed": false,
+  "build_or_extra_operational_test_performed": false,
+  "next_scope_requires_separate_exact_read_package_and_go": true,
+  "git_checkpoints": {
+    "authorization": "9cacfbb04ae37d93227df44737ad7934470cba07",
+    "intent20": "3dd6bc9e076ee63669f799f216d501cbb5839b9b",
+    "complete20_and_intent50": "9d49519e625c2d6f583597d200aed1ba2fcfe919",
+    "complete50": "ed90e6b99e8d04979f313c602e708ea39ec40ca9"
+  },
+  "inputs": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+      "git_blob_sha": "ea06b3cda816a5d4d57b02c05cc6d4925ba4bd1c"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "git_blob_sha": "3ac617711d0adefb9aa28a2754cda5d70be1838c"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+      "git_blob_sha": "88d1fb786a164fd28916001f1a051e26a2c5adb5"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_INSTALLATION_PLAN_2026-11-22.md",
+      "bytes": 17509,
+      "sha256": "b9b3a3342c446555524435b9d4be7e6e45540e72dde22fb1fde4da6f518f4879",
+      "git_blob_sha": "bf7d8aa05cd04c5ec8e8c4b64f0093d683300d29"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 140441,
+      "sha256": "7ecd5a6f7de153921e1dd06d5b26a46ebac6df03d30adfb74acc46f69fd896b0",
+      "git_blob_sha": "e202b4d15d38a4ef318f22ce7f10617c6170bbbc"
+    },
+    {
+      "path": "DECISIONS.md",
+      "bytes": 645768,
+      "sha256": "297be6a12865a5bb0f95cec2ce66e76c35753e2f00d81de6dfdcc6e8228332ea",
+      "git_blob_sha": "f9fcd20ed848d8e2d19a8f04b8506024e0ae1590"
+    },
+    {
+      "path": "ROADMAP.md",
+      "bytes": 65451,
+      "sha256": "9587743e4f0d8fff093c80db01b7598050f7df6c3a412dc95fb2be9c9590dc40",
+      "git_blob_sha": "4c48e15fd8ae19640b47020df8cc7caabf722414"
+    },
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 219858,
+      "sha256": "b814ef5fc89c56b29d2e2bb475c2755a33437fda129c440c957ab325639c1396",
+      "git_blob_sha": "3763e3d154013cc7b0f9aca9a5c5d3dc76dd7f8b"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_INSTALLATION_RESULT_2026-11-22.md",
+      "bytes": 10976,
+      "sha256": "ed66193de4b971c898c37e499c393b520fa9f8c9bfbb620a551c01a2242bf1bf",
+      "git_blob_sha": "8598edfe0d7bc72c7e7a4eb513f15285632bdc59"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/00-authorization-and-preflight.json",
+      "bytes": 3378,
+      "sha256": "a8102396c1f22f00f7c612f5b359b180e19d4163236eb2e07db71f24d92d4f48",
+      "git_blob_sha": "fc3c924b5d50acf06fd87d04a1920e444c67e8f7"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/01-independent-preflight-review.json",
+      "bytes": 908,
+      "sha256": "48f4dcb4524e8c4d874a09d34b514faa8d59e6fbce0d04bb59b36f9866dd1c80",
+      "git_blob_sha": "a945817194a5cafa8100dc1ea5bbd731df6690e8"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-execution.json",
+      "bytes": 1935,
+      "sha256": "e6c597cf280cb8b4b2ed33604c091c5e733ecfa62564107adb4b15623de5f620",
+      "git_blob_sha": "916d341c4b5e548600b4e70076382e8bc60551e2"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-invocation-intent.json",
+      "bytes": 730,
+      "sha256": "c3fa090527ab301c3033460b7c481d6e70774b59186e36d4a87c8f851e807a76",
+      "git_blob_sha": "0e7dd38bf31e50002c41102caf0e54fcfed4d1e4"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-validation.json",
+      "bytes": 1187,
+      "sha256": "c19071566bff0114ca81a32968b6f3980904d2bd9eb86fe8a86a943ab108278f",
+      "git_blob_sha": "eca62e05cfbcb68b1ca598c8c07a1fb1e6597485"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-execution.json",
+      "bytes": 2517,
+      "sha256": "fca9626e051ec91d5bd9a6ce76d5d907a5a6602d626dc85a0ee50eca25cd18a7",
+      "git_blob_sha": "ecccee32717947b3f529d6546c2039eabcb1a4d1"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-invocation-intent.json",
+      "bytes": 781,
+      "sha256": "558dc937e990b5c1d3db669e6c0b023715e2c01b06ed3ea9def39075f696341b",
+      "git_blob_sha": "77529bd470ef738b2fc7696f5bf434de1cbbaee7"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-validation.json",
+      "bytes": 1987,
+      "sha256": "48966215129f443989c32681b64919338561ee32cf2119e3b8625c2bd59e30c3",
+      "git_blob_sha": "2be2803d3772d2907f3b38b46f48de0a08c8dd60"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/architecture-before-installation-5ff8d5a5.md",
+      "bytes": 138438,
+      "sha256": "7b3fe2c548787d559a4b22a043f99c1ad722d163bd448de610a1c4a0de616805",
+      "git_blob_sha": "222fb855e1e8ef8b57204781d322d049d73e16be"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/decisions-before-installation-5ff8d5a5.md",
+      "bytes": 643424,
+      "sha256": "b1fca1c6250a074be2f67f66951bf6fd7a98aa4e3e7e9f498813aa79bb17ad3d",
+      "git_blob_sha": "472a4485496b1d338dd7ec0e9e72cd6376d506cf"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/independent-runtime-review.json",
+      "bytes": 9621,
+      "sha256": "43d86bba6c4c8ed56afa1eb09d9b26e2f6cb96597c54afe343a3a6e4930e071a",
+      "git_blob_sha": "be64e066dcd675aecad7869bf3170865175762ba"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/overall-plan-before-installation-5ff8d5a5.md",
+      "bytes": 215766,
+      "sha256": "be188ce299ca9aa7e089a4f7eeba740b83cf5a7c59d4a363db6172c17b37af60",
+      "git_blob_sha": "dcf28264a95e995f92f3374074a674e0a378f6cb"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/roadmap-before-installation-5ff8d5a5.md",
+      "bytes": 63662,
+      "sha256": "0cb39cfeac5418b280c1f7c44d7bc3d8f872ce2d8c6a680535e2b88a50817b55",
+      "git_blob_sha": "e074a9ddce120f6cabab5847db40e12b9d1ac835"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/runtime-result.json",
+      "bytes": 3794,
+      "sha256": "d68de4ea6b8cd7d28572ad131ebaa86ba4b7da82c36352ecf5566744d2f49486",
+      "git_blob_sha": "d5eedf44181d295d908a80473ebd000648efee53"
+    }
+  ],
+  "self_hash_excluded_to_avoid_circular_binding": true,
+  "historical_delivery_rule": "Verify mutable document bindings at the immutable final delivery commit, not at a later branch head."
+}

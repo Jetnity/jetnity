@@ -1,0 +1,175 @@
+{
+  "schema": "jetnity-production-http-allocator-independent-runtime-review-v1",
+  "reviewed_at_utc": "2026-11-22T10:31:41.066Z",
+  "reviewer": {
+    "logical_name": "/root/prod_install_preflight",
+    "role": "independent_read_only_reviewer",
+    "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+    "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+    "live_main_head": "not_checked_in_this_review",
+    "session_id": "not_exposed",
+    "model": "inherited_parent_model_not_independently_verified",
+    "write_scope": [
+      "docs/evidence/official-truth-production-http-allocator-installation-20261122/independent-runtime-review.json"
+    ],
+    "database_calls": 0,
+    "http_or_source_calls": 0,
+    "owner_actions": 0,
+    "live_github_workflow_or_alarm_checks": 0,
+    "operational_tests": 0
+  },
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "verdict": "PASS_INSTALLATION_COMMIT_AND_INDEPENDENT_READBACK_OPERATIONAL_ACCEPTANCE_PENDING",
+  "findings": [],
+  "input_bindings": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/00-authorization-and-preflight.json",
+      "bytes": 3378,
+      "sha256": "a8102396c1f22f00f7c612f5b359b180e19d4163236eb2e07db71f24d92d4f48"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-invocation-intent.json",
+      "bytes": 730,
+      "sha256": "c3fa090527ab301c3033460b7c481d6e70774b59186e36d4a87c8f851e807a76"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-execution.json",
+      "bytes": 1935,
+      "sha256": "e6c597cf280cb8b4b2ed33604c091c5e733ecfa62564107adb4b15623de5f620"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/20-validation.json",
+      "bytes": 1187,
+      "sha256": "c19071566bff0114ca81a32968b6f3980904d2bd9eb86fe8a86a943ab108278f"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-invocation-intent.json",
+      "bytes": 781,
+      "sha256": "558dc937e990b5c1d3db669e6c0b023715e2c01b06ed3ea9def39075f696341b"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-execution.json",
+      "bytes": 2517,
+      "sha256": "fca9626e051ec91d5bd9a6ce76d5d907a5a6602d626dc85a0ee50eca25cd18a7"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/50-validation.json",
+      "bytes": 1987,
+      "sha256": "48966215129f443989c32681b64919338561ee32cf2119e3b8625c2bd59e30c3"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/runtime-result.json",
+      "bytes": 3794,
+      "sha256": "d68de4ea6b8cd7d28572ad131ebaa86ba4b7da82c36352ecf5566744d2f49486"
+    }
+  ],
+  "checks": {
+    "exact_sql_byte_hashes_and_lengths_match_user_go_and_immutable_preflight": true,
+    "source_manifest_unchanged": true,
+    "raw_receipts_independently_decoded_without_executing_untrusted_content": true,
+    "each_raw_receipt_has_exactly_one_result_row_with_exact_expected_keys_and_types": true,
+    "raw_rows_equal_validation_rows_and_runtime_rows": true,
+    "recorded_order_20_then_50_once_with_no_retry": true,
+    "target_project_binding_consistent": true,
+    "recorded_invocation_intents_precede_calls": true,
+    "complete_tool_results_report_no_sql_or_transport_error": true,
+    "twenty_precommit_result_followed_in_exact_sql_by_final_cron_check_and_commit": true,
+    "fifty_exact_sql_is_read_only_with_terminal_rollback": true,
+    "fifty_checks_expected_full_function_authority_contracts_before_guard_calls": true,
+    "canonical_successor_helper_generation_and_cutoff_match_across_independent_transactions": true,
+    "logged_allocator_and_exact_cron_contract_reported_valid": true,
+    "id_floor_equals_max_historical211_legacy178_locked211_plus1025": true,
+    "own_sequence_first_value1236_not_consumed_at_observation": true,
+    "negative_publisher_zero_and_protected_state_unchanged_enforced_by_successful_twenty": true,
+    "time_and_output_shapes_within_reviewed_limits": true,
+    "runtime_summary_preserves_operational_and_source_acceptance_gates": true
+  },
+  "execution": {
+    "recorded_production_calls": 2,
+    "recorded_attempts": {
+      "20": 1,
+      "50": 1,
+      "30": 0,
+      "40": 0
+    },
+    "recorded_extra_production_reads": 0,
+    "recorded_retries": 0,
+    "started_at_utc": "2026-11-22T10:27:10.303Z",
+    "finished_at_utc": "2026-11-22T10:28:04.120Z",
+    "connector_elapsed_ms": {
+      "20": 6413,
+      "50": 2011
+    },
+    "whole_call_window_ms": 53817,
+    "allowed_window_ms": 300000,
+    "timing_is_connector_wall_clock_not_native_statement_runtime": true
+  },
+  "commit_evidence": {
+    "basis": "Successful complete execution response for the exact SQL ending in COMMIT, followed by an independent READ ONLY transaction observing the identical committed successor, helper, generation and cutoff.",
+    "precommit_select_alone_is_insufficient": true,
+    "separate_postgresql_commit_command_tag_exposed_by_connector": false,
+    "independent_readback_observed_at_utc": "2026-11-22T10:28:02.549288+00:00",
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "catalog_sha256": "e3b277f380acbb33bc79cc61ec4cd8cf35c905978b76a32edbec30f83b1b613e",
+    "transport_metadata_sha256": "4acd60c9bc23563913abd466d38b152ec194625e0a71b044b09456141f150b4d",
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "publisher_definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e",
+    "required_generation": 1759,
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "precommit_error_rollback_path_exercised_in_this_installation": false,
+    "ambiguous_commit_or_retry_path_exercised": false
+  },
+  "observed_state": {
+    "fresh_locked_hwm": "211",
+    "legacy_value_at_installation": "178",
+    "first_id": "1236",
+    "unused_safety_gap": 1024,
+    "own_sequence": {
+      "is_called": false,
+      "last_value": "1236"
+    },
+    "own_sequence_logged": true,
+    "cron_contract_matches_reviewed_full_rows": true,
+    "public_guard_status": {
+      "schema": 1,
+      "status": "unavailable"
+    },
+    "fresh_complete_state_run_count": 0,
+    "source_qualification_changed_in_twenty": false,
+    "positive_facts_added_in_twenty": false,
+    "http_or_wake_called_by_twenty": false,
+    "negative_publisher_expected_zero": "Established by the mandatory throwing SQL check and successful completion; the connector does not expose a separate probe result row."
+  },
+  "limits_and_remaining_gates": [
+    "Technical installation and independent committed readback passed; operational acceptance is not complete.",
+    "BG1 was unavailable with zero qualifying natural fresh complete proofs at the sole authorized read. No later live status is inferred.",
+    "The private sequence was still unused at 1236; no actual post-install HTTP allocation, AT transport or CH-to-DE completion is proven by these receipts.",
+    "Source qualification and historical facts are preserved by the successful SQL checks; no positive AT source renewal is proved. AT remains derzeit nicht verfügbar.",
+    "No live GitHub workflow or alarm delivery check was performed; database public guard status is not a workflow result.",
+    "Cron protection remains the reviewed optimistic contract with ACCESS SHARE and repeated checks, not a physical Cron DML freeze or a proof against arbitrary privileged mutation.",
+    "LOGGED sequence metadata is verified, not a physical restart/crash/failover test of Production.",
+    "The supplied execution record reports exactly two Production calls and no excluded actions; this local review is not an independent service-wide API or access-log audit.",
+    "The existing normal helper is retained. File 40 remains unauthorized; later fence binding, rehearsal, installation and fence-specific readback require their separate exact package and Go.",
+    "No additional database, HTTP/source, Publisher-positive, Owner, role, login/2FA, cost, publication, workflow or alarm action is authorized by this review."
+  ],
+  "next_responsible_actor": "/root as Technical Lead",
+  "next_step": "Persist the installation receipts and dated continuity updates; report the successful installation and the still-pending natural BG1/AT/CH-to-DE acceptance. Prepare any further bounded read package separately before seeking its own Go.",
+  "stop": "Review complete. No further operational call, retry, fence or follow-up action.",
+  "scope_complete": true,
+  "operational_acceptance_complete": false
+}
