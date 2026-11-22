@@ -911,7 +911,7 @@ required_generation bigint,proof_not_before timestamptz,catalog jsonb);
 INSERT INTO jetnity_at_full_rehearsal.bg1_transient_baseline_v3
 SELECT true,encode(sha256(convert_to(s.catalog::text,'UTF8')),'hex'),
  encode(sha256(convert_to((to_jsonb(s)||jsonb_build_object('proof_not_before',extract(epoch FROM s.proof_not_before)))::text,'UTF8')),'hex'),
-3,clock_timestamp()-interval '1 hour',jsonb_build_object('fixture','bg1_v3')
+s.required_generation+1,s.proof_not_before+interval '0.5 seconds',jsonb_build_object('fixture','bg1_v3')
 FROM jetnity_at_full_rehearsal.at_batch_switch_baseline_v2 s WHERE singleton;
 INSERT INTO jetnity_at_full_rehearsal.query_cost_baseline_v1
 SELECT true,'jsonb_unique_narrow_dependency_distinct_v1',
@@ -926,9 +926,22 @@ SELECT true,
  encode(sha256(convert_to(pg_get_functiondef('jetnity_at_full_rehearsal.renew_ch_v1()'::regprocedure),'UTF8')),'hex'),
  jetnity_at_full_rehearsal.catalog_status_v1()->'transport:production_http_id_allocator_v4',
  encode(sha256(convert_to((jetnity_at_full_rehearsal.catalog_status_v1()->'transport:production_http_id_allocator_v4')::text,'UTF8')),'hex'),
-4,(SELECT last_proof_started-interval '0.3 seconds' FROM jetnity_at_full_rehearsal.state_v1 WHERE singleton),
+(SELECT required_generation+1 FROM jetnity_at_full_rehearsal.bg1_transient_baseline_v3 WHERE singleton),
+ (SELECT last_proof_started-interval '0.3 seconds' FROM jetnity_at_full_rehearsal.state_v1 WHERE singleton),
  jetnity_at_full_rehearsal.catalog_status_v1()
 FROM jetnity_at_full_rehearsal.query_cost_baseline_v1 o WHERE singleton;
+-- Simulate the already completed NATURAL V4 proof on a disposable V1 fixture;
+-- this is synthetic test setup, not a manual proof against real Dev or Production.
+UPDATE jetnity_at_full_rehearsal.state_v1 st
+ SET generation=(SELECT required_generation FROM jetnity_at_full_rehearsal.bg1_production_http_allocator_v4 WHERE singleton),
+ last_started=clock_timestamp()-interval '0.8 seconds',
+ last_proof_started=clock_timestamp()-interval '0.6 seconds',
+ last_finished=clock_timestamp()-interval '0.3 seconds',
+ last_observed=clock_timestamp()-interval '0.3 seconds'
+ WHERE singleton;
+INSERT INTO jetnity_at_full_rehearsal.runs_v1
+ SELECT last_due,last_started,last_proof_started,last_finished,'complete',generation
+ FROM jetnity_at_full_rehearsal.state_v1 WHERE singleton;
 CREATE TABLE jetnity_at_full_rehearsal.expected_legacy_parent_sha(fqn text PRIMARY KEY,sha text NOT NULL);
 INSERT INTO jetnity_at_full_rehearsal.expected_legacy_parent_sha VALUES
 ('assert_catalog_v1',encode(sha256(convert_to(pg_get_functiondef('jetnity_at_full_rehearsal.assert_catalog_v1()'::regprocedure),'UTF8')),'hex')),
