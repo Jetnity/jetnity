@@ -6548,6 +6548,22 @@ Siehe `docs/HOMEPAGE_REISEINTELLIGENZ_2_TASK_2026-11-02.md`.
 
 **Konsequenzen:** Neue Dateien `styles/startseite.css`, `components/home/HomeMiniUi.tsx`, `lib/layout/nach-oben.ts` (mit Test), Änderungen an den Startseiten-Komponenten, `BackToTop.tsx`, `app/layout.tsx`. Der Browser-Test `lib/ui/white-mint-home-workspace-1/browser.test.ts` bündelt eine eigene CSS-Liste; `startseite.css` steht dort mit, jedes weitere globale Stylesheet braucht denselben Eintrag. Lighthouse 13.6 (je drei Läufe): Desktop 100/100/69/100 vorher wie nachher; mobil Performance 100 → 88 (Modelleffekt der Simulation durch das Foto als grösstes Element, gemessener LCP ≈ 0,15 s, mit DevTools-Drosselung 98 gegen 97, Live-Seite 74), Barrierefreiheit 100. SEO 69 stammt allein vom bewussten Site-weiten `noindex` (Owner-Hold), nicht geändert. Hero-Kontrast pixelgenau gemessen (H1 ≥ 6,49:1, kleiner Text ≥ 6,81:1); bei einem anderen Foto erneut messen. Offen: Abnahme auf einem echten Telefon; kein FAQPage-JSON-LD vorhanden (möglicher späterer SEO-Punkt, erst bei Aufhebung des `noindex`).
 
+## ADR-0243 – Datenschutzerklärung: das Stylesheet von PrivacyBee zulassen, Inhalt und Einbindung unverändert
+
+**Datum:** 22. November 2026. **Status:** Auftrag des PO, nur Darstellung. Merge durch den Technical Lead. Keine Migration, kein Production-Zugriff, keine neuen Kosten, kein neuer Dienst.
+
+**Kontext:** Auf jetnity.com/privacy erscheinen grosse grüne Balken statt der Karten mit «mehr anzeigen». PrivacyBee liefert den Text und pflegt ihn selbst (Licht-DOM, Klassen `prx_*`, eigenes Stylesheet `widget.css` bzw. `imprint-widget.css`). Die Einbindung (Skript, Website-ID, Host-Sperre) ist seit ADR-0213 unverändert.
+
+**Entscheidung:** `style-src` nennt zusätzlich genau `https://app.privacybee.io`, denselben Host, den `script-src` und `connect-src` schon erlauben. Kein Wildcard. Einbindung, Fallback-Texte und der gelieferte Inhalt bleiben byte-gleich. Jetnity kopiert das Stylesheet nicht.
+
+**Ursache, geprüft:** Weder der Abschluss-Schliff (#1264/#1272, `styles/white-mint.css`) noch die Startseite (#1278, `styles/startseite.css`) treffen die Klassen `prx_*`. Die begrenzte CSP vom 20. November 2026 (`9369821b7`) lässt Skript und Verbindung zu, das Stylesheet aber nicht. Der Browser verwirft `widget.css` und `imprint-widget.css`. Übrig bleiben die Inline-Hintergründe der Icons; als Block über die volle Spalte werden sie zu den grünen Balken. Gemessen auf der öffentlichen Seite: Konsole «Refused to load the stylesheet», Icon-Fläche 558 px statt 56 px, `display: block` statt `flex`.
+
+**Alternativen:** Stylesheet nachbauen – veraltet beim nächsten Scan von PrivacyBee und kopiert fremden Inhalt. Stylesheet bei uns hosten – dieselbe Drift, plus ein zweiter Abrufweg. `style-src https:` – öffnet jedes Stylesheet. Abgelehnt.
+
+**Begründung:** Die Karten sind die Gestaltung des Anbieters. Sie kommt nur an, wenn sein Stylesheet laden darf. Unsere eigenen Regeln überschreiben es nicht; sie kommen erst zum Zug, weil es fehlt.
+
+**Konsequenzen:** Eine Zeile in `next.config.js`, Prüfung in `lib/security/next-16-4-6-headers.test.ts` (Origin aus `privacybee-vertrag.ts`, kein zweites Vorkommen der Adresse). Die Spalte von `/privacy` geht von `max-w-prose` auf `max-w-3xl`: PrivacyBee blendet «mehr anzeigen» erst ab 680 px Breite selbst ein, die bisherige Spalte lag darunter. Impressum nutzt dieselbe Herkunft (`imprint-widget.css`) und bleibt in der Prosa-Spalte, es hat keine solchen Karten. Die AGB (`/terms`) sind eigener Text, bereits Schweizer Schreibweise, Karten und Überschriften intakt; nichts geändert. Wirksam erst nach Merge und dem nächsten Deploy, den dieser Auftrag nicht ausführt.
+
 ## Reiseideen: vorhandenen Katalog unter acht Veröffentlichungen ergänzen — 21.11.2026
 
 **Owner-Entscheidung:** Startseite und `/entdecken` ergänzen bei weniger als acht eindeutigen, validiert veröffentlichten Ideen den vorhandenen statischen Katalog. Nach `placeId` wird dedupliziert; die veröffentlichte Fassung gewinnt vollständig. Bei einem CMS-Ausfall bleiben die statischen Ideen mit einem ehrlichen Verfügbarkeitshinweis sichtbar. Diese ausdrückliche Anweisung ersetzt ausschließlich die frühere No-Fallback-Regel der öffentlichen Auswahl.
