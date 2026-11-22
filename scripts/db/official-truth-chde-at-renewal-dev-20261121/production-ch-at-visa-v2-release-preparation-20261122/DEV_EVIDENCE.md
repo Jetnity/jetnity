@@ -17,4 +17,17 @@
 - Erst wenn die ursprüngliche Watch-Abrufzeit **18:05 UTC** mindestens 60 Minuten vor dem **neuen natürlichen** geprüften Quelle/Fakt-/Besucherbeleg liegt, und die echte `anon`-Auskunft CH `accepted` mit drei amtlichen URLs zeigt, dürfen wir einen *>1h-Natural-Renewal-PASS* ausweisen. IN/DE und andere unqualifizierte Pässe müssen weiter `unavailable` bleiben.
 - Eine erzwungene manuelle Prozedur, ein synthetisches Datum oder ein grüner zeitlich abgelaufener Cache zählen ausdrücklich **nicht** als natürlicher Langzeitnachweis.
 
-**Zwischenstand dieser Datei: `PENDING_NATURAL_BG1_AND_CRON_RENEWAL`; erst mit echten Nachweisen aktualisieren.**
+## Tatsächlicher natürlicher Nachtest — 22.11.2026 19:22 UTC
+
+**PASS für die natürliche *erneute* Quellen-/Faktprüfung nach 77 Minuten; keine Behauptung durchgehend verfügbarer >60 Minuten.**
+
+- BG1 `generation=2413`, natürlicher `last_proof_started=2026-11-22T19:20:00.164033Z`, also **nach** v12-Installations-Cutoff `19:16:16.782636Z`, mit `incident_generation=resumed_generation=14` und Katalogv12 exakt gleich. Kein manuelles Audit.
+- Original-Quellenbeobachtung: Batch135 `source_checked_at=2026-11-22T18:05:00.224517Z`; erster automatisch qualifizierter CH-Dev-Fakt Id1 unter Owner-Methode Revision2/Epoch2, `verified_at=18:54:17.252283Z` und `expires_at=19:15:00.224517Z`. Dieser Fakt war **vor dem v12-Proof** abgelaufen.
+- Nachfolgenden natürlichen Watch-Batch136 beobachtete der echte Collector `source_checked_at=2026-11-22T19:00:00.281082Z`; `seal_at=19:02:03.019413Z` mit Outcome **`changed`**, die 3 Original-SHA/Bytes entsprechen exakt den fachlich zugelassenen Quellenversionen.
+- Der bestehende, unveränderte Cronjob `jetnity-source-renew-at-dev-v1` wurde **natürlich** mit Run `25558` am `2026-11-22T19:22:00.082494Z` gestartet, endete `19:22:05.430103Z` mit `status=succeeded`; kein manueller Funktions-/Cron-Aufruf erfolgte.
+- Neue unveränderliche Faktversion **Id2, Batch136**, `verified_at=2026-11-22T19:22:03.243300Z`, `source_checked_at=19:00:00.281082Z`, `expires_at=20:10:00.281082Z`. Seit dem ersten Quellen-Check liegen **77 Minuten und 3 Sekunden**; der neue Fakt wurde automatisch durch den echten Cron erzeugt, nicht durch einen Simulator.
+- **Echter `anon`-Dev-Readback unmittelbar danach:** `public.jetnity_source_bound_at_visa_v1('CH')` und die enge V4-Funktion liefern `status=accepted`, `visaEffect=not_required`, RuleVersion2 und drei erlaubte amtliche Links. 10 echte Fremd-/Ungültig-Passfälle `IN,DE,US,TR,CN,FR,IT,AT,ZZ,''` geben in beiden APIs ausnahmslos `unavailable`. Abschluss transaktional `ROLLBACK`, keine neuen Rechte.
+- **Transparenter Verfügbarkeitsvorbehalt:** Zwischen `19:15:00.224517Z` (Ablauf Fakt1) und `19:22:03.243300Z` (Fakt2) gab es durch den einmaligen Dev-v12-Installations-/BG1-Wechsel **rund sieben Minuten** ohne Positiv-Fakt. Der vorliegende Beleg zeigt **erneute automatische Verfügbarkeit nach mehr als einer Stunde**, nicht hundertprozentig ununterbrochene Sichtbarkeit über die gesamte Stunde. Für diesen strengeren Nachweis braucht es eine neue natürliche Beobachtung **frühestens 22.11.2026, 20:22:04 UTC / 21:22:04 Zürich**, idealerweise nach einem weiteren automatischen Source-Batch ohne Gültigkeitslücke.
+- Kein Production-Read, kein Production-Commit, keine neue Owner/AAL2-Handlung, keine Publikation in Production. Für ein Live-Go bleibt der separate aktuelle Production-Katalogread mit neuem eigenen Go erforderlich.
+
+**Ergebnis: `NATURAL_AFTER_77_MINUTES_PASS; UNINTERRUPTED_60_MINUTES_NOT_YET_PROVEN`.**
