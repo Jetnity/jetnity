@@ -1,0 +1,14 @@
+{
+  "stage": "first_dev_setup_attempt",
+  "sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+  "target": "yfvbxvijcorffwxbxahl",
+  "attempt_count": 1,
+  "raw_result_available": false,
+  "reason": "functions.exec returned running cell59; functions.wait subsequently reported exec runtime replaced and loss of cell/store. External tool operation may have completed; no raw receipt was persisted.",
+  "completion": "UNKNOWN",
+  "subsequent_read_observed_at": "2026-11-22T00:21:43.746075Z",
+  "subsequent_fixture_namespace_absent": true,
+  "setup_pass_claimed": false,
+  "full_rollback_pass_claimed": false,
+  "production_retried": false
+}

@@ -1,0 +1,304 @@
+{
+  "schema": "jetnity-production-http-allocator-cron-correction-bindings-v1",
+  "status": "REVIEWABLE_CANDIDATE_BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED_NOT_READY_FOR_PRODUCTION_REHEARSAL",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "old_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+  "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+  "installed_successor_canonical_sha256": null,
+  "pg_net_0195_worker_review": {
+    "evidence_path": "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json",
+    "sha256": "7ec6c65732acc5681a3f79d4cd612276461289576c5a8582a2bd1044d15fdef2",
+    "upstream_commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+    "static_id_transport_review_complete": true,
+    "hosted_binary_identity_or_runtime_proof": false
+  },
+  "resolve_before_rehearsal": [
+    "Completed: the authorized actual 02 receipt, source-correct queue/domain semantics and all 15 transport full-definition/body fingerprints are independently reviewed and archived. This does not authorize another READ, DDL or COMMIT.",
+    "Current catalog_status/assert native definition bytes exactly match the installed query-cost provider artifact at fixed main commit d8798dc2dee0a7f2cacb4f9def0605ee347f24c4.",
+    "The actual bounded post-abort read confirmed the archived v3-to-query-cost baseline comparison. Future exact preflight must still verify its complete catalog/digest edges, current guard status, full ACL/config pins, locked transport/domain metadata and fresh high water. Complete current guard-catalog recomputation and current BG1 status were not part of that read.",
+    "Review the generated 22 November candidate bytes and provenance, then obtain separate bounded Production ROLLBACK rehearsal authorization. READ authorization never authorizes DDL or COMMIT.",
+    "BLOCKED: complete the provider-required technical confirmation through the normal already-authorized Dev SQL path, then obtain actual successful evidence for fixture setup, the shared 14-group core suite, two-session concurrency and cleanup/state read. The first setup response is UNKNOWN and the second confirmation expired; neither is a PASS. The final current READ ONLY confirmed fixture absence and original v8, so no cleanup is needed now. Review the exact new candidate and only then request a separate Production rehearsal Go."
+  ],
+  "resolve_before_install": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql must actually pass in the approved Production scope; no isolated/native/static substitute is claimed.",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql must independently confirm restoration of the original definitions/chain and absence of new own objects.",
+    "Review the exact 20 installation bytes and actual rehearsal/readback evidence; obtain a separate explicit COMMIT Go. The immutable snapshots are not hand-edited to match current drift."
+  ],
+  "resolve_before_fence": [
+    "Pin the actually committed successor canonical SHA from an independent readback, not from this unexecuted draft.",
+    "Review the exact fail-closed scope; obtain the specifically approved fence rehearsal or fence COMMIT authorization."
+  ],
+  "required_before_rehearsal": [
+    "native_transport_sha256",
+    "method_domain_constraint_definition_sha256",
+    "method_domain_constraint_catalog_sha256",
+    "immediate_predecessor_catalog_sha256",
+    "cron_metadata_observation_sha256",
+    "cron_core_sha256"
+  ],
+  "safely_replaced_by_existing_pinned_chain": {
+    "control_retirement_immutable_pins": "Read only from the fixed ef4dcbe4\u2026 query_cost successor catalog after its exact source/definition and full catalog hash checks pass; historical v3 catalog SHA7b9418\u2026 and all older edges remain mandatory.",
+    "history_and_owner_frozen_hashes": "No prior live digest is required. Complete locked row multisets and counters are compared before/after; natural appended history is not silently deleted or rejected merely for being newer.",
+    "old_baseline_canonical_digest": "The immediate predecessor is query_cost_baseline_v1. Its documented v3 ancestry/catalog comparison was confirmed by the bounded post-abort read; future preflight still verifies the complete catalog and all algorithm/ancestry pins, then hashes the complete unchanged row (no timestamp fields) into the appended HTTP successor."
+  },
+  "immediate_predecessor": "official_v3_guard_private.query_cost_baseline_v1",
+  "immediate_predecessor_catalog_sha256": "ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24",
+  "query_cost_predecessor_baseline_sha256": "a7266c41fc77ab63b8ce2878d10890c7d5b395a3a33d8fe6c5331bf68f7e2bd0",
+  "method_domain_oid": 289454,
+  "method_domain_constraint_definition": "CHECK (((VALUE ~~* 'get'::text) OR (VALUE ~~* 'post'::text) OR (VALUE ~~* 'delete'::text)))",
+  "method_domain_constraint_definition_sha256": "412b54e60167a01e5fe4856c3ed5cbf862b912b2f3ba01bce4a8661c5ba915de",
+  "method_domain_constraint_catalog_sha256": "63ece7f25171a578daae026a9e5501f99fbbf3e9677452ab470248e13f3ad856",
+  "source_archives": {
+    "inputs/query-cost-JETNITY_BG1_QUERY_COST_2026-11-21.md": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "docs/JETNITY_BG1_QUERY_COST_2026-11-21.md",
+      "sha256": "32863ab0c883692975cc042b58c850adb058649b1908a2082087be83c7c52b92",
+      "bytes": 16269
+    },
+    "inputs/query-cost-build.mjs": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/build.mjs",
+      "sha256": "5676b1d9b026a262e701ea6fde11b8b811a5fb131a04cc5e07682494af3d127a",
+      "bytes": 16227
+    },
+    "inputs/query-cost-install.sql": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/install.sql",
+      "sha256": "d2bfb68565c5446da98d1e27cceabf8171590fae36f5c247cf10221bc9a5e99a",
+      "bytes": 26929
+    },
+    "inputs/query-cost-provider-migration-body.sql": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/provider-migration-body.sql",
+      "sha256": "dccf4eb097e4f6a4ffd040df6edb6933912a1a61e53dca06e14e6dc6d4a0fd67",
+      "bytes": 26914
+    },
+    "inputs/query-cost-observed-production-functions.json": {
+      "source_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+      "source_path": "scripts/db/bg1-query-cost-20261121/observed-production-functions.json",
+      "sha256": "abe10c96e22ab0554af163e52dc69a6d4d8a72cbe7cee1ff00cb9a433ea432c9",
+      "bytes": 20911
+    },
+    "inputs/queue-read-execution.json": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/execution.json",
+      "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+      "bytes": 52011
+    },
+    "inputs/pg-net-0.19.5-sql-source.txt": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-read-20261121/pg-net-0.19.5-sql-source.txt",
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+      "bytes": 9487
+    },
+    "inputs/transport-substantive-review.json": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/transport-substantive-review.json",
+      "sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+      "bytes": 43486
+    },
+    "inputs/transport-substantive-review.md": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/transport-substantive-review.md",
+      "sha256": "42b0e3795dd38b59d19723869a06244af1c93d2c7fc6db64fb25dc2424e2eabc",
+      "bytes": 6621
+    },
+    "inputs/postabort-production-result.json": {
+      "source_path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+      "bytes": 18148
+    },
+    "inputs/predecessor-build-candidates.py": {
+      "source_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/build-candidates.py",
+      "sha256": "c849a9b3eaf06f07a755eb33389508eb8cd26bddfeb61f39a40ddd91e76be568",
+      "bytes": 108839
+    },
+    "inputs/predecessor-package-MANIFEST.json": {
+      "source_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/MANIFEST.json",
+      "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+      "bytes": 19172
+    },
+    "cron-protection-core.sql": {
+      "source_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+      "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+      "bytes": 5563
+    }
+  },
+  "source_main_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+  "queue_read_observed_at": "2026-11-21T23:06:49.362212+00:00",
+  "substantive_transport_review": {
+    "complete": true,
+    "review_path": "inputs/transport-substantive-review.json",
+    "sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+    "full_definition_and_body_matches": 15,
+    "new_database_or_http_action": false,
+    "runtime_proof": false
+  },
+  "cron_metadata_observation_sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+  "cron_contract": [
+    {
+      "jobid": "6",
+      "jobname": "jetnity-at-production-source-collect-v1",
+      "schedule": "*/5 * * * *",
+      "active": true,
+      "database": "postgres",
+      "username": "postgres",
+      "command_sha256": "f16474de9c9e48b24d2ac84bc0ba3ac90d5ff401ef539ff1efa6ae94068dcf3f",
+      "full_row_sha256": "587b3bc0187f14965a579c7d1d13b4dbfe8dc82c06836d767c4b2178c61292a0"
+    },
+    {
+      "jobid": "5",
+      "jobname": "jetnity-at-production-source-enqueue-v1",
+      "schedule": "*/5 * * * *",
+      "active": true,
+      "database": "postgres",
+      "username": "postgres",
+      "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+      "full_row_sha256": "1971883b244c0fd1acad713cf8c5b8d62d649f9a121bfbbd547057aea0e23be3"
+    },
+    {
+      "jobid": "7",
+      "jobname": "jetnity-at-production-source-renew-v1",
+      "schedule": "2-59/5 * * * *",
+      "active": true,
+      "database": "postgres",
+      "username": "postgres",
+      "command_sha256": "7f97fd0c29c97f45c4f5b3458c60ce59711d2d10589a1be16656211f96141593",
+      "full_row_sha256": "c92294cf6d926896dcf845bd8a9113fada0d20636e24d3a906f85c8c3907e36f"
+    },
+    {
+      "jobid": "4",
+      "jobname": "jetnity-ch-de-prod-import-v1",
+      "schedule": "* * * * *",
+      "active": true,
+      "database": "postgres",
+      "username": "postgres",
+      "command_sha256": "87241ddeaf94b27c22676857c098492029dcbdcf8ac90ba7a5feaf2f62f43144",
+      "full_row_sha256": "6319ae3dc4b50ebe3cca6e1a4514c8a7ea6a3352697681a88d0612d1f8bba4de"
+    },
+    {
+      "jobid": "2",
+      "jobname": "jetnity-official-truth-production-guard-v1",
+      "schedule": "*/5 * * * *",
+      "active": true,
+      "database": "postgres",
+      "username": "postgres",
+      "command_sha256": "8ae86f70caca6fcf890eb66de93873b0f13c49bd689e8c8cd6993c4bef561863",
+      "full_row_sha256": "2d8d36409000dc6c7ad9423d8fa033d35a0034ec0e16de5c646ecc98b8c78893"
+    }
+  ],
+  "cron_contract_reference_observed_at": "2026-11-22T00:06:22.944557+00:00",
+  "cron_protection": {
+    "lock_mode": "ACCESS SHARE",
+    "configuration_protection": "Optimistic fixed-five full-row contract plus complete bounded all-row config/version before/after comparisons and writer observations",
+    "full_cron_table_freeze": false,
+    "all_jobs_are_five": false,
+    "durably_bound_job_count": 5,
+    "all_row_snapshot_cap": 128,
+    "max_row_bytes": 65536,
+    "existing_role_or_rights_changes": false,
+    "pure_transient_insert_delete_aba_proven_absent": false,
+    "last_check_commit_window_eliminated": false,
+    "late_bound_job_drift_is_never_resealed": true,
+    "dev_core_runtime_validation_complete": false
+  },
+  "cron_core_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+  "query_cost_baseline_observation": {
+    "source": "inputs/postabort-production-result.json",
+    "observed_at": "2026-11-22T00:06:22.944557+00:00",
+    "bounded_v3_to_query_cost_archival_match_observed": true,
+    "complete_current_guard_catalog_recomputed": false,
+    "current_bg1_status_checked": false,
+    "full_future_pre_ddl_checks_still_required": true
+  },
+  "runtime_validation": {
+    "status": "BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+    "ready_for_candidate_review": true,
+    "ready_for_production_rehearsal_go": false,
+    "dev_task_authorized": true,
+    "provider_technical_confirmation_required": true,
+    "read_only_permission_and_access_share_proof": {
+      "status": "PASS",
+      "scope": "Actual Dev SELECT authority and held ACCESS SHARE; not execution of the shared core.",
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/01-dev-cron-permission-execution.json",
+        "sha256": "65f1638184039c04b2f10d02d06aef2353607460b7a4fb28089f0092487038f9",
+        "bytes": 1824
+      }
+    },
+    "shared_core_14_native_groups": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "two_session_concurrency": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "setup_attempt_1": {
+      "status": "UNKNOWN",
+      "raw_original_response_available": false,
+      "setup_or_rollback_pass_claimed": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03-dev-setup-interrupted-response.json",
+        "sha256": "95b82c1d1efc07d58d00c04637dd254c6ceb9316e0b6c37b11aea2bb144eb0e8",
+        "bytes": 667
+      }
+    },
+    "reconciliation_after_attempt_1": {
+      "fixture_absence_observed": true,
+      "v8_exact_observed": true,
+      "does_not_reconstruct_lost_response_or_prove_full_rollback": true,
+      "evidence": [
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03b-dev-setup-outcome-execution.json",
+          "sha256": "ce6509f3224399af96a14964fd902ca53129e30567340c87a90bb68c643363aa",
+          "bytes": 1521
+        },
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03c-dev-full-context-execution.json",
+          "sha256": "d644859c5d06fbb8edea78a822dca68401c504053925e16938cb4f6c9fffa363",
+          "bytes": 1369
+        }
+      ]
+    },
+    "setup_attempt_2": {
+      "status": "PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+      "mcp_is_error": true,
+      "structured_status": "expired",
+      "setup_sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "started_at": "2026-11-22T00:23:46.470Z",
+      "returned_at": "2026-11-22T00:58:36.373Z",
+      "tool_call_elapsed_ms": 2089903,
+      "sql_runtime_or_success_proven": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-execution.json",
+        "sha256": "beae7b45c99b11fa77959c1e64a632f9c3f67bf377b29b4150a46fcfd481fc2f",
+        "bytes": 823
+      }
+    },
+    "final_independent_cleanup_state_read": {
+      "status": "READ_ONLY_FIXTURE_ABSENCE_AND_ORIGINAL_V8_OBSERVED",
+      "after_second_attempt": true,
+      "completed_claimed": true,
+      "observed_at": "2026-11-22T01:00:48.645764+00:00",
+      "fixture_absent": true,
+      "matching_active_test_sessions": 0,
+      "v8_exact": true,
+      "v8_catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "observed_counts": {
+        "roles_count": 43,
+        "memberships_count": 40,
+        "cron_count": 11,
+        "facts_count": 71,
+        "originals_count": 3
+      },
+      "fixture_cleanup_needed": false,
+      "setup_or_suite_pass_inferred": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03e-dev-final-read-execution.json",
+        "sha256": "f33d140ec738083fa72bbc5f762c63814180fd336322c031c17af7f88167e571",
+        "bytes": 1666
+      }
+    },
+    "automatic_retry_authorized_by_this_manifest": false,
+    "bypass_via_migration_auth_role_credentials_or_alternate_interface_permitted": false,
+    "new_production_candidate_executed": false,
+    "new_production_execution_authorized": false
+  }
+}

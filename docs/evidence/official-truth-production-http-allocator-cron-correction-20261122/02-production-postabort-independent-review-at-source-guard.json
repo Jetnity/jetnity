@@ -1,0 +1,188 @@
+{
+  "schema": "jetnity-independent-postabort-execution-review-v1",
+  "reviewer": "at_source_guard",
+  "review_scope": "Independent local verification of saved invocation evidence and response; no DB/browser/network call and no SQL execution by reviewer.",
+  "status": "ARCHIVAL_METADATA_MATCH_EVIDENCE_VERIFIED_NO_REHEARSAL_PASS",
+  "reviewed_at_utc": "2026-11-22T00:08:34.937077+00:00",
+  "references": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-execution.json",
+      "bytes": 18934,
+      "sha256": "f528d8db1bbfeb640a7794eb427ee39c48331251ffa5762dcfb735087e50fb7f"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+      "bytes": 18148,
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-authorization-and-intent.json",
+      "bytes": 1319,
+      "sha256": "2487e24207e43d7d33bd1c0eaf684fb60586439bff423f027aac797b52227102"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-postabort-review-20261122/01-postabort-queue-cron.READONLY.sql",
+      "bytes": 37402,
+      "sha256": "622a3a05b2588eaa1189f0e8017463fa27af5f0eefdbe873aa67648635a8ca84"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-postabort-review-20261122/expected-canonical.json",
+      "bytes": 21202,
+      "sha256": "0754bcc3727ac673c554a0368da7b0dcf4412acde5c6b2a5a85ac5266423b74d"
+    }
+  ],
+  "target_binding": {
+    "invocation_record_target": "qscbgcdmivbbnzrcyegn",
+    "declared_target_matches": true,
+    "server_project_authentication_by_sql": false,
+    "limitation": "Project binding is provided by saved invocation/intent target metadata; SQL output does not independently authenticate the project reference."
+  },
+  "response_integrity": {
+    "raw_envelope_json_parsed": true,
+    "single_tool_text_and_single_sql_result_row": true,
+    "raw_and_normalized_result_structurally_identical": true,
+    "returned_compact_array_bytes": 13677,
+    "inner_compact_document_bytes": 13664,
+    "within_262144_byte_cap": true,
+    "exact_sql_and_expected_canonical_hashes": true
+  },
+  "observed_timing": {
+    "started_at": "2026-11-22T00:06:22.223Z",
+    "database_statement_timestamp": "2026-11-22T00:06:22.944557+00:00",
+    "returned_at": "2026-11-22T00:06:23.400Z",
+    "elapsed_ms": 1177,
+    "observed_timestamp_inside_call": true,
+    "within_300000_ms_authorization_window": true,
+    "recorded_attempts": 1,
+    "no_more_production_calls": true,
+    "limitation": "One call is recorded in this preserved execution evidence. No additional calls corroborate history."
+  },
+  "verified_comparisons": {
+    "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+    "native_transport_matches_archived_02": true,
+    "six_queue_columns_correct_domain_and_nullable_headers": true,
+    "fixed_allocator_persistent_objects_absent": true,
+    "queue_has_no_triggers": true,
+    "queue_empty_at_observed_snapshot": true,
+    "fixed_failed10_probe_urls_absent_at_snapshot": true,
+    "seventeen_function_bindings_match": true,
+    "stored_v3_to_query_cost_catalog_and_predecessor_binding_matches": true,
+    "five_archived_cron_configurations_match": true,
+    "five_cron_names_exactly_once": true
+  },
+  "cron_privileges_observed": {
+    "can_delete": false,
+    "can_select": true,
+    "can_update": false,
+    "can_maintain": false,
+    "can_truncate": false,
+    "relation_present": true
+  },
+  "cron_new_snapshot_bindings": [
+    {
+      "jobid": 6,
+      "active": true,
+      "jobname": "jetnity-at-production-source-collect-v1",
+      "nodeport": 5432,
+      "schedule": "*/5 * * * *",
+      "is_localhost": true,
+      "postgres_role": true,
+      "command_sha256": "f16474de9c9e48b24d2ac84bc0ba3ac90d5ff401ef539ff1efa6ae94068dcf3f",
+      "row_within_cap": true,
+      "cron_row_sha256": "587b3bc0187f14965a579c7d1d13b4dbfe8dc82c06836d767c4b2178c61292a0",
+      "nodename_sha256": "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+      "expected_database": true,
+      "command_within_cap": true,
+      "nodeport_matches_server": true
+    },
+    {
+      "jobid": 5,
+      "active": true,
+      "jobname": "jetnity-at-production-source-enqueue-v1",
+      "nodeport": 5432,
+      "schedule": "*/5 * * * *",
+      "is_localhost": true,
+      "postgres_role": true,
+      "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+      "row_within_cap": true,
+      "cron_row_sha256": "1971883b244c0fd1acad713cf8c5b8d62d649f9a121bfbbd547057aea0e23be3",
+      "nodename_sha256": "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+      "expected_database": true,
+      "command_within_cap": true,
+      "nodeport_matches_server": true
+    },
+    {
+      "jobid": 7,
+      "active": true,
+      "jobname": "jetnity-at-production-source-renew-v1",
+      "nodeport": 5432,
+      "schedule": "2-59/5 * * * *",
+      "is_localhost": true,
+      "postgres_role": true,
+      "command_sha256": "7f97fd0c29c97f45c4f5b3458c60ce59711d2d10589a1be16656211f96141593",
+      "row_within_cap": true,
+      "cron_row_sha256": "c92294cf6d926896dcf845bd8a9113fada0d20636e24d3a906f85c8c3907e36f",
+      "nodename_sha256": "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+      "expected_database": true,
+      "command_within_cap": true,
+      "nodeport_matches_server": true
+    },
+    {
+      "jobid": 4,
+      "active": true,
+      "jobname": "jetnity-ch-de-prod-import-v1",
+      "nodeport": 5432,
+      "schedule": "* * * * *",
+      "is_localhost": true,
+      "postgres_role": true,
+      "command_sha256": "87241ddeaf94b27c22676857c098492029dcbdcf8ac90ba7a5feaf2f62f43144",
+      "row_within_cap": true,
+      "cron_row_sha256": "6319ae3dc4b50ebe3cca6e1a4514c8a7ea6a3352697681a88d0612d1f8bba4de",
+      "nodename_sha256": "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+      "expected_database": true,
+      "command_within_cap": true,
+      "nodeport_matches_server": true
+    },
+    {
+      "jobid": 2,
+      "active": true,
+      "jobname": "jetnity-official-truth-production-guard-v1",
+      "nodeport": 5432,
+      "schedule": "*/5 * * * *",
+      "is_localhost": true,
+      "postgres_role": true,
+      "command_sha256": "8ae86f70caca6fcf890eb66de93873b0f13c49bd689e8c8cd6993c4bef561863",
+      "row_within_cap": true,
+      "cron_row_sha256": "2d8d36409000dc6c7ad9423d8fa033d35a0034ec0e16de5c646ecc98b8c78893",
+      "nodename_sha256": "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+      "expected_database": true,
+      "command_within_cap": true,
+      "nodeport_matches_server": true
+    }
+  ],
+  "cron_new_binding_review": {
+    "five_distinct_positive_jobids": true,
+    "five_distinct_valid_row_hashes": true,
+    "nodename_hash_independently_matches_literal_localhost": true,
+    "all_nodeports_5432_and_returned_server_matches_true": true,
+    "row_hash_binds_ordinary_full_cron_job_row_without_system_xmin": true,
+    "row_hashes_are_new_native_read_observations_not_old_equality_claims": true,
+    "row_hash_recomputed_from_returned_full_plain_rows": false,
+    "reason_not_recomputed": "Full raw Cron rows and commands were intentionally not returned. Preserved SQL computes each hash directly from to_jsonb(j)::text after its 16KiB cap. This review checks hash format, uniqueness, record/SQL binding and archived selected-field equality."
+  },
+  "truth_limits": {
+    "no_pre_failure_row_snapshot": true,
+    "no_complete_rollback_proof": true,
+    "no_publisher_negative_proof": true,
+    "no_current_bg1_freshness_check": true,
+    "no_complete_live_catalog_or_all_historical_edge_verification": true,
+    "no_natural_http_or_positive_source_renewal_proof": true,
+    "no_all_cron_jobs_equality": true,
+    "no_sequences_or_run_history_read": true,
+    "absence_of_queued_probe_does_not_exclude_hypothetical_already_processed_request": true,
+    "no_retroactive_statement_location_from_privileges": true,
+    "no_new_production_read_or_write_permission": true
+  },
+  "findings": [],
+  "followup_scope": "Read-only local review of forthcoming Cron correction candidate against these five new native full-row hashes; no automatic resealing, no DB action."
+}

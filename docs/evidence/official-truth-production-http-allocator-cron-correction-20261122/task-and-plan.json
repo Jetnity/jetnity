@@ -1,0 +1,41 @@
+{
+  "task": "PROD_HTTP_ALLOCATOR_CRON_CORRECTION_REVIEW_20261122",
+  "source_commit": "81b872bc4728226165d2673d57ef556b45453b72",
+  "user_authorized": [
+    "prepare Cron guard correction without role or existing privilege changes",
+    "fully validate in Dev",
+    "new bounded read-only Production post-abort state verification",
+    "prepare revised package with SHA-256 for review"
+  ],
+  "not_authorized": [
+    "Production rehearsal or install",
+    "Production HTTP/source/publisher/Owner action",
+    "role or privilege alteration",
+    "login/2FA/secret changes",
+    "costs or publication"
+  ],
+  "plan": [
+    {
+      "work": "independent concurrency and privilege review",
+      "scope": "Cron protection; preserve HTTP producer and ledger barriers"
+    },
+    {
+      "work": "one bounded Production post-abort observation",
+      "scope": "READ ONLY / ROLLBACK; allocator absence, queue shape, known Cron configuration, predecessor bindings; no application functions"
+    },
+    {
+      "work": "Dev validation",
+      "scope": "native positive and negative tests, complete transactional rollback, no role/privilege or live Cron configuration changes"
+    },
+    {
+      "work": "review artifacts",
+      "scope": "new immutable SQL/manifest, full hashes, rollback and STOP rules, independent review; old package retained"
+    }
+  ],
+  "product_scope": "No UI/API or product eligibility change. Expired facts remain derzeit nicht verfügbar.",
+  "archive": {
+    "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/overall-plan-before-cron-correction-81b872bc.md",
+    "sha256": "947bbecb2f509cafc93cdb566f5d2c6f7e4547163fe2b616b3ed7bf05b14551f",
+    "bytes": 200907
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "DEV_SETUP_CONTINUATION_AFTER_READ_ONLY_RECONCILIATION",
+  "attempt_number": 2,
+  "first_attempt": "Response lost, final server outcome unknown; no setup PASS claimed",
+  "reason": "Two later reads found fixture absent. New prefix-based active-session count0. Full native v8 catalog equality true; same native definition, expected roles/rights/context and bounded cardinalities verified. Exact setup refuses existing fixture and is transactional; no overwrite or privilege workaround.",
+  "read_evidence": [
+    "03b-dev-setup-outcome-execution.json",
+    "03c-dev-full-context-execution.json"
+  ],
+  "target": "yfvbxvijcorffwxbxahl",
+  "sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+  "production_retry": false
+}

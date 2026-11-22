@@ -1,0 +1,24 @@
+{
+  "stage": "dev_setup_continuation_after_independent_reconciliation",
+  "attempt_number": 2,
+  "target": "yfvbxvijcorffwxbxahl",
+  "sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+  "sql_bytes": 11098,
+  "started_at": "2026-11-22T00:23:46.470Z",
+  "returned_at": "2026-11-22T00:58:36.373Z",
+  "elapsed_ms": 2089903,
+  "raw": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"status\":\"expired\",\"message\":\"This confirmation expired after 10 minutes. Call `execute_sql` again to get a new confirmation.\"}"
+      }
+    ],
+    "structuredContent": {
+      "status": "expired",
+      "message": "This confirmation expired after 10 minutes. Call `execute_sql` again to get a new confirmation.",
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

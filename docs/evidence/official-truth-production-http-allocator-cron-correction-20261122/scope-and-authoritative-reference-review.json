@@ -1,0 +1,40 @@
+{
+  "schema": "jetnity-cron-correction-research-and-scope-v1",
+  "official_references": [
+    {
+      "url": "https://www.postgresql.org/docs/17/sql-lock.html",
+      "used_for": "SELECT permits ACCESS SHARE; SHARE requires stronger privileges and blocks concurrent ROW EXCLUSIVE writers."
+    },
+    {
+      "url": "https://supabase.com/changelog.md",
+      "used_for": "Current feature/changelog check; no upgrade, branch merge, login, or CLI configuration performed."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/cron/install",
+      "used_for": "Standard hosted cron integration context; documented grants are not executed or requested."
+    }
+  ],
+  "observed_development": "Explicit ACCESS SHARE succeeded on cron.job with SELECT=true and MAINTAIN/UPDATE/DELETE/TRUNCATE=false. PG17.0.6 pg_cron1.6.4. Native Dev v8 retained.",
+  "observed_production": {
+    "read_only_once": true,
+    "observed_at": "2026-11-22T00:06:22.944557+00:00",
+    "allocator_objects_absent": true,
+    "queue_count": 0,
+    "known_five_cron_contracts_match": true,
+    "strong_cron_lock_privilege": false
+  },
+  "not_claimed": [
+    "Exact failed-statement location; original error lacked statement context",
+    "Complete rollback proof of old10 or previously unavailable pre-call rowsnapshot",
+    "Global Cron freeze from ACCESS SHARE",
+    "Historical equality of all Cron jobs, job IDs or target values not previously captured",
+    "Current BG1 or positive AT/source renewal PASS"
+  ],
+  "design_requirements": [
+    "Preserve independent queue/producer/ledger ID barriers",
+    "Fixed five-job full-configuration binding from new independent read and known semantic contracts",
+    "Bounded observed-writer checks plus configuration and row-version comparison",
+    "Capture successor catalog once, validate allowed delta and Cron identity, then store that exact captured object",
+    "No existing roles/privileges change; no Production write until separate hash-bound Go"
+  ]
+}

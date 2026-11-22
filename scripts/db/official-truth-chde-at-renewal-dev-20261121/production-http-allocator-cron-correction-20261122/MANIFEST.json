@@ -1,0 +1,493 @@
+{
+  "schema": "jetnity-production-http-allocator-cron-correction-manifest-v1",
+  "package": "PROD_HTTP_ALLOCATOR_CRON_CORRECTION_REVIEW_20261122",
+  "created_at_utc": "2026-11-22T01:02:58.211903+00:00",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "dev_validation_project_ref": "yfvbxvijcorffwxbxahl",
+  "status": "REVIEWABLE_CANDIDATE_NOT_READY_FOR_PRODUCTION_REHEARSAL",
+  "runtime_status": "BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+  "prepared_only": true,
+  "production_execution_authorized": false,
+  "new_candidate_sql_executed_in_production": false,
+  "new_candidate_sql_executed_in_dev": false,
+  "manifest_is_not_execution_evidence_or_authorization": true,
+  "fixed_query_cost_source_main_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+  "previous_package_bytes_preserved": {
+    "manifest": {
+      "file": "inputs/predecessor-package-MANIFEST.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/predecessor-package-MANIFEST.json",
+      "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+      "bytes": 19172
+    },
+    "manifested_files_verified_unchanged": 22
+  },
+  "consumed_postabort_read": {
+    "evidence": {
+      "file": "inputs/postabort-production-result.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/postabort-production-result.json",
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+      "bytes": 18148
+    },
+    "actual_calls": 1,
+    "observed_at": "2026-11-22T00:06:22.944557+00:00",
+    "repeat_or_additional_production_read_authorized": false
+  },
+  "sql_file_count": 6,
+  "sql_files": [
+    {
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982",
+      "bytes": 113322,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    },
+    {
+      "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224",
+      "bytes": 29501,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    },
+    {
+      "file": "20-production-http-id.INSTALL-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+      "bytes": 106669,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    },
+    {
+      "file": "30-production-http-id.FENCE-ROLLBACK.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/30-production-http-id.FENCE-ROLLBACK.sql",
+      "sha256": "4535acf918d96f6851cebe4463ed994154fe9d220a1d073384fcb434de0efc44",
+      "bytes": 35286,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ]
+    },
+    {
+      "file": "40-production-http-id.FENCE-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/40-production-http-id.FENCE-COMMIT.sql",
+      "sha256": "0f1b65076f4fb8191fc5bff821001fe67b54e3e8b3c1dab1976f6f3fb7a85a98",
+      "bytes": 35020,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ]
+    },
+    {
+      "file": "50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "bytes": 9347,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    }
+  ],
+  "supporting_file_count": 20,
+  "supporting_files": [
+    {
+      "file": "README.md",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/README.md",
+      "sha256": "139f0c64fb8a7a15522076091d12fd263e1d020aa3e599b414bf193692705f09",
+      "bytes": 9563,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "build-candidates.py",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/build-candidates.py",
+      "sha256": "a766d359d8c9e0cfa13a5aa029de92c6f0c53d416bf6a2cc1b0e4819722504ac",
+      "bytes": 114655,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "cron-protection-core.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+      "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+      "bytes": 5563,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "expected-native-guard-definitions.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/expected-native-guard-definitions.json",
+      "sha256": "9399b2a4520a78f06b5c55e62ba77127f402b505b1749cac78ff28630611e8d1",
+      "bytes": 64211,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/pg-net-0.19.5-sql-source.txt",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/pg-net-0.19.5-sql-source.txt",
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+      "bytes": 9487,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/postabort-production-result.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/postabort-production-result.json",
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+      "bytes": 18148,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/predecessor-build-candidates.py",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/predecessor-build-candidates.py",
+      "sha256": "c849a9b3eaf06f07a755eb33389508eb8cd26bddfeb61f39a40ddd91e76be568",
+      "bytes": 108839,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/predecessor-package-MANIFEST.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/predecessor-package-MANIFEST.json",
+      "sha256": "887d334381d48513a16b611450459f64586e11733a1d70dc98e43378641f0e67",
+      "bytes": 19172,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/query-cost-JETNITY_BG1_QUERY_COST_2026-11-21.md",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/query-cost-JETNITY_BG1_QUERY_COST_2026-11-21.md",
+      "sha256": "32863ab0c883692975cc042b58c850adb058649b1908a2082087be83c7c52b92",
+      "bytes": 16269,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/query-cost-build.mjs",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/query-cost-build.mjs",
+      "sha256": "5676b1d9b026a262e701ea6fde11b8b811a5fb131a04cc5e07682494af3d127a",
+      "bytes": 16227,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/query-cost-install.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/query-cost-install.sql",
+      "sha256": "d2bfb68565c5446da98d1e27cceabf8171590fae36f5c247cf10221bc9a5e99a",
+      "bytes": 26929,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/query-cost-observed-production-functions.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/query-cost-observed-production-functions.json",
+      "sha256": "abe10c96e22ab0554af163e52dc69a6d4d8a72cbe7cee1ff00cb9a433ea432c9",
+      "bytes": 20911,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/query-cost-provider-migration-body.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/query-cost-provider-migration-body.sql",
+      "sha256": "dccf4eb097e4f6a4ffd040df6edb6933912a1a61e53dca06e14e6dc6d4a0fd67",
+      "bytes": 26914,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/queue-read-execution.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/queue-read-execution.json",
+      "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+      "bytes": 52011,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/transport-substantive-review.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/transport-substantive-review.json",
+      "sha256": "81634890391f4c1ffa2a222caf46aba8c9cd33fe842b2888eb69e8c2f8364c65",
+      "bytes": 43486,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "inputs/transport-substantive-review.md",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/inputs/transport-substantive-review.md",
+      "sha256": "42b0e3795dd38b59d19723869a06244af1c93d2c7fc6db64fb25dc2424e2eabc",
+      "bytes": 6621,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "offline-verification.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/offline-verification.json",
+      "sha256": "41a8ef9c630b00b85fc97ffcd53da750324526baa2796e3ec2b9a9129da299f1",
+      "bytes": 11719,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "required-production-bindings.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/required-production-bindings.json",
+      "sha256": "03afc04a953a3478478cd5ac09711a74c12b038116dba447472f54b32e470ba3",
+      "bytes": 16815,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "reviewed-net-api-definitions.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/reviewed-net-api-definitions.json",
+      "sha256": "6a403e5f825ac48525fd8c6b9665c52472bee1cfc24fbef23b60e977211c8333",
+      "bytes": 4863,
+      "executable_transaction_entry": false
+    },
+    {
+      "file": "source-provenance.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/source-provenance.json",
+      "sha256": "97f8b97f5ebec510bd3cd8c4658d2c168426c269beaeb3846f84d179e501c550",
+      "bytes": 25399,
+      "executable_transaction_entry": false
+    }
+  ],
+  "archived_input_sql_and_core_are_never_standalone_execution_entries": true,
+  "manifest_self_hash_intentionally_external": true,
+  "frozen_shared_cron_core": {
+    "file": "cron-protection-core.sql",
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+    "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+    "bytes": 5563
+  },
+  "cron_contract": {
+    "complete_row_count": 5,
+    "total_cron_table_count_is_not_assumed_five": true,
+    "actual_full_row_pins": [
+      {
+        "jobid": "6",
+        "jobname": "jetnity-at-production-source-collect-v1",
+        "schedule": "*/5 * * * *",
+        "active": true,
+        "database": "postgres",
+        "username": "postgres",
+        "command_sha256": "f16474de9c9e48b24d2ac84bc0ba3ac90d5ff401ef539ff1efa6ae94068dcf3f",
+        "full_row_sha256": "587b3bc0187f14965a579c7d1d13b4dbfe8dc82c06836d767c4b2178c61292a0"
+      },
+      {
+        "jobid": "5",
+        "jobname": "jetnity-at-production-source-enqueue-v1",
+        "schedule": "*/5 * * * *",
+        "active": true,
+        "database": "postgres",
+        "username": "postgres",
+        "command_sha256": "d7eba2069a12188b34a98099506ae3368f7c7f5ff41c8e3fe2d153ea16278890",
+        "full_row_sha256": "1971883b244c0fd1acad713cf8c5b8d62d649f9a121bfbbd547057aea0e23be3"
+      },
+      {
+        "jobid": "7",
+        "jobname": "jetnity-at-production-source-renew-v1",
+        "schedule": "2-59/5 * * * *",
+        "active": true,
+        "database": "postgres",
+        "username": "postgres",
+        "command_sha256": "7f97fd0c29c97f45c4f5b3458c60ce59711d2d10589a1be16656211f96141593",
+        "full_row_sha256": "c92294cf6d926896dcf845bd8a9113fada0d20636e24d3a906f85c8c3907e36f"
+      },
+      {
+        "jobid": "4",
+        "jobname": "jetnity-ch-de-prod-import-v1",
+        "schedule": "* * * * *",
+        "active": true,
+        "database": "postgres",
+        "username": "postgres",
+        "command_sha256": "87241ddeaf94b27c22676857c098492029dcbdcf8ac90ba7a5feaf2f62f43144",
+        "full_row_sha256": "6319ae3dc4b50ebe3cca6e1a4514c8a7ea6a3352697681a88d0612d1f8bba4de"
+      },
+      {
+        "jobid": "2",
+        "jobname": "jetnity-official-truth-production-guard-v1",
+        "schedule": "*/5 * * * *",
+        "active": true,
+        "database": "postgres",
+        "username": "postgres",
+        "command_sha256": "8ae86f70caca6fcf890eb66de93873b0f13c49bd689e8c8cd6993c4bef561863",
+        "full_row_sha256": "2d8d36409000dc6c7ad9423d8fa033d35a0034ec0e16de5c646ecc98b8c78893"
+      }
+    ],
+    "independent_observation_sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+    "lock_mode": "ACCESS SHARE",
+    "existing_roles_or_privileges_changed": false,
+    "all_row_snapshot_cap": 128,
+    "max_row_bytes": 65536,
+    "capture_validated_then_same_jsonb_inserted": true,
+    "durable_contract_expression_is_exact_shared_core_expression": true,
+    "whole_table_frozen": false,
+    "transient_unrelated_insert_delete_aba_eliminated": false,
+    "last_observation_to_commit_window_eliminated": false
+  },
+  "unchanged_critical_bindings": {
+    "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+    "immediate_predecessor": "official_v3_guard_private.query_cost_baseline_v1",
+    "immediate_predecessor_catalog_sha256": "ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24",
+    "historical_v3_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+    "query_cost_predecessor_baseline_sha256": "a7266c41fc77ab63b8ce2878d10890c7d5b395a3a33d8fe6c5331bf68f7e2bd0",
+    "method_domain_constraint_definition_sha256": "412b54e60167a01e5fe4856c3ed5cbf862b912b2f3ba01bce4a8661c5ba915de",
+    "method_domain_constraint_catalog_sha256": "63ece7f25171a578daae026a9e5501f99fbbf3e9677452ab470248e13f3ad856",
+    "source_barrier_preserved": true,
+    "all_historical_and_query_cost_digest_edges_preserved": true,
+    "optimized_unique_aggregation_and_two_narrow_distincts_preserved": true,
+    "fresh_locked_id_high_water_and_1024_unused_gap_preserved": true
+  },
+  "installed_successor_canonical_sha256": null,
+  "runtime_validation": {
+    "status": "BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+    "ready_for_candidate_review": true,
+    "ready_for_production_rehearsal_go": false,
+    "dev_task_authorized": true,
+    "provider_technical_confirmation_required": true,
+    "read_only_permission_and_access_share_proof": {
+      "status": "PASS",
+      "scope": "Actual Dev SELECT authority and held ACCESS SHARE; not execution of the shared core.",
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/01-dev-cron-permission-execution.json",
+        "sha256": "65f1638184039c04b2f10d02d06aef2353607460b7a4fb28089f0092487038f9",
+        "bytes": 1824
+      }
+    },
+    "shared_core_14_native_groups": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "two_session_concurrency": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "setup_attempt_1": {
+      "status": "UNKNOWN",
+      "raw_original_response_available": false,
+      "setup_or_rollback_pass_claimed": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03-dev-setup-interrupted-response.json",
+        "sha256": "95b82c1d1efc07d58d00c04637dd254c6ceb9316e0b6c37b11aea2bb144eb0e8",
+        "bytes": 667
+      }
+    },
+    "reconciliation_after_attempt_1": {
+      "fixture_absence_observed": true,
+      "v8_exact_observed": true,
+      "does_not_reconstruct_lost_response_or_prove_full_rollback": true,
+      "evidence": [
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03b-dev-setup-outcome-execution.json",
+          "sha256": "ce6509f3224399af96a14964fd902ca53129e30567340c87a90bb68c643363aa",
+          "bytes": 1521
+        },
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03c-dev-full-context-execution.json",
+          "sha256": "d644859c5d06fbb8edea78a822dca68401c504053925e16938cb4f6c9fffa363",
+          "bytes": 1369
+        }
+      ]
+    },
+    "setup_attempt_2": {
+      "status": "PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+      "mcp_is_error": true,
+      "structured_status": "expired",
+      "setup_sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "started_at": "2026-11-22T00:23:46.470Z",
+      "returned_at": "2026-11-22T00:58:36.373Z",
+      "tool_call_elapsed_ms": 2089903,
+      "sql_runtime_or_success_proven": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-execution.json",
+        "sha256": "beae7b45c99b11fa77959c1e64a632f9c3f67bf377b29b4150a46fcfd481fc2f",
+        "bytes": 823
+      }
+    },
+    "final_independent_cleanup_state_read": {
+      "status": "READ_ONLY_FIXTURE_ABSENCE_AND_ORIGINAL_V8_OBSERVED",
+      "after_second_attempt": true,
+      "completed_claimed": true,
+      "observed_at": "2026-11-22T01:00:48.645764+00:00",
+      "fixture_absent": true,
+      "matching_active_test_sessions": 0,
+      "v8_exact": true,
+      "v8_catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "observed_counts": {
+        "roles_count": 43,
+        "memberships_count": 40,
+        "cron_count": 11,
+        "facts_count": 71,
+        "originals_count": 3
+      },
+      "fixture_cleanup_needed": false,
+      "setup_or_suite_pass_inferred": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03e-dev-final-read-execution.json",
+        "sha256": "f33d140ec738083fa72bbc5f762c63814180fd336322c031c17af7f88167e571",
+        "bytes": 1666
+      }
+    },
+    "automatic_retry_authorized_by_this_manifest": false,
+    "bypass_via_migration_auth_role_credentials_or_alternate_interface_permitted": false,
+    "new_production_candidate_executed": false,
+    "new_production_execution_authorized": false
+  },
+  "static_validation": {
+    "status": "STATIC_BINDING_AND_DETERMINISTIC_REBUILD_PASS_NOT_NATIVE_RUNTIME_PASS",
+    "report": {
+      "file": "offline-verification.json",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/offline-verification.json",
+      "sha256": "41a8ef9c630b00b85fc97ffcd53da750324526baa2796e3ec2b9a9129da299f1",
+      "bytes": 11719
+    },
+    "deterministic_byte_identical_generated_files": 8,
+    "old_manifest_files_unchanged": 22,
+    "full_native_successor_header_derivations": 5,
+    "native_parser_or_runtime_executed": false,
+    "independent_sql_review_does_not_prove_runtime": true
+  },
+  "next_step": {
+    "scope": "Continue the already-authorized Dev fixture tests through the normal Supabase SQL tool only after its required technical execution confirmation is completed. Preserve both failed/unknown attempt records.",
+    "requires_new_database_role_or_permission": false,
+    "requires_new_login_or_2fa_permission_for_workaround": false,
+    "provider_confirmation_bypass_allowed": false,
+    "production_rehearsal_go_ready": false,
+    "before_any_production_rehearsal": [
+      "Actual successful Dev fixture setup, all 14 native shared-core groups and two-session concurrency evidence",
+      "Actual fixture cleanup and independent final state read",
+      "Review of frozen new Production SQL bytes and complete evidence, followed by separate exact Production rehearsal authorization"
+    ],
+    "later_install_commit_requires": "Actual successful new 10 rehearsal plus independent 11 readback and a separate exact COMMIT Go.",
+    "later_fence_requires": "Actual committed successor canonical SHA, new bound fence bytes/manifest and separate exact Fence Go."
+  },
+  "limits": [
+    "ACCESS SHARE does not exclude Cron DML. Writer and full-row/version checks are optimistic observations, not a hard freeze.",
+    "Exactly five selected complete Cron rows are permanently bound. Other jobs are observed transiently during the transaction and are not claimed to become permanently guarded.",
+    "A late change is not resealed into the validated captured baseline. The final check/COMMIT window and fully unobserved unrelated insert/delete ABA histories remain possible.",
+    "The tool call of 2089903 ms waited for provider execution confirmation; it is not proven SQL runtime. Provider returned expiry after its stated 10-minute confirmation window.",
+    "The first setup response remains UNKNOWN. The expired second confirmation and final fixture-absence read establish no successful setup, native-core, concurrency or full rollback execution.",
+    "No positive AT qualification, renewal, HTTP delivery, production repair, restart or crash/failover proof is claimed by this package."
+  ]
+}

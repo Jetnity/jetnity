@@ -1,0 +1,12 @@
+{
+  "task": "DEV_CRON_GUARD_VALIDATION_20261122",
+  "target": "yfvbxvijcorffwxbxahl",
+  "file": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/00-setup-private-fixture.DEV-COMMIT.sql",
+  "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+  "bytes": 11098,
+  "stage": "setup",
+  "authorized_by": "Current user requested full Dev Cron correction tests without role/privilege changes",
+  "scope": "Only new private fixture schema and two exact tables; no live Cron DML or existing roles/ACL changes",
+  "cleanup_file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+  "status": "READY_FOR_FIRST_SETUP_ATTEMPT"
+}

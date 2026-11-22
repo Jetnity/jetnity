@@ -1,0 +1,80 @@
+{
+  "review_status": "STATIC_REVIEW_COMPLETE_AWAITING_ROOT_NATIVE_DEV_EXECUTION",
+  "reviewer": "verify_dev_receipts",
+  "manifest_sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1",
+  "files": [
+    {
+      "file": "00-setup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "bytes": 11098
+    },
+    {
+      "file": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "bytes": 31897
+    },
+    {
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788
+    },
+    {
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "bytes": 13811
+    },
+    {
+      "file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181
+    }
+  ],
+  "shared_core_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+  "mapped_core_sha256": "008cdadd544275cf0ab3c236229191fa78ee5b0af5cfaf4c527a74da5a984058",
+  "durable_catalog_expression_binding": {
+    "source": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/expected-native-guard-definitions.json",
+    "source_sha256": "9399b2a4520a78f06b5c55e62ba77127f402b505b1749cac78ff28630611e8d1",
+    "native_catalog_definition_sha256": "d80009f6db49c88fb446ee7ce140abafbfe35005e07db453b83b10c068964adf",
+    "exact_shared_expression_sha256": "b141cfd9c7b7fe4dc898c94569577d1a9894140abf24dcc7515988346ac51761",
+    "exact_occurrences_in_native_catalog_definition": 1,
+    "native_core_expression_tested_via_shared_function": true,
+    "whole_production_catalog_function_executed_in_dev": false
+  },
+  "reviewed_properties": [
+    "fixed Dev ref plus observed PG17.6/pg_net0.20.4/pg_cron1.6.4/current-user/v8-definition gates",
+    "actual cron.job SELECT-only privileges and ACCESS SHARE without stronger cron lock or new rights",
+    "five fixture rows with exact actual Production full-row hashes and command hashes; commands are inert stored text",
+    "only fixed new private schema/tables are persistent test writes; no real Cron/HTTP/source/Owner action",
+    "14 native groups require exact count and all positives; no skipped failures",
+    "each negative fixture mutation is rolled back in a native subtransaction and compared against original tuple snapshot",
+    "full test transaction ends ROLLBACK, existing Dev catalog/roles/ACLs/facts/originals/state and two sequence snapshots compared",
+    "native concurrent writer and reader use distinct PIDs bound to exact transactional advisory mutexes",
+    "reader requires the exact writer-refusal exception, then observes writer rollback and original native row pins",
+    "cleanup removes only exact owned fixture objects, has no CASCADE, and requires independent post-commit absence proof",
+    "new immutable catalog component expression exactly matches the shared native function used by tests"
+  ],
+  "resolved_findings": [
+    "all four sequence snapshots now explicitly project last_value/log_cnt/is_called; no invalid sequence composite conversion",
+    "session-private temporary ACLs excluded from existing explicit-ACL hash",
+    "setup and cleanup explicitly remove temporary helper before COMMIT to avoid pool-session residue",
+    "writer ACK and reader writer-observation bound to same-PID counterpart mutex",
+    "missing, null, scalar, object and empty-array capture inputs tested as distinct native negatives"
+  ],
+  "peer_review": {
+    "agent": "at_source_guard",
+    "kind": "static_read_only",
+    "remaining_concrete_blockers": [],
+    "native_execution_by_peer": false
+  },
+  "limits": [
+    "no native PostgreSQL parser or database was run by this agent",
+    "no successful runtime claim exists until Root records actual Dev execution",
+    "whole Production installer and full successor catalog are not executed by these scoped Dev probes",
+    "ACCESS SHARE is not a write freeze; post-final races and completely unobserved insert-delete ABA histories remain outside this proof",
+    "concurrent runtime case targets a granted RowExclusiveLock, not all pending/prepared lock variants",
+    "positive AT source qualification/renewal remains open"
+  ],
+  "production_or_dev_database_calls_by_reviewer": 0,
+  "roles_acl_or_environment_changes_by_reviewer": false,
+  "sql_executed_by_reviewer": false
+}

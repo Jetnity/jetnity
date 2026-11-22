@@ -1,0 +1,91 @@
+{
+  "schema": "jetnity-independent-cron-correction-candidate-review-v1",
+  "reviewer": "at_source_guard",
+  "reviewed_at_utc": "2026-11-22T00:14:53.153391+00:00",
+  "status": "FOCUSED_STATIC_REVIEW_NO_CONCRETE_BLOCKER_NOT_RUNTIME_PASS",
+  "references": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 113322,
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+      "bytes": 5563,
+      "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/build-candidates.py",
+      "bytes": 114268,
+      "sha256": "20d3d7ae02fad4e7d01a2d3e277f3244252d5dbc509cba5cfb118a2de412ae5c"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/required-production-bindings.json",
+      "bytes": 11710,
+      "sha256": "45c28673bcde9694c10bbe099f1defcc36f3ec8cf24bdeedcb2e1eab25621fa3"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/source-provenance.json",
+      "bytes": 20479,
+      "sha256": "cf50ca8c5fa9469ffabed1b0b6a3742e342271eb1dc95532621d6538b3bea97f"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+      "bytes": 18148,
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 101801,
+      "sha256": "286bd06250739d91476f286ac6fa668d7e662244c81064b2172599d3230c7457"
+    }
+  ],
+  "scope": "Local source/evidence review only. No builder import/execution, SQL execution, DB/API/browser/network call, SQL-file modification or Git mutation. Only this independent review artifact is written.",
+  "verified": {
+    "five_cron_pins_equal_actual_postabort_native_rows": true,
+    "full_row_hashes_cover_jobid_host_port_all_ordinary_columns": true,
+    "five_pins_checked_before_temp_ddl": true,
+    "five_pins_checked_again_before_first_install_ddl": true,
+    "exact_shared_core_embedded_in_10_and_20": true,
+    "same_contract_expression_embedded_in_new_live_catalog": true,
+    "select_authority_and_access_share_only_on_real_cron": true,
+    "other_backend_writer_locks_both_granted_and_pending_detected": true,
+    "prepared_transactions_not_skipped_due_to_null_pid": true,
+    "before_after_full_row_and_tableoid_xmin_ctid_fingerprints": true,
+    "single_live_catalog_capture_validated_before_insert": true,
+    "old_catalog_keys_and_allowed_five_definition_deltas_checked_before_seal": true,
+    "new_catalog_additions_limited_to_reviewed_objects": true,
+    "cron_capture_checked_against_reviewed_original_snapshot": true,
+    "insert_uses_only_validated_live_catalog_and_extracted_transport": true,
+    "no_second_live_capture_used_for_seal": true,
+    "last_optimistic_cron_check_before_install_commit": true,
+    "query_cost_two_narrow_distinct_and_unique_aggregate_retained": true,
+    "query_cost_v3_and_all_previous_assert_body_digest_edges_preserved": true,
+    "immediate_predecessor_full_query_cost_row_without_fake_timestamp_bound": true,
+    "guard_publisher_bodies_other_than_catalog_byte_equal_to_predecessor_package": true,
+    "at_source_qualification_barrier_unchanged_from_reviewed_package": true,
+    "no_positive_renewal_claim": true
+  },
+  "truth_limits": [
+    "Static review is not a PostgreSQL parse, successful Dev test, successful Production rehearsal, installation or new authorization.",
+    "AccessShare does not prevent concurrent Cron DML. Writer/row-version comparisons are optimistic observations, not a physical freeze.",
+    "A transient unrelated insert then delete wholly between observations and the final check-to-COMMIT interval are not eliminated; package provenance explicitly discloses both.",
+    "The new persistent Cron contract binds exactly five named full rows. All-row/version fingerprints are transient installation checks, not an invented historical all-Cron pin.",
+    "Unknown future changes fail existing strict checks. No resealing or acceptance of unknown source/transport drift is permitted by this review."
+  ],
+  "findings": [],
+  "related_dev_test_review": {
+    "fixture_five_full_rows_independently_reconstructed_offline_match_native_hashes": true,
+    "sequence_composite_bug_found_before_execution": "Four to_jsonb(sequence_alias) snapshots in Dev rehearsal were reported to its author for explicit last_value/log_cnt/is_called correction. This does not modify the Production candidate.",
+    "dev_runtime_status": "Not executed by reviewer; author/root handle fixes and actual tests separately."
+  },
+  "body_deltas_compared_with_previous_uninstalled_package": [
+    "official_v3_guard_private.catalog_status_v1()"
+  ],
+  "predecessor_package_execution_limit": "The previous 10 was attempted and stopped with SQLSTATE42501; it was not installed, and no successful rehearsal or complete rollback is asserted."
+}

@@ -1,0 +1,248 @@
+{
+  "schema": "jetnity-production-http-allocator-cron-correction-offline-verification-v1",
+  "status": "STATIC_BINDING_AND_DETERMINISTIC_REBUILD_PASS_NOT_NATIVE_RUNTIME_PASS",
+  "source_main_commit": "d8798dc2dee0a7f2cacb4f9def0605ee347f24c4",
+  "sql_executed": false,
+  "database_or_browser_or_network_access_performed": false,
+  "postgresql_native_parser_or_runtime_executed": false,
+  "local_python_builder_second_run_only": true,
+  "deterministic_byte_identical_generated_files": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+    "20-production-http-id.INSTALL-COMMIT.sql",
+    "30-production-http-id.FENCE-ROLLBACK.sql",
+    "40-production-http-id.FENCE-COMMIT.sql",
+    "50-production-http-id.POSTCOMMIT-READONLY.sql",
+    "source-provenance.json",
+    "expected-native-guard-definitions.json"
+  ],
+  "old_approved_package_manifest_files_unchanged": [
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+    "20-production-http-id.INSTALL-COMMIT.sql",
+    "30-production-http-id.FENCE-ROLLBACK.sql",
+    "40-production-http-id.FENCE-COMMIT.sql",
+    "50-production-http-id.POSTCOMMIT-READONLY.sql",
+    "README.md",
+    "build-candidates.py",
+    "expected-native-guard-definitions.json",
+    "pg-net-0.19.5-sql-source.txt",
+    "query-cost-JETNITY_BG1_QUERY_COST_2026-11-21.md",
+    "query-cost-build.mjs",
+    "query-cost-install.sql",
+    "query-cost-observed-production-functions.json",
+    "query-cost-provider-migration-body.sql",
+    "queue-read-execution.json",
+    "transport-substantive-review.json",
+    "transport-substantive-review.md",
+    "offline-verification.json",
+    "required-production-bindings.json",
+    "reviewed-net-api-definitions.json",
+    "source-provenance.json"
+  ],
+  "source_archive_count_verified": 13,
+  "preserved_byte_identical_components": {
+    "native_expr": true,
+    "qualification_barrier": true,
+    "helper_body": true
+  },
+  "optimized_catalog_original_entries_prefix_byte_identical": true,
+  "optimized_unique_aggregate_and_narrow_distinct_dependencies_preserved": true,
+  "every_original_historical_and_query_cost_assertion_clause_byte_identical": true,
+  "five_native_header_derivations": [
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_guard_private.assert_catalog_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_guard_private.require_open_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    },
+    {
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "old_native_matches_actual_02": true,
+      "header_unchanged": true,
+      "new_body_matches_install_sql": true,
+      "full_native_sha_checked_before_first_guard_call": true
+    }
+  ],
+  "postrehearsal_checks_current_predecessor_domain_and_native_transport_digest": true,
+  "fence_pin_deliberately_null_until_actual_committed_successor_readback": true,
+  "sql_files": {
+    "10-production-http-id.REHEARSAL-ROLLBACK.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982",
+      "bytes": 113322
+    },
+    "11-production-http-id.POSTREHEARSAL-READONLY.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224",
+      "bytes": 29501
+    },
+    "20-production-http-id.INSTALL-COMMIT.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+      "bytes": 106669
+    },
+    "30-production-http-id.FENCE-ROLLBACK.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "4535acf918d96f6851cebe4463ed994154fe9d220a1d073384fcb434de0efc44",
+      "bytes": 35286
+    },
+    "40-production-http-id.FENCE-COMMIT.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "0f1b65076f4fb8191fc5bff821001fe67b54e3e8b3c1dab1976f6f3fb7a85a98",
+      "bytes": 35020
+    },
+    "50-production-http-id.POSTCOMMIT-READONLY.sql": {
+      "lexically_balanced": true,
+      "native_sql_parser_used": false,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "bytes": 9347
+    }
+  },
+  "builder_sha256": "a766d359d8c9e0cfa13a5aa029de92c6f0c53d416bf6a2cc1b0e4819722504ac",
+  "required_bindings_sha256": "03afc04a953a3478478cd5ac09711a74c12b038116dba447472f54b32e470ba3",
+  "source_provenance_sha256": "97f8b97f5ebec510bd3cd8c4658d2c168426c269beaeb3846f84d179e501c550",
+  "limits": [
+    "Lexical balance is not PostgreSQL parsing, installation, hosted rollback, or concurrency proof.",
+    "The authorized post-abort read confirmed the bounded archived v3-to-query-cost baseline comparison. It did not recompute the complete current guard catalog or check current BG1 status; the full exact pre-DDL checks remain mandatory.",
+    "Domain owner/typmod/dimensions/default/collation additions are conservative source-derived future gates, not fields observed by 02.",
+    "Queue lock serializes ordinary queue DML. Direct external legacy nextval is not prevented; exact snapshot comparison can refuse observed foreign progress.",
+    "New sequence nextvals disappear only when the newly created sequence object is rolled back; no general nextval rollback is claimed.",
+    "Separate explicit authorization and actual evidence remain required for 10,11,20 and any later bound Fence; no HTTP, renewal, source qualification or Production repair is claimed.",
+    "The previous catalog did not contain Cron data. New durable coverage is exactly the five independently observed full Cron rows.",
+    "All Cron rows are checked optimistically by complete row/config and xmin/ctid snapshots; unrelated existing jobs are allowed.",
+    "ACCESS SHARE and writer observations do not freeze Cron DML or eliminate the final check/COMMIT window.",
+    "A pure unrelated insert/delete cycle between observations may be unseen. Late five-job drift is not resealed and cannot satisfy a mismatching new guard proof."
+  ],
+  "shared_cron_core_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+  "shared_core_byte_equal_in_four_writer_candidates": true,
+  "same_cron_contract_expression_in_durable_guard": true,
+  "five_actual_full_row_hashes_bound_before_first_ddl_and_in_readback": true,
+  "single_catalog_capture_validated_then_same_jsonb_inserted": true,
+  "cron_access_share_only_no_strong_lock_or_new_privilege": true,
+  "whole_cron_table_freeze_claimed": false,
+  "unrelated_transient_insert_delete_aba_or_commit_window_eliminated": false,
+  "dev_runtime_receipt_status": false,
+  "runtime_status": "BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+  "dev_runtime_validation": {
+    "status": "BLOCKED_PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+    "ready_for_candidate_review": true,
+    "ready_for_production_rehearsal_go": false,
+    "dev_task_authorized": true,
+    "provider_technical_confirmation_required": true,
+    "read_only_permission_and_access_share_proof": {
+      "status": "PASS",
+      "scope": "Actual Dev SELECT authority and held ACCESS SHARE; not execution of the shared core.",
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/01-dev-cron-permission-execution.json",
+        "sha256": "65f1638184039c04b2f10d02d06aef2353607460b7a4fb28089f0092487038f9",
+        "bytes": 1824
+      }
+    },
+    "shared_core_14_native_groups": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "two_session_concurrency": {
+      "status": "NOT_RUN",
+      "pass_claimed": false
+    },
+    "setup_attempt_1": {
+      "status": "UNKNOWN",
+      "raw_original_response_available": false,
+      "setup_or_rollback_pass_claimed": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03-dev-setup-interrupted-response.json",
+        "sha256": "95b82c1d1efc07d58d00c04637dd254c6ceb9316e0b6c37b11aea2bb144eb0e8",
+        "bytes": 667
+      }
+    },
+    "reconciliation_after_attempt_1": {
+      "fixture_absence_observed": true,
+      "v8_exact_observed": true,
+      "does_not_reconstruct_lost_response_or_prove_full_rollback": true,
+      "evidence": [
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03b-dev-setup-outcome-execution.json",
+          "sha256": "ce6509f3224399af96a14964fd902ca53129e30567340c87a90bb68c643363aa",
+          "bytes": 1521
+        },
+        {
+          "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03c-dev-full-context-execution.json",
+          "sha256": "d644859c5d06fbb8edea78a822dca68401c504053925e16938cb4f6c9fffa363",
+          "bytes": 1369
+        }
+      ]
+    },
+    "setup_attempt_2": {
+      "status": "PROVIDER_EXECUTION_CONFIRMATION_EXPIRED",
+      "mcp_is_error": true,
+      "structured_status": "expired",
+      "setup_sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "started_at": "2026-11-22T00:23:46.470Z",
+      "returned_at": "2026-11-22T00:58:36.373Z",
+      "tool_call_elapsed_ms": 2089903,
+      "sql_runtime_or_success_proven": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-execution.json",
+        "sha256": "beae7b45c99b11fa77959c1e64a632f9c3f67bf377b29b4150a46fcfd481fc2f",
+        "bytes": 823
+      }
+    },
+    "final_independent_cleanup_state_read": {
+      "status": "READ_ONLY_FIXTURE_ABSENCE_AND_ORIGINAL_V8_OBSERVED",
+      "after_second_attempt": true,
+      "completed_claimed": true,
+      "observed_at": "2026-11-22T01:00:48.645764+00:00",
+      "fixture_absent": true,
+      "matching_active_test_sessions": 0,
+      "v8_exact": true,
+      "v8_catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "observed_counts": {
+        "roles_count": 43,
+        "memberships_count": 40,
+        "cron_count": 11,
+        "facts_count": 71,
+        "originals_count": 3
+      },
+      "fixture_cleanup_needed": false,
+      "setup_or_suite_pass_inferred": false,
+      "evidence": {
+        "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03e-dev-final-read-execution.json",
+        "sha256": "f33d140ec738083fa72bbc5f762c63814180fd336322c031c17af7f88167e571",
+        "bytes": 1666
+      }
+    },
+    "automatic_retry_authorized_by_this_manifest": false,
+    "bypass_via_migration_auth_role_credentials_or_alternate_interface_permitted": false,
+    "new_production_candidate_executed": false,
+    "new_production_execution_authorized": false
+  }
+}

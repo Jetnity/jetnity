@@ -1,0 +1,74 @@
+{
+  "package": "DEV_CRON_GUARD_VALIDATION_20261122",
+  "target": "yfvbxvijcorffwxbxahl",
+  "execution_status": "NOT_EXECUTED",
+  "native_parser_status": "NOT_RUN",
+  "core_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+  "core_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+  "core_mapping": {
+    "from": "cron.job",
+    "to": "jetnity_dev_cron_guard_probe_20261122.jobs_v1",
+    "literal_replacement_count": 9
+  },
+  "mapped_core_sha256": "008cdadd544275cf0ab3c236229191fa78ee5b0af5cfaf4c527a74da5a984058",
+  "durable_catalog_expression_binding": {
+    "source": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/expected-native-guard-definitions.json",
+    "source_sha256": "9399b2a4520a78f06b5c55e62ba77127f402b505b1749cac78ff28630611e8d1",
+    "native_catalog_definition_sha256": "d80009f6db49c88fb446ee7ce140abafbfe35005e07db453b83b10c068964adf",
+    "exact_shared_expression_sha256": "b141cfd9c7b7fe4dc898c94569577d1a9894140abf24dcc7515988346ac51761",
+    "exact_occurrences_in_native_catalog_definition": 1,
+    "native_core_expression_tested_via_shared_function": true,
+    "whole_production_catalog_function_executed_in_dev": false
+  },
+  "fixture_receipt_source": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+  "fixture_receipt_source_sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+  "files": [
+    {
+      "file": "00-setup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "bytes": 11098
+    },
+    {
+      "file": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "bytes": 31897
+    },
+    {
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788
+    },
+    {
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "bytes": 13811
+    },
+    {
+      "file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181
+    }
+  ],
+  "required_order": [
+    "00",
+    "10",
+    "20 and 21 concurrently",
+    "30 even after failure",
+    "independent Root post-commit read"
+  ],
+  "claims_excluded": [
+    "Production installer runtime",
+    "new Production authorization",
+    "real Cron DML freeze",
+    "all intermediate ABA histories observed",
+    "HTTP/positive renewal",
+    "unexecuted tests passed"
+  ],
+  "writes": [
+    "new exact private fixture schema and two tables",
+    "fixture rows only",
+    "session-local temporary test helpers/results"
+  ],
+  "existing_role_acl_changes": false,
+  "existing_dev_v8_modified": false
+}

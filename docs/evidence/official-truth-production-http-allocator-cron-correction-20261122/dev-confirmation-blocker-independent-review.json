@@ -1,0 +1,185 @@
+{
+  "review_status": "BLOCKED_BY_EXPIRED_SUPABASE_EXECUTION_CONFIRMATION_NO_NATIVE_TEST_PASS",
+  "reviewer": "verify_dev_receipts",
+  "review_mode": "LOCAL_SAVED_EVIDENCE_ONLY",
+  "target": "yfvbxvijcorffwxbxahl",
+  "source_files": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03-dev-setup-intent.json",
+      "bytes": 678,
+      "sha256": "5d99920e5f9a5b4d3408f8cf56ebe25c9b416c0ef165eb24983d97eb95fa262d"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03-dev-setup-interrupted-response.json",
+      "bytes": 667,
+      "sha256": "95b82c1d1efc07d58d00c04637dd254c6ceb9316e0b6c37b11aea2bb144eb0e8"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03b-dev-setup-outcome-execution.json",
+      "bytes": 1521,
+      "sha256": "ce6509f3224399af96a14964fd902ca53129e30567340c87a90bb68c643363aa"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03b-dev-setup-outcome.READONLY.sql",
+      "bytes": 1905,
+      "sha256": "3d746aa71dc755b41f00997d0064e8daa901cc34825c24e1f1db22311dfe6f79"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03c-dev-full-context-execution.json",
+      "bytes": 1369,
+      "sha256": "d644859c5d06fbb8edea78a822dca68401c504053925e16938cb4f6c9fffa363"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03c-dev-full-context.READONLY.sql",
+      "bytes": 1665,
+      "sha256": "14f57fd4e1244fcee02cf2a82abae12b25ca2645830a9d574c1bca86399a5dd3"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-intent.json",
+      "bytes": 763,
+      "sha256": "f331dee54800c8207bad838c070e751d88fbe9e9b12b5a33a49d2dda6faed6df"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-execution.json",
+      "bytes": 823,
+      "sha256": "beae7b45c99b11fa77959c1e64a632f9c3f67bf377b29b4150a46fcfd481fc2f"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/03e-dev-final-read-execution.json",
+      "bytes": 1666,
+      "sha256": "f33d140ec738083fa72bbc5f762c63814180fd336322c031c17af7f88167e571"
+    }
+  ],
+  "frozen_setup_sql": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/00-setup-private-fixture.DEV-COMMIT.sql",
+    "bytes": 11098,
+    "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805"
+  },
+  "frozen_test_manifest": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/MANIFEST.json",
+    "bytes": 3074,
+    "sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1"
+  },
+  "all_five_frozen_sql_file_hashes_match_manifest": true,
+  "first_setup_attempt": {
+    "outcome": "UNKNOWN_ORIGINAL_RESPONSE_LOST",
+    "original_tool_response_available": false,
+    "separate_03b_observation": {
+      "result": "DEV_CRON_SETUP_OUTCOME_CATALOG_OBSERVATION",
+      "cron_delete": false,
+      "cron_select": true,
+      "cron_update": false,
+      "observed_at": "2026-11-22T00:21:43.746075+00:00",
+      "current_user": "postgres",
+      "cron_maintain": false,
+      "cron_truncate": false,
+      "dev_v8_present": true,
+      "fixture_functions": 0,
+      "fixture_relations": [],
+      "dev_allocator_present": true,
+      "fixture_namespace_oid": null,
+      "catalog_definition_sha256": "a37bdaaa546ab1bcf3baac301d83de3887765ae16532f149d421a9c1dd0780c4",
+      "other_active_matching_test_sessions": 0
+    },
+    "full_rollback_or_success_proven": false,
+    "initial_inflight_filter_limitation": "May not match truncated pg_stat_activity.query; later03c uses the actual statement prefix."
+  },
+  "second_setup_attempt": {
+    "attempt_number": 2,
+    "sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+    "sql_bytes": 11098,
+    "started_at": "2026-11-22T00:23:46.470Z",
+    "returned_at": "2026-11-22T00:58:36.373Z",
+    "elapsed_ms": 2089903,
+    "timing_scope": "Complete caller wait envelope, not SQL/database execution time.",
+    "raw_and_structured_status_match": true,
+    "content_status": "expired",
+    "structured_status": "expired",
+    "is_error": true,
+    "provider_error_code": "INVALID_ARGUMENT",
+    "provider_message": "This confirmation expired after 10 minutes. Call `execute_sql` again to get a new confirmation.",
+    "message_is_evidence_not_authorization_to_retry": true,
+    "native_sqlstate_present": false,
+    "native_query_result_present": false,
+    "database_execution_or_commit_confirmed": false,
+    "result": "SERVICE_EXECUTION_CONFIRMATION_EXPIRED"
+  },
+  "last_completed_pre_expiry_context_read": {
+    "observed": {
+      "result": "DEV_CRON_FULL_CONTEXT_READ",
+      "v8_exact": true,
+      "cron_count": 11,
+      "facts_count": 71,
+      "observed_at": "2026-11-22T00:23:14.730832+00:00",
+      "roles_count": 43,
+      "fixture_absent": true,
+      "originals_count": 3,
+      "memberships_count": 40,
+      "v8_catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "production_source_pins_absent": true,
+      "other_active_test_prefix_sessions": 0
+    },
+    "caller_elapsed_ms": 1212,
+    "read_only_rollback_sql_verified": true,
+    "proves_successful_single_full_v8_catalog_comparison": true,
+    "proves_all_setup_statements_would_fit_timeouts": false,
+    "proves_bg1_public_current_status": false,
+    "proves_fresh_at_qualification_or_positive_renewal": false
+  },
+  "suite_execution_status": {
+    "source": "Explicit Root report and available execution evidence; file absence alone is not execution proof.",
+    "fourteen_native_rehearsal_groups": "NOT_EXECUTED_REPORTED_BY_ROOT",
+    "concurrent_writer_reader": "NOT_EXECUTED_REPORTED_BY_ROOT",
+    "cleanup": "NOT_REQUIRED_BY_FINAL_OBSERVED_FIXTURE_ABSENCE_NO_CLEANUP_RUN_CLAIMED",
+    "full_dev_test_acceptance": "BLOCKED",
+    "core_native_failure_proven": false,
+    "twenty_second_catalog_timeout_proven": false
+  },
+  "final_post_expiry_readback": {
+    "status": "ACTUAL_READ_ONLY_OBSERVATION_VERIFIED",
+    "source": "03e-dev-final-read-execution.json",
+    "sql_sha256": "14f57fd4e1244fcee02cf2a82abae12b25ca2645830a9d574c1bca86399a5dd3",
+    "caller_started_at": "2026-11-22T01:00:47.367Z",
+    "caller_returned_at": "2026-11-22T01:00:48.960Z",
+    "caller_elapsed_ms": 1593,
+    "observed": {
+      "result": "DEV_CRON_FULL_CONTEXT_READ",
+      "v8_exact": true,
+      "cron_count": 11,
+      "facts_count": 71,
+      "observed_at": "2026-11-22T01:00:48.645764+00:00",
+      "roles_count": 43,
+      "fixture_absent": true,
+      "originals_count": 3,
+      "memberships_count": 40,
+      "v8_catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "production_source_pins_absent": true,
+      "other_active_test_prefix_sessions": 0
+    },
+    "same_protected_catalog_sha_as_pre_expiry_read": true,
+    "fixture_absence_observed_after_expiry": true,
+    "no_fixture_cleanup_required_at_this_observation": true,
+    "no_matching_active_test_prefix_session_observed": true,
+    "bg1_current_public_status_proven": false,
+    "fact_content_hash_or_freshness_proven_by_this_read": false,
+    "global_role_membership_or_acl_byte_equality_proven_by_counts": false,
+    "original_first_attempt_full_rollback_proven": false,
+    "native_rehearsal_or_concurrency_pass_proven": false,
+    "observation_not_a_claim_about_all_future_server_states": true
+  },
+  "continuation_boundary": {
+    "current_user_dev_work_authorization_is_not_reinterpreted_as_missing": true,
+    "next_required_step": "Fresh technical Supabase execution-confirmation dialog accepted in time by the user for the already authorized, exact Dev-only setup; final read-only reconciliation is now saved. No automatic retry.",
+    "requires_new_roles_privileges_or_owner_membership": false,
+    "permits_automatic_blind_retry": false,
+    "production_access_or_execution_authorization_added": false,
+    "immutable_sql_or_manifest_modified_to_appear_executed": false
+  },
+  "reviewer_actions": {
+    "database_calls": 0,
+    "browser_calls": 0,
+    "external_project_calls": 0,
+    "sql_execution": false,
+    "roles_or_acl_changes": false
+  }
+}

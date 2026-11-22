@@ -1,0 +1,412 @@
+{
+  "schema": "jetnity-production-transport-substantive-review-v1",
+  "reviewed_at": "2026-11-21T23:17:04.129636+00:00",
+  "reviewer": "at_source_guard",
+  "status": "STATIC_SOURCES_MATCHED_WITH_DECLARED_PROVIDER_HEADER_DIFFERENCE",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "scope": {
+    "db_calls": 0,
+    "new_project_access": false,
+    "sql_runtime_used": false,
+    "old_files_changed": false,
+    "write_permission": false,
+    "source_qualification_or_positive_renewal": false
+  },
+  "input_receipt": {
+    "path": "docs/evidence/official-truth-production-http-allocator-queue-read-20261122/execution.json",
+    "bytes": 52011,
+    "sha256": "4a65f43570b8f3a12a9d65ed7452106bb888ad2374b821eb1d4aad1b1adfe7cd",
+    "observed_at": "2026-11-21T23:06:49.362212+00:00",
+    "recorded_authorized_call_count": 1
+  },
+  "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+  "sources": {
+    "official_pg_net_0195": {
+      "path": "docs/evidence/official-truth-production-http-allocator-read-20261121/pg-net-0.19.5-sql-source.txt",
+      "bytes": 9487,
+      "sha256": "a87097c3b19d4583c5b0eefe28f97e34495e2acb67b8f7bde24ed75ccdead8b5",
+      "url": "https://github.com/supabase/pg_net/blob/a7792bfd913c7859e14025d606624982706c2a7f/sql/pg_net.sql",
+      "commit": "a7792bfd913c7859e14025d606624982706c2a7f",
+      "git_blob_sha": "09d6bc72fbf7922a7660dc0ea0261a303b5d86a2"
+    },
+    "archived_api_definitions": {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-package-20261121/reviewed-net-api-definitions.json",
+      "bytes": 4863,
+      "sha256": "6a403e5f825ac48525fd8c6b9665c52472bee1cfc24fbef23b60e977211c8333"
+    },
+    "official_supabase_provider_migration": {
+      "url": "https://github.com/supabase/postgres/blob/c85422318302fae317c8eb25d47b9abc810d61f0/migrations/db/migrations/20261016000001_search_path_for_supa_functions.sql",
+      "commit": "c85422318302fae317c8eb25d47b9abc810d61f0",
+      "git_blob_sha": "286eb69867014d90a69033f76b59fe09825fadfe",
+      "git_blob_verified_from_bytes": true,
+      "file_sha256": "ca312626320cd78dcdfc3ca89a61194ab34e651dc94d3f576a71cd2d56510f83",
+      "file_bytes": 9140,
+      "source_function": "CREATE OR REPLACE FUNCTION extensions.grant_pg_net_access() RETURNS event_trigger\n    LANGUAGE plpgsql\n    SET search_path to pg_catalog, pg_temp\n    AS $$\nBEGIN\n  IF EXISTS (\n    SELECT 1\n    FROM pg_event_trigger_ddl_commands() AS ev\n    JOIN pg_extension AS ext\n    ON ev.objid = ext.oid\n    WHERE ext.extname = 'pg_net'\n  )\n  THEN\n    IF NOT EXISTS (\n      SELECT 1\n      FROM pg_roles\n      WHERE rolname = 'supabase_functions_admin'\n    )\n    THEN\n      CREATE USER supabase_functions_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION;\n    END IF;\n\n    GRANT USAGE ON SCHEMA net TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n\n    IF EXISTS (\n      SELECT FROM pg_extension\n      WHERE extname = 'pg_net'\n      -- all versions in use on existing projects as of 2025-02-20\n      -- version 0.12.0 onwards don't need these applied\n      AND extversion IN ('0.2', '0.6', '0.7', '0.7.1', '0.8.0', '0.10.0', '0.11.0')\n    ) THEN\n      ALTER function net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) SECURITY DEFINER;\n      ALTER function net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) SECURITY DEFINER;\n\n      ALTER function net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) SET search_path = net;\n      ALTER function net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) SET search_path = net;\n\n      REVOKE ALL ON FUNCTION net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) FROM PUBLIC;\n      REVOKE ALL ON FUNCTION net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) FROM PUBLIC;\n\n      GRANT EXECUTE ON FUNCTION net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n      GRANT EXECUTE ON FUNCTION net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n    END IF;\n  END IF;\nEND;\n$$;"
+    },
+    "native_definition_renderer": {
+      "url": "https://github.com/postgres/postgres/blob/REL_17_STABLE/src/backend/utils/adt/ruleutils.c",
+      "immutable_blob_url": "https://api.github.com/repos/postgres/postgres/git/blobs/2d3625c9b7089af6787a8ae05a3d29aa2bebd590",
+      "git_blob_sha": "2d3625c9b7089af6787a8ae05a3d29aa2bebd590",
+      "function": "pg_get_functiondef",
+      "method": "Read official PostgreSQL 17 implementation. Reconstructed exact header/config, C library/symbol, dollar-quoted body, newline. No SQL parser/runtime."
+    }
+  },
+  "summary": {
+    "functions": 15,
+    "net_functions": 12,
+    "application_http_producers": 2,
+    "ddl_provider_helper": 1,
+    "exact_source_body_or_symbol_hash_matches": 15,
+    "source_canonical_full_definition_matches": 14,
+    "source_body_plus_declared_observed_header_matches": 1,
+    "exact_full_definition_hash_matches": 15,
+    "unresolved_body_hashes": [],
+    "unresolved_definition_hashes": []
+  },
+  "functions": [
+    {
+      "signature": "extensions.grant_pg_net_access()",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_supabase_provider_migration",
+        "line": 82
+      },
+      "source_body_sha256": "754e58111dbe32030af4d91591dfd78cb3cf8e8f4f56a5fcc199bb0cf7f4ac2b",
+      "observed_body_sha256": "754e58111dbe32030af4d91591dfd78cb3cf8e8f4f56a5fcc199bb0cf7f4ac2b",
+      "body_match": true,
+      "reconstructed_definition_sha256": "e38c4060751c9695123350596f1cb0d0c943015f3267a2a455d8efe02c711184",
+      "observed_definition_sha256": "e38c4060751c9695123350596f1cb0d0c943015f3267a2a455d8efe02c711184",
+      "definition_match": true,
+      "method": "Exact official body plus explicitly identified observed empty-search_path header. Full observed digest matches. Does not prove when or by whom the header was set.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION extensions.grant_pg_net_access()\n RETURNS event_trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN\n  IF EXISTS (\n    SELECT 1\n    FROM pg_event_trigger_ddl_commands() AS ev\n    JOIN pg_extension AS ext\n    ON ev.objid = ext.oid\n    WHERE ext.extname = 'pg_net'\n  )\n  THEN\n    IF NOT EXISTS (\n      SELECT 1\n      FROM pg_roles\n      WHERE rolname = 'supabase_functions_admin'\n    )\n    THEN\n      CREATE USER supabase_functions_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION;\n    END IF;\n\n    GRANT USAGE ON SCHEMA net TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n\n    IF EXISTS (\n      SELECT FROM pg_extension\n      WHERE extname = 'pg_net'\n      -- all versions in use on existing projects as of 2025-02-20\n      -- version 0.12.0 onwards don't need these applied\n      AND extversion IN ('0.2', '0.6', '0.7', '0.7.1', '0.8.0', '0.10.0', '0.11.0')\n    ) THEN\n      ALTER function net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) SECURITY DEFINER;\n      ALTER function net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) SECURITY DEFINER;\n\n      ALTER function net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) SET search_path = net;\n      ALTER function net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) SET search_path = net;\n\n      REVOKE ALL ON FUNCTION net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) FROM PUBLIC;\n      REVOKE ALL ON FUNCTION net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) FROM PUBLIC;\n\n      GRANT EXECUTE ON FUNCTION net.http_get(url text, params jsonb, headers jsonb, timeout_milliseconds integer) TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n      GRANT EXECUTE ON FUNCTION net.http_post(url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer) TO supabase_functions_admin, postgres, anon, authenticated, service_role;\n    END IF;\n  END IF;\nEND;\n$function$\n",
+      "upstream_native_definition_sha256": "5fabbc974bd72f16ccdc5a57c5237554774222c6d85d3a25895e1b0390f24b54",
+      "upstream_full_definition_match": false,
+      "header_difference": {
+        "upstream_search_path": [
+          "pg_catalog",
+          "pg_temp"
+        ],
+        "observed_search_path": "",
+        "observed_security": "INVOKER",
+        "change_history_verified": false
+      },
+      "event_trigger_registration_observed_by_02": false,
+      "functional_review": "DDL event-trigger helper, not HTTP producer. Conditional provider role/schema grants; net HTTP API alterations only for fixed legacy versions through 0.11.0, not observed 0.19.5. No queue INSERT, nextval, setval or outgoing HTTP invocation in body."
+    },
+    {
+      "signature": "jetnity_prod_import_scheduler.tick_v1()",
+      "observed_owner": "postgres",
+      "source": {
+        "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+        "bytes": 14307,
+        "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0",
+        "line": 78
+      },
+      "source_body_sha256": "ebc518fc18e8c5057941c1d65890171b510fa67138dc85023ac1d95195f6bb3a",
+      "observed_body_sha256": "ebc518fc18e8c5057941c1d65890171b510fa67138dc85023ac1d95195f6bb3a",
+      "body_match": true,
+      "reconstructed_definition_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe",
+      "observed_definition_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe",
+      "definition_match": true,
+      "method": "Repository body/attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION jetnity_prod_import_scheduler.tick_v1()\n RETURNS text\n LANGUAGE plpgsql\n SET search_path TO 'pg_catalog'\n SET statement_timeout TO '10s'\n SET lock_timeout TO '2s'\nAS $function$\nDECLARE\n  moment timestamptz:=clock_timestamp();\n  control jetnity_prod_import_scheduler.state_v1%ROWTYPE;\n  cycle jetnity_prod_import_scheduler.cycles_v1%ROWTYPE;\n  dispatch jetnity_prod_import_scheduler.dispatches_v1%ROWTYPE;\n  reply record;\n  result jsonb;\n  signing_key text;\n  actual_mac text;\n  expected_mac text;\n  mac_count integer;\n  response_status text;\n  amount integer;\n  request_id bigint;\n  timestamp_ms text;\n  request_body jsonb;\n  start_left integer;\n  operation_left integer;\n  quota jsonb;\n  response_verified boolean:=false;\n  target_url constant text:='https://jetnity.com/api/internal/readiness/ch-de-prod-refresh';\n  target_path constant text:='/api/internal/readiness/ch-de-prod-refresh';\nBEGIN\n  IF current_user<>'postgres' OR session_user<>'postgres' OR current_database()<>'postgres' THEN\n    RAISE EXCEPTION 'Production scheduler operator only';\n  END IF;\n  IF NOT pg_try_advisory_xact_lock(771106,32) THEN RETURN 'busy'; END IF;\n  SELECT * INTO STRICT control FROM jetnity_prod_import_scheduler.state_v1 WHERE singleton FOR UPDATE;\n  IF NOT control.enabled THEN RETURN 'disabled'; END IF;\n  -- Unchanged normal BG1 remains authoritative; this sender never runs an audit.\n  IF NOT EXISTS(SELECT 1 FROM official_v3_guard_private.state_v1\n    WHERE singleton AND incident_generation=resumed_generation AND valid_until>moment\n      AND last_proof_started IS NOT NULL AND last_finished>=last_proof_started) THEN\n    UPDATE jetnity_prod_import_scheduler.state_v1 SET status='guard_not_current' WHERE singleton;\n    RETURN 'guard_not_current';\n  END IF;\n  IF to_regprocedure('official_v3_guard_private.ch_de_quota_v2()') IS NULL THEN\n    UPDATE jetnity_prod_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;\n    RETURN 'quota_state_unavailable';\n  END IF;\n  -- The separately installed successor owns rolling admission and terminal\n  -- reserve. Never derive a daily allowance by resetting lifetime counters.\n  quota:=official_v3_guard_private.ch_de_quota_v2();\n  IF quota->>'model' IS DISTINCT FROM 'rolling_24h_v2' OR quota->'clock_ok' IS DISTINCT FROM 'true'::jsonb\n    OR jsonb_typeof(quota->'remaining_starts') IS DISTINCT FROM 'number'\n    OR jsonb_typeof(quota->'remaining_operations') IS DISTINCT FROM 'number'\n    OR (quota->>'remaining_starts') !~ '^[0-9]{1,2}$'\n    OR (quota->>'remaining_operations') !~ '^[0-9]{1,3}$' THEN\n    UPDATE jetnity_prod_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;\n    RETURN 'quota_state_unavailable';\n  END IF;\n  start_left:=(quota->>'remaining_starts')::integer;\n  operation_left:=(quota->>'remaining_operations')::integer;\n  IF start_left>64 OR operation_left>256 THEN\n    UPDATE jetnity_prod_import_scheduler.state_v1 SET status='quota_state_unavailable',observed_at=moment WHERE singleton;\n    RETURN 'quota_state_unavailable';\n  END IF;\n  UPDATE jetnity_prod_import_scheduler.state_v1 SET observed_at=moment,\n    remaining_starts=start_left,remaining_operations=operation_left WHERE singleton;\n  SELECT decrypted_secret INTO STRICT signing_key FROM vault.decrypted_secrets\n    WHERE name='jetnity_prod_import_cron_v1';\n  IF signing_key IS NULL OR length(signing_key) NOT BETWEEN 32 AND 256 OR signing_key !~ '^[A-Za-z0-9_-]+$' THEN\n    RAISE EXCEPTION 'scheduler signing configuration unavailable';\n  END IF;\n  SELECT * INTO cycle FROM jetnity_prod_import_scheduler.cycles_v1 WHERE state='active' FOR UPDATE;\n  IF NOT FOUND THEN\n    IF EXISTS(SELECT 1 FROM jetnity_prod_import_scheduler.cycles_v1 WHERE state='blocked') THEN\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET status='operator_review_required' WHERE singleton;\n      RETURN 'operator_review_required';\n    END IF;\n    IF control.next_due_at>moment THEN\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET status='not_due' WHERE singleton;\n      RETURN 'not_due';\n    END IF;\n    -- Reserve the existing attempt/operation allowance. Never reset or increase it.\n    IF start_left<4 OR operation_left<16 THEN\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET status='daily_capacity_low' WHERE singleton;\n      RETURN 'daily_capacity_low';\n    END IF;\n    INSERT INTO jetnity_prod_import_scheduler.cycles_v1(operation_id,lease_id)\n      VALUES('op3_'||replace(gen_random_uuid()::text,'-',''),'lease3_'||replace(gen_random_uuid()::text,'-',''))\n      RETURNING * INTO cycle;\n  END IF;\n  SELECT * INTO dispatch FROM jetnity_prod_import_scheduler.dispatches_v1\n    WHERE cycle_id=cycle.id AND processed_at IS NULL ORDER BY id DESC LIMIT 1 FOR UPDATE;\n  IF FOUND THEN\n    SELECT * INTO reply FROM net._http_response WHERE id=dispatch.net_request_id;\n    IF NOT FOUND AND moment<dispatch.dispatched_at+interval '90 seconds' THEN\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET status='awaiting_response' WHERE singleton;\n      RETURN 'awaiting_response';\n    END IF;\n    response_status:='response_unconfirmed';\n    IF FOUND AND reply.timed_out IS NOT TRUE AND reply.error_msg IS NULL AND reply.status_code BETWEEN 200 AND 599\n      AND reply.content IS NOT NULL AND octet_length(reply.content)<=1024\n      AND moment<=dispatch.dispatched_at+interval '150 seconds' THEN\n      BEGIN\n        result:=reply.content::jsonb;\n        amount:=(result->>'published')::integer;\n        response_status:=result->>'status';\n        SELECT count(*),min(value) INTO mac_count,actual_mac FROM jsonb_each_text(reply.headers)\n          WHERE lower(key)='x-jetnity-prod-import-mac';\n        expected_mac:=encode(extensions.hmac(concat_ws(E'\\n','jetnity-prod-import-response-v1','POST',target_path,\n          dispatch.signed_at_ms,'2',dispatch.phase,cycle.operation_id,cycle.lease_id,'1',reply.status_code::text,response_status,amount::text),\n          signing_key,'sha256'),'hex');\n        response_verified:=result=jsonb_build_object('schema',1,'status',response_status,'published',amount)\n          AND response_status IN ('queued','published','complete','exhausted','busy','not_approved','unavailable','access_required','request_refused','unresolved')\n          AND amount BETWEEN 0 AND 32 AND (response_status IN ('published','unresolved') OR amount=0)\n          AND mac_count=1 AND actual_mac ~ '^[a-f0-9]{64}$' AND actual_mac=expected_mac\n          AND dispatch.phase=cycle.phase;\n      EXCEPTION WHEN invalid_text_representation OR numeric_value_out_of_range OR invalid_parameter_value THEN\n        response_verified:=false;\n      END;\n    END IF;\n    IF response_verified IS NOT TRUE THEN response_status:='response_unconfirmed'; END IF;\n    UPDATE jetnity_prod_import_scheduler.dispatches_v1 SET processed_at=moment,\n      http_status=CASE WHEN reply.id IS NOT NULL THEN reply.status_code ELSE NULL END,outcome=response_status\n      WHERE id=dispatch.id;\n    IF response_verified AND reply.status_code=200 AND response_status='queued' AND cycle.phase='start' THEN\n      UPDATE jetnity_prod_import_scheduler.cycles_v1 SET phase='resume',phase_attempts=0,last_status='queued'\n        WHERE id=cycle.id RETURNING * INTO cycle;\n    ELSIF response_verified AND reply.status_code=200 AND response_status='published' AND amount>0 AND cycle.phase='resume' THEN\n      UPDATE jetnity_prod_import_scheduler.cycles_v1 SET state='published',published=amount,finished_at=moment,last_status='published'\n        WHERE id=cycle.id;\n      -- Preparation can precede publication ACK. Anchor to original request time.\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET next_due_at=cycle.created_at+interval '40 minutes',status='published' WHERE singleton;\n      RETURN 'published';\n    ELSE\n      UPDATE jetnity_prod_import_scheduler.cycles_v1 SET last_status=response_status WHERE id=cycle.id;\n    END IF;\n    IF response_verified AND response_status IN ('exhausted','not_approved','access_required','request_refused') THEN\n      UPDATE jetnity_prod_import_scheduler.cycles_v1 SET state='blocked',finished_at=moment WHERE id=cycle.id;\n      UPDATE jetnity_prod_import_scheduler.state_v1 SET status='operator_review_required' WHERE singleton;\n      RETURN 'operator_review_required';\n    END IF;\n  END IF;\n  IF cycle.phase_attempts>=8 OR moment>=cycle.created_at+interval '25 minutes' THEN\n    UPDATE jetnity_prod_import_scheduler.cycles_v1 SET state='blocked',finished_at=moment,last_status='retry_budget_exhausted' WHERE id=cycle.id;\n    UPDATE jetnity_prod_import_scheduler.state_v1 SET status='operator_review_required' WHERE singleton;\n    RETURN 'operator_review_required';\n  END IF;\n  -- Identifiers and phase are durable before pg_net can send after COMMIT.\n  timestamp_ms:=floor(extract(epoch FROM clock_timestamp())*1000)::bigint::text;\n  request_body:=jsonb_build_object('schema',2,'mode',cycle.phase,'operationId',cycle.operation_id,'leaseId',cycle.lease_id);\n  expected_mac:=encode(extensions.hmac(concat_ws(E'\\n','jetnity-prod-import-v1','POST',target_path,timestamp_ms,'2',\n    cycle.phase,cycle.operation_id,cycle.lease_id),signing_key,'sha256'),'hex');\n  request_id:=net.http_post(url:=target_url,body:=request_body,params:='{}'::jsonb,\n    headers:=jsonb_build_object('Content-Type','application/json','Authorization','HMAC-SHA256 '||expected_mac,\n      'X-Jetnity-Prod-Import-Time',timestamp_ms),timeout_milliseconds:=65000);\n  INSERT INTO jetnity_prod_import_scheduler.dispatches_v1(cycle_id,phase,signed_at_ms,net_request_id)\n    VALUES(cycle.id,cycle.phase,timestamp_ms,request_id);\n  UPDATE jetnity_prod_import_scheduler.cycles_v1 SET phase_attempts=phase_attempts+1 WHERE id=cycle.id;\n  UPDATE jetnity_prod_import_scheduler.state_v1 SET status='dispatched_'||cycle.phase WHERE singleton;\n  RETURN 'dispatched_'||cycle.phase;\nEND $function$\n",
+      "id_transport": "HTTP return value stored unchanged in dispatches_v1.net_request_id",
+      "configuration_caveat": "Observed lock_timeout=2s exactly matches original core; later 150ms candidate is not assumed installed."
+    },
+    {
+      "signature": "net._await_response(bigint)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 50
+      },
+      "source_body_sha256": "12a130dd8e2e6403f1ac5d7938eedfc796899640c09b0d3b5240f5cdbec4f1bd",
+      "observed_body_sha256": "12a130dd8e2e6403f1ac5d7938eedfc796899640c09b0d3b5240f5cdbec4f1bd",
+      "body_match": true,
+      "reconstructed_definition_sha256": "4c8e2c8e0f7d023cc615620398a1ed43d127b4ecb343158a60310f886daa6835",
+      "observed_definition_sha256": "4c8e2c8e0f7d023cc615620398a1ed43d127b4ecb343158a60310f886daa6835",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net._await_response(request_id bigint)\n RETURNS boolean\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    rec net._http_response;\nbegin\n    while rec is null loop\n        select *\n        into rec\n        from net._http_response\n        where id = request_id;\n\n        if rec is null then\n            -- Wait 50 ms before checking again\n            perform pg_sleep(0.05);\n        end if;\n    end loop;\n\n    return true;\nend;\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net._encode_url_with_params_array(text,text[])",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 86
+      },
+      "source_body_sha256": "5cb8b70700de75774ef30babbf0f06248266b71e0b91879c2d29735d5fba248d",
+      "observed_body_sha256": "5cb8b70700de75774ef30babbf0f06248266b71e0b91879c2d29735d5fba248d",
+      "body_match": true,
+      "reconstructed_definition_sha256": "be4a42be0fb73ec674a042ffb11b2698bd80b7965153c843c346e7abfe776c7f",
+      "observed_definition_sha256": "be4a42be0fb73ec674a042ffb11b2698bd80b7965153c843c346e7abfe776c7f",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net._encode_url_with_params_array(url text, params_array text[])\n RETURNS text\n LANGUAGE c\n IMMUTABLE\nAS 'pg_net', $function$_encode_url_with_params_array$function$\n",
+      "source_kind": "C_LIBRARY_AND_SYMBOL_DECLARATION"
+    },
+    {
+      "signature": "net._http_collect_response(bigint,boolean)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 288
+      },
+      "source_body_sha256": "e9d138360e40290da72383f3cebfd3329a0a79970f38a5fcebd2787b91148826",
+      "observed_body_sha256": "e9d138360e40290da72383f3cebfd3329a0a79970f38a5fcebd2787b91148826",
+      "body_match": true,
+      "reconstructed_definition_sha256": "6f0275eb73cf42cc9e3b270b9133d31268bd4df3500a0895d20e79d11563b3d1",
+      "observed_definition_sha256": "6f0275eb73cf42cc9e3b270b9133d31268bd4df3500a0895d20e79d11563b3d1",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net._http_collect_response(request_id bigint, async boolean DEFAULT true)\n RETURNS net.http_response_result\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    rec net._http_response;\n    req_exists boolean;\nbegin\n\n    if not async then\n        perform net._await_response(request_id);\n    end if;\n\n    select *\n    into rec\n    from net._http_response\n    where id = request_id;\n\n    if rec is null or rec.error_msg is not null then\n        -- The request is either still processing or the request_id provided does not exist\n\n        -- TODO: request in progress is indistinguishable from request that doesn't exist\n\n        -- No request matching request_id found\n        return (\n            'ERROR',\n            coalesce(rec.error_msg, 'request matching request_id not found'),\n            null\n        )::net.http_response_result;\n\n    end if;\n\n    -- Return a valid, populated http_response_result\n    return (\n        'SUCCESS',\n        'ok',\n        (\n            rec.status_code,\n            rec.headers,\n            rec.content\n        )::net.http_response\n    )::net.http_response_result;\nend;\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net._urlencode_string(character varying)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 78
+      },
+      "source_body_sha256": "d6ca8cc0ea90c627f061d8b8340f50794294a94e3961d93b910bf64a12537132",
+      "observed_body_sha256": "d6ca8cc0ea90c627f061d8b8340f50794294a94e3961d93b910bf64a12537132",
+      "body_match": true,
+      "reconstructed_definition_sha256": "3e9629db6729f01e07afc5cf40d3bbad255ef792fc3260bd6d666dbffc5c73ed",
+      "observed_definition_sha256": "3e9629db6729f01e07afc5cf40d3bbad255ef792fc3260bd6d666dbffc5c73ed",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net._urlencode_string(string character varying)\n RETURNS text\n LANGUAGE c\n IMMUTABLE\nAS 'pg_net', $function$_urlencode_string$function$\n",
+      "source_kind": "C_LIBRARY_AND_SYMBOL_DECLARATION"
+    },
+    {
+      "signature": "net.check_worker_is_up()",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 21
+      },
+      "source_body_sha256": "342ba857ac677ad7a39b7ee33a5f8cd4aaaaf7352a66c7904ed1ed61ed11a606",
+      "observed_body_sha256": "342ba857ac677ad7a39b7ee33a5f8cd4aaaaf7352a66c7904ed1ed61ed11a606",
+      "body_match": true,
+      "reconstructed_definition_sha256": "5fdaadbdc7ebefc5cc47571369060b444c7aabad895cea6915c9c7caedc0cd86",
+      "observed_definition_sha256": "5fdaadbdc7ebefc5cc47571369060b444c7aabad895cea6915c9c7caedc0cd86",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.check_worker_is_up()\n RETURNS void\n LANGUAGE plpgsql\nAS $function$\nbegin\n  if not exists (select pid from pg_stat_activity where backend_type ilike '%pg_net%') then\n    raise exception using\n      message = 'the pg_net background worker is not up'\n    , detail  = 'the pg_net background worker is down due to an internal error and cannot process requests'\n    , hint    = 'make sure that you didn''t modify any of pg_net internal tables';\n  end if;\nend\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net.http_collect_response(bigint,boolean)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 339
+      },
+      "source_body_sha256": "28a771108e4ef025ca42da0918f4773ce7e659346c0082036870cc593f8b4a54",
+      "observed_body_sha256": "28a771108e4ef025ca42da0918f4773ce7e659346c0082036870cc593f8b4a54",
+      "body_match": true,
+      "reconstructed_definition_sha256": "870e86a00b7b573335672105c6e8889949258f1c19873a48f4094e79e6d1a1c0",
+      "observed_definition_sha256": "870e86a00b7b573335672105c6e8889949258f1c19873a48f4094e79e6d1a1c0",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.http_collect_response(request_id bigint, async boolean DEFAULT true)\n RETURNS net.http_response_result\n LANGUAGE plpgsql\nAS $function$\nbegin\n  raise notice 'The net.http_collect_response function is deprecated.';\n  select net._http_collect_response(request_id, async);\nend;\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net.http_delete(text,jsonb,jsonb,integer,jsonb)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 222
+      },
+      "source_body_sha256": "7c4bd9c47e2d30bf80cf93bf71b1f5236c28de2e9f31b72aac047554ded974ae",
+      "observed_body_sha256": "7c4bd9c47e2d30bf80cf93bf71b1f5236c28de2e9f31b72aac047554ded974ae",
+      "body_match": true,
+      "reconstructed_definition_sha256": "1f2b6fc5ccc1511e77737a95c71228bed710482133a95a87cdb672d80373617b",
+      "observed_definition_sha256": "1f2b6fc5ccc1511e77737a95c71228bed710482133a95a87cdb672d80373617b",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.http_delete(url text, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{}'::jsonb, timeout_milliseconds integer DEFAULT 5000, body jsonb DEFAULT NULL::jsonb)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\nbegin\n    select coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into params_array\n    from jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, body, timeout_milliseconds)\n    values (\n        'DELETE',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        convert_to(body::text, 'UTF8'),\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net.http_get(text,jsonb,jsonb,integer)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 111
+      },
+      "source_body_sha256": "fac801ed417ff4ecda0f86a0bef9874d4b749fa34cc9000153aa4546b2cc8bac",
+      "observed_body_sha256": "fac801ed417ff4ecda0f86a0bef9874d4b749fa34cc9000153aa4546b2cc8bac",
+      "body_match": true,
+      "reconstructed_definition_sha256": "7012c5582cd0ab8d38f546af6633ea3c531950fb009f07127b99f8a1640eac1a",
+      "observed_definition_sha256": "7012c5582cd0ab8d38f546af6633ea3c531950fb009f07127b99f8a1640eac1a",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.http_get(url text, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{}'::jsonb, timeout_milliseconds integer DEFAULT 5000)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\nbegin\n    select coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into params_array\n    from jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, timeout_milliseconds)\n    values (\n        'GET',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net.http_post(text,jsonb,jsonb,jsonb,integer)",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 152
+      },
+      "source_body_sha256": "b7cde4add3ffb30c3a667d6038d223bbb03bac6cd5d181dab62f48c79c34f362",
+      "observed_body_sha256": "b7cde4add3ffb30c3a667d6038d223bbb03bac6cd5d181dab62f48c79c34f362",
+      "body_match": true,
+      "reconstructed_definition_sha256": "ee3ec5bc54158b60b6c4e3a966a07a33dc009788fad8f6b7480ad1c45acdfe78",
+      "observed_definition_sha256": "ee3ec5bc54158b60b6c4e3a966a07a33dc009788fad8f6b7480ad1c45acdfe78",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.http_post(url text, body jsonb DEFAULT '{}'::jsonb, params jsonb DEFAULT '{}'::jsonb, headers jsonb DEFAULT '{\"Content-Type\": \"application/json\"}'::jsonb, timeout_milliseconds integer DEFAULT 5000)\n RETURNS bigint\n LANGUAGE plpgsql\nAS $function$\ndeclare\n    request_id bigint;\n    params_array text[];\n    content_type text;\nbegin\n\n    -- Exctract the content_type from headers\n    select\n        header_value into content_type\n    from\n        jsonb_each_text(coalesce(headers, '{}'::jsonb)) r(header_name, header_value)\n    where\n        lower(header_name) = 'content-type'\n    limit\n        1;\n\n    -- If the user provided new headers and omitted the content type\n    -- add it back in automatically\n    if content_type is null then\n        select headers || '{\"Content-Type\": \"application/json\"}'::jsonb into headers;\n    end if;\n\n    -- Confirm that the content-type is set as \"application/json\"\n    if content_type <> 'application/json' then\n        raise exception 'Content-Type header must be \"application/json\"';\n    end if;\n\n    select\n        coalesce(array_agg(net._urlencode_string(key) || '=' || net._urlencode_string(value)), '{}')\n    into\n        params_array\n    from\n        jsonb_each_text(params);\n\n    -- Add to the request queue\n    insert into net.http_request_queue(method, url, headers, body, timeout_milliseconds)\n    values (\n        'POST',\n        net._encode_url_with_params_array(url, params_array),\n        headers,\n        convert_to(body::text, 'UTF8'),\n        timeout_milliseconds\n    )\n    returning id\n    into request_id;\n\n    perform net.wake();\n\n    return request_id;\nend\n$function$\n",
+      "source_kind": "PLPGSQL_BODY"
+    },
+    {
+      "signature": "net.wait_until_running()",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 98
+      },
+      "source_body_sha256": "92fe9eebbcd6ca1aeaa713d8a0bfdbec26ada4c8b9a45fe7cb1d9ace0f2e5638",
+      "observed_body_sha256": "92fe9eebbcd6ca1aeaa713d8a0bfdbec26ada4c8b9a45fe7cb1d9ace0f2e5638",
+      "body_match": true,
+      "reconstructed_definition_sha256": "2c475316a148b263530a1b641f241b1df14816d6ef1b6255169c7a308d9cc936",
+      "observed_definition_sha256": "2c475316a148b263530a1b641f241b1df14816d6ef1b6255169c7a308d9cc936",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.wait_until_running()\n RETURNS void\n LANGUAGE c\nAS 'pg_net', $function$wait_until_running$function$\n",
+      "source_kind": "C_LIBRARY_AND_SYMBOL_DECLARATION"
+    },
+    {
+      "signature": "net.wake()",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 104
+      },
+      "source_body_sha256": "51391bf0ab33e8272bcfca0d61b5ab242391822f331fe51ac5930b58da8e5b25",
+      "observed_body_sha256": "51391bf0ab33e8272bcfca0d61b5ab242391822f331fe51ac5930b58da8e5b25",
+      "body_match": true,
+      "reconstructed_definition_sha256": "b7f9cb7d7cd9b5259c6a29b1cae29b451b325a6f43169cee18b7ff723fad9efc",
+      "observed_definition_sha256": "b7f9cb7d7cd9b5259c6a29b1cae29b451b325a6f43169cee18b7ff723fad9efc",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.wake()\n RETURNS void\n LANGUAGE c\nAS 'pg_net', $function$wake$function$\n",
+      "source_kind": "C_LIBRARY_AND_SYMBOL_DECLARATION"
+    },
+    {
+      "signature": "net.worker_restart()",
+      "observed_owner": "supabase_admin",
+      "source": {
+        "key": "official_pg_net_0195",
+        "line": 93
+      },
+      "source_body_sha256": "98b3582078f29dde65a380c076b7d6f2cf4355b2e0eedddaf0733e7f5f0c3cd9",
+      "observed_body_sha256": "98b3582078f29dde65a380c076b7d6f2cf4355b2e0eedddaf0733e7f5f0c3cd9",
+      "body_match": true,
+      "reconstructed_definition_sha256": "620a4b3eba17ae830ea6bf9ec797e68c5fa7ec6286c3fa8603e1916e5e09b7af",
+      "observed_definition_sha256": "620a4b3eba17ae830ea6bf9ec797e68c5fa7ec6286c3fa8603e1916e5e09b7af",
+      "definition_match": true,
+      "method": "Source body/symbol and attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION net.worker_restart()\n RETURNS boolean\n LANGUAGE c\nAS 'pg_net', $function$worker_restart$function$\n",
+      "source_kind": "C_LIBRARY_AND_SYMBOL_DECLARATION"
+    },
+    {
+      "signature": "official_v3_at_production_private.enqueue_v1()",
+      "observed_owner": "postgres",
+      "source": {
+        "path": "scripts/db/official-truth-at-production-stage1/install.sql",
+        "bytes": 51112,
+        "sha256": "8adfe4df7da08677e42849f28f8458e48f5284b25127bd4ce5c5815e1aed982f",
+        "line": 165
+      },
+      "source_body_sha256": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+      "observed_body_sha256": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+      "body_match": true,
+      "reconstructed_definition_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+      "observed_definition_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+      "definition_match": true,
+      "method": "Repository body/attributes rendered as native PostgreSQL 17 definition text. No SQL execution.",
+      "native_definition_reconstructed": "CREATE OR REPLACE FUNCTION official_v3_at_production_private.enqueue_v1()\n RETURNS integer\n LANGUAGE plpgsql\n SET search_path TO 'pg_catalog'\nAS $function$\nDECLARE src record; b bigint; n integer:=0; started timestamptz;\nBEGIN\n IF session_user<>'postgres' OR current_user<>session_user\n OR public.official_v3_guard_alarm_status_v1()->>'status'<>'current'\n THEN RETURN 0; END IF;\n IF NOT pg_try_advisory_xact_lock(771112,1) THEN RETURN 0; END IF;\n IF (SELECT max(started_at) FROM official_v3_at_production_private.watch_batches_v1)\n >clock_timestamp()-interval '50 minutes' THEN RETURN 0; END IF;\n started:=clock_timestamp();\n INSERT INTO official_v3_at_production_private.watch_batches_v1(started_at)\n VALUES(started) RETURNING batch_id INTO b;\n FOR src IN SELECT source_id,official_url FROM official_v3_at_production_private.source_pins_v1 ORDER BY source_id LOOP\n   INSERT INTO official_v3_at_production_private.watch_requests_v1\n     (batch_id,source_id,request_id,requested_at)\n   VALUES(b,src.source_id,net.http_get(src.official_url,'{}'::jsonb,\n      '{\"accept\":\"text/html\"}'::jsonb,15000),started);\n   n:=n+1;\n END LOOP;\n IF n<>3 THEN RAISE EXCEPTION 'AT_PRODUCTION_INCOMPLETE_SOURCE_REQUEST' USING ERRCODE='P7979'; END IF;\n RETURN n;\nEND $function$\n",
+      "id_transport": "HTTP return value stored unchanged in watch_requests_v1.request_id"
+    }
+  ],
+  "domain": {
+    "observed": {
+      "oid": "289454",
+      "present": true,
+      "type_kind": "d",
+      "constraints": [
+        {
+          "kind": "c",
+          "validated": true,
+          "catalog_sha256": "63ece7f25171a578daae026a9e5501f99fbbf3e9677452ab470248e13f3ad856",
+          "definition_sha256": "412b54e60167a01e5fe4856c3ed5cbf862b912b2f3ba01bce4a8661c5ba915de"
+        }
+      ],
+      "base_type_oid": "25",
+      "domain_not_null": false,
+      "constraint_count": 1,
+      "is_domain_over_text": true,
+      "check_constraint_count": 1,
+      "constraint_semantics_verified": false,
+      "upstream_domain_not_null_matches": true,
+      "expected_native_constraint_hash_supplied": false
+    },
+    "source_derived_native_check": "CHECK (((VALUE ~~* 'get'::text) OR (VALUE ~~* 'post'::text) OR (VALUE ~~* 'delete'::text)))",
+    "source_derived_native_check_sha256": "412b54e60167a01e5fe4856c3ed5cbf862b912b2f3ba01bce4a8661c5ba915de",
+    "check_definition_matches_observed": true,
+    "catalog_hash_is_observed_identity_only": true,
+    "original_read_flags_unchanged": true,
+    "meaning": "Domain over text; case-insensitive get/post/delete CHECK; domain nullable but queue method NOT NULL; headers nullable jsonb.",
+    "native_transport_digest_covers_pg_type_domain_and_contypid_constraints": false,
+    "required_binding": "Explicit domain form/base/nullability and CHECK definition/catalog in protected successor; do not rely on unchanged native digest alone."
+  },
+  "queue": {
+    "upstream_shape_matches": true,
+    "historical_shape_matches": false,
+    "old_wrong_assumptions": [
+      "method text instead of observed net.http_method domain",
+      "headers NOT NULL instead of observed nullable jsonb"
+    ],
+    "other_columns_and_defaults_match": true,
+    "safe_shape": {
+      "queue_owner": "supabase_admin",
+      "queue_rule_count": 0,
+      "extension_version": "0.19.5",
+      "queue_index_count": 0,
+      "net_function_count": 12,
+      "queue_default_count": 1,
+      "queue_trigger_count": 0,
+      "queue_attribute_count": 12,
+      "queue_constraint_count": 0,
+      "stored_transport_consumer_count": 3,
+      "supautils_allows_replica_parameter": true,
+      "supautils_privileged_role_is_expected": true
+    }
+  },
+  "transport": {
+    "sql_http_apis_insert_into_real_queue_returning_same_id": true,
+    "application_callers_store_returned_id_unchanged": true,
+    "provider_helper_is_not_http_producer": true,
+    "worker_source_review_reference": "docs/evidence/official-truth-production-http-allocator-20261121/pg-net-0.19.5-transport-source-review.json",
+    "deployed_c_binary_verified": false,
+    "production_trigger_rollback_runtime_proven": false,
+    "natural_new_allocator_http_response_binding_proven": false,
+    "crash_restart_failover_proven": false
+  },
+  "remaining_gates": [
+    "Separate exact writer Go required.",
+    "Preserve actual current BG1/query-cost successor; obsolete v3 head must not be restored.",
+    "Domain metadata must be separately protected; native digest alone omits it.",
+    "02 did not separately output actual event-trigger registration; do not claim it was read or execute provider helper.",
+    "Native transaction/rollback and real later HTTP response binding remain separately authorized acceptance steps.",
+    "AT sources remain RESEARCH_ONLY/unqualified and expired data currently unavailable; no positive renewal."
+  ]
+}
