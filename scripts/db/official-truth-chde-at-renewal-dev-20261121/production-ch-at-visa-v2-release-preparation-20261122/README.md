@@ -1,6 +1,6 @@
 # CH→AT Visum — separates Production-Freigabepaket (22.11.2026)
 
-**PREPARED ONLY / NOT INSTALLABLE / NOT AUTHORIZED.** Ziel: `qscbgcdmivbbnzrcyegn`, in diesem Auftrag **0 Production-Aktionen**. Dev: `yfvbxvijcorffwxbxahl`. Featurebranch statt main; keine produktive Freigabe durch Dateipräsenz.
+**V1-PREFLIGHT EINGELÖST, ABER FEHLGESCHLAGEN / NOT INSTALLABLE / NO INSTALL GO.** Die exakt bereits freigegebene Production-Lese-SQL `00-PRODUCTION-PREFLIGHT.READONLY.sql` scheiterte **einmal** mit SQLSTATE `42P01` (`official_v3_at_private.whole_originals_v2` existiert in Production nicht). Keine Daten geändert, kein zweiter Production-Read. `01-PRODUCTION-CATALOG-V2.READONLY.sql` wird nur nach separatem neuem Go auf Production lesend ausgeführt und ist zuvor in Dev schema-tolerant geprüft. Ziel: `qscbgcdmivbbnzrcyegn`, in diesem Auftrag **0 Production-Aktionen**. Dev: `yfvbxvijcorffwxbxahl`. Featurebranch statt main; keine produktive Freigabe durch Dateipräsenz.
 
 ## Warum noch nicht installationsreif?
 
