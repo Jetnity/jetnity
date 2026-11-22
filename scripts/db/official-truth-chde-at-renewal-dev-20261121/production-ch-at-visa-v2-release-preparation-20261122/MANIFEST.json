@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "package_id": "PROD_CH_AT_VISA_V2_PREPARATION_20261122",
-  "status": "PREPARED_ONLY_NOT_INSTALLABLE_NO_GO",
+  "status": "BLOCKED_SCHEMA_MISMATCH_NO_INSTALL_GO",
   "intended_production_project": "qscbgcdmivbbnzrcyegn",
   "work_project": "yfvbxvijcorffwxbxahl",
   "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
-  "production_reads_or_writes_executed": 0,
+  "production_reads_or_writes_executed": 1,
   "production_install_file_present": false,
   "production_rollback_sql_present": false,
   "production_parent_requires_new_bound_read": true,
@@ -20,7 +20,7 @@
     "verified_at_utc": "2026-11-22T19:22:03.243300Z"
   },
   "dev_77min_after_first_source_pass": true,
-  "dev_uninterrupted_60min_pass": false,
+  "dev_uninterrupted_60min_pass": true,
   "follow_up_check": "2026-11-22T21:25:00+01:00",
   "sha256_algorithm": "SHA-256 over exact GitHub utf-8 file bytes; computed via read-only Supabase Dev PG17",
   "sum_scope": "The sums cover all files listed here, not the manifest itself (no circular self-digest).",
@@ -56,9 +56,15 @@
       "role": "release_preparation_only"
     },
     {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/01-PRODUCTION-CATALOG-V2.READONLY.sql",
+      "sha256": "c495cef4f5fb37d3e28e326ce81ed21b2e878d535070fcdecdace2425c03aa22",
+      "bytes": 4805,
+      "role": "new_go_required_read_only_only"
+    },
+    {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/40-PRODUCTION-POSTCOMMIT.READONLY.sql",
-      "sha256": "8b7d5f287f6bce9b733f1b564f61f86cf96cc9306c95e469701dca97741a2e84",
-      "bytes": 2503,
+      "sha256": "40b94e195f18f31e9e34c1b4214b3a0fc0f050dd58b08b3d7c6ff16565791d74",
+      "bytes": 3755,
       "role": "release_preparation_only"
     },
     {
@@ -75,14 +81,14 @@
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/GO_SCOPE.md",
-      "sha256": "a55ce29201f5e7f8063e06b5cfe04a05c032552694284101a17800b9d27c554e",
-      "bytes": 2311,
+      "sha256": "9d6b2f620ec8b194b773e33d29bda290f2b36bfe69480ac1b930b0f36fcf5c02",
+      "bytes": 2915,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/INSTALL_SPEC.md",
-      "sha256": "fd8b235c8f405c1d9ed172b1f60bd600133e7db557be8b18e882f5cc40ab40e7",
-      "bytes": 4550,
+      "sha256": "5bf5d809fc84621fe2659f1488ec2508284bc77ef3bcb4200f009975487e5484",
+      "bytes": 4933,
       "role": "release_preparation_only"
     },
     {
@@ -92,15 +98,21 @@
       "role": "release_preparation_only"
     },
     {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/PRODUCTION_PREFLIGHT_V1_FAILED.md",
+      "sha256": "c2d4008266cd07a2bc4f1a5b2b25aa954fcd5793424df4f2ca5629d52809653a",
+      "bytes": 2962,
+      "role": "historical_failed_one_shot_read_evidence"
+    },
+    {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/README.md",
-      "sha256": "fa4e117744b902efbb080aa095d387bfbe83b1680a82768ff8c499ff2dd3f318",
-      "bytes": 2500,
+      "sha256": "36e4efadbaccc65da4de7f0c518805f618e23a157cc55c7e0e4afa42008a1cac",
+      "bytes": 3242,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/ROLLBACK_PLAN.md",
-      "sha256": "cde17e31a9d35bdc08e6a46b85e9e1c1124a9766ecd47ecd23575609704dc695",
-      "bytes": 3271,
+      "sha256": "09e15dea73a7801372f39f91044a276da680a6abea0e9f658fb74913a9ba8798",
+      "bytes": 3928,
       "role": "release_preparation_only"
     },
     {
@@ -109,5 +121,17 @@
       "bytes": 2227,
       "role": "release_preparation_only"
     }
-  ]
+  ],
+  "production_catalog_read_attempts": 1,
+  "production_catalog_successful_reads": 0,
+  "production_writes_executed": 0,
+  "production_readonly_v1_sql_sha256": "2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec",
+  "production_readonly_v1_result": "42P01: official_v3_at_private.whole_originals_v2 does not exist; no catalog results; no writes",
+  "production_readonly_v1_go_consumed": true,
+  "production_readonly_v2_only_dev_tested": true,
+  "production_readonly_v2_requires_new_separate_go": true,
+  "production_next_go_file": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/01-PRODUCTION-CATALOG-V2.READONLY.sql",
+  "production_current_parent_unverified": true,
+  "dev_one_hour_coverage_start_utc": "2026-11-22T19:22:03.243300Z",
+  "dev_one_hour_readback_utc": "2026-11-22T20:38:58.043544Z"
 }
