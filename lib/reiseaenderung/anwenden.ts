@@ -305,8 +305,14 @@ function vorRueckreiseVerlaengern(
     istKommerziell(punkt)
     || punkt.kind === 'stay'
     || punkt.bookingSource !== null || punkt.bookingConfirmedAt !== null
+    || punkt.priceCurrency !== null
     || punkt.routeItinerary != null || punkt.connectionRef !== null
+    || punkt.mobilityMode !== null || punkt.mobilityChanges !== null
+    || punkt.originPlaceId !== null || punkt.destinationPlaceId !== null
+    || punkt.originName !== null || punkt.destinationName !== null
     || punkt.mobilityEvidence !== null || punkt.rentalEvidence !== null
+    || punkt.rentalSupplier !== null || punkt.vehicleClass !== null
+    || punkt.transmission !== null
     || (punkt.startsOn !== null && punkt.startsOn !== rueck.dayDate)
     || (punkt.endsOn !== null && punkt.endsOn !== rueck.dayDate),
   )
