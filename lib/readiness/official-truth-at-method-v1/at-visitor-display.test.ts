@@ -55,6 +55,20 @@ test('Austrian Dev CH accepted reply shows official wording, actual source date 
  assert.match(html,/Schweizer Staatsangehörige/)
 })
 
+test('CH-only V4 source-bound visa_free is normalized into a verified green visa-exempt display',()=>{
+ const actualDevV4={...sample('CH'),visaMode:'visa_free'}
+ const {view,shown}=result(['CH'],[{country:'CH',data:actualDevV4}])
+ assert.equal(view.cells[0]?.results[0]?.status,'accepted')
+ assert.equal(shown.anzeige.paare[0]?.ampel,'gruen')
+ assert.equal(shown.anzeige.paare[0]?.ampelText,'Kein Visum nötig')
+ assert.equal(view.cells[0]?.results[0]?.status==='accepted'
+   ? view.cells[0]?.results[0]?.visaAssessment.mode : null,'visa_exempt')
+ const foreign={...sample('IN'),visaMode:'visa_free'}
+ assert.equal(result(['IN'],[{country:'IN',data:foreign}]).shown.anzeige.paare[0]?.ampel,'neutral')
+ const extra={...actualDevV4,sourceUrls:[BMI_ENTRY,BMI_VISA]}
+ assert.equal(result(['CH'],[{country:'CH',data:extra}]).shown.anzeige.paare[0]?.ampel,'neutral')
+})
+
 test('all 50 distinct synthetic passport choices use the same accepted/unavailable presentation path',()=>{
  assert.equal(syntheticPassports.length,50)
  assert.equal(new Set(syntheticPassports).size,50)
