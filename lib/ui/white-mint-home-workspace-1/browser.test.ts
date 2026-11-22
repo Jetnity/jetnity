@@ -513,7 +513,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       assert.equal(aehnlich(rgbAus(werte.nav?.hintergrund), WHITE_MINT.card), true, JSON.stringify(werte.nav))
       if (werte.gewaehlt) {
         assert.equal(aehnlich(rgbAus(werte.gewaehlt.hintergrund), WHITE_MINT.selected), true, JSON.stringify(werte.gewaehlt))
-        assert.match(werte.gewaehlt.schatten, /rgb\(20,\s*62,\s*51\)/)
+        assert.equal(aehnlich(rgbAus(werte.gewaehlt.schatten), WHITE_MINT.ink), true, werte.gewaehlt.schatten)
       }
       if (breite < 1024) assert.ok(werte.unten, 'bottom navigation missing')
       assert.ok((werte.ueberlauf ?? 99) <= 1, `overflow ${werte.ueberlauf} at ${breite}`)
@@ -774,7 +774,10 @@ describe('rendered white/mint homepage and light workspace', () => {
     await page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
     await page.waitForSelector('[data-workspace-theme="light"]')
     assert.ok(new URL(page.url()).searchParams.has('tag'))
-    const tagZweiFarbe = rgbAus(await page.getByRole('button', { name: /Tag 2/ }).first().evaluate((el) => getComputedStyle(el).backgroundColor))
+    const tagZweiFarbe = rgbAus(await page.getByRole('button', { name: /Tag 2/ }).first().evaluate(async (el) => {
+      await new Promise((fertig) => setTimeout(fertig, 350))
+      return getComputedStyle(el).backgroundColor
+    }))
     assert.equal(aehnlich(tagZweiFarbe, '#153A33', 8), true, JSON.stringify(tagZweiFarbe))
     await page.goBack()
     await page.getByText('Nach dem Neuladen').waitFor()

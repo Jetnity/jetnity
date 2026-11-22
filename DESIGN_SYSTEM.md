@@ -13,6 +13,12 @@
 > [Analyse und Plan](docs/UI_UX_FEINSCHLIFF_PHASE1_ANALYSE_2026-11-20.md) ·
 > [DECISIONS.md](DECISIONS.md) ADR-0229.
 
+> **PO-Auftrag, 21.11.2026 – Abschluss-Schliff:** Die Weiss-Mint-Schicht wird weicher und
+> warm-anthrazit (2.1), Tiefe hat drei Stufen (5.2), Zustände haben weiche Übergänge (5.3),
+> und es gibt vier sanfte Statusfamilien für bestätigt, geschätzt, Handlung nötig und noch
+> nicht geprüft (2.2). Markenflächen, H1 und Bildwelt bleiben. Nur Aussehen und Texte.
+> [DECISIONS.md](DECISIONS.md) ADR-0240 · [Durchsicht](docs/ABSCHLUSS_SCHLIFF_2026-11-21.md).
+
 > **10.11.2026 – Reiseplan und Atlas:** Auf grossen Bildschirmen stehen Etappenliste und Reisekarte nebeneinander. Auf schmalen Bildschirmen wechselt man zwischen Plan und Karte. Im persönlichen Atlas zeigen Flächen und Muster besuchte und geplante Länder. Die Länderauswahl öffnet neben der Karte oder am unteren Bildschirmrand die zugehörigen Besuche und Reisen.
 
 > **Owner-Auftrag, 02.11.2026 – Mietwagen Layout 1:** Suche zuerst in einer weißen Karte mit zwei mintfarbenen Gruppen für Stationen und Mietzeitraum, darunter Fahrerangaben und primäre Suchaktion. Ergebnisse bilden ein eigenes Raster: eine Spalte mobil, zwei ab 640px, drei ab 1280px, vier ab 1536px. Gleiche Bildflächen, lesbarer Gesamtpreis und ausgerichtete Aktionen unterstützen den Vergleich. Datum und Uhrzeit stehen unter 1024px untereinander. Fehlende Anbieterbilder erhalten einen neutralen Platzhalter. Angebotsdetails gruppieren Bild/Preis, Bedingungen und Stationen; zusätzliche Angaben sind aufklappbar. Leerer Bestand bleibt kurz, manuelle Erfassung startet geschlossen. Die vier Organisationskategorien bleiben oberhalb des Inhalts. [Prüfstand](docs/RENTAL_SEARCH_LAYOUT_1_EVIDENCE_2026-11-02.md).
@@ -184,6 +190,37 @@ Von hell (auf dunklem Grund) nach dunkel (auf hellem Grund).
 | `--jet-ink-900` | `ink-900` | `#456059` | starker Sekundärtext |
 | `--jet-ink-950` | `ink-950` | `#39534b` | dunkelster Fließtext |
 
+### 2.1 Weiss-Mint-Schicht (öffentliche Seiten und heller Workspace)
+
+Auf allen öffentlichen Seiten (`[data-white-mint="home"]`) und im hellen Workspace bildet `styles/white-mint.css` die Tokens oben auf diese Werte ab (Quelle: `lib/ui/white-mint-home-workspace-1/palette.ts`, Kontrast in `palette.test.ts`). Wer dort eine Farbe ändert, ändert Palette und CSS gemeinsam – eine Tailwind-`textColor`-Überschreibung reicht nicht.
+
+| Rolle | Hex | Verwendung | Kontrast |
+| --- | --- | --- | --- |
+| Grund | `#F2F7F4` | Seitengrund, augenschonend statt Weiss | – |
+| Karte | `#FDFEFD` | aufliegende Fläche | Rand zu Grund unter 3:1 (bewusst, Tiefe über Schatten) |
+| Navigation | `#E9F1EC` | Kopf-/Seitenleiste, ruhige Gruppen | – |
+| Auswahl | `#DCEBE2` | aktive und gewählte Fläche | – |
+| Rand | `#D3E0D8` | Trennlinien und Kartenrand | 1,35:1 zur Karte |
+| Tinte | `#1B2A26` | Text, tiefes Anthrazit mit Grünstich | 12,1–14,8:1 |
+| Nebentext | `#4A5F57` | Hilfstext | 5,5–6,8:1 |
+| Steuerrahmen | `#46665B` | Rahmen von Feldern und Schaltflächen | 5,1–6,3:1 |
+| Creme | `#F5F4EE` | warme Kopfflächen | – |
+
+Markenflächen (`brand-800` Hero, Primär-Button, Citrus-Akzent) gehören nicht zu dieser Schicht und bleiben. `themeColor` in `app/layout.tsx` folgt dem Grund.
+
+### 2.2 status – sanfte Zustandsfarben
+
+Vier Familien aus Fläche (`soft`), Linie (`line`) und Text (`DEFAULT`), definiert als `--jet-status-*` in `styles/globals.css`, Tailwind `status-*`. Text auf Fläche erreicht mindestens 7,5:1. Sie ergänzen Wort und Form, ersetzen sie nie (7.5a).
+
+| Familie | Tailwind (Beispiel) | Bedeutung | Fläche / Linie / Text |
+| --- | --- | --- | --- |
+| `status-ok` | `bg-status-ok-soft text-status-ok` | bestätigt, bereit | `#E0F2E6` / `#A8D5B9` / `#174D37` |
+| `status-schaetzung` | `bg-status-schaetzung-soft border-dashed` | geschätzt oder nur ausgewählt, nicht bestätigt (gestrichelte Linie) | `#FBF2D9` / `#E5CF8E` / `#5C4107` |
+| `status-achtung` | `bg-status-achtung-soft` | Handlung nötig, Änderung, Löschung | `#FCE9DA` / `#EFBF9B` / `#77340F` |
+| `status-neutral` | `bg-status-neutral-soft` | noch nicht geprüft, unbekannt – bewusst nicht grün | `#ECEEE9` / `#C9CEC6` / `#424D48` |
+
+Regel: Geschätzte Preise und nur gewählte Angebote sind immer `schaetzung`, bestätigte `ok`; ein nicht geprüfter Einreisepunkt ist `neutral`, nie `ok`. Kein Dunkelthema (im Admin ungenutzt).
+
 ### danger – Funktionsfarbe
 
 Bereits in `styles/globals.css` definiert; Tailwind-Namen `danger-400` / `danger-600` für Feldfehler und zerstörende Aktionen. Nie als einziges Fehlersignal, immer zusammen mit Fläche, Icon oder Text.
@@ -226,7 +263,7 @@ Die shadcn-Namen definieren **keine eigenen Farben**. Sie verweisen auf die Pale
 Zwei Punkte sind bewusst keine reine Ableitung:
 
 - **`--ring` liegt auf `brand-600`, nicht auf `--primary`.** Der Fokusring muss sich von dem Element abheben, auf dem er sitzt. Auf einer `brand-800`-Schaltfläche wäre ein `brand-800`-Ring unsichtbar.
-- **`danger` ist die einzige Funktionsfarbe ausserhalb der Marke.** Rot lässt sich für zerstörende Aktionen nicht durch Grün ersetzen. Es gibt zwei Stufen, beide auf AA-Kontrast gewählt: `danger-600` auf hellem, `danger-400` auf dunklem Grund.
+- **`danger` ist die einzige Fehler- und Löschfarbe ausserhalb der Marke; Zustände nutzen die `status`-Familien (2.2).** Rot lässt sich für zerstörende Aktionen nicht durch Grün ersetzen. Es gibt zwei Stufen, beide auf AA-Kontrast gewählt: `danger-600` auf hellem, `danger-400` auf dunklem Grund.
 
 Die Notation ist durchgehend RGB-Kanäle (`rgb(var(--token) / <alpha-value>)` in `tailwind.config.js`). Nur so funktioniert die Verweiskette, und Opacity-Modifier wie `bg-primary/10` bleiben nutzbar.
 
@@ -300,7 +337,13 @@ Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit
 | `shadow-card` | sehr leicht, grüngetönt | ruhende Karte |
 | `shadow-raised` | deutlicher | angehobene Fläche (Dialog, schwebende Leiste) |
 
-Pillen bleiben `rounded-full`. Bestehende `rounded-lg`/`xl`/`2xl` und `shadow-e1` gelten weiter; neue Bausteine verwenden die drei Formstufen und die zwei Schatten. Auf der Weiss-Mint-Fläche dämpft `styles/white-mint.css` Schatten weiterhin.
+Pillen bleiben `rounded-full`. Bestehende `rounded-lg`/`xl`/`2xl` und `shadow-e1` gelten weiter; neue Bausteine verwenden die drei Formstufen und die zwei Schatten.
+
+**Tiefe auf der Weiss-Mint-Fläche:** `styles/white-mint.css` vereinheitlicht jeden Schatten auf drei Stufen in Anthrazit-Alpha: `lift-1` (Steuerelemente, `0 1px 2px / .05`), `lift-2` (ruhende Karte, `shadow-card`; äussere weisse Karten mit Rand erhalten sie automatisch), `lift-3` (angehobene Fläche, `shadow-raised`, Kontopanel, Hero). Verschachtelte Karten bleiben flach (`box-shadow: none`), damit keine Schatten stapeln. Hervorgehobene Bereiche (z. B. «Einreise & Visum» nach einem Sprung) nutzen `border-brand-600/60 shadow-card`, keinen schweren dunklen Rahmen.
+
+### 5.3 Zustände und Bewegung
+
+Links, Schaltflächen, Summaries, `role=button` und `role=tab` wechseln Farbe, Rand und Schatten in 160 ms und rücken beim Drücken 1 px nach unten – nur bei `prefers-reduced-motion: no-preference`, mit `:where` ohne Spezifität, damit Komponenten sie überschreiben können. Der Fokusring (3 px Tinte plus Halo) bleibt unverändert und wird nie abgeschwächt. Überschriften brechen mit `text-wrap: balance`, Fliesstext mit `pretty`. Das Suchfeld im Hero trägt bei Fokus einen Citrus-Ring (`outline`, nicht `box-shadow`, weil die Weiss-Mint-Schicht Schatten vereinheitlicht).
 
 ---
 
@@ -483,7 +526,7 @@ Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben s
 
 ### 7.5a Status nicht nur über Farbe
 
-Buchungs- und Abdeckungsstatus im Trip Workspace tragen immer einen lesbaren Text (`Gebucht`, `Ausgewählt`, `Noch offen`, `Noch nicht vollständig bestimmbar`). Die Fläche darf den Status stützen, ersetzt die Worte aber nicht. Keine neuen Statusfarben ausserhalb der bestehenden Tokens. Siegel sind `span`, keine Buttons.
+Buchungs- und Abdeckungsstatus im Trip Workspace tragen immer einen lesbaren Text (`Gebucht`, `Ausgewählt`, `Noch offen`, `Noch nicht vollständig bestimmbar`). Die Fläche darf den Status stützen, ersetzt die Worte aber nicht. Statusfarben kommen nur aus den `status`-Familien (2.2) und stützen das Wort, ersetzen es nie; auch `gewaehlt` (gestrichelt) und `gebucht` (gefüllt) unterscheiden sich in Form, nicht nur in Farbe. Siegel sind `span`, keine Buttons.
 
 ### 7.6 Eingabefelder
 

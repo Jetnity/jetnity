@@ -226,7 +226,8 @@ type EditorMessung = {
 }
 
 async function editorMessung(formular: ReturnType<Page['locator']>): Promise<EditorMessung[]> {
-  return formular.evaluate((wurzel) => {
+  return formular.evaluate(async (wurzel) => {
+    await new Promise((fertig) => setTimeout(fertig, 350))
     const gelesen = (farbe: string) => {
       const modern = farbe.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/)
       if (modern) {

@@ -78,9 +78,9 @@ export default function TripStageDayAllocation({
         Wie lange bleibst du wo?
       </h3>
       <p className="max-w-full break-words text-sm leading-6 text-ink-800">
-        Optional, am einfachsten aber gleich hier: Wenn jedes Ziel seine Tage hat, zeigt Jetnity pro
-        Ziel, was noch fehlt, etwa die Unterkunft für diese Nächte. Ohne Verteilung bleiben die Tage
-        vorerst ohne Ziel. Gebucht oder festgelegt wird dabei nichts, auch keine Flugzeiten.
+        Optional. Mit Tagen je Ziel zeigt Jetnity, was pro Ziel noch fehlt, etwa die Unterkunft.
+        Ohne sie bleiben die Tage vorerst ohne Ziel. Es wird nichts gebucht und keine Flugzeit
+        festgelegt.
       </p>
       {!zeitraumBereit ? (
         <p className="max-w-full break-words text-sm leading-6 text-ink-700">

@@ -136,7 +136,7 @@ export function uebersichtPersonen(reise: Pick<Trip, 'travellers' | 'party'>): U
     return {
       anzahl: lage.anzahl,
       quelle: 'travellers',
-      text: `${basis} · ${lage.profile} von ${lage.anzahl} Profilen vorhanden`,
+      text: `${basis} · Angaben für ${lage.profile} von ${lage.anzahl} hinterlegt`,
     }
   }
   return { anzahl: lage.anzahl, quelle: 'travellers', text: basis }

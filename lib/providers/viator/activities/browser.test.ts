@@ -114,7 +114,7 @@ const STIL = `(() => {
   return {
     ok: Boolean(shell)
       && shell.getAttribute('data-workspace-theme') === 'light'
-      && html.backgroundColor === 'rgb(247, 252, 249)'
+      && html.backgroundColor === 'rgb(242, 247, 244)'
       && schale.colorScheme === 'light',
     hintergrund: html.backgroundColor,
     schema: schale ? schale.colorScheme : '',

@@ -110,11 +110,11 @@ export default function AenderungVorschau({
             </div>
           )}
           {loescht && (
-            <div role="alert" className="mt-4 min-w-0 rounded-2xl bg-amber-50 px-4 py-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-950">Diese Punkte würden gelöscht</h3>
+            <div role="alert" className="mt-4 min-w-0 rounded-2xl border border-status-achtung-line bg-status-achtung-soft px-4 py-4">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-status-achtung">Diese Punkte würden gelöscht</h3>
               <ul className="mt-3 grid gap-2">
                 {plan.entfernt.map((zeile) => (
-                  <li key={zeile.id} className="break-words text-sm leading-6 text-amber-950">{zeile.text}</li>
+                  <li key={zeile.id} className="break-words text-sm leading-6 text-status-achtung">{zeile.text}</li>
                 ))}
               </ul>
             </div>
@@ -150,7 +150,7 @@ export default function AenderungVorschau({
       {vorschau.aenderung.warnungen.length > 0 && (
         <div
           role="status"
-          className="mt-4 rounded-2xl bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-950"
+          className="mt-4 rounded-2xl border border-status-schaetzung-line bg-status-schaetzung-soft px-4 py-4 text-sm leading-6 text-status-schaetzung"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.12em]">Offene Punkte</p>
           <ul className="mt-3 grid gap-2">

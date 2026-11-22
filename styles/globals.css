@@ -88,7 +88,8 @@ html {
        line    Rahmen und Trennlinien
        ink     Textfarben von hell (auf dunklem Grund) nach dunkel
        night   dunkle Flaechen fuer das Dunkelthema des Admin (ADR-0025)
-       danger  einzige Funktionsfarbe ausserhalb der Marke (ADR-0024)
+       danger  Fehlerfarbe ausserhalb der Marke (ADR-0024)
+       status  sanfte Statusfarben fuer Zustaende (ADR-0240)
     ------------------------------------------------------------------------- */
     --jet-brand-600: 29 113 94;      /* #1d715e */
     --jet-brand-700: 23 96 79;       /* #17604f */
@@ -129,6 +130,27 @@ html {
 
     --jet-danger-400: 232 106 110;   /* #e86a6e – auf dunklem Grund */
     --jet-danger-600: 193 45 50;     /* #c12d32 – auf hellem Grund */
+
+    /* Statusfarben (ADR-0240): sanfte Flaeche, feiner Rand, tiefer Text. Sie
+       tragen nie allein den Zustand; Wort und Symbol stehen immer daneben
+       (DESIGN_SYSTEM.md 6.4). Text auf Flaeche mindestens 7:1.
+
+       ok          bestaetigt, bereit, von dir erledigt
+       schaetzung  geschaetzt oder nur ausgewaehlt, nicht bestaetigt
+       achtung     verlangt eine Handlung oder zeigt eine Aenderung
+       neutral     noch nicht geprueft oder unbekannt – bewusst nicht gruen */
+    --jet-status-ok-soft: 224 242 230;          /* #e0f2e6 */
+    --jet-status-ok-line: 168 213 185;          /* #a8d5b9 */
+    --jet-status-ok: 23 77 55;                  /* #174d37 */
+    --jet-status-schaetzung-soft: 251 242 217;  /* #fbf2d9 */
+    --jet-status-schaetzung-line: 229 207 142;  /* #e5cf8e */
+    --jet-status-schaetzung: 92 65 7;           /* #5c4107 */
+    --jet-status-achtung-soft: 252 233 218;     /* #fce9da */
+    --jet-status-achtung-line: 239 191 155;     /* #efbf9b */
+    --jet-status-achtung: 119 52 15;            /* #77340f */
+    --jet-status-neutral-soft: 236 238 233;     /* #eceee9 */
+    --jet-status-neutral-line: 201 206 198;     /* #c9cec6 */
+    --jet-status-neutral: 66 77 72;             /* #424d48 */
 
     /* -------------------------------------------------------------------------
        Semantische Tokens (shadcn-Namen)
