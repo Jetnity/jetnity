@@ -115,6 +115,11 @@ export default function EinreiseLaenderpruefer({
         </div>
         <fieldset className="grid gap-3">
           <legend className="mb-2 text-base font-semibold">Pass / Staatsangehörigkeit</legend>
+          {vorbelegung && vorbelegung.personen.length > 1 ? (
+            <p className="text-xs leading-5 text-ink-800">
+              Ein Eintrag je Pass: Wer zwei Pässe hat, steht zweimal da. Wem welcher Pass gehört, zeigt die Liste darunter.
+            </p>
+          ) : null}
           {paesse.map((pass, index) => (
             <div key={index} className={paesse.length > 1 ? 'grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end' : 'grid gap-2'}>
               <LandFeld

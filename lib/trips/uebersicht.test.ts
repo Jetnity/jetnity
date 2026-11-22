@@ -206,7 +206,7 @@ describe('Personenkontext', () => {
     const person = uebersichtPersonen(reise({ travellers: 2, party: ohnePersonen(1) }))
     assert.equal(person.quelle, 'travellers')
     assert.equal(person.anzahl, 2)
-    assert.equal(person.text, '2 Reisende · 1 von 2 Profilen vorhanden')
+    assert.equal(person.text, '2 Reisende · Angaben für 1 von 2 hinterlegt')
     assert.equal(person.text.includes('1 Reisende Person'), false)
     ohnePersonenleak(person.text)
     assert.equal(mehrereReisendeLage(reise({ travellers: 2, party: ohnePersonen(1) })), 'hinweis')

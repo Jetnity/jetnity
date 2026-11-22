@@ -41,7 +41,7 @@ const legacyNativePath = 'scripts/db/official-truth-accepted-store-trip-integrat
 const legacyProducerPath = 'lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts'
 const legacyR2Path = 'lib/readiness/official-truth-content-identity-r2.test.ts'
 const legacyProofPins = [
-  { path: legacyNativePath, bytes: 6_501, sha256: '49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298' },
+  { path: legacyNativePath, bytes: 6_502, sha256: '6f6e1138dcffa7122007622d7cccb4a42edbc90b7146dfb23ed4d32dc8866b94' },
   { path: legacyProducerPath, bytes: 9_176, sha256: '74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572' },
   { path: legacyR2Path, bytes: 41_838, sha256: 'be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16' },
 ] as const

@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils'
  * Hinweis (DESIGN_SYSTEM.md 6.8): ein ruhiger Kasten fuer das, was jemand zu
  * einer Stelle wissen oder dort tun sollte.
  *
- * - `info`: zur Einordnung, nichts zu tun
- * - `aufgabe`: bitte erledigen, ohne Alarm
+ * - `info`: zur Einordnung, nichts zu tun (neutral, bewusst nicht gruen)
+ * - `aufgabe`: bitte erledigen, ohne Alarm (aprikosfarben, wie jede Handlung in Statusfarben)
  * - `dringend`: zeitkritisch oder blockierend; selten
  *
  * Der Ton steht als Symbol und im Text, nie nur als Farbe. Nur semantische
@@ -18,8 +18,8 @@ import { cn } from '@/lib/utils'
 export type HinweisTon = 'info' | 'aufgabe' | 'dringend'
 
 const TON: Record<HinweisTon, { flaeche: string; symbol: typeof Info; farbe: string }> = {
-  info: { flaeche: 'border-border bg-muted', symbol: Info, farbe: 'text-muted-foreground' },
-  aufgabe: { flaeche: 'border-primary/40 bg-card', symbol: ListTodo, farbe: 'text-primary' },
+  info: { flaeche: 'border-status-neutral-line bg-status-neutral-soft', symbol: Info, farbe: 'text-status-neutral' },
+  aufgabe: { flaeche: 'border-status-achtung-line bg-status-achtung-soft', symbol: ListTodo, farbe: 'text-status-achtung' },
   dringend: { flaeche: 'border-destructive bg-card', symbol: TriangleAlert, farbe: 'text-destructive' },
 }
 

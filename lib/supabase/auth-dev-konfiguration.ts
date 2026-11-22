@@ -72,10 +72,9 @@ export function devAuthKonfiguration(config: TomlTabelle, ref: string) {
 /** Read-only expectations for the Owner-approved Dev passkey device test. */
 export function devAuthPruefkonfiguration(config: TomlTabelle, ref: string) {
   const dev = devAuthKonfiguration(config, ref)
-  // The shared raw baseline and writer stay false. Do not learn from live Auth
-  // or silently accept a different/missing baseline in this read-only overlay.
-  if (tomlWert(dev.config, 'auth.passkey.enabled') !== false) {
-    throw new Error('Der Dev-Passkey-Prüfvertrag verlangt auth.passkey.enabled = false in der unveränderten Rohkonfiguration.')
+  // Der Button liest genau diesen Rohwert. Andere Werte bleiben ungültig.
+  if (tomlWert(dev.config, 'auth.passkey.enabled') !== true) {
+    throw new Error('Der Dev-Passkey-Prüfvertrag verlangt auth.passkey.enabled = true in der unveränderten Rohkonfiguration.')
   }
   const auth = dev.config.auth as TomlTabelle
   ;(auth.passkey as TomlTabelle).enabled = true

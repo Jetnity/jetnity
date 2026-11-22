@@ -2,6 +2,12 @@
 
 > Jeder Chat liest diese Datei zuerst. Wer eine Funktion fertigstellt, trägt sie im selben PR hier nach.
 
+> **Fortsetzung 22.11.2026 nach 12:13 Zürich — #1240/#1272 gemergt und UI live; #1276 freigegeben:** #1240 ist auf `601fc38c`, #1272 auf `0ca0fb2f` gemergt. Der echte [Main-Push 45014153993](https://github.com/Jetnity/jetnity/actions/runs/45014153993) bestand 12/12 Jobs und Hosted-main 280/280. Exakt `0ca0fb2fa3e371bfa754d4caaf074d23f2921aae` wurde als Production-Build `dpl_9qZpzGfPhrd5GarGrT9JnLMSvreF` gebaut, geprüft und um 12:13:07 Zürich auf beide Live-Domains promotet; Rückrollziel ist die vorherige Production `dpl_7vqNXqqYehgCU2FMgKN7Kbg61DKF` / `601fc38c`. Öffentliche Seiten, unveränderte vier CMS-Inhalte, neue UI-Texte/Farbwelt und Loginoberfläche bestanden; keine Anmeldung oder Einstellungsänderung. Der Owner hat anschliessend die Fertigstellung und den Merge von [#1276](https://github.com/Jetnity/jetnity/pull/1276) wie geplant freigegeben. Sein enges Profil-Paket übernimmt Main bei unveränderten sechs SQL-/Composer-/Testdateien; frische integrierte CI, normaler Merge und danach die genau gebundene Deaktivierung von Job 1 bleiben erforderlich. **Profil-Production in diesem Vor-Merge-Checkpoint weiterhin UNAPPLIED.** Aktuelle Ergebnisse folgen im selben PR; AT/BG1 bleiben beim Hauptplan 97.
+>
+> **Speicherbeobachtung inzwischen abgeschlossen:** Die vorhandene Einmalautomation endete am 22.11. um 04:21:23 Zürich und ist deaktiviert. Ihr aufgezeichnetes Vierstunden-SQL-Fenster zeigte keinen Neustart, Reset oder Deadlock; aktueller RAM-/Swap-Verlauf war nicht zugänglich. Deshalb weiterhin keine dauerhafte Small-RAM-Zusage, kein Upgrade und keine neu angelegte Messinfrastruktur. [Aktueller Profil-/Speicher-Checkpoint und historische Evidence](JETNITY_PROFILE_CRON_RECOVERY_2026-11-22.md).
+>
+> Die älteren datierten Kandidaten-, HOLD- und Speicherabschnitte darunter bleiben historische Evidence; dieser Nachtrag überholt sie nur im belegten Umfang.
+
 > **Nachtrag 22.11.2026 — Main grün, Profil-Cron als geprüfter Kandidat, Production UNAPPLIED:** #1275 ist regulär auf `73bfa7dbbeb24c87fc6442f7c253487bef91b43f` gemergt; der tatsächliche [Main-Push-Lauf 44965505093](https://github.com/Jetnity/jetnity/actions/runs/44965505093) bestand am 22.11. um 01:41:18 Zürich im ersten Versuch vollständig: **12/12 CI-Jobs, Hosted-main 280/280, 0 Fehler/Skips**. Das [eng begrenzte Profil-Paket](JETNITY_PROFILE_CRON_RECOVERY_2026-11-22.md) bereitet ausschliesslich die Deaktivierung von Job 1 `sync_profile_emails_hourly` vor, dessen Legacy-Funktion bereits im August entfernt wurde. **17 echte lokale PG17-/pg_cron-C-Prüffälle und zwei Composer-Tests bestanden**, einschliesslich tatsächlichem Commit, Rollback, Metadatenverweigerung und vollständigem erfasstem Readback; echte Parallelität bleibt mangels lokaler Sockets unbelegt. Unabhängiges Root-Review PASS; eigene vollständige PR-CI bleibt erforderlich. Keine Hosted-Anwendung. **HOLD für weitere Merges und die Profil-Anwendung bis BEIDE #1240 und #1272 gemergt sind.** Spätere CI-/Readback-Ergebnisse stehen im eigenen Profil-PR. AT-/HTTP-ID, Official Truth und BG1 bleiben bei Hauptplan 97; Login/2FA/Passkeys und Kosten unverändert.
 >
 > **Speicherbefund, 22.11., 00:43 Zürich:** Small Healthy, 37 % RAM, 2 % CPU, 6/90 Verbindungen, kein Neustart seit dem Upgrade. Für die Prüfung wurde ausschliesslich eine ChatGPT-Einmalautomation für **04:17:23 Zürich** eingerichtet: sechs alte Production-Crons unverändert, kein Speicher-Cron, keine Speicher-Tabelle/-Funktion. Das echte Statistikdelta umfasst bisher 28,42 Minuten; der bestehende BG1-Audit dominiert mit sechs Aufrufen à durchschnittlich 4,55 s und rund 35 MiB Temp-I/O, ohne belegten RAM-Engpass. Small reicht für die bisherige geringe Last vorläufig; die Commitment-Warnung und der noch offene Vierstundenabschluss bleiben im [Prüfprotokoll](JETNITY_PROFILE_CRON_RECOVERY_2026-11-22.md) sichtbar. Keine Infrastruktur- oder BG1-Änderung daraus.
@@ -18,6 +24,16 @@
 **Public-Release-Stand:** \`jetnity.com\` war auf Vercel Production \`dpl_4bei1CfkMWKRJpgvEvcq9R5K6Etf\` gebunden (Feature-Head \`e85ff69e5ebab77b019212843d92e5726eddd224\`, gleiches Dateibaum-Ergebnis wie der gemergte PR #1231). Das neuere Main-Deployment \`dpl_8fitMFHnsYX2RPYBGtPXJGkJFwaA\` war READY, aber nicht auf die öffentliche Domain umgeschaltet. Dies ist ein gezielt gepinnter Release, kein nachgewiesener Ausfall.  
 **Main-CI:** [Run 44333651972](https://github.com/Jetnity/jetnity/actions/runs/44333651972) \`SUCCESS\` auf dem oben genannten Main-Commit.  
 **Wichtig:** Dieser Bericht ist weder ein neuer V1 Release-Readiness-PASS noch eine Genehmigung, Code, Datenbanken, Produktion oder Anbieter zu ändern.
+
+## Nachtrag 19. November 2026 — Passkeys Dev 1
+
+Draft [#1240](https://github.com/Jetnity/jetnity/pull/1240) hat `main` bis `9f065a555754c76c64a4f02868797c70f1f49310` übernommen. Abgeschlossen in diesem Draft, nicht live:
+
+- `@supabase/supabase-js` `2.119.2` im bestehenden Browser-Singleton, einmal `auth.experimental.passkey`. `@supabase/ssr` bleibt `0.6.1`. `[auth.passkey] enabled` bleibt `false`. RP-ID geplant `jetnity.com`. `*.vercel.app` und Loopback bleiben geschlossen.
+- Hinzufügen, Umbenennen und Entfernen verlangen am Schreibzugang einen frischen Passwort-Nachweis oder, wenn ein bestätigter TOTP-Faktor existiert, einen verifizierten AAL2-Schritt. `getUser()` allein reicht nicht.
+- Ein Passkey-Login, der einen TOTP-Step-up braucht, beendet die AAL1-Sitzung bei Abbruch, Fehler, fehlender Challenge und fehlender AAL-Lesung. Nur erfolgreiches TOTP führt weiter.
+
+Nicht abgeschlossen und weiter Owner-Gate: Server-Enable, echte RP-/Origin-Freigabe, Geräte-Smoke. `MOCK_PASS`. `HOSTED_E2E_NOT_RUN`. Kein Production-Passkey. Die Tabelle vom 18.11. bleibt der damalige Stand.
 
 ## 1. Verbindliche Dokumentenhierarchie und unveränderte Vision
 

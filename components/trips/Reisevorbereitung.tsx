@@ -382,7 +382,7 @@ function Bereich({
       data-preparation-section={id}
       className={cn(
         'group/bereich scroll-mt-28 min-w-0 rounded-2xl border bg-surface-25',
-        hervorheben ? 'border-brand-800' : 'border-line-200',
+        hervorheben ? 'border-brand-600/60 shadow-card' : 'border-line-200',
       )}
     >
       <summary

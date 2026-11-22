@@ -27,9 +27,9 @@ export default function EinreiseUebersichtZeilen({
             <>
               <span className={cn(
                 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl',
-                zeile.ampel === 'gruen' && 'bg-surface-100 text-brand-800',
-                zeile.ampel === 'orange' && 'bg-amber-100 text-amber-950',
-                zeile.ampel === 'neutral' && 'bg-surface-50 text-ink-800',
+                zeile.ampel === 'gruen' && 'bg-status-ok-soft text-status-ok',
+                zeile.ampel === 'orange' && 'bg-status-achtung-soft text-status-achtung',
+                zeile.ampel === 'neutral' && 'bg-status-neutral-soft text-status-neutral',
               )}>
                 <Symbol art={zeile.ampel} />
               </span>

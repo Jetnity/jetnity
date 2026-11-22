@@ -21,9 +21,10 @@ function Ampel({ art, text }: { art: EinreiseAmpel; text: string }) {
     <p
       className={cn(
         'inline-flex min-h-11 max-w-full items-center gap-2 rounded-full px-3 text-sm font-semibold leading-5',
-        art === 'gruen' && 'bg-surface-100 text-brand-800',
-        art === 'orange' && 'bg-amber-100 text-amber-950',
-        art === 'neutral' && 'bg-surface-50 text-ink-900',
+        'border',
+        art === 'gruen' && 'border-status-ok-line bg-status-ok-soft text-status-ok',
+        art === 'orange' && 'border-status-achtung-line bg-status-achtung-soft text-status-achtung',
+        art === 'neutral' && 'border-dashed border-status-neutral-line bg-status-neutral-soft text-status-neutral',
       )}
     >
       <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />

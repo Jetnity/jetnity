@@ -219,8 +219,8 @@ const BERN_LIVE_ENTRY_TOKEN = 'retrieveOfficialTruthBernOneShotResearchOnly'
 const AA_BERN_METADATA_PIN = {
   path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts',
   bytes: 63059,
-  blob: '976f4e15fd58cfeed9008405d1d09ffb3e1821fd',
-  sha256: '487628809dd39e4288a832d577fdef32ec83ec1645e8bc83dcbe637292e45a37',
+  blob: '7063ae1f9a096b60d804f8a7b26f080ccdff6028',
+  sha256: 'cb2f6f2102d440efa0b845519a9c00eb94d6b42b32984d90d6ebd1b59bf97b4c',
   contextStart: 35420,
   contextEnd: 36111,
   tokenStart: 36047,

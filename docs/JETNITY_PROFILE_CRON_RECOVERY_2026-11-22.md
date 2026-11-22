@@ -1,6 +1,75 @@
 # Verwaisten Profile-Cron stilllegen – 22.11.2026
 
-## Aktueller Checkpoint: lokal und unabhängig geprüft, Production UNAPPLIED
+## Freigegebene Fortsetzung nach dem UI-Release – 22.11.2026
+
+Der Owner hat nach dem Merge von #1272 zuerst den unveränderten aktuellen
+Main-Stand als Production-Release beauftragt und **danach die Fertigstellung
+und den Merge von #1276 wie geplant freigegeben**. #1240 ist seit
+**11:00:05 Zürich** auf `601fc38c0924b176ee1c83dedb4e42797787b15d` gemergt,
+#1272 seit **11:47:41 Zürich** auf
+`0ca0fb2fa3e371bfa754d4caaf074d23f2921aae`. Der frühere Reihenfolge-HOLD ist
+damit für genau diesen Profilauftrag erfüllt.
+
+Der separat gebaute Production-Build
+`dpl_9qZpzGfPhrd5GarGrT9JnLMSvreF` verwendet exakt diesen Main-Stand und
+wurde um **12:13:07 Zürich** auf `jetnity.com` und `www.jetnity.com`
+promotet. Sein [echter Main-Push 45014153993](https://github.com/Jetnity/jetnity/actions/runs/45014153993)
+bestand **12/12 Jobs** im ersten Versuch, Hosted-main **280/280**.
+Öffentliche HTTP- und Browser-Rücklesung bestätigten die neuen Einstiegstexte,
+den Mint-Hintergrund, vier unveränderte CMS-Inhalte und geladene Bilder sowie
+das Loginformular mit sichtbarem Passkey-Button. Eine Anmeldung wurde nicht
+ausgeführt. Die vorherige Production
+`dpl_7vqNXqqYehgCU2FMgKN7Kbg61DKF` / `601fc38c` ist das Rückrollziel
+dieses UI-Releases. Es gab keine Environment-, Supabase-Projekt- oder
+Auth-Einstellungsänderung; die automatische Domain-Zuordnung bleibt aus.
+
+**Profil-Paket: Integration freigegeben, PRODUCTION UNAPPLIED.**
+Die sechs SQL-/Composer-/Runner-/Testdateien bleiben bytegenau auf dem bereits
+unabhängig geprüften Stand `814c3cb81fd5b9ff06c9e88898c51dbcc58d09d6`.
+Nur dieses Protokoll und der Gesamtstand erhalten neue datierte Evidence;
+der Passkey-Nachtrag aus Main bleibt vollständig erhalten. Die alten
+17 lokalen Native-Fälle sind historische Abnahme, keine neue Testausführung.
+Die vollständige CI des resultierenden integrierten Heads ist weiterhin
+vor dem normalen SHA-gebundenen Merge erforderlich.
+
+Die erste neue READ-ONLY-Vorprüfung um **12:15:44 Zürich** bestätigt das
+explizit adressierte Production-Projekt `qscbgcdmivbbnzrcyegn`, den
+unveränderten aktiven Zieljob 1, sechs Cron-Zeilen, fehlende Legacy-Funktion
+und die erwarteten Rollen-/C-API-/Extension-/RLS-/Trigger-/Rule-Bindungen.
+Sie ist eine Integrationsvorprüfung; der Composer erhält erst nach dem Merge
+einen **erneut frisch gelesenen** vollständigen Cron-Digest.
+
+Eine ergänzende reine Kataloglesung um **12:16:40 Zürich** fand weiterhin
+54 private Guard-Funktionen. Neben dem bekannten Kommentar in `audit_v1`
+liest der aktuell gelesene `catalog_status_v1` ausdrücklich nur die
+fünf benannten Official-Truth-/AT-/CH-DE-Crons. Der Profiljob gehört nicht
+zu dieser Auswahl; die Funktion enthält weder seinen Namen noch die alte
+Profilfunktion. Keine Guard-Funktion wurde aufgerufen oder geändert.
+
+Der vorgesehene anschliessende Operationsschritt bleibt ausschliesslich
+`active=true → false` für den vorhandenen Profiljob 1 mit dem unveränderten
+geprüften Paket und separater frischer Rücklesung. Der Merge selbst führt
+kein SQL aus. Neue CI-, Merge- und dauerhafte Production-Ergebnisse werden
+mit Head, Lauf, Zeitpunkt und Fremdjob-Digest in
+[#1276](https://github.com/Jetnity/jetnity/pull/1276) fortgeschrieben;
+sie werden in diesem Vor-Merge-Checkpoint nicht vorweggenommen.
+
+### Bestehende Vierstundenbeobachtung: aufgezeichneter Abschluss
+
+Die schon vorher eingerichtete Einmalautomation ist abgeschlossen und
+deaktiviert; ihr aufgezeichneter Lauf endete am **22.11., 04:21:23 Zürich**.
+Die Ausgabe beschreibt das SQL-Fenster **00:15–04:20 Zürich** ohne Neustart,
+Statistikreset oder Deadlock, mit 6 → 4 von maximal 90 Verbindungen.
+Eine dort nicht zugeordnete Abfrage hatte 50 Aufrufe, durchschnittlich 4,6 s
+und rund 306 MB temporäre Schreib-I/O. Das ist keine neue Root-Messung
+und wird hier keiner Funktion nachträglich zugeschrieben.
+Aktueller RAM-/Swap-Verlauf fehlte der Automation wegen fehlenden
+Dashboard-Zugriffs; eine dauerhafte RAM-Zusage für Small bleibt daher offen.
+Es wurde keine neue Automation oder Production-Messinfrastruktur angelegt.
+Die älteren Messungen und damals noch zukünftigen Termine darunter bleiben
+ausdrücklich historische Evidence ihres jeweiligen Zeitpunkts.
+
+## Historischer Erststand: lokal und unabhängig geprüft, Production UNAPPLIED
 
 Der Owner priorisiert zunächst die rote Main-CI `44957188431` und ihren Fix
 #1275. **Danach erfolgt hier kein weiterer Merge, bevor sowohl #1240 als auch

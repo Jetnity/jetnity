@@ -1,14 +1,14 @@
 /** Approved white/mint pairs for the homepage and the light workspace. */
 
 export const WHITE_MINT = {
-  canvas: '#F7FCF9',
-  card: '#FFFFFF',
-  navigation: '#EFF7F2',
-  ink: '#143E33',
-  selected: '#E1F1E8',
-  edge: '#DCE9E1',
-  muted: '#3A564C',
-  control: '#2F5A4E',
+  canvas: '#F2F7F4',
+  card: '#FDFEFD',
+  navigation: '#E9F1EC',
+  ink: '#1B2A26',
+  selected: '#DCEBE2',
+  edge: '#D3E0D8',
+  muted: '#4A5F57',
+  control: '#46665B',
   beige: '#F5F4EE',
 } as const
 

@@ -4,15 +4,23 @@
    Decorative edges stay pale. Controls and focus use a stronger boundary. */
 
 :root {
-  --white-mint-canvas: #f7fcf9;
-  --white-mint-card: #ffffff;
-  --white-mint-nav: #eff7f2;
-  --white-mint-ink: #143e33;
-  --white-mint-selected: #e1f1e8;
-  --white-mint-edge: #dce9e1;
-  --white-mint-muted: #3a564c;
-  --white-mint-control: #2f5a4e;
-  --white-mint-focus-halo: #f7fcf9;
+  --white-mint-canvas: #f2f7f4;
+  --white-mint-card: #fdfefd;
+  --white-mint-nav: #e9f1ec;
+  --white-mint-ink: #1b2a26;
+  --white-mint-selected: #dcebe2;
+  --white-mint-edge: #d3e0d8;
+  --white-mint-muted: #4a5f57;
+  --white-mint-control: #46665b;
+  --white-mint-focus-halo: #f2f7f4;
+  --white-mint-chrome: #ffffff;
+
+  /* Drei Tiefenstufen auf einem Farbkanal (Ink). Stufe 1 trennt nur, Stufe 2
+     hebt eine ruhende Karte sanft vom Grund, Stufe 3 gehört angehobenen
+     Flächen (Dialog, schwebende Leiste). */
+  --white-mint-lift-1: 0 1px 2px rgb(27 42 38 / 0.05);
+  --white-mint-lift-2: 0 1px 2px rgb(27 42 38 / 0.04), 0 10px 28px -16px rgb(27 42 38 / 0.18);
+  --white-mint-lift-3: 0 2px 6px rgb(27 42 38 / 0.06), 0 22px 44px -22px rgb(27 42 38 / 0.28);
 }
 
 html:has([data-white-mint="home"]),
@@ -26,16 +34,16 @@ html:has(.workspace-shell[data-workspace-theme="light"]) {
    die Hex-Werte von oben; --primary und --ring bleiben die Markenwerte. */
 [data-white-mint="home"],
 .workspace-shell[data-workspace-theme="light"] {
-  --background: 247 252 249;
-  --foreground: 20 62 51;
-  --card: 255 255 255;
-  --card-foreground: 20 62 51;
-  --popover: 255 255 255;
-  --popover-foreground: 20 62 51;
-  --muted: 225 241 232;
-  --accent: 225 241 232;
-  --muted-foreground: 58 86 76;
-  --border: 220 233 225;
+  --background: 242 247 244;
+  --foreground: 27 42 38;
+  --card: 253 254 253;
+  --card-foreground: 27 42 38;
+  --popover: 253 254 253;
+  --popover-foreground: 27 42 38;
+  --muted: 220 235 226;
+  --accent: 220 235 226;
+  --muted-foreground: 74 95 87;
+  --border: 211 224 216;
 }
 
 html:has([data-white-mint="home"]) body::before,
@@ -141,7 +149,15 @@ main[data-white-mint="home"].bg-surface-75 {
 }
 
 [data-white-mint="home"] [class*="shadow-"] {
-  box-shadow: 0 1px 2px rgb(20 62 51 / 0.05);
+  box-shadow: var(--white-mint-lift-1);
+}
+
+[data-white-mint="home"] .shadow-card {
+  box-shadow: var(--white-mint-lift-2);
+}
+
+[data-white-mint="home"] .shadow-raised {
+  box-shadow: var(--white-mint-lift-3);
 }
 
 [data-white-mint="home"] :focus-visible {
@@ -164,7 +180,7 @@ main[data-white-mint="home"].bg-surface-75 {
 }
 
 .workspace-shell[data-workspace-theme="light"] :is(.workspace-sidebar, .workspace-header, .workspace-bottom-nav) {
-  background: var(--white-mint-card);
+  background: var(--white-mint-chrome);
   background-image: none;
   border-color: var(--white-mint-edge);
   box-shadow: none;
@@ -201,16 +217,16 @@ main[data-white-mint="home"].bg-surface-75 {
 }
 
 .workspace-shell[data-workspace-theme="light"] .workspace-button.workspace-primary {
-  background: var(--white-mint-ink);
+  background: rgb(var(--jet-brand-800));
   color: var(--white-mint-card);
-  border-color: var(--white-mint-ink);
+  border-color: rgb(var(--jet-brand-800));
 }
 
 .workspace-shell[data-workspace-theme="light"] .workspace-account-panel {
   background: var(--white-mint-card);
   color: var(--white-mint-ink);
   border-color: var(--white-mint-edge);
-  box-shadow: 0 1px 2px rgb(20 62 51 / 0.06);
+  box-shadow: var(--white-mint-lift-3);
 }
 
 .workspace-shell[data-workspace-theme="light"] .workspace-account-panel :where(a, button):hover {
@@ -274,4 +290,42 @@ main[data-white-mint="home"].bg-surface-75 {
   background-color: var(--white-mint-card);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+/* Ruhende Karten heben sich sanft vom Grund ab (Tiefenstufe 2). Gemeint sind
+   die äussersten Flächen eines Abschnitts; Karten in Karten bleiben flach,
+   damit keine Schatten ineinander stehen. */
+.workspace-shell[data-workspace-theme="light"] .workspace-content :is(section, article, details).bg-white[class*="border-line-"]:not([class*="shadow-"]),
+.workspace-shell[data-workspace-theme="light"] .workspace-content .workspace-route-overview {
+  box-shadow: var(--white-mint-lift-2);
+}
+
+.workspace-shell[data-workspace-theme="light"] .workspace-content :is(section, article, details).bg-white[class*="border-line-"] :is(section, article, details, li).bg-white[class*="border-line-"]:not([class*="shadow-"]) {
+  box-shadow: none;
+}
+
+/* Zustände. Hover und Druck bekommen dieselbe ruhige Antwort überall:
+   Farbe und Rahmen wechseln weich, ein Druck senkt die Fläche um einen Pixel.
+   :where hält die Spezifität bei null, eigene Klassen gehen vor. */
+@media (prefers-reduced-motion: no-preference) {
+  :where([data-white-mint="home"], .workspace-shell[data-workspace-theme="light"]) :where(a, button, summary, [role="button"], [role="tab"]) {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 160ms;
+    transition-timing-function: ease-out;
+  }
+
+  :where([data-white-mint="home"], .workspace-shell[data-workspace-theme="light"]) :where(button, [role="button"], [role="tab"], a[class*="rounded-"], summary):active:not(:disabled, [aria-disabled="true"]) {
+    transform: translateY(1px);
+  }
+}
+
+/* Typografie. Überschriften brechen ausgewogen um, Absätze lassen keine
+   einzelnen Wörter in der letzten Zeile stehen. Beides ist rein typografisch
+   und ändert weder Breite noch Inhalt. */
+:where([data-white-mint="home"], .workspace-shell[data-workspace-theme="light"]) :where(h1, h2, h3, h4) {
+  text-wrap: balance;
+}
+
+:where([data-white-mint="home"], .workspace-shell[data-workspace-theme="light"]) :where(p, li, dd) {
+  text-wrap: pretty;
 }

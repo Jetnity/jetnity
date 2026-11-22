@@ -282,7 +282,10 @@ export function liesPkceCodeVerifier(cookieHeader: string, supabaseUrl: string):
 
 function istPasswortWiederherstellung(verifier: string | null): boolean {
   if (!verifier) return false
-  return verifier.split('/')[1] === 'PASSWORD_RECOVERY'
+  const art = verifier.split('/')[1]
+  // supabase-js 2.57 schrieb PASSWORD_RECOVERY. 2.119 schreibt recovery.
+  // Beides bleibt der Passwortpfad, nicht eine freie Weiterleitung.
+  return art === 'PASSWORD_RECOVERY' || art === 'recovery'
 }
 
 function suchParameter(suche: string): URLSearchParams {
@@ -363,7 +366,7 @@ function zielNachErfolg(
   session: unknown,
   code: string | null,
 ): string {
-  if (istPasswortWiederherstellung(verifier) || umleitung === 'PASSWORD_RECOVERY') {
+  if (istPasswortWiederherstellung(verifier) || umleitung === 'PASSWORD_RECOVERY' || umleitung === 'recovery') {
     bindWiederherstellung(eingabe.supabaseUrl, session, code)
     return PASSWORT_AKTUALISIEREN
   }

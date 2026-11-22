@@ -30,7 +30,7 @@
   --workspace-edge: rgb(var(--jet-brand-600) / .18);
   --workspace-ink: var(--white-mint-ink, rgb(var(--jet-brand-800)));
   --workspace-muted: var(--white-mint-muted, rgb(var(--jet-ink-800)));
-  --workspace-panel: var(--white-mint-card, rgb(var(--jet-surface-0)));
+  --workspace-panel: var(--white-mint-chrome, rgb(var(--jet-surface-0)));
   --workspace-soft: rgb(var(--jet-surface-100));
   background: var(--workspace-panel);
   color: var(--workspace-ink);

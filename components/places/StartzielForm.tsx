@@ -96,7 +96,7 @@ export function StartzielFormSicht({
       noValidate
       onSubmit={onAbsenden}
       aria-busy={intentLaedt || undefined}
-      className="mt-8 max-w-2xl rounded-[24px] border border-white/15 bg-white p-2 shadow-[0_22px_60px_rgba(0,0,0,0.22)]"
+      className="mt-8 max-w-2xl rounded-[24px] border border-white/15 bg-white p-2 shadow-[0_22px_60px_rgba(0,0,0,0.22)] outline outline-0 outline-offset-4 outline-citrus-400/70 transition-[outline-width] duration-150 focus-within:outline-[3px]"
     >
       {vorkommen.length > 0 ? (
         <div className="px-2 pt-2">
