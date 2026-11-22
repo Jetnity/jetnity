@@ -203,6 +203,19 @@ export function reiseDiff(vorher: Reisegraph, nachher: Reisegraph): DiffEintrag[
     })
   }
 
+  // A proposed stay extension must show that the existing return day moves.
+  // A shifted planning date is not a confirmed ticket change.
+  const bisherLetzter = [...vorher.days].sort((a, b) => a.dayIndex - b.dayIndex).at(-1)
+  const neuLetzter = [...nachher.days].sort((a, b) => a.dayIndex - b.dayIndex).at(-1)
+  if (nachher.days.length > vorher.days.length && bisherLetzter && neuLetzter
+    && bisherLetzter.id === neuLetzter.id
+    && bisherLetzter.dayDate !== neuLetzter.dayDate) {
+    const name = bisherLetzter.title?.trim() || 'Bisheriger letzter Reisetag'
+    eintraege.push({
+      art: 'tag',
+      text: `${name}: ${bisherLetzter.dayDate ?? 'Datum offen'} → ${neuLetzter.dayDate ?? 'Datum offen'} (geplant, nicht gebucht)`,
+    })
+  }
   const vorherTage = new Map(vorher.days.map((tag) => [tag.id, tag]))
   const nachherTage = new Map(nachher.days.map((tag) => [tag.id, tag]))
 
