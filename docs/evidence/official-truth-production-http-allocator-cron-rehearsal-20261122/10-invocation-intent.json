@@ -1,0 +1,13 @@
+{
+  "authorization_id": "PROD_HTTP_ALLOCATOR_CRON_REHEARSAL_20261122",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+  "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982",
+  "bytes": 113322,
+  "attempt": 1,
+  "started_at_utc": "2026-11-22T01:46:04.963Z",
+  "deadline_for_sequence_utc": "2026-11-22T01:51:04.963Z",
+  "no_retry": true,
+  "final_transaction_command": "ROLLBACK",
+  "file11_only_after_validated_success": true
+}

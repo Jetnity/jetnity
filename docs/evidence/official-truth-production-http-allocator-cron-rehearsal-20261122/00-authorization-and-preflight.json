@@ -1,0 +1,95 @@
+{
+  "authorization_id": "PROD_HTTP_ALLOCATOR_CRON_REHEARSAL_20261122",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "33ae75f7104a434fbdd507656126fea577059f2d",
+  "user_instruction": "Confirm readiness and sufficient existing ACCESS SHARE rights before starting, then exact10 once and11 once; no repetition, COMMIT, installation or role/privilege change; stop immediately on any error or deviation.",
+  "conditional_authorization_satisfied_for_rehearsal": true,
+  "readiness": {
+    "scope": "Only exact10 then11 ROLLBACK rehearsal; not installation",
+    "frozen_manifest_status_preserved": "REVIEWABLE_CANDIDATE_NOT_READY_FOR_PRODUCTION_REHEARSAL",
+    "later_dev_result_manifest_sha256": "118991ba301587f416162d6f59a6869ce5b5d10a892fecd80422c07d2c52d2a7",
+    "fourteen_groups_native_pass": true,
+    "native_two_session_parallel_pass": true,
+    "cleanup_and_independent_read_pass": true,
+    "original_26_manifested_files_verified": true
+  },
+  "cron_authority": {
+    "source": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+    "source_sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6",
+    "observed_at_utc": "2026-11-22T00:06:22.944557+00:00",
+    "observed_privileges": {
+      "can_delete": false,
+      "can_select": true,
+      "can_update": false,
+      "can_maintain": false,
+      "can_truncate": false,
+      "relation_present": true
+    },
+    "official_reference": "https://www.postgresql.org/docs/17/sql-lock.html",
+    "rule": "SELECT allows ACCESS SHARE",
+    "no_additional_cron_privilege_needed": true,
+    "fresh_extra_production_read_performed": false,
+    "file10_rechecks_select_before_ddl_and_locks_access_share_nowait": true,
+    "no_guarantee_against_current_drift_or_lock_contention": true
+  },
+  "allowed_files": [
+    {
+      "file": "10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982",
+      "bytes": 113322,
+      "max_calls": 1,
+      "transaction_end": "ROLLBACK",
+      "read_only": false
+    },
+    {
+      "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224",
+      "bytes": 29501,
+      "max_calls": 1,
+      "transaction_end": "ROLLBACK",
+      "read_only": true
+    }
+  ],
+  "manifest_sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+  "limits": {
+    "max_transactions": 2,
+    "max_overall_window_seconds": 300,
+    "order": [
+      "10",
+      "11 only after validated10PASS and no elapsed limit exceeded"
+    ],
+    "10_statement_timeout_seconds": 25,
+    "10_transaction_timeout_seconds": 90,
+    "10_lock_timeout_seconds": 2,
+    "11_statement_timeout_seconds": 15,
+    "11_transaction_timeout_seconds": 20,
+    "11_lock_timeout_ms": 500,
+    "no_retries": true,
+    "no_extra_read_after_error": true
+  },
+  "negative_publisher_probe": {
+    "signature": "official_v3_at_production_private.renew_ch_v1()",
+    "expected": 0,
+    "previous_explicit_consent_retained": true,
+    "stop_on_nonzero": true
+  },
+  "role_and_privilege_scope": {
+    "no_role_membership_owner_or_existing_acl_change": true,
+    "new_own_probe_objects_only_private_acl_restrictions_within_rollback": true,
+    "no_right_on_cron_job_changed": true
+  },
+  "other_excluded_actions": [
+    "COMMIT",
+    "files20/30/40/50",
+    "installation",
+    "newHTTPorwake",
+    "sourcequalification",
+    "positivepublisher",
+    "Owneraction",
+    "login/2FA/secretchange",
+    "newcosts",
+    "sitepublication"
+  ],
+  "stop_rule": "Any SQL/service error, unknown form, missing or changed pin, locked BG1, observed writer/drift, wrong Publisher result, unclear response or time/output excess ends this one-time instruction. No11 after failed10.",
+  "execution_started": false
+}

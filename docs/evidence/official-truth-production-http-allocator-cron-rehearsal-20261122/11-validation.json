@@ -1,0 +1,39 @@
+{
+  "status": "PRODUCTION_POSTREHEARSAL11_INDEPENDENT_READONLY_PASS",
+  "result": {
+    "result": "PROD_HTTP_POSTREHEARSAL_ORIGINAL_LINEAGE_AND_OBJECT_ABSENCE_CONFIRMED",
+    "read_only": true,
+    "observed_at": "2026-11-22T01:47:19.608995+00:00",
+    "legacy_sequence_now": {
+      "is_called": true,
+      "last_value": "74"
+    },
+    "public_guard_status": {
+      "schema": 1,
+      "status": "current"
+    },
+    "queue_trigger_count": 0,
+    "method_domain_sha256": "31284bb36c70079082b274b825f3214ea62c7653407f5ef3f97d12dc9e8fe43c",
+    "new_successor_absent": true,
+    "installation_permission": false,
+    "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+    "legacy_v3_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+    "legacy_v3_proof_not_before": "2026-11-20T22:51:44.959438+00:00",
+    "legacy_v3_required_generation": 1344,
+    "own_allocator_namespace_absent": true,
+    "http_or_publisher_or_owner_action": false,
+    "restored_query_cost_catalog_sha256": "ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24",
+    "cron_contract_matches_reviewed_full_rows": true,
+    "natural_progress_between_transactions_allowed": true,
+    "locked_history_restoration_proof_must_be_read_from_actual_10_result": true
+  },
+  "exact_return_shape": true,
+  "original_catalog_and_native_transport_restored": true,
+  "all_five_cron_full_row_bindings_match": true,
+  "new_objects_absent": true,
+  "overall_window_ms": 76000,
+  "production_calls_total": 2,
+  "retries": 0,
+  "additional_production_calls_allowed": false,
+  "commit_or_install_authorized": false
+}

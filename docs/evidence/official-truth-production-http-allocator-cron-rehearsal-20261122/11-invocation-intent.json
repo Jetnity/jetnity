@@ -1,0 +1,12 @@
+{
+  "authorization_id": "PROD_HTTP_ALLOCATOR_CRON_REHEARSAL_20261122",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "file": "11-production-http-id.POSTREHEARSAL-READONLY.sql",
+  "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224",
+  "bytes": 29501,
+  "attempt": 1,
+  "started_at_utc": "2026-11-22T01:47:18.605Z",
+  "no_retry": true,
+  "read_only": true,
+  "final_transaction_command": "ROLLBACK"
+}

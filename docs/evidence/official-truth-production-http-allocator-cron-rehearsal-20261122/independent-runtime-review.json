@@ -1,0 +1,170 @@
+{
+  "reviewer": "prod_rehearsal_preflight",
+  "status": "INDEPENDENT_PRODUCTION_REHEARSAL_AND_READBACK_REVIEW_PASS",
+  "scope": "Local review of two actual raw successful connector receipts and exact approved SQL. No database or network calls by reviewer.",
+  "sources": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/10-execution.json",
+      "bytes": 1866,
+      "sha256": "61914ce03b88cd3bd97ea1e6f7027cf9e991401d8b392c5f45e8d9f1a725b831"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/11-execution.json",
+      "bytes": 2501,
+      "sha256": "7b97a9f6c9a04c8944d74c378bc495c8a1e5af21337adc2fd6d0a4765db3b4c9"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 113322,
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 29501,
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024"
+    }
+  ],
+  "exact_return_shapes": {
+    "file10_outer_rows": 1,
+    "file10_result_keys": [
+      "commit_authorization",
+      "first_probed_id",
+      "fresh_locked_hwm",
+      "http_or_wake_called",
+      "legacy_value",
+      "next_required_step",
+      "original_legacy_sequence_and_history_preserved",
+      "positive_renewal_proven",
+      "result",
+      "second_probed_id",
+      "unused_safety_gap",
+      "whole_installation_rolled_back_before_final_result"
+    ],
+    "file11_outer_rows": 1,
+    "file11_result_keys": [
+      "cron_contract_matches_reviewed_full_rows",
+      "http_or_publisher_or_owner_action",
+      "installation_permission",
+      "legacy_sequence_now",
+      "legacy_v3_catalog_sha256",
+      "legacy_v3_proof_not_before",
+      "legacy_v3_required_generation",
+      "locked_history_restoration_proof_must_be_read_from_actual_10_result",
+      "method_domain_sha256",
+      "native_transport_sha256",
+      "natural_progress_between_transactions_allowed",
+      "new_successor_absent",
+      "observed_at",
+      "own_allocator_namespace_absent",
+      "public_guard_status",
+      "queue_trigger_count",
+      "read_only",
+      "restored_query_cost_catalog_sha256",
+      "result"
+    ]
+  },
+  "execution_bounds": {
+    "recorded_calls": 2,
+    "each_attempt": 1,
+    "ordered_10_then_11": true,
+    "retry_recorded": false,
+    "total_connector_window_ms": 76000,
+    "within_five_minutes": true,
+    "file10_connector_elapsed_ms": 45638,
+    "file11_connector_elapsed_ms": 2358,
+    "connector_elapsed_is_not_exact_sql_runtime": true,
+    "both_final_transaction_commands": "ROLLBACK",
+    "file11_read_only": true
+  },
+  "readiness": {
+    "original_frozen_manifest_unchanged": true,
+    "prior_manifest_NOT_READY_was_preparation_status": "Superseded only by separately bound successful Dev14, actual parallel and cleanup proof, then latest exact user Go. It remains historical rather than rewritten.",
+    "no_new_installation_authorization": true
+  },
+  "access_share": {
+    "actual_file10_pass_reaches_exact_lock": true,
+    "lock": "LOCK TABLE cron.job IN ACCESS SHARE MODE NOWAIT;",
+    "select_privilege_checked_before_ddl": true,
+    "shared_core_rechecks_actual_held_AccessShareLock_and_SELECT": true,
+    "no_extra_cron_privilege_added": true,
+    "no_physical_cron_dml_freeze_claim": true
+  },
+  "file10_result": {
+    "result": "PROD_HTTP_QUALIFICATION_ALLOCATOR_GUARD_DDL_ROLLBACK_PASS",
+    "legacy_value": "74",
+    "first_probed_id": "1236",
+    "fresh_locked_hwm": "211",
+    "second_probed_id": "1237",
+    "unused_safety_gap": 1024,
+    "next_required_step": "Independent readback and separate explicit exact installation Go",
+    "http_or_wake_called": false,
+    "commit_authorization": false,
+    "positive_renewal_proven": false,
+    "original_legacy_sequence_and_history_preserved": true,
+    "whole_installation_rolled_back_before_final_result": true
+  },
+  "negative_publisher": {
+    "actual_zero_required_for_final_PASS": true,
+    "return_zero_not_separately_exported": true,
+    "reason": "The preflight requires unqualified IS TRUE and stores source_unqualified NOT NULL. A mandatory pre-PASS IF raises when renew_ch_v1() IS DISTINCT FROM 0 or protected state differs. The immutable successful script therefore proves the exact negative return0 and preservation; it is not a positive renewal proof.",
+    "called_signature": "official_v3_at_production_private.renew_ch_v1()",
+    "expected_and_enforced_result": 0,
+    "prior_explicit_user_consent_and_latest_exact_file_go": true
+  },
+  "rollback": {
+    "inner_savepoint_restoration_checked_before_result": true,
+    "original_catalog_native_transport_and_protected_state_equality_required": true,
+    "original_managed_sequence_and_histories_preserved_within10": true,
+    "all_new_allocator_source_barrier_and_successor_changes_rolled_back": true,
+    "final_ROLLBACK_present_and_service_returned_success": true,
+    "independent11_objects_absent_and_original_bindings_confirmed": true
+  },
+  "file11_result": {
+    "result": "PROD_HTTP_POSTREHEARSAL_ORIGINAL_LINEAGE_AND_OBJECT_ABSENCE_CONFIRMED",
+    "read_only": true,
+    "observed_at": "2026-11-22T01:47:19.608995+00:00",
+    "legacy_sequence_now": {
+      "is_called": true,
+      "last_value": "74"
+    },
+    "public_guard_status": {
+      "schema": 1,
+      "status": "current"
+    },
+    "queue_trigger_count": 0,
+    "method_domain_sha256": "31284bb36c70079082b274b825f3214ea62c7653407f5ef3f97d12dc9e8fe43c",
+    "new_successor_absent": true,
+    "installation_permission": false,
+    "native_transport_sha256": "60e34d01b3fdf2834d284a5e43e3cdc0e5fde7dd14a060b336537b285d65c94f",
+    "legacy_v3_catalog_sha256": "7b9418dfeec3bb21d0c23f8689c8e19c2151a1a4d11901c727980373e30eab9e",
+    "legacy_v3_proof_not_before": "2026-11-20T22:51:44.959438+00:00",
+    "legacy_v3_required_generation": 1344,
+    "own_allocator_namespace_absent": true,
+    "http_or_publisher_or_owner_action": false,
+    "restored_query_cost_catalog_sha256": "ef4dcbe4d5c17bcdc339ef159a8fe26f352dbc8057943bc035ed3b79340e2a24",
+    "cron_contract_matches_reviewed_full_rows": true,
+    "natural_progress_between_transactions_allowed": true,
+    "locked_history_restoration_proof_must_be_read_from_actual_10_result": true
+  },
+  "acl_and_role_scope": {
+    "no_role_creation_change_membership_grant_or_set_role": true,
+    "no_new_right_on_existing_cron_or_other_existing_objects": true,
+    "REVOKE_statements_only_on_new_probe_helpers_and_new_owned_objects": true,
+    "those_new_object_ACLs_removed_by_same_rollback": true
+  },
+  "limits": [
+    "Actual production rehearsal is now proved, but no durable installation was performed or authorized.",
+    "The returned first/second IDs1236/1237 are rolled-back probe values, not persisted or promised future IDs. A separately authorized installation must recalculate from its fresh locked maximum.",
+    "Managed sequence74 is an actual snapshot and preserved within10; natural work may progress after or between transactions. No universal time-frozen whole database is claimed.",
+    "BG1 current is observed at01:47:19.608995UTC only, after restoration of the old predecessor. No new installed allocator BG1 generation proof exists.",
+    "ACCESS SHARE remains compatible with Cron DML; neither complete intermediate ABA history nor an absolute last-observation freeze is claimed.",
+    "Five reviewed Cron full rows are confirmed; unrelated Cron jobs are not newly claimed permanently guarded.",
+    "No positive source qualification, HTTP delivery, positive Publisher or AT renewal proof. Expired facts remain unavailable.",
+    "The one-time two-call authorization is consumed. No retry, additional read, file20/40 installation or other Production action follows from this review."
+  ]
+}

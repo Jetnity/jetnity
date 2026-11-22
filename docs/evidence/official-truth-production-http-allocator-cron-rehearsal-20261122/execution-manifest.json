@@ -1,0 +1,138 @@
+{
+  "package": "PROD_HTTP_ALLOCATOR_CRON_REHEARSAL_RESULT_20261122",
+  "status": "PRODUCTION_CRON_CORRECTION_REHEARSAL_AND_INDEPENDENT_READBACK_PASS",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "33ae75f7104a434fbdd507656126fea577059f2d",
+  "approved_package_manifest_sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+  "prior_dev_artifact_delivery_commit": "33ae75f7104a434fbdd507656126fea577059f2d",
+  "historical_dev_manifest_all40_bindings_verified_in_delivery_commit": true,
+  "production_call_count": 2,
+  "retries": 0,
+  "overall_window_ms": 76000,
+  "independent_read_observed_at_utc": "2026-11-22T01:47:19.608995Z",
+  "rollback_rehearsal_pass": true,
+  "independent_readback_pass": true,
+  "current_bg1_at_observation": "current",
+  "existing_cron_access_share_authority_actually_used": true,
+  "installation_authorized": false,
+  "further_production_calls_authorized": false,
+  "runtime_result_sha256": "40e7682955af9619d6cc825fff6414c8d51b216247012921891362c8db4617a7",
+  "immutable_inputs": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 113322,
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 29501,
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+      "bytes": 5563,
+      "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/execution-manifest.json",
+      "bytes": 11419,
+      "sha256": "118991ba301587f416162d6f59a6869ce5b5d10a892fecd80422c07d2c52d2a7"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/runtime-result.json",
+      "bytes": 9695,
+      "sha256": "9fc677d0a066c5ce7c82d37fa0e9da531f84559f1c0500172825485be39be13a"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-correction-20261122/02-production-postabort-result.json",
+      "bytes": 18148,
+      "sha256": "f6404d0d9c1407fcc8277d6b7ba5a9f2b84128b572c32d99d329c9ac23601fe6"
+    }
+  ],
+  "result_artifacts": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/00-authorization-and-preflight.json",
+      "bytes": 3894,
+      "sha256": "9e4698d7d6552c61c89282cd8352d390a98ee71c908c02c915c92d3e407ddca6"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/10-execution.json",
+      "bytes": 1866,
+      "sha256": "61914ce03b88cd3bd97ea1e6f7027cf9e991401d8b392c5f45e8d9f1a725b831"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/10-invocation-intent.json",
+      "bytes": 498,
+      "sha256": "b411ef721ed20605854ffb842e16532a9e5f831850fff31d40cae894acf8fb82"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/10-validation.json",
+      "bytes": 894,
+      "sha256": "3827e5f18fc2bae2ec42ac5955879bc7e59afbdf4cdbd67a274a2a00b5930fce"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/11-execution.json",
+      "bytes": 2501,
+      "sha256": "7b97a9f6c9a04c8944d74c378bc495c8a1e5af21337adc2fd6d0a4765db3b4c9"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/11-invocation-intent.json",
+      "bytes": 416,
+      "sha256": "ff399cfd968eea523242202131001c213ddea221c6f2dcb67a4344456940ecf9"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/11-validation.json",
+      "bytes": 1660,
+      "sha256": "5ead658cc34f16bca1aeedaa4473a37ee5817d514add647942b1c2def20673ac"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/correction-report-before-cron-rehearsal-33ae75f7.md",
+      "bytes": 13556,
+      "sha256": "19485c9c4bcd05a0b46df34980865de548e56c25c744cf1c786e94d3720fe495"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/independent-runtime-review.json",
+      "bytes": 8357,
+      "sha256": "2768d85c583cd49e0c4af2a52d97c73838a8fd9e5b893aa411dd0425d4f8f8c4"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/overall-plan-before-cron-rehearsal-33ae75f7.md",
+      "bytes": 209778,
+      "sha256": "9f92886e4625d3fdbb4be01724c64bb16488741e7dadfa032c92f465a976fd39"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/runtime-result.json",
+      "bytes": 5672,
+      "sha256": "40e7682955af9619d6cc825fff6414c8d51b216247012921891362c8db4617a7"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_CRON_REHEARSAL_RESULT_2026-11-22.md",
+      "bytes": 9416,
+      "sha256": "648197836585764c0add05c14f9738b4de5debaa1a779b854d9d6ce8274dd697"
+    },
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 212660,
+      "sha256": "0e3439c237f6749d72248ff3135b2abe0142ebf1a93ec6f2414aa5c995f7609b"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_CRON_CORRECTION_2026-11-22.md",
+      "bytes": 16179,
+      "sha256": "3590cec8b0529b70c403de92038cdf33bfe881477c567b709f65596fd714924c"
+    }
+  ],
+  "hash_semantics": "SHA-256 over exact stored bytes. No self-hash. Frozen preparation manifests and historical failure receipts remain unchanged; this separate result manifest records actual execution. Mutable status documents are preserved at their delivery commits and explicit archives.",
+  "limits": [
+    "The native Production rehearsal PASS proves this exact rolled-back test. It is not an installation or permission to install.",
+    "ACCESS SHARE does not freeze Cron DML; actual observed writer/configuration/row-version and captured-catalog checks retain their documented limits.",
+    "The independent read confirms currentness at its stated observation time; no future or continuous BG1 claim.",
+    "Negative Publisher0 is fail-closed behavior for unqualified sources, not positive AT qualification, renewal or fresh source data.",
+    "No whole-operation natural queue/Cron/sequence equality across two transactions is claimed.",
+    "No post-COMMIT restart/crash/failover/Fence/restore proof is claimed by this rehearsal."
+  ]
+}
