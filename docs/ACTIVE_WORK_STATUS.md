@@ -4,17 +4,28 @@
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
 
-## Aktueller Writer — Ortssuche, Reisetitel, Pass-Zuordnung (Folge-PR)
+## Aktueller Writer — Startseite neu gestaltet (PR B)
 
-22. November 2026. Branch `cursor/ortssuche-titel-pass-2ba1` von `main` `0ca0fb2fa` (inkl. #1272), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Folge-PR mit bewusst erweitertem Umfang, parallel zu einem zweiten PR (Startseite) ohne gemeinsame Dateien. Entscheidung: ADR-0241.
+22. November 2026. Branch `cursor/startseite-neugestaltung-2ba1` von `main` `b42cf9e55` (inkl. #1277), Draft-PR [#1278](https://github.com/Jetnity/jetnity/pull/1278), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Startseite hochmodern gestalten, ohne einen SEO-/KI-Text, eine Überschrift, FAQ oder strukturierte Daten zu verlieren. Entscheidung: ADR-0242. Umfang und Belege: `docs/STARTSEITE_NEUGESTALTUNG_2026-11-22.md`, Regeln: `DESIGN_SYSTEM.md` 6.24.
+
+- **Grenzen (PO):** nur Darstellung. Keine Änderung an Logik, Preisen, Einreisedaten, Login/2FA/Passkeys oder Datenbank; keine neuen kostenpflichtigen Dienste, keine externen Schriften, keine schweren Bibliotheken; Animationen höchstens 250 ms und mit `prefers-reduced-motion`. Kein Merge ohne PO-Go; kein Production-Deploy durch den Agenten.
+- **Umgesetzt:** Foto-Hero mit schwebender Suchkarte (H1 und alle drei Zusagen im ersten Bildschirm bei 390×800 und 1440×900), asymmetrisches Bento-Raster mit vier Mini-Oberflächen (Routen-Linie, Pass-Check-Badge, Preisvergleich, Werkzeug-Kette), `styles/startseite.css` (Präfix `hs-`), «Nach oben» auf Telefonen nur beim Hochscrollen (`lib/layout/nach-oben.ts`), `ß` → `ss` in zwei Texten und einem `aria-label`.
+- **Belege:** Rohdokument mit abgeschaltetem JavaScript vorher gegen nachher: Titel, Canonical, Meta und JSON-LD gleich, 31 Überschriften, 4 FAQ-Einträge, 112 Textblöcke und Link-Ziele unverändert, neu nur 12 `aria-hidden`-Beschriftungen. Lighthouse 13.6, je drei Läufe: Desktop 100/100/69/100 vorher wie nachher (Performance/Barrierefreiheit/SEO/Best Practices); mobil Performance 100 → 88 bei gleicher Barrierefreiheit 100 und SEO 69 (Modelleffekt der Simulation durch das Foto als LCP, gemessener LCP ≈ 0,15 s, mit DevTools-Drosselung 98 gegen 97; die Live-Seite liegt mit derselben Methode bei 74). SEO 69 stammt allein vom bewussten Site-weiten `noindex` (Owner-Hold), nicht geändert. Kontrast im Hero pixelgenau gemessen: H1 ≥ 6,49:1, kleiner Text ≥ 6,81:1. Kein Überlauf von 280 bis 1920 px, auch nicht bei 200 % Systemschrift.
+- **Abweichung:** «Eine Reise statt fünf getrennte Tools» steht im DOM jetzt vor «Du beschreibst deine Wünsche» (Rasterzelle); Überschriften, Texte und JSON-LD sind gleich.
+- **Offen:** Abnahme auf einem echten Telefon (nur Playwright-Touch geprüft); kein FAQPage-JSON-LD vorhanden (möglicher SEO-Punkt, erst sinnvoll bei Aufhebung des `noindex`); bei einem anderen Hero-Foto Kontrast erneut messen.
+- **Nächster Schritt:** alle Checks auf dem Head grün abwarten, dann PO-Entscheid zu Merge.
+
+## Abgeschlossen — Ortssuche, Reisetitel, Pass-Zuordnung #1277 gemergt
+
+22. November 2026. Branch `cursor/ortssuche-titel-pass-2ba1` von `main` `0ca0fb2fa` (inkl. #1272), vom PO am 22.11. um 14:40 MEZ gemergt (Merge-Commit `b42cf9e55`, Head `916ea88e0`, CI 14/14), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Folge-PR mit bewusst erweitertem Umfang, parallel zu einem zweiten PR (Startseite) ohne gemeinsame Dateien. Entscheidung: ADR-0241.
 
 - **Grenzen (PO):** nicht ändern: Einreisedaten, Login/2FA/Passkeys, Preise, Datenbank; keine neuen kostenpflichtigen Dienste. Kein Merge ohne PO-Go; kein Production-Deploy durch den Agenten.
 - **1 Ortssuche:** Ursache war, dass bei gleichem exaktem Namen nur der Typ entschied (Insel vor Stadt) und maschinelle Umschriften wie Aliase zählten. Fix in `lib/places/suche.ts`: Bedeutungsbonus (Einwohner, Hauptstadt/Verwaltungssitz, eigener Name) nur beim Gleichstand exakter Treffer; Umschriften zählen bei Orten nicht als Alias. Production-Messung (nur lesend, 104 Städte): 11 falsche erste Treffer vorher, 2 nachher; Abreise 2 von 25 vorher, 0 nachher. Production war gleich betroffen (Lissabon, Rom, Berlin, Porto, Amsterdam, Sydney, Valencia, San Francisco, Jerusalem, Rio); Madrid und Barcelona waren in Production schon richtig, in Dev fehlen sie im Katalog (Datenlücke, kein Codefehler). Tests: `lib/places/suche-bedeutung.test.ts` (rot ohne Fix, grün mit Fix), alle bestehenden Ortstests grün.
 - **2 Reisetitel:** `lib/places/titel-name.ts` (geprüfte Tabelle, ß → ss), nur `title` in `createZieleGraph`; Etappennamen, Abreise und Anbieter bleiben beim Katalognamen; bestehende Reisen behalten ihren Titel. `Organisieren` erkennt einen automatischen Titel weiter.
 - **3 Pass-Zuordnung:** «Gehört zu: …» unter jedem Pass-Feld und die Reisenden in den Ergebniskarten, nur aus vorhandenen Staatsangehörigkeiten; keine Speicherung, kein Schema.
 - **Offen für den PO:** «Granada» (ES) steht nach ADR-0196 hinter «Grenada»; «Valencia» (VE) vor «Valencia» (ES) nach Bevölkerung; Dev-Katalog ohne Madrid/Barcelona (Betreiberlauf); deutsche Namen für Etappen und Abreise brauchen die Katalog-Migration (F).
-- **Stand:** Preview-Variablen des Branches `cursor/abschluss-schliff-2ba1` sind entfernt, #1272 ist gemergt (`0ca0fb2fa`).
-- **Nächster Schritt:** alle Checks auf dem Head grün abwarten, dann PO-Entscheid zu Merge.
+- **Stand:** gemergt; Preview-Variablen des Branches `cursor/abschluss-schliff-2ba1` sind entfernt, #1272 ist gemergt (`0ca0fb2fa`). Kein Production-Deploy durch den Agenten.
+- **Nächster Schritt:** PO-Entscheide zu den offenen Punkten oben (Granada/Grenada, Valencia VE/ES, Dev-Katalog Madrid/Barcelona, deutsche Etappennamen).
 
 ## Aktueller Writer — Abschluss-Schliff (nur Aussehen und Texte)
 

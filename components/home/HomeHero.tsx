@@ -4,47 +4,51 @@ import { Check, MapPin } from 'lucide-react'
 import StartzielForm from '@/components/places/StartzielForm'
 import { FINAL_HOMEPAGE_DEFINITION, FINAL_HOMEPAGE_H1 } from '@/lib/seo/final-homepage'
 
+const ZUSAGEN = ['Flug, Unterkunft und Tage in einem Plan', 'Einreise für jede reisende Person im Blick', 'Buchungen bestätigst du selbst']
+
 export function HomeHero() {
   return (
-    <section
-      className="px-3 pt-3 sm:px-5 sm:pt-5"
-      aria-labelledby="start-titel"
-    >
-      <div className="mx-auto grid max-w-[1450px] items-stretch rounded-[28px] bg-brand-800 text-white shadow-raised lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:rounded-[36px]">
-        <div className="min-w-0 rounded-[28px] px-5 py-7 [background-image:radial-gradient(90%_70%_at_0%_0%,rgb(var(--jet-brand-600)/0.38),transparent_70%)] sm:px-10 sm:py-12 lg:rounded-l-[36px] lg:rounded-r-none lg:px-12 lg:py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-citrus-400">
-            Eine Reise. Ein Zusammenhang.
-          </p>
-          <h1
-            id="start-titel"
-            className="mt-4 max-w-3xl hyphens-manual text-[min(2rem,8.8vw)] font-semibold leading-[1.08] tracking-[-0.04em] text-balance text-white [overflow-wrap:normal] sm:text-5xl lg:text-[3.5rem]"
-          >
-            {FINAL_HOMEPAGE_H1}
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-ink-300">{FINAL_HOMEPAGE_DEFINITION}</p>
-          <StartzielForm />
-          <p className="mt-3 text-sm text-ink-300">Ohne Konto starten. Du siehst deinen Entwurf, bevor etwas gespeichert wird.</p>
-          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm leading-6 text-ink-300">
-            {['Flug, Unterkunft und Tage in einem Plan', 'Einreise für jede reisende Person im Blick', 'Buchungen bestätigst du selbst'].map((text) => (
-              <li key={text} className="flex items-start gap-2">
-                <Check className="mt-1 h-4 w-4 shrink-0 text-citrus-400" aria-hidden="true" />
-                {text}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="relative min-h-[190px] overflow-hidden rounded-b-[28px] sm:min-h-[260px] lg:min-h-full lg:rounded-b-none lg:rounded-r-[36px]">
+    <section className="px-3 pt-3 sm:px-5 sm:pt-5" aria-labelledby="start-titel">
+      <div className="hs-hero mx-auto max-w-[1450px]">
+        <div className="hs-hero-bild">
           <Image
             src="/images/hero-bali.png"
             alt="Palmen und Reisterrassen auf Bali im warmen Licht des Sonnenuntergangs"
             fill
             priority
-            sizes="(min-width: 1536px) 616px, (min-width: 1024px) 42vw, 100vw"
-            className="object-cover"
+            sizes="(min-width: 1536px) 1450px, 100vw"
+            className="object-cover object-[70%_50%] lg:object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" aria-hidden="true" />
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-brand-800/45 via-transparent to-transparent lg:block" aria-hidden="true" />
-          <p className="absolute bottom-5 left-5 flex items-center gap-2 text-sm font-medium text-white sm:bottom-7 sm:left-7">
+        </div>
+        <div className="hs-hero-verlauf" aria-hidden="true" />
+        <div className="min-w-0 px-5 pb-[8.5rem] pt-8 sm:px-10 sm:pb-[8.5rem] sm:pt-14 lg:min-h-[640px] lg:px-16 lg:pb-24 lg:pt-20">
+          <div className="max-w-[52rem]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-citrus-400">
+              Eine Reise. Ein Zusammenhang.
+            </p>
+            <h1
+              id="start-titel"
+              className="mt-4 hyphens-manual text-[min(2.125rem,9.2vw)] font-semibold leading-[1.06] tracking-[-0.045em] text-balance text-white [overflow-wrap:normal] sm:text-5xl lg:text-[3.75rem]"
+            >
+              {FINAL_HOMEPAGE_H1}
+            </h1>
+            <p className="mt-4 max-w-xl text-[0.9375rem] leading-6 text-white/90 sm:mt-5 sm:text-base sm:leading-7">{FINAL_HOMEPAGE_DEFINITION}</p>
+            <div className="hs-suchkarte">
+              <StartzielForm />
+            </div>
+            <p className="mt-3 text-sm leading-6 text-white/90 sm:mt-4">Ohne Konto starten. Du siehst deinen Entwurf, bevor etwas gespeichert wird.</p>
+            <ul className="hs-chips">
+              {ZUSAGEN.map((text) => (
+                <li key={text} className="hs-chip">
+                  <span className="hs-chip-haken">
+                    <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="hs-ort">
             <MapPin className="h-4 w-4" aria-hidden="true" /> Bali, Indonesien
           </p>
         </div>

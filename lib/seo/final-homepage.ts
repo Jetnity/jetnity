@@ -53,7 +53,7 @@ export const HOMEPAGE_UNTERSCHIEDE = [
   {
     thema: 'Gesamtkosten und Alternativen',
     titel: 'Die bessere Wahl für die ganze Reise.',
-    text: 'Jetnity vergleicht Preis, Reisezeit und Komfort zusammen. Gepäck, Transfers und zusätzliche Übernachtungen fließen ein. Bestätigte Preise und Schätzungen bleiben erkennbar.',
+    text: 'Jetnity vergleicht Preis, Reisezeit und Komfort zusammen. Gepäck, Transfers und zusätzliche Übernachtungen fliessen ein. Bestätigte Preise und Schätzungen bleiben erkennbar.',
     beispiel: 'Was wäre, wenn du eine Nacht länger bleibst?',
     ergebnis: 'Jetnity zeigt dir die Folgen für Kosten und Verbindungen. Dein bisheriger Plan bleibt erhalten, bis du die Änderung übernimmst.',
   },
@@ -111,7 +111,7 @@ export const HOMEPAGE_VERTRAUEN = [
 
 export const HOMEPAGE_FAQ = [
   { frage: 'Was ist Jetnity?', antwort: 'Jetnity ist eine intelligente Reiseplattform und dein persönlicher Reisebegleiter. Jetnity verbindet Route, Flüge, Unterkünfte, Erlebnisse und Mobilität, prüft die Zusammenhänge und begleitet dich von der ersten Idee bis zur Rückkehr. Deine Wünsche, die tatsächlichen Gesamtkosten und deine persönliche Vorbereitung werden gemeinsam berücksichtigt.' },
-  { frage: 'Wie berücksichtigt Jetnity meine Einreiseanforderungen?', antwort: 'Jetnity berücksichtigt deine Route einschließlich Zwischenstopps sowie Staatsangehörigkeiten, Reisepässe, bestehende Visa und Aufenthaltsbewilligungen. Für jede mitreisende Person werden relevante Anforderungen anhand offizieller Quellen aufbereitet. Du siehst den Informationsstand, wichtige Fristen und deine nächsten Vorbereitungsschritte. Bei einer Routenänderung wird die Vorbereitung erneut geprüft.' },
+  { frage: 'Wie berücksichtigt Jetnity meine Einreiseanforderungen?', antwort: 'Jetnity berücksichtigt deine Route einschliesslich Zwischenstopps sowie Staatsangehörigkeiten, Reisepässe, bestehende Visa und Aufenthaltsbewilligungen. Für jede mitreisende Person werden relevante Anforderungen anhand offizieller Quellen aufbereitet. Du siehst den Informationsstand, wichtige Fristen und deine nächsten Vorbereitungsschritte. Bei einer Routenänderung wird die Vorbereitung erneut geprüft.' },
   { frage: 'Was passiert bei einer Flugänderung oder einem Ausfall?', antwort: 'Jetnity erkennt die Änderung, prüft ihre Folgen für Anschlüsse, Transfers, Unterkunft und Erlebnisse und aktualisiert deinen Reiseplan automatisch. Bei einem Ausfall bereitet Jetnity passende Alternativen vor und erklärt die Folgen für Reisezeit und Kosten. Eine neue Verbindung kann auch andere Transit- und Einreiseanforderungen mit sich bringen; diese werden erneut berücksichtigt.' },
   { frage: 'Welche Entscheidungen trifft Jetnity automatisch?', antwort: 'Jetnity prüft deine Reise, aktualisiert Zeiten und stimmt den Reiseplan innerhalb deiner Freigaben neu ab. Neue Buchungen, kostenpflichtige Umbuchungen und Stornierungen bestätigst du selbst. Wo eine Buchung beim jeweiligen Anbieter abgeschlossen wird, führt Jetnity dich dorthin. Ein angepasster Planeintrag allein ist noch keine Buchung oder Umbuchung.' },
 ] as const

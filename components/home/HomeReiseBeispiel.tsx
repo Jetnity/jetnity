@@ -12,8 +12,8 @@ export function HomeReiseBeispiel({ beispiel }: { beispiel: typeof HOMEPAGE_PROD
   const [schritt, setSchritt] = useState(0)
   const stand = beispiel.schritte[schritt]!
   return (
-    <article id="reisebeispiel" className="scroll-mt-28 rounded-[28px] border border-line-200 bg-white shadow-sm sm:rounded-[32px]" aria-label={`${beispiel.kennzeichnung}: ${beispiel.titel}`}>
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-t-[27px] bg-brand-800 px-5 py-4 text-white sm:rounded-t-[31px] sm:px-7">
+    <article id="reisebeispiel" className="hs-schalen scroll-mt-28 rounded-[28px] bg-white sm:rounded-[32px]" aria-label={`${beispiel.kennzeichnung}: ${beispiel.titel}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3 hs-kopf rounded-t-[27px] bg-brand-800 px-5 py-4 text-white sm:rounded-t-[31px] sm:px-7">
         <span className="flex min-w-0 items-center gap-2 text-sm font-semibold"><Route className="h-5 w-5 shrink-0 text-citrus-400" aria-hidden="true" /><span className="min-w-0">Deine Reise im Zusammenhang</span></span>
         <span className="rounded-full border border-white/30 px-3 py-1 text-xs font-medium">{beispiel.kennzeichnung}</span>
       </div>

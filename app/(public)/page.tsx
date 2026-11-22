@@ -7,7 +7,6 @@ import { HomeInspiration } from '@/components/home/HomeInspiration'
 import { HomeProduktfenster } from '@/components/home/HomeProduktfenster'
 import { HomeUnterschied } from '@/components/home/HomeUnterschied'
 import { HomeVertrauen } from '@/components/home/HomeVertrauen'
-import { HomeWerkzeuge } from '@/components/home/HomeWerkzeuge'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import { publicInspiration } from '@/lib/inspiration/cms-public-server'
 import { zielHref } from '@/lib/places/auswahl'
@@ -54,11 +53,10 @@ export default async function HomePage() {
       <HomeProduktfenster />
       <HomeUnterschied />
       <HomeBegleitung />
-      <HomeWerkzeuge />
       <HomeInspiration ziele={inspirationsziele} status={inspiration.status} />
       <HomeVertrauen />
       <section className="px-3 pb-16 pt-4 sm:px-5 sm:pb-24 sm:pt-8" aria-labelledby="abschluss-titel">
-        <div className="mx-auto max-w-[1450px] rounded-[28px] bg-brand-800 px-5 py-10 text-white sm:rounded-[36px] sm:px-12 sm:py-14">
+        <div className="hs-schalen-dunkel mx-auto max-w-[1450px] rounded-[28px] bg-brand-800 px-5 py-10 text-white sm:rounded-[36px] sm:px-12 sm:py-14">
           <h2
             id="abschluss-titel"
             className="max-w-3xl text-3xl font-semibold tracking-[-0.045em] text-balance sm:text-5xl"

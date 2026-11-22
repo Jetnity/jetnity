@@ -44,14 +44,14 @@ export function HomeInspiration({ ziele, status = 'static' }: {
           <li key={ziel.name} className="min-w-0">
             <Link
               href={ziel.href}
-              className="group relative flex min-h-[280px] overflow-hidden rounded-[28px] bg-brand-800 text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:min-h-[360px]"
+              className="hs-bild-rand group relative flex min-h-[280px] overflow-hidden rounded-[28px] bg-brand-800 text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:min-h-[360px]"
             >
               <Image
                 src={ziel.image}
                 alt={`${ziel.name}, ${ziel.country}`}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover motion-safe:transition motion-safe:duration-700 motion-safe:group-hover:scale-105"
+                className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
               <span className="relative mt-auto flex w-full items-end justify-between gap-3 p-5">
