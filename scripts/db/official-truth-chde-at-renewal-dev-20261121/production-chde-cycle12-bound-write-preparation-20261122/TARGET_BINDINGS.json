@@ -1,0 +1,1145 @@
+{
+  "schema": 1,
+  "package_id": "PROD_CHDE_CYCLE12_BOUND_WRITE_PREPARATION_20261122",
+  "status": "TARGET_BOUND_SPECIFICATION_ONLY_NATIVE_AUTHORITY_AND_VALIDATION_OPEN",
+  "source_read_package_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "observed_at": "2026-11-22T13:02:06.758776+00:00",
+  "observation_file": {
+    "name": "22-chde-result.json",
+    "bytes": 38650,
+    "sha256": "4397576ecf394e9e3702f28d6859b33a21dc477e9905f34b36a9358174e22b94"
+  },
+  "read_sql_sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+  "read_manifest_sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+  "installed_parent": {
+    "name": "official_v3_guard_private.bg1_production_http_allocator_v4",
+    "canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4"
+  },
+  "historical_bg1_observation_only": {
+    "last_due": "2026-11-22T13:00:00+00:00",
+    "generation": 1789,
+    "valid_until": "2026-11-22T13:05:30+00:00",
+    "last_finished": "2026-11-22T13:00:05.323183+00:00",
+    "resumed_generation": 108,
+    "incident_generation": 108
+  },
+  "bg1_future_rule": "Require a new successful natural full proof matching the actual permitted installed successor at the time of each future action; generation1789 is only an archived observation.",
+  "bindings": {
+    "cycle": {
+      "id": 12,
+      "phase": "resume",
+      "state": "blocked",
+      "lease_id": "lease3_890f0128a96d476b8543c92ac7af5626",
+      "published": 0,
+      "created_at": "2026-11-16T07:43:00.031917+00:00",
+      "row_sha256": "05a43950fa9296e1dd76fa5786e1f2b888d1a58774e56e118c43edda95014544",
+      "finished_at": "2026-11-16T07:53:00.019315+00:00",
+      "last_status": "retry_budget_exhausted",
+      "operation_id": "op3_4775995258e84e1782dd1c715ac27025",
+      "phase_attempts": 8
+    },
+    "identity": {
+      "lease_id": "lease3_890f0128a96d476b8543c92ac7af5626",
+      "operation_id": "op3_4775995258e84e1782dd1c715ac27025",
+      "expected_job_id": "job3_2fd7149d9560d930957a0ca86fc65c73",
+      "enqueue_operation_id": "op3_185d9cea2da6d4e6dd41439137f0f036"
+    },
+    "subject": {
+      "kind": "rule_research",
+      "state": "leased",
+      "job_id": "job3_2fd7149d9560d930957a0ca86fc65c73",
+      "attempt": 1,
+      "job_key": "research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513",
+      "slot_id": 1,
+      "lease_id": "lease3_890f0128a96d476b8543c92ac7af5626",
+      "revision": 38,
+      "method_id": "jetnity-destination-primary-ch-de-visa",
+      "start_count": 13,
+      "open_attempt": "execution-attempt:v3:45128e7336cf585778e86a55f7531ff4a0a3bea2ac65341ecc2143142aa27981",
+      "operation_id": "op3_185d9cea2da6d4e6dd41439137f0f036",
+      "attempt_limit": 4,
+      "method_revision": 1,
+      "operation_count": 38,
+      "lease_expires_at": "2026-11-16T07:44:34.581Z",
+      "current_job_sha256": "0af7d03a11e2e50d9fdbc319b10cb2c763ea9b2662ea9b64554ad0bd302749f4",
+      "subject_row_sha256": "72925e4c556c1fdd15e7b5e4db92dcede271e0484c8b14949c441ee8943d2267",
+      "method_binding_sha256": "ec84430dea2454793c41193e046f57e5ef89754a3552b3b7c1738907fcc223bd",
+      "terminal_credit_claim": "op3_4775995258e84e1782dd1c715ac27025",
+      "cycle12_job_id_matches": true,
+      "cycle12_enqueue_operation_matches": true
+    },
+    "derived_claim_identities": [
+      {
+        "generation": 0,
+        "claim_lease_id": "lease3_890f0128a96d476b8543c92ac7af5626",
+        "claim_operation_id": "op3_4775995258e84e1782dd1c715ac27025"
+      },
+      {
+        "generation": 1,
+        "claim_lease_id": "lease3_34430cb1b88b039e6ed0ec914e52778b",
+        "claim_operation_id": "op3_6aee0b872b2c2676442467085ca37925"
+      },
+      {
+        "generation": 2,
+        "claim_lease_id": "lease3_8b985a482d72fc1e9f56bfbe9c4c4d31",
+        "claim_operation_id": "op3_73ae4e30f1462a47026ce8591132cd6d"
+      },
+      {
+        "generation": 3,
+        "claim_lease_id": "lease3_280d569c15c62f3cc0a69f6928117560",
+        "claim_operation_id": "op3_7b559e7af3511b6a4ec9f3470a80196a"
+      },
+      {
+        "generation": 4,
+        "claim_lease_id": "lease3_59cee61a6382f8c1a0e99ecaafa312a8",
+        "claim_operation_id": "op3_98c213f6db1e8d03d580fd43a36c3063"
+      }
+    ],
+    "starts": [
+      {
+        "job_id": "job3_2fd7149d9560d930957a0ca86fc65c73",
+        "job_key": "research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513",
+        "results": 0,
+        "generation": 0,
+        "attempt_key": "execution-attempt:v3:45128e7336cf585778e86a55f7531ff4a0a3bea2ac65341ecc2143142aa27981",
+        "reserved_at": "2026-11-16T07:44:06.888387+00:00",
+        "dispositions": 0,
+        "authority_sha256": "684f948760eeb0700236928a4ce01aae3032b2adf9772af3873c590d008f8f59",
+        "claim_text_sha256": "4de0b76bb8a99486f52dd2d3e03e41bce4d7b0dde33d27f80a6b0732c6ab7749",
+        "leased_job_sha256": "0af7d03a11e2e50d9fdbc319b10cb2c763ea9b2662ea9b64554ad0bd302749f4",
+        "claim_operation_id": "op3_4775995258e84e1782dd1c715ac27025",
+        "job_matches_cycle12": true,
+        "is_current_open_attempt": true,
+        "leased_job_equals_current": true,
+        "lease_matches_derived_identity": true
+      }
+    ],
+    "queue": [
+      {
+        "action": "enqueue",
+        "job_key": "research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513",
+        "command_key": "queue-command:v3:c3a7681e45537e4073a1cbaee337dcf1069517fec28b1764d495693ea99d9eb2",
+        "recorded_at": "2026-11-16T07:43:02.436582+00:00",
+        "operation_id": "op3_185d9cea2da6d4e6dd41439137f0f036",
+        "command_sha256": "c3a7681e45537e4073a1cbaee337dcf1069517fec28b1764d495693ea99d9eb2",
+        "audit_reference": "queue-event:v3:b0f9af93ce92383ee8966733faabe7dc1377260162223f6d25e3f5563f2c6279",
+        "envelope_sha256": "be67d5db74ab48c8fad290d0602fa6603e8d1a65f15f7f06f7a16cea4dc0423a",
+        "authority_sha256": "684f948760eeb0700236928a4ce01aae3032b2adf9772af3873c590d008f8f59",
+        "new_cycle_job_id": "job3_2fd7149d9560d930957a0ca86fc65c73"
+      },
+      {
+        "action": "claim",
+        "job_key": "research-job:v3:74713fe665cab1a7603f6e93ab06b6a1d1964e83a69571b8cced0ff009032513",
+        "command_key": "queue-command:v3:77397361e25dcd119fe4e0a35e39c77a18d9ff9f0347b90f05e4db304f3f2a68",
+        "recorded_at": "2026-11-16T07:44:04.616857+00:00",
+        "operation_id": "op3_4775995258e84e1782dd1c715ac27025",
+        "command_sha256": "77397361e25dcd119fe4e0a35e39c77a18d9ff9f0347b90f05e4db304f3f2a68",
+        "audit_reference": "queue-event:v3:1619087f644096661dd4fcfb3d5b199815cc33c0cd1f96ec6b5a96cd59146953",
+        "envelope_sha256": "4c9ab5a63081076980c0ae9d1b4036ee0e930aa40e8000ef7a3f7283e52764c8",
+        "authority_sha256": "684f948760eeb0700236928a4ce01aae3032b2adf9772af3873c590d008f8f59",
+        "new_cycle_job_id": null
+      }
+    ],
+    "intakes": [
+      {
+        "bytes": 1425,
+        "created_at": "2026-11-16T07:44:08.073962+00:00",
+        "expires_at": "2026-11-16T07:44:14.252233+00:00",
+        "operation_id": "op3_003e4bae5f19b85d2f0abde109afc3b4",
+        "binding_job_id": "job3_2fd7149d9560d930957a0ca86fc65c73",
+        "binding_sha256": "f114e16878008ad7621f4862351a834163ce0cd5c18c3b104c7b422efaaede7c",
+        "original_sha256": "8e8b2e8c4afa74ec4f15a19735f5ff7b39b01f27d02fb73107689f2f222b13d3",
+        "proposal_digest": "8e8b2e8c4afa74ec4f15a19735f5ff7b39b01f27d02fb73107689f2f222b13d3"
+      }
+    ],
+    "method": {
+      "status": "approved",
+      "method_id": "jetnity-destination-primary-ch-de-visa",
+      "row_sha256": "d8b5c3bda57d39a2314d18254f39f9858f89fc67b3154becee41b0c0946b992a"
+    },
+    "preserved_archive": {
+      "originals": [
+        {
+          "bytes": 93351,
+          "raw_digest": "dd19a21a32346a7c9aa1de0bdd2e22b0cb81450e9c0e5015e1e29170b7d105e5",
+          "version_id": "ev2_0190ee740a1603bd8083b1155bf24a6a",
+          "actual_body_sha256": "dd19a21a32346a7c9aa1de0bdd2e22b0cb81450e9c0e5015e1e29170b7d105e5"
+        },
+        {
+          "bytes": 71532,
+          "raw_digest": "4b9412ae72fb4b870f45451b69f8e00401eaebe6393b1a7aa22ef06f460a0bad",
+          "version_id": "ev2_b024517ea1b90e9e26e0753ff485a2a7",
+          "actual_body_sha256": "4b9412ae72fb4b870f45451b69f8e00401eaebe6393b1a7aa22ef06f460a0bad"
+        }
+      ],
+      "version_ref": "rule-version:v3:ad5ab8177bc21bb2f545613c1239dc0e1396043e1213242863b2b6665ae97a60",
+      "projection_ref": "rule-projection:v3:9252011c251b1cb7e50108ea43f8e42cbbcc00f6b53cfc6e01a7ca35dc696a36",
+      "head_row_sha256": "bc648e8da7885a41f4cfc617afafd6e1895d23e86dc6da1a6085a48f22fc3384",
+      "verification_ref": "hrs1-verification:v3:aff45e21f35165c8d441cb1a8ecbf8505f5af73da7b79806a4aa93fed5638b72",
+      "declared_original_ids": [
+        "ev2_0190ee740a1603bd8083b1155bf24a6a",
+        "ev2_b024517ea1b90e9e26e0753ff485a2a7"
+      ],
+      "qualification_row_sha256": "d1ebdddf94daf2dff14ceb6bdb7d1a438f5d0bf524e57dbf874e898736c18274",
+      "all_originals_present_and_exact": true
+    },
+    "prior_owner_receipt_metadata": {
+      "count": 3,
+      "retire_unknown_count": 0,
+      "ordered_row_digest_sha256": "3177a81e8d238107e19a9a7b0e7a8a1d7737d8d39bcecf16c0ea03175b45487b"
+    },
+    "functions": [
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "void",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "832d3a9c7b63b399d0470999a0f869119332fb42e27ab93c9c7b65122675b540",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "40de2dfee9d5e87199020d325ccf9359b041db77ffa58c74ed16a0a13f26f938",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "a7b6e690f6719d80d224e78e5897af80079f8d947fcc11cab7d20cfc030518db",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "jetnity_ot_auth.require_current_owner_session_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "trigger",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "832d3a9c7b63b399d0470999a0f869119332fb42e27ab93c9c7b65122675b540",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1",
+          "postgres_execute": true,
+          "security_definer": false,
+          "definition_sha256": "41b6b1a3a2fce87f072527b1d0c0604704bc06fae5d5a049798fea2ddd8bae38",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": true,
+        "signature": "jetnity_prod_import_scheduler.preserve_request_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "text",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "832d3a9c7b63b399d0470999a0f869119332fb42e27ab93c9c7b65122675b540",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "429a6be355781df4575a7a3db1b0229a57a105e91bcf31bb3db68e23c51e25a5",
+          "postgres_execute": true,
+          "security_definer": false,
+          "definition_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": true,
+        "signature": "jetnity_prod_import_scheduler.tick_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "void",
+          "strict": false,
+          "language": "sql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "404c40d7742e5b0f449e58999f4f9934c59af72288ab91378ae141c4728e96d4",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "e575f737513d801ded985d1245c36ca7ec8ea1b1c99cbfa27b93f52caed975d6",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "official_v3_guard_private.begin_jobs_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "void",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "404c40d7742e5b0f449e58999f4f9934c59af72288ab91378ae141c4728e96d4",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "f75ff8ee1ea6126edc5c5db75b8fc51bc6bdd1b07eb48f5c55e71fc38cc367f3",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": true,
+        "signature": "official_v3_guard_private.owner_session_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "void",
+          "strict": false,
+          "language": "sql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "404c40d7742e5b0f449e58999f4f9934c59af72288ab91378ae141c4728e96d4",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "5652be95beae3c1221f925529931db5a62ffc5236b4a6dc7a869ed86190ed291",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "official_v3_guard_private.seal_jobs_v1()"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "ot_v3_jobs_owner",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "wire text, method_id text, revision integer, method_digest text, package_digest text, epoch integer, remaining_ms integer, absolute_not_after text",
+          "leakproof": false,
+          "acl_sha256": "be2b2de83685a9c89a78b36abbcbf8501d6e2f06ec8360c3ccb629fe21c59c97",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "dcce988ad33e7ed00a93452f1fc0d39aff8dab3806caa8738bf8d0b4246e2958",
+          "postgres_execute": false,
+          "security_definer": true,
+          "definition_sha256": "2bc986276244b784a2f76106dae1f54af304fe2fe3472092455bce475e8728ae",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": true,
+        "signature": "official_v3_jobs_api.execute_v1(text,text,integer,text,text,integer,integer,text)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "ot_v3_jobs_owner",
+          "result": "void",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "k text",
+          "leakproof": false,
+          "acl_sha256": "9c780c25da725f12a928583ef519896a0c5131f7bb32e0659092ac975a508d80",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "dcce988ad33e7ed00a93452f1fc0d39aff8dab3806caa8738bf8d0b4246e2958",
+          "postgres_execute": false,
+          "security_definer": false,
+          "definition_sha256": "fa1b4e3d7a6fbbebe24b4ae715e6a5bcb6efe7cd1f9feb0693f97bc18d21c406",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": true,
+        "signature": "official_v3_jobs_private.assert_history_v1(text)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "ot_v3_jobs_owner",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "q jsonb, b jsonb, e integer, remaining integer, deadline timestamp with time zone",
+          "leakproof": false,
+          "acl_sha256": "9c780c25da725f12a928583ef519896a0c5131f7bb32e0659092ac975a508d80",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "dcce988ad33e7ed00a93452f1fc0d39aff8dab3806caa8738bf8d0b4246e2958",
+          "postgres_execute": false,
+          "security_definer": false,
+          "definition_sha256": "ea875d39bedc23760f0e49c5fac89f15d484bc205de5e193573f126f2df6d5e0",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "official_v3_jobs_private.tx_queue_cas_v1(jsonb,jsonb,integer,integer,timestamp with time zone)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "ot_v3_jobs_owner",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "q jsonb, b jsonb, e integer, remaining integer, deadline timestamp with time zone",
+          "leakproof": false,
+          "acl_sha256": "9c780c25da725f12a928583ef519896a0c5131f7bb32e0659092ac975a508d80",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "dcce988ad33e7ed00a93452f1fc0d39aff8dab3806caa8738bf8d0b4246e2958",
+          "postgres_execute": false,
+          "security_definer": false,
+          "definition_sha256": "e296e04087df094932f5003ec8a2afcfe3d53e9693b911d0f56ac8cc10902c41",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamp with time zone)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "ot_v3_jobs_owner",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "q jsonb, b jsonb, e integer, remaining integer, deadline timestamp with time zone",
+          "leakproof": false,
+          "acl_sha256": "9c780c25da725f12a928583ef519896a0c5131f7bb32e0659092ac975a508d80",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "dcce988ad33e7ed00a93452f1fc0d39aff8dab3806caa8738bf8d0b4246e2958",
+          "postgres_execute": false,
+          "security_definer": false,
+          "definition_sha256": "19c5a3376b49eab1453c0d6fde2e82295f6811375ab7f295e1b43083b454a229",
+          "service_role_execute": false,
+          "authenticated_execute": false
+        },
+        "required": false,
+        "signature": "official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamp with time zone)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "p_operation_id text, p_selection text",
+          "leakproof": false,
+          "acl_sha256": "c559e879f225edf743aef0215cc82a5dc1db4728578ed5064ff335ec0169e7ed",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "fd16f64413d7b935d15c7d02675d4d9525d049c4bd2786addb6bace50e9d6725",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "2dbeb65cfa9403babc8843c6e211880c8d4bdf1fc57eb1863b0936513263bb4f",
+          "service_role_execute": false,
+          "authenticated_execute": true
+        },
+        "required": true,
+        "signature": "public.official_v3_guard_retire_v1(text,text)"
+      },
+      {
+        "present": true,
+        "metadata": {
+          "owner": "postgres",
+          "result": "jsonb",
+          "strict": false,
+          "language": "plpgsql",
+          "parallel": "u",
+          "arguments": "",
+          "leakproof": false,
+          "acl_sha256": "c559e879f225edf743aef0215cc82a5dc1db4728578ed5064ff335ec0169e7ed",
+          "volatility": "v",
+          "anon_execute": false,
+          "config_sha256": "fd16f64413d7b935d15c7d02675d4d9525d049c4bd2786addb6bace50e9d6725",
+          "postgres_execute": true,
+          "security_definer": true,
+          "definition_sha256": "b0f7124a9ccd9692ceb4fda072bbdacf31787ac837a6bae0ac1f949f2e60ff5c",
+          "service_role_execute": false,
+          "authenticated_execute": true
+        },
+        "required": true,
+        "signature": "public.official_v3_guard_review_v1()"
+      }
+    ],
+    "relations": [
+      {
+        "name": "jetnity_prod_import_scheduler.cycles_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "postgres",
+          "columns": [
+            {
+              "name": "id",
+              "type": "bigint",
+              "not_null": true
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            },
+            {
+              "name": "operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "lease_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "phase",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "state",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "phase_attempts",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "last_status",
+              "type": "text",
+              "not_null": false
+            },
+            {
+              "name": "finished_at",
+              "type": "timestamp with time zone",
+              "not_null": false
+            },
+            {
+              "name": "published",
+              "type": "integer",
+              "not_null": true
+            }
+          ],
+          "force_rls": false,
+          "acl_sha256": "bccfd5e7f4b59dfa125583240776ddebca3a8761f33dd9c7f4abe446a71ddba9",
+          "postgres_select": true,
+          "postgres_update": true
+        }
+      },
+      {
+        "name": "jetnity_prod_import_scheduler.dispatches_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "postgres",
+          "columns": [
+            {
+              "name": "id",
+              "type": "bigint",
+              "not_null": true
+            },
+            {
+              "name": "cycle_id",
+              "type": "bigint",
+              "not_null": true
+            },
+            {
+              "name": "phase",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "signed_at_ms",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "dispatched_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            },
+            {
+              "name": "net_request_id",
+              "type": "bigint",
+              "not_null": true
+            },
+            {
+              "name": "processed_at",
+              "type": "timestamp with time zone",
+              "not_null": false
+            },
+            {
+              "name": "http_status",
+              "type": "integer",
+              "not_null": false
+            },
+            {
+              "name": "outcome",
+              "type": "text",
+              "not_null": false
+            }
+          ],
+          "force_rls": false,
+          "acl_sha256": "bccfd5e7f4b59dfa125583240776ddebca3a8761f33dd9c7f4abe446a71ddba9",
+          "postgres_select": true,
+          "postgres_update": true
+        }
+      },
+      {
+        "name": "official_v3_guard_private.owner_operations_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "postgres",
+          "columns": [
+            {
+              "name": "operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "action",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "expected_digest",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "actor_id",
+              "type": "uuid",
+              "not_null": true
+            },
+            {
+              "name": "recorded_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            },
+            {
+              "name": "receipt",
+              "type": "jsonb",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bccfd5e7f4b59dfa125583240776ddebca3a8761f33dd9c7f4abe446a71ddba9",
+          "postgres_select": true,
+          "postgres_update": true
+        }
+      },
+      {
+        "name": "official_v3_guard_private.retired_attempts_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "postgres",
+          "columns": [
+            {
+              "name": "attempt_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "job_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "claim_operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "intake_operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "owner_operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "before_state",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "retired_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bccfd5e7f4b59dfa125583240776ddebca3a8761f33dd9c7f4abe446a71ddba9",
+          "postgres_select": true,
+          "postgres_update": true
+        }
+      },
+      {
+        "name": "official_v3_guard_private.retired_cycle5_attempts_v1",
+        "present": false,
+        "metadata": null
+      },
+      {
+        "name": "official_v3_intake_private.operations_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_intake_owner",
+          "columns": [
+            {
+              "name": "operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "binding",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "original_bytes",
+              "type": "bytea",
+              "not_null": true
+            },
+            {
+              "name": "proposal_digest",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            },
+            {
+              "name": "generation",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "lease_token",
+              "type": "uuid",
+              "not_null": false
+            },
+            {
+              "name": "acquired_at",
+              "type": "timestamp with time zone",
+              "not_null": false
+            },
+            {
+              "name": "expires_at",
+              "type": "timestamp with time zone",
+              "not_null": false
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_jobs_private.execution_dispositions_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_jobs_owner",
+          "columns": [
+            {
+              "name": "attempt_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "queue_operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "kind",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "failure_reason",
+              "type": "text",
+              "not_null": false
+            },
+            {
+              "name": "settled_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bbad82800b7dfe9a98021513a4ab0be6d7facf0005a4b19431b41b6eca2859e8",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_jobs_private.execution_results_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_jobs_owner",
+          "columns": [
+            {
+              "name": "attempt_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "result",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "references",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "prepared_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bbad82800b7dfe9a98021513a4ab0be6d7facf0005a4b19431b41b6eca2859e8",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_jobs_private.execution_starts_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_jobs_owner",
+          "columns": [
+            {
+              "name": "attempt_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "job_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "claim_operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "claim_text",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "leased_job",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "authority",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "token_hash",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "reserved_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bbad82800b7dfe9a98021513a4ab0be6d7facf0005a4b19431b41b6eca2859e8",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_jobs_private.queue_operations_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_jobs_owner",
+          "columns": [
+            {
+              "name": "operation_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "job_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "action",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "command_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "command_text",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "envelope_text",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "audit_reference",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "new_cycle_job_id",
+              "type": "text",
+              "not_null": false
+            },
+            {
+              "name": "authority",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "recorded_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bbad82800b7dfe9a98021513a4ab0be6d7facf0005a4b19431b41b6eca2859e8",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_jobs_private.subjects_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "ot_v3_jobs_owner",
+          "columns": [
+            {
+              "name": "job_key",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "slot_id",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "kind",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "subject_text",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "method_binding",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "current_job",
+              "type": "jsonb",
+              "not_null": true
+            },
+            {
+              "name": "operation_count",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "start_count",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "open_attempt",
+              "type": "text",
+              "not_null": false
+            },
+            {
+              "name": "terminal_credit_claim",
+              "type": "text",
+              "not_null": false
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "bbad82800b7dfe9a98021513a4ab0be6d7facf0005a4b19431b41b6eca2859e8",
+          "postgres_select": true,
+          "postgres_update": false
+        }
+      },
+      {
+        "name": "official_v3_method_private.heads_v1",
+        "present": true,
+        "metadata": {
+          "rls": true,
+          "kind": "r",
+          "owner": "postgres",
+          "columns": [
+            {
+              "name": "method_id",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "revision",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "method_digest",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "package_digest",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "epoch",
+              "type": "integer",
+              "not_null": true
+            },
+            {
+              "name": "status",
+              "type": "text",
+              "not_null": true
+            },
+            {
+              "name": "approval_mode",
+              "type": "text",
+              "not_null": false
+            },
+            {
+              "name": "approval_until",
+              "type": "timestamp with time zone",
+              "not_null": false
+            },
+            {
+              "name": "changed_at",
+              "type": "timestamp with time zone",
+              "not_null": true
+            },
+            {
+              "name": "changed_by",
+              "type": "uuid",
+              "not_null": true
+            },
+            {
+              "name": "operation_id",
+              "type": "text",
+              "not_null": true
+            }
+          ],
+          "force_rls": true,
+          "acl_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "postgres_select": true,
+          "postgres_update": true
+        }
+      }
+    ],
+    "jobs_owner_membership": [
+      {
+        "set": false,
+        "admin": true,
+        "grantor": "supabase_admin",
+        "inherit": false
+      }
+    ]
+  },
+  "authorizations": {
+    "sql_read_already_used_once": true,
+    "additional_read_allowed": false,
+    "runtime_write_allowed": false,
+    "owner_action_allowed": false,
+    "rehearsal_allowed": false,
+    "installation_allowed": false,
+    "restart_allowed": false,
+    "native_mutation_authority_proven": false,
+    "real_owner_aal2_receipt_present_for_cycle12": false
+  },
+  "preservation_rules": [
+    "Cycle12 stays blocked and byte/field-identical; nine Dispatch38–46 rows are never rewritten.",
+    "Preserve all prior Owner rows/count/digest; no artificial receipt or actor/session data.",
+    "Preserve archived originals, verification/version/projection references and all historical source observations.",
+    "Do not reset allocator, IDs, attempts, quota or lifetime counts.",
+    "No GRANT, SET ROLE, owner switch, ACL/RLS/secret/authentication change.",
+    "Every future exact-write precondition must be rechecked atomically inside its separately approved transaction; a changed predecessor requires a new bound package."
+  ],
+  "unknowns": [
+    "Callable existing protected native authority for a Cycle12 unknown closure without new rights.",
+    "Exact supported native closure delta and full catalog successor after native validation.",
+    "Original HTTP503 request-level error/deployed revision.",
+    "Fresh real Owner/AAL2 approval for this exact closure.",
+    "A separately authorized one-cycle restart."
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "delivery_id": "AT_CHDE_BOUND_READ_RESULTS_AND_CHDE_WRITE_PREPARATION_20261122",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "execution_checkpoint_commit": "bf045082371d1be3026424c66a6ba24946e2ae57",
+  "existing_branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "database_calls": 2,
+  "execution_order": [
+    "AT",
+    "CHDE"
+  ],
+  "attempts_per_query": 1,
+  "all_queries_end_rollback": true,
+  "all_raw_responses_complete": true,
+  "independent_results_pass": true,
+  "extra_reads_or_retry": 0,
+  "native_dev_executions": 0,
+  "production_writes": 0,
+  "owner_actions": 0,
+  "source_actions": 0,
+  "installation_ready": false,
+  "write_preparation_manifest_sha256": "e9d728fcdab9f2606e0154d54cb10860ef9f66e86e52bd4a18d86cbcbbcb1c0a",
+  "files": [
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/00-authorization-and-bytecheck.json",
+      "bytes": 1056,
+      "sha256": "f089bd718da284204caa169f6d090cbc5c00e3b2579bd2607572cadca4c71b51",
+      "git_blob_sha1": "9268ade23f827355108b1edb320d374a7630cce1"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/10-at-invocation-intent.json",
+      "bytes": 435,
+      "sha256": "c5f67ac9a2a21529de520432e863033fa010bd628ea569fa829c948b4770061d",
+      "git_blob_sha1": "7efb59d207fd4c70e2913a8944351b0eae93f5e5"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/11-at-execution.json",
+      "bytes": 62501,
+      "sha256": "7873cfc96bf488c3a095a7de31c16ce0bd0d3804f0c424d5448e38bac67d3f65",
+      "git_blob_sha1": "4c4d1caece5f621da77a8e73fed616f367d4249e"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/12-at-result.json",
+      "bytes": 66279,
+      "sha256": "71e60e585ae8573f839bac736f6744b2da337a6084b01ff567af28f29b01f317",
+      "git_blob_sha1": "72e9bf7122dd4b76f03853dc81645184c6859874"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/13-at-validation.json",
+      "bytes": 2437,
+      "sha256": "2bed8cdb57672ff04d84ad60557846a771de9f1d1d3b490afd2453a9f9ccba30",
+      "git_blob_sha1": "570a013da5d56993da2f39e0f36fafc1396aa01e"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/14-at-independent-review.json",
+      "bytes": 6259,
+      "sha256": "73793e246a94ec9ad9b02f3ce0f8592b3d532785da059f5400125f9238193d22",
+      "git_blob_sha1": "2a14662419c5a55e2aa43b4c4e445411998720c9"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/15-at-source-decision-and-next-bindings.json",
+      "bytes": 73481,
+      "sha256": "5f7d649e2503bf699d945008ac2b784599522f57bf45b1f254bc9936e831e904",
+      "git_blob_sha1": "6d2e48c2e32b5254c3514a82f9e857fe568663e8"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/20-chde-invocation-intent.json",
+      "bytes": 417,
+      "sha256": "aade52f8e49f05c4681e26f1c4df94a6113cb61c307d5780b3010c162c8b48d7",
+      "git_blob_sha1": "377327be37afcfb34abaafa88f0f86caa2c0c1e6"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/21-chde-execution.json",
+      "bytes": 36265,
+      "sha256": "d17ae78c4b479a46ee4c0a1ca9d70719a84852b618853a63446b84e82b4c673e",
+      "git_blob_sha1": "8ba77827de48878284f25cd3af0976c33a6a5b6e"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/22-chde-result.json",
+      "bytes": 38650,
+      "sha256": "4397576ecf394e9e3702f28d6859b33a21dc477e9905f34b36a9358174e22b94",
+      "git_blob_sha1": "04425fd6faf558702bd92aee9b44bda2855ad63e"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/23-chde-validation.json",
+      "bytes": 5127,
+      "sha256": "6c18d80be459198ad693f23b15e2d9e2322af584b638a5e3a45b3a89a467af69",
+      "git_blob_sha1": "91068b0d2715f0ba4c3c4cb52877d2c1922226bd"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/24-chde-independent-review.json",
+      "bytes": 6749,
+      "sha256": "1c144ae66cff4724860b21f151140110d75a57a7c8a0dad141a668d6ed4283e3",
+      "git_blob_sha1": "25db5a4543d1fbadc8ad08b7129bd3c584f91857"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_AT_CHDE_BINDING_READ_RESULTS_2026-11-22.md",
+      "bytes": 11523,
+      "sha256": "93eabf48443bd0e80f53a800e9927579a716d8b85e19baf772fbadb29f7d78df",
+      "git_blob_sha1": "6fdd57f34b2b381ba7b89dfe06c2817f013c24a1"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/TARGET_BINDINGS.json",
+      "bytes": 39673,
+      "sha256": "36494fc109487795b622e5257e0762c5d4ba265ebb28600f45dffeb7f76518b5",
+      "git_blob_sha1": "d70faffb61e8f26b06d4d45765dc27ca2bc6e589"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/SOURCE_PROVENANCE.json",
+      "bytes": 7323,
+      "sha256": "9f2b5cfcf5f4d08bd1f8349c8b10d3849b84690d907e78d93062543224a71192",
+      "git_blob_sha1": "069b930b5ea8a5fca82bf115923a8878538c3ebd"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/WRITE_SPEC.md",
+      "bytes": 8833,
+      "sha256": "888a5cd309202d9d6a190e2ce40a0b3b101a96f54e5fe96a65bcd055f8db7611",
+      "git_blob_sha1": "6e4491119f9bff679d23afcda56b53f08f9d236e"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/NATIVE_VALIDATION_PLAN.md",
+      "bytes": 7479,
+      "sha256": "43d57cd363f9c50151a44bac155eda4510269fa747ad3a3f75d8e38bddd3a13a",
+      "git_blob_sha1": "6a64b8592dd077353ded3a6c6cc0c5da02699e6f"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/ROLLBACK_SPEC.md",
+      "bytes": 3141,
+      "sha256": "210ef6f9aa2e2a4a589ead34f43e707b597cca94b472acf86cde87ee52728e5b",
+      "git_blob_sha1": "2c0cd102a6763ca39bc01ef8cfb32b3ca7df4de4"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/MANIFEST.json",
+      "bytes": 3128,
+      "sha256": "e9d728fcdab9f2606e0154d54cb10860ef9f66e86e52bd4a18d86cbcbbcb1c0a",
+      "git_blob_sha1": "9b6f700c4f1e8a7d84ee9babddabfc709c40415e"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-bound-write-preparation-20261122/SHA256SUMS",
+      "bytes": 511,
+      "sha256": "1e2ce4a4ba859ff532b01819a79c3b3594fa8072d100d29ba49fc08bfca100b1",
+      "git_blob_sha1": "5ed9f58422a289e763ad5e7625c993768538bcc8"
+    },
+    {
+      "path": "docs/evidence/official-truth-at-chde-binding-reads-20261122/25-chde-write-preparation-review.json",
+      "bytes": 1137,
+      "sha256": "60c846a749115568525a07ef5ec83868a49f0ca4fad1bacb3930f6d9101c6f74",
+      "git_blob_sha1": "4acdebfed6e3cc0dd08dd85da61b9c116abdd52c"
+    },
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 232841,
+      "sha256": "80e02bc2e243f5d3f0be0f4e0968e022012ce1fe5545a4dbdc0daf5ea5bbcde2",
+      "git_blob_sha1": "0203a51e135988d6b645db089e166013c8d77a91"
+    }
+  ],
+  "self_hash_convention": "Manifest excludes itself; its Git blob and delivery commit bind exact bytes.",
+  "main_merge": false,
+  "app_deploy_requested": false,
+  "cursor_requested": false
+}

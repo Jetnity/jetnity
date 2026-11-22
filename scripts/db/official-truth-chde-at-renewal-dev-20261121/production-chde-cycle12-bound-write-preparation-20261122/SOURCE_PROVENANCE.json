@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "created_at": "2026-11-22T13:06:33.917764+00:00",
+  "method": "Offline reads and byte/hash calculations only; no SQL, runtime tests, provider calls or DB access by this preparer.",
+  "sources": [
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 18328,
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1",
+      "git_blob_sha1": "acf37bcf16c1d8479f2b01ce54619a7c189363e5",
+      "verified_against_previous_immutable_github_verification": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 43695,
+      "sha256": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a",
+      "git_blob_sha1": "4b36bb6ff8b26516dfa01579265d47022785a15c",
+      "verified_against_previous_immutable_github_verification": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 14307,
+      "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0",
+      "git_blob_sha1": "e6b9ffd0dd2267c206c6ab6ae92b497f4f794130",
+      "verified_against_previous_immutable_github_verification": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-owner-retirement-v6.CANDIDATE-ROLLBACK.sql",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 81468,
+      "sha256": "55329142a2157a09fe1bcd67b6e3e43e5e4571747dc764aa0746473142e207ef",
+      "git_blob_sha1": "d8f562d3916a3fa4ca2f7d15f7340ba2b3db9d46",
+      "fresh_immutable_github_read": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-background-guard-1/parts/owner.sql",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 25589,
+      "sha256": "9fbc00a5412481a7fcc02287d7f108dbadeba96b15867899d9bca133ad411abb",
+      "git_blob_sha1": "0843764c59e0418a84ae236992add342cb5cdfc0",
+      "fresh_immutable_github_read": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-v3-background-guard-1/parts/state.sql",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "bytes": 11219,
+      "sha256": "adf674f5cd6fbd5cd902307f5f6488ef44e2a53fed0bc132cb7e41f15cfa89e7",
+      "git_blob_sha1": "cf63bd22ab1bb8dbc710adf9e557566b33d4d453",
+      "fresh_immutable_github_read": true,
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+      "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+      "bytes": 31089,
+      "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+      "git_blob_sha1": "3622ad3246f05a39b15f0e2a479afd502f8b3031",
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/01-WRITE-AND-ROLLBACK-PLAN.md",
+      "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+      "bytes": 15173,
+      "sha256": "82353efc6d49fa3f0632d4ee35aee11500a03255082cd4d9e305612011562ace",
+      "git_blob_sha1": "93f7091f572b81980def1ecd7c469d1c143e42bb",
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/02-RESULT-CONTRACT.json",
+      "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+      "bytes": 7673,
+      "sha256": "1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da",
+      "git_blob_sha1": "8ed31b10a361e68d99cd35b5042314ec08a2ceb6",
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json",
+      "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+      "bytes": 6463,
+      "sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+      "git_blob_sha1": "154545d78a0f218a9d4222da30f9d93adf9f92a0",
+      "read_as_text_only": true
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/GO-SCOPE.md",
+      "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+      "bytes": 2554,
+      "sha256": "746189cb7f62cc4d2ce2d0aef461fb6fbe42665aba7acb8e83c46ae057f188c1",
+      "git_blob_sha1": "a7fa67eafbb1adc83210b3e24df461343d8e4950",
+      "read_as_text_only": true
+    }
+  ],
+  "runtime_definition_equivalence_note": "Observed native pg_get_functiondef hashes are preserved from the one authorized read. The repository source files below explain contracts; source text presence alone does not establish native authority or full installed-body equivalence for an unobserved routine.",
+  "structural_findings": [
+    {
+      "id": "DIRECT_NATIVE_CALL_BLOCKED",
+      "evidence": "functions metadata: execute_v1/assert_history_v1/tx_queue_cas_v1/tx_queue_claim_v1/tx_queue_mutate_v1 postgres_execute=false; jobs tables postgres_update=false; membership set=false,inherit=false,admin=true,grantor=supabase_admin.",
+      "conclusion": "The observed direct postgres path is not a proven permitted native mutation route. ADMIN membership is not SET/INHERIT permission. An unobserved existing protected owner bridge is not assumed absent or usable."
+    },
+    {
+      "id": "EXPIRED_STANDARD_MUTATION",
+      "source_path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "function": "official_v3_jobs_private.tx_queue_mutate_v1",
+      "evidence": "complete/fail returns superseded when the current lease expiresAt <= observed; settled_failure disposition requires token.",
+      "conclusion": "A normal complete/fail against the old expired lease is not a demonstrated retirement mechanism; do not recreate or reuse secret tokens."
+    },
+    {
+      "id": "DEV_GRANT_PATH_EXCLUDED",
+      "source_path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-owner-retirement-v6.CANDIDATE-ROLLBACK.sql",
+      "evidence": "The Dev example grants SET membership, executes SET LOCAL ROLE, creates jobs-owned helper functions and grants their execution before restoring membership.",
+      "conclusion": "This is a pattern for exact selection/preservation only; its authority setup must not be copied into this Production package."
+    },
+    {
+      "id": "OWNER_TEMPLATE_NOT_CYCLE12_AUTHORITY",
+      "source_path": "scripts/db/official-truth-v3-background-guard-1/parts/owner.sql",
+      "evidence": "Original recovery_jobs_v1/close_jobs_v1 contracts target first-attempt counts1/2; actual Cycle12 counts13/38 differ.",
+      "conclusion": "The template cannot be presumed a ready Cycle12 bridge. The actual installed public retire definition is pinned but underlying ready Cycle12 mutation authority remains unproven."
+    }
+  ]
+}

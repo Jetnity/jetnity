@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "package_id": "PROD_CHDE_CYCLE12_BOUND_WRITE_PREPARATION_20261122",
+  "prepared_at": "2026-11-22T13:09:18.421251+00:00",
+  "status": "BOUND_OFFLINE_SPECIFICATION_ONLY_NOT_READY_FOR_INSTALLATION",
+  "source_read_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "preparation_scope": "Evaluate the already authorized single Cycle12 read and prepare exact target/contract/validation/rollback artifacts. No executable SQL or runtime action.",
+  "runtime_observation_at": "2026-11-22T13:02:06.758776+00:00",
+  "files": [
+    {
+      "path": "TARGET_BINDINGS.json",
+      "bytes": 39673,
+      "sha256": "36494fc109487795b622e5257e0762c5d4ba265ebb28600f45dffeb7f76518b5",
+      "git_blob_sha1": "d70faffb61e8f26b06d4d45765dc27ca2bc6e589"
+    },
+    {
+      "path": "SOURCE_PROVENANCE.json",
+      "bytes": 7323,
+      "sha256": "9f2b5cfcf5f4d08bd1f8349c8b10d3849b84690d907e78d93062543224a71192",
+      "git_blob_sha1": "069b930b5ea8a5fca82bf115923a8878538c3ebd"
+    },
+    {
+      "path": "WRITE_SPEC.md",
+      "bytes": 8833,
+      "sha256": "888a5cd309202d9d6a190e2ce40a0b3b101a96f54e5fe96a65bcd055f8db7611",
+      "git_blob_sha1": "6e4491119f9bff679d23afcda56b53f08f9d236e"
+    },
+    {
+      "path": "NATIVE_VALIDATION_PLAN.md",
+      "bytes": 7479,
+      "sha256": "43d57cd363f9c50151a44bac155eda4510269fa747ad3a3f75d8e38bddd3a13a",
+      "git_blob_sha1": "6a64b8592dd077353ded3a6c6cc0c5da02699e6f"
+    },
+    {
+      "path": "ROLLBACK_SPEC.md",
+      "bytes": 3141,
+      "sha256": "210ef6f9aa2e2a4a589ead34f43e707b597cca94b472acf86cde87ee52728e5b",
+      "git_blob_sha1": "2c0cd102a6763ca39bc01ef8cfb32b3ca7df4de4"
+    }
+  ],
+  "executable_files": [],
+  "new_queries_by_preparer": 0,
+  "sql_or_runtime_tests_by_preparer": 0,
+  "dev_or_production_writes": 0,
+  "owner_actions": 0,
+  "installation_ready": false,
+  "native_authority_proven": false,
+  "native_validation_complete": false,
+  "owner_aal2_closure_authorized": false,
+  "restart_authorized": false,
+  "unresolved_gates": [
+    "Existing permitted native Cycle12 closure authority without new rights or SET ROLE.",
+    "Native test and independent review of exact closure/receipt/catalog/default-closed dispatch behavior.",
+    "Fully bound final rehearsal/install/readback/rollback files and their own Go.",
+    "Genuine current Owner/AAL2 closure operation and independent confirmation.",
+    "Original503 cause/current native path sufficient for separately authorized one-cycle restart."
+  ],
+  "validation_performed": [
+    "Known input marker and selected required correlations checked offline.",
+    "Repository source bytes matched pinned Git/SHA-256 evidence; three additional immutable GitHub source files byte-verified.",
+    "JSON syntax, UTF-8 bytes and all artifact SHA-256 computed."
+  ],
+  "validation_not_claimed": [
+    "No SQL parser or PostgreSQL execution.",
+    "No native authority success.",
+    "No Owner session or AAL2 observation.",
+    "No installation/closure/restart/customer availability."
+  ],
+  "self_hash": "Excluded; reported in SHA256SUMS and delivery receipt."
+}
