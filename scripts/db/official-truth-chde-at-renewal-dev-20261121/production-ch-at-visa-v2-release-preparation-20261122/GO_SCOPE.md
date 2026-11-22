@@ -1,0 +1,12 @@
+# CH→AT — künftige eigenständige Production-Freigabe (Go-Grenze)
+
+**Dieses Paket ist `PREPARED_ONLY`, nicht ausführungsreif, nicht freigegeben.**
+
+1. **Nur bereits freigegebene Dev-Phase:** amtliche Quellenquali, Owner/MA1 Dev-Rev2, BG1 v9–v12, native positive/negative Dev-Abnahme und natürlicher automatischer Quellenlauf. Alles nur Dev `yfvbxvijcorffwxbxahl`; keine Wiederverwendung der Dev-Ownerquittung in Production.
+2. **Production-Preflight zunächst gesondert autorisieren:** nur genau `00-PRODUCTION-PREFLIGHT.READONLY.sql`, unter `BEGIN ... READ ONLY` mit `ROLLBACK` und festem neuen Go. Keine zusätzliche Abfrage/Wiederholung ohne neues Go. Aktueller Production-Parent, Rollen/ACL/RLS und geänderte Objekte dürfen nur aus frischem einmalig gelesenem Ergebnis abgeleitet werden.
+3. **Anschließend neu gebundenes Installationspaket:** ausführbare `PROBE-ROLLBACK.sql`, `INSTALL-COMMIT.sql`, `POSTCOMMIT.READONLY.sql` und geschützte `ROLLBACK.sql` mit tatsächlichen SHA-256 und unabhängigem PG17-/CI-Nachweis. Alles *zunächst* prüffähig und geschlossen; keine Änderung an `CH→DE`-Zyklus12, HTTP-v4-Allocator, Owner/MFA/Passkeys, Rollen/Schlüsseln oder Preisen.
+4. **Eigenes explizites Production-Go des Inhabers** auf den dann exakt gebundenen SHA-256 und die Abfolge. Das hier dokumentierte Dev-Go autorisiert keine Production-Installation, nicht einmal einen Testread.
+5. **Nach Installation getrennte echte Production-Owner/AAL2-Methodenfreigabe** für nur CH→AT/Visa/gewöhnlichen gültigen Schweizer Reisepass/direkte Einreise; danach frischer natürlicher BG1-Proof, automatischer amtlicher Quellenlauf, append-only Fakt und echter `anon`/Browser-Readback. Ohne alle Belege weiter `derzeit nicht verfügbar`.
+6. **Wiederanlauf CH→DE ist ausgeschlossen**; dafür existiert ein eigener unerledigter schmaler Vertrag. Die für Österreich geprüfte BMEIA-Rohfassung bleibt technisch `changed`, fachlich nur in der ausgewiesenen engen CH→AT-Visumregel neutral.
+
+**Nächste Benutzerentscheidung:** Noch kein Production-Go erbeten. Der technisch sichere nächste Schritt ist nach dem vollständigen Dev-Nachweis die eindeutige Production-Read-only-Preflight-Freigabe auf Dateiname und SHA-256. Erst danach können tatsächliche INSTALL-/ROLLBACK-SHA-256 gebunden werden.
