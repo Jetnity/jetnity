@@ -22,3 +22,18 @@
 | AT16 | Atomare Installationsprobe vollständig ROLLBACK; echter COMMIT-Readback mit exakten Hashes; getesteter, separater fail-closed Rücknahmeweg; CH→DE-Zyklus12 und Scheduler weiterhin blockiert |
 
 **Status:** AT01–AT16 sind künftige Production-Gates, *nicht* pauschal PASS. Dev besitzt bereits enge native Negativ- und BG1-Belege; die echten Production-Schritte sind ausstehend. Ein fehlender Beleg darf niemals als Skip=PASS gezählt werden.
+
+
+## CH→AT Production-V1-Adapter: zusätzliche Native-/CoS-Abnahmekategorien
+
+Die im alten Abschnitt AT01–AT16 aufgeführten vollständigen **Production**-Gates bleiben weiterhin **nicht** als durchweg PASS markiert. Neu nachgewiesen ist nur der native Dev-PG17-V1-Layout-Fixture-Pfad:
+
+- **PG17-60 SOURCE/MA1/ISSUER/VISITOR: PASS** — drei amtliche Dev-Originalbodies mit exaktem SHA, ausschließlich Owner-Dev-MA1 Rev2/Epoch2, ein CH→AT-Fakt, drei offizielle Links, IN/DE gesperrt, Duplicate-Fact-Replay verweigert, neue geänderte Source sofort fail-closed, unveränderliche Quelle; vollständiges `ROLLBACK`. Erst reservierten PostgreSQL-Bezeichner und danach den mehrdeutigen Source-JOIN korrigiert; **finale Datei PASS**.
+- **PG17-61 ROLLBACK: PASS** — simulierte Production-V1-Rücknahme behält V1- und V2-Historie/Altcorns/Quellen/Fakt, deaktiviert nur neue V2-Cron, CH/IN `unavailable`, neuer Issuer `0`, V6-Predecessor-Digest verbunden, vollständiges `ROLLBACK`.
+- **PG17-62 BG1-Compiler: PASS** — fünf BG1/Guard/catalog-/require-Funktionen aus den Production-V1-Snapshot-Definitionen namespace-gemappt und nativ kompiliert; keine echten Live-Dev-Guard-Funktionen überschrieben. **Nicht** gleichzusetzen mit tatsächlichem BG1-Vollproof nach dem installierten V5-Cron auf vollständiger Production-V1-Topologie.
+- **PG17-63 IMMUTABLE BASELINE: PASS** — V5+V6 einmalig bootstrap-initialisiert, beide nach erster Initialisierung unveränderlich, vier Mutationstests mit SQLSTATE P7905 abgelehnt. V6 ist an V5-Hash gebunden, ROLLBACK.
+- **Repo-Exact-Body:** `30`/ `31` und `32`/`33` wurden bytegenau bis auf abschliessendes `ROLLBACK` bzw. `COMMIT` verglichen; Installationskörper `10`+Guardkörper `20` vollständig in `30` vorhanden. V1-Originaltabellen werden nicht ersetzt. Die historische HTTP-ID-v4-Transportmetadatenbindung wurde so korrigiert, dass v4 gegen den **eingefrorenen v4-Katalog** geprüft bleibt und die neue V2-Cron erst in v5/6 attestiert wird.
+- **Dev-Nachread:** 22.11.2026 22:30:10 UTC: alle drei disposable Fixture-Schemas nicht mehr vorhanden; Dev-BG1 Gen2451 mit Incident=Resume; Dev-v12-Katalog unverändert exakt; Methode Rev2.
+- **Noch BLOCKED:** End-to-End exakt ausführbare `30`/`31`/`32`/`33` gegen *identische* Production-V1-BG1-v4-Daten und echten Cron-`catalog_status`, unabhängiger Chief-of-Staff-Review, aktuelle Production-Quellen- und BG1-**Datenwerte** (ein Katalog-Metadatenread von 21:03 UTC ist kein aktueller Lauf), tatsächliche Production Owner/AAL2-Rev2-UI-Auswahl. Keine falschen Positivflags für andere 49 Pässe.
+
+**Release-Verdict: `CHIEF_OF_STAFF_REVIEW_READY / INSTALL_GO_HOLD`.** Nicht vor CoS-/vollständigem BG1-Nativ-Gate und explizitem Installations-Go ausführen.
