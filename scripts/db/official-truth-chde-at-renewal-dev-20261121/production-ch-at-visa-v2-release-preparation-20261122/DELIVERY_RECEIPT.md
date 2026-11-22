@@ -1,14 +1,14 @@
-# Externe Paketprüfsumme — CH→AT Production PREPARED ONLY
+# CH→AT — Paketidentität nach einmaligem Production-Leseversuch (22.11.2026)
 
-**Keine Production-Abfrage, keine Production-Installation, kein COMMIT-Go.**
-Die 14 im `MANIFEST.json` genannten Dateien sind einzeln erneut aus GitHub im bestehenden Featurezweig gelesen, bytegenau in einer separaten **Dev-only READ ONLY/ROLLBACK**-Hashprüfung nachgerechnet und mit `SHA256SUMS` und Manifest verglichen. **14/14 stimmen überein**.
+**Status: BLOCKED_SCHEMA_MISMATCH_NO_INSTALL_GO, keine Installation.** Die am 22.11.2026 vom Product Owner einmalig genehmigte Production-Leseabfrage `00-PRODUCTION-PREFLIGHT.READONLY.sql` (SHA-256 `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`) wurde **genau einmal** gegen `qscbgcdmivbbnzrcyegn` versucht, scheiterte mit SQLSTATE **42P01**, weil `official_v3_at_private.whole_originals_v2` in Production fehlt, und lieferte **keinen vollständigen Katalog**. Keine Wiederholung, kein Production-Schreiben, keine Rollen-/Methoden-/Auth-/Cron-/BG1-Änderung.
 
-- Manifest `MANIFEST.json` SHA-256: `2ebacfbd01ea8f4349d4e6b435ef6fcf219852536ce2fb23826a1391230e93a9` (5491 Bytes).
-- Checksum-Liste `SHA256SUMS` SHA-256: `0e794bfa7c725f606c3cf85c2b16ab78a438a22f445973d4a33bf27314891922` (2655 Bytes).
-- `00-PRODUCTION-PREFLIGHT.READONLY.sql` SHA-256: `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`.
-- `40-PRODUCTION-POSTCOMMIT.READONLY.sql` SHA-256: `8b7d5f287f6bce9b733f1b564f61f86cf96cc9306c95e469701dca97741a2e84`.
-- `50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql` SHA-256: `f6462240e13df799080bb85b8e684662f9f5d9d83012da64977c2d05075d75f6`.
-- `ROLLBACK_PLAN.md` SHA-256: `cde17e31a9d35bdc08e6a46b85e9e1c1124a9766ecd47ecd23575609704dc695`.
-- Dev-v12-Installationsreferenz (nicht für Production ausführbar) SHA-256: `35083e5b631f55fa96041137924f693da18865ea8d18f12d7727816924c21436`.
+**Paketidentitäten**, im bestehenden GitHub-Featurezweig nachgeholt, aus vollständigen gelesenen UTF-8-Inhalten durch `sha256(convert_to(...,'UTF8'))` in **Supabase Dev, BEGIN READ ONLY + ROLLBACK** berechnet:
+- `MANIFEST.json`: **16** gehashte Quelldateien, 7'028 UTF-8-Bytes, SHA-256 `274b5b2c14e7cc5d6bf67ddf844b13c825d49e1efbd0b17606f477516ee9bd07`; Manifest selbst nicht Bestandteil des eigenen Hashinventars (kein Zirkelschluss).
+- `SHA256SUMS`: **16** Einträge, 3'077 UTF-8-Bytes, SHA-256 `3e97b309d463c4c2cb329855d41621a1867c0c2f811f38dc58d193c8add818e9`; Reihenfolge und Werte entsprechen exakt den Manifest-Einträgen.
+- Neuer, **nicht ausgeführter** Production-Katalognachfolger `01-PRODUCTION-CATALOG-V2.READONLY.sql`: SHA-256 `c495cef4f5fb37d3e28e326ce81ed21b2e878d535070fcdecdace2425c03aa22`. Die neue Datei wurde ausschliesslich **in Dev** schema-tolerant unter `READ ONLY`+`ROLLBACK` geprüft, nicht Production.
+- Aktualisierte spätere `40-PRODUCTION-POSTCOMMIT.READONLY.sql`: SHA-256 `40b94e195f18f31e9e34c1b4214b3a0fc0f050dd58b08b3d7c6ff16565791d74`.
+- Aktualisierter `ROLLBACK_PLAN.md`: SHA-256 `09e15dea73a7801372f39f91044a276da680a6abea0e9f658fb74913a9ba8798`; **kein ausführbares Production-Rollback-SQL** vorhanden.
 
-**Gegenstand und Grenze:** Dies ist eine unabhängige *Dateiidentitäts*-Bestätigung und kein Production-Schema-, Rollen-, Kunden- oder Rollback-Abnahmelauf. Es gibt keine ausführbare Production-COMMIT-/Rollback-Datei, da der erforderliche aktuelle Production-Parent nur über eine **separat zu genehmigende** genau gebundene Read-only-Prüfung festgestellt werden darf. Ein späterer Installer bekommt eigene neue SHA-256 und eigene QA/GO; Dev-/BG1-/AAL2-Quittungen werden nicht nach Production übertragen.
+**Unabhängige Kontrolle:** Die 16 Quelldateien wurden auf dem Branch aus GitHub gelesen, ihre Bytes in einem einzigen read-only Dev-PG17-Hashlauf nachgerechnet und als Manifest plus `SHA256SUMS` festgeschrieben. Die Summenliste wurde danach nochmals mit dem Manifest verglichen.
+
+**STOP:** Dies belegt nur die Dateiidentitäten und den fehlgeschlagenen Production-V1-Katalogversuch. Die **heute installierten Production-BG1-Parent-/Funktions-/Rollendefinitionen wurden nicht vollständig ausgelesen**; deshalb sind `INSTALL-COMMIT.sql` und eine gleichermassen real gebundene `ROLLBACK.sql` für Production noch nicht seriös herstellbar. Ein **NEUES separates einmaliges Production-READONLY-Go** exakt für die Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` (SHA oben) ist die noch fehlende Voraussetzung. Ein spätere Produktionsinstallation braucht danach eigene neue exakte Probe-/COMMIT-/Rollback-/Readback-SHA256, CI/nativen Review und nochmals ausdrücklich eigenes Production-Installations-Go. CH→DE Cycle12 bleibt separat gesperrt.
