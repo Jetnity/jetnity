@@ -48,9 +48,32 @@ BEGIN
   OR (SELECT count(*) FROM official_v3_at_production_private.first_originals_v1)<>3
   OR (SELECT count(*) FROM official_v3_at_production_private.source_pins_v1 p
     JOIN official_v3_at_production_private.first_originals_v1 o USING(source_id)
-    WHERE p.research_only AND NOT p.source_qualified AND o.raw_sha=p.original_sha
+    WHERE p.research_only AND NOT p.source_qualified
       AND o.raw_bytes=p.original_bytes AND encode(sha256(o.raw_body),'hex')=o.raw_sha
-      AND NOT o.legal_source_approved AND NOT o.customer_rule_approved)<>3
+      AND NOT o.legal_source_approved AND NOT o.customer_rule_approved
+      AND (
+        -- BMI originals must stay byte-identical and strictly unchanged.
+        (p.source_id IN ('bmi-visa-nationality-matrix','bmi-general-entry')
+          AND o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+        OR
+        -- The historic BMEIA original may legitimately differ only in the
+        -- 19 theme asset timestamps, as accepted by the existing V1 collector.
+        -- Recompute the pinned canonical checksum: never silently relabel
+        -- a changed rule, update historical source bytes, or publish a fact.
+        (p.source_id='bmeia-bern-how-to-apply'
+          AND p.normalization='bmeia-theme-assets-v1'
+          AND p.canonical_sha='b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
+          AND (
+            (o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+            OR
+            (o.source_state='unchanged_asset_version_only'
+              AND (SELECT count(*) FROM regexp_matches(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")','g'))=19
+              AND encode(sha256(convert_to(regexp_replace(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")',
+                    E'\\1TIMESTAMP\\2','g'),'UTF8')),'hex')=p.canonical_sha)
+          ))
+      ))<>3
   OR NOT EXISTS(SELECT 1 FROM official_v3_at_production_private.source_pins_v1
     WHERE source_id='bmi-visa-nationality-matrix' AND original_sha=
       'fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778'
