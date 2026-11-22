@@ -1,0 +1,29 @@
+{
+  "schema": "jetnity-production-operational-read-intent-v1",
+  "prepared_at_utc": "2026-11-22T11:54:52.217Z",
+  "file": "02-operational.READONLY.sql",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "binding": {
+    "bytes": 21288,
+    "sha256": "262de69ee78b9d55e9ef15f5560653c417f92ca220793bf672e103bf3105545c"
+  },
+  "current_owner_authorization": "Danke. Bitte jetzt einen frischen Nachread: Ist BG1 wieder verfügbar mit neuem natürlichen Vollbeleg? Gibt es eindeutige IDs ab 1236 und erfolgreiche AT-HTTP200/Collector-Belege, und ist CH→DE korrekt abgeschlossen? Nichts ändern, nur lesen. Wenn etwas fehlt, sag mir die Ursache und den nächsten Schritt. AT bleibt «derzeit nicht verfügbar». Bericht höchstens fünf Zeilen.",
+  "source_commit": "fc30e1601e55445450a5cfb84098822ed0fc4fae",
+  "read_only": true,
+  "transaction_end": "ROLLBACK",
+  "statement_timeout_seconds": 15,
+  "transaction_timeout_seconds": 20,
+  "output_bytes_cap": 65536,
+  "at_batches_cap": 3,
+  "at_rows_cap": 9,
+  "cron_rows_cap": 15,
+  "chde_cycles_cap": 5,
+  "chde_dispatches_cap": 32,
+  "native_parser_test_performed": false,
+  "independent_static_reviews_passed": [
+    "/root/at_nachread_schema",
+    "/root/chde_nachread_schema"
+  ],
+  "no_installer_or_fence_executed": true,
+  "no_http_source_publisher_owner_actions": true
+}

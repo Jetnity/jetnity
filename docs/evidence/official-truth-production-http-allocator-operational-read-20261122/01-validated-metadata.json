@@ -1,0 +1,206 @@
+{
+  "role": "postgres",
+  "result": "PROD_OPERATIONAL_READ_METADATA",
+  "database": "postgres",
+  "functions": [
+    {
+      "signature": "jetnity_prod_import_scheduler.tick_v1()",
+      "function_oid": "jetnity_prod_import_scheduler.tick_v1()",
+      "definition_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe"
+    },
+    {
+      "signature": "official_v3_at_production_private.collect_v1()",
+      "function_oid": "official_v3_at_production_private.collect_v1()",
+      "definition_sha256": "3e681172f296ba3c4202dbf8108552201f613f8de345e6c339288f8680683422"
+    },
+    {
+      "signature": "official_v3_at_production_private.enqueue_v1()",
+      "function_oid": "official_v3_at_production_private.enqueue_v1()",
+      "definition_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90"
+    },
+    {
+      "signature": "official_v3_guard_private.audit_v1()",
+      "function_oid": "official_v3_guard_private.audit_v1()",
+      "definition_sha256": "b6f56232b998dea7868bf9767f8e9012282a43512a1e5fd622c9824e62fd2fff"
+    },
+    {
+      "signature": "official_v3_guard_private.catalog_status_v1()",
+      "function_oid": "official_v3_guard_private.catalog_status_v1()",
+      "definition_sha256": "d80009f6db49c88fb446ee7ce140abafbfe35005e07db453b83b10c068964adf"
+    },
+    {
+      "signature": "public.official_v3_guard_alarm_status_v1()",
+      "function_oid": "public.official_v3_guard_alarm_status_v1()",
+      "definition_sha256": "484b9519d6fa2129c9fbaa916732fb93423368c4bedafcf448534f53b942239b"
+    }
+  ],
+  "read_only": true,
+  "relations": [
+    {
+      "name": "cron.job_run_details",
+      "columns": [
+        {
+          "type": "bigint",
+          "column": "jobid"
+        },
+        {
+          "type": "bigint",
+          "column": "runid"
+        },
+        {
+          "type": "integer",
+          "column": "job_pid"
+        },
+        {
+          "type": "text",
+          "column": "database"
+        },
+        {
+          "type": "text",
+          "column": "username"
+        },
+        {
+          "type": "text",
+          "column": "command"
+        },
+        {
+          "type": "text",
+          "column": "status"
+        },
+        {
+          "type": "text",
+          "column": "return_message"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "start_time"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "end_time"
+        }
+      ],
+      "relation_oid": "cron.job_run_details",
+      "select_allowed": true
+    },
+    {
+      "name": "official_v3_guard_private.incidents_v1",
+      "columns": [
+        {
+          "type": "bigint",
+          "column": "generation"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "due_at"
+        },
+        {
+          "type": "text",
+          "column": "reason"
+        },
+        {
+          "type": "bigint",
+          "column": "baseline_generation"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "detected_at"
+        }
+      ],
+      "relation_oid": "official_v3_guard_private.incidents_v1",
+      "select_allowed": true
+    },
+    {
+      "name": "official_v3_guard_private.runs_v1",
+      "columns": [
+        {
+          "type": "timestamp with time zone",
+          "column": "due_at"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "started_at"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "proof_started_at"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "finished_at"
+        },
+        {
+          "type": "text",
+          "column": "outcome"
+        },
+        {
+          "type": "bigint",
+          "column": "generation"
+        },
+        {
+          "type": "bigint",
+          "column": "incident_generation"
+        }
+      ],
+      "relation_oid": "official_v3_guard_private.runs_v1",
+      "select_allowed": true
+    },
+    {
+      "name": "official_v3_guard_private.state_v1",
+      "columns": [
+        {
+          "type": "boolean",
+          "column": "singleton"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "installed_at"
+        },
+        {
+          "type": "bigint",
+          "column": "generation"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "last_due"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "last_started"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "last_proof_started"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "last_finished"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "valid_until"
+        },
+        {
+          "type": "bigint",
+          "column": "incident_generation"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "incident_at"
+        },
+        {
+          "type": "bigint",
+          "column": "resumed_generation"
+        },
+        {
+          "type": "timestamp with time zone",
+          "column": "last_observed"
+        }
+      ],
+      "relation_oid": "official_v3_guard_private.state_v1",
+      "select_allowed": true
+    }
+  ],
+  "observed_at": "2026-11-22T11:47:39.744477+00:00",
+  "installed_successor_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4"
+}

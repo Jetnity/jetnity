@@ -1,0 +1,150 @@
+{
+  "schema": "jetnity-production-http-operational-read-independent-runtime-review-v1",
+  "reviewed_at_utc": "2026-11-22T11:59:17.732019+00:00",
+  "reviewer": "/root/at_nachread_schema",
+  "review_scope": "Local receipt and exact SQL analysis only; this review performs zero database or operational calls.",
+  "source_commit": "fc30e1601e55445450a5cfb84098822ed0fc4fae",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "verdict": "READ_EVIDENCE_VERIFIED_BG1_AND_AT_TRANSPORT_PASS_CHDE_BLOCKED_AT_QUALIFICATION_CLOSED",
+  "input_bindings": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-operational-read-20261122/01-metadata.READONLY.sql",
+      "bytes": 2715,
+      "sha256": "95956b80a111dec4dec90bed235c928315324d8017d7a580e67e6e9406d0524c"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-execution.json",
+      "bytes": 6170,
+      "sha256": "1f5e0a7fdc6f3f7dea2745354396ccbc4e9a36967ef287e0c5459171e1ba0f41"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-operational-read-20261122/02-operational.READONLY.sql",
+      "bytes": 21288,
+      "sha256": "262de69ee78b9d55e9ef15f5560653c417f92ca220793bf672e103bf3105545c"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-execution.json",
+      "bytes": 35876,
+      "sha256": "0ffe519ef1ee9c56c0c79d6e0478598149219638e1d93f66c1dff237313610b8"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-invocation-intent.json",
+      "bytes": 1313,
+      "sha256": "8b48960996b404520bbad58e61a5d47c9cd99071def8bae31bbdaa4e6dd8ebb3"
+    }
+  ],
+  "validation_findings": [],
+  "execution_checks": {
+    "both_raw_envelopes_decoded_independently": true,
+    "both_known_result_shapes_and_successful_completions": true,
+    "sql_hashes_and_bytes_equal_receipt_bindings": true,
+    "both_transactions_repeatable_read_read_only_terminal_rollback": true,
+    "sql_static_review_no_durable_write_or_network_source_publisher_owner_call": true,
+    "only_pinned_reading_guard_status_routines_called": true,
+    "installed_successor_pin_matches_in_both_reads": true,
+    "metadata_01_required_select_access_present": true,
+    "response_output_within_65536_byte_cap": true,
+    "reviewed_receipt_count": 2,
+    "connector_elapsed_ms": {
+      "01": 826,
+      "02": 2069
+    },
+    "old_installation_five_minute_call_window_not_reused_for_new_owner_authorized_read_request": true
+  },
+  "bg1": {
+    "observed_at_utc": "2026-11-22T11:54:53.145099+00:00",
+    "observed_at_zurich": "2026-11-22T12:54:53.145099+01:00",
+    "status": "current",
+    "generation": 1775,
+    "minimum_generation": 1759,
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "fresh_complete_state_run_count": 1,
+    "natural_cron_correlations": 1,
+    "proof": {
+      "due_at": "2026-11-22T11:50:00+00:00",
+      "outcome": "complete",
+      "generation": 1775,
+      "started_at": "2026-11-22T11:50:00.036341+00:00",
+      "finished_at": "2026-11-22T11:50:05.498673+00:00",
+      "proof_started_at": "2026-11-22T11:50:00.039728+00:00",
+      "incident_generation": 108
+    },
+    "valid_until": "2026-11-22T11:55:30+00:00",
+    "incident_generation": 108,
+    "resumed_generation": 108,
+    "natural_cron_match": {
+      "jobid": 2,
+      "runid": 25733,
+      "status": "succeeded",
+      "database": "postgres",
+      "end_time": "2026-11-22T11:50:05.502344+00:00",
+      "username": "postgres",
+      "start_time": "2026-11-22T11:50:00.036307+00:00",
+      "command_sha256": "8ae86f70caca6fcf890eb66de93873b0f13c49bd689e8c8cd6993c4bef561863",
+      "return_message": "1 row"
+    }
+  },
+  "allocator": {
+    "own_sequence": {
+      "is_called": true,
+      "last_value": "1241"
+    },
+    "logged": true,
+    "logical_requests": 6,
+    "distinct_logical_ids": 6,
+    "min_id": 1236,
+    "max_id": 1241,
+    "collision_groups": 0,
+    "new_requests_below_floor": 0,
+    "producer": "AT",
+    "retained_response_rows": 6,
+    "queue_rows": 0,
+    "meaning": "Real allocations and retained responses for six AT requests; no CH-DE request after installation is observed."
+  },
+  "at": {
+    "verified_postinstallation_batches": [
+      601,
+      602
+    ],
+    "verified_http200_collector_rows": 6,
+    "each_batch_has_all_three_sources": true,
+    "strict_false_timeout_and_null_error": true,
+    "actual_response_hash_and_size_equal_collector": true,
+    "request_response_collector_times_correlated": true,
+    "bmi_sources_per_batch": "two unchanged_exact",
+    "bmeia_status": "changed",
+    "bmeia_actual_body_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+    "bmeia_bytes": 172428,
+    "old_failed_batch220_preserved": true,
+    "source_qualified_count": 0,
+    "legal_source_approved_count": 0,
+    "customer_rule_approved_count": 0,
+    "new_facts": 0,
+    "unexpired_facts": 0,
+    "display": "derzeit nicht verfügbar"
+  },
+  "ch_de": {
+    "scheduler_status": "operator_review_required",
+    "latest_cycle": 12,
+    "cycle_state": "blocked",
+    "last_status": "retry_budget_exhausted",
+    "historical_failed_resume503_count": 8,
+    "historical_exhaustion_finished_at": "2026-11-16T07:53:00.019315+00:00",
+    "new_dispatches": 0,
+    "new_successful_finishes": 0,
+    "current_public_projections": 0,
+    "expired_research_lease_count": 1,
+    "immediate_block_cause_confirmed": "The previously exhausted cycle remains blocked and the scheduler requires operator review; installation did not reset or resume it.",
+    "deeper_503_root_cause": "Not established by this read. The aggregate expired lease is not joined to cycle12 and is not a proven cause of its historical failures."
+  },
+  "limitations": [
+    "current is true at the explicit observation time and within the returned proof lease, not a perpetual availability guarantee.",
+    "Body hashes were computed inside the authorized SQL; this local review validates their exact reported equality and the pinned collector logic, and does not fetch official source bodies anew.",
+    "changed is a successful transport/collection result, not a substantive legal conclusion or permission to publish.",
+    "The original-body self-hash checks are valid; this query does not independently perform a new legal/original-to-pin qualification.",
+    "Historical CH-DE503 response bodies are not retained in the read; the exact earlier upstream cause and lease-to-cycle relationship are not proven.",
+    "The receipts and READ ONLY SQL support no operational writes by these two calls; this review is not a service-wide access-log audit of other sessions or natural cron work.",
+    "No forced retry, audit, source run, lease reset, Owner resume, fence, role change, login/2FA, cost or publication occurred in this review."
+  ],
+  "next_step": "Preserve the read evidence; separately prepare the supported CH-DE blocked-cycle/expired-lease review and any controlled recovery for the Owner, and retain the AT changed-source qualification gate."
+}

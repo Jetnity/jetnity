@@ -1,0 +1,155 @@
+{
+  "schema": "jetnity-production-operational-read-manifest-v1",
+  "source_commit": "fc30e1601e55445450a5cfb84098822ed0fc4fae",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "current_owner_scope": "Fresh BG1/IDs/AT-HTTP200-Collector/CHDE after-read with cause and next step; nothing changed. AT remains currently unavailable.",
+  "status": "READ_COMPLETE_BG1_AND_AT_TRANSPORT_PASS_CHDE_BLOCKED_AT_QUALIFICATION_PENDING",
+  "actual_production_calls": 2,
+  "read_only_transactions": 2,
+  "successful_terminal_rollbacks": 2,
+  "production_writes": 0,
+  "http_source_publisher_audit_owner_calls": 0,
+  "installer_or_fence_calls": 0,
+  "roles_privileges_login_2fa_changes": 0,
+  "extra_source_fetches": 0,
+  "read01_observed_at": "2026-11-22T11:47:39.744477+00:00",
+  "read02_observed_at": "2026-11-22T11:54:53.145099+00:00",
+  "connector_elapsed_ms": {
+    "01": 826,
+    "02": 2069
+  },
+  "whole_preparation_interval_is_not_native_database_runtime": true,
+  "read01_statement_seconds": 10,
+  "read02_statement_seconds": 15,
+  "per_transaction_seconds": 20,
+  "read02_output_cap_bytes": 65536,
+  "natural_bg1_generation": 1775,
+  "natural_bg1_complete_proof_count": 1,
+  "natural_bg1_cron_correlations": 1,
+  "observed_unique_http_ids": [
+    "1236",
+    "1237",
+    "1238",
+    "1239",
+    "1240",
+    "1241"
+  ],
+  "successful_at_batches": [
+    601,
+    602
+  ],
+  "successful_at_source_receipts": 6,
+  "bmeia_current_body_matches_prior_substantive_review": true,
+  "bmeia_rule_change_in_that_review": false,
+  "at_source_qualification_granted": false,
+  "chde_blocked_cycle": 12,
+  "chde_block_reason": "retry_budget_exhausted",
+  "chde_scheduler_status": "operator_review_required",
+  "chde_new_completion_proven": false,
+  "chde_production_specific_successor_still_to_prepare_and_test": true,
+  "native_offline_sql_parser_performed": false,
+  "independent_static_and_runtime_review_performed": true,
+  "inputs": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_BMEIA_FACHENTSCHEIDUNG_2026-11-21.md",
+      "bytes": 10926,
+      "sha256": "dbb17194292869de862fdd2d4ebc1723a5730d31dbc417b483dd61ce0f4c5ec8",
+      "git_blob_sha": "47f1cbe2311471b671497b8e78e4f7378a321527"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-input-metadata.json",
+      "bytes": 2196,
+      "sha256": "3ed65b283ead3cf886f5a15387d6df749156164191bd19996ad4e116542b1f66",
+      "git_blob_sha": "455992e860a715566fc3b42a5309a66e66e50dea"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_REVIEW_PACKAGE_2026-11-21.md",
+      "bytes": 35447,
+      "sha256": "2509e2a589a7b983180817f25b4722d257cf3b7a65c34c7e9df4942686db27ba",
+      "git_blob_sha": "f571a1bcfc74b83956a9c0a38a0c3ffdb5461943"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-installation-20261122/runtime-result.json",
+      "bytes": 3794,
+      "sha256": "d68de4ea6b8cd7d28572ad131ebaa86ba4b7da82c36352ecf5566744d2f49486",
+      "git_blob_sha": "d5eedf44181d295d908a80473ebd000648efee53"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "git_blob_sha": "3ac617711d0adefb9aa28a2754cda5d70be1838c"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 223548,
+      "sha256": "097bf4cc5bb94b6a5810a9d87528f0df89c2dcc47045e0cfe7b1ca81917a71aa",
+      "git_blob_sha": "8c7f5022625781527e11db121c22f1df720ecb95"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_OPERATIONAL_READ_2026-11-22.md",
+      "bytes": 9776,
+      "sha256": "1491039aa185a0034e87cba5f939f88620f9b09b9373608132eb0a77ba282ef3",
+      "git_blob_sha": "f0d544a7bfc9664146f719ac9f3388cd73669d7d"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-execution.json",
+      "bytes": 6170,
+      "sha256": "1f5e0a7fdc6f3f7dea2745354396ccbc4e9a36967ef287e0c5459171e1ba0f41",
+      "git_blob_sha": "139be85bd97a9df69f38b0c81923847b89c2b8b3"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-validated-metadata.json",
+      "bytes": 5546,
+      "sha256": "f3481330f3fe7ef40cbd3a88bda2206b36e7579cd17d99cc17a33413b5a351c9",
+      "git_blob_sha": "c5bb8bf55c1fd0a1e3108f0e019586ae5d3b8e1d"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-execution.json",
+      "bytes": 35876,
+      "sha256": "0ffe519ef1ee9c56c0c79d6e0478598149219638e1d93f66c1dff237313610b8",
+      "git_blob_sha": "fcdd294e481916677d2e742648dea36698d1c8c7"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-invocation-intent.json",
+      "bytes": 1313,
+      "sha256": "8b48960996b404520bbad58e61a5d47c9cd99071def8bae31bbdaa4e6dd8ebb3",
+      "git_blob_sha": "34b237cbfd3d40cc2aba2a35719990331fa8b7c9"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/independent-runtime-review.json",
+      "bytes": 7166,
+      "sha256": "6aa31021b869be64f7d61c4b98a6670d66e919394523f6fdea1bac808d18692e",
+      "git_blob_sha": "20f3aaf02e1f5836fc8d17150de52250d5695a7c"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/overall-plan-before-operational-read-fc30e160.md",
+      "bytes": 219858,
+      "sha256": "b814ef5fc89c56b29d2e2bb475c2755a33437fda129c440c957ab325639c1396",
+      "git_blob_sha": "3763e3d154013cc7b0f9aca9a5c5d3dc76dd7f8b"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/runtime-result.json",
+      "bytes": 41702,
+      "sha256": "f569e14e007e94447aa55c1406f2023ea9e5db705ac565406277e1936fa95cae",
+      "git_blob_sha": "c16a97e4e2bec2a655d55ff7a964ffebe039a540"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-operational-read-20261122/01-metadata.READONLY.sql",
+      "bytes": 2715,
+      "sha256": "95956b80a111dec4dec90bed235c928315324d8017d7a580e67e6e9406d0524c",
+      "git_blob_sha": "78898aceac17861388752a8856b24cd778b813b1"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-operational-read-20261122/02-operational.READONLY.sql",
+      "bytes": 21288,
+      "sha256": "262de69ee78b9d55e9ef15f5560653c417f92ca220793bf672e103bf3105545c",
+      "git_blob_sha": "43689b08f079243db35a0027416cb25aa208d89b"
+    }
+  ],
+  "self_hash_excluded_to_avoid_circular_binding": true,
+  "mutable_documents_verify_at_final_delivery_commit": true
+}
