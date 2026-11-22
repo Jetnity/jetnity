@@ -31,3 +31,5 @@
 - Kein Production-Read, kein Production-Commit, keine neue Owner/AAL2-Handlung, keine Publikation in Production. Für ein Live-Go bleibt der separate aktuelle Production-Katalogread mit neuem eigenen Go erforderlich.
 
 **Ergebnis: `NATURAL_AFTER_77_MINUTES_PASS; UNINTERRUPTED_60_MINUTES_NOT_YET_PROVEN`.**
+
+**Nächster rein lesender Dauercheck:** Ein einmaliger Dev-only-Nachtest ist für **22.11.2026, 21:25 Zürich / 20:25 UTC** angelegt (Automation `6b03413fe09c8191976840973c4c9ec4`). Er darf weder Production abfragen noch Fakten/Methoden oder BG1 verändern. Er prüft, ob nach mindestens einer Stunde seit Fakt2 die Quellen- und Fakt-Historie ohne neue Lücke fortgelaufen ist und die echte `anon`-Kundenausgabe weiterhin korrekt ist.
