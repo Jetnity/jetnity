@@ -1,5 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
+> **22.11.2026 — aktuelle Owner-Reihenfolge:** Zuerst [Main-CI nach #1274 reparieren und den neuen Main-Lauf prüfen](docs/JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md); danach hier keine weiteren Merges, bis sowohl #1240 als auch #1272 gemergt sind. Der Fix betrifft nur den isolierten Test-Harness. Ältere datierte Statusblöcke bleiben historische Evidence.
+
 <!-- OFFICIAL_TRUTH_PRODUCT_V3_CURRENT_BEGIN -->
 
 **12. November 2026 — M04 R41: tatsächlicher Main-Lauf fehlgeschlagen; unmittelbarer Review-Fix in derselben Generation4-Sitzung.** Main ist `4313049c2a8c276f2a63101dda8df996327230e0`, Tree `5a331f1a8846e8dc07a3e0a6de033fcf8da7400f`. #1190 ist gemergt, sein eigener [Push-Lauf 43150141948 / #4117 / Versuch 1](https://github.com/Jetnity/jetnity/actions/runs/43150141948) ist **FAILURE**. M04 erreicht 24 vollständige Prüfgruppen; Gruppe 25 überschreitet das feste 240-Sekunden-Budget beim 64. Start, sechs weitere Gruppen werden nicht ausgeführt. Die übrigen sechs CI-Jobs sind erfolgreich; Core und Aggregate schlagen fehl. Sauberes Cleanup ersetzt die fehlenden Prüfungen nicht. [Vollständige Root-Fehlerevidence](https://github.com/Jetnity/jetnity/pull/1190#issuecomment-6814174877).
