@@ -118,6 +118,8 @@ test('KI: fester Fremdtermin und strukturierte Verbindung werden nicht automatis
     (r: Reisegraph) => { r.days.at(-1)!.items[0]!.startsOn = '2026-09-18' },
     (r: Reisegraph) => { r.days.at(-1)!.items[0]!.connectionRef = 'FLIGHT-999' },
     (r: Reisegraph) => { r.days.at(-1)!.items[0]!.provider = 'airline' },
+    (r: Reisegraph) => { r.days.at(-1)!.items[0]!.priceCurrency = 'EUR' },
+    (r: Reisegraph) => { r.days.at(-1)!.items[0]!.originName = 'Wien' },
   ]) {
     const reise = reiseMitRueckflug()
     mutate(reise)
