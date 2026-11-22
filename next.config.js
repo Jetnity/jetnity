@@ -34,7 +34,10 @@ const PAGE_CSP = [
   "form-action 'self'",
   "frame-ancestors 'self'",
   "script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com https://widget.getyourguide.com https://www.viator.com https://app.privacybee.io",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  // The official widgets inject widget.css and imprint-widget.css into the
+  // light DOM. Without this exact host the browser drops the sheet, and the
+  // vendor's inline icon backgrounds stretch into full-width bars. No wildcard.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://app.privacybee.io",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
   `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://app.privacybee.io`,
