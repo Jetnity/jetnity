@@ -1,0 +1,52 @@
+{
+  "task": "DEV_CRON_GUARD_VALIDATION_20261122_CONFIRMED_CONTINUATION",
+  "user_authorization": "User is present and confirms the Supabase dialog now; Dev only; run all14 groups and parallel test, report SHA256. No Production steps.",
+  "target": "yfvbxvijcorffwxbxahl",
+  "source_commit": "e28207ee9ce67b4faef428b92d30bb0f245fa91c",
+  "manifest_sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1",
+  "sql_files": [
+    {
+      "file": "00-setup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "bytes": 11098
+    },
+    {
+      "file": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "bytes": 31897
+    },
+    {
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788
+    },
+    {
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "bytes": 13811
+    },
+    {
+      "file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181
+    }
+  ],
+  "required_order": [
+    "00",
+    "10",
+    "20 and 21 concurrently",
+    "30 even after failure",
+    "independent Root post-commit read"
+  ],
+  "first_new_call": "00-setup-private-fixture.DEV-COMMIT.sql",
+  "prior_setup_attempts": 2,
+  "prior_outcomes": [
+    "UNKNOWN_RESPONSE_LOST",
+    "PROVIDER_CONFIRMATION_EXPIRED"
+  ],
+  "no_prior_attempt_reinterpreted_as_success": true,
+  "production_calls_authorized": false,
+  "existing_roles_or_privileges_changes_authorized": false,
+  "no_http_source_owner_login_secret_or_cost_action": true,
+  "status": "READY_TO_REQUEST_PROVIDER_CONFIRMATION"
+}

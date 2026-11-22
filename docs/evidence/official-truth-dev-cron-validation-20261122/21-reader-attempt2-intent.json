@@ -1,0 +1,14 @@
+{
+  "status": "PREPARED_NOT_EXECUTED_WAITING_FOR_ROOT_GO",
+  "target": "yfvbxvijcorffwxbxahl",
+  "actor": "verify_dev_receipts",
+  "transport_change": "Separate agent executor for the exact original reader; no SQL change",
+  "sql_file": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/21-concurrent-reader.DEV-ROLLBACK.sql",
+  "sql_sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+  "sql_bytes": 13811,
+  "attempt": 2,
+  "max_calls": 1,
+  "result_file": "21-reader-attempt2-execution.json",
+  "production_access": false,
+  "permission_or_role_changes": false
+}

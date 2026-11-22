@@ -44,35 +44,15 @@ Die Korrektur fordert weder `supabase_admin`, zusätzliche Cron-Rechte, eine Own
 
 ## Dev-Nachweise und Paketentscheidung
 
-**Die vollständige Dev-Abnahme ist noch offen; das Paket ist derzeit nicht bereit für eine Production-Rehearsal-Freigabe.**
+**Aktualisierung 22.11.2026, 02:35:47 Zürich: Die 14 nativen Prüfgruppen und der echte Zwei-Sitzungs-Paralleltest sind bestanden.** Die vorherige Blockierung durch die abgelaufene technische Bestätigung ist durch neue tatsächliche Dev-Belege abgelöst. Der damalige Bericht bleibt [bytegleich archiviert](evidence/official-truth-dev-cron-validation-20261122/cron-correction-report-before-dev-validation-e28207ee.md); verlorene und abgelaufene Aufrufe werden nicht nachträglich als erfolgreich ausgegeben.
 
-| Dev-Schritt | Tatsächlicher Status |
-| --- | --- |
-| Echte SELECT-/ACCESS-SHARE-Rechtekante auf Dev | Bestanden; starke Cron-Rechte fehlen auch dort |
-| Erster Aufruf der Setup-Datei00 | Originalantwort verloren, weil die Ausführungsruntime ersetzt wurde; Ergebnis UNKNOWN |
-| Lesende Klärung vor Fortsetzung | Fixture fehlt, keine passende aktive Sitzung, vollständiger v8-Katalogvergleich stimmt |
-| Zweiter, getrennt protokollierter Aufruf derselben Setup-Datei00 | Supabase-Ausführungsbestätigung abgelaufen; kein SQL-Ergebnis |
-| 14 native Prüfgruppen in Datei 10 | Vorbereitet und statisch gegengeprüft, nicht ausgeführt |
-| Zwei-Sitzungs-Test mit Writer/Reader in20/21 | Vorbereitet und statisch gegengeprüft, nicht ausgeführt |
-| Finale unabhängige Dev-Nachprüfung | 22.11.2026,01:00:48.645764 UTC / 02:00:48.645764 Zürich: Fixture fehlt, keine passende aktive Testsitzung, v8-Katalog exakt |
+Nach der Bestätigung durch Sasa wurde Setup00 mit exakt dem bisherigen Hash ausgeführt. Datei10 lieferte 14/14 native PASS und ROLLBACK. Der erste Parallelversuch scheiterte an beiden Handshake-Fristen und bleibt als Fehler erhalten. Derselbe Writer/Reader mit denselben Zeitgrenzen bestand danach über zwei getrennte Ausführungssitzungen: tatsächlicher fremder Writer erkannt, vom gemeinsamen Core verweigert, Rollback beobachtet und fünf exakte Fixturezeilen wieder akzeptiert. Keine SQL-Datei wurde zum Bestehen gelockert.
 
-Die letzte Beobachtung zeigt außerdem 43 Rollen, 40 Mitgliedschaften, 11 Cron-Jobs, 71 historische Fakten und drei Originale. Diese Anzahlen ersetzen weder vollständige Daten-/ACL-Gleichheit noch einen aktuellen öffentlichen BG1- oder Frischenachweis. Der v8-Kataloghash lautet `12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a`. Weil keine Fixture vorhanden ist, wird kein unnötiger DROP ausgeführt.
+Cleanup30 entfernte ausschließlich die beiden Testtabellen und ihre private Namespace mit COMMIT. Ein unabhängiger READ ONLY-/ROLLBACK-Aufruf um 01:35:47.649164 UTC bestätigte ihre Abwesenheit, den exakten bestehenden v8-Katalog, unveränderte Cron-Rechte sowie null aktive Testsitzungen und null Testlocks. Rollen, ACLs, reale Cron-Jobs, Fakten und Originale wurden nicht geändert. Die in Datei10 gesicherten Sequenz-/Guardzustände wurden dort vollständig erhalten; natürliche spätere Cronfortschritte sind keine behauptete globale Zählergleichheit.
 
-### Konkreter technischer Blocker
+Der [vollständige Dev-Ergebnisbericht](OFFICIAL_TRUTH_DEV_CRON_VALIDATION_RESULT_2026-11-22.md), das [native Gesamtergebnis](evidence/official-truth-dev-cron-validation-20261122/runtime-result.json) und das [neue Ergebnismanifest](evidence/official-truth-dev-cron-validation-20261122/execution-manifest.json) enthalten 14 Einzelgruppen, Rohantworten, Parallelfehler/-erfolg, Cleanup, unabhängige Reviews und alle Hashbindungen. Das ursprüngliche Dev-Testmanifest `f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1` und das nachfolgende Production-Manifest bleiben unverändert eingefrorene Vorbereitungspakete; die Ausführungsbelege ergänzen deren damaligen Status getrennt.
 
-Der Supabase-Connector antwortete auf den zweiten Setup-Aufruf mit `isError=true`, `status=expired`, `error_code=INVALID_ARGUMENT` und dem Hinweis, dass die Ausführungsbestätigung nach zehn Minuten abgelaufen sei. Das ist **kein nativer SQL-Fehler und kein Beleg für ein Laufzeit- oder Rechteproblem des Testskripts**. Das gesamte gemessene Connector-Wartefenster von 2.089.903 ms ist ausdrücklich keine Datenbanklaufzeit. Die erste verlorene Antwort wird dadurch nicht nachträglich erfunden.
-
-Die bereits erteilte Dev-Freigabe bleibt gültig. Zum Fortsetzen muss die separate Supabase-Ausführungsbestätigung für die konkreten Dev-Testabfragen im Dialog angenommen werden. Es wird weder ein neues Cron-Recht noch eine Rollen-/Login-/2FA-Änderung benötigt. Es gibt keinen Umweg über eine andere Rolle oder eine persistente Migration, um diese Bestätigung zu umgehen.
-
-[Zweiter Originalaufruf](evidence/official-truth-production-http-allocator-cron-correction-20261122/03d-dev-setup-continuation-execution.json), [finaler Dev-Nachread](evidence/official-truth-production-http-allocator-cron-correction-20261122/03e-dev-final-read-execution.json), [unabhängiger Blockerreview](evidence/official-truth-production-http-allocator-cron-correction-20261122/dev-confirmation-blocker-independent-review.json), [gesamte Laufzeitauswertung](evidence/official-truth-production-http-allocator-cron-correction-20261122/runtime-interpretation.json).
-
-### Konkret vorbereitete Dev-Prüfung
-
-Die private Testtabelle enthält exakt die fünf unabhängig gelesenen Production-Zeilen einschließlich ihrer vollständigen nativen Zeilenhashes. Der gemeinsame Cron-Core wird lediglich auf den festen Fixture-Relationsnamen abgebildet. Die neue dauerhafte Cron-Katalogexpression ist bytegleich an diesen Core gebunden. Es wird keine Production-Installation als Dev-Test ausgegeben: Dev besitzt bereits v8 und pg_net0.20.4; die Production-Vorgängerkette und pg_net0.19.5 sind anders.
-
-Die 14 Gruppen prüfen unveränderte Konfiguration; geänderten Befehl, Ziel und Active-Status; gelöschten Job; neuen fremden Job; doppelten relevanten Namen; NULL-Befehl; Zeilen- und Bytegrenzen; UPDATE mit anschließend gleicher Konfiguration und anderer Zeilenversion; bereits vorhandenen fremden Job; späte Drift ohne Übernahme in die gespeicherte Baseline; NULL, fehlende und falsch geformte Capture-Werte. Jeder Negativfall muss seinen ursprünglichen Zustand wiederherstellen. Der gesonderte Paralleltest verwendet zwei gebundene Backend-PIDs, transaktionale Handshake-Locks, einen echten uncommitteten Writer und die tatsächliche native Verweigerung samt Wiederannahme nach dessen ROLLBACK.
-
-Das [Dev-Testmanifest](../scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/MANIFEST.json) hat SHA-256 `f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1`. Die als nächstes konkret zu bestätigende Setup-Datei00 hat SHA-256 `4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805`. Danach folgen10, parallel20/21, die eng begrenzte Cleanup-Datei30 und ein unabhängiger READ ONLY-Nachread. Alle fünf Dateien sind gehasht; keine enthält GRANT, REVOKE oder SET ROLE als ausgeführte Anweisung.
+**Reichweite:** Der bytegebundene gemeinsame Cron-Core wurde auf einer eigenen Dev-Fixture mit den fünf archivierten Originalzeilen geprüft; nicht der gesamte Production-Installer oder die gesamte Production-Katalogfunktion. Die letzte Fortsetzung hatte ausschließlich Dev-Freigabe und enthält **keinen Production-Aufruf**, auch keinen Read. Die historische Production-Nachprüfung oben bleibt ein separat datierter Beleg. Für jede zukünftige Production-Rehearsal oder Installation fehlt weiterhin das neue, ausdrückliche, datei- und hashgebundene Go.
 
 ### Neue Production-Dateien und SHA-256
 

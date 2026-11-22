@@ -1,0 +1,21 @@
+{
+  "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+  "target": "yfvbxvijcorffwxbxahl",
+  "sql_sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+  "sql_bytes": 13811,
+  "started_at": "2026-11-22T01:27:21.830Z",
+  "returned_at": "2026-11-22T01:27:43.755Z",
+  "connector_elapsed_ms": 21925,
+  "raw": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  P7998: DEV_CRON_CONCURRENT_WRITER_NOT_OBSERVED\\nCONTEXT:  PL/pgSQL function inline_code_block line 14 at RAISE\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

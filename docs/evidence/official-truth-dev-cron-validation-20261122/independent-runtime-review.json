@@ -1,0 +1,122 @@
+{
+  "reviewer": "cron_runtime_review",
+  "review_type": "Independent local review of frozen SQL and raw provider receipts; reviewer executed no database calls.",
+  "status": "DEV_FOURTEEN_GROUPS_PARALLEL_ROLLBACK_AND_CLEANUP_REVIEW_PASS",
+  "reviewed_at_utc": "2026-11-22T01:37:18.987130+00:00",
+  "target": "yfvbxvijcorffwxbxahl",
+  "frozen_dev_manifest_sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1",
+  "frozen_sql_files_verified": {
+    "00-setup-private-fixture.DEV-COMMIT.sql": {
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "bytes": 11098
+    },
+    "10-shared-core-rehearsal.DEV-ROLLBACK.sql": {
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "bytes": 31897
+    },
+    "20-concurrent-writer.DEV-ROLLBACK.sql": {
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788
+    },
+    "21-concurrent-reader.DEV-ROLLBACK.sql": {
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "bytes": 13811
+    },
+    "30-cleanup-private-fixture.DEV-COMMIT.sql": {
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181
+    }
+  },
+  "shared_core": {
+    "source_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+    "mapped_sha256": "008cdadd544275cf0ab3c236229191fa78ee5b0af5cfaf4c527a74da5a984058",
+    "literal_relation_replacement_count": 9,
+    "exact_mapped_core_once_in_rehearsal_and_reader": true
+  },
+  "fourteen_group_result": {
+    "passed_count": 14,
+    "passed_tests": [
+      "changed_active",
+      "changed_command",
+      "changed_target",
+      "deleted_job",
+      "duplicate_relevant_name",
+      "late_drift_never_adopted_by_sealed_fixture",
+      "new_unrelated_job",
+      "null_command",
+      "null_missing_and_malformed_capture_fail_closed",
+      "row_bytes_cap",
+      "row_cap_129",
+      "unchanged_positive",
+      "unrelated_existing_job_preserved",
+      "update_restore_rowversion_negative"
+    ],
+    "raw_envelope_matches_root_validation": true,
+    "final_assertion_checks_existing_state_guard_state_and_both_sequence_counters": true,
+    "explicit_terminal_rollback": true
+  },
+  "parallel_result": {
+    "successful_attempt": 2,
+    "unchanged_original_sql": true,
+    "separate_execution_sessions": true,
+    "native_other_pid_lock_and_mutex_binding_enforced": true,
+    "exact_core_writer_refusal_verified_before_ack": true,
+    "reader_observed_writer_lock_release_and_exact_original_fixture_rows": true,
+    "both_successful_scripts_end_in_rollback": true,
+    "raw_envelopes_match_root_validation": true,
+    "first_attempt_failures_preserved": [
+      {
+        "receipt": "20-writer-execution.json",
+        "sha256": "dfe4331ab7a2a18fa5f4fe572e8447e58a041ae6215f544aac6fa115c55ecbed",
+        "observed_error": "DEV_CRON_READER_HANDSHAKE_NOT_OBSERVED"
+      },
+      {
+        "receipt": "21-reader-execution.json",
+        "sha256": "57cee4f0c001fd17d36e2048720f60bf21615763efd2952638c9764a99d67a55",
+        "observed_error": "DEV_CRON_CONCURRENT_WRITER_NOT_OBSERVED"
+      }
+    ],
+    "first_attempt_root_cause": "Timing is consistent with serialized invocation, but no backend-start/PID receipt proves the precise service layer responsible."
+  },
+  "cleanup_result": {
+    "cleanup_receipt_reports_fixture_present_and_existing_state_preserved": true,
+    "cleanup_script_ends_in_commit": true,
+    "independent_readonly_script_sha256": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e",
+    "independent_postcommit_observed_at_utc": "2026-11-22 01:35:47.649164+00",
+    "fixture_namespace_and_exact_tables_absent": true,
+    "existing_v8_exact": true,
+    "cron_rights_unchanged": true,
+    "active_test_sessions": 0,
+    "remaining_test_locks": 0,
+    "catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a"
+  },
+  "scope": {
+    "all_reviewed_execution_targets_are_dev": true,
+    "production_steps_in_these_receipts": false,
+    "existing_role_or_privilege_changes_in_reviewed_sql": false,
+    "real_cron_dml_in_reviewed_sql": false,
+    "http_or_publisher_actions_in_reviewed_sql": false
+  },
+  "limitations": [
+    "This is fixture-scoped native Dev validation, not execution of the Production installer or the full new Production catalog function.",
+    "ACCESS SHARE is compatible with writes; the tested guard detects the observed concurrent writer and specified configuration/row-version drift, not every possible concurrent history or a physical Cron freeze.",
+    "The failed first parallel attempt remains a failure; attempt2 independently supplies the successful native concurrency proof.",
+    "Cleanup receipt alone reports state before COMMIT; the separate READ ONLY receipt supplies post-COMMIT absence and v8 integrity evidence.",
+    "Connector elapsed time includes approval and transport; the cleanup 78719ms does not measure database transaction runtime.",
+    "Current catalog equality and the post-cleanup observation do not grant Production installation or release approval."
+  ],
+  "evidence_sha256": {
+    "00-setup-execution.json": "238f8cb8dee26de25d2473aa03bb9f5aa38caa1c7caf9263b5a511cfd272655f",
+    "00-setup-validation.json": "7887a72c8bb7f442a04c60ff7155c89abd7ae5a7b545dffe3083b5045dbcd25f",
+    "10-rehearsal-execution.json": "050367c292e2ef82b785b70af0329fa19ee6ab6149e0659a4e68e5eab8ccb14d",
+    "10-rehearsal-validation.json": "3d21f38f66069e0257c1728f9d509dd5d392eecd9fbfa58ba9d08a00ad8a761f",
+    "20-writer-execution.json": "dfe4331ab7a2a18fa5f4fe572e8447e58a041ae6215f544aac6fa115c55ecbed",
+    "21-reader-execution.json": "57cee4f0c001fd17d36e2048720f60bf21615763efd2952638c9764a99d67a55",
+    "20-writer-attempt2-execution.json": "05044052cf48a099eb9c65ccaf959af814a88ef78fda085e91622209f1c87353",
+    "21-reader-attempt2-execution.json": "e6e6d8293f36353ac1590dfb9a0c5c09987081502d7314bbd41d47648fd81971",
+    "20-21-parallel-attempt2-validation.json": "322816b516366ec4508c6225d2126aa5d3646aa395010626852f5ba6b36ea0c8",
+    "30-cleanup-execution.json": "92a820fe61bc639c0f6d2bbc2ae5a9375bfbdba6dd335f8ca5b60aaca5b22e75",
+    "40-postcleanup-read-execution.json": "fe80a189eaa4838e9a32338ed3ddf53d7c1fb2eed7ad1607432d97f825ab3255",
+    "40-postcleanup.READONLY.sql": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e"
+  }
+}

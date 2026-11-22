@@ -1,0 +1,14 @@
+{
+  "stage": "native_two_session_parallel_test",
+  "target": "yfvbxvijcorffwxbxahl",
+  "files": [
+    "20-concurrent-writer.DEV-ROLLBACK.sql",
+    "21-concurrent-reader.DEV-ROLLBACK.sql"
+  ],
+  "writer_sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+  "reader_sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+  "required_result": "Native writer refusal while ACCESS SHARE succeeds, bound other PID + transactional handshake, then actual writer rollback and recovery; both sessions ROLLBACK",
+  "real_cron_mutations": false,
+  "existing_role_or_privilege_changes": false,
+  "production_steps": false
+}

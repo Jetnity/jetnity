@@ -1,0 +1,282 @@
+{
+  "status": "SCOPED_NATIVE_DEV_CRON_VALIDATION_PASS_WITH_INDEPENDENT_POSTCOMMIT_CLEANUP_PROOF",
+  "reviewer": "verify_dev_receipts",
+  "reviewed_at_utc": "2026-11-22T01:37:50.058758+00:00",
+  "target": "yfvbxvijcorffwxbxahl",
+  "source_files": [
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/authorization-and-intent.json",
+      "bytes": 1916,
+      "sha256": "982f4d649bf8466fe5d65cc5ba1f4688ed44649e2d5f914b94a80575bb8e024a"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/00-setup-execution.json",
+      "bytes": 1348,
+      "sha256": "238f8cb8dee26de25d2473aa03bb9f5aa38caa1c7caf9263b5a511cfd272655f"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/10-rehearsal-execution.json",
+      "bytes": 1854,
+      "sha256": "050367c292e2ef82b785b70af0329fa19ee6ab6149e0659a4e68e5eab8ccb14d"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-21-parallel-intent.json",
+      "bytes": 658,
+      "sha256": "9830b8f37208d8876646328c09d8bcc250be6f633ecc03c3e43c90ad1b7ceb41"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-writer-execution.json",
+      "bytes": 712,
+      "sha256": "dfe4331ab7a2a18fa5f4fe572e8447e58a041ae6215f544aac6fa115c55ecbed"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/21-reader-execution.json",
+      "bytes": 714,
+      "sha256": "57cee4f0c001fd17d36e2048720f60bf21615763efd2952638c9764a99d67a55"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-writer-attempt2-execution.json",
+      "bytes": 1191,
+      "sha256": "05044052cf48a099eb9c65ccaf959af814a88ef78fda085e91622209f1c87353"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/21-reader-attempt2-execution.json",
+      "bytes": 1347,
+      "sha256": "e6e6d8293f36353ac1590dfb9a0c5c09987081502d7314bbd41d47648fd81971"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/30-cleanup-execution.json",
+      "bytes": 1339,
+      "sha256": "92a820fe61bc639c0f6d2bbc2ae5a9375bfbdba6dd335f8ca5b60aaca5b22e75"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/40-postcleanup-read-execution.json",
+      "bytes": 1530,
+      "sha256": "fe80a189eaa4838e9a32338ed3ddf53d7c1fb2eed7ad1607432d97f825ab3255"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/40-postcleanup.READONLY.sql",
+      "bytes": 3552,
+      "sha256": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e"
+    }
+  ],
+  "frozen_test_manifest": {
+    "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/MANIFEST.json",
+    "bytes": 3074,
+    "sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1"
+  },
+  "frozen_test_sql": [
+    {
+      "file": "00-setup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "bytes": 11098
+    },
+    {
+      "file": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "bytes": 31897
+    },
+    {
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788
+    },
+    {
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "bytes": 13811
+    },
+    {
+      "file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181
+    }
+  ],
+  "all_frozen_sql_hashes_still_match": true,
+  "manifest_not_executed_value_is_preserved_preparation_time_status": true,
+  "new_runtime_results_are_separate_evidence_not_edits_to_historical_manifest": true,
+  "setup": {
+    "receipt": {
+      "result": "DEV_CRON_PRIVATE_FIXTURE_SETUP_READY",
+      "exact_five_archived_rows": true,
+      "existing_state_and_rights_unchanged": true,
+      "production_accessed": false,
+      "real_cron_changed": false,
+      "http_started": false
+    },
+    "timing": {
+      "client_start": "2026-11-22T01:25:53.400Z",
+      "client_end": "2026-11-22T01:26:11.657Z",
+      "caller_elapsed_ms": 18257
+    },
+    "third_known_setup_attempt": true,
+    "actual_successful_return_with_fixed_final_commit": true
+  },
+  "native_rehearsal": {
+    "receipt": {
+      "result": "DEV_CRON_SHARED_CORE_REHEARSAL_ROLLBACK_PASS",
+      "passed_tests": [
+        "changed_active",
+        "changed_command",
+        "changed_target",
+        "deleted_job",
+        "duplicate_relevant_name",
+        "late_drift_never_adopted_by_sealed_fixture",
+        "new_unrelated_job",
+        "null_command",
+        "null_missing_and_malformed_capture_fail_closed",
+        "row_bytes_cap",
+        "row_cap_129",
+        "unchanged_positive",
+        "unrelated_existing_job_preserved",
+        "update_restore_rowversion_negative"
+      ],
+      "passed_count": 14,
+      "live_v8_roles_acls_facts_originals_and_counters_preserved": true,
+      "production_installer_executed": false,
+      "real_cron_changed": false,
+      "http_started": false,
+      "physical_cron_freeze_proven": false,
+      "entire_concurrent_history_observed": false
+    },
+    "timing": {
+      "client_start": "2026-11-22T01:26:38.465Z",
+      "client_end": "2026-11-22T01:26:40.081Z",
+      "caller_elapsed_ms": 1616
+    },
+    "all_fourteen_named_groups_match_actual_sql": true,
+    "fixed_sql_ends_in_rollback": true
+  },
+  "first_parallel_attempt": {
+    "status": "FAILED_NOT_CONVERTED_TO_PASS",
+    "writer_timing": {
+      "client_start": "2026-11-22T01:27:21.830Z",
+      "client_end": "2026-11-22T01:27:32.717Z",
+      "caller_elapsed_ms": 10887
+    },
+    "reader_timing": {
+      "client_start": "2026-11-22T01:27:21.830Z",
+      "client_end": "2026-11-22T01:27:43.755Z",
+      "caller_elapsed_ms": 21925
+    },
+    "writer_sqlstate": "P7998",
+    "writer_message": "DEV_CRON_READER_HANDSHAKE_NOT_OBSERVED",
+    "reader_sqlstate": "P7998",
+    "reader_message": "DEV_CRON_CONCURRENT_WRITER_NOT_OBSERVED",
+    "same_client_start": true,
+    "return_separation_ms": 11038,
+    "assessment": "Consistent with calls reaching the database sequentially or without sufficient overlap; exact transport/provider cause is not measured.",
+    "distinct_backend_pids_or_server_start_times_returned": false,
+    "native_guard_algorithm_failure_proven": false
+  },
+  "second_parallel_attempt": {
+    "status": "ACTUAL_NATIVE_TWO_SESSION_REFUSAL_AND_RECOVERY_PASS",
+    "transport_change": "Root writer and agent reader invoked once each in separate executor calls; identical original SQL.",
+    "writer_timing": {
+      "client_start": "2026-11-22T01:33:05.741Z",
+      "client_end": "2026-11-22T01:33:06.733Z",
+      "caller_elapsed_ms": 992
+    },
+    "reader_timing": {
+      "client_start": "2026-11-22T01:33:04.731Z",
+      "client_end": "2026-11-22T01:33:06.708Z",
+      "caller_elapsed_ms": 1977
+    },
+    "writer_receipt": {
+      "result": "DEV_CRON_CONCURRENT_WRITER_OBSERVED_AND_ROLLED_BACK",
+      "committed": false,
+      "real_cron_changed": false,
+      "http_started": false
+    },
+    "reader_receipt": {
+      "result": "DEV_CRON_CONCURRENT_WRITER_REFUSAL_AND_RECOVERY_PASS",
+      "access_share_and_writer_were_concurrent": true,
+      "exact_core_refused_other_pid_writer": true,
+      "writer_rollback_observed": true,
+      "fixture_original_rows_restored": true,
+      "real_cron_changed": false,
+      "http_started": false,
+      "physical_cron_freeze_proven": false
+    },
+    "reader_verified_actual_other_pid_relation_lock_and_writer_mutex": true,
+    "writer_verified_reader_ack_and_reader_mutex_same_pid": true,
+    "reader_native_expected_exception": "P7998 / PROD_HTTP_CRON_WRITER_OBSERVED",
+    "reader_observed_writer_lock_release_and_rechecked_five_native_row_hashes": true,
+    "actual_overlap_is_established_by_sql_lock_assertions_not_only_client_timestamps": true,
+    "physical_cron_write_freeze_claimed": false,
+    "exact_original_parallel_failure_cause_proven_by_success": false
+  },
+  "cleanup_and_independent_postcommit_read": {
+    "status": "ACTUAL_CLEANUP_COMMIT_AND_SEPARATE_READ_ONLY_ABSENCE_PASS",
+    "cleanup_receipt": {
+      "result": "DEV_CRON_PRIVATE_FIXTURE_CLEANUP_READY_TO_COMMIT",
+      "fixture_was_present": true,
+      "exact_fixture_absent_before_commit": true,
+      "existing_state_and_rights_preserved": true,
+      "production_accessed": false,
+      "real_cron_changed": false,
+      "http_started": false
+    },
+    "cleanup_timing": {
+      "client_start": "2026-11-22T01:33:47.689Z",
+      "client_end": "2026-11-22T01:35:06.408Z",
+      "caller_elapsed_ms": 78719,
+      "timing_scope": "Caller envelope including any service confirmation; not a measured database statement runtime."
+    },
+    "cleanup_sql_ends_in_commit": true,
+    "cleanup_complete_tool_return_is_error": false,
+    "postcommit_read_receipt": {
+      "result": "DEV_CRON_POSTCLEANUP_INDEPENDENT_READONLY_PASS",
+      "observed_at_utc": "2026-11-22 01:35:47.649164+00",
+      "exact_dev_context": true,
+      "fixture_absent": true,
+      "existing_v8_exact": true,
+      "cron_rights_unchanged": true,
+      "active_test_sessions": 0,
+      "remaining_test_locks": 0,
+      "catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+      "read_only": true,
+      "production_accessed": false,
+      "http_started": false
+    },
+    "postcommit_read_timing": {
+      "client_start": "2026-11-22T01:35:46.947Z",
+      "client_end": "2026-11-22T01:35:47.704Z",
+      "caller_elapsed_ms": 757,
+      "timing_scope": "Caller envelope including any service confirmation; not a measured database statement runtime."
+    },
+    "postcommit_read_sql": {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/40-postcleanup.READONLY.sql",
+      "bytes": 3552,
+      "sha256": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e"
+    },
+    "independent_read_after_cleanup_return": true,
+    "no_fixture_namespace_tables_or_matching_active_sessions_or_advisory_locks_remain_at_observation": true,
+    "existing_dev_v8_protected_catalog_and_cron_select_only_rights_verified": true,
+    "catalog_sha_matches_pre_test_saved_context_reads": true,
+    "global_roles_acls_facts_originals_preservation_is_from_cleanup_exact_pre_post_comparison": true,
+    "final_read_alone_proves_global_role_or_fact_content_equality": false,
+    "public_bg1_current_status_claimed_by_this_final_read": false,
+    "overall_scoped_dev_acceptance_claimed": true,
+    "production_execution_readiness_or_authorization_claimed": false
+  },
+  "scope_limits": [
+    "Only the scoped Cron-protection core and exact durable Cron expression were tested through a fixed fixture mapping on actual Dev PG17.",
+    "The whole Production installer, full successor catalog, Production pg_net0.19.5 runtime and future Production changes are not validated by this scoped Dev proof.",
+    "No real cron.job DML, existing role/ACL changes, sequence advance, source/HTTP/publisher/Owner call was introduced by these test scripts.",
+    "Background production/Dev schedules outside these fixture scripts are not claimed to have stopped.",
+    "Granted RowExclusiveLock concurrency is tested, not every pending-lock or prepared-transaction mode.",
+    "Unobserved insertion-deletion ABA and changes after final observation remain outside the optimistic guard proof.",
+    "Positive AT source qualification and positive renewal remain open.",
+    "Earlier unknown/expired setup attempts and failed same-executor parallel attempts remain archived, never relabeled as successful."
+  ],
+  "reviewer_database_execution": {
+    "authorized_calls": 1,
+    "actual_calls": 1,
+    "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+    "target": "yfvbxvijcorffwxbxahl",
+    "production_calls": 0,
+    "further_calls_permitted_by_this_report": 0
+  },
+  "peer_review_note": "Additional message to at_source_guard for runtime evidence review was rejected by the agent thread limit; no new peer runtime review is claimed. Earlier static peer review remains in the frozen test package."
+}

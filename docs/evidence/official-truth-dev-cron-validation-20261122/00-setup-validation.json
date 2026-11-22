@@ -1,0 +1,16 @@
+{
+  "stage": "setup_result_validated",
+  "result": {
+    "result": "DEV_CRON_PRIVATE_FIXTURE_SETUP_READY",
+    "exact_five_archived_rows": true,
+    "existing_state_and_rights_unchanged": true,
+    "production_accessed": false,
+    "real_cron_changed": false,
+    "http_started": false
+  },
+  "original_sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+  "returned_at": "2026-11-22T01:26:11.657Z",
+  "interpretation": "Successful provider result for explicit setup COMMIT script; following rehearsal also independently verifies committed fixture shape and exact five-row pins.",
+  "next": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+  "production_steps": false
+}

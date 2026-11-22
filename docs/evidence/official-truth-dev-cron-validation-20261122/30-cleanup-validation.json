@@ -1,0 +1,27 @@
+{
+  "status": "EXACT_PRIVATE_FIXTURE_CLEANUP_AND_INDEPENDENT_READ_PASS",
+  "cleanup": {
+    "result": "DEV_CRON_PRIVATE_FIXTURE_CLEANUP_READY_TO_COMMIT",
+    "fixture_was_present": true,
+    "exact_fixture_absent_before_commit": true,
+    "existing_state_and_rights_preserved": true,
+    "production_accessed": false,
+    "real_cron_changed": false,
+    "http_started": false
+  },
+  "independent_postcommit_read": {
+    "result": "DEV_CRON_POSTCLEANUP_INDEPENDENT_READONLY_PASS",
+    "observed_at_utc": "2026-11-22 01:35:47.649164+00",
+    "exact_dev_context": true,
+    "fixture_absent": true,
+    "existing_v8_exact": true,
+    "cron_rights_unchanged": true,
+    "active_test_sessions": 0,
+    "remaining_test_locks": 0,
+    "catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+    "read_only": true,
+    "production_accessed": false,
+    "http_started": false
+  },
+  "before_commit_output_alone_was_not_used_as_durable_proof": true
+}

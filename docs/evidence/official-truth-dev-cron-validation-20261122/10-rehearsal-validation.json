@@ -1,0 +1,33 @@
+{
+  "stage": "fourteen_native_groups_validated",
+  "target": "yfvbxvijcorffwxbxahl",
+  "sql_sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+  "returned_at": "2026-11-22T01:26:40.081Z",
+  "result": {
+    "result": "DEV_CRON_SHARED_CORE_REHEARSAL_ROLLBACK_PASS",
+    "passed_tests": [
+      "changed_active",
+      "changed_command",
+      "changed_target",
+      "deleted_job",
+      "duplicate_relevant_name",
+      "late_drift_never_adopted_by_sealed_fixture",
+      "new_unrelated_job",
+      "null_command",
+      "null_missing_and_malformed_capture_fail_closed",
+      "row_bytes_cap",
+      "row_cap_129",
+      "unchanged_positive",
+      "unrelated_existing_job_preserved",
+      "update_restore_rowversion_negative"
+    ],
+    "passed_count": 14,
+    "live_v8_roles_acls_facts_originals_and_counters_preserved": true,
+    "production_installer_executed": false,
+    "real_cron_changed": false,
+    "http_started": false,
+    "physical_cron_freeze_proven": false,
+    "entire_concurrent_history_observed": false
+  },
+  "production_execution": false
+}

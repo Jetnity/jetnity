@@ -1,0 +1,9 @@
+{
+  "stage": "native_two_session_parallel_test_attempt2",
+  "target": "yfvbxvijcorffwxbxahl",
+  "invocation": "writer and reader through separate agent executors",
+  "sql_sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+  "unchanged_sql": true,
+  "production_steps": false,
+  "reason": "Attempt1 simultaneous client dispatch returned sequential-looking bounded handshake failures, no PASS claimed"
+}

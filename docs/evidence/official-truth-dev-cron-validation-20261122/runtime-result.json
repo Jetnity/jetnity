@@ -1,0 +1,226 @@
+{
+  "status": "DEV_CRON_GUARD_VALIDATION_PASS",
+  "observed_at_utc": "2026-11-22 01:35:47.649164+00",
+  "user_timezone": "Europe/Zurich",
+  "dev_project_ref": "yfvbxvijcorffwxbxahl",
+  "source_commit": "e28207ee9ce67b4faef428b92d30bb0f245fa91c",
+  "authorization": {
+    "latest_instruction": "Nur Dev, keine Production-Schritte. Danach alle 14 Prüfgruppen und den Paralleltest laufen lassen und Ergebnis mit SHA-256 melden.",
+    "provider_confirmation_succeeded_for_setup_and_cleanup": true,
+    "production_calls_in_this_continuation": 0,
+    "no_role_or_privilege_change": true
+  },
+  "frozen_inputs": {
+    "dev_manifest_sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1",
+    "prepared_production_manifest_sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+    "shared_core_sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79",
+    "mapped_core_sha256": "008cdadd544275cf0ab3c236229191fa78ee5b0af5cfaf4c527a74da5a984058",
+    "sql_files_unchanged": true,
+    "prepared_manifests_retain_historical_preparation_status": true
+  },
+  "setup": {
+    "result": {
+      "result": "DEV_CRON_PRIVATE_FIXTURE_SETUP_READY",
+      "exact_five_archived_rows": true,
+      "existing_state_and_rights_unchanged": true,
+      "production_accessed": false,
+      "real_cron_changed": false,
+      "http_started": false
+    },
+    "known_total_attempt": 3,
+    "previous_attempts_preserved": [
+      "UNKNOWN lost executor response",
+      "Provider confirmation expired; no SQL result"
+    ]
+  },
+  "fourteen_groups": {
+    "result": "DEV_CRON_SHARED_CORE_REHEARSAL_ROLLBACK_PASS",
+    "passed_tests": [
+      "changed_active",
+      "changed_command",
+      "changed_target",
+      "deleted_job",
+      "duplicate_relevant_name",
+      "late_drift_never_adopted_by_sealed_fixture",
+      "new_unrelated_job",
+      "null_command",
+      "null_missing_and_malformed_capture_fail_closed",
+      "row_bytes_cap",
+      "row_cap_129",
+      "unchanged_positive",
+      "unrelated_existing_job_preserved",
+      "update_restore_rowversion_negative"
+    ],
+    "passed_count": 14,
+    "live_v8_roles_acls_facts_originals_and_counters_preserved": true,
+    "production_installer_executed": false,
+    "real_cron_changed": false,
+    "http_started": false,
+    "physical_cron_freeze_proven": false,
+    "entire_concurrent_history_observed": false
+  },
+  "parallel": {
+    "status": "NATIVE_TWO_SESSION_PASS_ON_SECOND_INVOCATION",
+    "first_invocation": {
+      "writer_receipt": "20-writer-execution.json",
+      "reader_receipt": "21-reader-execution.json",
+      "both_failed": true,
+      "error_state": "P7998",
+      "writer_error": "DEV_CRON_READER_HANDSHAKE_NOT_OBSERVED",
+      "reader_error": "DEV_CRON_CONCURRENT_WRITER_NOT_OBSERVED",
+      "inference": "Elapsed response times fit serialized dispatch; provider serialization was not independently proved."
+    },
+    "second_invocation": {
+      "transport_change": "Separate executor sessions, same original SQL bytes and database time limits",
+      "writer_receipt": "20-writer-attempt2-execution.json",
+      "reader_receipt": "21-reader-attempt2-execution.json",
+      "writer": {
+        "result": "DEV_CRON_CONCURRENT_WRITER_OBSERVED_AND_ROLLED_BACK",
+        "committed": false,
+        "real_cron_changed": false,
+        "http_started": false
+      },
+      "reader": {
+        "result": "DEV_CRON_CONCURRENT_WRITER_REFUSAL_AND_RECOVERY_PASS",
+        "access_share_and_writer_were_concurrent": true,
+        "exact_core_refused_other_pid_writer": true,
+        "writer_rollback_observed": true,
+        "fixture_original_rows_restored": true,
+        "real_cron_changed": false,
+        "http_started": false,
+        "physical_cron_freeze_proven": false
+      },
+      "actual_other_backend_pid_and_transactional_handshake_asserted_in_sql": true,
+      "backend_pid_values_not_exported": true
+    }
+  },
+  "cleanup": {
+    "result": "DEV_CRON_PRIVATE_FIXTURE_CLEANUP_READY_TO_COMMIT",
+    "fixture_was_present": true,
+    "exact_fixture_absent_before_commit": true,
+    "existing_state_and_rights_preserved": true,
+    "production_accessed": false,
+    "real_cron_changed": false,
+    "http_started": false
+  },
+  "independent_postcleanup_read": {
+    "result": "DEV_CRON_POSTCLEANUP_INDEPENDENT_READONLY_PASS",
+    "observed_at_utc": "2026-11-22 01:35:47.649164+00",
+    "exact_dev_context": true,
+    "fixture_absent": true,
+    "existing_v8_exact": true,
+    "cron_rights_unchanged": true,
+    "active_test_sessions": 0,
+    "remaining_test_locks": 0,
+    "catalog_sha256": "12b69d7dec44160e611a01bedd87feaf6a17669b3f1f53b45f27239a71e3e83a",
+    "read_only": true,
+    "production_accessed": false,
+    "http_started": false
+  },
+  "preservation_scope": {
+    "full_existing_state_hashes_compared_to_before_fixture_in_cleanup": true,
+    "roles_memberships_explicit_acls_cron_facts_original_bytes_publisher_and_allocator_definitions_compared": true,
+    "live_v8_guard_state_and_own_and_legacy_counter_state_preserved_within_file10": true,
+    "independent_v8_catalog_exact_after_cleanup": true,
+    "no_sequence_value_equality_claim_across_natural_cron_progress": true
+  },
+  "execution_inventory": [
+    {
+      "stage": "confirmed_dev_setup",
+      "target": "yfvbxvijcorffwxbxahl",
+      "file": "00-setup-private-fixture.DEV-COMMIT.sql",
+      "sql_sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805",
+      "sql_bytes": 11098,
+      "attempt_in_this_continuation": 1,
+      "total_known_setup_attempts": 3,
+      "started_at": "2026-11-22T01:25:53.400Z",
+      "returned_at": "2026-11-22T01:26:11.657Z",
+      "connector_elapsed_ms": 18257,
+      "receipt": "00-setup-execution.json"
+    },
+    {
+      "stage": "dev_fourteen_group_rehearsal",
+      "target": "yfvbxvijcorffwxbxahl",
+      "file": "10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "sql_sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7",
+      "sql_bytes": 31897,
+      "started_at": "2026-11-22T01:26:38.465Z",
+      "returned_at": "2026-11-22T01:26:40.081Z",
+      "connector_elapsed_ms": 1616,
+      "receipt": "10-rehearsal-execution.json"
+    },
+    {
+      "target": "yfvbxvijcorffwxbxahl",
+      "stage": "writer_parallel_attempt2",
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "bytes": 6788,
+      "started_at_utc": "2026-11-22T01:33:05.741Z",
+      "ended_at_utc": "2026-11-22T01:33:06.733Z",
+      "connector_elapsed_ms": 992,
+      "receipt": "20-writer-attempt2-execution.json"
+    },
+    {
+      "file": "20-concurrent-writer.DEV-ROLLBACK.sql",
+      "target": "yfvbxvijcorffwxbxahl",
+      "sql_sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5",
+      "sql_bytes": 6788,
+      "started_at": "2026-11-22T01:27:21.830Z",
+      "returned_at": "2026-11-22T01:27:32.717Z",
+      "connector_elapsed_ms": 10887,
+      "receipt": "20-writer-execution.json"
+    },
+    {
+      "stage": "separate_agent_executor_reader_attempt2",
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "target": "yfvbxvijcorffwxbxahl",
+      "actor": "verify_dev_receipts",
+      "sql_sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "sql_bytes": 13811,
+      "started_at": "2026-11-22T01:33:04.731Z",
+      "returned_at": "2026-11-22T01:33:06.708Z",
+      "connector_elapsed_ms": 1977,
+      "receipt": "21-reader-attempt2-execution.json"
+    },
+    {
+      "file": "21-concurrent-reader.DEV-ROLLBACK.sql",
+      "target": "yfvbxvijcorffwxbxahl",
+      "sql_sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a",
+      "sql_bytes": 13811,
+      "started_at": "2026-11-22T01:27:21.830Z",
+      "returned_at": "2026-11-22T01:27:43.755Z",
+      "connector_elapsed_ms": 21925,
+      "receipt": "21-reader-execution.json"
+    },
+    {
+      "stage": "exact_private_fixture_cleanup",
+      "target": "yfvbxvijcorffwxbxahl",
+      "file": "30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b",
+      "bytes": 9181,
+      "started_at_utc": "2026-11-22T01:33:47.689Z",
+      "ended_at_utc": "2026-11-22T01:35:06.408Z",
+      "connector_elapsed_ms": 78719,
+      "receipt": "30-cleanup-execution.json"
+    },
+    {
+      "stage": "independent_postcleanup_readonly",
+      "target": "yfvbxvijcorffwxbxahl",
+      "file": "40-postcleanup.READONLY.sql",
+      "sha256": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e",
+      "bytes": 3552,
+      "started_at_utc": "2026-11-22T01:35:46.947Z",
+      "ended_at_utc": "2026-11-22T01:35:47.704Z",
+      "connector_elapsed_ms": 757,
+      "receipt": "40-postcleanup-read-execution.json"
+    }
+  ],
+  "scope_limits": [
+    "Native tests execute the byte-bound shared Cron core on exact archived five-row fixtures, not the whole Production installer or whole Production catalog function.",
+    "ACCESS SHARE is compatible with DML; no physical Cron write freeze or complete intermediate ABA history is proved.",
+    "No current public BG1, fresh source, positive publisher or AT renewal qualification claim.",
+    "Prepared Production SQL remains unexecuted; any future Production read, rehearsal or install requires a new separate relevant Go.",
+    "No new roles, grants, revokes, owner changes, HTTP/source/Owner action, login/2FA change, restart, extension, paid resource or site publication."
+  ],
+  "next_decision": "Review the preserved correction package and these Dev receipts. This Dev PASS grants no Production authorization."
+}

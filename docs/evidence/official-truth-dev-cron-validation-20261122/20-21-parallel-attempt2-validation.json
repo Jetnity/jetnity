@@ -1,0 +1,24 @@
+{
+  "status": "NATIVE_TWO_SESSION_PARALLEL_PASS",
+  "attempt": 2,
+  "unchanged_sql": true,
+  "writer": {
+    "result": "DEV_CRON_CONCURRENT_WRITER_OBSERVED_AND_ROLLED_BACK",
+    "committed": false,
+    "real_cron_changed": false,
+    "http_started": false
+  },
+  "reader": {
+    "result": "DEV_CRON_CONCURRENT_WRITER_REFUSAL_AND_RECOVERY_PASS",
+    "access_share_and_writer_were_concurrent": true,
+    "exact_core_refused_other_pid_writer": true,
+    "writer_rollback_observed": true,
+    "fixture_original_rows_restored": true,
+    "real_cron_changed": false,
+    "http_started": false,
+    "physical_cron_freeze_proven": false
+  },
+  "first_attempt_preserved_as_failure": true,
+  "invocation_change_only": "separate agent executors",
+  "no_further_parallel_retry_needed": true
+}

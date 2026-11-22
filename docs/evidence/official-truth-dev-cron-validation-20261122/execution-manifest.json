@@ -1,0 +1,232 @@
+{
+  "package": "DEV_CRON_GUARD_VALIDATION_RESULT_20261122",
+  "status": "SCOPED_NATIVE_DEV_PASS_14_OF_14_AND_REAL_TWO_SESSION_PARALLEL_WITH_INDEPENDENT_CLEANUP_PROOF",
+  "target": "yfvbxvijcorffwxbxahl",
+  "source_commit": "e28207ee9ce67b4faef428b92d30bb0f245fa91c",
+  "observed_at_utc": "2026-11-22T01:35:47.649164Z",
+  "observed_at_europe_zurich": "2026-11-22T02:35:47.649164+01:00",
+  "execution_receipt_count": 8,
+  "native_test_groups_passed": 14,
+  "parallel_invocations": 2,
+  "parallel_pass_invocation": 2,
+  "failed_or_unknown_history_preserved": true,
+  "cleanup_committed_and_independently_read": true,
+  "production_calls_in_this_continuation": 0,
+  "production_authorization_granted": false,
+  "production_sql_executed": false,
+  "role_or_privilege_changes": false,
+  "http_source_publisher_owner_actions": false,
+  "runtime_result_sha256": "9fc677d0a066c5ce7c82d37fa0e9da531f84559f1c0500172825485be39be13a",
+  "immutable_source_inputs": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/MANIFEST.json",
+      "bytes": 3074,
+      "sha256": "f9ff5d7ce9c47d39e32d013a8271234e9a6c1101deec517fe54a7bea5689f5d1"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/00-setup-private-fixture.DEV-COMMIT.sql",
+      "bytes": 11098,
+      "sha256": "4224eea08bd583e046a5b7622752745fb05b5dc38dc23ecbd1a42f8775cc3805"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/10-shared-core-rehearsal.DEV-ROLLBACK.sql",
+      "bytes": 31897,
+      "sha256": "fe0dd00a728804f9e7076a37302fe238ac1a35aa58039ae4d1f5fda51b2f09e7"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/20-concurrent-writer.DEV-ROLLBACK.sql",
+      "bytes": 6788,
+      "sha256": "e70a72a6f831c822c4af8d8c5b8ac6b1b92f704305991b4af8ea5f333f6827c5"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/21-concurrent-reader.DEV-ROLLBACK.sql",
+      "bytes": 13811,
+      "sha256": "e7fd7a351d3018148d69fd726d3e9c7e7c9ce0a5753f05a3649c87bad7012b7a"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cron-guard-validation-20261122/30-cleanup-private-fixture.DEV-COMMIT.sql",
+      "bytes": 9181,
+      "sha256": "dc8f1769699eee1a135e3b5575f93d759d9087d9a04c1c084ea75d4c72d2b98b"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/10-production-http-id.REHEARSAL-ROLLBACK.sql",
+      "bytes": 113322,
+      "sha256": "2d71da79604a37f762f89a69eb399439b94d175ebc65504584533bc85259c982"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/11-production-http-id.POSTREHEARSAL-READONLY.sql",
+      "bytes": 29501,
+      "sha256": "99b09948db844dc9198f5f4e4c92eeb83f41d8c87f533f009592aec13109f224"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/30-production-http-id.FENCE-ROLLBACK.sql",
+      "bytes": 35286,
+      "sha256": "4535acf918d96f6851cebe4463ed994154fe9d220a1d073384fcb434de0efc44"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/40-production-http-id.FENCE-COMMIT.sql",
+      "bytes": 35020,
+      "sha256": "0f1b65076f4fb8191fc5bff821001fe67b54e3e8b3c1dab1976f6f3fb7a85a98"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/cron-protection-core.sql",
+      "bytes": 5563,
+      "sha256": "6fb59e9ce1da9a43527fd0a945dd18dbfec6a14726ea1667674e14ea340fdd79"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/expected-native-guard-definitions.json",
+      "bytes": 64211,
+      "sha256": "9399b2a4520a78f06b5c55e62ba77127f402b505b1749cac78ff28630611e8d1"
+    }
+  ],
+  "result_artifacts": [
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/00-setup-execution.json",
+      "bytes": 1348,
+      "sha256": "238f8cb8dee26de25d2473aa03bb9f5aa38caa1c7caf9263b5a511cfd272655f"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/00-setup-validation.json",
+      "bytes": 695,
+      "sha256": "7887a72c8bb7f442a04c60ff7155c89abd7ae5a7b545dffe3083b5045dbcd25f"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/10-rehearsal-execution.json",
+      "bytes": 1854,
+      "sha256": "050367c292e2ef82b785b70af0329fa19ee6ab6149e0659a4e68e5eab8ccb14d"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/10-rehearsal-validation.json",
+      "bytes": 1087,
+      "sha256": "3d21f38f66069e0257c1728f9d509dd5d392eecd9fbfa58ba9d08a00ad8a761f"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-21-parallel-attempt2-validation.json",
+      "bytes": 781,
+      "sha256": "322816b516366ec4508c6225d2126aa5d3646aa395010626852f5ba6b36ea0c8"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-21-parallel-intent.json",
+      "bytes": 658,
+      "sha256": "9830b8f37208d8876646328c09d8bcc250be6f633ecc03c3e43c90ad1b7ceb41"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-writer-attempt2-execution.json",
+      "bytes": 1191,
+      "sha256": "05044052cf48a099eb9c65ccaf959af814a88ef78fda085e91622209f1c87353"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-writer-attempt2-intent.json",
+      "bytes": 428,
+      "sha256": "0db7f49374e5d28d6664d20cc17cf6d5b2028f8863e246052a4cbd453ee3c4eb"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/20-writer-execution.json",
+      "bytes": 712,
+      "sha256": "dfe4331ab7a2a18fa5f4fe572e8447e58a041ae6215f544aac6fa115c55ecbed"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/21-reader-attempt2-execution.json",
+      "bytes": 1347,
+      "sha256": "e6e6d8293f36353ac1590dfb9a0c5c09987081502d7314bbd41d47648fd81971"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/21-reader-attempt2-intent.json",
+      "bytes": 632,
+      "sha256": "9dc2da64bad5880bc4ed43f778487b265a7ebb0b2aed6a87c416a714900a478c"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/21-reader-execution.json",
+      "bytes": 714,
+      "sha256": "57cee4f0c001fd17d36e2048720f60bf21615763efd2952638c9764a99d67a55"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/30-cleanup-execution.json",
+      "bytes": 1339,
+      "sha256": "92a820fe61bc639c0f6d2bbc2ae5a9375bfbdba6dd335f8ca5b60aaca5b22e75"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/30-cleanup-validation.json",
+      "bytes": 970,
+      "sha256": "95c555d9daee4e3a12c6a5a74403e4079805f0611c0e074d03e4f5ae9b0c8179"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/40-postcleanup-read-execution.json",
+      "bytes": 1530,
+      "sha256": "fe80a189eaa4838e9a32338ed3ddf53d7c1fb2eed7ad1607432d97f825ab3255"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/40-postcleanup.READONLY.sql",
+      "bytes": 3552,
+      "sha256": "2e21529e76e4b595f5035bbeb06d0ce8540794009566ea7571ad964573c4fe9e"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/authorization-and-intent.json",
+      "bytes": 1916,
+      "sha256": "982f4d649bf8466fe5d65cc5ba1f4688ed44649e2d5f914b94a80575bb8e024a"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/cron-correction-report-before-dev-validation-e28207ee.md",
+      "bytes": 15437,
+      "sha256": "3239c521daf39be6b62f225a33df515812e5e14ac7c0fc1d42988e79edbef5bc"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/independent-dev-cron-runtime-review.json",
+      "bytes": 12441,
+      "sha256": "db4f0007a81e2a192d989c1ece9930a9c6a99edb4ccc4cea2fcf8e5fb82f3778"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/independent-runtime-review.json",
+      "bytes": 6454,
+      "sha256": "6b4092217ace346d6e7b531a335c9a87911612b4148e354ae63867ea24cd5cfc"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/overall-plan-before-dev-validation-e28207ee.md",
+      "bytes": 206754,
+      "sha256": "2ce3be77eb460fb06958e1c20ccb43babc970fbc68a51aaa65db0d6774803ae6"
+    },
+    {
+      "path": "docs/evidence/official-truth-dev-cron-validation-20261122/runtime-result.json",
+      "bytes": 9695,
+      "sha256": "9fc677d0a066c5ce7c82d37fa0e9da531f84559f1c0500172825485be39be13a"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_DEV_CRON_VALIDATION_RESULT_2026-11-22.md",
+      "bytes": 11007,
+      "sha256": "883ae90b1da9195b1c771feb08dc4cbc93c056474204ae24eda68a7db354a511"
+    },
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 209778,
+      "sha256": "9f92886e4625d3fdbb4be01724c64bb16488741e7dadfa032c92f465a976fd39"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_CRON_CORRECTION_2026-11-22.md",
+      "bytes": 13556,
+      "sha256": "19485c9c4bcd05a0b46df34980865de548e56c25c744cf1c786e94d3720fe495"
+    }
+  ],
+  "hash_semantics": "SHA-256 over exact UTF-8 bytes as stored; no self-hash. Frozen source preparation manifests are not rewritten as runtime receipts.",
+  "limits": [
+    "Native tests execute the byte-bound shared Cron core on exact archived five-row fixtures, not the whole Production installer or whole Production catalog function.",
+    "ACCESS SHARE is compatible with DML; no physical Cron write freeze or complete intermediate ABA history is proved.",
+    "No current public BG1, fresh source, positive publisher or AT renewal qualification claim.",
+    "Prepared Production SQL remains unexecuted; any future Production read, rehearsal or install requires a new separate relevant Go.",
+    "No new roles, grants, revokes, owner changes, HTTP/source/Owner action, login/2FA change, restart, extension, paid resource or site publication."
+  ]
+}
