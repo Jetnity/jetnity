@@ -1,36 +1,32 @@
-# Chief-of-Staff Review: CH→AT Production-V1 Paket, 22.11.2026
+# Jetnity CH→AT — Chief of Staff SHA-256-Handoff nach vollständigem Dev-PG17-Schatten-Gesamtlauf
 
-**Review-Status: `CHIEF_OF_STAFF_REVIEW_READY / INSTALL_GO_HOLD`. Kein Production-Go beantragt.** Produktion: `qscbgcdmivbbnzrcyegn`; Dev: `yfvbxvijcorffwxbxahl`. Dieser Auftrag hat **keinen Production-Read/Write/Deploy/Owner-AAL2-Schritt** ausgeführt. Der Katalogsnapshot stammt aus der früheren eigens genehmigten Read-only-Abfrage `2026-11-22T21:03:32.563156Z`.
+**Status: `CHIEF_OF_STAFF_REVIEW_READY_FULL_DEV_SHADOW_PASS_INSTALL_GO_HOLD`.** Die gebundenen Production-V1-Installations-/Rücknahme-SQL sind **nicht** auf Production ausgeführt worden, keine Production-Leseabfrage in diesem Auftrag, keine Owner/2FA/Passkey-Handlung, keine neuen Rechte/Schlüssel/Kosten. Quellbasis: einmalig genehmigter Production-V1-`pg_catalog`-Snapshot **22.11.2026 21:03:32.563156 UTC**.
 
-## Festgelegte SHA-256-Dateiidentitäten
+## Exakte Dateiprüfsummen für unabhängiges Chief-of-Staff-Review
 
-- **`MANIFEST.json`: SHA-256 `7efef18be719620d5e9242464de5466c9976b6ece42e84b2a79d5b4968759ee8`, 10262 UTF-8-Bytes.**
-- **`SHA256SUMS`: SHA-256 `196f45e5a35d708d440357fb4a5349fee6e852987465ab2251579bf685e031d8`, 5440 UTF-8-Bytes.**
-- **27/27 Einträge** stimmen paarweise `SHA256SUMS` ↔ `MANIFEST.json` überein. Jeder neue/aktualisierte Paketdatei-Hash wurde aus dem exakten GitHub-Textkörper in einer **Dev-PG17-READ-ONLY-Transaktion mit `ROLLBACK`** berechnet; die historischen unveränderten acht Referenzdateien blieben an den bereits unabhängig bestätigten Digests gebunden. Diese Receipt-Datei selbst ist bewusst **nicht** Bestandteil des Manifests, um keinen zirkulären Hash einzuführen.
-- **V1-Adapter Source-Body 10:** `e34fcdaa0c7476b7b52a81c49e78cc044afbeb9f6287f23942df153048b831f1`, 18835 Bytes.
-- **BG1-v5 Source-Body 20:** `496de2086c7c02539f8a9b50cef2a85ba308c0b6e9b0bcb32111d2ccaaef02e4`, 32493 Bytes.
-- **Production exakte Installationsprobe `30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql`: `cefcd3654d79d02bb0b7554d5724d36f43cbc5d0e8a32baa82e2cc0bf81c708d`, 58316 Bytes.**
-- **Production exakter INSTALL-COMMIT `31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql`: `5003a23e8024908737d5b3e34f52cf192c5ba5c9ce256d2ad2db29c107f74612`, 58314 Bytes.**
-- **Production exakte Rücknahmeprobe `32-PRODUCTION-V1-V2.ROLLBACK-PROBE.sql`: `ee6aeab74f2649878856b8991834b121f09b3784f966c1c5a611d3bd3cbb8507`, 19831 Bytes.**
-- **Production exakte Rücknahme-COMMIT `33-PRODUCTION-V1-V2.ROLLBACK-COMMIT.sql`: `cf50526bd7a59050922a364fc3631787a47c15e025c2aa52dcdf8261901c5fa4`, 19829 Bytes.**
-- **Readback** `40-PRODUCTION-POSTCOMMIT.READONLY.sql` `0d5c7cd17dc91cc3b1e10931a7011ba94c119a4ccd23b6a1b9ec82b38272ab25`; `50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql` `df35e0d946401a545dca6637a6f28c7840655ebd071a9929c606de6bc4d1caa8`.
-- **Historischer Production-Katalogsnapshot:** `docs/evidence/official-truth-ch-at-prod-catalog-v2-read-20261122/CATALOG-READBACK.json` `45286617bf31b2b674c3a1583ca7edd33f1f8c2cc568944be9c6f29623d5cbd5`, 91529 UTF-8-Bytes.
-- Bestehender BG1-v4 HTTP-Allocator, identische V1-Quellen-/Fakten-Historie und CH→DE-Cycle12 werden nicht angetastet. Kein `whole_originals_v2` vorausgesetzt. V2-BMEIA-Version bleibt `changed`, nicht `unchanged`.
+**Alle 30 SHA-256-Quelldateien vollständig in `MANIFEST.json` und `SHA256SUMS` verzeichnet.** Beide Dateien wurden bytegenau aus GitHub gelesen; die Summenliste stimmt **30/30** exakt mit dem Manifest überein. Vor der letzten Bindung wurden alle neuen/geänderten SQL-Test- und Dokumentdateien über Dev-PG17 im `BEGIN READ ONLY` mit `ROLLBACK` SHA-256- und bytegenau nachgerechnet; die übrigen unveränderten Referenzpfeile behalten ihre bereits unabhängig verifizierten Hashes.
 
-## Tatsächlich bestandene Dev-PG17-Nativprüfungen
+- **`MANIFEST.json`: SHA-256 `fa0625e161ae407356c524553d1f0aff6c1e46524d8d28c4f61a0d4d01554e18`, 12238 Bytes.**
+- **`SHA256SUMS`: SHA-256 `34f3721a752df20d0fc55de7639a0cd781369334c1d5c913d5ed842859080a1d`, 6123 Bytes.**
+- **Installation `31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql`: `5003a23e8024908737d5b3e34f52cf192c5ba5c9ce256d2ad2db29c107f74612`**.
+- **Installations-Probe `30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql`: `cefcd3654d79d02bb0b7554d5724d36f43cbc5d0e8a32baa82e2cc0bf81c708d`**.
+- **Rücknahme `33-PRODUCTION-V1-V2.ROLLBACK-COMMIT.sql`: `cf50526bd7a59050922a364fc3631787a47c15e025c2aa52dcdf8261901c5fa4`**.
+- **Rücknahme-Probe `32-PRODUCTION-V1-V2.ROLLBACK-PROBE.sql`: `ee6aeab74f2649878856b8991834b121f09b3784f966c1c5a611d3bd3cbb8507`**.
+- **Postinstallations-READONLY `40-PRODUCTION-POSTCOMMIT.READONLY.sql`: `0d5c7cd17dc91cc3b1e10931a7011ba94c119a4ccd23b6a1b9ec82b38272ab25`**.
+- **Echter `anon`-Readback `50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql`: `df35e0d946401a545dca6637a6f28c7840655ebd071a9929c606de6bc4d1caa8`**.
+- **Dev-V1-v4-Schatten-Parent `64`: `e86a8247806cab041324b5fcc9bb5bd3b5071e15104740fb1e668357d951b672`**.
+- **Dev-v5-Vollinstallations-Schatten `65`: `17f79e5272e0d37435f7dae0637bb7a65b10c2ae5ba4977567b86d77bc2691d4`**.
+- **Dev-v4/v5/v6-Gesamtprobe `66`: `5191a38ba11ec8f86abb335260e683eeffb2dfedb7e45628f36b02a4504c3dd1`**, 156178 Bytes.
 
-- **`60` PASSED** — authentische amtliche Dev-Originalbytes, V1-Layout, exakte BMEIA/BMI-Versionen, MA1-Rev2, natürlicher Dev-BG1, positive CH→AT-Visa-Auskunft, negative IN/DE, idempotenter Faktinsert, abweichender Source-SHA sofort Default-Closed, immutables Journal; Fixture ROLLBACK.
-- **`61` PASSED** — V1/V2-basierte Rücknahmeprobe: neue Ausgabe CH/IN `unavailable`, neuer Issuer0, V1-Crons3 beibehalten, Fact/Originals-History unverändert, v6 Vorgänger-Digest; Fixture ROLLBACK.
-- **`62` PASSED** — Syntaxkompilierung der fünf namespace-angepassten Production-Snapshot-BG1-Funktionen v5/v6 in echter Dev-PG17; kein Ersatz der laufenden Dev-BG1-Prozeduren, ROLLBACK. Korrigierte, eingefrorene HTTP-v4-Transport-Bindung ebenfalls kompiliert.
-- **`63` PASSED** — zwei einmalig bootstrappende BG1-v5/v6-Baselines und vier abgewiesene History-Tamper-Versuche, V6-Predecessor-Digest, ROLLBACK.
-- **Posttest-Readback** 2026-11-22 22:30:10 UTC: alle Fixture-Schemas sind nicht vorhanden, Dev-BG1 Gen2451 mit Incident=Resume, aktueller Dev-V12-Katalog exakt, Dev-Methode Rev2.
-- **Code-Identität:** Install-/Probe-Körper 30/31 sind bis auf `ROLLBACK` versus `COMMIT` identisch; analog Rücknahme 32/33. Installationskörper 10 und 20 sind vollständig im zusammengesetzten Pfad enthalten. Keine Production-SQL-Datei wurde in diesem Auftrag ausgeführt.
+## Native PG17-Endtest und unabhängiger Readback
 
-## Unabdingbare Restgates — CoS darf sie nicht als bestanden erklären
+- **`64` PASS:** bestehende PG17-V1-Vorgängerkette, alte Quellen im Schattenmodell, eingefrorener BG1-v4-Parent und vorbereiteter exakter SHA-Anker; vollständiges `ROLLBACK`.
+- **`65` PASS:** Zusammengesetzte 58-KB-Production-V1-Installations-Sourcebody mit isolierter Namespace-/Cron-/Source-Mapping-Schicht, BG1-v5-`assert_catalog_v1` *wirklich ausgeführt*, sämtliche V2-Relationen/RLS/Quell-Versionierung geschützt, ein neuer vierter Cron im Katalog, **keine positive Antwort ohne neue frische BG1-Generation**; `ROLLBACK`.
+- **`66` FULL DEV SHADOW PASS:** Erweitert `65` innerhalb **einer einzigen PG17-Transaktion** um synthetischen frischen BG1-v5-Vollproof im **Schatten**, anschließend echte amtliche, bereits in Dev vorhandene Quell-Bytes/SHA aus genau 3 Originals, CH-Visa-Fakt Version1, `accepted/not_required/visa_exempt` mit 3 Links, IN/DE `unavailable`, Replay fügt keine zweite Faktversion ein; ein absichtlich manipulierter V2-Cron wird vom v5-Guard abgewiesen. Danach derselbe auf Schatten-Namespace umgebundene komplette 20-KB-Rücknahme-Körper, nur neuer V2-Cron entfernt, alle Originale/Fakten/V1-Crons erhalten, CH/IN `unavailable`, v6 braucht erneut frische synthetische BG1-Generation, nach der Prüfung dauerhaft fail-closed. Ergebnis genau `DEV_PG17_V1_BG1_V4_V5_V6_INSTALL_PROOF_POSITIVE_ROLLBACK_FULL_PASS`, kompletter `ROLLBACK`.
+- **Unabhängige echte Dev-Nachlese (22.11.2026 22:54:03 UTC):** alle V1/Guard-Fixture-Schemas fehlen, Dev-BG1 generation2455, incident=resumed14, Dev-v12-Katalog exakt, echte MA1-Rev2/Epoch2 weiterhin approved. Keine Production-Änderung.
 
-1. **Fehlender exakter 58-KB Production-BG1-V1-Integrationstest:** Die gesamte unverändert zusammengesetzte Installation `30`/`31` sowie Rücknahme `32`/`33` wurde **nicht** gegen eine vollständig nachgebaute Production-V1/BG1-v4/cron-Topologie nativ ausgeführt. Die existierenden Fixture- und Compiler-Prüfungen sind wertvoll, aber kein Ersatz.
-2. **Zeitgebundene Production-Datenwerte offen:** Der autorisierte Katalogread lieferte nur statische Struktur/Funktionsdefinitionen, **nicht** die aktuellen 3 Quellenbody-Versionen, Cron-Ausführungsstatus oder die aktuelle natürliche BG1-Generation. Die atomaren Installer-`$pre$`-Gates sollen bei jeder Drift sperren; das ist nicht gleichbedeutend mit vorab bestätigter Freigabe.
-3. **Production-MA1 Rev2 Owner/AAL2 und isolierte UI-Auswahl offen:** Kein Dev-Owner-Receipt wird übertragen. Production-Frontend-/Owner-Freigabewahl muss getrennt korrekt für CH→AT/Rev2 gebunden und geprüft werden; ohne diesen Schritt garantiert die neue Installation keine positive öffentliche Auskunft.
-4. **Separate PO-Gos fehlen:** eine künftige Production-Probe unter `ROLLBACK`, ein danach neuer expliziter COMMIT-Go, separate Readback-/Owner/AAL2- und ggf. Rollback-Gos. Der Chief of Staff darf nur Hashes/Scope/Tests prüfen, keine Production-Gates eigenmächtig aufheben.
+## Nicht automatisch freigegebene Grenzen
 
-**Ergebnis:** Bereit zur unabhängigen Hash- und Quellprüfung durch Chief of Staff, aber **nicht freigegeben für Production-Installation**. Weiteres Arbeiten bis zum tatsächlichen `INSTALL_GO_READY` nur in Dev/Featurebranch.
+Der **vollständige native, funktionale Shadow-V1/BG1-v4/v5/v6-Integrationstest ist bestanden**, aber die Testdatei `66` enthält eine isolierte Namespace-Umbenennung und einen eigenen Dev-Katalog-/Cron-Schatten; die feste historische Production-SHA-Präflight-Prüfung wurde dort auf die entsprechenden vor Testbeginn authentisch berechneten *Shadow*-Signaturen gebunden. Die **originale unmodifizierte 58-KB-Production-Installation selbst** wurde nie in der tatsächlichen Production-Topologie oder gegen deren realen historischen OID-Katalog durchgeführt; ein echter Production-natürlicher BG1-Proof wurde nicht simuliert oder behauptet. Der Chief of Staff muss Unterschiede zwischen Original und Schatten, BG1-v4-/V5-/V6-CAS, Guards, RLS, historische Quellen, echte Cron-Bindung, Source-SHA-Kadenz, Owner-MA1-Rev2-Production-UI und Rücknahme-Fail-Closed **unabhängig prüfen**. **`CHIEF_OF_STAFF_REVIEW_DONE=false`; `PRODUCTION_INSTALL_GO=false`.**
+
+Ein späterer Production-Probeschritt `30` mit `ROLLBACK` und danach ein separater `31`-COMMIT-/Owner-/Readback-Go brauchen jeweils die ausdrücklich bestätigte Exact-Head-SHA-Grenze des Product Owners. Weder der Chief of Staff noch ein automatisierter Agent darf Production selbst freigeben. CH→DE Cycle12/HTTP-ID-v4-Historie bleibt gesperrt/unverändert.
