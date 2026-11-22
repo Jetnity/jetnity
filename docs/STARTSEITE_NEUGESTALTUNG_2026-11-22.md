@@ -32,7 +32,7 @@ Lighthouse 13.6, lokal gegen den Production-Build, je drei Läufe (Median). Sieh
 ## Bekannte Grenzen
 
 - Grosse Schrift: Bei 200 % Systemschrift und breiter Ersatzschrift läuft nichts über (`lib/ui/white-mint-home-workspace-1/browser.test.ts`). Dafür sind die Masse der Illustrationen in `px` gesetzt (sie sind `aria-hidden` und dekorativ), Zusagen und Ortsmarke dürfen umbrechen.
-- Kontrast: Der Text im Hero wurde Pixel für Pixel über dem Foto gemessen (hellste 5 % des Hintergrunds unter dem Text). Kleinster Wert 6,47:1 (H1, 1440 px), kleiner Text mindestens 6,76:1.
+- Kontrast: Der Text im Hero wurde Pixel für Pixel über dem Foto gemessen (hellste 5 % des Hintergrunds unter dem Text). Kleinster Wert 6,49:1 (H1, 1440 px), kleiner Text mindestens 6,81:1.
 - Die Hero-Zusagen und alle Texte bleiben wörtlich; die Illustrationen sind rein dekorativ.
 - Echte Geräte: Das Verhalten des Nach-oben-Knopfs wurde mit Playwright und Touch-Emulation geprüft (390 px), nicht auf einem physischen Telefon. Bis dahin gilt die Abnahme auf echter Hardware als offen.
-- `DECISIONS.md` und `docs/ACTIVE_WORK_STATUS.md` pflegt PR A (#1277); der Eintrag für diese Neugestaltung folgt, sobald A gemergt ist, damit beide PRs keine Datei gemeinsam ändern.
+- Entscheidung: ADR-0242 in `DECISIONS.md`; Arbeitsstand in `docs/ACTIVE_WORK_STATUS.md`. Beide Einträge sind erst nach dem Merge von #1277 ergänzt worden, damit sich die beiden PRs keine Datei teilen.
