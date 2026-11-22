@@ -36,7 +36,7 @@ describe('Passkey-Fähigkeit, MOCK und fail-closed', () => {
     assert.match(client, /experimental: \{ passkey: true \}/)
     assert.equal(client.includes('createBrowserClient(url, anon)'), false)
     const config = readFileSync(join(hier, '../../supabase/config.toml'), 'utf8')
-    assert.match(config, /\[auth\.passkey\]\nenabled = true/)
+    assert.match(config, /\[auth\.passkey\]\nenabled = false/)
     assert.equal(PASSKEY_RP_ID_GEPLANT, 'jetnity.com')
     assert.equal(passkeyOriginErlaubt('https://jetnity-app.vercel.app'), false)
   })

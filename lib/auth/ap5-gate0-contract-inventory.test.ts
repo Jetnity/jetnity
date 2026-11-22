@@ -140,7 +140,7 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
     assert.equal(soll.get('sessions_single_per_user'), false)
     assert.equal(soll.get('mfa_allow_low_aal'), false)
     assert.equal(soll.get('mfa_totp_enroll_enabled'), true)
-    assert.equal(soll.get('passkey_enabled'), true)
+    assert.equal(soll.get('passkey_enabled'), false)
   })
 
   test('kein Current-Password-Submit-Vertrag in App-Quellen', () => {

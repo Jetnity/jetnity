@@ -82,7 +82,8 @@ function uriListePasst(erwartet: unknown, gefunden: unknown): boolean {
   if (erwartet === gefunden) return true
   if (typeof erwartet !== 'string' || typeof gefunden !== 'string') return false
   if (!gefunden.startsWith(`${erwartet},`)) return false
-  return gefunden.slice(erwartet.length + 1).split(',').every(jetnityAdresse)
+  const bekannt = new Set(erwartet.split(','))
+  return gefunden.slice(erwartet.length + 1).split(',').every((eintrag) => jetnityAdresse(eintrag) && !bekannt.has(eintrag))
 }
 
 function vergleiche(erwartungen: Erwartung[], live: Record<string, unknown>) {
