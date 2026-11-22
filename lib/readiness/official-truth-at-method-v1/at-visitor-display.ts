@@ -19,7 +19,9 @@ const acceptedVisa = z.object({
   destinationCountryCode: z.literal('AT'),
   documentType: z.literal('passport'),
   visaEffect: z.literal('not_required'),
-  visaMode: z.literal('visa_exempt'),
+  // The protected CH-only V4 RPC emits 'visa_free'. Only CH may normalize that
+  // closed, exact effect into the UI's established 'visa_exempt' presentation.
+  visaMode: z.enum(['visa_exempt', 'visa_free']),
   ruleVersion: z.number().int().min(1).max(2_147_483_646),
   sourceCheckedAt: utcInstant,
   verifiedAt: utcInstant,
@@ -42,7 +44,8 @@ function formattedUtc(iso: string): string {
  * checks. A mismatched passport/source/clock never inherits another result. */
 function perPassport(country: string, raw: unknown, now: number): V3VisitorViewResult {
   const parsed = acceptedVisa.safeParse(raw)
-  if (!parsed.success || parsed.data.citizenshipCountryCode !== country) return unavailable
+  if (!parsed.success || parsed.data.citizenshipCountryCode !== country
+    || (parsed.data.visaMode === 'visa_free' && country !== 'CH')) return unavailable
   const fact = parsed.data
   const source = Date.parse(fact.sourceCheckedAt), verified = Date.parse(fact.verifiedAt)
   const expiry = Date.parse(fact.expiresAt)
