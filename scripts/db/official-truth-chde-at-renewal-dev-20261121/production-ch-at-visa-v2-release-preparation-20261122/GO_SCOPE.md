@@ -2,7 +2,7 @@
 
 **STATUS: `CHIEF_OF_STAFF_REVIEW_READY / INSTALL_GO_HOLD`.** Das bisherige Production-Katalog-Lese-Go ist verbraucht; der erfolgreiche Read vom **22.11.2026 21:03:32 UTC** wurde bereits auf dem bestehenden Production-V1-Baum gesichert. Kein weiterer Production-Read und keine Production-Mutation durch diesen Paketbau.
 
-**Chief of Staff prüft zunächst offline:** Exakt dieselben Quell-/Methoden-/BG1-V1-Parentdefinitionen, die tatsächlichen Versionen in `CATALOG-READBACK.json`, alle **neu zu berechnenden** SHA-256 in `MANIFEST.json` und `SHA256SUMS`; Dev-Testfälle 60–63, die noch offenen nativen Gesamtguard-Gates, Postcommit-RPC, Rollback und unveränderte HTTP-v4-/CH→DE-Historie.
+**Chief of Staff prüft zunächst offline:** Exakt dieselben Quell-/Methoden-/BG1-V1-Parentdefinitionen, die tatsächlichen Versionen in `CATALOG-READBACK.json`, alle **neu zu berechnenden** SHA-256 in `MANIFEST.json` und `SHA256SUMS`; Dev-Testfälle 60–63 und die neuen vollintegrierten V1/BG1-Shadow-Gates 64–66 (native Dev-PG17 PASS; synthetische BG1-Belege), die weiterhin notwendige unveränderte Production-Probe-ROLLBACK-Abnahme, Postcommit-RPC, Rollback und unveränderte HTTP-v4-/CH→DE-Historie.
 
 **Installations-GO darf erst auf den freigegebenen exakten vollständigen Paketstand folgen.** Wenn alle Tests grün sind, muss der Product Owner ausdrücklich *einen* atomaren Production-V1-Installationsversuch anhand der Dateinamen und **vollen SHA-256** freigeben. Die Reihenfolge ist:
 1. Exakte Production-Zielauswahl `qscbgcdmivbbnzrcyegn`, Parent/Drift und natürliche BG1-/Source-Freshness im `$pre$` prüfen; `30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql` ist ein **eigener** zu bewilligender Prod-Schritt mit `ROLLBACK`.
