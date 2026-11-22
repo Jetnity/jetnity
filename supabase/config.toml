@@ -303,10 +303,10 @@ redirect_uri = ""
 url = ""
 skip_nonce_check = false
 
-# Rohdatei bleibt aus. Die Dev-Leseprüfung legt den Gerätetest darüber.
-# Ein Merge schreibt den Production-Auth-Server nicht.
+# Die App liest diesen Schalter für den Button. Merge und Deploy schreiben
+# ihn nicht in den Production-Auth-Server.
 [auth.passkey]
-enabled = false
+enabled = true
 
 # Keine Anmeldung mit einer Krypto-Wallet. Sie gehört zu keinem Weg, den
 # Jetnity vorsieht.

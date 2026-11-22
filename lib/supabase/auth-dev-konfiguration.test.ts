@@ -148,14 +148,14 @@ describe('Owner-approved Dev passkey read expectations', () => {
     const baseline = live(devAuthKonfiguration(input, REF).config)
     const effective = live(read.config)
     assert.deepEqual(input, before)
-    assert.deepEqual(Object.keys(baseline).filter((key) => baseline[key] !== effective[key]), ['uri_allow_list', 'passkey_enabled'])
+    assert.deepEqual(Object.keys(baseline).filter((key) => baseline[key] !== effective[key]), ['uri_allow_list'])
     assert.equal(effective.passkey_enabled, true)
     assert.equal(effective.uri_allow_list, [CALLBACK, RECOVERY, DEVICE].join(','))
-    assert.equal(baseline.passkey_enabled, false)
+    assert.equal(baseline.passkey_enabled, true)
     assert.equal(baseline.uri_allow_list, [CALLBACK, RECOVERY].join(','))
-    assert.equal(live(devAuthPushKonfiguration(input, REF).config).passkey_enabled, false)
+    assert.equal(live(devAuthPushKonfiguration(input, REF).config).passkey_enabled, true)
     assert.equal(live(devAuthPushKonfiguration(input, REF).config).uri_allow_list, [CALLBACK, RECOVERY].join(','))
-    assert.equal(live(leseToml(RAW)).passkey_enabled, false)
+    assert.equal(live(leseToml(RAW)).passkey_enabled, true)
     assert.equal(read.passkeyHerkunft.sourcePr, 1240)
     assert.equal(read.passkeyHerkunft.enabled, true)
     assert.equal(read.geraetetestRedirectHerkunft.zusaetzlicheUrl, DEVICE)
@@ -182,7 +182,7 @@ describe('Owner-approved Dev passkey read expectations', () => {
     assert.equal(befund(effective, live(effective)).sauber, true)
   })
 
-  for (const value of [true, 'false', 0, undefined]) {
+  for (const value of [false, 'false', 0, undefined]) {
     test('rejects an unreviewed raw passkey baseline: ' + String(value), () => {
       const input = config()
       const passkey = (input.auth as TomlTabelle).passkey as TomlTabelle
