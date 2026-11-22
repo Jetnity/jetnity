@@ -1,0 +1,75 @@
+{
+  "schema": "jetnity.at.ch.source-to-method-v2.candidate",
+  "status": "DEV_SOURCE_CANDIDATE_ONLY__NO_METHOD_OR_PUBLICATION_ACTIVATION",
+  "target_environment": "Supabase Dev yfvbxvijcorffwxbxahl",
+  "decision": {
+    "owner_approved_source_scope": true,
+    "citizenship": "CH",
+    "destination": "AT",
+    "document": "ordinary_valid_swiss_passport",
+    "route": "direct_entry",
+    "requirement_type": "visa",
+    "semantic_effect": "no_visa_required",
+    "other_citizenships_or_subjects_approved": false
+  },
+  "observed_at_utc": "2026-11-22T12:50:00Z",
+  "source_batch": 129,
+  "source_editions": [
+    {
+      "source_id": "bmi-visa-nationality-matrix",
+      "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "raw_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "bytes": 498415,
+      "watch_state": "unchanged_exact"
+    },
+    {
+      "source_id": "bmi-general-entry",
+      "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "raw_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "bytes": 91655,
+      "watch_state": "unchanged_exact"
+    },
+    {
+      "source_id": "bmeia-bern-how-to-apply",
+      "url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "raw_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "bytes": 172428,
+      "watch_state": "changed",
+      "rule_neutral_difference_only_for_this_scope": true,
+      "prior_raw_sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18"
+    }
+  ],
+  "method_candidate": {
+    "id": "jetnity-destination-primary-at-visa",
+    "next_revision": 2,
+    "predecessor_revision": 1,
+    "predecessor_epoch": 1,
+    "predecessor_method_digest": "cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9",
+    "predecessor_package_digest": "55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe",
+    "next_method_digest": null,
+    "next_package_digest": null,
+    "staged": false,
+    "approved": false
+  },
+  "required_bindings": {
+    "new_append_only_source_edition": false,
+    "canonical_bmeia_diff_certificate_persisted": false,
+    "method_revision_2_native_staged": false,
+    "source_to_subject_issuer_wired": false,
+    "bg1_protected_catalog_successor": false,
+    "positive_dev_visitor_e2e": false,
+    "negative_expired_changed_foreign_scope_e2e": false,
+    "active_owner_aal2_approval": false
+  },
+  "forbidden": [
+    "rewrite_originals",
+    "change_legacy_watch_changed_to_unchanged",
+    "enable_other_49_passports",
+    "create_fact_from_unqualified_sources",
+    "reuse_old_method_revision",
+    "bypass_BG1",
+    "impersonate_owner_session",
+    "production_write"
+  ],
+  "note": "Static Dev review candidate. Never treat presence of this JSON as approved method digest, qualified source generation, DB migration or customer fact."
+}
