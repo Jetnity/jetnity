@@ -1,5 +1,9 @@
 # Jetnity – Active Work Status
 
+## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
+
+Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
+
 ## Aktueller Writer — Abschluss-Schliff (nur Aussehen und Texte)
 
 21. November 2026. Branch `cursor/abschluss-schliff-2ba1` von `main` `5bb0d5909` (inkl. #1264, #1267, #1268, #1270), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: ein einziger, ganzheitlicher Schliff in zwei Teilen, Farbwelt und Tiefe (Massstab Airbnb, Linear, Apple) sowie Perspektivwechsel Erstbesucher. Vollständige Einzelliste mit Vorher-Nachher: `docs/ABSCHLUSS_SCHLIFF_2026-11-21.md`, Entscheid: ADR-0240 in `DECISIONS.md`, Regeln: `DESIGN_SYSTEM.md` 2.1, 2.2, 5.2, 5.3, 7.5a.
@@ -13,8 +17,8 @@
 - **Beleg:** Vorher-Nachher-Bilder bei 1280 und 390 px für Start, «Reise planen», Übersicht, Plan, Organisieren, Vorbereitung und Einreise sowie die echten Bausteine `StatusSiegel` und `Hinweis` einzeln; zwei Videos des Durchlaufs (1280, 390) mit derselben Gastreise (drei Reisende, drei Länder, vier Ziele). Nicht mit Bild belegt, nur über Token und Tests: Änderungsvorschau, Flugsuche-Teilhinweis, Badge «Nur auf diesem Gerät», Omio-Vergleich (brauchen Anbieterdaten).
 - **Preview (21.11., 21:40 MEZ):** Link `https://jetnity-app-git-cursor-abschluss-schliff-2ba1-jetnity-e1b93c82.vercel.app` (geschützt, mit Vercel-Anmeldung). Die Supabase-Variablen der Preview sind je Git-Branch gebunden; auf PO-Freigabe des Geräte-Logins wurden `NEXT_PUBLIC_SUPABASE_URL` und `NEXT_PUBLIC_SUPABASE_ANON_KEY` (beide öffentlich, Rolle `anon`, Dev-Projekt) für den Branch `cursor/abschluss-schliff-2ba1` aus dem Eintrag von #1264 kopiert, danach wurde die Preview neu gebaut. Nichts an Production, Secrets oder Kosten; CLI danach abgemeldet. Geprüft über `vercel curl` und Headless-Chromium: Start, `/planen`, `/login`, `/reisen`, `/entdecken` antworten 200, kein «Das hat gerade nicht funktioniert», neue Texte und Palette sichtbar. Nach dem Merge oder Schliessen: die zwei Variablen des Branches in Vercel entfernen (Aufräumen offen, wie bei #1264).
 - **Nicht lösbar ohne neuen Umfang (PO entscheidet):** (1) Ortssuche in Dev findet Madrid und Barcelona nicht richtig, Production ungeprüft, P1 für Spanien-Reisen. (2) Reisetitel folgt dem ersten Ziel auf Englisch; deutsche Ortsnamen brauchen Migration (F). (3) «Pass 1/2/3» ohne Personenzuordnung im öffentlichen Prüfer braucht eine neue Funktion je Person. (4) Einreisedaten bleiben «noch nicht bestätigt», bis #1254 bestätigte Aussagen liefert. (5) Hero-Aussage «Intelligent» und Bildwelt sind PO-Entscheid.
-- **Offene PRs:** #1240 (Passkeys, Draft) und dieser. #1271 (Docs), #1269, #1270 und #1273 sind gemergt; der Branch enthält `main` damit.
-- **Nächster Schritt:** PO-Endtest auf der Preview von diesem PR. Merge nur nach PO-Go. Danach Production-Deploy wie bisher (separat bauen, prüfen, umschalten, Rückfall bereit).
+- **Offene PRs:** nur dieser (#1272). #1240 (Passkeys), #1271 (Docs), #1269, #1270, #1273 und #1275 sind gemergt; der Branch enthält `main` (Stand 22.11., 11:2x MEZ, bis `601fc38c0`).
+- **Nächster Schritt:** Alle Checks auf dem aktuellen Head grün abwarten, dann PO-Merge (nur nach PO-Go). Danach Production-Deploy wie bisher (separat bauen, prüfen, umschalten, Rückfall `dpl_4KySqFCx4qgvLn7bhP9uRLeKJwt1` bereit), Preview-Variablen des Branches entfernen.
 
 ## Abgeschlossen — Erstbesucher-Funktionen #1268 gemergt und live
 

@@ -2,6 +2,8 @@
 
 > Jeder Chat liest diese Datei zuerst. Wer eine Funktion fertigstellt, trägt sie im selben PR hier nach.
 
+> **Nachtrag 22.11.2026 — Main-CI hat Vorrang:** Der Main-Lauf nach #1274 scheitert an einer fehlenden BG1-Taktpflege im isolierten Atomic-Claim-Test. Die begrenzte Korrektur erhält sämtliche Runtime-Gates und besteht lokal über einen echten Slotwechsel. Eigene PR-CI und der neue Main-Push-Lauf sind vor Abschluss vollständig zu prüfen; spätere Ergebnisse stehen im zugehörigen PR. Danach in diesem Arbeitsstrang kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron pausiert, AT bleibt Hauptplan 97; keine Production-/Auth-Änderung. [Ursache, Evidence und verbindliche Reihenfolge](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md).
+
 > **Abschlussnachtrag 21.11.2026, 21:55 UTC — CMS, Small und BG1:** Der öffentliche CMS-Release und das freigegebene Small-Upgrade sind im [Release-Protokoll](JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md) tatsächlich abgenommen. #1273 ist nach vollständiger grüner CI gemergt und das exakte BG1-SQL-Paket separat in Production installiert. Der nächste reguläre Lauf um 21:55 UTC bestand intern (`complete`), der öffentliche Guard blieb `current`, Incident/Resume unverändert 108/108. Die vier CMS-Snapshots sowie Startseite und Entdecken bestanden den erneuten anonymen Nachtest. Kein zusätzlicher App-Deploy, Rollback oder Login-/2FA-Eingriff. Nachgewiesen ist weniger temporäre Sortier-I/O; beide CI-Zeitpaare waren langsamer, RAM-/OOM-Ursache bleiben unbewiesen. Die bestehenden Profile-/AT-Enqueue-Fehler und das AT-HTTP-ID-Gate bleiben separat offen. [Tatsächliche SQL-Abnahme und Grenzen](JETNITY_BG1_QUERY_COST_2026-11-21.md). Dieser eng begrenzte Abschluss überholt den Kandidatenstand direkt darunter; andere Produktfreigaben und #1240/#1272 bleiben eigenständig.
 
 > **Nachtrag 21.11.2026 — CMS/Ressourcen und begrenzter BG1-Kandidat:** Der Owner hat den vorbereiteten öffentlichen CMS-Release und Micro→Small ausdrücklich freigegeben. Die tatsächlichen Live-Nachweise für die vier veröffentlichten Reiseideen, Login/Meine Reisen und den Ressourcenwechsel stehen im [Release-Protokoll](JETNITY_CMS_PUBLIC_READER_RELEASE_2026-11-21.md). Die anschliessende BG1-SQL-Optimierung bleibt ein eigener geprüfter Schritt: gleiche vollständige Katalogabdeckung, unveränderte Cron-Fristen und unveränderte Login-/2FA-Verträge, keine automatische Incident-Freigabe. [Kandidat und offene Gates](JETNITY_BG1_QUERY_COST_2026-11-21.md). Historische Sperren darunter werden dadurch nur im Umfang dieses konkreten Owner-Auftrags überholt.
@@ -12,6 +14,16 @@
 **Public-Release-Stand:** \`jetnity.com\` war auf Vercel Production \`dpl_4bei1CfkMWKRJpgvEvcq9R5K6Etf\` gebunden (Feature-Head \`e85ff69e5ebab77b019212843d92e5726eddd224\`, gleiches Dateibaum-Ergebnis wie der gemergte PR #1231). Das neuere Main-Deployment \`dpl_8fitMFHnsYX2RPYBGtPXJGkJFwaA\` war READY, aber nicht auf die öffentliche Domain umgeschaltet. Dies ist ein gezielt gepinnter Release, kein nachgewiesener Ausfall.  
 **Main-CI:** [Run 44333651972](https://github.com/Jetnity/jetnity/actions/runs/44333651972) \`SUCCESS\` auf dem oben genannten Main-Commit.  
 **Wichtig:** Dieser Bericht ist weder ein neuer V1 Release-Readiness-PASS noch eine Genehmigung, Code, Datenbanken, Produktion oder Anbieter zu ändern.
+
+## Nachtrag 19. November 2026 — Passkeys Dev 1
+
+Draft [#1240](https://github.com/Jetnity/jetnity/pull/1240) hat `main` bis `9f065a555754c76c64a4f02868797c70f1f49310` übernommen. Abgeschlossen in diesem Draft, nicht live:
+
+- `@supabase/supabase-js` `2.119.2` im bestehenden Browser-Singleton, einmal `auth.experimental.passkey`. `@supabase/ssr` bleibt `0.6.1`. `[auth.passkey] enabled` bleibt `false`. RP-ID geplant `jetnity.com`. `*.vercel.app` und Loopback bleiben geschlossen.
+- Hinzufügen, Umbenennen und Entfernen verlangen am Schreibzugang einen frischen Passwort-Nachweis oder, wenn ein bestätigter TOTP-Faktor existiert, einen verifizierten AAL2-Schritt. `getUser()` allein reicht nicht.
+- Ein Passkey-Login, der einen TOTP-Step-up braucht, beendet die AAL1-Sitzung bei Abbruch, Fehler, fehlender Challenge und fehlender AAL-Lesung. Nur erfolgreiches TOTP führt weiter.
+
+Nicht abgeschlossen und weiter Owner-Gate: Server-Enable, echte RP-/Origin-Freigabe, Geräte-Smoke. `MOCK_PASS`. `HOSTED_E2E_NOT_RUN`. Kein Production-Passkey. Die Tabelle vom 18.11. bleibt der damalige Stand.
 
 ## 1. Verbindliche Dokumentenhierarchie und unveränderte Vision
 

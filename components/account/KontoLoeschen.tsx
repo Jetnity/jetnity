@@ -72,7 +72,7 @@ function portBauen(): KontoloeschungPort {
           .filter((faktor) => faktor.factor_type === 'totp' && faktor.id)
           .map((faktor) => faktor.id),
         verifiedAndere: verified.filter((faktor) => faktor.factor_type !== 'totp').length,
-        currentLevel: current === 'aal1' || current === 'aal2' ? current : null,
+        currentLevel: current === 'aal2' ? 'aal2' : current === 'aal1' ? 'aal1' : null,
       }
     },
     mfaChallenge: async (factorId) => {
@@ -93,7 +93,7 @@ function portBauen(): KontoloeschungPort {
       return {
         ok: typeof token === 'string' && token.length > 0,
         accessToken: typeof token === 'string' ? token : null,
-        currentLevel: current === 'aal1' || current === 'aal2' ? current : null,
+        currentLevel: current === 'aal2' ? 'aal2' : current === 'aal1' ? 'aal1' : null,
       }
     },
     loeschen: async (accessToken) => {

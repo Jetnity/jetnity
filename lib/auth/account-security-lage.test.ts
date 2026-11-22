@@ -22,11 +22,11 @@ const config = leseToml(
 )
 
 describe('AP-5-S1 Security-Lagen', () => {
-  test('config.toml deaktiviert Passkeys und die Ableitung bleibt fail-closed', () => {
-    assert.equal(passkeysServerAktiviertAusToml(config), false)
+  test('config.toml schaltet den Passkey-Button ein und unklare Werte bleiben fail-closed', () => {
+    assert.equal(passkeysServerAktiviertAusToml(config), true)
     assert.equal(passkeysServerAktiviertAusToml({}), false)
     assert.equal(passkeysServerAktiviertAusToml({ auth: { passkey: { enabled: 'true' } } }), false)
-    assert.equal(passkeysServerAktiviertLesen(), false)
+    assert.equal(passkeysServerAktiviertLesen(), true)
   })
 
   test('TOTP-Liste trennt empty, unsupported, error und ready', () => {
