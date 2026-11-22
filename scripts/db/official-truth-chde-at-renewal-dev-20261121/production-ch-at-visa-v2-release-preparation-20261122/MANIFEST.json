@@ -1,30 +1,41 @@
 {
-  "schema": 1,
-  "package_id": "PROD_CH_AT_VISA_V2_PREPARATION_20261122",
-  "status": "BLOCKED_SCHEMA_MISMATCH_NO_INSTALL_GO",
-  "intended_production_project": "qscbgcdmivbbnzrcyegn",
-  "work_project": "yfvbxvijcorffwxbxahl",
+  "schema": 2,
+  "package_id": "PROD_CH_AT_VISA_V2_ON_V1_REVIEW_20261122",
+  "status": "CHIEF_OF_STAFF_REVIEW_READY_INSTALL_GO_HOLD",
+  "production_project": "qscbgcdmivbbnzrcyegn",
+  "dev_project": "yfvbxvijcorffwxbxahl",
   "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
-  "production_reads_or_writes_executed": 1,
-  "production_install_file_present": false,
-  "production_rollback_sql_present": false,
-  "production_parent_requires_new_bound_read": true,
-  "legal_scope": "CH ordinary valid Swiss passport / AT direct entry / visa not required only",
-  "bmeia_raw_monitor_status": "changed",
-  "dev_BG1_v12_natural_generation": 2413,
-  "dev_natural_renewal_runid": 25558,
-  "dev_new_fact": {
-    "id": 2,
-    "batch": 136,
-    "checked_at_utc": "2026-11-22T19:00:00.281082Z",
-    "verified_at_utc": "2026-11-22T19:22:03.243300Z"
-  },
-  "dev_77min_after_first_source_pass": true,
-  "dev_uninterrupted_60min_pass": true,
-  "follow_up_check": "2026-11-22T21:25:00+01:00",
-  "sha256_algorithm": "SHA-256 over exact GitHub utf-8 file bytes; computed via read-only Supabase Dev PG17",
-  "sum_scope": "The sums cover all files listed here, not the manifest itself (no circular self-digest).",
+  "production_catalog_observed_at_utc": "2026-11-22T21:03:32.563156Z",
+  "production_catalog_snapshot_path": "docs/evidence/official-truth-ch-at-prod-catalog-v2-read-20261122/CATALOG-READBACK.json",
+  "production_calls_in_this_preparation_turn": 0,
+  "production_writes_in_this_preparation_turn": 0,
+  "production_install_executed": false,
+  "production_rollback_executed": false,
+  "production_v1_parent": "official_v3_guard_private.bg1_production_http_allocator_v4",
+  "production_source_schema": "official_v3_at_production_private",
+  "method_revision": 2,
+  "method_digest": "fe161a865c50d26be4a41c1b122fcd14efb3b39bc9100fd66b13304dfca07a4e",
+  "method_package_digest": "6584d20adcc08e94edc4a74cad6c780b6db9c7ce89fff8e89afb0d23380e27a0",
+  "narrow_scope": "CH ordinary valid Swiss passport / AT direct entry / visa not required only",
+  "bmeia_monitor_status": "changed",
+  "dev_pg17_native_fixture_pass": [
+    "60",
+    "61",
+    "62",
+    "63"
+  ],
+  "exact_composed_prod_bg1_native_integration_pass": false,
+  "production_method_owner_aal2_done": false,
+  "production_ui_method_rev2_deploy_done": false,
+  "independent_chief_of_staff_review_done": false,
+  "sha256_method": "sha256(UTF8 exact GitHub file content) by Dev PG17 read-only and rollback; neither manifest nor sums nor delivery receipt self-hashed into files list",
   "files": [
+    {
+      "path": "docs/evidence/official-truth-ch-at-prod-catalog-v2-read-20261122/CATALOG-READBACK.json",
+      "sha256": "45286617bf31b2b674c3a1583ca7edd33f1f8c2cc568944be9c6f29623d5cbd5",
+      "bytes": 91529,
+      "role": "historical_authorized_prod_read_only_catalog_snapshot"
+    },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-at-ch-bg1-v10-freshproof.INSTALL-COMMIT.sql",
       "sha256": "76e6a203840d96d3a1bdca9afc356435adf9d6a3c87accbd3ca0dec6e95207be",
@@ -62,39 +73,99 @@
       "role": "new_go_required_read_only_only"
     },
     {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/10-PRODUCTION-CH-AT-V1-ADAPTER.INSTALL-BODY.sql",
+      "sha256": "e34fcdaa0c7476b7b52a81c49e78cc044afbeb9f6287f23942df153048b831f1",
+      "bytes": 18835,
+      "role": "sql_fragment_not_standalone"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/20-PRODUCTION-BG1-V5.INSTALL-BODY.sql",
+      "sha256": "496de2086c7c02539f8a9b50cef2a85ba308c0b6e9b0bcb32111d2ccaaef02e4",
+      "bytes": 32493,
+      "role": "sql_fragment_not_standalone"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql",
+      "sha256": "cefcd3654d79d02bb0b7554d5724d36f43cbc5d0e8a32baa82e2cc0bf81c708d",
+      "bytes": 58316,
+      "role": "production_prepared_sql_not_authorized"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql",
+      "sha256": "5003a23e8024908737d5b3e34f52cf192c5ba5c9ce256d2ad2db29c107f74612",
+      "bytes": 58314,
+      "role": "production_prepared_sql_not_authorized"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/32-PRODUCTION-V1-V2.ROLLBACK-PROBE.sql",
+      "sha256": "ee6aeab74f2649878856b8991834b121f09b3784f966c1c5a611d3bd3cbb8507",
+      "bytes": 19831,
+      "role": "production_prepared_sql_not_authorized"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/33-PRODUCTION-V1-V2.ROLLBACK-COMMIT.sql",
+      "sha256": "cf50526bd7a59050922a364fc3631787a47c15e025c2aa52dcdf8261901c5fa4",
+      "bytes": 19829,
+      "role": "production_prepared_sql_not_authorized"
+    },
+    {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/40-PRODUCTION-POSTCOMMIT.READONLY.sql",
-      "sha256": "40b94e195f18f31e9e34c1b4214b3a0fc0f050dd58b08b3d7c6ff16565791d74",
-      "bytes": 3755,
+      "sha256": "0d5c7cd17dc91cc3b1e10931a7011ba94c119a4ccd23b6a1b9ec82b38272ab25",
+      "bytes": 4359,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql",
-      "sha256": "f6462240e13df799080bb85b8e684662f9f5d9d83012da64977c2d05075d75f6",
-      "bytes": 1123,
+      "sha256": "df35e0d946401a545dca6637a6f28c7840655ebd071a9929c606de6bc4d1caa8",
+      "bytes": 1228,
       "role": "release_preparation_only"
     },
     {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/60-DEV-NATIVE-PROD-V1-ADAPTER.REHEARSAL-ROLLBACK.sql",
+      "sha256": "e5790d6578728e70c3fa7470215414c4dc3a0231a6dcebec3f00b8ade46177bf",
+      "bytes": 27507,
+      "role": "dev_pg17_native_fixture_pass"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/61-DEV-NATIVE-PROD-V1-ROLLBACK.REHEARSAL-ROLLBACK.sql",
+      "sha256": "73cc306a641a5f3c67e5e49186a8589466a7379ab5afd6912cf02677d0aa76ee",
+      "bytes": 29638,
+      "role": "dev_pg17_native_fixture_pass"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/62-DEV-NATIVE-PROD-V1-BG1-COMPILE.REHEARSAL-ROLLBACK.sql",
+      "sha256": "6991542c7a829b88407173440f069026ba61cacac59d26f80247539ea2db16ba",
+      "bytes": 58668,
+      "role": "dev_pg17_native_fixture_pass"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/63-DEV-BG1-V5-V6-IMMUTABILITY.REHEARSAL-ROLLBACK.sql",
+      "sha256": "c8608b7dece94a2dffa159018e68265c0564fcbdf4ff31eae73e5119ed24c2c4",
+      "bytes": 5665,
+      "role": "dev_pg17_native_fixture_pass"
+    },
+    {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/DEV_EVIDENCE.md",
-      "sha256": "cfd4215a9eefc98aed06d2a6cd68a91747fdd64542376ecc35a4925622a44b88",
-      "bytes": 6492,
+      "sha256": "bfad64860ed3f302ab090152b1d216ef0972c626946c6f99a9d50981465f576b",
+      "bytes": 9954,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/GO_SCOPE.md",
-      "sha256": "9d6b2f620ec8b194b773e33d29bda290f2b36bfe69480ac1b930b0f36fcf5c02",
-      "bytes": 2915,
+      "sha256": "15118bd2a4599b1629caabbfbb6ff3426a9bcef5d1946c54be1efd6bff650e9e",
+      "bytes": 2673,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/INSTALL_SPEC.md",
-      "sha256": "5bf5d809fc84621fe2659f1488ec2508284bc77ef3bcb4200f009975487e5484",
-      "bytes": 4933,
+      "sha256": "90daf058f55cd82c32380f4fbc0f5adcefa215ef8cfe34c7ab631b89c3bd8ef1",
+      "bytes": 7349,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/NATIVE_VALIDATION_PLAN.md",
-      "sha256": "54405a2b767eda23d19f0262a6843f402b20b5b05c04eac292984725deb58df5",
-      "bytes": 3065,
+      "sha256": "e1e68920fbd884f3508ccd05f23b361137e9e12d8a47aa23239ad4e509dac591",
+      "bytes": 5817,
       "role": "release_preparation_only"
     },
     {
@@ -105,14 +176,14 @@
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/README.md",
-      "sha256": "36e4efadbaccc65da4de7f0c518805f618e23a157cc55c7e0e4afa42008a1cac",
-      "bytes": 3242,
+      "sha256": "b565c40f12c55c537a672280e65b5c52d340ffae750ee810d5cbca94cad99c64",
+      "bytes": 2305,
       "role": "release_preparation_only"
     },
     {
       "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/ROLLBACK_PLAN.md",
-      "sha256": "09e15dea73a7801372f39f91044a276da680a6abea0e9f658fb74913a9ba8798",
-      "bytes": 3928,
+      "sha256": "ad103914171cca00e20bebd6b07f7606260267225b5ad5dcea7ad6707e474117",
+      "bytes": 3942,
       "role": "release_preparation_only"
     },
     {
@@ -121,17 +192,5 @@
       "bytes": 2227,
       "role": "release_preparation_only"
     }
-  ],
-  "production_catalog_read_attempts": 1,
-  "production_catalog_successful_reads": 0,
-  "production_writes_executed": 0,
-  "production_readonly_v1_sql_sha256": "2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec",
-  "production_readonly_v1_result": "42P01: official_v3_at_private.whole_originals_v2 does not exist; no catalog results; no writes",
-  "production_readonly_v1_go_consumed": true,
-  "production_readonly_v2_only_dev_tested": true,
-  "production_readonly_v2_requires_new_separate_go": true,
-  "production_next_go_file": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-ch-at-visa-v2-release-preparation-20261122/01-PRODUCTION-CATALOG-V2.READONLY.sql",
-  "production_current_parent_unverified": true,
-  "dev_one_hour_coverage_start_utc": "2026-11-22T19:22:03.243300Z",
-  "dev_one_hour_readback_utc": "2026-11-22T20:38:58.043544Z"
+  ]
 }
