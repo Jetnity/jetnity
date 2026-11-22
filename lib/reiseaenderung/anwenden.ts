@@ -438,6 +438,14 @@ function tagHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kennung
     stageId = etappe.id
   }
   if (stageId) etappeSuchen(reise, stageId, 'Diese Etappe gehört nicht zur Reise.')
+  const rueckIndex = rueckreisetag(reise)?.dayIndex ?? null
+  if (vorRueckreiseVerlaengern(reise, nachIndex, 1, stageId, kennung)) {
+    if (op.titel && rueckIndex !== null) {
+      const neu = reise.days.find(tag => tag.dayIndex === rueckIndex)
+      if (neu) neu.title = op.titel
+    }
+    return
+  }
   tageEinfuegen(reise, nachIndex, 1, stageId, kennung)
   if (op.titel) {
     const neu = reise.days[nachIndex]
