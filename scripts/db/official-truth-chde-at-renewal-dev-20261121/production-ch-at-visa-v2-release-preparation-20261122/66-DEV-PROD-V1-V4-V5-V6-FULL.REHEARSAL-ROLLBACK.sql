@@ -1779,6 +1779,22 @@ BEGIN
  THEN RAISE EXCEPTION 'DEV_FULL_V1_BG1_V5_CH_VISA_AND_REPLAY_E2E_FAILED: issued %, answer %',applied,ans; END IF;
  PERFORM jetnity_at_full_rehearsal.assert_catalog_v1();
 END $verify_fresh$;
+-- Independent end-to-end integrity-tamper negative gate: the V5 snapshot
+-- includes the fourth V2 cron. A command mutation must invalidate BG1.
+DO $v5_tamper$
+BEGIN
+ UPDATE jetnity_at_full_rehearsal.cron_job
+ SET command='SELECT 999' WHERE jobname='jetnity-at-production-source-qualified-renew-v2';
+ BEGIN
+  PERFORM jetnity_at_full_rehearsal.assert_catalog_v1();
+  RAISE EXCEPTION 'DEV_BG1_V5_CRON_TAMPER_NOT_BLOCKED';
+ EXCEPTION WHEN SQLSTATE 'P7905' THEN NULL;
+ END;
+ UPDATE jetnity_at_full_rehearsal.cron_job
+ SET command='SELECT jetnity_at_full_rehearsal.renew_ch_v2()'
+ WHERE jobname='jetnity-at-production-source-qualified-renew-v2';
+ PERFORM jetnity_at_full_rehearsal.assert_catalog_v1();
+END $v5_tamper$;
 -- Map exact frozen production rollback SQL (except isolated target namespace,
 -- no real cron/job writes, and V3/optimized fixed archive SHA anchors bound
 -- to the fixture's pre-captured immutable SHA values).
