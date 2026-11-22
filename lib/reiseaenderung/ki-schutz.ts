@@ -33,6 +33,25 @@ export function kiGraphSicherheit(vorher: Reisegraph, nachher: Reisegraph): KiGr
   })
   if (moved) return { ok: false, meldung: SAFE_FAILURE }
 
+  // Inserting a day before an existing flight/stay can reindex the day while
+  // leaving its original item dates behind. That is a contradictory proposal,
+  // not an implicitly confirmed rescheduling of any booking or travel time.
+  const neueTage = new Map(nachher.days.map(tag => [tag.id, tag]))
+  const alteGebundeneDatenUnveraendert = vorher.days.some(alt => {
+    const neuTag = neueTage.get(alt.id)
+    if (!neuTag || !alt.dayDate || alt.dayDate === neuTag.dayDate) return false
+    return alt.items.some(punkt => {
+      const neuPunkt = neuTag.items.find(eintrag => eintrag.id === punkt.id)
+      if (!neuPunkt) return false
+      return (punkt.startsOn === alt.dayDate && neuPunkt.startsOn === punkt.startsOn)
+        || (punkt.endsOn === alt.dayDate && neuPunkt.endsOn === punkt.endsOn)
+    })
+  })
+  if (alteGebundeneDatenUnveraendert) return {
+    ok: false,
+    meldung: 'Dieser Vorschlag verschiebt Reisetage, lässt aber die festen Termine von Planpunkten zurück. Prüfe die Termine und die Rückreise; deine Reise bleibt unverändert.',
+  }
+
   const oldLast = [...vorher.days].sort((a, b) => a.dayIndex - b.dayIndex).at(-1)
   const newLast = [...nachher.days].sort((a, b) => a.dayIndex - b.dayIndex).at(-1)
   if (oldLast && newLast && oldLast.id !== newLast.id
