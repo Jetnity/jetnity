@@ -26,6 +26,7 @@ import { SuchbereichKontext } from './SuchbereichKontext'
 import { hotelKontextVersion } from '@/lib/trips/hotel-suchkontext'
 import Aktivitaeten from './Aktivitaeten'
 import dynamic from 'next/dynamic'
+import { titelFolgtDemErstenZiel } from '@/lib/places/titel-name'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
 
 const OmioImReiseplan = dynamic(() => import('./omio/OmioImReiseplan'), { ssr: false })
@@ -156,7 +157,7 @@ export default function Organisieren({
   const land = erste?.countryCode
   const landTitel = land && reise.stages.every((s) => s.countryCode === land) ? landName(land, 'de') : null
   const titel =
-    landTitel && reise.title === erste?.name
+    landTitel && erste && titelFolgtDemErstenZiel(reise.title, erste)
       ? landTitel
       : reise.title || landTitel || erste?.name || 'Deine Reise'
   const etappen = (
