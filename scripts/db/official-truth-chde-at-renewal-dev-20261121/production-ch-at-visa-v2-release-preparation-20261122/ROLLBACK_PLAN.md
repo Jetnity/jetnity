@@ -1,26 +1,25 @@
-# CH→AT: Rücknahmevertrag für eine *später* gesondert autorisierte Production-Installation
+# CH→AT Production V1/V2 — geschützter, historienerhaltender Rücknahmeplan
 
-**Stand nach einmaligem freigegebenem Production-Read 22.11.2026: BLOCKED / nicht installationsreif.** Die exakte 00-READONLY-SQL (SHA-256 `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`) scheiterte in Production an SQLSTATE `42P01` (`official_v3_at_private.whole_originals_v2` existiert dort nicht). Einzig Lesezugriff, **kein DDL/DML**, kein Installationsversuch und keine Wiederholung. Da der eigentliche SELECT fehlgeschlagen ist, liegen **keine vollständigen Production-Katalog-Readback-Daten** vor. Die neue schema-tolerante Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` wurde separat ausschliesslich gegen **Dev** überprüft und darf auf Production erst nach einem **neuen expliziten READ-ONLY-Go** ausgeführt werden.
-Production bleibt unangetastet. Ein Dev-Owner/AAL2-Beleg darf nie als Production-Owner-Aktion wiederverwendet werden.
+**PREPARED FOR CHIEF-OF-STAFF REVIEW / kein Production-Go.** Die V1-Production-Struktur und alte BG1-HTTP-v4-Baseline wurden über den einzigen bewilligten Katalog-READONLY vom **22.11.2026 21:03:32.563156 UTC** gebunden. Keine Production-Installation, Probe oder Rücknahme wurde ausgeführt.
 
-## A. Vor COMMIT
+## Prä- und Post-COMMIT-Gates
 
-Vorbedingung ist der unabhängig autorisierte, zeitnahe, unveränderliche Production-PREFLIGHT-Nachweis mit Zielobjekt-/ACL-/RLS-/Funktionshashes, aktuellem BG1-Katalog und ursprünglichem v4-HTTP-ID-Allocator. Ein fehlender Beleg oder eine geänderte Basis stoppt die Installation. Es muss zunächst eine atomare Production-Probe mit **vollständigem ROLLBACK** gelingen, bevor ein separates COMMIT-Go erteilt werden kann. Keine externen HTTP-/Owner-/Cron-Aufrufe in der Probe. Neue Tabellen/feste Quellenedition müssen ausschließlich append-only und privat sein; alter Research-Originalbody und alte Ergebnisse bleiben erhalten. Keine neuen Rollen/Grants für den direkten DB-Zugang.
+- `32-PRODUCTION-V1-V2.ROLLBACK-PROBE.sql` und `33-PRODUCTION-V1-V2.ROLLBACK-COMMIT.sql` sind eigenständige, identisch gebundene SQL-Pfade mit `ROLLBACK` bzw. `COMMIT`. Beide prüfen `postgres`, PG17, exakte Projekt-Zuordnung (auch externe Zielauswahl), v5 vorhanden/v6 abwesend, aktueller Schutzkatalog, eine **zusätzliche** aktive V2-Renew-Cron, drei Quellen und geeignete Locks. Jede Abweichung stoppt die Transaktion; keine Wiederholung bei unklarem Ausgang.
+- Bei Rücknahme wird **ausschliesslich die neue V2-Cron unscheduled**; die drei bisherigen Source-Crons sowie sämtliche V1-Originale, V1-Visa-Fakten, V2-Originale, V2-Fakten, Quellenbelege und MA1-Owner-Quittungen bleiben erhalten. Bestehende CH→DE-Jobs, Dispatches 38–46, Provider, Rollen, HTTP-ID-v4-Allocator/IDs und andere Länder werden nicht berührt.
+- Die **bestehende öffentliche V1-Visumfunktion** wird als streng fail-closed Version ersetzt: CH und alle Fremdpässe liefern `unavailable`, selbst wenn ein altes Rev1- oder Rev2-Methodenrecht existiert. Die neue private V2-Issuerfunktion sperrt nach vorhandenem `bg1_prod_ch_at_rollback_v6` ebenfalls jeden weiteren Faktimport.
+- Ein **neuer RLS-geschützter BG1-v6-Nachfolger** bindet den eingefrorenen v5-Baseline-Digest und den neuen geschützten Katalog, verlangt eine zusätzliche natürliche Vollproof-Generation nach `proof_not_before`. Wie v5 ist die V6-Baseline nach genau einer atomaren Kataloginitialisierung gegen UPDATE/DELETE/TRUNCATE geschützt.
+- Nach `ROLLBACK-PROBE.sql` muss durch identische erwartete SHA-256 und unabhängigen Diff-/PG17-/Chief-Review belegt sein, dass die echte Rücknahme fehlerfrei auszuführen wäre. **Ein Production-Rollback-COMMIT erfordert seine eigene explizite Go-Zielbindung** und wird in diesem Auftrag nicht ausgeführt.
 
-## B. Unklare COMMIT-Antwort
+## Bei Fehlern/Abbruch
 
-**Sofort stoppen; nicht blind wiederholen.** Erst eine separat freigegebene Readback-Abfrage (40-PRODUCTION-POSTCOMMIT.READONLY.sql) stellt die tatsächliche installierte Katalogidentität fest. Exakte, zeitlich noch gültige Funktions-/Tabellen-/ACL-/RLS-Digests vergleichen. Der HTTP-ID-Allocator bleibt unangetastet, keine `nextval/setval`.
+- Fehlschlag vor `COMMIT`: Eine einzelne nicht bestätigte Transaktion ist kein Beleg für ausgeführtes COMMIT; bei Verbindungsunterbruch **keinen Write wiederholen**, sondern mit eigenem neuen Lese-Go gegen den tatsächlich vorhandenen v5/v6-Katalog und faktischen Cronstatus lesen.
+- Wenn Installations-SQL aufgrund Source-, BG1- oder Rollenabweichung nicht durchgeht, bleibt Production unverändert und CH→AT weiterhin `derzeit nicht verfügbar`.
+- Nach erfolgter V2-Live-Aktivierung darf keine Originalversion oder Faktversion gelöscht oder umgeschrieben werden; Rücknahme ist ein **append-only Sperrnachfolger**, nicht ein historienverändernder „Restore“.
+- Ein Widerruf der Owner-Methode ist **eine andere echte Owner/AAL2-Aktion**. Die V6-Rücknahme stellt bewusst zunächst nur die öffentliche Ausgabe fail-closed; sie darf keine fremde MFA/Owner-Operation simulieren.
 
-## C. Nach COMMIT, bevor Owner handelt
+## Abnahmebelege
 
-Der Dev-Code ist keine direkt installierbare Production-Migration. Ein erst nach dem Production-PREFLIGHT erstelltes und vollständig gehashtes Schutz-/Rollback-SQL muss den **tatsächlich installierten** Nachfolger atomar auf Default-Closed zurückführen; ein Restore alter Funktionen darf nur mit nachgerechneter aktuellen und gesicherter vorheriger Definition, Rolle und ACL stattfinden. BG1 muss die Rücknahme vollständig kennen und einen neuen **natürlichen** Vollbeleg erbringen. Der Scheduler-/CH→DE-Cycle12-Block, Dispatches38–46, alte Owner-Quittungen und der Production-v4-HTTP-ID-Allocator werden nicht gelöscht oder umnummeriert.
-
-## D. Nach echtem Production Owner/AAL2 oder amtlichem Quellenlauf
-
-Bereits erzeugte echte Quellenbelege, Quellenjournal, Besitzer-Quittungen, Faktenversionen und IDs sind **unveränderliche Historie**. Deshalb keine Löschung oder rückwirkende Fälschung; stattdessen zusätzliches Sperr-/Widerrufsereignis und Customer-Ausgabe fail-closed bis zu einer eigenen geprüften Korrektur. Ein Owner-Methodenwiderruf ist eine echte separate Owner/AAL2-Aktion. Automatische Quellenüberwachung darf frühere Prüfungen nicht überschreiben; ein späterer negativer Status sperrt die Kundenanzeige.
-
-## E. Exakte Grenzen
-
-Es werden nur CH Staatsangehörigkeit, gültiger gewöhnlicher Schweizer Reisepass, AT direkte Einreise, Visumfreiheit qualifiziert. IN/DE/US/TR/CN und alle übrigen ungeprüften Pässe/anderen Themen bleiben «derzeit nicht verfügbar». Eine fachlich als regelneutral bestätigte geänderte BMEIA-Version bleibt technisch **`changed`**, niemals künstlich `unchanged`.
-
-**Aktuell existiert noch kein unzweideutig auf den heute tatsächlich installierten Production-Katalog gebundener Installations-/Rücknahmecode. Dieser Vertrag allein ist keine ausführbare Rücknahme.**
+- Nativer Dev-PG17-V1-Fixture-Test: `60` Quelle/positiver CH-Fakt/10-passartige negative, SHA-Change-Sperre/immutable `ROLLBACK` **PASS**.
+- Nativer Dev-PG17-Rollback-Fixture-Test: `61` positive Ausstellung, sofortige CH-/Fremdpass-Sperre, V2-Cron entfernt, V1-Crons/Quellen/Fakten erhalten, v6-Predecessor-Digest und `ROLLBACK` **PASS**.
+- PG17-Compile-Test `62` für v5/v6-Guard-Funktionen und Test `63` für zwei Bootstrap-Baselines, vier verweigerte Nachmanipulationen **PASS**.
+- **Offen:** exakter vollwertiger V1-BG1-Production-Katalog-Integrationstest in Dev, installierte Source-/Owner-UI-Production-Rev2-Gates und echtes Production-Readback (nur nach eigenem Go). Dieser Plan ist mit den zugehörigen Hashes Chief-of-Staff-prüffähig, **nicht automatisch Production-installationsreif**.
