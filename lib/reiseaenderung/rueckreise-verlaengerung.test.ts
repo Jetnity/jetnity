@@ -62,7 +62,9 @@ test('KI: ein Tag länger fügt vor die Rückreise ein und erhält Rückflug, ID
   assert.equal(rueck.items[0]?.startsAt, '18:00')
   assert.equal(result.reise.stages[1]?.departureDate, '2026-09-17')
   assert.deepEqual(kiGraphSicherheit(original, result.reise), { ok: true })
-  assert.ok(reiseDiff(original, result.reise).some(e => e.text.includes('Dauer: 5 → 6')))
+  const diff = reiseDiff(original, result.reise)
+  assert.ok(diff.some(e => e.text.includes('Dauer: 5 → 6')))
+  assert.ok(diff.some(e => e.text.includes('Rückreise: 2026-09-16 → 2026-09-17 (geplant, nicht gebucht)')))
   assert.deepEqual(original, vorher, 'the accepted source graph remains unchanged')
 })
 
@@ -151,7 +153,7 @@ test('KI-Erzeugung: echter Änderungs-Pipelinepfad liefert eine sichere Vorschau
     zustand: { aktiv: true, modell: 'gpt-5.6-terra', aufwand: 'low' },
     beanspruchen: async () => {
       kostenReservierungen += 1
-      return { ok: true, id: 'mock-reservation-1' }
+      return { ok: true as const, id: 'mock-reservation-1' }
     },
     abschliessen: async () => {},
     aufrufen: async () => {
