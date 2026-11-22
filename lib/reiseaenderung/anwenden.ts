@@ -265,11 +265,75 @@ function leereBetroffeneEtappenEntfernen(reise: Reisegraph, betroffeneEtappen: S
   if (verbleibende.length > 0) reise.stages = verbleibende
 }
 
+/**
+ * A generated return day is an existing day, not an extra stay day.
+ * Only move an unmistakably marked, unbooked return; a commercial/fixed
+ * connection must stay untouched and fail closed. All changes remain a
+ * proposal until the normal explicit user-acceptance path saves the graph.
+ */
+function rueckreisetag(reise: Reisegraph): TripDay | null {
+  const letzter = [...reise.days].sort((a, b) => a.dayIndex - b.dayIndex).at(-1)
+  if (!letzter || reise.days.length < 2) return null
+  const tagMarker = /^(?:rückreise|heimreise|rückflug|heimflug|abreise)(?:$|[\s:–—-])/iu
+  const punktMarker = /^(?:rückreise|heimreise|rückflug|heimflug|rückfahrt|heimfahrt)(?:$|[\s:–—-])/iu
+  if (tagMarker.test(letzter.title?.trim() ?? '')
+    || letzter.items.some(punkt =>
+      (punkt.kind === 'flight' || punkt.kind === 'transfer')
+      && punktMarker.test(punkt.title.trim()))) return letzter
+  return null
+}
+
+/**
+ * Extend the stay BEFORE the existing return day, preserving its ID, stage
+ * and planned points. Move only date fields that were tied exactly to the old
+ * calendar day. Unknown/explicitly different dates, bookings and structured
+ * transport are never retimed from a user's free-text wish.
+ */
+function vorRueckreiseVerlaengern(
+  reise: Reisegraph,
+  nachIndex: number,
+  anzahl: number,
+  stageId: string | null,
+  kennung: KennungFn,
+): boolean {
+  const rueck = rueckreisetag(reise)
+  if (!rueck || (nachIndex !== rueck.dayIndex && nachIndex !== rueck.dayIndex - 1)) return false
+  const davor = reise.days.find(tag => tag.dayIndex === rueck.dayIndex - 1)
+  if (!davor) return false
+
+  const fest = rueck.items.some(punkt =>
+    istKommerziell(punkt)
+    || punkt.kind === 'stay'
+    || punkt.bookingSource !== null || punkt.bookingConfirmedAt !== null
+    || punkt.routeItinerary != null || punkt.connectionRef !== null
+    || punkt.mobilityEvidence !== null || punkt.rentalEvidence !== null
+    || (punkt.startsOn !== null && punkt.startsOn !== rueck.dayDate)
+    || (punkt.endsOn !== null && punkt.endsOn !== rueck.dayDate),
+  )
+  if (fest) {
+    throw new ApplyError('ungueltig',
+      'Die Rückreise enthält eine Buchung, einen festen Verbindungshinweis oder abweichende Termine. ' +
+      'Verschiebe die Rückreise zuerst ausdrücklich und prüfe bestehende Buchungen; die Reise bleibt unverändert.')
+  }
+
+  const rueckId = rueck.id
+  const vorherDatum = rueck.dayDate
+  tageEinfuegen(reise, davor.dayIndex, anzahl, stageId ?? davor.stageId, kennung)
+  const versetzt = reise.days.find(tag => tag.id === rueckId)
+  if (!versetzt) throw new ApplyError('ungueltig', 'Der vorhandene Rückreisetag konnte nicht erhalten werden.')
+  for (const punkt of versetzt.items) {
+    if (vorherDatum !== null && punkt.startsOn === vorherDatum) punkt.startsOn = versetzt.dayDate
+    if (vorherDatum !== null && punkt.endsOn === vorherDatum) punkt.endsOn = versetzt.dayDate
+  }
+  return true
+}
+
 function dauerAendern(reise: Reisegraph, op: Modelloperation, kennung: KennungFn) {
   const delta = op.tageDelta
   if (!delta) return
   if (delta > 0) {
     const letzte = reise.days[reise.days.length - 1]
+    if (vorRueckreiseVerlaengern(reise, letzte?.dayIndex ?? 0, delta, null, kennung)) return
     tageEinfuegen(reise, letzte?.dayIndex ?? 0, delta, letzte?.stageId ?? null, kennung)
     return
   }
@@ -332,7 +396,9 @@ function etappeDauer(reise: Reisegraph, op: Modelloperation, kennung: KennungFn)
   const tage = tageDerEtappe(reise, etappe.id)
   if (delta > 0) {
     const letzter = tage[tage.length - 1]
-    tageEinfuegen(reise, letzter?.dayIndex ?? reise.days.length, delta, etappe.id, kennung)
+    const nachIndex = letzter?.dayIndex ?? reise.days.length
+    if (vorRueckreiseVerlaengern(reise, nachIndex, delta, etappe.id, kennung)) return
+    tageEinfuegen(reise, nachIndex, delta, etappe.id, kennung)
     return
   }
   if (tage.length + delta < 1) {
