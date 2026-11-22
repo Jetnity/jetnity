@@ -1,0 +1,52 @@
+{
+  "schema": "jetnity.prod.ch-at.visa.single-narrow-source-package.v1",
+  "status": "SOURCE_IDENTITY_ONLY_NOT_PRODUCTION_AUTHORITY",
+  "destination": "AT",
+  "citizenship": "CH",
+  "document": "ordinary_valid_swiss_passport",
+  "route": "direct_entry",
+  "requirement_type": "visa",
+  "decision": "not_required",
+  "other_passports_qualified": false,
+  "owner_semantic_qualification": "Only CH ordinary valid Swiss passport direct entry to Austria requires no visa; BMEIA changed presentation is legally rule-neutral for this scope only.",
+  "dev_observation_batch": 136,
+  "source_versions": [
+    {
+      "source_id": "bmi-visa-nationality-matrix",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "edition": "2026-11-06",
+      "size_bytes": 498415,
+      "raw_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "dev_watch_status": "unchanged_exact"
+    },
+    {
+      "source_id": "bmi-general-entry",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "edition": null,
+      "size_bytes": 91655,
+      "raw_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "dev_watch_status": "unchanged_exact"
+    },
+    {
+      "source_id": "bmeia-bern-how-to-apply",
+      "official_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "edition": null,
+      "size_bytes": 172428,
+      "raw_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "dev_watch_status": "changed",
+      "previous_research_sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+      "comparison_scope": "CSS/JS versions and unrelated menu item; visa-rule content not changed for Swiss direct entry"
+    }
+  ],
+  "forbidden": [
+    "replace_old_originals",
+    "translate_changed_to_unchanged",
+    "approve_other_passports",
+    "use_dev_owner_receipt_in_production",
+    "manual_BG1_proof",
+    "run_CHDE_restart",
+    "use_unbound_production_schema",
+    "add_direct_database_rights"
+  ],
+  "production_read_and_write_executed": false
+}
