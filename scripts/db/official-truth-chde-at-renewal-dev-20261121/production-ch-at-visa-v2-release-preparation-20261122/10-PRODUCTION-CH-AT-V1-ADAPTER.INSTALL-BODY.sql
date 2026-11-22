@@ -92,7 +92,7 @@ REVOKE ALL ON SEQUENCE official_v3_at_production_private.ch_visa_facts_v2_versio
 CREATE FUNCTION official_v3_at_production_private.batch_qualified_ch_v2(p_batch bigint)
  RETURNS boolean LANGUAGE plpgsql VOLATILE SECURITY INVOKER SET search_path=pg_catalog
 AS $qualified$
-DECLARE current_time timestamptz:=clock_timestamp(); started timestamptz;
+DECLARE instant_at timestamptz:=clock_timestamp(); started timestamptz;
 BEGIN
  IF p_batch IS NULL OR (SELECT count(*) FROM official_v3_at_production_private.ch_source_qualifications_v2)<>3
  OR (SELECT count(*) FROM official_v3_at_production_private.source_pins_v1)<>3
@@ -100,7 +100,7 @@ BEGIN
  OR (SELECT count(*) FROM official_v3_at_production_private.ch_source_originals_v2)>3
  THEN RETURN false; END IF;
  SELECT started_at INTO started FROM official_v3_at_production_private.watch_batches_v1 WHERE batch_id=p_batch;
- IF NOT FOUND OR started>current_time OR started<=current_time-interval '70 minutes' THEN RETURN false; END IF;
+ IF NOT FOUND OR started>instant_at OR started<=instant_at-interval '70 minutes' THEN RETURN false; END IF;
  IF (SELECT count(*) FROM official_v3_at_production_private.watch_requests_v1 WHERE batch_id=p_batch)<>3
  OR (SELECT count(*) FROM official_v3_at_production_private.watch_observations_v1 WHERE batch_id=p_batch)<>3
  THEN RETURN false; END IF;
@@ -109,7 +109,7 @@ BEGIN
    JOIN official_v3_at_production_private.watch_requests_v1 r USING(batch_id,source_id)
    WHERE o.batch_id=p_batch AND o.http_status=200
     AND o.observed_at>r.requested_at AND o.observed_at<=r.requested_at+interval '6 minutes 10 seconds'
-    AND o.observed_at<=current_time AND r.requested_at=started
+    AND o.observed_at<=instant_at AND r.requested_at=started
     AND o.source_status=q.expected_watch_state
     AND o.body_sha=q.accepted_sha AND o.bytes=q.accepted_bytes)<>3 THEN RETURN false; END IF;
  -- Even a single newer mismatch means immediate fail-closed, regardless of
@@ -121,7 +121,7 @@ BEGIN
        OR o.body_sha IS DISTINCT FROM q.accepted_sha
        OR o.bytes IS DISTINCT FROM q.accepted_bytes OR o.http_status IS DISTINCT FROM 200))
  OR EXISTS(SELECT 1 FROM official_v3_at_production_private.watch_batches_v1 b
-    WHERE b.batch_id>p_batch AND b.started_at<=current_time-interval '6 minutes 10 seconds'
+    WHERE b.batch_id>p_batch AND b.started_at<=instant_at-interval '6 minutes 10 seconds'
       AND (SELECT count(*) FROM official_v3_at_production_private.watch_observations_v1 o
             WHERE o.batch_id=b.batch_id)<>3)
  THEN RETURN false; END IF;
