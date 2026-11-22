@@ -481,6 +481,16 @@ Ein Hinweis unter einem Feld oder einer Überschrift sagt in einem Satz, **was J
 - **Hinweise aus Freitext:** Ohne Auswertung durch ein Modell darf ein Formular nur sagen, *wo* eine erwähnte Angabe hingehört, nie sie übernehmen. Der Kasten «Wo diese Angaben hingehören» steht unter dem Textfeld, in einer `aria-live`-Region, und schliesst mit «Jetnity liest deinen Wunschtext dafür nicht automatisch aus.»
 - **Prüfberichte:** Alltagssprache mit denselben Aussagen: «Nächte» statt Fachbegriffe, Datum als «5. Juni» statt ISO, Nullwerte als Satz («Noch kein Abschnitt …»), ein Hinweis, der für alle Befunde eines Bereichs gilt, steht einmal beim Bereich. Ein Grund («Grenze oder Fehler») wird nur genannt, wenn er vorliegt.
 
+### 6.24 Startseite: Foto-Hero, Bento-Raster, Mini-Oberflächen
+
+Die Startseite (`/`) folgt zusätzlich diesen Regeln; Begründung und Belege in `docs/STARTSEITE_NEUGESTALTUNG_2026-11-22.md`. Alle Werte stammen aus `styles/startseite.css`, Klassen beginnen mit `hs-` und enthalten kein `shadow-` (sonst setzt `white-mint.css` sie flach).
+
+- **Foto-Hero:** Foto als Hintergrund (`next/image`, `fill`, `priority`), darüber ein Verlauf aus `--jet-brand-900` (auf dem Telefon von oben nach unten dicht, ab 1024 px von links nach rechts) und ein dezenter Lime-Schein. Keine blauen oder violetten Verläufe. Der Text muss über dem Foto mindestens 4,5:1 erreichen (grosse Schrift 3:1), gemessen am hellsten 5 % des Bildes unter dem Text, nicht am Mittelwert. Die Suchkarte ist eine Glasfläche (`rgb(255 255 255 / 0.14)`, 14 px Unschärfe, 1-px-Kante `rgb(255 255 255 / 0.22)`); Glas gibt es nur über Fotos und auf der dunklen Bento-Karte.
+- **Bento-Raster:** zwölf Spalten ab 1024 px, Karten mit 7 und 5 Spalten abwechselnd, auf dem Telefon einspaltig. Jede Karte trägt ihre vollständigen Texte (Thema, `h3`, Text, Beispiel, Ergebnis) und eine Mini-Oberfläche. Karten sind `.hs-karte` (1-px-Kante `--hs-kante`, Oberlicht `--hs-licht`, Tiefe `--hs-tiefe-1`), die betonte Karte `.hs-karte-dunkel`, die ruhige `.hs-karte-mint`.
+- **Mini-Oberflächen (`HomeMiniUi`):** nur Form und Beschriftung, `aria-hidden`, keine Zahlen, Preise, Länder oder Fristen. Sie dürfen nichts versprechen, was die Funktion nicht belegt; Farben sind die Statusfarben `--jet-status-ok` und `--jet-status-achtung`.
+- **Bewegung:** nur `transform` und `opacity`, höchstens 250 ms (verwendet: 200 ms), nur unter `prefers-reduced-motion: no-preference`, Hover-Effekte nur mit `(hover: hover)`. Die globale Regel für reduzierte Bewegung bleibt unangetastet.
+- **«Nach oben»:** Auf öffentlichen Seiten erscheint der Knopf auf Telefonen (bis 639 px) nur beim Hochscrollen und geht nach 2,2 s Ruhe weg; ab 640 px und im Arbeitsbereich bleibt er ab 400 px Scrollweg sichtbar. Tailwind erzeugt in diesem Projekt kein `max-sm:` (der eigene Breakpoint `short` ist ein `raw`-Eintrag); für «nur Telefon» gilt `[@media(max-width:639px)]:`.
+
 ## 7. Responsive-Regeln
 
 Verbindlich für alle V2-Oberflächen. Referenzbreiten: **280, 320, 360, 375, 390, 430, 768, 1280 px**, dazu Landscape (844×390 und 667×375).
