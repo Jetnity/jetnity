@@ -44,7 +44,6 @@ export default async function SecurityPage() {
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-6 text-ink-700">
             {sicherheitText(sprache, 'page.intro')}
-            {!passkeysServerAktiviert ? ` ${sicherheitText(sprache, 'page.passkeysUnsupported')}` : null}
           </p>
         </header>
 

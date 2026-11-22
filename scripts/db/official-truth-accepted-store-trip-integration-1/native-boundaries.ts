@@ -42,7 +42,7 @@ export async function nativeBoundaryProof(t:TestContext,runtime:Runtime,state:Na
   await assert.rejects(run(()=>runtime.factory.createServerComponentClient(preLife.signal)));await run(()=>preLife.settle())
   assert.equal(state.authCookieReads,cookiesBefore);assert.equal(http.requests.length,requestsBefore)
 
-  // Actual SSR0.6.1 + supabase2.57.2/auth2.71.1 constructor/listener refresh.
+  // Actual SSR0.6.1 + supabase2.119.2/auth2.119.2 constructor/listener refresh.
   // No fake HTTP error stops retries: native pending refresh is really aborted,
   // and the pinned SDK's already-started retry bookkeeping is fully drained.
   for(const mode of ['constructor_only','concurrent_get_user','query_abort_then_owner'] as const) {
@@ -99,7 +99,7 @@ export async function nativeBoundaryProof(t:TestContext,runtime:Runtime,state:Na
     for(const work of observed){owner?.check();assert(work.registered>=2);assert.equal(work.initialCompleted,work.registered);assert(work.initializationCompleted)
       assert.equal(work.invalid,false);assert(Object.values(work.counts).every(value=>value===0))}
     const afterDrain=http.requests.length;await turn();assert.equal(http.requests.length,afterDrain)
-    t.diagnostic(JSON.stringify({proof:'actual-pinned-SSR-factory-abort',mode,node:process.versions.node,ssr:'0.6.1',supabase:'2.57.2',auth:'2.71.1',
+    t.diagnostic(JSON.stringify({proof:'actual-pinned-SSR-factory-abort',mode,node:process.versions.node,ssr:'0.6.1',supabase:'2.119.2',auth:'2.119.2',
       elapsedMs:Math.round(performance.now()-started),httpRefreshRequests:1,nativeFetchStarts,nativeStartsAfterAbort,positive:false,userCalls,queryCalls,subscribers:observed[0]!.registered,
       initialCompletions:observed[0]!.initialCompleted,observedPending:0,boundary:'No fixed clock-rollback-safe SDK return ceiling; business and new native work remain closed'}))
   }

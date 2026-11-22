@@ -34,34 +34,17 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
   // This policy's own blob/tree is externally bound by Root exact-head review.
   sourceInventory: Object.freeze([
     Object.freeze({ path: 'lib/readiness/official-truth-server-owned-retrieval.ts', bytes: 29654, sha256: '5a602682055c4f0d5a15b54524a3156a20223cc36dfcef71a953bccf84874d10' }),
-    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 63059, sha256: '487628809dd39e4288a832d577fdef32ec83ec1645e8bc83dcbe637292e45a37' }),
+    Object.freeze({ path: 'lib/readiness/official-truth-aa-revision-probe-1.test.ts', bytes: 63059, sha256: 'cb2f6f2102d440efa0b845519a9c00eb94d6b42b32984d90d6ebd1b59bf97b4c' }),
     Object.freeze({ path: 'lib/readiness/official-truth-bounded-response-body.ts', bytes: 1278, sha256: '186ad6dd5ebcf03cd25586775fefe17d652863cb04a2ba72a7be64c7ee4ca0a2' }),
     Object.freeze({ path: 'lib/readiness/official-truth-source-fingerprint-v2.ts', bytes: 5156, sha256: 'd8c0ddd287b0cffc4e9f0a88528ecce5c02052afdc0ab59fbb67449276388eac' }),
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
-    // Exact AT50 CI review successor: only an additional same-repo/branch-bound
-    // Dev visitor check inside the pre-existing secret-isolated Auth job.
-    // The next finite reviewed successor adds ONLY the strict offline BG1
-    // alarm test to the existing core job (51712 -> 52025 UTF-8 bytes).
-    // Its full prior 51712-byte fingerprint remains in pilot-context.test.ts.
-    // Reviewed incident-app CI-scope successor #1265: only the Dev BG1 live
-    // guard changes trigger scope, while offline BG1 tests, Auth-config checks
-    // and all required jobs remain mandatory. The 52025-byte predecessor
-    // remains pinned in pilot-context.test.ts; no historical pin is overwritten.
-    // Historical 50018-byte d2999d12 source identity stays bound independently
-    // by the finite nextSecurityPatch -> at50Successor chain in pilot-context.test.ts.
-    // Public CMS reader release 2026-11-21: one mandatory isolated native proof
-    // and its typecheck root join the existing CMS job. All prior gates and
-    // budgets stay intact; the 52696-byte predecessor remains independently
-    // pinned in the append-only pilot-context.test.ts successor chain.
-    // BG1 query-cost release adds two exact typecheck roots and one mandatory
-    // native proof to that same CMS job. The full 53070-byte predecessor stays
-    // pinned in pilot-context.test.ts; no run selection or earlier gate changes.
+    // BG1 query-cost CI successor plus supabase-js 2.119.2 package identity.
     Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53497, sha256: '88e45eaf54b0b26c5e35b4a17dfdfc43c7417d8aa05fd40d9e56ba35247f55b3' }),
-    Object.freeze({ path: 'package.json', bytes: 6717, sha256: '201da70eb924a2760b4c9bc368c81f3ee1688307e7fca8a9a23147ca04d11625' }),
-    Object.freeze({ path: 'package-lock.json', bytes: 326715, sha256: '8af66807f4368afe8f48b15d5cc8d4c2e7d06badda63aaac518877d208446e60' }),
+    Object.freeze({ path: 'package.json', bytes: 6717, sha256: 'b72ed28b71bd9a351eaef3637b6b56f2a28844c3e7f4dc6ac3f9a28bb96e540e' }),
+    Object.freeze({ path: 'package-lock.json', bytes: 325113, sha256: 'da769bf15ec9a5349e88cb7420267a5dedd70953c15f8e93ec6a6a802e24dfb4' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),
-    Object.freeze({ path: 'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts', bytes: 6501, sha256: '49ab7d7c68afcc30d80251db85e47041e2962f0c83cecf7f63964ce64aa4b298' }),
+    Object.freeze({ path: 'scripts/db/official-truth-accepted-store-trip-integration-1/native-loader.ts', bytes: 6502, sha256: '6f6e1138dcffa7122007622d7cccb4a42edbc90b7146dfb23ed4d32dc8866b94' }),
     Object.freeze({ path: 'lib/readiness/official-truth-accepted-store-trip-integration-1/producer-server.ts', bytes: 9176, sha256: '74a83b4b62711da43f4f6efdf94e4dd162bfcad5c06af253af3300dd59a27572' }),
     Object.freeze({ path: 'lib/readiness/official-truth-content-identity-r2.test.ts', bytes: 41838, sha256: 'be7a0b62e55c557faf05963befd5b717b7ea245bc71d2a85eb4fd0d3f5225c16' }),
     Object.freeze({ path: 'lib/readiness/official-truth-retrieval-physical-internal.ts', bytes: 17726, sha256: 'aa37e8a42581f4ee67cfd52e677cb7d09a804ac77043e2d20b85dc24cd467e3f' }),

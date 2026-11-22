@@ -1,6 +1,6 @@
 // proxy.ts
 import { NextResponse, type NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import type { Database } from './types/supabase' // relative statt "@/"
 
 /**
@@ -252,7 +252,7 @@ export async function proxy(req: NextRequest) {
       getAll() {
         return req.cookies.getAll().map(({ name, value }) => ({ name, value }))
       },
-      setAll(cookies) {
+      setAll(cookies: { name: string; value: string; options: CookieOptions }[]) {
         for (const { name, value, options } of cookies) {
           // Cookies zurück ins Response-Objekt schreiben
           res.cookies.set({ name, value, ...options })
