@@ -12,7 +12,7 @@ export function HomeVertrauen() {
       className="mx-auto max-w-[1450px] scroll-mt-28 px-3 py-10 sm:px-5 sm:py-16"
       aria-labelledby="vertrauen-titel"
     >
-      <div className="rounded-[28px] bg-white p-5 py-8 sm:rounded-[36px] sm:p-10 lg:p-12">
+      <div className="hs-schalen rounded-[28px] bg-white p-5 py-8 sm:rounded-[36px] sm:p-10 lg:p-12">
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Mit gutem Gefühl reisen</p>
           <h2 id="vertrauen-titel" className="mt-3 text-3xl font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
@@ -24,7 +24,7 @@ export function HomeVertrauen() {
             const Symbol = SYMBOLE[index]!
             return (
               <li key={punkt.titel} className="min-w-0">
-                <Symbol className="mb-3 h-6 w-6 text-brand-600" aria-hidden="true" />
+                <span className="hs-knoten mb-4"><Symbol className="h-5 w-5" aria-hidden="true" /></span>
                 <h3 className="font-semibold">{punkt.titel}</h3>
                 <p className="mt-2 text-sm leading-6 text-ink-800">{punkt.text}</p>
               </li>

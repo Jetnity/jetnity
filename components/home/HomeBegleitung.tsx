@@ -26,7 +26,7 @@ export function HomeBegleitung() {
               />
             ) : null}
             <div className="relative md:mb-5">
-              <span className="relative z-10 flex h-11 w-11 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">
+              <span className="hs-schritt relative z-10">
                 {index + 1}
               </span>
             </div>

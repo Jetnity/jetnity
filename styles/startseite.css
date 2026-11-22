@@ -1,0 +1,578 @@
+/* Startseite: Lichtkanten, Tiefe, Glas und Mini-Oberflächen.
+   Nur Darstellung. Farben kommen aus den bestehenden Marken- und Weiss-Mint-Tokens
+   (styles/globals.css, styles/white-mint.css). Klassennamen enthalten bewusst kein
+   «shadow-»: white-mint.css setzt jede Klasse mit diesem Bestandteil auf die flachste
+   Schattenstufe zurück.
+   Bewegung: nur transform und opacity, höchstens 250 ms, nur ohne reduzierte Bewegung. */
+
+[data-white-mint="home"] {
+  --hs-kante: 1px solid rgb(var(--jet-line-200) / 0.9);
+  --hs-licht: inset 0 1px 0 rgb(255 255 255 / 0.85);
+  --hs-tiefe-1: 0 1px 2px rgb(var(--jet-brand-900) / 0.04), 0 14px 30px -18px rgb(var(--jet-brand-900) / 0.2);
+  --hs-tiefe-2: 0 2px 6px rgb(var(--jet-brand-900) / 0.06), 0 28px 48px -26px rgb(var(--jet-brand-900) / 0.32);
+  --hs-glas-kante: 1px solid rgb(255 255 255 / 0.22);
+}
+
+/* ---------- Hero ---------- */
+
+.hs-hero {
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+  border-radius: 28px;
+  background-color: rgb(var(--jet-brand-900));
+  color: #fff;
+  box-shadow: var(--hs-tiefe-2), inset 0 0 0 1px rgb(255 255 255 / 0.1);
+}
+
+.hs-hero-bild {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.hs-hero-verlauf {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image:
+    radial-gradient(70% 55% at 88% 12%, rgb(var(--jet-citrus-400) / 0.16), transparent 62%),
+    linear-gradient(180deg, rgb(var(--jet-brand-900) / 0.94) 0, rgb(var(--jet-brand-900) / 0.9) calc(100% - 14rem), rgb(var(--jet-brand-900) / 0.7) calc(100% - 8.5rem), rgb(var(--jet-brand-900) / 0.18) 100%);
+}
+
+.hs-suchkarte {
+  position: relative;
+  z-index: 20;
+  margin-top: 1.25rem;
+  max-width: 40rem;
+  padding: 6px;
+  border-radius: 30px;
+  border: var(--hs-glas-kante);
+  background-color: rgb(255 255 255 / 0.14);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow: 0 34px 60px -30px rgb(0 0 0 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.32);
+}
+
+.hs-suchkarte > form {
+  margin-top: 0;
+  max-width: none;
+  border-radius: 24px;
+  border-color: rgb(255 255 255 / 0.7);
+}
+
+.hs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.hs-chip {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2rem;
+  padding: 0.1875rem 0.75rem 0.1875rem 0.3125rem;
+  border: var(--hs-glas-kante);
+  border-radius: 999px;
+  background-color: rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.hs-chip-haken {
+  display: inline-flex;
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background-color: rgb(var(--jet-citrus-400));
+  color: rgb(var(--jet-brand-800));
+}
+
+.hs-ort {
+  position: absolute;
+  max-width: calc(100% - 2.5rem);
+  overflow-wrap: anywhere;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: var(--hs-glas-kante);
+  border-radius: 999px;
+  background-color: rgb(255 255 255 / 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+@media (min-width: 640px) {
+  .hs-suchkarte {
+    margin-top: 1.75rem;
+  }
+
+  .hs-chips {
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hs-hero {
+    border-radius: 40px;
+  }
+
+  .hs-hero-verlauf {
+    background-image:
+      radial-gradient(60% 70% at 86% 20%, rgb(var(--jet-citrus-400) / 0.14), transparent 62%),
+      linear-gradient(180deg, transparent 55%, rgb(var(--jet-brand-900) / 0.55) 100%),
+      linear-gradient(100deg, rgb(var(--jet-brand-900) / 0.95) 0%, rgb(var(--jet-brand-900) / 0.88) 32%, rgb(var(--jet-brand-800) / 0.42) 62%, rgb(var(--jet-brand-800) / 0.04) 88%);
+  }
+
+  .hs-ort {
+    right: 1.75rem;
+    bottom: 1.75rem;
+    left: auto;
+  }
+}
+
+/* ---------- Karten und Bento ---------- */
+
+.hs-karte {
+  position: relative;
+  min-width: 0;
+  border: var(--hs-kante);
+  border-radius: 28px;
+  background-color: var(--white-mint-card);
+  box-shadow: var(--hs-licht), var(--hs-tiefe-1);
+}
+
+.hs-karte-dunkel {
+  border-color: rgb(255 255 255 / 0.12);
+  background-color: rgb(var(--jet-brand-800));
+  background-image: radial-gradient(80% 60% at 100% 0%, rgb(var(--jet-brand-600) / 0.55), transparent 70%);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), var(--hs-tiefe-2);
+}
+
+.hs-karte-mint {
+  background-color: var(--white-mint-selected);
+  border-color: rgb(var(--jet-brand-600) / 0.22);
+}
+
+.hs-flaeche {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  padding: 16px;
+  border: var(--hs-kante);
+  border-radius: 20px;
+  background-color: rgb(255 255 255 / 0.72);
+  box-shadow: var(--hs-licht);
+}
+
+.hs-karte-dunkel .hs-flaeche {
+  border-color: rgb(255 255 255 / 0.14);
+  background-color: rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.hs-karte-mint .hs-flaeche {
+  background-color: rgb(255 255 255 / 0.66);
+}
+
+@media (min-width: 768px) {
+  .hs-karte > .hs-flaeche-karte:last-child .hs-knoten {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hs-karte > .hs-flaeche-karte:last-child .hs-strecke {
+    height: 48px;
+  }
+
+  .hs-karte > .hs-flaeche-karte:last-child .hs-etikett,
+  .hs-karte > .hs-flaeche-karte:last-child .hs-legende {
+    font-size: 13px;
+  }
+
+  .hs-karte > .hs-flaeche:last-child {
+    align-content: center;
+    align-self: stretch;
+    margin-bottom: 0;
+    min-height: 15rem;
+  }
+}
+
+/* Tiefe beim Darüberfahren: die stärkere Stufe liegt als eigene Ebene bereit und wird nur eingeblendet. */
+.hs-karte::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--hs-tiefe-2);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Routen-Linie */
+
+.hs-zeile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.hs-zeile-route {
+  align-items: start;
+}
+
+.hs-station {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.hs-etikett {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(var(--jet-brand-800) / 0.8);
+}
+
+.hs-flaeche-karte {
+  background-image: radial-gradient(rgb(var(--jet-brand-600) / 0.14) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.hs-knoten {
+  display: inline-flex;
+  flex: none;
+  width: clamp(28px, 9vw, 36px);
+  height: clamp(28px, 9vw, 36px);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(var(--jet-brand-600) / 0.3);
+  border-radius: 999px;
+  background-color: #fff;
+  color: rgb(var(--jet-brand-800));
+}
+
+.hs-karte-dunkel .hs-knoten {
+  border-color: rgb(255 255 255 / 0.24);
+  background-color: rgb(255 255 255 / 0.1);
+  color: #fff;
+}
+
+.hs-strecke {
+  position: relative;
+  display: flex;
+  height: clamp(28px, 9vw, 36px);
+  align-items: center;
+  justify-content: center;
+}
+
+.hs-strecke::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 0;
+  border-top: 2px solid rgb(var(--jet-brand-600));
+  border-radius: 2px;
+}
+
+.hs-strecke-luecke::before {
+  border-top: 2px dashed rgb(var(--jet-status-achtung));
+}
+
+.hs-marke {
+  position: relative;
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(var(--jet-brand-600) / 0.4);
+  border-radius: 999px;
+  background-color: rgb(var(--jet-status-ok-soft));
+  color: rgb(var(--jet-status-ok));
+}
+
+.hs-marke-achtung {
+  border-color: rgb(var(--jet-status-achtung-line));
+  background-color: rgb(var(--jet-status-achtung-soft));
+  color: rgb(var(--jet-status-achtung));
+}
+
+/* Pass-Prüfung */
+
+.hs-pass {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 16px;
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.hs-pass-foto {
+  width: 36px;
+  height: 44px;
+  border-radius: 8px;
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.08));
+}
+
+.hs-pass-zeilen {
+  flex: 1 1 56px;
+  min-width: 56px;
+  display: grid;
+  gap: 6px;
+}
+
+.hs-pass-zeilen > i {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background-color: rgb(255 255 255 / 0.28);
+}
+
+.hs-pass-zeilen > i:nth-child(1) {
+  width: 62%;
+  background-color: rgb(255 255 255 / 0.5);
+}
+
+.hs-pass-zeilen > i:nth-child(2) {
+  width: 86%;
+}
+
+.hs-pass-zeilen > i:nth-child(3) {
+  width: 44%;
+}
+
+.hs-pass-abzeichen {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background-color: rgb(var(--jet-citrus-400));
+  color: rgb(var(--jet-brand-800));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.hs-pass-abzeichen > svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  padding: 3px;
+  border-radius: 999px;
+  background-color: rgb(var(--jet-brand-800));
+  color: rgb(var(--jet-citrus-400));
+}
+
+/* Preis-Vergleich */
+
+.hs-balken-zeile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.hs-balken {
+  display: flex;
+  height: 22px;
+  gap: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.hs-balken > i {
+  display: block;
+  height: 100%;
+}
+
+.hs-balken > i:nth-child(1) {
+  background-color: rgb(var(--jet-brand-600));
+}
+
+.hs-balken > i:nth-child(2) {
+  background-color: rgb(var(--jet-citrus-500));
+}
+
+.hs-balken > i:nth-child(3) {
+  background-color: rgb(var(--jet-brand-600) / 0.45);
+}
+
+.hs-balken > i:nth-child(4) {
+  background-color: rgb(var(--jet-citrus-400));
+}
+
+.hs-balken-beste .hs-balken {
+  box-shadow: 0 0 0 2px rgb(var(--jet-brand-800));
+}
+
+.hs-legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgb(var(--jet-brand-800) / 0.78);
+}
+
+.hs-legende > li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hs-legende > li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--hs-punkt);
+}
+
+/* Werkzeug-Kette */
+
+.hs-kette {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hs-kette > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.25rem 1rem;
+  min-width: 0;
+  padding: 0.75rem 0;
+}
+
+.hs-kette > li > .hs-knoten {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+}
+
+.hs-kette > li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: calc(0.75rem + 36px);
+  bottom: -0.75rem;
+  width: 2px;
+  border-radius: 2px;
+  background-image: linear-gradient(180deg, rgb(var(--jet-citrus-400) / 0.7), rgb(var(--jet-citrus-400) / 0.15));
+}
+
+/* ---------- Weitere Flächen ---------- */
+
+.hs-schalen {
+  border: var(--hs-kante);
+  box-shadow: var(--hs-licht), var(--hs-tiefe-1);
+}
+
+.hs-schalen-dunkel {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background-image: radial-gradient(70% 90% at 100% 0%, rgb(var(--jet-brand-600) / 0.5), transparent 70%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), var(--hs-tiefe-2);
+}
+
+.hs-kopf {
+  background-image: radial-gradient(60% 140% at 100% 0%, rgb(var(--jet-brand-600) / 0.5), transparent 70%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+.hs-schritt {
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background-color: rgb(var(--jet-brand-800));
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 4px var(--white-mint-canvas), 0 0 0 5px rgb(var(--jet-citrus-400));
+}
+
+.hs-bild-rand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+  pointer-events: none;
+}
+
+/* ---------- Bewegung: leicht, nur transform und opacity, höchstens 250 ms ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hs-karte,
+  .hs-knoten,
+  .hs-marke {
+    transition: transform 200ms ease-out;
+  }
+
+  .hs-karte::after {
+    transition: opacity 200ms ease-out;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hs-karte:hover {
+    transform: translate3d(0, -3px, 0);
+  }
+
+  .hs-karte:hover::after {
+    opacity: 1;
+  }
+
+  .hs-karte:hover .hs-knoten {
+    transform: translate3d(0, -2px, 0);
+  }
+
+  .hs-karte:hover .hs-marke {
+    transform: scale(1.08);
+  }
+}

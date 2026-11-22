@@ -114,7 +114,8 @@ async function projektCss(mint: boolean) {
   const etappen = readFileSync(join(process.cwd(), 'components/trips/reiseplan/etappen.css'), 'utf8')
   const kalender = readFileSync(join(process.cwd(), 'components/trips/organisieren/auswahl/suchauswahl.css'), 'utf8')
   const weiss = mint ? readFileSync(join(process.cwd(), 'styles/white-mint.css'), 'utf8') : ''
-  return `${ergebnis.css}\n${workspace}\n${surfaces}\n${etappen}\n${weiss}\n${kalender}`.replaceAll('</style', '<\\/style')
+  const startseite = readFileSync(join(process.cwd(), 'styles/startseite.css'), 'utf8')
+  return `${ergebnis.css}\n${workspace}\n${surfaces}\n${etappen}\n${weiss}\n${startseite}\n${kalender}`.replaceAll('</style', '<\\/style')
 }
 
 async function bundeln() {
