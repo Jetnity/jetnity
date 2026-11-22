@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "prepared_at": "2026-11-22T13:00:06.056899+00:00",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "explicit_owner_authorization_received": true,
+  "only_ordered_one_time_calls": [
+    "at",
+    "chde"
+  ],
+  "no_retry": true,
+  "no_extra_reads": true,
+  "no_runtime_writes": true,
+  "files": [
+    {
+      "id": "at",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/00-at-qualification-bindings.READONLY.sql",
+      "bytes": 34083,
+      "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+      "local_and_repo_bytes_identical": true
+    },
+    {
+      "id": "chde",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+      "bytes": 31089,
+      "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+      "local_and_repo_bytes_identical": true
+    }
+  ]
+}

@@ -1,0 +1,1978 @@
+{
+  "facts": {
+    "total": 62,
+    "unexpired": 0,
+    "last_version": 62,
+    "last_expires_at": "2026-11-20T13:17:00.076335+00:00",
+    "last_verified_at": "2026-11-20T12:17:00.076335+00:00",
+    "last_source_batch": 65
+  },
+  "result": "PROD_AT_QUALIFICATION_BINDINGS_READONLY_OBSERVED",
+  "schema": 1,
+  "bg1_proof": [
+    {
+      "due_at": "2026-11-22T13:00:00+00:00",
+      "outcome": "complete",
+      "generation": 1789,
+      "started_at": "2026-11-22T13:00:00.033621+00:00",
+      "finished_at": "2026-11-22T13:00:05.323183+00:00",
+      "valid_until": "2026-11-22T13:05:30+00:00",
+      "fresh_complete": true,
+      "proof_started_at": "2026-11-22T13:00:00.048695+00:00",
+      "resumed_generation": 108,
+      "incident_generation": 108
+    }
+  ],
+  "functions": [
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "289581",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "jetnity_ot_auth.require_current_owner_session_v1()",
+      "volatility": "v",
+      "body_sha256": "ba3667edd483f0a0abcf53f70f4dc71906f0ffdbc192ee569232c78dd359635b",
+      "result_type": "void",
+      "definition_bytes": 2122,
+      "security_definer": true,
+      "definition_sha256": "a7b6e690f6719d80d224e78e5897af80079f8d947fcc11cab7d20cfc030518db",
+      "configuration_bytes": 45,
+      "configuration_sha256": "40de2dfee9d5e87199020d325ccf9359b041db77ffa58c74ed16a0a13f26f938"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "291354",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_at_production_private.collect_v1()",
+      "volatility": "v",
+      "body_sha256": "920f4b870a072d854c86b351439c9ce5f5ac6dd1ea7be5ed9d3f19fad9c4c8b2",
+      "result_type": "integer",
+      "definition_bytes": 3186,
+      "security_definer": false,
+      "definition_sha256": "3e681172f296ba3c4202dbf8108552201f613f8de345e6c339288f8680683422",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "291337",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_at_production_private.deny_mutation_v1()",
+      "volatility": "v",
+      "body_sha256": "bd926e06883b3afc0c8be6f88d588509f05a33270ebaacae8ed7572069ff2753",
+      "result_type": "trigger",
+      "definition_bytes": 265,
+      "security_definer": false,
+      "definition_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "291353",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_at_production_private.enqueue_v1()",
+      "volatility": "v",
+      "body_sha256": "e2e01f262b3d1f13b13fc6b7f77d0e6c6f79072005626cfebdcc38bc58d16de0",
+      "result_type": "integer",
+      "definition_bytes": 1257,
+      "security_definer": false,
+      "definition_sha256": "3c75e96aa6b005d2b812b3ca48d288bc92397146567abc33e72449e5ae34ef90",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "291404",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_at_production_private.renew_ch_v1()",
+      "volatility": "v",
+      "body_sha256": "572a243b45785800f67f372c0667397d448e1eea5769c74065d4709a59e3b562",
+      "result_type": "integer",
+      "definition_bytes": 6408,
+      "security_definer": false,
+      "definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "291355",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_at_production_private.source_status_v1()",
+      "volatility": "v",
+      "body_sha256": "c11144cfe596d8c9d54c2ab4467715a37e797f328247b67939ce979ac1c6377a",
+      "result_type": "jsonb",
+      "definition_bytes": 1713,
+      "security_definer": false,
+      "definition_sha256": "a3324e39041634daadb7abb9253451ce9e1cfd87083b4cad82f388930b113cc9",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "289636",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_method_api.approve_v1(p_operation_id text, p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_expected_revision integer, p_expected_method_digest text, p_expected_package_digest text, p_expected_epoch integer, p_expected_status text, p_approval_mode text, p_approval_until text)",
+      "volatility": "v",
+      "body_sha256": "0b0db811d7d667ef63e607afb9cff9d48080821fd62252bf53df2f48c0e5712d",
+      "result_type": "jsonb",
+      "definition_bytes": 4684,
+      "security_definer": true,
+      "definition_sha256": "49258c07ee4bdd8ebedc219faed4f7aea47693f47f2c5547d9beca5d3c38a057",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "289634",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_method_api.confirm_operation_v1(p_operation_id text, p_action text, p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_predecessor_revision integer, p_expected_revision integer, p_expected_method_digest text, p_expected_package_digest text, p_expected_epoch integer, p_expected_status text, p_approval_mode text, p_approval_until text)",
+      "volatility": "v",
+      "body_sha256": "dc0c8e711eb360eb40022841b07a4d00f39a3a7a4edb0630bf72a8f8a622db02",
+      "result_type": "jsonb",
+      "definition_bytes": 2724,
+      "security_definer": true,
+      "definition_sha256": "5fe98b1438745fdbc38798b8dbc208bd42175ae33a091169c57f6232641552f5",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "289635",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_method_api.stage_draft_v1(p_operation_id text, p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_predecessor_revision integer)",
+      "volatility": "v",
+      "body_sha256": "79e627238134e15d45f09f5acb2aac7f9cf079b147d3220b2c3bbb893f992209",
+      "result_type": "jsonb",
+      "definition_bytes": 2883,
+      "security_definer": true,
+      "definition_sha256": "d4170312aef9730f1fafe27b77e26e8189b18ca840cd085f0a30d4ea0cd607a9",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "289639",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "official_v3_method_private.require_current_locked_v1(p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_epoch integer)",
+      "volatility": "v",
+      "body_sha256": "7e98f2a32a2388efde95d729d425581bf9443e4397eb8311d82e6a46eb88ca8c",
+      "result_type": "void",
+      "definition_bytes": 1281,
+      "security_definer": true,
+      "definition_sha256": "bf49c4fc56e2294b7d28b49f028669808330dc5b43356ec0c6640717d0487741",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "291407",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "public.jetnity_source_bound_at_visa_v1(p_citizenship_country_code text)",
+      "volatility": "v",
+      "body_sha256": "e83a79b636a26a3bfcec4e23b0fb51dc7c7c7be8e013740a0b3b306baf4c54c5",
+      "result_type": "jsonb",
+      "definition_bytes": 5269,
+      "security_definer": true,
+      "definition_sha256": "c2d937169152d3828b5ebb876a11fa054e3f3a011dee57dde3790b525230a38e",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "289724",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "sql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "public.official_v3_method_approve_v1(p_operation_id text, p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_expected_revision integer, p_expected_method_digest text, p_expected_package_digest text, p_expected_epoch integer, p_expected_status text, p_approval_mode text, p_approval_until text)",
+      "volatility": "v",
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result_type": "jsonb",
+      "definition_bytes": 680,
+      "security_definer": false,
+      "definition_sha256": "c3e53a21dc78ba5cf8c5198e77b459aefbb30b7ab5796600c745197940e44a71",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "289723",
+      "kind": "f",
+      "owner": "postgres",
+      "strict": false,
+      "language": "sql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "public.official_v3_method_stage_draft_v1(p_operation_id text, p_method_id text, p_revision integer, p_method_digest text, p_package_digest text, p_predecessor_revision integer)",
+      "volatility": "v",
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result_type": "jsonb",
+      "definition_bytes": 411,
+      "security_definer": false,
+      "definition_sha256": "f3c7d4ae1ef95f0622ca407351b4595cca5760dc24913a5f65b6c812ae1a437e",
+      "configuration_bytes": 26,
+      "configuration_sha256": "f156afc13bf2dac90d3d3f2965f5e4e3379aaa44d4dacc6ccd902462c63232e1"
+    }
+  ],
+  "read_only": true,
+  "relations": [
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291357",
+      "rls": true,
+      "name": "official_v3_at_production_private.ch_visa_facts_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "version_id",
+          "type": "bigint",
+          "identity": "a",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "citizenship_code",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 10,
+          "default_sha256": "306f5d902fa18a4295cf32cc13654060ebc0771c0af7a7367a4ac09f53ec60c8"
+        },
+        {
+          "name": "destination_code",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 10,
+          "default_sha256": "8e88d77b37f71802a253760c6c605f02447e57a6bd3975e1f00472119b998539"
+        },
+        {
+          "name": "requirement_type",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 12,
+          "default_sha256": "04f6bb43c253da7949064249543ebb0ec2997cc16e51d65a0bd21ac1fcec513c"
+        },
+        {
+          "name": "document_type",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 16,
+          "default_sha256": "4abf429a37af79135abf4c8c11be2d3d2f2be090cd209ca4a64f74845902222c"
+        },
+        {
+          "name": "route_type",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 20,
+          "default_sha256": "7d495e4c484cc28aa98f0a71f0aceac71fee9e366c008fbc8703c46bd7d0c6e9"
+        },
+        {
+          "name": "visa_effect",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 20,
+          "default_sha256": "57d6faf904fe3b557de08d067c25b357db88c9cbbb824eb46069cddbca38e310"
+        },
+        {
+          "name": "visa_mode",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 19,
+          "default_sha256": "08f5ab6518bb33cfeebdb5f0b2155c56e9e95a251ff06c3276cb43de478d40bb"
+        },
+        {
+          "name": "source_batch_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "predecessor_version_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_epoch",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_revision",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 1,
+          "default_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+        },
+        {
+          "name": "method_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "package_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "source_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "verified_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "source_checked_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "legal_valid_until",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "approved_origin",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 37,
+          "default_sha256": "87cff9ca5676ed2d338886d1f0f46dd32389b6ef2becb5c2788aa55021b43e94"
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 190,
+          "definition_sha256": "5cd3f1da0403b67282ca62c68f6995f1f34f62464bf53c7b67606db7134f6f47"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 192,
+          "definition_sha256": "882d675a1bf86c5168e34ba4aa59bddaf84e89f64ac17697915e3db9c2cbf093"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "ch_visa_facts_v1_approved_origin_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 63,
+          "definition_sha256": "2d7efee2953ab2774e5da951e120592e0f5dfa7a5873471c22ad2d9ca9cead9d"
+        },
+        {
+          "name": "ch_visa_facts_v1_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 254,
+          "definition_sha256": "79f42e29dc8d36bb130efa8acf7ae59eb3133f8f0750a341da0f2f423abbef8c"
+        },
+        {
+          "name": "ch_visa_facts_v1_citizenship_code_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 37,
+          "definition_sha256": "c176e8e05bf6bdf5a85ff68be6b9cd0e4416e0753f5f0fdf53563d9de4e429b5"
+        },
+        {
+          "name": "ch_visa_facts_v1_destination_code_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 37,
+          "definition_sha256": "c74ea28bf4350551093562c0709c53327eaba4e34a090ae3ab9b6b5057a49167"
+        },
+        {
+          "name": "ch_visa_facts_v1_document_type_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 40,
+          "definition_sha256": "6b015f5f73773d424a6eb3d4941ddb933440c863bf83ca7d37e7d7871269cf20"
+        },
+        {
+          "name": "ch_visa_facts_v1_legal_valid_until_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 33,
+          "definition_sha256": "b7effbdffbe3ba9dce1507820e171167d790c6dd1a77cc7e3bca8ad9281eed99"
+        },
+        {
+          "name": "ch_visa_facts_v1_method_digest_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 96,
+          "definition_sha256": "044a8b54cd4194df3db7d349e98fb385787da0f4f26d64ed11dd47475671c37c"
+        },
+        {
+          "name": "ch_visa_facts_v1_method_epoch_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 24,
+          "definition_sha256": "eaac48920d2e8741ca1f0869bef2554e4c6910c514cd7b7bfdb009226230f28a"
+        },
+        {
+          "name": "ch_visa_facts_v1_method_id_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 63,
+          "definition_sha256": "a1ded1a59c271f8545d7930ad53872d3e629b2b6a36b2c9013b25f9435e5a08b"
+        },
+        {
+          "name": "ch_visa_facts_v1_method_revision_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 27,
+          "definition_sha256": "b33d0300954200a0961b13cabfc835fe9b29016ac1689bc9a72af71292418ff8"
+        },
+        {
+          "name": "ch_visa_facts_v1_package_digest_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 97,
+          "definition_sha256": "e738177b771b0085353fed00e989d142830f5c6226c70bd10c5ae0ee60a5b6b4"
+        },
+        {
+          "name": "ch_visa_facts_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 24,
+          "definition_sha256": "4117f47687edc823a63b5f0c3dee5fc69bd8be1575d6253fd433e48a7eca90ba"
+        },
+        {
+          "name": "ch_visa_facts_v1_predecessor_version_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 110,
+          "definition_sha256": "bccfde4d9e150d5c7fd5fa2cf8a5e26ff3de376a69235879d02d4d2581fe6e4b"
+        },
+        {
+          "name": "ch_visa_facts_v1_requirement_type_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 39,
+          "definition_sha256": "b828ec02a3cc3079579cf2c2a7a30ab444839e800b37647d1819c3d5d914c963"
+        },
+        {
+          "name": "ch_visa_facts_v1_route_type_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 41,
+          "definition_sha256": "ae0d4557a0add9c23a6e8eb5c0cf77e1d14edd575dbd3882bf5adbf8612c0198"
+        },
+        {
+          "name": "ch_visa_facts_v1_source_batch_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 101,
+          "definition_sha256": "0e3ae0fc004ff2da7ae08a01afc38cb9c42fd2be93ead90749db9193ed0086b9"
+        },
+        {
+          "name": "ch_visa_facts_v1_source_batch_id_key",
+          "type": "u",
+          "validated": true,
+          "definition_bytes": 24,
+          "definition_sha256": "0f0841f26b5a88f7991deb19c4414cc6e788aa2187bee111e893a3a5db18cdf9"
+        },
+        {
+          "name": "ch_visa_facts_v1_source_digest_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 46,
+          "definition_sha256": "2b9a541b082804194813ca5a76eb7a64eb08f6b22a02a8abcfa65eb32e1f2539"
+        },
+        {
+          "name": "ch_visa_facts_v1_visa_effect_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 42,
+          "definition_sha256": "b487fff262f02c715c5ffe14d472402942f3dd70e371950fa23050a44db3d3c4"
+        },
+        {
+          "name": "ch_visa_facts_v1_visa_mode_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 39,
+          "definition_sha256": "68094e2023d8501d61aff869bfd4e97439ae4cc0d8ed2accdcb5c25b686f28bd"
+        }
+      ]
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291312",
+      "rls": true,
+      "name": "official_v3_at_production_private.first_originals_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "source_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "batch_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "stored_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "raw_body",
+          "type": "bytea",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "raw_sha",
+          "type": "text",
+          "identity": "",
+          "not_null": false,
+          "generated": "s",
+          "default_bytes": 37,
+          "default_sha256": "788d61ff7b4c691f6a636a451d0b5165d8c120b114a8625ee91abf4260d265b7"
+        },
+        {
+          "name": "raw_bytes",
+          "type": "integer",
+          "identity": "",
+          "not_null": false,
+          "generated": "s",
+          "default_bytes": 22,
+          "default_sha256": "f612e70fd97ea61f99371792de5b7fb4eae2cbe12d9a9bc800fc8b977f83e2f8"
+        },
+        {
+          "name": "source_state",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "legal_source_approved",
+          "type": "boolean",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 5,
+          "default_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+        },
+        {
+          "name": "customer_rule_approved",
+          "type": "boolean",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 5,
+          "default_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 192,
+          "definition_sha256": "6ba350a71e9d0afab9b0a5537a72ef80b5d464ca5ddd00dc3cfc0ef0b493f0cd"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 194,
+          "definition_sha256": "2332c779e88dbad0dd70c79cf33319c3953ead57bef8f6ad238865938d470a1e"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "first_originals_v1_batch_id_source_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 121,
+          "definition_sha256": "d1b34b77b0544d7d23cc5bfb08f323b6db6a88e4bbdd24668fdbcd869f4cf7bc"
+        },
+        {
+          "name": "first_originals_v1_customer_rule_approved_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 38,
+          "definition_sha256": "68539655566091059827bcad294eb097f6abf53e5663b2df7ef266f98e7fc661"
+        },
+        {
+          "name": "first_originals_v1_legal_source_approved_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 37,
+          "definition_sha256": "3e21d1bb9a7b0b7c89515f77a8f89658907e53bef920df196582e5cb3f8660b5"
+        },
+        {
+          "name": "first_originals_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 23,
+          "definition_sha256": "546830637bb203aa0810f58b2071c5b159dcbfd74a42904366a661e6eed55fec"
+        },
+        {
+          "name": "first_originals_v1_raw_body_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 73,
+          "definition_sha256": "e8efa6c83b3f027362d703278bb51a7e749604f4ba2c0715dab693f1a1a11d79"
+        },
+        {
+          "name": "first_originals_v1_source_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 94,
+          "definition_sha256": "d94431966055edc4c1a3027d80ef934e299f4a34033abb866d94edad68673fcc"
+        },
+        {
+          "name": "first_originals_v1_source_state_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 97,
+          "definition_sha256": "b6b346b8fe7654b3ba4bca17edc7d61a5e010cbbddc337b672fe2a4115bc9130"
+        }
+      ]
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291248",
+      "rls": true,
+      "name": "official_v3_at_production_private.source_pins_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "source_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "authority_code",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 10,
+          "default_sha256": "8e88d77b37f71802a253760c6c605f02447e57a6bd3975e1f00472119b998539"
+        },
+        {
+          "name": "official_url",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "original_sha",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "original_bytes",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "canonical_sha",
+          "type": "text",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "normalization",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "edition",
+          "type": "text",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "research_only",
+          "type": "boolean",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 4,
+          "default_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+        },
+        {
+          "name": "source_qualified",
+          "type": "boolean",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 5,
+          "default_sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 188,
+          "definition_sha256": "9bbfe92b30cb00dad5f8391020c715b5a6348068038061b1916dbdb9c3643f52"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 190,
+          "definition_sha256": "f2e377f69d1abeccf4ee7fcb29a4c864095852281d277117def7ee898dde64be"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "source_pins_v1_authority_code_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 35,
+          "definition_sha256": "02a747d7ca48b2e03031c7226a53a5254dcaff574d73d0b65f200b6709897f96"
+        },
+        {
+          "name": "source_pins_v1_canonical_sha_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 71,
+          "definition_sha256": "49eeb2a14d4457426c40cca19c1675141481837db1235a6beb055cb4afe89513"
+        },
+        {
+          "name": "source_pins_v1_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 109,
+          "definition_sha256": "6e92cb244b02c40d6c2487c99fca0ea9bb564cc536eb75889d0f064360e1da2d"
+        },
+        {
+          "name": "source_pins_v1_normalization_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 80,
+          "definition_sha256": "f664c31ae598d1aedc0efa508523f3f545b66617ee8eda281e71f995a551f699"
+        },
+        {
+          "name": "source_pins_v1_official_url_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 41,
+          "definition_sha256": "ea19b8fc38cd75111432c9040527ea535d4ae674ddb3cd1c4797b19ec84f6a04"
+        },
+        {
+          "name": "source_pins_v1_official_url_key",
+          "type": "u",
+          "validated": true,
+          "definition_bytes": 21,
+          "definition_sha256": "93ec85cb2076b1b0c2d218541ebaf9bb808658354ece6a72ebe3fb574211d4f8"
+        },
+        {
+          "name": "source_pins_v1_original_bytes_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 57,
+          "definition_sha256": "54945700f32483dd9e2090a9852cf844470ffa22beff37c382a30d8d73d9b667"
+        },
+        {
+          "name": "source_pins_v1_original_sha_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 45,
+          "definition_sha256": "b10fc7956d855e8469d319b16a904842e4abf7392a726e466bd1c419220a7581"
+        },
+        {
+          "name": "source_pins_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 23,
+          "definition_sha256": "546830637bb203aa0810f58b2071c5b159dcbfd74a42904366a661e6eed55fec"
+        },
+        {
+          "name": "source_pins_v1_research_only_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 28,
+          "definition_sha256": "e542755371ef4292d1bb5d4d75d6b462ea50b6c10ff2a352c391148bfe4434b6"
+        },
+        {
+          "name": "source_pins_v1_source_id_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 128,
+          "definition_sha256": "3a61cc7fec157cb572c24c31525574155e1f6d165878cbe6c064583b654d7285"
+        },
+        {
+          "name": "source_pins_v1_source_qualified_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 32,
+          "definition_sha256": "01f6aae6ec61801d72bbcdbb9bc5a60fb980925f9eb6238937d5be3e17676452"
+        }
+      ]
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291271",
+      "rls": true,
+      "name": "official_v3_at_production_private.watch_batches_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "batch_id",
+          "type": "bigint",
+          "identity": "a",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": 17,
+          "default_sha256": "4b1d66350efe3913ebc4851cda50bbd44dd30a5f59bafb1c24c2edec4301816e"
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 190,
+          "definition_sha256": "9ce2b40c15f33cb226d1a576e97c07ba53048d3a7121b9a0bf3e57f1b10ad44e"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 192,
+          "definition_sha256": "eae9c8c402e220444f699bba2b7335128e8f5b9070366fe15ee87bccca89b4e7"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "watch_batches_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 22,
+          "definition_sha256": "fa09fe18cf8009996960df7d8b9ba2776741ed0eff593f60c301817bfcee501a"
+        }
+      ]
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291296",
+      "rls": true,
+      "name": "official_v3_at_production_private.watch_observations_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "batch_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "source_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "observed_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "source_status",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "bytes",
+          "type": "integer",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "body_sha",
+          "type": "text",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "http_status",
+          "type": "integer",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 195,
+          "definition_sha256": "72c469bb596b7b441fba41fa873c2e33c8e7b746ea2d0a629c4eb025fd524e27"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 197,
+          "definition_sha256": "68423cfdc92c7fae74c88853c04c5b8b4d8bdf3d6d458d0f3edb622915e42cf1"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "watch_observations_v1_batch_id_source_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 117,
+          "definition_sha256": "21c940df2f3c0f334dec6d31681204aa1852f6338d090338d58ff59582937005"
+        },
+        {
+          "name": "watch_observations_v1_body_sha_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 61,
+          "definition_sha256": "0fa3be79d1259b0de807ea1766c10df3496ed4d0ed5ce4a6a13e2f0835fff0ff"
+        },
+        {
+          "name": "watch_observations_v1_bytes_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 56,
+          "definition_sha256": "737e5468ea42cc2026ffa935e2aaf825fe55aec6e5db6b40c7f25c46a41b1816"
+        },
+        {
+          "name": "watch_observations_v1_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 164,
+          "definition_sha256": "4694e3a563f8773ba62d332ea206da73e373ecc72430e68f51cf0b5905b0d877"
+        },
+        {
+          "name": "watch_observations_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 33,
+          "definition_sha256": "abd5622cc1db90d28ff8fc35562d161b3c62524b065eafded0f1d10eeec3c76a"
+        },
+        {
+          "name": "watch_observations_v1_source_status_check",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 136,
+          "definition_sha256": "039c1f55d9a19002af4d6926205757ee8ae5813620dafda125d7d7a2cddd1074"
+        }
+      ]
+    },
+    {
+      "acl": [
+        "postgres=arwdDxtm/postgres"
+      ],
+      "oid": "291277",
+      "rls": true,
+      "name": "official_v3_at_production_private.watch_requests_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "batch_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "source_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "request_id",
+          "type": "bigint",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "requested_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "immutable_rows",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 191,
+          "definition_sha256": "64b88b63881aa91535162c3b971ed366f9afc4114409e743b98392c61b46c796"
+        },
+        {
+          "name": "immutable_truncate",
+          "enabled": "O",
+          "function_sha256": "ec6179bfafb679512c6397adc3449ad293e1521a830f1f9c5f755a045d2b3459",
+          "definition_bytes": 193,
+          "definition_sha256": "ee8799136377bbbe999c5a318bdf27ecf9a361baa33746bc6680bdd3a35a6922"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "watch_requests_v1_batch_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 94,
+          "definition_sha256": "baec97b5831ec27747e46285af2a544b7e1fca9bd18e98552f0e4a89896d2f25"
+        },
+        {
+          "name": "watch_requests_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 33,
+          "definition_sha256": "abd5622cc1db90d28ff8fc35562d161b3c62524b065eafded0f1d10eeec3c76a"
+        },
+        {
+          "name": "watch_requests_v1_request_id_key",
+          "type": "u",
+          "validated": true,
+          "definition_bytes": 19,
+          "definition_sha256": "42b491790b4db13f17d0eb4e0b48653225c7f678a29518d2e2610e55cb5f2817"
+        },
+        {
+          "name": "watch_requests_v1_source_id_fkey",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 94,
+          "definition_sha256": "d94431966055edc4c1a3027d80ef934e299f4a34033abb866d94edad68673fcc"
+        }
+      ]
+    },
+    {
+      "acl": null,
+      "oid": "289604",
+      "rls": true,
+      "name": "official_v3_method_private.heads_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "method_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "revision",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "package_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "epoch",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "approval_mode",
+          "type": "text",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "approval_until",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "changed_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "changed_by",
+          "type": "uuid",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "operation_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        }
+      ],
+      "relkind": "r",
+      "triggers": null,
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "heads_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 23,
+          "definition_sha256": "bae9e1be658e1b92b5079b44c24be80956a6c15c94821f1c5f4bad1dbb78238b"
+        },
+        {
+          "name": "heads_v1_revision_fk",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 167,
+          "definition_sha256": "707c12af4749a4814b88cf448b56d80ae57a91ed4a4ed612f37bb82665204c7e"
+        },
+        {
+          "name": "heads_v1_shape",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 837,
+          "definition_sha256": "3641c1daca4c08016afcab1bd25351e4643d75700649aa9eb25a6b13da19631e"
+        }
+      ]
+    },
+    {
+      "acl": null,
+      "oid": "289617",
+      "rls": true,
+      "name": "official_v3_method_private.operations_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "operation_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "action",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "revision",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "command",
+          "type": "jsonb",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "before_state",
+          "type": "jsonb",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "after_state",
+          "type": "jsonb",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "recorded_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "operations_v1_immutable",
+          "enabled": "O",
+          "function_sha256": "bb767f77cc952706ea3855ab9a83698880b80ea035ca50ad190ebd2c794dcbb4",
+          "definition_bytes": 178,
+          "definition_sha256": "bf6450d0aa2ceb89671a9aaa1f365f090ae9d8ab41adbcb72a1beb15928aaf93"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "operations_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 26,
+          "definition_sha256": "fa9e54a3e382bb74b838e4e0fd1051605ed1f0ff41b7c8b50a3cbc46502ef7c7"
+        },
+        {
+          "name": "operations_v1_revision_fk",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 105,
+          "definition_sha256": "e936b80ce7e3d3139abca6741c8ca5828dbb35c568124263b7cdf3da246d5ad8"
+        },
+        {
+          "name": "operations_v1_shape",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 2722,
+          "definition_sha256": "c01902d79d9d81bbd02ad4cff1617ba6f67683bfe26ed4424b4ec7a64b267a9b"
+        }
+      ]
+    },
+    {
+      "acl": null,
+      "oid": "289589",
+      "rls": true,
+      "name": "official_v3_method_private.revisions_v1",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "method_id",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "revision",
+          "type": "integer",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "method_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "package_digest",
+          "type": "text",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "predecessor_revision",
+          "type": "integer",
+          "identity": "",
+          "not_null": false,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "staged_at",
+          "type": "timestamp with time zone",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        },
+        {
+          "name": "staged_by",
+          "type": "uuid",
+          "identity": "",
+          "not_null": true,
+          "generated": "",
+          "default_bytes": null,
+          "default_sha256": null
+        }
+      ],
+      "relkind": "r",
+      "triggers": [
+        {
+          "name": "revisions_v1_immutable",
+          "enabled": "O",
+          "function_sha256": "bb767f77cc952706ea3855ab9a83698880b80ea035ca50ad190ebd2c794dcbb4",
+          "definition_bytes": 176,
+          "definition_sha256": "2e911519d1488b74a94317baf64be1591332df9c4b478dfc46ba6ae636aa9d84"
+        }
+      ],
+      "force_rls": true,
+      "constraints": [
+        {
+          "name": "revisions_v1_pkey",
+          "type": "p",
+          "validated": true,
+          "definition_bytes": 33,
+          "definition_sha256": "5a4757b924f90a9918fed396cd6a96bf3fe74548541e0c5171f3596d70382462"
+        },
+        {
+          "name": "revisions_v1_predecessor_fk",
+          "type": "f",
+          "validated": true,
+          "definition_bytes": 117,
+          "definition_sha256": "925d4a7a93ce3560e3ffcefb2dc7651013297e8fc42f40ab130b751ce0b113c1"
+        },
+        {
+          "name": "revisions_v1_shape",
+          "type": "c",
+          "validated": true,
+          "definition_bytes": 272,
+          "definition_sha256": "e055d90e16d2912a82da1d126fa5d2f819b67d2855d731ea7d7ab5855a129930"
+        },
+        {
+          "name": "revisions_v1_tuple_key",
+          "type": "u",
+          "validated": true,
+          "definition_bytes": 59,
+          "definition_sha256": "74d95cde447f6bfd1f12e916e07630ef2a76fe668aca6a138abccfcfb0a6b505"
+        }
+      ]
+    }
+  ],
+  "method_head": [
+    {
+      "epoch": 1,
+      "status": "approved",
+      "revision": 1,
+      "method_id": "jetnity-destination-primary-at-visa",
+      "changed_at": "2026-11-18T00:35:56.348475+00:00",
+      "approval_mode": "until_revoked",
+      "method_digest": "cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9",
+      "approval_until": null,
+      "package_digest": "55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe",
+      "revision_bound": true,
+      "full_row_sha256": "4a4fc78d419514825e193dc9d066e2d44b0f8c2beace1c028042c1c26b1c9759",
+      "receipt_correlated": true,
+      "operation_id_sha256": "95ea0199c895837776384a53a242d96db95ebecafc8b8b70cbdb018bbc0c6701"
+    }
+  ],
+  "observed_at": "2026-11-22T13:00:37.083384+00:00",
+  "source_pins": [
+    {
+      "edition": null,
+      "source_id": "bmeia-bern-how-to-apply",
+      "row_sha256": "b34d904eb473e3c32caf977b195fb6d260a6cf9dae883291ffb8e74b8988502c",
+      "official_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "original_sha": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+      "canonical_sha": "b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55",
+      "normalization": "bmeia-theme-assets-v1",
+      "research_only": true,
+      "authority_code": "AT",
+      "original_bytes": 172460,
+      "source_qualified": false
+    },
+    {
+      "edition": null,
+      "source_id": "bmi-general-entry",
+      "row_sha256": "ccb1669a33c3335108718ebb86d297ebc8bc730f0bc86f159a17a47cd37f1947",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "original_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "canonical_sha": null,
+      "normalization": "none",
+      "research_only": true,
+      "authority_code": "AT",
+      "original_bytes": 91655,
+      "source_qualified": false
+    },
+    {
+      "edition": "BMI 06.11.2026",
+      "source_id": "bmi-visa-nationality-matrix",
+      "row_sha256": "5dc987711511419c600f148c10630270dd2616c3421ad1435122a04f184c9ab4",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "original_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "canonical_sha": null,
+      "normalization": "none",
+      "research_only": true,
+      "authority_code": "AT",
+      "original_bytes": 498415,
+      "source_qualified": false
+    }
+  ],
+  "production_change": false,
+  "preserved_originals": [
+    {
+      "raw_sha": "b678259a0e9f7941a39f305b1165ef5065805dfb9b1cd844347cb6b359e898e0",
+      "batch_id": 1,
+      "raw_bytes": 172460,
+      "source_id": "bmeia-bern-how-to-apply",
+      "stored_at": "2026-11-18T00:20:52.222368+00:00",
+      "source_state": "unchanged_asset_version_only",
+      "actual_body_sha256": "b678259a0e9f7941a39f305b1165ef5065805dfb9b1cd844347cb6b359e898e0",
+      "legal_source_approved": false,
+      "customer_rule_approved": false
+    },
+    {
+      "raw_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "batch_id": 1,
+      "raw_bytes": 91655,
+      "source_id": "bmi-general-entry",
+      "stored_at": "2026-11-18T00:20:52.230943+00:00",
+      "source_state": "unchanged_exact",
+      "actual_body_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "legal_source_approved": false,
+      "customer_rule_approved": false
+    },
+    {
+      "raw_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "batch_id": 1,
+      "raw_bytes": 498415,
+      "source_id": "bmi-visa-nationality-matrix",
+      "stored_at": "2026-11-18T00:20:52.252399+00:00",
+      "source_state": "unchanged_exact",
+      "actual_body_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "legal_source_approved": false,
+      "customer_rule_approved": false
+    }
+  ],
+  "latest_three_batches": [
+    {
+      "bytes": 172428,
+      "batch_id": 603,
+      "body_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "source_id": "bmeia-bern-how-to-apply",
+      "timed_out": false,
+      "request_id": 1242,
+      "started_at": "2026-11-22T12:20:00.028798+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T12:25:00.044233+00:00",
+      "requested_at": "2026-11-22T12:20:00.028798+00:00",
+      "response_html": true,
+      "source_status": "changed",
+      "response_created": "2026-11-22T12:20:00.033884+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 172428,
+      "retained_response_body_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 91655,
+      "batch_id": 603,
+      "body_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "source_id": "bmi-general-entry",
+      "timed_out": false,
+      "request_id": 1243,
+      "started_at": "2026-11-22T12:20:00.028798+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T12:25:00.048409+00:00",
+      "requested_at": "2026-11-22T12:20:00.028798+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T12:20:00.033884+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 91655,
+      "retained_response_body_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 498415,
+      "batch_id": 603,
+      "body_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "source_id": "bmi-visa-nationality-matrix",
+      "timed_out": false,
+      "request_id": 1244,
+      "started_at": "2026-11-22T12:20:00.028798+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T12:25:00.070237+00:00",
+      "requested_at": "2026-11-22T12:20:00.028798+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T12:20:00.033884+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 498415,
+      "retained_response_body_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 172428,
+      "batch_id": 602,
+      "body_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "source_id": "bmeia-bern-how-to-apply",
+      "timed_out": false,
+      "request_id": 1239,
+      "started_at": "2026-11-22T11:25:00.049955+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T11:30:00.060696+00:00",
+      "requested_at": "2026-11-22T11:25:00.049955+00:00",
+      "response_html": true,
+      "source_status": "changed",
+      "response_created": "2026-11-22T11:25:00.059337+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 172428,
+      "retained_response_body_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 91655,
+      "batch_id": 602,
+      "body_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "source_id": "bmi-general-entry",
+      "timed_out": false,
+      "request_id": 1240,
+      "started_at": "2026-11-22T11:25:00.049955+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T11:30:00.065059+00:00",
+      "requested_at": "2026-11-22T11:25:00.049955+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T11:25:00.059337+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 91655,
+      "retained_response_body_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 498415,
+      "batch_id": 602,
+      "body_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "source_id": "bmi-visa-nationality-matrix",
+      "timed_out": false,
+      "request_id": 1241,
+      "started_at": "2026-11-22T11:25:00.049955+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T11:30:00.08636+00:00",
+      "requested_at": "2026-11-22T11:25:00.049955+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T11:25:00.059337+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 498415,
+      "retained_response_body_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 172428,
+      "batch_id": 601,
+      "body_sha": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "source_id": "bmeia-bern-how-to-apply",
+      "timed_out": false,
+      "request_id": 1236,
+      "started_at": "2026-11-22T10:35:00.028339+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T10:40:00.047999+00:00",
+      "requested_at": "2026-11-22T10:35:00.028339+00:00",
+      "response_html": true,
+      "source_status": "changed",
+      "response_created": "2026-11-22T10:35:00.033621+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 172428,
+      "retained_response_body_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 91655,
+      "batch_id": 601,
+      "body_sha": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "source_id": "bmi-general-entry",
+      "timed_out": false,
+      "request_id": 1237,
+      "started_at": "2026-11-22T10:35:00.028339+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T10:40:00.054328+00:00",
+      "requested_at": "2026-11-22T10:35:00.028339+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T10:35:00.033621+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 91655,
+      "retained_response_body_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "matching_response_rows_capped_at_2": 1
+    },
+    {
+      "bytes": 498415,
+      "batch_id": 601,
+      "body_sha": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "source_id": "bmi-visa-nationality-matrix",
+      "timed_out": false,
+      "request_id": 1238,
+      "started_at": "2026-11-22T10:35:00.028339+00:00",
+      "http_status": 200,
+      "observed_at": "2026-11-22T10:40:00.074887+00:00",
+      "requested_at": "2026-11-22T10:35:00.028339+00:00",
+      "response_html": true,
+      "source_status": "unchanged_exact",
+      "response_created": "2026-11-22T10:35:00.033621+00:00",
+      "response_http_status": 200,
+      "response_error_absent": true,
+      "retained_response_bytes": 498415,
+      "retained_response_body_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "matching_response_rows_capped_at_2": 1
+    }
+  ],
+  "parent_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+  "target_project_declared": "qscbgcdmivbbnzrcyegn",
+  "http_or_source_action_performed": false,
+  "activation_authorized_by_this_read": false,
+  "source_generation_successor_present": false,
+  "method_approval_or_publication_performed": false
+}

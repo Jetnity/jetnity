@@ -1,0 +1,150 @@
+{
+  "schema": 1,
+  "review_id": "PROD_AT_BINDING_READ_INDEPENDENT_REVIEW_20261122",
+  "package_id": "PROD_AT_SOURCE_QUALIFICATION_REVIEW_20261122",
+  "status": "PASS_READ_SCOPE_AND_RESULT_VALIDATED_ACTIVATION_BLOCKED",
+  "review_mode": "OFFLINE_ONLY",
+  "performed_by": "independent_at_package_read_review_agent",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "project_id": "qscbgcdmivbbnzrcyegn",
+  "inputs": {
+    "execution_file": "11-at-execution.json",
+    "result_file": "12-at-result.json",
+    "result_file_sha256": "71e60e585ae8573f839bac736f6744b2da337a6084b01ff567af28f29b01f317",
+    "sql_file": "00-at-qualification-bindings.READONLY.sql",
+    "sql_sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+    "manifest_sha256": "a73a433fb7090e59ba53b7f67100417504c2525c87cc79a34d48077c2e0871be"
+  },
+  "execution": {
+    "started_at": "2026-11-22T13:00:36.070Z",
+    "finished_at": "2026-11-22T13:00:37.344Z",
+    "attempt": 1,
+    "maximum_attempts": 1,
+    "wall_seconds": 1.274,
+    "connector_is_error": false,
+    "rollback_basis": "The exact pinned SQL ends with ROLLBACK and the connector returned without SQL error; no additional database read or transaction was performed by this reviewer."
+  },
+  "checks": {
+    "original_tool_result_equals_saved_result": true,
+    "exactly_one_result_row": true,
+    "exact_root_keys_and_marker": true,
+    "target_parent_sql_sha_and_commit_match": true,
+    "time_limits_satisfied": true,
+    "result_output_limit_satisfied": true,
+    "exact_nested_metadata_keys_and_types": true,
+    "relation_column_names_and_builtin_types_match_sql": true,
+    "relation_ownership_rls_force_rls_and_acls_expected": true,
+    "closed_unique_function_names_and_expected_acls": true,
+    "publisher_body_and_complete_definition_hashes_match_sql": true,
+    "all_reported_hashes_and_lengths_validly_typed": true,
+    "closed_unique_three_source_lists": true,
+    "source_pin_and_retained_original_bindings_match_source_scope": true,
+    "all_nine_http_and_collector_observations_match_approved_source_hashes_and_bytes": true,
+    "all_nine_http_request_ids_unique_and_responses_single": true,
+    "method_revision_and_receipt_correlated": true,
+    "method_revision_epoch_and_old_digests_match_package": true,
+    "bg1_fresh_complete_timing_chain_and_incident_resume_consistent": true,
+    "no_qualification_successor_present": true,
+    "no_production_or_source_or_owner_action_by_read": true
+  },
+  "counts": {
+    "result_rows": 1,
+    "raw_rows_utf8_bytes": 46835,
+    "maximum_utf8_bytes": 131072,
+    "relations": 9,
+    "functions": 13,
+    "method_heads": 1,
+    "source_pins": 3,
+    "preserved_originals": 3,
+    "observations": 9,
+    "bg1_proofs": 1
+  },
+  "offline_validator_correction": {
+    "kind": "LOCAL_CHECKER_FALSE_POSITIVE_NOT_A_DATABASE_DEVIATION",
+    "detail": "An initial offline type assertion assumed all columns were non-generated. Existing raw_sha and raw_bytes are stored generated columns. Both expressions and exact native expression hashes match the retained Stage1 definition; all remaining nested checks passed.",
+    "relation": "official_v3_at_production_private.first_originals_v1",
+    "columns": [
+      "raw_sha",
+      "raw_bytes"
+    ],
+    "source": "source_review_cache/scripts/db/official-truth-at-production-stage1/install.sql",
+    "exact_expression_hashes_matched": true,
+    "repeated_database_query": false
+  },
+  "observed_at": "2026-11-22T13:00:37.083384+00:00",
+  "bg1_proof": {
+    "due_at": "2026-11-22T13:00:00+00:00",
+    "outcome": "complete",
+    "generation": 1789,
+    "started_at": "2026-11-22T13:00:00.033621+00:00",
+    "finished_at": "2026-11-22T13:00:05.323183+00:00",
+    "valid_until": "2026-11-22T13:05:30+00:00",
+    "fresh_complete": true,
+    "proof_started_at": "2026-11-22T13:00:00.048695+00:00",
+    "resumed_generation": 108,
+    "incident_generation": 108
+  },
+  "method_head": {
+    "epoch": 1,
+    "status": "approved",
+    "revision": 1,
+    "method_id": "jetnity-destination-primary-at-visa",
+    "changed_at": "2026-11-18T00:35:56.348475+00:00",
+    "approval_mode": "until_revoked",
+    "method_digest": "cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9",
+    "approval_until": null,
+    "package_digest": "55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe",
+    "revision_bound": true,
+    "full_row_sha256": "4a4fc78d419514825e193dc9d066e2d44b0f8c2beace1c028042c1c26b1c9759",
+    "receipt_correlated": true,
+    "operation_id_sha256": "95ea0199c895837776384a53a242d96db95ebecafc8b8b70cbdb018bbc0c6701"
+  },
+  "facts": {
+    "total": 62,
+    "unexpired": 0,
+    "last_version": 62,
+    "last_expires_at": "2026-11-20T13:17:00.076335+00:00",
+    "last_verified_at": "2026-11-20T12:17:00.076335+00:00",
+    "last_source_batch": 65
+  },
+  "result_summary": {
+    "newest_source_batch": 603,
+    "newest_request_ids": [
+      1242,
+      1243,
+      1244
+    ],
+    "newest_http200_count": 3,
+    "latest_observation_count": 9,
+    "all_request_ids": [
+      1236,
+      1237,
+      1238,
+      1239,
+      1240,
+      1241,
+      1242,
+      1243,
+      1244
+    ],
+    "source_generation_successor_present": false,
+    "customer_visibility": "derzeit nicht verfügbar"
+  },
+  "stop_findings": [],
+  "readiness_blockers": [
+    "All three existing source pins remain research_only=true and source_qualified=false.",
+    "All three retained originals remain legal_source_approved=false and customer_rule_approved=false.",
+    "BMEIA remains changed; historical pin, retained original and newly approved source bytes remain distinct.",
+    "Approved existing method revision1/epoch1 still binds the old BMEIA source generation.",
+    "No installed qualification successor; 62 historical AT facts and zero unexpired facts.",
+    "No new append-only source/method/runtime successor, actual positive renewal and isolated unqualified-unchanged negative test jointly accepted in Dev.",
+    "No installation, method-owner action, publication or activation is authorized by this read PASS."
+  ],
+  "reviewer_effects": {
+    "database_calls": 0,
+    "network_calls": 0,
+    "repository_scripts_executed": 0,
+    "sql_executed": 0,
+    "input_files_modified": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "package": "PROD_AT_SOURCE_QUALIFICATION_REVIEW_20261122",
+  "project_id": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "file": "00-at-qualification-bindings.READONLY.sql",
+  "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+  "attempt": 1,
+  "maximum_attempts": 1,
+  "started_at": "2026-11-22T13:00:36.070Z",
+  "status": "RESERVED_NO_RETRY"
+}

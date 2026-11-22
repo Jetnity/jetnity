@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "reviewer": "independent_chde_package_read_review_agent",
+  "verdict": "PASS_READ_RESULT_CONTRACT_ONLY__WRITE_AUTHORITY_UNPROVEN",
+  "package": "PROD_CHDE_CYCLE12_BINDINGS_20261122",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "inputs": {
+    "execution_envelope": "21-chde-execution.json",
+    "execution_envelope_sha256": "d17ae78c4b479a46ee4c0a1ca9d70719a84852b618853a63446b84e82b4c673e",
+    "result": "22-chde-result.json",
+    "result_sha256": "4397576ecf394e9e3702f28d6859b33a21dc477e9905f34b36a9358174e22b94",
+    "sql_sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+    "manifest_sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+    "result_contract_sha256": "1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da"
+  },
+  "method": {
+    "offline_only": true,
+    "implementation": "Ephemeral inline Python using only json, re, hashlib, datetime and pathlib; no repository script or SQL execution.",
+    "assertions": 2020,
+    "failed_assertions": 0,
+    "assertion_scope": "Strict root/nested keys and types, exact values, duplicate-key detection, bounds, timestamps, identity and row correlations, archive references/digest equality, metadata shapes and signatures, privacy payload-key exclusion. Count includes recursive privacy assertions and is not a count of native tests.",
+    "additional_check": "Independently reconstructed PostgreSQL JSONB ordering for the complete returned cycle row excluding its digest and recomputed its SHA-256.",
+    "raw_tool_response_is_error": false,
+    "single_raw_result_row": true,
+    "saved_result_equals_raw_tool_result": true,
+    "result_json_bytes_with_default_spaces": 28581,
+    "max_result_bytes": 262144,
+    "source_identity_algorithm_file_sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1",
+    "source_scheduler_file_sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0"
+  },
+  "timing": {
+    "execution_started_at": "2026-11-22T13:02:05.846Z",
+    "observed_at": "2026-11-22T13:02:06.758776+00:00",
+    "execution_finished_at": "2026-11-22T13:02:07.325Z",
+    "observation_inside_execution_window": true,
+    "bg1_generation": 1789,
+    "bg1_last_due": "2026-11-22T13:00:00+00:00",
+    "bg1_last_finished": "2026-11-22T13:00:05.323183+00:00",
+    "bg1_valid_until": "2026-11-22T13:05:30+00:00",
+    "bg1_current_at_observation": true,
+    "incident_generation": 108,
+    "resumed_generation": 108
+  },
+  "verified_result_counts": {
+    "cycle": 12,
+    "dispatches": 9,
+    "derived_claim_identities": 5,
+    "starts": 1,
+    "queue": 2,
+    "intakes": 1,
+    "archived_originals": 2,
+    "prior_owner_receipts": 3,
+    "prior_retire_unknown_receipts": 0,
+    "function_metadata_entries": 13,
+    "relation_metadata_entries": 12
+  },
+  "independent_correlations": {
+    "enqueue_and_job_ids_recomputed": true,
+    "all_five_claim_operation_and_lease_ids_recomputed": true,
+    "cycle_row_sha256_recomputed": "05a43950fa9296e1dd76fa5786e1f2b888d1a58774e56e118c43edda95014544",
+    "cycle_row_digest_matches": true,
+    "subject_job_and_enqueue_match_cycle12": true,
+    "one_current_open_attempt_matches_cycle_job_and_derived_lease": true,
+    "current_leased_job_digest_matches_start": true,
+    "current_attempt_results": 0,
+    "current_attempt_dispositions": 0,
+    "lease_expired_at_observation": true,
+    "intake_matches_same_job": true,
+    "intake_original_digest_equals_proposal_digest": true,
+    "method_status": "approved",
+    "archive_original_ids_unique_and_complete": true,
+    "returned_recomputed_original_hashes_equal_stored_hashes": true,
+    "read_bounds_ok": true,
+    "required_function_metadata_present": true
+  },
+  "privacy": {
+    "raw_source_body_or_bytes_returned": false,
+    "lease_token_or_credential_token_hash_returned": false,
+    "signing_key_or_auth_session_returned": false,
+    "owner_actor_or_receipt_body_returned": false,
+    "note": "Names such as lease_token, token_hash and actor_id occur only as table-column schema metadata, without values. Native authority objects appear only as digests."
+  },
+  "precise_existing_authority_gap": {
+    "jobs_api_execute_postgres_execute": false,
+    "jobs_assert_history_postgres_execute": false,
+    "jobs_tx_queue_claim_postgres_execute": false,
+    "jobs_tx_queue_mutate_postgres_execute": false,
+    "jobs_tx_queue_cas_postgres_execute": false,
+    "jobs_functions_owner": "ot_v3_jobs_owner",
+    "postgres_jobs_owner_membership": {
+      "grantor": "supabase_admin",
+      "admin": true,
+      "inherit": false,
+      "set": false
+    },
+    "interpretation": "The direct postgres-to-native-jobs execution path is not available under the observed privileges. Metadata does not establish an alternative existing authorized call chain. No grant, SET ROLE, role ownership change or bypass is authorized by this read.",
+    "required_next_evidence": "Bind any proposed existing native closure call chain to these exact installed definition/ACL/config digests and demonstrate it separately in the permitted native Dev review. If no unchanged-authority path exists, the proposed write package remains blocked."
+  },
+  "remaining_evidence_limits": {
+    "existing_claim_authority_is_proven": false,
+    "original_http503_error_body_is_proven": false,
+    "production_write_is_authorized": false,
+    "owner_action_performed": false,
+    "source_run_started": false,
+    "positive_public_fact_created": false,
+    "native_sql_or_mutation_test_performed_by_reviewer": false,
+    "original_archived_source_bytes_independently_downloaded": false,
+    "rollback_evidence": "Executed file is hash-bound and ends with ROLLBACK; tool returned success. Reviewer did not issue a new connection or independent transaction-state query.",
+    "future_write_package": "Requires grantless native authority evidence, a separately authorized genuine Owner/AAL2 receipt, reviewed append-only closure and scheduler/BG1 successor, explicit default-closed dispatch behavior, native rollback/negative tests, newly bound file hashes and separate Go. Restart remains a separate one-cycle decision.",
+    "original_http503_cause": "Current Cycle12 custody is now correlated, but retained original request-level error body/deployment-stage evidence remains absent. The current expired attempt is not proof of the first historical failure cause."
+  },
+  "reviewer_actions": {
+    "database_calls": 0,
+    "network_requests": 0,
+    "repository_scripts_executed": 0,
+    "sql_executed": 0,
+    "dev_or_production_mutations": 0,
+    "owner_or_source_actions": 0,
+    "only_written_artifact": "24-chde-independent-review.json"
+  }
+}

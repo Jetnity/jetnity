@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "package": "PROD_CHDE_CYCLE12_BINDINGS_20261122",
+  "project_id": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "9f372f00065e5570b70d59a9bc681b8b2387cf4f",
+  "file": "00-cycle12-bindings.READONLY.sql",
+  "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+  "attempt": 1,
+  "maximum_attempts": 1,
+  "started_at": "2026-11-22T13:02:05.846Z",
+  "status": "RESERVED_NO_RETRY"
+}

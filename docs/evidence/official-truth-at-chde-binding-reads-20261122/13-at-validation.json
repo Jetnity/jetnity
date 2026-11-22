@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "status": "READ_SUCCEEDED_SCOPE_VALIDATED",
+  "validated_at": "2026-11-22T13:01:41.396Z",
+  "offline_parse_note": "Initial envelope regex matched the explanatory inline tag. Reparsed the same saved response using anchored delimiter lines; no repeated SQL or additional read.",
+  "checks": {
+    "strict_root_keys": true,
+    "marker": true,
+    "schema": true,
+    "read_only": true,
+    "actual_tool_target": true,
+    "declared_target": true,
+    "parent": true,
+    "action_flags_false": true,
+    "no_installed_qualification_successor": true,
+    "relations_count": true,
+    "functions_bounded": true,
+    "method_head_bounded": true,
+    "bg1_bounded": true,
+    "pins_exact": true,
+    "originals_exact": true,
+    "observations_bounded": true,
+    "wall_clock_within_limit": true,
+    "terminal_rollback": true
+  },
+  "counts": {
+    "relations": 9,
+    "functions": 13,
+    "methods": 1,
+    "sources": 3,
+    "originals": 3,
+    "observations": 9,
+    "bg1": 1
+  },
+  "facts": {
+    "total": 62,
+    "unexpired": 0,
+    "last_version": 62,
+    "last_expires_at": "2026-11-20T13:17:00.076335+00:00",
+    "last_verified_at": "2026-11-20T12:17:00.076335+00:00",
+    "last_source_batch": 65
+  },
+  "method_head": [
+    {
+      "epoch": 1,
+      "status": "approved",
+      "revision": 1,
+      "method_id": "jetnity-destination-primary-at-visa",
+      "changed_at": "2026-11-18T00:35:56.348475+00:00",
+      "approval_mode": "until_revoked",
+      "method_digest": "cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9",
+      "approval_until": null,
+      "package_digest": "55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe",
+      "revision_bound": true,
+      "full_row_sha256": "4a4fc78d419514825e193dc9d066e2d44b0f8c2beace1c028042c1c26b1c9759",
+      "receipt_correlated": true,
+      "operation_id_sha256": "95ea0199c895837776384a53a242d96db95ebecafc8b8b70cbdb018bbc0c6701"
+    }
+  ],
+  "bg1_proof": [
+    {
+      "due_at": "2026-11-22T13:00:00+00:00",
+      "outcome": "complete",
+      "generation": 1789,
+      "started_at": "2026-11-22T13:00:00.033621+00:00",
+      "finished_at": "2026-11-22T13:00:05.323183+00:00",
+      "valid_until": "2026-11-22T13:05:30+00:00",
+      "fresh_complete": true,
+      "proof_started_at": "2026-11-22T13:00:00.048695+00:00",
+      "resumed_generation": 108,
+      "incident_generation": 108
+    }
+  ],
+  "at_activation_authorized": false
+}
