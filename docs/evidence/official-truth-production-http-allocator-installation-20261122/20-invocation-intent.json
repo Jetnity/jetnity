@@ -1,0 +1,16 @@
+{
+  "schema": "jetnity-production-http-allocator-invocation-intent-v1",
+  "file": "20",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "sql_sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+  "sql_bytes": 106669,
+  "attempt": 1,
+  "recorded_at_utc": "2026-11-22T10:27:07.623Z",
+  "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+  "authorization_checkpoint_commit": "9cacfbb04ae37d93227df44737ad7934470cba07",
+  "state": "ONE_TIME_INVOCATION_ARMED_TREAT_MISSING_RESULT_AS_UNKNOWN_DO_NOT_RETRY",
+  "exact_query_bytes_roundtrip_matched": true,
+  "sha256_rechecked_immediately_before_call": true,
+  "no_40": true,
+  "return_result_precedes_commit_and_is_not_standalone_commit_proof": true
+}
