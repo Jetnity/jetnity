@@ -53,7 +53,7 @@ SELECT pg_catalog.jsonb_build_object(
  'timestamp_utc',pg_catalog.clock_timestamp(),
  'server_version_num',pg_catalog.current_setting('server_version_num'),
  'database_name',pg_catalog.current_database(),
- 'connection_role',pg_catalog.current_user,
+ 'connection_role',current_user,
  'expected_prod_project','qscbgcdmivbbnzrcyegn',
  'no_ddl_or_dml',true,
  'originals_v2_exists',pg_catalog.to_regclass('official_v3_at_private.whole_originals_v2') IS NOT NULL,
@@ -64,7 +64,7 @@ SELECT pg_catalog.jsonb_build_object(
  ),
  'bg1_v4_locator',pg_catalog.to_regclass('official_v3_guard_private.bg1_production_http_allocator_v4')::text,
  'at_existing_schema_inventory',(
-   SELECT pg_catalog.coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
      'name',r.nspname||'.'||r.relname,'kind',r.relkind,'owner',r.owner,'acl',r.acl,
      'rls',r.rls,'force_rls',r.force_rls,
      'columns',(SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -75,7 +75,7 @@ SELECT pg_catalog.jsonb_build_object(
    FROM relevant_relations r
  ),
  'function_definitions_and_hashes',(
-   SELECT pg_catalog.coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
      'name',f.nspname||'.'||f.proname,'arguments',f.arguments,
      'owner',f.owner,'definer',f.definer,'acl',f.acl,
      'sha256',pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(f.definition,'UTF8')),'hex'),
@@ -83,7 +83,7 @@ SELECT pg_catalog.jsonb_build_object(
    FROM target_functions f
  ),
  'postgres_job_owner_membership',(
-   SELECT pg_catalog.coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
      'grantor',pg_catalog.pg_get_userbyid(m.grantor),
      'admin',m.admin_option,'inherit',m.inherit_option,'set',m.set_option)),'[]'::jsonb)
    FROM pg_catalog.pg_auth_members m
