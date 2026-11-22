@@ -1,0 +1,100 @@
+{
+  "status": "PLAN_ONLY_NO_EXECUTION_AUTHORIZED",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "6136b662b0c4227f651d3c41775767edec7de607",
+  "production_calls_this_task": 0,
+  "dev_calls_this_task": 0,
+  "sql_files_modified": false,
+  "source_package_manifest_sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+  "successful_rehearsal_result_manifest_sha256": "4be4d27720d1b95d0692cd53960e5bafbe7afae560a9ff0cc1300cd3ee29bb37",
+  "source_package_all26files_verified": true,
+  "source_rehearsal_all21bindings_verified_at_delivery_commit": true,
+  "normal_order": [
+    "20 once COMMIT after separate exact Go",
+    "50 once independent READ ONLY / ROLLBACK after unambiguous20 completion"
+  ],
+  "file50_does_not_prove_natural_http_or_positive_renewal": true,
+  "not_normal_order": [
+    "40"
+  ],
+  "fence": {
+    "current_draft_executable": false,
+    "reason": "expected_successor_sha=NULL; must bind actual committed canonical successor from independent50",
+    "current40_hash_will_change_when_bound": true,
+    "role": "deny new captured ordinary queue INSERTs, not restore old allocator",
+    "post40_verifier_missing": true,
+    "50_cannot_verify_post40_fenced_helper": true,
+    "new30and40and_fence_readback_require_separate_review_and_Go": true
+  },
+  "operational_followup_read_package": {
+    "status": "TO_BE_PREPARED_AND_HASHED_BEFORE_ITS_OWN_GO",
+    "scope": "new natural BG1 full proof and correlated AT/CHDE transport outcomes",
+    "not_covered_by_only20and50": true
+  },
+  "files": [
+    {
+      "file": "20-production-http-id.INSTALL-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+      "bytes": 106669,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    },
+    {
+      "file": "30-production-http-id.FENCE-ROLLBACK.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/30-production-http-id.FENCE-ROLLBACK.sql",
+      "sha256": "4535acf918d96f6851cebe4463ed994154fe9d220a1d073384fcb434de0efc44",
+      "bytes": 35286,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ]
+    },
+    {
+      "file": "40-production-http-id.FENCE-COMMIT.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/40-production-http-id.FENCE-COMMIT.sql",
+      "sha256": "0f1b65076f4fb8191fc5bff821001fe67b54e3e8b3c1dab1976f6f3fb7a85a98",
+      "bytes": 35020,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": false,
+      "transaction_end": "COMMIT",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": [
+        "installed_successor_canonical_sha256"
+      ]
+    },
+    {
+      "file": "50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "bytes": 9347,
+      "prepared_only": true,
+      "executed": false,
+      "execution_authorized": false,
+      "ready_for_candidate_review": true,
+      "ready_for_production_rehearsal": false,
+      "read_only": true,
+      "transaction_end": "ROLLBACK",
+      "requires_separate_exact_production_authorization": true,
+      "deliberately_missing_bindings": []
+    }
+  ]
+}

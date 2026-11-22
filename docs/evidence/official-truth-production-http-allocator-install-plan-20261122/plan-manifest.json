@@ -1,0 +1,87 @@
+{
+  "package": "PROD_HTTP_ALLOCATOR_INSTALLATION_PLAN_20261122",
+  "status": "REVIEW_ONLY_POSTCOMMIT_RECOVERY_AND_OPERATIONAL_READ_BINDINGS_OPEN",
+  "source_commit": "6136b662b0c4227f651d3c41775767edec7de607",
+  "target": "qscbgcdmivbbnzrcyegn",
+  "production_calls_this_task": 0,
+  "dev_calls_this_task": 0,
+  "execution_authorized": false,
+  "source_sql_changed": false,
+  "normal_order": [
+    "20 COMMIT after separate exact Go",
+    "50 independent READ ONLY / ROLLBACK once after unambiguous20 completion"
+  ],
+  "40_is_not_normal_step": true,
+  "40_current_draft_executable": false,
+  "40_requires_actual50_committed_successor_pin_new_hash_and_separate_Go": true,
+  "50_is_not_post40_verifier": true,
+  "post40_readback_missing": true,
+  "operational_read_packet_requires_separate_preparation_and_Go": true,
+  "unqualified_AT_remains_unavailable": true,
+  "plan_sha256": "b9b3a3342c446555524435b9d4be7e6e45540e72dde22fb1fde4da6f518f4879",
+  "immutable_inputs": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/MANIFEST.json",
+      "bytes": 24663,
+      "sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/30-production-http-id.FENCE-ROLLBACK.sql",
+      "bytes": 35286,
+      "sha256": "4535acf918d96f6851cebe4463ed994154fe9d220a1d073384fcb434de0efc44"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/40-production-http-id.FENCE-COMMIT.sql",
+      "bytes": 35020,
+      "sha256": "0f1b65076f4fb8191fc5bff821001fe67b54e3e8b3c1dab1976f6f3fb7a85a98"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/execution-manifest.json",
+      "bytes": 7171,
+      "sha256": "4be4d27720d1b95d0692cd53960e5bafbe7afae560a9ff0cc1300cd3ee29bb37"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-cron-rehearsal-20261122/runtime-result.json",
+      "bytes": 5672,
+      "sha256": "40e7682955af9619d6cc825fff6414c8d51b216247012921891362c8db4617a7"
+    }
+  ],
+  "plan_artifacts": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_INSTALLATION_PLAN_2026-11-22.md",
+      "bytes": 17509,
+      "sha256": "b9b3a3342c446555524435b9d4be7e6e45540e72dde22fb1fde4da6f518f4879"
+    },
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 215766,
+      "sha256": "be188ce299ca9aa7e089a4f7eeba740b83cf5a7c59d4a363db6172c17b37af60"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-install-plan-20261122/plan-inputs.json",
+      "bytes": 4415,
+      "sha256": "5fd70ce863818969125a8841176b4647d7a30ea0dbe9132f168d34bde577922a"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-install-plan-20261122/independent-plan-review.json",
+      "bytes": 5031,
+      "sha256": "80a813163289e61562ee69cb66b327ca4474b1abacce21409788bce150ef6370"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-install-plan-20261122/overall-plan-before-install-plan-6136b662.md",
+      "bytes": 212660,
+      "sha256": "0e3439c237f6749d72248ff3135b2abe0142ebf1a93ec6f2414aa5c995f7609b"
+    }
+  ],
+  "hash_semantics": "Exact stored-byte SHA-256; no self-hash. Historical mutable report bindings are verified in their delivery commit and preserved archives. This manifest grants no execution permission."
+}
