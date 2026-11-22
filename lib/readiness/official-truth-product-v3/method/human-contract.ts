@@ -181,6 +181,10 @@ export function readHumanRelease(value: unknown): HumanRelease | null {
       || !((scope.citizenship === 'CH' && scope.destination === 'DE' && scope.document === 'swiss_passport'
              && scope.conditions === 'unconditional')
         || (scope.citizenship === 'PRIORITY_50' && scope.destination === 'AT' && scope.document === 'national_passport'
+             && scope.conditions === 'verified_context_only')
+        // Narrow Dev-only CH/AT visa successor; the selected runtime branch is
+        // independently pinned. This parser grants no Owner/SQL authority.
+        || (scope.citizenship === 'CH' && scope.destination === 'AT' && scope.document === 'swiss_passport'
              && scope.conditions === 'verified_context_only'))
       || !utcMilliseconds(scope.activeFrom) || !utcMilliseconds(scope.activeUntilExclusive) || scope.activeFrom >= scope.activeUntilExclusive
       || !text(scope.reviewedScope, 1600)) return null
