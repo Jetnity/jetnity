@@ -1,14 +1,36 @@
-# CH→AT — Paketidentität nach einmaligem Production-Leseversuch (22.11.2026)
+# Chief-of-Staff Review: CH→AT Production-V1 Paket, 22.11.2026
 
-**Status: BLOCKED_SCHEMA_MISMATCH_NO_INSTALL_GO, keine Installation.** Die am 22.11.2026 vom Product Owner einmalig genehmigte Production-Leseabfrage `00-PRODUCTION-PREFLIGHT.READONLY.sql` (SHA-256 `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`) wurde **genau einmal** gegen `qscbgcdmivbbnzrcyegn` versucht, scheiterte mit SQLSTATE **42P01**, weil `official_v3_at_private.whole_originals_v2` in Production fehlt, und lieferte **keinen vollständigen Katalog**. Keine Wiederholung, kein Production-Schreiben, keine Rollen-/Methoden-/Auth-/Cron-/BG1-Änderung.
+**Review-Status: `CHIEF_OF_STAFF_REVIEW_READY / INSTALL_GO_HOLD`. Kein Production-Go beantragt.** Produktion: `qscbgcdmivbbnzrcyegn`; Dev: `yfvbxvijcorffwxbxahl`. Dieser Auftrag hat **keinen Production-Read/Write/Deploy/Owner-AAL2-Schritt** ausgeführt. Der Katalogsnapshot stammt aus der früheren eigens genehmigten Read-only-Abfrage `2026-11-22T21:03:32.563156Z`.
 
-**Paketidentitäten**, im bestehenden GitHub-Featurezweig nachgeholt, aus vollständigen gelesenen UTF-8-Inhalten durch `sha256(convert_to(...,'UTF8'))` in **Supabase Dev, BEGIN READ ONLY + ROLLBACK** berechnet:
-- `MANIFEST.json`: **16** gehashte Quelldateien, 7'028 UTF-8-Bytes, SHA-256 `274b5b2c14e7cc5d6bf67ddf844b13c825d49e1efbd0b17606f477516ee9bd07`; Manifest selbst nicht Bestandteil des eigenen Hashinventars (kein Zirkelschluss).
-- `SHA256SUMS`: **16** Einträge, 3'077 UTF-8-Bytes, SHA-256 `3e97b309d463c4c2cb329855d41621a1867c0c2f811f38dc58d193c8add818e9`; Reihenfolge und Werte entsprechen exakt den Manifest-Einträgen.
-- Neuer, **nicht ausgeführter** Production-Katalognachfolger `01-PRODUCTION-CATALOG-V2.READONLY.sql`: SHA-256 `c495cef4f5fb37d3e28e326ce81ed21b2e878d535070fcdecdace2425c03aa22`. Die neue Datei wurde ausschliesslich **in Dev** schema-tolerant unter `READ ONLY`+`ROLLBACK` geprüft, nicht Production.
-- Aktualisierte spätere `40-PRODUCTION-POSTCOMMIT.READONLY.sql`: SHA-256 `40b94e195f18f31e9e34c1b4214b3a0fc0f050dd58b08b3d7c6ff16565791d74`.
-- Aktualisierter `ROLLBACK_PLAN.md`: SHA-256 `09e15dea73a7801372f39f91044a276da680a6abea0e9f658fb74913a9ba8798`; **kein ausführbares Production-Rollback-SQL** vorhanden.
+## Festgelegte SHA-256-Dateiidentitäten
 
-**Unabhängige Kontrolle:** Die 16 Quelldateien wurden auf dem Branch aus GitHub gelesen, ihre Bytes in einem einzigen read-only Dev-PG17-Hashlauf nachgerechnet und als Manifest plus `SHA256SUMS` festgeschrieben. Die Summenliste wurde danach nochmals mit dem Manifest verglichen.
+- **`MANIFEST.json`: SHA-256 `7efef18be719620d5e9242464de5466c9976b6ece42e84b2a79d5b4968759ee8`, 10262 UTF-8-Bytes.**
+- **`SHA256SUMS`: SHA-256 `196f45e5a35d708d440357fb4a5349fee6e852987465ab2251579bf685e031d8`, 5440 UTF-8-Bytes.**
+- **27/27 Einträge** stimmen paarweise `SHA256SUMS` ↔ `MANIFEST.json` überein. Jeder neue/aktualisierte Paketdatei-Hash wurde aus dem exakten GitHub-Textkörper in einer **Dev-PG17-READ-ONLY-Transaktion mit `ROLLBACK`** berechnet; die historischen unveränderten acht Referenzdateien blieben an den bereits unabhängig bestätigten Digests gebunden. Diese Receipt-Datei selbst ist bewusst **nicht** Bestandteil des Manifests, um keinen zirkulären Hash einzuführen.
+- **V1-Adapter Source-Body 10:** `e34fcdaa0c7476b7b52a81c49e78cc044afbeb9f6287f23942df153048b831f1`, 18835 Bytes.
+- **BG1-v5 Source-Body 20:** `496de2086c7c02539f8a9b50cef2a85ba308c0b6e9b0bcb32111d2ccaaef02e4`, 32493 Bytes.
+- **Production exakte Installationsprobe `30-PRODUCTION-V1-V2.PROBE-ROLLBACK.sql`: `cefcd3654d79d02bb0b7554d5724d36f43cbc5d0e8a32baa82e2cc0bf81c708d`, 58316 Bytes.**
+- **Production exakter INSTALL-COMMIT `31-PRODUCTION-V1-V2.INSTALL-COMMIT.sql`: `5003a23e8024908737d5b3e34f52cf192c5ba5c9ce256d2ad2db29c107f74612`, 58314 Bytes.**
+- **Production exakte Rücknahmeprobe `32-PRODUCTION-V1-V2.ROLLBACK-PROBE.sql`: `ee6aeab74f2649878856b8991834b121f09b3784f966c1c5a611d3bd3cbb8507`, 19831 Bytes.**
+- **Production exakte Rücknahme-COMMIT `33-PRODUCTION-V1-V2.ROLLBACK-COMMIT.sql`: `cf50526bd7a59050922a364fc3631787a47c15e025c2aa52dcdf8261901c5fa4`, 19829 Bytes.**
+- **Readback** `40-PRODUCTION-POSTCOMMIT.READONLY.sql` `0d5c7cd17dc91cc3b1e10931a7011ba94c119a4ccd23b6a1b9ec82b38272ab25`; `50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql` `df35e0d946401a545dca6637a6f28c7840655ebd071a9929c606de6bc4d1caa8`.
+- **Historischer Production-Katalogsnapshot:** `docs/evidence/official-truth-ch-at-prod-catalog-v2-read-20261122/CATALOG-READBACK.json` `45286617bf31b2b674c3a1583ca7edd33f1f8c2cc568944be9c6f29623d5cbd5`, 91529 UTF-8-Bytes.
+- Bestehender BG1-v4 HTTP-Allocator, identische V1-Quellen-/Fakten-Historie und CH→DE-Cycle12 werden nicht angetastet. Kein `whole_originals_v2` vorausgesetzt. V2-BMEIA-Version bleibt `changed`, nicht `unchanged`.
 
-**STOP:** Dies belegt nur die Dateiidentitäten und den fehlgeschlagenen Production-V1-Katalogversuch. Die **heute installierten Production-BG1-Parent-/Funktions-/Rollendefinitionen wurden nicht vollständig ausgelesen**; deshalb sind `INSTALL-COMMIT.sql` und eine gleichermassen real gebundene `ROLLBACK.sql` für Production noch nicht seriös herstellbar. Ein **NEUES separates einmaliges Production-READONLY-Go** exakt für die Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` (SHA oben) ist die noch fehlende Voraussetzung. Ein spätere Produktionsinstallation braucht danach eigene neue exakte Probe-/COMMIT-/Rollback-/Readback-SHA256, CI/nativen Review und nochmals ausdrücklich eigenes Production-Installations-Go. CH→DE Cycle12 bleibt separat gesperrt.
+## Tatsächlich bestandene Dev-PG17-Nativprüfungen
+
+- **`60` PASSED** — authentische amtliche Dev-Originalbytes, V1-Layout, exakte BMEIA/BMI-Versionen, MA1-Rev2, natürlicher Dev-BG1, positive CH→AT-Visa-Auskunft, negative IN/DE, idempotenter Faktinsert, abweichender Source-SHA sofort Default-Closed, immutables Journal; Fixture ROLLBACK.
+- **`61` PASSED** — V1/V2-basierte Rücknahmeprobe: neue Ausgabe CH/IN `unavailable`, neuer Issuer0, V1-Crons3 beibehalten, Fact/Originals-History unverändert, v6 Vorgänger-Digest; Fixture ROLLBACK.
+- **`62` PASSED** — Syntaxkompilierung der fünf namespace-angepassten Production-Snapshot-BG1-Funktionen v5/v6 in echter Dev-PG17; kein Ersatz der laufenden Dev-BG1-Prozeduren, ROLLBACK. Korrigierte, eingefrorene HTTP-v4-Transport-Bindung ebenfalls kompiliert.
+- **`63` PASSED** — zwei einmalig bootstrappende BG1-v5/v6-Baselines und vier abgewiesene History-Tamper-Versuche, V6-Predecessor-Digest, ROLLBACK.
+- **Posttest-Readback** 2026-11-22 22:30:10 UTC: alle Fixture-Schemas sind nicht vorhanden, Dev-BG1 Gen2451 mit Incident=Resume, aktueller Dev-V12-Katalog exakt, Dev-Methode Rev2.
+- **Code-Identität:** Install-/Probe-Körper 30/31 sind bis auf `ROLLBACK` versus `COMMIT` identisch; analog Rücknahme 32/33. Installationskörper 10 und 20 sind vollständig im zusammengesetzten Pfad enthalten. Keine Production-SQL-Datei wurde in diesem Auftrag ausgeführt.
+
+## Unabdingbare Restgates — CoS darf sie nicht als bestanden erklären
+
+1. **Fehlender exakter 58-KB Production-BG1-V1-Integrationstest:** Die gesamte unverändert zusammengesetzte Installation `30`/`31` sowie Rücknahme `32`/`33` wurde **nicht** gegen eine vollständig nachgebaute Production-V1/BG1-v4/cron-Topologie nativ ausgeführt. Die existierenden Fixture- und Compiler-Prüfungen sind wertvoll, aber kein Ersatz.
+2. **Zeitgebundene Production-Datenwerte offen:** Der autorisierte Katalogread lieferte nur statische Struktur/Funktionsdefinitionen, **nicht** die aktuellen 3 Quellenbody-Versionen, Cron-Ausführungsstatus oder die aktuelle natürliche BG1-Generation. Die atomaren Installer-`$pre$`-Gates sollen bei jeder Drift sperren; das ist nicht gleichbedeutend mit vorab bestätigter Freigabe.
+3. **Production-MA1 Rev2 Owner/AAL2 und isolierte UI-Auswahl offen:** Kein Dev-Owner-Receipt wird übertragen. Production-Frontend-/Owner-Freigabewahl muss getrennt korrekt für CH→AT/Rev2 gebunden und geprüft werden; ohne diesen Schritt garantiert die neue Installation keine positive öffentliche Auskunft.
+4. **Separate PO-Gos fehlen:** eine künftige Production-Probe unter `ROLLBACK`, ein danach neuer expliziter COMMIT-Go, separate Readback-/Owner/AAL2- und ggf. Rollback-Gos. Der Chief of Staff darf nur Hashes/Scope/Tests prüfen, keine Production-Gates eigenmächtig aufheben.
+
+**Ergebnis:** Bereit zur unabhängigen Hash- und Quellprüfung durch Chief of Staff, aber **nicht freigegeben für Production-Installation**. Weiteres Arbeiten bis zum tatsächlichen `INSTALL_GO_READY` nur in Dev/Featurebranch.
