@@ -1,0 +1,19 @@
+{
+  "schema": "jetnity-independent-install-preflight-review-v1",
+  "reviewer": "/root/prod_install_preflight",
+  "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+  "independently_computed_sha256_matches": true,
+  "method": "Read immutable GitHub files; standalone JS SHA-256 validated against three known vectors; both complete ASCII file bytes hashed.",
+  "source_file_20_bytes": 106669,
+  "source_file_50_bytes": 9347,
+  "checks": [
+    "20 ends with actual COMMIT after the final Cron check",
+    "Pre-COMMIT result alone is not commit evidence",
+    "50 is READ ONLY/ROLLBACK and checks exact functions/catalog/authority contracts",
+    "50 successor and helper must match 20",
+    "No operational AT/CH→DE or positive-source PASS from 50",
+    "No new blocker; current embedded preflight remains binding"
+  ],
+  "production_calls_by_reviewer": 0,
+  "repository_mutations_by_reviewer": 0
+}

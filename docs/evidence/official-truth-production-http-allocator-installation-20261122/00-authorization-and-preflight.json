@@ -1,0 +1,68 @@
+{
+  "schema": "jetnity-production-http-allocator-installation-authorization-v1",
+  "prepared_at_utc": "2026-11-22T10:25:52.984Z",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+  "branch": "fix/official-truth-chde-at-renewal-dev-20261121",
+  "explicit_user_authorization": "Go für die Production-Installation genau nach diesem Plan: zuerst Datei 20 (COMMIT, SHA 1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f), danach Datei 50 (READ ONLY, SHA cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591). Datei 40 NICHT ausführen, dafür gibt es ein eigenes Go. Vor dem Start die SHAs nochmal prüfen. Bei einem Fehler vor dem COMMIT einen vollständigen ROLLBACK machen, bei unklarer COMMIT-Antwort STOP und nicht wiederholen. Danach melden: COMMIT-Beleg, Ergebnis von Datei 50 und ob BG1, die AT-Belege und CH→DE wie geplant aussehen. AT bleibt «derzeit nicht verfügbar». Bericht höchstens fünf Zeilen.",
+  "normal_order": [
+    "20",
+    "50"
+  ],
+  "max_normal_calls": 2,
+  "max_attempts_per_file": 1,
+  "overall_call_window_ms": 300000,
+  "files": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+      "transaction_end": "COMMIT",
+      "statement_timeout_seconds": 25,
+      "transaction_timeout_seconds": 90,
+      "lock_timeout_seconds": 2
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/50-production-http-id.POSTCOMMIT-READONLY.sql",
+      "bytes": 9347,
+      "sha256": "cc6fc3738eaf5ddfc7fdee801d96f99abcc6ddb90a10ce58052f45b48039d591",
+      "transaction_end": "ROLLBACK",
+      "read_only": true,
+      "statement_timeout_seconds": 15,
+      "transaction_timeout_seconds": 20,
+      "lock_timeout_ms": 500
+    }
+  ],
+  "source_manifest_sha256": "90c439a9f818074f68c6f12c7a2716b947ebc65d9af925f97cc502613e3be024",
+  "sha_rechecked_native_python_and_independent_js": true,
+  "mandatory_negative_publisher_probe": {
+    "function": "official_v3_at_production_private.renew_ch_v1()",
+    "expected": 0,
+    "explicit_prior_exception_persists": true
+  },
+  "excluded": [
+    "40",
+    "30",
+    "extra_production_reads",
+    "HTTP/source/Owner actions",
+    "roles or existing privileges changes",
+    "login/2FA",
+    "new costs",
+    "publication"
+  ],
+  "stop_rules": [
+    "Any SQL error, unknown result shape, changed binding, lock failure or timeout: STOP without retry",
+    "Before COMMIT: full transaction rollback; do not invent rollback evidence",
+    "Ambiguous COMMIT: STOP, no 20 retry and no 50; separate bounded state clarification required",
+    "50 only after complete unambiguous successful 20 response",
+    "Do not treat pre-COMMIT SELECT as a COMMIT receipt",
+    "Do not perform 40 or remove/rewind allocator after COMMIT"
+  ],
+  "operational_limits": {
+    "natural_http_operational_proof_in_50": false,
+    "positive_source_renewal_proven_by_50": false,
+    "bg1_initial_unavailable_with_zero_new_fresh_proofs_may_be_expected": true,
+    "at_display": "derzeit nicht verfügbar"
+  },
+  "state": "AUTHORIZED_PREPARED_NOT_INVOKED"
+}
