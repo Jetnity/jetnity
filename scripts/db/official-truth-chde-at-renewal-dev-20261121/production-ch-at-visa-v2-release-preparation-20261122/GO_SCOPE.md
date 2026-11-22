@@ -1,6 +1,6 @@
 # CH→AT — künftige eigenständige Production-Freigabe (Go-Grenze)
 
-**Dieses Paket ist `PREPARED_ONLY`, nicht ausführungsreif, nicht freigegeben.**
+**Dieses Paket ist weiterhin `BLOCKED_PREFLIGHT_SCHEMA_MISMATCH`, nicht installationsreif und ohne Installations-Go.** Ein einziges Production-READONLY wurde versucht und ohne Datenänderung mit `42P01` beendet; die Annahme der Tabelle `official_v3_at_private.whole_originals_v2` stimmt für Production nicht. `00-PRODUCTION-PREFLIGHT.READONLY.sql` ist **VERBRAUCHT** und darf nicht wiederholt werden. Nur `01-PRODUCTION-CATALOG-V2.READONLY.sql` ist als **neue**, in Dev schema-tolerant getestete Kataloglese-Vorbereitung vorhanden. Auch diese Datei benötigt **ein eigenes neues Produktions-Lese-Go**, bevor ein gebundenes Installations-/Readback-/Rollback-Paket erzeugt werden kann.
 
 1. **Nur bereits freigegebene Dev-Phase:** amtliche Quellenquali, Owner/MA1 Dev-Rev2, BG1 v9–v12, native positive/negative Dev-Abnahme und natürlicher automatischer Quellenlauf. Alles nur Dev `yfvbxvijcorffwxbxahl`; keine Wiederverwendung der Dev-Ownerquittung in Production.
 2. **Production-Preflight zunächst gesondert autorisieren:** nur genau `00-PRODUCTION-PREFLIGHT.READONLY.sql`, unter `BEGIN ... READ ONLY` mit `ROLLBACK` und festem neuen Go. Keine zusätzliche Abfrage/Wiederholung ohne neues Go. Aktueller Production-Parent, Rollen/ACL/RLS und geänderte Objekte dürfen nur aus frischem einmalig gelesenem Ergebnis abgeleitet werden.
