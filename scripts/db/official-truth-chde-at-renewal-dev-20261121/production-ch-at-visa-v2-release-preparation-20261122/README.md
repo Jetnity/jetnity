@@ -1,22 +1,11 @@
-# CH→AT Visum — separates Production-Freigabepaket (22.11.2026)
+# CH→AT — separates Production-V1-Installations-/Rollback-Paket (22.11.2026)
 
-**V1-PREFLIGHT EINGELÖST, ABER FEHLGESCHLAGEN / NOT INSTALLABLE / NO INSTALL GO.** Die exakt bereits freigegebene Production-Lese-SQL `00-PRODUCTION-PREFLIGHT.READONLY.sql` scheiterte **einmal** mit SQLSTATE `42P01` (`official_v3_at_private.whole_originals_v2` existiert in Production nicht). Keine Daten geändert, kein zweiter Production-Read. `01-PRODUCTION-CATALOG-V2.READONLY.sql` wird nur nach separatem neuem Go auf Production lesend ausgeführt und ist zuvor in Dev schema-tolerant geprüft. Ziel: `qscbgcdmivbbnzrcyegn`, in diesem Auftrag **ein fehlgeschlagener Production-READONLY-Aufruf, null Production-Writes**. Dev: `yfvbxvijcorffwxbxahl`. Featurebranch statt main; keine produktive Freigabe durch Dateipräsenz.
+**`CHIEF_OF_STAFF_REVIEW_READY / INSTALL_GO_HOLD`** — Production vollständig unangetastet bei dieser Vorbereitung. Der bereits einmalig bewilligte Kataloglese-Pfad war erfolgreich in `qscbgcdmivbbnzrcyegn` am **22.11.2026 21:03:32 UTC**, und zeigte die echte V1-Quellenstruktur; keine `whole_originals_v2`.
 
-## Warum noch nicht installationsreif?
+Das Paket umfasst nun **ausführbare, aber noch nicht genehmigte** V1-spezifische Atomarpfade für `PROBE-ROLLBACK`, `INSTALL-COMMIT`, `ROLLBACK-PROBE` und `ROLLBACK-COMMIT`, alle mit Default-Closed-Guard, unveränderlichen neuen Quellen-/Faktversionen und BG1-v5/v6-Nachfolger. Die alte V1-Historie, bestehende drei Source-Crons, CH→DE Cycle12 und der Production-HTTP-ID-v4-Allocator bleiben erhalten. Alter BMEIA-Rohhash und neue fachlich rule-neutrale, aber technisch **`changed`**-Rohfassung sind getrennt.
 
-Die Production-BG1-Kette hat einen anderen installierten Vorgänger als die in Dev erfolgreich geprüften v9–v12-Nachfolger. Ohne eine eigene, frische, genau begrenzte **Production-READ-ONLY-Preflight-Freigabe** kann niemand den richtigen Katalog, die Role-/ACL-Digests und die tatsächlichen installierbaren COMMIT-/Rollback-Bytes sicher binden. Deshalb sind installierbare Production-`COMMIT`- und `ROLLBACK`-Dateien hier bewusst nicht vorhanden. Dev-AAL2 ist nicht Production-AAL2. **Kein Produktiv-Testread ohne gesondertes Go.**
+Vier tatsächlich in **Dev PostgreSQL 17** unter vollständigem `ROLLBACK` bestandene isolierte Testdateien: `60` V1-Adapter und CH-positiv/Fremdpass-negativ/ein abweichender SHA, `61` V1-V2-Fail-Closed-Rücknahme mit unveränderlicher Historie, `62` Syntax-/Typkompilierung der BG1-v5/v6-Funktionsänderungen, `63` immutable v5/v6-Guard-Bootstrap und vier verweigerte Mutationsfälle.
 
-## Gesicherte Inhalte
+**Wesentliche Grenze:** Dev hat die Production-V1-Schemas/BG1-v4-Parent **nicht** dauerhaft installiert; diese Tests nutzen vollständige Rollback-Fixtures und namespace-angepasste Funktionskörper. Der **exakte vollständig zusammengesetzte Production-Guard-Installer und die entsprechende vollständige Rollback-Integration wurden noch nicht unter einer identischen V1/BG1-v4-Topologie nativ ausgeführt.** Deshalb **kein aktueller `INSTALL_GO_READY`-Verdict**. Chief of Staff prüft Quell-/Guard-/Cron-/RLS-/Fakt-/Methodenhashes; ein echter kompletter Dev-V1-BG1-Proof muss vor dem Production-Installations-Go ergänzt werden.
 
-`SOURCE_SCOPE.json` fixiert nur CH→AT/gewöhnlicher gültiger Schweizer Pass/direkte Einreise/Visumfreiheit mit drei amtlichen Originaleditionen; BMEIA bleibt technisch `changed`.
-`DEV_EVIDENCE.md` trennt den wirklichen Dev-Test von dem noch erforderlichen unabhängigen Production-Verfahren.
-`00-PRODUCTION-PREFLIGHT.READONLY.sql` wurde einmal versucht und ist **verbraucht/fehlgeschlagen**. Sein Schemafehler und die Nicht-Wiederholung sind in `PRODUCTION_PREFLIGHT_V1_FAILED.md` dokumentiert. `01-PRODUCTION-CATALOG-V2.READONLY.sql` ist die schematolerante, nur in Dev getestete Nachfolgedatei **für ein neues separates Read-Go**, noch niemals gegen Production ausgeführt.
-`40-PRODUCTION-POSTCOMMIT.READONLY.sql` und `50-PRODUCTION-VISITOR-READBACK.ROLLBACK.sql` sind nicht ausgeführte spätere Katalog-/`anon`-Readbacks.
-`ROLLBACK_PLAN.md` schützt die alte append-only Historie und verlangt für die tatsächlich installierte Production-Fassung ein eigenes, getestetes Rücknahmeskript.
-`NATIVE_VALIDATION_PLAN.md` dokumentiert 16 echte positive/negative Abnahmekriterien; fehlende Belege werden nicht als PASS gezählt.
-`INSTALL_SPEC.md` und `GO_SCOPE.md` begrenzen den späteren Release ausdrücklich.
-`SHA256SUMS` und `MANIFEST.json` binden die **hier vorhandenen** Dateien und den getesteten Dev-Code. Sie sind keine Prüfsummen noch nicht erzeugter Production-Installationsdateien.
-
-## Nächste unabhängige GO-Grenze
-
-Erst nach finalem natürlichen Dev-Quellen-/BG1-/Visitor-Langzeitnachweis: neuer **eng gebundener Production-Read-Only-GO**. Danach neues tatsächliches Production-Katalog-basierendes Installations-/Probe-/Rollback-Paket mit neuen SHA256, voller native QA, externem Review und einem **weiteren getrennten Production-COMMIT-GO**. Bestehender Production-CH→DE-Cycle12 bleibt gesperrt und wird nicht restartet.
+Dokumente: `INSTALL_SPEC.md`, `GO_SCOPE.md`, `ROLLBACK_PLAN.md`, `DEV_EVIDENCE.md`, `NATIVE_VALIDATION_PLAN.md`, `SOURCE_SCOPE.json`, `MANIFEST.json` und `SHA256SUMS`. `40` ist Production-V1-Postcommit-READONLY, `50` echter `anon`-Readback in normaler transaktionaler Probe. **Kein Production-Read/Write durch diesen Auftrag**, keine Owner-AAL2- oder Preis-/Login-/Key-Änderung.
