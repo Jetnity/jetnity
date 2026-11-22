@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { scopedMethodJournalStorage, AT_HUMAN_METHOD_STORAGE_KEY, AT50_HUMAN_METHOD_STORAGE_KEY } from '@/lib/readiness/official-truth-at-method-v1/at-journal-storage'
+import { scopedMethodJournalStorage, AT_CH_V2_HUMAN_METHOD_STORAGE_KEY, AT_HUMAN_METHOD_STORAGE_KEY, AT50_HUMAN_METHOD_STORAGE_KEY } from '@/lib/readiness/official-truth-at-method-v1/at-journal-storage'
 import {
   HUMAN_METHOD_BODY_BYTES, HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_STORAGE_KEY, appendHumanOperation, createHumanOperationId,
   latestHumanOperation, nextHumanAction, persistHumanJournal, readHumanJournal, readHumanOutcome, readHumanRelease,
@@ -38,8 +38,10 @@ async function outcomeBody(response: Response): Promise<unknown> {
 export default function MethodAuthorityPanel({ release }: { release: HumanRelease | null }) {
   const selected = readHumanRelease(release), selectedId = selected?.selectionId ?? null
   const atMethod = selected?.scope.destination === 'AT'
-  const storageKey = selected?.methodId === 'jetnity-at-priority50-visa'
-    ? AT50_HUMAN_METHOD_STORAGE_KEY : atMethod ? AT_HUMAN_METHOD_STORAGE_KEY : HUMAN_METHOD_STORAGE_KEY
+  const atChV2 = atMethod && selected?.scope.citizenship === 'CH'
+  const storageKey = atChV2 ? AT_CH_V2_HUMAN_METHOD_STORAGE_KEY
+    : selected?.methodId === 'jetnity-at-priority50-visa'
+      ? AT50_HUMAN_METHOD_STORAGE_KEY : atMethod ? AT_HUMAN_METHOD_STORAGE_KEY : HUMAN_METHOD_STORAGE_KEY
   const [journal, setJournal] = useState<HumanJournal | null>(null)
   const [confirmed, setConfirmed] = useState<HumanOperation | null>(null)
   const [storageBlocked, setStorageBlocked] = useState(false)
@@ -169,8 +171,8 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
   return (
     <div className="space-y-5" aria-busy={busy}>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="method-scope">
-        <h2 id="method-scope" className="text-lg font-semibold">{atMethod ? '50 priorisierte nationale Reisepässe → Österreich · Visum' : 'Schweizer Pass → Deutschland · Visum'}</h2>
-        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · {atMethod ? 'Nationale Reisepässe der festen 50er-Priorität' : 'Schweizer Reisepass'} · direkte Einreise</p>
+        <h2 id="method-scope" className="text-lg font-semibold">{atChV2 ? 'Schweizer Reisepass → Österreich · Visum' : atMethod ? '50 priorisierte nationale Reisepässe → Österreich · Visum' : 'Schweizer Pass → Deutschland · Visum'}</h2>
+        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · {atChV2 ? 'Ausschliesslich Schweizer Reisepass · direkte Einreise' : atMethod ? 'Nationale Reisepässe der festen 50er-Priorität' : 'Schweizer Reisepass'} · direkte Einreise</p>
         <p>{selected.scope.reviewedScope}</p>
         <dl className="grid gap-2 sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium">Betriebszeitraum</dt><dd>{selected.scope.activeFrom} bis {selected.scope.activeUntilExclusive} (Ende ausgeschlossen, UTC)</dd>
