@@ -1,0 +1,14 @@
+# Production-Katalog CH→AT – genau ein freigegebener READONLY-Versuch, 22.11.2026
+
+- **Anweisung:** PO-Go nur für den reinen Lesezugriff zum CH→AT-Production-Katalog, keine Installation oder Änderung.
+- **Ziel:** Supabase Production `qscbgcdmivbbnzrcyegn`.
+- **Ausgeführte Datei (exakt, unverändert):** `00-PRODUCTION-PREFLIGHT.READONLY.sql`, voriger Branch-Head `42534580f0e9fe32281031e1653496592a6bec48`, SHA-256 `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`.
+- **Beabsichtigte Transaktion:** `BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY`, `SET LOCAL statement_timeout='12s'`, `lock_timeout='500ms'`, nur `SELECT`, abschliessend `ROLLBACK`. Keine Production-Schreibbefehle.
+- **Tatsächliches Ergebnis:** **genau ein** Connector-Aufruf; SQLSTATE `42P01` mit `relation "official_v3_at_private.whole_originals_v2" does not exist`, Zeile 29 im SELECT. Kein `results`-Katalogresultat. Die Query wurde vor inhaltlichem Readback abgebrochen; der abschliessende `ROLLBACK`-Befehl konnte wegen des Statementfehlers nicht als erfolgreich ausgeführt nachgewiesen werden. **Die Transaktion enthielt keine Writes; keine Datenbankänderung.**
+- **Kein Wiederholversuch:** Kein zweiter Production-Read, keine vermeintliche Objektanlage, kein Reparatur-Grant, keine Trigger-, Cron- oder Owner-Aktion. Die bisherige Go-Grenze ist verbraucht.
+- **Technische Folgerung:** Das Dev-Objekt `official_v3_at_private.whole_originals_v2` ist **keine gültige Production-Voraussetzung**. Ohne einen tatsächlichen aktuellen Production-Katalog und Definitionen kann keine zuverlässige produktive BG1-Nachfolgersicherung, Runtime-Migration und ausführbare Rücknahme mit finalem SHA gebunden werden.
+- **Vorbereitete Korrektur, nur Dev validiert:** `01-PRODUCTION-CATALOG-V2.READONLY.sql` durchsucht ausschliesslich `pg_catalog`, ist bei abwesenden AT-Tabellen schematolerant und wurde genau mit `BEGIN READ ONLY ... ROLLBACK` gegen Dev PG17 verifiziert (15 Funktionen / 55 Dev-Katalogobjekte gefunden; diese Zahlen sind **keine** Production-Aussage).
+- **Erforderlicher nächster separater Go:** Ein **neuer eigener** Production-READONLY-Go, fest auf die dann im Manifest dokumentierte Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` und deren exakten SHA-256 begrenzt, **einmal** ohne zusätzliche Abfragen. Erst nach erfolgreichem Erhalt und unabhängiger Prüfung dieser Daten dürfen neue Installations-/Probe-/Readback-/Rollback-Dateien für Production geschrieben und final gehasht werden; weitere Production-Ausführung benötigt jeweils ihre eigene Freigabe.
+- **Mitgehörige Grenzen:** CH→DE Cycle12 weiterhin blockiert. Bestehender Production-HTTP-ID-Allocator, Auth, Rollen, AAL2, Kosten, Dokumenthistorie und öffentliche Anzeige unverändert. Dieses Evidence-Protokoll ist ein **nicht manipulierender Repository-Eintrag**, kein Production-Freigabeprotokoll.
+
+**Fazit:** `PROD_PRECHECK_FAILED_SCHEMA_MISMATCH_NO_INSTALL_GO`.
