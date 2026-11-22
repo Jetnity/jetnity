@@ -10,10 +10,16 @@ import NextEightOfficialGuidance from '@/components/readiness/NextEightOfficialG
 import { landAnzeigeText } from '@/lib/country/darstellung'
 import { istKatalogLand, type Iso3166Alpha2 } from '@/lib/country/katalog'
 import { einreisePrueferLaden, einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
-import { EINREISE_PRUEFER_MAX_PAESSE, type EinreisePrueferVorbelegung } from '@/lib/readiness/einreise-pruefer-vorbelegung'
+import { EINREISE_PRUEFER_MAX_PAESSE, reisendeJeLand, reisendeMitPass, type EinreisePrueferVorbelegung } from '@/lib/readiness/einreise-pruefer-vorbelegung'
 import { loadChDeVisa } from '@/lib/readiness/official-truth-product-v3/visitor/ch-de-http'
 import { loadAtVisa } from '@/lib/readiness/official-truth-at-method-v1/at-visa-http'
 import { createV3VisitorController, type V3VisitorUiState } from '@/lib/readiness/official-truth-product-v3/visitor/controller'
+
+function passHinweis(pass: string, personen: EinreisePrueferVorbelegung['personen']): string | undefined {
+  if (personen.length === 0 || !istKatalogLand(pass)) return undefined
+  const namen = reisendeMitPass(personen, pass)
+  return namen ? `Gehört zu: ${namen}` : 'Bei keiner reisenden Person dieser Reise hinterlegt.'
+}
 
 const sekundär = 'inline-flex min-h-11 items-center justify-center rounded-full border border-line-200 px-4 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15'
 
@@ -56,7 +62,9 @@ export default function EinreiseLaenderpruefer({
     return auswahl
   }, [paesse])
   const bereit = istKatalogLand(ziel) && gewaehlt.length > 0 && paesse.every(istKatalogLand) && paesse.length <= EINREISE_PRUEFER_MAX_PAESSE
-  const sicht = einreisePrueferSicht(stand)
+  const personen = vorbelegung?.personen ?? []
+  const reisendeJePass = reisendeJeLand(personen)
+  const sicht = einreisePrueferSicht(stand, reisendeJePass)
   const zuruecksetzen = (action: () => void) => {
     controller.invalidate()
     action()
@@ -117,7 +125,7 @@ export default function EinreiseLaenderpruefer({
           <legend className="mb-2 text-base font-semibold">Pass / Staatsangehörigkeit</legend>
           {vorbelegung && vorbelegung.personen.length > 1 ? (
             <p className="text-xs leading-5 text-ink-800">
-              Ein Eintrag je Pass: Wer zwei Pässe hat, steht zweimal da. Wem welcher Pass gehört, zeigt die Liste darunter.
+              Ein Eintrag je Pass. Unter jedem Pass steht, wem er gehört. Wer zwei Pässe hat, steht bei beiden.
             </p>
           ) : null}
           {paesse.map((pass, index) => (
@@ -125,6 +133,7 @@ export default function EinreiseLaenderpruefer({
               <LandFeld
                 id={`${id}-pass-${index}`}
                 label={`Pass ${index + 1}`}
+                hinweis={passHinweis(pass, personen)}
                 value={pass}
                 optional={false}
                 searchable

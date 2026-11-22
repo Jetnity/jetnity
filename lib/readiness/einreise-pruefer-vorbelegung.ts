@@ -56,3 +56,26 @@ export function einreisePrueferVorbelegung(eingabe: {
     personen,
   }
 }
+
+function reisendeAlsText(namen: readonly string[]): string {
+  if (namen.length < 2) return namen[0] ?? ''
+  return `${namen.slice(0, -1).join(', ')} und ${namen[namen.length - 1]}`
+}
+
+/**
+ * Wer einen Pass trägt, nur aus den Angaben dieser Reise. Rein für die Anzeige: Wer zwei Pässe hat, steht bei
+ * beiden. Ohne Reisende (öffentlicher Prüfer) oder ohne Treffer gibt es keine Zuordnung.
+ */
+export function reisendeMitPass(personen: EinreisePrueferVorbelegung['personen'], code: string): string | null {
+  const namen = personen.filter((person) => person.paesse.some((pass) => pass === code)).map((person) => person.label.trim())
+  return namen.length > 0 ? reisendeAlsText(namen.filter(Boolean)) : null
+}
+
+export function reisendeJeLand(personen: EinreisePrueferVorbelegung['personen']): Record<string, string> {
+  const zuordnung: Record<string, string> = {}
+  for (const code of new Set(personen.flatMap((person) => person.paesse))) {
+    const namen = reisendeMitPass(personen, code)
+    if (namen) zuordnung[code] = namen
+  }
+  return zuordnung
+}
