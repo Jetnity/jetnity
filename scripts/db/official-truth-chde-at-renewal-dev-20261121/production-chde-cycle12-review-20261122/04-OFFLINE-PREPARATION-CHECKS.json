@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "scope": "Local preparation only; not SQL parser or native execution evidence.",
+  "sql_sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+  "checks": {
+    "one_read_only_transaction": true,
+    "one_final_rollback": true,
+    "no_mutating_sql_keyword_outside_comments_or_literals": true,
+    "no_sequence_http_or_scheduler_invocation": true,
+    "local_table_inheritance_and_builtin_type_guards_precede_data_read": true,
+    "v4_baseline_and_changed_catalog_stop": true,
+    "deterministic_identity_algorithm_independently_reviewed": true,
+    "archive_intake_jobs_owner_column_sources_independently_reviewed": true,
+    "closed_restart_gate_in_write_plan": true,
+    "oversized_or_missing_required_metadata_payload_is_not_returned": true
+  },
+  "validation_limits": {
+    "postgres_parser_executed": false,
+    "sql_executed": false,
+    "native_pg17_test_performed": false,
+    "production_connection_used": false,
+    "dev_connection_used": false,
+    "write_package_ready": false
+  },
+  "review_corrections": [
+    "Reject views, foreign tables, partitions and inheritance before reads.",
+    "Allow only listed builtin column types before whole-row hashing or pinned catalog reader.",
+    "Keep original 503 cause and expired-subject association explicitly unproven.",
+    "Separate closure from a default-closed one-cycle restart authorization gate.",
+    "Never return the ninth Intake overflow sentinel: return a small STOP object before payload output on any bound or required-function failure."
+  ]
+}

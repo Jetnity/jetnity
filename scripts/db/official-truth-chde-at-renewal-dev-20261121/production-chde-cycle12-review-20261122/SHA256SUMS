@@ -1,0 +1,8 @@
+e6aa2038271c0e4e65b4947bc1dad55c6faed60cb6be476720eb86c3193cd5bc  docs/OFFICIAL_TRUTH_CHDE_CYCLE12_PACKAGE_2026-11-22.md
+e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql
+82353efc6d49fa3f0632d4ee35aee11500a03255082cd4d9e305612011562ace  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/01-WRITE-AND-ROLLBACK-PLAN.md
+1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/02-RESULT-CONTRACT.json
+21ebbd187f4039a20641d8a0136e1af4509f0af7d1f5a1d19b4e3a58300fd297  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/03-SOURCE-EVIDENCE.json
+ac6ac1006bb75a943d565e36af42eb72e272867f883fd9ef415ec3f99922084a  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/04-OFFLINE-PREPARATION-CHECKS.json
+746189cb7f62cc4d2ce2d0aef461fb6fbe42665aba7acb8e83c46ae057f188c1  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/GO-SCOPE.md
+7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f  scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json

@@ -1,0 +1,439 @@
+{
+  "schema": "jetnity-independent-production-two-read-scopes-review-v1",
+  "reviewer": "independent_chde_503_cause_agent",
+  "review_method": "Repository and archived evidence only; manual SQL/PLpgSQL trace, lexical statement/effect review, immutable source checks and exact local file hash verification.",
+  "verdict": "STATIC_SCOPE_REVIEW_PASS_PREPARATION_ONLY_NOT_EXECUTION_AUTHORITY",
+  "scope": {
+    "production_sql_calls": 0,
+    "development_sql_calls": 0,
+    "postgres_parser_calls": 0,
+    "ci_or_log_service_calls": 0,
+    "external_source_or_http_calls": 0,
+    "owner_or_login_or_2fa_actions": 0,
+    "role_or_permission_changes": 0,
+    "code_or_package_edits_by_this_reviewer": 0,
+    "only_file_written": "docs/evidence/official-truth-production-two-packages-20261122/independent-read-scope-review.json"
+  },
+  "conditions_common": {
+    "target": "qscbgcdmivbbnzrcyegn",
+    "expected_database": "postgres",
+    "expected_current_and_session_role": "postgres",
+    "postgres_major": 17,
+    "target_binding": "The project reference must be checked at actual connector dispatch. SQL checks database/role/PG17 and installed Production fingerprints, not an independently authenticated project ID.",
+    "installed_baseline": "official_v3_guard_private.bg1_production_http_allocator_v4",
+    "baseline_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "transactions_each": 1,
+    "maximum_wall_seconds_each": 300,
+    "transaction_mode": "REPEATABLE READ READ ONLY",
+    "final_statement": "ROLLBACK",
+    "statement_timeout_ms": 15000,
+    "lock_timeout_ms": 500,
+    "idle_in_transaction_session_timeout_ms": 20000,
+    "retry_allowed": false,
+    "extra_read_allowed": false,
+    "local_settings_only": true,
+    "on_failure": "STOP; if the same transaction remains open, only its full ROLLBACK. No resubmission or new diagnostic transaction."
+  },
+  "checks": [
+    {
+      "id": "FIXED_TARGET_AND_BINDINGS",
+      "result": "PASS_STATIC",
+      "detail": "Both candidates pin Production context, expected baseline digest and the relevant immutable function definitions. A different package changing these bindings requires new bytes, new hashes and a separate Go."
+    },
+    {
+      "id": "READ_ONLY_CONTROL",
+      "result": "PASS_STATIC",
+      "detail": "Exactly one explicit READ ONLY transaction, transaction-local settings, metadata/preflight DO blocks, one bounded result SELECT and terminal ROLLBACK. No COMMIT, DDL, DML, SET ROLE, role/ACL change, sequence allocation, source action or owner mutation."
+    },
+    {
+      "id": "BEFORE_DATA_RELATION_TYPES",
+      "result": "PASS_STATIC",
+      "detail": "Views, foreign/partitioned/inherited tables and unexpected custom types are rejected through pg_catalog before project-table data reads. AT binds 13 complete table shapes/126 built-in columns. CHDE binds all read relation kinds, required columns and a whole-row safe built-in type set, with exact scheduler shapes and subsequent full protected catalog equality."
+    },
+    {
+      "id": "PROJECT_FUNCTION_EFFECTS",
+      "result": "PASS_STATIC",
+      "detail": "AT invokes no project function. CHDE invokes only the fully pinned STABLE catalog_status_v1 reader, whose exact body was checked against the authorized installation file; it reads system catalog metadata plus the five named cron.job rows and invokes no project helper."
+    },
+    {
+      "id": "OUTPUT_CONFIDENTIALITY",
+      "result": "PASS_STATIC",
+      "detail": "No original source text, HTTP body/header/error text, signing key, lease_token, credential token_hash, raw native authority, personal actor ID or auth-session record is returned. Body/original bytes are processed inside SQL only to produce bounded hashes and byte counts. New arbitrary GUC/default/constraint/trigger text is hashed rather than emitted."
+    },
+    {
+      "id": "CARDINALITY_AND_OUTPUT_BOUNDS",
+      "result": "PASS_STATIC",
+      "detail": "AT checks its exact unique three-source lists, joined recent-source cardinality<=9, duplicate stored HTTP response refusal, method head<=1 and BG1 proof join<=1 before output; it caps serialized output at131072 bytes. CHDE fixes Cycle12 and9dispatches,5derived claims and bounded linked results; any invalid output-bound flag suppresses the payload, and serialized output is capped at262144 bytes."
+    },
+    {
+      "id": "KNOWN_COLUMNS_AND_TYPES",
+      "result": "PASS_STATIC",
+      "detail": "Method, AT source/watch, jobs, intake, archive/projection and owner metadata column names/types were compared with immutable repository DDL. Actual current shape is enforced by the candidate when separately authorized; no live current-shape PASS is claimed now."
+    },
+    {
+      "id": "CHDE_IDENTITY_ALGORITHM",
+      "result": "PASS_STATIC",
+      "detail": "Enqueue/job identities and retained claim generations0..4 exactly match chDeRefreshRequestIdentity/retainedChDeClaim: fixed SHA256 prefixes, newline order and32hex suffix; generation0 retains original operation/lease IDs."
+    },
+    {
+      "id": "SYNTAX_AND_LEXICAL_EFFECTS",
+      "result": "PASS_STATIC_NOT_NATIVE",
+      "detail": "Quotes, dollar blocks, parentheses, statement order, CTE joins, subquery result cardinality and PLpgSQL gates reviewed. Offline lexical segmentation found only BEGIN/SET/DO/WITH/ROLLBACK top-level verbs and no executable write/sequence/HTTP/Owner call. No PostgreSQL parser or database execution was performed."
+    },
+    {
+      "id": "MANIFEST_FILE_HASHES",
+      "result": "PASS_EXACT_BYTES",
+      "detail": "Both final manifests and every file they bind were independently reread and hashed. SHA/byte comparisons are recorded below. The independent review is outside those self-hash-free manifest chains."
+    },
+    {
+      "id": "SEPARATE_AUTHORIZATION",
+      "result": "PASS_STATIC",
+      "detail": "Each Go covers only its own one-time read. Neither read authorizes installation, Owner receipt, closure, restart, source qualification, renewal, customer publication or the other package."
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "R1_BEFORE_DATA_FORM",
+      "initial_at_sql_sha256": "d74604d2d37d502445d1ed5009aba427d45daf089c7b7ab561f98be980cb415c",
+      "initial_chde_sql_sha256": "9d3bf0530ba760b7607f5d7af11245c5133b1a6bce11787c34696a3444511e33",
+      "finding": "Some table reads/counts preceded local-table/type admission, allowing unknown view/foreign/inherited shapes to be evaluated before STOP.",
+      "resolution": "Both authors moved catalog-only relation/type admission before project data and rejected inheritance/partitions. Final reviewed hashes below supersede those candidates."
+    },
+    {
+      "id": "R2_AT_RAW_METADATA",
+      "finding": "AT returned raw proconfig and SQL default/constraint/trigger expressions while their contents were being diagnosed.",
+      "resolution": "Only SHA256/byte metadata for those strings is emitted; no arbitrary configuration or expression value is exported."
+    },
+    {
+      "id": "R3_AT_SOURCE_JOIN_BOUND",
+      "finding": "Declared maximum9 recent-source rows relied on constraints whose current form was being diagnosed.",
+      "resolution": "A LIMIT10 sentinel, exact source whitelist and duplicate batch/source test stop before payload; duplicate retained HTTP response also stops."
+    },
+    {
+      "id": "R4_AT_SINGLE_ROW_AND_SOURCE_IDENTITIES",
+      "finding": "Declared method/BG1 maximum1 and exact source lists required explicit result gates independent of metadata under review.",
+      "resolution": "Method and identical BG1 join LIMIT2 sentinels stop on excess; both three-row source lists require exactly the three distinct expected IDs."
+    },
+    {
+      "id": "R5_CHDE_OVERFLOW_SENTINEL_EXPORT",
+      "finding": "The ninth intake sentinel could be emitted in a payload whose read_bounds_ok flag was false, despite maximum8 permitted intake metadata rows.",
+      "resolution": "The final SELECT now returns only a compact STOP result before emitting payload when read_bounds_ok or mandatory function metadata is not true.",
+      "final_sql_sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f"
+    }
+  ],
+  "at_read_specific": {
+    "transaction_timeout_ms": 20000,
+    "max_result_utf8_bytes": 131072,
+    "maximum_source_metadata_rows": 3,
+    "maximum_original_metadata_rows": 3,
+    "maximum_recent_source_rows": 9,
+    "maximum_method_head_rows": 1,
+    "maximum_bg1_proof_rows": 1,
+    "function_rows_maximum": 16,
+    "returned_relation_metadata_rows": 9,
+    "no_project_function_invocations": true,
+    "semantics": "Only stored metadata is observed. The fresh_complete field is a stored proof/timestamp correlation; this candidate deliberately does not invoke a full live guard. Missing/expired/revoked/uncorrelated records remain unavailable and cannot approve activation.",
+    "customer_display_after_read": "derzeit nicht verfügbar"
+  },
+  "chde_read_specific": {
+    "transaction_timeout_ms": 30000,
+    "max_result_utf8_bytes": 262144,
+    "cycle_id": 12,
+    "dispatch_ids": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "original_terminal_history_unchanged": true,
+    "claim_generations": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "maximum_starts": 5,
+    "maximum_queue_operations": 6,
+    "maximum_intakes": 8,
+    "maximum_archived_originals": 8,
+    "required_boolean_flags": {
+      "read_bounds_ok": true,
+      "required_function_metadata_present": true
+    },
+    "authority_flags_that_must_remain_false": [
+      "existing_claim_authority_is_proven",
+      "original_http503_error_body_is_proven",
+      "production_write_is_authorized",
+      "owner_action_performed",
+      "source_run_started",
+      "positive_public_fact_created"
+    ],
+    "caller_result_contract_required": "02-RESULT-CONTRACT.json rejects unknown/missing/extra root keys and false/missing required correlations; successful SQL alone is insufficient.",
+    "source_archive_semantics": "Linked original bodies are not exported; their stored bytes are hashed inside SQL and compared with immutable raw_digest. This is archival identity proof, not new source verification.",
+    "restart_policy": "Even a future closure/Owner receipt must leave dispatch closed. A distinct one-cycle restart Go is required before any new natural HTTP/source cycle."
+  },
+  "pinned_catalog_reader": {
+    "signature": "official_v3_guard_private.catalog_status_v1()",
+    "full_native_definition_sha256": "d80009f6db49c88fb446ee7ce140abafbfe35005e07db453b83b10c068964adf",
+    "body_sha256": "66612df9bbc2ba0aeb016f97c5c245c76f176e13c02bd1150c5cc618c5363601",
+    "implementation_source": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+    "implementation_file_sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f",
+    "installed_native_hash_evidence": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-execution.json",
+    "owner": "postgres",
+    "language": "sql",
+    "volatility": "STABLE",
+    "security_definer": true,
+    "nested_project_function_invocations": 0,
+    "special_metadata_read": "Five named cron.job rows, LIMIT6; command only hashed; catalog equality sees the metadata but the response does not export the full catalog.",
+    "clarification": "Names of allocator functions occur as quoted regprocedure lookup strings; they are not invoked."
+  },
+  "source_schema_bindings": [
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-at-production-stage1/install.sql",
+      "git_blob_sha1": "029bc650d572e8c562e688d1043c07c4ca824887"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "git_blob_sha1": "9c17260c202e430e4c779e47fee0a62c047c4d87"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
+      "git_blob_sha1": "bb98fa79f46faa555632b669e97bfcbf9bf99220"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "git_blob_sha1": "faac74e6ab56072f01d941d24a8be28aa7895d94"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "git_blob_sha1": "84b07f5f2730b1df5a151042f163ce71af7c66b4"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "scripts/db/official-truth-v3-background-guard-1/parts/state.sql",
+      "git_blob_sha1": "cf63bd22ab1bb8dbc710adf9e557566b33d4d453"
+    },
+    {
+      "repository": "Jetnity/jetnity",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "git_blob_sha1": "acf37bcf16c1d8479f2b01ce54619a7c189363e5"
+    }
+  ],
+  "limitations": [
+    "This is a static review of review packages, not a native SQL parse, a Dev rehearsal, a Production read or a statement about current live state.",
+    "A later read needs its exact separate Owner Go and unchanged final bytes; prior completed one-time authorizations are not reused.",
+    "The SQL project context is an environment fingerprint; project identity must be checked in the connector call itself.",
+    "Body hashing necessarily processes retained bytes inside SQL. The no-body/no-header boundary here means no raw-body/header/token export and no external source request.",
+    "A read can discover that a required relation/privilege/custody/correlation differs. That must STOP; no runtime repair, role change or exploratory fallback is implied.",
+    "Historical CHDE503 trigger remains unproven; a current identity read does not reconstruct missing historical execution traces.",
+    "No static or previous Dev success transfers approval to Production writes. AT remains unavailable; CHDE closure/restart remains separately gated."
+  ],
+  "open_static_blockers": [],
+  "executed": false,
+  "package_bindings": [
+    {
+      "manifest": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/MANIFEST.json",
+        "sha256": "a73a433fb7090e59ba53b7f67100417504c2525c87cc79a34d48077c2e0871be",
+        "bytes": 10205
+      },
+      "status": "READY_FOR_SOURCE_DECISION_AND_ONE_READ_ONLY_BINDING_READ_NOT_READY_FOR_INSTALLATION",
+      "executed": false,
+      "verified_files": [
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/00-at-qualification-bindings.READONLY.sql",
+          "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+          "bytes": 34083
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/CHANGE_AND_ROLLBACK.md",
+          "sha256": "a7f6e68925491385a4a39350d5acc10f17502d1e7350e517cf5249cf6474133e",
+          "bytes": 11627
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/GO_SCOPE.md",
+          "sha256": "a87d197eed30a7abbadcc496d48f7aef5600bdc0e4e221c81b8432a329f15b01",
+          "bytes": 3360
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/SOURCE_SCOPE.json",
+          "sha256": "ac6dd050a3bb78bc12ff3308471f36ca5932684a1483673b8abf719fa750003b",
+          "bytes": 8753
+        }
+      ],
+      "go_text_bindings": [
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/GO_SCOPE.md",
+          "sha256": "a87d197eed30a7abbadcc496d48f7aef5600bdc0e4e221c81b8432a329f15b01",
+          "bytes": 3360
+        }
+      ],
+      "execution_limits": {
+        "maximum_transactions": 1,
+        "maximum_total_seconds": 300,
+        "statement_timeout_ms": 15000,
+        "transaction_timeout_ms": 20000,
+        "idle_in_transaction_session_timeout_ms": 20000,
+        "lock_timeout_ms": 500,
+        "result_rows": 1,
+        "result_utf8_bytes": 131072,
+        "metadata_relations": 9,
+        "function_rows_maximum": 16,
+        "source_pin_rows": 3,
+        "original_metadata_rows": 3,
+        "method_head_rows_maximum": 1,
+        "source_batches": 3,
+        "source_observation_rows_maximum": 9,
+        "raw_source_bodies_exported": 0,
+        "credentials_or_owner_identifiers_exported": 0,
+        "bg1_proof_rows_maximum": 1
+      }
+    },
+    {
+      "manifest": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json",
+        "sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+        "bytes": 6463
+      },
+      "status": "READ_ONLY_BINDING_PHASE_READY_FOR_SEPARATE_GO_WRITE_PACKAGE_NOT_READY",
+      "executed": false,
+      "verified_files": [
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+          "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+          "bytes": 31089
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/01-WRITE-AND-ROLLBACK-PLAN.md",
+          "sha256": "82353efc6d49fa3f0632d4ee35aee11500a03255082cd4d9e305612011562ace",
+          "bytes": 15173
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/02-RESULT-CONTRACT.json",
+          "sha256": "1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da",
+          "bytes": 7673
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/03-SOURCE-EVIDENCE.json",
+          "sha256": "21ebbd187f4039a20641d8a0136e1af4509f0af7d1f5a1d19b4e3a58300fd297",
+          "bytes": 5011
+        },
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/04-OFFLINE-PREPARATION-CHECKS.json",
+          "sha256": "ac6ac1006bb75a943d565e36af42eb72e272867f883fd9ef415ec3f99922084a",
+          "bytes": 1558
+        }
+      ],
+      "go_text_bindings": [
+        {
+          "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/GO-SCOPE.md",
+          "sha256": "746189cb7f62cc4d2ce2d0aef461fb6fbe42665aba7acb8e83c46ae057f188c1",
+          "bytes": 2554
+        }
+      ],
+      "execution_limits": {
+        "ordered_files": [
+          "00-cycle12-bindings.READONLY.sql"
+        ],
+        "file_invocations": 1,
+        "max_transactions": 1,
+        "transaction_mode": "REPEATABLE READ READ ONLY",
+        "final_control": "ROLLBACK",
+        "max_wall_clock_seconds": 300,
+        "transaction_timeout_ms": 30000,
+        "statement_timeout_ms": 15000,
+        "lock_timeout_ms": 500,
+        "idle_in_transaction_session_timeout_ms": 20000,
+        "result_rows": 1,
+        "max_result_utf8_bytes": 262144,
+        "retry_allowed": false,
+        "additional_read_allowed": false,
+        "project_id_must_be_verified_at_tool_dispatch": true,
+        "failure_control": "Stop; ensure rollback of the same read-only transaction if its connection remains available. Do not open a new transaction or resubmit the file."
+      }
+    }
+  ],
+  "lexical_review_base": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/00-at-qualification-bindings.READONLY.sql",
+      "bytes": 32506,
+      "sha256": "6c8f98a8711f06bb0e795531df7fd77376e9c16feff2a56269e428294bdd0a7a",
+      "top_level_statement_verbs": [
+        "BEGIN",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "DO",
+        "DO",
+        "DO",
+        "WITH",
+        "ROLLBACK"
+      ],
+      "top_level_statements": 13,
+      "forbidden_executable_tokens": [],
+      "project_function_invocations": [],
+      "quotes_dollar_blocks_and_parentheses_balanced": true,
+      "parser_level": "offline lexical segmentation and manual review only; no PostgreSQL parse or execution"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+      "bytes": 30725,
+      "sha256": "a23d5e07143978ab6fa5cf15bf5e2f7869087573af65002e5eaf0c86d1b4bb50",
+      "top_level_statement_verbs": [
+        "BEGIN",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "SET",
+        "DO",
+        "WITH",
+        "ROLLBACK"
+      ],
+      "top_level_statements": 12,
+      "forbidden_executable_tokens": [],
+      "project_function_invocations": [
+        "official_v3_guard_private . catalog_status_v1 ("
+      ],
+      "quotes_dollar_blocks_and_parentheses_balanced": true,
+      "parser_level": "offline lexical segmentation and manual review only; no PostgreSQL parse or execution"
+    }
+  ],
+  "final_delta_review": {
+    "at": {
+      "final_sql_sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+      "change": "Only final source-identity and method/BG1 cardinality gates added after the lexical base; each added SELECT/RAISE gate was manually reread and final bytes rebound."
+    },
+    "chde": {
+      "final_sql_sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+      "change": "Final CASE checks read_bounds_ok and required_function_metadata_present with IS DISTINCT FROM true before any payload/size return. False/missing flags produce only a compact STOP envelope; no ninth intake row can be exported."
+    }
+  },
+  "final_hashes_are_execution_candidate_identity_not_execution_evidence": true,
+  "review_completed_at_utc": "2026-11-22T12:40:52.861577+00:00"
+}

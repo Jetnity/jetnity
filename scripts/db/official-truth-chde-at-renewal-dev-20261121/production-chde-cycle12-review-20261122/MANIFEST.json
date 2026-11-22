@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "package": "PROD_CHDE_CYCLE12_REVIEW_PACKAGE_20261122",
+  "read_order": "PROD_CHDE_CYCLE12_BINDINGS_20261122",
+  "prepared_on": "2026-11-22",
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "target_project": "qscbgcdmivbbnzrcyegn",
+  "status": "READ_ONLY_BINDING_PHASE_READY_FOR_SEPARATE_GO_WRITE_PACKAGE_NOT_READY",
+  "execution_authorized": false,
+  "executed": false,
+  "read_phase_ready_for_separate_go": true,
+  "write_package_ready": false,
+  "installed_v4_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+  "files": [
+    {
+      "path": "00-cycle12-bindings.READONLY.sql",
+      "bytes": 31089,
+      "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+      "role": "READ_ONLY_EXECUTION_CANDIDATE"
+    },
+    {
+      "path": "01-WRITE-AND-ROLLBACK-PLAN.md",
+      "bytes": 15173,
+      "sha256": "82353efc6d49fa3f0632d4ee35aee11500a03255082cd4d9e305612011562ace",
+      "role": "PLAN_ONLY_NO_EXECUTABLE_WRITES"
+    },
+    {
+      "path": "02-RESULT-CONTRACT.json",
+      "bytes": 7673,
+      "sha256": "1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da",
+      "role": "OFFLINE_RESULT_VALIDATION_CONTRACT"
+    },
+    {
+      "path": "03-SOURCE-EVIDENCE.json",
+      "bytes": 5011,
+      "sha256": "21ebbd187f4039a20641d8a0136e1af4509f0af7d1f5a1d19b4e3a58300fd297",
+      "role": "PINNED_REPOSITORY_AND_PREVIOUS_RUNTIME_EVIDENCE"
+    },
+    {
+      "path": "04-OFFLINE-PREPARATION-CHECKS.json",
+      "bytes": 1558,
+      "sha256": "ac6ac1006bb75a943d565e36af42eb72e272867f883fd9ef415ec3f99922084a",
+      "role": "STATIC_ONLY_NOT_NATIVE_SQL_PROOF"
+    }
+  ],
+  "execution": {
+    "ordered_files": [
+      "00-cycle12-bindings.READONLY.sql"
+    ],
+    "file_invocations": 1,
+    "max_transactions": 1,
+    "transaction_mode": "REPEATABLE READ READ ONLY",
+    "final_control": "ROLLBACK",
+    "max_wall_clock_seconds": 300,
+    "transaction_timeout_ms": 30000,
+    "statement_timeout_ms": 15000,
+    "lock_timeout_ms": 500,
+    "idle_in_transaction_session_timeout_ms": 20000,
+    "result_rows": 1,
+    "max_result_utf8_bytes": 262144,
+    "retry_allowed": false,
+    "additional_read_allowed": false,
+    "project_id_must_be_verified_at_tool_dispatch": true,
+    "failure_control": "Stop; ensure rollback of the same read-only transaction if its connection remains available. Do not open a new transaction or resubmit the file."
+  },
+  "read_scope": [
+    "Exact Cycle12 row and Dispatch38-46 metadata/digests.",
+    "Exactly one CH-passport/DE-destination method-scoped subject and derived native claim identities.",
+    "At most five matching execution starts, six queue operations and eight Intake metadata rows returned. A ninth Intake row is inspected only as an overflow sentinel; overflow returns a small STOP object without payload.",
+    "Current result-head/verification reference and at most eight linked archived original hashes/sizes.",
+    "Prior Owner receipts only aggregate count and ordered digest; no actor/session/receipt body output.",
+    "Required and explicitly optional catalog function/relation/authority metadata; no invocation of mutating helpers.",
+    "Installed v4 baseline, pinned read-only catalog comparison and a fresh natural BG1/Cron proof."
+  ],
+  "allowed_application_invocations": [
+    "official_v3_guard_private.catalog_status_v1() with full native definition/owner/ACL/config binding checked before invocation"
+  ],
+  "explicitly_optional_metadata_objects": [
+    "official_v3_jobs_private.tx_queue_claim_v1(jsonb,jsonb,integer,integer,timestamp with time zone)",
+    "official_v3_jobs_private.tx_queue_mutate_v1(jsonb,jsonb,integer,integer,timestamp with time zone)",
+    "official_v3_jobs_private.tx_queue_cas_v1(jsonb,jsonb,integer,integer,timestamp with time zone)",
+    "official_v3_guard_private.begin_jobs_v1()",
+    "official_v3_guard_private.seal_jobs_v1()",
+    "jetnity_ot_auth.require_current_owner_session_v1()",
+    "official_v3_guard_private.retired_attempts_v1",
+    "official_v3_guard_private.retired_cycle5_attempts_v1"
+  ],
+  "optional_absence_representation": {
+    "present": false,
+    "metadata": null
+  },
+  "forbidden": [
+    "Any Production or Dev write/rehearsal/install.",
+    "HTTP or source action, Scheduler tick, Publisher, Queue/CAS mutation, audit invocation or Owner action.",
+    "Roles, grants, SET ROLE, ACL, secrets, authentication, login/2FA or passkey change.",
+    "Sequence nextval/setval/reset or HTTP allocator removal.",
+    "Old cycle/dispatch/counter/quota/history changes.",
+    "New costs or release/publication.",
+    "Reading original source bodies, auth sessions, actor details, signing keys, lease tokens, credential token hashes or raw native authority objects."
+  ],
+  "stop_rules": [
+    "Any SQL error, unrecognized object/type/result form, missing mandatory object, timeout, unclear or truncated response.",
+    "Any stale/missing natural BG1 proof or changed v4/catalog/scheduler binding.",
+    "Terminal Cycle12 or Dispatch38-46 mismatch, active cycle or changed current publication state.",
+    "read_bounds_ok is not true or required_function_metadata_present is not true.",
+    "Any correlation/archive/shape condition in 02-RESULT-CONTRACT.json fails; no automatic rebind, retry or extra read."
+  ],
+  "phase_after_success": "Evaluate only. The observation does not authorize CAS closure, a new Owner receipt, production rehearsal, installation or restart. Produce a newly bound write package after separate native validation and review.",
+  "restart_policy": "Closure, CAS and Owner closure receipt alone must leave a default-closed dispatch gate. A separate one-cycle restart authorization is required before any new natural cycle or HTTP start.",
+  "at_package_interlock": "If AT or another package changes BG1/functions first, this immutable read must stop. Rebinding requires a new package, new hashes and new Go; do not silently adopt the new catalog.",
+  "validation": {
+    "offline_static_checks_only": true,
+    "independent_source_and_scope_review_performed": true,
+    "postgres_parser_executed": false,
+    "sql_executed": false,
+    "native_dev_rehearsal_of_this_package": false
+  },
+  "hash_convention": "SHA-256 of exact UTF-8/LF file bytes. Manifest does not hash itself or files that contain its SHA; GO-SCOPE and report cite the finalized manifest. SHA256SUMS is an external checksum list and excludes itself."
+}

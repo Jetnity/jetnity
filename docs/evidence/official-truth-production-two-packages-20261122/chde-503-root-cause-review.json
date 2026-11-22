@@ -1,0 +1,841 @@
+{
+  "schema": "jetnity-chde-cycle12-http503-root-cause-review-v1",
+  "reviewed_at_utc": "2026-11-22",
+  "reviewer": "independent_repository_and_archived_evidence_review",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "immutable_source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "scope": {
+    "production_queries_this_review": 0,
+    "development_queries_this_review": 0,
+    "log_service_queries": 0,
+    "external_source_requests": 0,
+    "owner_actions": 0,
+    "role_or_secret_or_login_changes": 0,
+    "repository_reads_only": true,
+    "written_artifact": "docs/evidence/official-truth-production-two-packages-20261122/chde-503-root-cause-review.json",
+    "purpose": "Prepare the separate package; no action authorized or performed by this review."
+  },
+  "verdict": "TERMINAL_BLOCK_CAUSE_PROVEN__ORIGINAL_503_TRIGGER_NOT_PROVEN__TARGET_BINDINGS_REQUIRED_BEFORE_WRITE_PACKAGE",
+  "concise_decision_de": [
+    "Zyklus12 bleibt gesperrt, weil acht Resume-Versuche ohne bestätigte Veröffentlichung ausgeschöpft wurden; danach verweigert der Scheduler jeden neuen Zyklus mit operator_review_required.",
+    "Die archivierten HTTP503 sind signierte Sammelantworten des eigenen Import-Endpunkts: 7 unresolved und 1 unavailable. Eine konkrete fehlgeschlagene SQL-/Quellen-/Laufzeitstufe ist damit nicht bewiesen.",
+    "Die einzige unavailable-Antwort passt zur BG1-Zeitsperre um07:45UTC; das ist eine zeitliche Code-Hypothese, keine nachgewiesene historische Fehlerursache.",
+    "Die einzelne abgelaufene Job-Lease ist bislang nur aggregiert über subjects_v1 bekannt, ohne kind- oder CH→DE-Filter. Ohne Cycle12 operationId/leaseId und die deterministisch abgeleitete Job-/Claim-Familie darf sie Zyklus12 nicht zugeordnet werden.",
+    "Vor einem bindbaren Schreibpaket ist ein eng begrenzter separater READ-ONLY-Read für diese Identitäten, die native Originalverwahrung und die aktuellen Funktions-/Rechtebindungen erforderlich."
+  ],
+  "proven_observations": {
+    "snapshot_source": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/runtime-result.json",
+    "snapshot_observed_at_utc": "2026-11-22T11:54:53.145099+00:00",
+    "cycle_id": 12,
+    "cycle_created_at": "2026-11-16T07:43:00.031917+00:00",
+    "cycle_finished_at": "2026-11-16T07:53:00.019315+00:00",
+    "phase": "resume",
+    "state": "blocked",
+    "phase_attempts": 8,
+    "last_status": "retry_budget_exhausted",
+    "published": 0,
+    "processed_dispatches": 9,
+    "pending_dispatches": 0,
+    "start_200_queued": 1,
+    "resume_503_unresolved": 7,
+    "resume_503_unavailable": 1,
+    "scheduler_status": "operator_review_required",
+    "old_http_responses_retained": false,
+    "expired_research_lease_count": 1,
+    "expired_lease_cycle12_join_proven": false,
+    "method_at_last_read": "approved",
+    "remaining_starts_at_last_read": 64,
+    "remaining_operations_at_last_read": 255,
+    "bg1_at_last_read": "current",
+    "current_public_projections_at_last_read": 0,
+    "old_rows_change_authorized": false,
+    "expired_research_leases_alias_definition": "The archived SQL alias counts all subjects_v1 with current_job.state='leased' and expired lease.expiresAt, without a kind or CH-DE scope filter."
+  },
+  "code_proven_interpretation": {
+    "response_is_application_status": "503 is returned by /api/internal/readiness/ch-de-prod-refresh. It is not evidence of an HTTP503 from either official AA source.",
+    "accepted_signed_status": {
+      "source": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "current_installed_tick_definition_sha256": "57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe",
+      "current_definition_binding_source": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-execution.json",
+      "condition": "A stored recognized outcome is selected only after exact response schema, phase, code/status/published tuple and HMAC checks; invalid/missing evidence is response_unconfirmed.",
+      "inference": "The persisted unresolved/unavailable outcomes are evidence that the scheduler accepted signed responses, assuming preserved function/history custody. This review cannot reverify deleted original response bytes.",
+      "early_unsigned_failures_excluded_as_complete_explanation": [
+        "Missing/invalid production cron secret before request verification",
+        "Wrong release target/Supabase target before request verification",
+        "Request HMAC/authentication rejection before verified is set",
+        "An unsigned infrastructure-generated gateway503 by itself"
+      ]
+    },
+    "signed_unavailable_paths": [
+      {
+        "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+        "case": "Abort after verified is set but before dispatched=true."
+      },
+      {
+        "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+        "case": "Method precheck returns unavailable (including admission/source/target checks) or throws before dispatched=true."
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+        "case": "BG1 exclusion window; selected program/PG target mismatch; method read unavailable, malformed binding, receipt deadline or abort; rechecked exclusion window/backwards clock."
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+        "case": "Selected request parsing fails or fixed facade is unavailable before any work call; chDeTickOutcome maps zero-call unavailable to unavailable."
+      }
+    ],
+    "signed_unresolved_paths": [
+      {
+        "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-import-http.ts",
+        "case": "Malformed/inconsistent tick report or unequal started/settled calls; interrupted/stopped result not satisfying exact complete/exhausted contract; nonzero unconfirmed/unavailable/invalid/deferred counters."
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+        "case": "Resume performs only rule_research for the supplied original operationId/leaseId. Unconfirmed/unavailable/invalid/collision, backoff/superseded, incomplete terminal result or uncaught worker failure does not prove publication."
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+        "case": "The exact request family cannot be selected because retained execution/queue/confirm/epoch/lease/canonical row evidence is missing, blocked, inconsistent or out of budget; return unconfirmed."
+      },
+      {
+        "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+        "case": "Native operation report/receipt decoding, method authority, deadline or actual-drain failure; poisoned transport or other worker unavailable also reaches unresolved once a work call started."
+      },
+      {
+        "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+        "case": "Abort after dispatched=true or an exception after dispatch returns unresolved; it does not prove rollback or safe replay."
+      }
+    ],
+    "terminal_block": {
+      "source": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "rule": "After processing a resume, phase_attempts>=8 or cycle age>=25minutes blocks the immutable cycle with retry_budget_exhausted; any existing blocked cycle prevents opening another cycle.",
+      "cycle12": "Eight attempts within ten minutes establish the attempt cap as the triggering terminal condition. This is the scheduler stop condition, not the underlying cause of the first503."
+    },
+    "immutable_history_rule": "preserve_request_v1 rejects changes to the original request identity and any transition from a terminal row. No update/delete/reset/reuse of Cycle12 is a permitted repair.",
+    "original_queue_custody": "A retained claim is selected only through the existing original execution/queue/confirm predicates; a negative or blocked lookup is never authority to create/replay a new claim."
+  },
+  "unproven_hypotheses": [
+    {
+      "name": "BG1 scheduled source-admission refusal for dispatch40",
+      "status": "PLAUSIBLE_TIMING_ONLY",
+      "support": "Dispatch40 was issued2026-11-16T07:45:00.093842Z and is the sole unavailable response; the code excludes the first35s of each five-minute UTC period and the last35s before its next slot.",
+      "limitations": "Dispatch timestamp is not the method-precheck execution timestamp. Historical Production deployment/request-stage log binding is missing. The seven unresolved responses cannot all be explained by this single precheck refusal."
+    },
+    {
+      "name": "Expired Cycle12 claim or open native attempt prevents progress",
+      "status": "UNBOUND_CURRENT_STATE_ONLY",
+      "support": "One expired job lease is present in the aggregate latest read; the SQL has no kind/CH-DE filter. Native selected-claim logic refuses absent/inconsistent custody.",
+      "limitations": "No archived Cycle12 operationId/leaseId-to-job/claim/subject join was observed. Do not call the aggregate lease the cause. A lease observed expired six days later may be a consequence rather than the initial failure."
+    },
+    {
+      "name": "Worker budget, method/transport, native START/intake, source validation or publication settlement failure",
+      "status": "UNRESOLVED_CAUSE_CLASS",
+      "support": "All are potential code paths to the same unresolved wire status.",
+      "limitations": "No retained stage result, platform request correlation or linked original custody record identifies which path actually failed."
+    }
+  ],
+  "required_missing_bindings": [
+    "Exact immutable Cycle12 operation_id and lease_id; canonical full-row SHA256; existing terminal row and dispatch39-46 identity/timestamp/outcome digests.",
+    "Derived enqueue operationId/jobId and the corresponding fixed CH-DE job_key; exact optional subject current_job, method_binding, counters, open_attempt, terminal_credit_claim, and canonical row digests.",
+    "Original bounded claim family generations0..4 and their queue confirmation command/envelope hashes, original leased job/fence metadata, execution START/result/disposition existence and linked attempt identities.",
+    "Any linked intake record metadata/status, immutable bytes hash and byte length only; no lease_token, original_bytes or secret payload.",
+    "Current installed native queue/helper/API definition hashes, owners/security mode and effective existing privileges for the actual intended actor; no grant, role membership or SET ROLE workaround is approved here.",
+    "A historical Production deployment commit and retained request-correlated diagnostic stage trace from2026-11-16T07:43Z..07:53Z if available. Without it the initial503 cause may remain unreconstructible even after a current-state read."
+  ],
+  "minimal_readonly_preparation": {
+    "status": "PROPOSAL_ONLY__NOT_EXECUTED__SEPARATE_OWNER_GO_REQUIRED",
+    "target_project_ref": "qscbgcdmivbbnzrcyegn",
+    "transactions_maximum": 1,
+    "transaction": "BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY; SET LOCAL statement_timeout='15s'; SET LOCAL lock_timeout='2s'; SET LOCAL idle_in_transaction_session_timeout='20s'; ... ROLLBACK;",
+    "time_window_maximum_ms": 300000,
+    "output_ceiling_recommended_bytes": 65536,
+    "scope": [
+      "Fixed Cycle12 plus its nine dispatch rows only, not all scheduler history.",
+      "Bounded optional one matching CH-DE subject selected through exact deterministic Cycle12 identities; count guard rejects >1.",
+      "At most five original/derived claim generations, their known queue/execution rows and linked metadata; fixed per-relation caps and explicit overflow flags.",
+      "Known pg_catalog function/column/owner/privilege metadata needed to decode that fixed current shape; unknown/missing mandatory shape stops before data decoding.",
+      "Retain source/subject/record bytes as SHA256/length and selected typed fields; exclude source bodies, tokens, secret values, actor PII and unrelated history."
+    ],
+    "do_not_invoke": [
+      "jetnity_prod_import_scheduler.tick_v1",
+      "Any jobs/intake execute, claim, mutation, publisher, renewal, source or HTTP routine",
+      "Any guard resume/recovery or Owner authority action",
+      "Any catalog assertion whose implementation has not been verified as read-only",
+      "Any retry, second diagnostic read or fallback scan after error/unknown shape"
+    ],
+    "stop_rules": "Any error, missing mandatory relation/function, unknown shape, more than one matching subject, ambiguous identity join, row/output/time overflow or partial response: stop, no retry, no writes.",
+    "interpretation_limit": "The read can bind the actual current blocker and a safe terminal action. It cannot fabricate lost historical runtime diagnostics or establish that a future retry will succeed."
+  },
+  "implementation_decision": {
+    "write_ready": false,
+    "arbitrary_retry_authorized": false,
+    "terminal_close_can_be_prepared_only_after": "Exact original custody and technical review are bound. Use a reviewed append-only technical receipt and successor; preserve old Cycle12 and its failures.",
+    "resume_requires": "Current source/method/BG1 evidence, a supported unchanged native CAS path with existing authority, original custody closed safely, exact new IDs and immutable caps, Dev/native negative and positive proofs, and a separate Production Go.",
+    "known_unsafe_shortcuts": [
+      "Updating Cycle12 state, phase_attempts or request IDs",
+      "Deleting the blocked cycle or failure/START/queue evidence",
+      "Calling an expired lease a valid new lease, or reusing original IDs for a new source attempt",
+      "Granting roles/permissions or bypassing native original-custody checks",
+      "Treating BG1 current, HTTP200 queued or AT transport repair as accepted CH-DE facts",
+      "Presenting a generic retry as a proven repair of the original503 cause"
+    ],
+    "dev_receipt_limit": "The21Nov Dev-cycle5 retirement independently proves that exact Dev closure only. Its identities, counters, Owner receipt and authority do not transfer to Production cycle12."
+  },
+  "archive_correction": {
+    "path": "docs/OFFICIAL_TRUTH_CHDE_AT_RENEWAL_APPROVAL_2026-11-21.md",
+    "old_phrase": "first was 503 unavailable",
+    "correction": "The structured latest read orders dispatch39 unresolved first and dispatch40 unavailable second. Preserve the old document; use the exact structured dispatch evidence for this review."
+  },
+  "source_history": [
+    {
+      "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+      "commits": [
+        {
+          "commit": "b195e83c6763334290120d7cf3005335a86da050",
+          "authored_at": "2026-11-15T00:58:39Z",
+          "subject": "Prepare CH-DE Production release and repair bounded Dev claim continuation"
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+      "commits": [
+        {
+          "commit": "4911bd5ee209abe977fcbdd1418b7b0b85da149e",
+          "authored_at": "2026-11-15T18:20:57Z",
+          "subject": "fix: avoid BG1 source collisions and recover the exact Dev attempt"
+        },
+        {
+          "commit": "4fd6dc9e50972233288a9552f9331b915a85847f",
+          "authored_at": "2026-11-13T23:07:57Z",
+          "subject": "feat(readiness): add guarded manual Dev owner import"
+        },
+        {
+          "commit": "5c2c27ee6ac05d53bb907cf6df0da7f97956fdee",
+          "authored_at": "2026-11-12T23:00:36Z",
+          "subject": "fix(official-truth): validate canonical HRS context and connect reviewed CH-DE API"
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+      "commits": [
+        {
+          "commit": "7e7d05141c31e4580d30237d1a73b9b38bc79ff9",
+          "authored_at": "2026-11-14T17:58:41Z",
+          "subject": "fix(readiness): finish Dev imports with bounded proof handoffs"
+        },
+        {
+          "commit": "30bd36698504536c987307ce5e9579affd436d5b",
+          "authored_at": "2026-11-14T01:23:12Z",
+          "subject": "feat(readiness): stage bounded Dev integrity guard and recovery"
+        },
+        {
+          "commit": "e1c8217f2628da3aa96adb7a87ad3c3af8f73b4f",
+          "authored_at": "2026-11-12T23:17:30Z",
+          "subject": "feat(official-truth): compose Owner MFA, CH-DE visitor and bounded refresh on corrected backend"
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "commits": [
+        {
+          "commit": "70a3cb09204e74f6bcd4a5b481e942e526a6102f",
+          "authored_at": "2026-11-15T07:16:28Z",
+          "subject": "fix(official-truth): complete bounded queue processing and publication resume"
+        },
+        {
+          "commit": "238a2d9e00e96fa44c68a45203e02d3909dc7c6b",
+          "authored_at": "2026-11-15T03:16:06Z",
+          "subject": "fix(official-truth): drain claim replay authority before reacquiring"
+        },
+        {
+          "commit": "5472b849b2c22f576eb25a697843d33c4237a581",
+          "authored_at": "2026-11-14T22:42:40Z",
+          "subject": "fix: resume retained Dev claims and reconcile quota proof outcomes"
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts",
+      "commits": [
+        {
+          "commit": "4911bd5ee209abe977fcbdd1418b7b0b85da149e",
+          "authored_at": "2026-11-15T18:20:57Z",
+          "subject": "fix: avoid BG1 source collisions and recover the exact Dev attempt"
+        }
+      ]
+    }
+  ],
+  "historical_deployment_binding": "The inspected route, tick, selected-claim and admission changes exist before16Nov in this branch ancestry. Git history alone is not proof of the Production deployment actually serving the eight requests.",
+  "source_bindings": [
+    {
+      "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+      "git_blob_sha1": "e2e9113212e0cd9e46313ceb75387801c0d50f0e",
+      "sha256": "b9fabb09753b16b0a91fa671db18dac2e44ed9b4289dc66f009b8c5dcd2091b0",
+      "bytes": 5779
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-import-http.ts",
+      "git_blob_sha1": "85e0f4512759821b47b960157c38fb4e7df9c8ee",
+      "sha256": "a2e17e7cdc35abe0af8575546592fc7dfa83eee248baf003d989e7a715dca814",
+      "bytes": 4992
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+      "git_blob_sha1": "273d68353605ae840126e0ea2c69b1705a7f5bc5",
+      "sha256": "bb56a13541bc2d8ed12de7bd35784616b0ec17774f32517abc8ed58e9bac54e0",
+      "bytes": 8814
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-refresh.ts",
+      "git_blob_sha1": "cc7440fb51873990d5d6699a6fca7afae6c8681f",
+      "sha256": "7f21d0cfb6e690580de05cec773a09e9864b9fae112272c5c4d18b5002ee22bb",
+      "bytes": 3339
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+      "git_blob_sha1": "8931a5cbc5f25134df3b942102843d64c32453df",
+      "sha256": "f3f69481b1e158a4db5dbe57cbc79c4a458e2bf83c6a8224d9aad126e1ba3176",
+      "bytes": 3931
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts",
+      "git_blob_sha1": "c1ea539c1be9518489852f2658d7ad7a4037efde",
+      "sha256": "ed61adeaef389f0f946af4d35dc456ef4b3470f46fe1a2377aec94fa83e860ae",
+      "bytes": 1293
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
+      "git_blob_sha1": "6826d8e85d1d4ca262d6d4405c78130e90444256",
+      "sha256": "4ba44187c26aa7f4f7e8785775bec82154e00ba6f97a813d688bf093ef444433",
+      "bytes": 7912
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "git_blob_sha1": "acf37bcf16c1d8479f2b01ce54619a7c189363e5",
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1",
+      "bytes": 18328
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "git_blob_sha1": "504bee3e70baccab4597c2442172ed2b10db520d",
+      "sha256": "42fb1f7094764fa8ba85c122f39ee8290e0cdf08b6b8c4f2ed84f58a3139a2f3",
+      "bytes": 57640
+    },
+    {
+      "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "git_blob_sha1": "e6b9ffd0dd2267c206c6ab6ae92b497f4f794130",
+      "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0",
+      "bytes": 14307
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-terminal-history.READONLY.sql",
+      "git_blob_sha1": "4426c80efa3aabd2b9548b6aa1eed5bee0c5d516",
+      "sha256": "2290683d6a87d346267ec984d0f6e8d124598acafc27f99a71f6ffcbef0279ac",
+      "bytes": 3691
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "git_blob_sha1": "4b36bb6ff8b26516dfa01579265d47022785a15c",
+      "sha256": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a",
+      "bytes": 43695
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_CHDE_AT_RENEWAL_APPROVAL_2026-11-21.md",
+      "git_blob_sha1": "ae9953901ab42e016ec41a69912dc8ba80055d46",
+      "sha256": "6d0bdcc8a1a279efcf883aa5ed57b71b78f1c1a8b118ab869d73ee7da766fa66",
+      "bytes": 43715
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_RELEASE_1_HANDOFF_2026-11-15.md",
+      "git_blob_sha1": "acd8417bf908c6af4a66e6cb0eb198ac6588e06b",
+      "sha256": "9b61f9455a5ef0488015edfc76d8d63a3208af4aa129569a19f8f04d746ddfd8",
+      "bytes": 14745
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md",
+      "git_blob_sha1": "1a273337cfa62b03b4ed3e7c9d83a7ca6258b82a",
+      "sha256": "6c85e1851b20024f405fdcefa9daf021d7723e9baf379178a58b5e3ef68429e2",
+      "bytes": 26130
+    },
+    {
+      "path": "docs/evidence/official-truth-renewal-20261121/dev-cycle5-readback-20261121T130920Z.json",
+      "git_blob_sha1": "752335aba3cbfd138623aad603f58d2308e7b95d",
+      "sha256": "6b5680bdc603c19bdfca20a3e2aa299e35bb08571a858e926b48622a902fdee7",
+      "bytes": 2180
+    }
+  ],
+  "code_anchors": [
+    {
+      "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+      "anchors": [
+        {
+          "needle": "verified =",
+          "line_numbers": [
+            62
+          ]
+        },
+        {
+          "needle": "checkOfficialTruthV3ChDeMethod",
+          "line_numbers": [
+            5,
+            66
+          ]
+        },
+        {
+          "needle": "dispatched = true",
+          "line_numbers": [
+            69
+          ]
+        },
+        {
+          "needle": "} catch",
+          "line_numbers": [
+            76
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-import-http.ts",
+      "anchors": [
+        {
+          "needle": "export function chDeTickOutcome",
+          "line_numbers": [
+            57
+          ]
+        },
+        {
+          "needle": "report.status === 'complete'",
+          "line_numbers": [
+            67
+          ]
+        },
+        {
+          "needle": "export function chDeImportHttpStatus",
+          "line_numbers": [
+            77
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+      "anchors": [
+        {
+          "needle": "function countWork",
+          "line_numbers": [
+            26
+          ]
+        },
+        {
+          "needle": "if (!facade)",
+          "line_numbers": [
+            118
+          ]
+        },
+        {
+          "needle": "selected?.mode",
+          "line_numbers": [
+            120
+          ]
+        },
+        {
+          "needle": "calls.started++",
+          "line_numbers": [
+            121,
+            131,
+            142
+          ]
+        },
+        {
+          "needle": "} catch",
+          "line_numbers": [
+            154
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+      "anchors": [
+        {
+          "needle": "export async function checkOfficialTruthV3ChDeMethod",
+          "line_numbers": [
+            21
+          ]
+        },
+        {
+          "needle": "export function officialTruthV3ChDeRuntime",
+          "line_numbers": [
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts",
+      "anchors": [
+        {
+          "needle": "export function chDeSourceAdmissionOpen",
+          "line_numbers": [
+            17
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "anchors": [
+        {
+          "needle": "export function chDeRefreshRequestIdentity",
+          "line_numbers": [
+            17
+          ]
+        },
+        {
+          "needle": "export function retainedChDeClaim",
+          "line_numbers": [
+            26
+          ]
+        },
+        {
+          "needle": "export async function selectRetainedChDeClaim",
+          "line_numbers": [
+            48
+          ]
+        },
+        {
+          "needle": "current.status === 'blocked'",
+          "line_numbers": [
+            92
+          ]
+        },
+        {
+          "needle": "job.lease.expiresAt > now",
+          "line_numbers": [
+            151
+          ]
+        },
+        {
+          "needle": "export function guardRetainedChDeClaim",
+          "line_numbers": [
+            171
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "anchors": [
+        {
+          "needle": "async resolveCurrent",
+          "line_numbers": [
+            114
+          ]
+        },
+        {
+          "needle": "selection = await selectRetainedChDeClaim",
+          "line_numbers": [
+            715
+          ]
+        },
+        {
+          "needle": "selection.status !== 'selected'",
+          "line_numbers": [
+            719
+          ]
+        },
+        {
+          "needle": "scope.signal.aborted || performance.now() >= deadline",
+          "line_numbers": [
+            416,
+            505,
+            734
+          ]
+        },
+        {
+          "needle": "async workSelectedOnce",
+          "line_numbers": [
+            753
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "anchors": [
+        {
+          "needle": "preserve_request_v1",
+          "line_numbers": [
+            65,
+            76
+          ]
+        },
+        {
+          "needle": "response_unconfirmed",
+          "line_numbers": [
+            172,
+            194
+          ]
+        },
+        {
+          "needle": "retry_budget_exhausted",
+          "line_numbers": [
+            217
+          ]
+        },
+        {
+          "needle": "operator_review_required",
+          "line_numbers": [
+            148,
+            149,
+            212,
+            213,
+            218,
+            219
+          ]
+        },
+        {
+          "needle": "response-v1",
+          "line_numbers": [
+            182
+          ]
+        }
+      ]
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "anchors": [
+        {
+          "needle": "CREATE OR REPLACE FUNCTION official_v3_jobs_api.execute_v1",
+          "line_numbers": [
+            19
+          ]
+        },
+        {
+          "needle": "CREATE FUNCTION official_v3_jobs_private.tx_queue_claim_v1",
+          "line_numbers": [
+            228
+          ]
+        },
+        {
+          "needle": "CREATE FUNCTION official_v3_jobs_private.tx_queue_mutate_v1",
+          "line_numbers": [
+            336
+          ]
+        },
+        {
+          "needle": "REVOKE ALL",
+          "line_numbers": [
+            474
+          ]
+        }
+      ]
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
+      "anchors": [
+        {
+          "needle": "const STAGES",
+          "line_numbers": [
+            7
+          ]
+        },
+        {
+          "needle": "const line = JSON.stringify",
+          "line_numbers": [
+            65
+          ]
+        },
+        {
+          "needle": "withProductionImportDiagnostics",
+          "line_numbers": [
+            97
+          ]
+        }
+      ]
+    }
+  ],
+  "secrets_in_artifact": false,
+  "immutable_prior_evidence_changed": false,
+  "test_claim": "Static repository tracing, Git-blob/SHA256 verification and archived structured evidence cross-check only; no live, native, rehearsal, integration or retry test performed.",
+  "archived_live_input_bindings": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/runtime-result.json",
+      "sha256": "f569e14e007e94447aa55c1406f2023ea9e5db705ac565406277e1936fa95cae",
+      "bytes": 41702
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-execution.json",
+      "sha256": "1f5e0a7fdc6f3f7dea2745354396ccbc4e9a36967ef287e0c5459171e1ba0f41",
+      "bytes": 6170
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-execution.json",
+      "sha256": "0ffe519ef1ee9c56c0c79d6e0478598149219638e1d93f66c1dff237313610b8",
+      "bytes": 35876
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/independent-runtime-review.json",
+      "sha256": "6aa31021b869be64f7d61c4b98a6670d66e919394523f6fdea1bac808d18692e",
+      "bytes": 7166
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/execution-manifest.json",
+      "sha256": "2c903644831656495687f031fd81a4eb1ebdf906e1597af65f7e1133065744cf",
+      "bytes": 6934
+    }
+  ],
+  "archived_cycle12_row": {
+    "id": 12,
+    "phase": "resume",
+    "state": "blocked",
+    "published": 0,
+    "created_at": "2026-11-16T07:43:00.031917+00:00",
+    "finished_at": "2026-11-16T07:53:00.019315+00:00",
+    "last_status": "retry_budget_exhausted",
+    "queued_starts": 1,
+    "dispatch_count": 9,
+    "failed_resumes": 8,
+    "phase_attempts": 8,
+    "pending_dispatches": 0,
+    "correlated_published_finish": false
+  },
+  "archived_cycle12_dispatch_rows": [
+    {
+      "id": 38,
+      "phase": "start",
+      "outcome": "queued",
+      "cycle_id": 12,
+      "http_status": 200,
+      "processed_at": "2026-11-16T07:44:00.021558+00:00",
+      "dispatched_at": "2026-11-16T07:43:00.040486+00:00",
+      "net_request_id": 38,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 39,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:45:00.060569+00:00",
+      "dispatched_at": "2026-11-16T07:44:00.050592+00:00",
+      "net_request_id": 39,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 40,
+      "phase": "resume",
+      "outcome": "unavailable",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:46:00.020359+00:00",
+      "dispatched_at": "2026-11-16T07:45:00.093842+00:00",
+      "net_request_id": 40,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 41,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:47:00.025807+00:00",
+      "dispatched_at": "2026-11-16T07:46:00.036967+00:00",
+      "net_request_id": 41,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 42,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:48:00.01926+00:00",
+      "dispatched_at": "2026-11-16T07:47:00.041512+00:00",
+      "net_request_id": 42,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 43,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:49:00.020009+00:00",
+      "dispatched_at": "2026-11-16T07:48:00.033316+00:00",
+      "net_request_id": 43,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 44,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:51:00.035755+00:00",
+      "dispatched_at": "2026-11-16T07:49:00.036679+00:00",
+      "net_request_id": 44,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 45,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:52:00.020847+00:00",
+      "dispatched_at": "2026-11-16T07:51:00.050913+00:00",
+      "net_request_id": 45,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    },
+    {
+      "id": 46,
+      "phase": "resume",
+      "outcome": "unresolved",
+      "cycle_id": 12,
+      "http_status": 503,
+      "processed_at": "2026-11-16T07:53:00.019315+00:00",
+      "dispatched_at": "2026-11-16T07:52:00.040364+00:00",
+      "net_request_id": 46,
+      "retained_response_error": null,
+      "retained_response_created": null,
+      "retained_response_timed_out": null,
+      "retained_response_http_status": null
+    }
+  ],
+  "observation_snapshot_invariants_checked": true,
+  "evidence_comparison": {
+    "prior_cycles_8_through_11_published": 4,
+    "prior_cycle_11_initial_resume_503_then_published": true,
+    "meaning": "An unresolved response is an intermediate refusal/uncertainty category; by itself it does not identify permanent source failure. Historical earlier successes do not authorize retry of blocked Cycle12."
+  }
+}

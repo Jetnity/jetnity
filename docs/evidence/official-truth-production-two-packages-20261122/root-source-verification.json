@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "review_type": "ROOT_INDEPENDENT_IMMUTABLE_REPOSITORY_INPUT_VERIFICATION",
+  "reviewed_on": "2026-11-22",
+  "immutable_source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "verification": "Every file was separately fetched from the immutable GitHub commit with base64 encoding; decoded bytes were compared to the exact Git blob SHA-1 and SHA-256/byte binding. The two extra AT code files had their SHA-256 independently computed after Git blob verification.",
+  "files": [
+    {
+      "path": "app/api/internal/readiness/ch-de-prod-refresh/route.ts",
+      "sha256": "b9fabb09753b16b0a91fa671db18dac2e44ed9b4289dc66f009b8c5dcd2091b0",
+      "bytes": 5779,
+      "verified": true,
+      "git_blob_sha1": "e2e9113212e0cd9e46313ceb75387801c0d50f0e",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-import-http.ts",
+      "sha256": "a2e17e7cdc35abe0af8575546592fc7dfa83eee248baf003d989e7a715dca814",
+      "bytes": 4992,
+      "verified": true,
+      "git_blob_sha1": "85e0f4512759821b47b960157c38fb4e7df9c8ee",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-tick.ts",
+      "sha256": "bb56a13541bc2d8ed12de7bd35784616b0ec17774f32517abc8ed58e9bac54e0",
+      "bytes": 8814,
+      "verified": true,
+      "git_blob_sha1": "273d68353605ae840126e0ea2c69b1705a7f5bc5",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-refresh.ts",
+      "sha256": "7f21d0cfb6e690580de05cec773a09e9864b9fae112272c5c4d18b5002ee22bb",
+      "bytes": 3339,
+      "verified": true,
+      "git_blob_sha1": "cc7440fb51873990d5d6699a6fca7afae6c8681f",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-server.ts",
+      "sha256": "f3f69481b1e158a4db5dbe57cbc79c4a458e2bf83c6a8224d9aad126e1ba3176",
+      "bytes": 3931,
+      "verified": true,
+      "git_blob_sha1": "8931a5cbc5f25134df3b942102843d64c32453df",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/ch-de-source-admission.ts",
+      "sha256": "ed61adeaef389f0f946af4d35dc456ef4b3470f46fe1a2377aec94fa83e860ae",
+      "bytes": 1293,
+      "verified": true,
+      "git_blob_sha1": "c1ea539c1be9518489852f2658d7ad7a4037efde",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/runtime/dev-diagnostics.ts",
+      "sha256": "4ba44187c26aa7f4f7e8785775bec82154e00ba6f97a813d688bf093ef444433",
+      "bytes": 7912,
+      "verified": true,
+      "git_blob_sha1": "6826d8e85d1d4ca262d6d4405c78130e90444256",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1",
+      "bytes": 18328,
+      "verified": true,
+      "git_blob_sha1": "acf37bcf16c1d8479f2b01ce54619a7c189363e5",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/method/authority-postgres.ts",
+      "sha256": "42fb1f7094764fa8ba85c122f39ee8290e0cdf08b6b8c4f2ed84f58a3139a2f3",
+      "bytes": 57640,
+      "verified": true,
+      "git_blob_sha1": "504bee3e70baccab4597c2442172ed2b10db520d",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0",
+      "bytes": 14307,
+      "verified": true,
+      "git_blob_sha1": "e6b9ffd0dd2267c206c6ab6ae92b497f4f794130",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-terminal-history.READONLY.sql",
+      "sha256": "2290683d6a87d346267ec984d0f6e8d124598acafc27f99a71f6ffcbef0279ac",
+      "bytes": 3691,
+      "verified": true,
+      "git_blob_sha1": "4426c80efa3aabd2b9548b6aa1eed5bee0c5d516",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "sha256": "75f43cdf119fe9bd862dd5bdcbbd6d53da974b09a6162ad999f23ab62fd3af8a",
+      "bytes": 43695,
+      "verified": true,
+      "git_blob_sha1": "4b36bb6ff8b26516dfa01579265d47022785a15c",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_CHDE_AT_RENEWAL_APPROVAL_2026-11-21.md",
+      "sha256": "6d0bdcc8a1a279efcf883aa5ed57b71b78f1c1a8b118ab869d73ee7da766fa66",
+      "bytes": 43715,
+      "verified": true,
+      "git_blob_sha1": "ae9953901ab42e016ec41a69912dc8ba80055d46",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_RELEASE_1_HANDOFF_2026-11-15.md",
+      "sha256": "9b61f9455a5ef0488015edfc76d8d63a3208af4aa129569a19f8f04d746ddfd8",
+      "bytes": 14745,
+      "verified": true,
+      "git_blob_sha1": "acd8417bf908c6af4a66e6cb0eb198ac6588e06b",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_DEV_RENEWAL_CONTINUATION_2026-11-21.md",
+      "sha256": "6c85e1851b20024f405fdcefa9daf021d7723e9baf379178a58b5e3ef68429e2",
+      "bytes": 26130,
+      "verified": true,
+      "git_blob_sha1": "1a273337cfa62b03b4ed3e7c9d83a7ca6258b82a",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "docs/evidence/official-truth-renewal-20261121/dev-cycle5-readback-20261121T130920Z.json",
+      "sha256": "6b5680bdc603c19bdfca20a3e2aa299e35bb08571a858e926b48622a902fdee7",
+      "bytes": 2180,
+      "verified": true,
+      "git_blob_sha1": "752335aba3cbfd138623aad603f58d2308e7b95d",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-at-production-stage1/install.sql",
+      "bytes": 51112,
+      "sha256": "8adfe4df7da08677e42849f28f8458e48f5284b25127bd4ce5c5815e1aed982f",
+      "git_blob_sha1": "029bc650d572e8c562e688d1043c07c4ca824887",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "verified": true
+    },
+    {
+      "path": "lib/readiness/official-truth-at-method-v1/at-visitor-display.ts",
+      "bytes": 5877,
+      "sha256": "5cda16ed9c40193aa094cf253aeaf79d6afccd65c1acb8cd2a7ea4f84e7dc69f",
+      "git_blob_sha1": "a4783c4c9622a1a090dbfa8eab5e5098e6c02912",
+      "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+      "verified": true
+    }
+  ],
+  "root_content_review": [
+    "AT source_pins research_only=true/source_qualified=false CHECKs and first_originals legal/customer=false CHECKs are explicit in the source.",
+    "AT CH display text is narrowly Swiss passport/direct entry/visa exemption and separately carries provenance and expiry.",
+    "The CH-DE route signs responses only after verified request admission, distinguishes pre-dispatch unavailable and post-dispatch unresolved, and does not make HTTP503 a source-provider diagnosis.",
+    "CH-DE scheduler native tick blocks after eight resume attempts and refuses another cycle while an unresolved blocked cycle exists.",
+    "Exact Production runtime function binding and historical dispatch receipts are archived observations; branch ancestry alone does not prove the deployment serving the historical requests."
+  ],
+  "database_queries": 0,
+  "source_http_requests": 0,
+  "sql_executed": false,
+  "original_files_changed": false
+}

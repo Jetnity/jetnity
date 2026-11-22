@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "package_id": "PROD_AT_SOURCE_QUALIFICATION_REVIEW_20261122",
+  "prepared_at_date": "2026-11-22",
+  "repository": "Jetnity/jetnity",
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "state": "PREPARED_NOT_EXECUTED_SOURCE_DECISION_AND_READ_ONLY_BINDINGS",
+  "authorization_received": false,
+  "target": {
+    "environment": "production",
+    "project_ref": "qscbgcdmivbbnzrcyegn",
+    "installed_baseline": "official_v3_guard_private.bg1_production_http_allocator_v4",
+    "parent_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "observed_at": "2026-11-22T11:54:53.145099Z"
+  },
+  "proposed_owner_source_decision": {
+    "meaning": "Die unten genannten drei amtlichen Fassungen dürfen für die technische Vorbereitung einer gesondert freizugebenden CH→AT-Visumregel qualifiziert werden; diese Entscheidung ist keine Datenbankquittung, keine Methodenaktivierung und keine Veröffentlichung.",
+    "exact_rule": "Schweizer Staatsangehörige benötigen für die direkte Einreise nach Österreich mit gültigem Schweizer Reisepass kein Visum.",
+    "citizenship": "CH",
+    "destination": "AT",
+    "topic": "visa",
+    "document": "valid_ordinary_swiss_passport",
+    "route": "direct_entry",
+    "result": "not_required",
+    "mode": "visa_exempt",
+    "publication_now": false,
+    "production_write_now": false,
+    "bmeia_review_decision": "Keine Änderung der Einreise-/Pass-/Visumantragsregel durch die konkret verglichenen 20 HTML-Zeilen.",
+    "not_approved": [
+      "Andere Staatsangehörigkeiten oder Dokumente",
+      "Transit",
+      "Aufenthaltsrecht oder Aufenthaltsdauer",
+      "Arbeit oder Studium",
+      "Passgültigkeitsfristen über gültiger Schweizer Reisepass hinaus",
+      "ETA und Formulare",
+      "Gesundheit, Impfung, Versicherung",
+      "Gebühren",
+      "Minderjährige",
+      "Allgemeine Einreisegarantie",
+      "50-Pass-/Vollprodukt-Freigabe"
+    ]
+  },
+  "sources": [
+    {
+      "source_id": "bmi-visa-nationality-matrix",
+      "authority": "Bundesministerium für Inneres Österreich",
+      "role": "destination_primary_for_ch_visa",
+      "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "editorial_edition": "2026-11-06",
+      "candidate_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "candidate_bytes": 498415,
+      "candidate_comparison": "exact_bytes",
+      "last_observed_batches": [
+        601,
+        602
+      ],
+      "last_observed_state": "unchanged_exact",
+      "existing_pin_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "existing_archived_original_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "qualification_pending": true
+    },
+    {
+      "source_id": "bmi-general-entry",
+      "authority": "Bundesministerium für Inneres Österreich",
+      "role": "official_entry_context_only_no_new_topic_approval",
+      "url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "editorial_edition": null,
+      "candidate_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "candidate_bytes": 91655,
+      "candidate_comparison": "exact_bytes",
+      "last_observed_batches": [
+        601,
+        602
+      ],
+      "last_observed_state": "unchanged_exact",
+      "existing_pin_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "existing_archived_original_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "qualification_pending": true
+    },
+    {
+      "source_id": "bmeia-bern-how-to-apply",
+      "authority": "Österreichische Botschaft Bern / BMEIA",
+      "role": "official_corroboration_and_application_context_only",
+      "url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "editorial_edition": null,
+      "candidate_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "candidate_bytes": 172428,
+      "candidate_comparison": "exact_bytes",
+      "last_observed_batches": [
+        601,
+        602
+      ],
+      "last_observed_state": "changed",
+      "existing_pin_sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+      "existing_pin_bytes": 172460,
+      "existing_archived_original_sha256": "b678259a0e9f7941a39f305b1165ef5065805dfb9b1cd844347cb6b359e898e0",
+      "existing_archived_original_bytes": 172460,
+      "preserve_distinct_raw_original_and_configured_pin": true,
+      "old_asset_normalized_sha256": "b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55",
+      "current_asset_normalized_sha256": "5358fa717d60edcf74d011795bd46b607b7faa78b4833241c23edb249176ce26",
+      "main_content_bytes": 42541,
+      "unchanged_main_content_sha256": "9ed47f7fd1544d813a16b0f204b34a20174757b0dd58159646a695b0b052d83f",
+      "main_content_links_unchanged": 28,
+      "observed_changes": {
+        "asset_version_parameters": 19,
+        "unrelated_id_austria_menu_link": 1,
+        "html_lines": 20,
+        "byte_delta": -32
+      },
+      "qualification_pending": true
+    }
+  ],
+  "preservation": {
+    "existing_pin_research_only": true,
+    "existing_pin_source_qualified": false,
+    "existing_original_legal_source_approved": false,
+    "existing_original_customer_rule_approved": false,
+    "old_pin_original_and_changed_observation_rows_are_immutable": true,
+    "no_relabel_changed_as_unchanged": true,
+    "no_expiry_extension": true,
+    "historical_ch_at_facts": 62,
+    "unexpired_facts_at_observation": 0
+  },
+  "customer_visibility": {
+    "after_this_package_go": "derzeit nicht verfügbar",
+    "reason": "Nur fachliche Quellenentscheidung und READ-ONLY-Bindungsread; keine Runtime-/Methoden-/Fact-Änderung.",
+    "after_later_separately_authorized_verified_activation": {
+      "scope": {
+        "citizenship": "CH",
+        "destination": "AT",
+        "topic": "visa",
+        "document": "passport",
+        "route": "direct_entry"
+      },
+      "exact_existing_display_text": "Schweizer Staatsangehörige benötigen für die direkte Einreise nach Österreich mit gültigem Schweizer Reisepass kein Visum.",
+      "source_links": "Alle drei exakten amtlichen URLs im gebundenen RPC; die bestehende CH-Ansicht verlinkt die Österreichische Botschaft Bern.",
+      "visible_provenance": [
+        "Stand vom Zeitpunkt der Quellenprüfung",
+        "Zeitpunkt der Regelprüfung",
+        "Regelversion",
+        "Ablaufzeit im Ergebnis"
+      ],
+      "freshness": "Höchstens eine Stunde ab Verifikation und nie länger als 70 Minuten nach der ältesten erforderlichen Quellenprüfung; zusätzlich gültige Methode und frischer vollständiger BG1-Nachfolger.",
+      "guard_failure_or_expiry": "derzeit nicht verfügbar",
+      "all_other_passports_and_topics": "derzeit nicht verfügbar, soweit nicht durch einen eigenen unabhängig freigegebenen Pfad belegt"
+    }
+  },
+  "readiness": {
+    "source_scope_decision": "READY_FOR_OWNER_REVIEW",
+    "prepared_read_only_file": "00-at-qualification-bindings.READONLY.sql",
+    "read_only_executed": false,
+    "production_installation": "NOT_READY_NOT_INCLUDED",
+    "positive_at_renewal": "NOT_PROVEN",
+    "isolated_unqualified_unchanged_source_negative_test": "NOT_PROVEN",
+    "blockers": [
+      "Bestehende Pins und First-Originals erzwingen Research-only bzw. false-Qualifikationsflags per CHECK und unveränderlichen Triggern.",
+      "Der installierte Publisher fordert qualifizierte exakte Originale und sperrt geänderte Quellenhistorie nach dem letzten Fakt.",
+      "Die bisherige Methode bindet BMEIA 172460 Bytes / alten Paketdigest; aktuelle Fassung hat 172428 Bytes.",
+      "Native aktuelle Methodenkopf-/Quittungs-/Visitor-/Ownerpfad-Metadaten wurden im letzten eng begrenzten Production-Read nicht vollständig gebunden.",
+      "Neue append-only Quellen-/Methodenlinie, echter positiver Erneuerungspfad, isolierter Negativfall und BG1-Anschluss sind noch nicht gemeinsam implementiert und in Dev abgenommen."
+    ]
+  },
+  "cross_package_order": {
+    "current_parent": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "this_package_changes_parent": false,
+    "other_package": "CH→DE Zyklus 12, eigenständiges Go",
+    "rule": "Zwei lesende Pakete dürfen denselben unveränderten Parent prüfen. Nach jeder späteren zustands- oder katalogändernden Installation muss das zweite Schreibpaket gegen den tatsächlichen neuen Parent neu gebunden und separat vorgelegt werden; keine automatische Übernahme einer unbekannten Baseline."
+  }
+}
+

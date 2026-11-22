@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "delivery_id": "PROD_AT_AND_CHDE_SEPARATE_REVIEW_PACKAGES_20261122",
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "prepared_only": true,
+  "execution_authorized": false,
+  "database_actions": 0,
+  "customer_at_status": "derzeit nicht verfügbar",
+  "separate_package_manifests": [
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/MANIFEST.json",
+      "bytes": 10205,
+      "sha256": "a73a433fb7090e59ba53b7f67100417504c2525c87cc79a34d48077c2e0871be",
+      "git_blob_sha1": "54f6f11e765a854aba4b3edfa7d376140a77c042"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json",
+      "bytes": 6463,
+      "sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+      "git_blob_sha1": "154545d78a0f218a9d4222da30f9d93adf9f92a0"
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/JETNITY_GESAMTSTAND_RECONCILIATION_2026-11-18.md",
+      "bytes": 229820,
+      "sha256": "d4ce7520a0ba3738c0a15f17cfe111aae53fd13d26126226c0d72ddf73dd8e0d",
+      "git_blob_sha1": "b210df94d6365d5b2a42d8025433144a9c81a44e"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_AT_SOURCE_QUALIFICATION_PACKAGE_2026-11-22.md",
+      "bytes": 10476,
+      "sha256": "49a0de1716628a84f1c840b9d1f7591d85a1af16e49035c3a726812e347ddad7",
+      "git_blob_sha1": "d43fe3a24e49a6c3be99ad5cea4ab04960dedd8d"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_CHDE_CYCLE12_PACKAGE_2026-11-22.md",
+      "bytes": 4719,
+      "sha256": "e6aa2038271c0e4e65b4947bc1dad55c6faed60cb6be476720eb86c3193cd5bc",
+      "git_blob_sha1": "b6ff88275518b0b278c85822e5c898ed2445eede"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-two-packages-20261122/chde-503-root-cause-review.json",
+      "bytes": 35122,
+      "sha256": "4b6b1dd4063b06203655df8a5c2030c51f41d6832830d286492ac30c904445d4",
+      "git_blob_sha1": "4d55fa6f9724cdd7be28c15ce823167e2ccc592d"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-two-packages-20261122/independent-read-scope-review.json",
+      "bytes": 22747,
+      "sha256": "abed5b7f65c5d172b865985a4484b9443206923e8e013052253b316b606b4b59",
+      "git_blob_sha1": "eb0b7ee7a011dbe8e2a203517c774bd297fcd80f"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-two-packages-20261122/overall-plan-before-two-packages-86238b2c.md",
+      "bytes": 223548,
+      "sha256": "097bf4cc5bb94b6a5810a9d87528f0df89c2dcc47045e0cfe7b1ca81917a71aa",
+      "git_blob_sha1": "8c7f5022625781527e11db121c22f1df720ecb95"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-two-packages-20261122/preparation-review.json",
+      "bytes": 6712,
+      "sha256": "cca1d0cd8485b56cc4263312854f27d6b9c2664d37128cb3c1529c8dc83f2302",
+      "git_blob_sha1": "0634b8dfa893247fe84659e4a4b5009f3f06761b"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-two-packages-20261122/root-source-verification.json",
+      "bytes": 7952,
+      "sha256": "29137cb8ff687b82600b1d37ebddd4e0218a3fefa396f6ef8f1a913bcbf5bcfd",
+      "git_blob_sha1": "5a3f179621bd93edae9104486e0fbce5b55d1c92"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/00-at-qualification-bindings.READONLY.sql",
+      "bytes": 34083,
+      "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+      "git_blob_sha1": "0288b9afe80d7bb27114d21c9a7d33027258a495"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/CHANGE_AND_ROLLBACK.md",
+      "bytes": 11627,
+      "sha256": "a7f6e68925491385a4a39350d5acc10f17502d1e7350e517cf5249cf6474133e",
+      "git_blob_sha1": "2d2b41dd5eee5f51015a91e3fac9e194aab6a5f8"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/GO_SCOPE.md",
+      "bytes": 3360,
+      "sha256": "a87d197eed30a7abbadcc496d48f7aef5600bdc0e4e221c81b8432a329f15b01",
+      "git_blob_sha1": "07c8a2c7ec9e6afdafea21a13b5e55791558b71d"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/MANIFEST.json",
+      "bytes": 10205,
+      "sha256": "a73a433fb7090e59ba53b7f67100417504c2525c87cc79a34d48077c2e0871be",
+      "git_blob_sha1": "54f6f11e765a854aba4b3edfa7d376140a77c042"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/SOURCE_SCOPE.json",
+      "bytes": 8753,
+      "sha256": "ac6dd050a3bb78bc12ff3308471f36ca5932684a1483673b8abf719fa750003b",
+      "git_blob_sha1": "17e6e938cf22bf801a8997728532da054a917423"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+      "bytes": 31089,
+      "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+      "git_blob_sha1": "3622ad3246f05a39b15f0e2a479afd502f8b3031"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/01-WRITE-AND-ROLLBACK-PLAN.md",
+      "bytes": 15173,
+      "sha256": "82353efc6d49fa3f0632d4ee35aee11500a03255082cd4d9e305612011562ace",
+      "git_blob_sha1": "93f7091f572b81980def1ecd7c469d1c143e42bb"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/02-RESULT-CONTRACT.json",
+      "bytes": 7673,
+      "sha256": "1781ab9307d14e011f9c66d60000b81d764114ddb6c0d811bbc50519696965da",
+      "git_blob_sha1": "8ed31b10a361e68d99cd35b5042314ec08a2ceb6"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/03-SOURCE-EVIDENCE.json",
+      "bytes": 5011,
+      "sha256": "21ebbd187f4039a20641d8a0136e1af4509f0af7d1f5a1d19b4e3a58300fd297",
+      "git_blob_sha1": "b0f819928707e3008364e840b5726c1c6c50a355"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/04-OFFLINE-PREPARATION-CHECKS.json",
+      "bytes": 1558,
+      "sha256": "ac6ac1006bb75a943d565e36af42eb72e272867f883fd9ef415ec3f99922084a",
+      "git_blob_sha1": "66dec66fe9f7f5ebe1213513edaf7854b3437ef0"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/GO-SCOPE.md",
+      "bytes": 2554,
+      "sha256": "746189cb7f62cc4d2ce2d0aef461fb6fbe42665aba7acb8e83c46ae057f188c1",
+      "git_blob_sha1": "a7fa67eafbb1adc83210b3e24df461343d8e4950"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json",
+      "bytes": 6463,
+      "sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+      "git_blob_sha1": "154545d78a0f218a9d4222da30f9d93adf9f92a0"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/SHA256SUMS",
+      "bytes": 1420,
+      "sha256": "b74264a23e07804d5c372095e575addadf91fcb13ad0e82cd5de45ab0d4d5f0e",
+      "git_blob_sha1": "07f61d411fa8f6582b6fa5fed31506b2b5b7b85b"
+    }
+  ],
+  "self_hash_convention": "This manifest excludes itself. Its exact hash is carried by the delivery verification/commit record.",
+  "artifact_scope": "Two source/diagnosis read proposals plus future write/rollback specifications, immutable evidence review, and overall-plan addendum/archive. No executable install, rehearsal, fence or restart file."
+}

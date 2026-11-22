@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "package_id": "PROD_AT_SOURCE_QUALIFICATION_REVIEW_20261122",
+  "prepared_on": "2026-11-22",
+  "status": "READY_FOR_SOURCE_DECISION_AND_ONE_READ_ONLY_BINDING_READ_NOT_READY_FOR_INSTALLATION",
+  "executed": false,
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "target": {
+    "environment": "production",
+    "project_ref": "qscbgcdmivbbnzrcyegn",
+    "database": "postgres",
+    "role": "postgres",
+    "postgres_major": 17,
+    "baseline": "official_v3_guard_private.bg1_production_http_allocator_v4",
+    "canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "project_verified_outside_sql_before_start": true
+  },
+  "files": [
+    {
+      "path": "00-at-qualification-bindings.READONLY.sql",
+      "bytes": 34083,
+      "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064"
+    },
+    {
+      "path": "CHANGE_AND_ROLLBACK.md",
+      "bytes": 11627,
+      "sha256": "a7f6e68925491385a4a39350d5acc10f17502d1e7350e517cf5249cf6474133e"
+    },
+    {
+      "path": "GO_SCOPE.md",
+      "bytes": 3360,
+      "sha256": "a87d197eed30a7abbadcc496d48f7aef5600bdc0e4e221c81b8432a329f15b01"
+    },
+    {
+      "path": "SOURCE_SCOPE.json",
+      "bytes": 8753,
+      "sha256": "ac6dd050a3bb78bc12ff3308471f36ca5932684a1483673b8abf719fa750003b"
+    }
+  ],
+  "only_executable_file": "00-at-qualification-bindings.READONLY.sql",
+  "execution_plan": [
+    {
+      "order": 1,
+      "file": "00-at-qualification-bindings.READONLY.sql",
+      "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+      "invocations": 1,
+      "transaction": "REPEATABLE READ READ ONLY",
+      "ending": "ROLLBACK",
+      "no_retry": true,
+      "additional_read_allowed": false
+    }
+  ],
+  "limits": {
+    "maximum_transactions": 1,
+    "maximum_total_seconds": 300,
+    "statement_timeout_ms": 15000,
+    "transaction_timeout_ms": 20000,
+    "idle_in_transaction_session_timeout_ms": 20000,
+    "lock_timeout_ms": 500,
+    "result_rows": 1,
+    "result_utf8_bytes": 131072,
+    "metadata_relations": 9,
+    "function_rows_maximum": 16,
+    "source_pin_rows": 3,
+    "original_metadata_rows": 3,
+    "method_head_rows_maximum": 1,
+    "source_batches": 3,
+    "source_observation_rows_maximum": 9,
+    "raw_source_bodies_exported": 0,
+    "credentials_or_owner_identifiers_exported": 0,
+    "bg1_proof_rows_maximum": 1
+  },
+  "expected_result": {
+    "result": "PROD_AT_QUALIFICATION_BINDINGS_READONLY_OBSERVED",
+    "schema": 1,
+    "read_only": true,
+    "production_change": false,
+    "http_or_source_action_performed": false,
+    "method_approval_or_publication_performed": false,
+    "activation_authorized_by_this_read": false,
+    "source_ids": [
+      "bmeia-bern-how-to-apply",
+      "bmi-general-entry",
+      "bmi-visa-nationality-matrix"
+    ],
+    "relations_count": 9,
+    "source_pins_count": 3,
+    "preserved_originals_count": 3,
+    "method_head": "empty or exactly one typed row; absence, expiry, revoked state or uncorrelated receipt is a readiness blocker, never approval",
+    "bg1_proof": "empty or exactly one typed row; not fresh_complete means no activation readiness",
+    "source_metadata": "missing retained response or missing fresh batch is reported as unavailable, never fabricated or retried",
+    "hashes_and_columns": "review exact returned metadata against immutable repo implementation before any later writer is prepared"
+  },
+  "stop_conditions": [
+    "SHA-256 mismatch for manifest-approved file before execution",
+    "Target is not qscbgcdmivbbnzrcyegn or would require new login/2FA",
+    "SQL error, unknown shape, missing required relation or function, unexpected data type",
+    "Different native pinned function or installed parent baseline",
+    "Before-data catalog admission fails for a base table or exact built-in column shape",
+    "Actual recent source join exceeds nine rows or duplicate stored HTTP response exists",
+    "Unexpected source identity, duplicate method/proof row, excessive counts or response/output bounds",
+    "STOP_OUTPUT_CAP, ambiguous reply, transaction or wall-clock limit",
+    "An already installed qualification successor or unreviewed dependency requires a newly bound package"
+  ],
+  "failure_handling": "STOP; no retry or diagnosis; if a transaction remains open issue only a full ROLLBACK; do not count an unclear reply as success",
+  "authorization": {
+    "source_semantic_scope": "SOURCE_SCOPE.json",
+    "exact_owner_go_text": "GO_SCOPE.md",
+    "allowed_now_after_go": [
+      "Record the exact three-source CH→AT visa scope decision",
+      "Execute the single bound read-only file once",
+      "Evaluate and prepare a separate tested successor package"
+    ],
+    "forbidden": [
+      "Production DML/DDL/COMMIT/Fence",
+      "Source qualification flag writes",
+      "Method stage/approve/revoke or Owner impersonation",
+      "HTTP enqueue/collect/renew/import actions",
+      "Sequence nextval/setval",
+      "Role/ACL/secret/login/2FA changes",
+      "New costs",
+      "Publication",
+      "CH→DE cycle action"
+    ],
+    "customer_display_after_this_go": "derzeit nicht verfügbar",
+    "installation_files_included": false,
+    "owner_method_approval_included": false,
+    "requires_new_go_for_runtime_or_production_write": true
+  },
+  "verification": {
+    "level": "OFFLINE_STATIC_ONLY",
+    "sql_executed": false,
+    "dev_or_production_access": false,
+    "source_http_requests": false,
+    "checks": [
+      "JSON parses; three exact source hashes",
+      "File UTF-8 byte lengths and SHA-256",
+      "Exactly one READ ONLY transaction and terminal ROLLBACK",
+      "No DML/DDL/COMMIT, sequence allocation, project function invocation or source call in SQL",
+      "Catalog shape gate precedes first project-table data access; no raw GUC/default/constraint/trigger expression output",
+      "Actual source join and response uniqueness checked before payload",
+      "Explicit one-row method/BG1 LIMIT-2 gates and closed unique three-source lists before result construction"
+    ],
+    "hosted_syntax_or_runtime_pass_claimed": false,
+    "positive_at_renewal_pass_claimed": false
+  },
+  "baseline_order_rule": "This read changes no baseline. A later AT or CH→DE write must bind the actual predecessor left by the other package; no blind reseal and no implicit cross-package Go.",
+  "evidence": [
+    {
+      "path": "docs/OFFICIAL_TRUTH_BMEIA_FACHENTSCHEIDUNG_2026-11-21.md",
+      "bytes": 10926,
+      "sha256": "dbb17194292869de862fdd2d4ebc1723a5730d31dbc417b483dd61ce0f4c5ec8"
+    },
+    {
+      "path": "docs/evidence/official-truth-bmeia-restart-20261121/bmeia-input-metadata.json",
+      "bytes": 2196,
+      "sha256": "3ed65b283ead3cf886f5a15387d6df749156164191bd19996ad4e116542b1f66"
+    },
+    {
+      "path": "docs/OFFICIAL_TRUTH_PRODUCTION_HTTP_ALLOCATOR_OPERATIONAL_READ_2026-11-22.md",
+      "bytes": 9776,
+      "sha256": "1491039aa185a0034e87cba5f939f88620f9b09b9373608132eb0a77ba282ef3"
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-execution.json",
+      "bytes": 35876,
+      "sha256": "0ffe519ef1ee9c56c0c79d6e0478598149219638e1d93f66c1dff237313610b8"
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-http-allocator-cron-correction-20261122/20-production-http-id.INSTALL-COMMIT.sql",
+      "bytes": 106669,
+      "sha256": "1c6919aa7672de029f1c3efa22f26b7d83b7d0d1fb664c5da155a8ea0f783f3f"
+    }
+  ],
+  "code_references": [
+    {
+      "path": "scripts/db/official-truth-at-production-stage1/install.sql",
+      "git_blob_sha1": "029bc650d572e8c562e688d1043c07c4ca824887",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-at-method-v1/at-visitor-display.ts",
+      "git_blob_sha1": "a4783c4c9622a1a090dbfa8eab5e5098e6c02912",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-at-eu-ch-legal-review-dev-1/install.sql",
+      "git_blob_sha1": "94a5e664d8e3ac85331aebe0f8aeb1462ae25bc4",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-at-whole-originals-v2/candidate.sql",
+      "git_blob_sha1": "ad78d3ad7235aac22b83857107988d5dba9725c0",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-source-bound-renewal-dev-1/install.sql",
+      "git_blob_sha1": "6c0227091070ef35a57c7ba38d7a78a1abf31ae4",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-method-authority-1/install-candidate.sql",
+      "git_blob_sha1": "9c17260c202e430e4c779e47fee0a62c047c4d87",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    },
+    {
+      "path": "lib/readiness/official-truth-at-method-v1/at-v3-method-preparation.ts",
+      "git_blob_sha1": "00dbb3b9aa8344f596950b7c3c42b1775369e67a",
+      "commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca"
+    }
+  ],
+  "manifest_self_hash": "Not embedded. Compute SHA-256 over these exact bytes and quote outside manifest-bound files.",
+  "catalog_admission": {
+    "before_first_project_table_read": true,
+    "relation_shapes": 13,
+    "column_shapes": 126,
+    "allowed_relation_kind": "ordinary base table only; no inheritance",
+    "allowed_column_types": "exact built-in pg_catalog types, no custom/domain/array/typmod variation",
+    "values_redacted_to_hashes": [
+      "Function GUC configuration",
+      "Column default expressions",
+      "Constraint expressions",
+      "Trigger definitions"
+    ],
+    "actual_source_join_gate": "bounded 10-row precursor; >9, foreign source or duplicate batch/source aborts before payload",
+    "duplicate_http_response": "aborts before payload",
+    "fixed_source_list_gate": "Both three-row lists must contain the exact three allowed source IDs once each; otherwise abort before payload",
+    "one_row_output_gates": "Method head and identical fully correlated BG1 join each checked with LIMIT 2; >1 aborts before payload, zero remains a missing proof"
+  }
+}

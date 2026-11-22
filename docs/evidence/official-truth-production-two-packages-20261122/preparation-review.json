@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "prepared_at_utc": "2026-11-22T12:42:31.519894+00:00",
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "task": "Prepare two independent review packages only; do not execute. Separate future Owner Gos.",
+  "verdict": "READY_FOR_SEPARATE_SOURCE_DECISION_AND_READ_PHASE_REVIEW__NOT_READY_FOR_INSTALLATION_OR_RESTART",
+  "last_live_observation_at_utc": "2026-11-22T11:54:53.145099+00:00",
+  "fresh_live_status_claimed": false,
+  "new_database_or_workload_activity": {
+    "production_sql_calls": 0,
+    "dev_sql_calls": 0,
+    "native_postgres_parser_calls": 0,
+    "http_source_or_import_actions": 0,
+    "publisher_or_collector_or_audit_actions": 0,
+    "owner_actions": 0,
+    "role_or_permission_changes": 0,
+    "login_or_2fa_or_secret_changes": 0,
+    "new_costs": 0,
+    "ci_dispatches": 0,
+    "merges_or_deployments": 0
+  },
+  "packages": [
+    {
+      "id": "PROD_AT_SOURCE_QUALIFICATION_REVIEW_20261122",
+      "manifest": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/MANIFEST.json",
+        "bytes": 10205,
+        "sha256": "a73a433fb7090e59ba53b7f67100417504c2525c87cc79a34d48077c2e0871be",
+        "git_blob_sha1": "54f6f11e765a854aba4b3edfa7d376140a77c042"
+      },
+      "sql": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-at-source-qualification-review-20261122/00-at-qualification-bindings.READONLY.sql",
+        "bytes": 34083,
+        "sha256": "30ff328d1901297b1a76ba3ddabb9ebc6004de95b764ce989e45acc238c9a064",
+        "git_blob_sha1": "0288b9afe80d7bb27114d21c9a7d33027258a495"
+      },
+      "authorization_received": false,
+      "executable_phase": "Exactly one READ ONLY binding read after its own Go; source scope decision recorded without a database mutation.",
+      "source_scope": "Three exact official editions; CH citizenship, valid ordinary Swiss passport, direct entry AT, visa exemption only.",
+      "customer_after_this_go": "derzeit nicht verfügbar",
+      "future_activation": "Requires the specified append-only qualified source/method/runtime lineage, actual positive and isolated negative Dev proof, real Owner/AAL2 path and fresh natural BG1 successor proof.",
+      "installation_files_included": false
+    },
+    {
+      "id": "PROD_CHDE_CYCLE12_REVIEW_PACKAGE_20261122",
+      "manifest": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/MANIFEST.json",
+        "bytes": 6463,
+        "sha256": "7110bc2fb5b77638acaf20f35044faddf8e2c91df469c197e35c1a273ae07f1f",
+        "git_blob_sha1": "154545d78a0f218a9d4222da30f9d93adf9f92a0"
+      },
+      "sql": {
+        "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/production-chde-cycle12-review-20261122/00-cycle12-bindings.READONLY.sql",
+        "bytes": 31089,
+        "sha256": "e642250349a993d8f70c805e52e02646d957301ec0e6f8951dbc85d32559535f",
+        "git_blob_sha1": "3622ad3246f05a39b15f0e2a479afd502f8b3031"
+      },
+      "authorization_received": false,
+      "executable_phase": "Exactly one READ ONLY Cycle12 identity/authority binding read after its own Go.",
+      "terminal_stop_proven": "Eight resume failures then retry_budget_exhausted/operator_review_required.",
+      "original_http503_failure_stage_proven": false,
+      "cycle12_expired_lease_join_proven": false,
+      "production_mutating_cas_authority_proven": false,
+      "closure_does_not_open_dispatch_gate": true,
+      "restart_requires_separate_one_cycle_authorization": true,
+      "installation_files_included": false
+    }
+  ],
+  "shared_parent_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+  "ordering": "These read phases do not alter the shared parent. After any later state/catalog installation, rebind the other write package to the actual new parent and obtain a separate Go; no blind reseal.",
+  "rollback": "Prepared reads always ROLLBACK. Future writes need atomic rollback before COMMIT; unclear COMMIT means STOP/no retry; after COMMIT only a separately bound protective successor/fence, preserving old evidence and IDs. No universal restore claim.",
+  "archive_clarifications": [
+    "expired_research_leases counted all leased-expired subjects without kind/CH-DE scope, so it proves one unbound job lease only.",
+    "Dispatch39/unresolved was first resume; Dispatch40/unavailable second. Old archives remain untouched."
+  ],
+  "root_review_actions": [
+    "Reviewed both reports, source scope, precise Go scopes, plans and manifests against the user hold.",
+    "Independently refetched and verified18 immutable repository code/evidence inputs.",
+    "Checked AT fixed false qualification constraints and exact Swiss visa display text.",
+    "Checked CH-DE signed response classification and scheduler terminal cap.",
+    "Required a separate default-closed restart gate so closure alone cannot cause the next Cron dispatch.",
+    "Verified both final manifest chains and the complete previous overall-plan prefix."
+  ],
+  "independent_scope_review": {
+    "path": "docs/evidence/official-truth-production-two-packages-20261122/independent-read-scope-review.json",
+    "bytes": 22747,
+    "sha256": "abed5b7f65c5d172b865985a4484b9443206923e8e013052253b316b606b4b59",
+    "git_blob_sha1": "eb0b7ee7a011dbe8e2a203517c774bd297fcd80f"
+  },
+  "root_source_verification": {
+    "path": "docs/evidence/official-truth-production-two-packages-20261122/root-source-verification.json",
+    "bytes": 7952,
+    "sha256": "29137cb8ff687b82600b1d37ebddd4e0218a3fefa396f6ef8f1a913bcbf5bcfd",
+    "git_blob_sha1": "5a3f179621bd93edae9104486e0fbce5b55d1c92"
+  },
+  "cause_review": {
+    "path": "docs/evidence/official-truth-production-two-packages-20261122/chde-503-root-cause-review.json",
+    "bytes": 35122,
+    "sha256": "4b6b1dd4063b06203655df8a5c2030c51f41d6832830d286492ac30c904445d4",
+    "git_blob_sha1": "4d55fa6f9724cdd7be28c15ce823167e2ccc592d"
+  },
+  "final_manifest_bound_files_verified": 9,
+  "open_static_scope_blockers": 0,
+  "hosted_sql_or_runtime_pass_claimed": false,
+  "previous_one_time_gos_reused": false,
+  "overall_plan_archive": {
+    "path": "docs/evidence/official-truth-production-two-packages-20261122/overall-plan-before-two-packages-86238b2c.md",
+    "bytes": 223548,
+    "sha256": "097bf4cc5bb94b6a5810a9d87528f0df89c2dcc47045e0cfe7b1ca81917a71aa",
+    "git_blob_sha1": "8c7f5022625781527e11db121c22f1df720ecb95"
+  },
+  "original_overall_prefix_unchanged": true,
+  "persistence_plan": "Documentation/review artifacts only on existing feature branch with skip-ci commit and compare-and-swap ref update; no main merge or publication."
+}

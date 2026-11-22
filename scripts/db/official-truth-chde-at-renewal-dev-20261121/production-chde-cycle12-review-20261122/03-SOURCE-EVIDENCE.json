@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "prepared_on": "2026-11-22",
+  "source_commit": "86238b2c34011554c05353ddf6f9f764e92fd6ca",
+  "runtime_evidence_observed_at": "2026-11-22T11:54:53.145099+00:00",
+  "runtime_evidence_files": [
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/01-validated-metadata.json",
+      "sha256": "f3481330f3fe7ef40cbd3a88bda2206b36e7579cd17d99cc17a33413b5a351c9",
+      "bytes": 5546
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/02-execution.json",
+      "sha256": "0ffe519ef1ee9c56c0c79d6e0478598149219638e1d93f66c1dff237313610b8",
+      "bytes": 35876
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/runtime-result.json",
+      "sha256": "f569e14e007e94447aa55c1406f2023ea9e5db705ac565406277e1936fa95cae",
+      "bytes": 41702
+    },
+    {
+      "path": "docs/evidence/official-truth-production-http-allocator-operational-read-20261122/execution-manifest.json",
+      "sha256": "2c903644831656495687f031fd81a4eb1ebdf906e1597af65f7e1133065744cf",
+      "bytes": 6934
+    }
+  ],
+  "repository_sources": [
+    {
+      "path": "scripts/db/official-truth-v3-production-import-schedule-1/core.sql",
+      "sha256": "e2ddbf4713d5b43fcb46ab791674515e7bd6c39dcdf85b92fc628503456574a0",
+      "purpose": "Scheduler terminal-state contract; tick_v1 native definition was independently observed as 57b101b3551b64e95bc68e6650d642ba34829fccb84bc081b7ad606879c176fe."
+    },
+    {
+      "path": "lib/readiness/official-truth-product-v3/jobs/selected-claim.ts",
+      "git_blob_sha": "acf37bcf16c1d8479f2b01ce54619a7c189363e5",
+      "sha256": "29be658ca64918c1f7d2d8f50041eca2395b5ccbbfd787dd988a7ea463914dd1",
+      "purpose": "Deterministic refresh and retained claim identities; independently matched against SQL."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-durable-jobs-1/install-candidate.sql",
+      "git_blob_sha": "84b07f5f2730b1df5a151042f163ce71af7c66b4",
+      "purpose": "Native subjects, queue operations, execution starts/results/dispositions column shapes."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-intake-store-1/install-candidate.sql",
+      "git_blob_sha": "faac74e6ab56072f01d941d24a8be28aa7895d94",
+      "purpose": "Intake metadata and excluded credential columns."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-hosted-result-store-1/install-candidate.sql",
+      "git_blob_sha": "bb98fa79f46faa555632b669e97bfcbf9bf99220",
+      "purpose": "Result heads, verification, archived original digests; no body output."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-background-guard-1/parts/state.sql",
+      "git_blob_sha": "cf63bd22ab1bb8dbc710adf9e557566b33d4d453",
+      "purpose": "Owner operation metadata; actor_id and receipt contents are not output."
+    },
+    {
+      "path": "scripts/db/official-truth-v3-customer-information-1/atomic-claim-definitions.sql",
+      "git_blob_sha": "4b36bb6ff8b26516dfa01579265d47022785a15c",
+      "purpose": "Native API/CAS candidate signatures; metadata existence is not mutation authority."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-owner-retirement-v6.CANDIDATE-ROLLBACK.sql",
+      "git_blob_sha": "d8f562d3916a3fa4ca2f7d15f7340ba2b3db9d46",
+      "purpose": "Pattern only; exact Owner receipt/CAS/archive preservation; temporary Dev role grant explicitly excluded from Production plan."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-duplicate-grantor-v7.CANDIDATE-ROLLBACK.sql",
+      "git_blob_sha": "ddb603aac2b203e7ff4e73a004351fec77e17d8a",
+      "purpose": "Dev grantor repair lesson; Production role/membership state must remain unchanged."
+    },
+    {
+      "path": "scripts/db/official-truth-chde-at-renewal-dev-20261121/dev-cycle5-independent-readback.READONLY.sql",
+      "git_blob_sha": "89d5eb557490e2dba6afa6e3b8714a7762cfe18e",
+      "purpose": "Independent confirmation pattern; Dev counters/Owner receipts are not reused for Production."
+    }
+  ],
+  "established_facts": [
+    "Cycle12 retry budget exhausted: one start HTTP200/queued plus eight resume HTTP503 responses.",
+    "Dispatch39 unresolved, Dispatch40 unavailable, Dispatch41-46 unresolved.",
+    "Scheduler operator_review_required blocks new cycles even with current BG1 and repaired HTTP IDs.",
+    "The expired-lease aggregate did not filter kind and has not been bound to CHDE/Cycle12."
+  ],
+  "not_established": [
+    "The original request-level 503 cause and matching deployed source revision.",
+    "Which expired subject/claim/intake corresponds to Cycle12.",
+    "An existing Production-authorized native CAS closure without role or privilege changes.",
+    "Any Production Owner approval for closure/restart or positive legal/source publication."
+  ],
+  "production_or_dev_sql_executed_during_preparation": false
+}
