@@ -866,13 +866,38 @@ SELECT (SELECT count(*) FROM jetnity_at_full_rehearsal.at_batch_switch_baseline_
 -- New Dev-only append-only Production-v4 source + BG1 precursor setup.
 ALTER TABLE jetnity_at_full_rehearsal.source_pins_v1 ADD COLUMN research_only boolean NOT NULL DEFAULT true,
  ADD COLUMN source_qualified boolean NOT NULL DEFAULT false;
-ALTER TABLE jetnity_at_full_rehearsal.first_originals_v1 ADD COLUMN legal_source_approved boolean NOT NULL DEFAULT false,
+ALTER TABLE jetnity_at_full_rehearsal.first_originals_v1 ADD COLUMN source_state text NOT NULL DEFAULT 'unchanged_exact',
+ ADD COLUMN legal_source_approved boolean NOT NULL DEFAULT false,
  ADD COLUMN customer_rule_approved boolean NOT NULL DEFAULT false;
 UPDATE jetnity_at_full_rehearsal.first_originals_v1 old
  SET raw_body=research.original_body,raw_sha=encode(sha256(research.original_body),'hex'),
  raw_bytes=octet_length(research.original_body)
  FROM official_v3_at_private.whole_originals_v2 research
  WHERE old.source_id=research.source_id;
+-- Reproduce the observed immutable Production V1 BMEIA original: legitimate
+-- 19 asset timestamp variants; bytes unchanged, raw_sha different, canonical pinned.
+WITH shifted AS (
+ SELECT source_id,convert_to(regexp_replace(convert_from(raw_body,'UTF8'),
+  '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")',E'\\1'||'0000000000'||E'\\2','g'),'UTF8') AS changed_body
+ FROM jetnity_at_full_rehearsal.first_originals_v1 WHERE source_id='bmeia-bern-how-to-apply'
+)
+UPDATE jetnity_at_full_rehearsal.first_originals_v1 o
+SET raw_body=s.changed_body,raw_sha=encode(sha256(s.changed_body),'hex'),
+ raw_bytes=octet_length(s.changed_body),source_state='unchanged_asset_version_only'
+FROM shifted s WHERE o.source_id=s.source_id;
+DO $shadow_historic_bmeia_asset$
+BEGIN
+ IF NOT EXISTS(SELECT 1 FROM jetnity_at_full_rehearsal.first_originals_v1 o
+ JOIN jetnity_at_full_rehearsal.source_pins_v1 p USING(source_id)
+ WHERE o.source_id='bmeia-bern-how-to-apply'
+ AND o.raw_sha<>p.original_sha AND o.raw_bytes=p.original_bytes
+ AND o.source_state='unchanged_asset_version_only'
+ AND (SELECT count(*) FROM regexp_matches(convert_from(o.raw_body,'UTF8'),'((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")','g'))=19
+ AND encode(sha256(convert_to(regexp_replace(convert_from(o.raw_body,'UTF8'),
+ '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")',E'\\1TIMESTAMP\\2','g'),'UTF8')),'hex')=p.canonical_sha)
+ THEN RAISE EXCEPTION 'DEV_SHADOW_BMEIA_V1_ASSET_CANONICAL_NOT_EXACT'; END IF;
+END $shadow_historic_bmeia_asset$;
+
 ALTER TABLE jetnity_at_full_rehearsal.heads_v1 ADD COLUMN status text NOT NULL DEFAULT 'approved';
 UPDATE jetnity_at_full_rehearsal.heads_v1 SET revision=2,epoch=2,
  method_digest='fe161a865c50d26be4a41c1b122fcd14efb3b39bc9100fd66b13304dfca07a4e',
@@ -957,8 +982,34 @@ SELECT encode(sha256(convert_to(v.catalog::text,'UTF8')),'hex'),
 DO $native_pre$
 BEGIN
  IF (SELECT count(*) FROM jetnity_at_full_rehearsal.source_pins_v1)<>3
- OR (SELECT count(*) FROM jetnity_at_full_rehearsal.first_originals_v1 o JOIN jetnity_at_full_rehearsal.source_pins_v1 p USING(source_id)
- WHERE o.raw_sha=p.original_sha AND o.raw_bytes=p.original_bytes AND NOT o.legal_source_approved AND NOT o.customer_rule_approved)<>3
+ OR (SELECT count(*) FROM jetnity_at_full_rehearsal.source_pins_v1 p
+    JOIN jetnity_at_full_rehearsal.first_originals_v1 o USING(source_id)
+    WHERE p.research_only AND NOT p.source_qualified
+      AND o.raw_bytes=p.original_bytes AND encode(sha256(o.raw_body),'hex')=o.raw_sha
+      AND NOT o.legal_source_approved AND NOT o.customer_rule_approved
+      AND (
+        -- BMI originals must stay byte-identical and strictly unchanged.
+        (p.source_id IN ('bmi-visa-nationality-matrix','bmi-general-entry')
+          AND o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+        OR
+        -- The historic BMEIA original may legitimately differ only in the
+        -- 19 theme asset timestamps, as accepted by the existing V1 collector.
+        -- Recompute the pinned canonical checksum: never silently relabel
+        -- a changed rule, update historical source bytes, or publish a fact.
+        (p.source_id='bmeia-bern-how-to-apply'
+          AND p.normalization='bmeia-theme-assets-v1'
+          AND p.canonical_sha='b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
+          AND (
+            (o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+            OR
+            (o.source_state='unchanged_asset_version_only'
+              AND (SELECT count(*) FROM regexp_matches(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")','g'))=19
+              AND encode(sha256(convert_to(regexp_replace(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")',
+                    E'\\1TIMESTAMP\\2','g'),'UTF8')),'hex')=p.canonical_sha)
+          ))
+      ))<>3
  OR (SELECT count(*) FROM jetnity_at_full_rehearsal.cron_job)<>3
  OR (SELECT count(*) FROM jetnity_at_full_rehearsal.bg1_production_http_allocator_v4)<>1
  OR (SELECT transport_metadata IS DISTINCT FROM catalog->'transport:production_http_id_allocator_v4' FROM jetnity_at_full_rehearsal.bg1_production_http_allocator_v4 WHERE singleton)
@@ -1024,9 +1075,32 @@ BEGIN
   OR (SELECT count(*) FROM jetnity_at_full_rehearsal.first_originals_v1)<>3
   OR (SELECT count(*) FROM jetnity_at_full_rehearsal.source_pins_v1 p
     JOIN jetnity_at_full_rehearsal.first_originals_v1 o USING(source_id)
-    WHERE p.research_only AND NOT p.source_qualified AND o.raw_sha=p.original_sha
+    WHERE p.research_only AND NOT p.source_qualified
       AND o.raw_bytes=p.original_bytes AND encode(sha256(o.raw_body),'hex')=o.raw_sha
-      AND NOT o.legal_source_approved AND NOT o.customer_rule_approved)<>3
+      AND NOT o.legal_source_approved AND NOT o.customer_rule_approved
+      AND (
+        -- BMI originals must stay byte-identical and strictly unchanged.
+        (p.source_id IN ('bmi-visa-nationality-matrix','bmi-general-entry')
+          AND o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+        OR
+        -- The historic BMEIA original may legitimately differ only in the
+        -- 19 theme asset timestamps, as accepted by the existing V1 collector.
+        -- Recompute the pinned canonical checksum: never silently relabel
+        -- a changed rule, update historical source bytes, or publish a fact.
+        (p.source_id='bmeia-bern-how-to-apply'
+          AND p.normalization='bmeia-theme-assets-v1'
+          AND p.canonical_sha='b696180d20ac97333f54f0bb6fc3dc55481884ac3663d3dcb67a7a3367052a55'
+          AND (
+            (o.source_state='unchanged_exact' AND o.raw_sha=p.original_sha)
+            OR
+            (o.source_state='unchanged_asset_version_only'
+              AND (SELECT count(*) FROM regexp_matches(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")','g'))=19
+              AND encode(sha256(convert_to(regexp_replace(convert_from(o.raw_body,'UTF8'),
+                    '((?:href|src)="/typo3conf/ext/theme_bmeia/Resources/Public/[^"?]*[?])[0-9]{10}(")',
+                    E'\\1TIMESTAMP\\2','g'),'UTF8')),'hex')=p.canonical_sha)
+          ))
+      ))<>3
   OR NOT EXISTS(SELECT 1 FROM jetnity_at_full_rehearsal.source_pins_v1
     WHERE source_id='bmi-visa-nationality-matrix' AND original_sha=
       'fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778'
