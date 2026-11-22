@@ -227,7 +227,7 @@ BEGIN
  SELECT q.source_id,b,convert_to(netresp.content,'UTF8')
  FROM jetnity_at_prod_v1_fixture_20261122.ch_source_qualifications_v2 q
  JOIN jetnity_at_prod_v1_fixture_20261122.watch_requests_v1 req ON req.source_id=q.source_id AND req.batch_id=b
- JOIN jetnity_at_prod_v1_fixture_20261122.watch_observations_v1 obs USING(batch_id,source_id)
+ JOIN jetnity_at_prod_v1_fixture_20261122.watch_observations_v1 obs ON obs.batch_id=req.batch_id AND obs.source_id=req.source_id
  JOIN jetnity_at_prod_v1_fixture_20261122.mock_http_response netresp ON netresp.id=req.request_id
  WHERE netresp.status_code=200 AND netresp.timed_out IS FALSE AND netresp.error_msg IS NULL
   AND encode(sha256(convert_to(netresp.content,'UTF8')),'hex')=q.accepted_sha
