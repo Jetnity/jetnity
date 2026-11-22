@@ -320,7 +320,7 @@ BEGIN
  END LOOP;
  RETURN inserted;
 EXCEPTION WHEN OTHERS THEN RETURN 0;
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION public.jetnity_source_bound_at_visa_v1(p_citizenship_country_code text)
  RETURNS jsonb
@@ -412,7 +412,7 @@ BEGIN
   'expiresAt',to_char(fact.expires_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
   'sourceUrls',source_links);
 EXCEPTION WHEN OTHERS THEN RETURN unavailable;
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION official_v3_guard_private.catalog_status_v1()
  RETURNS jsonb
@@ -556,7 +556,7 @@ WITH namespaces AS (
 ))
 )
 SELECT jsonb_object_agg(key,value ORDER BY key COLLATE "C") FROM entries
-$function$
+$function$;
 
 CREATE TABLE official_v3_guard_private.bg1_dev_at_ch_source_v9(
  singleton boolean PRIMARY KEY DEFAULT true CHECK(singleton),
@@ -733,7 +733,7 @@ BEGIN
    FROM official_v3_at_private.ch_source_qualifications_v4)
  OR at_source_v9.catalog IS DISTINCT FROM official_v3_guard_private.catalog_status_v1() THEN
     RAISE EXCEPTION 'bg1 recovery protected catalog changed' USING ERRCODE='P7905'; END IF;
-END $function$
+END $function$;
 
 CREATE OR REPLACE FUNCTION official_v3_guard_private.require_open_v1()
  RETURNS bigint
@@ -781,7 +781,7 @@ BEGIN
       AND run.due_at=s.last_due AND run.started_at=s.last_started AND run.proof_started_at=s.last_proof_started AND run.finished_at=s.last_finished) THEN
     RAISE EXCEPTION 'bg1 recovery fresh full proof required' USING ERRCODE='P7902'; END IF;
   RETURN s.incident_generation;
-END $function$
+END $function$;
 
 UPDATE official_v3_guard_private.bg1_dev_at_ch_source_v9
  SET catalog=official_v3_guard_private.catalog_status_v1() WHERE singleton;
