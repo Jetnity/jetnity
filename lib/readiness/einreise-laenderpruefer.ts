@@ -44,7 +44,7 @@ function ergebnisLesen(result: V3VisitorView['cells'][number]['results'][number]
 }
 
 /** The visible country is the answered input, never the form field that may already have moved. */
-export function einreisePrueferSicht(state: V3VisitorUiState): {
+export function einreisePrueferSicht(state: V3VisitorUiState, reisendeJePass: Readonly<Record<string, string>> = {}): {
   zielCode: string
   zielLabel: string
   citizenshipCodes: readonly string[]
@@ -59,6 +59,7 @@ export function einreisePrueferSicht(state: V3VisitorUiState): {
     return {
       landCode: pass,
       landLabel: landAnzeigeText(pass),
+      reisende: reisendeJePass[pass],
       ergebnisse: zelle ? zelle.results.map(ergebnisLesen) : [],
     }
   })

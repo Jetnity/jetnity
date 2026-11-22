@@ -8,6 +8,7 @@
 // serverseitig bestätigte `Ort`-Fakten.
 
 import type { Ort } from '@/lib/places/domain'
+import { ortTitelName } from '@/lib/places/titel-name'
 import {
   createDayPositions,
   type Tagesanspruch,
@@ -61,7 +62,7 @@ export function createZieleGraph(
   const einzelziel = destinations.length === 1
 
   return {
-    title: destinations[0].name,
+    title: ortTitelName(destinations[0]),
     einzelziel,
     assignmentMode: zuordnung.mode,
     stages: destinations.map((ziel, index) => ({

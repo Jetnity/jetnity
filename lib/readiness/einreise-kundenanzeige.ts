@@ -501,7 +501,7 @@ function themaBekannt(id: string): id is V3CustomerInformationTopic {
 export function einreiseAusBesucher(input: {
   zielCode: string
   zielLabel: string
-  zellen: readonly { landCode: string; landLabel: string; ergebnisse: readonly EinreiseBesucherErgebnis[] }[]
+  zellen: readonly { landCode: string; landLabel: string; reisende?: string; ergebnisse: readonly EinreiseBesucherErgebnis[] }[]
 }): EinreiseAnzeige {
   const paare = input.zellen.map((zelle) => {
     const lichter: EinreiseAmpel[] = []
@@ -545,7 +545,7 @@ export function einreiseAusBesucher(input: {
     const belegt = new Set(themen.map((eintrag) => eintrag.id))
     return {
       id: `${zelle.landCode}:${input.zielCode}`,
-      reisende: zelle.landLabel,
+      reisende: zelle.reisende ?? zelle.landLabel,
       dokument: landName(zelle.landCode, COUNTRY_UI_LOCALE) || zelle.landLabel,
       land: landName(input.zielCode, COUNTRY_UI_LOCALE) || input.zielLabel,
       landCode: input.zielCode,

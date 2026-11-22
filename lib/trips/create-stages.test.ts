@@ -37,6 +37,14 @@ const ROM = ort({
   lat: 41.89193,
   lon: 12.51133,
 })
+const LISSABON = ort({
+  id: 'geonames:2267057',
+  name: 'Lisbon',
+  country: 'Portugal',
+  countryCode: 'PT',
+  lat: 38.71667,
+  lon: -9.13333,
+})
 const ZEITRAUM = { startDate: '2026-09-12', endDate: '2026-09-17' }
 
 describe('TW6-B Create-Stages – bestehende trip_stages', () => {
@@ -51,6 +59,14 @@ describe('TW6-B Create-Stages – bestehende trip_stages', () => {
     assert.equal(graph.stages[0]?.placeId, PARIS.id)
     assert.equal(graph.stages[0]?.arrivalDate, ZEITRAUM.startDate)
     assert.equal(graph.stages[0]?.departureDate, ZEITRAUM.endDate)
+  })
+
+  test('der Titel nennt das erste Ziel deutsch, die Etappe behält den Katalognamen', () => {
+    const graph = createZieleGraph([LISSABON, PARIS], ZEITRAUM)
+
+    assert.equal(graph.title, 'Lissabon')
+    assert.equal(graph.stages[0]?.name, 'Lisbon')
+    assert.equal(graph.stages[1]?.name, 'Paris')
   })
 
   test('drei bestätigte Ziele behalten Eingabereihenfolge und Place-Fakten', () => {

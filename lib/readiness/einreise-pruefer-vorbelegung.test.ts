@@ -4,7 +4,7 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 import EinreiseLaenderpruefer from '@/components/readiness/EinreiseLaenderpruefer'
-import { einreisePrueferVorbelegung } from '@/lib/readiness/einreise-pruefer-vorbelegung'
+import { einreisePrueferVorbelegung, reisendeJeLand, reisendeMitPass } from '@/lib/readiness/einreise-pruefer-vorbelegung'
 import type { TravellerSlot } from '@/lib/readiness/party'
 import type { TripTraveller } from '@/types/trips'
 
@@ -90,4 +90,35 @@ test('öffentlicher Prüfer ohne Reise bleibt unverändert leer', () => {
   const html = renderToStaticMarkup(React.createElement(EinreiseLaenderpruefer))
   assert.match(html, /Wähle das Zielland und den Pass/)
   assert.doesNotMatch(html, /data-einreise-vorbelegung|data-einreise-reiseziele|vorausgefüllt/)
+})
+
+test('Pass-Zuordnung: wer welchen Pass trägt, Doppelpässe stehen bei beiden, ohne Treffer keine Angabe', () => {
+  const vorbelegung = einreisePrueferVorbelegung({
+    laender: ['PT'],
+    slots: [slot(1, person('traveller:1', ['RS', 'CH'])), slot(2, person('traveller:2', ['CH'])), slot(3, person('traveller:3', ['CH'])), slot(4, null)],
+  })
+  assert.equal(reisendeMitPass(vorbelegung.personen, 'CH'), 'Reisende 1, Reisende 2 und Reisende 3')
+  assert.equal(reisendeMitPass(vorbelegung.personen, 'RS'), 'Reisende 1')
+  assert.equal(reisendeMitPass(vorbelegung.personen, 'US'), null)
+  assert.equal(reisendeMitPass([], 'CH'), null)
+  assert.deepEqual(reisendeJeLand(vorbelegung.personen), { CH: 'Reisende 1, Reisende 2 und Reisende 3', RS: 'Reisende 1' })
+})
+
+test('eingebetteter Prüfer: jeder Pass nennt seine Reisenden, der Feldname bleibt «Pass n»', () => {
+  const vorbelegung = einreisePrueferVorbelegung({
+    laender: ['PT'],
+    slots: [slot(1, person('traveller:1', ['RS', 'CH'])), slot(2, person('traveller:2', ['CH']))],
+  })
+  const html = renderToStaticMarkup(React.createElement<PrueferProps>(EinreiseLaenderpruefer, { eingebettet: true, vorbelegung }))
+  assert.match(html, /Pass 1<\/span>[\s\S]*?Gehört zu: Reisende 1 und Reisende 2/)
+  assert.match(html, /Pass 2<\/span>[\s\S]*?Gehört zu: Reisende 1</)
+  assert.match(html, /Unter jedem Pass steht, wem er gehört/)
+})
+
+test('öffentlicher Prüfer und freie Länderwahl: keine erfundene Zuordnung', () => {
+  const ohne = renderToStaticMarkup(React.createElement(EinreiseLaenderpruefer))
+  assert.doesNotMatch(ohne, /Gehört zu|keiner reisenden Person/)
+  const vorbelegung = einreisePrueferVorbelegung({ laender: ['PT'], slots: [slot(1, null), slot(2, null)] })
+  const leer = renderToStaticMarkup(React.createElement<PrueferProps>(EinreiseLaenderpruefer, { eingebettet: true, vorbelegung }))
+  assert.doesNotMatch(leer, /Gehört zu|keiner reisenden Person/)
 })

@@ -30,6 +30,26 @@ const STARK_RANG = 2_800
 const MIN_RANG_BEI_STARK = 1_500
 const MIN_RANG = 200
 
+/**
+ * Bedeutung eines Orts bei gleich guter Namensübereinstimmung. Der Bestand
+ * enthält über 175 000 Inseln, fast alle winzig und ohne Einwohnerzahl. Ohne
+ * diese Stufen schlägt eine Mini-Insel mit dem Alias «Rom» die Hauptstadt, weil
+ * der Inselbonus (110) knapp über dem Stadtbonus (100) liegt. Die Summe bleibt
+ * unter dem Abstand zwischen exaktem Namen und Namensanfang (1 500): ein grosser
+ * Ort überholt nie eine bessere Namensübereinstimmung.
+ */
+const BEDEUTUNG_STUFEN: ReadonlyArray<readonly [einwohnerAb: number, bonus: number]> = [
+  [1_000_000, 200],
+  [250_000, 160],
+  [100_000, 120],
+  [30_000, 80],
+  [10_000, 45],
+  [1_000, 15],
+]
+const SITZ_BONUS: Readonly<Record<string, number>> = { PPLC: 40, PPLA: 20 }
+/** Der eigene Name schlägt einen fremden Alias gleicher Stufe («Porto» vor «Bordeaux»). */
+const EIGENER_NAME_BONUS = 40
+
 export function sucheSicher(wert: string): string {
   return [...wert].filter((zeichen) => zeichen >= ' ' && zeichen !== '\u007f')
     .join('').replace(/[%_\\*"]/g, '').trim()
@@ -145,6 +165,16 @@ function schluesselwortGenau(keywords: string | readonly string[] | null | undef
   return schluesselwoerter(keywords).some((teil) => gleichGefaltet(teil, suche))
 }
 
+/** Kleingeschriebene lateinische Alias-Tokens sind maschinelle Umschriften («sylt», «bai lin»), keine Ortsnamen. */
+function istUmschrift(teil: string): boolean {
+  return teil === teil.toLowerCase() && /^[\p{Script=Latin}\s'’.-]+$/u.test(teil)
+}
+
+function ortAliase(ort: Ort): string | readonly string[] | null {
+  if (ort.typ === 'country') return ort.keywords
+  return schluesselwoerter(ort.keywords).filter((teil) => !istUmschrift(teil))
+}
+
 function keywordAlsWort(keywords: string | readonly string[] | null | undefined, suche: string): boolean {
   return schluesselwoerter(keywords).some(
     (wort) => gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche),
@@ -174,6 +204,13 @@ function typBonus(ort: Ort, rolle: OrtRolle): number {
   return 0
 }
 
+function bedeutungsBonus(ort: Ort, suche: string): number {
+  if (ort.typ === 'country' || ort.typ === 'airport') return 0
+  const stufe = BEDEUTUNG_STUFEN.find(([ab]) => (ort.population ?? 0) >= ab)?.[1] ?? 0
+  const eigenerName = gleichGefaltet(ort.name, suche) || gleichGefaltet(ort.sourceName ?? '', suche)
+  return stufe + (SITZ_BONUS[ort.featureCode ?? ''] ?? 0) + (eigenerName ? EIGENER_NAME_BONUS : 0)
+}
+
 function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   const raw = suche.trim()
   if (!raw || sucheIstPlatzhalter(raw)) return 0
@@ -182,7 +219,8 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
 
   if (ort.iata && ort.iata === up) treffer += 10_000
 
-  const aliasGenau = schluesselwortGenau(ort.keywords, raw)
+  const aliase = ortAliase(ort)
+  const aliasGenau = schluesselwortGenau(aliase, raw)
   const landAliasAlsName = rolle === 'ziel' && istExaktesLandAlias(ort, raw)
   let nameScore = Math.max(namensRangMitWortanfang(ort.name, raw), namensRangMitWortanfang(ort.sourceName, raw), ort.typ === 'country' ? namensRangMitWortanfang(ortLokalerName(ort), raw) : 0)
   if (ort.typ === 'country' && ort.countryCode && passendeLandCodes(raw).includes(ort.countryCode)) {
@@ -196,7 +234,7 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   treffer += nameScore
 
   if (gleichGefaltet(ort.region, raw)) treffer += 180
-  if (keywordAlsWort(ort.keywords, raw) && (!aliasGenau || !aliasIstOrtsname)) {
+  if (keywordAlsWort(aliase, raw) && (!aliasGenau || !aliasIstOrtsname)) {
     treffer = Math.max(treffer, aliasIstOrtsname ? 3_000 : (aliasGenau ? 700 : 220))
   }
   if (treffer === 0) return 0
@@ -206,7 +244,9 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
     if (gleichGefaltet(ort.region, raw) || keywordAlsWort(ort.keywords, raw)) treffer += 1_600
   }
 
-  return treffer + typBonus(ort, rolle)
+  // Nur der Gleichstand exakter Namen und Aliase wird nach Bedeutung geordnet.
+  const bedeutung = treffer >= EXAKTER_NAMENS_RANG ? bedeutungsBonus(ort, raw) : 0
+  return treffer + typBonus(ort, rolle) + bedeutung
 }
 
 function lageText(ort: Ort): string {

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 import type { Ladung } from '@/lib/admin/ladezustand'
+import { landAnzeigeText } from '@/lib/country/darstellung'
 import { EINREISE_AMPEL_TEXT } from '@/lib/readiness/einreise-kundenanzeige'
 import { atBmiSourceReview } from '@/lib/readiness/official-truth-at-method-v1/at-bmi-visa-groups-v1'
 import { einreisePrueferLaden, einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
@@ -147,4 +148,21 @@ test('amtliche AT-Quellenhinweise verwenden die tatsächlich beantworteten Passc
   assert.deepEqual(sicht.anzeige.paare.map(paar => paar.landCode), ['AT', 'AT', 'AT'])
   assert.equal(sicht.anzeige.paare.every(paar => paar.ampel === 'neutral'), true)
   assert.equal(sicht.anzeige.paare.every(paar => paar.themen.length === 0), true)
+})
+
+test('Ergebniskarten nennen die Reisenden des Passes, ohne Zuordnung bleibt es das Passland', () => {
+  const input: V3VisitorInput = { destinationCountryCode: 'AT', citizenshipCountryCodes: ['CH', 'RS'] }
+  const state: V3VisitorUiState = {
+    phase: 'ready', refresh: 'off', focusResult: false, message: null,
+    view: { input, synthetic: false, generatedAt: '2026-11-19T19:30:00.000Z',
+      cells: input.citizenshipCountryCodes.map(country => ({
+        country, label: country,
+        results: [{ status: 'unavailable' as const, title: 'Derzeit nicht verfügbar', message: 'Noch nicht freigegeben' }],
+      })) },
+  }
+  const mit = einreisePrueferSicht(state, { CH: 'Reisende 1 und Reisende 2' })
+  assert.deepEqual(mit?.anzeige.paare.map(paar => paar.reisende), ['Reisende 1 und Reisende 2', landAnzeigeText('RS')])
+  assert.deepEqual(mit?.anzeige.paare.map(paar => paar.dokument), ['Schweiz', 'Serbien'])
+  const ohne = einreisePrueferSicht(state)
+  assert.deepEqual(ohne?.anzeige.paare.map(paar => paar.reisende), [landAnzeigeText('CH'), landAnzeigeText('RS')])
 })
