@@ -40,8 +40,10 @@ test('method rev2 CH→AT Owner descriptor binds exact predecessor and never sel
     selectionId: selected.selectionId, operationId: 'maop1_' + 'a'.repeat(32) })
   assert.ok(stage)
   assert.equal(stage.action, 'stage')
-  assert.equal(humanRpcArguments(stage).action, 'stage')
-  assert.equal(humanRpcArguments(stage).args.p_predecessor_revision, 1)
+  const stageArgs = humanRpcArguments(stage)
+  assert.equal(stageArgs.action, 'stage')
+  if (stageArgs.action !== 'stage') assert.fail('Stage-only selection must not change action')
+  assert.equal(stageArgs.args.p_predecessor_revision, 1)
   const approve = buildHumanCommand(selected, { schema: 1, action: 'approve',
     selectionId: selected.selectionId, operationId: 'maop1_' + 'b'.repeat(32) })
   assert.ok(approve)
