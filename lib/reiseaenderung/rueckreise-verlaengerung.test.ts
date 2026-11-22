@@ -70,7 +70,7 @@ test('KI: ein Tag länger fügt vor die Rückreise ein und erhält Rückflug, ID
 
 test('KI: selbst ohne Rückreise-Tagtitel wird ein echter geplanter Rückflug erkannt', () => {
   let i = 0
-  const reise = vorschlagAlsReise(VORSCHLAG_MIT_DATUM, 'test-three-days',
+  const reise = vorschlagAlsReise({ ...VORSCHLAG_MIT_DATUM, fassung: 1 as const, reisewunsch: null }, 'test-three-days',
     prefix => prefix + '-return-' + ++i, '2026-11-22T08:00:00.000Z')
   const alterRueckTag = reise.days.at(-1)!
   assert.equal(alterRueckTag.title, null)
