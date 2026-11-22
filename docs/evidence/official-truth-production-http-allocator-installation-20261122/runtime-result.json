@@ -1,0 +1,94 @@
+{
+  "schema": "jetnity-production-http-allocator-installation-result-v1",
+  "target_project_ref": "qscbgcdmivbbnzrcyegn",
+  "source_commit": "5ff8d5a5efc244842af6f94c221f3c2a85e558b4",
+  "status": "INSTALLATION_COMMITTED_AND_INDEPENDENTLY_READ_BACK",
+  "execution_order": [
+    "20",
+    "50"
+  ],
+  "actual_production_calls": 2,
+  "attempts": {
+    "file20": 1,
+    "file50": 1,
+    "file40": 0,
+    "file30": 0
+  },
+  "started_at_utc": "2026-11-22T10:27:10.303Z",
+  "finished_at_utc": "2026-11-22T10:28:04.120Z",
+  "overall_connector_window_ms": 53817,
+  "allowed_window_ms": 300000,
+  "within_5_minute_window": true,
+  "sql_bytes_unchanged": true,
+  "retries": 0,
+  "extra_production_reads": 0,
+  "raw_receipts": [
+    "20-execution.json",
+    "50-execution.json"
+  ],
+  "commit_evidence": {
+    "complete_20_tool_response_without_sql_or_transport_error": true,
+    "precommit_result_alone_not_sufficient": true,
+    "independent_50_observed_committed_successor": true,
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "catalog_sha256": "e3b277f380acbb33bc79cc61ec4cd8cf35c905978b76a32edbec30f83b1b613e",
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "required_generation": 1759,
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00"
+  },
+  "result20": {
+    "result": "PROD_HTTP_INSTALL_CHECKS_COMPLETE_COMMIT_STILL_MUST_SUCCEED",
+    "first_id": "1236",
+    "legacy_value": "178",
+    "fresh_locked_hwm": "211",
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "unused_safety_gap": 1024,
+    "http_or_wake_called": false,
+    "required_generation": 1759,
+    "positive_facts_added": false,
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "postcommit_readback_required": true,
+    "source_qualification_changed": false,
+    "natural_fresh_complete_bg1_proof_required": true
+  },
+  "result50": {
+    "result": "PROD_HTTP_COMMITTED_READBACK_OBSERVED",
+    "read_only": true,
+    "observed_at": "2026-11-22T10:28:02.549288+00:00",
+    "own_sequence": {
+      "is_called": false,
+      "last_value": "1236"
+    },
+    "catalog_sha256": "e3b277f380acbb33bc79cc61ec4cd8cf35c905978b76a32edbec30f83b1b613e",
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "own_sequence_logged": true,
+    "public_guard_status": {
+      "schema": 1,
+      "status": "unavailable"
+    },
+    "required_generation": 1759,
+    "postmaster_started_at": "2026-11-21T20:25:51.211541+00:00",
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "transport_metadata_sha256": "4acd60c9bc23563913abd466d38b152ec194625e0a71b044b09456141f150b4d",
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "publisher_definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e",
+    "fence_or_followup_permission": false,
+    "fresh_complete_state_run_count": 0,
+    "positive_source_renewal_proven": false,
+    "cron_contract_matches_reviewed_full_rows": true,
+    "natural_http_operational_proof_performed_by_this_query": false
+  },
+  "remaining_gates": {
+    "bg1_natural_fresh_complete_proof_pending": true,
+    "at_transport_and_chde_completion_not_proven": true,
+    "positive_source_renewal_not_proven": true,
+    "postcommit_fence_binding_and_go_not_provided": true,
+    "at_display": "derzeit nicht verfügbar"
+  },
+  "excluded_actions_performed": [],
+  "build_performed": false,
+  "extra_tests_performed": false,
+  "scope_complete": true,
+  "operational_acceptance_complete": false
+}

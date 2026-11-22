@@ -1,0 +1,44 @@
+{
+  "schema": "jetnity-production-http-allocator-postcommit-validation-v1",
+  "file": "50",
+  "validated_at_utc": "2026-11-22T10:28:45.457Z",
+  "result": {
+    "result": "PROD_HTTP_COMMITTED_READBACK_OBSERVED",
+    "read_only": true,
+    "observed_at": "2026-11-22T10:28:02.549288+00:00",
+    "own_sequence": {
+      "is_called": false,
+      "last_value": "1236"
+    },
+    "catalog_sha256": "e3b277f380acbb33bc79cc61ec4cd8cf35c905978b76a32edbec30f83b1b613e",
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "own_sequence_logged": true,
+    "public_guard_status": {
+      "schema": 1,
+      "status": "unavailable"
+    },
+    "required_generation": 1759,
+    "postmaster_started_at": "2026-11-21T20:25:51.211541+00:00",
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "transport_metadata_sha256": "4acd60c9bc23563913abd466d38b152ec194625e0a71b044b09456141f150b4d",
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "publisher_definition_sha256": "9d0857cdf2a8942af52409043eac78929d288e46400d17e70834e7a2455bbc9e",
+    "fence_or_followup_permission": false,
+    "fresh_complete_state_run_count": 0,
+    "positive_source_renewal_proven": false,
+    "cron_contract_matches_reviewed_full_rows": true,
+    "natural_http_operational_proof_performed_by_this_query": false
+  },
+  "exact_shape_pass": true,
+  "complete_tool_execution_success": true,
+  "read_only_rollback_completed": true,
+  "independent_committed_successor_matches_20": true,
+  "helper_generation_and_proof_cutoff_match_20": true,
+  "cron_full_rows_match": true,
+  "allocator_floor_valid": true,
+  "installation_verdict": "PASS_COMMIT_AND_INDEPENDENT_READBACK",
+  "bg1_operational_verdict": "PENDING_NATURAL_FRESH_COMPLETE_PROOF",
+  "at_chde_operational_verdict": "NOT_PROVEN_BY_AUTHORIZED_50",
+  "at_display": "derzeit nicht verfügbar",
+  "no_more_production_calls_authorized_in_this_run": true
+}
