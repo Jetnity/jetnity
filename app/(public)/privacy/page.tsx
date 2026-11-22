@@ -27,7 +27,7 @@ export default async function PrivacyPage() {
 
   return (
     <main className="px-5 text-foreground sm:px-8">
-      <article className="mx-auto w-full max-w-prose py-12 text-body sm:py-16">
+      <article className="mx-auto w-full max-w-3xl py-12 text-body sm:py-16">
         <p className="mb-1 text-kicker uppercase text-muted-foreground">Rechtliches</p>
         <PrivacyBeeEinbettung flaeche="datenschutz" einbetten={einbetten} />
         <section aria-label="Stay22" className="mt-10 border-t border-border pt-6 text-body text-muted-foreground">

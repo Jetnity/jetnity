@@ -4,7 +4,19 @@
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
 
-## Aktueller Writer — Startseite neu gestaltet (PR B)
+## Aktueller Writer — Datenschutzerklärung, nur Darstellung
+
+22. November 2026. Branch `cursor/datenschutz-darstellung-2ba1` von `main` `c8cd06732` (inkl. #1278), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: `/privacy` soll wieder wie das PrivacyBee-Original aussehen (Karten, «mehr anzeigen»). Einbindung und Inhalt bleiben. Entscheidung: ADR-0243.
+
+- **Ursache:** nicht #1264/#1272 und nicht #1278. Die CSP vom 20. November 2026 blockiert `https://app.privacybee.io/widget.css` und `imprint-widget.css` (`style-src` ohne diesen Host). Die grünen Balken sind die Inline-Hintergründe der Icons, die ohne das Stylesheet die ganze Spalte füllen.
+- **Änderung:** `style-src` nennt genau diesen Host, den Skript und Verbindung schon dürfen. Kein Wildcard, kein kopiertes CSS, keine Textänderung. Die Spalte von `/privacy` ist `max-w-3xl`, weil PrivacyBee «mehr anzeigen» erst ab 680 px selbst einblendet.
+- **Kontrolle:** Impressum hat denselben Block und ist mit gedeckt. AGB sind in Ordnung (Schweizer Schreibweise, keine Balken). In den eigenen Rechtstexten steht kein `ß`.
+- **Grenzen:** kein Production-Zugriff, kein Deploy, kein Merge durch den Agenten. Wirksam erst nach Merge und Deploy durch den Technical Lead.
+- **Nächster Schritt:** CI auf dem Head grün, dann Prüfung und Merge durch den Technical Lead.
+
+## Abgeschlossen — Startseite neu gestaltet #1278 gemergt
+
+22. November 2026. Branch `cursor/startseite-neugestaltung-2ba1` von `main` `b42cf9e55` (inkl. #1277), gemergt als `c8cd06732`, Draft-PR [#1278](https://github.com/Jetnity/jetnity/pull/1278), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Startseite hochmodern gestalten, ohne einen SEO-/KI-Text, eine Überschrift, FAQ oder strukturierte Daten zu verlieren. Entscheidung: ADR-0242. Umfang und Belege: `docs/STARTSEITE_NEUGESTALTUNG_2026-11-22.md`, Regeln: `DESIGN_SYSTEM.md` 6.24.
 
 22. November 2026. Branch `cursor/startseite-neugestaltung-2ba1` von `main` `b42cf9e55` (inkl. #1277), Draft-PR [#1278](https://github.com/Jetnity/jetnity/pull/1278), Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: Startseite hochmodern gestalten, ohne einen SEO-/KI-Text, eine Überschrift, FAQ oder strukturierte Daten zu verlieren. Entscheidung: ADR-0242. Umfang und Belege: `docs/STARTSEITE_NEUGESTALTUNG_2026-11-22.md`, Regeln: `DESIGN_SYSTEM.md` 6.24.
 
@@ -13,7 +25,7 @@ Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_
 - **Belege:** Rohdokument mit abgeschaltetem JavaScript vorher gegen nachher: Titel, Canonical, Meta und JSON-LD gleich, 31 Überschriften, 4 FAQ-Einträge, 112 Textblöcke und Link-Ziele unverändert, neu nur 12 `aria-hidden`-Beschriftungen. Lighthouse 13.6, je drei Läufe: Desktop 100/100/69/100 vorher wie nachher (Performance/Barrierefreiheit/SEO/Best Practices); mobil Performance 100 → 88 bei gleicher Barrierefreiheit 100 und SEO 69 (Modelleffekt der Simulation durch das Foto als LCP, gemessener LCP ≈ 0,15 s, mit DevTools-Drosselung 98 gegen 97; die Live-Seite liegt mit derselben Methode bei 74). SEO 69 stammt allein vom bewussten Site-weiten `noindex` (Owner-Hold), nicht geändert. Kontrast im Hero pixelgenau gemessen: H1 ≥ 6,49:1, kleiner Text ≥ 6,81:1. Kein Überlauf von 280 bis 1920 px, auch nicht bei 200 % Systemschrift.
 - **Abweichung:** «Eine Reise statt fünf getrennte Tools» steht im DOM jetzt vor «Du beschreibst deine Wünsche» (Rasterzelle); Überschriften, Texte und JSON-LD sind gleich.
 - **Offen:** Abnahme auf einem echten Telefon (nur Playwright-Touch geprüft); kein FAQPage-JSON-LD vorhanden (möglicher SEO-Punkt, erst sinnvoll bei Aufhebung des `noindex`); bei einem anderen Hero-Foto Kontrast erneut messen.
-- **Nächster Schritt:** alle Checks auf dem Head grün abwarten, dann PO-Entscheid zu Merge.
+- **Stand:** gemergt als `c8cd06732`. Offen bleibt die Abnahme auf einem echten Telefon.
 
 ## Abgeschlossen — Ortssuche, Reisetitel, Pass-Zuordnung #1277 gemergt
 

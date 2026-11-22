@@ -77,6 +77,16 @@ test('page headers enforce bounded CSP while nonce-bearing provider/map API HTML
   const frameSrc = csp.split('; ').find(part => part.startsWith('frame-src ')) ?? ''
   assert.doesNotMatch(frameSrc, /https:\/\/\*|https:\/\/\*\./)
   assert.doesNotMatch(frameSrc, /https:\/\/tpwgts\.com|https:\/\/api\.openweathermap\.org/)
+  // Privacy and imprint widgets load their own stylesheets from the same host
+  // already named in the legal contract. style-src must list that origin
+  // exactly; a wildcard would open every stylesheet on the site.
+  const vertrag = readFileSync('lib/legal/privacybee-vertrag.ts', 'utf8')
+  const privacybeeOrigin = new URL(
+    vertrag.match(/PRIVACYBEE_DATENSCHUTZ_SKRIPT = '([^']+)'/)?.[1] ?? '',
+  ).origin
+  const styleSrc = csp.split('; ').find(part => part.startsWith('style-src ')) ?? ''
+  assert.match(styleSrc, new RegExp(`${privacybeeOrigin.replaceAll('.', '\\.')}(?:\\s|;|$)`))
+  assert.doesNotMatch(styleSrc, /https:\/\/\*|https:\/\/\*\./)
   assert.match(csp, /connect-src[^;]*https:\/\/[^;]*supabase\.co/)
   assert.match(csp, /worker-src 'self' blob:/)
   // These routes set stricter nonce/hash CSP themselves; global page policy
