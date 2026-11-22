@@ -100,6 +100,33 @@ test('KI: letzte Etappe verlängern verschiebt Rückreise statt sie vorletzten T
   assert.deepEqual(kiGraphSicherheit(reise, result.reise), { ok: true })
 })
 
+test('KI: auch tag_hinzufuegen am Reiseende erhält die geplante Rückreise', () => {
+  const original = reiseMitRueckflug()
+  const result = operationenAnwenden(original, [
+    leereOperation('tag_hinzufuegen', { titel: 'Zusätzlicher Aufenthaltstag' }),
+  ], kennung)
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  assert.equal(result.reise.days.length, 6)
+  assert.equal(result.reise.days[4]?.title, 'Zusätzlicher Aufenthaltstag')
+  assert.equal(result.reise.days[4]?.stageId, original.days[3]?.stageId)
+  assert.equal(result.reise.days.at(-1)?.id, original.days.at(-1)?.id)
+  assert.equal(result.reise.days.at(-1)?.items[0]?.startsOn, '2026-09-17')
+  assert.deepEqual(kiGraphSicherheit(original, result.reise), { ok: true })
+})
+
+test('KI: Einfügen mitten in der Reise darf spätere Planpunkt-Daten nicht still veralten lassen', () => {
+  const original = reiseMitRueckflug()
+  const result = operationenAnwenden(original, [
+    leereOperation('tag_hinzufuegen', { nachTagId: original.days[1]!.id }),
+  ], kennung)
+  assert.equal(result.ok, true, 'interpreter makes only a structural candidate')
+  if (!result.ok) return
+  const safety = kiGraphSicherheit(original, result.reise)
+  assert.equal(safety.ok, false, 'the AI proposal must fail closed on stale scheduled dates')
+  if (!safety.ok) assert.match(safety.meldung, /Termine|unverändert/)
+})
+
 test('KI: gebuchter Rückflug bleibt unverändert, Änderung wird sicher verweigert', () => {
   const reise = reiseMitRueckflug()
   const rueck = reise.days.at(-1)!.items[0]!
