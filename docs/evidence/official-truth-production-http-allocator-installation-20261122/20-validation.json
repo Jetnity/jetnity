@@ -1,0 +1,31 @@
+{
+  "schema": "jetnity-production-http-allocator-installation-validation-v1",
+  "file": "20",
+  "validated_at_utc": "2026-11-22T10:27:59.129Z",
+  "result": {
+    "result": "PROD_HTTP_INSTALL_CHECKS_COMPLETE_COMMIT_STILL_MUST_SUCCEED",
+    "first_id": "1236",
+    "legacy_value": "178",
+    "fresh_locked_hwm": "211",
+    "proof_not_before": "2026-11-22T10:27:14.042745+00:00",
+    "unused_safety_gap": 1024,
+    "http_or_wake_called": false,
+    "required_generation": 1759,
+    "positive_facts_added": false,
+    "helper_definition_sha256": "6c5925d2fb8c301e4cb046428f99b7573fdb5810ad39a2f1651c57f5e9f34a7a",
+    "successor_canonical_sha256": "c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4",
+    "postcommit_readback_required": true,
+    "source_qualification_changed": false,
+    "natural_fresh_complete_bg1_proof_required": true
+  },
+  "complete_tool_execution_success": true,
+  "sql_error_reported": false,
+  "transport_error_reported": false,
+  "terminal_sql": "COMMIT",
+  "precommit_result_alone_not_commit_proof": true,
+  "independent_50_still_required": true,
+  "exact_shape_pass": true,
+  "fresh_floor_formula_pass": true,
+  "attempts": 1,
+  "retry": false
+}
