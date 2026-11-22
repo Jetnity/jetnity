@@ -2,7 +2,7 @@
 
 ## Status und Ursprung
 
-`NOT_READY_FOR_PRODUCTION_COMMIT`: Das Production-Katalogbild ist nicht erneut gelesen und kein Production-Installations- oder Rücknahme-SQL wurde in diesem Paket erstellt. Die vorhandene natürliche Dev-BG1-Kette v9 → v10 → v11 → v12 ist kein direktes Production-Installationsskript. Sie referenziert Dev-Baselines und würde auf Production bewusst ablehnen. Ungeprüft übertragen wäre ein falscher Integritätsschutz.
+`NOT_READY_FOR_PRODUCTION_COMMIT`: Die einmalige Production-V1-Kataloglese wurde versucht, aber mit `42P01` abgebrochen, da `official_v3_at_private.whole_originals_v2` in Production **nicht existiert**; die tatsächliche Production-Variante und der BG1-Parent wurden **nicht ermittelt**. Die neue schema-tolerante Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` ist nur in Dev testgelesen, nicht Production. Das Production-Katalogbild ist nicht erfolgreich erneut gelesen und kein Production-Installations- oder Rücknahme-SQL wurde in diesem Paket erstellt. Die vorhandene natürliche Dev-BG1-Kette v9 → v10 → v11 → v12 ist kein direktes Production-Installationsskript. Sie referenziert Dev-Baselines und würde auf Production bewusst ablehnen. Ungeprüft übertragen wäre ein falscher Integritätsschutz.
 
 Letztes **historisches**, nicht aktuelles Production-v4-HTTP-Allocator-Digest: `c847d8573ac8f62c2d163fcec7d8f0bde409574bd9ae7319e0bf97d99eb9c0a4` aus der bekannten Abnahme vom 22.11.2026. Dieser Wert darf ohne frischen Zielread nicht als gültiger heutiger COMMIT-Parent gelten. Production-CH→DE-Zyklus12 bleibt in eigenem gesperrten Programm; AT-Installation darf seine historischen Dispatches/Jobs oder die HTTP-ID-Sequenz nicht anfassen.
 
