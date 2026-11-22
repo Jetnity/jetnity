@@ -12,3 +12,10 @@
 5. Separate `32` Rücknahmeprobe/`33` Rücknahme-COMMIT nur nach eigener Freigabe; immer fail-closed und ohne Löschen der alten Quellen-/Faktenhistorie.
 
 **Nicht Teil dieses Go:** CH→DE Cycle12-Abschluss oder Wiederanlauf, neue Schlüssel/Kosten/Rollen/ACL für direkten DB-Zugang, Production-Vercel-Featureflag/Deploy ohne eigenes Go, Login/2FA/Passkeys durch KI oder Cursor. Quelle BMEIA bleibt `changed` mit exakt beglaubigtem neuem Rohhash; nur Schweiz/Österreich/gewöhnlicher gültiger CH-Pass/direkte Visumfreiheit positiv. Die übrigen 49 Pässe und alle anderen Themen bleiben gesperrt.
+
+
+## Neues separates Go nach P7905-STOP
+
+Die Production-Probe `30` aus dem alten Manifest wurde **vor DDL** wegen einer zu strengen historischen BMEIA-Roh-SHA-Bindung gestoppt; **31/40/50/32/33 nicht ausgeführt**. Das neue einmalig autorisierte Production-READ-ONLY (23.11.2026 00:17 Uhr Zürich) belegte: **2/3 Raw-SHA-gleiche Originale, aber 3/3 korrekt unveränderte Source-/Research-Statusfälle und 3/3 exakte Crons**. Nur `30`/`31`-Quellprädikat auf die bereits alte V1-Canonical-19-Asset-Methode korrigiert, alle übrigen historischen und BG1-/Owner-/HTTP-ID-Gates unverändert. Re-PG17-Tests `67`, `65`, `66` erfolgreich; kein Production-Write.
+
+**Frühere Production-Gos sind vollständig verbraucht.** Vor einem neuen Installations-Go zwingend: neue `MANIFEST.json`-`SHA256SUMS` und vollständige SHA-256 aller veränderten Dateien, erneute unabhängige CoS-Prüfung des engen P7905-Fixes, neu ausdrücklich freigegebenes `30`-Production-PROBEREAD/ROLLBACK und **erst bei PASS** ein neues exaktes `31`-COMMIT-Go. Auch dann Owner/AAL2 und Anzeige-Deploy separat, CH→DE unverändert.
