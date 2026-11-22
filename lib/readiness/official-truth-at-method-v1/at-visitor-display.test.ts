@@ -63,7 +63,7 @@ test('CH-only V4 source-bound visa_free is normalized into a verified green visa
  assert.equal(shown.anzeige.paare[0]?.ampelText,'Kein Visum nötig')
  const item=view.cells[0]?.results[0]
  if(item?.status!=='accepted')assert.fail('CH Dev V4 must have an accepted visa result')
- assert.equal(item.visaAssessment.mode,'visa_exempt')
+ assert.equal(item.visaAssessment?.mode,'visa_exempt')
  const foreign={...sample('IN'),visaMode:'visa_free'}
  assert.equal(result(['IN'],[{country:'IN',data:foreign}]).shown.anzeige.paare[0]?.ampel,'neutral')
  const extra={...actualDevV4,sourceUrls:[BMI_ENTRY,BMI_VISA]}
