@@ -1,6 +1,6 @@
 # CH→AT: Rücknahmevertrag für eine *später* gesondert autorisierte Production-Installation
 
-**Status: nur vorbereitet, nicht getestet/ausgeführt auf Production, kein Freigabe-Go.**
+**Stand nach einmaligem freigegebenem Production-Read 22.11.2026: BLOCKED / nicht installationsreif.** Die exakte 00-READONLY-SQL (SHA-256 `2bd2163109d408f8d06a104eee15a926bde9abfef3f14e82af833a6f32aba5ec`) scheiterte in Production an SQLSTATE `42P01` (`official_v3_at_private.whole_originals_v2` existiert dort nicht). Einzig Lesezugriff, **kein DDL/DML**, kein Installationsversuch und keine Wiederholung. Da der eigentliche SELECT fehlgeschlagen ist, liegen **keine vollständigen Production-Katalog-Readback-Daten** vor. Die neue schema-tolerante Datei `01-PRODUCTION-CATALOG-V2.READONLY.sql` wurde separat ausschliesslich gegen **Dev** überprüft und darf auf Production erst nach einem **neuen expliziten READ-ONLY-Go** ausgeführt werden.
 Production bleibt unangetastet. Ein Dev-Owner/AAL2-Beleg darf nie als Production-Owner-Aktion wiederverwendet werden.
 
 ## A. Vor COMMIT
