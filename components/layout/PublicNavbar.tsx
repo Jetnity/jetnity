@@ -209,7 +209,7 @@ export default function PublicNavbar() {
         <button
           ref={menuKnopf}
           type="button"
-          aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
+          aria-label={mobileOpen ? 'Menü schliessen' : 'Menü öffnen'}
           aria-expanded={mobileOpen}
           aria-controls={MOBILE_NAV_ID}
           onClick={() => setMobileOpen((current) => !current)}

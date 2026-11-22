@@ -222,7 +222,7 @@ async function tastaturPruefen(browser) {
   await seiteOffen(page, '/')
   await page.locator('h1').first().waitFor({ timeout: 15_000 })
   await hydrationWarten(page)
-  const menue = page.getByRole('button', { name: /Menü öffnen|Menü schließen/ })
+  const menue = page.getByRole('button', { name: /Menü öffnen|Menü schlie(ß|ss)en/ })
   await menue.click()
   await page.waitForTimeout(200)
   const expanded = await menue.getAttribute('aria-expanded')
