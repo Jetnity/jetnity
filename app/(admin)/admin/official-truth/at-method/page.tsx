@@ -16,8 +16,9 @@ export default async function AustriaMethodPage() {
       <p>{release?.targetUrl === HUMAN_METHOD_PRODUCTION_URL
         ? 'Nur nach gesonderter Production-Installation und expliziter Inhaberfreigabe mit Zwei-Faktor-Prüfung.'
         : 'Nur Development. Eine spätere Production-Freigabe ist davon unabhängig.'}
-        {' '}Die 50 Pässe sind keine 50 automatisch bestätigten Visaentscheidungen.
-        Jede Passregel benötigt eigene amtliche Qualifikation und aktuelle Source-, MA1- und BG1-Nachweise.</p>
+        {' '}{release?.scope.citizenship === 'CH'
+          ? 'Nur der gültige gewöhnliche Schweizer Reisepass bei direkter Einreise nach Österreich ist umfasst. Die übrigen 49 Pässe und alle anderen Themen bleiben gesperrt.'
+          : 'Die 50 Pässe sind keine 50 automatisch bestätigten Visaentscheidungen. Jede Passregel benötigt eigene amtliche Qualifikation und aktuelle Source-, MA1- und BG1-Nachweise.'}</p>
     </Seitenkopf>
     <MethodAuthorityPanel key={release?.selectionId ?? 'at-unselected'} release={release} />
   </section>
