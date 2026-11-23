@@ -169,8 +169,8 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
   return (
     <div className="space-y-5" aria-busy={busy}>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="method-scope">
-        <h2 id="method-scope" className="text-lg font-semibold">{atMethod ? '50 priorisierte nationale Reisepässe → Österreich · Visum' : 'Schweizer Pass → Deutschland · Visum'}</h2>
-        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · {atMethod ? 'Nationale Reisepässe der festen 50er-Priorität' : 'Schweizer Reisepass'} · direkte Einreise</p>
+        <h2 id="method-scope" className="text-lg font-semibold">{atMethod ? (selected.scope.citizenship === 'CH' ? 'Schweizer Pass → Österreich · Visum' : '50 priorisierte nationale Reisepässe → Österreich · Visum') : 'Schweizer Pass → Deutschland · Visum'}</h2>
+        <p>{selected.targetUrl === HUMAN_METHOD_PRODUCTION_URL ? 'Production · jetnity.com' : 'Entwicklungsumgebung'} · {atMethod ? (selected.scope.citizenship === 'CH' ? 'Gewöhnlicher Schweizer Reisepass' : 'Nationale Reisepässe der festen 50er-Priorität') : 'Schweizer Reisepass'} · direkte Einreise</p>
         <p>{selected.scope.reviewedScope}</p>
         <dl className="grid gap-2 sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium">Betriebszeitraum</dt><dd>{selected.scope.activeFrom} bis {selected.scope.activeUntilExclusive} (Ende ausgeschlossen, UTC)</dd>
