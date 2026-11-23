@@ -3,8 +3,11 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fixture, conflictFixture } from '@/scripts/direct-trip-editing-1/fixture'
 import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import { buchungsstatusAnwenden, istGebucht } from '@/lib/trips/buchung'
 import { manuellSchema, manuellerEntwurf, vorschauKennungen } from './direct/entwurf'
 import { auswirkungen } from './direct/auswirkungen'
+import { tripAuditV1 } from '@/lib/trips/trip-audit-v1/audit'
 import { bedeutung, fingerprint } from './direct/bestaetigung'
 import { manuellVorschau, manuellSpeichern } from './direct/speichern'
 import { gastManuellSpeichern } from './direct/gast'
@@ -355,3 +358,184 @@ function katalogStopp(before: Trip) {
   const ort: import('@/lib/places/domain').Ort = { id:'geonames:1621177', source:'geonames', sourceId:'1621177', name:'Ayutthaya', typ:'city', country:'Thailand', countryCode:'TH', region:null, lat:14.35, lon:100.57, iata:null, keywords:null }
   return {ort,request:{neuerStopp:{ortId:ort.id,nachEtappeId:before.stages[0].id,tage:2}}}
 }
+
+
+/**
+ * W2 regression base: six explicit, unbooked/booked plan points on four
+ * calendar days. This is a deterministic fixture, not browser evidence.
+ * It reuses the authoritative direct-preview, impact and write primitives.
+ */
+function w2SechsTagespunkte(): Trip {
+  const reise = fixture()
+  // Synthetic, test-owned fixture ONLY: no Supabase write, no supplier reference,
+  // no price or external checkout. "booked" is ONLY a user-maintained marker.
+  // The label must prevent a browser tester from mistaking this for a real reservation.
+  const aufenthalt = reise.days[3].items[0]
+  Object.assign(aufenthalt, {
+    title: 'W2-TEST: Unterkunft (nur markiert, keine echte Buchung)',
+    provider: null, externalRef: null, bookingUrl: null,
+    priceAmount: null, priceCurrency: null,
+    bookingStatus: 'booked', bookingSource: 'user',
+    bookingConfirmedAt: '2026-10-01T10:00:00.000Z',
+  })
+  const normal = reise.days[0].items[0]
+  reise.days[1].items.push({
+    ...normal, id: 'w2-visit-5', dayId: 'day-2', stageId: 'stage-1',
+    title: 'Museumsbesuch', position: 2,
+    startsOn: '2026-10-08', endsOn: '2026-10-08',
+    startsAt: '11:00', endsAt: '12:00',
+  })
+  reise.days[3].items.push({
+    ...normal, id: 'w2-return-6', dayId: 'day-4', stageId: 'stage-2',
+    title: 'Rückreise (ungebucht)', position: 2,
+    startsOn: '2026-10-10', endsOn: '2026-10-10',
+    startsAt: '18:00', endsAt: '19:00',
+  })
+  assert.equal(reise.days.flatMap(tag => tag.items).length, 6)
+  return reise
+}
+
+// Same safe transition used by the actual UnterkunftBestand button.
+// It represents a Dev user's assertion, never a hotel/provider confirmation.
+test('W2-Dev-Testunterkunft: selbst markiert, ohne echte Buchung/Preis/Provider', async () => {
+  const vor = w2SechsTagespunkte()
+  const punkt = vor.days[3].items.find(item => item.id === 'item-4')!
+  assert.match(punkt.title, /^W2-TEST: Unterkunft/)
+  assert.equal(punkt.kind, 'stay')
+  assert.equal(punkt.bookingStatus, 'booked')
+  assert.equal(punkt.bookingSource, 'user')
+  assert.equal(punkt.provider, null)
+  assert.equal(punkt.externalRef, null)
+  assert.equal(punkt.bookingUrl, null)
+  assert.equal(punkt.priceAmount, null)
+  assert.equal(punkt.priceCurrency, null)
+  assert.equal(istGebucht(punkt), true)
+  assert.equal(istKommerziell(punkt), true, 'Schutz entsteht allein durch den Nutzerstatus, nicht durch einen erfundenen Preis')
+  const korrektur = buchungsstatusAnwenden(punkt, false, '2026-10-01T11:00:00.000Z')
+  assert(korrektur.ok)
+  assert.equal(korrektur.punkt.bookingStatus, 'unconfirmed')
+  assert.equal(korrektur.punkt.bookingSource, null)
+  assert.equal(korrektur.punkt.bookingConfirmedAt, null)
+  const markiert = buchungsstatusAnwenden(korrektur.punkt, true, '2026-10-01T11:05:00.000Z')
+  assert(markiert.ok)
+  assert.equal(markiert.punkt.bookingStatus, 'booked')
+  assert.equal(markiert.punkt.bookingSource, 'user')
+  assert.equal(markiert.punkt.provider, null)
+  assert.equal(markiert.punkt.bookingUrl, null)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const danach = v.vorschau.nachher.days[3].items.find(item => item.id === punkt.id)
+  assert.deepEqual(danach, punkt, 'Vorschau bewahrt die reine Dev-Buchungsmarkierung und alte Check-in-/Check-out-Daten')
+})
+
+function w2PunktKennungen(reise: Trip): string[] {
+  return [...reise.days.flatMap(tag => tag.items), ...reise.ohneTag]
+    .map(punkt => punkt.id).sort()
+}
+
+test('W2: sechs Tagespunkte – reine Rückreisedatum-Vorschau und Folgen ohne Originaländerung', async () => {
+  const vor = w2SechsTagespunkte(), original = structuredClone(vor)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const nach = v.vorschau.nachher
+  assert.deepEqual(w2PunktKennungen(nach), w2PunktKennungen(original))
+  assert.equal(new Set(w2PunktKennungen(nach)).size, 6)
+  assert.equal(nach.days.find(tag => tag.id === 'day-4')?.dayDate, '2026-10-11')
+  assert.equal(nach.days[3].items.find(punkt => punkt.id === 'w2-return-6')?.startsOn, '2026-10-11')
+  assert.deepEqual(nach.days[3].items.find(punkt => punkt.id === 'item-4'),
+    original.days[3].items.find(punkt => punkt.id === 'item-4'))
+  const folgen = auswirkungen(vor, nach).flatMap(gruppe => gruppe.zeilen.map(zeile => zeile.text)).join('\n')
+  assert.match(folgen, /Rückreise \(ungebucht\)/)
+  assert.match(folgen, /Geschützt/)
+  assert.deepEqual(vor, original) // Abbrechen: only preview; no mutation/no persistence
+  assert.equal(vor.revision, original.revision)
+})
+
+test('W2: sechs Tagespunkte – Übernehmen, Readback, IDs und Revision mit idempotentem Retry', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  let aktuell = structuredClone(vor), writes = 0
+  const ports = {
+    quelle: 'account' as const,
+    lesen: async () => aktuell,
+    schreiben: async (reise: Trip, mutation: string, revision: number) => {
+      writes++
+      aktuell = { ...reise, revision: revision + 1, lastMutationId: mutation }
+      return { konflikt: false }
+    },
+  }
+  const uebernahme = await manuellSpeichern(v.vorschau.anfrage, ports)
+  assert(uebernahme.ok)
+  assert.equal(writes, 1)
+  assert.equal(uebernahme.reise.id, vor.id)
+  assert.equal(uebernahme.reise.revision, vor.revision + 1)
+  assert.deepEqual(w2PunktKennungen(uebernahme.reise), w2PunktKennungen(vor))
+  assert.deepEqual(uebernahme.reise.days, v.vorschau.nachher.days)
+  assert.equal(uebernahme.reise.lastMutationId, aktuell.lastMutationId)
+  const wiederholt = await manuellSpeichern(v.vorschau.anfrage, ports)
+  assert(wiederholt.ok)
+  assert.equal(writes, 1)
+  assert.deepEqual(wiederholt.reise, uebernahme.reise)
+})
+
+test('W2: konkurrierende Revision verweigert sechs-Punkte-Übernahme ohne Write', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const parallel = { ...structuredClone(vor), title: 'Parallelbearbeitung', revision: vor.revision + 1 }
+  let writes = 0
+  const antwort = await manuellSpeichern(v.vorschau.anfrage, {
+    quelle: 'account',
+    lesen: async () => parallel,
+    schreiben: async () => { writes++; return { konflikt: false } },
+  })
+  assert.equal(antwort.ok, false)
+  if (!antwort.ok) assert.equal(antwort.art, 'konflikt')
+  assert.equal(writes, 0)
+  assert.deepEqual(w2PunktKennungen(parallel), w2PunktKennungen(vor))
+  assert.equal(parallel.days[3].items.find(punkt => punkt.id === 'w2-return-6')?.startsOn, '2026-10-10')
+})
+
+
+// W2 integration: both read-only snapshots remain separately auditable.
+// A preview audit is not provider truth or proof that the changed trip is stored.
+test('W2: Audit der sechs Planpunkte vor/nach Vorschau bleibt read-only und ohne Anbieterzusage', async () => {
+  const vor = w2SechsTagespunkte(), original = structuredClone(vor)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const vorherBericht = tripAuditV1(vor)
+  const vorschauBericht = tripAuditV1(v.vorschau.nachher)
+  assert.equal(vorherBericht.claimScope, 'stored_plan_only')
+  assert.equal(vorschauBericht.claimScope, 'stored_plan_only')
+  assert.equal(vorherBericht.tripId, vor.id)
+  assert.equal(vorschauBericht.tripId, vor.id)
+  assert.deepEqual(vorschauBericht.sections.map(s => s.domain), ['lodging', 'time', 'flights', 'mobility'])
+  assert.match(vorschauBericht.notChecked.join('; '), /Anbieter, Preise, Verfügbarkeit/)
+  const vorherUnterkunft = vor.days[3].items.find(p => p.id === 'item-4')
+  const danachUnterkunft = v.vorschau.nachher.days[3].items.find(p => p.id === 'item-4')
+  assert.deepEqual(danachUnterkunft, vorherUnterkunft, 'geschützte Unterkunft bleibt exakt unverändert')
+  assert.deepEqual(w2PunktKennungen(v.vorschau.nachher), w2PunktKennungen(vor))
+  assert.deepEqual(vor, original, 'weder Vorschau noch Audit schreiben ins Original')
+})
+
+test('W2: fremde Reise oder gleiche Revision mit fremdem Inhalt blockieren ohne Write', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  let writes = 0
+  for (const [fall, aktuell, erwartet] of [
+    ['andere Reise', { ...structuredClone(vor), id: 'fremde-reise' }, 'sitzung'],
+    ['stiller Inhaltswechsel', { ...structuredClone(vor), title: 'Parallel geändert' }, 'konflikt'],
+  ] as const) {
+    const antwort = await manuellSpeichern(v.vorschau.anfrage, {
+      quelle: 'account',
+      lesen: async () => aktuell,
+      schreiben: async () => { writes++; return { konflikt: false } },
+    })
+    assert.equal(antwort.ok, false, fall)
+    if (!antwort.ok) assert.equal(antwort.art, erwartet, fall)
+    assert.deepEqual(w2PunktKennungen(aktuell), w2PunktKennungen(vor), fall)
+  }
+  assert.equal(writes, 0)
+})

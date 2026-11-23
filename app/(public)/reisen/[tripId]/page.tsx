@@ -15,6 +15,7 @@
 
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
 import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
@@ -47,14 +48,50 @@ type ReiseSeiteProps = {
 export default async function ReiseSeite({ params }: ReiseSeiteProps) {
   const { tripId } = await leseRequestParam(params)
   const supabase = await createServerComponentClient()
-  const { data } = await supabase.auth.getUser()
+  // A failed/temporary Auth read is NOT evidence that an account UUID is a
+  // local guest draft. A refresh after a successful save must never show the
+  // "guest trip missing" empty state for an existing account trip.
+  let kontoBestaetigt = false
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    kontoBestaetigt = !error && Boolean(data.user)
+  } catch {
+    // Unknown session remains unknown, never silently interpreted as guest.
+  }
 
   // Eine Gastkennung bleibt eine Gastkennung, auch in einer angemeldeten
   // Sitzung: Der Entwurf liegt im Browser, und die Brücke auf /reisen holt ihn
   // ins Konto. Ihn hier stillschweigend gegen eine Reise im Konto zu tauschen
   // wäre ein Rätsel für alle, die die Adresse gespeichert haben.
-  if (!data.user || !istKontoKennung(tripId)) {
+  if (!istKontoKennung(tripId)) {
     return <GastArbeitsbereich tripId={tripId} />
+  }
+
+  // Explicit, reversible fallback: no account graph fetch, no guest fallback,
+  // no "no trip" claim and no additional Auth/2FA state change.
+  if (!kontoBestaetigt) {
+    return (
+      <main data-konto-reise-zugriff="nicht-bestaetigt" className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+          <AlertCircle className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em] text-brand-800">
+          Deine Kontoreise konnte gerade nicht geöffnet werden.
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-ink-700">
+          Deine Anmeldung konnte nicht bestätigt werden. Das sagt nichts darüber aus, ob die Reise gespeichert ist.
+          Lade die Reise erneut oder melde dich bei Bedarf an.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <Link href={`/reisen/${tripId}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 py-3 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
+            Reise erneut öffnen
+          </Link>
+          <Link href={`/login?next=${encodeURIComponent(`/reisen/${tripId}`)}`} className="inline-flex min-h-11 items-center justify-center rounded-full border border-line-300 px-5 py-3 text-sm font-semibold text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600">
+            Zur Anmeldung
+          </Link>
+        </div>
+      </main>
+    )
   }
 
   const { zeilen, problem } = await reiseLaden(tripId)
