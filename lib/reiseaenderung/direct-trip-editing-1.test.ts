@@ -5,6 +5,7 @@ import { fixture, conflictFixture } from '@/scripts/direct-trip-editing-1/fixtur
 import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { manuellSchema, manuellerEntwurf, vorschauKennungen } from './direct/entwurf'
 import { auswirkungen } from './direct/auswirkungen'
+import { tripAuditV1 } from '@/lib/trips/trip-audit-v1/audit'
 import { bedeutung, fingerprint } from './direct/bestaetigung'
 import { manuellVorschau, manuellSpeichern } from './direct/speichern'
 import { gastManuellSpeichern } from './direct/gast'
@@ -448,4 +449,47 @@ test('W2: konkurrierende Revision verweigert sechs-Punkte-Übernahme ohne Write'
   assert.equal(writes, 0)
   assert.deepEqual(w2PunktKennungen(parallel), w2PunktKennungen(vor))
   assert.equal(parallel.days[3].items.find(punkt => punkt.id === 'w2-return-6')?.startsOn, '2026-10-10')
+})
+
+
+// W2 integration: both read-only snapshots remain separately auditable.
+// A preview audit is not provider truth or proof that the changed trip is stored.
+test('W2: Audit der sechs Planpunkte vor/nach Vorschau bleibt read-only und ohne Anbieterzusage', async () => {
+  const vor = w2SechsTagespunkte(), original = structuredClone(vor)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const vorherBericht = tripAuditV1(vor)
+  const vorschauBericht = tripAuditV1(v.vorschau.nachher)
+  assert.equal(vorherBericht.claimScope, 'stored_plan_only')
+  assert.equal(vorschauBericht.claimScope, 'stored_plan_only')
+  assert.equal(vorherBericht.tripId, vor.id)
+  assert.equal(vorschauBericht.tripId, vor.id)
+  assert.deepEqual(vorschauBericht.sections.map(s => s.domain), ['lodging', 'time', 'flights', 'mobility'])
+  assert.match(vorschauBericht.notChecked.join('; '), /Anbieter, Preise, Verfügbarkeit/)
+  const vorherUnterkunft = vor.days[3].items.find(p => p.id === 'item-4')
+  const danachUnterkunft = v.vorschau.nachher.days[3].items.find(p => p.id === 'item-4')
+  assert.deepEqual(danachUnterkunft, vorherUnterkunft, 'geschützte Unterkunft bleibt exakt unverändert')
+  assert.deepEqual(w2PunktKennungen(v.vorschau.nachher), w2PunktKennungen(vor))
+  assert.deepEqual(vor, original, 'weder Vorschau noch Audit schreiben ins Original')
+})
+
+test('W2: fremde Reise oder gleiche Revision mit fremdem Inhalt blockieren ohne Write', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  let writes = 0
+  for (const [fall, aktuell, erwartet] of [
+    ['andere Reise', { ...structuredClone(vor), id: 'fremde-reise' }, 'sitzung'],
+    ['stiller Inhaltswechsel', { ...structuredClone(vor), title: 'Parallel geändert' }, 'konflikt'],
+  ] as const) {
+    const antwort = await manuellSpeichern(v.vorschau.anfrage, {
+      quelle: 'account',
+      lesen: async () => aktuell,
+      schreiben: async () => { writes++; return { konflikt: false } },
+    })
+    assert.equal(antwort.ok, false, fall)
+    if (!antwort.ok) assert.equal(antwort.art, erwartet, fall)
+    assert.deepEqual(w2PunktKennungen(aktuell), w2PunktKennungen(vor), fall)
+  }
+  assert.equal(writes, 0)
 })
