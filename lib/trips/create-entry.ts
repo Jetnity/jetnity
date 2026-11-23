@@ -151,6 +151,28 @@ export function gastCreateVorNetzschritt(eingabe: {
   return gastCreateGate(eingabe)
 }
 
+/** Frischer, serverseitiger Create-Stand. Kein Nutzerprofil und keine ID. */
+export type FrischerCreateSitzungsstand = 'konto' | 'gast' | 'unbekannt'
+export type ReiseCreateSchreibziel = 'konto' | 'gast' | 'blockiert'
+
+/**
+ * Der Server-Render-Stand bleibt während eines offenen Formulars bestehen.
+ * Eine spätere, auf dem Server verifizierte Anmeldung gewinnt deshalb vor
+ * dem Write; bei einem verschwundenen Konto oder einem Auth-Fehler wird nie
+ * still ein Gastentwurf angelegt.
+ */
+export function reiseCreateSchreibziel(
+  beimLadenAngemeldet: boolean,
+  aktuell: FrischerCreateSitzungsstand,
+): ReiseCreateSchreibziel {
+  if (aktuell === 'konto') return 'konto'
+  if (aktuell === 'unbekannt' || beimLadenAngemeldet) return 'blockiert'
+  return 'gast'
+}
+
+export const REISE_CREATE_SITZUNG_UNKLAR =
+  'Deine Anmeldung konnte vor dem Speichern nicht bestätigt werden. Bitte versuche es erneut oder lade die Seite neu.'
+
 /**
  * Action-time Create-Prüfung. Konten inspecten den Gastspeicher nicht.
  * Gäste lesen die aktiven Bytes jetzt, nicht den Stand vom ersten Render.
