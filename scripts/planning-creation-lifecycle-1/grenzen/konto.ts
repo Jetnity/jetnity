@@ -9,3 +9,9 @@ function grenzen(): Grenze {
 export async function reiseAnlegen(eingabe: unknown) {
   return grenzen()('anlegen', eingabe)
 }
+
+/** Browser-Mount: simulierte frische Serverwahrheit, nie echte Credentials. */
+export async function reiseCreateSitzungsstandLesen(): Promise<'konto' | 'gast' | 'unbekannt'> {
+  const fenster = window as unknown as { fixture?: { sitzung?: 'konto' | 'gast' | 'unbekannt' } }
+  return fenster.fixture?.sitzung ?? 'unbekannt'
+}
