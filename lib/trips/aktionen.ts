@@ -62,6 +62,26 @@ import {
 import { istManuelleUnterkunft } from '@/lib/trips/unterkunft-manuell'
 
 /**
+ * Nur eine frische, lesende Auth-Entscheidung für den bestehenden Create-Weg.
+ * `getSession` darf ausschliesslich das FEHLEN einer Sitzung feststellen.
+ * Ein positives Konto wird zwingend durch `getUser()` am Auth-Server geprüft;
+ * Netzwerk-/Refreshfehler werden niemals als Gast klassifiziert.
+ * Keine Benutzer-ID, kein Token und keine Datenbankänderung verlassen die Action.
+ */
+export async function reiseCreateSitzungsstandLesen(): Promise<'konto' | 'gast' | 'unbekannt'> {
+  try {
+    const client = await createServerActionClient()
+    const { data: sessionData, error: sessionError } = await client.auth.getSession()
+    if (sessionError) return 'unbekannt'
+    if (!sessionData.session) return 'gast'
+    const { data: userData, error: userError } = await client.auth.getUser()
+    return !userError && userData.user ? 'konto' : 'unbekannt'
+  } catch {
+    return 'unbekannt'
+  }
+}
+
+/**
  * Legt eine Reise aus dem Formular unter /planen an.
  *
  * Die Tage entstehen serverseitig aus dem Zeitraum – dieselbe Aufteilung, die
