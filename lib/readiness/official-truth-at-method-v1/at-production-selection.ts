@@ -61,3 +61,21 @@ export function selectedAustriaProductionMethod(): boolean {
     supabaseUrl: getServerSupabaseUrl(),
   })
 }
+
+/** CH→AT revision 2 Owner-only Production selection. Deliberately uses a NEW
+ * server-side flag: enabling it before deployment must not awaken the legacy
+ * revision-1/50-passport Owner page. The older V1 flag and the visitor flag
+ * remain independent and unchanged. This grants no SQL method authority. */
+export function selectedAustriaProductionMethodV2(): boolean {
+  const flag = process.env.JETNITY_OFFICIAL_AT_PRODUCTION_METHOD_OWNER_V2
+  if (flag !== 'enabled' || process.env.VERCEL_ENV !== 'production') return false
+  return eligibleAustriaProductionVisitor({
+    ownerRelease: flag,
+    deploymentEnv: process.env.VERCEL_ENV,
+    projectId: process.env.VERCEL_PROJECT_ID,
+    repoOwner: process.env.VERCEL_GIT_REPO_OWNER,
+    repoSlug: process.env.VERCEL_GIT_REPO_SLUG,
+    branch: process.env.VERCEL_GIT_COMMIT_REF,
+    supabaseUrl: getServerSupabaseUrl(),
+  })
+}
