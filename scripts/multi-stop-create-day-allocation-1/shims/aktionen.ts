@@ -16,3 +16,8 @@ export async function reiseAnlegen(eingabe: unknown) {
 }
 
 fenster()
+
+/** Mounted Guest/Account-Pfade: nur synthetische Session, keine echte Auth. */
+export async function reiseCreateSitzungsstandLesen(): Promise<'konto' | 'gast'> {
+  return window.location.pathname.startsWith('/konto') ? 'konto' : 'gast'
+}
