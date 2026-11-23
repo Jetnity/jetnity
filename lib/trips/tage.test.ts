@@ -83,12 +83,21 @@ describe('Ein unbrauchbarer Zeitraum ergibt keine Tage', () => {
 })
 
 describe('Die Obergrenze ist die der Datenbank', () => {
-  test('höchstens 366 Tage – wie trip_days_index_bereich', () => {
-    // Zehn Jahre als Zeitraum wären in `trip_days.day_index` ein `smallint`
-    // jenseits der Prüfbedingung. Die Grenze greift vor der Datenbank.
-    const tage = reisetageBauen('2026-01-01', '2036-01-01')
-
+  test('366 einschliessliche Tage werden vollständig angelegt', () => {
+    const tage = reisetageBauen('2026-11-01', '2027-11-01')
     assert.equal(tage.length, TAGE_MAXIMUM)
-    assert.equal(tage[tage.length - 1].dayIndex, TAGE_MAXIMUM)
+    assert.deepEqual(tage.at(-1), { dayIndex: TAGE_MAXIMUM, dayDate: '2027-11-01' })
+  })
+
+  test('367 Tage oder zehn Jahre werden abgewiesen, nicht auf 366 gekürzt', () => {
+    assert.deepEqual(reisetageBauen('2026-11-01', '2027-11-02'), [])
+    assert.deepEqual(reisetageBauen('2026-01-01', '2036-01-01'), [])
+  })
+
+  test('ein unmöglicher Kalendertag wird nicht nach März verschoben', () => {
+    for (const ungueltig of ['2026-02-30', '2026-04-31', '2026-13-01', '2026-00-01']) {
+      assert.deepEqual(reisetageBauen(ungueltig, '2026-05-01'), [])
+      assert.deepEqual(reisetageBauen('2026-01-01', ungueltig), [])
+    }
   })
 })
