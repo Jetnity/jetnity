@@ -95,6 +95,15 @@ import { usePlanenMitnahme } from '@/components/trips/PlanenEinstiegNavigation'
 const TRANSPORT =
   'Die Reise konnte gerade nicht erstellt werden. Deine Angaben bleiben hier. Bitte versuche es erneut.'
 
+/** Auch ein unterbrochener Server-Action-Transport ist unbekannt, nie Gast. */
+async function frischeCreateSitzungLesen() {
+  try {
+    return await reiseCreateSitzungsstandLesen()
+  } catch {
+    return 'unbekannt' as const
+  }
+}
+
 type ZusaetzlichesZiel = {
   key: string
   ort: OrtAuswahl | null
@@ -440,7 +449,7 @@ export default function TripPlanner({
       // Der Render kann noch Gast zeigen, obwohl die Anmeldung inzwischen
       // auf einem anderen Tab abgeschlossen wurde. Nur die frische Server-
       // Sitzung darf ein bestehendes Gast-Gate für ein Konto übergehen.
-      const schreibziel = reiseCreateSchreibziel(angemeldet, await reiseCreateSitzungsstandLesen())
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
       if (schreibziel !== 'konto') {
         setBestehendeReise(schreibziel === 'gast' && gate.grund === 'besteht' ? gate.bestehendeId : '')
         setMeldung(schreibziel === 'blockiert' ? REISE_CREATE_SITZUNG_UNKLAR : gastCreateGateMeldung(gate))
@@ -540,7 +549,7 @@ export default function TripPlanner({
 
     const vorNetz = gastCreateJetztPruefen(angemeldet)
     if (!vorNetz.erlaubt) {
-      const schreibziel = reiseCreateSchreibziel(angemeldet, await reiseCreateSitzungsstandLesen())
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
       if (schreibziel !== 'konto') {
         setBestehendeReise(schreibziel === 'gast' && vorNetz.grund === 'besteht' ? vorNetz.bestehendeId : '')
         setMeldung(schreibziel === 'blockiert' ? REISE_CREATE_SITZUNG_UNKLAR : gastCreateGateMeldung(vorNetz))
@@ -591,7 +600,7 @@ export default function TripPlanner({
       // Direkt vor JEDEM Write entscheidet die aktuelle Server-Session neu:
       // Konto gewinnt bei späterem Login; Auth-Fehler/Logout werden nicht
       // automatisch zum lokalen Gast-Write herabgestuft.
-      const schreibziel = reiseCreateSchreibziel(angemeldet, await reiseCreateSitzungsstandLesen())
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
       if (!lifecycle.aktuell(lauf)) return
       if (schreibziel === 'blockiert') {
         setMeldung(REISE_CREATE_SITZUNG_UNKLAR)
