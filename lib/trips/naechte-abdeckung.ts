@@ -19,6 +19,7 @@
 // Frei von React, Next und Providern.
 
 import { istGebucht } from '@/lib/trips/buchung'
+import { REISEDAUER_MAXIMUM, kalendertagUtc } from '@/lib/trips/tage'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
 function allePunkte(reise: Trip, ohneTag: readonly TripItem[]): TripItem[] {
@@ -69,26 +70,21 @@ export type UnterkunftAbdeckung = {
 }
 
 export function naechteHalboffen(checkIn: string, checkOut: string): string[] {
-  const start = Date.parse(`${checkIn}T00:00:00Z`)
-  const ende = Date.parse(`${checkOut}T00:00:00Z`)
-  if (Number.isNaN(start) || Number.isNaN(ende) || ende <= start) return []
-
+  const start = kalendertagUtc(checkIn)
+  const ende = kalendertagUtc(checkOut)
+  if (start === null || ende === null || ende <= start) return []
+  const anzahl = (ende - start) / EIN_TAG
+  // Listenansichten dürfen nicht still kürzen oder riesige Jahre expandieren.
+  if (anzahl > REISEDAUER_MAXIMUM) return []
   const naechte: string[] = []
-  for (let zeit = start; zeit < ende; zeit += EIN_TAG) {
-    naechte.push(new Date(zeit).toISOString().slice(0, 10))
+  for (let index = 0; index < anzahl; index++) {
+    naechte.push(new Date(start + index * EIN_TAG).toISOString().slice(0, 10))
   }
   return naechte
 }
 
 function datumGueltig(wert: string | null | undefined): wert is string {
-  if (!wert || !/^\d{4}-\d{2}-\d{2}$/.test(wert)) return false
-  const [jahr, monat, tag] = wert.split('-').map(Number)
-  const geprueft = new Date(Date.UTC(jahr, monat - 1, tag))
-  return (
-    geprueft.getUTCFullYear() === jahr &&
-    geprueft.getUTCMonth() === monat - 1 &&
-    geprueft.getUTCDate() === tag
-  )
+  return kalendertagUtc(wert) !== null
 }
 
 function stayZeitraum(punkt: TripItem): { start: string; end: string } | null {
