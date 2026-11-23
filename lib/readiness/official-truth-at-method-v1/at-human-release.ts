@@ -36,8 +36,9 @@ export function getAtHumanRelease(): HumanRelease | null {
       methodId: next.binding.methodId, revision: next.binding.revision,
       methodDigest: next.binding.methodDigest, packageDigest: next.binding.packageDigest,
       predecessorRevision: 1,
-      // Exact installed Rev1 predecessor, never inferred from the new package.
-      // A changed head/epoch is refused by MA1, not silently upgraded.
+      // Strict expected Rev1 predecessor from the reviewed method contract;
+      // this descriptor alone does NOT prove the live database head/epoch.
+      // Any deviation must fail closed under the independent MA1 authority.
       expectedHead: {
         methodId: 'jetnity-destination-primary-at-visa', revision: 1,
         methodDigest: 'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9',
