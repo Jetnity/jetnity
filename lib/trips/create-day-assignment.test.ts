@@ -55,7 +55,7 @@ describe('Erstzuordnung vorhandener Kalendertage', () => {
     assert.equal(REISEDAUER_MAXIMUM, GRENZEN.reisedauerInTagen)
     assert.equal(
       ZEITRAUM_ZU_LANG,
-      'Eine Reise umfasst höchstens 366 Kalendertage, einschließlich Abreise und Rückreise.',
+      'Eine Reise umfasst höchstens 366 Kalendertage, einschliesslich Abreise und Rückreise.',
     )
   })
 
@@ -397,5 +397,48 @@ describe('Erstzuordnung vorhandener Kalendertage', () => {
       weitereDestinationPlaceIds: [CHIANG.id],
     })
     assert.equal(formularSchaltGueltig.success, true)
+  })
+})
+
+
+describe('Workspace W1 – kein erfolgreicher leerer oder gekürzter Gast-/Kontokalender', () => {
+  test('ein einzelnes Ziel mit unmöglichem Datum darf nicht als Null-Tage-Reise entstehen', () => {
+    for (const stageCount of [1, 2]) {
+      for (const daten of [
+        { startDate: '2026-02-30', endDate: '2026-03-02' },
+        { startDate: '2026-12-04', endDate: '2026-12-03' },
+        { startDate: '', endDate: '' },
+      ]) {
+        const ergebnis = createDayPositions({ stageCount, ...daten })
+        assert.equal(ergebnis.ok, false)
+      }
+    }
+    assert.throws(() => createZieleGraph([BANGKOK], {
+      startDate: '2026-02-30', endDate: '2026-03-02',
+    }), /gültigen Reisetage/)
+  })
+
+  test('überlange Reisen und mehr als 50 Ziele werden vor einer Zuordnung abgewiesen', () => {
+    const zuLang = createDayPositions({stageCount: 1, startDate: '2026-01-01', endDate: '2027-01-02'})
+    assert.equal(zuLang.ok, false)
+    if (!zuLang.ok) assert.equal(zuLang.message, ZEITRAUM_ZU_LANG)
+    const zuViele = createDayPositions({stageCount: 51, ...ZEITRAUM})
+    assert.equal(zuViele.ok, false)
+  })
+
+  test('14 Tage und drei Zielvorkommen behalten Ankunft, Rückreise und die explizite Aufteilung', () => {
+    const allocation = {claims: [
+      {occurrence: 1, startDate: '2026-11-01', endDate: '2026-11-03'},
+      {occurrence: 2, startDate: '2026-11-04', endDate: '2026-11-07'},
+      {occurrence: 3, startDate: '2026-11-08', endDate: '2026-11-14'},
+    ]}
+    const graph = createZieleGraph([BANGKOK, CHIANG, PHUKET], ZEITRAUM, allocation)
+    const konto = createKontoTage(graph, ZEITRAUM)
+    assert.equal(konto.length, 14)
+    assert.equal(konto[0]?.day_date, ZEITRAUM.startDate)
+    assert.equal(konto.at(-1)?.day_date, ZEITRAUM.endDate)
+    assert.deepEqual(konto.map(x => x.stage_position), [1,1,1,2,2,2,2,3,3,3,3,3,3,3])
+    assert.equal(graph.stages.every(x => x.arrivalDate === null && x.departureDate === null), true,
+      'keine erfundenen Etappen-/Hotelgrenzen bei drei Zielen')
   })
 })

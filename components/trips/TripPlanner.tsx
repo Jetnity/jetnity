@@ -286,7 +286,9 @@ export default function TripPlanner({
       focusId: null as string | null,
       claims: null as { occurrence: number; startDate: string; endDate: string }[] | null,
     }
-    if (!zuordnungAktiv || zuordnungZiele.length < 2) return leer
+    // Ein noch nicht ausgefüllter Reisekalender zeigt keinen vorzeitigen
+    // Zuordnungsfehler. Beim Speichern prüft das strenge Reiseschema separat.
+    if (!zuordnungAktiv || zuordnungZiele.length < 2 || tage.length === 0) return leer
     const unvollstaendig = zuordnung.find((eintrag) => (eintrag.startDate === '') !== (eintrag.endDate === ''))
     if (unvollstaendig) {
       return {

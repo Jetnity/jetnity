@@ -478,3 +478,18 @@ test('Gespeicherte manuelle Daten: unknown → partial → full nur für tatsäc
     else Reflect.deleteProperty(globalThis, 'window')
   }
 })
+
+
+describe('Workspace W1 – halboffene Nächte mit strikt gültigen Grenzen', () => {
+  test('ungültige und zu lange Intervalle sind nicht still normalisiert oder gekürzt', () => {
+    assert.deepEqual(naechteHalboffen('2027-02-29', '2027-03-03'), [])
+    assert.deepEqual(naechteHalboffen('2026-02-30', '2026-03-03'), [])
+    assert.deepEqual(naechteHalboffen('2026-01-01', '2027-01-02'), [])
+  })
+  test('366 Kalendertage ergeben 365 Reisenächte und 1 klare Rückreise', () => {
+    const naechte = naechteHalboffen('2026-01-01', '2027-01-01')
+    assert.equal(naechte.length, 365)
+    assert.equal(naechte[0], '2026-01-01')
+    assert.equal(naechte.at(-1), '2026-12-31')
+  })
+})

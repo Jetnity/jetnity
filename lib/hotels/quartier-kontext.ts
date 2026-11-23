@@ -18,6 +18,7 @@ import {
   type ReiseAnker,
 } from '@/lib/hotels/domain'
 import { geoPunktGueltig } from '@/lib/hotels/geo'
+import { kalendertagUtc } from '@/lib/trips/tage'
 import type { HotelSucheEingabe } from '@/lib/hotels/schema'
 import type { Trip, TripInterest, TripPace, TripStage } from '@/types/trips'
 
@@ -27,13 +28,11 @@ export type QuartierKontextErgebnis = {
   evidenz: QuartierEvidenz
 }
 
-function tageUtc(wert: string): number {
-  return Date.parse(`${wert}T00:00:00Z`)
-}
-
 export function naechteZwischen(anreise: string | null, abreise: string | null): number | null {
-  if (!anreise || !abreise) return null
-  const differenz = Math.round((tageUtc(abreise) - tageUtc(anreise)) / 86_400_000)
+  const start = kalendertagUtc(anreise)
+  const ende = kalendertagUtc(abreise)
+  if (start === null || ende === null) return null
+  const differenz = (ende - start) / 86_400_000
   return differenz > 0 ? differenz : null
 }
 
@@ -48,14 +47,36 @@ export function hotelZeitraumAusEtappe(
   reise: Pick<Trip, 'startDate' | 'endDate' | 'stages'>,
   etappe: Pick<TripStage, 'arrivalDate' | 'departureDate'>,
 ): { checkIn: string; checkOut: string } | null {
-  const eigene = naechteZwischen(etappe.arrivalDate, etappe.departureDate)
-  if (eigene && etappe.arrivalDate && etappe.departureDate) {
-    return { checkIn: etappe.arrivalDate, checkOut: etappe.departureDate }
+  // Eine bekannte Reisegrenze ist ein harter Rahmen, kein geschätzter
+  // Hoteltermin. Ungültige oder vertauschte Grenzen sind nicht übergehbar.
+  const reiseStart = kalendertagUtc(reise.startDate)
+  const reiseEnde = kalendertagUtc(reise.endDate)
+  if ((reise.startDate !== null && reiseStart === null)
+    || (reise.endDate !== null && reiseEnde === null)
+    || (reiseStart !== null && reiseEnde !== null && reiseStart > reiseEnde)) return null
+
+  function innerhalb(checkIn: string, checkOut: string): boolean {
+    const anreise = kalendertagUtc(checkIn)
+    const abreise = kalendertagUtc(checkOut)
+    return anreise !== null && abreise !== null && abreise > anreise
+      && (reiseStart === null || anreise >= reiseStart)
+      && (reiseEnde === null || abreise <= reiseEnde)
   }
-  if (reise.stages.length > 1) return null
+
+  // Mehrere Aufenthalte (auch derselbe Ort zweimal) haben eigene Grenzen.
+  // Ein Datum ausserhalb des Reisekalenders wird nie als Suchtermin übernommen.
+  if (etappe.arrivalDate && etappe.departureDate) {
+    return innerhalb(etappe.arrivalDate, etappe.departureDate)
+      ? { checkIn: etappe.arrivalDate, checkOut: etappe.departureDate }
+      : null
+  }
+  if (reise.stages.length !== 1) return null
+
+  // Nur bei genau einer Etappe darf eine fehlende Grenze aus der bekannten
+  // Reise selbst stammen. Kein stilles Vererben auf den nächsten Reiseort.
   const checkIn = etappe.arrivalDate ?? reise.startDate
   const checkOut = etappe.departureDate ?? reise.endDate
-  if (!checkIn || !checkOut || !naechteZwischen(checkIn, checkOut)) return null
+  if (!checkIn || !checkOut || !innerhalb(checkIn, checkOut)) return null
   return { checkIn, checkOut }
 }
 

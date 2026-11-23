@@ -86,7 +86,7 @@ export function hotelTerminHinweis(herkunft: HotelTerminHerkunft): string {
     case 'unvollstaendig':
       return 'Für diese Etappe fehlt An- oder Abreise. Der übrige Reisezeitraum wird nicht eingesetzt.'
     case 'ungueltig':
-      return 'Die gespeicherten Etappendaten ergeben keinen Aufenthalt. Bitte setze An- und Abreise.'
+      return 'Die Aufenthaltsdaten dieser Etappe passen nicht zum Reisezeitraum. Bitte prüfe An- und Abreise.'
     case 'offen':
       return 'Ergänze die Aufenthaltsdaten für diese Etappe.'
   }

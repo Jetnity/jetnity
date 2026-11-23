@@ -204,3 +204,29 @@ describe('Quartierkontext aus der Reise', () => {
     assert.equal(ergebnis.kontext?.praeferenzen.essen, 0.8)
   })
 })
+
+
+describe('Workspace W1 – Hotels nur innerhalb belegter Reisetermine', () => {
+  test('Date.parse darf keine nicht existierenden Nächte erzeugen', () => {
+    assert.equal(naechteZwischen('2026-02-30', '2026-03-03'), null)
+    assert.equal(naechteZwischen('2027-02-28', '2027-02-29'), null)
+    assert.equal(naechteZwischen('2028-02-28', '2028-03-01'), 2)
+    assert.equal(naechteZwischen('2026-10-24', '2026-10-27'), 3)
+  })
+
+  test('Etappen ausserhalb der Reise landen niemals in einer Hotel-Suchanfrage', () => {
+    const etappe = {
+      ...EINGABE.stage,
+      arrivalDate: '2026-09-14', departureDate: '2026-09-20',
+    } as TripStage
+    const reise = {
+      stages: [etappe], days: [], ohneTag: [], travellers: 2,
+      currency: 'CHF', budgetAmount: null, interests: [], pace: null,
+      startDate: '2026-09-12', endDate: '2026-09-16',
+    } as unknown as Trip
+    const such = hotelSucheEingabeAusReise(reise, etappe)
+    assert.equal(such.stage.arrivalDate, null)
+    assert.equal(such.stage.departureDate, null)
+    assert.equal(suchanfrageAusKontext(such, null), null)
+  })
+})

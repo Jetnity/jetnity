@@ -7,7 +7,7 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { TAGE_MAXIMUM, reisetageBauen } from '@/lib/trips/tage'
+import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, datumVerschieben, kalendertagUtc, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 
 describe('Aus einem Zeitraum werden Reisetage', () => {
   test('beide Daten gehören dazu', () => {
@@ -83,12 +83,37 @@ describe('Ein unbrauchbarer Zeitraum ergibt keine Tage', () => {
 })
 
 describe('Die Obergrenze ist die der Datenbank', () => {
-  test('höchstens 366 Tage – wie trip_days_index_bereich', () => {
-    // Zehn Jahre als Zeitraum wären in `trip_days.day_index` ein `smallint`
-    // jenseits der Prüfbedingung. Die Grenze greift vor der Datenbank.
-    const tage = reisetageBauen('2026-01-01', '2036-01-01')
-
+  test('366 inklusive Tage behalten den letzten Rückreisetag', () => {
+    const tage = reisetageBauen('2026-01-01', '2027-01-01')
     assert.equal(tage.length, TAGE_MAXIMUM)
-    assert.equal(tage[tage.length - 1].dayIndex, TAGE_MAXIMUM)
+    assert.deepEqual(tage.at(-1), { dayIndex: 366, dayDate: '2027-01-01' })
+  })
+
+  test('367 Tage und zehn Jahre werden abgewiesen, niemals still gekürzt', () => {
+    assert.equal(zeitraumIstZuLang('2026-01-01', '2027-01-02'), true)
+    assert.deepEqual(reisetageBauen('2026-01-01', '2027-01-02'), [])
+    assert.deepEqual(reisetageBauen('2026-01-01', '2036-01-01'), [])
+    assert.match(ZEITRAUM_ZU_LANG, /einschliesslich Abreise und Rückreise/)
+  })
+})
+
+describe('W1 echte Kalenderdaten statt Date.parse-Normalisierung', () => {
+  test('unmögliche Kalendertage werden in allen Einstiegen abgewiesen', () => {
+    for (const invalid of ['2026-02-30', '2027-02-29', '2026-04-31', '2026-13-01', '2026-1-01', '']) {
+      assert.equal(kalendertagUtc(invalid), null)
+      assert.deepEqual(reisetageBauen(invalid, '2026-03-02'), [])
+      assert.deepEqual(reisetageBauen('2026-02-01', invalid), [])
+      assert.equal(datumVerschieben(invalid, 0), null)
+    }
+  })
+
+  test('Schaltjahr, Monatswechsel, DST und ganze Verschiebung bleiben exakt', () => {
+    assert.ok(kalendertagUtc('2028-02-29') !== null)
+    assert.equal(datumVerschieben('2028-02-28', 1), '2028-02-29')
+    assert.equal(datumVerschieben('2028-02-29', 1), '2028-03-01')
+    assert.equal(datumVerschieben('2026-10-25', 1), '2026-10-26')
+    assert.equal(datumVerschieben('2026-10-25', -1), '2026-10-24')
+    assert.equal(datumVerschieben('2026-10-25', 0.5), null)
+    assert.equal(datumVerschieben(null, 1), null)
   })
 })
