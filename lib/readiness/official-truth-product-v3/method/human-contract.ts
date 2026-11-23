@@ -181,7 +181,10 @@ export function readHumanRelease(value: unknown): HumanRelease | null {
       || !((scope.citizenship === 'CH' && scope.destination === 'DE' && scope.document === 'swiss_passport'
              && scope.conditions === 'unconditional')
         || (scope.citizenship === 'PRIORITY_50' && scope.destination === 'AT' && scope.document === 'national_passport'
-             && scope.conditions === 'verified_context_only'))
+             && scope.conditions === 'verified_context_only')
+        || (scope.citizenship === 'CH' && scope.destination === 'AT' && scope.document === 'swiss_passport'
+             && scope.conditions === 'verified_context_only' && tuple.methodId === 'jetnity-destination-primary-at-visa'
+             && tuple.revision === 2))
       || !utcMilliseconds(scope.activeFrom) || !utcMilliseconds(scope.activeUntilExclusive) || scope.activeFrom >= scope.activeUntilExclusive
       || !text(scope.reviewedScope, 1600)) return null
     return freeze({ schema: 1, selectionId: row.selectionId, targetUrl: row.targetUrl, ...tuple,
