@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { readFileSync } from 'node:fs'
 import { eligibleAustriaProductionVisitor } from './at-production-selection'
-import { HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_DEV_URL } from '../official-truth-product-v3/method/human-contract'
+import { HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_DEV_URL, readHumanRelease } from '../official-truth-product-v3/method/human-contract'
 
 const production = {
   deploymentEnv: 'production',
@@ -79,4 +79,34 @@ test('Production Rev2 only: Owner access cannot select 50-passport Rev1 or visit
  assert.match(page,/release\?\.scope\.citizenship === 'CH'/)
  assert.match(panel,/selected\.scope\.citizenship === 'CH'/)
  assert.doesNotMatch(selection,/NEXT_PUBLIC_JETNITY_OFFICIAL_AT_PRODUCTION_METHOD_OWNER_V2/)
+})
+
+
+test('strict release decoder admits only a CH-to-AT visa Rev2 successor',()=>{
+ const valid={
+  schema:1,selectionId:'hmr1_feb439d56d8a60334d0151683f46114b',
+  targetUrl:HUMAN_METHOD_PRODUCTION_URL,
+  methodId:'jetnity-destination-primary-at-visa',revision:2,
+  methodDigest:'fe161a865c50d26be4a41c1b122fcd14efb3b39bc9100fd66b13304dfca07a4e',
+  packageDigest:'6584d20adcc08e94edc4a74cad6c780b6db9c7ce89fff8e89afb0d23380e27a0',
+  predecessorRevision:1,expectedHead:{
+   methodId:'jetnity-destination-primary-at-visa',revision:1,
+   methodDigest:'cd9b8584d08cc3bfb83f0f1a7095c1c6e011c8d25336f8767ec6678ec8bbc9e9',
+   packageDigest:'55e574d7c70c20513a4ac05273c43cdd87dd854e0b403ce0c9a5ab168220ebfe',
+   epoch:1,status:'approved',approvalMode:'until_revoked',approvalUntil:null,
+  },
+  approval:{mode:'until_revoked',until:null},
+  packageVersion:'CH→AT Rev2 (Test)',
+  packageHref:'https://github.com/Jetnity/jetnity/blob/a7d7b0ba833c4421c7f7b353566762e0472f3638/lib/readiness/official-truth-at-method-v1/at-ch-v2-method-candidate.ts',
+  scope:{citizenship:'CH',destination:'AT',requirement:'visa',document:'swiss_passport',route:'direct_entry',
+   conditions:'verified_context_only',activeFrom:'2026-11-22T00:00:00.000Z',activeUntilExclusive:'2027-11-22T00:00:00.000Z',
+   reviewedScope:'Only ordinary valid CH passport direct entry visa-free. No 50-passport release.'},
+ }
+ assert.equal(readHumanRelease(valid)?.revision,2)
+ for(const altered of [
+  {revision:1},{methodId:'another_method'},{predecessorRevision:null},{expectedHead:null},
+  {scope:{...valid.scope,citizenship:'DE'}},{scope:{...valid.scope,destination:'DE'}},
+  {scope:{...valid.scope,document:'national_passport'}},{scope:{...valid.scope,route:'transit'}},
+  {scope:{...valid.scope,requirement:'vaccination'}},{scope:{...valid.scope,conditions:'unconditional'}},
+ ]) assert.equal(readHumanRelease({...valid,...altered}),null)
 })
