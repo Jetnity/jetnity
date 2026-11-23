@@ -274,3 +274,20 @@ describe('Hotel-Suchbelegung', () => {
     assert.equal(ohne.ok, false)
   })
 })
+
+
+describe('Workspace W1 – Hotelvorlagen nicht über die Rückreise hinaus', () => {
+  test('eine aus dem Reisekalender gefallene Etappe bleibt ohne Suchtermin', () => {
+    const zuSpaet = etappe({
+      id: 'bkk-spaet', position: 1, name: 'Bangkok',
+      arrivalDate: '2027-03-12', departureDate: '2027-03-21',
+    })
+    const trip = reise({stages: [zuSpaet], endDate: '2027-03-20'})
+    assert.deepEqual(hotelSuchtermine(trip, zuSpaet), {anreise: '', abreise: '', herkunft: 'ungueltig'})
+    const vorlage = hotelSuchvorlage(trip, zuSpaet)
+    assert.equal(vorlage.reisende, 2)
+    assert.equal(vorlage.erwachsene, null)
+    assert.equal(vorlage.kinder, null)
+    assert.equal(vorlage.zimmer, null)
+  })
+})
