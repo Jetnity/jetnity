@@ -3,6 +3,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fixture, conflictFixture } from '@/scripts/direct-trip-editing-1/fixture'
 import { tripZeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import { buchungsstatusAnwenden, istGebucht } from '@/lib/trips/buchung'
 import { manuellSchema, manuellerEntwurf, vorschauKennungen } from './direct/entwurf'
 import { auswirkungen } from './direct/auswirkungen'
 import { tripAuditV1 } from '@/lib/trips/trip-audit-v1/audit'
@@ -365,6 +367,17 @@ function katalogStopp(before: Trip) {
  */
 function w2SechsTagespunkte(): Trip {
   const reise = fixture()
+  // Synthetic, test-owned fixture ONLY: no Supabase write, no supplier reference,
+  // no price or external checkout. "booked" is ONLY a user-maintained marker.
+  // The label must prevent a browser tester from mistaking this for a real reservation.
+  const aufenthalt = reise.days[3].items[0]
+  Object.assign(aufenthalt, {
+    title: 'W2-TEST: Unterkunft (nur markiert, keine echte Buchung)',
+    provider: null, externalRef: null, bookingUrl: null,
+    priceAmount: null, priceCurrency: null,
+    bookingStatus: 'booked', bookingSource: 'user',
+    bookingConfirmedAt: '2026-10-01T10:00:00.000Z',
+  })
   const normal = reise.days[0].items[0]
   reise.days[1].items.push({
     ...normal, id: 'w2-visit-5', dayId: 'day-2', stageId: 'stage-1',
@@ -381,6 +394,39 @@ function w2SechsTagespunkte(): Trip {
   assert.equal(reise.days.flatMap(tag => tag.items).length, 6)
   return reise
 }
+
+// Same safe transition used by the actual UnterkunftBestand button.
+// It represents a Dev user's assertion, never a hotel/provider confirmation.
+test('W2-Dev-Testunterkunft: selbst markiert, ohne echte Buchung/Preis/Provider', async () => {
+  const vor = w2SechsTagespunkte()
+  const punkt = vor.days[3].items.find(item => item.id === 'item-4')!
+  assert.match(punkt.title, /^W2-TEST: Unterkunft/)
+  assert.equal(punkt.kind, 'stay')
+  assert.equal(punkt.bookingStatus, 'booked')
+  assert.equal(punkt.bookingSource, 'user')
+  assert.equal(punkt.provider, null)
+  assert.equal(punkt.externalRef, null)
+  assert.equal(punkt.bookingUrl, null)
+  assert.equal(punkt.priceAmount, null)
+  assert.equal(punkt.priceCurrency, null)
+  assert.equal(istGebucht(punkt), true)
+  assert.equal(istKommerziell(punkt), true, 'Schutz entsteht allein durch den Nutzerstatus, nicht durch einen erfundenen Preis')
+  const korrektur = buchungsstatusAnwenden(punkt, false, '2026-10-01T11:00:00.000Z')
+  assert(korrektur.ok)
+  assert.equal(korrektur.punkt.bookingStatus, 'unconfirmed')
+  assert.equal(korrektur.punkt.bookingSource, null)
+  assert.equal(korrektur.punkt.bookingConfirmedAt, null)
+  const markiert = buchungsstatusAnwenden(korrektur.punkt, true, '2026-10-01T11:05:00.000Z')
+  assert(markiert.ok)
+  assert.equal(markiert.punkt.bookingStatus, 'booked')
+  assert.equal(markiert.punkt.bookingSource, 'user')
+  assert.equal(markiert.punkt.provider, null)
+  assert.equal(markiert.punkt.bookingUrl, null)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const danach = v.vorschau.nachher.days[3].items.find(item => item.id === punkt.id)
+  assert.deepEqual(danach, punkt, 'Vorschau bewahrt die reine Dev-Buchungsmarkierung und alte Check-in-/Check-out-Daten')
+})
 
 function w2PunktKennungen(reise: Trip): string[] {
   return [...reise.days.flatMap(tag => tag.items), ...reise.ohneTag]
