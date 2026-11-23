@@ -21,6 +21,8 @@ import {
   istGenerischerCreateHref,
   planenCreateGateSicht,
   planenVorbelegung,
+  reiseCreateSchreibziel,
+  REISE_CREATE_SITZUNG_UNKLAR,
   wunschAusIdee,
   wunschHinweise,
 } from '@/lib/trips/create-entry'
@@ -665,5 +667,42 @@ describe('Wunschtext: Hinweis, wo Kinder- und Pass-Angaben hingehören', () => {
     assert.match(quelle, /data-wunsch-hinweis="paesse"/)
     assert.match(quelle, /Jetnity liest deinen Wunschtext dafür nicht automatisch aus\./)
     assert.ok(quelle.indexOf('id="wunsch-hinweis"') < quelle.indexOf('data-wunsch-hinweise'))
+  })
+})
+
+
+describe('Workspace W1 – Session-Wechsel darf nie zur falschen Gastablage führen', () => {
+  test('Gast bleibt Gast, aber eine später bestätigte Anmeldung gewinnt vor dem Write', () => {
+    assert.equal(reiseCreateSchreibziel(false, 'gast'), 'gast')
+    assert.equal(reiseCreateSchreibziel(false, 'konto'), 'konto')
+    assert.equal(reiseCreateSchreibziel(true, 'konto'), 'konto')
+    assert.equal(gastCreateGate({ angemeldet: true, aktiveReiseId: 'trip-alter-entwurf' }).erlaubt, true)
+  })
+
+  test('Logout und Auth-Ungewissheit erzeugen keinen ungewollten Gastentwurf', () => {
+    assert.equal(reiseCreateSchreibziel(true, 'gast'), 'blockiert')
+    assert.equal(reiseCreateSchreibziel(true, 'unbekannt'), 'blockiert')
+    assert.equal(reiseCreateSchreibziel(false, 'unbekannt'), 'blockiert')
+    assert.match(REISE_CREATE_SITZUNG_UNKLAR, /Anmeldung konnte vor dem Speichern nicht bestätigt werden/)
+  })
+
+  test('Formular prüft die Server-Sitzung nach Ortsbestätigung und vor der einzigen Gast-Persistenz', () => {
+    const planer = quelle('../../components/trips/TripPlanner.tsx')
+    const action = quelle('./aktionen.ts')
+    assert.match(planer, /reiseCreateSitzungsstandLesen/)
+    assert.match(planer, /async function frischeCreateSitzungLesen\(\)/)
+    assert.match(planer, /catch \{\s+return 'unbekannt' as const/)
+    assert.match(planer, /reiseCreateSchreibziel\(angemeldet, await frischeCreateSitzungLesen\(\)\)/)
+    assert.match(planer, /if \(schreibziel === 'konto'\)/)
+    assert.match(planer, /if \(schreibziel === 'gast'\)/)
+    assert.match(planer, /if \(schreibziel === 'blockiert'\)/)
+    const frisch = planer.indexOf("const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())", planer.indexOf('const orte = await reiseorteBestaetigen'))
+    const konto = planer.indexOf('const ergebnis = await reiseAnlegen(', frisch)
+    const gast = planer.indexOf('const reise = gastreiseAnlegen(entwurf, orte)', frisch)
+    assert.ok(frisch >= 0 && konto > frisch && gast > konto)
+    assert.match(action, /client\.auth\.getSession\(\)/)
+    assert.match(action, /if \(!sessionData\.session\) return 'gast'/)
+    assert.match(action, /client\.auth\.getUser\(\)/)
+    assert.match(action, /return !userError && userData\.user \? 'konto' : 'unbekannt'/)
   })
 })

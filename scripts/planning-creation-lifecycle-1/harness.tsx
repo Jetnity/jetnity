@@ -131,6 +131,7 @@ window.fixture = {
   pushes,
   uuids,
   props: ANFANG,
+  sitzung: 'gast',
   texte: {
     zielUnbekannt: ORT_MELDUNG.zielUnbekannt,
     ortFrei: ORT_FREI,
@@ -178,6 +179,8 @@ function Shell() {
     window.fixture.steuerung = {
       wieder(next?: Partial<Props>) {
         const basis = { ...ANFANG, ...next }
+        window.fixture.sitzung = basis.konto ? 'konto' : 'gast'
+        window.fixture.props = basis
         const weitere = next?.weitere ?? ANFANG.weitere
         setStand({ ...basis, weitere: weitere.map((ziel) => ({ ...ziel })) })
         setN((wert) => wert + 1)
@@ -223,6 +226,7 @@ declare global {
       pushes: string[]
       uuids: string[]
       props: Props
+      sitzung: 'konto' | 'gast' | 'unbekannt'
       texte: Record<string, string>
       arm: (name: string, modus: Modus, danach?: Exclude<Modus, 'hold'>) => void
       los: (name: string) => void

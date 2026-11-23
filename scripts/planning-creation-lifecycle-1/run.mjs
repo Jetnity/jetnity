@@ -384,6 +384,43 @@ try {
       assert.equal(daten.calls.some((eintrag) => eintrag.name === 'anlegen'), false)
     })
 
+    await fall('late verified login in open W1 form writes directly to account', async () => {
+      await neu(page, { ansicht: 'manual', konto: false })
+      await ausfuellen(page, false)
+      // Simuliert Anmeldung nach dem RSC-Render, ohne das Formular neu zu mounten.
+      await page.evaluate(() => { window.fixture.sitzung = 'konto' })
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.waitForFunction(() => window.fixture.pushes.at(-1) === '/reisen/reise-konto-synthetisch')
+      const daten = await stand(page)
+      assert.equal(daten.aktiv, null)
+      assert.equal(daten.calls.filter((eintrag) => eintrag.name === 'anlegen').length, 1)
+      assert.ok(anlegenRef(daten)?.startsWith('trip-'))
+    })
+
+    await fall('unknown current session refuses guest downgrade without writes', async () => {
+      await neu(page, { ansicht: 'manual', konto: false })
+      await ausfuellen(page, false)
+      await page.evaluate(() => { window.fixture.sitzung = 'unbekannt' })
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.getByText(/Anmeldung konnte vor dem Speichern nicht bestätigt werden/).waitFor()
+      const daten = await stand(page)
+      assert.equal(daten.aktiv, null)
+      assert.equal(daten.calls.some((eintrag) => eintrag.name === 'anlegen'), false)
+      assert.equal(daten.pushes.length, 0)
+    })
+
+    await fall('logout after render never creates a guest trip from account form', async () => {
+      await neu(page, { ansicht: 'manual', konto: true })
+      await ausfuellen(page, false)
+      await page.evaluate(() => { window.fixture.sitzung = 'gast' })
+      await page.getByRole('button', { name: 'Reise erstellen' }).click()
+      await page.getByText(/Anmeldung konnte vor dem Speichern nicht bestätigt werden/).waitFor()
+      const daten = await stand(page)
+      assert.equal(daten.aktiv, null)
+      assert.equal(daten.calls.some((eintrag) => eintrag.name === 'anlegen'), false)
+      assert.equal(daten.pushes.length, 0)
+    })
+
     await fall('existing guest draft blocks a second create without overwrite', async () => {
       const bytes = (await stand(page)).aktiv
       const alt = await generation(page)

@@ -65,7 +65,7 @@ import {
 import TripStageDayAllocation, {
   type TageszuordnungAnspruch,
 } from '@/components/trips/TripStageDayAllocation'
-import { reiseAnlegen } from '@/lib/trips/aktionen'
+import { reiseAnlegen, reiseCreateSitzungsstandLesen } from '@/lib/trips/aktionen'
 import { createDayPositions, tageszuordnungAngleichen } from '@/lib/trips/create-day-assignment'
 import { ZEITRAUM_ZU_LANG, REISEDAUER_MAXIMUM, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 import {
@@ -73,6 +73,8 @@ import {
   CREATE_PERSISTENZ_TEMPO,
   gastCreateGateMeldung,
   gastCreateJetztPruefen,
+  reiseCreateSchreibziel,
+  REISE_CREATE_SITZUNG_UNKLAR,
   wunschAusIdee,
   wunschHinweise,
 } from '@/lib/trips/create-entry'
@@ -92,6 +94,15 @@ import { usePlanenMitnahme } from '@/components/trips/PlanenEinstiegNavigation'
 
 const TRANSPORT =
   'Die Reise konnte gerade nicht erstellt werden. Deine Angaben bleiben hier. Bitte versuche es erneut.'
+
+/** Auch ein unterbrochener Server-Action-Transport ist unbekannt, nie Gast. */
+async function frischeCreateSitzungLesen() {
+  try {
+    return await reiseCreateSitzungsstandLesen()
+  } catch {
+    return 'unbekannt' as const
+  }
+}
 
 type ZusaetzlichesZiel = {
   key: string
@@ -435,9 +446,15 @@ export default function TripPlanner({
 
     const gate = gastCreateJetztPruefen(angemeldet)
     if (!gate.erlaubt) {
-      setBestehendeReise(gate.grund === 'besteht' ? gate.bestehendeId : '')
-      setMeldung(gastCreateGateMeldung(gate))
-      return
+      // Der Render kann noch Gast zeigen, obwohl die Anmeldung inzwischen
+      // auf einem anderen Tab abgeschlossen wurde. Nur die frische Server-
+      // Sitzung darf ein bestehendes Gast-Gate für ein Konto übergehen.
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
+      if (schreibziel !== 'konto') {
+        setBestehendeReise(schreibziel === 'gast' && gate.grund === 'besteht' ? gate.bestehendeId : '')
+        setMeldung(schreibziel === 'blockiert' ? REISE_CREATE_SITZUNG_UNKLAR : gastCreateGateMeldung(gate))
+        return
+      }
     }
 
     setMeldung('')
@@ -532,9 +549,12 @@ export default function TripPlanner({
 
     const vorNetz = gastCreateJetztPruefen(angemeldet)
     if (!vorNetz.erlaubt) {
-      setBestehendeReise(vorNetz.grund === 'besteht' ? vorNetz.bestehendeId : '')
-      setMeldung(gastCreateGateMeldung(vorNetz))
-      return
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
+      if (schreibziel !== 'konto') {
+        setBestehendeReise(schreibziel === 'gast' && vorNetz.grund === 'besteht' ? vorNetz.bestehendeId : '')
+        setMeldung(schreibziel === 'blockiert' ? REISE_CREATE_SITZUNG_UNKLAR : gastCreateGateMeldung(vorNetz))
+        return
+      }
     }
 
     const lauf = lifecycle.beginnen()
@@ -576,7 +596,28 @@ export default function TripPlanner({
         return
       }
 
-      if (angemeldet) {
+      // Der beim ersten Render geprüfte Status ist nur eine Momentaufnahme.
+      // Direkt vor JEDEM Write entscheidet die aktuelle Server-Session neu:
+      // Konto gewinnt bei späterem Login; Auth-Fehler/Logout werden nicht
+      // automatisch zum lokalen Gast-Write herabgestuft.
+      const schreibziel = reiseCreateSchreibziel(angemeldet, await frischeCreateSitzungLesen())
+      if (!lifecycle.aktuell(lauf)) return
+      if (schreibziel === 'blockiert') {
+        setMeldung(REISE_CREATE_SITZUNG_UNKLAR)
+        lifecycle.beenden(lauf)
+        return
+      }
+      if (schreibziel === 'gast') {
+        const aktuell = gastCreateJetztPruefen(false)
+        if (!aktuell.erlaubt) {
+          setBestehendeReise(aktuell.grund === 'besteht' ? aktuell.bestehendeId : '')
+          setMeldung(gastCreateGateMeldung(aktuell))
+          lifecycle.beenden(lauf)
+          return
+        }
+      }
+
+      if (schreibziel === 'konto') {
         const ergebnis = await reiseAnlegen({
           ...entwurf,
           title: orte.ziel.name,
