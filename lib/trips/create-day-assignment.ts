@@ -8,7 +8,7 @@ import {
   dayStageAssignmentModeAbleiten,
   type DayStageAssignmentMode,
 } from '@/lib/trips/day-stage-assignment'
-import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
+import { TAGE_MAXIMUM, ZEITRAUM_ZU_LANG, kalendertagUtc, reisetageBauen, zeitraumIstZuLang } from '@/lib/trips/tage'
 
 /** Dieselbe Etappengrenze wie `GRENZEN.etappenJeReise`. */
 export const ZUORDNUNG_ANSPRUECHE_MAXIMUM = 50
@@ -50,20 +50,10 @@ const FREMDE =
   'Die Tageszuordnung verweist auf ein Ziel, das in dieser Reise nicht vorkommt.'
 const NUR_MEHRERE = 'Eine Tagesverteilung ist nur bei mehreren Zielen möglich.'
 const UMFANG = `Die Tageszuordnung umfasst höchstens ${ZUORDNUNG_ANSPRUECHE_MAXIMUM} Ansprüche.`
-const KEINE_TAGE = 'Für diesen Zeitraum gibt es keine Reisetage.'
+const KEINE_TAGE = 'Für diesen Zeitraum gibt es keine gültigen Reisetage.'
+const ZIELE_ZU_VIELE = 'Eine Reise umfasst höchstens 50 bestätigte Reiseziele.'
 const ENDE_VOR_ANFANG = 'Das Zuordnungsende liegt vor dem Anfang.'
 const KEINE_ZAHL = 'Die Tageszuordnung braucht eine ganze Zielnummer.'
-
-function isoDatum(wert: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(wert)) return false
-  const [jahr, monat, tag] = wert.split('-').map(Number)
-  const geprueft = new Date(Date.UTC(jahr, monat - 1, tag))
-  return (
-    geprueft.getUTCFullYear() === jahr &&
-    geprueft.getUTCMonth() === monat - 1 &&
-    geprueft.getUTCDate() === tag
-  )
-}
 
 function fehler(message: string, focusOccurrence: number | null = null): TageszuordnungFehler {
   return { ok: false, message, focusOccurrence }
@@ -79,10 +69,13 @@ export function createDayPositions(eingabe: TageszuordnungEingabe): Tageszuordnu
   if (!Number.isInteger(eingabe.stageCount) || eingabe.stageCount < 1) {
     return fehler('Mindestens ein bestätigtes Reiseziel ist erforderlich.')
   }
+  if (eingabe.stageCount > ZUORDNUNG_ANSPRUECHE_MAXIMUM) return fehler(ZIELE_ZU_VIELE)
 
   if (zeitraumIstZuLang(eingabe.startDate, eingabe.endDate)) return fehler(ZEITRAUM_ZU_LANG)
 
   const tage = reisetageBauen(eingabe.startDate, eingabe.endDate)
+  // Auch eine Einzelzielreise darf nie mit null Tagen erfolgreich entstehen.
+  if (tage.length === 0) return fehler(KEINE_TAGE)
   const ansprueche = eingabe.allocation?.claims
   const hatAnsprueche = ansprueche != null
 
@@ -134,7 +127,7 @@ export function createDayPositions(eingabe: TageszuordnungEingabe): Tageszuordnu
     if (occurrence < 1 || occurrence > eingabe.stageCount) {
       return fehler(FREMDE, occurrence)
     }
-    if (!isoDatum(anspruch.startDate) || !isoDatum(anspruch.endDate)) {
+    if (kalendertagUtc(anspruch.startDate) === null || kalendertagUtc(anspruch.endDate) === null) {
       return fehler(AUSSERHALB, occurrence)
     }
     const von = index.get(anspruch.startDate)
