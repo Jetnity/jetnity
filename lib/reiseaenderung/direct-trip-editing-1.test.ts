@@ -355,3 +355,97 @@ function katalogStopp(before: Trip) {
   const ort: import('@/lib/places/domain').Ort = { id:'geonames:1621177', source:'geonames', sourceId:'1621177', name:'Ayutthaya', typ:'city', country:'Thailand', countryCode:'TH', region:null, lat:14.35, lon:100.57, iata:null, keywords:null }
   return {ort,request:{neuerStopp:{ortId:ort.id,nachEtappeId:before.stages[0].id,tage:2}}}
 }
+
+
+/**
+ * W2 regression base: six explicit, unbooked/booked plan points on four
+ * calendar days. This is a deterministic fixture, not browser evidence.
+ * It reuses the authoritative direct-preview, impact and write primitives.
+ */
+function w2SechsTagespunkte(): Trip {
+  const reise = fixture()
+  const normal = reise.days[0].items[0]
+  reise.days[1].items.push({
+    ...normal, id: 'w2-visit-5', dayId: 'day-2', stageId: 'stage-1',
+    title: 'Museumsbesuch', position: 2,
+    startsOn: '2026-10-08', endsOn: '2026-10-08',
+    startsAt: '11:00', endsAt: '12:00',
+  })
+  reise.days[3].items.push({
+    ...normal, id: 'w2-return-6', dayId: 'day-4', stageId: 'stage-2',
+    title: 'Rückreise (ungebucht)', position: 2,
+    startsOn: '2026-10-10', endsOn: '2026-10-10',
+    startsAt: '18:00', endsAt: '19:00',
+  })
+  assert.equal(reise.days.flatMap(tag => tag.items).length, 6)
+  return reise
+}
+
+function w2PunktKennungen(reise: Trip): string[] {
+  return [...reise.days.flatMap(tag => tag.items), ...reise.ohneTag]
+    .map(punkt => punkt.id).sort()
+}
+
+test('W2: sechs Tagespunkte – reine Rückreisedatum-Vorschau und Folgen ohne Originaländerung', async () => {
+  const vor = w2SechsTagespunkte(), original = structuredClone(vor)
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const nach = v.vorschau.nachher
+  assert.deepEqual(w2PunktKennungen(nach), w2PunktKennungen(original))
+  assert.equal(new Set(w2PunktKennungen(nach)).size, 6)
+  assert.equal(nach.days.find(tag => tag.id === 'day-4')?.dayDate, '2026-10-11')
+  assert.equal(nach.days[3].items.find(punkt => punkt.id === 'w2-return-6')?.startsOn, '2026-10-11')
+  assert.deepEqual(nach.days[3].items.find(punkt => punkt.id === 'item-4'),
+    original.days[3].items.find(punkt => punkt.id === 'item-4'))
+  const folgen = auswirkungen(vor, nach).flatMap(gruppe => gruppe.zeilen.map(zeile => zeile.text)).join('\n')
+  assert.match(folgen, /Rückreise \(ungebucht\)/)
+  assert.match(folgen, /Geschützt/)
+  assert.deepEqual(vor, original) // Abbrechen: only preview; no mutation/no persistence
+  assert.equal(vor.revision, original.revision)
+})
+
+test('W2: sechs Tagespunkte – Übernehmen, Readback, IDs und Revision mit idempotentem Retry', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  let aktuell = structuredClone(vor), writes = 0
+  const ports = {
+    quelle: 'account' as const,
+    lesen: async () => aktuell,
+    schreiben: async (reise: Trip, mutation: string, revision: number) => {
+      writes++
+      aktuell = { ...reise, revision: revision + 1, lastMutationId: mutation }
+      return { konflikt: false }
+    },
+  }
+  const uebernahme = await manuellSpeichern(v.vorschau.anfrage, ports)
+  assert(uebernahme.ok)
+  assert.equal(writes, 1)
+  assert.equal(uebernahme.reise.id, vor.id)
+  assert.equal(uebernahme.reise.revision, vor.revision + 1)
+  assert.deepEqual(w2PunktKennungen(uebernahme.reise), w2PunktKennungen(vor))
+  assert.deepEqual(uebernahme.reise.days, v.vorschau.nachher.days)
+  assert.equal(uebernahme.reise.lastMutationId, aktuell.lastMutationId)
+  const wiederholt = await manuellSpeichern(v.vorschau.anfrage, ports)
+  assert(wiederholt.ok)
+  assert.equal(writes, 1)
+  assert.deepEqual(wiederholt.reise, uebernahme.reise)
+})
+
+test('W2: konkurrierende Revision verweigert sechs-Punkte-Übernahme ohne Write', async () => {
+  const vor = w2SechsTagespunkte()
+  const v = await manuellVorschau(vor, { startDate: '2026-10-08' }, seed, 'account')
+  assert(v.ok)
+  const parallel = { ...structuredClone(vor), title: 'Parallelbearbeitung', revision: vor.revision + 1 }
+  let writes = 0
+  const antwort = await manuellSpeichern(v.vorschau.anfrage, {
+    quelle: 'account',
+    lesen: async () => parallel,
+    schreiben: async () => { writes++; return { konflikt: false } },
+  })
+  assert.equal(antwort.ok, false)
+  if (!antwort.ok) assert.equal(antwort.art, 'konflikt')
+  assert.equal(writes, 0)
+  assert.deepEqual(w2PunktKennungen(parallel), w2PunktKennungen(vor))
+  assert.equal(parallel.days[3].items.find(punkt => punkt.id === 'w2-return-6')?.startsOn, '2026-10-10')
+})
