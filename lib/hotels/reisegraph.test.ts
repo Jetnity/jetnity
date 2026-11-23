@@ -93,3 +93,31 @@ describe('Hotel-Reisegraph', () => {
     assert.equal(ergebnis.tag?.id, 'day-1')
   })
 })
+
+
+describe('Workspace W1 – Etappe und Reisetermin bilden denselben Kalender', () => {
+  test('eine Etappe vor der Hinreise oder nach der Rückreise ist kein Hoteltermin', () => {
+    for (const patch of [
+      {arrivalDate: '2026-09-11', departureDate: '2026-09-14'},
+      {arrivalDate: '2026-09-12', departureDate: '2026-09-17'},
+      {arrivalDate: '2026-02-30', departureDate: '2026-09-14'},
+    ]) {
+      const trip = beispielreise()
+      trip.stages[0] = {...trip.stages[0]!, ...patch}
+      assert.equal(hotelZeitraumAusEtappe(trip, trip.stages[0]!), null)
+      const checked = hotelReisegraphPruefen(trip, {tripId: trip.id, stageId: trip.stages[0]!.id, dayId: null})
+      assert.equal(checked.ok, false)
+      if (!checked.ok) assert.equal(checked.art, 'zeitraum-unvollstaendig')
+    }
+  })
+
+  test('eine einzelne Etappe darf eine fehlende Grenze nur innerhalb des Reisezeitraums ergänzen', () => {
+    const trip = beispielreise()
+    const only = {...trip.stages[0]!, arrivalDate: '2026-09-13', departureDate: null}
+    trip.stages = [only]
+    assert.deepEqual(hotelZeitraumAusEtappe(trip, only), {
+      checkIn: '2026-09-13', checkOut: '2026-09-16',
+    })
+    assert.equal(hotelZeitraumAusEtappe({...trip, endDate: '2026-09-12'}, only), null)
+  })
+})
