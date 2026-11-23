@@ -39,6 +39,14 @@ export const ZEITRAUM_ZU_LANG = `Eine Reise umfasst höchstens ${TAGE_MAXIMUM} K
 
 const EIN_TAG = 86_400_000
 
+/** Liest ausschliesslich wirkliche UTC-Kalendertage; Date.parse allein
+ * normalisiert z. B. den unmöglichen 30. Februar zu einem Märzdatum. */
+function utcKalendertag(iso: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null
+  const zeit = Date.parse(`${iso}T00:00:00Z`)
+  return Number.isFinite(zeit) && new Date(zeit).toISOString().slice(0, 10) === iso ? zeit : null
+}
+
 /** Verschiebt ein Kalenderdatum um ganze Tage. `null` bleibt `null`. */
 export function datumVerschieben(iso: string | null, delta: number): string | null {
   if (!iso || delta === 0) return iso
@@ -49,10 +57,9 @@ export function datumVerschieben(iso: string | null, delta: number): string | nu
 
 /** Kalendertage zwischen Abreise und Rückreise, ohne den Abreisetag selbst. */
 function zeitraumDauer(startDate: string, endDate: string): number | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return null
-  const start = Date.parse(`${startDate}T00:00:00Z`)
-  const ende = Date.parse(`${endDate}T00:00:00Z`)
-  if (Number.isNaN(start) || Number.isNaN(ende)) return null
+  const start = utcKalendertag(startDate)
+  const ende = utcKalendertag(endDate)
+  if (start === null || ende === null) return null
   return Math.round((ende - start) / EIN_TAG)
 }
 
@@ -69,19 +76,20 @@ export function zeitraumIstZuLang(startDate: string, endDate: string): boolean {
  * Zeitumstellung ein Tag aus oder doppelt an – für eine Reise, die in der
  * Sommerzeit beginnt und in der Winterzeit endet, ist das der Normalfall.
  *
- * Ein unmöglicher oder umgekehrter Zeitraum ergibt eine leere Liste. Die
- * Schleife stoppt bei 366 Tagen. Ein längerer Zeitraum muss vorher abgewiesen
- * werden; diese Funktion kürzt ihn sonst still.
+ * Ein unmöglicher, umgekehrter oder zu langer Zeitraum ergibt eine leere
+ * Liste; niemals still auf 366 Tage abschneiden. Die bestehende Formulargrenze
+ * liefert die benutzerfreundliche Fehlermeldung vor dieser Hilfsfunktion.
  */
 export function reisetageBauen(startDate: string, endDate: string): Reisetag[] {
-  const start = Date.parse(`${startDate}T00:00:00Z`)
-  const ende = Date.parse(`${endDate}T00:00:00Z`)
+  const start = utcKalendertag(startDate)
+  const ende = utcKalendertag(endDate)
 
-  if (Number.isNaN(start) || Number.isNaN(ende) || ende < start) return []
+  if (start === null || ende === null || ende < start
+    || ende - start > REISEDAUER_MAXIMUM * EIN_TAG) return []
 
   const tage: Reisetag[] = []
 
-  for (let zeit = start; zeit <= ende && tage.length < TAGE_MAXIMUM; zeit += EIN_TAG) {
+  for (let zeit = start; zeit <= ende; zeit += EIN_TAG) {
     tage.push({
       dayIndex: tage.length + 1,
       dayDate: new Date(zeit).toISOString().slice(0, 10),
