@@ -240,6 +240,8 @@ type AccountProps = React.ComponentProps<typeof KontoArbeitsbereich>
 
 function pageTest(options: {
   auth?: boolean
+  authError?: boolean
+  authThrow?: boolean
   load?: () => Promise<Lesung<Trip>>
   evaluate?: typeof tripOfficialEvaluationsAuswerten
 } = {}) {
@@ -251,10 +253,16 @@ function pageTest(options: {
   const registryDisplay = [{ id: 'registry-only', label: null, citizenshipCountryCodes: ['US'], residenceCountryCode: 'CA', documents: [{ documentType: 'passport', issuingCountryCode: 'US' }] }]
   const page = laden<{ default: typeof ReiseSeite }>(PAGE, {
     'next/navigation': { notFound() { events.push('404'); throw NOT_FOUND } },
+    'next/link': { default: (props: React.ComponentProps<'a'>) => React.createElement('a', props) },
     'lucide-react': { AlertCircle: () => null },
     '@/lib/next/request-api': { leseRequestParam },
     '@/lib/seo/index-grenze': { NICHT_INDEXIEREN: {} },
-    '@/lib/supabase/server': { async createServerComponentClient() { return { auth: { async getUser() { events.push('auth'); return { data: { user: options.auth === false ? null : { id: 'owner-test' } } } } } } } },
+    '@/lib/supabase/server': { async createServerComponentClient() { return { auth: { async getUser() {
+      events.push('auth')
+      if (options.authThrow) throw Error('synthetic Auth transport failure')
+      return { data: { user: options.auth === false ? null : { id: 'owner-test' } },
+        error: options.authError ? { message: 'synthetic Auth failure' } : null }
+    } } } } },
     '@/lib/trips/daten': { istKontoKennung, async reiseLaden(id: string) {
       assert.ok(events.includes('auth'))
       assert.equal(id, TRIP_ID)
@@ -326,8 +334,25 @@ describe('B01 authenticated page and account handoff', () => {
     })
   }
 
-  for (const [auth, tripId] of [[false, TRIP_ID], [true, `trip-${TRIP_ID}`], [true, 'invalid']] as const) {
-    test(`guest boundary (${auth}, ${tripId}): no account, evaluation or registry calls`, async () => {
+  for (const [reason, input] of [
+    ['signed out', { auth: false }],
+    ['Auth response failure', { authError: true }],
+    ['Auth transport failure', { authThrow: true }],
+  ] as const) {
+    test(`account UUID after reload: ${reason} never becomes an empty guest trip`, async () => {
+      const page = pageTest(input)
+      const result = await page.default({ params: Promise.resolve({ tripId: TRIP_ID }) })
+      assert.ok(React.isValidElement<{ 'data-konto-reise-zugriff': string; children: unknown }>(result))
+      assert.equal(result.type, 'main')
+      assert.equal(result.props['data-konto-reise-zugriff'], 'nicht-bestaetigt')
+      assert.match(JSON.stringify(result.props), /Reise erneut öffnen/)
+      assert.match(JSON.stringify(result.props), /Zur Anmeldung/)
+      assert.deepEqual(page.events, ['auth'], 'no guest, no account graph, no registry or evaluations')
+    })
+  }
+
+  for (const [auth, tripId] of [[false, `trip-${TRIP_ID}`], [true, `trip-${TRIP_ID}`], [true, 'invalid']] as const) {
+    test(`real guest boundary (${auth}, ${tripId}): no account, evaluation or registry calls`, async () => {
       const page = pageTest({ auth })
       const result = await page.default({ params: Promise.resolve({ tripId }) })
       assert.ok(React.isValidElement<{ tripId: string }>(result))
