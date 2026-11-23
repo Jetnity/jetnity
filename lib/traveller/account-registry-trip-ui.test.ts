@@ -82,8 +82,24 @@ describe('AP-7-S4 UI-/Scope-Vertrag', () => {
     assert.equal(konto.includes('router.refresh()'), true)
     assert.equal(gast.includes('registryTravellerInReiseUebernehmen'), false)
     assert.equal(gast.includes('RegistryReiseUebernahme'), false)
-    assert.match(seite, /if \(!data\.user \|\| !istKontoKennung\(tripId\)\)/)
-    assert.match(seite, /const registry = await registryLaden\(\)/)
+    // Registry adoption stays user-triggered, but unknown account Auth must
+    // never be reinterpreted as a local guest trip after a reload.
+    assert.match(ui, /onClick=\{\(\) => uebernehmen\(traveller\.id\)\}/)
+    assert.match(ui, /onClick=\{\(\) => \{\s*setStatus\(null\)\s*setBestaetigungId\(traveller\.id\)/)
+    assert.match(seite, /kontoBestaetigt = !error && Boolean\(data\.user\)/)
+    assert.match(seite, /if \(!istKontoKennung\(tripId\)\) \{\s*return <GastArbeitsbereich tripId=\{tripId\} \/>/)
+    assert.match(seite, /if \(!kontoBestaetigt\) \{\s*return \([\s\S]*?data-konto-reise-zugriff="nicht-bestaetigt"/)
+    const gastGrenze = seite.indexOf('if (!istKontoKennung(tripId))')
+    const ungeprueft = seite.indexOf('if (!kontoBestaetigt)')
+    const kontoLesung = seite.indexOf('const { zeilen, problem } = await reiseLaden(tripId)')
+    const geladen = seite.indexOf('const reise = zeilen[0]')
+    const registryLesung = seite.indexOf('const registry = await registryLaden()')
+    const render = seite.indexOf('<KontoArbeitsbereich')
+    assert.ok(gastGrenze >= 0 && gastGrenze < ungeprueft, 'nur Gastkennungen führen in den Gastbereich')
+    assert.ok(ungeprueft < kontoLesung && kontoLesung < geladen, 'unbestätigte Anmeldung stoppt vor dem Kontoread')
+    assert.ok(geladen < registryLesung && registryLesung < render, 'Registry erst nach dem Lesen der Kontoreise')
+    assert.match(seite, /const reise = zeilen\[0\]\s*if \(!reise\) notFound\(\)/)
+    assert.doesNotMatch(seite, /registryTravellerInReiseUebernehmen|registryTravellerId|registryTripMaterialisieren/)
   })
 
   test('wählt niemanden und kein Credential voraus', () => {
