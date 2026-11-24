@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import { readFileSync } from 'node:fs'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import AtVisitorPreview from '@/components/readiness/AtVisitorPreview'
+import AtVisitorPreview, { AtVisitorPreviewNotice } from '@/components/readiness/AtVisitorPreview'
 import { einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
 import { V3_CUSTOMER_INFORMATION_TOPICS } from '../official-truth-product-v3/customer-information/topics'
 import { HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL } from '../official-truth-product-v3/method/human-contract'
@@ -92,4 +92,25 @@ test('preview layout uses wrapping, grouped responsive columns and only Hell/Dun
   assert.match(frame, /\['light', 'dark'\]/)
   assert.match(css, /data-workspace-theme="dark"/)
   assert.doesNotMatch(css, /overflow-x:\s*hidden/)
+})
+
+
+test('AT Dev notice is explicit and visible in the entry and the actual result markup', () => {
+  const notice = renderToStaticMarkup(React.createElement(AtVisitorPreviewNotice, { placement: 'entry' }))
+  const result = render()
+  for (const html of [notice, result]) {
+    assert.match(html, /Dev-Vorschau · Keine Freigabe für Besucher/)
+    assert.match(html, /Diese Darstellung ist nur zur Abnahme vorgesehen/)
+    assert.match(html, /role="note"/)
+    assert.match(html, /data-hinweis="info"/)
+    assert.match(html, /text-foreground/)
+  }
+  assert.match(notice, /data-at-visitor-notice="entry"/)
+  assert.match(result, /data-at-visitor-notice="result"/)
+  const frame = readFileSync(new URL('../../../components/readiness/OfficialTruthChDe.tsx', import.meta.url), 'utf8')
+  assert.match(frame, /<AtVisitorPreviewNotice placement="entry" \/>/)
+  assert.match(frame, /atVisitorPreview \? <AtVisitorPreviewFrame \/> : <EinreiseLaenderpruefer \/>/)
+  assert.ok(frame.indexOf('<AtVisitorPreviewNotice placement="entry" />') < frame.indexOf('<EinreiseLaenderpruefer atVisitorPreview />'))
+  const checker = readFileSync(new URL('../../../components/readiness/EinreiseLaenderpruefer.tsx', import.meta.url), 'utf8')
+  assert.match(checker, /atVisitorPreview && sicht\.zielCode === 'AT'/)
 })

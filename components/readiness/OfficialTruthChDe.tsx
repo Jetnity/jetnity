@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import EinreiseLaenderpruefer from './EinreiseLaenderpruefer'
+import { AtVisitorPreviewNotice } from './AtVisitorPreview'
 import './at-visitor-preview.css'
 
 function AtVisitorPreviewFrame() {
@@ -9,8 +10,8 @@ function AtVisitorPreviewFrame() {
   return (
     <div className="at-visitor-preview workspace-shell mx-auto min-w-0 max-w-4xl rounded-panel border border-border p-2 sm:p-5" data-workspace-theme={theme} data-at-visitor-preview-frame>
       <div className="workspace-content">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="min-w-0 break-words text-sm font-semibold text-muted-foreground">Dev-Vorschau · Keine Freigabe für Besucher</p>
+        <div className="mb-5 grid min-w-0 gap-3">
+          <AtVisitorPreviewNotice placement="entry" />
           <div role="group" aria-label="Darstellung" className="flex flex-wrap gap-2">
             {(['light', 'dark'] as const).map((mode) => (
               <button key={mode} type="button" aria-pressed={theme === mode} onClick={() => setTheme(mode)}

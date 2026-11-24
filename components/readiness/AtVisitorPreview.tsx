@@ -11,6 +11,15 @@ const AMTLICHE_QUELLEN = [
   { label: 'Österreichische Botschaft Bern', href: 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/' },
 ] as const
 
+/** A visible, neutral design-system notice in both the entry and result view. */
+export function AtVisitorPreviewNotice({ placement }: { placement: 'entry' | 'result' }) {
+  return (
+    <Hinweis role="note" titel="Dev-Vorschau · Keine Freigabe für Besucher" data-at-visitor-notice={placement}>
+      <p>Diese Darstellung ist nur zur Abnahme vorgesehen.</p>
+    </Hinweis>
+  )
+}
+
 function QuellenLink({ href, label }: { href: string; label: string }) {
   return <a href={href} target="_blank" rel="noopener noreferrer"
     className="inline-flex min-h-11 max-w-full items-center text-sm font-semibold text-foreground underline underline-offset-4 [overflow-wrap:anywhere]">{label}</a>
@@ -34,6 +43,7 @@ export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
 }) {
   return (
     <section className="grid min-w-0 gap-4 text-foreground" data-at-visitor-preview>
+      <AtVisitorPreviewNotice placement="result" />
       <Hinweis titel="Geltungsbereich der Auskunft">
         <p>Die Visumauskunft gilt nur für die gewählte Staatsangehörigkeit, einen gültigen gewöhnlichen Reisepass und die direkte Einreise nach Österreich. Andere Reisedokumente, Reisewege und persönliche Umstände müssen gesondert geprüft werden.</p>
       </Hinweis>
