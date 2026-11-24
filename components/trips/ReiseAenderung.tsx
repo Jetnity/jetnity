@@ -20,6 +20,7 @@ import { Sparkles } from 'lucide-react'
 
 import Aenderungsfortschritt from '@/components/trips/Aenderungsfortschritt'
 import AenderungVorschau from '@/components/trips/AenderungVorschau'
+import ReiseAenderungBuchungshinweise from '@/components/trips/ReiseAenderungBuchungshinweise'
 import ReiseAenderungRuecknahme from '@/components/trips/ReiseAenderungRuecknahme'
 import {
   aenderungErzeugen,
@@ -230,6 +231,7 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
               setMeldung('')
             }}
           />
+          <ReiseAenderungBuchungshinweise vorher={vorschau.vorher} nachher={vorschau.nachher} />
         </>
       )}
     </div>
