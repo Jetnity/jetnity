@@ -25,11 +25,6 @@ const UNBESTAETIGTE_BUCHUNG = {
   bookingConfirmedAt: string | null
 }
 
-export const BUCHUNGSSTATUS_BEZEICHNUNG: Record<TripItemBookingStatus, string> = {
-  unconfirmed: 'Ausgewählt',
-  booked: 'Gebucht',
-}
-
 const BUCHBARE_ARTEN: ReadonlySet<TripItemKind> = new Set(['flight', 'stay', 'transfer', 'rental_car'])
 
 export function unbestaetigteBuchung(): typeof UNBESTAETIGTE_BUCHUNG {
