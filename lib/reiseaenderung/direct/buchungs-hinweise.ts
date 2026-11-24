@@ -1,6 +1,7 @@
 // W2 #1299: truthful visitor guidance for commercial points affected by a
 // proposed itinerary change. Pure projection: no booking, provider call or IO.
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import { leistungsstand, W3_STATUS_TEXT } from '@/lib/trips/angebot-buchung-anzeige'
 import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -57,9 +58,8 @@ export function preisEinordnung(punkt: TripItem): string {
 
 /** Deliberately never calls a user-marked booking a provider-confirmed booking. */
 export function buchungsEinordnung(punkt: TripItem): Pick<BuchungsHinweis, 'status' | 'label'> {
-  return punkt.bookingStatus === 'booked'
-    ? { status: 'vom_nutzer_markiert', label: 'Von dir als gebucht markiert – nicht vom Anbieter bestätigt' }
-    : { status: 'unverbindliches_angebot', label: 'Unverbindliches Angebot – nicht gebucht' }
+  const status = leistungsstand(punkt)
+  return { status, label: W3_STATUS_TEXT[status] }
 }
 
 function kontext(reise: Trip, punkt: TripItem): string {

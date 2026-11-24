@@ -1,4 +1,6 @@
 'use client'
+
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
 /* eslint-disable @next/next/no-img-element -- Provider images are allowlisted, transient and loaded directly without extending the image-optimizer trust boundary. */
 import { useState, type ReactNode } from 'react'
 import { ArrowRight, Car, ExternalLink, Gauge, Luggage, ShieldCheck, Star, Users } from 'lucide-react'
@@ -26,7 +28,7 @@ function facts(o: RentalOffer) {
     ['Stornierung', cancellationText(o.cancellation)],
   ]
 }
-export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, saveAction }: { offer: RentalOffer; selected: boolean; onCompare: () => void; onDetails: () => void; expired: boolean; saveAction?: ReactNode }) {
+export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, saveAction, suchzeit }: { offer: RentalOffer; selected: boolean; onCompare: () => void; onDetails: () => void; expired: boolean; saveAction?: ReactNode; suchzeit?: number }) {
   return <article className={`flex min-w-0 flex-col rounded-3xl border bg-white p-4 transition sm:p-5 ${selected ? 'border-brand-600 ring-1 ring-brand-600' : 'border-line-200 hover:border-line-400'}`}>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-600">
       <span className="rounded-full bg-surface-50 px-2.5 py-1.5 font-medium text-brand-700">{CATEGORY[o.car.category ?? ''] ?? 'Mietwagen'}</span>
@@ -50,8 +52,10 @@ export function OfferCard({ offer: o, selected, onCompare, onDetails, expired, s
       </div>
     </div>
     <div className="mt-5 border-t border-line-200 pt-4">
-      <p className="text-xs text-ink-600">Gesamtpreis für deinen Mietzeitraum</p>
+      <LeistungsStatus stand="unverbindliches_angebot" />
+      <p className="mt-2 text-xs text-ink-600">Gesamtpreis für deinen Mietzeitraum</p>
       <p className="mt-1 text-2xl font-bold tracking-tight text-brand-800">{money(o.price.total, o.price.currency)}</p>
+      <PreisstandHinweis suchzeit={suchzeit} />
       <button className={`${PRIMARY} mt-3 w-full`} type="button" disabled={expired} onClick={onDetails}>Angebot ansehen<ArrowRight className="h-4 w-4" aria-hidden="true" /></button>
       {saveAction}
       <label className="mt-1 flex min-h-11 cursor-pointer items-center justify-center gap-2 text-sm font-medium text-brand-800"><input type="checkbox" checked={selected} disabled={expired} onChange={onCompare} className="h-4 w-4 accent-brand-800" />Vergleichen<span className="sr-only">: {o.car.name} bei {o.supplier?.name}</span></label>
@@ -66,12 +70,12 @@ function VehicleImage({ offer: o, eager = false }: { offer: RentalOffer; eager?:
     : <div className="flex flex-col items-center gap-2 text-ink-600"><Car className="h-14 w-14 text-brand-600" aria-hidden="true" /><span className="text-xs">Kein Fahrzeugbild verfügbar</span></div>
 }
 
-export function OfferComparison({ offers, onClose }: { offers: RentalOffer[]; onClose: () => void }) {
+export function OfferComparison({ offers, onClose, preiszeiten }: { offers: RentalOffer[]; onClose: () => void; preiszeiten?: ReadonlyMap<string, number> }) {
   return <section aria-label="Mietwagenvergleich" className="min-w-0 rounded-3xl border border-line-200 bg-white p-4 sm:p-5">
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h3 className="text-xl font-semibold text-brand-800">Dein Vergleich</h3><button type="button" onClick={onClose} className={BUTTON}>Vergleich leeren</button></div>
     <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Vergleichstabelle, bei Bedarf seitlich scrollen">
       <table className="w-full text-left text-sm text-ink-800"><caption className="sr-only">Ausgewählte Mietwagen und ihre Bedingungen</caption><thead><tr><th className="p-3">Angebot</th>{offers.map(o => <th key={o.offer_id} scope="col" className="min-w-44 p-3 text-brand-800">{o.car.name}<span className="block font-normal">{o.supplier?.name}</span></th>)}</tr></thead>
-        <tbody>{['Gesamtpreis', ...facts(offers[0]).map(f => f[0])].map((label, i) => <tr key={label} className="border-t border-line-200"><th scope="row" className="p-3 font-medium">{label}</th>{offers.map(o => <td key={o.offer_id} className="p-3">{i === 0 ? money(o.price.total, o.price.currency) : facts(o)[i - 1][1]}</td>)}</tr>)}</tbody>
+        <tbody>{['Gesamtpreis', ...facts(offers[0]).map(f => f[0])].map((label, i) => <tr key={label} className="border-t border-line-200"><th scope="row" className="p-3 font-medium">{label}</th>{offers.map(o => <td key={o.offer_id} className="p-3">{i === 0 ? <>{money(o.price.total, o.price.currency)}<LeistungsStatus stand="unverbindliches_angebot" /><PreisstandHinweis suchzeit={preiszeiten?.get(o.offer_id)} /></> : facts(o)[i - 1][1]}</td>)}</tr>)}</tbody>
       </table>
     </div>
   </section>
@@ -82,7 +86,7 @@ export function OfferDetails({ offer: o, expired, expiresAt, onExpired }: { offe
   return <div className="grid gap-5 text-sm text-ink-800">
     <div className="grid min-w-0 items-center gap-5 rounded-2xl bg-surface-50 p-4 sm:grid-cols-[1fr_1.3fr] sm:p-5">
       <div className="flex h-40 items-center justify-center rounded-2xl bg-white"><VehicleImage offer={o} eager /></div>
-      <div><p className="text-xs font-medium text-brand-700">{CATEGORY[o.car.category ?? ''] ?? 'Mietwagen'} · {o.guaranteed_model === true ? 'Garantiertes Modell' : 'oder ähnliches Modell'}</p><p className="mt-2 text-3xl font-bold tracking-tight text-brand-800">{money(o.price.total, o.price.currency)}</p><p className="mt-1 text-sm">Gesamtpreis für deinen Mietzeitraum</p>
+      <div><p className="text-xs font-medium text-brand-700">{CATEGORY[o.car.category ?? ''] ?? 'Mietwagen'} · {o.guaranteed_model === true ? 'Garantiertes Modell' : 'oder ähnliches Modell'}</p><p className="mt-2 text-3xl font-bold tracking-tight text-brand-800">{money(o.price.total, o.price.currency)}</p><p className="mt-1 text-sm">Gesamtpreis für deinen Mietzeitraum</p><LeistungsStatus stand="unverbindliches_angebot" /><PreisstandHinweis />
         <p className="mt-2 text-xs leading-5 text-ink-600">Obligatorische Steuern und Gebühren sind laut DiscoverCars enthalten. Optionale Extras und bestimmte örtliche Rückgabegebühren können zusätzlich anfallen.</p>
       </div>
     </div>

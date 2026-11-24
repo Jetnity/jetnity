@@ -5,6 +5,7 @@ import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { BedDouble } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   BUCHUNG_AKTION_KLASSE,
@@ -156,7 +157,8 @@ export default function UnterkunftBestand({
                   ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} punkt={aufenthalt.item} />
+                  <GespeicherterPreisstand punkt={aufenthalt.item} />
                   {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
                     <button
                       type="button"

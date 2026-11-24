@@ -1,4 +1,6 @@
 'use client'
+
+import { suchzeitText } from '@/lib/trips/angebot-buchung-anzeige'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Car, ExternalLink, Loader2, Search, X } from 'lucide-react'
 import { SucheKnopf } from '@/components/trips/organisieren/Suchfelder'
@@ -35,6 +37,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   const [residence, setResidence] = useState('')
   const [currency, setCurrency] = useState<string>((SEARCH_CURRENCIES as readonly string[]).includes(reise.currency) ? reise.currency : 'CHF')
   const [result, setResult] = useState<RentalResults | null>(null)
+  const [preiszeiten, setPreiszeiten] = useState<ReadonlyMap<string, number>>(() => new Map())
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [unavailable, setUnavailable] = useState(false)
@@ -76,7 +79,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
   }, [selected])
   const close = () => { detailRequest.current?.abort(); setSelected(null); setDetailMessage('') }
   const invalidate = () => {
-    request.current?.abort(); detailRequest.current?.abort(); setLoading(false); setResult(null)
+    request.current?.abort(); detailRequest.current?.abort(); setLoading(false); setResult(null); setPreiszeiten(new Map())
     setCompare([]); setSelected(null); setMessage(''); setUnavailable(false); setLimit(12)
   }
   const submit = async (e: React.FormEvent) => {
@@ -89,7 +92,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
       const data = await rentalRequest({ action: 'search', search: input.data }, controller.signal)
       if (controller.signal.aborted) return
       if (data.status === 'ok' && data.kind === 'search') {
-        setResult(data.result); setNow(Date.now()); setCategory(''); setTransmission(''); setOrder('price')
+        setResult(data.result); setPreiszeiten(new Map(data.result.offers.map(o => [o.offer_id, data.result.searchedAt] as const))); setNow(Date.now()); setCategory(''); setTransmission(''); setOrder('price')
         requestAnimationFrame(() => resultHeading.current?.focus({ preventScroll: true }))
       } else if (data.status !== 'ok') { setMessage(data.message); setUnavailable(data.status === 'unavailable') }
     } catch { if (!controller.signal.aborted) setMessage('Die Verbindung wurde unterbrochen. Bitte versuche die Suche erneut.') }
@@ -104,6 +107,8 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
       if (controller.signal.aborted) return
       if (data.status === 'ok' && data.kind === 'detail') {
         setSelected(data.offer)
+        // A detail response contains no matching price-observation time.
+        setPreiszeiten(old => { const next = new Map(old); next.delete(data.offer.offer_id); return next })
         setResult(r => r ? { ...r, offers: r.offers.map(o => o.offer_id === data.offer.offer_id ? data.offer : o) } : null)
       } else if (data.status !== 'ok') setDetailMessage(data.message)
     } catch { if (!controller.signal.aborted) setDetailMessage('Die Fahrzeugdetails konnten nicht geladen werden. Bitte versuche es erneut.') }
@@ -181,7 +186,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
       {unavailable ? <details className="mt-4"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-brand-800">Alternatives Suchformular öffnen</summary><DiscoverCarsSuche /></details> : null}
     </div>
     {result ? <div className="grid min-w-0 gap-4" aria-busy={loading}>
-      <div><h3 ref={resultHeading} tabIndex={-1} className="text-2xl font-semibold tracking-tight text-brand-800 focus:outline-none">{result.offers.length ? `${result.offers.length} Mietwagenangebote` : 'Keine Mietwagen für diese Suche'}</h3><p className="mt-1 text-sm text-ink-800">{pickup?.name} · {rentalDate(pickupDate)} {pickupTime} – {rentalDate(dropoffDate)} {dropoffTime}{oneWay ? ` · Rückgabe: ${dropoff?.name}` : ''}</p><p className="mt-1 text-xs text-ink-600">Gesamtpreise · Stand {new Date(result.searchedAt).toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })} · DiscoverCars</p></div>
+      <div><h3 ref={resultHeading} tabIndex={-1} className="text-2xl font-semibold tracking-tight text-brand-800 focus:outline-none">{result.offers.length ? `${result.offers.length} Mietwagenangebote` : 'Keine Mietwagen für diese Suche'}</h3><p className="mt-1 text-sm text-ink-800">{pickup?.name} · {rentalDate(pickupDate)} {pickupTime} – {rentalDate(dropoffDate)} {dropoffTime}{oneWay ? ` · Rückgabe: ${dropoff?.name}` : ''}</p><p className="mt-1 text-xs text-ink-600">Unverbindliche Angebote · Suche vom {suchzeitText(result.searchedAt) ?? 'unbekannten Zeitpunkt'} · DiscoverCars</p></div>
       {expired ? <p role="status" className="rounded-2xl bg-surface-50 p-4 text-sm text-brand-800">Diese Suche ist abgelaufen. Starte „Mietwagen vergleichen“ erneut, um aktuelle Preise und Verfügbarkeit zu erhalten.</p> : null}
       {result.omitted > 0 ? <p className="text-sm text-ink-600">Einige unvollständige Angebote konnten nicht angezeigt werden.</p> : null}
       {!result.offers.length ? <p className="text-sm text-ink-800">Versuche eine andere Station oder einen anderen Mietzeitraum.</p> : <>
@@ -190,12 +195,12 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
           <label className="grid min-w-0 gap-1 text-sm text-brand-800">Fahrzeugklasse<select className={FIELD} value={category} onChange={e => { setCategory(e.target.value); setLimit(12) }}><option value="">Alle</option>{categories.map(c => <option key={c} value={c}>{CATEGORY[c] ?? c}</option>)}</select></label>
           <label className="grid min-w-0 gap-1 text-sm text-brand-800">Sortieren<select className={FIELD} value={order} onChange={e => setOrder(e.target.value)}><option value="price">Niedrigster Gesamtpreis</option><option value="rating">Beste Vermieterbewertung</option></select></label>
         </div>
-        {comparison.length ? <OfferComparison offers={comparison} onClose={() => setCompare([])} /> : null}
+        {comparison.length ? <OfferComparison offers={comparison} preiszeiten={preiszeiten} onClose={() => setCompare([])} /> : null}
         <p role="status" className="text-sm text-ink-600">{visible.length} passende Angebote · bis zu drei Fahrzeuge vergleichen</p>
         {!visible.length ? <p className="text-sm text-ink-800">Zu diesen Filtern gibt es keine Treffer. Ändere Getriebe oder Fahrzeugklasse.</p> : null}
         <RentalHearts key={result.searchedAt} offers={result.offers.map(o => o.offer_id)} timing={{ starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }}>
         <div data-rental-grid className="grid min-w-0 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} saveAction={<RentalHeart offerId={o.offer_id} token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
+          {visible.slice(0, limit).map(o => <OfferCard key={o.offer_id} offer={o} suchzeit={preiszeiten.get(o.offer_id)} saveAction={<RentalHeart offerId={o.offer_id} token={o.token} title={o.car.name} disabled={expired} context={{ destination: pickup?.name ?? null, starts_on: pickupDate || null, ends_on: dropoffDate || null, starts_at: pickupTime || null, ends_at: dropoffTime || null }} />} selected={compare.includes(o.offer_id)} expired={expired} onDetails={() => void handleOfferDetails(o)} onCompare={() => setCompare(ids => ids.includes(o.offer_id) ? ids.filter(x => x !== o.offer_id) : ids.length < 3 ? [...ids, o.offer_id] : ids)} />)}
         </div>
         </RentalHearts>
         {compare.length === 3 ? <p role="status" className="text-sm text-ink-600">Drei Fahrzeuge sind ausgewählt. Entferne eines, um ein anderes hinzuzufügen.</p> : null}

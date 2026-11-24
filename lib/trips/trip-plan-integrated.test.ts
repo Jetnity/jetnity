@@ -59,8 +59,8 @@ test('invalid prices never inflate totals',()=>{
   assert.equal(gespeicherteKosten(graph(item({priceAmount:0.1}),item({id:'two',priceAmount:0.2})),'day-1').totals[0].amount,0.3)
 })
 test('booking user confirmation differs from selected and note is not a booking',()=>{
-  assert.match(buchungstext(item({kind:'stay',bookingStatus:'booked',bookingSource:'user'})),/von dir/)
-  assert.match(buchungstext(item({kind:'stay'})),/nicht bestätigt/)
+  assert.match(buchungstext(item({kind:'stay',bookingStatus:'booked',bookingSource:'user'})),/Von dir als gebucht markiert – nicht vom Anbieter bestätigt/)
+  assert.match(buchungstext(item({kind:'stay'})),/Unverbindliches Angebot – nicht gebucht/)
   assert.equal(buchungstext(item({kind:'note',note:'Confirmed'})),'Geplant')
 })
 test('stage coordinates never become venue pins, zero valid, impossible/nonfinite rejected',()=>{

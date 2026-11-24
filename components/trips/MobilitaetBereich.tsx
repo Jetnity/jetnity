@@ -12,6 +12,7 @@ import { ArrowRightLeft } from 'lucide-react'
 import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
 import TwelveGoAffiliateLinks from '@/components/trips/TwelveGoAffiliateLinks'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
@@ -259,7 +260,8 @@ export default function MobilitaetBereich({
                   ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={kante.status} />
+                  <BuchungsSiegel status={kante.status} punkt={kante.mobilityItem} />
+                  {kante.mobilityItem && <GespeicherterPreisstand punkt={kante.mobilityItem} />}
                   {kante.mobilityItem && kannBuchungMarkieren(kante.mobilityItem) && onBuchungsstatus ? (
                     <button
                       type="button"
@@ -286,7 +288,8 @@ export default function MobilitaetBereich({
                   </p>
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} punkt={item} />
+                  <GespeicherterPreisstand punkt={item} />
                   {kannBuchungMarkieren(item) && onBuchungsstatus ? (
                     <button
                       type="button"

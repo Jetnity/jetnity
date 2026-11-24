@@ -5,6 +5,7 @@ import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { CircleAlert, Plane } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import FlugRoute from '@/components/trips/FlugRoute'
 import { routeFactsFuerPunkt } from '@/lib/route/ableitung'
 import { istManuellerFlug } from '@/lib/trips/flug-manuell'
@@ -402,7 +403,8 @@ export default function FlugBestand({
                   ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={abschnitt.status} />
+                  <BuchungsSiegel status={abschnitt.status} punkt={abschnitt.item} />
+                  {abschnitt.item && <GespeicherterPreisstand punkt={abschnitt.item} />}
                   {abschnitt.item && kannBuchungMarkieren(abschnitt.item) && onBuchungsstatus ? (
                     <button
                       type="button"
@@ -438,7 +440,8 @@ export default function FlugBestand({
                   </div>
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} punkt={item} />
+                  <GespeicherterPreisstand punkt={item} />
                   {kannBuchungMarkieren(item) && onBuchungsstatus ? (
                     <button
                       type="button"

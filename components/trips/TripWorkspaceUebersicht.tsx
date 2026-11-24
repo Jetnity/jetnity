@@ -7,7 +7,8 @@ import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
 import { buchungZeittext } from '@/lib/account/buchungen'
-import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
+import { LeistungsStatus, GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import { ART_BEZEICHNUNG, INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { AttentionAbleitung, AttentionAktion } from '@/lib/trips/attention'
 import {
@@ -140,7 +141,7 @@ export default function TripWorkspaceUebersicht({
   const praeferenzen = workspacePraeferenzSicht(reise)
   // Im Arbeitsbereich stehen gebuchte Punkte im Kostenbild, mit oder ohne Preis.
   const buchungen = workspace ? [] : [...reise.days.flatMap((tag) => tag.items), ...(ungeplantePunkte ?? reise.ohneTag)]
-    .filter((punkt) => kannBuchungMarkieren(punkt) && istGebucht(punkt))
+    .filter((punkt) => leistungsstand(punkt) === 'vom_nutzer_markiert')
   const bild = workspace ? kosten ?? kostenbild(reise, ungeplantePunkte) : null
 
   return (
@@ -218,8 +219,8 @@ export default function TripWorkspaceUebersicht({
 
       {buchungen.length > 0 ? (
         <section aria-labelledby="reise-buchungen" className="overflow-hidden rounded-[24px] border border-line-200 bg-white">
-          <h3 id="reise-buchungen" className="px-4 pt-4 text-lg font-semibold text-brand-800">Buchungen dieser Reise</h3>
-          <p className="px-4 pb-3 text-sm text-ink-700">In Jetnity als gebucht markiert</p>
+          <h3 id="reise-buchungen" className="px-4 pt-4 text-lg font-semibold text-brand-800">Eigene Buchungsmarkierungen</h3>
+          <p className="px-4 pb-3 text-sm text-ink-700">In Jetnity von dir als gebucht markiert – nicht vom Anbieter bestätigt.</p>
           <ul className="divide-y divide-line-100 border-t border-line-100">
             {buchungen.map((punkt) => {
               const zeit = buchungZeittext(punkt)
@@ -227,6 +228,8 @@ export default function TripWorkspaceUebersicht({
                 <span className="min-w-0">
                   <strong className="block break-words text-sm text-brand-800">{punkt.title}</strong>
                   <span className="text-xs text-ink-700">{ART_BEZEICHNUNG[punkt.kind]}{zeit ? ` · ${zeit}` : ''}</span>
+                  <span className="mt-1 block"><LeistungsStatus stand={leistungsstand(punkt)} /></span>
+                  <GespeicherterPreisstand punkt={punkt} />
                 </span>
               )
               return (

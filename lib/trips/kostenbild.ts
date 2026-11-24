@@ -14,7 +14,7 @@
 //   · Ob ein Preis pro Person gilt, ist nicht gespeichert: keine Hochrechnung.
 
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
-import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
 import { inventar } from '@/lib/trips/trip-plan-integrated/day'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
 
@@ -80,7 +80,7 @@ function preisLesen(punkt: Pick<TripItem, 'priceAmount' | 'priceCurrency'>): Les
 
 /** «gebucht» nur, wenn du den Punkt als gebucht markiert hast; sonst gilt er als ausgewählt. */
 export function kostenStand(punkt: TripItem): KostenStand {
-  return kannBuchungMarkieren(punkt) && istGebucht(punkt) ? 'gebucht' : 'ausgewaehlt'
+  return leistungsstand(punkt) === 'vom_nutzer_markiert' ? 'gebucht' : 'ausgewaehlt'
 }
 
 export type GespeicherterPreis =

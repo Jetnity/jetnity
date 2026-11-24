@@ -1,5 +1,7 @@
 'use client'
 
+import { ExterneAngeboteHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import Reisefoto from './Reisefoto'
 import OrganisierenBestand from './OrganisierenBestand'
@@ -231,6 +233,7 @@ export default function Organisieren({
         <div id={uid + '-panel-' + t.key} role="tabpanel" aria-labelledby={uid + '-' + t.key}
           hidden={tab !== t.key} inert={tab !== t.key} data-suchbereich={t.key}>
           <OrganisierenBestand kategorie={t.key} eintraege={bestand[t.key]} onItem={onItem} />
+          {(t.key === 'fluege' || t.key === 'unterkunft' || t.key === 'aktivitaeten') && <ExterneAngeboteHinweis />}
           {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
           {t.key === 'unterkunft' && (
             <Hotelsuche

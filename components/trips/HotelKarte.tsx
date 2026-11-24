@@ -1,5 +1,7 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+
 // components/trips/HotelKarte.tsx
 //
 // Eine Hoteloption mit Jetnity-Labels. Nur rendern, wenn eine echte Option da ist.
@@ -23,6 +25,7 @@ export default function HotelKarte({
   return (
     <article className="rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
+        <LeistungsStatus stand="unverbindliches_angebot" />
         {option.labels.map((marke: HotelMarke) => (
           <span
             key={marke}
@@ -55,13 +58,14 @@ export default function HotelKarte({
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
         <div>
-          <p className="text-xs text-ink-700">Preis zum Auswahlzeitpunkt</p>
+          <p className="text-xs text-ink-700">Angebotspreis</p>
           <p className="text-lg font-semibold text-brand-800">
             {betragLesbar(option.preisGesamt, option.preisWaehrung)}
           </p>
           <p className="text-xs text-ink-700">
             {betragLesbar(option.preisProNacht, option.preisWaehrung)} / Nacht
           </p>
+          <PreisstandHinweis />
         </div>
         {onUebernehmen && (
           <button

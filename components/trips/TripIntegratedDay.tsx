@@ -1,5 +1,8 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
+
 import * as React from 'react'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { aenderungsAuswirkung, gespeicherteKosten, planSnapshot, tagesOrte, vorbereitungenFuerPunkt, type PlanSnapshot } from '@/lib/trips/trip-plan-integrated/day'
@@ -44,8 +47,8 @@ export default function TripIntegratedDay({reise,dayId,ordered,selected,tasks=[]
       <ul className="py-2 text-sm">{impact.targets.map(target=><li key={target.id}>Vorbereitung · {target.reasons.map(id=>ordered.find(item=>item.id===id)?.title ?? 'Geänderter Planpunkt').join(', ')}</li>)}</ul>
     </details>}
     <details className="border-t border-line-200"><summary className={summary}>Preise aufschlüsseln</summary>
-      <p className="text-xs leading-5 text-ink-700">Voller gespeicherter Preis je eindeutigem Punkt, einmal am zugeordneten Tag. Mehrtägige Aufenthalte werden nicht auf Nächte verteilt. Keine Aussage über Zahlung oder aktuelle Verfügbarkeit.</p>
-      <ul className="my-3 space-y-2 text-sm">{costs.items.map(item=><li key={item.id} className="flex min-w-0 flex-wrap justify-between gap-2"><span>{item.title}</span><span>{costs.totals.some(total=>total.itemIds.includes(item.id)) && item.priceAmount!==null && item.priceCurrency ? betragLesbar(item.priceAmount,item.priceCurrency) : 'Preis fehlt oder ist ungültig'}</span></li>)}</ul>
+      <p className="text-xs leading-5 text-ink-700">Voller gespeicherter Preis je eindeutigem Punkt, einmal am zugeordneten Tag. Mehrtägige Aufenthalte werden nicht auf Nächte verteilt. Preisstand unbekannt. Keine Aussage über Zahlung oder aktuelle Verfügbarkeit.</p>
+      <ul className="my-3 space-y-2 text-sm">{costs.items.map(item=><li key={item.id} className="flex min-w-0 flex-wrap justify-between gap-2"><span className="min-w-0 break-words">{item.title}{item.kind !== 'note' && <span className="mt-1 block"><LeistungsStatus stand={leistungsstand(item)} /><PreisstandHinweis /></span>}</span><span>{costs.totals.some(total=>total.itemIds.includes(item.id)) && item.priceAmount!==null && item.priceCurrency ? betragLesbar(item.priceAmount,item.priceCurrency) : 'Preis fehlt oder ist ungültig'}</span></li>)}</ul>
       <p className="text-xs text-ink-700">{costs.missing} Preise fehlen · {costs.invalid} ungültig · {costs.ambiguous.length} mehrdeutige Kennungen</p>
       {unassigned.items.length>0 && <p className="my-3 text-sm">Noch keinem Tag zugeordnet: {unassigned.totals.map(total=>betragLesbar(total.amount,total.currency)).join(' · ') || 'Kein gültiger Betrag'}{!unassigned.complete ? ' · unvollständig' : ''}. Diese Beträge sind nicht in der Tagessumme enthalten.</p>}
     </details>

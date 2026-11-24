@@ -1,5 +1,8 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
+
 import { useId, useMemo } from 'react'
 import { ArrowRight, CalendarDays, ChevronDown, ChevronRight, TriangleAlert } from 'lucide-react'
 
@@ -52,6 +55,7 @@ export default function EtappenTage({ days, reise, onDay }: {
                   {tag.vorschau.map(({ punkt, label }) => (
                     <span key={punkt.id} className="et-agenda-eintrag">
                       <span>{label}</span> {punkt.title.trim() || ART_BEZEICHNUNG[punkt.kind]}
+                      {punkt.kind !== 'note' && <span className="block min-w-0 break-words"><LeistungsStatus stand={leistungsstand(punkt)} /><PreisstandHinweis /></span>}
                     </span>
                   ))}
                   {tag.anzahl === 0 && <span className="et-agenda-frei">Noch ohne Eintrag</span>}

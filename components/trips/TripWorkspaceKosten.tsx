@@ -5,14 +5,14 @@ import { ChevronRight } from 'lucide-react'
 
 import { Abschnitt } from '@/components/ui/abschnitt'
 import { Preis } from '@/components/ui/preis'
-import { StatusSiegel } from '@/components/ui/status-siegel'
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Kostenbild, KostenPosten, KostenStand } from '@/lib/trips/kostenbild'
 import { cn } from '@/lib/utils'
 
-const STAND: Record<KostenStand, { ton: 'gebucht' | 'gewaehlt'; text: string }> = {
-  gebucht: { ton: 'gebucht', text: 'Gebucht' },
-  ausgewaehlt: { ton: 'gewaehlt', text: 'Ausgewählt' },
+const STAND: Record<KostenStand, 'vom_nutzer_markiert' | 'unverbindliches_angebot'> = {
+  gebucht: 'vom_nutzer_markiert',
+  ausgewaehlt: 'unverbindliches_angebot',
 }
 
 function anzahlText(anzahl: number, einzahl: string, mehrzahl: string): string {
@@ -32,9 +32,10 @@ function PostenZeile({
         <strong className="block text-meta font-semibold text-foreground [overflow-wrap:anywhere]">{posten.titel}</strong>
         <span className="mt-0.5 block text-meta text-muted-foreground">{ART_BEZEICHNUNG[posten.art]}</span>
       </span>
-      <StatusSiegel ton={STAND[posten.stand].ton}>{STAND[posten.stand].text}</StatusSiegel>
+      <LeistungsStatus stand={STAND[posten.stand]} />
       <span className="min-w-[5.5rem] text-right text-meta font-semibold text-foreground">
         {posten.betrag !== undefined && posten.waehrung ? <Preis betrag={posten.betrag} waehrung={posten.waehrung} /> : 'ohne Preis'}
+        <PreisstandHinweis />
       </span>
       {onItem ? <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" /> : null}
     </>
@@ -130,7 +131,7 @@ export default function TripWorkspaceKosten({
       <Abschnitt
         id="reise-kosten-titel"
         titel="Kosten"
-        beschreibung="Gespeicherte Preise beim Auswählen, keine Live-Preise. Jede Währung für sich."
+        beschreibung="Gespeicherte Beträge, keine Live-Preise und kein Zahlungsnachweis. Preisstand unbekannt. Jede Währung für sich."
         data-workspace-kosten={leer ? 'leer' : 'summen'}
         className="h-full"
       >
@@ -147,7 +148,7 @@ export default function TripWorkspaceKosten({
                 <dl className="mt-3 grid gap-2">
                   {(['gebucht', 'ausgewaehlt'] as const).map((stand) => (
                     <div key={stand} className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-                      <dt><StatusSiegel ton={STAND[stand].ton}>{STAND[stand].text}</StatusSiegel></dt>
+                      <dt><LeistungsStatus stand={STAND[stand]} /></dt>
                       <dd className="text-meta font-semibold text-foreground">
                         <Preis betrag={stand === 'gebucht' ? summe.gebucht : summe.ausgewaehlt} waehrung={summe.waehrung} />
                       </dd>

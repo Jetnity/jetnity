@@ -1,5 +1,7 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useEffect, useRef, useState } from 'react'
 import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 
@@ -240,6 +242,7 @@ function ViatorPruefungLauf({
   return (
     <section aria-label="Viator-Prüfung" aria-busy={prueft} className="mt-4 min-w-0 max-w-full [overflow-wrap:anywhere] rounded-2xl border border-line-200 bg-white p-[12px]">
       <h3 className="text-base font-semibold text-brand-800">Ausgewähltes Angebot</h3>
+      <LeistungsStatus stand="unverbindliches_angebot" />
       <p className="mt-1 text-sm leading-6 text-ink-800">{meldung}</p>
       {bild ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -368,6 +371,7 @@ function ViatorPruefungLauf({
         <p className="mt-2 text-sm text-ink-800">
           {quote.price.currency} {quote.price.amount}. Keine Checkout-Zusage.
           {quote.price.currency !== waehrung ? ` Nicht als ${waehrung} übernommen.` : ''}
+          <PreisstandHinweis />
         </p>
       ) : null}
       {link ? (

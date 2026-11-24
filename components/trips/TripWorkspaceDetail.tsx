@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import { Preis } from '@/components/ui/preis'
-import { StatusSiegel } from '@/components/ui/status-siegel'
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import {
   DETAIL_LAGE_TEXT,
@@ -109,9 +109,7 @@ export default function TripWorkspaceDetail({
           {item.stand || item.wann ? (
             <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
               {item.stand ? (
-                <StatusSiegel ton={item.stand === 'gebucht' ? 'gebucht' : 'gewaehlt'}>
-                  {item.stand === 'gebucht' ? 'Gebucht' : 'Ausgewählt'}
-                </StatusSiegel>
+                <LeistungsStatus stand={item.stand === 'gebucht' ? 'vom_nutzer_markiert' : 'unverbindliches_angebot'} />
               ) : null}
               {item.wann ? <p className="text-meta text-ink-800">{item.wann}</p> : null}
             </div>
@@ -150,13 +148,14 @@ export default function TripWorkspaceDetail({
           {item.preis.art === 'preis' ? (
             <p className="flex min-w-0 flex-wrap items-baseline gap-x-2">
               <Preis betrag={item.preis.betrag} waehrung={item.preis.waehrung} className="text-subtitle text-brand-800" />
-              <span className="text-meta text-ink-700">Preis beim Auswählen</span>
+              <span className="text-meta text-ink-700">Gespeicherter Betrag</span>
             </p>
           ) : item.stand ? (
             <p className="text-meta text-ink-700">
               {item.preis.art === 'ungueltig' ? 'Gespeicherter Preis nicht lesbar' : 'Ohne gespeicherten Preis'}
             </p>
           ) : null}
+          {item.stand && <PreisstandHinweis />}
           <p className="text-meta text-ink-700 break-words hyphens-auto">{item.trustText}</p>
           {item.buchungsHinweis ? (
             <p className="text-meta text-ink-700 break-words hyphens-auto">{item.buchungsHinweis}</p>

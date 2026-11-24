@@ -9,7 +9,7 @@
 // Domain-Ableitungen gelesen. Guest und Account nutzen dieselbe Logik.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
-import { BUCHUNGSSTATUS_BEZEICHNUNG } from '@/lib/trips/buchung'
+import { leistungsstand, W3_STATUS_TEXT } from '@/lib/trips/angebot-buchung-anzeige'
 import { planpunktWann } from '@/lib/trips/datum-anzeige'
 import { gespeicherterPreis, kostenStand, type GespeicherterPreis, type KostenStand } from '@/lib/trips/kostenbild'
 import {
@@ -308,7 +308,7 @@ export function itemDetailAbleiten(
     startsOn: punkt.startsOn,
     endsOn: punkt.endsOn,
     bookingStatus: punkt.bookingStatus,
-    bookingStatusText: BUCHUNGSSTATUS_BEZEICHNUNG[punkt.bookingStatus],
+    bookingStatusText: punkt.kind === 'note' ? 'Geplant' : W3_STATUS_TEXT[leistungsstand(punkt)],
     priceAmount: punkt.priceAmount,
     priceCurrency: punkt.priceCurrency,
     stand: punkt.kind === 'note' ? null : kostenStand(punkt),
@@ -317,16 +317,16 @@ export function itemDetailAbleiten(
     trust,
     trustText: TRUST_TEXT[trust],
     buchungsHinweis:
-      trust === 'herkunft-vorhanden' && punkt.bookingStatus === 'booked' ? TRUST_TEXT['manuell-gebucht'] : null,
+      trust === 'herkunft-vorhanden' && leistungsstand(punkt) === 'vom_nutzer_markiert' ? TRUST_TEXT['manuell-gebucht'] : null,
     domain,
     sucheAnbietbar: domain !== null && domain !== 'mobilitaet',
   }
 }
 
-export function itemTrust(punkt: Pick<TripItem, 'kind' | 'provider' | 'externalRef' | 'bookingUrl' | 'bookingStatus'>): ItemTrust {
+export function itemTrust(punkt: Pick<TripItem, 'kind' | 'provider' | 'externalRef' | 'bookingUrl' | 'bookingStatus'> & Partial<Pick<TripItem, 'bookingSource'>>): ItemTrust {
   if (punkt.kind === 'note') return 'notiz'
   if (punkt.provider || punkt.externalRef || punkt.bookingUrl) return 'herkunft-vorhanden'
-  if (punkt.bookingStatus === 'booked') return 'manuell-gebucht'
+  if (leistungsstand({ ...punkt, bookingSource: punkt.bookingSource ?? null }) === 'vom_nutzer_markiert') return 'manuell-gebucht'
   return 'manuell'
 }
 

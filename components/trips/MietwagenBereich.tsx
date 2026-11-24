@@ -19,6 +19,7 @@ import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-car
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
@@ -129,7 +130,8 @@ export default function MietwagenBereich({
                   </p>
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={punkt.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={punkt.bookingStatus === 'booked' ? 'booked' : 'selected'} punkt={punkt} />
+                  <GespeicherterPreisstand punkt={punkt} />
                   {kannBuchungMarkieren(punkt) && onBuchungsstatus ? (
                     <button
                       type="button"
