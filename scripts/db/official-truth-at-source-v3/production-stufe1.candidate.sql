@@ -229,14 +229,14 @@ CREATE TABLE official_v3_at_production_private.ch_source_originals_v3(
  recorded_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
 INSERT INTO official_v3_at_production_private.ch_source_originals_v3(source_id,original_batch,raw_body)
-SELECT c.source_id,c.original_batch,convert_to(response.content,'UTF8')
+SELECT c.source_id,c.original_batch,body.raw_body
 FROM official_v3_at_production_private.ch_source_qualifications_v3 c
-JOIN official_v3_at_production_private.watch_requests_v1 w
-  ON w.source_id=c.source_id AND w.batch_id=c.original_batch
-JOIN net._http_response response ON response.id=w.request_id
-WHERE response.status_code=200 AND response.timed_out IS FALSE AND response.error_msg IS NULL
- AND encode(sha256(convert_to(response.content,'UTF8')),'hex')=c.original_sha
- AND octet_length(convert_to(response.content,'UTF8'))=c.original_bytes;
+JOIN official_v3_at_production_private.ch_source_http_receipts_v3 receipt
+ ON receipt.source_id=c.source_id AND receipt.batch_id=c.original_batch
+JOIN official_v3_at_production_private.ch_source_http_bodies_v3 body
+ ON body.source_id=receipt.source_id AND body.raw_sha=receipt.raw_sha
+WHERE receipt.raw_sha=c.original_sha AND receipt.raw_bytes=c.original_bytes
+ AND body.raw_sha=c.original_sha AND body.raw_bytes=c.original_bytes;
 DO $stored$
 BEGIN
  IF (SELECT count(*) FROM official_v3_at_production_private.ch_source_originals_v3)<>3
