@@ -5,11 +5,8 @@
 import { buchungsHinweise } from '@/lib/reiseaenderung/direct/buchungs-hinweise'
 import type { Trip } from '@/types/trips'
 
-/** Anzeigehilfe: ein mitgelieferter Zeitpunkt wird erkannt, nie erfunden. */
-function enthaeltPreiszeit(text: string): boolean {
-  return /\d{4}-\d{2}-\d{2}|\d{1,2}\.\d{1,2}\.\d{2,4}|\d{1,2}:\d{2}/.test(text)
-}
-
+// Der bestehende TripItem-Vertrag enthält keinen geprüften Preis-Abrufzeitpunkt.
+// Niemals anhand von Datums-/Uhrzeit-Mustern im freien Preistext Frische ableiten.
 export default function ReiseAenderungBuchungshinweise({ vorher, nachher }: { vorher: Trip; nachher: Trip }) {
   const hinweise = buchungsHinweise(vorher, nachher)
   if (hinweise.length === 0) return null
@@ -60,12 +57,9 @@ export default function ReiseAenderungBuchungshinweise({ vorher, nachher }: { vo
               <div className="mt-4 min-w-0 rounded-xl border border-line-200 bg-white p-3">
                 <p className="text-sm font-semibold text-brand-900">Preisstand</p>
                 <p className="mt-1 break-words text-sm leading-6 text-ink-900">{hinweis.preisHinweis}</p>
-                {!enthaeltPreiszeit(hinweis.preisHinweis) && (
-                  <div className="mt-3 break-words border-t border-line-200 pt-3 text-sm font-semibold leading-6 text-ink-900">
-                    <p>Preisstand mit Datum/Uhrzeit nicht verfügbar</p>
-                    <p>Preis kann sich ändern</p>
-                  </div>
-                )}
+                <div className="mt-3 break-words border-t border-line-200 pt-3 text-sm font-semibold leading-6 text-ink-900">
+                  <p>Preisstand mit Datum/Uhrzeit nicht verfügbar</p>
+                </div>
               </div>
               <h4 className="mt-4 break-words text-sm font-semibold leading-6 text-brand-900">Was muss ich jetzt tun?</h4>
               <p className="mt-1 break-words text-sm leading-6 text-ink-900">{hinweis.handlung}</p>
