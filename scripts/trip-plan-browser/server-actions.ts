@@ -7,7 +7,7 @@ export const atlasServerActions: Plugin = {
   setup(build) {
     const files = {
       '@/lib/reiseaenderung/aktionen': [
-        'manuelleAenderungVorschau', 'manuelleAenderungUebernehmen', 'aenderungErzeugen',
+        'manuelleAenderungVorschau', 'manuelleAenderungUebernehmen', 'manuelleAenderungRueckgaengig', 'aenderungErzeugen',
         'aenderungErzeugenGast', 'aenderungOrteAufloesen', 'aenderungUebernehmen',
       ],
       '@/lib/places/aktionen': ['ortBestaetigen', 'reiseorteBestaetigen'],
