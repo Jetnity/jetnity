@@ -14,6 +14,7 @@
 import { revalidatePath } from 'next/cache'
 import { manuellSchema } from '@/lib/reiseaenderung/direct/entwurf'
 import { manuellVorschau, manuellSpeichern } from '@/lib/reiseaenderung/direct/speichern'
+import { rueckgaengigSpeichern } from '@/lib/reiseaenderung/direct/rueckgaengig'
 import { KONFLIKT, UNGEWISS, bedeutung, mutationskennung, type SpeicherErgebnis } from '@/lib/reiseaenderung/direct/bestaetigung'
 import { z } from 'zod'
 
@@ -257,6 +258,33 @@ export async function manuelleAenderungUebernehmen(roh: unknown): Promise<Speich
     schreiben: async (trip, mutationId, revision) => {
       // No places lookup: this subset cannot change location and uses server-loaded facts.
       const { error } = await supabase.rpc('reise_aendern', { _aenderung: aenderungAlsNutzlast(trip, mutationId, revision) })
+      return { konflikt: error?.code === 'P0001' }
+    },
+  })
+}
+
+
+/**
+ * Owner-only W2 undo for a recently confirmed manual/AI trip edit.
+ * No new RPC, bypass, history table, booking write or background mutation.
+ * The original inverse is recomputed against a fresh RLS-owned graph and
+ * must restore exactly the previous meaning; ambiguous edits fail closed.
+ */
+export async function manuelleAenderungRueckgaengig(roh: unknown): Promise<SpeicherErgebnis> {
+  const { supabase, benutzerId } = await konto()
+  if (!benutzerId) return { ok: false, art: 'sitzung', meldung: NICHT_ANGEMELDET }
+  return rueckgaengigSpeichern(roh, {
+    quelle: 'account',
+    lesen: async tripId => {
+      if (!z.string().uuid().safeParse(tripId).success) return null
+      const read = await reiseLaden(tripId)
+      if (read.problem) throw new Error('account trip read unavailable')
+      return read.zeilen[0] ?? null
+    },
+    schreiben: async (trip, mutationId, revision) => {
+      const { error } = await supabase.rpc('reise_aendern', {
+        _aenderung: aenderungAlsNutzlast(trip, mutationId, revision),
+      })
       return { konflikt: error?.code === 'P0001' }
     },
   })
