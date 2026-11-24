@@ -9,6 +9,7 @@ import { test } from 'node:test'
 import { assertLocalProofEnvironment, findLocalPgBins } from '../../scripts/db/official-truth-integrated-pilot-1/local-cluster'
 
 import { runAtBmeiaAssetsNativePg17 } from '../../scripts/db/official-truth-at-bmeia-assets-dev-1/native'
+import { runAtSourceV3NativePg17 } from '../../scripts/db/official-truth-at-source-v3/native'
 
 const directory = '../../scripts/db/official-truth-v3-dev-import-schedule-1/'
 const core = readFileSync(new URL(directory + 'core.sql', import.meta.url), 'utf8')
@@ -221,3 +222,7 @@ test('Dev preview renewal — actual PostgreSQL 17 and isolated provider fixture
 // Dedicated BMEIA PG17 proof shares the existing mandatory hosted PG17 job.
 // Do not change the AA-pinned test selector or weaken its actual-byte inventory.
 test('BMEIA theme-only Dev: native PG17, negative cases and rollback', { timeout: 90_000 }, runAtBmeiaAssetsNativePg17)
+
+// Exact production-source comparator runs inside our owned local PG17 fixture.
+// Source owner approval remains unavailable without real Owner/AAL2 witness.
+test('CH→AT Source V3 native PG17 bounded assets, strict negative HTML and rollback', {timeout:90_000}, runAtSourceV3NativePg17)
