@@ -32,6 +32,150 @@ BEGIN
  OR m.package_digest<>'6584d20adcc08e94edc4a74cad6c780b6db9c7ce89fff8e89afb0d23380e27a0'
  THEN RAISE EXCEPTION 'AT_V3_SOURCE_MA1_EXACT_REV2_REQUIRED' USING ERRCODE='P7996'; END IF;
 END $gate$;
+-- Production STAGE-1 CANDIDATE ONLY, DO NOT APPLY WITHOUT RELEASE CHAT PO-GO.
+-- Append-only content-addressed official source bytes, captured atomically by
+-- the EXISTING source collector's observation INSERT, never 6h later by installer.
+-- No new jobs, no paid HTTP fetch, no change to existing collector, no visitor flag.
+CREATE TABLE official_v3_at_production_private.ch_source_http_bodies_v3(
+ source_id text NOT NULL REFERENCES official_v3_at_production_private.source_pins_v1(source_id),
+ raw_body bytea NOT NULL CHECK(octet_length(raw_body) BETWEEN 1 AND 1048576),
+ raw_sha text GENERATED ALWAYS AS (encode(sha256(raw_body),'hex')) STORED,
+ raw_bytes integer GENERATED ALWAYS AS (octet_length(raw_body)) STORED,
+ first_batch_id bigint NOT NULL REFERENCES official_v3_at_production_private.watch_batches_v1(batch_id),
+ first_request_id bigint NOT NULL,
+ stored_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ PRIMARY KEY(source_id,raw_sha)
+);
+CREATE TABLE official_v3_at_production_private.ch_source_http_receipts_v3(
+ batch_id bigint NOT NULL REFERENCES official_v3_at_production_private.watch_batches_v1(batch_id),
+ source_id text NOT NULL,
+ request_id bigint NOT NULL,
+ raw_sha text NOT NULL CHECK(raw_sha~'^[a-f0-9]{64}$'),
+ raw_bytes integer NOT NULL CHECK(raw_bytes BETWEEN 1 AND 1048576),
+ observed_at timestamptz NOT NULL,
+ state text NOT NULL CHECK(state IN('unchanged_exact','unchanged_asset_version_only','changed')),
+ stored_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ PRIMARY KEY(batch_id,source_id),
+ UNIQUE(request_id),
+ FOREIGN KEY(source_id,raw_sha)
+ REFERENCES official_v3_at_production_private.ch_source_http_bodies_v3(source_id,raw_sha)
+);
+DO $private_acl$
+DECLARE nm text;
+BEGIN
+ FOREACH nm IN ARRAY ARRAY['ch_source_http_bodies_v3','ch_source_http_receipts_v3'] LOOP
+  EXECUTE format('ALTER TABLE official_v3_at_production_private.%I ENABLE ROW LEVEL SECURITY',nm);
+  EXECUTE format('ALTER TABLE official_v3_at_production_private.%I FORCE ROW LEVEL SECURITY',nm);
+  EXECUTE format('REVOKE ALL ON TABLE official_v3_at_production_private.%I FROM PUBLIC,anon,authenticated,service_role',nm);
+  EXECUTE format('CREATE POLICY postgres_only ON official_v3_at_production_private.%I FOR ALL TO postgres USING(true) WITH CHECK(true)',nm);
+  EXECUTE format('CREATE TRIGGER archive_immutable_rows BEFORE UPDATE OR DELETE ON official_v3_at_production_private.%I FOR EACH ROW EXECUTE FUNCTION official_v3_at_production_private.deny_mutation_v1()',nm);
+  EXECUTE format('CREATE TRIGGER archive_immutable_truncate BEFORE TRUNCATE ON official_v3_at_production_private.%I FOR EACH STATEMENT EXECUTE FUNCTION official_v3_at_production_private.deny_mutation_v1()',nm);
+ END LOOP;
+END $private_acl$;
+
+CREATE FUNCTION official_v3_at_production_private.archive_on_observation_v3()
+RETURNS trigger LANGUAGE plpgsql VOLATILE SECURITY INVOKER SET search_path=pg_catalog AS $capture$
+DECLARE req record; response record; raw bytea; body_sha text; bytes integer;
+BEGIN
+ IF session_user<>'postgres' OR current_user<>session_user
+ OR TG_OP<>'INSERT'
+ OR NEW.source_id NOT IN('bmeia-bern-how-to-apply','bmi-general-entry','bmi-visa-nationality-matrix')
+ OR NEW.source_status NOT IN('changed','unchanged_exact','unchanged_asset_version_only')
+ OR NEW.http_status IS DISTINCT FROM 200
+ OR NEW.observed_at IS NULL OR NEW.observed_at>clock_timestamp()
+ OR NEW.body_sha IS NULL OR NEW.bytes IS NULL
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_OBSERVATION_UNTRUSTED' USING ERRCODE='P7993'; END IF;
+ SELECT * INTO req FROM official_v3_at_production_private.watch_requests_v1
+ WHERE source_id=NEW.source_id AND batch_id=NEW.batch_id FOR SHARE;
+ IF NOT FOUND OR NEW.observed_at<req.requested_at
+ OR NEW.observed_at>req.requested_at+interval '6 minutes 10 seconds'
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_PROVENANCE_REFUSED' USING ERRCODE='P7993'; END IF;
+ SELECT * INTO response FROM net._http_response WHERE id=req.request_id;
+ IF NOT FOUND OR response.status_code<>200 OR response.timed_out IS DISTINCT FROM FALSE
+ OR response.error_msg IS NOT NULL OR response.content IS NULL
+ OR response.content_type!~*'^text/html([; ]|$)'
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_HTTP_NOT_AVAILABLE' USING ERRCODE='P7993'; END IF;
+ raw:=convert_to(response.content,'UTF8');
+ bytes:=octet_length(raw);
+ IF bytes NOT BETWEEN 1 AND 1048576 OR NEW.bytes IS DISTINCT FROM bytes
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_SIZE_MISMATCH' USING ERRCODE='P7993'; END IF;
+ body_sha:=encode(sha256(raw),'hex');
+ IF body_sha IS DISTINCT FROM NEW.body_sha
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_HASH_MISMATCH' USING ERRCODE='P7993'; END IF;
+ PERFORM pg_advisory_xact_lock(771112,47);
+ IF NOT EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_source_http_bodies_v3
+  WHERE source_id=NEW.source_id AND raw_sha=body_sha)
+ AND (SELECT coalesce(sum(raw_bytes),0) FROM official_v3_at_production_private.ch_source_http_bodies_v3)+bytes>33554432
+ THEN RAISE EXCEPTION 'AT_PROD_ARCHIVE_32MIB_LIMIT_FAIL_CLOSED' USING ERRCODE='P7993'; END IF;
+ INSERT INTO official_v3_at_production_private.ch_source_http_bodies_v3(
+  source_id,raw_body,first_batch_id,first_request_id)
+ VALUES(NEW.source_id,raw,NEW.batch_id,req.request_id)
+ ON CONFLICT(source_id,raw_sha) DO NOTHING;
+ INSERT INTO official_v3_at_production_private.ch_source_http_receipts_v3(
+  batch_id,source_id,request_id,raw_sha,raw_bytes,observed_at,state)
+ VALUES(NEW.batch_id,NEW.source_id,req.request_id,body_sha,bytes,NEW.observed_at,NEW.source_status);
+ RETURN NULL;
+END $capture$;
+REVOKE ALL ON FUNCTION official_v3_at_production_private.archive_on_observation_v3()
+ FROM PUBLIC,anon,authenticated,service_role;
+CREATE TRIGGER capture_official_http_original_v3
+ AFTER INSERT ON official_v3_at_production_private.watch_observations_v1
+ FOR EACH ROW WHEN (NEW.http_status=200 AND NEW.body_sha IS NOT NULL AND NEW.bytes IS NOT NULL)
+ EXECUTE FUNCTION official_v3_at_production_private.archive_on_observation_v3();
+
+
+-- A fresh complete real batch, NEVER a guessed old HTTP ID (639/658).
+CREATE TEMP TABLE pg_temp.at_ch_v3_selected_batch(batch_id bigint PRIMARY KEY) ON COMMIT DROP;
+INSERT INTO pg_temp.at_ch_v3_selected_batch(batch_id)
+SELECT b.batch_id FROM official_v3_at_production_private.watch_batches_v1 b
+WHERE b.batch_id=(SELECT max(batch_id) FROM official_v3_at_production_private.watch_batches_v1)
+ AND b.started_at BETWEEN clock_timestamp()-interval '70 minutes' AND clock_timestamp()
+ AND (SELECT count(*) FROM official_v3_at_production_private.watch_requests_v1 r
+  JOIN official_v3_at_production_private.watch_observations_v1 o USING(batch_id,source_id)
+  JOIN net._http_response response ON response.id=r.request_id
+  JOIN (VALUES
+ ('bmeia-bern-how-to-apply','b8ae6ea71f8ca44556ec30be7921de9c18c26211da1a6175d9b5c0bda85aabc8',172428),
+ ('bmi-general-entry','ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e',91655),
+ ('bmi-visa-nationality-matrix','fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778',498415)
+  ) expected(id,sha,bytes) ON expected.id=r.source_id
+  WHERE r.batch_id=b.batch_id AND o.http_status=200 AND response.status_code=200
+   AND response.timed_out IS FALSE AND response.error_msg IS NULL
+   AND response.content IS NOT NULL AND response.content_type~*'^text/html([; ]|$)'
+   AND o.observed_at BETWEEN r.requested_at AND r.requested_at+interval '6 minutes 10 seconds'
+   AND o.observed_at<=clock_timestamp()
+   AND o.body_sha=expected.sha AND o.bytes=expected.bytes
+   AND encode(sha256(convert_to(response.content,'UTF8')),'hex')=expected.sha
+   AND octet_length(convert_to(response.content,'UTF8'))=expected.bytes
+   AND (CASE WHEN r.source_id='bmeia-bern-how-to-apply' THEN o.source_status='changed'
+     ELSE o.source_status='unchanged_exact' END))=3;
+DO $chosen$
+BEGIN
+ IF (SELECT count(*) FROM pg_temp.at_ch_v3_selected_batch)<>1
+ THEN RAISE EXCEPTION 'AT_V3_NO_CURRENT_COMPLETE_REAL_HTTP200_TRIPLE' USING ERRCODE='P7996'; END IF;
+END $chosen$;
+-- Capture the genuine 3 current HTTP200 bodies NOW, future collector triggers
+-- archive new versions BEFORE pg_net's 6-hour response eviction.
+INSERT INTO official_v3_at_production_private.ch_source_http_bodies_v3(
+ source_id,raw_body,first_batch_id,first_request_id)
+SELECT o.source_id,convert_to(response.content,'UTF8'),o.batch_id,r.request_id
+FROM pg_temp.at_ch_v3_selected_batch chosen
+JOIN official_v3_at_production_private.watch_observations_v1 o USING(batch_id)
+JOIN official_v3_at_production_private.watch_requests_v1 r USING(batch_id,source_id)
+JOIN net._http_response response ON response.id=r.request_id;
+INSERT INTO official_v3_at_production_private.ch_source_http_receipts_v3(
+ batch_id,source_id,request_id,raw_sha,raw_bytes,observed_at,state)
+SELECT o.batch_id,o.source_id,r.request_id,o.body_sha,o.bytes,o.observed_at,o.source_status
+FROM pg_temp.at_ch_v3_selected_batch chosen
+JOIN official_v3_at_production_private.watch_observations_v1 o USING(batch_id)
+JOIN official_v3_at_production_private.watch_requests_v1 r USING(batch_id,source_id);
+DO $triple$
+BEGIN
+ IF (SELECT count(*) FROM official_v3_at_production_private.ch_source_http_bodies_v3)<>3
+ OR (SELECT count(*) FROM official_v3_at_production_private.ch_source_http_receipts_v3)<>3
+ OR (SELECT sum(raw_bytes) FROM official_v3_at_production_private.ch_source_http_bodies_v3)<>762498
+ THEN RAISE EXCEPTION 'AT_V3_GENUINE_HTTP_BOOTSTRAP_NOT_COMPLETE' USING ERRCODE='P7996'; END IF;
+END $triple$;
+
 
 -- Immutable method-scoped proposal, not an automatic source qualification.
 CREATE TABLE official_v3_at_production_private.ch_source_qualifications_v3(
@@ -56,7 +200,7 @@ predecessor_sha,predecessor_bytes,original_batch,observed_at)
 SELECT q.source_id,q.official_url,
  CASE WHEN q.source_id='bmeia-bern-how-to-apply' THEN 'independent_official'
       ELSE 'destination_primary' END,
- v.sha,v.bytes,q.accepted_sha,q.accepted_bytes,639,o.observed_at
+ v.sha,v.bytes,q.accepted_sha,q.accepted_bytes,(SELECT batch_id FROM pg_temp.at_ch_v3_selected_batch),o.observed_at
 FROM official_v3_at_production_private.ch_source_qualifications_v2 q
 JOIN (VALUES
  ('bmeia-bern-how-to-apply','b8ae6ea71f8ca44556ec30be7921de9c18c26211da1a6175d9b5c0bda85aabc8',172428),
@@ -64,10 +208,9 @@ JOIN (VALUES
  ('bmi-visa-nationality-matrix','fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778',498415)
 ) v(id,sha,bytes) ON v.id=q.source_id
 JOIN official_v3_at_production_private.watch_observations_v1 o
-  ON o.source_id=q.source_id AND o.batch_id=639
+  ON o.source_id=q.source_id AND o.batch_id=(SELECT batch_id FROM pg_temp.at_ch_v3_selected_batch)
 WHERE o.http_status=200 AND o.body_sha=v.sha AND o.bytes=v.bytes
-  AND o.observed_at>='2026-11-23T19:45:00Z'::timestamptz
-  AND o.observed_at<='2026-11-23T19:46:00Z'::timestamptz;
+  AND o.observed_at<=clock_timestamp();
 DO $three$
 BEGIN
  IF (SELECT count(*) FROM official_v3_at_production_private.ch_source_qualifications_v3)<>3
@@ -110,7 +253,7 @@ CREATE TABLE official_v3_at_production_private.ch_source_owner_decisions_v3(
  decision text NOT NULL CHECK(decision='rule_neutral_ch_at_visa_only'),
  source_sha text NOT NULL CHECK(source_sha='b8ae6ea71f8ca44556ec30be7921de9c18c26211da1a6175d9b5c0bda85aabc8'),
  source_bytes integer NOT NULL CHECK(source_bytes=172428),
- initial_batch bigint NOT NULL DEFAULT 639 CHECK(initial_batch=639),
+ initial_batch bigint NOT NULL REFERENCES official_v3_at_production_private.watch_batches_v1(batch_id),
  semantic_scope text NOT NULL DEFAULT 'CH_AT_VALID_SWISS_PASSPORT_DIRECT_VISA_ONLY'
  CHECK(semantic_scope='CH_AT_VALID_SWISS_PASSPORT_DIRECT_VISA_ONLY'),
  owner_id uuid NOT NULL,
@@ -238,8 +381,9 @@ BEGIN
    'sourceSha',p_bmeia_sha,'recordedAt',recorded_at);
  END IF;
  INSERT INTO official_v3_at_production_private.ch_source_owner_decisions_v3(
- operation_id,decision,source_sha,source_bytes,owner_id,auth_session_id,method_epoch)
- VALUES(p_operation_id,'rule_neutral_ch_at_visa_only',p_bmeia_sha,172428,actor,session_uuid,2)
+ operation_id,decision,source_sha,source_bytes,initial_batch,owner_id,auth_session_id,method_epoch)
+ VALUES(p_operation_id,'rule_neutral_ch_at_visa_only',p_bmeia_sha,172428,
+ (SELECT original_batch FROM official_v3_at_production_private.ch_source_qualifications_v3 WHERE source_id='bmeia-bern-how-to-apply'),actor,session_uuid,2)
  RETURNING decided_at INTO recorded_at;
  RETURN jsonb_build_object('schema',3,'status','recorded','operationId',p_operation_id,
  'sourceSha',p_bmeia_sha,'recordedAt',recorded_at);
