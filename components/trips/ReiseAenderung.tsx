@@ -20,6 +20,7 @@ import { Sparkles } from 'lucide-react'
 
 import Aenderungsfortschritt from '@/components/trips/Aenderungsfortschritt'
 import AenderungVorschau from '@/components/trips/AenderungVorschau'
+import ReiseAenderungRuecknahme from '@/components/trips/ReiseAenderungRuecknahme'
 import {
   aenderungErzeugen,
   aenderungErzeugenGast,
@@ -57,12 +58,14 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
   const [vorschau, setVorschau] = React.useState<Aenderungsvorschau | null>(null)
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
+  const [undoKontext, setUndoKontext] = React.useState<{ vorher: Trip; nachher: Trip } | null>(null)
+  const [undoBusy, setUndoBusy] = React.useState(false)
   const [warteMs, setWarteMs] = React.useState(0)
 
   const anlauf = React.useRef(0)
   const alive = React.useRef(true)
   React.useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
-  React.useLayoutEffect(() => { onSperre(laeuft); return () => onSperre(false) }, [laeuft, onSperre])
+  React.useLayoutEffect(() => { onSperre(laeuft || undoBusy); return () => onSperre(false) }, [laeuft, undoBusy, onSperre])
   const flight = React.useRef(false)
   const identity = React.useRef({ id: reise.id, revision: reise.revision, quelle })
   React.useEffect(() => { identity.current = { id: reise.id, revision: reise.revision, quelle } }, [reise.id, reise.revision, quelle])
@@ -79,8 +82,9 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
 
   const erzeugen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
-    if (flight.current) return
+    if (flight.current || undoBusy) return
     flight.current = true
+    setUndoKontext(null)
     setMeldung(''); setVorschau(null); setLaeuft(true); setWarteMs(0)
     const eigener = ++anlauf.current
     try {
@@ -95,7 +99,7 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
   }
 
   const uebernehmen = async () => {
-    if (!vorschau || flight.current) return
+    if (!vorschau || flight.current || undoBusy) return
     flight.current = true; setMeldung(''); setLaeuft(true)
     try {
       let gespeichert: Trip
@@ -115,7 +119,10 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
         gespeichert = ergebnis.wert.reise
       }
       if (!current()) return
-      setVorschau(null); setFreitext(''); onGespeichert(gespeichert)
+      setVorschau(null)
+      setFreitext('')
+      setUndoKontext({ vorher: reise, nachher: gespeichert })
+      onGespeichert(gespeichert)
     } catch (fehler) {
       if (current()) setMeldung(fehler instanceof VeralteteFassungFehler || fehler instanceof SpeicherFehler ? fehler.message : UNGEWISS)
     } finally { flight.current = false; if (alive.current) setLaeuft(false) }
@@ -143,9 +150,9 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
         <label className="mt-6 grid min-w-0 gap-2 text-sm font-medium text-brand-800">
           Dein Änderungswunsch
           <textarea
-            disabled={laeuft}
+            disabled={laeuft || undoBusy}
             value={freitext}
-            onChange={(ereignis) => { setFreitext(ereignis.target.value); setVorschau(null) }}
+            onChange={(ereignis) => { setFreitext(ereignis.target.value); setVorschau(null); setUndoKontext(null) }}
             rows={3}
             maxLength={AENDERUNG_GRENZEN.freitextMaximum}
             placeholder={BEISPIELE[0].text}
@@ -156,10 +163,10 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
         <div className="mt-4 flex flex-wrap gap-2">
           {BEISPIELE.map((beispiel) => (
             <button
-              disabled={laeuft}
+              disabled={laeuft || undoBusy}
               key={beispiel.kurz}
               type="button"
-              onClick={() => { setFreitext(beispiel.text); setVorschau(null) }}
+              onClick={() => { setFreitext(beispiel.text); setVorschau(null); setUndoKontext(null) }}
               className="inline-flex min-h-11 max-w-full items-center rounded-full border border-line-200 px-4 text-left text-xs font-medium text-ink-900 transition hover:border-line-500"
             >
               <span className="truncate">{beispiel.kurz}</span>
@@ -188,7 +195,7 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
           </p>
           <button
             type="submit"
-            disabled={laeuft}
+            disabled={laeuft || undoBusy}
             className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white transition hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
             {plant ? 'Änderung entsteht …' : 'Änderung vorschlagen'}
@@ -196,6 +203,13 @@ function FreitextAenderung({ reise, quelle, onGespeichert, onSperre }: ReiseAend
         </div>
       </form>
 
+      {undoKontext && <div className="rounded-2xl bg-white p-4">
+        <p role="status" className="font-semibold text-brand-800">Die letzte Änderung wurde gespeichert und bestätigt.</p>
+        <ReiseAenderungRuecknahme
+          vorher={undoKontext.vorher} nachher={undoKontext.nachher} quelle={quelle}
+          onBeschaeftigt={setUndoBusy} onGespeichert={onGespeichert}
+        />
+      </div>}
       {vorschau && vorschau.basisRevision !== reise.revision && <p role="alert">Die Reise hat sich inzwischen geändert. Bitte erstelle den Vorschlag am aktuellen Stand erneut.</p>}
       {vorschau && vorschau.basisRevision === reise.revision && (
         <>
