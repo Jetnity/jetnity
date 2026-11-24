@@ -19,6 +19,7 @@ export default async function ProductionGuardRecoveryPage() {
     </Seitenkopf>
     {selected ? <ProductionGuardRecoveryPanel /> : <p role="status">Die Production-Wiederaufnahme ist hier nicht verfügbar.</p>}
     <p><Link className="inline-flex min-h-11 items-center underline underline-offset-4" href="/admin/official-truth/method">Methode und vollständiges Quellenpaket prüfen</Link></p>
+    <p><Link className="inline-flex min-h-11 items-center underline underline-offset-4" href="/admin/official-truth/at-source-v3">CH→AT Quellen V3: geschützte Owner-Entscheidung (nur nach Stufe 1)</Link></p>
     <p><Link className="inline-flex min-h-11 items-center underline underline-offset-4" href="/admin/official-truth/import">Zum normalen Quellenlauf</Link></p>
     <p><Link className="inline-flex min-h-11 items-center underline underline-offset-4" href="/einreise">Zur Besucheransicht</Link></p>
   </main>
