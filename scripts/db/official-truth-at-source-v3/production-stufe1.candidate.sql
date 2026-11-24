@@ -436,14 +436,16 @@ BEGIN
   JOIN official_v3_at_production_private.watch_requests_v1 w USING(source_id,batch_id)
   JOIN official_v3_at_production_private.ch_source_qualifications_v3 q USING(source_id)
   JOIN official_v3_at_production_private.ch_source_originals_v3 raw USING(source_id)
-  JOIN net._http_response r ON r.id=w.request_id
-  WHERE o.batch_id=b AND o.http_status=200 AND r.status_code=200
-    AND r.timed_out IS FALSE AND r.error_msg IS NULL
+  JOIN official_v3_at_production_private.ch_source_http_receipts_v3 receipt
+    ON receipt.batch_id=o.batch_id AND receipt.source_id=o.source_id AND receipt.request_id=w.request_id
+  JOIN official_v3_at_production_private.ch_source_http_bodies_v3 body
+    ON body.source_id=receipt.source_id AND body.raw_sha=receipt.raw_sha
+  WHERE o.batch_id=b AND o.http_status=200
     AND o.observed_at BETWEEN w.requested_at AND w.requested_at+interval '6 minutes 10 seconds'
-    AND r.content IS NOT NULL AND o.body_sha=encode(sha256(convert_to(r.content,'UTF8')),'hex')
-    AND o.bytes=octet_length(convert_to(r.content,'UTF8'))
+    AND o.body_sha=receipt.raw_sha AND o.bytes=receipt.raw_bytes
+    AND receipt.state=o.source_status AND receipt.observed_at=o.observed_at
     AND (CASE WHEN q.source_id='bmeia-bern-how-to-apply'
-     THEN official_v3_at_production_private.bmeia_theme_assets_v3(convert_from(raw.raw_body,'UTF8'),r.content)
+     THEN official_v3_at_production_private.bmeia_theme_assets_v3(convert_from(raw.raw_body,'UTF8'),convert_from(body.raw_body,'UTF8'))
      ELSE o.body_sha=q.original_sha AND o.bytes=q.original_bytes END))=3;
 EXCEPTION WHEN OTHERS THEN RETURN false;
 END $pre$;
