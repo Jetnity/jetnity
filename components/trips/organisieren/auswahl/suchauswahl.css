@@ -153,15 +153,15 @@
 .reise-kalender .reise-abbrechen { border: 1px solid var(--kal-line); color: var(--kal-ink); background: var(--kal-bg); }
 .reise-kalender .reise-uebernehmen { display: flex; gap: 7px; align-items: center; background: #153f35; color: white; border: 1px solid #153f35; }
 .reise-uebernehmen:disabled { opacity: .45; }
-[data-workspace-theme='green'] .reise-kalender {
+[data-workspace-theme='dark'] .reise-kalender {
   --kal-ink: #eef7ef;
   --kal-muted: #aac6b8;
   --kal-line: #476556;
   --kal-bg: #132e28;
   --kal-soft: #294e3f;
 }
-[data-workspace-theme='green'] .reise-monat td > button.reise-tag-gewaehlt,
-[data-workspace-theme='green'] .reise-kalender .reise-uebernehmen { background: #ddf578; color: #153f35; }
+[data-workspace-theme='dark'] .reise-monat td > button.reise-tag-gewaehlt,
+[data-workspace-theme='dark'] .reise-kalender .reise-uebernehmen { background: #ddf578; color: #153f35; }
 @media (pointer: coarse) and (min-width: 641px) {
   .reise-monat td { height: 46px; }
   .reise-monat td > button { width: min(44px, 100%); height: 44px; }

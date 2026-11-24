@@ -1,5 +1,5 @@
-/* Light by default; the optional green palette lives in workspace-surfaces.css.
-   Both themes share this layout and the existing domain behavior. */
+/* Light by default; the neutral dark palette is scoped to workspace-surfaces.css.
+   Both themes share the same layout and unchanged trip behaviour. */
 .workspace-shell {
   --workspace-side-width: 14rem;
   --workspace-rail-width: 4.5rem;

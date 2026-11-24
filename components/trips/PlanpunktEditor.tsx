@@ -3,6 +3,7 @@
 import * as React from 'react'
 import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { ART_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { KONFLIKT, allePlanpunkte, manuellBearbeitbar, manuellerInhaltSchema, punktAendern, type PlanAenderung } from '@/lib/trips/trip-plan-integrated/manual'
 import { aenderungsAuswirkung, planSnapshot } from '@/lib/trips/trip-plan-integrated/day'
@@ -270,7 +271,7 @@ export default function PlanpunktEditor({
       </div>
     </> : <p className="text-sm leading-6 text-ink-900">Flugroute, Unterkunftszeitraum und Mobilitätsangaben bearbeitest du in der jeweiligen Detailansicht. Die Tageszuordnung ändert diese Angaben nicht.</p>}
     {original && <label className="grid min-w-0 gap-1 text-sm">Zuordnung im Tagesplan<select disabled={laeuft} className={feld} value={dayId} onChange={e => setDayId(e.target.value)}>
-      <option value="">Noch nicht eingeplant</option>{reise.days.map(day => <option key={day.id} value={day.id}>Tag {day.dayIndex}{day.dayDate ? ` · ${day.dayDate}` : ''}</option>)}
+      <option value="">Noch nicht eingeplant</option>{reise.days.map(day => <option key={day.id} value={day.id}>Tag {day.dayIndex}{day.dayDate ? ` · ${datumMitWochentag(day.dayDate) ?? 'Datum noch offen'}` : ''}</option>)}
     </select></label>}
     {preview && preview.changed.length > 0 && <p data-plan-preview className="text-xs leading-5 text-ink-900">
       Nach dem Speichern werden die Tagesinformationen neu ausgewertet. {preview.count} nachweislich verknüpfte Vorbereitungspunkte wären zu prüfen. Weitere Beziehungen sind nicht belegt. Es werden keine anderen Punkte verschoben.

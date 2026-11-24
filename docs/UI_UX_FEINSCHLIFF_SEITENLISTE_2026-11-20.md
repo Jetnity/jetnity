@@ -139,3 +139,4 @@ Diese Seiten antworten in Production immer mit 404 und dienen nur als Messfläch
 - `/ui-audit/meine-reisen`
 - `/ui-audit/runtime` (aus #1265, nur im QA-Branch von #1265, sonst 404)
 - `/ui-audit/trip-workspace`
+- `/account/ui-audit/w2-angebot` – ausschliesslich die isolierte Dev-Preview #1302; rein browserlokale synthetische Angebots-/Buchungsmarkierungen; Production 404.

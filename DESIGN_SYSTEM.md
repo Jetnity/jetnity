@@ -1,5 +1,7 @@
 # Jetnity – Design-System
 
+> **PO-Nachtrag 24.11.2026: ausschliesslich Hell und Dunkel.** Die ältere Option «Grünes Design» ist aufgehoben. Der Workspace verwendet nur «Hell» und ein neutral-anhrazitfarbenes «Dunkel»; Marken-Grün darf Akzent bleiben, ist kein eigenes Farbthema. Eine bisher gespeicherte Browserpräferenz `jetnity:workspace-theme:v1=green` wird ohne Nutzerkonto-, Login-, Datenbank- oder Reiseänderung auf `dark` migriert. Der Umschalter im Kopf und «Darstellung» in den Konto-Einstellungen bieten Hell/Dunkel. Das bisherige separate Admin-«System» entscheidet nur zwischen Hell und Dunkel. Ältere Passagen und Screenshots für `green` bleiben historische Belege und sind nicht mehr der aktuelle Abnahmestandard; die übrige #1264-Typografie, Bausteine, Abstände, Buttons, Fokussierung und Bewegung gelten unverändert. Neue Work-Screenshots sind 320/390/1280 px in beiden aktuellen Themen. Keine Production-Installation durch diese Änderung.
+
 > **PO-Go, 20.11.2026 – UI/UX-Feinschliff der ganzen App, Etappe 1 (gemeinsames Design-System):**
 > Feste Stufen für Schrift (4.1), Ecken und Schatten (5.2), ein Grundton für alle
 > Seiten (6.1), gemeinsame Bausteine in `components/ui` (6.2–6.9) und eine

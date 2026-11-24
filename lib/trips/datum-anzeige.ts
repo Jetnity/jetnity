@@ -97,3 +97,36 @@ export function planpunktWann(
   const tag = datumKurz(datum)
   return punkt.startsAt ? `${tag} · ${punkt.startsAt}` : tag
 }
+
+
+/** Swiss visitor dates with an actual weekday: "Di, 1. Dez. 2026".
+ * Civil UTC prevents accidental day changes between browsers/time zones. */
+const BESUCHER_WOCHENTAGE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] as const
+const BESUCHER_DATUM = new Intl.DateTimeFormat('de-CH', {
+  day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
+})
+export function datumMitWochentag(wert: string | null | undefined): string | null {
+  const tag = tagLesen(wert)
+  return tag ? `${BESUCHER_WOCHENTAGE[tag.zeit.getUTCDay()]}, ${BESUCHER_DATUM.format(tag.zeit)}` : null
+}
+
+/** Presentation only; does not rewrite dates in the saved trip or operation. */
+export function aenderungstextLesbar(wert: string): string {
+  // Ausschliesslich der sichtbare Text wird umgeschrieben. IDs, Graph und
+  // gespeicherte Originalaussagen der Änderungsprüfung bleiben unverändert.
+  return wert
+    .replace(/\b\d{4}-\d{2}-\d{2}\b/g, datum => datumMitWochentag(datum) ?? 'Datum noch offen')
+    .replaceAll('Geschützte Planpunkte mit betroffenem Reisezeitraum oder Tageskontext',
+      'Geschützte Einträge, die von der Änderung betroffen sein könnten')
+    .replaceAll('Weitere betroffene Planpunkte', 'Weitere betroffene Einträge')
+    .replaceAll('Etappenzuordnung', 'Zuordnung zu einem Reiseziel')
+    .replaceAll('Übernachtungsintervalle', 'Nächte')
+    .replaceAll('Übernachtungsintervall', 'Nacht')
+    .replaceAll('Tageskontext', 'Reisetag')
+    .replaceAll('Position ', 'Reihenfolge ')
+    .replaceAll('Geschützt:', 'Deine Buchungsangaben bleiben erhalten:')
+    .replaceAll('Planpunkten', 'Einträgen')
+    .replaceAll('Planpunkte', 'Einträge')
+    .replaceAll('Planpunkt', 'Eintrag')
+    .replaceAll('Eintrage', 'Einträge')
+}
