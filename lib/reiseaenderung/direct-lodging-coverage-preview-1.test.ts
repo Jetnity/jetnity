@@ -30,16 +30,18 @@ function zeilenVon(vorher: Trip, nachher: Trip) {
 
 function spiegelt(text: string, label: string, wert: UnterkunftAbdeckung) {
   assert.equal(wert.bekannt, true)
-  assert.match(text, new RegExp(`${label}: ${wert.naechteAbgedeckt} von ${wert.naechteGesamt} Nächten im aufgezeichneten Plan abgedeckt, ${wert.naechteGebucht} vom Nutzer als gebucht markiert, ${wert.naechteAusgewaehlt} ausgewählt`))
+  assert.match(text, new RegExp(`${label}: ${wert.naechteAbgedeckt} von ${wert.naechteGesamt} ${wert.naechteGesamt === 1 ? 'Nacht' : 'Nächten'} im aufgezeichneten Plan abgedeckt, ${wert.naechteGebucht} vom Nutzer als gebucht markiert, ${wert.naechteAusgewaehlt} ausgewählt`))
   assert.match(text, /Die Check-in-Nacht zählt, die Check-out-Nacht nicht/)
   assert.match(text, /keine Anbieterbestätigung, keine Verfügbarkeit und keine Reisebereitschaft/)
   for (const luecke of wert.luecken) {
-    assert.ok(text.includes(`${label}, Lücke: Check-in ${luecke.start}, Check-out ${luecke.end}, ${luecke.naechte} Nächte`))
-    if (luecke.stageId) assert.ok(text.includes(`Etappe ${luecke.stageId}`))
-    else assert.ok(text.includes('ohne Etappenzuordnung'))
+    assert.ok(text.includes(`${label}, Lücke: Check-in ${luecke.start}, Check-out ${luecke.end}, ${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht' : 'Nächte'}`))
+    if (luecke.stageId) {
+      assert.ok(!text.includes(luecke.stageId), 'internal stage ID must never be visible')
+      if (luecke.stageName) assert.ok(text.includes(luecke.stageName))
+    } else assert.ok(text.includes('keinem Reiseziel zugeordnet'))
   }
   const ohneTag = wert.aufenthalte.filter(aufenthalt => aufenthalt.item.dayId === null).length
-  assert.ok(text.includes(`${label}: ${wert.aufenthalte.length} aufgezeichnete Unterkünfte, davon ${ohneTag} ohne Tag, jede davon genau einmal gezählt`))
+  assert.ok(text.includes(`${label}: ${wert.aufenthalte.length} ${wert.aufenthalte.length === 1 ? 'aufgezeichnete Unterkunft' : 'aufgezeichnete Unterkünfte'}, davon ${ohneTag} ohne Reisetag, ${wert.aufenthalte.length === 1 ? 'genau einmal gezählt' : 'jede davon genau einmal gezählt'}`))
   assert.match(text, /Nichts wird automatisch beim Anbieter storniert oder umgebucht/)
   assert.doesNotMatch(text, /Unterkunftsdaten bleiben unverändert/)
 }
@@ -99,8 +101,8 @@ test('date shift keeps protected stay dates and shows canonical before/after cov
   const text = textVon(before, after)
   spiegelt(text, 'Bisheriger gespeicherter Plan', vorher)
   spiegelt(text, 'Vorschau nach deiner Änderung', nachher)
-  assert.match(text, /Etappe stage-1 „Florenz“/)
-  assert.match(text, /Etappe stage-2 „Florenz“/)
+  assert.match(text, /Etappe 1: Florenz/)
+  assert.match(text, /Etappe 2: Florenz/)
   assert.doesNotMatch(text, /Ein Vergleich der beiden Seiten ist nicht möglich/)
   assert.deepEqual(before.days[3].items[0], originalStay)
 })
@@ -261,13 +263,13 @@ test('an unconfirmed unpriced stay shifts with the date edit and the preview doe
   assert.doesNotMatch(text, /bleiben unverändert/)
 })
 
-test('repeated stage names stay distinguished by stage id', () => {
+test('repeated stage names stay distinguished by visible stage position, not internal ID', () => {
   const before = fixture()
   assert.equal(before.stages[0].name, before.stages[1].name)
   assert.notEqual(before.stages[0].id, before.stages[1].id)
   const text = textVon(before, vorschlag(before, { startDate: '2026-10-09' }))
-  assert.match(text, /Etappe stage-1 „Florenz“/)
-  assert.match(text, /Etappe stage-2 „Florenz“/)
+  assert.match(text, /Etappe 1: Florenz/)
+  assert.match(text, /Etappe 2: Florenz/)
   const ids = new Set(zeilenVon(before, vorschlag(fixture(), { startDate: '2026-10-09' })).map(zeile => zeile.id))
   assert.equal(ids.size, zeilenVon(before, vorschlag(fixture(), { startDate: '2026-10-09' })).length)
 })
@@ -283,7 +285,7 @@ test('an unassigned stay is counted once', () => {
   assert.equal(kanonisch.aufenthalte[0]?.item.id, stay.id)
   assert.equal(unterkunftAbdeckung(after, [...after.ohneTag, ...after.ohneTag]).aufenthalte.length, 2)
   const text = textVon(before, after)
-  assert.match(text, /1 aufgezeichnete Unterkünfte, davon 1 ohne Tag, jede davon genau einmal gezählt/)
+  assert.match(text, /1 aufgezeichnete Unterkunft, davon 1 ohne Reisetag, genau einmal gezählt/)
   spiegelt(text, 'Vorschau nach deiner Änderung', kanonisch)
 })
 
@@ -421,4 +423,22 @@ test('a reader failure degrades to an unknown preview and does not fail the edit
   assert.match(text, /Vorschau nach deiner Änderung: Unterkunftsplanung nicht verfügbar/)
   assert.doesNotMatch(text, /0 von \d+ Nächten/)
   assert.equal(vorschlag(fixture(), { title: 'Weiterhin bestätigbar' }).title, 'Weiterhin bestätigbar')
+})
+
+// Production regression: real-shaped UUIDs, same destination twice, one-night
+// stay and one-night gaps. No display-layer ID substitution or graph mutation.
+test('W2 live text: UUIDs stay internal and one night / one lodging use singular', () => {
+  const ids = ['02cad721-6adf-4f72-9382-414049f03e0f', '02cad722-6adf-4f72-9382-414049f03e0f']
+  const before: Trip = JSON.parse(JSON.stringify(fixture()).replaceAll('stage-1', ids[0]).replaceAll('stage-2', ids[1]))
+  const after = vorschlag(before, { startDate: '2026-10-09' })
+  const beforeSnapshot = structuredClone(before), afterSnapshot = structuredClone(after)
+  const text = textVon(before, after)
+  assert.match(text, /Etappe 1: Florenz/)
+  assert.match(text, /Etappe 2: Florenz/)
+  assert.match(text, /1 Nacht,/)
+  assert.match(text, /1 aufgezeichnete Unterkunft,/)
+  assert.doesNotMatch(text, /1 Nächte\b|1 aufgezeichnete Unterkünfte|1 Tage\b/)
+  for (const id of ids) assert.ok(!text.includes(id))
+  assert.deepEqual(before, beforeSnapshot)
+  assert.deepEqual(after, afterSnapshot)
 })

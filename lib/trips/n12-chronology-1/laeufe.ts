@@ -175,7 +175,7 @@ export function reisehinweisText(hinweis: QuerMitternachtHinweis): string {
     return `Gespeicherter ${art} «${hinweis.titel}»: ${hinweis.startsOn}${startZeit} bis ${hinweis.endsOn}${endZeit}. ${zeit} Keine Übernachtung abgeleitet.`
   }
   const art = hinweis.kind === 'flight' ? 'Flugs' : 'Transfers'
-  return `Fortsetzung desselben gespeicherten ${art} «${hinweis.titel}» vom ${hinweis.startsOn}. Ankunft laut Plan am ${hinweis.endsOn}${endZeit}. Dieselbe Kennung ${hinweis.itemId}. Keine zweite Buchung und keine Übernachtung.`
+  return `Fortsetzung desselben gespeicherten ${art} «${hinweis.titel}» vom ${hinweis.startsOn}. Ankunft laut Plan am ${hinweis.endsOn}${endZeit}. Es ist derselbe Reiseeintrag. Keine zweite Buchung und keine Übernachtung.`
 }
 
 /**
