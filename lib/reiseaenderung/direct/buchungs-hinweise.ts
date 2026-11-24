@@ -1,6 +1,7 @@
 // W2 #1299: truthful visitor guidance for commercial points affected by a
 // proposed itinerary change. Pure projection: no booking, provider call or IO.
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import { datumMitJahr } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripItem } from '@/types/trips'
 
 export type BuchungsHinweis = {
@@ -64,7 +65,12 @@ export function buchungsEinordnung(punkt: TripItem): Pick<BuchungsHinweis, 'stat
 function kontext(reise: Trip, punkt: TripItem): string {
   const d = reise.days.find(tag => tag.id === punkt.dayId)
   const s = reise.stages.find(stage => stage.id === punkt.stageId)
-  return `${d ? `Tag ${d.dayIndex}, ${d.dayDate ?? 'Datum offen'}` : 'Ohne Reisetag'} · ${s?.name ?? 'Ziel offen'} · ${punkt.startsOn ?? 'Termin offen'} bis ${punkt.endsOn ?? 'Termin offen'}`
+  // Presentation only: never alter stored dates, booking facts or comparisons.
+  const tag = d ? `Tag ${d.dayIndex} · ${datumMitJahr(d.dayDate) ?? 'Datum noch offen'}` : 'Ohne Reisetag'
+  const anfang = datumMitJahr(punkt.startsOn)
+  const ende = datumMitJahr(punkt.endsOn)
+  const termin = anfang || ende ? `${anfang ?? 'Beginn offen'} bis ${ende ?? 'Ende offen'}` : 'Termin noch offen'
+  return `${tag} · ${s?.name ?? 'Ziel noch offen'} · ${termin}`
 }
 
 function betrifft(vorher: Trip, nachher: Trip, alt: TripItem, neu: TripItem | undefined): boolean {
