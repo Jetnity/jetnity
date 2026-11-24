@@ -19,7 +19,9 @@ export default function ReiseAenderungRuecknahme({ vorher, nachher, quelle, onGe
   onGespeichert: (graph: Trip) => void
   onBeschaeftigt?: (busy: boolean) => void
 }) {
-  const [seed] = React.useState(() => crypto.randomUUID())
+  // Deterministic across SSR/hydration and explicit retries. The mutation ID
+  // still binds the trip, revision, exact last mutation and both graph hashes.
+  const seed = '00000000-0000-4000-8000-000000000000'
   const [bestaetigen, setBestaetigen] = React.useState(false)
   const [pending, setPending] = React.useState(false)
   const [ungewiss, setUngewiss] = React.useState(false)
