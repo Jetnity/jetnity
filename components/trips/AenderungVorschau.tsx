@@ -9,18 +9,20 @@
 // echte Löschungen getrennt. Die Kurzfassung des Modells ersetzt diese
 // Aufstellung nicht. Preise und Anbieter stehen hier nicht.
 
-import { ArrowRight, Info } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
+import { Hinweis } from '@/components/ui/hinweis'
 import type { Aenderungsvorschau } from '@/lib/reiseaenderung/erzeugen'
 import { strukturVergleich } from '@/lib/reiseaenderung/diff'
+import { aenderungstextLesbar } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
 
 function Tagliste({ tage, leer }: { tage: string[]; leer: string }) {
-  if (tage.length === 0) return <p className="break-words">{leer}</p>
+  if (tage.length === 0) return <p className="break-words text-body">{aenderungstextLesbar(leer)}</p>
   return (
     <ul className="grid gap-1">
       {tage.map((tag, index) => (
-        <li key={`${index}-${tag}`} className="break-words">{tag}</li>
+        <li key={`${index}-${tag}`} className="break-words text-body">{aenderungstextLesbar(tag)}</li>
       ))}
     </ul>
   )
@@ -32,6 +34,9 @@ type AenderungVorschauProps = {
   onUebernehmen: () => void
   onVerwerfen: () => void
 }
+
+const nebenaktion = 'inline-flex min-h-11 w-full items-center justify-center rounded-full px-4 text-body font-medium text-foreground underline underline-offset-4 motion-safe:active:translate-y-px hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 sm:w-auto'
+const hauptaktion = 'inline-flex min-h-11 w-full items-center justify-center rounded-full bg-primary px-6 text-center text-body font-semibold text-primary-foreground motion-safe:active:translate-y-px hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 sm:w-auto'
 
 export default function AenderungVorschau({
   vorschau,
@@ -52,42 +57,44 @@ export default function AenderungVorschau({
   return (
     <section
       aria-label="Änderungsvorschlag"
-      className="min-w-0 rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5"
+      className="min-w-0 max-w-full rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5"
     >
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center rounded-full bg-surface-100 px-3 py-1 text-xs font-semibold text-brand-800">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <span className="inline-flex max-w-full items-center break-words rounded-full bg-muted px-3 py-1 text-kicker text-foreground">
           Vorschlag
         </span>
-        <span className="text-xs text-ink-700">Noch nicht gespeichert.</span>
+        <span className="text-meta text-muted-foreground">Noch nicht gespeichert.</span>
       </div>
 
-      <h2 className="mt-4 break-words text-lg font-semibold text-brand-900 sm:text-xl">
-        {vorschau.aenderung.zusammenfassung}
+      <h2 className="mt-4 break-words text-title text-foreground">
+        {aenderungstextLesbar(vorschau.aenderung.zusammenfassung)}
       </h2>
-      <p className="mt-3 max-w-2xl break-words text-sm leading-6 text-ink-800">
-        Die Kurzfassung steht oben. Was sich im Reiseplan ändert, steht in der Aufstellung.
+      <p className="mt-3 max-w-prose break-words text-body text-muted-foreground">
+        Oben steht die kurze Zusammenfassung. Darunter siehst du, was sich im Reiseplan ändert.
       </p>
 
       {plan.strukturell && (
         <div id="aenderung-plan" className="mt-6 min-w-0">
-          <h3 className="break-words text-base font-semibold text-brand-900">Reiseplan vorher und nachher</h3>
+          <h3 className="break-words text-subtitle text-foreground">Reiseplan vorher und nachher</h3>
           <dl className="mt-4 grid min-w-0 gap-4">
-            <div className="min-w-0">
-              <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">Reisetage</dt>
-              <dd className="mt-1 break-words text-sm leading-6 text-brand-900">
-                {plan.tageVorher} → {plan.tageNachher}
+            <div className="min-w-0 rounded-control bg-muted p-3">
+              <dt className="text-meta font-semibold text-foreground">Reisetage</dt>
+              <dd className="mt-2 grid min-w-0 gap-2 text-body text-foreground sm:flex sm:flex-wrap sm:items-baseline sm:gap-x-3">
+                <span className="break-words"><span className="font-semibold">Vorher </span>{plan.tageVorher}</span>
+                <span className="hidden text-muted-foreground sm:inline" aria-hidden="true">→</span>
+                <span className="break-words"><span className="font-semibold">Nachher </span>{plan.tageNachher}</span>
               </dd>
             </div>
             {plan.etappen.map((etappe) => (
-              <div key={etappe.id} className="min-w-0">
-                <dt className="break-words text-sm font-semibold text-brand-900">{etappe.name}</dt>
-                <dd className="mt-1 grid min-w-0 gap-2 text-sm leading-6 text-ink-800">
+              <div key={etappe.id} className="min-w-0 rounded-control border border-border p-3">
+                <dt className="break-words text-subtitle text-foreground">{etappe.name}</dt>
+                <dd className="mt-3 grid min-w-0 gap-3 text-muted-foreground sm:grid-cols-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">Vorher</p>
+                    <p className="text-meta font-semibold text-foreground">Vorher</p>
                     <Tagliste tage={etappe.vorherTage} leer={etappe.vorher} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">Nachher</p>
+                    <p className="text-meta font-semibold text-foreground">Nachher</p>
                     <Tagliste tage={etappe.nachherTage} leer={etappe.nachher} />
                   </div>
                 </dd>
@@ -95,84 +102,66 @@ export default function AenderungVorschau({
             ))}
           </dl>
           {tageswechsel && (
-            <p className="mt-4 break-words text-sm leading-6 text-ink-800">
+            <p className="mt-4 max-w-prose break-words text-body text-muted-foreground">
               Zugeordnete Reisetage sind keine Hotelnächte. Diese Vorschau nennt keine Nachtzahl und bucht keine Unterkunft um.
             </p>
           )}
           {plan.ungeplant.length > 0 && (
-            <div role="status" className="mt-4 min-w-0 rounded-2xl border border-line-200 bg-surface-25 px-4 py-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">Ungeplant, nicht gelöscht</h3>
-              <ul className="mt-3 grid gap-2">
+            <Hinweis ton="info" role="status" titel="Ungeplant, nicht gelöscht" className="mt-4">
+              <ul className="grid gap-2">
                 {plan.ungeplant.map((zeile) => (
-                  <li key={zeile.id} className="break-words text-sm leading-6 text-brand-900">{zeile.text}</li>
+                  <li key={zeile.id} className="break-words">{aenderungstextLesbar(zeile.text)}</li>
                 ))}
               </ul>
-            </div>
+            </Hinweis>
           )}
           {loescht && (
-            <div role="alert" className="mt-4 min-w-0 rounded-2xl border border-status-achtung-line bg-status-achtung-soft px-4 py-4">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-status-achtung">Diese Punkte würden gelöscht</h3>
-              <ul className="mt-3 grid gap-2">
+            <Hinweis ton="aufgabe" role="alert" titel="Diese Punkte würden gelöscht" className="mt-4 border-status-achtung-line bg-status-achtung-soft">
+              <ul className="grid gap-2">
                 {plan.entfernt.map((zeile) => (
-                  <li key={zeile.id} className="break-words text-sm leading-6 text-status-achtung">{zeile.text}</li>
+                  <li key={zeile.id} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(zeile.text)}</li>
                 ))}
               </ul>
-            </div>
+            </Hinweis>
           )}
         </div>
       )}
 
-      <ol className="mt-6 grid min-w-0 gap-3 border-y border-line-200 py-6">
+      <ol className="mt-6 grid min-w-0 gap-3 border-y border-border py-6">
         {saetze.map((eintrag) => (
           <li key={`${eintrag.art}-${eintrag.text}`} className="flex min-w-0 items-start gap-3">
-            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
-            <span className="min-w-0 break-words text-sm leading-6 text-brand-900">{eintrag.text}</span>
+            <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="min-w-0 break-words text-body text-foreground [overflow-wrap:anywhere]">{aenderungstextLesbar(eintrag.text)}</span>
           </li>
         ))}
       </ol>
 
       {vorschau.aenderung.annahmen.length > 0 && (
-        <div className="mt-6 rounded-2xl border border-line-200 bg-surface-25 px-4 py-4">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">
-            <Info className="h-3.5 w-3.5" aria-hidden="true" />
-            Annahmen
-          </p>
-          <ul className="mt-3 grid gap-2">
+        <Hinweis ton="info" titel="Annahmen" className="mt-6">
+          <ul className="grid min-w-0 gap-2">
             {vorschau.aenderung.annahmen.map((annahme) => (
-              <li key={annahme} className="text-sm leading-6 text-ink-800">
-                {annahme}
-              </li>
+              <li key={annahme} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(annahme)}</li>
             ))}
           </ul>
-        </div>
+        </Hinweis>
       )}
 
       {vorschau.aenderung.warnungen.length > 0 && (
-        <div
-          role="status"
-          className="mt-4 rounded-2xl border border-status-schaetzung-line bg-status-schaetzung-soft px-4 py-4 text-sm leading-6 text-status-schaetzung"
-        >
-          <p className="text-xs font-semibold uppercase tracking-[0.12em]">Offene Punkte</p>
-          <ul className="mt-3 grid gap-2">
+        <Hinweis ton="aufgabe" role="status" titel="Offene Punkte" className="mt-4">
+          <ul className="grid min-w-0 gap-2">
             {vorschau.aenderung.warnungen.map((warnung) => (
-              <li key={warnung}>{warnung}</li>
+              <li key={warnung} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(warnung)}</li>
             ))}
           </ul>
-        </div>
+        </Hinweis>
       )}
 
-      <div className="mt-7 flex flex-col gap-3 border-t border-line-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs leading-5 text-ink-700">
-          Gespeichert wird erst, wenn du die Änderung übernimmst. Bei einem Fehler bleibt dieser
-          Vorschlag stehen.
+      <div className="mt-7 flex min-w-0 flex-col gap-4 border-t border-border pt-6">
+        <p className="max-w-prose break-words text-meta text-muted-foreground">
+          Es wird erst gespeichert, wenn du die Änderung übernimmst. Gelingt das nicht, bleibt dieser Vorschlag stehen.
         </p>
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
-          <button
-            type="button"
-            onClick={onVerwerfen}
-            disabled={laeuft}
-            className="inline-flex h-12 items-center justify-center rounded-full px-4 text-sm font-medium text-ink-900 underline underline-offset-4 transition hover:text-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800 disabled:pointer-events-none disabled:opacity-60"
-          >
+        <div className="flex min-w-0 flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <button type="button" onClick={onVerwerfen} disabled={laeuft} className={nebenaktion}>
             Verwerfen
           </button>
           <button
@@ -180,12 +169,7 @@ export default function AenderungVorschau({
             onClick={onUebernehmen}
             disabled={laeuft}
             aria-describedby={plan.strukturell ? 'aenderung-plan' : undefined}
-            className={cn(
-              'inline-flex h-12 items-center justify-center rounded-full bg-brand-800 px-6 text-sm font-semibold text-white',
-              'transition hover:bg-brand-900',
-              'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800',
-              'disabled:pointer-events-none disabled:opacity-60',
-            )}
+            className={cn(hauptaktion)}
           >
             {laeuft ? 'Wird übernommen …' : loescht ? 'Löschung übernehmen' : 'Änderung übernehmen'}
           </button>

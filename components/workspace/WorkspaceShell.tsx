@@ -182,9 +182,9 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
           <div ref={setActions} className="workspace-header-actions" />
           <div className="workspace-header-global">
             <button type="button" className="workspace-icon-button workspace-theme-toggle" onClick={toggleTheme}
-              aria-label={theme === 'green' ? 'Helle Darstellung aktivieren' : 'Grünes Design aktivieren'}
-              title={theme === 'green' ? 'Zur hellen Darstellung wechseln' : 'Zum grünen Design wechseln'}>
-              {theme === 'green' ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+              aria-label={theme === 'dark' ? 'Helle Darstellung aktivieren' : 'Dunkle Darstellung aktivieren'}
+              title={theme === 'dark' ? 'Zur hellen Darstellung wechseln' : 'Zur dunklen Darstellung wechseln'}>
+              {theme === 'dark' ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
             </button>
             <GastCreateLink createLabel="Reise planen" className="workspace-button workspace-primary">
               <Plus aria-hidden="true" /><span>Reise planen</span>

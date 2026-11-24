@@ -427,11 +427,11 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       await page.goto(origin); await plan(page)
       const atlas=page.locator('[data-trip-atlas]')
       await lichtePalette(page)
-      for(const [width,theme] of [[1440,'light'],[390,'green']] as const){
+      for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
         await page.setViewportSize({width,height:900})
-        if(theme==='green'){
-          await page.getByRole('button',{name:'Grünes Design aktivieren'}).click()
-          await page.locator('[data-workspace-theme="green"]').waitFor()
+        if(theme==='dark'){
+          await page.getByRole('button',{name:'Dunkle Darstellung aktivieren'}).click()
+          await page.locator('[data-workspace-theme="dark"]').waitFor()
         }
         const visited=new Set<string>()
         const ranges=await atlas.locator('[data-u1c-lauf]').evaluateAll(nodes=>nodes.map(node=>JSON.parse(node.getAttribute('data-u1c-tag-ids')||'[]') as string[]))
@@ -552,8 +552,8 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.match(dialoge.at(-1) ?? '', /von diesem Gerät entfernt/)
     assert.equal(await gast.evaluate(() => localStorage.getItem('jetnity:reise:v3') != null), true)
 
-    await gast.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
-    await gast.waitForSelector('[data-workspace-theme="green"]')
+    await gast.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await gast.waitForSelector('[data-workspace-theme="dark"]')
     const kontrast = await gast.locator('.workspace-reiseoptionen > summary').evaluate((el) => {
       const kanal = (wert: number) => {
         const v = wert / 255
@@ -638,7 +638,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await konto.keyboard.press('Enter')
     assert.match(kontoDialoge.at(-1) ?? '', /nicht rückgängig/)
     assert.equal(await konto.locator('[role="alert"]').count(), 0)
-    await konto.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+    await konto.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
     await loeschen.tap()
     assert.equal(kontoDialoge.length, 2)
     await konto.locator('[data-u1c-shell]').click()
@@ -676,8 +676,8 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await formular.locator('input[required]').fill('QA-Test Tag 11')
     await formular.locator('textarea').fill('Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
 
-    await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
-    await page.waitForSelector('[data-workspace-theme="green"]')
+    await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await page.waitForSelector('[data-workspace-theme="dark"]')
     assert.equal(await formular.locator('input[required]').inputValue(), 'QA-Test Tag 11')
     assert.equal(await formular.locator('textarea').inputValue(), 'Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
 
@@ -690,14 +690,14 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       ['Enddatum, optional'],
     )
 
-    const themaSetzen = async (name: 'light' | 'green') => {
+    const themaSetzen = async (name: 'light' | 'dark') => {
       const aktuell = await page.locator('.workspace-shell').getAttribute('data-workspace-theme')
       if (aktuell === name) return
-      await page.getByRole('button', { name: name === 'green' ? 'Grünes Design aktivieren' : 'Helle Darstellung aktivieren' }).click()
+      await page.getByRole('button', { name: name === 'dark' ? 'Dunkle Darstellung aktivieren' : 'Helle Darstellung aktivieren' }).click()
       await page.waitForSelector(`[data-workspace-theme="${name}"]`)
     }
     const breiten = [320, 390, 768, 1440]
-    for (const name of ['green', 'light'] as const) {
+    for (const name of ['dark', 'light'] as const) {
       await themaSetzen(name)
       for (const breite of breiten) {
         await page.setViewportSize({ width: breite, height: 900 })
@@ -712,7 +712,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await page.setViewportSize({ width: 768, height: 900 })
     assert.equal(await formular.locator('textarea').inputValue(), 'Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
 
-    await themaSetzen('green')
+    await themaSetzen('dark')
     await formular.locator('input[required]').fill(' ')
     await formular.locator('button[type="submit"]').click()
     const alarm = formular.locator('[role="alert"]')
@@ -743,7 +743,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     const bearbeiten = page.locator('form[aria-label="Punkt bearbeiten: QA-Test Tag 11"]')
     await bearbeiten.waitFor()
     await bearbeiten.locator('textarea').fill('Dieser Testeintrag soll nach dem Neuladen erhalten bleiben und wurde bearbeitet')
-    for (const name of ['green', 'light'] as const) {
+    for (const name of ['dark', 'light'] as const) {
       await themaSetzen(name)
       for (const breite of breiten) {
         await page.setViewportSize({ width: breite, height: 900 })
@@ -754,7 +754,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       await page.evaluate(() => { document.documentElement.style.fontSize = '' })
     }
     await page.setViewportSize({ width: 768, height: 900 })
-    await themaSetzen('green')
+    await themaSetzen('dark')
     await bearbeiten.getByRole('button', { name: /^Enddatum, optional:/ }).evaluate((el) => {
       el.style.color = getComputedStyle(el).backgroundColor
     })
@@ -781,9 +781,9 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await page.waitForFunction(() => location.search.includes('tag=day-11'))
     assert.equal(await page.locator('[data-plan-punkt]').count(), 1)
 
-    const zuGruen = page.getByRole('button', { name: 'Grünes Design aktivieren' })
+    const zuGruen = page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' })
     if (await zuGruen.isVisible()) await zuGruen.click()
-    await page.waitForSelector('[data-workspace-theme="green"]')
+    await page.waitForSelector('[data-workspace-theme="dark"]')
     const gewaehlt = await page.locator('[data-timeline-tag="day-11"]').evaluate((el) => {
       const bevor = getComputedStyle(el, '::before')
       const stil = getComputedStyle(el)

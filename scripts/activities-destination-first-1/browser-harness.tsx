@@ -148,7 +148,7 @@ declare global {
 function Flaeche() {
   const parameter = new URLSearchParams(window.location.hash.replace(/^#/, ''))
   const fall = faelle[parameter.get('fall') ?? 'thailand'] ? (parameter.get('fall') ?? 'thailand') : 'thailand'
-  const thema = parameter.get('thema') === 'green' ? 'green' : 'light'
+  const thema = parameter.get('thema') === 'dark' ? 'dark' : 'light'
   const [sichtbar, setSichtbar] = useState(parameter.get('sichtbar') !== 'nein')
   const daten = faelle[fall] ?? faelle.thailand
   return (

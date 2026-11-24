@@ -6,6 +6,7 @@ import { Download, Shield } from 'lucide-react'
 import KontoDatenexportAktion from '@/components/account/account-home-export-1/KontoDatenexportAktion'
 import KontoLoeschen from '@/components/account/KontoLoeschen'
 import Kontosprache, { type KontospracheAktionen } from './Kontosprache'
+import ArbeitsbereichDarstellung from './ArbeitsbereichDarstellung'
 import type { UiEinstellungenLesen } from '@/lib/account/ui-einstellungen-1/vertrag'
 import type { UiSprache } from '@/lib/localization/ui-sprache'
 import { einstellungenText } from '@/lib/localization/einstellungen-texte'
@@ -31,6 +32,7 @@ function Inhalt({ initial, bereich, loeschungAngeboten = false, ...aktionen }: E
         <Kontosprache initial={initial} sprache={sprache} waehlen={setSprache} bereich={bereich} {...aktionen} />
         {bereich === 'admin' ? <p className="mt-4 max-w-prose text-sm leading-6 text-foreground/80">{einstellungenText(sprache, 'admin.scope')}</p> : (
           <>
+            <ArbeitsbereichDarstellung sprache={sprache} />
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Link href="/account/security" className="flex min-h-11 flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 motion-reduce:transition-none sm:flex-row sm:items-start sm:p-5">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-muted text-foreground"><Shield className="h-5 w-5" aria-hidden="true" /></span>

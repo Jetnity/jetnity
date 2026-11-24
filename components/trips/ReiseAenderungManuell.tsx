@@ -4,6 +4,7 @@ import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { useWorkspaceEditSurface } from './TripWorkspaceEditSurface'
 import { workspaceEditFocus } from '@/lib/trips/workspace-edit-focus'
 import ReiseAenderungAuswirkungen from './ReiseAenderungAuswirkungen'
+import ReiseAenderungBuchungshinweise from './ReiseAenderungBuchungshinweise'
 import ReiseAenderungRuecknahme from './ReiseAenderungRuecknahme'
 import { manuelleAenderungVorschau, manuelleAenderungUebernehmen } from '@/lib/reiseaenderung/aktionen'
 import { manuellVorschau, type ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
@@ -150,6 +151,7 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
     {meldung && <p ref={alert} tabIndex={-1} role="alert" className="mt-4 text-red-700 [overflow-wrap:anywhere]">{meldung}</p>}
     {vorschau ? <div className="mt-5 grid gap-5">
       <ReiseAenderungAuswirkungen vorher={vorschau.vorher} nachher={vorschau.nachher} />
+      <ReiseAenderungBuchungshinweise vorher={vorschau.vorher} nachher={vorschau.nachher} />
       <div className="flex flex-wrap gap-3">
         <button className={button} disabled={pending || ungewiss} onClick={() => { generation.current++; setVorschau(null); setMeldung('') }}>Zurück zur Eingabe</button>
         {ungewiss && <button className={button} disabled={pending || stale} onClick={() => void save(true)}>Ergebnis erneut prüfen</button>}
