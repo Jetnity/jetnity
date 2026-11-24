@@ -32,7 +32,7 @@ function createThemeStore() {
     try { localStorage.setItem(STORAGE_KEY, next) }
     catch { /* Preference storage is optional. */ }
     update(next)
-    window.dispatchEvent(new Event(CHANGED))
+    window.dispatchEvent(new CustomEvent(CHANGED, { detail: next }))
   }
   return {
     getSnapshot: () => theme,
@@ -42,7 +42,11 @@ function createThemeStore() {
       const storageChanged = (event: StorageEvent) => {
         if (event.key === STORAGE_KEY || event.key === null) read()
       }
-      const sameTabChanged = () => read()
+      const sameTabChanged = (event: Event) => {
+        const next = (event as CustomEvent<WorkspaceTheme>).detail
+        if (next === 'light' || next === 'dark') update(next)
+        else read()
+      }
       window.addEventListener('storage', storageChanged)
       window.addEventListener(CHANGED, sameTabChanged)
       return () => {

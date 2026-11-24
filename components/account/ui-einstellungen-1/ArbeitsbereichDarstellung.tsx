@@ -16,7 +16,7 @@ export default function ArbeitsbereichDarstellung({ sprache }: { sprache: UiSpra
     <p className="mt-1 max-w-prose text-meta text-muted-foreground">{en
       ? 'Choose how your travel workspace looks on this device.'
       : 'Wähle, wie deine Reiseansicht auf diesem Gerät aussieht.'}</p>
-    <div className="mt-4 grid min-w-0 grid-cols-2 gap-3" role="group" aria-label={en ? 'Choose appearance' : 'Darstellung wählen'}>
+    <div className="mt-4 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2" role="group" aria-label={en ? 'Choose appearance' : 'Darstellung wählen'}>
       {thema.map(({ id, label, erklaerung, Icon }) => <button
         key={id} type="button" aria-pressed={theme === id}
         onClick={() => setTheme(id)}
@@ -26,3 +26,4 @@ export default function ArbeitsbereichDarstellung({ sprache }: { sprache: UiSpra
       </button>)}
     </div>
   </section>
+}

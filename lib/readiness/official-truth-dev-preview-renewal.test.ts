@@ -10,6 +10,7 @@ import { assertLocalProofEnvironment, findLocalPgBins } from '../../scripts/db/o
 
 import { runAtBmeiaAssetsNativePg17 } from '../../scripts/db/official-truth-at-bmeia-assets-dev-1/native'
 import { runAtSourceV3NativePg17 } from '../../scripts/db/official-truth-at-source-v3/native'
+import { runAtSourceArchiveNativePg17 } from '../../scripts/db/official-truth-at-source-archive-v2/native'
 
 const directory = '../../scripts/db/official-truth-v3-dev-import-schedule-1/'
 const core = readFileSync(new URL(directory + 'core.sql', import.meta.url), 'utf8')
@@ -226,3 +227,6 @@ test('BMEIA theme-only Dev: native PG17, negative cases and rollback', { timeout
 // Exact production-source comparator runs inside our owned local PG17 fixture.
 // Source owner approval remains unavailable without real Owner/AAL2 witness.
 test('CH→AT Source V3 native PG17 bounded assets, strict negative HTML and rollback', {timeout:90_000}, runAtSourceV3NativePg17)
+
+// Exact Production archive trigger, TTL eviction and append-only negative proof.
+test('CH→AT immutable HTTP source archive native PG17 TTL/negative/rollback', {timeout:90_000}, runAtSourceArchiveNativePg17)
