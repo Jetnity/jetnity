@@ -67,7 +67,7 @@ export default function AenderungVorschau({
       </div>
 
       <h2 className="mt-4 break-words text-title text-foreground">
-        {vorschau.aenderung.zusammenfassung}
+        {aenderungstextLesbar(vorschau.aenderung.zusammenfassung)}
       </h2>
       <p className="mt-3 max-w-prose break-words text-body text-muted-foreground">
         Oben steht die kurze Zusammenfassung. Darunter siehst du, was sich im Reiseplan ändert.
@@ -119,7 +119,7 @@ export default function AenderungVorschau({
             <Hinweis ton="aufgabe" role="alert" titel="Diese Punkte würden gelöscht" className="mt-4 border-status-achtung-line bg-status-achtung-soft">
               <ul className="grid gap-2">
                 {plan.entfernt.map((zeile) => (
-                  <li key={zeile.id} className="break-words">{zeile.text}</li>
+                  <li key={zeile.id} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(zeile.text)}</li>
                 ))}
               </ul>
             </Hinweis>

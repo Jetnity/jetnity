@@ -15,7 +15,7 @@ import {
   createBookingMemory,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
-import { zeitraumKurz } from '@/lib/trips/datum-anzeige'
+import { datumMitWochentag, zeitraumKurz } from '@/lib/trips/datum-anzeige'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import { gleicherEditorKontext } from '@/lib/trips/manual-journey-editor-completion-1'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
@@ -80,10 +80,10 @@ export default function UnterkunftBestand({
   const kopf = datumUnbekannt
     ? abdeckung.zusammenfassung
     : zuordnungUnbekannt
-      ? `${abdeckung.kalenderNaechte} Übernachtungsintervalle im Reisekalender. Die Etappenzuordnung ist unbekannt.`
+      ? `${abdeckung.kalenderNaechte} Nächte im Reisekalender. Die Nächte sind noch keinem Reiseziel zugeordnet.`
     : abdeckung.bekannt && abdeckung.naechteGesamt !== null && abdeckung.naechteAbgedeckt !== null
       ? uebergangsNaechte > 0
-        ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Übernachtungsintervallen im Reisekalender erfasst`
+        ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten im Reisekalender erfasst`
         : `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten abgedeckt`
       : abdeckung.zusammenfassung
 
@@ -107,13 +107,13 @@ export default function UnterkunftBestand({
           {uebergangsNaechte > 0 ? (
             <p className="mt-1 min-w-0 break-words text-sm leading-6 text-ink-800">
               {uebergangsNaechte === 1
-                ? '1 Übernachtungsintervall liegt im Übergang oder ausserhalb der Etappen. Daraus folgt keine Hotelbuchung.'
-                : `${uebergangsNaechte} Übernachtungsintervalle liegen im Übergang oder ausserhalb der Etappen. Daraus folgt keine Hotelbuchung.`}
+                ? '1 Nacht liegt zwischen den Reisezielen oder ausserhalb der Aufenthalte. Das bedeutet keine Hotelbuchung.'
+                : `${uebergangsNaechte} Nächte liegen zwischen den Reisezielen oder ausserhalb der Aufenthalte. Das bedeutet keine Hotelbuchung.`}
             </p>
           ) : null}
           {zuordnungUnbekannt ? (
             <p className="mt-1 min-w-0 break-words text-sm leading-6 text-ink-800">
-              Fehlende Etappendaten legen keine Hotelbuchung fest.
+              Fehlende Angaben zu Reisezielen bedeuten keine Hotelbuchung.
             </p>
           ) : null}
         </div>
@@ -382,7 +382,7 @@ function UnterkunftZeitraum({
       if (!schreibt.current) schliessen()
     }}>
       <p className="text-xs leading-5 text-ink-800 break-words">
-        Check-in: {item.startsOn ?? 'offen'} · Check-out: {item.endsOn ?? 'offen'}
+        Check-in: {datumMitWochentag(item.startsOn) ?? 'noch offen'} · Check-out: {datumMitWochentag(item.endsOn) ?? 'noch offen'}
       </p>
       {!vollstaendig ? <p className="text-xs leading-5 text-ink-800">Der Zeitraum fehlt oder ist unvollständig bzw. ungültig.</p> : null}
       <button

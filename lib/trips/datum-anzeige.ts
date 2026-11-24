@@ -112,9 +112,21 @@ export function datumMitWochentag(wert: string | null | undefined): string | nul
 
 /** Presentation only; does not rewrite dates in the saved trip or operation. */
 export function aenderungstextLesbar(wert: string): string {
+  // Ausschliesslich der sichtbare Text wird umgeschrieben. IDs, Graph und
+  // gespeicherte Originalaussagen der Änderungsprüfung bleiben unverändert.
   return wert
     .replace(/\b\d{4}-\d{2}-\d{2}\b/g, datum => datumMitWochentag(datum) ?? 'Datum noch offen')
+    .replaceAll('Geschützte Planpunkte mit betroffenem Reisezeitraum oder Tageskontext',
+      'Geschützte Einträge, die von der Änderung betroffen sein könnten')
+    .replaceAll('Weitere betroffene Planpunkte', 'Weitere betroffene Einträge')
+    .replaceAll('Etappenzuordnung', 'Zuordnung zu einem Reiseziel')
+    .replaceAll('Übernachtungsintervalle', 'Nächte')
+    .replaceAll('Übernachtungsintervall', 'Nacht')
+    .replaceAll('Tageskontext', 'Reisetag')
     .replaceAll('Position ', 'Reihenfolge ')
     .replaceAll('Geschützt:', 'Deine Buchungsangaben bleiben erhalten:')
+    .replaceAll('Planpunkten', 'Einträgen')
+    .replaceAll('Planpunkte', 'Einträge')
     .replaceAll('Planpunkt', 'Eintrag')
+    .replaceAll('Eintrage', 'Einträge')
 }

@@ -16,13 +16,13 @@ function Gruppe({ gruppe }: { gruppe: Auswirkungsgruppe }) {
   const limit = 20, count = gruppe.zeilen.length
   return (
     <details className="min-w-0 rounded-card border border-border bg-card p-4 shadow-none" open={offen} onToggle={e => setOffen(e.currentTarget.open)}>
-      <summary ref={summary} className="min-h-11 cursor-pointer break-words rounded-control py-2 text-subtitle text-card-foreground outline-none motion-safe:active:translate-y-px focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+      <summary ref={summary} className="min-h-11 min-w-0 max-w-prose cursor-pointer break-words rounded-control py-2 text-subtitle text-card-foreground [overflow-wrap:anywhere] outline-none motion-safe:active:translate-y-px focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         {aenderungstextLesbar(gruppe.titel)} ({count})
       </summary>
       {offen && <>
-        <ul className="mt-3 grid min-w-0 gap-3 text-body text-card-foreground [overflow-wrap:anywhere]">
+        <ul className="mt-3 grid w-full min-w-0 max-w-prose grid-cols-[minmax(0,1fr)] gap-3 text-body text-card-foreground [overflow-wrap:anywhere]">
           {gruppe.zeilen.slice(seite * limit, (seite + 1) * limit).map(row => (
-            <li key={row.id} className="min-w-0 break-words rounded-control bg-muted px-3 py-3">{aenderungstextLesbar(row.text)}</li>
+            <li key={row.id} className="w-full min-w-0 max-w-prose break-words rounded-control bg-muted px-3 py-3 [overflow-wrap:anywhere]">{aenderungstextLesbar(row.text)}</li>
           ))}
         </ul>
         {count > limit && (
