@@ -102,6 +102,7 @@ Diese Punkte haben keine eigene URL. Sie werden in Etappe 8 einzeln geöffnet, g
 - [x] `/admin/localization` (auf dem Handy als Liste statt Tabelle) – Etappe 7
 - [x] `/admin/marketing` – Etappe 7
 - [x] `/admin/official-truth/at-50-method` – Etappe 8 (mit #1254 auf main gekommen; Seitenkopf und Lesespalte wie die übrigen amtlichen Quellen)
+- [x] `/admin/official-truth/at-source-v3` – Owner-only CH→AT Quellennachfolger V3 (gesperrt ohne BG1/Owner-AAL2/Featureflag, keine Besucherfreigabe)
 - [x] `/admin/official-truth/at-method` – Etappe 7
 - [x] `/admin/official-truth/guard` – Etappe 7
 - [x] `/admin/official-truth/import` – Etappe 7
