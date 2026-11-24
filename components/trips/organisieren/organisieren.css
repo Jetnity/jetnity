@@ -20,7 +20,7 @@
 [data-workspace-theme='light'] .org-workspace {
   --org-bg: var(--workspace-bg);
 }
-[data-workspace-theme='green'] .org-workspace {
+[data-workspace-theme='dark'] .org-workspace {
   --org-ink: var(--workspace-ink);
   --org-muted: var(--workspace-muted);
   --org-white: var(--workspace-panel);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { fixture } from '@/scripts/direct-trip-editing-1/fixture'
-import { datumMitJahr } from '@/lib/trips/datum-anzeige'
+import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import type { TripItem } from '@/types/trips'
 import { buchungsEinordnung, buchungsHinweise, gespeicherterAnbieterLink, preisEinordnung } from './buchungs-hinweise'
 
@@ -32,8 +32,8 @@ test('W2 #1299: user-marked booking is NOT provider-confirmed, regardless of the
   assert.match(row.preisHinweis, /Zuletzt gespeicherter Betrag: 0 CHF/)
   assert.match(row.preisHinweis, /Preisstand mit Datum und Uhrzeit.*nicht vor/) // no invented date
   assert.match(row.preisHinweis, /Preis kann sich ändern/)
-  assert.ok(row.vorher.includes(datumMitJahr('2026-10-10')!), 'bisheriges Datum im Feinschliff-Format')
-  assert.ok(row.nachher.includes(datumMitJahr('2026-10-11')!), 'neues Datum im Feinschliff-Format')
+  assert.ok(row.vorher.includes(datumMitWochentag('2026-10-10')!), 'bisheriges Datum im Feinschliff-Format')
+  assert.ok(row.nachher.includes(datumMitWochentag('2026-10-11')!), 'neues Datum im Feinschliff-Format')
   assert.doesNotMatch(row.vorher + row.nachher, /2026-10-\d{2}/, 'keine ISO-Datumsanzeige')
   assert.deepEqual(vorher, ursprünglicher, 'no mutation of the original trip')
   assert.deepEqual(nachher, vorgeschlagener, 'no mutation of the proposed trip')

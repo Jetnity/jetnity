@@ -2,6 +2,7 @@
 import * as React from 'react'
 import { auswirkungen, type Auswirkungsgruppe } from '@/lib/reiseaenderung/direct/auswirkungen'
 import { workspaceEditFocus } from '@/lib/trips/workspace-edit-focus'
+import { aenderungstextLesbar } from '@/lib/trips/datum-anzeige'
 import type { Trip } from '@/types/trips'
 
 const seitenknopf = 'inline-flex min-h-11 w-full items-center justify-center rounded-full border border-input bg-background px-4 text-body font-semibold text-foreground motion-safe:active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 sm:w-auto'
@@ -16,12 +17,12 @@ function Gruppe({ gruppe }: { gruppe: Auswirkungsgruppe }) {
   return (
     <details className="min-w-0 rounded-card border border-border bg-card p-4 shadow-none" open={offen} onToggle={e => setOffen(e.currentTarget.open)}>
       <summary ref={summary} className="min-h-11 cursor-pointer break-words rounded-control py-2 text-subtitle text-card-foreground outline-none motion-safe:active:translate-y-px focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-        {gruppe.titel} ({count})
+        {aenderungstextLesbar(gruppe.titel)} ({count})
       </summary>
       {offen && <>
         <ul className="mt-3 grid min-w-0 gap-3 text-body text-card-foreground [overflow-wrap:anywhere]">
           {gruppe.zeilen.slice(seite * limit, (seite + 1) * limit).map(row => (
-            <li key={row.id} className="min-w-0 break-words rounded-control bg-muted px-3 py-3">{row.text}</li>
+            <li key={row.id} className="min-w-0 break-words rounded-control bg-muted px-3 py-3">{aenderungstextLesbar(row.text)}</li>
           ))}
         </ul>
         {count > limit && (

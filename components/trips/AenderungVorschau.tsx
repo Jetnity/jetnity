@@ -14,14 +14,15 @@ import { ArrowRight } from 'lucide-react'
 import { Hinweis } from '@/components/ui/hinweis'
 import type { Aenderungsvorschau } from '@/lib/reiseaenderung/erzeugen'
 import { strukturVergleich } from '@/lib/reiseaenderung/diff'
+import { aenderungstextLesbar } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
 
 function Tagliste({ tage, leer }: { tage: string[]; leer: string }) {
-  if (tage.length === 0) return <p className="break-words text-body">{leer}</p>
+  if (tage.length === 0) return <p className="break-words text-body">{aenderungstextLesbar(leer)}</p>
   return (
     <ul className="grid gap-1">
       {tage.map((tag, index) => (
-        <li key={`${index}-${tag}`} className="break-words text-body">{tag}</li>
+        <li key={`${index}-${tag}`} className="break-words text-body">{aenderungstextLesbar(tag)}</li>
       ))}
     </ul>
   )
@@ -109,7 +110,7 @@ export default function AenderungVorschau({
             <Hinweis ton="info" role="status" titel="Ungeplant, nicht gelöscht" className="mt-4">
               <ul className="grid gap-2">
                 {plan.ungeplant.map((zeile) => (
-                  <li key={zeile.id} className="break-words">{zeile.text}</li>
+                  <li key={zeile.id} className="break-words">{aenderungstextLesbar(zeile.text)}</li>
                 ))}
               </ul>
             </Hinweis>
@@ -130,7 +131,7 @@ export default function AenderungVorschau({
         {saetze.map((eintrag) => (
           <li key={`${eintrag.art}-${eintrag.text}`} className="flex min-w-0 items-start gap-3">
             <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            <span className="min-w-0 break-words text-body text-foreground [overflow-wrap:anywhere]">{eintrag.text}</span>
+            <span className="min-w-0 break-words text-body text-foreground [overflow-wrap:anywhere]">{aenderungstextLesbar(eintrag.text)}</span>
           </li>
         ))}
       </ol>
@@ -139,7 +140,7 @@ export default function AenderungVorschau({
         <Hinweis ton="info" titel="Annahmen" className="mt-6">
           <ul className="grid min-w-0 gap-2">
             {vorschau.aenderung.annahmen.map((annahme) => (
-              <li key={annahme} className="break-words [overflow-wrap:anywhere]">{annahme}</li>
+              <li key={annahme} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(annahme)}</li>
             ))}
           </ul>
         </Hinweis>
@@ -149,7 +150,7 @@ export default function AenderungVorschau({
         <Hinweis ton="aufgabe" role="status" titel="Offene Punkte" className="mt-4">
           <ul className="grid min-w-0 gap-2">
             {vorschau.aenderung.warnungen.map((warnung) => (
-              <li key={warnung} className="break-words [overflow-wrap:anywhere]">{warnung}</li>
+              <li key={warnung} className="break-words [overflow-wrap:anywhere]">{aenderungstextLesbar(warnung)}</li>
             ))}
           </ul>
         </Hinweis>

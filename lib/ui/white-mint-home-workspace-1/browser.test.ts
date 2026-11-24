@@ -187,7 +187,7 @@ async function oeffnen(optionen: {
   breite: number
   hoehe?: number
   schrift?: string
-  thema?: 'light' | 'green'
+  thema?: 'light' | 'dark'
   touch?: boolean
 }) {
   const context = await browser.newContext({
@@ -545,30 +545,30 @@ describe('rendered white/mint homepage and light workspace', () => {
     protokoll.kontoPaare = { paare: kontoAudit.urteil.paare, unsupported: kontoAudit.urteil.unsupported }
     await schliessen(konto.context)
 
-    const gruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
-    await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="green"]')
+    const gruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'dark' })
+    await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="dark"]')
     const gruenShell = await gruen.page.locator('.workspace-shell').evaluate((el) => ({
       hintergrund: getComputedStyle(el).backgroundColor,
       farbe: getComputedStyle(el).color,
     }))
-    assert.equal(aehnlich(rgbAus(gruenShell.hintergrund), '#101F1B', 2), true, JSON.stringify(gruenShell))
+    assert.equal(aehnlich(rgbAus(gruenShell.hintergrund), '#121921', 2), true, JSON.stringify(gruenShell))
     assert.equal(aehnlich(rgbAus(gruenShell.farbe), WHITE_MINT.ink), false)
     await gruen.page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
     await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="light"]')
     assert.equal(await gruen.page.evaluate((key) => localStorage.getItem(key), THEME_KEY), 'light')
-    await gruen.page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
-    await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="green"]')
-    assert.equal(await gruen.page.evaluate((key) => localStorage.getItem(key), THEME_KEY), 'green')
+    await gruen.page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="dark"]')
+    assert.equal(await gruen.page.evaluate((key) => localStorage.getItem(key), THEME_KEY), 'dark')
     await gruen.page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
     await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="light"]')
     const wieder = rgbAus(await gruen.page.locator('.workspace-shell').evaluate((el) => getComputedStyle(el).backgroundColor))
     assert.equal(aehnlich(wieder, WHITE_MINT.canvas), true)
     await schliessen(gruen.context)
 
-    const basisGruen = await oeffnen({ schicht: 'basis', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
-    await basisGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
-    const mintGruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'green' })
-    await mintGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="green"] [data-workspace-ansicht]'))
+    const basisGruen = await oeffnen({ schicht: 'basis', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'dark' })
+    await basisGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="dark"] [data-workspace-ansicht]'))
+    const mintGruen = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, thema: 'dark' })
+    await mintGruen.page.waitForFunction(() => document.querySelector('[data-workspace-theme="dark"] [data-workspace-ansicht]'))
     const signatur = async (page: Page) => page.evaluate(() => window.__whiteMintPaareSammeln?.('.workspace-content') ?? [])
     const vorherPaare = (await signatur(basisGruen.page)).filter((paar) => paar.background && !paar.unsupported)
     const nachherPaare = (await signatur(mintGruen.page)).filter((paar) => paar.background && !paar.unsupported)
@@ -630,8 +630,8 @@ describe('rendered white/mint homepage and light workspace', () => {
 
   test('white header and icon controls work in both themes and expose the complete attribution', async () => {
     const { context, page } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440 })
-    for (const thema of ['light', 'green'] as const) {
-      if (thema === 'green') await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
+    for (const thema of ['light', 'dark'] as const) {
+      if (thema === 'dark') await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
       await page.waitForSelector(`[data-workspace-theme="${thema}"]`)
       for (const selector of ['.workspace-header', '.workspace-sidebar']) {
         assert.equal(await page.locator(selector).evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)')
@@ -770,8 +770,8 @@ describe('rendered white/mint homepage and light workspace', () => {
     const tagZwei = page.getByRole('button', { name: /Tag 2/ }).first()
     await tagZwei.click()
     await page.waitForFunction(() => new URL(location.href).searchParams.has('tag'))
-    await page.getByRole('button', { name: 'Grünes Design aktivieren' }).click()
-    await page.waitForSelector('[data-workspace-theme="green"]')
+    await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await page.waitForSelector('[data-workspace-theme="dark"]')
     await page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
     await page.waitForSelector('[data-workspace-theme="light"]')
     assert.ok(new URL(page.url()).searchParams.has('tag'))
