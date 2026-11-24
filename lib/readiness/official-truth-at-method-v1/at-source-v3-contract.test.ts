@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { LOCAL_UNAPPLIED_RPCS, pruefe } from '../../../scripts/db/verwendung.mjs'
 import {
  readAtSourceV3Command,AT_SOURCE_V3_BMEIA_SHA,AT_SOURCE_V3_BMEIA_BYTES,
- AT_SOURCE_V3_SELECTION,AT_SOURCE_V3_SOURCES
+ AT_SOURCE_V3_SELECTION,AT_SOURCE_V3_SOURCES,AT_SOURCE_V3_METHOD_SHA,AT_SOURCE_V3_PACKAGE_SHA
 } from './at-source-v3-owner-contract'
 
 const folder=new URL('../../../scripts/db/official-truth-at-source-v3/',import.meta.url)
@@ -42,6 +42,14 @@ test('immutable V3 sources and raw original custody bound to exact released lega
  assert.equal(AT_SOURCE_V3_BMEIA_BYTES,172428)
  assert.equal(AT_SOURCE_V3_BMEIA_SHA,'b8ae6ea71f8ca44556ec30be7921de9c18c26211da1a6175d9b5c0bda85aabc8')
  assert.equal(AT_SOURCE_V3_SELECTION,'CH_AT_VALID_SWISS_PASSPORT_DIRECT_VISA_ONLY')
+ assert.equal(manifest.approved_method.revision,2)
+ assert.equal(manifest.approved_method.epoch,2)
+ assert.equal(manifest.approved_method.method_sha256,AT_SOURCE_V3_METHOD_SHA)
+ assert.equal(manifest.approved_method.package_sha256,AT_SOURCE_V3_PACKAGE_SHA)
+ for(const prefix of ['m','current_head']){
+  assert.ok(installer.includes(`${prefix}.method_digest<>'${AT_SOURCE_V3_METHOD_SHA}'`))
+  assert.ok(installer.includes(`${prefix}.package_digest<>'${AT_SOURCE_V3_PACKAGE_SHA}'`))
+ }
  assert.equal(manifest.sources.length,3)
  for(const row of AT_SOURCE_V3_SOURCES){
   const pinned=manifest.sources.find((s:{source_id:string})=>s.source_id===row.id)
