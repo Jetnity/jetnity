@@ -1,0 +1,104 @@
+{
+  "schema": "jetnity.official-truth.ch-at.source-successor-review.v3",
+  "immutable_candidate": true,
+  "status": "REVIEW_ONLY_OWNER_DECISION_PENDING_NOT_PRODUCTION_INSTALLED",
+  "production_project_ref": "qscbgcdmivbbnzrcyegn",
+  "production_readback_utc": "2026-11-23T19:55:28.896386+00:00",
+  "watch_batch_id": 639,
+  "watch_batch_started_at_utc": "2026-11-23T19:40:00.044736+00:00",
+  "source_predecessor": "official_v3_at_production_private.ch_source_qualifications_v2",
+  "immutable_predecessor_unchanged": true,
+  "target_successor": "ch_source_qualifications_v3 — not yet installed, append-only BG1/MA1 gated",
+  "approved_method": {
+    "method_id": "jetnity-destination-primary-at-visa",
+    "revision": 2,
+    "epoch": 2,
+    "status_at_readback": "approved",
+    "method_sha256": "fe161a865c50d26be4a41c1b122fcd14efb3b39bc9100fd66b13304dfca07a4e",
+    "package_sha256": "6584d20adcc08e94edc4a74cad6c780b6db9c7ce89fff8e89afb0d23380e27a0",
+    "reapproval_required_if_unchanged": false
+  },
+  "exact_scope": {
+    "destination_country_code": "AT",
+    "citizenship_country_code": "CH",
+    "document": "valid_ordinary_swiss_national_passport",
+    "route": "direct_entry",
+    "requirement_type": "visa",
+    "rule_effect": "not_required",
+    "semantic_scope": "CH_AT_VALID_SWISS_PASSPORT_DIRECT_VISA_ONLY",
+    "exclude": "Other 49 passports, residence permits, transit, fees, health, vaccination, forms, ETA, other visa types, document-validity variants, family members and all non-visa topics"
+  },
+  "sources": [
+    {
+      "source_id": "bmeia-bern-how-to-apply",
+      "authority": "Austria BMEIA Austrian Embassy Bern",
+      "role": "independent_official_visa_crosscheck",
+      "official_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+      "current_watch_state": "changed",
+      "current_http_status": 200,
+      "observed_at_utc": "2026-11-23T19:45:00.050808+00:00",
+      "current_original_bytes": 172428,
+      "current_original_sha256": "b8ae6ea71f8ca44556ec30be7921de9c18c26211da1a6175d9b5c0bda85aabc8",
+      "predecessor_qualified_original_bytes": 172428,
+      "predecessor_qualified_original_sha256": "2521a95cc70490decb12051b28f1e5d208b9429ffb589e2491b34ca110f62cbe",
+      "predecessor_owner_review": "owner_approved_rule_neutral_delta_changed_remains_changed_20261122",
+      "diff_from_predecessor": {
+        "changed_lines": 19,
+        "css_js_theme_timestamp_only": 19,
+        "other_lines": 0,
+        "after_strict_css_js_timestamp_normalization_exact_bytes_equal": true
+      },
+      "new_owner_decision": "PENDING_REVIEW_PROPOSED_RULE_NEUTRAL"
+    },
+    {
+      "source_id": "bmi-general-entry",
+      "authority": "Austria BMI",
+      "role": "destination_primary_official_general_entry",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html",
+      "current_watch_state": "unchanged_exact",
+      "current_http_status": 200,
+      "observed_at_utc": "2026-11-23T19:45:00.056078+00:00",
+      "current_original_bytes": 91655,
+      "current_original_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e",
+      "predecessor_qualified_original_bytes": 91655,
+      "predecessor_qualified_original_sha256": "ab2b735bf53e21a83c447fe9cfefabd7ffc54406f68793d01acac421fd6c301e"
+    },
+    {
+      "source_id": "bmi-visa-nationality-matrix",
+      "authority": "Austria BMI",
+      "role": "destination_primary_official_nationality_matrix",
+      "official_url": "https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html",
+      "current_watch_state": "unchanged_exact",
+      "current_http_status": 200,
+      "observed_at_utc": "2026-11-23T19:45:00.078154+00:00",
+      "current_original_bytes": 498415,
+      "current_original_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778",
+      "predecessor_qualified_original_bytes": 498415,
+      "predecessor_qualified_original_sha256": "fcec70ebb5e7869591eaa8490025288534f5e44dddc0926102cd0bb27de8e778"
+    }
+  ],
+  "linked_navigation_change": {
+    "historical_dev_original_sha256": "7ca5618875cf1eccea033e1b851cdd8aea3d1aef80585048f62826c8c5266c18",
+    "historical_dev_original_bytes": 172460,
+    "previous_link": "https://www.bmeia.gv.at/oeb-bern/service-fuer-buergerinnen/information-fuer-auslandsoesterreicherinnen-und-auslandsoesterreicher/handy-signatur-id-austria",
+    "current_link": "https://www.bmeia.gv.at/oeb-bern/service-fuer-buergerinnen/information-fuer-auslandsoesterreicherinnen-und-auslandsoesterreicher/id-austria",
+    "nav_change_context": "ID Austria digital identification for Austrian citizens abroad; not visa rule",
+    "already_present_in_production_predecessor_v2": true,
+    "official_visa_rule_evidence_url": "https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/",
+    "review_proposal": "rule_neutral_only_for_exact_CH_AT_direct_visa_scope",
+    "owner_decision": "NOT_YET_GIVEN_FOR_THIS_SUCCESSOR",
+    "explicitly_never_whitelist_all_a_href_changes": true
+  },
+  "guardrails": {
+    "raw_original_history_append_only": true,
+    "predecessor_v2_must_not_be_updated": true,
+    "new_v3_immutable_source_record_required": true,
+    "signed_owner_source_decision_required": true,
+    "owner_login_aal2_required_for_protected_source_action": true,
+    "new_bg1_catalog_successor_and_natural_full_proof_required": true,
+    "new_fresh_fact_after_proof_required": true,
+    "CH_positive_and_foreign_passport_negative_readback_required": true,
+    "visitor_flag_unchanged_and_publication_disabled": true,
+    "production_install_requires_separate_PO_GO_and_release_chat": true
+  }
+}

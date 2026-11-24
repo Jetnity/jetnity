@@ -139,6 +139,11 @@ describe('schema-reference LOCAL/UNAPPLIED classification', () => {
           sourcePath: 'lib/readiness/official-truth-product-v3/method/human-server.ts',
           sqlPath: 'scripts/db/official-truth-v3-human-method-transport-1/install-candidate.sql',
         },
+        ...['official_v3_at_ch_source_approve_v3','official_v3_at_ch_source_confirm_v3'].map(name => ({
+          name,
+          sourcePath: 'lib/readiness/official-truth-at-method-v1/at-source-v3-owner-server.ts',
+          sqlPath: 'scripts/db/official-truth-at-source-v3/production-v3-v6.PO-GO-INSTALL.sql',
+        })),
         ...['official_v3_guard_review_v1', 'official_v3_guard_retire_v1',
           'official_v3_guard_resume_v1', 'official_v3_guard_confirm_v1'].map(name => ({
           name,
