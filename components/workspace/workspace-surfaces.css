@@ -175,6 +175,31 @@
 :where([data-workspace-theme="dark"]) [data-status-siegel="gebucht"] { background: rgb(var(--jet-ink-400)); color: rgb(var(--jet-brand-900)); }
 :where([data-workspace-theme="dark"]) [data-status-siegel="gewaehlt"] { border-color: var(--workspace-ink); }
 :where([data-workspace-theme="dark"]) [data-status-siegel="offen"] { border-color: var(--workspace-edge); }
+/* Shared #1264 components retain semantic status meaning in neutral dark mode.
+   Pale light-theme backgrounds with pale text were unreadable (Work FAIL).
+   These are only visual overrides, not booking state or data changes. */
+.workspace-shell[data-workspace-theme="dark"] .workspace-content [data-hinweis="info"] {
+  background-color: #283742;
+  border-color: #617684;
+  color: #f4f7f9;
+}
+.workspace-shell[data-workspace-theme="dark"] .workspace-content [data-hinweis="info"] > svg {
+  color: #bde5d1;
+}
+.workspace-shell[data-workspace-theme="dark"] .workspace-content [data-hinweis="aufgabe"] {
+  background-color: #392e28;
+  border-color: #c39c72;
+  color: #fff0de;
+}
+.workspace-shell[data-workspace-theme="dark"] .workspace-content [data-hinweis="aufgabe"] > svg {
+  color: #ffd19a;
+}
+.workspace-shell[data-workspace-theme="dark"] [data-status-siegel="gewaehlt"] {
+  background-color: #3c3527;
+  border-color: #c4aa73;
+  color: #ffe6b6;
+}
+
 .workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
 /* These legacy header slots were white on a dark hero. Only recolour them
    inside the compact, transparent heading; keep dark action buttons intact. */

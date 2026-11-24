@@ -23,6 +23,11 @@ test('W2 owner choice exposes only Light and Dark and safely migrates old green 
   assert.match(css, /data-workspace-theme="dark"/)
   assert.doesNotMatch(css, /data-workspace-theme="green"/)
   assert.match(css, /--workspace-bg: #121921/)
+  assert.match(css, /\[data-hinweis="info"\]/)
+  assert.match(css, /\[data-hinweis="aufgabe"\]/)
+  assert.match(css, /\[data-status-siegel="gewaehlt"\]/)
+  assert.match(css, /background-color: #283742/)
+  assert.match(css, /background-color: #392e28/)
 })
 
 test('W2 visitor dates are rendered from civil UTC in Swiss weekday format', async () => {
