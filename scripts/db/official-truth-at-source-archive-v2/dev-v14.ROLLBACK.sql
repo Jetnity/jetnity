@@ -117,7 +117,7 @@ DO $initial_archive$
 DECLARE b bigint; n int; anchor text;
 BEGIN
  SELECT MAX(x.batch_id) INTO b FROM official_v3_at_source_watch_private.batches_v1 x
- WHERE x.started_at>clock_timestamp()-interval '70 minutes'
+ WHERE x.requested_at>clock_timestamp()-interval '70 minutes'
  AND (SELECT count(*) FROM official_v3_at_source_watch_private.reads_v1 y
   WHERE y.batch_id=x.batch_id AND y.state IN
   ('changed','unchanged_exact','unchanged_asset_version_only'))=3;
