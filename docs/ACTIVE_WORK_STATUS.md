@@ -1,5 +1,14 @@
 # Jetnity – Active Work Status
 
+## 24.11.2026 — W3 CI-Sollwerte, Draft #1307
+
+Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgangshead `27a4654ed2ffad84d269d4a8e255eb88ca9f7a85`. Einmaliger Auftrag: nur die roten W3-Regressionen aus CI [45485351071](https://github.com/Jetnity/jetnity/actions/runs/45485351071), Job Repository verification [138769138386](https://github.com/Jetnity/jetnity/actions/runs/45485351071/job/138769138386). Der rote Typecheck, Lint & Build ist der nachgelagerte Aggregate. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy.
+
+- **Ursache:** Die Darstellung sagt bereits «Unverbindliches Angebot – nicht gebucht» und, nur bei `bookingSource: user`, «Von dir als gebucht markiert – nicht vom Anbieter bestätigt». Gespeicherte Beträge ohne Suchzeitpunkt zeigen «Preisstand unbekannt». `lodging-coverage-truth-1.test.ts`, `organisieren-action-recovery-1.test.ts` und `trip-plan-premium-experience-4.test.ts` verlangten noch «Ausgewählt», «Gebucht» oder «zum Auswahlzeitpunkt». `detail.test.ts` setzte `bookingStatus: booked` ohne Nutzerquelle; Hinweis und Kostenstand blieben deshalb leer bzw. «ausgewählt». Die Sperre «Anbieter bestätigt» traf die vorgeschriebene Verneinung.
+- **Änderung:** Nur Solltexte und die Detail-Fixture. Eigene Markierung nur über `gebuchteBuchung`. Ohne Quelle bleiben Anbietername, Link, Referenz, Betrag und Zeitpunkt ein unverbindliches Angebot. Positive Anbieterbestätigung, Zahlung und «bezahlt» bleiben verboten. Der Reiseplan bindet `GespeicherterPreisstand` ohne Suchzeitpunkt.
+- **Nicht geändert:** Buchungs-, Preis- und Speicherlogik, Datenmodell, DB, Login/2FA, Provider, Production, Kosten, CI-Konfiguration. #1308 und andere PRs unberührt.
+- **Tests:** Die vier Dateien lokal 66 bestanden, 0 fehlgeschlagen. `npm run test:core` lokal: 10573 bestanden, 23 fehlgeschlagen, 10 übersprungen. Die 23 sind hier fehlende PostgreSQL-16-Binaries, ein Dateisystem-Beweis (`in_place` wurde `recorded` statt `rejected`) und ein Playwright-Klick, den die Workspace-Navigation verdeckt. Keiner davon liegt in den vier W3-Dateien. Auf dem GitHub-Runner von CI 45485351071 waren genau die acht W3-Sollwertfehler rot, die nativen Beweise dort grün. Exact-Head-CI auf dem neuen Head und die isolierte Dev-Vorschau bleiben vor der Work-Abnahme offen.
+
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.

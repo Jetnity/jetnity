@@ -8,6 +8,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { itineraryDirekt } from '@/lib/route/fixtures'
+import { gebuchteBuchung } from '@/lib/trips/buchung'
 import { modusAusQuery, modusFuerReise, modusUrl, detailElternModus } from '@/lib/trips/workspace-mode'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import { gewaehlterTagId } from '@/lib/trips/arbeitsbereich'
@@ -467,7 +468,7 @@ describe('Item Details', () => {
     )
   })
 
-  test('gebucht mit Anbieterangaben bleibt deine eigene Markierung, mit Preis zum Auswahlzeitpunkt', () => {
+  test('gebucht mit belegter Nutzerquelle bleibt deine Markierung; Anbieterangaben und gespeicherter Preis bestätigen nichts', () => {
     const aktuell = reise({
       days: [
         {
@@ -477,7 +478,20 @@ describe('Item Details', () => {
           dayDate: '2026-09-12',
           title: null,
           items: [
-            punkt({ id: 'flug-1', kind: 'flight', title: 'Flug', provider: 'duffel', startsAt: '13:05', priceAmount: 80, priceCurrency: 'CHF', bookingStatus: 'booked' }),
+            punkt({ id: 'flug-1', kind: 'flight', title: 'Flug', provider: 'duffel', startsAt: '13:05', priceAmount: 80, priceCurrency: 'CHF', ...gebuchteBuchung(JETZT) }),
+            punkt({
+              id: 'flug-ohne-quelle',
+              kind: 'flight',
+              title: 'Flug ohne Quelle',
+              provider: 'duffel',
+              externalRef: 'off_1',
+              bookingUrl: 'https://example.test/book',
+              startsAt: '13:05',
+              priceAmount: 80,
+              priceCurrency: 'CHF',
+              bookingStatus: 'booked',
+              bookingConfirmedAt: JETZT,
+            }),
             punkt({ id: 'flug-2', kind: 'flight', title: 'Flug zurück', provider: 'duffel' }),
           ],
         },
@@ -485,12 +499,24 @@ describe('Item Details', () => {
     })
     const gebucht = itemDetailAbleiten(aktuell, [], 'flug-1')
     assert.equal(gebucht?.trust, 'herkunft-vorhanden')
-    assert.match(gebucht?.buchungsHinweis ?? '', /Von dir als gebucht markiert\. Jetnity prüft Buchungen nicht beim Anbieter\./)
+    assert.equal(gebucht?.buchungsHinweis, 'Von dir als gebucht markiert. Jetnity prüft Buchungen nicht beim Anbieter.')
+    assert.equal(gebucht?.bookingStatusText, 'Von dir als gebucht markiert – nicht vom Anbieter bestätigt')
     assert.equal(gebucht?.stand, 'gebucht')
     assert.deepEqual(gebucht?.preis, { art: 'preis', betrag: 80, waehrung: 'CHF' })
     assert.equal(gebucht?.wann, '12. Sept. · 13:05')
+    assert.doesNotMatch(`${gebucht?.bookingStatusText} ${gebucht?.buchungsHinweis}`, /Vom Anbieter bestätigte Buchung/)
+
+    const ohneQuelle = itemDetailAbleiten(aktuell, [], 'flug-ohne-quelle')
+    assert.equal(ohneQuelle?.trust, 'herkunft-vorhanden')
+    assert.equal(ohneQuelle?.buchungsHinweis, null)
+    assert.equal(ohneQuelle?.bookingStatusText, 'Unverbindliches Angebot – nicht gebucht')
+    assert.equal(ohneQuelle?.stand, 'ausgewaehlt')
+    assert.deepEqual(ohneQuelle?.preis, { art: 'preis', betrag: 80, waehrung: 'CHF' })
+    assert.doesNotMatch(ohneQuelle?.bookingStatusText ?? '', /Vom Anbieter bestätigte Buchung|Von dir als gebucht markiert/)
+
     const offen = itemDetailAbleiten(aktuell, [], 'flug-2')
     assert.equal(offen?.buchungsHinweis, null)
+    assert.equal(offen?.bookingStatusText, 'Unverbindliches Angebot – nicht gebucht')
     assert.equal(offen?.preis.art, 'ohne')
   })
 })

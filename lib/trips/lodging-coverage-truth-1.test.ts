@@ -105,6 +105,9 @@ function manuell(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
 }
 
 const ZEITRAUM_UNKLAR = /Der Zeitraum fehlt oder ist unvollständig bzw\. ungültig/
+const UNVERBINDLICH = /Unverbindliches Angebot – nicht gebucht/
+const EIGENE_MARKIERUNG = /Von dir als gebucht markiert – nicht vom Anbieter bestätigt/
+const ANBIETER_ERFUNDEN = /Vom Anbieter bestätigte Buchung|(?<!nicht vom )Anbieter bestätigt|Providerbestätigung/
 
 function siegeltexte(markup: string): string[] {
   return [...markup.matchAll(/<span data-status-siegel="[^"]*"[^>]*><svg[\s\S]*?<\/svg>([^<]*)<\/span>/g)].map(treffer => treffer[1])
@@ -218,9 +221,10 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.match(text, /Noch nicht vollständig bestimmbar/)
     assert.match(text, /Zeitraum noch nicht bestimmbar/)
     assert.match(text, /Der Zeitraum fehlt oder ist unvollständig bzw\. ungültig/)
-    assert.match(text, /Gebucht/)
+    assert.match(text, EIGENE_MARKIERUNG)
     assert.match(text, /Buchung korrigieren/)
-    assert.doesNotMatch(text, /Als gebucht markieren|Zahlung|bezahlt|Anbieter bestätigt/)
+    assert.doesNotMatch(text, /Als gebucht markieren|Zahlung|bezahlt/)
+    assert.doesNotMatch(text, ANBIETER_ERFUNDEN)
 
     const ui = bedienung(trip)
     assert.equal(ui.buttonFor('Gebuchtes Hotel').props.children, 'Buchung korrigieren')
@@ -228,7 +232,7 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.deepEqual(ui.calls, [['stay-booked', false]])
 
     const ohneAktion = html(trip, { buchung: false, zeitraum: true })
-    assert.match(ohneAktion, /Gebucht/)
+    assert.match(ohneAktion, EIGENE_MARKIERUNG)
     assert.match(ohneAktion, /Unterkunftsstand noch unklar/)
     assert.doesNotMatch(ohneAktion, /Buchung korrigieren|Als gebucht markieren/)
   })
@@ -239,10 +243,12 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.match(text, /Unterkunftsstand noch unklar/)
     assert.doesNotMatch(text, BEKANNT)
     assert.doesNotMatch(text, FEHLT)
-    assert.match(text, /Ausgewählt/)
+    assert.match(text, UNVERBINDLICH)
     assert.match(text, /Als gebucht markieren/)
     assert.doesNotMatch(text, /Buchung korrigieren/)
     assert.doesNotMatch(text, />Gebucht</)
+    assert.doesNotMatch(text, /Von dir als gebucht markiert/)
+    assert.doesNotMatch(text, ANBIETER_ERFUNDEN)
 
     const ui = bedienung(trip)
     ui.buttonFor('Offenes Hotel').props.onClick!()
@@ -327,8 +333,8 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.doesNotMatch(unklareZeile, falscheSpanne, fall.id)
     assert.match(unklareZeile, ZEITRAUM_UNKLAR, fall.id)
     assert.doesNotMatch(fall.title, /Gebucht/, fall.id)
-    assert.deepEqual(siegeltexte(unklareZeile), ['Gebucht'], fall.id)
-    assert.deepEqual(siegeltexte(volleZeile), ['Ausgewählt'], fall.id)
+    assert.deepEqual(siegeltexte(unklareZeile), ['Von dir als gebucht markiert – nicht vom Anbieter bestätigt'], fall.id)
+    assert.deepEqual(siegeltexte(volleZeile), ['Unverbindliches Angebot – nicht gebucht'], fall.id)
     assert.match(unklareZeile, /Buchung korrigieren/, fall.id)
     const ui = bedienung(trip)
     const zeileElement = elements(ui.render(), el => el.type === 'li').find(li => textOf(li).includes(fall.title))
@@ -373,7 +379,9 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.match(teilweiseText, /6 von 14 Nächten abgedeckt/)
     assert.match(teilweiseText, /8 Nächte fehlen/)
     assert.match(teilweiseText, /Noch offen/)
-    assert.match(teilweiseText, /Ausgewählt/)
+    assert.match(teilweiseText, UNVERBINDLICH)
+    assert.doesNotMatch(teilweiseText, /Von dir als gebucht markiert/)
+    assert.doesNotMatch(teilweiseText, ANBIETER_ERFUNDEN)
     assert.doesNotMatch(teilweiseText, /Unterkunftsstand noch unklar/)
     assert.doesNotMatch(teilweiseText, VORLAEUFIG)
     const teilweiseUi = bedienung(teilweise)
@@ -385,7 +393,8 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     })] })
     const vollText = html(voll)
     assert.match(vollText, /14 von 14 Nächten abgedeckt/)
-    assert.match(vollText, /Gebucht/)
+    assert.match(vollText, EIGENE_MARKIERUNG)
+    assert.doesNotMatch(vollText, ANBIETER_ERFUNDEN)
     assert.match(vollText, /Buchung korrigieren/)
     assert.doesNotMatch(vollText, FEHLT)
     assert.doesNotMatch(vollText, /Unterkunftsstand noch unklar/)
@@ -406,7 +415,8 @@ describe('Unterkunftsabdeckung bleibt unbekannt und folgt der gespeicherten Buch
     assert.match(aussenText, /ausserhalb des Reisezeitraums/)
     assert.match(aussenText, /0 von 14 Nächten abgedeckt/)
     assert.match(aussenText, /14 Nächte fehlen/)
-    assert.match(aussenText, /Gebucht/)
+    assert.match(aussenText, EIGENE_MARKIERUNG)
+    assert.doesNotMatch(aussenText, ANBIETER_ERFUNDEN)
     const aussenUi = bedienung(aussen)
     aussenUi.buttonFor('Anderes Hotel').props.onClick!()
     assert.deepEqual(aussenUi.calls, [['stay-out', false]])
