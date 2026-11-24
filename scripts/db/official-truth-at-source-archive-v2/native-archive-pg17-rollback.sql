@@ -2,6 +2,12 @@
 -- Isolated PostgreSQL 17 only. Exact production archive trigger and append-only
 -- objects; fake HTTP payloads are SYNTHETIC test fixtures, no live customer data.
 BEGIN;
+-- The disposable local-cluster default is ot_pilot_owner, not Production
+-- postgres. Change real session authorization inside this ROLLBACK-only
+-- disposable cluster, so the EXACT Production trigger's postgres-only guard
+-- is exercised without weakening its source bytes.
+CREATE ROLE postgres SUPERUSER LOGIN;
+SET SESSION AUTHORIZATION postgres;
 SET LOCAL search_path=pg_catalog;
 SET LOCAL statement_timeout='15s';
 CREATE ROLE anon NOLOGIN;
