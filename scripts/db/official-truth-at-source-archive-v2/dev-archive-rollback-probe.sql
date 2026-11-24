@@ -104,8 +104,8 @@ DECLARE b bigint; rec record; attempts integer:=0; good_count integer:=0;
  old_bytes bigint; old_digests text; full_digests text;
 BEGIN
  IF session_user<>'postgres' OR current_user<>session_user
- OR public.official_v3_guard_alarm_status_v1()->>'status'<>'unavailable'
- THEN RAISE EXCEPTION 'AT_ARCHIVE_TEST_REQUIRES_NEW_BG1_FRESH_PROOF' USING ERRCODE='P7986'; END IF;
+ OR current_setting('server_version_num')::int/10000<>17
+ THEN RAISE EXCEPTION 'AT_ARCHIVE_TEST_REQUIRES_PG17_POSTGRES' USING ERRCODE='P7986'; END IF;
  SELECT MAX(batch_id) INTO b FROM official_v3_at_source_watch_private.batches_v1 q
  WHERE (SELECT count(*) FROM official_v3_at_source_watch_private.reads_v1 r
    WHERE r.batch_id=q.batch_id AND r.state IN('changed','unchanged_exact','unchanged_asset_version_only'))=3;
