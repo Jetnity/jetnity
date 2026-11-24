@@ -4,6 +4,7 @@ import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { useWorkspaceEditSurface } from './TripWorkspaceEditSurface'
 import { workspaceEditFocus } from '@/lib/trips/workspace-edit-focus'
 import ReiseAenderungAuswirkungen from './ReiseAenderungAuswirkungen'
+import ReiseAenderungRuecknahme from './ReiseAenderungRuecknahme'
 import { manuelleAenderungVorschau, manuelleAenderungUebernehmen } from '@/lib/reiseaenderung/aktionen'
 import { manuellVorschau, type ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
 import { gastManuellSpeichern } from '@/lib/reiseaenderung/direct/gast'
@@ -34,6 +35,8 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
   const [ungewiss, setUngewiss] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [erfolg, setErfolg] = React.useState<Trip | null>(null)
+  const [undoKontext, setUndoKontext] = React.useState<{ vorher: Trip; nachher: Trip } | null>(null)
+  const [wiederhergestellt, setWiederhergestellt] = React.useState(false)
   const [versucht, setVersucht] = React.useState(false)
   const alive = React.useRef(true), flight = React.useRef(false), generation = React.useRef(0)
   const root = React.useRef<HTMLDivElement>(null), heading = React.useRef<HTMLHeadingElement>(null), alert = React.useRef<HTMLParagraphElement>(null)
@@ -120,13 +123,23 @@ export default function ReiseAenderungManuell({ reise, quelle, onGespeichert, on
       const result = quelle === 'guest' ? await gastManuellSpeichern(request) : await manuelleAenderungUebernehmen(request)
       if (!validGeneration(own)) return
       if (!result.ok) { setMeldung(result.meldung); setUngewiss(result.art === 'ungewiss' || (ungewiss && result.art === 'unverfuegbar')); return }
-      setUngewiss(false); setErfolg(result.reise); setVorschau(null); onGespeichert(result.reise)
+      setUngewiss(false)
+      setErfolg(result.reise)
+      setUndoKontext({ vorher: vorschau.vorher, nachher: result.reise })
+      setWiederhergestellt(false)
+      setVorschau(null)
+      onGespeichert(result.reise)
     } catch { if (validGeneration(own)) { setMeldung(UNGEWISS); setUngewiss(true) } }
     finally { flight.current = false; if (alive.current) setPending(false) }
   }
   if (erfolg) return <div ref={root} className="mt-5 grid gap-4 rounded-3xl bg-white p-5 sm:p-7">
-    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">Änderung gespeichert und bestätigt</h2>
+    <h2 ref={heading} tabIndex={-1} className="text-lg font-semibold text-brand-900 outline-none sm:text-xl">{wiederhergestellt ? 'Änderung rückgängig gemacht' : 'Änderung gespeichert und bestätigt'}</h2>
     <p role="status">„{erfolg.title}“ wurde erneut aus {quelle === 'guest' ? 'diesem Browserspeicher' : 'deinem Konto'} gelesen. Der Arbeitsbereich zeigt den bestätigten Stand mit {erfolg.days.length} Tagen.</p>
+    {undoKontext && <ReiseAenderungRuecknahme
+      vorher={undoKontext.vorher} nachher={undoKontext.nachher} quelle={quelle}
+      onBeschaeftigt={setPending}
+      onGespeichert={graph => { setErfolg(graph); setWiederhergestellt(true); onGespeichert(graph) }}
+    />}
     <div className="flex flex-wrap gap-3">{surface && <button type="button" className={`${button} bg-brand-800 text-white`} onClick={surface.close}>Zur gespeicherten Reise</button>}<button type="button" className={button} onClick={onNeu}>Weitere Änderung vorbereiten</button></div>
   </div>
   return <div ref={root} data-aenderung-sperre={pending || ungewiss ? 'true' : 'false'} className="mt-5 min-w-0 [overflow-wrap:anywhere] rounded-3xl border border-line-200 bg-white p-[16px] sm:p-5 [&_p]:max-w-prose">
