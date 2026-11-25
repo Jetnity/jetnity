@@ -12,6 +12,7 @@ import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib
 import { EXAKTER_NAMENS_RANG, namensArt, namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
 import { ortLandName, ortLokalerName, passendeLandCodes } from '@/lib/places/namen'
+import { ortAnzeigeName } from '@/lib/places/titel-name'
 
 export const ORT_SUCHTEXT_MAX = 120
 export const ORT_TREFFER = 6
@@ -207,7 +208,11 @@ function typBonus(ort: Ort, rolle: OrtRolle): number {
 function bedeutungsBonus(ort: Ort, suche: string): number {
   if (ort.typ === 'country' || ort.typ === 'airport') return 0
   const stufe = BEDEUTUNG_STUFEN.find(([ab]) => (ort.population ?? 0) >= ab)?.[1] ?? 0
-  const eigenerName = gleichGefaltet(ort.name, suche) || gleichGefaltet(ort.sourceName ?? '', suche)
+  const anzeige = ortAnzeigeName(ort)
+  const eigenerName =
+    gleichGefaltet(ort.name, suche) ||
+    gleichGefaltet(ort.sourceName ?? '', suche) ||
+    (!gleichGefaltet(anzeige, ort.name) && gleichGefaltet(anzeige, suche))
   return stufe + (SITZ_BONUS[ort.featureCode ?? ''] ?? 0) + (eigenerName ? EIGENER_NAME_BONUS : 0)
 }
 
@@ -229,6 +234,14 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   const aliasIstOrtsname = ort.typ === 'country' || (ort.typ !== 'airport' && !['admin', 'later'].includes(namensArt(ort.name, raw)))
   if (aliasGenau && aliasIstOrtsname) nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   if (landAliasAlsName) {
+    nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
+  }
+  const anzeigeName = ortAnzeigeName(ort)
+  if (
+    !gleichGefaltet(anzeigeName, ort.name) &&
+    !gleichGefaltet(anzeigeName, ort.sourceName ?? '') &&
+    gleichGefaltet(anzeigeName, raw)
+  ) {
     nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   }
   treffer += nameScore
@@ -296,16 +309,25 @@ export function ortAnzeigeLabel(ort: Ort, suche: string): string {
   return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
 }
 
+/** Sichtbarer Suchname. Ein zurückgespiegeltes Alias bleibt, der eigene Ortsname wird de-CH. */
+function ortSuchAnzeige(ort: Ort, label: string): string {
+  const eigene = [ortLokalerName(ort), ort.name, ort.sourceName ?? ''].filter((name) => name.length > 0)
+  if (!eigene.includes(label)) return label
+  return ortAnzeigeName(ort)
+}
+
 function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): OrtOption {
   const label = ortAnzeigeLabel(ort, suche)
+  const anzeige = ortSuchAnzeige(ort, label)
   const description = ortAnzeigeKontext(ort, suche, mehrdeutigesLandAlias)
   return {
     id: ort.id,
     label,
+    anzeige,
     description,
     typ: ort.typ,
     iata: ort.iata ?? undefined,
-    ariaLabel: `${label}, ${description}`,
+    ariaLabel: `${anzeige}, ${description}`,
     landAliasMatch: istExaktesLandAlias(ort, suche),
     ...(ort.countryCode ? { countryCode: ort.countryCode } : {}),
   }

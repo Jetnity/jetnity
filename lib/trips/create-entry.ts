@@ -358,7 +358,12 @@ export function planenVorbelegung(eingabe: {
     originId: '',
     origin: '',
     weitereZiele: (eingabe.weitereZiele ?? [])
-      .map((ziel) => ({ id: ziel.id.trim(), name: ziel.name.trim(), ...(ziel.description ? { description: ziel.description } : {}) }))
+      .map((ziel) => ({
+        id: ziel.id.trim(),
+        name: ziel.name.trim(),
+        ...(ziel.description ? { description: ziel.description } : {}),
+        ...(ziel.anzeige ? { anzeige: ziel.anzeige } : {}),
+      }))
       .filter((ziel) => ziel.id && ziel.name),
   }
 }

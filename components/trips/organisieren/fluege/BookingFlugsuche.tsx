@@ -10,6 +10,7 @@ import {
   BOOKING_FLUG_PARTNERLINK,
   type Flugart,
 } from '@/lib/trips/organisieren/booking-flug'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
 import { useFlughafenVorschlag } from './useFlughafenVorschlag'
 import FlughafenHinweise from './FlughafenHinweise'
@@ -56,11 +57,11 @@ export default function BookingFlugsuche({ reise, etappen }: { reise: Trip; etap
   )
   const [nach, setNach, nachHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(erste?.placeId ?? null, erste?.name ?? null, erste),
-    { placeId: erste?.placeId, name: erste?.name },
+    { placeId: erste?.placeId, name: erste ? gespeicherteEtappeAnzeigen(erste) : null },
   )
   const [zurueck, setZurueck, zurueckHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(letzte?.placeId ?? null, letzte?.name ?? null, letzte),
-    { placeId: letzte?.placeId, name: letzte?.name },
+    { placeId: letzte?.placeId, name: letzte ? gespeicherteEtappeAnzeigen(letzte) : null },
   )
   const hinweisBasis = useId()
   const [art, setArt] = useState<Flugart>(

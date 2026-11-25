@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import Reisefoto from './Reisefoto'
 import OrganisierenBestand from './OrganisierenBestand'
 import { organisierenBestand } from '@/lib/trips/organisieren/bestand'
@@ -97,12 +98,12 @@ function Etappenkarten({ reise, waehlen }: { reise: Trip; waehlen: (s: TripStage
               key={s.id}
               className="org-stage"
               onClick={() => waehlen(s)}
-              aria-label={'Unterkünfte in ' + s.name + ' suchen'}
+              aria-label={'Unterkünfte in ' + gespeicherteEtappeAnzeigen(s) + ' suchen'}
             >
               <Reisefoto src={reiseFoto(s)} ziel={s} breite={400} hoehe={158} />
               <span className="org-stagecaption">
                 <small>{etappenZeitraumAnzeigen(daten.anreise, daten.abreise) ?? 'Zeitraum offen'}</small>
-                <b>{s.name}</b>
+                <b>{gespeicherteEtappeAnzeigen(s)}</b>
               </span>
               <span className="org-circle">
                 <ArrowUpRight size={15} />
@@ -212,7 +213,7 @@ export default function Organisieren({
   const titel =
     landTitel && erste && titelFolgtDemErstenZiel(reise.title, erste)
       ? landTitel
-      : reise.title || landTitel || erste?.name || 'Deine Reise'
+      : reise.title || landTitel || (erste ? gespeicherteEtappeAnzeigen(erste) : '') || 'Deine Reise'
   const etappen = (
     <Etappenkarten
       reise={reise}

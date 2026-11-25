@@ -237,11 +237,16 @@ export function routeAbsendenPruefen(
 export function tripPlannerRouteVorbelegen(eingabe: {
   destinationId?: string
   destination?: string
+  destinationAnzeige?: string
   weitereZiele?: OrtAuswahl[]
 }): { primaer: OrtAuswahl | null; primaerKey: string; weitere: RouteVorkommen[] } {
   const primaer =
     eingabe.destinationId && eingabe.destination
-      ? { id: eingabe.destinationId, name: eingabe.destination }
+      ? {
+          id: eingabe.destinationId,
+          name: eingabe.destination,
+          ...(eingabe.destinationAnzeige ? { anzeige: eingabe.destinationAnzeige } : {}),
+        }
       : null
   const weitere = (eingabe.weitereZiele ?? []).map((ziel, index) =>
     neuesRouteVorkommen(`handoff-${index + 1}`, ziel),

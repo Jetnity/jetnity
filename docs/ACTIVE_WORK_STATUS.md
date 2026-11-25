@@ -1,5 +1,14 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314
+
+Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine Kosten.
+
+- Eine Anzeige über `ortAnzeigeName` in `lib/places/titel-name.ts`. `ortTitelName` bleibt darüber erreichbar. Gespeicherte Etappen, IDs, Koordinaten, IATA, Anbieterabfragen und persönliche Titel bleiben.
+- Sichtbar: Ortssuche samt Auswahl und `aria-label`, Meine Reisen, Reiseplan/Etappen, Unterkunft, Verbindungen/Flugauswahl, KI-Etappen mit Ländercode.
+- Nicht geraten: Abreise ohne Land, Freitext, Mobilitätskanten, Omio-Freitext. Die 15 genannten `ß`-Stellen sind auf `ss` gestellt.
+- Konfliktpotenzial, Branches unangetastet: #1313 teilt `DECISIONS.md` und `docs/ACTIVE_WORK_STATUS.md`. #1307 teilt `Organisieren.tsx`, `TripWorkspacePlan.tsx`, `DiscoverCarsMietwagen.tsx`, den Arbeitsstatus und den Gesamtstand. Nachweis: `docs/DE_CH_ORTSNAMEN_2026-11-25.md`.
+
 ## 25.11.2026 — Organisieren, Mobile Routing #1311 und Bestand #1310
 
 Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9` inklusive gemergtem #1308 ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.

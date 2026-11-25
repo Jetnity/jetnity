@@ -1,13 +1,16 @@
 // lib/places/titel-name.ts
 //
-// Anzeigename für den Reisetitel: gängiger deutscher Ortsname in Schweizer
-// Schreibweise. Reine Darstellung. Der Katalogname bleibt die Namenswahrheit für
-// Suche, Etappen, Flughafen- und Anbieterabfragen; es wird nichts gespeichert,
-// was nicht schon im Titel steht, und nichts in der Datenbank geändert.
+// Zentrale de-CH-Anzeige: gängiger deutscher Ortsname in Schweizer Schreibweise.
+// Reine Darstellung. Dieselbe geprüfte Tabelle gilt für den Reisetitel und für
+// sichtbare Ortsnamen. Der Katalogname bleibt die Namenswahrheit für Suche,
+// gespeicherte Etappen, Koordinaten, IATA, Flughafen- und Anbieterabfragen.
+// Es wird nichts gespeichert und nichts in der Datenbank geändert.
 //
 // Die Tabelle nennt nur Orte, deren GeoNames-Name im Bestand vom deutschen Namen
 // abweicht. Jede Zeile ist gegen den Production-Bestand geprüft (Typ, Land und
-// exakter Katalogname). Ein Ort ohne Eintrag behält seinen Katalognamen.
+// exakter Katalogname). Ein Ort ohne eindeutigen Treffer behält seinen Namen;
+// nur «ß» wird zu «ss». Fehlt Land oder Typ, wird nicht geraten, ausser der
+// Katalogname trifft in diesem Land genau eine Zeile.
 
 import type { Ort, OrtTyp } from '@/lib/places/domain'
 
@@ -115,13 +118,54 @@ export function schweizerSchreibweise(text: string): string {
   return text.replace(/ß/g, 'ss').replace(/ẞ/g, 'SS')
 }
 
-export function ortTitelName(ort: Pick<Ort, 'typ' | 'name' | 'sourceName' | 'countryCode'>): string {
-  const katalogName = ort.sourceName ?? ort.name
-  const deutsch = ort.countryCode ? DEUTSCHE_NAMEN.get(schluessel(ort.typ, ort.countryCode, katalogName)) : undefined
-  return schweizerSchreibweise(deutsch ?? ort.name)
+const ORT_TYPEN: readonly OrtTyp[] = ['city', 'island', 'region']
+
+function deutscherName(typ: OrtTyp, land: string, katalogName: string): string | undefined {
+  if (typ !== 'city' && typ !== 'island' && typ !== 'region') return undefined
+  return DEUTSCHE_NAMEN.get(schluessel(typ, land, katalogName))
 }
 
-const ORT_TYPEN: readonly OrtTyp[] = ['city', 'island', 'region']
+export type OrtAnzeigeEingabe = {
+  name: string
+  typ?: OrtTyp | null
+  countryCode?: string | null
+  /** Katalogname, wenn die sichtbare Zeichenkette schon abweicht. */
+  sourceName?: string | null
+}
+
+/**
+ * Sichtbarer de-CH-Name. Nur ein eindeutiger Tabellentreffer wechselt den Namen.
+ * Mit Typ zählt genau diese Zeile. Ohne Typ nur, wenn Land und Katalogname
+ * genau eine Zeile treffen. Sonst bleibt der übergebene Name, «ß» wird «ss».
+ */
+export function ortAnzeigeName(ort: OrtAnzeigeEingabe): string {
+  const sichtbar = ort.name
+  const katalogName = (ort.sourceName ?? ort.name).trim()
+  const land = ort.countryCode?.trim() || ''
+  if (!land || !katalogName) return schweizerSchreibweise(sichtbar)
+  if (ort.typ) {
+    return schweizerSchreibweise(deutscherName(ort.typ, land, katalogName) ?? sichtbar)
+  }
+  const treffer = new Set(
+    ORT_TYPEN.map((typ) => deutscherName(typ, land, katalogName)).filter(
+      (name): name is string => name !== undefined,
+    ),
+  )
+  if (treffer.size === 1) return schweizerSchreibweise([...treffer][0]!)
+  return schweizerSchreibweise(sichtbar)
+}
+
+/** Sichtbare Etappe. Der gespeicherte Name und das Land bleiben das einzige Kontextpaar. */
+export function gespeicherteEtappeAnzeigen(etappe: {
+  name: string
+  countryCode?: string | null
+}): string {
+  return ortAnzeigeName({ name: etappe.name, countryCode: etappe.countryCode ?? null })
+}
+
+export function ortTitelName(ort: Pick<Ort, 'typ' | 'name' | 'sourceName' | 'countryCode'>): string {
+  return ortAnzeigeName(ort)
+}
 
 /**
  * Erkennt einen Reisetitel, der nur das erste Ziel wiedergibt: alt als Katalogname («Lisbon»), neu als

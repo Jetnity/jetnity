@@ -8,6 +8,7 @@ import * as React from 'react'
 import { AlertCircle, BedDouble, MapPin } from 'lucide-react'
 
 import type { HotelOptionSichtbar, HotelSucheAntwort } from '@/lib/hotels/client-sicht'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { HOTEL_ABDECKUNGSHINWEIS } from '@/lib/hotels/domain'
 import { HOTELZEITRAUM_OFFEN, hotelSucheEingabeAusReise, naechteZwischen } from '@/lib/hotels/quartier-kontext'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
@@ -184,7 +185,7 @@ function HotelEtappe({
 
   return (
     <section
-      aria-label={`Unterkunft ${etappe.name}`}
+      aria-label={`Unterkunft ${gespeicherteEtappeAnzeigen(etappe)}`}
       data-organisieren-flaeche="suche"
       className={cn(ORGANISIEREN_FLAECHE_KLASSE, 'relative overflow-hidden')}
     >
@@ -193,7 +194,7 @@ function HotelEtappe({
         <div>
           <p className="text-kicker uppercase text-brand-600">Unterkunft</p>
           <h2 className="mt-1 text-title text-brand-800">
-            {etappe.name}
+            {gespeicherteEtappeAnzeigen(etappe)}
           </h2>
           <p className="mt-3 rounded-2xl border border-line-200 bg-surface-25 px-3 py-3 text-sm leading-6 text-ink-800">
             <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Zeitraum</span>
@@ -243,7 +244,7 @@ function HotelEtappe({
 
           {!quartierSichtbar && (
             <p className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-              Für {etappe.name} fehlen noch belastbare Orts- oder Koordinatendaten. Jetnity rät deshalb
+              Für {gespeicherteEtappeAnzeigen(etappe)} fehlen noch belastbare Orts- oder Koordinatendaten. Jetnity rät deshalb
               keine feinere Gegend.
             </p>
           )}

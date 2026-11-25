@@ -268,6 +268,10 @@ function konjunktionsBlockZerlegen(
   return { art: 'phrasen', phrasen }
 }
 
+function optionsNamen(option: OrtOption): string[] {
+  return [option.label, option.anzeige].filter((name): name is string => Boolean(name && name.trim()))
+}
+
 function labelMitOrtskontext(frage: string, option: OrtOption): boolean {
   const teile = frage
     .split(/\s*[,;；]\s*/u)
@@ -275,7 +279,7 @@ function labelMitOrtskontext(frage: string, option: OrtOption): boolean {
     .filter((teil) => teil.length > 0)
   if (teile.length !== 2) return false
   const [name, kontext] = teile
-  if (!gleichGefaltet(option.label, name)) return false
+  if (!optionsNamen(option).some((eintrag) => gleichGefaltet(eintrag, name))) return false
   const beschreibung = option.description?.trim() ?? ''
   if (!beschreibung) return false
   if (option.countryCode && passendeLandCodes(kontext, true).includes(option.countryCode)) return true
@@ -290,7 +294,7 @@ export function ganzerOrtGlaubwuerdig(
   if (!frage || optionen.length === 0) return false
   return optionen.some(
     (option) =>
-      gleichGefaltet(option.label, frage) ||
+      optionsNamen(option).some((name) => gleichGefaltet(name, frage)) ||
       option.landAliasMatch === true ||
       labelMitOrtskontext(frage, option),
   )

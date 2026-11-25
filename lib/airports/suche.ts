@@ -5,6 +5,7 @@
 // Suchvarianten und Rangfolge.
 
 import { enthaeltGefaltet, gleichGefaltet, sucheVarianten } from '@/lib/airports/normalisieren'
+import { ortAnzeigeName } from '@/lib/places/titel-name'
 import { flughafenLandPasst } from './laendersuche'
 import { iataLesen } from '@/lib/route/referenz'
 import { namensRangMitWortanfang } from '@/lib/suche/relevanz'
@@ -41,10 +42,20 @@ function klasseBonus(klasse: string | null | undefined): number {
   return 0
 }
 
+function stadtSichtbar(zeile: FlughafenZeile): string | null {
+  if (!zeile.city) return null
+  return ortAnzeigeName({
+    name: zeile.city,
+    typ: 'city',
+    countryCode: zeile.country_code ?? null,
+    sourceName: zeile.city,
+  })
+}
+
 export function flughafenAlsOption(zeile: FlughafenZeile): FlughafenOption | null {
   const iata = iataLesen(zeile.iata)
   if (!iata) return null
-  const zusatz = [zeile.city, zeile.region, zeile.country].filter(
+  const zusatz = [stadtSichtbar(zeile), zeile.region, zeile.country].filter(
     (wert, i, alle): wert is string => Boolean(wert) && alle.indexOf(wert) === i,
   )
   return {

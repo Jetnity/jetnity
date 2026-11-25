@@ -5,6 +5,7 @@
 // keine Commercial-Suche.
 
 import { landAnzeigeText } from '@/lib/country/darstellung'
+import { ortAnzeigeName } from '@/lib/places/titel-name'
 import {
   officialActionZweckText,
   officialAnforderungTitel,
@@ -653,7 +654,10 @@ function zielAus(
   return {
     stageId: stage.id,
     position: stage.position,
-    name: nameLesen(stage.name),
+    name: (() => {
+      const roh = nameLesen(stage.name)
+      return roh ? ortAnzeigeName({ name: roh, countryCode: stage.countryCode }) : null
+    })(),
     countryCode,
     countryLabel: landLabel(countryCode),
     placeId: stage.placeId,

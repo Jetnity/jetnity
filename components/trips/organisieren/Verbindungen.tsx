@@ -10,6 +10,7 @@ import { TimetableDetails } from '@/components/trips/TwelveGoTimetable'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import type { Trip } from '@/types/trips'
 import type { ReiseAbschnitt } from '@/lib/providers/omio/reise'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { Feld, Personen, SucheKnopf, useSuchanfrage } from './Suchfelder'
 
 export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: {
@@ -24,6 +25,7 @@ export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: 
           {
             id: 'reise:ursprung',
             name: reise.origin,
+            anzeige: reise.origin,
             placeId: reise.originPlaceId,
             countryCode: null,
             datum: reise.startDate,
@@ -33,6 +35,7 @@ export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: 
     ...reise.stages.map((s) => ({
       id: 'reise:' + s.id,
       name: s.name,
+      anzeige: gespeicherteEtappeAnzeigen(s),
       placeId: s.placeId,
       countryCode: s.countryCode,
       datum: s.arrivalDate,
@@ -57,7 +60,7 @@ export default function Verbindungen({ reise, etappen, start, abschnittFehlt }: 
   })
   const optionen = stationen.map((s) => (
     <option key={s.id} value={s.id}>
-      {s.name}
+      {s.anzeige}
     </option>
   ))
   return (

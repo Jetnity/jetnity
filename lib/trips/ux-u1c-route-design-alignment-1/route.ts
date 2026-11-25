@@ -2,6 +2,7 @@
 // Reads N12 runs and existing mobility edges. Does not sort or write the trip.
 
 import { landDarstellung } from '@/lib/country/darstellung'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { istGebucht } from '@/lib/trips/buchung'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
@@ -133,7 +134,9 @@ function laufZeile(lauf: ChronologischerLauf): RouteLaufZeile {
     art: 'lauf',
     schluessel: lauf.schluessel,
     stageId: lauf.stageId,
-    name: lauf.name,
+    name: lauf.lesart === 'ziel'
+      ? gespeicherteEtappeAnzeigen({ name: lauf.name, countryCode: lauf.countryCode })
+      : lauf.name,
     lesart: lauf.lesart,
     land: landText(lauf),
     untertitel: lauf.lesart === 'ziel' ? null : laufUntertitel(lauf),

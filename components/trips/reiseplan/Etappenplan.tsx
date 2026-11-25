@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import type { Trip, TripItemKind, TripSource } from '@/types/trips'
 import { landName } from '@/lib/country/darstellung'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import { StadtbildMiniatur, StadtbildNachweis } from '@/components/trips/organisieren/Stadtbild'
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
@@ -393,7 +394,7 @@ export default function Etappenplan({
                       {stageTile(
                         s.id,
                         reise.days.filter((d) => d.stageId === s.id).map((d) => d.id),
-                        s.name,
+                        gespeicherteEtappeAnzeigen(s),
                       )}
                     </Fragment>
                   ))}
