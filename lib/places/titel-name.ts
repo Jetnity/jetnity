@@ -12,6 +12,7 @@
 // nur «ß» wird zu «ss». Fehlt Land oder Typ, wird nicht geraten, ausser der
 // Katalogname trifft in diesem Land genau eine Zeile.
 
+import { gleichGefaltet } from '@/lib/airports/normalisieren'
 import type { Ort, OrtTyp } from '@/lib/places/domain'
 
 type Eintrag = readonly [land: string, katalogName: string, deutsch: string]
@@ -153,6 +154,35 @@ export function ortAnzeigeName(ort: OrtAnzeigeEingabe): string {
   )
   if (treffer.size === 1) return schweizerSchreibweise([...treffer][0]!)
   return schweizerSchreibweise(sichtbar)
+}
+
+export type AnzeigeAlias = {
+  typ: OrtTyp
+  land: string
+  katalogName: string
+}
+
+/**
+ * Exakte de-CH-Anzeigenamen zurück auf die Tabellenzeile.
+ * Kein Präfix, kein anderes Land, keine zweite Tabelle.
+ */
+export function anzeigeAliase(suche: string): readonly AnzeigeAlias[] {
+  const roh = suche.trim()
+  if (roh.length < 2) return []
+  const treffer: AnzeigeAlias[] = []
+  const gruppen = [
+    ['city', STAEDTE],
+    ['island', INSELN],
+    ['region', REGIONEN],
+  ] as const
+  for (const [typ, eintraege] of gruppen) {
+    for (const [land, katalogName, deutsch] of eintraege) {
+      if (gleichGefaltet(schweizerSchreibweise(deutsch), roh)) {
+        treffer.push({ typ, land, katalogName })
+      }
+    }
+  }
+  return treffer
 }
 
 /** Sichtbare Etappe. Der gespeicherte Name und das Land bleiben das einzige Kontextpaar. */

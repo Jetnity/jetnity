@@ -12,7 +12,7 @@ import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib
 import { EXAKTER_NAMENS_RANG, namensArt, namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
 import { ortLandName, ortLokalerName, passendeLandCodes } from '@/lib/places/namen'
-import { ortAnzeigeName } from '@/lib/places/titel-name'
+import { anzeigeAliase, ortAnzeigeName } from '@/lib/places/titel-name'
 
 export const ORT_SUCHTEXT_MAX = 120
 export const ORT_TREFFER = 6
@@ -85,11 +85,25 @@ export function ortExaktfilter(suche: string): string | null {
   if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (!teile.length) return null
+  const alias = ortAnzeigeAliasfilter(suche)
   return [...teile.flatMap((teil) => [
     postgrestIlike('name', teil),
     `and(${postgrestIlike('keywords', `%${teil}%`)},${postgrestImatch('keywords', `(^|,)[[:space:]]*${regexSicher(teil)}[[:space:]]*(,|$)`)})`,
     ...(/^[A-Za-z]{3}$/.test(teil) ? [`iata.eq.${teil.toUpperCase()}`] : []),
-  ]), ...passendeLandCodes(suche, true).map((code) => `and(typ.eq.country,country_code.eq.${code})`)].join(',')
+  ]), ...passendeLandCodes(suche, true).map((code) => `and(typ.eq.country,country_code.eq.${code})`), ...(alias ? [alias] : [])].join(',')
+}
+
+/**
+ * Selektiver Nachzug: nur die Tabellenzeile zum exakten de-CH-Namen.
+ * Land, Typ und Katalogname bleiben in einem `and`. Kein `%name%` über alle Länder.
+ */
+export function ortAnzeigeAliasfilter(suche: string): string | null {
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
+  const ziele = anzeigeAliase(suche)
+  if (ziele.length === 0) return null
+  return ziele
+    .map((ziel) => `and(typ.eq.${ziel.typ},country_code.eq.${ziel.land},${postgrestIlike('name', ziel.katalogName)})`)
+    .join(',')
 }
 
 export function ortSchluesselfilter(suche: string): string | null {

@@ -6,6 +6,7 @@ Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). D
 
 - Eine Anzeige über `ortAnzeigeName` in `lib/places/titel-name.ts`. `ortTitelName` bleibt darüber erreichbar. Gespeicherte Etappen, IDs, Koordinaten, IATA, Anbieterabfragen und persönliche Titel bleiben.
 - Sichtbar: Ortssuche samt Auswahl und `aria-label`, Meine Reisen, Reiseplan/Etappen, Unterkunft, Verbindungen/Flugauswahl, KI-Etappen mit Ländercode.
+- Nachzug: exakter de-CH-Name liest die Tabellenzeile Land+Typ+Katalogname, bevor gerankt wird. Vienna (US) kommt dadurch nicht als Wien herein. Der Browsernachweis mountet die echten Flächen; Screenshots nur bei gesetztem `DE_CH_ANZEIGE_EVIDENCE_DIR`.
 - Nicht geraten: Abreise ohne Land, Freitext, Mobilitätskanten, Omio-Freitext. Die 15 genannten `ß`-Stellen sind auf `ss` gestellt.
 - Konfliktpotenzial, Branches unangetastet: #1313 teilt `DECISIONS.md` und `docs/ACTIVE_WORK_STATUS.md`. #1307 teilt `Organisieren.tsx`, `TripWorkspacePlan.tsx`, `DiscoverCarsMietwagen.tsx`, den Arbeitsstatus und den Gesamtstand. Nachweis: `docs/DE_CH_ORTSNAMEN_2026-11-25.md`.
 

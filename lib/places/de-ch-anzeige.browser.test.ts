@@ -1,163 +1,220 @@
 import assert from 'node:assert/strict'
-import { createServer } from 'node:http'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { createServer, type Server } from 'node:http'
+import { mkdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { after, before, describe, test } from 'node:test'
 import type { AddressInfo } from 'node:net'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { chromium, type Browser } from 'playwright'
+import { chromium, type Browser, type Page } from 'playwright'
 
+import { gleichGefaltet } from '@/lib/airports/normalisieren'
 import { flughafenAlsOption } from '@/lib/airports/suche'
-import { reiseOrte } from '@/lib/trips/reise-orte'
-import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
-import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
-import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import type { OrtZeile } from '@/lib/places/abbildung'
+import { placesSuchen } from '@/lib/places/suche-lauf'
+import { DeChAnzeigeHarness } from '@/lib/places/de-ch-anzeige-harness'
+
+void DeChAnzeigeHarness
 
 const BREITEN = [320, 390, 1280] as const
-const BELEGE = join(process.cwd(), 'docs/evidence/de-ch-ortsnamen-2026-11-25')
-const ARTIFAKTE = '/opt/cursor/artifacts'
+const BROWSER_ARGS = ['--no-sandbox', '--disable-dev-shm-usage']
 
-const etappen = [
-  { name: 'Lisbon', countryCode: 'PT' },
-  { name: 'Rome', countryCode: 'IT' },
-  { name: 'Munich', countryCode: 'DE' },
-  { name: 'Milan', countryCode: 'IT' },
-  { name: 'Geneva', countryCode: 'CH' },
-  { name: 'Prague', countryCode: 'CZ' },
-  { name: 'Canary Islands', countryCode: 'ES' },
-  { name: 'Ho Chi Minh City', countryCode: 'VN' },
-  { name: 'Saint Petersburg', countryCode: 'RU' },
-  { name: 'Vienna', countryCode: 'US' },
-]
+function oderTeile(filter: string): string[] {
+  const teile: string[] = []
+  let tiefe = 0
+  let start = 0
+  let quote = false
+  for (let i = 0; i < filter.length; i += 1) {
+    const zeichen = filter[i]
+    if (zeichen === '"') quote = !quote
+    else if (!quote && zeichen === '(') tiefe += 1
+    else if (!quote && zeichen === ')') tiefe -= 1
+    else if (!quote && tiefe === 0 && zeichen === ',') {
+      teile.push(filter.slice(start, i))
+      start = i + 1
+    }
+  }
+  teile.push(filter.slice(start))
+  return teile.map((teil) => teil.trim()).filter((teil) => teil.length > 0)
+}
 
-const liste = reiseOrte({
-  origin: 'Vienna',
-  stages: etappen.map((etappe, index) => ({ ...etappe, position: index + 1 })),
-})
-const flughafen = flughafenAlsOption({
+function literale(roh: string): string {
+  if (roh.startsWith('"') && roh.endsWith('"')) return JSON.parse(roh) as string
+  return roh
+}
+
+function zeilePasst(zeile: OrtZeile, ausdruck: string): boolean {
+  if (ausdruck.startsWith('and(') && ausdruck.endsWith(')')) {
+    return oderTeile(ausdruck.slice(4, -1)).every((teil) => zeilePasst(zeile, teil))
+  }
+  const ilike = /^(name|keywords)\.ilike\.(.+)$/.exec(ausdruck)
+  if (ilike) {
+    const roh = ilike[2] ?? ''
+    const muster = literale(roh).replaceAll('%', '')
+    const schluessel = typeof zeile.keywords === 'string' ? zeile.keywords : Array.isArray(zeile.keywords) ? zeile.keywords.join(', ') : ''
+    const feld = ilike[1] === 'name' ? zeile.name : schluessel
+    if (!roh.includes('%')) return gleichGefaltet(feld, muster)
+    if (roh.startsWith('%')) return feld.toLocaleLowerCase('de').includes(muster.toLocaleLowerCase('de'))
+    return feld.toLocaleLowerCase('de').startsWith(muster.toLocaleLowerCase('de'))
+  }
+  const gleich = /^(typ|country_code|iata)\.eq\.(.+)$/.exec(ausdruck)
+  if (gleich) {
+    const wert = literale(gleich[2] ?? '')
+    if (gleich[1] === 'typ') return zeile.typ === wert
+    if (gleich[1] === 'country_code') return zeile.country_code === wert
+    return (zeile.iata ?? '').toUpperCase() === wert.toUpperCase()
+  }
+  return false
+}
+
+const WIEN: OrtZeile = {
+  id: 'geonames:2761369', source: 'geonames', source_id: '2761369', name: 'Vienna', typ: 'city',
+  country: 'Austria', country_code: 'AT', region: null, lat: 48.20849, lon: 16.37208, iata: null,
+  keywords: 'Vienna, Vienne', population: 1_900_000, feature_code: 'PPLC',
+}
+const VIENNA_US: OrtZeile = {
+  ...WIEN, id: 'geonames:4730000', source_id: '4730000', country: 'United States', country_code: 'US',
+  keywords: 'Vienna', population: 20_000, lat: 38.9, lon: -77.26,
+}
+
+async function ortsAntwort(suche: string) {
+  const ergebnis = await placesSuchen(suche, 'ziel', async (_art, filter, limit) => ({
+    zeilen: [WIEN, VIENNA_US].filter((zeile) => oderTeile(filter).some((teil) => zeilePasst(zeile, teil))).slice(0, limit),
+    problem: null,
+  }))
+  assert.equal(ergebnis.problem, null)
+  return ergebnis.optionen ?? []
+}
+
+const FLUGHAFEN = flughafenAlsOption({
   iata: 'VIE', icao: 'LOWW', name: 'Vienna International Airport', city: 'Vienna',
   country: 'Austria', country_code: 'AT',
 })
-const vorschlag = {
-  titel: 'Ein Wochenende in Prague',
-  abreiseort: 'Vienna',
-  reisende: 2,
-  waehrung: 'CHF',
-  budgetziel: null,
-  tempo: 'balanced',
-  interessen: [],
-  startdatum: null,
-  annahmen: [],
-  etappen: [
-    { name: 'Prague', laendercode: 'CZ', vonTag: 1, bisTag: 2 },
-    { name: 'Vienna', laendercode: null, vonTag: 3, bisTag: 3 },
-  ],
-  tage: [{
-    nummer: 1,
-    titel: 'Ankommen in Prague',
-    punkte: [{ art: 'note', titel: 'Spaziergang in Prague', notiz: null, beginn: null }],
-  }],
-} as unknown as Reisevorschlag
 
-const vorschau = renderToStaticMarkup(createElement(VorschlagVorschau, {
-  vorschlag,
-  laeuft: false,
-  angemeldet: false,
-  onUebernehmen: () => {},
-  onAendern: () => {},
-  onVerwerfen: () => {},
-}))
+function playwrightChromiumFehlt(fehler: unknown): boolean {
+  return fehler instanceof Error && fehler.message.includes("Executable doesn't exist")
+}
 
-const html = `<!doctype html>
-<html lang="de-CH">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>de-CH Ortsnamen</title>
-<style>
-  :root { color-scheme: light; --grund: #f2f7f4; --karte: #fdfffd; --text: #1b2a26; --ruhig: #4a5f57; --kante: #d3e0d8; --aktion: #153a33; }
-  html[data-theme="dark"] { color-scheme: dark; --grund: #10211c; --karte: #173028; --text: #f4f7f5; --ruhig: #c5d5ce; --kante: #2c4a40; --aktion: #d7efe4; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--grund); color: var(--text); font: 16px/1.4 system-ui, sans-serif; }
-  main { width: min(100%, 720px); margin: 0 auto; padding: 12px; display: grid; gap: 12px; }
-  section, article { background: var(--karte); border: 1px solid var(--kante); border-radius: 16px; padding: 12px; min-width: 0; }
-  h1, h2, p, li, button, label { overflow-wrap: anywhere; min-width: 0; }
-  h1 { font-size: 1.4rem; margin: 0; }
-  main > section > h2 { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ruhig); margin: 0 0 8px; }
-  .ort { font-weight: 650; font-size: 1.05rem; }
-  ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-  input, select { width: 100%; min-height: 44px; font: inherit; color: inherit; background: transparent; border: 1px solid var(--kante); border-radius: 12px; padding: 8px 10px; }
-  [role="option"] { min-height: 44px; }
-</style>
-</head>
-<body>
-<main>
-  <h1>Ortsnamen de-CH</h1>
-  <section aria-label="Ortssuche">
-    <h2>Ortssuche</h2>
-    <label for="ort">Ziel</label>
-    <input id="ort" role="combobox" aria-label="Wien, Stadt · Österreich" value="Wien" readonly />
-    <ul role="listbox">
-      <li role="option" class="ort" aria-label="Wien, Stadt · Österreich">Wien</li>
-      <li role="option" class="ort" aria-label="Vienna, Stadt · United States">Vienna</li>
-    </ul>
-  </section>
-  <section aria-label="Meine Reisen">
-    <h2>Meine Reisen</h2>
-    <article>
-      <p>Unsere Romreise</p>
-      <p class="ort" data-flaeche="reisen">${liste}</p>
-    </article>
-  </section>
-  <section aria-label="Reiseplan">
-    <h2>Reiseplan</h2>
-    <ul>${etappen.map((etappe) => `<li class="ort">${gespeicherteEtappeAnzeigen(etappe)}</li>`).join('')}</ul>
-  </section>
-  <section aria-label="Unterkunft">
-    <h2>Unterkunft</h2>
-    <p class="ort">Unterkünfte in ${gespeicherteEtappeAnzeigen(etappen[0]!)}</p>
-  </section>
-  <section aria-label="Verbindungen">
-    <h2>Verbindungen</h2>
-    <label for="von">Von</label>
-    <select id="von"><option>${gespeicherteEtappeAnzeigen(etappen[1]!)}</option><option>Vienna</option></select>
-  </section>
-  <section aria-label="Flugauswahl">
-    <h2>Flugauswahl</h2>
-    <p>${flughafen?.label ?? ''}</p>
-    <p class="ort">${flughafen?.description ?? ''}</p>
-    <p data-iata="VIE">Abfrage VIE, nicht der Stadtname</p>
-  </section>
-  <section aria-label="KI-Reisevorschau">
-    <h2>KI-Reisevorschau</h2>
-    ${vorschau}
-  </section>
-</main>
-</body>
-</html>`
+async function browserStarten() {
+  try {
+    return await chromium.launch({ headless: true, args: BROWSER_ARGS })
+  } catch (fehler) {
+    if (!playwrightChromiumFehlt(fehler)) throw fehler
+    return chromium.launch({ headless: true, channel: 'chrome', args: BROWSER_ARGS })
+  }
+}
 
-describe('de-CH-Ortsnamen im Browser', () => {
-  let browser: Browser
-  let url = ''
-  const server = createServer((_, antwort) => {
-    antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-    antwort.end(html)
+async function projektCss() {
+  const verlangen = createRequire(import.meta.url)
+  const postcss = verlangen('postcss') as (plugins: unknown[]) => {
+    process: (css: string, opts: { from: string }) => Promise<{ css: string }>
+  }
+  const nesting = verlangen('tailwindcss/nesting') as () => unknown
+  const tailwindcss = verlangen('tailwindcss') as (config: unknown) => unknown
+  const autoprefixer = verlangen('autoprefixer') as () => unknown
+  const from = join(process.cwd(), 'styles/globals.css')
+  const config = verlangen(join(process.cwd(), 'tailwind.config.js')) as unknown
+  const ergebnis = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(from, 'utf8'), { from })
+  const dateien = [
+    'components/workspace/workspace.css',
+    'components/workspace/workspace-surfaces.css',
+    'components/trips/reiseplan/etappen.css',
+    'components/trips/organisieren/organisieren.css',
+    'components/trips/organisieren/hotelsuche.css',
+    'components/trips/organisieren/fluege/flugsuche.css',
+    'styles/white-mint.css',
+  ]
+  const extra = dateien.map((datei) => readFileSync(join(process.cwd(), datei), 'utf8')).join('\n')
+  return `${ergebnis.css}\n${extra}`.replaceAll('</style', '<\\/style')
+}
+
+async function bundeln() {
+  const esbuild = createRequire(import.meta.url)('esbuild') as typeof import('esbuild')
+  const wurzel = process.cwd()
+  const gebaut = await esbuild.build({
+    absWorkingDir: wurzel,
+    entryPoints: ['lib/places/de-ch-anzeige-harness.tsx'],
+    bundle: true,
+    write: false,
+    format: 'iife',
+    platform: 'browser',
+    jsx: 'automatic',
+    define: { 'process.env.NODE_ENV': '"production"' },
+    banner: { js: 'var __name=(target)=>target;globalThis.process=globalThis.process||{env:{NODE_ENV:"production"}};globalThis.global=globalThis;' },
+    plugins: [{
+      name: 'de-ch-shims',
+      setup(build) {
+        const shim = join(wurzel, 'lib/ui/white-mint-home-workspace-1')
+        build.onResolve({ filter: /^next\/link$/ }, () => ({ path: join(shim, 'link.tsx') }))
+        build.onResolve({ filter: /^next\/image$/ }, () => ({ path: join(shim, 'image.tsx') }))
+        build.onResolve({ filter: /^next\/navigation$/ }, () => ({ path: join(shim, 'navigation.tsx') }))
+        build.onResolve({ filter: /^next\/dynamic$/ }, () => ({ path: join(shim, 'dynamic-stub.tsx') }))
+        build.onResolve({ filter: /^@\/lib\/places\/aktionen$/ }, () => ({ path: join(shim, 'server-action-stub.ts') }))
+        build.onResolve({ filter: /\.css$/ }, () => ({ path: 'leer.css', namespace: 'css-leer' }))
+        build.onLoad({ filter: /.*/, namespace: 'css-leer' }, () => ({ contents: '', loader: 'js' }))
+        build.onResolve({ filter: /^@\// }, (args) => {
+          if (args.path === '@/lib/places/aktionen') return { path: join(shim, 'server-action-stub.ts') }
+          return build.resolve(join(wurzel, args.path.slice(2)), { resolveDir: wurzel, kind: args.kind })
+        })
+      },
+    }],
   })
+  const js = gebaut.outputFiles[0]?.text
+  if (!js) throw new Error('de-CH-Harness blieb leer')
+  return js
+}
 
+let browser: Browser
+let server: Server
+let origin = ''
+let dokument = ''
+
+async function seite(theme: 'light' | 'dark', breite: number): Promise<Page> {
+  const context = await browser.newContext({ viewport: { width: breite, height: 1100 } })
+  await context.route('**/*', (route) => {
+    const url = new URL(route.request().url())
+    if (url.hostname !== '127.0.0.1' && url.hostname !== 'localhost') return route.abort()
+    return route.continue()
+  })
+  await context.addInitScript(`document.addEventListener('DOMContentLoaded', () => { document.body.dataset.theme = ${JSON.stringify(theme)}; });`)
+  const page = await context.newPage()
+  page.on('pageerror', (fehler) => {
+    page.setExtraHTTPHeaders({})
+    void fehler
+  })
+  const fehler: string[] = []
+  page.on('pageerror', (error) => fehler.push(error.message))
+  await page.goto(origin, { waitUntil: 'domcontentloaded' })
+  await page.evaluate((modus) => { document.body.dataset.theme = modus }, theme)
+  await page.waitForSelector('[data-de-ch-harness]')
+  ;(page as Page & { __fehler?: string[] }).__fehler = fehler
+  return page
+}
+
+describe('de-CH-Anzeige in den echten Flächen', () => {
   before(async () => {
-    mkdirSync(BELEGE, { recursive: true })
-    mkdirSync(ARTIFAKTE, { recursive: true })
+    const [css, js, orte] = await Promise.all([projektCss(), bundeln(), ortsAntwort('Wien')])
+    assert.equal(orte[0]?.anzeige, 'Wien')
+    assert.equal(orte[0]?.label, 'Vienna')
+    assert.equal(orte.some((option) => option.id === VIENNA_US.id), false)
+    dokument = `<!doctype html><html lang="de-CH"><head><meta charset="utf-8" /><style>${css}</style></head><body data-theme="light"><div id="root"></div><script>${js}</script></body></html>`
+    server = createServer((req, antwort) => {
+      const url = new URL(req.url ?? '/', 'http://127.0.0.1')
+      if (url.pathname === '/api/search/places') {
+        antwort.writeHead(200, { 'content-type': 'application/json; charset=utf-8' })
+        antwort.end(JSON.stringify(orte))
+        return
+      }
+      if (url.pathname === '/api/search/airports') {
+        antwort.writeHead(200, { 'content-type': 'application/json; charset=utf-8' })
+        antwort.end(JSON.stringify(FLUGHAFEN ? [FLUGHAFEN] : []))
+        return
+      }
+      antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+      antwort.end(dokument)
+    })
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
-    url = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`
-    try {
-      browser = await chromium.launch()
-    } catch {
-      browser = await chromium.launch({
-        executablePath: '/usr/bin/google-chrome',
-        args: ['--no-sandbox', '--disable-dev-shm-usage'],
-      })
-    }
+    origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`
+    browser = await browserStarten()
   })
 
   after(async () => {
@@ -167,43 +224,60 @@ describe('de-CH-Ortsnamen im Browser', () => {
 
   for (const theme of ['light', 'dark'] as const) {
     for (const breite of BREITEN) {
-      test(`${theme} ${breite}px zeigt die Namen und schneidet sie nicht ab`, async () => {
-        const page = await browser.newPage({ viewport: { width: breite, height: 900 }, colorScheme: theme })
-        await page.goto(url)
-        await page.evaluate((modus) => document.documentElement.setAttribute('data-theme', modus), theme)
-        const text = await page.locator('body').innerText()
-        assert.match(text, /Wien/)
-        assert.match(text, /Lissabon/)
-        assert.match(text, /Rom/)
-        assert.match(text, /München/)
-        assert.match(text, /Mailand/)
-        assert.match(text, /Genf/)
-        assert.match(text, /Prag/)
-        assert.match(text, /Kanarische Inseln/)
-        assert.match(text, /Ho-Chi-Minh-Stadt/)
-        assert.match(text, /Sankt Petersburg/)
-        assert.match(text, /Unsere Romreise/)
-        assert.match(text, /Ein Wochenende in Prague/)
-        assert.match(text, /Ankommen in Prague/)
-        assert.match(text, /Spaziergang in Prague/)
-        assert.match(text, /Vienna International Airport · VIE/)
+      test(`${theme} ${breite}: echte Komponenten, kein abgeschnittener Ortsname`, async () => {
+        const page = await seite(theme, breite)
+        const flaeche = async (name: string) => page.locator(`[data-flaeche="${name}"]`).innerText()
+        const reisen = await flaeche('reisen')
+        const etappen = await flaeche('etappen')
+        const unterkunft = await flaeche('unterkunft')
+        const verbindungen = await flaeche('verbindungen')
+        const vorschau = await flaeche('vorschau')
+        assert.match(reisen, /Unsere Romreise/)
+        assert.match(reisen, /Lissabon/)
+        assert.equal(reisen.includes('Lisbon'), false)
+        assert.match(etappen, /Lissabon/)
+        assert.match(unterkunft, /Lissabon/)
+        assert.match(verbindungen, /Lissabon/)
+        assert.match(verbindungen, /Vienna/)
+        assert.match(vorschau, /Prag/)
+        assert.match(vorschau, /Ein Wochenende in Prague/)
+        assert.match(vorschau, /Ankommen in Prague/)
         const masse = await page.evaluate(() => {
           const wurzel = document.documentElement
-          const namen = [...document.querySelectorAll('.ort')].map((knoten) => {
+          const namen = [...document.querySelectorAll('[data-flaeche]')].map((knoten) => {
             const feld = knoten as HTMLElement
-            return { text: feld.textContent ?? '', ueber: feld.scrollWidth - feld.clientWidth }
+            return { flaeche: feld.dataset.flaeche ?? '', ueber: feld.scrollWidth - feld.clientWidth }
           })
           return { ueberlauf: wurzel.scrollWidth - wurzel.clientWidth, namen }
         })
-        assert.ok(masse.ueberlauf <= 1, `Dokument überläuft um ${masse.ueberlauf}px`)
-        for (const name of masse.namen) assert.ok(name.ueber <= 1, `${name.text} wird abgeschnitten`)
-        const datei = `de-ch-${theme}-${breite}.png`
-        const puffer = await page.screenshot({ fullPage: true })
-        writeFileSync(join(BELEGE, datei), puffer)
-        if (theme === 'light' && breite === 390) writeFileSync(join(ARTIFAKTE, datei), puffer)
-        if (theme === 'dark' && breite === 1280) writeFileSync(join(ARTIFAKTE, datei), puffer)
-        await page.close()
+        assert.ok(masse.ueberlauf <= 1, `Dokument überläuft um ${masse.ueberlauf}`)
+        for (const name of masse.namen) assert.ok(name.ueber <= 1, `${name.flaeche} schneidet ab`)
+        const ausgabe = process.env.DE_CH_ANZEIGE_EVIDENCE_DIR?.trim()
+        if (ausgabe) {
+          mkdirSync(ausgabe, { recursive: true })
+          await page.screenshot({ path: join(ausgabe, `de-ch-${theme}-${breite}.png`), fullPage: true })
+        }
+        await page.context().close()
       })
     }
   }
+
+  test('Ortssuche übernimmt per Klick die Anzeige und behält den Katalognamen', async () => {
+    const page = await seite('light', 390)
+    await page.locator('#de-ch-ort').fill('Wien')
+    await page.getByRole('option', { name: /Wien/ }).click()
+    assert.equal(await page.locator('#de-ch-ort').inputValue(), 'Wien')
+    assert.equal(await page.locator('[data-kanonisch]').innerText(), 'Vienna')
+    assert.equal(await page.locator('[data-anzeige]').innerText(), 'Wien')
+    await page.context().close()
+  })
+
+  test('Flughafensuche zeigt Wien und übernimmt die IATA, nicht einen übersetzten Abfragewert', async () => {
+    const page = await seite('light', 390)
+    await page.locator('#de-ch-flug').fill('Wien')
+    await page.getByRole('option', { name: /Wien/ }).click()
+    assert.equal(await page.locator('[data-iata]').innerText(), 'VIE')
+    assert.match(await page.locator('#de-ch-flug').inputValue(), /VIE/)
+    await page.context().close()
+  })
 })

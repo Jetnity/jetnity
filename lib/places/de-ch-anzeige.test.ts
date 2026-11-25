@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
 
+import { gleichGefaltet } from '@/lib/airports/normalisieren'
 import { flughafenAlsOption, type FlughafenZeile } from '@/lib/airports/suche'
 import { ganzerOrtGlaubwuerdig } from '@/lib/places/route-intent'
 import type { OrtZeile } from '@/lib/places/abbildung'
-import { placesSuchen } from '@/lib/places/suche-lauf'
+import { placesSuchen, type PlacesZeilenLesen } from '@/lib/places/suche-lauf'
+import { ortAnzeigeAliasfilter, ortExaktfilter, ortNamensfilter, ortSchluesselfilter } from '@/lib/places/suche'
 import { ortAnzeigeName } from '@/lib/places/titel-name'
 import { bookingHotelSuche } from '@/lib/trips/organisieren/katalog'
 import { createZieleGraph } from '@/lib/trips/create-stages'
@@ -45,22 +48,151 @@ function ort(teil: Partial<Ort> & Pick<Ort, 'id' | 'name' | 'countryCode'>): Ort
   }
 }
 
+function oderTeile(filter: string): string[] {
+  const teile: string[] = []
+  let tiefe = 0
+  let start = 0
+  let quote = false
+  for (let i = 0; i < filter.length; i += 1) {
+    const zeichen = filter[i]
+    if (zeichen === '"') quote = !quote
+    else if (!quote && zeichen === '(') tiefe += 1
+    else if (!quote && zeichen === ')') tiefe -= 1
+    else if (!quote && tiefe === 0 && zeichen === ',') {
+      teile.push(filter.slice(start, i))
+      start = i + 1
+    }
+  }
+  teile.push(filter.slice(start))
+  return teile.map((teil) => teil.trim()).filter((teil) => teil.length > 0)
+}
+
+function literale(roh: string): string {
+  if (roh.startsWith('"') && roh.endsWith('"')) return JSON.parse(roh) as string
+  return roh
+}
+
+function zeilePasst(zeile: OrtZeile, ausdruck: string): boolean {
+  if (ausdruck.startsWith('and(') && ausdruck.endsWith(')')) {
+    return oderTeile(ausdruck.slice(4, -1)).every((teil) => zeilePasst(zeile, teil))
+  }
+  const ilike = /^(name|keywords)\.ilike\.(.+)$/.exec(ausdruck)
+  if (ilike) {
+    const roh = ilike[2] ?? ''
+    const muster = literale(roh).replaceAll('%', '')
+    const schluessel = typeof zeile.keywords === 'string' ? zeile.keywords : Array.isArray(zeile.keywords) ? zeile.keywords.join(', ') : ''
+    const feld = ilike[1] === 'name' ? zeile.name : schluessel
+    if (!roh.includes('%')) return gleichGefaltet(feld, muster)
+    if (roh.startsWith('%')) return gleichGefaltet(feld, muster) || feld.toLocaleLowerCase('de').includes(muster.toLocaleLowerCase('de'))
+    return feld.toLocaleLowerCase('de').startsWith(muster.toLocaleLowerCase('de'))
+  }
+  const imatch = /^keywords\.imatch\.(.+)$/.exec(ausdruck)
+  if (imatch) {
+    const token = /\*\s*([^*]+?)\s*\[\[:space:\]\]/.exec(literale(imatch[1] ?? ''))?.[1] ?? ''
+    const schluessel = typeof zeile.keywords === 'string' ? zeile.keywords : Array.isArray(zeile.keywords) ? zeile.keywords.join(', ') : ''
+    return schluessel.split(',').some((teil) => gleichGefaltet(teil.trim(), token))
+  }
+  const gleich = /^(typ|country_code|iata)\.eq\.(.+)$/.exec(ausdruck)
+  if (gleich) {
+    const wert = literale(gleich[2] ?? '')
+    if (gleich[1] === 'typ') return zeile.typ === wert
+    if (gleich[1] === 'country_code') return zeile.country_code === wert
+    return (zeile.iata ?? '').toUpperCase() === wert.toUpperCase()
+  }
+  return false
+}
+
+function filtertreu(bestand: readonly OrtZeile[]): PlacesZeilenLesen {
+  return async (_art, filter, limit) => ({
+    zeilen: bestand.filter((zeile) => oderTeile(filter).some((teil) => zeilePasst(zeile, teil))).slice(0, limit),
+    problem: null,
+  })
+}
+
+const BESTAND: OrtZeile[] = [
+  WIEN,
+  VIENNA_US,
+  zeile('geonames:3169070', 'Rome', 'IT', 'Roma, Roma', 2_300_000),
+  zeile('geonames:4219762', 'Rome', 'US', 'Rome', 36_000),
+  zeile('geonames:2267057', 'Lisbon', 'PT', 'Lisboa, Lisbon', 500_000),
+  zeile('geonames:2867714', 'Munich', 'DE', 'Munich, Muenchen', 1_400_000),
+  zeile('geonames:2657896', 'Zurich', 'CH', 'Zürich, Zurich', 400_000),
+  zeile('geonames:2660646', 'Geneva', 'CH', 'Geneve, Genève', 200_000),
+  zeile('geonames:3067696', 'Prague', 'CZ', 'Praha', 1_300_000),
+]
+
+const ROM = BESTAND[2]!
+const ROM_US = BESTAND[3]!
+const LISSABON = BESTAND[4]!
+const MUENCHEN = BESTAND[5]!
+
 describe('de-CH-Anzeige lässt Identität und Abfragen unverändert', () => {
-  test('Wien und Vienna treffen denselben Ort, Vienna in den USA nicht', async () => {
-    const lesen = async () => ({ zeilen: [WIEN, VIENNA_US], problem: null })
+  test('deutsche Anzeigenamen werden vor dem Ranking als Land-Typ-Katalogzeile gelesen', async () => {
+    const alias = ortAnzeigeAliasfilter('Wien')
+    assert.match(alias ?? '', /typ\.eq\.city/)
+    assert.match(alias ?? '', /country_code\.eq\.AT/)
+    assert.match(alias ?? '', /name\.ilike\.Vienna/)
+    assert.equal((alias ?? '').includes('%'), false)
+    assert.equal(ortAnzeigeAliasfilter('Vienne'), null)
+    assert.equal(ortNamensfilter('Wien')?.includes('country_code.eq.AT'), false)
+    assert.match(ortExaktfilter('Wien') ?? '', /country_code\.eq\.AT/)
+    assert.equal(ortSchluesselfilter('Wien')?.includes('name.ilike.Vienna'), false)
+
+    const lesen = filtertreu(BESTAND)
     const deutsch = await placesSuchen('Wien', 'ziel', lesen)
     const englisch = await placesSuchen('Vienna', 'ziel', lesen)
+    const lokal = await placesSuchen('Vienne', 'ziel', lesen)
     assert.equal(deutsch.problem, null)
-    assert.equal(englisch.problem, null)
-    assert.equal(deutsch.optionen?.[0]?.id, WIEN.id)
-    assert.equal(englisch.optionen?.[0]?.id, WIEN.id)
+    assert.equal(deutsch.optionen?.map((option) => option.id).join(','), WIEN.id)
     assert.equal(deutsch.optionen?.[0]?.label, 'Vienna')
     assert.equal(deutsch.optionen?.[0]?.anzeige, 'Wien')
-    assert.match(deutsch.optionen?.[0]?.ariaLabel ?? '', /^Wien,/)
-    assert.equal(deutsch.optionen?.some((option) => option.id === VIENNA_US.id), false)
+    assert.equal(deutsch.optionen?.[0]?.id, englisch.optionen?.[0]?.id)
+    assert.equal(WIEN.lat, 48.2)
+    assert.equal(WIEN.lon, 16.37)
     const usa = englisch.optionen?.find((option) => option.id === VIENNA_US.id)
-    assert.equal(usa?.label, 'Vienna')
     assert.equal(usa?.anzeige, 'Vienna')
+    assert.equal(usa?.label, 'Vienna')
+    assert.equal(lokal.optionen?.[0]?.id, WIEN.id)
+    assert.equal(lokal.optionen?.some((option) => option.id === VIENNA_US.id), false)
+
+    const rom = await placesSuchen('Rom', 'ziel', lesen)
+    const rome = await placesSuchen('Rome', 'ziel', lesen)
+    const roma = await placesSuchen('Roma', 'ziel', lesen)
+    assert.match(ortAnzeigeAliasfilter('Rom') ?? '', /country_code\.eq\.IT/)
+    assert.equal((ortAnzeigeAliasfilter('Rom') ?? '').includes('country_code.eq.US'), false)
+    assert.equal(rom.optionen?.[0]?.id, ROM.id)
+    assert.equal(rom.optionen?.[0]?.label, 'Rome')
+    assert.equal(rom.optionen?.[0]?.anzeige, 'Rom')
+    assert.equal(rom.optionen?.find((option) => option.id === ROM_US.id)?.anzeige, 'Rome')
+    assert.equal(rome.optionen?.[0]?.id, ROM.id)
+    assert.equal(rome.optionen?.some((option) => option.id === ROM_US.id), true)
+    assert.equal(roma.optionen?.map((option) => option.id).join(','), ROM.id)
+
+    const lissabon = await placesSuchen('Lissabon', 'ziel', lesen)
+    const lisbon = await placesSuchen('Lisbon', 'ziel', lesen)
+    const lisboa = await placesSuchen('Lisboa', 'ziel', lesen)
+    assert.equal(lissabon.optionen?.[0]?.id, LISSABON.id)
+    assert.equal(lisbon.optionen?.[0]?.id, LISSABON.id)
+    assert.equal(lisboa.optionen?.[0]?.id, LISSABON.id)
+    assert.equal(lissabon.optionen?.[0]?.anzeige, 'Lissabon')
+    assert.equal(lissabon.optionen?.[0]?.id, lisbon.optionen?.[0]?.id)
+
+    const muenchen = await placesSuchen('München', 'ziel', lesen)
+    const munich = await placesSuchen('Munich', 'ziel', lesen)
+    assert.equal(muenchen.optionen?.[0]?.id, MUENCHEN.id)
+    assert.equal(munich.optionen?.[0]?.id, MUENCHEN.id)
+    assert.equal(muenchen.optionen?.[0]?.label, 'Munich')
+
+    const genf = await placesSuchen('Genf', 'ziel', lesen)
+    const prag = await placesSuchen('Prag', 'ziel', lesen)
+    assert.equal(genf.optionen?.[0]?.label, 'Geneva')
+    assert.equal(genf.optionen?.[0]?.anzeige, 'Genf')
+    assert.equal(prag.optionen?.[0]?.anzeige, 'Prag')
+    assert.equal(prag.optionen?.[0]?.id, 'geonames:3067696')
+    const suche = readFileSync(new URL('../../components/places/OrtSuche.tsx', import.meta.url), 'utf8')
+    const planer = readFileSync(new URL('../../components/trips/TripPlanner.tsx', import.meta.url), 'utf8')
+    assert.match(suche, /name: option\.label/)
+    assert.match(planer, /setDestination\(wert\?\.name/)
   })
 
   test('englischer und deutscher Suchname bleiben ein ganzer Ort', () => {
