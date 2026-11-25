@@ -208,7 +208,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
               aria-label="Navigation schliessen" onClick={closeNavigation}><X aria-hidden="true" /></button>
           </div>
           <button type="button" className="workspace-touch-toggle workspace-icon-button"
-            aria-label={touchOpen ? 'Seitenleiste schließen' : 'Seitenleiste öffnen'} aria-expanded={expanded}
+            aria-label={touchOpen ? 'Seitenleiste schliessen' : 'Seitenleiste öffnen'} aria-expanded={expanded}
             aria-controls="workspace-navigation" onClick={() => setTouchOpen((value) => !value)}>
             {touchOpen ? <PanelLeftClose aria-hidden="true" /> : <PanelLeftOpen aria-hidden="true" />}
           </button>
