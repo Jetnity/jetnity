@@ -116,6 +116,7 @@ type TripPlannerProps = {
   initialDestination?: string
   initialDestinationId?: string
   initialDestinationDescription?: string
+  initialDestinationAnzeige?: string
   initialIdea?: string
   initialWeitereZiele?: OrtAuswahl[]
 }
@@ -177,6 +178,7 @@ export default function TripPlanner({
   initialDestination = '',
   initialDestinationId = '',
   initialDestinationDescription,
+  initialDestinationAnzeige,
   initialIdea = '',
   initialWeitereZiele = [],
 }: TripPlannerProps) {
@@ -186,6 +188,7 @@ export default function TripPlanner({
   const handoff = tripPlannerRouteVorbelegen({
     destinationId: initialDestinationId,
     destination: initialDestination,
+    destinationAnzeige: initialDestinationAnzeige,
     weitereZiele: initialWeitereZiele,
   })
   const [primaerKey, setPrimaerKey] = React.useState(handoff.primaerKey)

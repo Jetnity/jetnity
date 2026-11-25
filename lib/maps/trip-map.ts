@@ -1,3 +1,4 @@
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { chronologischeLaeufe } from '@/lib/trips/n12-chronology-1/laeufe'
 import type { Trip } from '@/types/trips'
 
@@ -22,7 +23,7 @@ export function tripMapStops(trip: Trip): MapStop[] {
     return {
       index,
       stageId: stage.id,
-      name: stage.name,
+      name: gespeicherteEtappeAnzeigen(stage),
       position,
       dayIds: chronology.gueltig && ids.get(stage.id) === 1
         ? chronology.laeufe.filter((run) => run.stageId === stage.id).flatMap((run) => run.tage.map((day) => day.id))

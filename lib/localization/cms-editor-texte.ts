@@ -22,7 +22,7 @@ const de = {
   requestConflict: 'Dieser Auftrag kann nicht wiederverwendet werden. Prüfe den aktuellen Stand, bevor du eine neue Aktion beginnst.',
   state: 'Diese Aktion ist für den aktuellen Eintrag nicht möglich. Lade den aktuellen Stand neu.', missing: 'Der Eintrag oder die ausgewählte Revision ist derzeit nicht verfügbar.',
   forbidden: 'Deine aktuelle Berechtigung oder Sicherheitsbestätigung reicht nicht aus. Melde dich über den bestehenden Admin-Zugang erneut an.', unauthenticated: 'Deine Anmeldung ist nicht mehr gültig. Melde dich über den bestehenden Admin-Zugang erneut an.',
-  rateLimit: 'Zu viele Anfragen. Warte kurz und versuche die Aktion anschließend erneut.', timeout: 'Die Anfrage wurde nicht rechtzeitig bestätigt. Das bedeutet nicht, dass eine Änderung fehlgeschlagen ist.', invalidResponse: 'Der Serverstand konnte nicht zuverlässig bestätigt werden. Es wird kein Erfolg angenommen.',
+  rateLimit: 'Zu viele Anfragen. Warte kurz und versuche die Aktion anschliessend erneut.', timeout: 'Die Anfrage wurde nicht rechtzeitig bestätigt. Das bedeutet nicht, dass eine Änderung fehlgeschlagen ist.', invalidResponse: 'Der Serverstand konnte nicht zuverlässig bestätigt werden. Es wird kein Erfolg angenommen.',
   unconfirmed: 'Noch keine dauerhafte Bestätigung vorhanden. Das Ergebnis ist offen.', unsaved: 'Es gibt ungespeicherte Änderungen. Speichere sie zuerst oder verwirf sie ausdrücklich.', random: 'Es konnte keine sichere Auftragskennung erstellt werden. Es wurde keine Änderung gesendet.',
 } as const
 export type CmsTextKey = keyof typeof de

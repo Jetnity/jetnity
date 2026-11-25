@@ -15,7 +15,7 @@ export const STATUS_LABELS: Record<AccountStatus, string> = {
   banned: 'Gesperrt',
 }
 
-export const RECOVER_LABEL = 'Hinweis schließen, ohne erneut zu senden'
+export const RECOVER_LABEL = 'Hinweis schliessen, ohne erneut zu senden'
 
 export function roleLabel(role: Role | null): string {
   return role ? ROLE_LABELS[role] : 'Unbekannte Rolle'

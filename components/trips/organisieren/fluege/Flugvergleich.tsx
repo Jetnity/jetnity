@@ -12,6 +12,7 @@ import FlughafenSuche from '@/components/airports/FlughafenSuche'
 import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { tageUtc } from '@/lib/activities/zeit'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { vorgeschlagenerFlughafen } from '@/lib/trips/organisieren/katalog'
 import { useFlughafenVorschlag } from './useFlughafenVorschlag'
 import FlughafenHinweise from './FlughafenHinweise'
@@ -77,11 +78,11 @@ export default function Flugvergleich({
   )
   const [nach, setNach, nachHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(erste?.placeId ?? null, erste?.name ?? null, erste),
-    { placeId: erste?.placeId, name: erste?.name },
+    { placeId: erste?.placeId, name: erste ? gespeicherteEtappeAnzeigen(erste) : null },
   )
   const [zurueck, setZurueck, zurueckHinweis] = useFlughafenVorschlag(
     vorgeschlagenerFlughafen(letzte?.placeId ?? null, letzte?.name ?? null, letzte),
-    { placeId: letzte?.placeId, name: letzte?.name },
+    { placeId: letzte?.placeId, name: letzte ? gespeicherteEtappeAnzeigen(letzte) : null },
   )
   const hinweisBasis = useId()
   const [art, setArt] = useState<FlugVergleichEingabe['art']>(

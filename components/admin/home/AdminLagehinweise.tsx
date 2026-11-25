@@ -77,7 +77,7 @@ export function AdminLagehinweiseAnsicht({ bericht }: { bericht: AnalystBericht 
               data-analyst-attribution={insight.attribution}
             >
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-                <h4 className="min-w-0 text-sm font-medium">{noAction ? 'Keine Maßnahmen erforderlich' : insight.title}</h4>
+                <h4 className="min-w-0 text-sm font-medium">{noAction ? 'Keine Massnahmen erforderlich' : insight.title}</h4>
                 <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', chipKlassen(insight))}>
                   <span>{observedLabel}</span>
                   <span className="mx-1" aria-hidden>

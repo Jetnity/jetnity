@@ -1,4 +1,5 @@
 import { ArrowRight, CalendarDays, MapPin } from 'lucide-react'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import type { ManuelleVorschau } from '@/lib/reiseaenderung/direct/speichern'
 import type { Trip, TripStage } from '@/types/trips'
@@ -35,14 +36,14 @@ export default function StoppVorschau({ vorschau }: { vorschau: ManuelleVorschau
     if (!stage) return []
     const von = aufenthalt(alt, vorher),
       zu = aufenthalt(stage, nachher)
-    return von === zu ? [] : [{ id: stage.id, name: stage.name, von, zu }]
+    return von === zu ? [] : [{ id: stage.id, name: gespeicherteEtappeAnzeigen(stage), von, zu }]
   })
   const ende = (trip: Trip) =>
     trip.endDate ? etappenZeitraumAnzeigen(trip.endDate, trip.endDate) : 'Datum offen'
   return (
     <section className="grid gap-3" aria-label="Auswirkungen des neuen Stopps">
       <div className="et-vorschau-ort">
-        <h4>{neu.name}</h4>
+        <h4>{gespeicherteEtappeAnzeigen(neu)}</h4>
         <p className="mt-1 flex items-center gap-2">
           <CalendarDays size={15} aria-hidden="true" />
           {aufenthalt(neu, nachher)}

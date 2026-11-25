@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import type { Trip, TripSource } from '@/types/trips'
 import { WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 
 const EditContext = React.createContext<{ close: () => void; setBusy: (value: boolean) => void } | null>(null)
 export const useWorkspaceEditSurface = () => React.useContext(EditContext)
@@ -85,7 +86,7 @@ export default function TripWorkspaceEditSurface({ reise, quelle, ansicht, onClo
             <p className="mt-1.5 font-semibold text-brand-900">{reise.title}</p>
             <p className="mt-1.5 text-sm leading-6 text-ink-900">{datumKurz(reise.startDate) || 'Beginn offen'} – {datumKurz(reise.endDate) || 'Ende offen'} · {reise.days.length} {reise.days.length === 1 ? 'Tag' : 'Tage'} · {reise.stages.length} {reise.stages.length === 1 ? 'Etappe' : 'Etappen'}</p>
             <p className="mt-1 text-meta text-ink-800">Gespeicherter Stand</p>
-            <details className="group mt-2"><summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg text-sm font-semibold text-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 [&::-webkit-details-marker]:hidden">Reiseziele ansehen<ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" /></summary><ol className="grid gap-1.5 pb-1 text-sm text-ink-900">{reise.stages.map(stage => <li key={stage.id}>{stage.position}. {stage.name}</li>)}</ol></details>
+            <details className="group mt-2"><summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg text-sm font-semibold text-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 [&::-webkit-details-marker]:hidden">Reiseziele ansehen<ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" /></summary><ol className="grid gap-1.5 pb-1 text-sm text-ink-900">{reise.stages.map(stage => <li key={stage.id}>{stage.position}. {gespeicherteEtappeAnzeigen(stage)}</li>)}</ol></details>
           </aside>
           <div className="min-w-0">{children}</div>
         </div>

@@ -12,6 +12,7 @@ import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib
 import { EXAKTER_NAMENS_RANG, namensArt, namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
 import { ortLandName, ortLokalerName, passendeLandCodes } from '@/lib/places/namen'
+import { anzeigeAliase, ortAnzeigeName } from '@/lib/places/titel-name'
 
 export const ORT_SUCHTEXT_MAX = 120
 export const ORT_TREFFER = 6
@@ -84,11 +85,25 @@ export function ortExaktfilter(suche: string): string | null {
   if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (!teile.length) return null
+  const alias = ortAnzeigeAliasfilter(suche)
   return [...teile.flatMap((teil) => [
     postgrestIlike('name', teil),
     `and(${postgrestIlike('keywords', `%${teil}%`)},${postgrestImatch('keywords', `(^|,)[[:space:]]*${regexSicher(teil)}[[:space:]]*(,|$)`)})`,
     ...(/^[A-Za-z]{3}$/.test(teil) ? [`iata.eq.${teil.toUpperCase()}`] : []),
-  ]), ...passendeLandCodes(suche, true).map((code) => `and(typ.eq.country,country_code.eq.${code})`)].join(',')
+  ]), ...passendeLandCodes(suche, true).map((code) => `and(typ.eq.country,country_code.eq.${code})`), ...(alias ? [alias] : [])].join(',')
+}
+
+/**
+ * Selektiver Nachzug: nur die Tabellenzeile zum exakten de-CH-Namen.
+ * Land, Typ und Katalogname bleiben in einem `and`. Kein `%name%` über alle Länder.
+ */
+export function ortAnzeigeAliasfilter(suche: string): string | null {
+  if (suche.length > ORT_SUCHTEXT_MAX || sucheIstPlatzhalter(suche)) return null
+  const ziele = anzeigeAliase(suche)
+  if (ziele.length === 0) return null
+  return ziele
+    .map((ziel) => `and(typ.eq.${ziel.typ},country_code.eq.${ziel.land},${postgrestIlike('name', ziel.katalogName)})`)
+    .join(',')
 }
 
 export function ortSchluesselfilter(suche: string): string | null {
@@ -207,7 +222,11 @@ function typBonus(ort: Ort, rolle: OrtRolle): number {
 function bedeutungsBonus(ort: Ort, suche: string): number {
   if (ort.typ === 'country' || ort.typ === 'airport') return 0
   const stufe = BEDEUTUNG_STUFEN.find(([ab]) => (ort.population ?? 0) >= ab)?.[1] ?? 0
-  const eigenerName = gleichGefaltet(ort.name, suche) || gleichGefaltet(ort.sourceName ?? '', suche)
+  const anzeige = ortAnzeigeName(ort)
+  const eigenerName =
+    gleichGefaltet(ort.name, suche) ||
+    gleichGefaltet(ort.sourceName ?? '', suche) ||
+    (!gleichGefaltet(anzeige, ort.name) && gleichGefaltet(anzeige, suche))
   return stufe + (SITZ_BONUS[ort.featureCode ?? ''] ?? 0) + (eigenerName ? EIGENER_NAME_BONUS : 0)
 }
 
@@ -229,6 +248,14 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   const aliasIstOrtsname = ort.typ === 'country' || (ort.typ !== 'airport' && !['admin', 'later'].includes(namensArt(ort.name, raw)))
   if (aliasGenau && aliasIstOrtsname) nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   if (landAliasAlsName) {
+    nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
+  }
+  const anzeigeName = ortAnzeigeName(ort)
+  if (
+    !gleichGefaltet(anzeigeName, ort.name) &&
+    !gleichGefaltet(anzeigeName, ort.sourceName ?? '') &&
+    gleichGefaltet(anzeigeName, raw)
+  ) {
     nameScore = Math.max(nameScore, EXAKTER_NAMENS_RANG)
   }
   treffer += nameScore
@@ -296,16 +323,32 @@ export function ortAnzeigeLabel(ort: Ort, suche: string): string {
   return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
 }
 
+/** Sichtbarer Suchname. Ein zurückgespiegeltes Alias bleibt, der eigene Ortsname wird de-CH. */
+function ortSuchAnzeige(ort: Ort, label: string): string {
+  const eigene = [ortLokalerName(ort), ort.name, ort.sourceName ?? ''].filter((name) => name.length > 0)
+  if (!eigene.includes(label)) return label
+  // Ohne Tabellentreffer bleibt das schon gewählte Label.
+  // `ort.name` ist dort oft der englische Katalogname und darf die Anzeige nicht ersetzen.
+  return ortAnzeigeName({
+    name: label,
+    typ: ort.typ,
+    countryCode: ort.countryCode,
+    sourceName: ort.sourceName ?? ort.name,
+  })
+}
+
 function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): OrtOption {
   const label = ortAnzeigeLabel(ort, suche)
+  const anzeige = ortSuchAnzeige(ort, label)
   const description = ortAnzeigeKontext(ort, suche, mehrdeutigesLandAlias)
   return {
     id: ort.id,
     label,
+    anzeige,
     description,
     typ: ort.typ,
     iata: ort.iata ?? undefined,
-    ariaLabel: `${label}, ${description}`,
+    ariaLabel: `${anzeige}, ${description}`,
     landAliasMatch: istExaktesLandAlias(ort, suche),
     ...(ort.countryCode ? { countryCode: ort.countryCode } : {}),
   }

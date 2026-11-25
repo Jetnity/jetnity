@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 
 import type { Ort } from '@/lib/places/domain'
-import { ortTitelName, schweizerSchreibweise, titelFolgtDemErstenZiel } from '@/lib/places/titel-name'
+import { gespeicherteEtappeAnzeigen, ortAnzeigeName, ortTitelName, schweizerSchreibweise, titelFolgtDemErstenZiel } from '@/lib/places/titel-name'
 
 function ort(teil: Pick<Ort, 'name' | 'typ' | 'countryCode'> & Partial<Ort>): Pick<Ort, 'typ' | 'name' | 'sourceName' | 'countryCode'> {
   return { sourceName: teil.sourceName, name: teil.name, typ: teil.typ, countryCode: teil.countryCode }
@@ -40,6 +40,27 @@ describe('Reisetitel: deutsche Ortsnamen in Schweizer Schreibweise', () => {
     assert.equal(ortTitelName(ort({ name: 'Paris', typ: 'city', countryCode: 'FR' })), 'Paris')
     assert.equal(ortTitelName(ort({ name: 'Groß-Gerau', typ: 'city', countryCode: 'DE' })), 'Gross-Gerau')
     assert.equal(ortTitelName(ort({ name: 'Bali', typ: 'island', countryCode: 'ID' })), 'Bali')
+  })
+
+  test('dieselbe Tabelle, auch ohne Typ, nur bei einem eindeutigen Landstreffer', () => {
+    assert.equal(ortAnzeigeName({ name: 'Lisbon', countryCode: 'PT' }), 'Lissabon')
+    assert.equal(ortAnzeigeName({ name: 'Vienna', countryCode: 'AT', typ: 'city' }), 'Wien')
+    assert.equal(ortAnzeigeName({ name: 'Munich', countryCode: 'DE' }), 'München')
+    assert.equal(ortAnzeigeName({ name: 'Milan', countryCode: 'IT' }), 'Mailand')
+    assert.equal(ortAnzeigeName({ name: 'Geneva', countryCode: 'CH' }), 'Genf')
+    assert.equal(ortAnzeigeName({ name: 'Prague', countryCode: 'CZ' }), 'Prag')
+    assert.equal(gespeicherteEtappeAnzeigen({ name: 'Rome', countryCode: 'IT' }), 'Rom')
+  })
+
+  test('gleicher Name im anderen Land, unbekannter Name und fehlender Kontext bleiben', () => {
+    assert.equal(ortAnzeigeName({ name: 'Vienna', countryCode: 'US', typ: 'city' }), 'Vienna')
+    assert.equal(ortAnzeigeName({ name: 'Rome', countryCode: 'US' }), 'Rome')
+    assert.equal(ortAnzeigeName({ name: 'Lisbon', countryCode: 'PT', typ: 'island' }), 'Lisbon')
+    assert.equal(ortAnzeigeName({ name: 'Nirgendwo', countryCode: 'DE', typ: 'city' }), 'Nirgendwo')
+    assert.equal(ortAnzeigeName({ name: 'Vienna' }), 'Vienna')
+    assert.equal(ortAnzeigeName({ name: 'Vienna', countryCode: null }), 'Vienna')
+    assert.equal(ortAnzeigeName({ name: 'Groß-Gerau', countryCode: null }), 'Gross-Gerau')
+    assert.equal(ortTitelName(ort({ name: 'Rome', sourceName: 'Rome', typ: 'city', countryCode: 'IT' })), ortAnzeigeName({ name: 'Rome', sourceName: 'Rome', typ: 'city', countryCode: 'IT' }))
   })
 
   test('schweizerSchreibweise ersetzt ß und ẞ, sonst nichts', () => {

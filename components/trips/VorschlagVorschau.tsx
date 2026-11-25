@@ -37,6 +37,7 @@ import {
 } from '@/lib/trips/bezeichnungen'
 import { reiseende } from '@/lib/reisevorschlag/abbildung'
 import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import { ortAnzeigeName } from '@/lib/places/titel-name'
 import { cn } from '@/lib/utils'
 
 type VorschlagVorschauProps = {
@@ -97,7 +98,9 @@ export default function VorschlagVorschau({
   onAendern,
   onVerwerfen,
 }: VorschlagVorschauProps) {
-  const ziele = vorschlag.etappen.map((etappe) => etappe.name).join(' · ')
+  const etappeSichtbar = (etappe: (typeof vorschlag.etappen)[number]) =>
+    ortAnzeigeName({ name: etappe.name, countryCode: etappe.laendercode })
+  const ziele = vorschlag.etappen.map((etappe) => etappeSichtbar(etappe)).join(' · ')
 
   return (
     <section
@@ -189,7 +192,7 @@ export default function VorschlagVorschau({
               key={`${etappe.name}-${etappe.vonTag}`}
               className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-2xl border border-line-200 px-4 py-3"
             >
-              <span className="text-sm font-semibold text-brand-900">{etappe.name}</span>
+              <span className="text-sm font-semibold text-brand-900 [overflow-wrap:anywhere]">{etappeSichtbar(etappe)}</span>
               <span className="text-xs text-ink-700">
                 {etappe.vonTag === etappe.bisTag
                   ? `Tag ${etappe.vonTag}`

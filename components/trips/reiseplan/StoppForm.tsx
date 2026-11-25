@@ -6,6 +6,7 @@ import type { Trip, TripSource } from '@/types/trips'
 import { GRENZEN } from '@/lib/trips/schema'
 import OrtSuche from '@/components/places/OrtSuche'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import StoppVorschau from './StoppVorschau'
 import { AENDERUNG_GRENZEN } from '@/lib/reiseaenderung/schema'
 import { gastManuellSpeichern } from '@/lib/reiseaenderung/direct/gast'
@@ -167,7 +168,7 @@ export default function StoppForm({
                   .sort((a, b) => a.position - b.position)
                   .map((s) => (
                     <option value={s.id} key={s.id}>
-                      {s.name}
+                      {gespeicherteEtappeAnzeigen(s)}
                     </option>
                   ))}
               </select>

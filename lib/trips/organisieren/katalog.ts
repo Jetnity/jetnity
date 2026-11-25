@@ -1,4 +1,5 @@
 import { landName } from '@/lib/country/darstellung'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { flughafenAusReiseort, type FlughafenAuswahl } from '@/lib/airports/auswahl'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { tageDifferenz } from '@/lib/activities/zeit'
@@ -128,7 +129,8 @@ export function vorgeschlagenerFlughafen(
 ): FlughafenAuswahl | null {
   const direkt = flughafenAusReiseort({ placeId, name })
   const iata = direkt?.iata ?? (placeId === 'geonames:2657896' ? 'ZRH' : etappenZiel(etappe)?.flughafen)
-  return iata ? { iata, name: name && name !== iata ? name + ' (' + iata + ')' : iata } : null
+  const sichtbar = etappe ? gespeicherteEtappeAnzeigen(etappe) : name
+  return iata ? { iata, name: sichtbar && sichtbar !== iata ? sichtbar + ' (' + iata + ')' : iata } : null
 }
 
 export function hotelDaten(reise: Trip, etappe?: TripStage) {

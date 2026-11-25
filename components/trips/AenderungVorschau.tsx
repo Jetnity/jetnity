@@ -13,6 +13,7 @@ import { ArrowRight } from 'lucide-react'
 
 import { Hinweis } from '@/components/ui/hinweis'
 import type { Aenderungsvorschau } from '@/lib/reiseaenderung/erzeugen'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { strukturVergleich } from '@/lib/reiseaenderung/diff'
 import { aenderungstextLesbar } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
@@ -87,7 +88,7 @@ export default function AenderungVorschau({
             </div>
             {plan.etappen.map((etappe) => (
               <div key={etappe.id} className="min-w-0 rounded-control border border-border p-3">
-                <dt className="break-words text-subtitle text-foreground">{etappe.name}</dt>
+                <dt className="break-words text-subtitle text-foreground">{gespeicherteEtappeAnzeigen(etappe)}</dt>
                 <dd className="mt-3 grid min-w-0 gap-3 text-muted-foreground sm:grid-cols-2">
                   <div className="min-w-0">
                     <p className="text-meta font-semibold text-foreground">Vorher</p>

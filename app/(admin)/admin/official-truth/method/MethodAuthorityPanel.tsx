@@ -87,7 +87,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
       const parsed = readHumanOutcome(await outcomeBody(response), operation, intent)
       if (!mounted.current) return
       if (response.status === 401 || response.status === 403) {
-        setMessage('Dein aktueller Zugang wurde nicht bestätigt. Melde dich als Inhaber an und schließe die Zwei-Faktor-Prüfung ab; bestätige danach denselben gespeicherten Vorgang.')
+        setMessage('Dein aktueller Zugang wurde nicht bestätigt. Melde dich als Inhaber an und schliesse die Zwei-Faktor-Prüfung ab; bestätige danach denselben gespeicherten Vorgang.')
       } else if (!parsed || (!response.ok && parsed.status !== 'unresolved')) setMessage(PENDING)
       else if (parsed.status === 'confirmed' && intent === 'confirm') {
         setConfirmed(operation)
@@ -204,7 +204,7 @@ export default function MethodAuthorityPanel({ release }: { release: HumanReleas
         </> : null}
       </div>
       <p className="text-sm">Jeder Schreibschritt braucht danach eine neue Bestätigungsanfrage. Bei Abbruch oder verlorener Antwort bleibt derselbe Vorgang erhalten; es gibt keinen automatischen erneuten Schreibversuch.</p>
-      <p className="text-sm"><Link className="underline" href="/admin/login">Zur Anmeldung und Zwei-Faktor-Prüfung</Link>. Kehre anschließend zu <Link className="underline" href={atMethod ? '/admin/official-truth/at-method' : '/admin/official-truth/method'}>dieser Freigabeseite</Link> zurück.</p>
+      <p className="text-sm"><Link className="underline" href="/admin/login">Zur Anmeldung und Zwei-Faktor-Prüfung</Link>. Kehre anschliessend zu <Link className="underline" href={atMethod ? '/admin/official-truth/at-method' : '/admin/official-truth/method'}>dieser Freigabeseite</Link> zurück.</p>
     </div>
   )
 }
