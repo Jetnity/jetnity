@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — Organisieren, Mobile Routing #1311
+
+Branch `cursor/organisieren-mobile-routing-9117` von `main` `2daeff2cb`. Dev-only. Befund und legitime KAYAK-Pfade: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
+
+- Auf dieser Basis öffnet das Antippen eines sichtbaren gespeicherten Eintrags den Planpunkt dieser Reise. Die KAYAK-Testvorschau erscheint dabei nicht. WebKit gegen den Next-Dev-Server scheitert an `upgrade-insecure-requests`, nicht am Routing.
+- Keine Produktänderung am Routing. Regression `lib/trips/organisieren-routing-1/browser.test.ts`, 30 Kombinationen, WebKit. #1307 und #1308 unberührt. Kein Merge, kein Production-Deploy.
+
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
