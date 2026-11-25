@@ -233,7 +233,13 @@ async function messen(page: Page): Promise<Messung> {
       .map((e) => {
         const s = getComputedStyle(e)
         const frei = e.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight)
-        return `${kurz(e)} «${e.placeholder}» frei ${Math.round(frei)}px bei Bildbreite ${document.documentElement.clientWidth}px`
+        const kette: string[] = []
+        for (let n: HTMLElement | null = e; n && n !== document.body; n = n.parentElement) {
+          const cs = getComputedStyle(n)
+          kette.push(`${n.tagName.toLowerCase()}.${String(n.className).split(' ')[0]} ${Math.round(n.getBoundingClientRect().width)}px innen ${cs.paddingLeft}/${cs.paddingRight} aussen ${cs.marginLeft}/${cs.marginRight}`)
+        }
+        const umgebung = ['(max-width: 700px)', '(pointer: coarse)', '(hover: hover)'].map((q) => `${q}=${matchMedia(q).matches}`).join(' ')
+        return `${kurz(e)} «${e.placeholder}» frei ${Math.round(frei)}px, Bildbreite ${document.documentElement.clientWidth}px, ${umgebung}, Wurzelschrift ${getComputedStyle(document.documentElement).fontSize}, Kette: ${kette.join(' <- ')}`
       })
     const abgeschnitten = alle
       .filter((e) => {
