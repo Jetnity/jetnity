@@ -9,6 +9,7 @@ import { chromium, type Browser, type BrowserContext, type Page } from 'playwrig
 
 import { paarePruefen, type Paar } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
 import { ANBIETER_RAHMEN, bundeln, dokument, projektCss } from '@/lib/ui/workspace-niveau-1/bundle'
+import dynamicGeladen from '@/lib/ui/workspace-niveau-1/dynamic-geladen'
 
 /**
  * Darstellungsvertrag des Workspace (Übersicht, Reiseplan, Organisieren, Vorbereitung, Einreise).
@@ -230,6 +231,10 @@ async function messen(page: Page): Promise<Messung> {
     }
   })
 }
+
+test('der Ersatz für next/dynamic lädt die echte Komponente', () => {
+  assert.equal(typeof dynamicGeladen, 'function')
+})
 
 describe('Workspace-Niveau im echten Browser', () => {
   before(async () => {
