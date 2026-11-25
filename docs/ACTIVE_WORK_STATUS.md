@@ -6,7 +6,7 @@ Branch `cursor/official-truth-at-stage3-dev-a92d` von `main` `69ab3fa203f45cd97e
 
 - Ein unangewandtes Paket: read-only Preflight, ROLLBACK-Probe, COMMIT-Kandidat, Readback, Withdrawal-Probe und Withdrawal. Der V6-Katalogdigest kommt nur aus einem frischen Readback und steht nicht im Git.
 - BG1-Nachfolger `bg1_prod_ch_at_stage3_v8` ist append-only. `catalog_status_v1` bleibt der V6-Körper. V7 bleibt reserviert. `renew_ch_v1`, HTTP-Allocator, CH→DE und die übrigen Cron-Kommandos bleiben.
-- Native PostgreSQL 17.12, isoliert: Erneuerungsregeln, Fail-closed des echten Guards, Rollback, Digest-/V7-/Drift-Verweigerung und das Advisory-Schloss `771112,34`. Der historische Katalog auf der synthetischen Datenbank endet mit `production rolling protected catalog changed`. Das ist kein Production-PASS.
+- Nach dem NO-GO auf `4b0cdbe7`: schema-toleranter Preflight, lebendiger V6-Katalog vor dem DDL, nur erlaubte Stage-3-Deltas, gemeinsame Sperre `771112,1` dann `2` dann `34`, echte parallele `renew_ch_v3` und Withdrawal-Rennen. `assert_catalog_v1` auf der synthetischen Datenbank bleibt `P7905`; der exakte Production-Katalog ist ein Release-Gate.
 - Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`. Nächster Schritt: Exact-Head-CI und Technical-Lead-Review. Italien, Frankreich und Spanien bleiben zu.
 
 ## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314

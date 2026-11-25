@@ -10,11 +10,14 @@ AS $renew$
 DECLARE a official_v3_at_production_private.ch_renewal_go_v3%ROWTYPE; previous bigint; evidence jsonb;
  instant_at timestamptz; checked timestamptz; until_at timestamptz;
 BEGIN
+ IF session_user<>'postgres' OR current_user<>session_user THEN RETURN 0; END IF;
+ -- Same ascending order as enqueue (771112,1) and legacy renew_ch_v1 (771112,2).
+ PERFORM pg_advisory_xact_lock(771112,1);
+ PERFORM pg_advisory_xact_lock(771112,2);
+ PERFORM pg_advisory_xact_lock(771112,34);
  IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
  OR EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)
  THEN RETURN 0; END IF;
- IF session_user<>'postgres' OR current_user<>session_user
- OR NOT pg_try_advisory_xact_lock(771112,34) THEN RETURN 0; END IF;
  PERFORM official_v3_guard_private.require_open_v1();
  PERFORM official_v3_guard_private.assert_catalog_v1();
  SELECT * INTO a FROM official_v3_at_production_private.ch_renewal_go_v3 WHERE authorization_id=p_authorization FOR SHARE;
@@ -45,6 +48,9 @@ BEGIN
  -- Last fresh reproof before insert, still within the same transaction.
  PERFORM official_v3_guard_private.require_open_v1();
  IF official_v3_at_production_private.stage2_evidence_ch_v3(a.batch_id,a.source_operation_id) IS DISTINCT FROM evidence
+ THEN RETURN 0; END IF;
+ IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
+ OR EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)
  THEN RETURN 0; END IF;
  INSERT INTO official_v3_at_production_private.ch_visa_facts_v3(version_id,authorization_id,source_operation_id,source_batch_id,source_digest,
   method_epoch,source_checked_at,verified_at,expires_at)

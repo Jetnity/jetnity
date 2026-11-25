@@ -31,31 +31,36 @@ Parent-Funktionskörper SHA-256, aus dem installierten V6-Text und gegen Postgre
 
 Der V6-Katalogdigest ist kein Git-Pin. Ein erfundener Wert wäre eine gefälschte Quittung. Der Installer bricht ohne den frischen Readback ab.
 
+## Review-Nachzug 4b0cdbe7
+
+Der Technical Lead hat den ersten Head mit NO-GO belegt. Der korrigierte Stand:
+
+- Der Preflight zählt das Publikationsjournal per dynamischem SQL. Auf einem isolierten V6 ohne Stage-3-Tabelle ist `publication_count` null; mit zwei Zeilen ist es 2. Beides auf PostgreSQL 17.12 gelaufen.
+- Vor jedem DDL vergleicht der Installer den lebendigen `catalog_status_v1()` mit dem gespeicherten V6-Katalog. Danach sind nur die Stage-3-Objekte, die vier ersetzten Funktionskörper und interne Fremdschlüssel-Trigger erlaubt. Fremder Drift bricht mit `P7996` / `AT_STAGE3_V6_LIVE_CATALOG_DRIFT` oder `AT_STAGE3_FOREIGN_CATALOG_DRIFT` ab. Der exakte Production-Katalog bleibt ein Release-Gate: `assert_catalog_v1()` auf der synthetischen Datenbank liefert `P7905`.
+- `renew_ch_v3` und der Withdrawal nehmen `771112,1`, dann `771112,2` (Legacy-Publisher), dann `771112,34`. Der Hold wird nach dem Schloss und noch einmal unmittelbar vor dem Insert geprüft.
+- Zwei gleichzeitige `renew_ch_v3` derselben Autorisierung erzeugen genau eine Faktversion 83. Zwei verschiedene Autorisierungen mit demselben Vorgänger erzeugen höchstens eine weitere monotone Version. Ein Rennen von Renew und Withdrawal endet ohne Deadlock; danach liefert Renew 0 und der Hold bleibt.
+
 ## Native PostgreSQL 17
 
 Befehl, isoliertes Cluster, Benutzer `postgres`, nur Unix-Socket, Version `postgres (PostgreSQL) 17.12`:
 
 `node --import tsx --test lib/readiness/official-truth-at-method-v1/at-stage3-native.test.ts`
 
-Ergebnis lokal: 1 Test, 0 Fehler. Darin tatsächlich gelaufen:
+Ergebnis lokal nach dem Review-Nachzug: 1 nativer Test und der Paketvergleich, 0 Fehler. Tatsächlich gelaufen:
 
-- Erneuerungsregeln auf einem Stub-Guard: eine synthetische Freigabe erzeugt Faktversion 83 über der abgelaufenen V2-Version 82; Replay, falscher Digest, falscher Vorgänger, abgelaufenes Go, geänderte und wieder zurückgesetzte Quelle, unvollständige Charge, DE/FR/ES/IT/IN, leeres Publikationsjournal, Hold und ACL verweigern. Token `AT_STAGE3_RENEWAL_RULES_PASS`.
-- Echtes Paket bis vor die historische Katalogkette: Parent-Hashes, Reservierung von V7, leeres Journal, unveränderte Cron-Kommandos inklusive CH→DE, `require_open_v1` mit `P7902`, Alarm danach `unavailable`. Token `AT_STAGE3_PACKAGE_PREFIX_APPLIED`.
-- Dieselbe synthetische Autorisierung gegen den echten V8-Guard liefert 0 und keine Faktzeile. Token `AT_STAGE3_REAL_GUARD_BLOCKS_SYNTHETIC_RENEWAL`.
-- `ROLLBACK` entfernt die Schemas. Token `AT_STAGE3_ROLLBACK_PASS`.
-- Der volle Body ruft `assert_catalog_v1()` auf. Die historische Kette läuft und endet mit `production rolling protected catalog changed`. Das ist die Verweigerung des synthetischen Katalogs, kein positiver Production-Abgleich.
-- Fehlender Digest: `AT_STAGE3_V6_CATALOG_DIGEST_REQUIRES_FRESH_READBACK`.
-- Vorhandener V7-Marker: `AT_STAGE3_V6_PARENT_REQUIRED`.
-- Veränderter `catalog_status_v1`-Körper: `AT_STAGE3_V6_PARENT_FUNCTION_DRIFT`.
-- Zweites Session: `pg_try_advisory_xact_lock(771112,34)` ist falsch, während die andere Session dasselbe Schloss hält, und danach wahr. `renew_ch_v3` benutzt genau diesen Schlüssel.
+- Erneuerungsregeln ohne Hold: Faktversion 83, Replay, falscher Digest, falscher Vorgänger, Ablauf, geänderte Quelle, zurückgesetzte Quelle bei weiterhin qualifizierter letzter Charge, unvollständige Charge, DE/FR/ES/IT/IN. Ein sauberer Folgebatch erneuert; derselbe Batch mit Hold ergibt 0. Token `AT_STAGE3_RENEWAL_RULES_PASS`.
+- Preflight auf isoliertem V6: `publication_count` null. Danach mit zwei Zeilen: 2.
+- Die Datei `production-stage3.ROLLBACK-PROBE.sql` läuft auf dem isolierten V6, dessen gespeicherter Katalog dem lebendigen `catalog_status_v1()` entspricht, und endet mit `AT_STAGE3_ROLLBACK_PROBE_CLEAN`. V8 ist danach abwesend.
+- Fremde Tabelle, leerer Digest, vorhandener V7-Marker und veränderter `catalog_status_v1`-Körper: jeweils `P7996` mit dem genannten Marker. Kein pauschales `42P01`.
+- `assert_catalog_v1()` nach dem isolierten Commit: `P7905`.
+- `production-stage3.WITHDRAWAL-REHEARSAL.sql` nach dem isolierten Commit-Kandidaten: `AT_STAGE3_WITHDRAWAL_ROLLBACK_CLEAN`, Hold-Zähler 0, V8 bleibt.
+- Zwei Sessions, dieselbe Autorisierung: genau eine Faktversion 83. Zwei Autorisierungen, derselbe Vorgänger: höchstens eine weitere monotone Version. Renew gegen die Withdrawal-Datei: kein Deadlock, danach Renew 0, Hold vorhanden.
 
 Nicht gelaufen und nicht als PASS gewertet:
 
 - Kein Zugriff auf Production oder eine verbundene Datenbank.
-- Kein frischer Production-Readback und deshalb kein Commit-Kandidat ausgeführt.
-- Kein positiver Abgleich des produktiven Katalog-JSON. Die synthetische Datenbank kann die Production-Digests nicht nachbilden.
-- Kein zweiter gleichzeitiger `renew_ch_v3`-Aufruf mit anschliessendem Erfolg. Geprüft ist das Schloss, das diese Funktion nimmt.
-- CI dieses Heads steht aus. Der native Test liegt in der bestehenden PostgreSQL-17-Jobfamilie `hosted_v3_native_pg17` / Runner `main`, ohne neuen Job und ohne neue Kosten.
+- Kein frischer Production-Readback und kein positiver Abgleich des produktiven Katalog-JSON.
+- CI dieses Heads steht aus. Der native Test liegt in der bestehenden PostgreSQL-17-Jobfamilie `hosted_v3_native_pg17` / Runner `main`.
 
 ## Offene PO-Gates
 

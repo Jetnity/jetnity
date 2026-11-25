@@ -14,7 +14,11 @@ BEGIN
  OR to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8') IS NULL
  OR to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
  OR (SELECT count(*) FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)<>0
- OR NOT pg_try_advisory_xact_lock(771112,36)
+ THEN RAISE EXCEPTION 'AT_STAGE3_WITHDRAWAL_PREDECESSOR_STOP' USING ERRCODE='P7997'; END IF;
+ PERFORM pg_advisory_xact_lock(771112,1);
+ PERFORM pg_advisory_xact_lock(771112,2);
+ PERFORM pg_advisory_xact_lock(771112,34);
+ IF (SELECT count(*) FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)<>0
  THEN RAISE EXCEPTION 'AT_STAGE3_WITHDRAWAL_PREDECESSOR_STOP' USING ERRCODE='P7997'; END IF;
  SELECT count(*) INTO quals FROM official_v3_at_production_private.ch_source_qualifications_v3;
  SELECT count(*) INTO originals FROM official_v3_at_production_private.ch_source_originals_v3;

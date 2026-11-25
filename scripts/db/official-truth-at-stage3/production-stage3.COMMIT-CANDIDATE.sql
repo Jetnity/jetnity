@@ -25,14 +25,28 @@ BEGIN
  IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_v6') IS NULL
  OR to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8') IS NOT NULL
  OR to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
- OR NOT pg_try_advisory_xact_lock(771112,35)
- OR public.official_v3_guard_alarm_status_v1()->>'status' IS DISTINCT FROM 'current'
+ THEN RAISE EXCEPTION 'AT_STAGE3_V6_PARENT_REQUIRED' USING ERRCODE='P7996'; END IF;
+ -- Ascending legacy order, then the Stage 3 install key. Blocks until free.
+ PERFORM pg_advisory_xact_lock(771112,1);
+ PERFORM pg_advisory_xact_lock(771112,2);
+ PERFORM pg_advisory_xact_lock(771112,34);
+ PERFORM pg_advisory_xact_lock(771112,35);
+ IF public.official_v3_guard_alarm_status_v1()->>'status' IS DISTINCT FROM 'current'
  THEN RAISE EXCEPTION 'AT_STAGE3_V6_PARENT_REQUIRED' USING ERRCODE='P7996'; END IF;
  digest:=current_setting('jetnity.at_stage3_expected_v6_catalog_digest',true);
  IF digest IS NULL OR digest!~'^[a-f0-9]{64}$'
  OR digest IS DISTINCT FROM (SELECT encode(sha256(convert_to(catalog::text,'UTF8')),'hex')
    FROM official_v3_guard_private.bg1_prod_ch_at_source_v6 WHERE singleton)
  THEN RAISE EXCEPTION 'AT_STAGE3_V6_CATALOG_DIGEST_REQUIRES_FRESH_READBACK' USING ERRCODE='P7996'; END IF;
+ CREATE TEMP TABLE at_stage3_pre_catalog(catalog jsonb);
+ INSERT INTO at_stage3_pre_catalog SELECT official_v3_guard_private.catalog_status_v1();
+ IF (SELECT encode(sha256(convert_to(catalog::text,'UTF8')),'hex') FROM at_stage3_pre_catalog)
+  IS DISTINCT FROM (SELECT encode(sha256(convert_to(catalog::text,'UTF8')),'hex')
+   FROM official_v3_guard_private.bg1_prod_ch_at_source_v6 WHERE singleton)
+ THEN RAISE EXCEPTION 'AT_STAGE3_V6_LIVE_CATALOG_DRIFT %', (
+  SELECT coalesce(live.key,stored.key) FROM jsonb_each((SELECT catalog FROM at_stage3_pre_catalog)) live
+  FULL JOIN jsonb_each((SELECT catalog FROM official_v3_guard_private.bg1_prod_ch_at_source_v6 WHERE singleton)) stored USING (key)
+  WHERE live.value IS DISTINCT FROM stored.value LIMIT 1) USING ERRCODE='P7996'; END IF;
  IF EXISTS(
   SELECT 1 FROM (VALUES
   ('official_v3_guard_private.catalog_status_v1()','aaf93dcd12350720cac4ce76e557043908760034d353851e9de6c6094bea3086'),
@@ -396,11 +410,14 @@ AS $renew$
 DECLARE a official_v3_at_production_private.ch_renewal_go_v3%ROWTYPE; previous bigint; evidence jsonb;
  instant_at timestamptz; checked timestamptz; until_at timestamptz;
 BEGIN
+ IF session_user<>'postgres' OR current_user<>session_user THEN RETURN 0; END IF;
+ -- Same ascending order as enqueue (771112,1) and legacy renew_ch_v1 (771112,2).
+ PERFORM pg_advisory_xact_lock(771112,1);
+ PERFORM pg_advisory_xact_lock(771112,2);
+ PERFORM pg_advisory_xact_lock(771112,34);
  IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
  OR EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)
  THEN RETURN 0; END IF;
- IF session_user<>'postgres' OR current_user<>session_user
- OR NOT pg_try_advisory_xact_lock(771112,34) THEN RETURN 0; END IF;
  PERFORM official_v3_guard_private.require_open_v1();
  PERFORM official_v3_guard_private.assert_catalog_v1();
  SELECT * INTO a FROM official_v3_at_production_private.ch_renewal_go_v3 WHERE authorization_id=p_authorization FOR SHARE;
@@ -431,6 +448,9 @@ BEGIN
  -- Last fresh reproof before insert, still within the same transaction.
  PERFORM official_v3_guard_private.require_open_v1();
  IF official_v3_at_production_private.stage2_evidence_ch_v3(a.batch_id,a.source_operation_id) IS DISTINCT FROM evidence
+ THEN RETURN 0; END IF;
+ IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
+ OR EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_stage3_renewal_hold_v1)
  THEN RETURN 0; END IF;
  INSERT INTO official_v3_at_production_private.ch_visa_facts_v3(version_id,authorization_id,source_operation_id,source_batch_id,source_digest,
   method_epoch,source_checked_at,verified_at,expires_at)
@@ -739,6 +759,119 @@ END
 $function$;
 REVOKE ALL ON FUNCTION official_v3_guard_private.stage3_parent_binding_v1()
  FROM PUBLIC,anon,authenticated,service_role;
+CREATE FUNCTION official_v3_guard_private.stage3_require_allowed_delta_v1()
+ RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'pg_catalog' AS $delta$
+DECLARE pre jsonb; post jsonb; changed text; added text; allowed_change text[]; allowed_oid oid[];
+BEGIN
+ SELECT catalog INTO STRICT pre FROM at_stage3_pre_catalog;
+ post:=official_v3_guard_private.catalog_status_v1();
+ allowed_change:=ARRAY[
+  'function:'||to_regprocedure('official_v3_guard_private.assert_catalog_v1()')::oid::text,
+  'function:'||to_regprocedure('official_v3_guard_private.require_open_v1()')::oid::text,
+  'function:'||to_regprocedure('public.official_v3_guard_alarm_status_v1()')::oid::text,
+  'function:'||to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid::text];
+ SELECT coalesce(array_agg(DISTINCT object_id),ARRAY[]::oid[]) INTO allowed_oid FROM (
+  SELECT to_regclass(name)::oid AS object_id FROM unnest(ARRAY[
+   'official_v3_guard_private.bg1_prod_ch_at_stage3_v8',
+   'official_v3_at_production_private.ch_stage3_renewal_hold_v1',
+   'official_v3_at_production_private.ch_renewal_go_v3',
+   'official_v3_at_production_private.ch_visa_facts_v3',
+   'official_v3_at_production_private.ch_visa_publication_v3',
+   'official_v3_at_production_private.ch_stage3_renewal_hold_v1_hold_id_seq',
+   'official_v3_at_production_private.ch_visa_publication_v3_decision_seq_seq']::text[]) AS name
+  UNION SELECT p.oid FROM pg_proc p
+   WHERE p.pronamespace IN (to_regnamespace('official_v3_at_production_private'),to_regnamespace('official_v3_guard_private'))
+   AND NOT (SELECT catalog FROM at_stage3_pre_catalog) ? ('function:'||p.oid::text)
+  UNION SELECT to_regprocedure(name)::oid FROM unnest(ARRAY[
+   'official_v3_at_production_private.stage2_evidence_ch_v3(bigint,text)',
+   'official_v3_at_production_private.stage2_history_ch_v3(bigint,text)',
+   'official_v3_at_production_private.stage2_method_ch_v3()',
+   'official_v3_at_production_private.renew_ch_v3(text)',
+   'official_v3_at_production_private.read_ch_v3(text)',
+   'official_v3_at_production_private.read_published_ch_v3(text)',
+   'official_v3_guard_private.stage3_parent_binding_v1()',
+   'official_v3_guard_private.stage3_require_allowed_delta_v1()']::text[]) AS name
+  UNION SELECT reltoastrelid FROM pg_class WHERE oid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3')) AND reltoastrelid<>0
+  UNION SELECT indexrelid FROM pg_index WHERE indrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+   OR indrelid IN (SELECT reltoastrelid FROM pg_class WHERE oid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3')) AND reltoastrelid<>0)
+  UNION SELECT oid FROM pg_type WHERE typrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+  UNION SELECT typarray FROM pg_type WHERE typrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3')) AND typarray<>0
+  UNION SELECT oid FROM pg_constraint WHERE conrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+  UNION SELECT oid FROM pg_trigger WHERE tgrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+  UNION SELECT oid FROM pg_policy WHERE polrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+  UNION SELECT oid FROM pg_attrdef WHERE adrelid IN (
+   to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+   to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+   to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+   to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+ ) AS owned(object_id) WHERE object_id IS NOT NULL;
+ IF EXISTS(SELECT 1 FROM jsonb_object_keys(pre) AS old_key WHERE NOT post ? old_key) THEN
+  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT removed' USING ERRCODE='P7996'; END IF;
+ FOR changed IN SELECT each.key FROM jsonb_each(post) AS each
+  WHERE pre ? each.key AND each.value IS DISTINCT FROM pre->each.key LOOP
+  IF changed=ANY(allowed_change) THEN CONTINUE; END IF;
+  IF changed LIKE 'relation:%' AND NOT EXISTS(
+   SELECT 1 FROM jsonb_each(post->changed) AS field(key,value)
+   WHERE field.key<>'relhastriggers' AND field.value IS DISTINCT FROM (pre->changed)->field.key)
+  THEN CONTINUE; END IF;
+  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT changed %', changed USING ERRCODE='P7996';
+ END LOOP;
+ FOR added IN SELECT each.key FROM jsonb_each(post) AS each WHERE NOT pre ? each.key LOOP
+  IF EXISTS(SELECT 1 FROM unnest(allowed_oid) AS object_id
+    WHERE added ~ ('(^|[^0-9])'||object_id::text||'([^0-9]|$)')) THEN CONTINUE; END IF;
+  IF EXISTS(SELECT 1 FROM unnest(allowed_change) AS changed_key
+    WHERE added ~ ('(^|[^0-9])'||substring(changed_key from '[0-9]+')||'([^0-9]|$)'))
+  THEN CONTINUE; END IF;
+  IF added LIKE 'trigger:%' AND EXISTS(
+   SELECT 1 FROM pg_trigger t WHERE t.oid=substring(added from 'trigger:([0-9]+)')::oid AND t.tgisinternal
+   AND t.tgconstraint IN (SELECT c.oid FROM pg_constraint c WHERE c.conrelid=ANY(allowed_oid)))
+  THEN CONTINUE; END IF;
+  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT added %', added USING ERRCODE='P7996';
+ END LOOP;
+END $delta$;
+REVOKE ALL ON FUNCTION official_v3_guard_private.stage3_require_allowed_delta_v1()
+ FROM PUBLIC,anon,authenticated,service_role;
 INSERT INTO official_v3_guard_private.bg1_prod_ch_at_stage3_v8(
  singleton,predecessor_catalog_digest,predecessor_baseline_digest,
  source_digest,required_generation,proof_not_before,catalog)
@@ -753,6 +886,7 @@ WHERE v6.singleton AND s.singleton;
 DO $stage3_close$
 DECLARE before_row at_stage3_count_snapshot%ROWTYPE;
 BEGIN
+ PERFORM official_v3_guard_private.stage3_require_allowed_delta_v1();
  PERFORM official_v3_guard_private.stage3_parent_binding_v1();
  SELECT * INTO STRICT before_row FROM at_stage3_count_snapshot;
  IF to_regclass('official_v3_guard_private.bg1_prod_ch_at_source_rollback_v7') IS NOT NULL
@@ -774,6 +908,11 @@ BEGIN
  OR EXISTS(SELECT 1 FROM cron.job WHERE command LIKE '%renew_ch_v3%')
  OR (SELECT proparallel FROM pg_proc WHERE oid=to_regprocedure('official_v3_at_production_private.renew_ch_v1()'))<>'u'
  OR (SELECT proparallel FROM pg_proc WHERE oid=to_regprocedure('official_v3_guard_private.assert_catalog_v1()'))<>'u'
+ OR has_function_privilege('anon','official_v3_at_production_private.renew_ch_v3(text)','EXECUTE')
+ OR has_function_privilege('service_role','official_v3_at_production_private.read_ch_v3(text)','EXECUTE')
+ OR has_table_privilege('service_role','official_v3_at_production_private.ch_stage3_renewal_hold_v1','INSERT')
+ OR NOT (SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='official_v3_guard_private.bg1_prod_ch_at_stage3_v8'::regclass)
+ OR NOT (SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='official_v3_at_production_private.ch_visa_facts_v3'::regclass)
  THEN RAISE EXCEPTION 'AT_STAGE3_LANE_OR_PUBLICATION_DRIFT' USING ERRCODE='P7996'; END IF;
  BEGIN
   PERFORM official_v3_guard_private.require_open_v1();
@@ -783,10 +922,7 @@ BEGIN
  IF public.official_v3_guard_alarm_status_v1()->>'status' IS DISTINCT FROM 'unavailable'
  THEN RAISE EXCEPTION 'AT_STAGE3_ALARM_STILL_CURRENT_BEFORE_NATURAL_PROOF' USING ERRCODE='P7996'; END IF;
 END $stage3_close$;
--- Historical production catalog chain. A synthetic database must fail closed
--- here; that refusal is not a positive Production catalog proof.
-DO $stage3_historical_chain$
-BEGIN
- PERFORM official_v3_guard_private.assert_catalog_v1();
-END $stage3_historical_chain$;
+-- Runtime assert_catalog_v1 still carries the production digest pins. Executing
+-- that chain against a synthetic catalog is not this installer's success path.
+-- The exact production catalog remains a separate release-chat gate.
 COMMIT;
