@@ -216,6 +216,13 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+/* Schalter der Angebotssuche: ein bedienbares Feld, dessen Kante allein die Fläche zeigt.
+   Kante und Grund kommen wie bei den Eingabefeldern aus den Hell/Dunkel-Tokens (Kante ≥ 3:1);
+   die ruhige Kartenkante `border-input` genügt dafür nicht (1,28:1). */
+.org-workspace [data-organisieren-suche-toggle] {
+  border-color: var(--org-feld-kante);
+  background-color: var(--org-feld-grund);
+}
 .org-formtop,
 .org-sectionhead,
 .org-cardactions,

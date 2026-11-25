@@ -7,7 +7,7 @@ import { after, before, describe, test } from 'node:test'
 
 import { chromium, type Browser, type Page } from 'playwright'
 
-import { paarePruefen, type Paar } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
+import { kontrast, paarePruefen, type Paar } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
 import { ANBIETER_RAHMEN, bundeln, dokument, projektCss } from '@/lib/ui/workspace-niveau-1/bundle'
 import dynamicGeladen from '@/lib/ui/workspace-niveau-1/dynamic-geladen'
 
@@ -44,6 +44,16 @@ const ANSICHTEN = [
   { name: 'vorbereitung', suche: '?ansicht=vorbereitung', ueberschrift: 'Was diese Reise offiziell und persönlich braucht' },
   { name: 'einreise', suche: '?ansicht=einreise', ueberschrift: 'Einreise und Visum prüfen' },
 ] as const
+
+/** #1312: Anbieterformulare liegen hinter einem Schalter. Der Text des Schalters wechselt beim Öffnen. */
+const SUCHAKTIONEN = [
+  { key: 'fluege', tab: 'Flüge', aktion: 'Weitere Flüge suchen' },
+  { key: 'unterkunft', tab: 'Unterkunft', aktion: 'Neue Unterkünfte suchen' },
+  { key: 'aktivitaeten', tab: 'Aktivitäten', aktion: 'Weitere Aktivitäten entdecken' },
+  { key: 'mietwagen', tab: 'Mietwagen', aktion: 'Mietwagenangebote suchen' },
+  { key: 'verbindungen', tab: 'Verbindungen', aktion: 'Weitere Verbindungen suchen' },
+] as const
+const SUCHE_SCHLIESSEN = 'Angebotssuche schliessen'
 
 const OMIO_REGISTER = {
   date: '2026-11-20',
@@ -138,7 +148,7 @@ async function oeffnen(breite: number, thema: 'light' | 'dark', hoehe = 844, sch
   return { context, page, fehler, fremd }
 }
 
-async function gehe(page: Page, suche: string, klick?: string) {
+async function gehe(page: Page, suche: string, klick?: string, suchflaeche: 'offen' | 'zu' = 'offen') {
   await page.evaluate((ziel) => {
     window.history.pushState(window.history.state, '', ziel)
     window.dispatchEvent(new PopStateEvent('popstate'))
@@ -158,8 +168,9 @@ async function gehe(page: Page, suche: string, klick?: string) {
     // #1312: Anbieterformulare sind absichtlich erst nach einer ausdrücklichen Aktion sichtbar.
     const schalter = page.locator(`[data-organisieren-suche-toggle="${kategorie}"]`)
     await schalter.waitFor({ state: 'visible' })
-    if (await schalter.getAttribute('aria-expanded') !== 'true') await schalter.click()
-    await page.locator(`[data-organisieren-suche="${kategorie}"]`).waitFor({ state: 'visible' })
+    const gewuenscht = suchflaeche === 'offen'
+    if ((await schalter.getAttribute('aria-expanded') === 'true') !== gewuenscht) await schalter.click()
+    await page.locator(`[data-organisieren-suche="${kategorie}"]`).waitFor({ state: gewuenscht ? 'visible' : 'hidden' })
   }
 }
 
@@ -276,6 +287,79 @@ async function messen(page: Page): Promise<Messung> {
       navUmbruch,
     }
   })
+}
+
+function fehlerAus(m: Messung, wo: string): string[] {
+  const meldungen: string[] = []
+  if (m.ueberlauf > 1) meldungen.push(`${wo}: seitlicher Überlauf ${m.ueberlauf}px`)
+  for (const [art, liste] of Object.entries({ ragt: m.ragt, kleinFeld: m.kleinFeld, ziele: m.ziele, kleinText: m.kleinText, platzhalter: m.platzhalter, abgeschnitten: m.abgeschnitten, navUmbruch: m.navUmbruch })) {
+    if (liste.length) meldungen.push(`${wo}: ${art} ${JSON.stringify(liste)}`)
+  }
+  return meldungen
+}
+
+/**
+ * Lage der ersten Zeile unter dem Reiter: die erste gespeicherte Leistung, sonst die Überschrift
+ * des Leerzustands. Sie darf weder unter der festen Kopfzeile noch unter der festen Fussleiste
+ * liegen und muss an ihrer Oberkante tatsächlich getroffen werden.
+ */
+async function ersteZeileLage(page: Page, kategorie: string) {
+  return page.evaluate((key) => {
+    const bereich = document.querySelector(`[data-organisieren-bestand="${key}"]`)
+    const zeile = bereich?.querySelector('button.org-bestand-zeile') ?? bereich?.querySelector('h3') ?? null
+    if (!bereich || !zeile) return { fehlt: true as const }
+    const fest = (e: Element) => ['fixed', 'sticky'].includes(getComputedStyle(e).position) && e.getBoundingClientRect().height > 0
+    const kopf = [...document.querySelectorAll('header')].filter(fest).reduce((unten, e) => Math.max(unten, e.getBoundingClientRect().bottom), 0)
+    const dock = [...document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')]
+      .filter((e) => getComputedStyle(e).position === 'fixed' && e.getBoundingClientRect().height > 0)
+      .reduce((oben, e) => Math.min(oben, e.getBoundingClientRect().top), window.innerHeight)
+    const r = zeile.getBoundingClientRect()
+    const x = r.left + Math.min(r.width / 2, 24)
+    const y = r.top + Math.min(r.height / 2, 12)
+    const treffer = y >= 0 && y < window.innerHeight ? document.elementFromPoint(x, y) : null
+    return { fehlt: false as const, oben: Math.round(r.top), unten: Math.round(r.bottom), kopf: Math.round(kopf), dock: Math.round(dock), hoehe: window.innerHeight, getroffen: Boolean(treffer && bereich.contains(treffer)) }
+  }, kategorie)
+}
+
+/** Fokus per Tastatur auf den Schalter der Angebotssuche, ausgehend vom gewählten Reiter. */
+async function fokusAufSchalter(page: Page, kategorie: string) {
+  await page.locator('[role=tab][aria-selected=true]').first().focus()
+  for (let schritt = 0; schritt < 16; schritt += 1) {
+    await page.keyboard.press('Tab')
+    if (await page.evaluate((key) => Boolean(document.activeElement?.matches(`[data-organisieren-suche-toggle="${key}"]`)), kategorie)) return true
+  }
+  return false
+}
+
+/** Sichtbarer Fokusring: Umriss oder voller Ring (Schatten ohne Unschärfe) von mindestens 2 px, 3:1 zur Fläche dahinter. */
+async function fokusRing(page: Page) {
+  const lage = await page.evaluate(() => {
+    const el = document.activeElement as HTMLElement
+    const s = getComputedStyle(el)
+    const lesen = (text: string) => {
+      const t = text.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/)
+      return t ? [Number(t[1]), Number(t[2]), Number(t[3]), t[4] === undefined ? 1 : Number(t[4])] : null
+    }
+    const lagen: { art: string; farbe: number[]; breite: number }[] = []
+    const umriss = lesen(s.outlineColor)
+    if (s.outlineStyle !== 'none' && umriss) lagen.push({ art: 'outline', farbe: umriss, breite: parseFloat(s.outlineWidth) })
+    for (const t of s.boxShadow.matchAll(/(rgba?\([^)]*\))\s+(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px(?:\s+(-?[\d.]+)px)?(\s+inset)?/g)) {
+      const farbe = lesen(t[1]!)
+      if (farbe && !t[6] && Number(t[2]) === 0 && Number(t[3]) === 0 && Number(t[4]) === 0) lagen.push({ art: 'ring', farbe, breite: Number(t[5] ?? 0) })
+    }
+    let grund: number[] | null = null
+    for (let n = el.parentElement; n && !grund; n = n.parentElement) {
+      const f = lesen(getComputedStyle(n).backgroundColor)
+      if (f && f[3] >= 0.99) grund = f
+    }
+    return { lagen, grund }
+  })
+  if (!lage.grund) return { ok: false, text: 'kein deckender Hintergrund hinter dem Schalter' }
+  const grund = [lage.grund[0]!, lage.grund[1]!, lage.grund[2]!] as const
+  const messwerte = lage.lagen
+    .filter((l) => l.farbe[3]! >= 0.99 && l.breite >= 2)
+    .map((l) => ({ ...l, kontrast: kontrast([l.farbe[0]!, l.farbe[1]!, l.farbe[2]!], grund) }))
+  return { ok: messwerte.some((l) => l.kontrast >= 3), text: JSON.stringify({ lagen: lage.lagen, grund, messwerte }) }
 }
 
 test('der Ersatz für next/dynamic lädt die echte Komponente', () => {
@@ -456,5 +540,80 @@ describe('Workspace-Niveau im echten Browser', () => {
         await context.close()
       }
     }
+  })
+  test('Angebotssuche (#1312): geschlossen und offen in allen fünf Kategorien bei 320 bis 430 px in Hell und Dunkel', async () => {
+    const meldungen: string[] = []
+    const audit = async (page: Page, wo: string, aktion: string) => {
+      const paare = await page.evaluate(() => (window.__whiteMintPaareSammeln ? window.__whiteMintPaareSammeln('.workspace-content') : []))
+      const urteil = paarePruefen(paare, [aktion, `${aktion} border`])
+      if (!urteil.ok) meldungen.push(`${wo}: Kontrast ${urteil.fehler.slice(0, 4).join(' | ')}`)
+    }
+    const zeilePruefen = async (page: Page, key: string, wo: string) => {
+      const lage = await ersteZeileLage(page, key)
+      if (lage.fehlt) return meldungen.push(`${wo}: erste Zeile fehlt`)
+      if (!lage.getroffen) meldungen.push(`${wo}: erste Zeile wird an der Oberkante nicht getroffen ${JSON.stringify(lage)}`)
+      if (lage.oben < lage.kopf - 0.5) meldungen.push(`${wo}: erste Zeile liegt unter der Kopfzeile ${JSON.stringify(lage)}`)
+      if (lage.oben >= lage.dock) meldungen.push(`${wo}: erste Zeile liegt unter der Fussleiste ${JSON.stringify(lage)}`)
+    }
+    const schalterPruefen = async (page: Page, key: string, wo: string, offen: boolean) => {
+      const schalter = page.locator(`[data-organisieren-suche-toggle="${key}"]`)
+      const flaeche = page.locator(`[data-organisieren-suche="${key}"]`)
+      assert.equal(await schalter.getAttribute('aria-expanded'), String(offen), `${wo}: aria-expanded`)
+      assert.equal(await flaeche.isVisible(), offen, `${wo}: Suchfläche ${offen ? 'nicht sichtbar' : 'sichtbar'}`)
+      const gesteuert = await schalter.getAttribute('aria-controls')
+      assert.equal(await page.locator(`[id="${gesteuert}"]`).getAttribute('data-organisieren-suche'), key, `${wo}: aria-controls zeigt nicht auf die Suchfläche`)
+      const kasten = await schalter.evaluate((el) => {
+        const r = el.getBoundingClientRect()
+        return { links: r.left, rechts: r.right, hoehe: r.height, iw: window.innerWidth }
+      })
+      if (kasten.links < -0.5 || kasten.rechts > kasten.iw + 0.5) meldungen.push(`${wo}: Schalter ausserhalb des Bildes ${JSON.stringify(kasten)}`)
+      if (kasten.hoehe < 43.5) meldungen.push(`${wo}: Schalter nur ${Math.round(kasten.hoehe)}px hoch`)
+    }
+
+    for (const thema of THEMEN) {
+      for (const breite of BREITEN) {
+        const { context, page, fehler, fremd } = await oeffnen(breite, thema)
+        for (const [index, { key, tab, aktion }] of SUCHAKTIONEN.entries()) {
+          const wo = (zustand: string) => `${key} ${zustand} ${breite}px ${thema}`
+          if (index === 0) await gehe(page, `?ansicht=organisieren&kategorie=${key}`, undefined, 'zu')
+          else {
+            await page.getByRole('tab', { name: tab, exact: true }).click()
+            await page.locator(`[data-organisieren-suche-toggle="${key}"]`).waitFor({ state: 'visible' })
+            await page.waitForTimeout(300)
+            await zeilePruefen(page, key, wo('nach Reiterwechsel'))
+          }
+          await schalterPruefen(page, key, wo('geschlossen'), false)
+          meldungen.push(...fehlerAus(await messen(page), wo('geschlossen')))
+          await audit(page, wo('geschlossen'), aktion)
+
+          assert.ok(await fokusAufSchalter(page, key), `${wo('geschlossen')}: Schalter per Tab nicht erreichbar`)
+          const ring = await fokusRing(page)
+          if (!ring.ok) meldungen.push(`${wo('geschlossen')}: Fokusring unter 3:1 oder zu schmal ${ring.text}`)
+
+          await page.keyboard.press('Enter')
+          await page.locator(`[data-organisieren-suche="${key}"]`).waitFor({ state: 'visible' })
+          assert.equal(await page.evaluate((k) => document.activeElement?.matches(`[data-organisieren-suche-toggle="${k}"]`) ?? false, key), true, `${wo('offen')}: Fokus geht beim Öffnen verloren`)
+          await page.waitForTimeout(200)
+          await schalterPruefen(page, key, wo('offen'), true)
+          assert.equal((await page.locator(`[data-organisieren-suche-toggle="${key}"]`).innerText()).trim(), SUCHE_SCHLIESSEN, `${wo('offen')}: Schaltertext`)
+          meldungen.push(...fehlerAus(await messen(page), wo('offen')))
+          await audit(page, wo('offen'), SUCHE_SCHLIESSEN)
+          const offenerRing = await fokusRing(page)
+          if (!offenerRing.ok) meldungen.push(`${wo('offen')}: Fokusring unter 3:1 oder zu schmal ${offenerRing.text}`)
+
+          await page.keyboard.press('Space')
+          await page.locator(`[data-organisieren-suche="${key}"]`).waitFor({ state: 'hidden' })
+          await schalterPruefen(page, key, wo('wieder geschlossen'), false)
+        }
+        await page.getByRole('tab', { name: SUCHAKTIONEN[0].tab, exact: true }).click()
+        await page.locator(`[data-organisieren-suche-toggle="${SUCHAKTIONEN[0].key}"]`).waitFor({ state: 'visible' })
+        await page.waitForTimeout(300)
+        await zeilePruefen(page, SUCHAKTIONEN[0].key, `${SUCHAKTIONEN[0].key} nach Reiterwechsel ${breite}px ${thema}`)
+        assert.deepEqual(fehler, [], `Skriptfehler bei ${breite}px ${thema}`)
+        assert.deepEqual(fremd, [], 'keine fremden Anfragen')
+        await context.close()
+      }
+    }
+    assert.deepEqual(meldungen, [], meldungen.slice(0, 40).join('\n'))
   })
 })
