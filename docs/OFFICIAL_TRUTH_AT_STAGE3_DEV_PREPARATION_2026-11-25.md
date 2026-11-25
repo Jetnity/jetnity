@@ -31,30 +31,35 @@ Parent-Funktionskörper SHA-256, aus dem installierten V6-Text und gegen Postgre
 
 Der V6-Katalogdigest ist kein Git-Pin. Ein erfundener Wert wäre eine gefälschte Quittung. Der Installer bricht ohne den frischen Readback ab.
 
-## Review-Nachzug 4b0cdbe7
+## Review-Nachzug auf `752f32baa`
 
-Der Technical Lead hat den ersten Head mit NO-GO belegt. Der korrigierte Stand:
+Der Technical Lead hat `752f32baa` mit NO-GO belegt. Der Installer ruft `assert_catalog_v1()` zweimal verpflichtend auf: einmal vor jedem Stage-3-DDL, solange der Körper noch V6 ist, und einmal am Ende, wenn der V8-Körper steht. Eine fehlschlagende Kette bricht die Transaktion ab. Auf der synthetischen Datenbank liefern deshalb sowohl `production-stage3.ROLLBACK-PROBE.sql` als auch `production-stage3.COMMIT-CANDIDATE.sql` `P7905` / `production rolling protected catalog changed` und rollen zurück. V8, Fakten, Publikation, Hold und die Erneuerungstabelle bleiben abwesend. Die vier V6-Funktionskörper bleiben auf den Pins oben.
 
-- Der Preflight zählt das Publikationsjournal per dynamischem SQL. Auf einem isolierten V6 ohne Stage-3-Tabelle ist `publication_count` null; mit zwei Zeilen ist es 2. Beides auf PostgreSQL 17.12 gelaufen.
-- Vor jedem DDL vergleicht der Installer den lebendigen `catalog_status_v1()` mit dem gespeicherten V6-Katalog. Danach sind nur die Stage-3-Objekte, die vier ersetzten Funktionskörper und interne Fremdschlüssel-Trigger erlaubt. Fremder Drift bricht mit `P7996` / `AT_STAGE3_V6_LIVE_CATALOG_DRIFT` oder `AT_STAGE3_FOREIGN_CATALOG_DRIFT` ab. Der exakte Production-Katalog bleibt ein Release-Gate: `assert_catalog_v1()` auf der synthetischen Datenbank liefert `P7905`.
-- `renew_ch_v3` und der Withdrawal nehmen `771112,1`, dann `771112,2` (Legacy-Publisher), dann `771112,34`. Der Hold wird nach dem Schloss und noch einmal unmittelbar vor dem Insert geprüft.
-- Zwei gleichzeitige `renew_ch_v3` derselben Autorisierung erzeugen genau eine Faktversion 83. Zwei verschiedene Autorisierungen mit demselben Vorgänger erzeugen höchstens eine weitere monotone Version. Ein Rennen von Renew und Withdrawal endet ohne Deadlock; danach liefert Renew 0 und der Hold bleibt.
+`native-isolated-guard.sql` ist keine Installationsdatei und steht nicht im Manifest. Die Datei ist dieselbe Paketkomposition ohne genau diese zwei markierten Aufrufe, damit die synthetische Abnahme den Guard-Übergang, die Delta-Prüfung und die Rennen ausführen kann. Sie darf nie auf Production laufen. Nach diesem isolierten Commit ist `assert_catalog_v1()` der echte V8-Körper und liefert `P7905`. `require_open_v1()` liefert `P7902` / `bg1 recovery fresh full proof required`. Der Alarm steht auf `unavailable`.
+
+Die Delta-Prüfung nennt Tabellen, Sequenzen, Funktionen, Toast, Indizes, Typen, Constraints, Trigger, Policies und Defaults. Geänderte Altfunktionen dürfen nur im Feld `definition` abweichen. Einzige ausdrückliche Ausnahme: `public.jetnity_source_bound_at_visa_v1(text)` wechselt durch den unveränderten Stage-2-Wrapper von SQL nach PL/pgSQL, samt genau der zugehörigen Sprachabhängigkeit. `relhastriggers` darf nur auf einer Relation kippen, die Ziel eines neuen Fremdschlüssels aus einer genannten Stage-3-Tabelle ist. Interne Fremdschlüssel-Trigger dieser Constraints sind mit ihrem konkreten OID gebunden. Ein regulärer Ausdruck über beliebige Ziffern in einem Katalogschlüssel ist nicht erlaubt.
+
+Das UNIQUE auf `ch_renewal_go_v3.batch_id` wird nach dem wortgleichen Stage-2-Modul und vor dem Delta-Vergleich entfernt, damit zwei Freigaben dieselbe jüngste Charge tragen können. Die Faktzeile bleibt je Charge eindeutig. Der Abgleich sieht die Einschränkung weder vorher noch nachher.
 
 ## Native PostgreSQL 17
 
 Befehl, isoliertes Cluster, Benutzer `postgres`, nur Unix-Socket, Version `postgres (PostgreSQL) 17.12`:
 
-`node --import tsx --test lib/readiness/official-truth-at-method-v1/at-stage3-native.test.ts`
+`node --import tsx --test lib/readiness/official-truth-at-method-v1/at-stage3-native.test.ts lib/readiness/official-truth-at-method-v1/at-stage3-package.test.ts`
 
-Ergebnis lokal nach dem Review-Nachzug: 1 nativer Test und der Paketvergleich, 0 Fehler. Tatsächlich gelaufen:
+Ergebnis lokal nach diesem Nachzug: 3 Tests, 0 Fehler. Tatsächlich gelaufen:
 
-- Erneuerungsregeln ohne Hold: Faktversion 83, Replay, falscher Digest, falscher Vorgänger, Ablauf, geänderte Quelle, zurückgesetzte Quelle bei weiterhin qualifizierter letzter Charge, unvollständige Charge, DE/FR/ES/IT/IN. Ein sauberer Folgebatch erneuert; derselbe Batch mit Hold ergibt 0. Token `AT_STAGE3_RENEWAL_RULES_PASS`.
-- Preflight auf isoliertem V6: `publication_count` null. Danach mit zwei Zeilen: 2.
-- Die Datei `production-stage3.ROLLBACK-PROBE.sql` läuft auf dem isolierten V6, dessen gespeicherter Katalog dem lebendigen `catalog_status_v1()` entspricht, und endet mit `AT_STAGE3_ROLLBACK_PROBE_CLEAN`. V8 ist danach abwesend.
-- Fremde Tabelle, leerer Digest, vorhandener V7-Marker und veränderter `catalog_status_v1`-Körper: jeweils `P7996` mit dem genannten Marker. Kein pauschales `42P01`.
-- `assert_catalog_v1()` nach dem isolierten Commit: `P7905`.
-- `production-stage3.WITHDRAWAL-REHEARSAL.sql` nach dem isolierten Commit-Kandidaten: `AT_STAGE3_WITHDRAWAL_ROLLBACK_CLEAN`, Hold-Zähler 0, V8 bleibt.
-- Zwei Sessions, dieselbe Autorisierung: genau eine Faktversion 83. Zwei Autorisierungen, derselbe Vorgänger: höchstens eine weitere monotone Version. Renew gegen die Withdrawal-Datei: kein Deadlock, danach Renew 0, Hold vorhanden.
+- Parser: die primäre `ERROR`-Zeile kommt nur aus stderr. Ein späterer `ERROR` zählt nicht. `absent` ist kein boolesches `t`.
+- Erneuerungsregeln ohne Hold: Faktversion 83, Replay, falscher Digest, falscher Vorgänger, Ablauf, geänderte Quelle, zurückgesetzte Quelle, unvollständige Charge, DE/FR/ES/IT/IN. Token `AT_STAGE3_RENEWAL_RULES_PASS`.
+- Preflight: `publication_count` null, danach 2.
+- Echte Probe und echter Commit-Kandidat auf dem synthetischen Parent: beide `P7905`, Rollback, V6-Pins unverändert.
+- Fremde Tabelle vor dem Gate: `P7996` / `AT_STAGE3_V6_LIVE_CATALOG_DRIFT`. Leerer Digest und vorhandener V7-Marker: `P7996` mit dem jeweiligen Marker.
+- Isolierte Komposition: veränderter `catalog_status_v1`-Körper `P7996` / `AT_STAGE3_V6_PARENT_FUNCTION_DRIFT`. Danach, nach dem Pre-Snapshot, eine fremde Funktion, eine fremde Relation und `GRANT EXECUTE` auf `renew_ch_v1`: jeweils `P7996` / `AT_STAGE3_FOREIGN_CATALOG_DRIFT`, Rollback.
+- Dieselbe isolierte Komposition ohne diese Eingriffe committet. Danach echter V8-Assert `P7905`, `require_open_v1` `P7902`, Alarm `unavailable`. Withdrawal-Rehearsal `AT_STAGE3_WITHDRAWAL_ROLLBACK_CLEAN`, Hold 0.
+- Zwei gleichzeitige Aufrufe unter dem echten V8-Guard: beide `0`, keine Faktzeile.
+- Nach dem markierten Stub: Fakt 83 aus Charge 690. Zwei verschiedene Freigaben auf der jüngsten Charge 692, beide Vorgänger 83, beide Digest von 692. Jede für sich in einer zurückgerollten Transaktion `1`. Gleichzeitig genau `0` und `1` und genau Faktversion 84.
+- Withdrawal zuerst, überlappend auf den Advisory-Locks `771112`: Renew `0`, Fakt bleibt 83, Hold 1, Publikation `hold`.
+- Renew zuerst gegen Withdrawal auf Charge 693 mit Digest von 693, Vorgänger 84, positive Kontrolle vorher `1`: Renew `1`, Faktversion 85, Hold 1, Publikation `hold`, danach Renew `0`. Kein Deadlock und kein Lock-Timeout als PASS.
 
 Nicht gelaufen und nicht als PASS gewertet:
 

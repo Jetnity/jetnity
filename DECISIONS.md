@@ -6642,4 +6642,4 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 
 **Begründung:** Die Parent-Funktionskörper sind aus dem bereits installierten V6-Text prüfbar. Der Katalog-JSON ist es ohne frischen Readback nicht. Fail-closed ist deshalb der ehrliche Installer.
 
-**Konsequenzen:** Keine Production-Änderung, keine Kosten, keine Oberfläche, kein Besucherflag. Installation, Faktenerneuerung, Rechtstext, Publikation und Besucherflag bleiben eigene PO-Gates. Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`.
+**Konsequenzen:** Keine Production-Änderung, keine Kosten, keine Oberfläche, kein Besucherflag. Installation, Faktenerneuerung, Rechtstext, Publikation und Besucherflag bleiben eigene PO-Gates. Der Produktionskandidat behält beide historischen `assert_catalog_v1()`-Aufrufe. Eine synthetische Komposition ohne genau diese zwei Aufrufe ist als `native-isolated-guard.sql` gekennzeichnet und gehört nicht zum Installationsmanifest. Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`.

@@ -47,6 +47,8 @@ BEGIN
   SELECT coalesce(live.key,stored.key) FROM jsonb_each((SELECT catalog FROM at_stage3_pre_catalog)) live
   FULL JOIN jsonb_each((SELECT catalog FROM official_v3_guard_private.bg1_prod_ch_at_source_v6 WHERE singleton)) stored USING (key)
   WHERE live.value IS DISTINCT FROM stored.value LIMIT 1) USING ERRCODE='P7996'; END IF;
+ -- Full historical V6 chain, while assert_catalog_v1 is still the V6 body.
+ PERFORM official_v3_guard_private.assert_catalog_v1();
  IF EXISTS(
   SELECT 1 FROM (VALUES
   ('official_v3_guard_private.catalog_status_v1()','aaf93dcd12350720cac4ce76e557043908760034d353851e9de6c6094bea3086'),
@@ -378,6 +380,8 @@ REVOKE ALL ON FUNCTION official_v3_at_production_private.stage2_evidence_ch_v3(b
  official_v3_at_production_private.stage2_history_ch_v3(bigint,text),official_v3_at_production_private.stage2_method_ch_v3(),
  official_v3_at_production_private.renew_ch_v3(text),official_v3_at_production_private.read_ch_v3(text),
  official_v3_at_production_private.read_published_ch_v3(text) FROM PUBLIC,anon,authenticated,service_role;
+ALTER TABLE official_v3_at_production_private.ch_renewal_go_v3
+ DROP CONSTRAINT ch_renewal_go_v3_batch_id_key;
 -- UNAPPLIED; only assemble with the future exact BG1 successor and separate Production install Go.
 -- Preserve the existing RPC signature and ACL. No public new function or grant.
 -- The publication ledger starts empty; the wrapper then returns unavailable.
@@ -759,6 +763,40 @@ END
 $function$;
 REVOKE ALL ON FUNCTION official_v3_guard_private.stage3_parent_binding_v1()
  FROM PUBLIC,anon,authenticated,service_role;
+CREATE FUNCTION official_v3_guard_private.stage3_added_key_allowed_v1(added text, allowed_oid oid[])
+ RETURNS boolean LANGUAGE plpgsql STABLE SET search_path TO 'pg_catalog' AS $allow$
+DECLARE parts text[];
+BEGIN
+ IF added ~ '^relation:[0-9]+$' THEN
+  RETURN substring(added from '^relation:([0-9]+)$')::oid = ANY(allowed_oid);
+ ELSIF added ~ '^function:[0-9]+$' THEN
+  RETURN substring(added from '^function:([0-9]+)$')::oid = ANY(allowed_oid);
+ ELSIF added ~ '^attribute:[0-9]+:-?[0-9]+$' THEN
+  RETURN substring(added from '^attribute:([0-9]+):')::oid = ANY(allowed_oid);
+ ELSIF added ~ '^type:[0-9]+$' OR added ~ '^constraint:[0-9]+$' OR added ~ '^policy:[0-9]+$'
+  OR added ~ '^default:[0-9]+$' OR added ~ '^index:[0-9]+$' THEN
+  RETURN substring(added from '^[a-z]+:([0-9]+)$')::oid = ANY(allowed_oid);
+ ELSIF added ~ '^rewrite:[0-9]+$' THEN
+  RETURN EXISTS(SELECT 1 FROM pg_rewrite r WHERE r.oid=substring(added from '^rewrite:([0-9]+)$')::oid AND r.ev_class=ANY(allowed_oid));
+ ELSIF added ~ '^trigger:[0-9]+$' THEN
+  RETURN EXISTS(SELECT 1 FROM pg_trigger t WHERE t.oid=substring(added from '^trigger:([0-9]+)$')::oid
+   AND (t.tgrelid=ANY(allowed_oid) OR (t.tgisinternal AND t.tgconstraint IN (
+    SELECT c.oid FROM pg_constraint c WHERE c.contype='f' AND c.conrelid=ANY(allowed_oid)))));
+ ELSIF added = 'dependency:'||'pg_proc'::regclass::oid::text||':'||
+  to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid::text||':0:'||
+  'pg_language'::regclass::oid::text||':'||(SELECT oid::text FROM pg_language WHERE lanname='plpgsql')||':0:n'
+ THEN RETURN true;
+ ELSIF added ~ '^dependency:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[^:]+$'
+  OR added ~ '^shared:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[0-9]+:[^:]+$' THEN
+  parts:=string_to_array(substring(added from '^[a-z]+:(.*)$'),':');
+  RETURN (CASE WHEN added LIKE 'dependency:%' THEN parts[2] ELSE parts[3] END)::oid = ANY(allowed_oid)
+   OR (CASE WHEN added LIKE 'dependency:%' THEN parts[5] ELSE parts[6] END)::oid = ANY(allowed_oid);
+ ELSIF added ~ '^description:[0-9]+:[0-9]+:[0-9]+$' THEN
+  RETURN substring(added from '^description:[0-9]+:([0-9]+):')::oid = ANY(allowed_oid);
+ ELSE RETURN false; END IF;
+END $allow$;
+REVOKE ALL ON FUNCTION official_v3_guard_private.stage3_added_key_allowed_v1(text,oid[])
+ FROM PUBLIC,anon,authenticated,service_role;
 CREATE FUNCTION official_v3_guard_private.stage3_require_allowed_delta_v1()
  RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'pg_catalog' AS $delta$
 DECLARE pre jsonb; post jsonb; changed text; added text; allowed_change text[]; allowed_oid oid[];
@@ -779,9 +817,6 @@ BEGIN
    'official_v3_at_production_private.ch_visa_publication_v3',
    'official_v3_at_production_private.ch_stage3_renewal_hold_v1_hold_id_seq',
    'official_v3_at_production_private.ch_visa_publication_v3_decision_seq_seq']::text[]) AS name
-  UNION SELECT p.oid FROM pg_proc p
-   WHERE p.pronamespace IN (to_regnamespace('official_v3_at_production_private'),to_regnamespace('official_v3_guard_private'))
-   AND NOT (SELECT catalog FROM at_stage3_pre_catalog) ? ('function:'||p.oid::text)
   UNION SELECT to_regprocedure(name)::oid FROM unnest(ARRAY[
    'official_v3_at_production_private.stage2_evidence_ch_v3(bigint,text)',
    'official_v3_at_production_private.stage2_history_ch_v3(bigint,text)',
@@ -790,7 +825,8 @@ BEGIN
    'official_v3_at_production_private.read_ch_v3(text)',
    'official_v3_at_production_private.read_published_ch_v3(text)',
    'official_v3_guard_private.stage3_parent_binding_v1()',
-   'official_v3_guard_private.stage3_require_allowed_delta_v1()']::text[]) AS name
+   'official_v3_guard_private.stage3_require_allowed_delta_v1()',
+   'official_v3_guard_private.stage3_added_key_allowed_v1(text,oid[])']::text[]) AS name
   UNION SELECT reltoastrelid FROM pg_class WHERE oid IN (
    to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
    to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
@@ -833,6 +869,14 @@ BEGIN
    to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
    to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
    to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
+  UNION SELECT t.oid FROM pg_trigger t
+   WHERE t.tgisinternal AND t.tgconstraint IN (
+    SELECT c.oid FROM pg_constraint c WHERE c.contype='f' AND c.conrelid IN (
+     to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
+     to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
+     to_regclass('official_v3_at_production_private.ch_renewal_go_v3'),
+     to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
+     to_regclass('official_v3_at_production_private.ch_visa_publication_v3')))
   UNION SELECT oid FROM pg_policy WHERE polrelid IN (
    to_regclass('official_v3_guard_private.bg1_prod_ch_at_stage3_v8'),
    to_regclass('official_v3_at_production_private.ch_stage3_renewal_hold_v1'),
@@ -846,28 +890,41 @@ BEGIN
    to_regclass('official_v3_at_production_private.ch_visa_facts_v3'),
    to_regclass('official_v3_at_production_private.ch_visa_publication_v3'))
  ) AS owned(object_id) WHERE object_id IS NOT NULL;
- IF EXISTS(SELECT 1 FROM jsonb_object_keys(pre) AS old_key WHERE NOT post ? old_key) THEN
-  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT removed' USING ERRCODE='P7996'; END IF;
+ IF EXISTS(SELECT 1 FROM jsonb_object_keys(pre) AS old_key
+  WHERE NOT post ? old_key AND old_key IS DISTINCT FROM
+   'dependency:'||'pg_proc'::regclass::oid::text||':'||
+   to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid::text||':0:'||
+   'pg_language'::regclass::oid::text||':'||(SELECT oid::text FROM pg_language WHERE lanname='sql')||':0:n') THEN
+  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT removed %', (
+   SELECT old_key FROM jsonb_object_keys(pre) AS old_key
+   WHERE NOT post ? old_key AND old_key IS DISTINCT FROM
+    'dependency:'||'pg_proc'::regclass::oid::text||':'||
+    to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid::text||':0:'||
+    'pg_language'::regclass::oid::text||':'||(SELECT oid::text FROM pg_language WHERE lanname='sql')||':0:n'
+   LIMIT 1) USING ERRCODE='P7996'; END IF;
  FOR changed IN SELECT each.key FROM jsonb_each(post) AS each
   WHERE pre ? each.key AND each.value IS DISTINCT FROM pre->each.key LOOP
-  IF changed=ANY(allowed_change) THEN CONTINUE; END IF;
-  IF changed LIKE 'relation:%' AND NOT EXISTS(
+  IF changed=ANY(allowed_change) AND NOT EXISTS(
+   SELECT 1 FROM jsonb_each(post->changed) AS field(key,value)
+   WHERE field.key<>'definition'
+   AND NOT (changed=('function:'||to_regprocedure('public.jetnity_source_bound_at_visa_v1(text)')::oid::text)
+    AND field.key='prolang'
+    AND (pre->changed->>'prolang')::oid=(SELECT oid FROM pg_language WHERE lanname='sql')
+    AND (post->changed->>'prolang')::oid=(SELECT oid FROM pg_language WHERE lanname='plpgsql'))
+   AND field.value IS DISTINCT FROM (pre->changed)->field.key)
+  THEN CONTINUE; END IF;
+  IF changed ~ '^relation:[0-9]+$' AND NOT EXISTS(
    SELECT 1 FROM jsonb_each(post->changed) AS field(key,value)
    WHERE field.key<>'relhastriggers' AND field.value IS DISTINCT FROM (pre->changed)->field.key)
+  AND EXISTS(SELECT 1 FROM pg_constraint c
+   WHERE c.contype='f' AND c.confrelid=substring(changed from '^relation:([0-9]+)$')::oid
+   AND c.conrelid=ANY(allowed_oid))
   THEN CONTINUE; END IF;
   RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT changed %', changed USING ERRCODE='P7996';
  END LOOP;
  FOR added IN SELECT each.key FROM jsonb_each(post) AS each WHERE NOT pre ? each.key LOOP
-  IF EXISTS(SELECT 1 FROM unnest(allowed_oid) AS object_id
-    WHERE added ~ ('(^|[^0-9])'||object_id::text||'([^0-9]|$)')) THEN CONTINUE; END IF;
-  IF EXISTS(SELECT 1 FROM unnest(allowed_change) AS changed_key
-    WHERE added ~ ('(^|[^0-9])'||substring(changed_key from '[0-9]+')||'([^0-9]|$)'))
-  THEN CONTINUE; END IF;
-  IF added LIKE 'trigger:%' AND EXISTS(
-   SELECT 1 FROM pg_trigger t WHERE t.oid=substring(added from 'trigger:([0-9]+)')::oid AND t.tgisinternal
-   AND t.tgconstraint IN (SELECT c.oid FROM pg_constraint c WHERE c.conrelid=ANY(allowed_oid)))
-  THEN CONTINUE; END IF;
-  RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT added %', added USING ERRCODE='P7996';
+  IF NOT official_v3_guard_private.stage3_added_key_allowed_v1(added, allowed_oid) THEN
+   RAISE EXCEPTION 'AT_STAGE3_FOREIGN_CATALOG_DRIFT added %', added USING ERRCODE='P7996'; END IF;
  END LOOP;
 END $delta$;
 REVOKE ALL ON FUNCTION official_v3_guard_private.stage3_require_allowed_delta_v1()
@@ -921,8 +978,7 @@ BEGIN
  END;
  IF public.official_v3_guard_alarm_status_v1()->>'status' IS DISTINCT FROM 'unavailable'
  THEN RAISE EXCEPTION 'AT_STAGE3_ALARM_STILL_CURRENT_BEFORE_NATURAL_PROOF' USING ERRCODE='P7996'; END IF;
+ -- Full chain again, now the V8 body. Failure aborts the transaction.
+ PERFORM official_v3_guard_private.assert_catalog_v1();
 END $stage3_close$;
--- Runtime assert_catalog_v1 still carries the production digest pins. Executing
--- that chain against a synthetic catalog is not this installer's success path.
--- The exact production catalog remains a separate release-chat gate.
 COMMIT;

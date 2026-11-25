@@ -6,7 +6,7 @@ Branch `cursor/official-truth-at-stage3-dev-a92d` von `main` `69ab3fa203f45cd97e
 
 - Ein unangewandtes Paket: read-only Preflight, ROLLBACK-Probe, COMMIT-Kandidat, Readback, Withdrawal-Probe und Withdrawal. Der V6-Katalogdigest kommt nur aus einem frischen Readback und steht nicht im Git.
 - BG1-Nachfolger `bg1_prod_ch_at_stage3_v8` ist append-only. `catalog_status_v1` bleibt der V6-Körper. V7 bleibt reserviert. `renew_ch_v1`, HTTP-Allocator, CH→DE und die übrigen Cron-Kommandos bleiben.
-- Nach dem NO-GO auf `4b0cdbe7`: schema-toleranter Preflight, lebendiger V6-Katalog vor dem DDL, nur erlaubte Stage-3-Deltas, gemeinsame Sperre `771112,1` dann `2` dann `34`, echte parallele `renew_ch_v3` und Withdrawal-Rennen. `assert_catalog_v1` auf der synthetischen Datenbank bleibt `P7905`; der exakte Production-Katalog ist ein Release-Gate.
+- Nach dem NO-GO auf `752f32baa`: der Produktionskandidat ruft `assert_catalog_v1()` vor dem DDL und nach dem V8-Körper auf. Auf der synthetischen Datenbank enden Probe und Commit-Kandidat mit `P7905` und Rollback. Die markierte Datei `native-isolated-guard.sql` ist kein Installer. Die Delta-Allowlist ist an Namen und konkrete OIDs gebunden. Zwei Freigaben derselben jüngsten Charge 692 und desselben Vorgängers 83 ergeben genau `0` und `1` und Faktversion 84. Renew gegen Withdrawal ist in beiden Reihenfolgen überlappend geprüft, mit Digest der jeweiligen Charge. Der echte V8-Guard bleibt fail-closed.
 - Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`. Nächster Schritt: Exact-Head-CI und Technical-Lead-Review. Italien, Frankreich und Spanien bleiben zu.
 
 ## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314

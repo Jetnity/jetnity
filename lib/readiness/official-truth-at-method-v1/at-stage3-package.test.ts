@@ -18,6 +18,13 @@ test('the Stage 3 package is one UNAPPLIED transaction and keeps the V6 parent p
   assert.equal(read('production-stage3.WITHDRAWAL-REHEARSAL.sql'), pkg.withdrawalRehearsal)
   assert.equal(read('production-read-only-preflight.sql'), pkg.preflight)
   assert.equal(read('production-post-commit-readback.sql'), pkg.readback)
+  assert.equal(read('native-isolated-guard.sql'), pkg.isolatedBody)
+  assert.equal((pkg.body.match(/PERFORM official_v3_guard_private\.assert_catalog_v1\(\);/g) || []).length,
+    (pkg.isolatedBody.match(/PERFORM official_v3_guard_private\.assert_catalog_v1\(\);/g) || []).length + 2)
+  assert.match(pkg.body, /Full historical V6 chain/)
+  assert.match(pkg.body, /Full chain again, now the V8 body/)
+  assert.doesNotMatch(pkg.isolatedBody, /Full historical V6 chain|Full chain again, now the V8 body/)
+  assert.ok(!manifestFor(pkg).files.some(file => file.name === 'native-isolated-guard.sql'))
   assert.ok(pkg.body.includes(read('renewal-overlay.sql').trim()))
   assert.equal(JSON.parse(read('PACKAGE-MANIFEST.json')).files.map((file: { sha256: string }) => file.sha256).join(','),
     manifestFor(pkg).files.map(file => file.sha256).join(','))
