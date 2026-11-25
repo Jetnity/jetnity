@@ -155,6 +155,11 @@ async function gehe(page: Page, suche: string, klick?: string) {
   if (kategorie) {
     const aktuell = await page.evaluate(() => new URLSearchParams(window.location.search).get('kategorie'))
     assert.equal(aktuell, kategorie, `Kategorie ${kategorie} im Beispiel-Trip nicht erreichbar`)
+    // #1312: Anbieterformulare sind absichtlich erst nach einer ausdrücklichen Aktion sichtbar.
+    const schalter = page.locator(`[data-organisieren-suche-toggle="${kategorie}"]`)
+    await schalter.waitFor({ state: 'visible' })
+    if (await schalter.getAttribute('aria-expanded') !== 'true') await schalter.click()
+    await page.locator(`[data-organisieren-suche="${kategorie}"]`).waitFor({ state: 'visible' })
   }
 }
 

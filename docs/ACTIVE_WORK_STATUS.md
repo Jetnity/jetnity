@@ -1,10 +1,20 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — Organisieren, Mobile Routing #1311 und Bestand #1310
+
+Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9` inklusive gemergtem #1308 ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
+
+- Übernommen aus #1310: gespeicherte Leistungen zuerst, klarer Leerzustand, Anbietersuche nur nach Knopf oder ausdrücklichem Einstieg mit Etappe, Ort oder Kante, keine alte tiefe Scrollposition. #1310 bleibt offen für den Technical Lead.
+- Die erste Zeile rückt auf 390 px 8 px über die fixierte Leiste. «Flug suchen» und «Unterkunft suchen» im Planpunkt bleiben.
+- Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, lokal grün. Die Pflicht-CI startet dieselbe Prüfung auf Chromium, weil der Runner kein WebKit-Binary hat. Der Harness bleibt über den esbuild-Einstieg erreichbar. Seine Hilfsfunktionen und die Leisten-Konstante sind nicht exportiert, weil nur die Datei selbst einen Aufrufer hat. Kein Merge, kein Production-Deploy. #1313 unberührt.
+
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
 
 ## Aktueller Writer — Workspace auf dem Niveau der Startseite, nur Darstellung
+
+**TL-Nachtrag 25.11.2026:** #1312 ist auf `main` `ef378ba74` gemergt, #1310 geschlossen. Dieser Branch übernimmt den Routingfix ohne Force-Push; die kombinierte CI und Work-iPhone-Abnahme sind vor einem Merge zwingend. Die bisherigen lokalen Belege gelten für den damaligen Stand.
 
 25. November 2026. Branch `cursor/workspace-niveau-2ba1` von `main` `c52b9df12` (inkl. #1309), danach `main` `1fa5ee8f9` (inkl. #1308) eingemerged, Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: den eingeloggten Workspace (Übersicht, Reiseplan, Organisieren, Vorbereitung, Einreise samt Such- und Formularansichten) auf die Gestaltungsqualität der Startseite #1278 bringen; Anlass war der Production-Befund auf dem iPhone (Flugsuche verschiebt sich seitlich, Platzhalter abgeschnitten, Flughafenliste ragt links heraus). Entscheidung: ADR-0244, Regeln: `DESIGN_SYSTEM.md` 6.25.
 
