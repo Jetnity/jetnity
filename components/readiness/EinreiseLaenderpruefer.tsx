@@ -5,6 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'rea
 import LandFeld from '@/components/country/LandFeld'
 import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
 import AtOfficialGuidance from '@/components/readiness/AtOfficialGuidance'
+import AtVisitorPreview from '@/components/readiness/AtVisitorPreview'
 import FollowupOfficialGuidance from '@/components/readiness/FollowupOfficialGuidance'
 import NextEightOfficialGuidance from '@/components/readiness/NextEightOfficialGuidance'
 import { landAnzeigeText } from '@/lib/country/darstellung'
@@ -34,10 +35,12 @@ export default function EinreiseLaenderpruefer({
   eingebettet = false,
   vorbelegung = null,
   onAngabenErgaenzen,
+  atVisitorPreview = false,
 }: {
   eingebettet?: boolean
   vorbelegung?: EinreisePrueferVorbelegung | null
   onAngabenErgaenzen?: () => void
+  atVisitorPreview?: boolean
 } = {}) {
   const id = useId()
   const [ziel, setZiel] = useState<string>(vorbelegung?.ziele[0] ?? '')
@@ -204,8 +207,14 @@ export default function EinreiseLaenderpruefer({
             </p>
           ) : null}
           {sicht.hinweis ? <p role="status" className="max-w-prose text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
-          <EinreiseKundenanzeige anzeige={sicht.anzeige} />
-          {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.citizenshipCodes} /> : null}
+          {atVisitorPreview && sicht.zielCode === 'AT' ? (
+            <AtVisitorPreview anzeige={sicht.anzeige} synthetisch={sicht.synthetisch} />
+          ) : (
+            <>
+              <EinreiseKundenanzeige anzeige={sicht.anzeige} />
+              {sicht.zielCode === 'AT' ? <AtOfficialGuidance citizenshipCodes={sicht.citizenshipCodes} /> : null}
+            </>
+          )}
           {['IT','FR','ES','PT'].includes(sicht.zielCode) ? <FollowupOfficialGuidance country={sicht.zielCode} /> : null}
           {['GR','HR','NL','GB','US','TR','TH','AE'].includes(sicht.zielCode) ? <NextEightOfficialGuidance country={sicht.zielCode} /> : null}
         </div>

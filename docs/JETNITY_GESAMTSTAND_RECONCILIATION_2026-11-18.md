@@ -223,13 +223,15 @@ Legende: **B** = gebaut und mit technischer Evidence belegt; **T** = vom Owner l
 
 | Nr. | Funktion | Stand / tatsächliche Grenze |
 | --- | --- | --- |
-| 25 | Kundenoberfläche Einreise/Visum | **B** – #1224/#1229; **nur UI-Beleg**, fachlicher Owner ist anderer TL |
-| 26 | Einreise nach Land/Pass | **P** – tatsächliche sichere Abdeckung laut zuständigem Official-Truth-TL, hier **nicht** als generell abgeschlossen erklärt |
-| 27 | Quellen/Formulare/Gebühren/alle Themen | **P** – eigenständiger Official-Truth-Workstream; keine Sach- oder Statusfreigabe hier |
+| 25 | Kundenoberfläche Einreise/Visum | **B/P** – bestehende UI #1224/#1229; CH→AT Besucherabnahme noch offen. PO-Go 24.11.: Dev-Feinschliff gemäss #1264, Hell/Dunkel bei 320/390/1280 px, Schweizer Deutsch, nicht bestätigte Felder «Derzeit nicht verfügbar», Haftungstext Entwurf. Production-Besucherflag bleibt aus. |
+| 26 | Einreise nach Land/Pass | **P** – CH→AT Stage 1 installiert (#1288), persönliche V3-Quellenentscheidung am 24.11.2026 18:17:10 Zürich confirmed, unabhängiger [Readback PASS #1297](https://github.com/Jetnity/jetnity/issues/1297#issuecomment-7139277824). Scope nur gewöhnlicher gültiger Schweizer Reisepass, direkte Einreise, Visum; keine neue Faktenfreigabe, Faktversion 82 unverändert, Besucherflag aus. Übrige AT-Pässe/Themen nicht freigegeben. |
+| 27 | Quellen/Formulare/Gebühren/alle Themen | **P** – AT-Archiv #1288: 3/3 amtliche Originale, append-only Chargenbelege, BG1 current/complete laut #1297; alle drei Source-Pins research_only=true/source_qualified=false, Owner-Quellenentscheid separat bestätigt. Formulare/Gebühren/weitere Themen bleiben ohne belegte Fakten unverfügbar. AT als wiederverwendbare Architekturvorlage; IT → FR → ES erst nach abgeschlossener AT-Besucherabnahme. Keine Aktivierung, neue Faktversion oder Kosten. |
 | 28 | Wetter in Reise/Tagesplan | **T** – vom Owner auf jetnity.com getestet; Quoten-/Schutzkandidat #1219 unabhängig gegen Hosted-Stand abgleichen |
 | 29 | „Jetzt wichtig“ | **B** – vorhandene kontextbezogene Aufmerksamkeit |
 | 30 | KI-Reisebegleiter | **P** – Code/Assistant vorhanden; Owner berichtet KI funktioniert noch nicht |
 | 31 | Automatische Cross-Domain-Änderungsfolgen | **O** – \`change-impact-foundation-v1\` ausdrücklich dormant; kein vollständiger Recovery-Service |
+
+> **TL-Index #751 – Official Truth, PO-Go 24.11.2026:** [#1297](https://github.com/Jetnity/jetnity/issues/1297#issuecomment-7139277824) belegt genau einen bestätigten V3-Owner-Quellenentscheid (`atsrc3_90780981bdd041b4b87c908ecea180a9`), BG1 Generation 2418 current/complete, Incident/Resume 108/108, 3/3 Originale. Faktversion 82 und RESEARCH_ONLY unverändert, Besucherflag disabled. Nächster Schritt nach grünem Doku-Merge: AT-Besucheranzeige ausschliesslich in Dev, vollständige Pflicht-CI und unabhängige Work-Abnahme mit sechs Screenshots (320/390/1280 px je Hell/Dunkel), Kontrast, verständlichen Texten und Negativprüfung auf erfundene Fakten. Rechtliche Prüfung und spätere Besucher-/Faktenfreigabe separat durch PO; keine Production-Änderung, keine Aktivierung, keine neuen Kosten, maximal fünf offene PRs. Der TL-Index wird mit dem tatsächlichen Merge-Beleg separat als datierter Kommentar ergänzt; ältere Evidenz bleibt erhalten.
 
 ### D. Account/Meine Welt
 
