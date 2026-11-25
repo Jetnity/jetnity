@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
+import WorkspaceShell from '@/components/workspace/WorkspaceShell'
 import { n12Punkt, n12Reise } from '@/lib/trips/n12-chronology-1/fixture'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
@@ -182,31 +183,27 @@ export function phuketReise(): Trip {
 
 function Flaeche() {
   const [reise] = React.useState(phuketReise)
-  const [thema, setThema] = React.useState<'light' | 'dark'>('light')
   return (
-    <div data-organisieren-routing="" data-workspace-theme={thema} data-reise-id={reise.id} data-reise-revision={reise.revision}>
-      <header className="sticky top-0 z-50 flex h-[72px] items-center border-b border-line-200 bg-white px-3 text-sm font-semibold text-brand-800">
-        Jetnity
-      </header>
-      <button type="button" data-theme="light" onClick={() => setThema('light')}>Hell</button>
-      <button type="button" data-theme="dark" onClick={() => setThema('dark')}>Dunkel</button>
-      <TripWorkspace
-        reise={reise}
-        quelle="guest"
-        ohneTag={reise.ohneTag}
-        onPunktAnlegen={async () => null}
-        onPunktEntfernen={async () => null}
-        onBuchungsstatus={async () => null}
-        flugsuche={
-          <FlugSuche
-            reise={reise}
-            tagId={reise.days[0]?.id ?? null}
-            onUebernehmen={async () => null}
-          />
-        }
-        hotelsuche={<HotelBereich reise={reise} onUebernehmen={async () => null} />}
-      />
-    </div>
+    <WorkspaceShell contentId="public-content">
+      <div data-organisieren-routing="" data-reise-id={reise.id} data-reise-revision={reise.revision}>
+        <TripWorkspace
+          reise={reise}
+          quelle="guest"
+          ohneTag={reise.ohneTag}
+          onPunktAnlegen={async () => null}
+          onPunktEntfernen={async () => null}
+          onBuchungsstatus={async () => null}
+          flugsuche={
+            <FlugSuche
+              reise={reise}
+              tagId={reise.days[0]?.id ?? null}
+              onUebernehmen={async () => null}
+            />
+          }
+          hotelsuche={<HotelBereich reise={reise} onUebernehmen={async () => null} />}
+        />
+      </div>
+    </WorkspaceShell>
   )
 }
 

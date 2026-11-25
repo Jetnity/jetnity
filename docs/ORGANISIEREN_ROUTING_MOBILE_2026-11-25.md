@@ -1,6 +1,6 @@
 # Organisieren – Mobile Routing, 25. November 2026
 
-Auftrag #1311. Basis `main` `2daeff2cbbb2622163970bb05805d9868d3db486`. Keine Datenänderung, kein Production-Deploy, kein Login. #1307 und #1308 sind unberührt.
+Auftrag #1311. Ausgang `a32c888f`, danach `main` `c52b9df12` ohne Force-Push. Keine Datenänderung, kein Production-Deploy, kein Login. #1307 und #1308 sind unberührt.
 
 ## Vorher-Befund auf dieser Basis
 
@@ -37,8 +37,27 @@ Nicht entfernt. Sie starten erst am ausdrücklichen Knopf im geöffneten Eintrag
 
 Die fünf Reiter in Organisieren selbst nutzen weiterhin Booking-Flüge, Hotelsuche, Aktivitäten, DiscoverCars und Omio. Das sind andere Flächen.
 
-## Regression
+## KAYAK-Meldung, getrennt
 
-`lib/trips/organisieren-routing-1/browser.test.ts` fährt WebKit über den bestehenden Harness-Weg (esbuild, lokaler Prüfserver, kein Next-Dev-Server). 5 Kategorien × 320/390/1280 × Hell/Dunkel = 30. Je Kombination: Reiter, vorhandener Eintrag, `punkt` und Reise-ID `trip-phuket-routing`, Suche zu, kein KAYAK-Text, kein horizontaler Überlauf, Fokus nicht in einer verborgenen Fläche, Zurück nach Organisieren, Revision unverändert.
+Die Sätze «Deine Anreise», «Der passende Flug für deine Reise.», «KAYAK · Testvorschau» und «Zürich → Zürich» liessen sich auf diesem Pfad nicht reproduzieren. Ein gespeicherter Eintrag öffnet den Planpunkt mit `data-detail-suche=aus`. Die Abdeckung zeigt «Zürich → Phuket». «Flug suchen» und «Unterkunft suchen» bleiben die ausdrücklichen KAYAK-Wege und wurden nicht entfernt.
 
-Auf `main` ohne weitere Produktänderung ist dieser Lauf grün. Ein Vorher-Rot gibt es auf diesem Kopf nicht. Der Test hält den beobachteten Pfad fest, damit eine spätere Änderung die Testvorschau nicht ungefragt in den Eintrag legt. Hell und Dunkel setzen `color-scheme` und `data-workspace-theme`. Die Shell-Stylesheets der laufenden App lädt der Harness nicht mit. Die Kartenflächen bleiben deshalb die hellen Token. Der Gastpfad im Dev-Server wurde hell geprüft.
+## Überdeckung, vor dem Fix rot
+
+Auf 390×664 liegt die erste gespeicherte Zeile im Bild, aber unter der fixierten Kosten- und Navigationsleiste. Der Test tippt die Koordinate an, ohne vorher `scrollIntoView` aufzurufen.
+
+WebKit, echte `WorkspaceShell`, `workspace.css` und `workspace-surfaces.css`, Hell, Kategorie Flüge, `scrollY` 0:
+
+- Zeile top 539, bottom 639, Leiste bei 547
+- `elementFromPoint` trifft `button.workspace-cost-bar`, nicht die Zeile
+
+Dieselbe Reise im Next-Dev-Server, Chromium, vor dem Fix: Zeile top 617, Leiste bei 591, Treffer `button.workspace-nav-link`. WebKit lädt den Dev-Server nicht: die CSP enthält `upgrade-insecure-requests`, und der Dev-Modus braucht `eval`, das die CSP nicht erlaubt.
+
+## Fix
+
+`organisierenZeileScroll` schiebt das Fenster so weit, dass die Unterkante der ersten Zeile 8 px über der fixierten Leiste liegt. Das gilt nur, solange die Leiste fest ist: Breite ab 360 und unter 1024, Höhe ab 500, normale Schrift, keine Tastatur. Bei 320 px und auf dem Desktop passiert nichts. Ein späteres Wachstum von Zeile oder Leiste wird neu gemessen. Die Routing-Funktion bleibt.
+
+## Nach dem Fix
+
+WebKit-Regression mit Shell und echten Darstellungs-Token, 5 × 320/390×664/1280 × Hell/Dunkel = 30, grün. Dunkel prüft `color-scheme: dark` und `--workspace-bg: #121921`. Je Kombination: erste Zeile nicht von der Leiste gedeckt, echter Touch oder Klick, richtige Reise- und Eintrags-ID, Suche zu, kein KAYAK-Text, kein horizontaler Überlauf, Fokus nicht in einer verborgenen Fläche, Zurück nach Organisieren.
+
+Zusätzlich `next start` hinter lokalem HTTPS, WebKit, 390×664, dieselbe Gastreise. Kein Konsolenfehler. Nach dem Laden `scrollY` 122, Zeile bottom 583, Leiste bei 591, Treffer ist die Zeile. Der Tap öffnet `punkt=flug-zrh-bkk`. Dieselben fünf Kategorien liefern ihre eigene Eintrags-ID, ohne KAYAK-Text. Der Dev-Server in Chromium zeigt danach `scrollY` 135 und denselben Treffer auf der Zeile.

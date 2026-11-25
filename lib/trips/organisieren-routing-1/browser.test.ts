@@ -21,7 +21,8 @@ const KOMBINATIONEN = [
 ] as const
 const BREITEN = [
   { name: '320', width: 320, height: 700 },
-  { name: '390', width: 390, height: 844 },
+  // 390×664 ist der iPhone-Viewport, in dem die fixierte Leiste die erste Zeile deckt.
+  { name: '390', width: 390, height: 664 },
   { name: '1280', width: 1280, height: 800 },
 ] as const
 const THEMEN = ['light', 'dark'] as const
@@ -38,6 +39,8 @@ async function projektCss(): Promise<string> {
   const config = verlangen(join(process.cwd(), 'tailwind.config.js')) as unknown
   const ergebnis = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(from, 'utf8'), { from })
   const extra = [
+    'components/workspace/workspace.css',
+    'components/workspace/workspace-surfaces.css',
     'components/trips/organisieren/organisieren.css',
     'components/trips/organisieren/hotelsuche.css',
     'components/trips/organisieren/fluege/flugsuche.css',
@@ -67,17 +70,19 @@ async function bundeln(): Promise<string> {
         build.onResolve({ filter: /^next\/dynamic$/ }, () => ({ path: 'dynamic', namespace: 'org-leer' }))
         build.onResolve({ filter: /^next\/link$/ }, () => ({ path: 'link', namespace: 'org-leer' }))
         build.onResolve({ filter: /^next\// }, () => ({ path: 'next', namespace: 'org-leer' }))
+        build.onResolve({ filter: /\.css$/ }, (args) => ({ path: args.path, namespace: 'org-css' }))
         build.onResolve({ filter: /^@\// }, (args) => build.resolve(join(process.cwd(), args.path.slice(2)), { resolveDir: process.cwd(), kind: args.kind }))
+        build.onLoad({ filter: /.*/, namespace: 'org-css' }, () => ({ contents: 'export default {}', loader: 'js' }))
         build.onLoad({ filter: /.*/, namespace: 'org-leer' }, (args) => {
           const stubModules: Record<string, string> = {
             dynamic: 'export default function dynamic(){return function Dynamisch(){return null}}',
-            link: 'export default function Link(props){return props.children??null}',
+            link: 'import { createElement } from "react"; export default function Link(props){ return createElement("a", { href: props.href || "#", className: props.className, "aria-label": props["aria-label"], "aria-current": props["aria-current"], onClick: props.onClick }, props.children) }',
             crypto: 'const hash=()=>({update(){return this},digest(){return ""}});export const createHmac=()=>hash();export const createHash=()=>hash();export const timingSafeEqual=()=>false;export const randomUUID=()=>"00000000-0000-4000-8000-000000000000";export default {}',
-            next: 'export const cookies=()=>({get(){return undefined}});export const revalidatePath=()=>{};export const useRouter=()=>({push(){},replace(){}});export const usePathname=()=>"/";export const useSearchParams=()=>new URLSearchParams();export default function NextLeer(){return null}',
+            next: 'export const cookies=()=>({get(){return undefined}});export const revalidatePath=()=>{};export const redirect=()=>{};export const permanentRedirect=()=>{};export const notFound=()=>{};export const useRouter=()=>({push(){},replace(){},back(){},refresh(){},prefetch(){}});export const usePathname=()=>"/reisen/trip-phuket-routing";export const useParams=()=>({tripId:"trip-phuket-routing"});export const useSearchParams=()=>new URLSearchParams(typeof location==="undefined"?"":location.search);export default function NextLeer(){return null}',
             node: 'export default {}',
             empty: 'export default {}',
           }
-          return { contents: stubModules[args.path] ?? 'export default {}', loader: 'js' }
+          return { contents: stubModules[args.path] ?? 'export default {}', loader: 'js', resolveDir: process.cwd() }
         })
       },
     }],
@@ -131,6 +136,9 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
             hasTouch: breite.width < 1024,
             colorScheme: thema,
           })
+          if (thema === 'dark') {
+            await page.addInitScript(() => localStorage.setItem('jetnity:workspace-theme:v1', 'dark'))
+          }
           page.setDefaultTimeout(20_000)
           const seitenfehler: string[] = []
           page.on('pageerror', (error) => seitenfehler.push(error.message))
@@ -144,16 +152,47 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
             } catch (error) {
               throw new Error(`${name} Harness fehlt\n${seitenfehler.slice(0, 6).join('\n')}\n${error instanceof Error ? error.message : error}`)
             }
-            await page.locator(`[data-theme="${thema}"]`).click()
-            await page.locator(`[data-workspace-theme="${thema}"]`).waitFor()
+            await page.locator(`.workspace-shell[data-workspace-theme="${thema}"]`).waitFor()
+            const darstellung = await page.evaluate(() => {
+              const shell = document.querySelector('.workspace-shell')
+              if (!shell) return null
+              const stil = getComputedStyle(shell)
+              return { schema: stil.colorScheme, hintergrund: stil.getPropertyValue('--workspace-bg').trim() }
+            })
+            assert.equal(darstellung?.schema, thema === 'dark' ? 'dark' : 'light', `${name} Darstellung`)
+            if (thema === 'dark') assert.equal(darstellung?.hintergrund, '#121921', `${name} dunkle Fläche`)
             const nav = page.locator('[data-workspace-mode-nav]:visible').first()
             await nav.getByRole('button', { name: 'Organisieren', exact: true }).click()
-            await page.getByRole('tab', { name: fall.tab, exact: true }).click()
+            await page.evaluate((label) => {
+              const knopf = [...document.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find((el) => (el.textContent ?? '').includes(label))
+              knopf?.click()
+            }, fall.tab)
             const bestand = page.locator(`[data-organisieren-bestand="${fall.kategorie}"]`)
             await bestand.waitFor()
+            await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)))))
             await pruefeFlaeche(page, name, 'kategorie')
-            const zeile = bestand.getByRole('button', { name: new RegExp(fall.titel.replace('–', '.')) })
-            await zeile.click()
+            let lage = await zeileLage(page, fall.kategorie)
+            if (lage.ueberdeckt) {
+              assert.equal(lage.trifftZeile, true, `${name} erste Zeile liegt unter der Leiste ${JSON.stringify(lage)}`)
+            } else if (!lage.imBild && lage.rect) {
+              await page.evaluate((oben) => {
+                window.scrollTo({ top: window.scrollY + oben - 80, behavior: 'instant' })
+              }, lage.rect.top)
+              lage = await zeileLage(page, fall.kategorie)
+            }
+            assert.equal(lage.trifftZeile, true, `${name} erste Zeile nicht antippbar ${JSON.stringify(lage)}`)
+            if (lage.fest && lage.rect) {
+              const hoehe = lage.rect.bottom - lage.rect.top
+              if (hoehe <= lage.dock - 8) {
+                assert.ok(lage.rect.bottom <= lage.dock - 7, `${name} Zeile ragt in die Leiste ${JSON.stringify(lage)}`)
+              }
+            }
+            if (process.env.ORGANISIEREN_ROUTING_OUT && breite.name === '390') {
+              mkdirSync(process.env.ORGANISIEREN_ROUTING_OUT, { recursive: true })
+              await page.screenshot({ path: join(process.env.ORGANISIEREN_ROUTING_OUT, `${name}-zeile.png`) })
+            }
+            if (breite.width < 1024) await page.touchscreen.tap(lage.x, lage.y)
+            else await page.mouse.click(lage.x, lage.y)
             await page.waitForFunction(
               (id) => new URL(location.href).searchParams.get('punkt') === id,
               fall.id,
@@ -171,7 +210,6 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
             const ziel = process.env.ORGANISIEREN_ROUTING_OUT
             if (ziel) {
               mkdirSync(ziel, { recursive: true })
-              await page.locator('[data-workspace-detail] h2').scrollIntoViewIfNeeded()
               await page.screenshot({ path: join(ziel, `${name}.png`) })
             }
             const fokusVerborgen = await page.evaluate(() => {
@@ -193,6 +231,43 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
     }
   })
 })
+
+async function zeileLage(page: Page, kategorie: string) {
+  return page.evaluate((key) => {
+    const zeile = document.querySelector(`[data-organisieren-bestand="${key}"] button.org-bestand-zeile`)
+    if (!zeile) return { fehlt: true, trifftZeile: false, fest: false, x: 0, y: 0, scrollY: window.scrollY, rect: null, dock: window.innerHeight }
+    const rect = zeile.getBoundingClientRect()
+    const fest = [...document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')].filter((el) => {
+      const kasten = el.getBoundingClientRect()
+      return getComputedStyle(el).position === 'fixed' && kasten.height > 0 && kasten.width > 0
+    })
+    const dock = fest.reduce((kante, el) => Math.min(kante, el.getBoundingClientRect().top), window.innerHeight)
+    const x = rect.left + rect.width / 2
+    const y = Math.min(rect.top + 16, rect.bottom - 8)
+    const imBild = y >= 0 && y < window.innerHeight && x >= 0 && x < window.innerWidth
+    const ueberdeckt = fest.length > 0 && imBild && y >= dock
+    const hit = imBild ? document.elementFromPoint(x, y) : null
+    const kette: string[] = []
+    let knoten = hit
+    while (knoten && kette.length < 5) {
+      kette.push(`${knoten.tagName}.${String(knoten.className || '').slice(0, 60)}`)
+      knoten = knoten.parentElement
+    }
+    return {
+      fehlt: false,
+      rect: { top: rect.top, bottom: rect.bottom },
+      dock,
+      x,
+      y,
+      imBild,
+      ueberdeckt,
+      fest: fest.length > 0,
+      trifftZeile: Boolean(hit && (hit === zeile || zeile.contains(hit))),
+      kette,
+      scrollY: window.scrollY,
+    }
+  }, kategorie)
+}
 
 async function pruefeFlaeche(page: Page, name: string, schritt: string) {
   for (const text of KAYAK) {

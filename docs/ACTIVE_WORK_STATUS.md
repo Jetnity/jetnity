@@ -2,10 +2,11 @@
 
 ## 25.11.2026 — Organisieren, Mobile Routing #1311
 
-Branch `cursor/organisieren-mobile-routing-9117` von `main` `2daeff2cb`. Dev-only. Befund und legitime KAYAK-Pfade: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
+Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `c52b9df12` ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
 
-- Auf dieser Basis öffnet das Antippen eines sichtbaren gespeicherten Eintrags den Planpunkt dieser Reise. Die KAYAK-Testvorschau erscheint dabei nicht. WebKit gegen den Next-Dev-Server scheitert an `upgrade-insecure-requests`, nicht am Routing.
-- Keine Produktänderung am Routing. Regression `lib/trips/organisieren-routing-1/browser.test.ts`, 30 Kombinationen, WebKit. #1307 und #1308 unberührt. Kein Merge, kein Production-Deploy.
+- Die gemeldete KAYAK-Testvorschau erscheint beim Öffnen eines gespeicherten Eintrags nicht. Der belegte Fehler ist die fixierte Leiste auf 390×664: sie deckt die erste Zeile, der Touch trifft die Leiste.
+- Fix: die erste Zeile rückt 8 px über diese Leiste. 320 px und Desktop bleiben unverändert. «Flug suchen» und «Unterkunft suchen» bleiben.
+- WebKit mit echter Shell, 30 Kombinationen, grün. Zusätzlich WebKit gegen `next start` über lokales HTTPS: fünf Kategorien, richtige Eintrags-ID, kein KAYAK-Text. #1307 und #1308 unberührt. Kein Merge, kein Production-Deploy.
 
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
