@@ -13,6 +13,7 @@ import { WorkspaceContext } from './WorkspaceContext'
 import useWorkspaceTheme from './useWorkspaceTheme'
 import './workspace.css'
 import './workspace-surfaces.css'
+import './workspace-niveau.css'
 
 const PERSONAL = [
   { label: 'Meine Reisen', href: '/reisen', icon: Luggage },
