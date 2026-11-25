@@ -20,9 +20,32 @@
 .at-visitor-preview[data-workspace-theme="dark"] :where(.border-line-200, .border-line-300) {
   border-color: rgb(var(--border));
 }
-.at-visitor-preview[data-workspace-theme="dark"] :where(input, select, textarea)::placeholder {
+/* PublicChrome is a white-mint ancestor even when the nested Dev preview
+   is dark. Override the more specific public form-control selector as a
+   matched foreground/background pair. Do not change global controls. */
+.at-visitor-preview.workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea) {
+  background-color: var(--white-mint-card);
+  color: var(--white-mint-ink);
+  border-color: var(--white-mint-control);
+  color-scheme: light;
+}
+.at-visitor-preview.workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, textarea)::placeholder {
+  color: var(--white-mint-muted);
+  opacity: 1;
+}
+.at-visitor-preview.workspace-shell[data-workspace-theme="dark"] .workspace-content :is(input, select, textarea) {
+  background-color: var(--workspace-panel);
+  color: var(--workspace-ink);
+  border-color: var(--workspace-muted);
+  color-scheme: dark;
+}
+.at-visitor-preview.workspace-shell[data-workspace-theme="dark"] .workspace-content :is(input, textarea)::placeholder {
   color: var(--workspace-muted);
   opacity: 1;
+}
+.at-visitor-preview.workspace-shell[data-workspace-theme="dark"] .workspace-content select option {
+  background-color: var(--workspace-panel);
+  color: var(--workspace-ink);
 }
 .at-visitor-preview[data-workspace-theme="dark"] :where(input, select, textarea, a, button, summary):focus-visible {
   outline: 3px solid rgb(var(--ring));

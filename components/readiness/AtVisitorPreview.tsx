@@ -2,14 +2,10 @@ import { ChevronDown, CircleHelp } from 'lucide-react'
 
 import { Hinweis } from '@/components/ui/hinweis'
 import type { EinreiseAnzeige, EinreisePaar } from '@/lib/readiness/einreise-kundenanzeige'
+import { AT_VISITOR_INFORMATION_LINKS as AMTLICHE_QUELLEN } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-links'
 import { V3_CUSTOMER_INFORMATION_GROUPS, V3_CUSTOMER_INFORMATION_TOPICS } from '@/lib/readiness/official-truth-product-v3/customer-information/topics'
 
 const NICHT_VERFUEGBAR = 'Derzeit nicht verfügbar'
-const AMTLICHE_QUELLEN = [
-  { label: 'Österreichisches Innenministerium – Einreise', href: 'https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/start.html' },
-  { label: 'Österreichisches Innenministerium – Visumliste', href: 'https://www.bmi.gv.at/202/fremdenpolizei_und_grenzkontrolle/visumpflichtige_laender/start.html' },
-  { label: 'Österreichische Botschaft Bern', href: 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/' },
-] as const
 
 /** A visible, neutral design-system notice in both the entry and result view. */
 export function AtVisitorPreviewNotice({ placement }: { placement: 'entry' | 'result' }) {
@@ -34,7 +30,7 @@ function BestaetigtesVisum(paar: EinreisePaar, synthetisch: boolean) {
   return paar.themen.find(thema => thema.id === 'visa'
     && thema.status === 'current' && thema.freshness === 'current'
     && thema.result === 'not_required' && Boolean(thema.stand && thema.quelle)
-    && AMTLICHE_QUELLEN.some(quelle => quelle.href === thema.quelleHref))
+    && AMTLICHE_QUELLEN.some(quelle => quelle.receiptHref === thema.quelleHref))
 }
 
 export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
@@ -76,6 +72,7 @@ export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
                     <ul className="grid min-w-0 gap-0 divide-y divide-border border-t border-border">
                       {themen.map(thema => {
                         const fakt = thema.id === 'visa' ? visum : undefined
+                        const link = fakt ? AMTLICHE_QUELLEN.find(quelle => quelle.receiptHref === fakt.quelleHref) : undefined
                         return (
                           <li key={thema.id} data-at-visitor-topic={thema.id} data-at-visitor-topic-status={fakt ? 'confirmed' : 'unavailable'}
                             className="grid min-w-0 gap-1 px-3 py-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-x-4">
@@ -85,7 +82,7 @@ export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
                               {fakt ? <>
                                 {fakt.bedingung ? <p>Gilt, wenn: {fakt.bedingung}</p> : null}
                                 <p>Geprüft am {fakt.stand}</p>
-                                {fakt.quelleHref && fakt.quelle ? <QuellenLink href={fakt.quelleHref} label={fakt.quelle} /> : null}
+                                {link && fakt.quelle ? <QuellenLink href={link.href} label={fakt.quelle} /> : null}
                               </> : null}
                             </div>
                           </li>

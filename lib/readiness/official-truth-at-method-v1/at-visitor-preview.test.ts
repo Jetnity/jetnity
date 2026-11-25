@@ -8,6 +8,7 @@ import { einreisePrueferSicht } from '@/lib/readiness/einreise-laenderpruefer'
 import { V3_CUSTOMER_INFORMATION_TOPICS } from '../official-truth-product-v3/customer-information/topics'
 import { HUMAN_METHOD_DEV_URL, HUMAN_METHOD_PRODUCTION_URL } from '../official-truth-product-v3/method/human-contract'
 import { eligibleAtVisitorPresentationPreview } from './at-visitor-preview-selection'
+import { AT_VISITOR_INFORMATION_LINKS } from './at-visitor-links'
 import { readAtVisaInput } from './at-visa-http'
 import { presentAtVisaReadbacks, type AtVisaReadback } from './at-visitor-display'
 
@@ -113,4 +114,19 @@ test('AT Dev notice is explicit and visible in the entry and the actual result m
   assert.ok(frame.indexOf('<AtVisitorPreviewNotice placement="entry" />') < frame.indexOf('<EinreiseLaenderpruefer atVisitorPreview />'))
   const checker = readFileSync(new URL('../../../components/readiness/EinreiseLaenderpruefer.tsx', import.meta.url), 'utf8')
   assert.match(checker, /atVisitorPreview && sicht\.zielCode === 'AT'/)
+})
+
+test('every displayed AT information link uses the current visitor URL without changing authority pins', () => {
+  const expected = AT_VISITOR_INFORMATION_LINKS.map(link => link.href).sort()
+  assert.deepEqual(AT_VISITOR_INFORMATION_LINKS.map(link => link.receiptHref), sourceUrls)
+  const bern = AT_VISITOR_INFORMATION_LINKS[2]
+  assert.equal(bern.href, 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag')
+  assert.notEqual(bern.href, bern.receiptHref)
+  for (const html of [render(), render([{ country: 'CH', data: sample }])]) {
+    const links = [...new Set(Array.from(html.matchAll(/href="([^"]+)"/g), match => match[1]))].sort()
+    assert.deepEqual(links, expected)
+    assert.ok(!links.includes(bern.receiptHref))
+  }
+  // A new navigation destination must never acquire receipt authority.
+  assert.doesNotMatch(render([{ country: 'CH', data: { ...sample, sourceUrls: [...sourceUrls.slice(0, 2), bern.href] } }]), /data-at-visitor-topic-status="confirmed"|Visum nicht erforderlich/)
 })
