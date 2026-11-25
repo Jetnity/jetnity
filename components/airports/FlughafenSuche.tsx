@@ -264,7 +264,7 @@ export default function FlughafenSuche({
       {listeSichtbar && (
         <Suchliste
           id={listeId}
-          className="!max-h-80 sm:!w-[22rem] !max-w-[calc(100vw-3rem)]"
+          className="org-air-liste !max-h-80 sm:!w-[22rem] !max-w-[calc(100vw-3rem)]"
           lage={lage}
           eintraege={treffer.map((option, index) => ({
             id: `${option.value}-${index}`,

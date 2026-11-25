@@ -28,9 +28,9 @@ export function useFlughafenVorschlag(
         if (!daten || beruehrt.current) return
         if (daten.vorschlag) {
           setWert({ iata: daten.vorschlag.iata, name: daten.vorschlag.name })
-          setHinweis(`Vorschlag: nächster großer Flughafen, ca. ${daten.vorschlag.km} km von ${name}. Du kannst ihn ändern.`)
+          setHinweis(`Vorschlag: nächster grosser Flughafen, ca. ${daten.vorschlag.km} km von ${name}. Du kannst ihn ändern.`)
         } else {
-          setHinweis(`Im Umkreis von ${FLUGHAFEN_VORSCHLAG_RADIUS_KM} km um ${name} ist kein großer Linienflughafen hinterlegt. Bitte wähle einen Flughafen.`)
+          setHinweis(`Im Umkreis von ${FLUGHAFEN_VORSCHLAG_RADIUS_KM} km um ${name} ist kein grosser Linienflughafen hinterlegt. Bitte wähle einen Flughafen.`)
         }
       })
       .catch(() => {})

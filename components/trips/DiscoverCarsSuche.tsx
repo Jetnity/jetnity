@@ -32,7 +32,7 @@ export default function DiscoverCarsSuche() {
       <h2 className="mt-1 text-title text-brand-800 break-words">Mietwagen finden</h2>
       <p className="mt-3 text-sm leading-6 text-ink-800">
         Abholort, Rückgabe und Mietdaten hier festlegen. Fahrzeuge, Preise und Mietbedingungen
-        vergleichst du anschließend bei DiscoverCars. Die Buchung öffnet dort in einem neuen Tab.
+        vergleichst du anschliessend bei DiscoverCars. Die Buchung öffnet dort in einem neuen Tab.
       </p>
       {!anzeigen ? (
         <div className="mt-4 rounded-2xl bg-surface-25 p-4 text-sm leading-6 text-ink-800">
