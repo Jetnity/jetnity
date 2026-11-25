@@ -112,6 +112,11 @@ async function browserStarten(): Promise<{ browser: Browser, motor: 'webkit' | '
   }
 }
 
+test('der Harness bleibt der esbuild-Einstieg', () => {
+  const laden = () => import('./harness')
+  assert.equal(typeof laden, 'function')
+})
+
 describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, () => {
   let browser: Browser
   let server: Server
