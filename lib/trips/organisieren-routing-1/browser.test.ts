@@ -8,9 +8,8 @@ import { after, before, describe, test } from 'node:test'
 import type { AddressInfo } from 'node:net'
 
 import * as esbuild from 'esbuild'
-import { webkit, type Browser, type Page } from 'playwright'
+import { chromium, webkit, type Browser, type Page } from 'playwright'
 
-const BROWSER_ARGS: string[] = []
 const KAYAK = ['KAYAK · Testvorschau', 'Der passende Flug für deine Reise.', 'Hotels mit KAYAK entdecken']
 const KOMBINATIONEN = [
   { kategorie: 'fluege', tab: 'Flüge', titel: 'ZRH–BKK', id: 'flug-zrh-bkk' },
@@ -92,14 +91,32 @@ async function bundeln(): Promise<string> {
   return js
 }
 
-async function browserStarten(): Promise<Browser> {
-  return webkit.launch({ headless: true, args: BROWSER_ARGS })
+function browserFehlt(fehler: unknown) {
+  const meldung = fehler instanceof Error ? fehler.message : String(fehler)
+  return meldung.includes("Executable doesn't exist")
+}
+
+/** WebKit, wenn der Runner ihn hat. Sonst dasselbe Chromium wie die übrigen Browserprüfungen. */
+async function browserStarten(): Promise<{ browser: Browser, motor: 'webkit' | 'chromium' }> {
+  try {
+    return { browser: await webkit.launch({ headless: true }), motor: 'webkit' }
+  } catch (fehler) {
+    if (!browserFehlt(fehler)) throw fehler
+  }
+  const args = ['--no-sandbox', '--disable-dev-shm-usage']
+  try {
+    return { browser: await chromium.launch({ headless: true, args }), motor: 'chromium' }
+  } catch (fehler) {
+    if (!browserFehlt(fehler)) throw fehler
+    return { browser: await chromium.launch({ headless: true, channel: 'chrome', args }), motor: 'chromium' }
+  }
 }
 
 describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, () => {
   let browser: Browser
   let server: Server
   let origin: string
+  let motor: 'webkit' | 'chromium' = 'webkit'
   const belege: unknown[] = []
 
   before(async () => {
@@ -112,14 +129,16 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
     })
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
     origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`
-    browser = await browserStarten()
+    const gestartet = await browserStarten()
+    browser = gestartet.browser
+    motor = gestartet.motor
   })
 
   after(async () => {
     const ziel = process.env.ORGANISIEREN_ROUTING_OUT
     if (ziel) {
       mkdirSync(ziel, { recursive: true })
-      writeFileSync(join(ziel, 'bericht.json'), JSON.stringify({ kombinationen: belege.length, belege }, null, 2))
+      writeFileSync(join(ziel, 'bericht.json'), JSON.stringify({ motor, kombinationen: belege.length, belege }, null, 2))
     }
     await browser?.close()
     await new Promise<void>((resolve) => server?.close(() => resolve()))

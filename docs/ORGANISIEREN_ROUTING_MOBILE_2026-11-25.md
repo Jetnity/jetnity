@@ -64,6 +64,6 @@ Auf dem Stand ohne diesen Fix rendert Organisieren die Booking-Fläche «Flug su
 
 ## Nach dem Fix
 
-WebKit-Regression mit Shell und echten Darstellungs-Token, 5 × 320/390×664/1280 × Hell/Dunkel = 30, grün. Dunkel prüft `color-scheme: dark` und `--workspace-bg: #121921`. Je Kombination: erste Zeile nicht von der Leiste gedeckt, echter Touch oder Klick, richtige Reise- und Eintrags-ID, Suche zu, kein KAYAK-Text, kein horizontaler Überlauf, Fokus nicht in einer verborgenen Fläche, Zurück nach Organisieren.
+WebKit-Regression mit Shell und echten Darstellungs-Token, 5 × 320/390×664/1280 × Hell/Dunkel = 30, lokal grün. Die Pflicht-CI hat kein WebKit-Binary; dort läuft dieselbe Prüfung auf Chromium, wie die übrigen Browserprüfungen. Ein fehlender Browser überspringt die 30 Kombinationen nicht. Dunkel prüft `color-scheme: dark` und `--workspace-bg: #121921`. Je Kombination: erste Zeile nicht von der Leiste gedeckt, echter Touch oder Klick, richtige Reise- und Eintrags-ID, Suche zu, kein KAYAK-Text, kein horizontaler Überlauf, Fokus nicht in einer verborgenen Fläche, Zurück nach Organisieren.
 
 Zusätzlich `next start` hinter lokalem HTTPS, WebKit, 390×664, dieselbe Gastreise. Kein Konsolenfehler. Nach dem Laden `scrollY` 122, Zeile bottom 583, Leiste bei 591, Treffer ist die Zeile. Der Tap öffnet `punkt=flug-zrh-bkk`. Dieselben fünf Kategorien liefern ihre eigene Eintrags-ID, ohne KAYAK-Text. Der Dev-Server in Chromium zeigt danach `scrollY` 135 und denselben Treffer auf der Zeile.
