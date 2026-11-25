@@ -69,7 +69,7 @@ async function bundeln(): Promise<string> {
         build.onResolve({ filter: /^next\// }, () => ({ path: 'next', namespace: 'org-leer' }))
         build.onResolve({ filter: /^@\// }, (args) => build.resolve(join(process.cwd(), args.path.slice(2)), { resolveDir: process.cwd(), kind: args.kind }))
         build.onLoad({ filter: /.*/, namespace: 'org-leer' }, (args) => {
-          const module: Record<string, string> = {
+          const stubModules: Record<string, string> = {
             dynamic: 'export default function dynamic(){return function Dynamisch(){return null}}',
             link: 'export default function Link(props){return props.children??null}',
             crypto: 'const hash=()=>({update(){return this},digest(){return ""}});export const createHmac=()=>hash();export const createHash=()=>hash();export const timingSafeEqual=()=>false;export const randomUUID=()=>"00000000-0000-4000-8000-000000000000";export default {}',
@@ -77,7 +77,7 @@ async function bundeln(): Promise<string> {
             node: 'export default {}',
             empty: 'export default {}',
           }
-          return { contents: module[args.path] ?? 'export default {}', loader: 'js' }
+          return { contents: stubModules[args.path] ?? 'export default {}', loader: 'js' }
         })
       },
     }],
