@@ -222,17 +222,19 @@ async function messen(page: Page): Promise<Messung> {
       })
       .map((e) => `${kurz(e)} ${getComputedStyle(e).fontSize}`)
     const leinwand = document.createElement('canvas').getContext('2d')!
+    const freieBreite = (e: HTMLElement) => {
+      const s = getComputedStyle(e)
+      return e.getBoundingClientRect().width - parseFloat(s.borderLeftWidth) - parseFloat(s.borderRightWidth) - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight)
+    }
     const platzhalter = felder
       .filter((e): e is HTMLInputElement => e instanceof HTMLInputElement && Boolean(e.placeholder) && !e.value)
       .filter((e) => {
-        const s = getComputedStyle(e)
         const p = getComputedStyle(e, '::placeholder')
         leinwand.font = `${p.fontWeight} ${p.fontSize} ${p.fontFamily}`
-        return leinwand.measureText(e.placeholder).width > e.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight) + 0.5
+        return leinwand.measureText(e.placeholder).width > freieBreite(e) + 0.5
       })
       .map((e) => {
-        const s = getComputedStyle(e)
-        const frei = e.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight)
+        const frei = freieBreite(e)
         const kette: string[] = []
         for (let n: HTMLElement | null = e; n && n !== document.body; n = n.parentElement) {
           const cs = getComputedStyle(n)
@@ -377,7 +379,7 @@ describe('Workspace-Niveau im echten Browser', () => {
           leinwand.font = `${p.fontWeight} ${p.fontSize} ${p.fontFamily}`
           return {
             text: leinwand.measureText(input.placeholder).width,
-            frei: input.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight),
+            frei: input.getBoundingClientRect().width - parseFloat(s.borderLeftWidth) - parseFloat(s.borderRightWidth) - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight),
             schrift: parseFloat(s.fontSize),
             hoehe: input.getBoundingClientRect().height,
           }
@@ -385,6 +387,19 @@ describe('Workspace-Niveau im echten Browser', () => {
         assert.ok(platz.text <= platz.frei + 0.5, `Platzhalter abgeschnitten bei ${breite}px ${thema}: ${platz.text} > ${platz.frei}`)
         assert.ok(platz.schrift >= 16, `Feldschrift ${platz.schrift}px bei ${breite}px`)
         assert.ok(platz.hoehe >= 44, `Feldhöhe ${platz.hoehe}px bei ${breite}px`)
+        const luecken = await page.getByPlaceholder(platzhalterText[schicht]).evaluateAll((els) =>
+          els.map((el) => {
+            const feld = el.closest('.org-field')!
+            const eingabeBox = el.getBoundingClientRect()
+            const feldBox = feld.getBoundingClientRect()
+            const tauschzone = Math.max(0, parseFloat(getComputedStyle(feld).paddingRight) - parseFloat(getComputedStyle(el).paddingRight))
+            return { links: eingabeBox.left - feldBox.left, rechts: feldBox.right - eingabeBox.right, erlaubt: 2 + tauschzone }
+          }),
+        )
+        assert.ok(
+          luecken.length > 0 && luecken.every((l) => l.links <= 2 && l.rechts <= l.erlaubt),
+          `Trefferfläche deckt das Feld nicht bei ${breite}px ${thema}: ${JSON.stringify(luecken)}`,
+        )
         await eingabe.click()
         await eingabe.fill('zur')
         const liste = page.getByRole('listbox').first()

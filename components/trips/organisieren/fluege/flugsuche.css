@@ -414,6 +414,9 @@
     right: 8px;
     transform: translateY(-50%);
   }
+  .flug-airports .org-field input {
+    width: calc(100% + 2 * var(--org-feld-px));
+  }
   .flug-airports .org-field:first-child {
     padding-right: 56px;
   }
