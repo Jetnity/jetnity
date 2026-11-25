@@ -58,7 +58,7 @@ export function tageVerteilen(reise: Trip, verteilung: Tagesverteilung): Verteil
   if (summe > gesamt) {
     return {
       ok: false,
-      meldung: `Deine Reise hat ${gesamt} Tage, verteilt sind ${summe}. Beim Verteilen wird die Reise nicht länger. Bitte vergib höchstens ${gesamt} Tage.`,
+      meldung: `Deine Reise hat ${gesamt} ${gesamt === 1 ? 'Tag' : 'Tage'}, verteilt ${summe === 1 ? 'ist' : 'sind'} ${summe}. Beim Verteilen wird die Reise nicht länger. Bitte vergib höchstens ${gesamt} ${gesamt === 1 ? 'Tag' : 'Tage'}.`,
     }
   }
 
