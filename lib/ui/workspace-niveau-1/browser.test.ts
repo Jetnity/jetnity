@@ -59,6 +59,21 @@ const FLUGHAEFEN = [
   { label: 'Zürich (ZRH), Zürich Hauptbahnhof Verbindungsstrecke mit einem sehr langen Namen', value: 'ZRH', description: 'Zürich, Kanton Zürich · Schweiz' },
 ]
 
+/**
+ * Feste Referenzschrift, damit das Ergebnis nicht von den Systemschriften des Rechners abhängt
+ * (auf dem CI-Runner ist `system-ui` DejaVu Sans, 12 % breiter als Noto Sans, das auf Telefonen
+ * nicht vorkommt). Geist liegt mit Next in node_modules; `size-adjust` dehnt sie auf die Breite
+ * von Noto Sans, etwa 5 % breiter als SF Pro und Roboto. Das ist bewusst ein strenger Massstab.
+ * `WORKSPACE_NIVEAU_SCHRIFT="DejaVu Sans"` prüft stattdessen eine installierte Systemschrift.
+ */
+const REFERENZSCHRIFT = join(process.cwd(), 'node_modules/next/dist/compiled/@vercel/og/Geist-Regular.ttf')
+
+function schriftRegel(systemschrift?: string) {
+  if (systemschrift) return `*{font-family:"${systemschrift}",sans-serif !important}`
+  const daten = readFileSync(REFERENZSCHRIFT).toString('base64')
+  return `@font-face{font-family:"Referenzschrift";src:url(data:font/ttf;base64,${daten}) format("truetype");font-weight:100 900;size-adjust:107%}*{font-family:"Referenzschrift",sans-serif !important}`
+}
+
 type Messung = {
   ueberlauf: number
   ragt: string[]
@@ -106,6 +121,13 @@ async function oeffnen(breite: number, thema: 'light' | 'dark', hoehe = 844, sch
   page.on('pageerror', (error) => fehler.push(error.message))
   await page.goto(`${origin}${REISE}?schicht=${schicht}`, { waitUntil: 'load' })
   await page.waitForSelector('[data-workspace-ansicht]', { state: 'attached' })
+  if (!process.env.WORKSPACE_NIVEAU_SCHRIFT) {
+    const aktiv = await page.evaluate(async () => {
+      await document.fonts.ready
+      return document.fonts.check('16px "Referenzschrift"') && getComputedStyle(document.body).fontFamily.startsWith('Referenzschrift')
+    })
+    assert.ok(aktiv, 'Die Referenzschrift ist nicht aktiv; Messungen wären vom Rechner abhängig')
+  }
   return { context, page, fehler, fremd }
 }
 
@@ -238,7 +260,8 @@ test('der Ersatz für next/dynamic lädt die echte Komponente', () => {
 
 describe('Workspace-Niveau im echten Browser', () => {
   before(async () => {
-    const [css, mitAnbieter, ohneAnbieter] = await Promise.all([projektCss(), bundeln(true), bundeln(false)])
+    const [grundCss, mitAnbieter, ohneAnbieter] = await Promise.all([projektCss(), bundeln(true), bundeln(false)])
+    const css = `${grundCss}\n${schriftRegel(process.env.WORKSPACE_NIVEAU_SCHRIFT)}`
     dokumente.anbieter = dokument(css, mitAnbieter)
     dokumente.ohne = dokument(css, ohneAnbieter)
     server = createServer((req, res) => {
