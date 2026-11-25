@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import OfficialTruthChDe from '@/components/readiness/OfficialTruthChDe'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
+import { selectedAtVisitorPresentationPreview } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-preview-selection'
 
 export const metadata: Metadata = {
   title: 'Einreise und Visum prüfen',
@@ -10,6 +11,6 @@ export const metadata: Metadata = {
 
 export default function EinreisePage() {
   return <main className="min-h-[70dvh] px-4 py-8 text-foreground sm:px-6 sm:py-12">
-    <OfficialTruthChDe />
+    <OfficialTruthChDe atVisitorPreview={selectedAtVisitorPresentationPreview()} />
   </main>
 }
