@@ -2,7 +2,7 @@
 // Dieselbe Bedingung wie in WorkspaceTripChrome: unter 360 px, unter 500 px Höhe,
 // grosse Schrift oder offene Tastatur steht die Leiste im Fluss und deckt nichts.
 
-export const ORGANISIEREN_ZEILE_LUFT_PX = 8
+const ORGANISIEREN_ZEILE_LUFT_PX = 8
 
 export type OrganisierenZeileKasten = { readonly top: number; readonly bottom: number }
 

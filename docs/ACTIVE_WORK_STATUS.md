@@ -6,7 +6,7 @@ Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9
 
 - Übernommen aus #1310: gespeicherte Leistungen zuerst, klarer Leerzustand, Anbietersuche nur nach Knopf oder ausdrücklichem Einstieg mit Etappe, Ort oder Kante, keine alte tiefe Scrollposition. #1310 bleibt offen für den Technical Lead.
 - Die erste Zeile rückt auf 390 px 8 px über die fixierte Leiste. «Flug suchen» und «Unterkunft suchen» im Planpunkt bleiben.
-- Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, lokal grün. Die Pflicht-CI startet dieselbe Prüfung auf Chromium, weil der Runner kein WebKit-Binary hat. Der Harness bleibt über den esbuild-Einstieg erreichbar. Kein Merge, kein Production-Deploy. #1313 unberührt.
+- Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, lokal grün. Die Pflicht-CI startet dieselbe Prüfung auf Chromium, weil der Runner kein WebKit-Binary hat. Der Harness bleibt über den esbuild-Einstieg erreichbar. Seine Hilfsfunktionen und die Leisten-Konstante sind nicht exportiert, weil nur die Datei selbst einen Aufrufer hat. Kein Merge, kein Production-Deploy. #1313 unberührt.
 
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 

@@ -31,7 +31,7 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'kind' | 'title' 
 }
 
 /** Synthetische Phuket-Reise: drei Flüge und je ein Eintrag der übrigen Kategorien. */
-export function phuketReise(): Trip {
+function phuketReise(): Trip {
   const basis = n12Reise()
   const days = [
     tag({
@@ -207,7 +207,7 @@ function Flaeche() {
   )
 }
 
-export function mountOrganisierenRoutingHarness() {
+function mountOrganisierenRoutingHarness() {
   const wurzel = document.getElementById('root')
   if (!wurzel) return
   createRoot(wurzel).render(<Flaeche />)
