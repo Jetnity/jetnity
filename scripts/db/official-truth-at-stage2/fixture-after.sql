@@ -1,8 +1,12 @@
 -- Assertions run against the identical core/Stage1 V3 comparator and wrapper.
 -- Method/guard are isolated controlled fixtures, not a complete hosted BG1 proof.
-REVOKE ALL ON FUNCTION public.jetnity_source_bound_at_visa_v1(text) FROM PUBLIC;
-GRANT USAGE ON SCHEMA at_stage2_fixture_api TO anon;
-GRANT EXECUTE ON FUNCTION public.jetnity_source_bound_at_visa_v1(text) TO anon;
+-- Observe inherited ACL; no corrective fixture grant after replacement.
+DO $preserved_acl$
+BEGIN
+ IF NOT has_function_privilege('anon','public.jetnity_source_bound_at_visa_v1(text)','EXECUTE')
+ OR has_function_privilege('service_role','public.jetnity_source_bound_at_visa_v1(text)','EXECUTE')
+ THEN RAISE EXCEPTION 'AT_STAGE2_PUBLIC_ACL_CHANGED'; END IF;
+END $preserved_acl$;
 
 DO $checks$
 DECLARE op text:='atsrc3_'||repeat('a',32); a text:='atrenew3_'||repeat('b',32);

@@ -13,6 +13,15 @@ CREATE SCHEMA official_v3_at_production_private;
 CREATE SCHEMA official_v3_guard_private;
 CREATE SCHEMA official_v3_method_private;
 CREATE SCHEMA at_stage2_fixture_api;
+-- Stand-in for the already existing public RPC and its existing anon ACL.
+-- CREATE OR REPLACE must retain this exact ACL, not create a new endpoint.
+CREATE FUNCTION public.jetnity_source_bound_at_visa_v1(p_citizenship_country_code text)
+RETURNS jsonb LANGUAGE sql SECURITY DEFINER SET search_path=pg_catalog AS $old$
+ SELECT jsonb_build_object('status','unavailable','destinationCountryCode','AT')
+$old$;
+REVOKE ALL ON FUNCTION public.jetnity_source_bound_at_visa_v1(text) FROM PUBLIC;
+GRANT USAGE ON SCHEMA at_stage2_fixture_api TO anon;
+GRANT EXECUTE ON FUNCTION public.jetnity_source_bound_at_visa_v1(text) TO anon;
 CREATE TEMP TABLE at_stage2_exact_predecessor(singleton boolean);
 CREATE TABLE official_v3_guard_private.fixture_guard(ok boolean NOT NULL);
 INSERT INTO official_v3_guard_private.fixture_guard VALUES(true);

@@ -11,6 +11,7 @@ import { HUMAN_METHOD_PRODUCTION_URL, HUMAN_METHOD_DEV_URL } from '../official-t
 import { presentAtVisaReadbacks } from './at-visitor-display'
 import { AT_VISITOR_INFORMATION_LINKS } from './at-visitor-links'
 import type { V3VisitorInput } from '../official-truth-product-v3/contract'
+import { createV3VisitorController, type V3VisitorTimers, type V3VisitorUiState } from '../official-truth-product-v3/visitor/controller'
 
 const copy: AtApprovedVisitorCopy = { approvalReference: 'SYNTHETIC', scope: 'Test-Geltungsbereich', officialLinks: 'Test-Quellen', fraudWarning: 'Test-Warnung', liability: 'Test-Hinweis' }
 const input: V3VisitorInput = { destinationCountryCode: 'AT', citizenshipCountryCodes: ['CH', 'IN'] }
@@ -70,4 +71,43 @@ test('separately supplied approved copy never renders the Dev label or legal dra
   assert.match(html, /Test-Hinweis/)
   assert.match(html, /Derzeit nicht verfügbar/)
   assert.doesNotMatch(html, /Dev-Vorschau|Haftungshinweis – Entwurf|Visum nicht erforderlich/)
+})
+
+test('the production positive projection disappears from an already open tab after the 60-second lease, without polling', async () => {
+  let elapsed = 0, serial = 0, requests = 0
+  const tasks = new Map<number, { due: number; callback: () => void }>()
+  const timers: V3VisitorTimers = {
+    now: () => elapsed,
+    after(milliseconds, callback) {
+      const id = ++serial
+      tasks.set(id, { due: elapsed + milliseconds, callback })
+      return () => { tasks.delete(id) }
+    },
+  }
+  const changes: V3VisitorUiState[] = []
+  const projected = capAtProductionDisplayLease(presentAtVisaReadbacks(input, [{ country: 'CH', data: { ...raw, sourceAuthorityVersion: 3 } }], now, true))
+  const controller = createV3VisitorController(async () => {
+    requests += 1
+    return { daten: projected, fehler: null }
+  }, state => changes.push(state), timers)
+  await controller.submit(input)
+  const before = changes.at(-1)
+  assert.equal(before?.phase, 'ready')
+  if (before?.phase !== 'ready') assert.fail('synthetic response not ready')
+  assert.equal(before.view.cells[0]?.results[0]?.status, 'accepted')
+  elapsed = 60_000
+  for (const [id, task] of [...tasks]) {
+    if (task.due <= elapsed && tasks.delete(id)) task.callback()
+  }
+  const after = changes.at(-1)
+  assert.equal(after?.phase, 'ready')
+  if (after?.phase !== 'ready') assert.fail('expiry must keep unavailable result')
+  assert.ok(after.view.cells.every(cell => cell.results.every(result => result.status === 'unavailable')))
+  const sicht = einreisePrueferSicht(after)
+  assert.ok(sicht)
+  const html = renderToStaticMarkup(React.createElement(AtVisitorPreview, { anzeige: sicht.anzeige, approvedCopy: copy }))
+  assert.match(html, /Derzeit nicht verfügbar/)
+  assert.doesNotMatch(html, /Visum nicht erforderlich/)
+  assert.equal(requests, 1)
+  controller.dispose()
 })

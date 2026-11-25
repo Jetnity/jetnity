@@ -153,6 +153,10 @@ BEGIN
  instant_at:=clock_timestamp();
  IF NOT FOUND OR a.authorized_at>instant_at OR a.valid_until<=instant_at OR a.method_epoch<>2
  OR official_v3_at_production_private.stage2_method_ch_v3() IS DISTINCT FROM true THEN RETURN 0; END IF;
+ -- Hold the source and receipt snapshot stable from the final reproof to commit.
+ LOCK TABLE official_v3_at_production_private.watch_batches_v1,official_v3_at_production_private.watch_requests_v1,
+  official_v3_at_production_private.watch_observations_v1,official_v3_at_production_private.ch_source_http_receipts_v3,
+  official_v3_at_production_private.ch_source_http_bodies_v3 IN SHARE MODE;
  LOCK TABLE official_v3_at_production_private.ch_visa_facts_v1,official_v3_at_production_private.ch_visa_facts_v2,official_v3_at_production_private.ch_visa_facts_v3 IN SHARE ROW EXCLUSIVE MODE;
  SELECT greatest(
   coalesce((SELECT max(version_id) FROM official_v3_at_production_private.ch_visa_facts_v1),0),
@@ -201,7 +205,7 @@ BEGIN
  OR NOT EXISTS(SELECT 1 FROM official_v3_at_production_private.ch_renewal_go_v3 a WHERE a.authorization_id=f.authorization_id
     AND a.source_operation_id=f.source_operation_id AND a.batch_id=f.source_batch_id AND a.source_digest=f.source_digest
     AND a.expected_predecessor+1=f.version_id AND a.method_epoch=f.method_epoch
-    AND f.verified_at BETWEEN a.authorized_at AND a.valid_until)
+    AND f.verified_at>=a.authorized_at AND f.verified_at<a.valid_until)
  THEN RETURN none; END IF;
  evidence:=official_v3_at_production_private.stage2_evidence_ch_v3(f.source_batch_id,f.source_operation_id);
  IF evidence IS NULL OR evidence->>'digest' IS DISTINCT FROM f.source_digest
