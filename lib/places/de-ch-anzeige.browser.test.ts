@@ -117,6 +117,7 @@ async function projektCss() {
   const dateien = [
     'components/workspace/workspace.css',
     'components/workspace/workspace-surfaces.css',
+    'components/workspace/workspace-niveau.css',
     'components/trips/reiseplan/etappen.css',
     'components/trips/organisieren/organisieren.css',
     'components/trips/organisieren/hotelsuche.css',

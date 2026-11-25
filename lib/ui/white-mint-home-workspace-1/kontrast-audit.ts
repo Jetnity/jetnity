@@ -229,7 +229,7 @@ export function paareSammeln(root: ParentNode | null): Paar[] {
     if (Number.parseFloat(stil.borderTopWidth) < 1) return
     const rand = farbeLesen(stil.borderTopColor)
     const eigene = farbeLesen(stil.backgroundColor)
-    if (!rand || !eigene || eigene.a < 0.99) return
+    if (!rand || rand.a < 0.05 || !eigene || eigene.a < 0.99) return
     const gleich = Math.abs(rand.r - eigene.r) < 3 && Math.abs(rand.g - eigene.g) < 3 && Math.abs(rand.b - eigene.b) < 3
     if (gleich) return
     const grund = hintergrund(el.parentElement)

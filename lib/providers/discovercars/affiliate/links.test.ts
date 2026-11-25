@@ -14,7 +14,7 @@ describe('DiscoverCars Suche vor der bewussten Anzeige', () => {
     assert.match(html, /optionale externe Suchformular ist noch nicht freigegeben/)
     assert.match(html, /nicht geladen und erhält dadurch keine Verbindungsdaten/)
     assert.match(html, /Fahrzeuge, Preise und Mietbedingungen/)
-    assert.match(html, /anschließend bei DiscoverCars/)
+    assert.match(html, /anschliessend bei DiscoverCars/)
     assert.match(html, /Affiliate-Partner/)
     assert.match(html, /href="https:\/\/www\.discovercars\.com\/\?a_aid=jetnity" target="_blank" rel="noopener noreferrer sponsored" referrerPolicy="no-referrer"/i)
     assert.match(html, /data-discovercars-zustand="ruhend"/)

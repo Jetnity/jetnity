@@ -20,8 +20,10 @@ const KOMBINATIONEN = [
 ] as const
 const BREITEN = [
   { name: '320', width: 320, height: 700 },
+  { name: '375', width: 375, height: 635 },
   // 390×664 ist der iPhone-Viewport, in dem die fixierte Leiste die erste Zeile deckt.
   { name: '390', width: 390, height: 664 },
+  { name: '430', width: 430, height: 739 },
   { name: '1280', width: 1280, height: 800 },
 ] as const
 const THEMEN = ['light', 'dark'] as const
@@ -40,6 +42,7 @@ async function projektCss(): Promise<string> {
   const extra = [
     'components/workspace/workspace.css',
     'components/workspace/workspace-surfaces.css',
+    'components/workspace/workspace-niveau.css',
     'components/trips/organisieren/organisieren.css',
     'components/trips/organisieren/hotelsuche.css',
     'components/trips/organisieren/fluege/flugsuche.css',
@@ -149,8 +152,8 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
     await new Promise<void>((resolve) => server?.close(() => resolve()))
   })
 
-  test('fünf Kategorien, drei Breiten und Hell/Dunkel öffnen den Eintrag dieser Reise ohne KAYAK-Testvorschau', async () => {
-    assert.equal(KOMBINATIONEN.length * BREITEN.length * THEMEN.length, 30)
+  test('fünf Kategorien, fünf Breiten und Hell/Dunkel öffnen den Eintrag dieser Reise ohne KAYAK-Testvorschau', async () => {
+    assert.equal(KOMBINATIONEN.length * BREITEN.length * THEMEN.length, 50)
     for (const breite of BREITEN) {
       for (const thema of THEMEN) {
         for (const fall of KOMBINATIONEN) {

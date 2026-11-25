@@ -122,7 +122,40 @@ test('presentation gates use neutral #1264 tokens and do not branch on the devic
   assert.match(code, /focus-visible:ring-2 focus-visible:ring-ring/)
   assert.doesNotMatch(code, /userAgent|navigator\.platform|window\.innerWidth/)
   assert.match(css, /@media \(max-width: 700px\)/)
-  assert.match(css, /\[data-workspace-theme='dark'\] \.org-workspace/)
+
+  // Hell und Dunkel kommen seit #1313 zentral aus workspace-niveau.css: beide Themes definieren
+  // dieselben `--wn-*`-Tokens genau einmal, `.org-workspace` erbt sie und setzt keine eigenen
+  // Farben je Theme. Ein drittes Theme (zum Beispiel Grün) gibt es nicht.
+  const niveau = readFileSync('components/workspace/workspace-niveau.css', 'utf8')
+  const flaechen = readFileSync('components/workspace/workspace-surfaces.css', 'utf8')
+  const namenIn = (block: string) => [...block.matchAll(/(--wn-[a-z-]+)\s*:/g)].map((treffer) => treffer[1]!)
+  const themaTokens = (thema: 'light' | 'dark') => {
+    const block = niveau.match(new RegExp(`\\.workspace-shell\\[data-workspace-theme="${thema}"\\]\\s*\\{([^}]*)\\}`))?.[1]
+    assert.ok(block, `workspace-niveau.css definiert keine ${thema}-Tokens`)
+    const namen = namenIn(block)
+    assert.equal(new Set(namen).size, namen.length, `${thema}: ein --wn-Token ist doppelt definiert`)
+    return namen.sort()
+  }
+  const hell = themaTokens('light')
+  const dunkel = themaTokens('dark')
+  assert.ok(hell.length >= 12, 'zu wenige neutrale Tokens im hellen Theme')
+  assert.deepEqual(dunkel, hell, 'Hell und Dunkel müssen dieselben --wn-Tokens definieren')
+  assert.deepEqual(
+    [...new Set([...niveau.matchAll(/data-workspace-theme="([^"]+)"/g)].map((treffer) => treffer[1]))].sort(),
+    ['dark', 'light'],
+  )
+  const basis = namenIn(niveau.match(/\.workspace-shell\s*\{([^}]*)\}/)?.[1] ?? '')
+  const orgBlock = css.match(/\.org-workspace\s*\{([^}]*)\}/)?.[1]
+  assert.ok(orgBlock, 'organisieren.css: .org-workspace fehlt')
+  const verwendet = [...orgBlock.matchAll(/var\((--wn-[a-z-]+)/g)].map((treffer) => treffer[1]!)
+  assert.ok(verwendet.length >= 8, '.org-workspace erbt die neutralen Tokens nicht')
+  for (const name of verwendet) assert.ok([...hell, ...basis].includes(name), `${name} ist in Hell und Dunkel nicht definiert`)
+  for (const name of ['--org-ink', '--org-muted', '--org-line', '--org-bg', '--org-white']) {
+    assert.match(orgBlock, new RegExp(`${name}:\\s*var\\(--workspace-`), `${name} folgt nicht dem Workspace-Theme`)
+  }
+  for (const name of ['--workspace-bg', '--workspace-panel', '--workspace-soft', '--workspace-ink', '--workspace-muted', '--workspace-edge']) {
+    assert.match(flaechen, new RegExp(`${name}:`), `${name} fehlt im dunklen Workspace`)
+  }
   // Actual geometry, contrast and Safari taps at 320/390/1280 in light/dark
   // are browser acceptance gates, never claimed as proven by a source test.
 })
