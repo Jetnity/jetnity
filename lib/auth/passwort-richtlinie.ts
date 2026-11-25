@@ -24,7 +24,7 @@ export const PASSWORT_RICHTLINIE = {
   mindestlaenge: 12,
   /** Entspricht `auth.password_requirements = "lower_upper_letters_digits_symbols"`. */
   gruppen: [
-    { text: 'Groß- & Kleinbuchstaben', pruefe: (pw: string) => /[a-z]/.test(pw) && /[A-Z]/.test(pw) },
+    { text: 'Gross- & Kleinbuchstaben', pruefe: (pw: string) => /[a-z]/.test(pw) && /[A-Z]/.test(pw) },
     { text: 'Mind. 1 Zahl', pruefe: (pw: string) => /\d/.test(pw) },
     { text: 'Mind. 1 Symbol (z. B. !?@#)', pruefe: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
   ] as Zeichengruppe[],
@@ -80,7 +80,7 @@ export function staerkeFarbe(punkte: number): string {
 }
 
 /** Der Text, der die Anforderungen in einem Satz zusammenfasst. */
-export const RICHTLINIE_TEXT = `Bitte nutze mind. ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen inkl. Groß-/Kleinbuchstaben, Zahl und Symbol.`
+export const RICHTLINIE_TEXT = `Bitte nutze mind. ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen inkl. Gross-/Kleinbuchstaben, Zahl und Symbol.`
 
 /** Was unter dem Feld steht, abgeleitet aus derselben Regel. */
 export const RICHTLINIE_PUNKTE = [

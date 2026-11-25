@@ -8,7 +8,7 @@ Auftrag #1314. Ein Draft-PR, Ausgang `main` mit #1308 und #1312. Keine Datenbank
 
 Ein Name wechselt nur bei einem eindeutigen Tabellentreffer aus Typ, Land und exaktem Katalognamen. Fehlt der Typ, zählt der Treffer nur, wenn Land und Katalogname genau eine Zeile treffen. Vienna (US), Rome (US), ein unbekannter Name und ein Name ohne Land bleiben stehen. `ß` wird `ss`. Es wird kein Name erfunden und kein Freitext durchsucht.
 
-Die Ortssuche lässt `label` als Katalognamen stehen. Sichtbar sind `anzeige` und das `aria-label`. `OrtSuche` gibt im `onChange` diesen Katalognamen als `name` weiter. «Wien» ist kein blosses Ranking nach dem Lesen: `ortAnzeigeAliasfilter` und der exakte Filter nennen `and(typ, country_code, Katalogname)`, und `placesSuchen` zieht genau diese Zeile im bestehenden Read-only-Weg nach. Vienna (US) kommt dadurch nicht als Wien herein. Vienne, Roma und Lisboa bleiben die vorhandenen Keyword-Filter.
+Die Ortssuche lässt `label` als Katalognamen stehen. Sichtbar sind `anzeige` und das `aria-label`. `OrtSuche` gibt im `onChange` diesen Katalognamen als `name` weiter; `anzeige` hängt nur an, wenn die Option einen Anzeigenamen hat. «Wien» ist kein blosses Ranking nach dem Lesen: `ortAnzeigeAliasfilter` und der exakte Filter nennen `and(typ, country_code, Katalogname)`, und `placesSuchen` zieht genau diese Zeile im bestehenden Read-only-Weg nach. Vienna (US) kommt dadurch nicht als Wien herein. Vienne, Roma und Lisboa bleiben die vorhandenen Keyword-Filter. Ohne Tabellentreffer bleibt das schon gewählte Label: Schweiz und Kongo-Brazzaville werden nicht durch den englischen Katalognamen ersetzt.
 
 ## Abgedeckte Flächen
 
@@ -28,11 +28,11 @@ Eine bereits gespeicherte Reise braucht keine Migration: Anzeige aus gespeichert
 - Eine blosse Place-ID ohne Ort (Typ, Land, Katalogname) reicht der Funktion nicht. Die Suche und `/planen` lösen den Ort zuerst auf.
 - Verbindungsnamen auf Mobilitätskanten, freie Omio-Eingaben und Natural-Earth-Länderbeschriftungen sind kein belegter Katalogort.
 - Der Inspirationskatalog liegt ausserhalb dieses Auftrags.
-- `lib/auth/passwort-richtlinie.ts` enthält weiter «Groß». Die Stelle steht nicht in den 15 genannten Texten und wurde nicht angefasst.
+- Die Passwortprüfung in `lib/auth/passwort-richtlinie.ts` ist unverändert. Zwei sichtbare Sätze dort («Gross- & Kleinbuchstaben», «inkl. Gross-/Kleinbuchstaben») folgen dem Katalog, weil der bestehende Anzeigetest denselben deutschen Wortlaut verlangt. Official-Truth-Namen wie «Großbritannien» bleiben.
 
 ## Schweizer Texte
 
-Genau die 15 genannten sichtbaren `ß`-Stellen in den acht Dateien, plus die Solltexte, die diese Zeichenketten festschreiben. Keine Admin-, Auth- oder Official-Truth-Logik.
+Genau die 15 genannten sichtbaren `ß`-Stellen in den acht Dateien, plus die Solltexte, die diese Zeichenketten festschreiben. Die Passwortlogik, Admin-Logik und Official-Truth-Logik bleiben. Nur der sichtbare Richtlinientext folgt dem Katalog, damit Deutsch in Katalog und Formular dasselbe sagt.
 
 ## Konflikt mit offenen PRs
 

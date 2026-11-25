@@ -327,7 +327,14 @@ export function ortAnzeigeLabel(ort: Ort, suche: string): string {
 function ortSuchAnzeige(ort: Ort, label: string): string {
   const eigene = [ortLokalerName(ort), ort.name, ort.sourceName ?? ''].filter((name) => name.length > 0)
   if (!eigene.includes(label)) return label
-  return ortAnzeigeName(ort)
+  // Ohne Tabellentreffer bleibt das schon gewählte Label.
+  // `ort.name` ist dort oft der englische Katalogname und darf die Anzeige nicht ersetzen.
+  return ortAnzeigeName({
+    name: label,
+    typ: ort.typ,
+    countryCode: ort.countryCode,
+    sourceName: ort.sourceName ?? ort.name,
+  })
 }
 
 function ortAlsOption(ort: Ort, suche: string, mehrdeutigesLandAlias: boolean): OrtOption {
