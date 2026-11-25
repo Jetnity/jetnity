@@ -1,4 +1,7 @@
-/* The search shares the workspace navigation. The hero and form use the approved travel view. */
+/* Organisieren: Suche, Formulare und Ergebnisse im Workspace.
+   Masse folgen DESIGN_SYSTEM.md (4.1 Schrift, 5.2 Radien, 7 Mobile).
+   Farben, Radien und Tiefe kommen aus workspace-niveau.css; die Rückfallwerte
+   gelten nur ausserhalb der Workspace-Hülle, z. B. in der Kartenvorschau. */
 [data-reisesuche] > div {
   max-width: none;
 }
@@ -7,25 +10,28 @@
   padding-top: 0;
 }
 .org-workspace {
-  --org-ink: #153a33;
-  --org-muted: #506760;
-  --org-line: #d9e2da;
-  --org-bg: #f5f7f2;
-  --org-white: #fff;
+  --org-ink: var(--workspace-ink, #1b2a26);
+  --org-muted: var(--workspace-muted, #4a5f57);
+  --org-line: var(--workspace-edge, #d3e0d8);
+  --org-bg: var(--workspace-bg, #f2f7f4);
+  --org-white: var(--workspace-panel, #fdfefd);
+  --org-gewaehlt: var(--workspace-soft, #dcebe2);
+  --org-feld-kante: var(--wn-feld-kante, #46665b);
+  --org-feld-grund: var(--wn-feld-grund, #fdfefd);
+  --org-aktion: var(--wn-aktion, #153a33);
+  --org-aktion-schrift: var(--wn-aktion-schrift, #fdfefd);
+  --org-fokus: var(--wn-fokus, #1b2a26);
+  --org-fehler: var(--wn-fehler, #a3361d);
+  --org-tiefe: var(--wn-tiefe, 0 1px 2px rgb(27 42 38 / 0.04), 0 10px 28px -16px rgb(27 42 38 / 0.18));
+  --org-schwebe: var(--wn-schwebe, 0 2px 6px rgb(27 42 38 / 0.06), 0 22px 44px -22px rgb(27 42 38 / 0.28));
+  --org-r-control: var(--wn-r-control, 14px);
+  --org-r-card: var(--wn-r-card, 20px);
+  --org-feld-h: var(--wn-feld-h, 3.5rem);
+  --org-feld-px: 14px;
   min-width: 0;
   grid-column: 1/-1;
   background: var(--org-bg);
   color: var(--org-ink);
-}
-[data-workspace-theme='light'] .org-workspace {
-  --org-bg: var(--workspace-bg);
-}
-[data-workspace-theme='dark'] .org-workspace {
-  --org-ink: var(--workspace-ink);
-  --org-muted: var(--workspace-muted);
-  --org-white: var(--workspace-panel);
-  --org-bg: var(--workspace-bg);
-  --org-line: var(--workspace-edge);
 }
 .org-wrap {
   width: min(1200px, calc(100% - 72px));
@@ -59,8 +65,10 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.org-rueckkehr:hover {
-  border-color: var(--org-ink);
+@media (hover: hover) {
+  .org-rueckkehr:hover {
+    border-color: var(--org-ink);
+  }
 }
 .org-tabs button,
 .org-go,
@@ -71,80 +79,80 @@
 .org-check {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 .org-body {
   position: relative;
   padding-bottom: 24px;
 }
+
+/* Bereichswahl, Bestand und Formular sind drei eigene Karten mit gleichem Radius und gleichem Abstand. */
 .org-tabs {
   position: relative;
   z-index: 1;
   display: flex;
-  gap: 5px;
-  padding: 13px 20px;
+  gap: 6px;
+  padding: 12px 16px;
   background: var(--org-white);
   border: 1px solid var(--org-line);
-  border-radius: 18px 18px 0 0;
+  border-radius: var(--org-r-card);
+  margin-bottom: 12px;
   scroll-margin-block-start: 5rem;
 }
 .org-tabs button {
   min-height: 44px;
   padding: 0 16px;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 999px;
+  font-size: 0.875rem;
   font-weight: 650;
   white-space: nowrap;
 }
-.org-tabs button[aria-selected='true'],
-.org-go {
-  background: #153a33;
-  color: white;
+.org-tabs button[aria-selected='true'] {
+  background: var(--org-aktion);
+  color: var(--org-aktion-schrift);
 }
-.org-tabs button:hover:not([aria-selected='true']) {
-  background: var(--org-bg);
+@media (hover: hover) {
+  .org-tabs button:hover:not([aria-selected='true']) {
+    background: var(--org-gewaehlt);
+  }
 }
 .org-tabs svg {
   width: 18px;
   height: 18px;
+  flex: none;
 }
 .org-workspace :is(button, a, select, input, summary):focus-visible {
-  outline: 3px solid #6b9f8e;
+  outline: 3px solid var(--org-fokus);
   outline-offset: 2px;
 }
+
+/* Formular- und Bestandskarte */
 .org-form {
   position: relative;
   min-width: 0;
-  padding: 19px 22px 21px;
+  padding: 24px;
   border: 1px solid var(--org-line);
-  border-top: 0;
-  border-radius: 0 0 18px 18px;
+  border-radius: var(--org-r-card);
   background: var(--org-white);
-  box-shadow: 0 7px 25px #112f220c;
+  box-shadow: var(--org-tiefe);
 }
 .org-bestand {
-  padding: 16px 22px 10px;
+  margin-bottom: 12px;
+  padding: 20px 24px 12px;
   border: 1px solid var(--org-line);
-  border-top: 0;
+  border-radius: var(--org-r-card);
   background: var(--org-white);
-}
-.org-bestand:not(:has(+ .org-form)) {
-  margin-bottom: 14px;
-  border-radius: 0 0 18px 18px;
-  box-shadow: 0 7px 25px #112f220c;
-}
-.org-bestand + .org-form {
-  border-top: 1px solid var(--org-line);
+  box-shadow: var(--org-tiefe);
 }
 .org-bestand-kopf h3 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.35;
   font-weight: 650;
   letter-spacing: -0.012em;
 }
 .org-bestand-kopf p,
 .org-bestand-text small {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.45;
   color: var(--org-muted);
 }
@@ -161,12 +169,14 @@
   gap: 8px 14px;
   width: 100%;
   min-height: 56px;
-  padding: 10px 6px;
-  border-radius: 10px;
+  padding: 10px 8px;
+  border-radius: var(--org-r-control);
   text-align: left;
 }
-button.org-bestand-zeile:hover {
-  background: var(--org-bg);
+@media (hover: hover) {
+  button.org-bestand-zeile:hover {
+    background: var(--org-gewaehlt);
+  }
 }
 .org-bestand-text {
   display: grid;
@@ -174,7 +184,7 @@ button.org-bestand-zeile:hover {
   min-width: 0;
 }
 .org-bestand-text b {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 650;
   overflow-wrap: anywhere;
 }
@@ -184,7 +194,7 @@ button.org-bestand-zeile:hover {
   align-items: center;
   justify-content: flex-end;
   gap: 6px 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .org-bestand-pfeil {
   width: 18px;
@@ -201,10 +211,17 @@ button.org-bestand-zeile:hover {
 .org-bestand-mehr {
   min-height: 44px;
   padding-inline: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+/* Schalter der Angebotssuche: ein bedienbares Feld, dessen Kante allein die Fläche zeigt.
+   Kante und Grund kommen wie bei den Eingabefeldern aus den Hell/Dunkel-Tokens (Kante ≥ 3:1);
+   die ruhige Kartenkante `border-input` genügt dafür nicht (1,28:1). */
+.org-workspace [data-organisieren-suche-toggle] {
+  border-color: var(--org-feld-kante);
+  background-color: var(--org-feld-grund);
 }
 .org-formtop,
 .org-sectionhead,
@@ -217,13 +234,13 @@ button.org-bestand-zeile:hover {
   gap: 12px;
 }
 .org-formtop {
-  margin-bottom: 14px;
-  min-height: 31px;
+  margin-bottom: 16px;
+  min-height: 44px;
 }
 .org-formtop h2,
 .org-results > h2,
 .org-sectionhead h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1.17;
   letter-spacing: -0.035em;
   font-weight: 650;
@@ -232,16 +249,20 @@ button.org-bestand-zeile:hover {
 .org-sectionhead select,
 .org-sub select,
 .org-sub input:not([type='checkbox']) {
-  border: 1px solid var(--org-line);
-  background: var(--org-white);
+  min-height: 44px;
+  border: 1px solid var(--org-feld-kante);
+  background: var(--org-feld-grund);
   color: var(--org-ink);
-  border-radius: 8px;
-  padding: 4px 8px;
-  font-size: 13px;
+  border-radius: var(--org-r-control);
+  padding: 6px 12px;
+  font-size: 1rem;
 }
 .org-formtop > select {
-  border-radius: 18px;
+  border-radius: 999px;
+  padding-inline: 16px;
 }
+
+/* Suchfelder: eine Höhe, ein Radius, eine Kante für jedes Eingabeelement. */
 .org-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1.2fr)) repeat(2, minmax(0, 0.94fr)) minmax(0, 1fr) auto;
@@ -255,64 +276,128 @@ button.org-bestand-zeile:hover {
   grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 }
 .org-field,
-.org-station {
+.org-station,
+.ov-place,
+.ov-people {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  padding: 8px 12px;
-  min-height: 61px;
-  border: 1px solid var(--org-line);
-  border-radius: 10px;
-  background: var(--org-white);
+  padding: 8px var(--org-feld-px);
+  min-height: var(--org-feld-h);
+  border: 1px solid var(--org-feld-kante);
+  border-radius: var(--org-r-control);
+  background: var(--org-feld-grund);
 }
 .org-field:focus-within,
-.org-station:focus-within {
-  border-color: #739584;
+.org-station:focus-within,
+.ov-place:focus-within,
+.ov-people:focus-within {
+  outline: 3px solid var(--org-fokus);
+  outline-offset: 2px;
+}
+/* Den Fokusring zeichnet das Feld; das Eingabeelement darin bekommt keinen zweiten. */
+.org-workspace .org-field :is(input, select):focus-visible,
+.org-workspace .org-station input:focus-visible,
+.org-workspace .ov-place input:focus-visible,
+.org-workspace .ov-people select:focus-visible {
+  outline: 0;
+}
+/* Die Vorschlagsliste hängt am Feld, nicht am Eingabeelement: gleiche Breite, nie aus dem Bild.
+   !important nur gegen die festen Tailwind-Werte der geteilten Suchliste. */
+.org-field > .relative {
+  position: static;
+}
+.org-field .org-air-liste {
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  width: auto !important;
+  max-width: none !important;
+  margin-top: 0;
+  border-radius: var(--org-r-control);
+  box-shadow: var(--org-schwebe);
 }
 .org-field > span,
 .org-field > label,
-.org-station label {
-  font-size: 11px;
-  font-weight: 610;
+.org-station label,
+.ov-place > label {
+  position: relative;
+  z-index: 1;
+  font-size: 0.75rem;
+  font-weight: 620;
+  line-height: 1.3;
   color: var(--org-muted);
 }
+/* Das Eingabeelement bleibt optisch eine Zeile, seine Trefferfläche reicht über das ganze Feld (mindestens 44 px). */
 .org-field :is(select, input),
-.org-station input {
+.org-station input,
+.ov-people select {
   display: block;
-  width: 100%;
-  max-width: 100%;
+  width: calc(100% + 2 * var(--org-feld-px));
+  max-width: none;
   min-width: 0;
+  min-height: 44px;
+  margin: -10px calc(-1 * var(--org-feld-px));
+  padding: 10px var(--org-feld-px);
   border: 0;
   border-radius: 0;
   background: transparent;
   outline: 0;
   color: var(--org-ink);
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 620;
-  letter-spacing: -0.015em;
-  line-height: 1.45;
-  padding: 1px 0;
+  line-height: 1.4;
 }
-.org-field input[type='date'] {
-  min-height: 22px;
+/* Das Feld trägt den Grund; das Eingabeelement bleibt durchsichtig, damit es die Beschriftung nicht überdeckt.
+   Die Selektoren sind so spezifisch, dass sie die allgemeine Einfärbung der Workspace-Eingaben überstimmen. */
+.workspace-shell[data-workspace-theme] .workspace-content :is(.org-field, .org-station, .ov-place, .ov-people) :is(input, select) {
+  background-color: transparent;
+}
+@media (min-width: 701px) {
+  .workspace-shell[data-workspace-theme] .workspace-content .org-sub .org-field input {
+    background-color: var(--org-feld-grund);
+  }
+}
+@media (max-width: 700px) {
+  .workspace-shell[data-workspace-theme] .workspace-content .org-aktion-ende .org-rentalsub > :is(label, div) > :is(input, select) {
+    background-color: transparent;
+  }
+}
+.org-field select,
+.ov-people select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: calc(var(--org-feld-px) + 1.25rem);
+  background-image: linear-gradient(to top right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)), linear-gradient(to bottom right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+  background-position: calc(100% - var(--org-feld-px) - 7px) 50%, calc(100% - var(--org-feld-px)) 50%;
+  background-size: 7px 7px, 7px 7px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.org-field input::placeholder,
+.org-station input::placeholder {
+  font-weight: 450;
+  opacity: 1;
 }
 .org-station input {
-  min-height: 24px;
-  padding-right: 1.4rem;
+  padding-right: calc(var(--org-feld-px) + 1.4rem);
 }
 .org-station .absolute svg {
-  height: 15px;
+  height: 16px;
 }
 .org-station p {
-  font-size: 10px;
-  line-height: 1.25;
+  font-size: 0.75rem;
+  line-height: 1.3;
 }
-.org-fields .org-go {
-  padding: 0 19px;
-  min-height: 44px;
-  border-radius: 11px;
-  font-size: 14px;
+.org-go {
+  padding: 0 24px;
+  min-height: var(--org-feld-h);
+  border-radius: 999px;
+  background: var(--org-aktion);
+  color: var(--org-aktion-schrift);
+  font-size: 1rem;
   font-weight: 650;
   justify-content: center;
 }
@@ -330,7 +415,7 @@ button.org-bestand-zeile:hover {
   flex-wrap: wrap;
   margin-top: 12px;
   color: var(--org-muted);
-  font-size: 12px;
+  font-size: 0.8125rem;
 }
 .org-sub label,
 .org-sub .org-field {
@@ -343,19 +428,22 @@ button.org-bestand-zeile:hover {
   min-height: 0;
   border: 0;
   padding: 0;
+  background: transparent;
 }
 .org-sub .org-field > div {
   max-width: 12rem;
 }
 .org-sub .org-field input {
-  min-height: 40px;
-  border: 1px solid var(--org-line);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
+  width: auto;
+  min-height: 44px;
+  margin: 0;
+  border: 1px solid var(--org-feld-kante);
+  border-radius: var(--org-r-control);
+  padding: 6px 12px;
+  font-size: 1rem;
 }
 .org-sub input[type='checkbox'] {
-  accent-color: #153a33;
+  accent-color: var(--org-aktion);
 }
 .org-rentalsub input[type='number'] {
   width: 5rem;
@@ -363,7 +451,7 @@ button.org-bestand-zeile:hover {
 .org-rentalsub select {
   max-width: 11rem;
 }
-/* LandFeld brings its own stacked block; in the desktop row it sits inline like the other extras. */
+/* LandFeld bringt einen eigenen gestapelten Block mit; in der Desktopzeile steht er wie die anderen Zusätze. */
 @media (min-width: 701px) {
   .org-sub.org-rentalsub > div {
     display: inline-flex;
@@ -373,47 +461,34 @@ button.org-bestand-zeile:hover {
     width: auto;
   }
   .org-sub.org-rentalsub > div > span[id] {
-    font-size: 12px;
+    font-size: 0.8125rem;
     font-weight: 400;
     color: var(--org-muted);
   }
   .org-sub.org-rentalsub > div > select {
     width: auto;
-    min-height: 0;
-    height: auto;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 13px;
-  }
-}
-@media (pointer: fine) {
-  .org-tabs button {
-    min-height: 39px;
-  }
-}
-/* Tablets: the compact extras row keeps finger-sized fields. */
-@media (pointer: coarse) and (min-width: 701px) {
-  .org-sub select,
-  .org-sub input:not([type='checkbox']),
-  .org-sub.org-rentalsub > div > select {
     min-height: 44px;
+    height: auto;
+    padding: 6px 12px;
+    border-radius: var(--org-r-control);
+    font-size: 1rem;
   }
 }
 .org-form p[role='alert'] {
-  color: #a44528;
+  color: var(--org-fehler);
   margin-top: 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .org-results {
-  margin-top: 26px;
+  margin-top: 32px;
 }
 .org-results h3 {
-  font-size: 19px;
+  font-size: 1.1875rem;
   letter-spacing: -0.025em;
   font-weight: 650;
 }
 .org-sectionhead {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .org-sectionhead p,
 .org-results > p,
@@ -422,7 +497,7 @@ button.org-bestand-zeile:hover {
 .org-actgrid p,
 .org-item p {
   color: var(--org-muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   margin-top: 4px;
 }
@@ -430,16 +505,16 @@ button.org-bestand-zeile:hover {
 .org-note,
 .org-footer {
   color: var(--org-muted);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .flug-vorschlaege {
   display: grid;
   gap: 4px;
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   padding: 0;
   list-style: none;
   color: var(--org-muted);
-  font-size: 12px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -457,10 +532,10 @@ button.org-bestand-zeile:hover {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--org-r-card);
   text-align: left;
   color: white;
-  height: 158px;
+  height: 168px;
   background: #18392f;
 }
 .org-stage img {
@@ -470,10 +545,14 @@ button.org-bestand-zeile:hover {
   height: 100%;
   object-fit: cover;
   z-index: -2;
-  transition: transform 0.25s;
 }
-.org-stage:hover img {
-  transform: scale(1.03);
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .org-stage img {
+    transition: transform 0.2s ease-out;
+  }
+  .org-stage:hover img {
+    transform: scale(1.03);
+  }
 }
 .org-stage::before {
   position: absolute;
@@ -484,24 +563,24 @@ button.org-bestand-zeile:hover {
 }
 .org-stagecaption {
   position: absolute;
-  bottom: 17px;
-  left: 19px;
-  right: 45px;
+  bottom: 16px;
+  left: 18px;
+  right: 52px;
 }
 .org-stagecaption small {
-  font-size: 11px;
+  font-size: 0.75rem;
 }
 .org-stagecaption b {
   display: block;
-  font-size: 27px;
+  font-size: 1.5rem;
   line-height: 1.1;
   letter-spacing: -0.035em;
   overflow-wrap: anywhere;
 }
 .org-circle {
   position: absolute;
-  right: 15px;
-  bottom: 18px;
+  right: 16px;
+  bottom: 16px;
   border: 1px solid #ffffff80;
   border-radius: 50%;
   width: 32px;
@@ -512,12 +591,12 @@ button.org-bestand-zeile:hover {
 .org-hotelgrid {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(270px, 0.82fr);
-  gap: 18px;
+  gap: 20px;
   align-items: start;
 }
 .org-list {
   display: grid;
-  gap: 11px;
+  gap: 12px;
 }
 .org-hotel,
 .org-item,
@@ -525,7 +604,7 @@ button.org-bestand-zeile:hover {
 .org-mapbox {
   border: 1px solid var(--org-line);
   background: var(--org-white);
-  border-radius: 14px;
+  border-radius: var(--org-r-card);
   overflow: hidden;
 }
 .org-hotel {
@@ -536,8 +615,8 @@ button.org-bestand-zeile:hover {
   scroll-margin-top: 6rem;
 }
 .org-selected {
-  border-color: #749a83;
-  box-shadow: inset 0 0 0 1px #749a83;
+  border-color: var(--org-ink);
+  box-shadow: inset 0 0 0 1px var(--org-ink);
 }
 .org-thumb {
   position: relative;
@@ -547,16 +626,17 @@ button.org-bestand-zeile:hover {
   width: 152px;
   height: 107px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 .org-thumb small {
   position: absolute;
-  bottom: 3px;
-  right: 3px;
-  font-size: 9px;
-  background: #153a33;
-  color: white;
-  padding: 2px;
+  bottom: 4px;
+  right: 4px;
+  font-size: 0.75rem;
+  background: var(--org-aktion);
+  color: var(--org-aktion-schrift);
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 .org-hoteltext {
   flex: 1;
@@ -564,34 +644,31 @@ button.org-bestand-zeile:hover {
 }
 .org-pill {
   display: inline-block;
-  padding: 2px 7px;
-  border-radius: 5px;
-  font-size: 11px;
-  background: #eaf2e8;
-  color: #315646;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: var(--org-gewaehlt);
+  color: var(--org-ink);
   font-weight: 650;
 }
 .org-cardactions {
-  margin-top: 7px;
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 .org-cardactions button,
 .org-actgrid a {
-  font-size: 12px;
+  font-size: 0.8125rem;
   font-weight: 650;
   min-height: 44px;
 }
-@media (pointer: fine) {
-  .org-cardactions button,
-  .org-actgrid a { min-height: 31px; }
-}
 .org-cardactions a {
-  background: #ecf2eb;
-  color: #153a33;
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 630;
+  background: var(--org-gewaehlt);
+  color: var(--org-ink);
+  padding: 0 14px;
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 650;
 }
 .org-mapbox {
   position: sticky;
@@ -599,21 +676,23 @@ button.org-bestand-zeile:hover {
 }
 .org-maphead,
 .org-mapfoot {
-  padding: 12px 13px;
-  font-size: 13px;
+  padding: 12px 16px;
+  font-size: 0.8125rem;
 }
 .org-maphead div {
   display: flex;
-  gap: 3px;
+  gap: 4px;
 }
 .org-maphead button {
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 11px;
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
 }
 .org-maphead button[aria-pressed='true'] {
-  background: #153a33;
-  color: white;
+  background: var(--org-aktion);
+  color: var(--org-aktion-schrift);
 }
 .org-mapcanvas {
   display: block;
@@ -631,19 +710,19 @@ button.org-bestand-zeile:hover {
   color: white;
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   box-shadow: 0 1px 5px #153a3350;
 }
 .org-mapfoot b {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .org-results .org-note {
-  font-size: 12px;
-  margin-top: 13px;
+  font-size: 0.75rem;
+  margin-top: 12px;
 }
 .org-footer {
-  margin-top: 21px;
+  margin-top: 24px;
   align-items: flex-start;
 }
 .org-footer > a {
@@ -653,9 +732,6 @@ button.org-bestand-zeile:hover {
   text-decoration: underline;
   white-space: nowrap;
 }
-@media (pointer: fine) {
-  .org-footer > a { min-height: 24px; }
-}
 .org-activityfields {
   grid-template-columns: 1fr 1fr auto;
 }
@@ -663,8 +739,8 @@ button.org-bestand-zeile:hover {
   align-self: center;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 0.75rem;
   color: var(--org-muted);
 }
 .org-actgrid {
@@ -679,18 +755,25 @@ button.org-bestand-zeile:hover {
   padding: 14px 16px;
 }
 .org-actgrid a {
-  margin-top: 9px;
+  margin-top: 8px;
 }
 .org-item,
 .org-empty {
   padding: 16px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 .org-results > h3 {
-  margin-block: 14px 6px;
+  margin-block: 16px 8px;
 }
 .org-check {
-  font-size: 12px;
+  min-height: 44px;
+  font-size: 0.875rem;
+}
+.org-check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  accent-color: var(--org-aktion);
 }
 @media (max-width: 1100px) and (min-width: 701px) {
   .org-wrap {
@@ -709,58 +792,56 @@ button.org-bestand-zeile:hover {
   .org-rentalfields.org-four > .org-go {
     grid-column: auto / span 2;
   }
-  .org-go {
-    min-height: 45px;
-  }
   .org-tabs button {
-    padding-inline: 11px;
+    padding-inline: 12px;
   }
   .org-thumb img {
     width: 96px;
   }
 }
+
+/* Handy: Felder und Knöpfe behalten dieselben Masse wie am Desktop. Nur die
+   Anordnung ändert sich; Schrift bleibt bei 16 px, damit iOS beim Fokus nicht zoomt. */
 @media (max-width: 700px) {
+  .org-workspace {
+    --org-feld-px: 12px;
+  }
   .org-wrap {
     width: calc(100% - 24px);
   }
   .org-tabs {
-    padding: 6px 3px;
-    gap: 0;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-  }
-  .org-tabs::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px;
   }
   .org-tabs button {
-    flex: 1 0 auto;
+    grid-column: span 2;
     flex-direction: column;
     justify-content: center;
-    gap: 3px;
-    min-width: 3rem;
-    padding: 6px 3px;
-    font-size: 12px;
-    min-height: 52px;
-    border-radius: 10px;
-    letter-spacing: -0.01em;
-    scroll-snap-align: start;
+    gap: 2px;
+    min-width: 0;
+    min-height: 56px;
+    padding: 6px 4px;
+    border-radius: var(--org-r-control);
+    font-size: 0.8125rem;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
   }
-  .org-tabs svg {
-    width: 17px;
-    height: 17px;
+  .org-tabs button:nth-child(n + 4) {
+    grid-column: span 3;
   }
   .org-form {
-    padding: 14px 11px;
+    padding: 16px;
   }
   .org-bestand {
-    padding: 14px 11px 6px;
+    padding: 16px 16px 8px;
   }
   .org-bestand-zeile {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    padding-inline: 2px;
+    padding-inline: 4px;
   }
   .org-bestand-stand {
     grid-column: 1;
@@ -773,71 +854,65 @@ button.org-bestand-zeile:hover {
   .org-formtop h2,
   .org-sectionhead h2,
   .org-results > h2 {
-    font-size: 21px;
+    font-size: 1.25rem;
   }
   .org-fields,
   .org-fields.org-four,
   .org-activityfields,
   .org-rentalfields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 8px;
   }
   .org-activityfields small {
     grid-column: 1/-1;
   }
   .org-field,
-  .org-station {
-    padding: 7px 9px;
-    min-height: 54px;
-  }
-  .org-field input,
-  .org-field select,
-  .org-station input {
-    font-size: 13px;
+  .org-station,
+  .ov-place,
+  .ov-people {
+    padding: 8px 12px;
   }
   .org-sub {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: end;
-    gap: 8px 10px;
+    gap: 8px 12px;
   }
   .org-sub > .org-field {
     grid-column: 1 / -1;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    min-height: 54px;
-    padding: 7px 9px;
-    border: 1px solid var(--org-line);
+    min-height: var(--org-feld-h);
+    padding: 8px 12px;
+    border: 1px solid var(--org-feld-kante);
+    background: var(--org-feld-grund);
   }
   .org-sub .org-field > div {
     max-width: none;
   }
   .org-sub .org-field input {
-    min-height: 24px;
+    width: calc(100% + 2 * var(--org-feld-px));
+    margin: -10px calc(-1 * var(--org-feld-px));
     border: 0;
     border-radius: 0;
-    padding: 1px 0;
-    font-size: 13px;
+    padding: 10px var(--org-feld-px);
   }
   .org-sub > label {
     min-height: 44px;
     gap: 8px;
     color: var(--org-ink);
-    font-size: 13px;
+    font-size: 0.875rem;
   }
   .org-sub input[type='checkbox'] {
     width: 20px;
     height: 20px;
   }
-  .org-fields .org-go {
-    padding: 0 11px;
-  }
   /* Auf dem Handy steht die Suche nach allen Feldern, auch nach den Zusatzfeldern darunter. */
   .org-aktion-ende {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 6px;
+    gap: 8px;
   }
   .org-aktion-ende > :not(.org-fields):not(.org-sub) {
     grid-column: 1 / -1;
@@ -851,42 +926,100 @@ button.org-bestand-zeile:hover {
     grid-column: 1 / -1;
     margin-top: 4px;
   }
+  /* Flugsuche ohne Anbieter: Orte und Reisende stehen in voller Breite, damit der Ortsname lesbar bleibt. */
+  .org-aktion-ende:has(.org-air-input) .org-formtop {
+    display: block;
+  }
+  .org-aktion-ende:has(.org-air-input) .org-formtop .reise-auswahl {
+    margin-top: 12px;
+  }
+  .org-aktion-ende:has(.org-air-input) .org-fields > .org-field:has(.org-air-input),
+  .org-aktion-ende:has(.org-air-input) .org-fields > .org-field:has(> select),
+  .org-aktion-ende:has(.org-air-input) .org-sub > .reise-auswahl,
+  .org-aktion-ende:has(.org-air-input) .org-sub > label {
+    grid-column: 1 / -1;
+  }
   .org-aktion-ende > :is(.org-note, p[role='alert']) {
     order: 2;
   }
-  .org-aktion-ende .org-rentalsub > label {
+  /* Zeit, Alter, Land und Währung sehen aus wie die übrigen Felder: Karte mit kleiner Beschriftung, darunter der Wert. */
+  .org-aktion-ende .org-rentalsub > :is(label, div) {
+    display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: stretch;
-    gap: 4px;
+    gap: 0;
+    min-width: 0;
+    width: auto;
+    min-height: var(--org-feld-h);
+    padding: 8px var(--org-feld-px);
+    border: 1px solid var(--org-feld-kante);
+    border-radius: var(--org-r-control);
+    background: var(--org-feld-grund);
+    color: var(--org-muted);
+    font-size: 0.75rem;
+    font-weight: 620;
+    line-height: 1.3;
   }
-  .org-aktion-ende .org-rentalsub > label > :is(input, select) {
-    width: 100%;
+  .org-aktion-ende .org-rentalsub > :is(label, div):focus-within {
+    outline: 3px solid var(--org-fokus);
+    outline-offset: 2px;
+  }
+  .org-aktion-ende .org-rentalsub > div > span {
+    position: relative;
+    z-index: 1;
+    font-size: 0.75rem;
+    font-weight: 620;
+    color: var(--org-muted);
+  }
+  .org-aktion-ende .org-rentalsub > :is(label, div) > :is(input, select) {
+    display: block;
+    width: calc(100% + 2 * var(--org-feld-px));
     max-width: none;
+    min-width: 0;
     min-height: 44px;
+    height: auto;
+    margin: -10px calc(-1 * var(--org-feld-px));
+    padding: 10px var(--org-feld-px);
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--org-ink);
+    font-size: 1rem;
+    font-weight: 620;
+    line-height: 1.4;
+    outline: 0;
+  }
+  .org-aktion-ende .org-rentalsub select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: calc(var(--org-feld-px) + 1.25rem);
+    background-image: linear-gradient(to top right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)), linear-gradient(to bottom right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+    background-position: calc(100% - var(--org-feld-px) - 7px) 50%, calc(100% - var(--org-feld-px)) 50%;
+    background-size: 7px 7px, 7px 7px;
+    background-repeat: no-repeat;
   }
   .org-results {
-    margin-top: 19px;
+    margin-top: 24px;
   }
   .org-sectionhead {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .org-stages {
-    gap: 6px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+    gap: 8px;
   }
   .org-stage {
-    height: 126px;
-    border-radius: 9px;
+    height: 140px;
+    border-radius: var(--org-r-control);
   }
   .org-stagecaption {
-    left: 8px;
-    right: 5px;
-    bottom: 11px;
+    left: 12px;
+    right: 10px;
+    bottom: 12px;
   }
   .org-stagecaption b {
-    font-size: 17px;
-  }
-  .org-stagecaption small {
-    font-size: 9px;
+    font-size: 1.125rem;
   }
   .org-circle {
     display: none;
@@ -898,32 +1031,30 @@ button.org-bestand-zeile:hover {
     position: static;
   }
   .org-hotel {
-    padding: 9px;
-    gap: 10px;
+    padding: 10px;
+    gap: 12px;
   }
   .org-thumb img {
-    width: 83px;
+    width: 88px;
     height: 96px;
+    border-radius: 10px;
   }
   .org-hoteltext h3,
   .org-actgrid h3 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .org-actgrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .org-actgrid article > img {
-    height: 102px;
+    height: 104px;
   }
   .org-actgrid article > div {
-    padding: 10px;
-  }
-  .org-sectionhead small {
-    font-size: 10px;
+    padding: 12px;
   }
   .org-formtop > select {
-    max-width: 45%;
+    max-width: 50%;
   }
   .org-mapcanvas {
     height: 230px;
@@ -932,16 +1063,9 @@ button.org-bestand-zeile:hover {
 @media (max-width: 359px) {
   .org-tabs button {
     padding-inline: 2px;
-    font-size: 11.5px;
-    letter-spacing: -0.02em;
+    font-size: 0.75rem;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .org-stage img {
-    transition: none;
-  }
-}
-
 .org-marker.org-marker-selected {
   background: #e8f985;
   color: #153a33;
