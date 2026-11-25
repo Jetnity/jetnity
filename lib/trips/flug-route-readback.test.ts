@@ -3,6 +3,8 @@ import { describe, test } from 'node:test'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import FlugRoute from '@/components/trips/FlugRoute'
+import FlugKarte from '@/components/trips/FlugKarte'
+import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { routeFactsAusItinerary } from '@/lib/route/ableitung'
 import { routeAnzeigeAusFacts } from '@/lib/route/anzeige'
 import type { RouteFacts, RouteSegment } from '@/lib/route/domain'
@@ -121,4 +123,29 @@ describe('FlugRoute: stored direct-flight local schedule readback', () => {
     }))
     assert.doesNotMatch(html, /2026-11|09:15|16:40|18:55|07:10|<details/)
   })
+})
+
+
+test('W2 #1308: flight offer card shows Swiss visitor dates instead of ISO for an overnight flight', () => {
+  const option: FlugOptionSichtbar = {
+    id: 'synthetischer-flug', provider: 'test', externalRef: 'test-angebot',
+    airline: 'LX', airlineName: 'Testflug',
+    legs: [{ segments: [{
+      origin: 'ZRH', destination: 'VIE',
+      departureDate: '2026-12-01', departureTime: '22:30',
+      arrivalDate: '2026-12-02', arrivalTime: '00:40',
+      airline: 'LX', airlineName: 'Testflug',
+      operatingAirline: null, operatingAirlineName: null,
+      flightNumber: 'TEST1', durationMinutes: 130,
+    }], durationMinutes: 130, stops: 0 }],
+    durationMinutes: 130, stops: 0, priceAmount: 0, priceCurrency: 'CHF',
+    cabin: null, baggage: null, refundable: null, fare: null,
+    labels: [], reasons: [],
+  }
+  const unveraendert = structuredClone(option)
+  const html = renderToStaticMarkup(createElement(FlugKarte, { option, laeuft: false }))
+  assert.match(html, /Di, 1\. Dez\. 2026/)
+  assert.match(html, /Mi, 2\. Dez\. 2026/)
+  assert.doesNotMatch(html, /\b\d{4}-\d{2}-\d{2}\b/)
+  assert.deepEqual(option, unveraendert, 'original offer fields and dates remain unchanged')
 })

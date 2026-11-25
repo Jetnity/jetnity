@@ -6,6 +6,7 @@
 // Graphen nicht um.
 
 import { dayStageAssignmentModeLesenDb } from '@/lib/trips/day-stage-assignment'
+import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import { lokalePlanzeit } from '@/lib/trips/trip-timeline-core-1'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
@@ -167,15 +168,18 @@ export function laufUntertitel(lauf: ChronologischerLauf): string {
 }
 
 export function reisehinweisText(hinweis: QuerMitternachtHinweis): string {
+  // Formatting is visitor-only; stored chronology retains the exact source days.
+  const startDatum = datumMitWochentag(hinweis.startsOn) ?? 'Datum noch offen'
+  const endDatum = datumMitWochentag(hinweis.endsOn) ?? 'Datum noch offen'
   const startZeit = hinweis.startsAt ? ` ${hinweis.startsAt}` : ''
   const endZeit = hinweis.endsAt ? ` ${hinweis.endsAt}` : ''
   const zeit = hinweis.startsAt || hinweis.endsAt ? 'Ortszeit ohne Zeitzone.' : 'Uhrzeit nicht gespeichert.'
   if (hinweis.rolle === 'spanne') {
     const art = hinweis.kind === 'flight' ? 'Flug' : 'Transfer'
-    return `Gespeicherter ${art} «${hinweis.titel}»: ${hinweis.startsOn}${startZeit} bis ${hinweis.endsOn}${endZeit}. ${zeit} Keine Übernachtung abgeleitet.`
+    return `Gespeicherter ${art} «${hinweis.titel}»: ${startDatum}${startZeit} bis ${endDatum}${endZeit}. ${zeit} Keine Übernachtung abgeleitet.`
   }
   const art = hinweis.kind === 'flight' ? 'Flugs' : 'Transfers'
-  return `Fortsetzung desselben gespeicherten ${art} «${hinweis.titel}» vom ${hinweis.startsOn}. Ankunft laut Plan am ${hinweis.endsOn}${endZeit}. Es ist derselbe Reiseeintrag. Keine zweite Buchung und keine Übernachtung.`
+  return `Fortsetzung desselben gespeicherten ${art} «${hinweis.titel}» vom ${startDatum}. Ankunft laut Plan am ${endDatum}${endZeit}. Es ist derselbe Reiseeintrag. Keine zweite Buchung und keine Übernachtung.`
 }
 
 /**

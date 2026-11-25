@@ -442,3 +442,28 @@ test('W2 live text: UUIDs stay internal and one night / one lodging use singular
   assert.deepEqual(before, beforeSnapshot)
   assert.deepEqual(after, afterSnapshot)
 })
+
+
+test('W2 #1308: one and two recorded accommodations retain visitor singular and plural', () => {
+  for (const anzahl of [1, 2]) {
+    const vorher = fixture()
+    if (anzahl === 2) {
+      const erstes = vorher.days[3].items[0]!
+      vorher.days[3].items.push({
+        ...erstes, id: 'stay-2', title: 'Zweite Test-Unterkunft', position: 2,
+        bookingStatus: 'unconfirmed', bookingSource: null, bookingConfirmedAt: null,
+        priceAmount: null, priceCurrency: null,
+      })
+    }
+    const ursprung = structuredClone(vorher)
+    const nachher = vorschlag(vorher, { startDate: '2026-10-09' })
+    const zeilen = zeilenVon(vorher, nachher).filter(zeile => zeile.id.endsWith('-unterkuenfte'))
+    assert.equal(zeilen.length, 2, 'both sides must use actual lodging coverage')
+    const wort = anzahl === 1 ? 'aufgezeichnete Unterkunft' : 'aufgezeichnete Unterkünfte'
+    for (const zeile of zeilen) {
+      assert.ok(zeile.text.includes(anzahl + ' ' + wort + ','), zeile.text)
+      assert.doesNotMatch(zeile.text, /1 aufgezeichnete Unterkünfte|2 aufgezeichnete Unterkunft,|\b\d{4}-\d{2}-\d{2}\b/)
+    }
+    assert.deepEqual(vorher, ursprung, 'the preview never mutates the original trip')
+  }
+})
