@@ -105,8 +105,8 @@ export default function TripStageDayAllocation({
             {zeitraumZuLang
               ? 'Dieser Zeitraum ist länger als erlaubt. Die Tage werden nicht gekürzt und nicht gespeichert.'
               : aktiv
-                ? `${zugeordnet} Tage zugeordnet, ${ohneZiel} ohne Ziel. Die Reise bleibt ${reisetage} Tage.`
-                : `Noch nicht verteilt. Die Reise hat ${reisetage} Tage.`}
+                ? `${zugeordnet} ${zugeordnet === 1 ? 'Tag' : 'Tage'} zugeordnet, ${ohneZiel} ohne Ziel. Die Reise bleibt ${reisetage} ${reisetage === 1 ? 'Tag' : 'Tage'}.`
+                : `Noch nicht verteilt. Die Reise hat ${reisetage} ${reisetage === 1 ? 'Tag' : 'Tage'}.`}
           </p>
           {aktiv ? (
             <div className="tageszuordnung-liste">
