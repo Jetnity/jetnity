@@ -65,13 +65,18 @@ const FLUGHAEFEN = [
  * nicht vorkommt). Geist liegt mit Next in node_modules; `size-adjust` dehnt sie auf die Breite
  * von Noto Sans, etwa 5 % breiter als SF Pro und Roboto. Das ist bewusst ein strenger Massstab.
  * `WORKSPACE_NIVEAU_SCHRIFT="DejaVu Sans"` prüft stattdessen eine installierte Systemschrift.
+ * Ebenso fest ist die Bildlaufleiste: Telefone zeigen sie als Überlagerung, ein Desktop-Chrome mit
+ * klassischer Leiste nimmt dem Inhalt Breite (lokal gemessen: 15 px) und verfälscht die
+ * Messung. Darum wird sie ausgeblendet und in `oeffnen` geprüft, dass sie keine Breite belegt.
  */
 const REFERENZSCHRIFT = join(process.cwd(), 'node_modules/next/dist/compiled/@vercel/og/Geist-Regular.ttf')
 
+const KEINE_BILDLAUFLEISTE = '*{scrollbar-width:none !important}*::-webkit-scrollbar{display:none !important}'
+
 function schriftRegel(systemschrift?: string) {
-  if (systemschrift) return `*{font-family:"${systemschrift}",sans-serif !important}`
+  if (systemschrift) return `*{font-family:"${systemschrift}",sans-serif !important}${KEINE_BILDLAUFLEISTE}`
   const daten = readFileSync(REFERENZSCHRIFT).toString('base64')
-  return `@font-face{font-family:"Referenzschrift";src:url(data:font/ttf;base64,${daten}) format("truetype");font-weight:100 900;size-adjust:107%}*{font-family:"Referenzschrift",sans-serif !important}`
+  return `@font-face{font-family:"Referenzschrift";src:url(data:font/ttf;base64,${daten}) format("truetype");font-weight:100 900;size-adjust:107%}*{font-family:"Referenzschrift",sans-serif !important}${KEINE_BILDLAUFLEISTE}`
 }
 
 type Messung = {
@@ -128,6 +133,8 @@ async function oeffnen(breite: number, thema: 'light' | 'dark', hoehe = 844, sch
     })
     assert.ok(aktiv, 'Die Referenzschrift ist nicht aktiv; Messungen wären vom Rechner abhängig')
   }
+  const leiste = await page.evaluate(() => window.innerWidth - document.documentElement.clientWidth)
+  assert.equal(leiste, 0, `Eine Bildlaufleiste belegt ${leiste}px Breite; Messungen wären vom Browser abhängig`)
   return { context, page, fehler, fremd }
 }
 
@@ -223,7 +230,11 @@ async function messen(page: Page): Promise<Messung> {
         leinwand.font = `${p.fontWeight} ${p.fontSize} ${p.fontFamily}`
         return leinwand.measureText(e.placeholder).width > e.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight) + 0.5
       })
-      .map((e) => `${kurz(e)} «${e.placeholder}»`)
+      .map((e) => {
+        const s = getComputedStyle(e)
+        const frei = e.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight)
+        return `${kurz(e)} «${e.placeholder}» frei ${Math.round(frei)}px bei Bildbreite ${document.documentElement.clientWidth}px`
+      })
     const abgeschnitten = alle
       .filter((e) => {
         if (!sichtbar(e) || versteckt(e) || e.matches('input,select,textarea,iframe,img,canvas,ul,ol,nav,[role=tablist],[role=listbox]')) return false
