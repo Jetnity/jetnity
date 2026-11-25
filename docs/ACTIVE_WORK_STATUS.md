@@ -1,5 +1,14 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — Official Truth AT Stage 3, nur Dev-Vorbereitung #1317
+
+Branch `cursor/official-truth-at-stage3-dev-a92d` von `main` `69ab3fa203f45cd97ee3ed5187ca51a0497c625b`. Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Deploy, keine Production-SQL, keine Faktenerneuerung, keine Publikation, kein Besucherflag, keine Kosten.
+
+- Ein unangewandtes Paket: read-only Preflight, ROLLBACK-Probe, COMMIT-Kandidat, Readback, Withdrawal-Probe und Withdrawal. Der V6-Katalogdigest kommt nur aus einem frischen Readback und steht nicht im Git.
+- BG1-Nachfolger `bg1_prod_ch_at_stage3_v8` ist append-only. `catalog_status_v1` bleibt der V6-Körper. V7 bleibt reserviert. `renew_ch_v1`, HTTP-Allocator, CH→DE und die übrigen Cron-Kommandos bleiben.
+- Native PostgreSQL 17.12, isoliert: Erneuerungsregeln, Fail-closed des echten Guards, Rollback, Digest-/V7-/Drift-Verweigerung und das Advisory-Schloss `771112,34`. Der historische Katalog auf der synthetischen Datenbank endet mit `production rolling protected catalog changed`. Das ist kein Production-PASS.
+- Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`. Nächster Schritt: Exact-Head-CI und Technical-Lead-Review. Italien, Frankreich und Spanien bleiben zu.
+
 ## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314
 
 Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine Kosten.

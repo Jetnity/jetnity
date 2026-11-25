@@ -18,6 +18,7 @@ import {
 } from './official-truth-v3-test-selection.mjs'
 
 const hosted = [
+  'lib/readiness/official-truth-at-method-v1/at-stage3-native.test.ts',
   'lib/readiness/official-truth-customer-information-migration.test.ts',
   'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
