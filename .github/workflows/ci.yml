@@ -50,6 +50,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Bounded public GET check only for the approved AT presentation draft.
+      # No secrets, new job, scheduler, database or Production execution.
+      - name: AT visitor information links – live HTTP
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 1309 && github.head_ref == 'feat/official-truth-at-visitor-preview-20261124' && github.event.pull_request.head.repo.full_name == 'Jetnity/jetnity' }}
+        timeout-minutes: 2
+        run: node --import tsx scripts/official-truth-at-visitor-links.ts
+
       - name: Tests
         run: npm run test:core
 

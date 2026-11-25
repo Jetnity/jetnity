@@ -124,8 +124,8 @@ test('every displayed AT information link uses the current visitor URL without c
   assert.notEqual(bern.href, bern.receiptHref)
   for (const html of [render(), render([{ country: 'CH', data: sample }])]) {
     const links = [...new Set(Array.from(html.matchAll(/href="([^"]+)"/g), match => match[1]))].sort()
-    assert.deepEqual(links, expected)
     assert.ok(!links.includes(bern.receiptHref))
+    assert.deepEqual(links, expected)
   }
   // A new navigation destination must never acquire receipt authority.
   assert.doesNotMatch(render([{ country: 'CH', data: { ...sample, sourceUrls: [...sourceUrls.slice(0, 2), bern.href] } }]), /data-at-visitor-topic-status="confirmed"|Visum nicht erforderlich/)

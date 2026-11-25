@@ -8,6 +8,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { chromium } from 'playwright'
 import EinreiseLaenderpruefer from '@/components/readiness/EinreiseLaenderpruefer'
 
+type CheckerProps = NonNullable<Parameters<typeof EinreiseLaenderpruefer>[0]>
+
 async function projektCss() {
   const require = createRequire(import.meta.url)
   const postcss = require('postcss') as (plugins: unknown[]) => {
@@ -58,8 +60,8 @@ test('real entry checker controls and placeholders meet AA in the public white-m
     const page = await browser.newPage()
     await page.route('**/*', route => route.abort())
     const states = [
-      { label: 'empty', markup: renderToStaticMarkup(React.createElement(EinreiseLaenderpruefer, { atVisitorPreview: true })), count: 4 },
-      { label: 'selected multiple', markup: renderToStaticMarkup(React.createElement(EinreiseLaenderpruefer, {
+      { label: 'empty', markup: renderToStaticMarkup(React.createElement<CheckerProps>(EinreiseLaenderpruefer, { atVisitorPreview: true })), count: 4 },
+      { label: 'selected multiple', markup: renderToStaticMarkup(React.createElement<CheckerProps>(EinreiseLaenderpruefer, {
         atVisitorPreview: true, vorbelegung: { ziele: ['AT'], paesse: ['CH', 'IN'], nichtUebernommen: [], personen: [] },
       })), count: 6 },
     ]
