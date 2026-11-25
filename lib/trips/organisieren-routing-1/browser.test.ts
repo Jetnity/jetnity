@@ -169,6 +169,9 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
             }, fall.tab)
             const bestand = page.locator(`[data-organisieren-bestand="${fall.kategorie}"]`)
             await bestand.waitFor()
+            const sucheSchalter = page.locator(`[data-organisieren-suche-toggle="${fall.kategorie}"]`)
+            assert.equal(await sucheSchalter.getAttribute('aria-expanded'), 'false', `${name} Suche von allein offen`)
+            assert.equal(await page.locator(`[data-organisieren-suche="${fall.kategorie}"]`).isVisible(), false, `${name} Suchfläche sichtbar`)
             await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)))))
             await pruefeFlaeche(page, name, 'kategorie')
             let lage = await zeileLage(page, fall.kategorie)
@@ -222,6 +225,16 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
             assert.equal(await page.locator('[data-reise-revision]').getAttribute('data-reise-revision'), '1', `${name} nach Zurück`)
             await bestand.waitFor()
             await pruefeFlaeche(page, name, 'zurueck')
+            if (name === 'fluege-390-light') {
+              await page.evaluate(() => {
+                document.querySelector<HTMLButtonElement>('[data-organisieren-suche-toggle="fluege"]')?.click()
+              })
+              await page.locator('[data-organisieren-suche="fluege"]').waitFor({ state: 'visible' })
+              await page.evaluate(() => {
+                document.querySelector<HTMLButtonElement>('[data-organisieren-suche-toggle="fluege"]')?.click()
+              })
+              await page.locator('[data-organisieren-suche="fluege"]').waitFor({ state: 'hidden' })
+            }
             belege.push({ name, planUrl, zurueck: page.url(), kayak: false, ueberlauf: false })
           } finally {
             await page.close()
@@ -229,6 +242,17 @@ describe('Organisieren-Routing, gespeicherter Eintrag', { timeout: 300_000 }, ()
         }
       }
     }
+    const einstieg = await browser.newPage({ viewport: { width: 390, height: 664 }, hasTouch: true, colorScheme: 'light' })
+    einstieg.setDefaultTimeout(20_000)
+    await einstieg.goto(`${origin}/?ansicht=organisieren&kategorie=unterkunft&etappe=stage-hkt`, { waitUntil: 'domcontentloaded' })
+    await einstieg.locator('[data-organisieren-suche-toggle="unterkunft"]').waitFor()
+    assert.equal(await einstieg.locator('[data-organisieren-suche-toggle="unterkunft"]').getAttribute('aria-expanded'), 'true')
+    await einstieg.locator('[data-organisieren-suche="unterkunft"]').waitFor({ state: 'visible' })
+    await einstieg.evaluate(() => {
+      document.querySelector<HTMLButtonElement>('[data-organisieren-suche-toggle="unterkunft"]')?.click()
+    })
+    await einstieg.locator('[data-organisieren-suche="unterkunft"]').waitFor({ state: 'hidden' })
+    await einstieg.close()
   })
 })
 

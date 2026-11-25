@@ -31,3 +31,30 @@ export function organisierenZeileScroll(
   if (hoehe > ziel) return Math.max(0, zeile.top - ORGANISIEREN_ZEILE_LUFT_PX)
   return Math.max(0, zeile.bottom - ziel)
 }
+
+/** Misst die laufende Leiste und schiebt nur eine verdeckte erste Zeile frei. */
+export function organisierenZeileBeobachten(tab: string): () => void {
+  const freigeben = () => {
+    const schriftPx = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+    const sicht = window.visualViewport
+    const tastatur = Boolean(sicht && sicht.height < window.innerHeight * 0.75)
+    if (!organisierenDockFest({ breite: window.innerWidth, hoehe: window.innerHeight, schriftPx, tastatur })) return
+    const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
+    if (!(zeile instanceof HTMLElement)) return
+    const fest = [...document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')].filter((el) => {
+      const kasten = el.getBoundingClientRect()
+      return getComputedStyle(el).position === 'fixed' && kasten.height > 0 && kasten.width > 0
+    })
+    if (fest.length === 0) return
+    const dockOben = Math.min(...fest.map((el) => el.getBoundingClientRect().top))
+    const kasten = zeile.getBoundingClientRect()
+    const delta = organisierenZeileScroll({ top: kasten.top, bottom: kasten.bottom }, dockOben, window.innerHeight)
+    if (delta > 0) window.scrollTo({ top: window.scrollY + delta, behavior: 'instant' })
+  }
+  freigeben()
+  const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
+  const beobachter = new ResizeObserver(freigeben)
+  if (zeile) beobachter.observe(zeile)
+  for (const el of document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')) beobachter.observe(el)
+  return () => beobachter.disconnect()
+}

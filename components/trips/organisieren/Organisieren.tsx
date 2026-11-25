@@ -4,7 +4,7 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type Reac
 import Reisefoto from './Reisefoto'
 import OrganisierenBestand from './OrganisierenBestand'
 import { organisierenBestand } from '@/lib/trips/organisieren/bestand'
-import { organisierenDockFest, organisierenZeileScroll } from '@/lib/trips/organisieren/zeile-frei'
+import { organisierenZeileBeobachten } from '@/lib/trips/organisieren/zeile-frei'
 import { StadtbildNachweis } from './Stadtbild'
 import ManualOffer from '@/components/saved-offers/ManualOffer'
 import { providerZurReiseplanUrl } from '@/lib/trips/provider-rueckkehr'
@@ -15,6 +15,7 @@ import {
   CarFront,
   Route,
   ArrowUpRight,
+  ChevronDown,
 } from 'lucide-react'
 import { hotelDaten, reiseFoto } from '@/lib/trips/organisieren/katalog'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
@@ -40,6 +41,34 @@ const tabs = [
   { key: 'verbindungen', label: 'Verbindungen', icon: Route },
 ] as const
 
+const SUCHAKTION: Record<Suchkategorie, string> = {
+  fluege: 'Weitere Flüge suchen',
+  unterkunft: 'Neue Unterkünfte suchen',
+  aktivitaeten: 'Weitere Aktivitäten entdecken',
+  mietwagen: 'Mietwagenangebote suchen',
+  verbindungen: 'Weitere Verbindungen suchen',
+}
+
+const LEER: Record<Suchkategorie, string> = {
+  fluege: 'Noch keine Flüge in dieser Reise gespeichert.',
+  unterkunft: 'Noch keine Unterkunft in dieser Reise gespeichert.',
+  aktivitaeten: 'Noch keine Aktivitäten in dieser Reise gespeichert.',
+  mietwagen: 'Noch kein Mietwagen in dieser Reise gespeichert.',
+  verbindungen: 'Noch keine Verbindungen in dieser Reise gespeichert.',
+}
+
+/** Etappe, Ort oder Kante sind ein ausdrücklicher Einstieg, kein gewöhnlicher Reiterwechsel. */
+function ausdruecklicheSuche(
+  kategorie: Suchkategorie,
+  etappeId?: string,
+  hotelOrtKey?: string,
+  kanteId?: string,
+): string | null {
+  if (kategorie === 'unterkunft' && (etappeId || hotelOrtKey)) return `unterkunft:${etappeId ?? ''}:${hotelOrtKey ?? ''}`
+  if (kategorie === 'aktivitaeten' && etappeId) return `aktivitaeten:${etappeId}`
+  if (kategorie === 'verbindungen' && kanteId) return `verbindungen:${kanteId}`
+  return null
+}
 
 function Etappenkarten({ reise, waehlen }: { reise: Trip; waehlen: (s: TripStage) => void }) {
   if (!reise.stages.length)
@@ -126,6 +155,15 @@ export default function Organisieren({
     else if (rechts > leiste.scrollLeft + leiste.clientWidth) leiste.scrollLeft = rechts - leiste.clientWidth
   }, [tab, uid])
   const [auswahlVersion, setAuswahlVersion] = useState(0)
+  const anfang = ausdruecklicheSuche(tab, etappeId, hotelOrtKey, kanteId)
+  // Reiseeinträge zuerst. Anbieterflächen erst nach einer ausdrücklichen Aktion mounten.
+  const [sucheOffen, setSucheOffen] = useState<Partial<Record<Suchkategorie, boolean>>>(() => anfang ? { [tab]: true } : {})
+  const [sucheBesucht, setSucheBesucht] = useState<readonly Suchkategorie[]>(() => anfang ? [tab] : [])
+  const [ausdruckGesehen, setAusdruckGesehen] = useState(anfang)
+  const sucheWechseln = (k: Suchkategorie) => {
+    setSucheOffen(bisher => ({ ...bisher, [k]: !bisher[k] }))
+    setSucheBesucht(bisher => bisher.includes(k) ? bisher : [...bisher, k])
+  }
   // Resume a category's existing search. Only an explicit route/destination
   // request changes its entry context; ordinary tab navigation supplies none.
   const eingang = JSON.stringify([tab, etappeId, hotelOrtKey, kanteId])
@@ -146,37 +184,28 @@ export default function Organisieren({
     })
   }
   const einstieg = reise.stages.find(s => s.id === sitzung.hotel.etappeId)
-  const scrollPositionen = useRef<Partial<Record<Suchkategorie, number>>>({})
-  const scrollZiel = useRef<number | null>(null)
+  const ausdruck = ausdruecklicheSuche(tab, etappeId, hotelOrtKey, kanteId)
+  if (ausdruck && ausdruck !== ausdruckGesehen) {
+    setAusdruckGesehen(ausdruck)
+    setSucheOffen(bisher => ({ ...bisher, [tab]: true }))
+    setSucheBesucht(bisher => bisher.includes(tab) ? bisher : [...bisher, tab])
+  }
+  // Beim Reiterwechsel nicht die alte, auf Mobile oft tiefe Suchposition übernehmen.
+  const kategorieSprung = useRef(false)
   useLayoutEffect(() => {
-    if (scrollZiel.current !== null) {
-      window.scrollTo({ top: scrollZiel.current, behavior: 'instant' })
-      scrollZiel.current = null
+    if (kategorieSprung.current) {
+      kategorieSprung.current = false
+      const leiste = document.getElementById(uid + '-tabs')
+      if (leiste) {
+        const kopf = document.querySelector('header')
+        const kopfHoehe = kopf instanceof HTMLElement && ['sticky', 'fixed'].includes(getComputedStyle(kopf).position)
+          ? kopf.getBoundingClientRect().height : 0
+        const oben = leiste.getBoundingClientRect().top + window.scrollY - kopfHoehe - 12
+        window.scrollTo({ top: Math.max(0, oben), behavior: 'instant' })
+      }
     }
-    const freigeben = () => {
-      const schriftPx = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-      const sicht = window.visualViewport
-      const tastatur = Boolean(sicht && sicht.height < window.innerHeight * 0.75)
-      if (!organisierenDockFest({ breite: window.innerWidth, hoehe: window.innerHeight, schriftPx, tastatur })) return
-      const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
-      if (!(zeile instanceof HTMLElement)) return
-      const fest = [...document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')].filter((el) => {
-        const kasten = el.getBoundingClientRect()
-        return getComputedStyle(el).position === 'fixed' && kasten.height > 0 && kasten.width > 0
-      })
-      if (fest.length === 0) return
-      const dockOben = Math.min(...fest.map((el) => el.getBoundingClientRect().top))
-      const kasten = zeile.getBoundingClientRect()
-      const delta = organisierenZeileScroll({ top: kasten.top, bottom: kasten.bottom }, dockOben, window.innerHeight)
-      if (delta > 0) window.scrollTo({ top: window.scrollY + delta, behavior: 'instant' })
-    }
-    freigeben()
-    const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
-    const beobachter = new ResizeObserver(freigeben)
-    if (zeile) beobachter.observe(zeile)
-    for (const el of document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')) beobachter.observe(el)
-    return () => beobachter.disconnect()
-  }, [tab, bestand])
+    return organisierenZeileBeobachten(tab)
+  }, [tab, uid, bestand])
   const erste = reise.stages[0]
   const land = erste?.countryCode
   const landTitel = land && reise.stages.every((s) => s.countryCode === land) ? landName(land, 'de') : null
@@ -196,8 +225,7 @@ export default function Organisieren({
   )
   function wechsle(k: Suchkategorie, tastatur = false) {
     if (k !== tab) {
-      scrollPositionen.current[tab] = window.scrollY
-      scrollZiel.current = tastatur ? null : (scrollPositionen.current[k] ?? null)
+      kategorieSprung.current = !tastatur
       kategorieWaehlen(k)
     }
   }
@@ -254,21 +282,44 @@ export default function Organisieren({
         <SuchbereichKontext.Provider key={t.key} value={tab === t.key}>
         <div id={uid + '-panel-' + t.key} role="tabpanel" aria-labelledby={uid + '-' + t.key}
           hidden={tab !== t.key} inert={tab !== t.key} data-suchbereich={t.key}>
-          <OrganisierenBestand kategorie={t.key} eintraege={bestand[t.key]} onItem={onItem} />
-          {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
-          {t.key === 'unterkunft' && (
-            <Hotelsuche
-              key={hotelKontextVersion(reise) + ':' + (sitzung.hotel.ort ?? '')}
-              reise={reise}
-              start={einstieg ?? erste}
-              startOrt={sitzung.hotel.ort}
-              auswahlVersion={auswahlVersion}
-              etappen={etappen}
-            />
-          )}
-          {t.key === 'aktivitaeten' && <Aktivitaeten key={sitzung.aktivitaeten} reise={reise} startId={sitzung.aktivitaeten} partner={partnerAktivitaeten} />}
-          {t.key === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
-          {t.key === 'verbindungen' && <OmioImReiseplan key={sitzung.verbindungen} reise={reise} etappen={etappen} kanteId={sitzung.verbindungen} />}
+          {bestand[t.key].length > 0
+            ? <OrganisierenBestand kategorie={t.key} eintraege={bestand[t.key]} onItem={onItem} />
+            : <section className="org-bestand" data-organisieren-bestand={t.key} aria-label="Gespeicherte Reiseleistungen">
+                <h3 className="text-subtitle text-foreground">Das hast du schon</h3>
+                <p className="mt-2 break-words text-body text-muted-foreground">
+                  {LEER[t.key]} Eine neue Suche kannst du getrennt öffnen.
+                </p>
+              </section>}
+          <section className="mt-4 grid min-w-0 gap-3 rounded-card border border-border bg-card p-3 sm:p-4"
+            aria-label={SUCHAKTION[t.key]} data-organisieren-angebote={t.key}>
+            <button type="button" data-organisieren-suche-toggle={t.key}
+              aria-expanded={Boolean(sucheOffen[t.key])} aria-controls={uid + '-suche-' + t.key}
+              onClick={() => sucheWechseln(t.key)}
+              className="flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-control border border-input bg-background px-4 py-2 text-left text-body font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <span className="min-w-0 break-words">{sucheOffen[t.key] ? 'Angebotssuche schliessen' : SUCHAKTION[t.key]}</span>
+              <ChevronDown size={18} className={sucheOffen[t.key] ? 'shrink-0 rotate-180' : 'shrink-0'} aria-hidden="true" />
+            </button>
+            <div id={uid + '-suche-' + t.key} data-organisieren-suche={t.key}
+              hidden={!sucheOffen[t.key]} inert={!sucheOffen[t.key]}
+              className={sucheOffen[t.key] ? 'min-w-0' : 'hidden'}>
+              {sucheBesucht.includes(t.key) && <>
+                {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
+                {t.key === 'unterkunft' && (
+                  <Hotelsuche
+                    key={hotelKontextVersion(reise) + ':' + (sitzung.hotel.ort ?? '')}
+                    reise={reise}
+                    start={einstieg ?? erste}
+                    startOrt={sitzung.hotel.ort}
+                    auswahlVersion={auswahlVersion}
+                    etappen={etappen}
+                  />
+                )}
+                {t.key === 'aktivitaeten' && <Aktivitaeten key={sitzung.aktivitaeten} reise={reise} startId={sitzung.aktivitaeten} partner={partnerAktivitaeten} />}
+                {t.key === 'mietwagen' && <DiscoverCarsMietwagen reise={reise} zentral />}
+                {t.key === 'verbindungen' && <OmioImReiseplan key={sitzung.verbindungen} reise={reise} etappen={etappen} kanteId={sitzung.verbindungen} />}
+              </>}
+            </div>
+          </section>
         </div>
         </SuchbereichKontext.Provider>
         ))}

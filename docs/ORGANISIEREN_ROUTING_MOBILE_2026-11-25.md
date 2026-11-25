@@ -56,6 +56,12 @@ Dieselbe Reise im Next-Dev-Server, Chromium, vor dem Fix: Zeile top 617, Leiste 
 
 `organisierenZeileScroll` schiebt das Fenster so weit, dass die Unterkante der ersten Zeile 8 px über der fixierten Leiste liegt. Das gilt nur, solange die Leiste fest ist: Breite ab 360 und unter 1024, Höhe ab 500, normale Schrift, keine Tastatur. Bei 320 px und auf dem Desktop passiert nichts. Ein späteres Wachstum von Zeile oder Leiste wird neu gemessen. Die Routing-Funktion bleibt.
 
+## Übernahme aus #1310
+
+Auf dem Stand ohne diesen Fix rendert Organisieren die Booking-Fläche «Flug suchen» sofort unter den gespeicherten Zeilen. Eine leere Kategorie zeigt dasselbe Formular statt eines Satzes. Der Test `navigation-eigene-reise.test.ts` scheitert dort an `data-organisieren-suche-toggle` und am Satz «Noch keine …».
+
+Übernommen: Bestand oder Leerzustand zuerst, Suche hinter «Weitere Flüge suchen», «Neue Unterkünfte suchen», «Weitere Aktivitäten entdecken», «Mietwagenangebote suchen» und «Weitere Verbindungen suchen». Schliessen heisst «Angebotssuche schliessen». Ein Einstieg mit Etappe, Ort oder Kante öffnet diese Suche, ein gewöhnlicher Flugreiter nicht. Der Reiterwechsel stellt keine alte `window.scrollY`-Position wieder her. Die Datei `scripts/organisieren-eigene-reise-browser-audit.mjs` ist mit übernommen. #1310 bleibt offen.
+
 ## Nach dem Fix
 
 WebKit-Regression mit Shell und echten Darstellungs-Token, 5 × 320/390×664/1280 × Hell/Dunkel = 30, grün. Dunkel prüft `color-scheme: dark` und `--workspace-bg: #121921`. Je Kombination: erste Zeile nicht von der Leiste gedeckt, echter Touch oder Klick, richtige Reise- und Eintrags-ID, Suche zu, kein KAYAK-Text, kein horizontaler Überlauf, Fokus nicht in einer verborgenen Fläche, Zurück nach Organisieren.

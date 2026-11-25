@@ -1,12 +1,12 @@
 # Jetnity – Active Work Status
 
-## 25.11.2026 — Organisieren, Mobile Routing #1311
+## 25.11.2026 — Organisieren, Mobile Routing #1311 und Bestand #1310
 
-Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `c52b9df12` ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
+Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9` inklusive gemergtem #1308 ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
 
-- Die gemeldete KAYAK-Testvorschau erscheint beim Öffnen eines gespeicherten Eintrags nicht. Der belegte Fehler ist die fixierte Leiste auf 390×664: sie deckt die erste Zeile, der Touch trifft die Leiste.
-- Fix: die erste Zeile rückt 8 px über diese Leiste. 320 px und Desktop bleiben unverändert. «Flug suchen» und «Unterkunft suchen» bleiben.
-- WebKit mit echter Shell, 30 Kombinationen, grün. Zusätzlich WebKit gegen `next start` über lokales HTTPS: fünf Kategorien, richtige Eintrags-ID, kein KAYAK-Text. #1307 und #1308 unberührt. Kein Merge, kein Production-Deploy.
+- Übernommen aus #1310: gespeicherte Leistungen zuerst, klarer Leerzustand, Anbietersuche nur nach Knopf oder ausdrücklichem Einstieg mit Etappe, Ort oder Kante, keine alte tiefe Scrollposition. #1310 bleibt offen für den Technical Lead.
+- Die erste Zeile rückt auf 390 px 8 px über die fixierte Leiste. «Flug suchen» und «Unterkunft suchen» im Planpunkt bleiben.
+- Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, grün. Kein Merge, kein Production-Deploy. #1313 unberührt.
 
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
