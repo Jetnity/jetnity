@@ -15,6 +15,7 @@ const utcInstant = z.string().regex(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/)
   .refine(value => Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value)
 const acceptedVisa = z.object({
   status: z.literal('accepted'),
+  sourceAuthorityVersion: z.literal(3).optional(),
   citizenshipCountryCode: z.string().regex(/^[A-Z]{2}$/),
   destinationCountryCode: z.literal('AT'),
   documentType: z.literal('passport'),
@@ -40,10 +41,12 @@ function formattedUtc(iso: string): string {
 
 /** Reproves *presentation* freshness after the protected RPC's own authority
  * checks. A mismatched passport/source/clock never inherits another result. */
-function perPassport(country: string, raw: unknown, now: number): V3VisitorViewResult {
+function perPassport(country: string, raw: unknown, now: number, requireV3: boolean): V3VisitorViewResult {
   const parsed = acceptedVisa.safeParse(raw)
   if (!parsed.success || parsed.data.citizenshipCountryCode !== country) return unavailable
   const fact = parsed.data
+  // A legacy V1/V2 positive cannot become a new Production V3 answer.
+  if (requireV3 && (country !== 'CH' || fact.sourceAuthorityVersion !== 3)) return unavailable
   const source = Date.parse(fact.sourceCheckedAt), verified = Date.parse(fact.verifiedAt)
   const expiry = Date.parse(fact.expiresAt)
   // Browser-held responses cannot outlive the stricter 70-minute source-watch
@@ -85,14 +88,14 @@ function perPassport(country: string, raw: unknown, now: number): V3VisitorViewR
  * one independently validated authority response must match EACH selected
  * country. No Swiss shortcut and no positive fallback or source-derived guess. */
 export function presentAtVisaReadbacks(input: V3VisitorInput,
-  readbacks: readonly AtVisaReadback[], currentTime: Date): V3VisitorView {
+  readbacks: readonly AtVisaReadback[], currentTime: Date, requireV3 = false): V3VisitorView {
   const generatedAt = currentTime.toISOString(), now = currentTime.getTime()
   return {
     input, generatedAt, synthetic: false,
     cells: input.citizenshipCountryCodes.map(country => {
       const matching = readbacks.filter(entry => entry.country === country)
       return { country, label: landAnzeigeText(country),
-        results: [matching.length === 1 ? perPassport(country, matching[0]!.data, now) : unavailable],
+        results: [matching.length === 1 ? perPassport(country, matching[0]!.data, now, requireV3) : unavailable],
       }
     }),
   }

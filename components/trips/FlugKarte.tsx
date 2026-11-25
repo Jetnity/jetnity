@@ -17,6 +17,7 @@ import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 import { routeFactsAusItinerary } from '@/lib/route/ableitung'
 import { itineraryAusFlugOption } from '@/lib/route/itinerary'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
+import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
 
 const MARKE: Record<string, string> = {
@@ -101,9 +102,9 @@ export default function FlugKarte({
                 </strong>
               </div>
               <p className="mt-1 text-xs text-ink-700">
-                {gelesen.start.departureDate}
+                {datumMitWochentag(gelesen.start.departureDate) ?? 'Abflugdatum noch offen'}
                 {gelesen.ende.arrivalDate !== gelesen.start.departureDate
-                  ? ` → ${gelesen.ende.arrivalDate}`
+                  ? ` → ${datumMitWochentag(gelesen.ende.arrivalDate) ?? 'Ankunftsdatum noch offen'}`
                   : ''}
               </p>
             </div>

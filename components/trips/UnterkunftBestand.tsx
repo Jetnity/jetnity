@@ -81,11 +81,13 @@ export default function UnterkunftBestand({
   const kopf = datumUnbekannt
     ? abdeckung.zusammenfassung
     : zuordnungUnbekannt
-      ? `${abdeckung.kalenderNaechte} Nächte im Reisekalender. Die Nächte sind noch keinem Reiseziel zugeordnet.`
+      ? abdeckung.kalenderNaechte === 1
+        ? '1 Nacht im Reisekalender. Die Nacht ist noch keinem Reiseziel zugeordnet.'
+        : `${abdeckung.kalenderNaechte} Nächte im Reisekalender. Die Nächte sind noch keinem Reiseziel zugeordnet.`
     : abdeckung.bekannt && abdeckung.naechteGesamt !== null && abdeckung.naechteAbgedeckt !== null
       ? uebergangsNaechte > 0
-        ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten im Reisekalender erfasst`
-        : `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} Nächten abgedeckt`
+        ? `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} ${abdeckung.naechteGesamt === 1 ? 'Nacht' : 'Nächten'} im Reisekalender erfasst`
+        : `${abdeckung.naechteAbgedeckt} von ${abdeckung.naechteGesamt} ${abdeckung.naechteGesamt === 1 ? 'Nacht' : 'Nächten'} abgedeckt`
       : abdeckung.zusammenfassung
 
   return (

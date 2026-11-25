@@ -3,6 +3,7 @@
 import { cloneElement, isValidElement, useState, type ReactNode } from 'react'
 import Reisefoto from './Reisefoto'
 import { ArrowUpRight, Check } from 'lucide-react'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { etappenZiel } from '@/lib/trips/organisieren/katalog'
 import type { Trip } from '@/types/trips'
 import { Feld } from './Suchfelder'
@@ -23,7 +24,7 @@ export default function Aktivitaeten({ reise, partner, startId }: { reise: Trip;
             <select value={id} onChange={(e) => setId(e.target.value)}>
               {reise.stages.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name}
+                  {gespeicherteEtappeAnzeigen(s)}
                 </option>
               ))}
             </select>
@@ -42,7 +43,7 @@ export default function Aktivitaeten({ reise, partner, startId }: { reise: Trip;
         </div>
       </div>
       <section className="org-results">
-        <h2>{stage ? 'Aktivitäten in ' + stage.name : 'Aktivitäten'}</h2>
+        <h2>{stage ? 'Aktivitäten in ' + gespeicherteEtappeAnzeigen(stage) : 'Aktivitäten'}</h2>
         {ideen.length > 0 ? (
           <div className="org-actgrid">
             {ideen.map((a) => (

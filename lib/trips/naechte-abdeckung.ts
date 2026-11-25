@@ -460,7 +460,7 @@ function zusammenfassungAus(abdeckung: Omit<UnterkunftAbdeckung, 'zusammenfassun
     return 'Noch keine Unterkunft ausgewählt'
   }
   const gebucht = abdeckung.naechteGebucht ?? 0
-  const kern = `${abdeckung.naechteAbgedeckt}/${abdeckung.naechteGesamt} Nächte abgedeckt`
+  const kern = `${abdeckung.naechteAbgedeckt}/${abdeckung.naechteGesamt} ${abdeckung.naechteGesamt === 1 ? 'Nacht' : 'Nächte'} abgedeckt`
   if (gebucht > 0 && gebucht === abdeckung.naechteAbgedeckt) return `${kern} · gebucht`
   if (gebucht > 0) return `${kern} · ${gebucht} gebucht`
   return kern

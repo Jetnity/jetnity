@@ -213,7 +213,7 @@ export default function TripWorkspaceMap({ trip, selectedDay, onDay, presentatio
           ))}
         </ol>
       ) : null}
-      <p className="mt-3 px-1 text-xs leading-5 text-ink-700">Die Markierungen zeigen gespeicherte Reiseorte. Es wird keine Straßenroute berechnet.</p>
+      <p className="mt-3 px-1 text-xs leading-5 text-ink-700">Die Markierungen zeigen gespeicherte Reiseorte. Es wird keine Strassenroute berechnet.</p>
     </section>
   )
 }

@@ -4,6 +4,7 @@
 
 import { tageUtc } from '@/lib/activities/zeit'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripStage } from '@/types/trips'
 
@@ -98,7 +99,8 @@ export function hotelEtappenName(reise: ReiseFuerTermine, etappe: TripStage): st
   const wiederholt = reise.stages.filter((s) => s.name.trim().toLocaleLowerCase('de') === name).length > 1
   const termine = hotelSuchtermine(reise, etappe)
   const zeit = etappenZeitraumAnzeigen(termine.anreise, termine.abreise)
-  const basis = wiederholt ? `${etappe.position}. ${etappe.name}` : etappe.name
+  const sichtbar = gespeicherteEtappeAnzeigen(etappe)
+  const basis = wiederholt ? `${etappe.position}. ${sichtbar}` : sichtbar
   return zeit ? `${basis} · ${zeit}` : basis
 }
 

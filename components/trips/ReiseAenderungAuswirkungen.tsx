@@ -49,7 +49,7 @@ export default function ReiseAenderungAuswirkungen({ vorher, nachher }: { vorher
         </p>
       </div>
       <p className="min-w-0 break-words rounded-control bg-muted p-3 text-meta text-foreground">
-        {sichtbar} Gruppen mit Auswirkungen. Jeder betroffene Eintrag steht in einer Gruppe. Pro Seite siehst du höchstens 20 Einträge.
+        {sichtbar} {sichtbar === 1 ? 'Gruppe' : 'Gruppen'} mit Auswirkungen. Jeder betroffene Eintrag steht in einer Gruppe. Pro Seite siehst du höchstens 20 Einträge.
       </p>
       {gruppen.map(g => <Gruppe key={g.titel} gruppe={g} />)}
     </section>

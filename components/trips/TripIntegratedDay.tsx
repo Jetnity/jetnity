@@ -49,16 +49,16 @@ export default function TripIntegratedDay({reise,dayId,ordered,selected,tasks=[]
     <details className="border-t border-line-200"><summary className={summary}>Preise aufschlüsseln</summary>
       <p className="text-xs leading-5 text-ink-700">Voller gespeicherter Preis je eindeutigem Punkt, einmal am zugeordneten Tag. Mehrtägige Aufenthalte werden nicht auf Nächte verteilt. Preisstand unbekannt. Keine Aussage über Zahlung oder aktuelle Verfügbarkeit.</p>
       <ul className="my-3 space-y-2 text-sm">{costs.items.map(item=><li key={item.id} className="flex min-w-0 flex-wrap justify-between gap-2"><span className="min-w-0 break-words">{item.title}{item.kind !== 'note' && <span className="mt-1 block"><LeistungsStatus stand={leistungsstand(item)} /><PreisstandHinweis /></span>}</span><span>{costs.totals.some(total=>total.itemIds.includes(item.id)) && item.priceAmount!==null && item.priceCurrency ? betragLesbar(item.priceAmount,item.priceCurrency) : 'Preis fehlt oder ist ungültig'}</span></li>)}</ul>
-      <p className="text-xs text-ink-700">{costs.missing} Preise fehlen · {costs.invalid} ungültig · {costs.ambiguous.length} mehrdeutige Kennungen</p>
+      <p className="text-xs text-ink-700">{costs.missing} {costs.missing === 1 ? 'Preis fehlt' : 'Preise fehlen'} · {costs.invalid} ungültig · {costs.ambiguous.length} {costs.ambiguous.length === 1 ? 'Eintrag nicht eindeutig' : 'Einträge nicht eindeutig'}</p>
       {unassigned.items.length>0 && <p className="my-3 text-sm">Noch keinem Tag zugeordnet: {unassigned.totals.map(total=>betragLesbar(total.amount,total.currency)).join(' · ') || 'Kein gültiger Betrag'}{!unassigned.complete ? ' · unvollständig' : ''}. Diese Beträge sind nicht in der Tagessumme enthalten.</p>}
     </details>
     <details className="border-t border-line-200" data-day-places><summary className={summary}>Orte ansehen</summary>
       {places.stage && <p className="text-sm text-ink-800">Etappenort: {places.stage.label}{!places.stage.point?' · Koordinaten unbekannt':''}</p>}
-      {places.stage?.point && <svg viewBox="0 0 360 160" role="img" aria-label={`Schematische Weltposition des Etappenorts ${places.stage.label}; keine Straßenroute`} className="my-3 max-h-48 w-full rounded-xl bg-white">
+      {places.stage?.point && <svg viewBox="0 0 360 160" role="img" aria-label={`Schematische Weltposition des Etappenorts ${places.stage.label}; keine Strassenroute`} className="my-3 max-h-48 w-full rounded-xl bg-white">
         <path d="M0 80H360M180 0V160" stroke="currentColor" className="text-line-200" />
         <circle cx={(places.stage.point.longitude+180)} cy={(90-places.stage.point.latitude)*160/180} r="5" fill="currentColor" className="text-brand-700" />
       </svg>}
-      <p className="my-2 text-xs leading-5 text-ink-700">Etappenkoordinaten sind keine Treffpunkte. Schematische Orientierung ohne Straßenroute oder geprüfte Wegezeit.</p>
+      <p className="my-2 text-xs leading-5 text-ink-700">Etappenkoordinaten sind keine Treffpunkte. Schematische Orientierung ohne Strassenroute oder geprüfte Wegezeit.</p>
       <ol className="my-3 list-inside list-decimal space-y-2 text-sm">{places.stops.map(stop=><li key={stop.id}><span className="font-medium">{stop.title}</span> · {stop.description}</li>)}</ol>
     </details>
     {checks.length>0 && <details className="border-t border-line-200"><summary className={summary}>Vorbereitung zu diesem Tag · {new Set(checks.map(x=>x.id)).size} Prüfungen</summary>
@@ -76,7 +76,7 @@ export default function TripIntegratedDay({reise,dayId,ordered,selected,tasks=[]
           <ManuelleVerbindung key={`${need.occurrence}:${dayId}`} reise={reise} onAnlegen={onVerbindungAnlegen}
             vorgabe={{mode:'transfer',originName:need.from.id,destinationName:need.to.id,
               originPlaceId:`airport:${need.from.id}`,destinationPlaceId:`airport:${need.to.id}`,dayId,startsOn:null}} />
-          <button type="button" className={action} onClick={()=>setMovement(null)}>Verbindung schließen</button></div>
+          <button type="button" className={action} onClick={()=>setMovement(null)}>Verbindung schliessen</button></div>
       })()}
       {!needs.length && <p className="my-3 text-sm">Eine genaue Verbindungszuordnung ist für diese Punkte noch nicht belegt.</p>}
       {time.groups.map(group=><div key={group.contextRef} className="my-3 text-sm"><p>Zwischen ausdrücklich vergleichbaren Ortszeiten:</p>

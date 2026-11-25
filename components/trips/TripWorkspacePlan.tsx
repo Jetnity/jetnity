@@ -5,6 +5,7 @@ import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
 
 import * as React from 'react'
 import { tripMapEntryVisible } from '@/lib/maps/config'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import Etappenplan from './reiseplan/Etappenplan'
 import TripWorkspaceMap from '@/components/trips/TripWorkspaceMap'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
@@ -381,7 +382,7 @@ export default function TripWorkspacePlan({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <p className="text-kicker uppercase text-brand-600">
-          {laufDesTags?.name ?? `Tag ${tag.dayIndex}`}
+          {laufDesTags ? (laufDesTags.lesart === 'ziel' ? gespeicherteEtappeAnzeigen(laufDesTags) : laufDesTags.name) : `Tag ${tag.dayIndex}`}
         </p>
         <h3 className="mt-1 text-title text-brand-800">
           {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
@@ -661,7 +662,7 @@ export default function TripWorkspacePlan({
                   <p data-plan-tag-zaehler className={gemessen ? 'min-w-0 max-w-full text-sm font-semibold text-brand-800 [overflow-wrap:anywhere]' : 'whitespace-nowrap text-sm font-semibold text-brand-800'}>{navigator.text}</p>
                   <p data-plan-tag-datum className="mt-0.5 min-w-0 max-w-full text-xs leading-5 text-ink-700 [overflow-wrap:anywhere]">
                     {tag.dayDate ? kurzesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-                    {laufDesTags ? ` · ${laufDesTags.name}` : ''}
+                    {laufDesTags ? ` · ${laufDesTags.lesart === 'ziel' ? gespeicherteEtappeAnzeigen(laufDesTags) : laufDesTags.name}` : ''}
                   </p>
                 </div>
                 <div className="flex min-w-0 max-w-full flex-wrap items-center justify-between gap-3 md:justify-center">

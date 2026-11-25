@@ -362,7 +362,7 @@ async function settingsContrast(page: Page) {
 const words = {
   de: {
     title: 'Einstellungen', language: 'Sprache der Einstellungen', save: 'Sprache speichern', reload: 'Gespeicherte Sprache erneut laden',
-    prepare: 'Kontolöschung vorbereiten', close: 'Vorbereitung schließen', password: 'Aktuelles Passwort', show: 'Passwort anzeigen', hide: 'Passwort verbergen',
+    prepare: 'Kontolöschung vorbereiten', close: 'Vorbereitung schliessen', password: 'Aktuelles Passwort', show: 'Passwort anzeigen', hide: 'Passwort verbergen',
     confirmation: 'Gib KONTO LÖSCHEN ein, um fortzufahren', remove: 'Konto endgültig löschen',
     export: 'Konto- und Reisedaten als JSON herunterladen', cancel: 'Export abbrechen',
     catalog: 'Sprachkatalog', search: 'Übersetzungen durchsuchen', empty: 'Keine passenden Übersetzungen gefunden.',

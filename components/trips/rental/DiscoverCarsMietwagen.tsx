@@ -13,6 +13,7 @@ import DiscoverCarsSuche from '@/components/trips/DiscoverCarsSuche'
 import { DISCOVERCARS_GENERISCH_HREF } from '@/lib/providers/discovercars/affiliate/ziel'
 import { offersForView, SEARCH_CURRENCIES, searchInput, type RentalResults, type RentalStation, type RentalOffer } from '@/lib/providers/discovercars/search/contract'
 import { ORGANISIEREN_FLAECHE_KLASSE } from '@/lib/trips/organize-premium-experience-6'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import type { Trip } from '@/types/trips'
 import StationField from './StationField'
 import RentalHeart from '@/components/saved-offers/RentalHeart'
@@ -156,7 +157,7 @@ export default function DiscoverCarsMietwagen({ reise, zentral = false }: { reis
               <StationField onUnavailable={providerUnavailable} label="Abholstation" query={pickupQuery} value={pickup} onQuery={s => { invalidate(); setPickupQuery(s); setPickup(null) }} onSelect={s => { invalidate(); setPickup(s); setPickupQuery(s.name) }} />
               {oneWay ? <StationField onUnavailable={providerUnavailable} label="Rückgabestation" query={dropoffQuery} value={dropoff} onQuery={s => { invalidate(); setDropoffQuery(s); setDropoff(null) }} onSelect={s => { invalidate(); setDropoff(s); setDropoffQuery(s.name) }} /> : null}
             </div>
-            {reise.stages.length ? <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-xs text-ink-600">Deine Reiseorte:</span>{reise.stages.map(s => <button key={s.id} type="button" className="min-h-11 rounded-full px-3 text-sm font-semibold text-brand-700 underline decoration-line-300 underline-offset-4 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600" onClick={() => { invalidate(); setPickup(null); setPickupQuery(s.name); setPickupDate(s.arrivalDate ?? reise.startDate ?? ''); setDropoffDate(s.departureDate ?? reise.endDate ?? '') }}>{s.name}</button>)}</div> : null}
+            {reise.stages.length ? <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-xs text-ink-600">Deine Reiseorte:</span>{reise.stages.map(s => <button key={s.id} type="button" className="min-h-11 rounded-full px-3 text-sm font-semibold text-brand-700 underline decoration-line-300 underline-offset-4 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600" onClick={() => { invalidate(); setPickup(null); setPickupQuery(s.name); setPickupDate(s.arrivalDate ?? reise.startDate ?? ''); setDropoffDate(s.departureDate ?? reise.endDate ?? '') }}>{gespeicherteEtappeAnzeigen(s)}</button>)}</div> : null}
           </fieldset>
           <fieldset className="min-w-0 rounded-2xl bg-surface-50 p-4">
             <legend className="sr-only">Mietzeitraum</legend>

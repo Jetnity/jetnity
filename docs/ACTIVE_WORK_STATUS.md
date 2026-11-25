@@ -1,5 +1,24 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314
+
+Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine Kosten.
+
+- Eine Anzeige über `ortAnzeigeName` in `lib/places/titel-name.ts`. `ortTitelName` bleibt darüber erreichbar. Gespeicherte Etappen, IDs, Koordinaten, IATA, Anbieterabfragen und persönliche Titel bleiben.
+- Sichtbar: Ortssuche samt Auswahl und `aria-label`, Meine Reisen, Reiseplan/Etappen, Unterkunft, Verbindungen/Flugauswahl, KI-Etappen mit Ländercode.
+- Nachzug: exakter de-CH-Name liest die Tabellenzeile Land+Typ+Katalogname, bevor gerankt wird. Vienna (US) kommt dadurch nicht als Wien herein. Der Browsernachweis mountet die echten Flächen; Screenshots nur bei gesetztem `DE_CH_ANZEIGE_EVIDENCE_DIR`.
+- CI auf `adc50bf8` rot: Länder ohne Tabellentreffer behalten das deutsche Label (Schweiz, Kongo-Brazzaville). Die Ortssuche reicht weiter `name: option.label` und hängt `anzeige` nur an. Die zwei sichtbaren Passwortsätze folgen dem Katalog; die Prüfung bleibt.
+- Nicht geraten: Abreise ohne Land, Freitext, Mobilitätskanten, Omio-Freitext. Die 15 genannten `ß`-Stellen sind auf `ss` gestellt.
+- Konfliktpotenzial, Branches unangetastet: #1313 teilt `DECISIONS.md` und `docs/ACTIVE_WORK_STATUS.md`. #1307 teilt `Organisieren.tsx`, `TripWorkspacePlan.tsx`, `DiscoverCarsMietwagen.tsx`, den Arbeitsstatus und den Gesamtstand. Nachweis: `docs/DE_CH_ORTSNAMEN_2026-11-25.md`.
+
+## 25.11.2026 — Organisieren, Mobile Routing #1311 und Bestand #1310
+
+Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9` inklusive gemergtem #1308 ist ohne Force-Push eingebunden. Befund: `docs/ORGANISIEREN_ROUTING_MOBILE_2026-11-25.md`.
+
+- Übernommen aus #1310: gespeicherte Leistungen zuerst, klarer Leerzustand, Anbietersuche nur nach Knopf oder ausdrücklichem Einstieg mit Etappe, Ort oder Kante, keine alte tiefe Scrollposition. #1310 bleibt offen für den Technical Lead.
+- Die erste Zeile rückt auf 390 px 8 px über die fixierte Leiste. «Flug suchen» und «Unterkunft suchen» im Planpunkt bleiben.
+- Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, lokal grün. Die Pflicht-CI startet dieselbe Prüfung auf Chromium, weil der Runner kein WebKit-Binary hat. Der Harness bleibt über den esbuild-Einstieg erreichbar. Seine Hilfsfunktionen und die Leisten-Konstante sind nicht exportiert, weil nur die Datei selbst einen Aufrufer hat. Kein Merge, kein Production-Deploy. #1313 unberührt.
+
 ## 24.11.2026 — W3 CI-Sollwerte, Draft #1307
 
 Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgangshead `27a4654ed2ffad84d269d4a8e255eb88ca9f7a85`. Einmaliger Auftrag: nur die roten W3-Regressionen aus CI [45485351071](https://github.com/Jetnity/jetnity/actions/runs/45485351071), Job Repository verification [138769138386](https://github.com/Jetnity/jetnity/actions/runs/45485351071/job/138769138386). Der rote Typecheck, Lint & Build ist der nachgelagerte Aggregate. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy.
@@ -12,6 +31,26 @@ Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgangshead `27a4654ed2ffa
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 
 Aktiv ist nur der [Atomic-Claim-Testfix mit echter BG1-Taktpflege](JETNITY_MAIN_CI_ATOMIC_CADENCE_RECOVERY_2026-11-22.md). Native Slotwechsel-Evidence liegt vor; eigene PR-CI, normaler Merge und der tatsächliche neue Main-Push-Lauf bleiben die Abschlussgates. Danach hier kein weiterer Merge, bis sowohl #1240 als auch #1272 gemergt sind. Profile-Cron vor PR/Hosted-SQL eingefroren; AT bleibt Hauptplan 97, Small-Beobachtung bleibt rein lesend.
+
+## Aktueller Writer — Workspace auf dem Niveau der Startseite, nur Darstellung
+
+**TL-Nachtrag 25.11.2026:** #1312 ist auf `main` `ef378ba74` gemergt, #1310 geschlossen. Dieser Branch übernimmt den Routingfix ohne Force-Push; die kombinierte CI und Work-iPhone-Abnahme sind vor einem Merge zwingend. Die bisherigen lokalen Belege gelten für den damaligen Stand.
+
+**TL-Korrektur 25.11.2026 (Head `35372c1e9`, CI [45663394622](https://github.com/Jetnity/jetnity/actions/runs/45663394622), Repository verification 139378952634):** zwei echte Testfehler nach dem Einbinden von #1312, in derselben Agent-Sitzung auf demselben Branch behoben, kein neuer PR, #1316, #1307 und andere PRs unberührt.
+
+- **1 Struktur-Sollwert:** `lib/trips/organisieren/navigation-eigene-reise.test.ts` erwartete die #1264-Regel `[data-workspace-theme='dark'] .org-workspace`. Seit #1313 erben `.org-workspace` und Organisieren Hell und Dunkel zentral aus `--wn-*`. Der Test prüft jetzt dieselbe Aussage strenger: beide Themes definieren in `workspace-niveau.css` genau dieselben `--wn-*`-Tokens je einmal, es gibt nur `light` und `dark`, `.org-workspace` verwendet nur dort definierte Tokens und folgt über `--workspace-*` dem Theme; keine Geräteverzweigung (unverändert). Negativkontrollen (fehlendes dunkles Token, undefiniertes Token) sind rot.
+- **2 Schalterrand:** der neue #1312-Schalter `[data-organisieren-suche-toggle]` trug nur `border-input` (1,28:1 hell, 2,41:1 dunkel auf der Karte). `organisieren.css` setzt jetzt Kante `--org-feld-kante` (= `--wn-feld-kante`) und Grund `--org-feld-grund`, eng gescopt, in Hell und Dunkel. Keine Logikänderung, keine Ausnahme im Kontrast-Audit.
+- **3 Neue Prüfung:** `lib/ui/workspace-niveau-1/browser.test.ts` prüft die Angebotssuche geschlossen, offen und wieder geschlossen für alle fünf Kategorien bei 320/375/390/430 px in Hell und Dunkel: kein Überlauf, Ziele ≥ 44 px, 3:1 für die UI-Kante und 4,5:1 für Text (Audit, der Schalter muss darin vorkommen), erste Zeile nach dem Reiterwechsel weder unter Kopfzeile noch unter Fussleiste und an der Oberkante getroffen, Tastaturfokus mit sichtbarem Ring ≥ 2 px und 3:1, Enter und Leertaste öffnen und schliessen, der Fokus bleibt auf dem Schalter. Ohne die CSS-Regel ist der Test rot (1,28:1 hell, 2,41:1 dunkel). `lib/trips/organisieren-routing-1/browser.test.ts` (#1312) läuft zusätzlich bei 375 und 430 px und mit `workspace-niveau.css`: 50 statt 30 Kombinationen, nichts entfernt oder gelockert.
+- **Stand:** `main` (`8f92559a8`, nur Gesamtstand-Dokumentation zu W2 #1302) ist ohne Force-Push eingemerged, die Einträge von #1312 und W2 bleiben. CI auf dem finalen Head wird im PR dokumentiert. #1313 bleibt Draft, kein Merge, kein Deploy, keine Kosten, keine Überwachung. Der echte iPhone-Test bleibt Owner-/Work-Gate.
+
+25. November 2026. Branch `cursor/workspace-niveau-2ba1` von `main` `c52b9df12` (inkl. #1309), danach `main` `1fa5ee8f9` (inkl. #1308) eingemerged, Cursor-Agent Session [bc-726acf4e-a89b-4668-b1a6-d0934d792ba1](https://cursor.com/agents/bc-726acf4e-a89b-4668-b1a6-d0934d792ba1). Auftrag des PO: den eingeloggten Workspace (Übersicht, Reiseplan, Organisieren, Vorbereitung, Einreise samt Such- und Formularansichten) auf die Gestaltungsqualität der Startseite #1278 bringen; Anlass war der Production-Befund auf dem iPhone (Flugsuche verschiebt sich seitlich, Platzhalter abgeschnitten, Flughafenliste ragt links heraus). Entscheidung: ADR-0244, Regeln: `DESIGN_SYSTEM.md` 6.25.
+
+- **Umgesetzt (nur CSS, ein Klassenhaken, fünf Texte):** gemeinsame Ebene `components/workspace/workspace-niveau.css` (`--wn-*`, Radien 14/20/28, Felder 16 px und 3,5 rem, Ziele 44 px, nichts unter 12 px); Organisieren (Flüge mit beiden Varianten, Unterkunft, Aktivitäten, Mietwagen, Verbindungen, Kalender) und Reiseplan (Liste, Karte, Tage) folgen den Tokens in Hell und Dunkel; Plan-Karten waren im dunklen Workspace weiss, weil ihre Farb-Tokens nie definiert waren. Fünf Texte `ß` → `ss`; Trefferfläche der Flughafenfelder unter 700 px deckt das ganze Feld.
+- **Test:** `lib/ui/workspace-niveau-1/browser.test.ts` (Chromium, echte CSS-Reihenfolge der App): zehn Ansichten (Plan als Liste und als Karte) bei 320/375/390/430 px in Hell und Dunkel ohne Überlauf, ohne Element ausserhalb des Bildes, Felder ≥ 16 px, Ziele ≥ 44 px, Text ≥ 12 px, Platzhalter und Kartentext nicht abgeschnitten; Flughafenliste, Kalender und Gästepanel im Bild; Kontrast ≥ 4,5:1. Gemessen mit fester Referenzschrift (Breite von Noto Sans), weil die Systemschrift des CI-Runners (DejaVu Sans, 12 % breiter) den ersten CI-Lauf rot gemacht hatte; auf `main` scheitern alle vier Prüfungen, auf dem Head sind sie grün.
+- **Nicht angefasst:** alle Komponenten, die die offenen PRs #1307, #1308, #1310 ändern (`Organisieren.tsx`, `OrganisierenBestand.tsx`, `Stay22Ergebnisse.tsx`, `Flugergebnisse.tsx`, `EtappenTage.tsx`, `TripWorkspace*.tsx`, `TripIntegratedDay.tsx`, `TripWorkspaceMap.tsx`, `rental/*` und weitere); keine Logik, keine Daten, keine Texte ausser den vier.
+- **Offen:** (1) Abnahme auf einem echten iPhone: der iOS-Fokus-Zoom (vermutete Ursache des Überlaufs) tritt in Playwright nicht auf, ein grüner Test ersetzt sie nicht. (2) `ß` in Texten ausserhalb der Workspace-Ansichten (`lib/localization/*` für Konto-Sicherheit, Einstellungen und CMS-Editor, Admin-Seiten); in den Workspace-Ansichten sind keine sichtbaren Vorkommen mehr, nach dem Merge von #1308 am 25. November 2026 auch nicht in `TripIntegratedDay.tsx`, `TripWorkspaceMap.tsx` und `TripTimelineZeitpruefung.tsx`. (3) `kartenauswahl.css`, `reisekarte.css`, `allocation.css` sind nicht überarbeitet. (4) Kopfzeile und Seitenleiste bleiben nach W2 #1302 in beiden Themes weiss.
+- **Grenzen:** kein Production-Zugriff, kein Deploy, kein Merge durch den Agenten; Vorher/Nachher-Bilder stammen aus lokalen Production-Builds (`next build`/`next start`, Supabase-Variablen auf eine nicht erreichbare lokale Adresse gesetzt), die Gastreise liegt im Browser-Speicher.
+- **Nächster Schritt:** CI auf dem finalen Head grün, dann unabhängige Prüfung und Merge durch den Technical Lead; danach die Abnahme auf einem echten iPhone (Owner-/Work-Gate).
 
 ## Aktueller Writer — Datenschutzerklärung, nur Darstellung
 

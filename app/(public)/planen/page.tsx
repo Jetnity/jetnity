@@ -36,6 +36,7 @@ import TripPlanner from '@/components/trips/TripPlanner'
 import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { ortAnzeigeKontext } from '@/lib/places/suche'
+import { ortAnzeigeName } from '@/lib/places/titel-name'
 import { istOrtId, type Ort } from '@/lib/places/domain'
 import {
   routeEinstiegAusParams,
@@ -129,7 +130,12 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
     handoffWiederholen = bestaetigt.grund === 'ausfall'
   }
   const zielOrt = bestaetigteRoute[0] ?? (bestaetigt?.ok ? bestaetigt.wert : null)
-  const weitereZiele = bestaetigteRoute.slice(1).map((ort) => ({ id: ort.id, name: ort.name, description: ortAnzeigeKontext(ort) }))
+  const weitereZiele = bestaetigteRoute.slice(1).map((ort) => ({
+    id: ort.id,
+    name: ort.name,
+    description: ortAnzeigeKontext(ort),
+    anzeige: ortAnzeigeName(ort),
+  }))
 
   const vor = planenVorbelegung({
     zielId: zielOrt?.id ?? null,
@@ -162,6 +168,7 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
                     angemeldet={angemeldet}
                     initialDestination={vor.destination}
                     initialDestinationId={vor.destinationId}
+                    initialDestinationAnzeige={zielOrt ? ortAnzeigeName(zielOrt) : undefined}
                     initialDestinationDescription={zielOrt ? ortAnzeigeKontext(zielOrt) : undefined}
                     initialIdea={vor.idee}
                     initialWeitereZiele={vor.weitereZiele}

@@ -150,6 +150,6 @@ test('Production recovery panel starts with an explicit read and never starts wo
   assert.match(html, /Gespeicherten Production-Stand lesen/)
   assert.match(html, /Eine Wiederaufnahme erfolgt nur durch deinen Klick/)
   assert.match(html, /aria-live="polite"/)
-  assert.doesNotMatch(html, /Abgelaufenen Quellenversuch schließen|op3_[a-f0-9]{32}/)
+  assert.doesNotMatch(html, /Abgelaufenen Quellenversuch schliessen|op3_[a-f0-9]{32}/)
   assert.equal(requests, 0)
 })

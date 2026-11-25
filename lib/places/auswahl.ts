@@ -11,6 +11,8 @@ export type OrtAuswahl = {
   name: string
   /** Nur sichtbarer Auswahlkontext; niemals Ortsautorität. */
   description?: string
+  /** Nur der sichtbare de-CH-Name. Persistenz und Abfragen bleiben bei `id` und `name`. */
+  anzeige?: string
 }
 
 export function auswahlFehlt(

@@ -61,7 +61,7 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
   const v = parsed.data
   const items = [...vorher.days.flatMap(d => d.items), ...vorher.ohneTag]
   if ([vorher.stages, vorher.days, items].some(a => new Set(a.map(x => x.id)).size !== a.length))
-    return fehler('Die Reise enthält mehrdeutige Kennungen. Bitte die Reise neu laden.')
+    return fehler('Einträge dieser Reise lassen sich nicht eindeutig zuordnen. Bitte lade die Reise neu.')
   const ops: Modelloperation[] = [], basic = operation('stammdaten')
   if (v.title !== undefined && v.title !== vorher.title) basic.titel = v.title
   if (v.budgetAmount !== undefined && v.budgetAmount !== vorher.budgetAmount) basic.budgetziel = v.budgetAmount
@@ -115,7 +115,7 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
   }
   const struktur = !!v.neuerStopp || ops.some(op => op.art === 'etappe_dauer' || op.art === 'etappe_entfernen')
   if (struktur && v.duration !== undefined && v.duration !== total)
-    return fehler(`Die Etappen ergeben ${total} Tage. Bitte Gesamtdauer und Etappen auf denselben Wert bringen.`, 'duration')
+    return fehler(`Die Etappen ergeben ${total} ${total === 1 ? 'Tag' : 'Tage'}. Bitte Gesamtdauer und Etappen auf denselben Wert bringen.`, 'duration')
   if (!struktur && v.duration !== undefined && v.duration !== vorher.days.length) {
     const delta = v.duration - vorher.days.length
     if (Math.abs(delta) > AENDERUNG_GRENZEN.tageDelta) return fehler('Die Gesamtdauer kann je Änderung um höchstens 30 Tage verlängert oder verkürzt werden.', 'duration')
@@ -127,7 +127,7 @@ export function manuellerEntwurf(vorher: Trip, roh: unknown, kennung: KennungFn,
   if (!angewandt.ok) return fehler(angewandt.fehler.meldung + (vorher.readinessItems?.some(t => t.tripItemId) ? ' Bitte prüfe auch verknüpfte Vorbereitungen; ihre Bezüge werden nicht automatisch entfernt.' : ''))
   const afterItems = [...angewandt.reise.days.flatMap(d => d.items), ...angewandt.reise.ohneTag]
   if ([angewandt.reise.stages, angewandt.reise.days, afterItems].some(a => new Set(a.map(x => x.id)).size !== a.length))
-    return fehler('Die Änderung würde mehrdeutige Kennungen erzeugen. Bitte eine neue Vorschau erstellen.')
+    return fehler('Einträge lassen sich nach der Änderung nicht eindeutig zuordnen. Bitte erstelle eine neue Vorschau.')
   return { ok: true, eingabe: v, operationen: ops, nachher: quelle === 'account' ? { ...angewandt.reise, dayStageAssignmentMode: vorher.dayStageAssignmentMode } : angewandt.reise }
 }
 

@@ -1,0 +1,103 @@
+/* Workspace-Niveau: ein gemeinsamer Massstab für Felder, Knöpfe, Karten und Schrift.
+   Nur Darstellung (Hell und Dunkel). Keine Daten-, Funktions- oder Layoutlogik.
+   Die Werte entsprechen der Startseite (#1278): ruhige Kanten, drei Radien,
+   16-px-Felder, 44-px-Ziele, Bewegung nur über transform und opacity. */
+
+.workspace-shell {
+  --wn-r-control: 14px;
+  --wn-r-card: 20px;
+  --wn-r-panel: 28px;
+  --wn-feld-h: 3.5rem;
+  --wn-ziel: 44px;
+}
+
+.workspace-shell[data-workspace-theme="light"] {
+  --wn-feld-kante: var(--white-mint-control, #46665b);
+  --wn-feld-grund: var(--white-mint-card, #fdfefd);
+  --wn-aktion: rgb(var(--jet-brand-800));
+  --wn-aktion-schrift: var(--white-mint-card, #fdfefd);
+  --wn-fokus: var(--white-mint-ink, #1b2a26);
+  --wn-tiefe: var(--white-mint-lift-2, 0 1px 2px rgb(27 42 38 / 0.04), 0 10px 28px -16px rgb(27 42 38 / 0.18));
+  --wn-schwebe: var(--white-mint-lift-3, 0 2px 6px rgb(27 42 38 / 0.06), 0 22px 44px -22px rgb(27 42 38 / 0.28));
+  --wn-fehler: #a3361d;
+  --wn-flaeche: var(--white-mint-card, #fdfefd);
+  --wn-flaeche-ruhig: var(--white-mint-nav, #e9f1ec);
+  --wn-gewaehlt: var(--white-mint-selected, #dcebe2);
+  --wn-kante: var(--white-mint-edge, #d3e0d8);
+  --wn-text: var(--white-mint-ink, #1b2a26);
+  --wn-text-ruhig: var(--white-mint-muted, #4a5f57);
+}
+
+.workspace-shell[data-workspace-theme="dark"] {
+  --wn-feld-kante: #8ea3b1;
+  --wn-feld-grund: var(--workspace-bg);
+  --wn-aktion: rgb(var(--jet-citrus-400));
+  --wn-aktion-schrift: rgb(var(--jet-brand-900));
+  --wn-fokus: rgb(var(--jet-ink-400));
+  --wn-tiefe: none;
+  --wn-schwebe: 0 18px 40px -16px rgb(0 0 0 / 0.55);
+  --wn-fehler: var(--workspace-danger);
+  --wn-flaeche: var(--workspace-panel);
+  --wn-flaeche-ruhig: var(--workspace-soft);
+  --wn-gewaehlt: var(--workspace-soft);
+  --wn-kante: var(--workspace-edge);
+  --wn-text: var(--workspace-ink);
+  --wn-text-ruhig: var(--workspace-muted);
+}
+
+/* Felder unterhalb von sm und auf Touchgeräten mindestens 16 px, sonst zoomt iOS beim Fokus
+   und die Seite verschiebt sich seitlich (DESIGN_SYSTEM 7.6). */
+@media (max-width: 639px), (pointer: coarse) {
+  .workspace-content :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="hidden"]), select, textarea) {
+    font-size: 1rem;
+  }
+}
+
+/* Kleinste Schrift im Workspace: 12 px. Die Tailwind-Werte unter 12 px stammen aus Komponenten,
+   die hier nicht angefasst werden. */
+.workspace-content :is([class*="text-[8px]"], [class*="text-[9px]"], [class*="text-[10px]"], [class*="text-[11px]"]) {
+  font-size: 0.75rem;
+}
+
+/* Lange Wörter und Adressen laufen nie aus der Karte. */
+.workspace-content :is(h1, h2, h3, h4, p, li, dt, dd, label, legend) {
+  overflow-wrap: anywhere;
+}
+
+/* Formen: Felder 14 px, Karten 20 px, Karten in Karten 14 px, grosse Flächen 28 px.
+   Die Formulare der Reisevorbereitung tragen noch rounded-2xl/3xl und feste Pixelwerte; die
+   Werte werden hier vereinheitlicht, ohne die Komponenten zu ändern. Pillen bleiben rund. */
+.workspace-content :is(input, select, textarea)[class*="rounded-"]:not([type="checkbox"], [type="radio"]) {
+  border-radius: var(--wn-r-control);
+}
+.workspace-content :is(section, article, details, form, aside, div):is(.rounded-2xl, .rounded-3xl, [class*="rounded-[24px]"]):not(.shrink-0),
+.workspace-content .workspace-route-overview,
+.workspace-content [data-workspace-attention="integrated"],
+.workspace-content [data-workspace-trip-parts] {
+  border-radius: var(--wn-r-card);
+}
+.workspace-content :is(section, article, details, form, aside, div):is(.rounded-2xl, .rounded-3xl, [class*="rounded-[24px]"], .rounded-card):not(.shrink-0)
+  :is(section, article, details, form, aside, div):is(.rounded-2xl, .rounded-3xl, [class*="rounded-[24px]"], .rounded-card):not(.shrink-0) {
+  border-radius: var(--wn-r-control);
+}
+.workspace-content .workspace-trip-heading {
+  border-radius: var(--wn-r-panel);
+}
+
+/* Kopfzeile, Menü und Seitenleiste: nichts unter 12 px. */
+.workspace-menu-button,
+.workspace-kicker,
+.workspace-account-panel p {
+  font-size: 0.75rem;
+}
+
+/* Untere Navigation: Spalten nach Länge der Beschriftung, ab 375 px mit 12 px. Darunter bleiben 11 px,
+   weil «Organisieren» und «Vorbereitung» sonst nicht in die Spalte passen. */
+@media (min-width: 375px) {
+  .workspace-bottom-nav:not([data-flow="true"]) {
+    grid-template-columns: minmax(0, 9fr) minmax(0, 9fr) minmax(0, 12fr) minmax(0, 12fr) minmax(0, 8fr);
+  }
+  .workspace-bottom-nav:not([data-flow="true"]) .workspace-nav-link {
+    font-size: 0.75rem;
+  }
+}

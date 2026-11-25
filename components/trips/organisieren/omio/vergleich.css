@@ -1,14 +1,25 @@
+/* Verbindungen vergleichen (Omio-Katalog) im Workspace.
+   Farben, Radien, Felder und Tiefe stammen aus organisieren.css und workspace-niveau.css;
+   die Rückfallwerte gelten nur ausserhalb der Workspace-Hülle. Die Felder `.ov-place`,
+   `.ov-people` und `.ov-date` teilen sich Aussehen und Trefferfläche mit `.org-field`. */
 .ov {
-  --ov-ink: #1b2a26;
-  --ov-body: #33443e;
-  --ov-muted: #4a5f57;
-  --ov-line: #d3e0d8;
-  --ov-white: #fff;
-  --ov-soft: #e9f1ec;
-  --ov-action: #153f34;
+  --ov-ink: var(--org-ink, #1b2a26);
+  --ov-muted: var(--org-muted, #4a5f57);
+  --ov-line: var(--org-line, #d3e0d8);
+  --ov-white: var(--org-white, #fdfefd);
+  --ov-soft: var(--org-gewaehlt, #dcebe2);
+  --ov-kante: var(--org-feld-kante, #46665b);
+  --ov-aktion: var(--org-aktion, #153a33);
+  --ov-aktion-schrift: var(--org-aktion-schrift, #fdfefd);
+  --ov-warn-bg: #fff4d8;
+  --ov-warn-ink: #654a1b;
   font: inherit;
   color: var(--ov-ink);
   min-width: 0;
+}
+.workspace-shell[data-workspace-theme='dark'] .ov {
+  --ov-warn-bg: #3a2f1c;
+  --ov-warn-ink: #f6e3b4;
 }
 .ov *,
 .ov *::before,
@@ -26,16 +37,9 @@
 .ov select {
   cursor: pointer;
 }
-.ov button {
+.ov button:where(:not(.org-field)) {
   border: 0;
   background: none;
-}
-.ov button:focus-visible,
-.ov select:focus-visible,
-.ov input:focus-visible,
-.ov a:focus-visible {
-  outline: 3px solid #3a886d;
-  outline-offset: 2px;
 }
 .ov svg {
   flex: none;
@@ -46,22 +50,25 @@
 .ov ul {
   margin: 0;
 }
+.ov :is(h2, h3, p) {
+  overflow-wrap: anywhere;
+}
 .ov .ov-search,
 .ov .ov-map,
 .ov .ov-card,
 .ov .ov-empty {
   border: 1px solid var(--ov-line);
   background: var(--ov-white);
-  border-radius: 18px;
+  border-radius: var(--org-r-card, 20px);
 }
 .ov .ov-search {
   position: relative;
-  padding: 20px 23px 16px;
+  padding: 20px;
   z-index: 3;
-  box-shadow: 0 8px 30px #1c3b2510;
+  box-shadow: var(--org-tiefe, none);
 }
 .ov-formhead {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .ov .ov-formhead h2,
 .ov .ov-mode,
@@ -77,75 +84,62 @@
   gap: 8px;
 }
 .ov .ov-formhead h2 {
-  font-size: 1.23rem;
+  font-size: 1.5rem;
+  font-weight: 650;
   letter-spacing: -0.035em;
-  line-height: 1.25;
+  line-height: 1.17;
 }
 .ov-formhead h2 svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
-.ov-fields {
+
+/* Suchfelder: eine Zeile ab 1101 px, zwei Zeilen auf dem Tablet, gestapelt auf dem Handy. */
+.ov .ov-fields {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) 34px minmax(0, 1.2fr) minmax(150px, 0.88fr) auto;
+  grid-template-columns: minmax(0, 1.1fr) 44px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 8px;
   align-items: stretch;
 }
-.ov-place,
-.ov-date {
-  position: relative;
+.ov-place {
   min-width: 0;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 4px;
-  border: 1px solid #b6c9bb;
-  border-radius: 11px;
-  padding: 7px 12px;
-  background: var(--ov-white);
 }
-.ov-place:focus-within,
-.ov-date:focus-within {
-  border-color: #51886c;
-  box-shadow: 0 0 0 1px #51886c;
-}
-.ov-place label,
-.ov-date {
-  font-size: 0.72rem;
-  font-weight: 650;
-  color: var(--ov-muted);
-}
-.ov-input,
-.ov-date > span {
+.ov-input {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
+  min-width: 0;
 }
-.ov-input > svg,
-.ov-date > span > svg {
-  color: #567267;
+.ov-input > svg {
+  color: var(--ov-muted);
   stroke-width: 1.7;
 }
-.ov .ov-input input,
-.ov .ov-date input {
+.ov .ov-input input {
+  flex: 1 1 auto;
   min-width: 0;
   width: 100%;
-  background: transparent;
+  min-height: 44px;
+  margin-block: -10px;
+  padding: 10px 0;
   border: 0;
-  border-radius: 2px;
-  line-height: 1.31;
-  padding: 0;
+  border-radius: 0;
+  outline: 0;
   color: var(--ov-ink);
-  font-weight: 650;
   font-size: 1rem;
-  min-height: 23px;
-}
-.ov .ov-date input {
-  color-scheme: light;
+  font-weight: 620;
+  line-height: 1.4;
+  text-overflow: ellipsis;
 }
 .ov input::placeholder {
-  color: #63756a;
+  color: var(--ov-muted);
   font-weight: 450;
+  opacity: 1;
+}
+.ov-people {
+  font-size: 0.75rem;
+  font-weight: 620;
+  line-height: 1.3;
+  color: var(--ov-muted);
 }
 .ov .ov-swap,
 .ov .ov-save,
@@ -153,165 +147,186 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--ov-line);
+  border: 1px solid var(--ov-kante);
   background: var(--ov-white);
-  border-radius: 10px;
+  border-radius: var(--org-r-control, 14px);
 }
 .ov .ov-swap {
   align-self: center;
-  width: 34px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border-color: var(--ov-kante);
 }
 .ov .ov-primary,
 .ov .ov-offerlink {
-  border-radius: 10px;
-  background: var(--ov-action);
-  color: #fff;
+  border-radius: 999px;
+  background: var(--ov-aktion);
+  color: var(--ov-aktion-schrift);
   text-decoration: none;
   justify-content: center;
   font-weight: 650;
   white-space: nowrap;
 }
 .ov .ov-primary {
-  padding: 0 21px;
-  min-height: 47px;
-  font-size: 0.95rem;
+  padding: 0 24px;
+  min-height: var(--org-feld-h, 3.5rem);
+  font-size: 1rem;
 }
 .ov .ov-offerlink {
-  min-height: 39px;
-  padding: 6px 13px;
-  font-size: 0.82rem;
-}
-.ov .ov-primary:hover,
-.ov .ov-offerlink:hover {
-  background: #245440;
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: 0.9375rem;
 }
 .ov-menu {
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% + 5px);
-  min-width: 190px;
+  top: calc(100% + 6px);
   z-index: 20;
   background: var(--ov-white);
   border: 1px solid var(--ov-line);
-  border-radius: 12px;
-  box-shadow: 0 8px 24px #1b392b24;
+  border-radius: var(--org-r-control, 14px);
+  box-shadow: var(--org-schwebe, 0 8px 24px rgb(27 42 38 / 0.18));
   overflow: hidden;
 }
 .ov-menu ul {
   list-style: none;
-  padding: 3px;
-  max-height: 265px;
+  padding: 4px;
+  max-height: 18rem;
   overflow: auto;
 }
 .ov-menu li {
-  padding: 7px 10px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  font-size: 0.87rem;
+  font-size: 1rem;
   cursor: pointer;
-  min-height: 37px;
-  border-radius: 7px;
+  min-height: 44px;
+  border-radius: 10px;
 }
-.ov-menu li:hover,
+.ov-menu li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .ov-menu li[aria-selected='true'] {
   background: var(--ov-soft);
 }
 .ov-menu li small {
-  font-size: 0.69rem;
+  flex: none;
+  font-size: 0.75rem;
   color: var(--ov-muted);
 }
 .ov-menu p {
-  padding: 8px;
-  font-size: 0.78rem;
+  padding: 10px 12px;
+  font-size: 0.875rem;
 }
 .ov-legs {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  margin-top: 11px;
+  margin-top: 14px;
 }
 .ov-legs > span {
-  font-size: 0.74rem;
+  font-size: 0.8125rem;
   color: var(--ov-muted);
   margin-right: 2px;
 }
 .ov .ov-legs button {
-  font-size: 0.76rem;
-  font-weight: 580;
-  border-radius: 30px;
-  background: #f3f6f0;
-  min-height: 32px;
-  padding: 5px 11px;
-  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 620;
+  border-radius: 999px;
+  background: var(--ov-white);
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--ov-kante);
+  text-align: left;
 }
 .ov .ov-legs button[aria-pressed='true'] {
-  background: #e5efe2;
-  border-color: #bad1bb;
+  background: var(--ov-aktion);
+  border-color: var(--ov-aktion);
+  color: var(--ov-aktion-schrift);
 }
 .ov .ov-warning {
-  margin-top: 10px;
-  padding: 9px 12px;
-  border-radius: 9px;
-  background: #fff4d8;
-  color: #654a1b;
-  font-size: 0.83rem;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--org-r-control, 14px);
+  background: var(--ov-warn-bg);
+  color: var(--ov-warn-ink);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.ov .ov-warning button {
+  min-height: 44px;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .ov-results {
-  padding-top: 26px;
+  padding-top: 28px;
 }
 .ov-resultshead {
   display: flex;
   align-items: flex-end;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 12px 16px;
   justify-content: space-between;
   margin-bottom: 16px;
 }
 .ov .ov-date-line {
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   color: var(--ov-muted);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 .ov .ov-resultshead h2 {
-  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-weight: 650;
   line-height: 1.13;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.04em;
   margin: 0;
 }
 .ov-resultshead h2 span {
-  color: #759181;
+  color: var(--ov-muted);
   font-weight: 400;
 }
 .ov .ov-sort {
-  font-size: 0.79rem;
-  font-weight: 630;
+  font-size: 0.875rem;
+  font-weight: 620;
   flex: none;
 }
 .ov-sort select {
-  background: var(--ov-white);
-  border: 1px solid var(--ov-line);
-  border-radius: 9px;
-  min-height: 38px;
-  padding: 5px 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--ov-white);
+  background-image: linear-gradient(to top right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)), linear-gradient(to bottom right, transparent calc(50% - 0.8px), currentColor calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+  background-position: calc(100% - 21px) 50%, calc(100% - 14px) 50%;
+  background-size: 7px 7px, 7px 7px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--ov-kante);
+  border-radius: var(--org-r-control, 14px);
+  min-height: 44px;
+  padding: 0 36px 0 14px;
+  font-size: 1rem;
+  font-weight: 620;
 }
 .ov .ov-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.58fr) minmax(295px, 1fr);
   align-items: start;
-  gap: 18px;
+  gap: 20px;
 }
 .ov-list {
   min-width: 0;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 .ov .ov-card,
 .ov .ov-empty {
-  padding: 16px 18px;
+  padding: 20px;
+  box-shadow: var(--org-tiefe, none);
 }
 .ov-cardtop,
 .ov-maphead,
@@ -327,61 +342,80 @@
   flex-wrap: wrap;
 }
 .ov .ov-mode h3 {
-  font-size: 1.12rem;
+  font-size: 1.1875rem;
+  font-weight: 650;
   line-height: 1.2;
   letter-spacing: -0.03em;
 }
 .ov-icon {
-  height: 35px;
-  width: 35px;
-  border-radius: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: var(--org-r-control, 14px);
   background: var(--ov-soft);
   display: inline-grid;
   place-items: center;
   flex: none;
 }
 .ov-icon > svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   stroke-width: 1.7;
 }
 .ov-cheap {
-  font-size: 0.68rem;
-  font-weight: 670;
-  color: #315940;
-  background: #e9f1df;
-  border-radius: 20px;
-  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--ov-ink);
+  background: var(--ov-soft);
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 .ov .ov-save {
-  height: 34px;
-  width: 34px;
+  height: 44px;
+  width: 44px;
   border-color: transparent;
-  color: #567362;
+  color: var(--ov-muted);
   flex: none;
 }
-.ov .ov-save:hover,
 .ov .ov-save[aria-pressed='true'] {
   border-color: var(--ov-line);
   background: var(--ov-soft);
+  color: var(--ov-ink);
+}
+@media (hover: hover) {
+  .ov .ov-save:hover {
+    border-color: var(--ov-line);
+    background: var(--ov-soft);
+  }
+  .ov .ov-primary:hover,
+  .ov .ov-offerlink:hover {
+    filter: brightness(1.08);
+  }
+  .ov-menu li:hover,
+  .ov .ov-stops button:hover {
+    background: var(--ov-soft);
+  }
+  .ov .ov-legs button:hover:not([aria-pressed='true']) {
+    background: var(--ov-soft);
+  }
 }
 .ov-facts {
-  margin-top: 12px;
+  margin-top: 14px;
   display: grid;
-  grid-template-columns: minmax(85px, 1fr) minmax(97px, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   align-items: end;
-  gap: 6px;
+  gap: 8px 16px;
 }
 .ov-facts small,
 .ov-stops small {
   display: block;
   color: var(--ov-muted);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.3;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 .ov-facts b {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
+  font-weight: 650;
   line-height: 1.22;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
@@ -389,22 +423,22 @@
 .ov-facts strong {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.96rem;
+  gap: 6px;
+  font-size: 1rem;
   line-height: 1.48;
   font-weight: 630;
 }
 .ov-facts strong svg {
-  color: #5b7464;
+  color: var(--ov-muted);
 }
 .ov-disclosure {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: 8px;
   color: var(--ov-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.55;
-  padding: 3px 2px;
+  padding: 4px 2px;
 }
 .ov-disclosure > svg {
   margin-top: 2px;
@@ -416,39 +450,41 @@
 }
 .ov .ov-map {
   overflow: hidden;
+  box-shadow: var(--org-tiefe, none);
 }
 .ov-maphead {
-  padding: 13px 14px;
+  padding: 14px 16px;
 }
 .ov .ov-maphead h3 {
-  font-size: 1rem;
+  font-size: 1.0625rem;
+  font-weight: 650;
   letter-spacing: -0.035em;
 }
 .ov-mapbuttons {
   display: flex;
   gap: 2px;
-  background: #eef3eb;
-  border-radius: 8px;
+  background: var(--ov-soft);
+  border-radius: var(--org-r-control, 14px);
   padding: 2px;
 }
 .ov .ov-mapbuttons button {
-  padding: 5px 7px;
-  border-radius: 6px;
+  padding: 0 12px;
+  border-radius: 12px;
   font-weight: 620;
-  font-size: 0.68rem;
-  min-height: 29px;
+  font-size: 0.875rem;
+  min-height: 44px;
 }
 .ov .ov-mapbuttons button[aria-pressed='true'] {
-  background: white;
-  color: #173f31;
-  box-shadow: 0 1px 4px #23432d26;
+  background: var(--ov-white);
+  color: var(--ov-ink);
+  box-shadow: 0 1px 4px rgb(27 42 38 / 0.18);
 }
 .ov .ov-canvas {
   display: block;
   height: clamp(228px, 22vw, 298px);
   width: 100%;
   border: 0;
-  background: #e7ede5;
+  background: var(--ov-soft);
   z-index: 0;
 }
 .ov .ov-pin,
@@ -473,65 +509,68 @@
 .ov-stops {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  padding: 11px 12px 9px;
+  gap: 8px;
+  padding: 12px;
 }
 .ov .ov-stops button {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   text-align: left;
-  padding: 4px;
-  border-radius: 8px;
+  padding: 4px 6px;
+  min-height: 44px;
+  border-radius: 10px;
   min-width: 0;
 }
-.ov .ov-stops button[aria-pressed='true'],
-.ov .ov-stops button:hover {
+.ov .ov-stops button[aria-pressed='true'] {
   background: var(--ov-soft);
 }
 .ov-stops b {
   display: block;
-  font-size: 0.88rem;
+  font-size: 0.9375rem;
   overflow-wrap: anywhere;
 }
 .ov-letter {
-  width: 23px;
-  height: 23px;
+  width: 24px;
+  height: 24px;
   box-shadow: none;
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   flex: none;
 }
 .ov-mapfoot {
   border-top: 1px solid var(--ov-line);
-  padding: 8px 13px;
+  padding: 8px 16px;
   color: var(--ov-muted);
-  font-size: 0.69rem;
+  font-size: 0.75rem;
 }
 .ov .ov-mapfoot a {
+  min-height: 44px;
   font-weight: 650;
   text-decoration: none;
-  gap: 2px;
+  gap: 4px;
 }
 .ov .ov-mobilemap {
   display: none;
 }
 .ov-empty h3 {
-  margin: 9px 0 4px;
-  font-size: 1.15rem;
+  margin: 10px 0 6px;
+  font-size: 1.1875rem;
+  font-weight: 650;
 }
 .ov-empty p,
 .ov-mapnotice,
 .ov-hint {
   color: var(--ov-muted);
-  font-size: 0.87rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 .ov-empty a {
-  margin-top: 12px;
+  margin-top: 14px;
   width: fit-content;
 }
 .ov-mapnotice,
 .ov-hint {
-  padding: 13px;
+  padding: 14px;
 }
 .ov-sr {
   position: absolute;
@@ -543,162 +582,16 @@
 .ov .leaflet-control-zoom a {
   color: #174234;
 }
-@media (max-width: 1060px) {
-  .ov .ov-layout {
-    grid-template-columns: minmax(0, 1.3fr) minmax(272px, 1fr);
-    gap: 12px;
-  }
-  .ov .ov-card {
-    padding: 13px;
-  }
-  .ov-maphead {
-    flex-wrap: wrap;
-  }
-  .ov .ov-offerlink {
-    padding-inline: 9px;
-  }
-  .ov-fields {
-    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr) minmax(140px, 0.82fr) auto;
-    gap: 5px;
-  }
-  .ov .ov-primary {
-    padding-inline: 12px;
-  }
-  .ov .ov-search {
-    padding: 17px;
-  }
-  .ov-facts {
-    grid-template-columns: 1fr 1fr;
-  }
-  .ov .ov-offerlink {
-    grid-column: 1/-1;
-    min-height: 35px;
-    margin-top: 4px;
-  }
-  .ov-mapcol {
-    position: static;
-  }
-}
-@media (max-width: 780px) {
-  .ov .ov-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .ov-list,
-  .ov-mapcol {
-    width: 100%;
-  }
-  .ov-mapcol {
-    display: none;
-    order: -1;
-  }
-  .ov-showmap .ov-mapcol {
-    display: block;
-  }
-  .ov .ov-mobilemap {
-    display: flex;
-    min-height: 39px;
-    gap: 7px;
-    padding: 5px 12px;
-    font-size: 0.82rem;
-    font-weight: 630;
-    margin: 0 0 11px;
-  }
-  .ov .ov-resultshead {
-    margin-bottom: 10px;
-    align-items: start;
-  }
-  .ov .ov-canvas {
-    height: 255px;
-  }
-  .ov-stops button {
-    min-height: 44px;
-  }
-  .ov .ov-mapbuttons button {
-    min-height: 36px;
-  }
-  .ov-fields {
-    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr);
-  }
-  .ov-date {
-    grid-column: 1/3;
-  }
-  .ov-place,
-  .ov-date {
-    padding: 8px;
-  }
-  .ov .ov-primary {
-    grid-column: 3;
-  }
-  .ov .ov-card,
-  .ov .ov-empty {
-    padding: 14px 16px;
-  }
-  .ov .ov-legs button {
-    min-height: 38px;
-  }
-  .ov .ov-save,
-  .ov .ov-swap {
-    min-height: 40px;
-  }
-  .ov .ov-swap {
-    width: 30px;
-  }
-  .ov .ov-offerlink {
-    min-height: 42px;
-  }
-  .ov .ov-sort > svg {
-    display: none;
-  }
-  .ov-results {
-    padding-top: 20px;
-  }
-  .ov .ov-search {
-    padding: 14px;
-  }
-  .ov-legs {
-    gap: 4px;
-  }
-  .ov .ov-legs > span {
-    width: 100%;
-  }
-  .ov-place:nth-of-type(2) .ov-menu {
-    right: 0;
-    left: auto;
-  }
-  .ov .ov-resultshead h2 {
-    font-size: 1.6rem;
-  }
-  .ov-facts b {
-    font-size: 1.2rem;
-  }
-  .ov-cheap {
-    font-size: 0.63rem;
-  }
-  .ov .ov-sort select {
-    max-width: 124px;
-    font-size: 0.72rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ov * {
-    scroll-behavior: auto !important;
-  }
-}
-.org-workspace .ov-search {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
 .ov-bestehend {
   margin: 16px 0 0;
-  border-top: 1px solid #d3e0d8;
-  padding: 12px 0;
+  border-top: 1px solid var(--ov-line);
+  padding: 4px 0 12px;
 }
 .ov-bestehend > summary {
+  padding-block: 12px;
   cursor: pointer;
   font-weight: 620;
-  font-size: 0.87rem;
+  font-size: 0.9375rem;
 }
 .ov .ov-tooltip {
   color: #163e32;
@@ -713,71 +606,169 @@
   box-shadow: 0 1px 4px #1b392b28;
   padding: 3px 5px;
 }
-.ov .ov-fields {
-  grid-template-columns: minmax(115px, 1.2fr) 32px minmax(115px, 1.2fr) minmax(138px, 0.9fr) minmax(
-      112px,
-      0.85fr
-    ) auto;
-}
-.ov-people {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  border: 1px solid #b6c9bb;
-  border-radius: 11px;
-  padding: 7px 10px;
-  background: var(--ov-white);
-  font-size: 0.72rem;
-  font-weight: 650;
-  color: var(--ov-muted);
-}
-.ov .ov-people select {
-  border: 0;
-  min-width: 0;
-  width: 100%;
-  font-size: 0.93rem;
-  min-height: 23px;
-  color: var(--ov-ink);
-  background: var(--ov-white);
-  font-weight: 650;
-}
 .ov-weitere {
   display: grid;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 12px;
 }
 .ov-weitere p {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--ov-muted);
 }
+
 @media (max-width: 1100px) {
+  .ov .ov-layout {
+    grid-template-columns: minmax(0, 1.3fr) minmax(272px, 1fr);
+    gap: 16px;
+  }
   .ov .ov-fields {
-    grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr) minmax(135px, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr) minmax(0, 0.8fr);
+  }
+  .ov-date {
+    grid-column: 1 / 3;
   }
   .ov-people {
-    grid-column: 1/3;
+    grid-column: 3 / 5;
   }
   .ov .ov-primary {
-    grid-column: 3/5;
+    grid-column: 1 / -1;
+  }
+  .ov-maphead {
+    flex-wrap: wrap;
+  }
+  .ov-facts {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .ov .ov-offerlink {
+    grid-column: 1 / -1;
+  }
+  .ov-mapcol {
+    position: static;
   }
 }
 @media (max-width: 780px) {
+  .ov .ov-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .ov-list,
+  .ov-mapcol {
+    width: 100%;
+  }
+  .ov-mapcol {
+    display: none;
+    order: -1;
+  }
+  .ov-showmap .ov-mapcol {
+    display: block;
+  }
+  .ov .ov-mobilemap {
+    display: flex;
+    min-height: 44px;
+    gap: 8px;
+    padding: 0 16px;
+    font-size: 0.9375rem;
+    font-weight: 620;
+    margin: 0 0 12px;
+  }
+  .ov .ov-resultshead {
+    margin-bottom: 12px;
+  }
+  .ov .ov-canvas {
+    height: 255px;
+  }
+  .ov .ov-search {
+    padding: 16px;
+  }
   .ov .ov-fields {
-    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
-  .ov-date {
-    grid-column: 1/3;
+  .ov .ov-fields > .ov-place:first-child {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
-  .ov-people {
-    grid-column: 3;
+  .ov .ov-fields > .ov-swap {
+    grid-column: 1 / -1;
+    grid-row: 1 / 3;
+    justify-self: end;
+    margin-right: 8px;
+    z-index: 2;
   }
-  .ov .ov-primary {
-    grid-column: 1/-1;
+  .ov .ov-fields > .ov-place:nth-of-type(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
-  .ov .ov-people select {
-    font-size: 16px;
+  .ov .ov-fields > .ov-place:first-child {
+    padding-right: 60px;
+  }
+  .ov .ov-fields > .ov-date {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .ov .ov-fields > .ov-people {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .ov .ov-fields > .ov-primary {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+  .ov .ov-card,
+  .ov .ov-empty {
+    padding: 16px;
+  }
+  .ov-results {
+    padding-top: 24px;
+  }
+  .ov-legs {
+    gap: 8px;
+  }
+  .ov .ov-legs > span {
+    width: 100%;
+  }
+  .ov .ov-resultshead h2 {
+    font-size: 1.5rem;
+  }
+  .ov-facts b {
+    font-size: 1.25rem;
+  }
+  .ov .ov-sort {
+    width: 100%;
+  }
+  .ov .ov-sort select {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .ov-stops {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
-
-.ov .ov-save:disabled{opacity:.5;cursor:default}
+@media (max-width: 359px) {
+  .ov .ov-fields > .ov-date,
+  .ov .ov-fields > .ov-people {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .ov .ov-fields > .ov-date {
+    grid-row: 3;
+  }
+  .ov .ov-fields > .ov-people {
+    grid-row: 4;
+  }
+  .ov .ov-fields > .ov-primary {
+    grid-row: 5;
+  }
+  .ov-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ov * {
+    scroll-behavior: auto !important;
+  }
+}
+.ov .ov-save:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

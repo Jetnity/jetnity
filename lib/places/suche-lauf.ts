@@ -4,12 +4,14 @@
 // Kein Geocoder, keine zweite Ortswahrheit.
 
 import { ortSuchKontext } from '@/lib/places/namen'
+import { anzeigeAliase } from '@/lib/places/titel-name'
 import type { Lesung, Problem } from '@/lib/api/datenbank-lesen'
 import { ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import type { Ort, OrtOption, OrtRolle } from '@/lib/places/domain'
 import {
   ORT_ABFRAGE,
   ORT_SUCHTEXT_MAX,
+  ortAnzeigeAliasfilter,
   ortExaktfilter,
   ORT_LAND_UNIVERSUM,
   landAliasNachzugNoetig,
@@ -87,6 +89,14 @@ export async function placesSuchen(
       zeilen = zeilenMergen(zeilen, laender.zeilen)
       orte = orteAus(zeilen)
     }
+  }
+
+  const aliasFilter = ortAnzeigeAliasfilter(suche)
+  if (aliasFilter) {
+    const alias = await lesen('exakt', aliasFilter, anzeigeAliase(suche).length, landCodes)
+    if (alias.problem) return { optionen: null, problem: alias.problem }
+    zeilen = zeilenMergen(zeilen, alias.zeilen)
+    orte = orteAus(zeilen)
   }
 
   if (suche.length >= 3 || schluesselErgaenzungNoetig(orte, suche, rolle)) {

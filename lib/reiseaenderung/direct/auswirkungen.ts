@@ -25,14 +25,14 @@ export function auswirkungen(
     if (row) row.text = `Budgetziel (${vorher.currency}): ${vorher.budgetAmount ?? 'offen'} → ${nachher.budgetAmount ?? 'offen'}`
   }
   // A non-lossy summary of all trip-wide material fields.
-  basic.push({ id: 'range', text: `Reise: ${datum(vorher.startDate)} bis ${datum(vorher.endDate)} (${vorher.days.length} Tage) → ${datum(nachher.startDate)} bis ${datum(nachher.endDate)} (${nachher.days.length} Tage)` })
+  basic.push({ id: 'range', text: `Reise: ${datum(vorher.startDate)} bis ${datum(vorher.endDate)} (${vorher.days.length} ${vorher.days.length === 1 ? 'Tag' : 'Tage'}) → ${datum(nachher.startDate)} bis ${datum(nachher.endDate)} (${nachher.days.length} ${nachher.days.length === 1 ? 'Tag' : 'Tage'})` })
   const stages: Auswirkungsgruppe['zeilen'] = [], days: Auswirkungsgruppe['zeilen'] = []
   for (const s of vorher.stages) {
     const next = nachher.stages.find(n => n.id === s.id)
     const oldDays = vorher.days.filter(d => d.stageId === s.id).length
     const newDays = nachher.days.filter(d => d.stageId === s.id).length
     if (!next || oldDays !== newDays || s.arrivalDate !== next.arrivalDate || s.departureDate !== next.departureDate || s.position !== next.position)
-      stages.push({ id: s.id, text: `Etappe ${s.position}: ${s.name} · ${oldDays} Tage (${datum(s.arrivalDate)} – ${datum(s.departureDate)}) → ${next ? `Etappe ${next.position}, ${newDays} Tage (${datum(next.arrivalDate)} – ${datum(next.departureDate)})` : 'wird entfernt'}` })
+      stages.push({ id: s.id, text: `Etappe ${s.position}: ${s.name} · ${oldDays} ${oldDays === 1 ? 'Tag' : 'Tage'} (${datum(s.arrivalDate)} – ${datum(s.departureDate)}) → ${next ? `Etappe ${next.position}, ${newDays} ${newDays === 1 ? 'Tag' : 'Tage'} (${datum(next.arrivalDate)} – ${datum(next.departureDate)})` : 'wird entfernt'}` })
   }
   for (const old of vorher.days) {
     const next = nachher.days.find(n => n.id === old.id)
@@ -193,36 +193,40 @@ function seiteLesen(reise: Trip, erlaubt: boolean, lesen: UnterkunftLeser): Seit
   }
 }
 
-function etappenLabel(luecke: UnterkunftLuecke): string {
-  if (!luecke.stageId) return 'ohne Etappenzuordnung'
-  return luecke.stageName ? `Etappe ${luecke.stageId} „${luecke.stageName}“` : `Etappe ${luecke.stageId}`
+function etappenLabel(luecke: UnterkunftLuecke, reise: Trip): string {
+  if (!luecke.stageId) return 'keinem Reiseziel zugeordnet'
+  const etappe = reise.stages.find(stage => stage.id === luecke.stageId)
+  if (!etappe) return 'Reiseziel noch nicht bestimmbar'
+  // Display the actual position and name, not the internal ID. Position also
+  // distinguishes consecutive visits to the same destination.
+  return etappe.name.trim() ? `Etappe ${etappe.position}: ${etappe.name}` : `Etappe ${etappe.position}`
 }
 
-function planZeilen(id: string, label: string, wert: UnterkunftAbdeckung, vergleich: boolean): Auswirkungsgruppe['zeilen'] {
+function planZeilen(id: string, label: string, wert: UnterkunftAbdeckung, vergleich: boolean, reise: Trip): Auswirkungsgruppe['zeilen'] {
   const zeilen: Auswirkungsgruppe['zeilen'] = [{
     id: `${id}-summe`,
-    text: `${label}: ${wert.naechteAbgedeckt} von ${wert.naechteGesamt} Nächten im aufgezeichneten Plan abgedeckt, ${wert.naechteGebucht} vom Nutzer als gebucht markiert, ${wert.naechteAusgewaehlt} ausgewählt. Die Check-in-Nacht zählt, die Check-out-Nacht nicht. Das ist aufgezeichneter Planungsstand, keine Anbieterbestätigung, keine Verfügbarkeit und keine Reisebereitschaft.`,
+    text: `${label}: ${wert.naechteAbgedeckt} von ${wert.naechteGesamt} ${wert.naechteGesamt === 1 ? 'Nacht' : 'Nächten'} im aufgezeichneten Plan abgedeckt, ${wert.naechteGebucht} vom Nutzer als gebucht markiert, ${wert.naechteAusgewaehlt} ausgewählt. Die Check-in-Nacht zählt, die Check-out-Nacht nicht. Das ist aufgezeichneter Planungsstand, keine Anbieterbestätigung, keine Verfügbarkeit und keine Reisebereitschaft.`,
   }]
   if (wert.luecken.length === 0) {
-    if (vergleich) zeilen.push({ id: `${id}-keine-luecke`, text: `${label}: keine offene Nachtlücke im kanonischen Zeitraum.` })
+    if (vergleich) zeilen.push({ id: `${id}-keine-luecke`, text: `${label}: keine Nacht ohne Unterkunft im geplanten Zeitraum.` })
   } else {
     wert.luecken.forEach((luecke, index) => {
       zeilen.push({
         id: `${id}-luecke-${index}`,
-        text: `${label}, Lücke: Check-in ${luecke.start}, Check-out ${luecke.end}, ${luecke.naechte} Nächte, ${etappenLabel(luecke)}.`,
+        text: `${label}, Lücke: Check-in ${luecke.start}, Check-out ${luecke.end}, ${luecke.naechte} ${luecke.naechte === 1 ? 'Nacht' : 'Nächte'}, ${etappenLabel(luecke, reise)}.`,
       })
     })
   }
   const ohneTag = wert.aufenthalte.filter(aufenthalt => aufenthalt.item.dayId === null).length
   zeilen.push({
     id: `${id}-unterkuenfte`,
-    text: `${label}: ${wert.aufenthalte.length} aufgezeichnete Unterkünfte, davon ${ohneTag} ohne Tag, jede davon genau einmal gezählt. Nichts wird automatisch beim Anbieter storniert oder umgebucht.`,
+    text: `${label}: ${wert.aufenthalte.length} ${wert.aufenthalte.length === 1 ? 'aufgezeichnete Unterkunft' : 'aufgezeichnete Unterkünfte'}, davon ${ohneTag} ohne Reisetag, ${wert.aufenthalte.length === 1 ? 'genau einmal gezählt' : 'jede davon genau einmal gezählt'}. Nichts wird automatisch beim Anbieter storniert oder umgebucht.`,
   })
   return zeilen
 }
 
-function seiteZeilen(id: string, label: string, seite: Seite, vergleich: boolean): Auswirkungsgruppe['zeilen'] {
-  if (seite.art === 'plan') return planZeilen(id, label, seite.wert, vergleich)
+function seiteZeilen(id: string, label: string, seite: Seite, vergleich: boolean, reise: Trip): Auswirkungsgruppe['zeilen'] {
+  if (seite.art === 'plan') return planZeilen(id, label, seite.wert, vergleich, reise)
   if (seite.art === 'unklar') {
     return [{ id: `${id}-unklar`, text: `${label}: Unterkunftsstand noch unklar. Eine Gesamtaussage zur Abdeckung ist nicht möglich.` }]
   }
@@ -237,8 +241,8 @@ function unterkunftsgruppe(vorher: Trip, nachher: Trip, lesen: UnterkunftLeser):
   if (links.art === 'plan' && rechts.art === 'plan' && planKern(links.wert) === planKern(rechts.wert)) return null
   const vergleich = links.art === 'plan' && rechts.art === 'plan'
   const zeilen = [
-    ...seiteZeilen('lodging-before', 'Bisheriger gespeicherter Plan', links, vergleich),
-    ...seiteZeilen('lodging-after', 'Vorschau nach deiner Änderung', rechts, vergleich),
+    ...seiteZeilen('lodging-before', 'Bisheriger gespeicherter Plan', links, vergleich, vorher),
+    ...seiteZeilen('lodging-after', 'Vorschau nach deiner Änderung', rechts, vergleich, nachher),
   ]
   if (!vergleich) {
     zeilen.push({

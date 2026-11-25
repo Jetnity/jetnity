@@ -228,7 +228,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             {/* Overlay */}
             <button
-              aria-label="Overlay schließen"
+              aria-label="Overlay schliessen"
               className="absolute inset-0 bg-black/50"
               onClick={closeDrawer}
             />
@@ -241,7 +241,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-sm font-medium">Navigation</span>
                 <button
                   type="button"
-                  aria-label="Navigationsmenü schließen"
+                  aria-label="Navigationsmenü schliessen"
                   onClick={closeDrawer}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-md hover:bg-accent"
                 >

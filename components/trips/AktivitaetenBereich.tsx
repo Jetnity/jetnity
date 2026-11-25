@@ -9,6 +9,7 @@
 import * as React from 'react'
 
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import { activitySucheFehlerAntwort, activitySucheVomClient } from '@/lib/activities/client-anfrage'
 import { ACTIVITY_ABDECKUNGSHINWEIS } from '@/lib/activities/domain'
 import { activitySucheEingabeAusReise } from '@/lib/activities/tageskontext'
@@ -440,11 +441,11 @@ export default function AktivitaetenBereich({
         </h2>
         <p className="mt-1 text-sm text-ink-800">Anbieter: GetYourGuide und Viator</p>
         {wahl.datumOffen && gewaehlt ? (
-          <p className="mt-1 break-words text-sm text-ink-800">Ideen für {gewaehlt.name} · Datum später wählen</p>
+          <p className="mt-1 break-words text-sm text-ink-800">Ideen für {gespeicherteEtappeAnzeigen(gewaehlt)} · Datum später wählen</p>
         ) : null}
         {gewaehlt?.status === 'land' ? (
           <p className="mt-1 break-words text-sm leading-6 text-ink-800">
-            {gewaehlt.name} ist ein Land. Die Ideen gelten für das ganze Land, nicht für einen einzelnen Ort oder Tag.
+            {gespeicherteEtappeAnzeigen(gewaehlt)} ist ein Land. Die Ideen gelten für das ganze Land, nicht für einen einzelnen Ort oder Tag.
           </p>
         ) : null}
         {adoptTag?.dayDate ? (
@@ -464,7 +465,7 @@ export default function AktivitaetenBereich({
             >
               {wahl.ziele.map((ziel) => (
                 <option key={ziel.stageId} value={ziel.stageId}>
-                  {besuchsLabel(ziel.name, ziel.tage)}
+                  {besuchsLabel(gespeicherteEtappeAnzeigen(ziel), ziel.tage)}
                 </option>
               ))}
             </select>

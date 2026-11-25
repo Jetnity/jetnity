@@ -42,6 +42,15 @@ type OrtSucheProps = {
   inputRef?: React.Ref<HTMLInputElement>
 }
 
+function sichtbarerOptionsname(option: OrtOption): string {
+  return option.anzeige?.trim() || option.label
+}
+
+function sichtbareAuswahl(value: OrtAuswahl | null): string | undefined {
+  if (!value) return undefined
+  return value.anzeige?.trim() || value.name
+}
+
 function typText(typ: OrtOption['typ']): string {
   if (typ === 'country') return 'Land'
   if (typ === 'region') return 'Region'
@@ -85,7 +94,7 @@ export default function OrtSuche({
   describedBy,
   inputRef,
 }: OrtSucheProps) {
-  const [text, setText] = React.useState(value?.name ?? initialText ?? '')
+  const [text, setText] = React.useState(sichtbareAuswahl(value) ?? initialText ?? '')
   const [treffer, setTreffer] = React.useState<OrtOption[]>([])
   const [trefferSchluessel, setTrefferSchluessel] = React.useState('')
   const suchSchluessel = `${rolle}\0${text.trim()}`
@@ -100,12 +109,12 @@ export default function OrtSuche({
   const auswahlKontextId = React.useId()
   const letzterSamen = React.useRef(initialText)
   const zeigerWahl = React.useRef(false)
-  const wertSchluessel = value ? `${value.id}\0${value.name}` : ''
+  const wertSchluessel = value ? `${value.id}\0${value.name}\0${value.anzeige ?? ''}` : ''
   const [gesehenerSamen, setGesehenerSamen] = React.useState(initialText)
   const [gesehenerWert, setGesehenerWert] = React.useState(wertSchluessel)
   if (initialText !== gesehenerSamen || wertSchluessel !== gesehenerWert) {
     const uebernahme = ortSucheAnzeigetextAbstimmen({
-      valueName: value?.name,
+      valueName: sichtbareAuswahl(value),
       initialText,
       letzterSamen: gesehenerSamen,
     })
@@ -124,7 +133,7 @@ export default function OrtSuche({
 
   React.useEffect(() => {
     const abgleich = ortSucheAnzeigetextAbstimmen({
-      valueName: value?.name,
+      valueName: sichtbareAuswahl(value),
       initialText,
       letzterSamen: letzterSamen.current,
     })
@@ -132,11 +141,11 @@ export default function OrtSuche({
     if (abgleich.uebernehmen !== null) {
       setText(abgleich.uebernehmen)
     }
-  }, [value?.id, value?.name, initialText])
+  }, [value?.id, value?.name, value?.anzeige, initialText])
 
   React.useEffect(() => {
     const suche = text.trim()
-    if (value && suche === value.name) {
+    if (value && suche === (sichtbareAuswahl(value) ?? '')) {
       setTreffer([])
       setLaedt(false)
       setFehlerArt(null)
@@ -239,8 +248,9 @@ export default function OrtSuche({
 
   const waehlen = (option: OrtOption) => {
     if (trefferSchluessel !== suchSchluessel) return
-    onChange({ id: option.id, name: option.label, description: option.description }, option.label)
-    setText(option.label)
+    const sichtbar = sichtbarerOptionsname(option)
+    onChange({ id: option.id, name: option.label, description: option.description, ...(option.anzeige ? { anzeige: option.anzeige } : {}) }, sichtbar)
+    setText(sichtbar)
     setOffen(false)
     setTreffer([])
     setAktiv(-1)
@@ -337,14 +347,17 @@ export default function OrtSuche({
         <Suchliste
           id={listeId}
           lage={lage}
-          eintraege={aktuelleTreffer.map((option) => ({
+          eintraege={aktuelleTreffer.map((option) => {
+            const sichtbar = sichtbarerOptionsname(option)
+            return {
             id: option.id,
-            primaer: option.label,
+            primaer: sichtbar,
             sekundaer: option.description,
             extra: typText(option.typ),
-            ariaLabel: option.ariaLabel ?? `${option.label}, ${typText(option.typ)}`,
+            ariaLabel: option.ariaLabel ?? `${sichtbar}, ${typText(option.typ)}`,
             betont: option.landAliasMatch === true,
-          }))}
+            }
+          })}
           aktiv={aktiverIndex}
           onWaehlen={(index) => {
             const option = aktuelleTreffer[index]

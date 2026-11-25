@@ -22,10 +22,10 @@ const grundText = {
   invalid_local_time: 'Ein Datum oder eine Uhrzeit ist ungültig.',
   conflicting_evidence: 'Zeitangaben widersprechen sich oder können nicht zuverlässig gelesen werden.',
   stale_evidence: 'Die zugrunde liegenden Zeitangaben sind nicht mehr aktuell.',
-  incomplete_snapshot: 'Das vorliegende Inventar oder die Zuordnung ist unvollständig.',
+  incomplete_snapshot: 'Die gespeicherten Einträge oder ihre Zuordnung sind unvollständig.',
   unsupported_role: 'Notizen gelten nicht automatisch als feste Termine.',
   unknown_placement: 'Punkte ohne Tageszuordnung wurden ebenfalls berücksichtigt.',
-  duplicate_identity: 'Widersprüchliche Kennungen verhindern einen eindeutigen Abgleich.',
+  duplicate_identity: 'Widersprüchliche Einträge lassen sich nicht eindeutig abgleichen.',
   evaluation_error: 'Die Auswertung ist fehlgeschlagen.',
   work_limit: 'Die Reise überschreitet den Umfang dieser Prüfung. Nicht geprüfte Vergleiche bleiben offen.',
   date_mismatch: 'Ein gespeichertes Termindatum weicht vom angezeigten Reisetag ab. Geprüft wird das gespeicherte Datum.',
@@ -86,13 +86,13 @@ export default function TripTimelineZeitpruefung({ reise, ohneTag, tagId, onPunk
       <details className="mt-1 min-w-0">
         <summary className={`min-h-11 cursor-pointer rounded-lg py-2 font-medium text-brand-800 ${fokus}`}>Prüfumfang und Details</summary>
         <p data-zeitpruefung-umfang>
-          Gesamte Reise einschließlich nicht eingeplanter Punkte: {review.coverage.evaluatedPairs} von {review.coverage.eligiblePairs ?? 'unbekannt vielen'} Vergleichen auswertbar.
+          Gesamte Reise einschliesslich nicht eingeplanter Punkte: {review.coverage.evaluatedPairs} von {review.coverage.eligiblePairs ?? 'unbekannt vielen'} {review.coverage.eligiblePairs === 1 ? 'Vergleich' : 'Vergleichen'} auswertbar.
           {review.coverage.unevaluablePairs !== null ? ` ${review.coverage.unevaluablePairs} nicht auswertbar oder noch ungeprüft.` : ''}
-          {' '}{review.coverage.unassessedEvents ?? 'Unbekannt viele'} Punkte zeitlich nicht vollständig bestimmbar.
+          {' '}{review.coverage.unassessedEvents ?? 'Unbekannt viele'} {review.coverage.unassessedEvents === 1 ? 'Eintrag' : 'Einträge'} zeitlich nicht vollständig bestimmbar.
         </p>
-        <p className="mt-2">Für diesen Tag: {checked} von {pairs.length} berücksichtigten Vergleichen auswertbar.
+        <p className="mt-2">Für diesen Tag: {checked} von {pairs.length} {pairs.length === 1 ? 'berücksichtigtem Vergleich' : 'berücksichtigten Vergleichen'} auswertbar.
           {' '}Das ist keine Aussage über freie Zeit, Wege oder die tatsächliche Teilnahme.</p>
-        {disjoint > 0 ? <p className="mt-2">Keine zeitliche Überschneidung für {disjoint} vollständig geprüfte Terminpaare.</p> : null}
+        {disjoint > 0 ? <p className="mt-2">Keine zeitliche Überschneidung für {disjoint} {disjoint === 1 ? 'vollständig geprüftes Terminpaar' : 'vollständig geprüfte Terminpaare'}.</p> : null}
         {findings.length > 0 ? (
           <div className="mt-3">
             <ul className="space-y-3">
@@ -101,7 +101,7 @@ export default function TripTimelineZeitpruefung({ reise, ohneTag, tagId, onPunk
                   <p className="font-medium text-brand-800">{pair.state === 'proven_conflict'
                     ? 'Diese Termine überschneiden sich laut deinem Plan.' : 'Mögliche Überschneidung im Plan.'}</p>
                   {pair.state === 'possible_conflict' ? <p>{pair.reasons.map(reason => grundText[reason]).join(' ')}</p> : null}
-                  {pair.overlapMinutes !== null ? <p>{pair.overlapMinutes} Minuten laut den gespeicherten Zeiten.</p> : null}
+                  {pair.overlapMinutes !== null ? <p>{pair.overlapMinutes} {pair.overlapMinutes === 1 ? 'Minute' : 'Minuten'} laut den gespeicherten Zeiten.</p> : null}
                   <div className="flex min-w-0 flex-wrap gap-x-2">{[...new Set(pair.itemIds)].map(link)}</div>
                 </li>
               ))}

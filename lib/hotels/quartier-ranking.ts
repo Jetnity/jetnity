@@ -106,7 +106,7 @@ function gruende(
   if (kandidat.gehScore !== null || kandidat.oevScore !== null) {
     kandidaten.push({
       score: scoreTeile.mobilitaet,
-      text: 'Gute Erreichbarkeit zu Fuß und mit öffentlichen Verkehrsmitteln.',
+      text: 'Gute Erreichbarkeit zu Fuss und mit öffentlichen Verkehrsmitteln.',
     })
   }
 

@@ -20,6 +20,7 @@ export type DiffEintrag = {
 export type StrukturEtappe = {
   id: string
   name: string
+  countryCode?: string | null
   vorher: string
   nachher: string
   vorherTage: string[]
@@ -76,6 +77,7 @@ export function strukturVergleich(vorher: Reisegraph, nachher: Reisegraph): Stru
     etappen.push({
       id: etappe.id,
       name: (neu ?? alt)?.name ?? etappe.name,
+      countryCode: (neu ?? alt)?.countryCode ?? null,
       vorher: vorherZuordnung.text,
       nachher: nachherZuordnung.text,
       vorherTage: vorherZuordnung.tage,
