@@ -65,7 +65,7 @@ Nicht gelaufen und nicht als PASS gewertet:
 
 - Kein Zugriff auf Production oder eine verbundene Datenbank.
 - Kein frischer Production-Readback und kein positiver Abgleich des produktiven Katalog-JSON.
-- CI dieses Heads steht aus. Der native Test liegt in der bestehenden PostgreSQL-17-Jobfamilie `hosted_v3_native_pg17` / Runner `main`.
+- CI auf `65d09e6b0` war im Job «Repository verification» rot, weil der bestehende AA-Inventarpin die alte Länge 10827 von `scripts/official-truth-v3-test-selection.mjs` erwartet. Die Workflow-Datei ist bytegleich geblieben. Nachgeführt sind nur die zwei Pins des Selektorpaars auf die tatsächlichen Bytes und SHA-256. Der AA-Test und die Reihenfolge synthetischer Preflight vor dem einen nativen Eintrag bleiben unverändert. Der native Test liegt in der bestehenden PostgreSQL-17-Jobfamilie `hosted_v3_native_pg17` / Runner `main`.
 
 ## Offene PO-Gates
 
