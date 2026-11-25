@@ -218,7 +218,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
     return {
       coverage: lodgingComplete ? 'complete' : result.bekannt || zuordnungUnbekannt ? 'partial' : 'unavailable',
       detail: lodgingComplete
-        ? `${result.naechteGesamt} geplante Nächte; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
+        ? `${result.naechteGesamt} ${result.naechteGesamt === 1 ? 'geplante Nacht' : 'geplante Nächte'}; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
         : safeGaps && uebergangsNaechte > 0
           ? `${naechte(result.naechteGesamt)} im Reisekalender; ${uebergangsNaechte} davon Übergang ohne Unterkunftszuordnung und ohne angenommene Hotelpflicht; ${result.naechteAusgewaehlt} mit ausgewählter Unterkunft; ${result.naechteGebucht} von dir als gebucht markiert. Keine externe Buchungsbestätigung geprüft.${aussenHinweis}`
           : zuordnungUnbekannt && result.kalenderNaechte !== null

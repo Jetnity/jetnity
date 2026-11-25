@@ -3,6 +3,7 @@ import test from 'node:test'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
+import TripTimelineZeitpruefung from '@/components/trips/TripTimelineZeitpruefung'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { tripZeitpruefung, zeitereignissePruefen, type Zeitereignis, type Zeitgrenze } from '@/lib/trips/trip-timeline-temporal-review-1'
 import type { TripItem } from '@/types/trips'
@@ -413,7 +414,8 @@ test('actual Plan integration: quiet grouped coverage, original IDs, prices and 
   const html = render()
   assert.match(html, /aria-label="Zeitprüfung"/)
   assert.match(html, /data-zeitpruefung-status="unavailable"/)
-  assert.match(html, /0 von 1 Vergleichen auswertbar/)
+  assert.match(html, /0 von 1 Vergleich auswertbar/)
+  assert.match(html, /0 von 1 berücksichtigtem Vergleich auswertbar/)
   assert.match(html, /CHF/)
   assert.match(html, /original:\?\[\]&amp;=/)
   assert.doesNotMatch(html, /Alles passt|konfliktfrei|proven_conflict|not_evaluable/)
@@ -423,4 +425,34 @@ test('actual Plan integration: quiet grouped coverage, original IDs, prices and 
   trip.days[0].items = Array.from({ length: 1001 }, (_, i) => item(String(i)))
   assert.match(render(), /Für diesen Tag liegt kein verlässliches Prüfergebnis vor/)
   assert.doesNotMatch(render(), /Noch keine festen Termine für diesen Tag/)
+})
+
+
+test('W2 #1308: one and two day-scoped comparisons show grammatical visitor counts on two days', () => {
+  const reise = beispielreise()
+  const vorlage = reise.days[0].items[0]!
+  for (const tag of reise.days) tag.items = []
+  const erster = reise.days[0]!
+  const zweiter = reise.days[1]!
+  const aktivitaet = (id: string, tag: typeof erster, position: number): TripItem => ({
+    ...vorlage, id, title: id, kind: 'activity', dayId: tag.id, stageId: tag.stageId, position,
+    startsOn: tag.dayDate, endsOn: tag.dayDate, startsAt: '10:00', endsAt: '11:00',
+    bookingStatus: 'unconfirmed', bookingSource: null, bookingConfirmedAt: null,
+    priceAmount: null, priceCurrency: null,
+  })
+  erster.items.push(aktivitaet('zeit-a', erster, 1))
+  zweiter.items.push(aktivitaet('zeit-b', zweiter, 1))
+  const sichtbar = () => renderToStaticMarkup(createElement(TripTimelineZeitpruefung, {
+    reise, ohneTag: reise.ohneTag, tagId: erster.id,
+  }))
+  const eins = sichtbar()
+  assert.match(eins, /Gesamte Reise[^<]*\d+ von 1 Vergleich auswertbar/)
+  assert.match(eins, /Für diesen Tag: \d+ von 1 berücksichtigtem Vergleich auswertbar/)
+  assert.equal(tripZeitpruefung(reise).coverage.eligiblePairs, 1)
+  zweiter.items.push(aktivitaet('zeit-c', zweiter, 2))
+  const zwei = sichtbar()
+  assert.match(zwei, /Für diesen Tag: \d+ von 2 berücksichtigten Vergleichen auswertbar/)
+  assert.match(zwei, /Gesamte Reise[^<]*\d+ von 3 Vergleichen auswertbar/)
+  assert.equal(tripZeitpruefung(reise).coverage.eligiblePairs, 3)
+  assert.doesNotMatch(zwei, /1 Vergleichen|2 Vergleich auswertbar|2 berücksichtigtem Vergleich/)
 })

@@ -133,7 +133,7 @@ describe('Unterkunftsabdeckung', () => {
     assert.equal(ergebnis.naechteGesamt, 1)
     assert.equal(ergebnis.naechteAbgedeckt, 1)
     assert.equal(ergebnis.luecken.length, 0)
-    assert.equal(ergebnis.zusammenfassung, '1/1 Nächte abgedeckt')
+    assert.equal(ergebnis.zusammenfassung, '1/1 Nacht abgedeckt')
   })
 
   test('vollständige Abdeckung', () => {
