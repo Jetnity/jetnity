@@ -119,7 +119,7 @@ try {
   }
   assert.equal(overflow,false,`overflow @ ${width}x${height}`)
   const text=await page.locator('#admin-content').innerText()
-  assert.match(text,/Keine Maßnahmen erforderlich/)
+  assert.match(text,/Keine Massnahmen erforderlich/)
   assert.doesNotMatch(text,/public\.airports|model_usage|security_events|Kein Ziel in diesem Slice/)
   const summary=page.locator('summary').first()
   await summary.focus(); await page.keyboard.press('Enter')
@@ -150,7 +150,7 @@ try {
   const page=await browser.newPage({viewport:{width:390,height:844}})
   await page.goto(`${url}?case=${name}`); await page.locator('#admin-operative-lage').waitFor()
   const text=await page.locator('#admin-content').innerText()
-  if(['stale','unknown','denied','failed'].includes(name)) assert.doesNotMatch(text,/Keine Maßnahmen erforderlich/)
+  if(['stale','unknown','denied','failed'].includes(name)) assert.doesNotMatch(text,/Keine Massnahmen erforderlich/)
   if(name==='zero') assert.match(text,/Keine neuen Reisen/)
   if(name==='rls-gap') assert.match(text,/1 Tabellen ohne RLS/)
   if(name==='stale') assert.match(text,/veraltet/)

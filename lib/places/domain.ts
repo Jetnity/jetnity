@@ -45,6 +45,11 @@ export type OrtOption = {
   landAliasMatch?: boolean
   /** Nur belegter Kontext, keine zweite Ortsidentität. */
   countryCode?: string
+  /**
+   * Sichtbare de-CH-Anzeige. `label` bleibt der bisherige Such- und Auswahlname.
+   * Fehlt `anzeige`, ist `label` auch der sichtbare Text.
+   */
+  anzeige?: string
 }
 
 export function ortId(quelle: OrtQuelle, schluessel: string): string {

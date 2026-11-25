@@ -7,7 +7,7 @@ import { DEV_GUARD_PATH, DEV_GUARD_STORAGE, DEV_GUARD_RESPONSE_BYTES, readDevGua
   type DevGuardReview } from '@/lib/readiness/official-truth-product-v3/runtime/guard-contract'
 
 const button = 'min-h-11 rounded-md border px-4 py-2 text-left font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
-const label = (action: DevGuardOperation['action']) => action === 'retire_unknown' ? 'Abgelaufenen Quellenversuch schließen' : 'Dev nach Schutzprüfung wiederaufnehmen'
+const label = (action: DevGuardOperation['action']) => action === 'retire_unknown' ? 'Abgelaufenen Quellenversuch schliessen' : 'Dev nach Schutzprüfung wiederaufnehmen'
 const time = (value: string | null) => value === null ? 'Noch kein vollständiger Erfolg' : new Date(value).toLocaleString('de-CH')
 
 export default function DevGuardPanel() {
@@ -101,9 +101,9 @@ export default function DevGuardPanel() {
         <h2 id="retirement-title" className="text-lg font-semibold">Offener Quellenversuch</h2>
         {review.retirement.status === 'reviewable' ? <>
           <p>Versuch {review.retirement.attempt} ist abgelaufen. Gespeicherte Originale: {review.retirement.originals}. Quellenprüfungen: {review.retirement.qualifications}. Es gibt keine akzeptierte Regelversion. Ende der alten Arbeitsfrist: {time(review.retirement.leaseEndedAt)}.</p>
-          <p>Schließen hält den unbekannten Ausgang fest und sperrt weitere Abschlüsse unter den alten Vorgangskennungen. Bisherige Belege bleiben erhalten. Ein späterer Quellenlauf benötigt einen eigenen Start.</p>
+          <p>Schliessen hält den unbekannten Ausgang fest und sperrt weitere Abschlüsse unter den alten Vorgangskennungen. Bisherige Belege bleiben erhalten. Ein späterer Quellenlauf benötigt einen eigenen Start.</p>
           <button type="button" className={button} disabled={busy || !!operation || !consent || !storageReady} onClick={() => mutate('retire_unknown')}>{label('retire_unknown')}</button>
-        </> : <p>{review.retirement.status === 'closed' ? 'Der letzte offene Versuch ist durch eine eigene Quittung geschlossen.' : 'Der vorgesehene Quellenversuch ist in diesem Zustand nicht abschließbar.'}</p>}
+        </> : <p>{review.retirement.status === 'closed' ? 'Der letzte offene Versuch ist durch eine eigene Quittung geschlossen.' : 'Der vorgesehene Quellenversuch ist in diesem Zustand nicht abschliessbar.'}</p>}
       </section>
       <section className="space-y-3 rounded-lg border p-4" aria-labelledby="incident-title">
         <h2 id="incident-title" className="text-lg font-semibold">Hintergrundprüfung und Sperre</h2>

@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { BedDouble, CalendarDays, ChevronDown, MapPin, MapPinned, Search, SlidersHorizontal } from 'lucide-react'
 import OrtSuche from '@/components/places/OrtSuche'
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import type { OrtAuswahl } from '@/lib/places/auswahl'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
@@ -62,7 +63,7 @@ export default function Hotelsuche({ reise, start, startOrt, auswahlVersion, eta
         const termine = hotelSuchtermine(reise, s)
         const zeit = etappenZeitraumAnzeigen(termine.anreise, termine.abreise)
         return <button key={s.id} type="button" aria-pressed={stageId === s.id} onClick={() => setAuswahl({ eingang, stageId: s.id })}>
-          <span className="stay22-stage-number">{index + 1}</span><span><b>{s.name}</b><small>{zeit || (termine.herkunft === 'ungueltig' ? 'Daten prüfen' : 'Zeitraum offen')}</small></span>
+          <span className="stay22-stage-number">{index + 1}</span><span><b>{gespeicherteEtappeAnzeigen(s)}</b><small>{zeit || (termine.herkunft === 'ungueltig' ? 'Daten prüfen' : 'Zeitraum offen')}</small></span>
         </button>
       })}
     </div>
@@ -121,7 +122,7 @@ function HotelSuchformular({ reise, stage, stageId, etappenGeordnet, d, waehlen,
     }
   }
   const [mehrStart] = useState(() => d.umgebung !== 'etappe' || d.filter.sterne > 0 || d.filter.bewertung > 0)
-  const ortName = stage?.name || d.suchOrt?.name || 'dein Reiseziel'
+  const ortName = (stage ? gespeicherteEtappeAnzeigen(stage) : '') || d.suchOrt?.name || 'dein Reiseziel'
   const mehrText = [
     d.umgebung === 'etappe' ? `Rund um ${ortName}` : d.umgebung === 'text' ? 'Eigene Adresse' : `Nahe ${anker.find(a => a.key === d.umgebung)?.name ?? 'einem Ort im Reiseplan'}`,
     d.filter.sterne > 0 ? (d.filter.sterne === 5 ? '5 Sterne' : `Ab ${d.filter.sterne} Sternen`) : null,

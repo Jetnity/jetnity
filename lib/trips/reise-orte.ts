@@ -7,19 +7,26 @@
 // Keine persistierte Wahrheit, keine Transit-/Flight-Ziele, keine stille
 // Reorder jenseits von `position`. World-Map-Felder bleiben Durchreichung.
 
+import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import type { Trip, TripSummary, TripSummaryStage } from '@/types/trips'
 
 export type ReiseOrtQuelle = {
   origin: string | null
-  stages: readonly Pick<TripSummaryStage, 'name' | 'position'>[]
+  stages: readonly (Pick<TripSummaryStage, 'name' | 'position'> & {
+    countryCode?: string | null
+  })[]
 }
 
 export function reiseOrte(reise: ReiseOrtQuelle): string {
   const namen = [...reise.stages]
     .sort((links, rechts) => links.position - rechts.position)
-    .map((etappe) => etappe.name.trim())
+    .map((etappe) => {
+      const name = etappe.name.trim()
+      return name ? gespeicherteEtappeAnzeigen({ name, countryCode: etappe.countryCode }) : ''
+    })
     .filter((name) => name.length > 0)
   const orte = namen.length > 0 ? namen.join(' · ') : 'Ziel noch offen'
+  // Abreise hat in der Liste kein Land. Ohne dieses Kontextpaar bleibt der gespeicherte Text.
   return reise.origin ? `${orte} · ab ${reise.origin}` : orte
 }
 

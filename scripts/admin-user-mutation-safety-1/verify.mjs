@@ -377,7 +377,7 @@ try {
     await page.waitForTimeout(50)
     assert.equal((await phases(page))[0]?.reason, 'transport')
     const before = (await calls(page)).length
-    await page.getByRole('button', { name: 'Hinweis schließen, ohne erneut zu senden' }).click()
+    await page.getByRole('button', { name: 'Hinweis schliessen, ohne erneut zu senden' }).click()
     await page.waitForFunction(() => window.__mutation.phases().length === 0)
     assert.equal((await calls(page)).length, before)
     assert.equal(await page.evaluate(() => window.__mutation.storageWrites()), 0)
@@ -389,7 +389,7 @@ try {
     await chooseRole(page, 'Ada Example', 'Rolle: Creator')
     await confirm(page)
     await page.waitForFunction(() => window.__mutation.phases().some((item) => item.reason === 'transport'))
-    await page.getByRole('button', { name: 'Hinweis schließen, ohne erneut zu senden' }).click()
+    await page.getByRole('button', { name: 'Hinweis schliessen, ohne erneut zu senden' }).click()
     await page.waitForFunction(() => window.__mutation.phases().length === 0)
     assert.equal((await calls(page)).length, 1)
     return { calls: 1 }
