@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net'
 import { join } from 'node:path'
 import { after, before, describe, test } from 'node:test'
 
-import { chromium, type Browser, type BrowserContext, type Page } from 'playwright'
+import { chromium, type Browser, type Page } from 'playwright'
 
 import { paarePruefen, type Paar } from '@/lib/ui/white-mint-home-workspace-1/kontrast-audit'
 import { ANBIETER_RAHMEN, bundeln, dokument, projektCss } from '@/lib/ui/workspace-niveau-1/bundle'
