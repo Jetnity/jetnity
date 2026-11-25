@@ -392,7 +392,19 @@ describe('P2 correction: local airport times and legacy summary representability
   })
 
   test('existing FlugRoute details show exact local Date-Line and earlier-clock values, never degraded summary', () => {
-    for (const first of [datumslinie, frueheOrtszeit]) {
+    const faelle = [
+      {
+        first: datumslinie,
+        hinflug: 'Fr, 2. Jan. 2026 23:30 → Do, 1. Jan. 2026 12:00',
+        anschluss: 'Do, 1. Jan. 2026 13:00 → Do, 1. Jan. 2026 14:00',
+      },
+      {
+        first: frueheOrtszeit,
+        hinflug: 'Fr, 2. Jan. 2026 18:00 → Fr, 2. Jan. 2026 09:00',
+        anschluss: 'Fr, 2. Jan. 2026 13:00 → Fr, 2. Jan. 2026 14:00',
+      },
+    ] as const
+    for (const { first, hinflug, anschluss: anschlussText } of faelle) {
       const input = [first, { ...anschluss, departureDate: first.arrivalDate, departureTime: '13:00',
         arrivalDate: first.arrivalDate, arrivalTime: '14:00' }]
       const validated = flugRouteManuellSchema.parse({ segments: input }).segments
@@ -402,8 +414,10 @@ describe('P2 correction: local airport times and legacy summary representability
       assert.deepEqual(lokaleAngaben(built.routeItinerary), input)
       assert.deepEqual(facts.segments, built.routeItinerary.legs[0]!.segments)
       const html = renderToStaticMarkup(React.createElement(FlugRoute, { facts }))
-      assert.ok(html.includes(`${first.departureDate} ${first.departureTime} → ${first.arrivalDate} ${first.arrivalTime}`))
-      assert.ok(html.includes(`${first.arrivalDate} 13:00 → ${first.arrivalDate} 14:00`))
+      assert.ok(html.includes(hinflug), 'exact local departure and arrival day/clock must survive the Date Line or early arrival')
+      assert.ok(html.includes(anschlussText), 'connecting segment must retain both exact local times, never a shortened summary')
+      assert.doesNotMatch(html, /\b\d{4}-\d{2}-\d{2}\b|Zeiten unbekannt|Datum noch offen/, 'visible flight schedule has no raw ISO day or degraded placeholder')
+      assert.ok(html.indexOf(hinflug) < html.indexOf(anschlussText), 'segments remain in their original order')
     }
   })
 

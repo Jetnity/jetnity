@@ -11,6 +11,7 @@ import type { RouteFacts, RouteSegment } from '@/lib/route/domain'
 import { punktLesbar, routeAnzeigeAusFacts } from '@/lib/route/anzeige'
 import { verbindungNachSegment } from '@/lib/route/verbindung'
 import { dauerLesbar } from '@/lib/flights/zeit'
+import { datumMitWochentag } from '@/lib/trips/datum-anzeige'
 import { cn } from '@/lib/utils'
 
 export default function FlugRoute({
@@ -81,8 +82,8 @@ export default function FlugRoute({
 }
 
 function segmentZeit(segment: RouteSegment): string {
-  const start = [segment.departureDate, segment.departureTime].filter(Boolean).join(' ')
-  const ende = [segment.arrivalDate, segment.arrivalTime].filter(Boolean).join(' ')
+  const start = [datumMitWochentag(segment.departureDate), segment.departureTime].filter(Boolean).join(' ')
+  const ende = [datumMitWochentag(segment.arrivalDate), segment.arrivalTime].filter(Boolean).join(' ')
   if (start && ende) return `${start} → ${ende}`
   return start || ende || 'Zeiten unbekannt'
 }
