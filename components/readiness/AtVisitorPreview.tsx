@@ -2,6 +2,7 @@ import { ChevronDown, CircleHelp } from 'lucide-react'
 
 import { Hinweis } from '@/components/ui/hinweis'
 import type { EinreiseAnzeige, EinreisePaar } from '@/lib/readiness/einreise-kundenanzeige'
+import type { AtApprovedVisitorCopy } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-release'
 import { AT_VISITOR_INFORMATION_LINKS as AMTLICHE_QUELLEN } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-links'
 import { V3_CUSTOMER_INFORMATION_GROUPS, V3_CUSTOMER_INFORMATION_TOPICS } from '@/lib/readiness/official-truth-product-v3/customer-information/topics'
 
@@ -33,15 +34,16 @@ function BestaetigtesVisum(paar: EinreisePaar, synthetisch: boolean) {
     && AMTLICHE_QUELLEN.some(quelle => quelle.receiptHref === thema.quelleHref))
 }
 
-export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
+export default function AtVisitorPreview({ anzeige, synthetisch = false, approvedCopy = null }: {
   anzeige: EinreiseAnzeige
   synthetisch?: boolean
+  approvedCopy?: AtApprovedVisitorCopy | null
 }) {
   return (
     <section className="grid min-w-0 gap-4 text-foreground" data-at-visitor-preview>
-      <AtVisitorPreviewNotice placement="result" />
+      {!approvedCopy ? <AtVisitorPreviewNotice placement="result" /> : null}
       <Hinweis titel="Geltungsbereich der Auskunft">
-        <p>Die Visumauskunft gilt nur für die gewählte Staatsangehörigkeit, einen gültigen gewöhnlichen Reisepass und die direkte Einreise nach Österreich. Andere Reisedokumente, Reisewege und persönliche Umstände müssen gesondert geprüft werden.</p>
+        <p>{approvedCopy?.scope ?? 'Die Visumauskunft gilt nur für die gewählte Staatsangehörigkeit, einen gültigen gewöhnlichen Reisepass und die direkte Einreise nach Österreich. Andere Reisedokumente, Reisewege und persönliche Umstände müssen gesondert geprüft werden.'}</p>
       </Hinweis>
       {anzeige.paare.map(paar => {
         const visum = BestaetigtesVisum(paar, synthetisch)
@@ -100,16 +102,18 @@ export default function AtVisitorPreview({ anzeige, synthetisch = false }: {
       {anzeige.paare.length === 0 ? <Hinweis titel={NICHT_VERFUEGBAR}><p>Wähle einen Pass und frage die Einreiseauskunft erneut ab.</p></Hinweis> : null}
       <section className="grid min-w-0 gap-2 rounded-card border border-border bg-card p-3 sm:p-5" aria-label="Amtliche Quellen">
         <h3 className="text-base font-semibold">Amtliche Quellen</h3>
-        <p className="text-sm leading-6 text-muted-foreground">Diese Behördenlinks dienen zur eigenen Prüfung. Sie sind kein Nachweis, dass eine persönliche Einreisebedingung bestätigt ist.</p>
+        <p className="text-sm leading-6 text-muted-foreground">{approvedCopy?.officialLinks ?? 'Diese Behördenlinks dienen zur eigenen Prüfung. Sie sind kein Nachweis, dass eine persönliche Einreisebedingung bestätigt ist.'}</p>
         <ul className="grid min-w-0 gap-1">
           {AMTLICHE_QUELLEN.map(quelle => <li key={quelle.href} className="min-w-0"><QuellenLink href={quelle.href} label={quelle.label} /></li>)}
         </ul>
-        <Hinweis titel="Achtung vor inoffiziellen Antragsseiten"><p>Nutze amtliche Direktlinks und prüfe Gebühren bei der zuständigen Behörde, bevor du etwas beantragst oder bezahlst.</p></Hinweis>
+        <Hinweis titel="Achtung vor inoffiziellen Antragsseiten"><p>{approvedCopy?.fraudWarning ?? 'Nutze amtliche Direktlinks und prüfe Gebühren bei der zuständigen Behörde, bevor du etwas beantragst oder bezahlst.'}</p></Hinweis>
       </section>
-      <Hinweis titel="Haftungshinweis – Entwurf" data-at-visitor-liability="draft">
-        <p>Die Angaben dienen der Reisevorbereitung und sind keine Einreisegarantie. Massgebend sind die zuständigen Behörden. Prüfe die aktuellen Bestimmungen nochmals vor der Abreise.</p>
-        <p>Dieser Text ist noch nicht rechtlich geprüft oder zur Veröffentlichung freigegeben.</p>
-      </Hinweis>
+      {approvedCopy ? <Hinweis titel="Hinweis zur Einreise" data-at-visitor-liability="approved"><p>{approvedCopy.liability}</p></Hinweis> : (
+        <Hinweis titel="Haftungshinweis – Entwurf" data-at-visitor-liability="draft">
+          <p>Die Angaben dienen der Reisevorbereitung und sind keine Einreisegarantie. Massgebend sind die zuständigen Behörden. Prüfe die aktuellen Bestimmungen nochmals vor der Abreise.</p>
+          <p>Dieser Text ist noch nicht rechtlich geprüft oder zur Veröffentlichung freigegeben.</p>
+        </Hinweis>
+      )}
     </section>
   )
 }

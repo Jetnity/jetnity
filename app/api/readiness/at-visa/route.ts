@@ -13,6 +13,8 @@ import { readinessBegrenztLesen,readinessContentLengthUeberschritten,
 import { readinessAnfrageErlaubt,readinessRateKennungAus } from '@/lib/readiness/rate-limit'
 import { selectedAustriaDev } from '@/lib/readiness/official-truth-at-method-v1/at-dev-selection'
 import { selectedAustriaProduction } from '@/lib/readiness/official-truth-at-method-v1/at-production-selection'
+import { selectedAtVisitorProductionPresentation } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-release-server'
+import { capAtProductionDisplayLease } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-release'
 import { readAtVisaInput,readAtVisaView } from '@/lib/readiness/official-truth-at-method-v1/at-visa-http'
 export const runtime='nodejs'
 export const dynamic='force-dynamic'
@@ -39,6 +41,9 @@ export async function POST(request:Request):Promise<Response>{
   // independently reprove MA1/BG1/source and passport-specific authorization.
   const empty=presentAtVisaReadbacks(input,[],new Date())
   if(!(selectedAustriaDev()||selectedAustriaProduction())||request.signal.aborted)return reply(200,empty)
+  const dev=selectedAustriaDev()
+  // A transport flag is never a legal-copy or V3 fact-publication decision.
+  if(!dev&&!selectedAtVisitorProductionPresentation())return reply(200,empty)
   const client=await createRouteHandlerClient<AtVisitorDatabase>()
   const attempts=await Promise.allSettled(input.citizenshipCountryCodes.map(async country=>{
     const response=await client.rpc('jetnity_source_bound_at_visa_v1',{p_citizenship_country_code:country})
@@ -48,7 +53,8 @@ export async function POST(request:Request):Promise<Response>{
   if(request.signal.aborted)return reply(200,empty)
   const readbacks=attempts.map((attempt,index)=>attempt.status==='fulfilled'?
     attempt.value:{country:input.citizenshipCountryCodes[index]!,data:null})
-  const view=presentAtVisaReadbacks(input,readbacks,new Date())
-  return readAtVisaView(view)?reply(200,view):reply(200,empty)
+  const view=presentAtVisaReadbacks(input,readbacks,new Date(),!dev)
+  const projected=dev?view:capAtProductionDisplayLease(view)
+  return readAtVisaView(projected)?reply(200,projected):reply(200,empty)
  }catch{return reply(503,{message:'Visumauskunft vorübergehend nicht verfügbar'})}
 }

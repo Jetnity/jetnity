@@ -6,6 +6,7 @@ import LandFeld from '@/components/country/LandFeld'
 import EinreiseKundenanzeige from '@/components/readiness/EinreiseKundenanzeige'
 import AtOfficialGuidance from '@/components/readiness/AtOfficialGuidance'
 import AtVisitorPreview from '@/components/readiness/AtVisitorPreview'
+import type { AtApprovedVisitorCopy } from '@/lib/readiness/official-truth-at-method-v1/at-visitor-release'
 import FollowupOfficialGuidance from '@/components/readiness/FollowupOfficialGuidance'
 import NextEightOfficialGuidance from '@/components/readiness/NextEightOfficialGuidance'
 import { landAnzeigeText } from '@/lib/country/darstellung'
@@ -36,11 +37,13 @@ export default function EinreiseLaenderpruefer({
   vorbelegung = null,
   onAngabenErgaenzen,
   atVisitorPreview = false,
+  atApprovedCopy = null,
 }: {
   eingebettet?: boolean
   vorbelegung?: EinreisePrueferVorbelegung | null
   onAngabenErgaenzen?: () => void
   atVisitorPreview?: boolean
+  atApprovedCopy?: AtApprovedVisitorCopy | null
 } = {}) {
   const id = useId()
   const [ziel, setZiel] = useState<string>(vorbelegung?.ziele[0] ?? '')
@@ -54,6 +57,16 @@ export default function EinreiseLaenderpruefer({
     [],
   )
   useEffect(() => () => controller.dispose(), [controller])
+  // Never restore an old Production result from a suspended or cached tab.
+  // Clearing the local result makes no additional HTTP request.
+  useEffect(() => {
+    if (!atApprovedCopy) return
+    const clear = () => { if (document.visibilityState !== 'visible') controller.invalidate() }
+    const pageHide = () => controller.invalidate()
+    document.addEventListener('visibilitychange', clear)
+    window.addEventListener('pagehide', pageHide)
+    return () => { document.removeEventListener('visibilitychange', clear); window.removeEventListener('pagehide', pageHide) }
+  }, [atApprovedCopy, controller])
   const gewaehlt = useMemo(() => {
     const gesehen = new Set<string>()
     const auswahl: Iso3166Alpha2[] = []
@@ -207,8 +220,8 @@ export default function EinreiseLaenderpruefer({
             </p>
           ) : null}
           {sicht.hinweis ? <p role="status" className="max-w-prose text-sm leading-6 text-ink-900">{sicht.hinweis}</p> : null}
-          {atVisitorPreview && sicht.zielCode === 'AT' ? (
-            <AtVisitorPreview anzeige={sicht.anzeige} synthetisch={sicht.synthetisch} />
+          {(atVisitorPreview && sicht.zielCode === 'AT') || (atApprovedCopy && sicht.zielCode === 'AT') ? (
+            <AtVisitorPreview anzeige={sicht.anzeige} synthetisch={sicht.synthetisch} approvedCopy={atApprovedCopy} />
           ) : (
             <>
               <EinreiseKundenanzeige anzeige={sicht.anzeige} />
