@@ -58,7 +58,8 @@ const ZUSTAENDE = [
   { name: 'dunkel', wert: 'dark', erwartet: 'dark' },
   { name: 'hell', wert: 'light', erwartet: 'light' },
   { name: 'fehlend', wert: null, erwartet: 'light' },
-  { name: 'blockiert', wert: 'BLOCKIERT', erwartet: 'light' },
+  // Bei blockiertem Speicher ist auch die Gastreise unlesbar: die Seite zeigt die Lesefehler-Meldung ohne Reisekopf und ohne Foto.
+  { name: 'blockiert', wert: 'BLOCKIERT', erwartet: 'light', reiseLaedt: false },
   { name: 'alt-green', wert: 'green', erwartet: 'dark' },
 ]
 /** Geltung des Dunkelmodus je Seite. Es gibt keine Ausnahme ohne Begründung: jede Seite steht hier und wird geprüft. */
@@ -395,7 +396,8 @@ function auswerten(zustand, proben, seite, endzustand = null, meldungen = { hydr
     if (bereiche[name].bilderMitBereich === 0) grundlagen.push(`Bereich «${name}» nie gefunden: nicht gemessen`)
     else if (bereiche[name].maxTexte === 0) grundlagen.push(`Bereich «${name}» ohne messbaren Text: nicht gemessen`)
   }
-  if (seite.nachweisErforderlich) {
+  const nachweisNoetig = seite.nachweisErforderlich && zustand.reiseLaedt !== false
+  if (nachweisNoetig) {
     if (bereiche.nachweis.bilderMitBereich === 0) grundlagen.push('Bildnachweis nie gefunden')
     else if (bereiche.nachweis.maxTexte === 0) grundlagen.push('Bildnachweis ohne messbaren Text oder Symbol: nicht gemessen')
   }
@@ -404,8 +406,8 @@ function auswerten(zustand, proben, seite, endzustand = null, meldungen = { hydr
   }
   if (endzustand) {
     if (!endzustand.kontrast.bestanden) grundlagen.push(`Kontrast im Endzustand: ${endzustand.kontrast.gemessen} gemessen, ${endzustand.kontrast.nichtGemessen} nicht gemessen, kleinster ${endzustand.kontrast.kleinster}`)
-    if (endzustand.fotos > 0 && !seite.nachweisErforderlich) grundlagen.push('Foto ohne Bildnachweis-Bereich')
-    if (seite.nachweisSymbol && endzustand.nachweisOffen === null) grundlagen.push('Bildnachweis liess sich nicht öffnen: nicht gemessen')
+    if (endzustand.fotos > 0 && !nachweisNoetig) grundlagen.push('Foto ohne Bildnachweis-Bereich')
+    if (nachweisNoetig && seite.nachweisSymbol && endzustand.nachweisOffen === null) grundlagen.push('Bildnachweis liess sich nicht öffnen: nicht gemessen')
     else if (endzustand.nachweisOffen && !endzustand.nachweisOffen.bestanden) grundlagen.push(`Kontrast im geöffneten Bildnachweis: ${endzustand.nachweisOffen.kleinster}`)
   } else if (!seite.verstoss) {
     grundlagen.push('Endzustand nicht gemessen')
