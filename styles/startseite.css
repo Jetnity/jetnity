@@ -105,13 +105,14 @@
 
 .hs-ort {
   position: absolute;
-  max-width: calc(100% - 2.5rem);
-  overflow-wrap: anywhere;
-  left: 1.25rem;
-  bottom: 1.25rem;
+  max-width: calc(100% - 40px);
+  overflow-wrap: break-word;
+  left: 20px;
+  bottom: 20px;
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem 0.5rem;
   padding: 0.5rem 0.875rem;
   border: var(--hs-glas-kante);
   border-radius: 999px;
@@ -163,9 +164,10 @@
   }
 
   .hs-ort {
-    right: 1.75rem;
-    bottom: 1.75rem;
+    right: 28px;
+    bottom: 28px;
     left: auto;
+    max-width: calc(100% - 56px);
   }
 }
 

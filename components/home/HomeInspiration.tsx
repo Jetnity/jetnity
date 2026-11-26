@@ -56,7 +56,7 @@ export function HomeInspiration({ ziele, status = 'static' }: {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
                 />
-                <span className="relative mt-auto flex w-full items-end justify-between gap-3 bg-gradient-to-t from-black/85 via-black/70 via-55% to-transparent p-5 pt-16">
+                <span className="relative mt-auto flex w-full items-end justify-between gap-3 bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0,rgb(0_0_0/0.7)_calc(100%-4rem),transparent_100%)] p-5 pt-16">
                   <span className="min-w-0">
                     <span className="block text-xs text-white">{ziel.country}</span>
                     <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">{ziel.name}</h3>
