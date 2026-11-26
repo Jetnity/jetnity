@@ -1,5 +1,14 @@
 # Jetnity – Active Work Status
 
+## 25.11.2026 — Official Truth AT Stage 3, nur Dev-Vorbereitung #1317
+
+Branch `cursor/official-truth-at-stage3-dev-a92d` von `main` `69ab3fa203f45cd97ee3ed5187ca51a0497c625b`. Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Deploy, keine Production-SQL, keine Faktenerneuerung, keine Publikation, kein Besucherflag, keine Kosten.
+
+- Ein unangewandtes Paket: read-only Preflight, ROLLBACK-Probe, COMMIT-Kandidat, Readback, Withdrawal-Probe und Withdrawal. Der V6-Katalogdigest kommt nur aus einem frischen Readback und steht nicht im Git.
+- BG1-Nachfolger `bg1_prod_ch_at_stage3_v8` ist append-only. `catalog_status_v1` bleibt der V6-Körper. V7 bleibt reserviert. `renew_ch_v1`, HTTP-Allocator, CH→DE und die übrigen Cron-Kommandos bleiben.
+- Nach dem NO-GO auf `752f32baa`: der Produktionskandidat ruft `assert_catalog_v1()` vor dem DDL und nach dem V8-Körper auf. Auf der synthetischen Datenbank enden Probe und Commit-Kandidat mit `P7905` und Rollback. Die markierte Datei `native-isolated-guard.sql` ist kein Installer. Die Delta-Allowlist ist an Namen und konkrete OIDs gebunden. Zwei Freigaben derselben jüngsten Charge 692 und desselben Vorgängers 83 ergeben genau `0` und `1` und Faktversion 84. Renew gegen Withdrawal ist in beiden Reihenfolgen überlappend geprüft, mit Digest der jeweiligen Charge. Der echte V8-Guard bleibt fail-closed.
+- Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`. Die CI-Datei ist unverändert. Der Stage-3-Nachweis steht im bestehenden PostgreSQL-17-Selektor; die zwei AA-Bytepins dieses Selektorpaars sind auf die tatsächlichen Bytes nachgeführt. Der Bestandstest und seine Reihenfolge bleiben. Nächster Schritt: Exact-Head-CI und Technical-Lead-Review. Italien, Frankreich und Spanien bleiben zu.
+
 ## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314
 
 Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine Kosten.
