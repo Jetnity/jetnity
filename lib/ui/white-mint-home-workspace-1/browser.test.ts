@@ -46,8 +46,11 @@ test('local shims stay on the fixture import path', () => {
   const harness = readFileSync(join(process.cwd(), 'lib/ui/white-mint-home-workspace-1/harness.tsx'), 'utf8')
   assert.match(harness, /function WhiteMintHarness/)
   assert.match(harness, /whiteMintHarnessMounted/)
+  const boot = readFileSync(join(process.cwd(), 'lib/ui/workspace-theme-boot.ts'), 'utf8')
+  assert.match(boot, /export const WORKSPACE_THEME_KEY = 'jetnity:workspace-theme:v1'/)
   const thema = readFileSync(join(process.cwd(), 'components/workspace/useWorkspaceTheme.ts'), 'utf8')
-  assert.match(thema, /jetnity:workspace-theme:v1/)
+  assert.match(thema, /import \{ WORKSPACE_THEME_KEY \} from '@\/lib\/ui\/workspace-theme-boot'/)
+  assert.match(thema, /const STORAGE_KEY = WORKSPACE_THEME_KEY/)
 })
 
 const BREITEN = [320, 390, 768, 1440] as const

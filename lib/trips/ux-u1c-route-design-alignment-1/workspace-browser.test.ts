@@ -421,7 +421,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     } finally {await page.close()}
   })
 
-  test('Jeder gespeicherte Tag bleibt bei Tastaturwahl im hellen und grünen Workspace auf Desktop und Telefon erreichbar', async () => {
+  test('Jeder gespeicherte Tag bleibt bei Tastaturwahl im hellen und dunklen Workspace auf Desktop und Telefon erreichbar', async () => {
     const page=await browser.newPage({viewport:{width:1440,height:900}})
     try {
       await page.goto(origin); await plan(page)
@@ -431,7 +431,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
         await page.setViewportSize({width,height:900})
         if(theme==='dark'){
           await page.getByRole('button',{name:'Dunkle Darstellung aktivieren'}).click()
-          await page.locator('[data-workspace-theme="dark"]').waitFor()
+          await page.locator('.workspace-shell[data-workspace-theme="dark"]').waitFor()
         }
         const visited=new Set<string>()
         const ranges=await atlas.locator('[data-u1c-lauf]').evaluateAll(nodes=>nodes.map(node=>JSON.parse(node.getAttribute('data-u1c-tag-ids')||'[]') as string[]))
