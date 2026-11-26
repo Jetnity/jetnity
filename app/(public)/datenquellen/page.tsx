@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
 import { KANONISCHE_PUBLIC_ORIGIN } from '@/lib/seo/oeffentlicher-origin'
+import { BILDNACHWEISE } from '@/lib/trips/organisieren/bildnachweise'
+
+const LINK_KLASSE =
+  'font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 export const metadata: Metadata = {
   title: 'Datenquellen & Lizenzen',
@@ -41,18 +45,33 @@ export default function DatenquellenPage() {
         <section aria-labelledby="reisefotos-title" className="space-y-4 rounded-card border border-border bg-card p-5 text-body text-muted-foreground shadow-card sm:p-6">
           <h2 id="reisefotos-title" className="text-title text-foreground">Reisefotografien</h2>
           <p>Für weitere eindeutig zugeordnete Ziele bezieht Jetnity automatisch Fotografien aus Wikimedia Commons. Die Zuordnung erfolgt über die GeoNames-Kennung und das Land in Wikidata. Urheber, Original und freie Lizenz werden unmittelbar bei der Reise genannt und verlinkt. Die Darstellung kann einen Bildausschnitt zeigen. Ohne eindeutige Zuordnung oder geeignete Lizenz bleibt ein neutrales Ersatzmotiv.</p>
+        </section>
+        <section aria-labelledby="bildnachweise-title" className="space-y-4 rounded-card border border-border bg-card p-5 text-body text-muted-foreground shadow-card sm:p-6">
+          <h2 id="bildnachweise-title" className="text-title text-foreground">Bildnachweise</h2>
           <p>
-            Das Paris-Foto „Skyline of Paris with the Eiffel Tower 2“ stammt von{' '}
-            <a href="https://commons.wikimedia.org/wiki/File:Skyline_of_Paris_with_the_Eiffel_Tower_2.jpg" className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              DiscoA340 auf Wikimedia Commons
-            </a>{' '}
-            und steht unter{' '}
-            <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">CC BY-SA 4.0</a>.
-            Die Originaldatei bleibt unverändert; die Darstellung wird je nach Bildschirm zugeschnitten.
+            Diese Reisebilder liefert Jetnity selbst mit. Dieselben Angaben stehen in der Reise hinter dem
+            kleinen Symbol ⓘ am Foto im Reisekopf.
           </p>
+          <ul className="space-y-3 text-meta">
+            {BILDNACHWEISE.map((nachweis) => (
+              <li key={nachweis.datei} className="space-y-0.5">
+                <p className="font-medium text-foreground">«{nachweis.bildtitel}»</p>
+                <p>
+                  {nachweis.urheber ?? 'Urheber nicht angegeben'}
+                  {' · '}
+                  {nachweis.lizenzUrl ? (
+                    <a href={nachweis.lizenzUrl} className={LINK_KLASSE}>{nachweis.lizenz}</a>
+                  ) : nachweis.lizenz}
+                  {' · '}
+                  <a href={nachweis.quelleUrl} className={LINK_KLASSE}>Original ansehen</a>
+                </p>
+                <p>{nachweis.bearbeitung}</p>
+              </li>
+            ))}
+          </ul>
           <p>
-            Die einzelnen Quellen, Urheber und Lizenzen weiterer Reisemotive findest du in den{' '}
-            <a href="/images/organisieren/Bildnachweise.txt" className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Bildnachweisen</a>.
+            Dieselben Angaben stehen auch als{' '}
+            <a href="/images/organisieren/Bildnachweise.txt" className={LINK_KLASSE}>Textdatei</a>.
           </p>
         </section>
       </article>
