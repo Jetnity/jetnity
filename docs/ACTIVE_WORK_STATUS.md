@@ -2,7 +2,7 @@
 
 ## 27.11.2026 — Official Truth Paket II, Quellenpflege 6+4, Dry-run
 
-Branch `cursor/official-truth-source-care-6-4-0cd9` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Draft, kein Ready, kein Merge, kein Deploy.
+Branch `cursor/official-truth-source-care-6-4-0cd9` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Draft [#1324](https://github.com/Jetnity/jetnity/pull/1324), Head `6f9c4d17a8cf3304de697a902701487efb33412d`. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Kein Ready, kein Merge, kein Deploy.
 
 - Eine manuelle Dry-run-Warnung in `lib/readiness/official-truth-source-care-6-4/dry-run.ts`. Sechs Kernthemen und vier Zusatzthemen bleiben getrennt. Echte Text-, Tabellen- und Linkänderungen sperren nur das betroffene Thema und den betroffenen Scope. Neutrale Änderungen sind nur die bestehenden vier Stylesheet- und fünfzehn Skript-Zeitstempel des BMEIA-Theme-Vertrags. Keine Verlängerung, keine Autorisierung, kein Scheduler, kein Schreibweg.
 - Thailand 60→30 ab 15.09.2026 ist eine synthetische Fixture mit Bestandsschutz. Die 15-Tage-Befreiung, Visa on Arrival und bilaterale Regeln werden davon nicht pauschal gesperrt.
