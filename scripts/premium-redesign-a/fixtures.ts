@@ -174,12 +174,69 @@ function lissabonReise(): Trip {
   }
 }
 
+/** Kostenprobe: lange Titel, grosse Beträge in zwei Währungen, Posten ohne Preis, Budget überschritten. */
+function kostenReise(): Trip {
+  const etappen: TripStage[] = [
+    { id: 'etappe-tyo', position: 1, name: 'Tokio', countryCode: 'JP', arrivalDate: '2027-03-02', departureDate: '2027-03-12', latitude: 35.6762, longitude: 139.6503, placeId: 'geonames:1850147' },
+  ]
+  const reisetage = tage('2027-03-02', '2027-03-12', etappen)
+  const flug = punkt({
+    id: 'punkt-flug', kind: 'flight', title: 'Zürich → Tokio Haneda, Business Class, Hin- und Rückflug', dayId: 'tag-1', stageId: 'etappe-tyo',
+    startsOn: '2027-03-02', startsAt: '13:05', priceAmount: 1234567.89, priceCurrency: 'CHF', provider: 'duffel',
+    originName: 'Zürich', destinationName: 'Tokio',
+  })
+  const hotel = punkt({
+    id: 'punkt-hotel', kind: 'stay', title: 'Unterkunft Shinjuku mit sehr langem Hausnamen und Zusatzbezeichnung', dayId: 'tag-1', stageId: 'etappe-tyo',
+    startsOn: '2027-03-02', endsOn: '2027-03-12', priceAmount: 123456.78, priceCurrency: 'CHF',
+    bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: JETZT,
+  })
+  const bahn = punkt({
+    id: 'punkt-bahn', kind: 'activity', title: 'Rail Pass 21 Tage', dayId: 'tag-2', stageId: 'etappe-tyo',
+    startsOn: '2027-03-03', priceAmount: 1234567, priceCurrency: 'JPY',
+  })
+  const essen = punkt({
+    id: 'punkt-essen', kind: 'activity', title: 'Kochkurs Tsukiji', dayId: 'tag-4', stageId: 'etappe-tyo',
+    startsOn: '2027-03-05', priceAmount: 9999999.99, priceCurrency: 'JPY', bookingStatus: 'booked', bookingSource: 'user', bookingConfirmedAt: JETZT,
+  })
+  const ohnePreis = punkt({ id: 'punkt-park', kind: 'activity', title: 'Spaziergang durch den Shinjuku Gyoen', dayId: 'tag-5', stageId: 'etappe-tyo', startsOn: '2027-03-06' })
+  const zuordnung: Record<string, TripItem[]> = {
+    'tag-1': [flug, hotel],
+    'tag-2': [bahn],
+    'tag-4': [essen],
+    'tag-5': [ohnePreis],
+  }
+  return {
+    id: 'trip-synth-kosten',
+    clientRef: 'trip-synth-kosten',
+    title: 'Tokio mit grossen Beträgen',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2027-03-02',
+    endDate: '2027-03-12',
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: 1000000,
+    status: 'draft',
+    pace: 'balanced',
+    interests: ['culture'],
+    travelWish: null,
+    revision: 1,
+    lastMutationId: null,
+    stages: etappen,
+    days: reisetage.map((tag) => ({ ...tag, items: zuordnung[tag.id] ?? [] })),
+    ohneTag: [],
+    dayStageAssignmentMode: 'single_destination',
+    createdAt: JETZT,
+    updatedAt: JETZT,
+  }
+}
+
 async function main() {
   const ziel = process.argv[2]
   if (!ziel) throw new Error('Zielordner fehlt.')
   mkdirSync(ziel, { recursive: true })
   const { gastreiseAblegen } = await import('@/lib/trips/gastspeicher')
-  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise]] as const) {
+  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise], ['kosten', kostenReise]] as const) {
     const daten = speicherEinrichten()
     const reise = gastreiseAblegen(bauen())
     const roh = daten.get(SCHLUESSEL_AKTIV)

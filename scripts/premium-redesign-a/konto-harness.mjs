@@ -5,7 +5,7 @@
 // umgangen. Dieser Prüfstand rendert die echten Komponenten (WorkspaceShell, KontoStart)
 // mit dem echten Projekt-CSS und denselben lokalen Ersatzmodulen wie der White-Mint-Test.
 //
-//   node --import tsx scripts/premium-redesign-a/konto-harness.mjs [Port] [Fixture-Ordner]
+//   node --import tsx scripts/premium-redesign-a/konto-harness.mjs [Port] [Fixture-Ordner] [Fixture-Name]
 //
 // Zweite Seite: /reisen/konto – dieselbe Shell mit einer Konto-Reise (Reisebegleiter,
 // «Reise ändern», Speicherhinweis «Im Konto gespeichert»), Reise aus dem Fixture-Ordner.
@@ -22,6 +22,7 @@ const wurzel = process.cwd()
 const verlangen = createRequire(join(wurzel, 'package.json'))
 const port = Number(process.argv[2] ?? 3470)
 const fixtureOrdner = process.argv[3] ?? '/tmp/pra/fixtures'
+const fixtureName = process.argv[4] ?? 'thailand'
 
 const { atlasServerActions } = await import(join(wurzel, 'scripts/trip-plan-browser/server-actions.ts'))
 
@@ -33,12 +34,20 @@ async function css() {
   const von = join(wurzel, 'styles/globals.css')
   const config = verlangen(join(wurzel, 'tailwind.config.js'))
   const ergebnis = await postcss([nesting(), tailwindcss(config), autoprefixer()]).process(readFileSync(von, 'utf8'), { from: von })
-  const lesen = (pfad) => readFileSync(join(wurzel, pfad), 'utf8')
+  // Fehlt eine Datei in einem älteren Stand (Vorher-Prüfstand), steht an ihrer Stelle nichts.
+  const lesen = (pfad) => {
+    try {
+      return readFileSync(join(wurzel, pfad), 'utf8')
+    } catch {
+      return ''
+    }
+  }
   return [
     ergebnis.css,
     lesen('components/workspace/workspace.css'),
     lesen('components/workspace/workspace-surfaces.css'),
     lesen('components/trips/reiseplan/etappen.css'),
+    lesen('components/trips/kostenkarte.css'),
     lesen('styles/white-mint.css'),
     lesen('styles/startseite.css'),
     lesen('components/trips/organisieren/auswahl/suchauswahl.css'),
@@ -87,7 +96,7 @@ function seite(skriptText, vorspann = '') {
   return `<!doctype html><html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${stil}</style></head><body><div id="root"></div><script>${vorspann}</script><script>${skriptText}</script></body></html>`
 }
 const kontoSeite = seite(await skript())
-const fixture = JSON.parse(readFileSync(join(fixtureOrdner, 'thailand.json'), 'utf8'))
+const fixture = JSON.parse(readFileSync(join(fixtureOrdner, `${fixtureName}.json`), 'utf8'))
 const reiseSeite = seite(await skript('reise-konto-harness.tsx'), `globalThis.__REISE__ = ${JSON.stringify(JSON.parse(fixture.roh)).replaceAll('<', '\\u003c')}`)
 
 createServer((anfrage, antwort) => {

@@ -33,14 +33,14 @@ function PostenZeile({
         <span className="mt-0.5 block text-meta text-muted-foreground">{ART_BEZEICHNUNG[posten.art]}</span>
       </span>
       <LeistungsStatus stand={STAND[posten.stand]} />
-      <span className="min-w-[5.5rem] text-right text-meta font-semibold text-foreground">
+      <span className="kosten-betrag min-w-[5.5rem] text-right text-meta font-semibold text-foreground">
         {posten.betrag !== undefined && posten.waehrung ? <Preis betrag={posten.betrag} waehrung={posten.waehrung} /> : 'ohne Preis'}
         <PreisstandHinweis />
       </span>
       {onItem ? <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" /> : null}
     </>
   )
-  const klasse = 'flex min-h-12 w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-1 px-1 py-2.5 text-left'
+  const klasse = 'kosten-posten flex min-h-12 w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-1 px-1 py-2.5 text-left'
   return (
     <li className="min-w-0">
       {onItem ? (
@@ -95,6 +95,8 @@ function Budget({ bild }: { bild: Kostenbild }) {
 /**
  * Kostenbild der Übersicht. Liest nur das Ergebnis von `kostenbild()`; Wahrheitsregeln
  * stehen dort. `ansteuern` scrollt einmal hierher, wenn die Kostenleiste angetippt wurde.
+ * Seit dem Premium-Redesign (PR A) setzt kein Aufrufer `ansteuern`, weil die Kostenleiste entfallen ist. Bewusst
+ * behalten (kein Löschen im Rahmen von PR A); der Zweig ist durch den Bestand der Kostenansicht gedeckt.
  */
 export default function TripWorkspaceKosten({
   bild,
@@ -127,25 +129,25 @@ export default function TripWorkspaceKosten({
   ].filter((text): text is string => text !== null)
 
   return (
-    <div ref={ref} className="min-w-0">
+    <div ref={ref} className="kosten-behaelter min-w-0">
       <Abschnitt
         id="reise-kosten-titel"
         titel="Kosten"
         beschreibung="Gespeicherte Beträge, keine Live-Preise und kein Zahlungsnachweis. Preisstand unbekannt. Jede Währung für sich."
         data-workspace-kosten={leer ? 'leer' : 'summen'}
-        className="h-full"
+        className="kosten-karte h-full"
       >
         {leer ? (
           <p className="text-body text-muted-foreground">
             Noch keine Preise gespeichert. Sobald du einen Flug, eine Unterkunft oder eine Aktivität mit Preis auswählst, steht er hier.
           </p>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="kosten-summen grid gap-3 sm:grid-cols-2">
             {bild.summen.map((summe) => (
-              <li key={summe.waehrung} className="min-w-0 rounded-control bg-muted px-4 py-3">
+              <li key={summe.waehrung} className="kosten-summe min-w-0 rounded-control bg-muted px-4 py-3">
                 <p className="text-meta text-muted-foreground">Geplant ca.</p>
                 <p className="text-title text-foreground"><Preis betrag={summe.gesamt} waehrung={summe.waehrung} /></p>
-                <dl className="mt-3 grid gap-2">
+                <dl className="kosten-summe-liste mt-3 grid gap-2">
                   {(['gebucht', 'ausgewaehlt'] as const).map((stand) => (
                     <div key={stand} className="flex min-w-0 flex-wrap items-center justify-between gap-2">
                       <dt><LeistungsStatus stand={STAND[stand]} /></dt>

@@ -1,6 +1,7 @@
 import '@/components/trips/reiseplan/etappen.css'
 import '@/components/trips/reiseplan/etappen-tage.css'
 import '@/components/trips/reiseplan/kartenauswahl.css'
+import '@/components/trips/kostenkarte.css'
 import type { ReactNode } from 'react'
 import 'leaflet/dist/leaflet.css'
 import '@/components/trips/organisieren/omio/vergleich.css'
