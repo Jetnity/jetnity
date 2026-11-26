@@ -69,6 +69,11 @@ function createThemeStore() {
   }
 }
 
+/**
+ * `toggleTheme` hat seit dem Premium-Redesign (PR A) keinen Aufrufer im Arbeitsbereich mehr: die Oberfläche wählt
+ * Hell und Dunkel über «Darstellung» (`setTheme`). Bewusst behalten. Der gleichnamige Admin-Schalter
+ * (`app/(admin)/admin/layout.tsx`) ist ein anderer, eigener Pfad und bleibt unberührt.
+ */
 export default function useWorkspaceTheme() {
   const [store] = useState(createThemeStore)
   const theme = useSyncExternalStore(store.subscribe, store.getSnapshot, serverTheme)

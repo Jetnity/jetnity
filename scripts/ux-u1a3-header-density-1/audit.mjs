@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// HISTORISCH (Premium-Redesign PR A, 26.11.2026): Dieses Skript belegt den Stand VOR dem Premium-Redesign (alte Kopfzeile,
+// altes Menü, altes Startseitenbild). Es ist nicht Teil der aktuellen Abnahme und wurde im Rahmen von PR A nicht neu
+// ausgeführt; sein Ergebnis gilt nur für den damaligen Stand. Nicht gelöscht, weil es den früheren Nachweis belegt.
+// Aktuelle Prüfskripte: scripts/premium-redesign-a/ (siehe dort README.md).
+//
 // scripts/ux-u1a3-header-density-1/audit.mjs
 //
 // Mounted browser evidence for UX V1 U1-A3.

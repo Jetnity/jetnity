@@ -3,6 +3,11 @@
 //
 // Browser-Viewport/Emulation-Evidence für Mobile Accessibility 1.
 // Kein physisches Real-Device-Testing.
+//
+// Stand PR A (26.11.2026): Der Menüknopf der Kopfzeile heisst seit dem gemeinsamen Kopfbaustein «Menü» (Zustand über
+// aria-expanded, vorher «Menü öffnen»/«Menü schliessen»). Nur die Suche nach dem Knopf wurde angepasst; die geprüften
+// Behauptungen (44-px-Ziel, aria-expanded, aria-controls, kein Überlauf) sind unverändert. Die übrigen Prüfungen belegen
+// den Stand vom 02.09.2026 und wurden in PR A nicht neu ausgeführt. Aktuelle Skripte: scripts/premium-redesign-a/.
 
 import { spawn } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -167,7 +172,7 @@ async function reflowPruefen(browser, viewport, pfad) {
   if (overflow.bodyOverflow > 1) fehler.push(`body overflow ${overflow.bodyOverflow}px`)
 
   if (viewport.width < 768 && pfad === '/') {
-    const menue = page.getByRole('button', { name: 'Menü öffnen' })
+    const menue = page.getByRole('button', { name: /^Menü( öffnen)?$/ })
     if ((await menue.count()) === 0) {
       fehler.push('Mobile-Menüknopf fehlt')
     } else {
@@ -222,7 +227,7 @@ async function tastaturPruefen(browser) {
   await seiteOffen(page, '/')
   await page.locator('h1').first().waitFor({ timeout: 15_000 })
   await hydrationWarten(page)
-  const menue = page.getByRole('button', { name: /Menü öffnen|Menü schlie(ß|ss)en/ })
+  const menue = page.getByRole('button', { name: /^Menü( öffnen| schlie(ß|ss)en)?$/ })
   await menue.click()
   await page.waitForTimeout(200)
   const expanded = await menue.getAttribute('aria-expanded')

@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+// HISTORISCH (Premium-Redesign PR A, 26.11.2026): Dieses Skript belegt den Stand VOR dem Premium-Redesign (alte Kopfzeile,
+// altes Menü, altes Startseitenbild). Es ist nicht Teil der aktuellen Abnahme und wurde im Rahmen von PR A nicht neu
+// ausgeführt; sein Ergebnis gilt nur für den damaligen Stand. Nicht gelöscht, weil es den früheren Nachweis belegt.
+// Aktuelle Prüfskripte: scripts/premium-redesign-a/ (siehe dort README.md).
+// Dieses Skript erwartet das frühere Teilen-Bild `/images/hero-bali.png`. Die Startseite bindet es seit dem Lizenz-Gate
+// (kein belegter Lizenznachweis) nicht mehr ein; die Behauptung bleibt bewusst unverändert, das Skript ist daher veraltet.
+//
 // Existing homepage audit, updated for the owner-approved Reiseintelligenz 2 story.
 // AUDIT_BROWSER=1 adds an isolated localhost-only check against an actual Next server.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
