@@ -13,6 +13,8 @@ import {
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
+  bookingZeiger,
+  bookingZeigerMerken,
   createBookingMemory,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
@@ -64,12 +66,12 @@ export default function UnterkunftBestand({
     aufenthaltBesitz.current += 1
   }
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   const uebergangsNaechte = abdeckung.bekannt
@@ -166,7 +168,8 @@ export default function UnterkunftBestand({
                       type="button"
                       disabled={pendingId !== null && pendingId !== aufenthalt.item.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === aufenthalt.item.id ? 'Wird gespeichert …' : gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}

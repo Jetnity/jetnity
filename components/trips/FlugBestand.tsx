@@ -18,6 +18,8 @@ import {
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
+  bookingZeiger,
+  bookingZeigerMerken,
   createBookingMemory,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
@@ -349,12 +351,12 @@ export default function FlugBestand({
     return error
   }
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   return (
@@ -410,7 +412,8 @@ export default function FlugBestand({
                       type="button"
                       disabled={pendingId !== null && pendingId !== abschnitt.item.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(abschnitt.item!.id, abschnitt.status !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(abschnitt.item!.id, abschnitt.status !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === abschnitt.item.id ? 'Wird gespeichert …' : abschnitt.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
@@ -447,7 +450,8 @@ export default function FlugBestand({
                       type="button"
                       disabled={pendingId !== null && pendingId !== item.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === item.id ? 'Wird gespeichert …' : item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}

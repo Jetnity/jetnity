@@ -166,7 +166,7 @@ export function kostenbild(reise: Trip, ohneTag: readonly TripItem[] = reise.ohn
 }
 
 /**
- * Eine Zeile für Kopf und Handyleiste, z. B. „Geplant ca. CHF 2’640 · Budget CHF 4’200“.
+ * Eine Zeile für Kopf und Handyleiste, z. B. „Geplant ca. CHF 2’640.00 · Budget CHF 4’200.00“.
  * „ca.“ steht, weil gespeicherte Preise keine Live-Preise sind und Punkte ohne Preis fehlen können.
  */
 export function kostenZeile(bild: Kostenbild): string {

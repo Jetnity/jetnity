@@ -1,5 +1,33 @@
 # Jetnity – Active Work Status
 
+## 26.11.2026 — W3 drei Korrekturen, Draft #1307
+
+Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.
+
+**PO-Gate, ausdrücklich:** D6 keine eigene Aktion «als ausgewählt markieren»; ein gespeicherter Punkt ist die Auswahl. D7 Aktivitäten ohne Buchungsmarkierung. D8 «Preisstand unbekannt» ohne Beleg, kein erfundenes Datum. D1–D5 und D9 bleiben OFFEN und werden nach Release mit Work/PO am iPhone geprüft, nicht als PASS gezählt. D10 bleibt lokal offen; die native CI ist separat. Der PO akzeptiert diese Grenzen für einen Code-Merge nach TL-PASS und voller neuer CI, nicht als Production-Speicherabnahme.
+
+- **A Beträge:** `betragLesbar` zeigt gespeicherte Hundertstel, de-CH, Trenner U+2019, Dezimalpunkt, zwei Nachkommastellen. Keine Rundung auf Franken. Beispiel gerendert: CHF 420.50 + 610.00 + 79.90 = CHF 1’110.40, nach Flugmarkierung gebucht 420.50 und ausgewählt 689.90, Budget 1’500.00, Rest 389.60. Ungenaue oder unsichere Werte heissen «Betrag nicht lesbar». Gespeicherte Beträge, Preisprüfung und Anbieterpayloads bleiben.
+- **B Hell-Aufblitzen:** Ein Skript im Dokumentkopf setzt `data-workspace-theme="dark"` aus `jetnity:workspace-theme:v1`, bevor der Körper gezeichnet wird. `green` wird `dark`. Blockierter oder leerer Speicher bleibt hell. Die dunklen Workspace-Tokens gelten schon über das `html`-Attribut, nicht erst nach der Hydration. Keine neue Sperre, kein Verstecken der Oberfläche.
+- **C Doppelklick:** Am gemeinsamen Weg für Flug, Unterkunft, Verbindung und Mietwagen gilt das Ziel des ersten Klicks. Ein zweiter Mausklick, Doppelklick (`detail` > 1) oder Touch/Stift innerhalb von 500 ms auf denselben Eintrag schreibt nicht noch einmal. Tastatur und ein späterer Einzelklick bleiben möglich. Fehler und anschliessender Einzelversuch schreiben erneut. Pending, Reisewechsel und verschwundener Eintrag bleiben wie bisher.
+
+**Gemessen, lokal, Production-Build `next start`, keine externen Anfragen (0):**
+
+| Schritt | Erwartet | Tatsächlich | Ergebnis |
+|---|---|---|---|
+| Vorher, JavaScript aus, 390 px | helle Prüffläche | Shell `rgb(242, 247, 244)`, Luminanz 0,919, Text «Der Browserspeicher wird geprüft.» | Vorher-Befund |
+| Chromium dunkel, erste Frames während der Prüfung | dunkle Fläche ab erstem Frame | `html=dark`, Shell `rgb(18, 25, 33)`, Luminanz 0,009, 10 Warte-Frames, 0 helle | PASS |
+| Chromium hell, fehlend, blockiert | hell, kein Absturz | Luminanz 0,919, Hydration-Fehler 0 | PASS |
+| Chromium `green` | wird dunkel, Speicher `dark` | Shell dunkel, gespeichert `dark`, 0 helle Warte-Frames | PASS |
+| Harter Reload dunkel, Chromium | bleibt dunkel | Shell `rgb(18, 25, 33)` | PASS |
+| WebKit 320/390/1440 hell und dunkel über HTTPS | gleiche Summen, Shell je Theme | 6/6 Summen, Shell hell `rgb(242, 247, 244)` bzw. dunkel `rgb(18, 25, 33)`, Hydration 0 | PASS |
+| Chromium und WebKit, 320/390/1440, hell/dunkel | CHF 1’110.40, Budget 1’500.00, Rest 389.60, kein CHF 421 | 12/12, `rounded` falsch, «ohne Preis» vorhanden | PASS |
+| Doppelklick «Als gebucht markieren» | genau eine Markierung, Quelle `user` | danach `booked`/`user`, nicht zurück auf unconfirmed | PASS |
+| Danach ein Klick «Buchung korrigieren» | wird unconfirmed | `bookingStatus` unconfirmed, Quelle null | PASS |
+| Zwei schnelle Touch-Taps | eine Markierung | `booked`/`user` | PASS |
+| Tastatur Enter | eine Markierung | `booked`/`user` | PASS |
+
+D1–D5 und D9 bleiben OFFEN. Nächster Schritt: main `59ba8c8cb` konfliktfrei einbinden, Pflicht-CI auf dem neuen Head, TL-Review. Kein Ready durch Cursor.
+
 ## 25.11.2026 — de-CH-Ortsnamen und Schweizer Texte #1314
 
 Branch `cursor/de-ch-ortsnamen-73ea` von `main` `ef378ba74` (#1312 und #1308). Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine Kosten.

@@ -52,26 +52,42 @@ export const ART_BEZEICHNUNG: Record<TripItemKind, string> = {
 }
 
 /**
- * Ein Betrag, wie Reisende ihn lesen: `CHF 3’000`.
+ * Ein Betrag, wie Reisende ihn lesen: `CHF 1’110.40`.
  *
- * Bewusst ohne `Intl.NumberFormat`, und das ist keine Bastelei. Der
- * Gruppentrenner von `de-CH` kommt aus ICU, und Node und Browser bringen jeweils
- * ihre eigene Fassung mit: Node 22 schreibt U+2019, ältere ICU-Fassungen
- * schreiben U+0027. Derselbe Betrag sieht dann auf dem Server anders aus als im
- * Browser, React findet beim Hydrieren zwei verschiedene Texte und bricht die
- * ganze Seite auf Client-Rendering zurück („Text content does not match
- * server-rendered HTML“). Ein Trenner, den Jetnity selbst setzt, ist in beiden
- * Laufzeiten derselbe.
+ * Bewusst ohne `Intl.NumberFormat`. Der Gruppentrenner von `de-CH` kommt aus
+ * ICU, und Node und Browser bringen jeweils ihre eigene Fassung mit: Node 22
+ * schreibt U+2019, ältere ICU-Fassungen schreiben U+0027. Derselbe Betrag sieht
+ * dann auf dem Server anders aus als im Browser. Ein Trenner, den Jetnity
+ * selbst setzt, ist in beiden Laufzeiten derselbe. Die Dezimaltrennung ist der
+ * Punkt, die Gruppierung U+2019, immer mit zwei Nachkommastellen (Hundertstel).
  *
  * Die Währung erscheint als ISO-Code und nicht als Symbol, weil auch die
- * Symbolwahl aus ICU kommt – sie würde dieselbe Frage nur verschieben.
+ * Symbolwahl aus ICU kommt.
  *
- * `wert` ist nach `lib/trips/schema.ts` nicht negativ; ein Vorzeichen kann hier
- * deshalb nicht entstehen.
+ * Gespeicherte Preise rechnet das Kostenbild in Rappen. Diese Anzeige rundet
+ * nicht auf Franken. Ein Wert, der sich nicht exakt und sicher als Hundertstel
+ * darstellen lässt, wird nicht geraten.
  */
+export const BETRAG_NICHT_LESBAR = 'Betrag nicht lesbar'
+
 export function betragLesbar(wert: number, waehrung: string): string {
-  const gruppiert = String(Math.round(wert)).replace(/\B(?=(\d{3})+$)/g, '\u2019')
-  return `${waehrung} ${gruppiert}`
+  const rappen = rappenGenau(wert)
+  if (rappen === null) return `${waehrung} ${BETRAG_NICHT_LESBAR}`
+  const negativ = rappen < 0
+  const absolut = Math.abs(rappen)
+  const franken = Math.trunc(absolut / 100)
+  const rest = absolut % 100
+  const gruppiert = String(franken).replace(/\B(?=(\d{3})+$)/g, '\u2019')
+  return `${waehrung} ${negativ ? '-' : ''}${gruppiert}.${String(rest).padStart(2, '0')}`
+}
+
+function rappenGenau(wert: number): number | null {
+  if (typeof wert !== 'number' || !Number.isFinite(wert)) return null
+  const negativ = wert < 0
+  const betrag = Math.abs(wert)
+  const ganz = Math.round(betrag * 100)
+  if (!Number.isSafeInteger(ganz) || Math.abs(ganz / 100 - betrag) > 1e-8) return null
+  return negativ ? -ganz : ganz
 }
 
 /**

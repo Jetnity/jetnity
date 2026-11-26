@@ -1,5 +1,6 @@
 /* Neutral dark Workspace mode. Green is a brand accent, NOT a third theme.
    Presentation only, no changes to data, auth, bookings or providers. */
+html[data-workspace-theme="dark"] .workspace-shell,
 .workspace-shell:where([data-workspace-theme="dark"]) {
   --workspace-bg: #121921;
   --workspace-panel: #202c37;

@@ -38,6 +38,8 @@ import {
   rentalStillOwned,
   rentalTripChanged,
   restoreOwnedFocus,
+  bookingZeiger,
+  bookingZeigerMerken,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
@@ -82,12 +84,12 @@ export default function MietwagenBereich({
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   return (
@@ -137,7 +139,8 @@ export default function MietwagenBereich({
                       type="button"
                       disabled={pendingId !== null && pendingId !== punkt.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === punkt.id ? 'Wird gespeichert …' : punkt.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
