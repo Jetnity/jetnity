@@ -319,6 +319,7 @@
   color: white;
   font-weight: 750;
   font-size: 0.87rem;
+  line-height: 1;
   box-shadow: 0 1px 5px #183e3250;
 }
 .et-pin.active {
