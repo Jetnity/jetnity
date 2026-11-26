@@ -7,7 +7,7 @@ import { useGeraetekalendertag } from '@/components/account/account-home-export-
 import { useStadtbild } from '@/components/trips/organisieren/Stadtbild'
 import { BildnachweisKnopf } from '@/components/ui/bildnachweis'
 import { bildMitNachweis } from '@/lib/trips/organisieren/bildnachweise'
-import { reisephaseAbleiten } from '@/lib/trips/reisephase'
+import { kopfbildEtappe, reisephaseAbleiten } from '@/lib/trips/reisephase'
 import type { UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import type { WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import type { Trip, TripSource } from '@/types/trips'
@@ -15,7 +15,9 @@ import type { Trip, TripSource } from '@/types/trips'
 /**
  * Gemeinsamer Reisekopf für Übersicht, Reiseplan, Organisieren, Vorbereitung und Einreise.
  * Alles hier ist aus echten Reisedaten abgeleitet; es gibt keine gespeicherte Phase,
- * kein erfundenes Wetter und kein Budget. Ein Bild wird nur mit seinem Nachweis gezeigt.
+ * kein erfundenes Wetter und kein Budget. Ein Bild wird nur mit seinem Nachweis gezeigt
+ * und gehört zur belegten Etappe von «Heute laut Plan»; bei unklarer Zuordnung bleibt das
+ * Motiv neutral.
  */
 export default function Reisekopf({
   reise,
@@ -39,13 +41,13 @@ export default function Reisekopf({
   reiseoptionen?: ReactNode
 }) {
   const gast = quelle === 'guest'
-  const stadtbild = useStadtbild(reise.stages[0])
+  const heute = useGeraetekalendertag()
+  const phase = reisephaseAbleiten(reise, heute)
+  const stadtbild = useStadtbild(kopfbildEtappe(reise, phase))
   const bild = bildMitNachweis(stadtbild.src, stadtbild.photo)
   const [fehlgeschlagen, setFehlgeschlagen] = useState<string | null>(null)
   const bildSichtbar = fehlgeschlagen !== bild.src
 
-  const heute = useGeraetekalendertag()
-  const phase = reisephaseAbleiten(reise, heute)
   const uebersichtKopf = ansicht === 'uebersicht'
   const anzahl = uebersicht.personen.anzahl
 

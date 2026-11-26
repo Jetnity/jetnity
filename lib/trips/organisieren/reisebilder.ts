@@ -1,3 +1,4 @@
+import { landName } from '@/lib/country/darstellung'
 import type { TripSummaryStage } from '@/types/trips'
 
 type Bildziel = {
@@ -13,12 +14,13 @@ const lokal = (name: string) => `/images/organisieren/${name}.webp`
 // public/images/organisieren/Bildnachweise.txt. Unattributed legacy JPGs are
 // not used by this resolver. This bounded catalogue is
 // not a promise of worldwide coverage or a runtime third-party image search.
+// A country without a concrete place (Thailand) has no entry: a city photo would
+// claim a place the trip never named.
 const ziele: readonly Bildziel[] = [
   { land: 'FR', ids: ['geonames:2988507'], namen: ['paris'], src: '/images/organisieren/paris.jpg' },
   { land: 'TH', ids: ['geonames:1609350', 'geonames:1609348', 'airport:BKK', 'airport:DMK'], namen: ['bangkok'], src: lokal('hero') },
   { land: 'TH', ids: ['geonames:1611309'], namen: ['ko chang', 'koh chang'], src: lokal('chang') },
   { land: 'TH', ids: ['geonames:1151254', 'airport:HKT'], namen: ['phuket'], src: lokal('phuket') },
-  { land: 'TH', ids: ['geonames:1605651'], namen: ['thailand'], src: lokal('hero') },
   { land: 'ID', ids: ['geonames:1631470'], namen: ['nusa penida'], src: lokal('nusa-penida') },
   { land: 'PA', ids: ['geonames:3703430', 'geonames:3703443'], namen: ['panama', 'panama city', 'panama-stadt', 'ciudad de panama'], src: lokal('panama') },
   { land: 'NL', ids: ['geonames:2759794'], namen: ['amsterdam'], src: '/images/organisieren/amsterdam-commons.jpg' },
@@ -30,8 +32,18 @@ function namensschluessel(name: string): string {
   return name.trim().toLocaleLowerCase('de').normalize('NFD').replace(/\p{M}/gu, '').replace(/\s+/g, ' ')
 }
 
+type Ziel = Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'>
+
+/** Eine Etappe, die nur ihr Land nennt («Thailand» in TH), hat keinen konkreten Ort. */
+export function nenntNurLand(etappe?: Ziel): boolean {
+  const code = etappe?.countryCode
+  if (!etappe || !code) return false
+  const name = namensschluessel(etappe.name)
+  return name !== '' && ['de', 'en'].some((sprache) => namensschluessel(landName(code, sprache)) === name)
+}
+
 /** Unknown or contradictory places receive a neutral map, never another city's photo. */
-export function reisebildAusEtappe(etappe?: Pick<TripSummaryStage, 'name' | 'countryCode' | 'placeId'>): string {
+export function reisebildAusEtappe(etappe?: Ziel): string {
   const neutral = lokal('reiseatlas')
   if (!etappe) return neutral
   const placeId = etappe.placeId

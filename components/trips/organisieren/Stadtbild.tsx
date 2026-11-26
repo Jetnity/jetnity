@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { reisebildAusEtappe } from '@/lib/trips/organisieren/reisebilder'
+import { nenntNurLand, reisebildAusEtappe } from '@/lib/trips/organisieren/reisebilder'
 import type { CityPhoto } from '@/lib/travel-images/city-photo'
 import type { TripSummaryStage } from '@/types/trips'
 
@@ -21,7 +21,7 @@ function request(key: string): Promise<CityPhoto | null> {
 
 export function useStadtbild(ziel?: Ziel) {
   const local = reisebildAusEtappe(ziel)
-  const key = local === reisebildAusEtappe() && ziel?.placeId?.startsWith('geonames:') && ziel.countryCode
+  const key = local === reisebildAusEtappe() && !nenntNurLand(ziel) && ziel?.placeId?.startsWith('geonames:') && ziel.countryCode
     ? new URLSearchParams({ place: ziel.placeId, country: ziel.countryCode }).toString() : ''
   const [result, setResult] = useState<{ key: string; photo: CityPhoto | null } | null>(null)
   useEffect(() => {

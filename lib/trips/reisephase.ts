@@ -12,9 +12,11 @@
 
 import { reiseGruppe } from '@/lib/account/reise-lage'
 import { kalendertagNummer } from '@/lib/trips/datum-anzeige'
+import { dayStageAssignmentModeLesenDb } from '@/lib/trips/day-stage-assignment'
 import type { Trip, TripStage } from '@/types/trips'
 
-export type ReisephaseReise = Pick<Trip, 'startDate' | 'endDate' | 'stages' | 'days'>
+export type ReisephaseReise = Pick<Trip, 'startDate' | 'endDate' | 'stages' | 'days'> &
+  Partial<Pick<Trip, 'dayStageAssignmentMode'>>
 
 export type ReisephaseArt = 'wartet' | 'offen' | 'unklar' | 'vorher' | 'laeuft' | 'nachher'
 
@@ -46,15 +48,27 @@ function widersprichtZeitraum(reise: ReisephaseReise, start: number, ende: numbe
   )
 }
 
-type Tagesetappe = { art: 'eindeutig'; etappe: TripStage } | { art: 'keine' } | { art: 'mehrdeutig' }
+type Tagesetappe =
+  | { art: 'eindeutig'; etappe: TripStage }
+  | { art: 'keine' }
+  | { art: 'offen' }
+  | { art: 'mehrdeutig' }
 
-/** Die ausdrückliche Zuordnung «Tag → Etappe» des Plans für genau diesen Kalendertag. */
+/**
+ * Die ausdrückliche Zuordnung «Tag → Etappe» des Plans für genau diesen Kalendertag.
+ * Ein Tag des Plans ohne Etappe ist in den Modi `explicit` und `unassigned` eine
+ * ausdrückliche Lücke («Lücken bleiben leer», «kein Fallback»), zum Beispiel ein
+ * Reisetag zwischen zwei Orten. Sie wird nicht aus Etappendaten geraten.
+ */
 function etappeAusTagesplan(reise: ReisephaseReise, heute: string): Tagesetappe {
   const tage = reise.days.filter((tag) => tag.dayDate === heute)
   if (tage.length === 0) return { art: 'keine' }
   if (tage.length > 1) return { art: 'mehrdeutig' }
   const stageId = tage[0]!.stageId
-  if (stageId === null) return { art: 'keine' }
+  if (stageId === null) {
+    const modus = dayStageAssignmentModeLesenDb(reise.dayStageAssignmentMode)
+    return modus === 'explicit' || modus === 'unassigned' ? { art: 'offen' } : { art: 'keine' }
+  }
   const etappe = reise.stages.find((kandidat) => kandidat.id === stageId)
   return etappe ? { art: 'eindeutig', etappe } : { art: 'mehrdeutig' }
 }
@@ -79,13 +93,26 @@ function etappenAmTag(reise: ReisephaseReise, tag: number): TripStage[] {
   })
 }
 
+/**
+ * Jede bekannte Zeitgrenze einer Etappe zählt, auch eine einzelne: Wer erst am
+ * 1.12. anreist, ist am 26.11. nicht dort, und wer am 4.12. abreist, ist am 6.12.
+ * nicht mehr dort. Fehlt eine Grenze, wird daraus nichts geschlossen.
+ */
+function widersprichtEtappenzeit(etappe: TripStage, tag: number): boolean {
+  const von = kalendertagNummer(etappe.arrivalDate)
+  const bis = kalendertagNummer(etappe.departureDate)
+  return (von !== null && tag < von) || (bis !== null && tag > bis)
+}
+
 function etappeHeute(reise: ReisephaseReise, heute: string, tag: number): TripStage | null {
   const plan = etappeAusTagesplan(reise, heute)
-  if (plan.art === 'mehrdeutig') return null
-  const daten = etappenAmTag(reise, tag)
+  if (plan.art === 'mehrdeutig' || plan.art === 'offen') return null
   if (plan.art === 'eindeutig') {
+    if (widersprichtEtappenzeit(plan.etappe, tag)) return null
+    const daten = etappenAmTag(reise, tag)
     return daten.length === 0 || daten.includes(plan.etappe) ? plan.etappe : null
   }
+  const daten = etappenAmTag(reise, tag)
   return daten.length === 1 ? daten[0]! : null
 }
 
@@ -131,4 +158,22 @@ export function reisephaseAbleiten(reise: ReisephaseReise, heute: string | null)
     heute: etappe && name ? `Heute laut Plan: ${name}` : 'Heutige Etappe noch offen',
     etappe: etappe && name ? etappe : null,
   }
+}
+
+/**
+ * Die Etappe, deren Ortsbild der Reisekopf zeigen darf. Nur ein belegter Bezug zählt:
+ * während der Reise die Etappe von «Heute laut Plan», vor der Abreise die erste Etappe
+ * der Route, bei einer einzigen Etappe diese. Alles andere (unklarer Tag, Rückblick,
+ * offener Zeitraum, mehrere Etappen ohne belegten Bezug, Phase noch unbekannt) bleibt
+ * ohne Etappe und damit beim neutralen Motiv. Es wird nie eine Etappe «an erster
+ * Stelle» geraten.
+ */
+export function kopfbildEtappe(reise: Pick<Trip, 'stages'>, phase: Pick<Reisephase, 'art' | 'etappe'>): TripStage | undefined {
+  if (reise.stages.length === 0) return undefined
+  if (phase.art === 'laeuft') return phase.etappe ?? undefined
+  if (reise.stages.length === 1) return reise.stages[0]
+  if (phase.art !== 'vorher') return undefined
+  const geordnet = [...reise.stages].sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
+  const [erste, zweite] = geordnet
+  return erste && (!zweite || zweite.position > erste.position) ? erste : undefined
 }
