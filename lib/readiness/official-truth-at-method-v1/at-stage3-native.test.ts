@@ -107,7 +107,7 @@ type Cluster = ReturnType<typeof startCluster>
 
 const keyedMessage = /^(AT_STAGE3_V6_LIVE_CATALOG_DRIFT|AT_STAGE3_FOREIGN_CATALOG_DRIFT (?:added|changed|removed))(?: [A-Za-z0-9_:.+-]+)?$/
 
-export function primaryError(stderr: string) {
+function primaryError(stderr: string) {
   const line = stderr.split('\n').map(item => item.trim()).find(item => item.startsWith('ERROR:'))
   if (!line) throw new Error('no primary ERROR on stderr')
   const coded = /^ERROR:\s+([A-Z0-9]{5}):\s+(\S.*)$/.exec(line)
@@ -119,7 +119,7 @@ export function primaryError(stderr: string) {
   return { sqlstate: parsedState[1], message: plain[1] }
 }
 
-export function booleanCells(raw: string) {
+function booleanCells(raw: string) {
   const lines = raw.split('\n').filter(line => line.length > 0)
   if (lines.length === 0) throw new Error('empty boolean result')
   return lines.map(line => {
