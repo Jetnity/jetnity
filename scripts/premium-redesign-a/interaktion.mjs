@@ -217,6 +217,26 @@ async function phone(browserName, browserTyp, basis) {
     await context.close()
   }
 
+  /* ---- Öffentliche Leiste ab md: Hauptnavigation statt Menü-Knopf ---- */
+  for (const breite of [768, 1440]) {
+    const { context, seite, meldungen } = await kontext(browserTyp, { mitReise: false, kontext: { viewport: { width: breite, height: 900 }, isMobile: false, hasTouch: false } })
+    await seite.goto(`${basis}/`, { waitUntil: 'domcontentloaded' })
+    await seite.waitForSelector('header', { timeout: 20_000 })
+    await warten(seite)
+    await pruefen(B, `Startseite ${breite} px: kein Menü-Knopf, Hauptnavigation sichtbar, keine doppelte Navigation`, 'Knopf unsichtbar, Hauptnavigation sichtbar', async () => {
+      const daten = await seite.evaluate(() => {
+        const knopf = document.querySelector('button.kopf-menue')
+        const haupt = document.querySelector('nav[aria-label="Hauptnavigation"]')
+        const mobil = document.getElementById('oeffentliche-mobile-navigation')
+        const sichtbar = (element) => Boolean(element && getComputedStyle(element).display !== 'none' && element.getBoundingClientRect().width > 0)
+        return { knopf: sichtbar(knopf), haupt: sichtbar(haupt), mobil: sichtbar(mobil) }
+      })
+      return { ok: !daten.knopf && daten.haupt && !daten.mobil, wert: JSON.stringify(daten) }
+    })
+    await pruefen(B, `Startseite ${breite} px: keine Konsolen- oder Hydrationsfehler`, '0 Fehler', async () => ({ ok: echt(meldungen.fehler).length === 0 && meldungen.hydration.length === 0, wert: fehlerText(meldungen) }))
+    await context.close()
+  }
+
   /* ---- Darstellung: wechseln, neu laden ---- */
   {
     const { context, seite, meldungen } = await kontext(browserTyp)

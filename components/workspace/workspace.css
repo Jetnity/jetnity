@@ -95,6 +95,9 @@
   border: 0; border-radius: .75rem; background: transparent; color: rgb(var(--jet-brand-800)); cursor: pointer;
 }
 .kopf-profil { border-radius: 50%; }
+/* Die öffentliche Leiste zeigt ab 48 rem die Hauptnavigation selbst; ihr Menü ist nur für schmale Breiten da.
+   `md:hidden` verliert gegen `.kopf-menue { display: inline-flex }`, deshalb eine eigene Regel danach. */
+@media (min-width: 48rem) { .kopf-menue-oeffentlich { display: none; } }
 .kopf-menue:hover, .kopf-profil:hover { background: rgb(var(--jet-surface-100)); }
 .kopf-menue:focus-visible, .kopf-profil:focus-visible, .kopf-marke:focus-visible {
   outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 2px;

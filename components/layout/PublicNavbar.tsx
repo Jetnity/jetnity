@@ -157,7 +157,7 @@ export default function PublicNavbar() {
             aria-expanded={mobileOpen}
             aria-controls={MOBILE_NAV_ID}
             onClick={() => setMobileOpen((current) => !current)}
-            className="kopf-menue md:hidden"
+            className="kopf-menue kopf-menue-oeffentlich"
           >
             {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
           </button>
