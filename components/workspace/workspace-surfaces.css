@@ -253,9 +253,10 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 .workspace-content .reise-aendern-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: 2px; }
 /* Bildnachweis: ⓘ am Foto mit 44-px-Trefferfläche und kleiner Scheibe; das Feld öffnet unter dem Kopf. */
 .workspace-content .reisekopf .bildnachweis { position: absolute; right: .25rem; bottom: .25rem; z-index: 1; }
-/* Das ⓘ liegt unten rechts über dem Kopf (44 px). Die beiden letzten Zeilen lassen ihm Platz, damit bei schmaler Breite
-   und grosser Schrift kein Text darunter verschwindet. */
-.reisekopf:has(> .bildnachweis) .reisekopf-inhalt > :nth-last-child(-n+2) { padding-inline-end: 2.75rem; }
+/* Das ⓘ liegt unten rechts über dem Kopf (44 px). Bei schmaler Breite und grosser Schrift (Breite in em, nicht in px) steht es
+   in einem eigenen Streifen unter dem Text, statt Text zu verdecken oder die Spalte zu verbreitern. */
+.reisekopf:has(> .bildnachweis) { container: reisekopf / inline-size; }
+@container reisekopf (max-width: 14em) { .reisekopf-inhalt { padding-block-end: calc(44px + .25rem); } }
 .bildnachweis-knopf {
   display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
   border: 0; background: transparent; color: #fff; cursor: pointer;
