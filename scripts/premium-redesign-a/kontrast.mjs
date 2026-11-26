@@ -141,7 +141,7 @@ export function textKontrastImBrowser({ wurzelSelektor = 'body', ausschliessen =
 }
 
 /** Läuft im Browser: alle markierten Bildtexte, die im aktuellen Sichtfeld liegen, mit Farbe und Zeilenrechtecken. */
-function sichtbareBildtexte() {
+function sichtbareBildtexte(nurIndex) {
   const kanaele = (farbe) => {
     const treffer = farbe && farbe.match(/rgba?\(([^)]+)\)/)
     if (!treffer) return null
@@ -166,7 +166,7 @@ function sichtbareBildtexte() {
   }
   const liste = []
   const verdeckte = []
-  const markierte = [...document.querySelectorAll('[data-pra-bildtext]')]
+  const markierte = [...document.querySelectorAll('[data-pra-bildtext]')].filter((element) => !nurIndex || nurIndex.includes(Number(element.getAttribute('data-pra-bildtext'))))
   // Karten-Tooltips und andere Anzeigeflächen haben pointer-events:none. Für die Verdeckungsprüfung muss der Text selbst
   // treffbar sein, sonst würde elementFromPoint stets das Element darunter melden.
   const vorher = markierte.map((element) => element.style.getPropertyValue('pointer-events'))
@@ -273,7 +273,11 @@ async function pixelAuswerten({ texte, a, b, c }) {
         // Abdeckung eines Buchstabenpixels: Anteil der erwartbaren Abweichung von Schwarz bzw. Weiss gegen den Grund.
         const erwartetSchwarz = Math.max(1, Math.max(grund[i], grund[i + 1], grund[i + 2]))
         const erwartetWeiss = Math.max(1, 255 - Math.min(grund[i], grund[i + 1], grund[i + 2]))
-        if (dSchwarz / erwartetSchwarz < 0.5 && dWeiss / erwartetWeiss < 0.5) continue
+        // Mindestabstand: Auf sehr hellem oder dunklem Grund hat eine der beiden Aufnahmen kaum Spielraum; ein Unterschied
+        // von wenigen Stufen (Kantenglättung, Ringe) ist kein Buchstabe.
+        const alsSchwarz = dSchwarz >= 48 && dSchwarz / erwartetSchwarz >= 0.5
+        const alsWeiss = dWeiss >= 48 && dWeiss / erwartetWeiss >= 0.5
+        if (!alsSchwarz && !alsWeiss) continue
         const al = farbe.a * deckkraft
         const lv = leuchtdichte(farbe.r * al + grund[i] * (1 - al), farbe.g * al + grund[i + 1] * (1 - al), farbe.b * al + grund[i + 2] * (1 - al))
         const lh = leuchtdichte(grund[i], grund[i + 1], grund[i + 2])
@@ -286,67 +290,112 @@ async function pixelAuswerten({ texte, a, b, c }) {
   })
 }
 
+/** Läuft im Browser: Höhe der festen oder klebenden Leisten oben und unten (Kopfzeile, untere Navigation). */
+function festeBaender() {
+  let oben = 0
+  let unten = 0
+  for (const element of document.querySelectorAll('body *')) {
+    const stil = getComputedStyle(element)
+    if (stil.position !== 'fixed' && stil.position !== 'sticky') continue
+    if (stil.visibility === 'hidden' || stil.display === 'none' || Number(stil.opacity) === 0) continue
+    const r = element.getBoundingClientRect()
+    if (r.width < innerWidth * 0.5 || r.height <= 0) continue
+    if (r.top <= 1 && r.bottom > 0) oben = Math.max(oben, r.bottom)
+    if (r.bottom >= innerHeight - 1 && r.top < innerHeight) unten = Math.max(unten, innerHeight - r.top)
+  }
+  return { oben, unten, hoehe: innerHeight }
+}
+
+/** Ein Sichtfeld: dreimal fotografieren (ohne Text, schwarz, weiss), Buchstabenpixel finden, schlechtesten Kontrast je Text merken. */
+async function sichtfeldMessen(seite, je, nurIndex) {
+  let { texte, verdeckte } = await seite.evaluate(sichtbareBildtexte, nurIndex)
+  // Einblend-Animationen abwarten. Bleibt die Deckkraft zwischen zwei Messungen gleich, ist sie Teil der Gestaltung
+  // (etwa Karten-Tooltips mit 0,9) und wird in die Textfarbe eingerechnet.
+  let vorigeDeckkraft = ''
+  for (let versuch = 0; versuch < 6 && texte.some((text) => text.deckkraft < 0.99); versuch += 1) {
+    const aktuell = texte.map((text) => `${text.index}:${text.deckkraft.toFixed(3)}`).join(',')
+    if (aktuell === vorigeDeckkraft) break
+    vorigeDeckkraft = aktuell
+    await seite.waitForTimeout(400)
+    ;({ texte, verdeckte } = await seite.evaluate(sichtbareBildtexte, nurIndex))
+  }
+  for (const index of verdeckte) if (je.has(index)) je.get(index).verdeckt = true
+  for (const text of texte) if (text.deckkraft < 0.05 && je.has(text.index)) je.get(text.index).ohneBuchstaben = true
+  texte = texte.filter((text) => text.deckkraft >= 0.05)
+  if (!texte.length) return false
+  const aufnehmen = async (farbe) => {
+    await seite.evaluate((wert) => {
+      document.getElementById('pra-text-aus')?.remove()
+      const stil = document.createElement('style')
+      stil.id = 'pra-text-aus'
+      stil.textContent = `* { transition: none !important; animation: none !important; color: ${wert} !important; text-shadow: none !important; -webkit-text-fill-color: ${wert} !important; text-decoration-color: ${wert} !important; caret-color: transparent !important; }`
+      document.head.append(stil)
+      return new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+    }, farbe)
+    return (await seite.screenshot()).toString('base64')
+  }
+  let aufnahmen
+  try {
+    // Das Bild muss stillstehen (offene Menüs, Karten und Einblendungen bewegen sich noch): erst messen, wenn zwei
+    // Aufnahmen ohne Text gleich sind. Sonst passen die Buchstabenmasken nicht auf den Grund.
+    let grund = await aufnehmen('transparent')
+    for (let versuch = 0; versuch < 8; versuch += 1) {
+      await seite.waitForTimeout(250)
+      const nochmal = await aufnehmen('transparent')
+      if (nochmal === grund) break
+      grund = nochmal
+    }
+    aufnahmen = { a: grund, b: await aufnehmen('#000000'), c: await aufnehmen('#ffffff') }
+  } finally {
+    await seite.evaluate(() => document.getElementById('pra-text-aus')?.remove())
+  }
+  const werte = await seite.evaluate(pixelAuswerten, { texte, ...aufnahmen })
+  for (const wert of werte) {
+    const eintrag = je.get(wert.index)
+    if (!eintrag) continue
+    if (wert.schlechtester == null) {
+      eintrag.ohneBuchstaben = true
+      continue
+    }
+    eintrag.schlechtester = Math.min(eintrag.schlechtester, wert.schlechtester)
+    eintrag.p01 = Math.min(eintrag.p01, wert.p01)
+    eintrag.pixel += wert.pixel
+  }
+  return true
+}
+
 /**
- * Misst die von `textKontrastImBrowser` markierten Bildtexte an den Pixeln: Die Seite wird in Sichtfeldern durchlaufen;
- * in jedem Sichtfeld wird dreimal fotografiert (ohne Text, schwarzer Text, weisser Text); daraus ergeben sich die
+ * Misst die von `textKontrastImBrowser` markierten Bildtexte an den Pixeln: Die Seite wird in Sichtfeldern durchlaufen,
+ * deren Schritt um die Höhe der festen Leisten kürzer ist (sonst bliebe ein Streifen unter der Kopfzeile nie frei).
+ * In jedem Sichtfeld wird dreimal fotografiert (ohne Text, schwarzer Text, weisser Text); daraus ergeben sich die
  * Buchstabenpixel, und die echte Textfarbe wird nur gegen den Grund hinter diesen Pixeln gerechnet.
+ * Was danach nicht gemessen ist, wird einzeln in sein Sichtfeld gescrollt (auch in innere Scrollbereiche wie Menüs).
  * Ein Text, für den kein Pixel gemessen werden konnte, steht als `nichtGemessen` und ist kein PASS. Ein Text ohne
  * Buchstabenpixel in jedem Sichtfeld steht als `nichtSichtbar` (abgeschnitten, ausserhalb) und wird mit Beispielen gemeldet.
+ * `verdeckt` heisst: in jedem Sichtfeld von einem zeichnenden Element überdeckt (etwa von einem offenen Menü).
  */
 export async function bildgrundMessen(seite, markierte) {
   const je = new Map(markierte.map((eintrag) => [eintrag.index, { ...eintrag, schlechtester: Infinity, p01: Infinity, pixel: 0 }]))
   if (je.size === 0) return { markiert: 0, gemessen: 0, nichtGemessen: 0, verdeckt: 0, verdecktBeispiele: [], nichtSichtbar: 0, nichtSichtbarBeispiele: [], nichtGemessenBeispiele: [], kleinster: null, kleinsterRoh: null, verfehlt: [], anzahlVerfehlt: 0, sichtfelder: 0 }
   const mass = await seite.evaluate(() => ({ hoehe: document.documentElement.scrollHeight, sicht: innerHeight, vorher: scrollY }))
-  const schritt = Math.max(200, Math.floor(mass.sicht * 0.85))
+  await seite.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+  await seite.waitForTimeout(250)
+  const baender = await seite.evaluate(festeBaender)
+  const fuellt = baender.oben + baender.unten >= mass.sicht * 0.9
+  const schritt = fuellt ? Infinity : Math.max(120, mass.sicht - baender.oben - baender.unten - 48)
   let sichtfelder = 0
   for (let y = 0; y < mass.hoehe; y += schritt) {
     await seite.evaluate((oben) => window.scrollTo({ top: oben, behavior: 'instant' }), y)
     await seite.waitForTimeout(250)
-    let { texte, verdeckte } = await seite.evaluate(sichtbareBildtexte)
-    // Einblend-Animationen abwarten. Bleibt die Deckkraft zwischen zwei Messungen gleich, ist sie Teil der Gestaltung
-    // (etwa Karten-Tooltips mit 0,9) und wird in die Textfarbe eingerechnet.
-    let vorigeDeckkraft = ''
-    for (let versuch = 0; versuch < 6 && texte.some((text) => text.deckkraft < 0.99); versuch += 1) {
-      const aktuell = texte.map((text) => `${text.index}:${text.deckkraft.toFixed(3)}`).join(',')
-      if (aktuell === vorigeDeckkraft) break
-      vorigeDeckkraft = aktuell
-      await seite.waitForTimeout(400)
-      ;({ texte, verdeckte } = await seite.evaluate(sichtbareBildtexte))
-    }
-    for (const index of verdeckte) if (je.has(index)) je.get(index).verdeckt = true
-    for (const text of texte) if (text.deckkraft < 0.05 && je.has(text.index)) je.get(text.index).ohneBuchstaben = true
-    texte = texte.filter((text) => text.deckkraft >= 0.05)
-    if (!texte.length) continue
-    sichtfelder += 1
-    const aufnehmen = async (farbe) => {
-      await seite.evaluate((wert) => {
-        document.getElementById('pra-text-aus')?.remove()
-        const stil = document.createElement('style')
-        stil.id = 'pra-text-aus'
-        stil.textContent = `* { transition: none !important; animation: none !important; color: ${wert} !important; text-shadow: none !important; -webkit-text-fill-color: ${wert} !important; text-decoration-color: ${wert} !important; caret-color: transparent !important; }`
-        document.head.append(stil)
-        return new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
-      }, farbe)
-      return (await seite.screenshot()).toString('base64')
-    }
-    let aufnahmen
-    try {
-      aufnahmen = { a: await aufnehmen('transparent'), b: await aufnehmen('#000000'), c: await aufnehmen('#ffffff') }
-    } finally {
-      await seite.evaluate(() => document.getElementById('pra-text-aus')?.remove())
-    }
-    const werte = await seite.evaluate(pixelAuswerten, { texte, ...aufnahmen })
-    for (const wert of werte) {
-      const eintrag = je.get(wert.index)
-      if (!eintrag) continue
-      if (wert.schlechtester == null) {
-        eintrag.ohneBuchstaben = true
-        continue
-      }
-      eintrag.schlechtester = Math.min(eintrag.schlechtester, wert.schlechtester)
-      eintrag.p01 = Math.min(eintrag.p01, wert.p01)
-      eintrag.pixel += wert.pixel
-    }
+    if (await sichtfeldMessen(seite, je)) sichtfelder += 1
+  }
+  for (const eintrag of je.values()) {
+    if (Number.isFinite(eintrag.schlechtester)) continue
+    await seite.evaluate((index) => {
+      document.querySelector(`[data-pra-bildtext="${index}"]`)?.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+    }, eintrag.index)
+    await seite.waitForTimeout(250)
+    if (await sichtfeldMessen(seite, je, [eintrag.index])) sichtfelder += 1
   }
   await seite.evaluate((oben) => window.scrollTo({ top: oben, behavior: 'instant' }), mass.vorher)
   const alle = [...je.values()]
@@ -373,8 +422,13 @@ export async function bildgrundMessen(seite, markierte) {
   }
 }
 
-/** Kontrast aller sichtbaren Texte: einfarbiger Grund und Bildgrund getrennt, Grenze 4,5 : 1 ungerundet. */
-export async function kontrastMessen(seite, optionen = {}) {
+/**
+ * Kontrast aller sichtbaren Texte: einfarbiger Grund und Bildgrund getrennt, Grenze 4,5 : 1 ungerundet.
+ * `ueberlagerungErwartet` gilt nur für Ansichten, in denen ein Menü oder Panel absichtlich offen steht: Was dahinter
+ * liegt, ist dort nicht sichtbar und wird in den Ansichten ohne Überlagerung gemessen. Es wird trotzdem gezählt und
+ * genannt (`verdeckt`). Ohne diese Angabe ist ein verdeckter Text nicht gemessen und kein PASS.
+ */
+export async function kontrastMessen(seite, { ueberlagerungErwartet = false, ...optionen } = {}) {
   // Der Zeiger darf nicht über der seitlichen Navigation stehen: Sie klappt bei Zeigerkontakt über den Inhalt auf.
   await seite.mouse.move((await seite.evaluate(() => innerWidth)) - 1, 1)
   await seite.waitForTimeout(350)
@@ -382,13 +436,14 @@ export async function kontrastMessen(seite, optionen = {}) {
   const bildgrund = await bildgrundMessen(seite, einfarbig.bildTexte)
   const kleinsterRoh = Math.min(einfarbig.kleinster ?? Infinity, bildgrund.kleinsterRoh ?? Infinity)
   const gemessen = einfarbig.geprueft + bildgrund.gemessen
-  const nichtGemessen = bildgrund.nichtGemessen + bildgrund.verdeckt + Math.max(0, einfarbig.bildTexteGesamt - einfarbig.bildTexte.length)
+  const nichtGemessen = bildgrund.nichtGemessen + (ueberlagerungErwartet ? 0 : bildgrund.verdeckt) + Math.max(0, einfarbig.bildTexteGesamt - einfarbig.bildTexte.length)
   const bestanden = gemessen > 0 && nichtGemessen === 0 && einfarbig.anzahlVerfehlt === 0 && bildgrund.anzahlVerfehlt === 0
   return {
     grenze: GRENZE,
     bestanden,
     gemessen,
     nichtGemessen,
+    ueberlagerungErwartet,
     kleinster: Number.isFinite(kleinsterRoh) ? Math.round(kleinsterRoh * 100) / 100 : null,
     einfarbig: { geprueft: einfarbig.geprueft, kleinster: einfarbig.kleinster == null ? null : Math.round(einfarbig.kleinster * 100) / 100, verfehlt: einfarbig.verfehlt, anzahlVerfehlt: einfarbig.anzahlVerfehlt },
     bildgrund,

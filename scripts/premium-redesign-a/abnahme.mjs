@@ -328,7 +328,7 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
     const nurAnzeigen = (ansicht === 'konto' || ansicht === 'konto-reise' || ansicht === 'begleiter') && !KONTO
     if (!nurAnzeigen) {
       messung = await seite.evaluate(messenImBrowser)
-      messung.kontrast = await kontrastMessen(seite)
+      messung.kontrast = await kontrastMessen(seite, { ueberlagerungErwartet: ['menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht) })
       messung.kleinsterKontrast = messung.kontrast.kleinster
       await seite.screenshot({ path: datei })
       if (!['laden', 'fehler', 'menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht)) {

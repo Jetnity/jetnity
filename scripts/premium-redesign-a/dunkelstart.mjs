@@ -16,7 +16,7 @@
 //   - Kontrast jedes sichtbaren Texts gegen den gemischten Grund (Grenze 4,5 : 1 für alle Texte,
 //     ungerundet verglichen). Texte auf Bildgrund werden hier gezählt und im Endzustand an den Pixeln gemessen.
 //
-// Geltung des Dunkelmodus (explizit, GELTUNG unten; DESIGN_SYSTEM.md 3.3):
+// Geltung des Dunkelmodus (explizit, GELTUNG unten; DESIGN_SYSTEM.md 6.27):
 //   - Arbeitsbereich (Reise, Planen, Konto): bei gespeichertem Dunkel muss der Inhalt dunkel sein. Eine helle Fläche ist FAIL.
 //   - Öffentliche Seiten (Startseite): bewusst hell in beiden Themes. Bei gespeichertem Dunkel muss der Grund hell BLEIBEN;
 //     ein stiller Wechsel in den Dunkelmodus wäre eine Geltungsänderung ohne Entscheidung und ist FAIL.
