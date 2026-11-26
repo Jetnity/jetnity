@@ -158,7 +158,9 @@ test('supplemented and fallback components show useful cards, details and honest
   const home = renderToStaticMarkup(createElement(HomeInspiration, {
     ziele: ENTDECKEN_ZIELE.map(ziel => ({ ...ziel, href: ziel.href! })), status: 'fallback',
   }))
-  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /reiseatlas\.webp/); assert.doesNotMatch(home, /bali\.jpg/)
+  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /reiseatlas\.webp/)
+  assert.match(home, /bali\.jpg/); assert.match(home, /data-illustrationshinweis/); assert.match(home, /KI-Illustration: Reisterrassen und Palmen im Morgenlicht, Motiv Bali/)
+  assert.doesNotMatch(home, /zermatt[\w-]*\.jpg/)
 })
 
 test('actual public components render published copy and honest absence in German without adding required caller props', () => {
@@ -169,6 +171,7 @@ test('actual public components render published copy and honest absence in Germa
   const homeGoals = published.ziele.map(row => ({ ...row, href: row.href! }))
   const home = renderToStaticMarkup(createElement(HomeInspiration, { ziele: homeGoals, status: published.status }))
   assert.ok(home.includes('lang="de"')); assert.ok(home.includes('Bali')); assert.ok(!home.includes('Lissabon'))
+  assert.match(home, /bali\.jpg/); assert.match(home, /data-illustrationshinweis/); assert.ok(!home.includes('lisbon.jpg'))
   const unavailable = renderToStaticMarkup(createElement(HomeInspiration, { ziele: homeGoals, status: 'unavailable' }))
   assert.match(unavailable, /Reiseideen derzeit nicht verfügbar/); assert.ok(!unavailable.includes('/images/bali.jpg'))
   const empty = renderToStaticMarkup(createElement(InspirationExplorer, { initial: { q: '', thema: 'alle' }, ziele: [], status: 'published' }))

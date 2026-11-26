@@ -5,9 +5,13 @@ import { describe, test } from 'node:test'
 
 import {
   BILDNACHWEISE,
+  KI_ILLUSTRATIONEN,
+  KI_URHEBER,
   NEUTRALES_REISEBILD,
+  ZURUECKGEHALTENE_ILLUSTRATIONEN,
   bildMitNachweis,
   bildnachweisFuerDatei,
+  datumDeutsch,
 } from '@/lib/trips/organisieren/bildnachweise'
 import { reisebildAusEtappe } from '@/lib/trips/organisieren/reisebilder'
 
@@ -97,5 +101,63 @@ describe('Bildnachweise', () => {
         assert.match(eintrag.lizenzUrl ?? '', /^https:\/\/creativecommons\.org\/licenses\//)
       }
     }
+  })
+})
+
+describe('Herkunftsnachweise der KI-Illustrationen in Bildnachweise.txt', () => {
+  const KI_TEXT = TEXT.slice(TEXT.indexOf('# KI-Illustrationen'))
+
+  test('der Abschnitt nennt Medium, Eigentumsangabe, OpenAI-Bedingungen, Ersteintrag-Vorbehalt und fehlende Angaben', () => {
+    assert.ok(TEXT.includes('# KI-Illustrationen (keine Fotos)'))
+    assert.ok(KI_TEXT.includes(`Herkunft: ${KI_URHEBER}`))
+    assert.ok(KI_TEXT.includes('https://openai.com/policies/dec-2024-eu-terms/'))
+    assert.ok(KI_TEXT.includes('https://openai.com/policies/eu-terms-of-use/'))
+    assert.ok(KI_TEXT.includes('Ownership of content'))
+    assert.ok(KI_TEXT.includes('kein verifiziertes Erstellungsdatum'))
+    assert.ok(KI_TEXT.includes('keine Creative-Commons-Lizenz'))
+    assert.ok(KI_TEXT.includes('Prompts, Generierungs-Kennungen und Original-Adressen sind nicht erfasst'))
+    assert.ok(KI_TEXT.includes('keine Garantie für exklusive Rechte'))
+    assert.ok(KI_TEXT.includes('ersetzt weder die PO-Erklärung noch einen Rechtsnachweis'))
+  })
+
+  test('jede der fünf Dateien hat einen Datensatz mit Titel, Urheber, Ersteintrag, Commit und Prüfsumme wie im Katalog', () => {
+    assert.equal(KI_ILLUSTRATIONEN.length, 5)
+    const zeilen = TEXT.split('\n')
+    for (const eintrag of KI_ILLUSTRATIONEN) {
+      const index = zeilen.findIndex((zeile) => zeile.startsWith(`${basename(eintrag.datei)} –`))
+      assert.ok(index >= 0, `${eintrag.datei} fehlt in Bildnachweise.txt`)
+      const kopf = zeilen[index]!
+      assert.ok(kopf.includes(eintrag.bildtitel), `${eintrag.datei}: Titel weicht ab`)
+      assert.ok(kopf.endsWith(KI_URHEBER), `${eintrag.datei}: Urheber weicht ab`)
+      assert.equal(
+        zeilen[index + 1],
+        `Ersteintrag: ${datumDeutsch(eintrag.herkunft.ersteintrag.datum)}, Commit ${eintrag.herkunft.ersteintrag.commit}`,
+        `${eintrag.datei}: Ersteintrag weicht ab`,
+      )
+      assert.equal(zeilen[index + 2], `SHA-256: ${eintrag.herkunft.sha256}`, `${eintrag.datei}: Prüfsumme weicht ab`)
+    }
+  })
+
+  test('der Einsatz stimmt: vier Dateien freigegeben, Zermatt belegt, aber nirgends gezeigt', () => {
+    for (const eintrag of KI_ILLUSTRATIONEN) {
+      const zeile = TEXT.split('\n').find((text, index, alle) => alle[index - 3]?.startsWith(`${basename(eintrag.datei)} –`))
+      assert.ok(zeile?.startsWith('Einsatz: '), eintrag.datei)
+      const einsatz = zeile ?? ''
+      const zurueckgehalten = eintrag.datei in ZURUECKGEHALTENE_ILLUSTRATIONEN
+      assert.equal(einsatz.includes('derzeit nirgends'), zurueckgehalten, eintrag.datei)
+      assert.equal(einsatz.includes('(freigegeben)'), !zurueckgehalten, eintrag.datei)
+    }
+    assert.ok(KI_TEXT.includes('geonames:2657915'))
+    assert.ok(KI_TEXT.includes('geonames:2657928'))
+    assert.ok(KI_TEXT.includes('Die Kennungen werden nicht gleichgesetzt'))
+  })
+
+  test('Nachweise für KI-Illustrationen erfinden weder Quelle noch Lizenz', () => {
+    for (const eintrag of KI_ILLUSTRATIONEN) {
+      assert.equal(eintrag.quelleUrl, null, eintrag.datei)
+      assert.match(eintrag.lizenz, /^Keine CC-Lizenz/, eintrag.datei)
+    }
+    assert.doesNotMatch(KI_TEXT, /Original: https?:/)
+    assert.doesNotMatch(KI_TEXT, /CC BY|Public domain|Creative Commons Namensnennung/)
   })
 })

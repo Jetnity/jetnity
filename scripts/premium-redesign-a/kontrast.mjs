@@ -376,7 +376,7 @@ async function sichtfeldMessen(seite, je, nurIndex) {
  */
 export async function bildgrundMessen(seite, markierte) {
   const je = new Map(markierte.map((eintrag) => [eintrag.index, { ...eintrag, schlechtester: Infinity, p01: Infinity, pixel: 0 }]))
-  if (je.size === 0) return { markiert: 0, gemessen: 0, nichtGemessen: 0, verdeckt: 0, verdecktBeispiele: [], nichtSichtbar: 0, nichtSichtbarBeispiele: [], nichtGemessenBeispiele: [], kleinster: null, kleinsterRoh: null, verfehlt: [], anzahlVerfehlt: 0, sichtfelder: 0 }
+  if (je.size === 0) return { markiert: 0, gemessen: 0, nichtGemessen: 0, verdeckt: 0, verdecktBeispiele: [], nichtSichtbar: 0, nichtSichtbarBeispiele: [], nichtGemessenBeispiele: [], kleinster: null, kleinsterRoh: null, verfehlt: [], anzahlVerfehlt: 0, einzelwerte: [], sichtfelder: 0 }
   const mass = await seite.evaluate(() => ({ hoehe: document.documentElement.scrollHeight, sicht: innerHeight, vorher: scrollY }))
   await seite.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
   await seite.waitForTimeout(250)
@@ -418,6 +418,8 @@ export async function bildgrundMessen(seite, markierte) {
     kleinsterRoh: Number.isFinite(kleinster) ? kleinster : null,
     verfehlt: verfehlt.slice(0, 12).map((eintrag) => ({ text: eintrag.text, selektor: eintrag.selektor, schlechtester: Math.round(eintrag.schlechtester * 100) / 100, p01: Math.round(eintrag.p01 * 100) / 100 })),
     anzahlVerfehlt: verfehlt.length,
+    // Jeder an den Pixeln gemessene Bildtext einzeln: Belege dafür, WELCHER Text gemessen wurde (nicht nur wie viele).
+    einzelwerte: gemessen.map((eintrag) => ({ text: eintrag.text, selektor: eintrag.selektor, schlechtester: Math.round(eintrag.schlechtester * 100) / 100, p01: Math.round(eintrag.p01 * 100) / 100, pixel: eintrag.pixel })),
     sichtfelder,
   }
 }

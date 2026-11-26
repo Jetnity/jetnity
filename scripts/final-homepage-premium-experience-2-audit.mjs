@@ -3,8 +3,9 @@
 // altes Menü, altes Startseitenbild). Es ist nicht Teil der aktuellen Abnahme und wurde im Rahmen von PR A nicht neu
 // ausgeführt; sein Ergebnis gilt nur für den damaligen Stand. Nicht gelöscht, weil es den früheren Nachweis belegt.
 // Aktuelle Prüfskripte: scripts/premium-redesign-a/ (siehe dort README.md).
-// Dieses Skript erwartet das frühere Teilen-Bild `/images/hero-bali.png`. Die Startseite bindet es seit dem Lizenz-Gate
-// (kein belegter Lizenznachweis) nicht mehr ein; die Behauptung bleibt bewusst unverändert, das Skript ist daher veraltet.
+// Dieses Skript erwartet das Teilen-Bild `/images/hero-bali.png`. Die Startseite bindet es nach der PO-Bildkorrektur
+// (26.11.2026) wieder ein, jetzt als gekennzeichnete KI-Illustration mit Herkunftsnachweis (lib/seo/startseitenbild.ts).
+// Die Dateibehauptung stimmt damit wieder; Kennzeichnung, Alt-Texte und Metadaten prüft scripts/premium-redesign-a/bildlizenz.mjs.
 //
 // Existing homepage audit, updated for the owner-approved Reiseintelligenz 2 story.
 // AUDIT_BROWSER=1 adds an isolated localhost-only check against an actual Next server.
