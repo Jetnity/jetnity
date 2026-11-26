@@ -56,10 +56,10 @@ export function HomeInspiration({ ziele, status = 'static' }: {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
                 />
-                <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/65 via-40% to-transparent to-75%" />
                 <span className="relative mt-auto flex w-full items-end justify-between gap-3 p-5">
                   <span className="min-w-0">
-                    <span className="block text-xs text-white/80">{ziel.country}</span>
+                    <span className="block text-xs text-white">{ziel.country}</span>
                     <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">{ziel.name}</h3>
                   </span>
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10">
