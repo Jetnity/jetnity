@@ -77,8 +77,8 @@
 .workspace-page { min-width: 0; }
 /* Gemeinsame Kopfzeile für Startseite, Reiseplanung, Meine Reisen, Reise und Konto (PR A).
    Eine Zeile: Menü · Marke · [Begleiter] · Profil. Menü, Marke und Profil teilen dieselben
-   Klassen (kopf-*) in der öffentlichen Leiste und im Arbeitsbereich. Ziele sind mindestens
-   44 px gross, ohne sichtbaren Rahmen. Höhe auf dem Telefon 60 px plus Safe Area, ab 64 rem 72 px. */
+   Klassen (kopf-*) in der öffentlichen Leiste und im Arbeitsbereich. Ziele sind 44 px gross
+   (fest, damit grössere Schrift die Zeile nicht umbrechen lässt), ohne sichtbaren Rahmen. Höhe auf dem Telefon 60 px plus Safe Area, ab 64 rem 72 px. */
 .workspace-header {
   position: sticky; top: 0; z-index: 41;
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
@@ -91,7 +91,7 @@
 .workspace-header[data-flow="true"] .kopf-innen { flex-wrap: wrap; }
 .kopf-menue, .kopf-profil {
   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-  width: 2.75rem; height: 2.75rem; min-width: 44px; min-height: 44px; padding: 0;
+  width: 44px; height: 44px; padding: 0;
   border: 0; border-radius: .75rem; background: transparent; color: rgb(var(--jet-brand-800)); cursor: pointer;
 }
 .kopf-profil { border-radius: 50%; }
@@ -99,14 +99,14 @@
 .kopf-menue:focus-visible, .kopf-profil:focus-visible, .kopf-marke:focus-visible {
   outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 2px;
 }
-.kopf-menue svg { width: 1.5rem; height: 1.5rem; stroke-width: 1.85; }
-.kopf-profil svg { width: 1.625rem; height: 1.625rem; stroke-width: 1.6; }
+.kopf-menue svg { width: 24px; height: 24px; stroke-width: 1.85; }
+.kopf-profil svg { width: 26px; height: 26px; stroke-width: 1.6; }
 .kopf-marke { display: inline-flex; min-width: 0; min-height: 44px; align-items: center; padding-inline: .25rem; border-radius: .5rem; }
 .kopf-marke img { height: 48px; width: auto; max-width: 100%; }
 .kopf-rechts { display: flex; align-items: center; gap: .25rem; min-width: 0; margin-left: auto; }
 .workspace-header-actions { display: flex; align-items: center; min-width: 0; }
 .workspace-header-actions:empty { display: none; }
-.kopf-planen { display: none; }
+.workspace-header .kopf-planen { display: none; }
 .kopf-begleiter {
   display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; max-width: 100%; padding: .25rem .875rem .25rem .75rem;
   border: 0; border-radius: 1.375rem; background: rgb(var(--jet-brand-600) / .1); color: rgb(var(--jet-brand-800));

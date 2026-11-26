@@ -148,7 +148,7 @@ export default function PublicNavbar() {
       className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
                  pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
-      <div className="mx-auto flex min-h-[64px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:gap-x-3 md:py-2 lg:px-8">
+      <div className="mx-auto flex min-h-[60px] w-full max-w-7xl flex-nowrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:flex-wrap md:gap-x-3 md:py-2 lg:px-8">
         <div className="flex min-w-0 items-center gap-1">
           <button
             ref={menuKnopf}

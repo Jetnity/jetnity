@@ -449,9 +449,9 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           <button
             type="button"
             onClick={verwerfen}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-2 text-sm font-medium text-white/70 transition hover:text-white"
+            className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-full px-2 text-left text-sm font-medium text-white/70 transition hover:text-white"
           >
-            <Trash2 className="h-4 w-4" aria-hidden="true" />
+            <Trash2 className="h-4 w-4 shrink-0" aria-hidden="true" />
             Entwurf verwerfen
           </button>
         </div>

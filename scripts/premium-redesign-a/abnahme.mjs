@@ -279,33 +279,6 @@ async function abstandVorFusszeile(seite) {
   })
 }
 
-/** Tastaturlauf: fokussierte Elemente dürfen nicht verdeckt sein und brauchen sichtbaren Fokus. */
-async function tastaturPruefung(seite, schritte = 12) {
-  const befunde = []
-  await seite.evaluate(() => window.scrollTo(0, 0))
-  for (let i = 0; i < schritte; i++) {
-    await seite.keyboard.press('Tab')
-    await seite.waitForTimeout(60)
-    const befund = await seite.evaluate(() => {
-      const element = document.activeElement
-      if (!element || element === document.body) return null
-      element.scrollIntoView({ block: 'nearest' })
-      const r = element.getBoundingClientRect()
-      const mitte = document.elementFromPoint(Math.min(Math.max(r.x + r.width / 2, 0), innerWidth - 1), Math.min(Math.max(r.y + r.height / 2, 0), innerHeight - 1))
-      const stil = getComputedStyle(element)
-      const ring = (stil.outlineStyle !== 'none' && parseFloat(stil.outlineWidth) > 0) || (stil.boxShadow && stil.boxShadow !== 'none')
-      const name = (element.getAttribute('aria-label') || element.textContent || element.tagName).trim().replace(/\s+/g, ' ').slice(0, 40)
-      return { name, verdeckt: !(mitte && (element === mitte || element.contains(mitte) || mitte.contains(element))), fokusSichtbar: Boolean(ring) }
-    })
-    if (befund) befunde.push(befund)
-  }
-  return {
-    schritte: befunde.length,
-    verdeckt: befunde.filter((b) => b.verdeckt).map((b) => b.name),
-    ohneFokusanzeige: befunde.filter((b) => !b.fokusSichtbar).map((b) => b.name),
-  }
-}
-
 /* ---------- Ansichten ---------- */
 
 async function tabOeffnen(seite, muster) {

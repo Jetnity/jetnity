@@ -56,12 +56,37 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] {
   color: var(--workspace-ink, #f4f7f9);
 }
+/* Gleiche Kollision bei Flächen und Rändern: Bis zur Hydration trägt die Shell noch den Serverwert
+   «light», und die hellen Regeln aus white-mint.css gewinnen gegen die dunkle Abbildung. Ohne diese
+   Spiegelung bleibt jede Karte im ersten Bild (zum Beispiel «Du hast bereits eine Reise» auf /planen)
+   hell, während ihre Texte schon dunkel-auf-hell vertauscht sind. Der helle Modus trifft sie nie. */
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :where(.bg-white, .bg-white\/65, .bg-white\/70, .bg-white\/75, .bg-surface-0, .bg-surface-0\/85, .bg-surface-25) {
+  background-color: var(--workspace-panel, #202c37);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :where(.bg-surface-75, .bg-surface-75\/95, .bg-background) {
+  background-color: var(--workspace-bg, #121921);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :where(.bg-surface-50, .bg-surface-100, .bg-surface-200, .bg-line-100) {
+  background-color: var(--workspace-soft, #2a3945);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :where(.border-line-100, .border-line-200, .border-line-300) {
+  border-color: var(--workspace-edge, rgb(214 226 235 / .26));
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea, button).border-line-100,
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea, button).border-line-200,
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea, button).border-line-300,
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea) {
+  border-color: var(--workspace-edge, rgb(214 226 235 / .26));
+  background-color: var(--workspace-panel, #202c37);
+  color: var(--workspace-ink, #f4f7f9);
+}
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
 :where([data-workspace-theme="dark"]) .workspace-credit { color: var(--workspace-muted); }
 :where([data-workspace-theme="dark"]) .workspace-bottom-nav {
-  background: linear-gradient(120deg, rgb(var(--jet-ink-400) / .12), transparent 70%), var(--workspace-glass);
+  /* Deckend: Text und Preise dahinter dürfen nicht durchscheinen. */
+  background: linear-gradient(120deg, rgb(var(--jet-ink-400) / .12), transparent 70%), var(--workspace-panel);
   box-shadow: inset -1px 0 rgb(var(--jet-ink-400) / .07);
 }
 :where([data-workspace-theme="dark"]) .workspace-bottom-nav .workspace-nav-link { color: var(--workspace-ink); }
@@ -215,6 +240,8 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 .workspace-content .reisekopf .reisekopf-optionen > summary { color: var(--reisekopf-text); width: fit-content; }
 .workspace-content .reisekopf .reisekopf-optionen > summary:focus-visible { outline-color: var(--reisekopf-akzent); }
 .reisekopf-optionen-inhalt { padding-block: .5rem; }
+.workspace-content .reisekopf .reisekopf-optionen-inhalt button { color: var(--reisekopf-text-leise); }
+.workspace-content .reisekopf .reisekopf-optionen-inhalt button:hover { color: var(--reisekopf-text); }
 /* «Reise ändern»: beschriftete Stiftaktion neben dem Titel. Umbricht bei 320 px unter den Titel. */
 .workspace-content .reise-aendern-knopf {
   display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: .25rem .875rem .25rem .75rem; flex: 0 1 auto; max-width: 100%;

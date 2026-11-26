@@ -5,7 +5,10 @@
 // umgangen. Dieser Prüfstand rendert die echten Komponenten (WorkspaceShell, KontoStart)
 // mit dem echten Projekt-CSS und denselben lokalen Ersatzmodulen wie der White-Mint-Test.
 //
-//   node --import tsx scripts/premium-redesign-a/konto-harness.mjs [Port]
+//   node --import tsx scripts/premium-redesign-a/konto-harness.mjs [Port] [Fixture-Ordner]
+//
+// Zweite Seite: /reisen/konto – dieselbe Shell mit einer Konto-Reise (Reisebegleiter,
+// «Reise ändern», Speicherhinweis «Im Konto gespeichert»), Reise aus dem Fixture-Ordner.
 //
 // Aus dem Arbeitsverzeichnis des geprüften Stands starten (Vorher: Worktree der Basis).
 
@@ -18,6 +21,7 @@ import * as esbuild from 'esbuild'
 const wurzel = process.cwd()
 const verlangen = createRequire(join(wurzel, 'package.json'))
 const port = Number(process.argv[2] ?? 3470)
+const fixtureOrdner = process.argv[3] ?? '/tmp/pra/fixtures'
 
 const { atlasServerActions } = await import(join(wurzel, 'scripts/trip-plan-browser/server-actions.ts'))
 
@@ -41,11 +45,11 @@ async function css() {
   ].join('\n').replaceAll('</style', '<\\/style')
 }
 
-async function skript() {
+async function skript(eintrag = 'konto-harness.tsx') {
   const ersatz = (name) => join(wurzel, 'lib/ui/white-mint-home-workspace-1', name)
   const gebaut = await esbuild.build({
     absWorkingDir: wurzel,
-    entryPoints: [join(wurzel, 'scripts/premium-redesign-a/konto-harness.tsx')],
+    entryPoints: [join(wurzel, 'scripts/premium-redesign-a', eintrag)],
     bundle: true,
     write: false,
     format: 'iife',
@@ -68,6 +72,7 @@ async function skript() {
             if (args.path === '@/app/auth/sign-out') return { path: ersatz('sign-out-stub.ts') }
             if (args.path === '@/lib/supabase/client') return { path: ersatz('supabase-stub.ts') }
             if (args.path === '@/lib/reiseaenderung/aktionen' || args.path === '@/lib/places/aktionen') return { path: ersatz('server-action-stub.ts') }
+            if (args.path === '@/lib/reisebegleiter/aktionen') return { path: join(wurzel, 'scripts/premium-redesign-a/aktionen-stub.ts') }
             return build.resolve(join(wurzel, args.path.slice(2)), { resolveDir: wurzel, kind: args.kind })
           })
         },
@@ -77,7 +82,13 @@ async function skript() {
   return gebaut.outputFiles[0].text
 }
 
-const dokument = `<!doctype html><html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${await css()}</style></head><body><div id="root"></div><script>${await skript()}</script></body></html>`
+const stil = await css()
+function seite(skriptText, vorspann = '') {
+  return `<!doctype html><html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${stil}</style></head><body><div id="root"></div><script>${vorspann}</script><script>${skriptText}</script></body></html>`
+}
+const kontoSeite = seite(await skript())
+const fixture = JSON.parse(readFileSync(join(fixtureOrdner, 'thailand.json'), 'utf8'))
+const reiseSeite = seite(await skript('reise-konto-harness.tsx'), `globalThis.__REISE__ = ${JSON.stringify(JSON.parse(fixture.roh)).replaceAll('<', '\\u003c')}`)
 
 createServer((anfrage, antwort) => {
   if (anfrage.url?.startsWith('/brand/') || anfrage.url?.startsWith('/images/')) {
@@ -90,5 +101,6 @@ createServer((anfrage, antwort) => {
       return
     }
   }
-  antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(dokument)
-}).listen(port, '127.0.0.1', () => console.log(`Konto-Prüfstand auf http://127.0.0.1:${port}/account`))
+  const pfad = anfrage.url?.split('?')[0] ?? '/'
+  antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(pfad.startsWith('/reisen') ? reiseSeite : kontoSeite)
+}).listen(port, '127.0.0.1', () => console.log(`Konto-Prüfstand auf http://127.0.0.1:${port}/account und /reisen/konto`))
