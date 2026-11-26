@@ -65,6 +65,8 @@ const ANSICHTEN = [
   'vorbereitung',
   'einreise',
   'konto',
+  'konto-reise',
+  'begleiter',
   'menue',
   'menue-startseite',
   'profil',
@@ -319,7 +321,7 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
   const { breite } = kombi
   const basis = kombi.browser === 'webkit' ? BASIS_WEBKIT : BASIS
   const REISE_URL = `${basis}/reisen/${REISE.id}`
-  const context = await kontext(browserTyp, kombi, ansicht === 'startseite' || ansicht === 'menue-startseite' ? { mitReise: false } : {})
+  const context = await kontext(browserTyp, kombi, ansicht === 'startseite' || ansicht === 'menue-startseite' || ansicht === 'konto-reise' || ansicht === 'begleiter' ? { mitReise: false } : {})
   const { seite, meldungen } = await seiteOeffnen(context)
   const datei = join(ordner, `${ansicht}__${kombiName(kombi)}.png`)
   let messung = null
@@ -343,6 +345,18 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
       } else {
         await seite.goto(`${KONTO}/account`, { waitUntil: 'domcontentloaded' })
         await warten(seite, 900)
+      }
+    } else if (ansicht === 'konto-reise' || ansicht === 'begleiter') {
+      if (!KONTO) {
+        hinweis = 'OFFEN: kein Konto-Harness angegeben; die Konto-Reise braucht eine Anmeldung und wird nicht umgangen.'
+      } else {
+        await seite.goto(`${KONTO}/reisen/konto`, { waitUntil: 'domcontentloaded' })
+        await seite.waitForSelector('.reisekopf h1, h1', { timeout: 20_000 })
+        await warten(seite, 1000)
+        if (ansicht === 'begleiter') {
+          await seite.locator('button.kopf-begleiter').first().click()
+          await seite.waitForTimeout(700)
+        }
       }
     } else if (ansicht === 'laden') {
       await seite.route('**/_next/static/chunks/**/*.js', (route) => route.abort())
@@ -370,11 +384,11 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
         await seite.waitForTimeout(400)
       }
     }
-    const nurAnzeigen = ansicht === 'konto' && !KONTO
+    const nurAnzeigen = (ansicht === 'konto' || ansicht === 'konto-reise' || ansicht === 'begleiter') && !KONTO
     if (!nurAnzeigen) {
       messung = await seite.evaluate(messenImBrowser)
       await seite.screenshot({ path: datei })
-      if (ansicht !== 'laden' && ansicht !== 'fehler' && ansicht !== 'menue' && ansicht !== 'menue-startseite' && ansicht !== 'profil') {
+      if (!['laden', 'fehler', 'menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht)) {
         messung.fusszeile = await abstandVorFusszeile(seite)
         await seite.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
       }
@@ -385,7 +399,7 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
   const ergebnis = {
     ansicht,
     kombination: kombiName(kombi),
-    datei: messung || ansicht === 'konto' ? (messung ? `${ansicht}__${kombiName(kombi)}.png` : null) : null,
+    datei: messung ? `${ansicht}__${kombiName(kombi)}.png` : null,
     messung,
     hinweis,
     konsolenFehler: meldungen.konsole.filter((m) => m.art === 'error').length,
