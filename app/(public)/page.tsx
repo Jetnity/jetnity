@@ -8,6 +8,8 @@ import { HomeProduktfenster } from '@/components/home/HomeProduktfenster'
 import { HomeUnterschied } from '@/components/home/HomeUnterschied'
 import { HomeVertrauen } from '@/components/home/HomeVertrauen'
 import GastCreateLink from '@/components/trips/GastCreateLink'
+import { Bildnachweisliste } from '@/components/inspiration/Bildnachweisliste'
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { publicInspiration } from '@/lib/inspiration/cms-public-server'
 import { zielHref } from '@/lib/places/auswahl'
 import {
@@ -16,6 +18,8 @@ import {
   HOMEPAGE_UEBERSCHRIFTEN,
 } from '@/lib/seo/final-homepage'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
+import { BILDNACHWEISE_ID, STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { bildnachweisFuerDatei } from '@/lib/trips/organisieren/bildnachweise'
 
 const homepageMeta = finalHomepageMetadaten(kanonischeUrl('/'))
 
@@ -28,16 +32,16 @@ export const metadata: Metadata = {
     url: kanonischeUrl('/'),
     images: [
       {
-        url: '/images/hero-bali.png',
-        width: 1536,
-        height: 1024,
+        url: STARTSEITENBILD.pfad,
+        width: STARTSEITENBILD.breite,
+        height: STARTSEITENBILD.hoehe,
         alt: 'Jetnity – Deine ganze Reise. Intelligent an einem Ort.',
       },
     ],
   },
   twitter: {
     ...homepageMeta.twitter,
-    images: ['/images/hero-bali.png'],
+    images: [STARTSEITENBILD.pfad],
   },
 }
 
@@ -47,6 +51,11 @@ export default async function HomePage() {
     name: ziel.name, country: ziel.country, image: ziel.image,
     href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
   }))
+  const heroNachweis = bildnachweisFuerDatei(STARTSEITENBILD.pfad)
+  const bildnachweise = [
+    ...(heroNachweis ? [{ bezug: 'Startseite', nachweis: heroNachweis }] : []),
+    ...inspirationsziele.map((ziel) => ({ bezug: ziel.name, nachweis: inspirationsbild(ziel.image).nachweis })),
+  ]
   return (
     <main data-white-mint="home" className="break-words bg-surface-75 pb-[env(safe-area-inset-bottom)] text-brand-800 [&_.sr-only]:whitespace-normal">
       <HomeHero />
@@ -76,6 +85,11 @@ export default async function HomePage() {
           </GastCreateLink>
         </div>
       </section>
+      <Bildnachweisliste
+        id={BILDNACHWEISE_ID}
+        eintraege={bildnachweise}
+        className="mx-auto max-w-[1450px] px-5 pb-10 pt-2 text-ink-800 sm:px-8"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

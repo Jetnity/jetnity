@@ -21,6 +21,8 @@ import {
   finalHomepageSeitenUrl,
 } from '@/lib/seo/final-homepage'
 import { KANONISCHE_PUBLIC_ORIGIN, kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
+import { STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { bildnachweisFuerDatei } from '@/lib/trips/organisieren/bildnachweise'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
@@ -63,7 +65,7 @@ describe('final homepage product 1 – Wahrheit und Entity', () => {
     assert.equal(graph['@graph'][1].inLanguage, 'de')
     assert.equal(graph['@graph'][2].operatingSystem, 'Web')
     assert.equal(graph['@graph'][0].logo, 'https://jetnity.com/brand/jetnity-logo.png')
-    assert.equal(graph['@graph'][2].image, 'https://jetnity.com/images/hero-bali.png')
+    assert.equal(graph['@graph'][2].image, `https://jetnity.com${STARTSEITENBILD.pfad}`)
     assert.equal(roh.includes('vercel.app'), false)
     for (const schluessel of VERBOTENE_SCHLUESSEL) {
       assert.equal(roh.includes(`"${schluessel}"`), false, schluessel)
@@ -134,10 +136,13 @@ describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', ()
 
   test('Share-Bild und Bildreferenzen existieren; Sitemap erfindet kein Aktualisierungsdatum', () => {
     const seite = quelle('../../app/(public)/page.tsx')
-    assert.match(seite, /hero-bali.png/)
-    const bild = readFileSync(join(hier, '../../public/images/hero-bali.png'))
-    assert.equal(bild.readUInt32BE(16), 1536)
-    assert.equal(bild.readUInt32BE(20), 1024)
+    assert.match(seite, /STARTSEITENBILD\.pfad/)
+    assert.ok(bildnachweisFuerDatei(STARTSEITENBILD.pfad), 'Das Startseitenbild braucht einen Lizenznachweis.')
+    const bild = readFileSync(join(hier, '../../public', STARTSEITENBILD.pfad))
+    assert.equal(bild.subarray(0, 4).toString('latin1'), 'RIFF')
+    assert.equal(bild.subarray(8, 16).toString('latin1'), 'WEBPVP8 ')
+    assert.equal(bild.readUInt16LE(26) & 0x3fff, STARTSEITENBILD.breite)
+    assert.equal(bild.readUInt16LE(28) & 0x3fff, STARTSEITENBILD.hoehe)
     const sitemap = quelle('../../app/sitemap.ts')
     assert.equal(sitemap.includes('lastModified: new Date()'), false)
   })

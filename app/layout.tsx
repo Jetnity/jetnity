@@ -10,6 +10,7 @@ import { Toaster } from 'sonner'
 import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundary'
 import { productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
+import { STARTSEITENBILD } from '@/lib/seo/startseitenbild'
 import { WORKSPACE_THEME_BOOT } from '@/lib/ui/workspace-theme-boot'
 
 const CMP_BOOTSTRAP = productionBootstrapSource()
@@ -33,13 +34,13 @@ export const metadata: Metadata = {
     siteName: 'Jetnity',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`, width: 1536, height: 1024, alt: 'Jetnity' }],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, width: STARTSEITENBILD.breite, height: STARTSEITENBILD.hoehe, alt: 'Jetnity' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: [`${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`],
+    images: [`${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`],
   },
   manifest: '/manifest.webmanifest',
   appleWebApp: {

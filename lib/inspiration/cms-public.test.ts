@@ -158,7 +158,7 @@ test('supplemented and fallback components show useful cards, details and honest
   const home = renderToStaticMarkup(createElement(HomeInspiration, {
     ziele: ENTDECKEN_ZIELE.map(ziel => ({ ...ziel, href: ziel.href! })), status: 'fallback',
   }))
-  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /bali\.jpg/)
+  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /reiseatlas\.webp/); assert.doesNotMatch(home, /bali\.jpg/)
 })
 
 test('actual public components render published copy and honest absence in German without adding required caller props', () => {

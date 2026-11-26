@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { HOMEPAGE_UEBERSCHRIFTEN } from '@/lib/seo/final-homepage'
 import type { PublicInspiration } from '@/lib/inspiration/cms-public'
 
@@ -40,32 +41,35 @@ export function HomeInspiration({ ziele, status = 'static' }: {
         Weitere Reiseideen sind vorübergehend nicht verfügbar. Entdecke inzwischen diese Auswahl.
       </p>}
       {status !== 'unavailable' && ziele.length ? <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {ziele.map((ziel) => (
-          <li key={ziel.name} className="min-w-0">
-            <Link
-              href={ziel.href}
-              className="hs-bild-rand group relative flex min-h-[280px] overflow-hidden rounded-[28px] bg-brand-800 text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:min-h-[360px]"
-            >
-              <Image
-                src={ziel.image}
-                alt={`${ziel.name}, ${ziel.country}`}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
-              />
-              <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-              <span className="relative mt-auto flex w-full items-end justify-between gap-3 p-5">
-                <span className="min-w-0">
-                  <span className="block text-xs text-white/80">{ziel.country}</span>
-                  <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">{ziel.name}</h3>
+        {ziele.map((ziel) => {
+          const bild = inspirationsbild(ziel.image)
+          return (
+            <li key={ziel.name} className="min-w-0">
+              <Link
+                href={ziel.href}
+                className="hs-bild-rand group relative flex min-h-[280px] overflow-hidden rounded-[28px] bg-brand-800 text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/30 sm:min-h-[360px]"
+              >
+                <Image
+                  src={bild.src}
+                  alt={bild.neutral ? '' : `${ziel.name}, ${ziel.country}`}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
+                />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <span className="relative mt-auto flex w-full items-end justify-between gap-3 p-5">
+                  <span className="min-w-0">
+                    <span className="block text-xs text-white/80">{ziel.country}</span>
+                    <h3 className="mt-1 text-2xl font-semibold tracking-[-0.03em]">{ziel.name}</h3>
+                  </span>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10">
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
                 </span>
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10">
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </span>
-              </span>
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          )
+        })}
       </ul> : <p role="status" className="mt-8 rounded-2xl border border-line-200 bg-surface-0 p-5 text-ink-950">
         {status === 'unavailable' ? 'Reiseideen derzeit nicht verfügbar.' : 'Derzeit sind keine Reiseideen veröffentlicht.'}
       </p>}

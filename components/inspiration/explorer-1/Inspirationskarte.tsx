@@ -3,10 +3,12 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowRight, MapPin } from 'lucide-react'
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { THEMEN, type EntdeckenZiel } from '@/lib/inspiration/explorer-1/katalog'
 
 export default function Inspirationskarte({ ziel, zuerst }: { ziel: EntdeckenZiel; zuerst: boolean }) {
   const [bildFehlt, setBildFehlt] = useState(false)
+  const bild = inspirationsbild(ziel.image)
   return (
     <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-panel border border-border bg-card shadow-card">
       <div className="relative aspect-[16/10] bg-muted">
@@ -16,7 +18,7 @@ export default function Inspirationskarte({ ziel, zuerst }: { ziel: EntdeckenZie
             <span className="text-sm">Bild nicht verfügbar</span>
           </div>
         ) : (
-          <Image src={ziel.image} alt={`Reiseinspiration ${ziel.name}, ${ziel.country}`} fill
+          <Image src={bild.src} alt={bild.neutral ? '' : `Reiseinspiration ${ziel.name}, ${ziel.country}`} fill
             loading={zuerst ? 'eager' : 'lazy'}
             sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 600px"
             className="object-cover" onError={() => setBildFehlt(true)} />
