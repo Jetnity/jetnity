@@ -29,12 +29,12 @@ export type KopfMenue = {
   offen: boolean
   steuert: string
   onKlick: () => void
-  knopfRef?: Ref<HTMLButtonElement>
 }
 
 type KopfLeisteProps = {
   variante: KopfVariante
   menue: KopfMenue
+  menueRef?: Ref<HTMLButtonElement>
   mitte?: ReactNode
   aktionen?: ReactNode
   darunter?: ReactNode
@@ -47,6 +47,7 @@ type KopfLeisteProps = {
 export default function KopfLeiste({
   variante,
   menue,
+  menueRef,
   mitte,
   aktionen,
   darunter,
@@ -67,7 +68,7 @@ export default function KopfLeiste({
       <div className={cn('kopf-innen', innenClassName)} data-mitte={mitte ? '' : undefined}>
         <div className="kopf-links">
           <button
-            ref={menue.knopfRef}
+            ref={menueRef}
             type="button"
             aria-label="Menü"
             aria-expanded={menue.offen}

@@ -174,8 +174,8 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
             offen: mobileOpen,
             steuert: 'workspace-navigation',
             onKlick: () => { restoreMenuFocus.current = true; setMobileOpen(true) },
-            knopfRef: menuRef,
           }}
+          menueRef={menuRef}
           aktionen={<div ref={setActions} className="workspace-header-actions" />}
         />
         {mobileOpen && <button type="button" className="workspace-backdrop" tabIndex={-1}
