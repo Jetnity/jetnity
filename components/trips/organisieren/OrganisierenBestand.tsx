@@ -4,7 +4,7 @@ import { useId, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 
 import { Preis } from '@/components/ui/preis'
-import { StatusSiegel } from '@/components/ui/status-siegel'
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
 import type { BestandEintrag } from '@/lib/trips/organisieren/bestand'
 import type { Suchkategorie } from '@/lib/trips/workspace-mode'
 
@@ -19,7 +19,7 @@ const ZAHLWORT: Record<Suchkategorie, [string, string]> = {
 const SICHTBAR = 3
 
 function PreisText({ preis }: { preis: BestandEintrag['preis'] }) {
-  if (preis.art === 'preis') return <Preis betrag={preis.betrag} waehrung={preis.waehrung} className="font-semibold" />
+  if (preis.art === 'preis') return <span className="min-w-0 break-words text-meta">Gespeicherter Betrag: <Preis betrag={preis.betrag} waehrung={preis.waehrung} className="font-semibold" /></span>
   return <span className="text-[color:var(--org-muted)]">{preis.art === 'ohne' ? 'ohne Preis' : 'Preis nicht lesbar'}</span>
 }
 
@@ -56,10 +56,9 @@ export default function OrganisierenBestand({
                 {eintrag.wann ? <small>{eintrag.wann}</small> : null}
               </span>
               <span className="org-bestand-stand">
-                <StatusSiegel ton={eintrag.stand === 'gebucht' ? 'gebucht' : 'gewaehlt'}>
-                  {eintrag.stand === 'gebucht' ? 'Gebucht' : 'Ausgewählt'}
-                </StatusSiegel>
+                <LeistungsStatus stand={eintrag.stand === 'gebucht' ? 'vom_nutzer_markiert' : 'unverbindliches_angebot'} />
                 <PreisText preis={eintrag.preis} />
+                <PreisstandHinweis />
               </span>
             </>
           )

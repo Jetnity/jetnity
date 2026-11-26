@@ -1,5 +1,7 @@
 'use client'
 
+import { ExterneAngeboteHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
 import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
 import Reisefoto from './Reisefoto'
@@ -304,6 +306,7 @@ export default function Organisieren({
               hidden={!sucheOffen[t.key]} inert={!sucheOffen[t.key]}
               className={sucheOffen[t.key] ? 'min-w-0' : 'hidden'}>
               {sucheBesucht.includes(t.key) && <>
+                {(t.key === 'fluege' || t.key === 'unterkunft' || t.key === 'aktivitaeten') && <ExterneAngeboteHinweis />}
                 {t.key === 'fluege' && <Flugsuche reise={reise} etappen={etappen} />}
                 {t.key === 'unterkunft' && (
                   <Hotelsuche

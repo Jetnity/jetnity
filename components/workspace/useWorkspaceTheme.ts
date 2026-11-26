@@ -2,11 +2,19 @@
 
 import { useState, useSyncExternalStore } from 'react'
 
+import { WORKSPACE_THEME_KEY } from '@/lib/ui/workspace-theme-boot'
+
 // Browser-local display only: no account setting, auth, database or travel data.
-const STORAGE_KEY = 'jetnity:workspace-theme:v1'
+const STORAGE_KEY = WORKSPACE_THEME_KEY
 const CHANGED = 'jetnity:workspace-theme-change'
 export type WorkspaceTheme = 'light' | 'dark'
 const serverTheme = (): WorkspaceTheme => 'light'
+
+function dokumentThema(next: WorkspaceTheme) {
+  if (typeof document === 'undefined') return
+  if (next === 'dark') document.documentElement.setAttribute('data-workspace-theme', 'dark')
+  else document.documentElement.removeAttribute('data-workspace-theme')
+}
 
 // An old "green" display was dark. Migrate it to the new neutral dark mode
 // without touching a trip, user account or Supabase setting.
@@ -14,6 +22,7 @@ function createThemeStore() {
   let theme: WorkspaceTheme = 'light'
   const listeners = new Set<() => void>()
   const update = (next: WorkspaceTheme) => {
+    dokumentThema(next)
     if (theme === next) return
     theme = next
     listeners.forEach(listener => listener())

@@ -5,6 +5,7 @@ import Suchkalender from '@/components/trips/organisieren/auswahl/Suchkalender'
 import { BedDouble } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   BUCHUNG_AKTION_KLASSE,
@@ -12,6 +13,8 @@ import {
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
+  bookingZeiger,
+  bookingZeigerMerken,
   createBookingMemory,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
@@ -63,12 +66,12 @@ export default function UnterkunftBestand({
     aufenthaltBesitz.current += 1
   }
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   const uebergangsNaechte = abdeckung.bekannt
@@ -158,13 +161,15 @@ export default function UnterkunftBestand({
                   ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={gebucht ? 'booked' : 'selected'} punkt={aufenthalt.item} />
+                  <GespeicherterPreisstand punkt={aufenthalt.item} />
                   {kannBuchungMarkieren(aufenthalt.item) && onBuchungsstatus ? (
                     <button
                       type="button"
                       disabled={pendingId !== null && pendingId !== aufenthalt.item.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(aufenthalt.item.id, !gebucht, event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === aufenthalt.item.id ? 'Wird gespeichert …' : gebucht ? 'Buchung korrigieren' : 'Als gebucht markieren'}

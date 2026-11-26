@@ -1,5 +1,7 @@
 'use client'
 
+import { ExterneAngeboteHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useSuchbereichAktiv } from '../SuchbereichKontext'
 import {
@@ -126,6 +128,7 @@ export default function Flugergebnisse({ suche }: { suche: FlugSuchauftrag }) {
           </button>
         </div>
       </header>
+      <ExterneAngeboteHinweis />
       {phase !== 'bereit' && (
         <div className="flug-status" role="status">
           {phase === 'laedt' && (

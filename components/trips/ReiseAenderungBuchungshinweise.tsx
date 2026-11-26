@@ -51,7 +51,7 @@ export default function ReiseAenderungBuchungshinweise({ vorher, nachher }: { vo
                   </div>
                 </dl>
                 <Hinweis ton="info" className="border-status-neutral-line bg-status-neutral-soft">
-                  <p className="font-semibold">Preisstand</p>
+                  <p className="font-semibold">Preisstand unbekannt</p>
                   <p>{hinweis.preisHinweis}</p>
                   <p className="font-semibold">Preisstand mit Datum/Uhrzeit nicht verfügbar</p>
                   <p className="font-semibold">Preis kann sich ändern</p>

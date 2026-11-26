@@ -1,5 +1,8 @@
 'use client'
 
+import { LeistungsStatus, GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
+import { leistungsstand } from '@/lib/trips/angebot-buchung-anzeige'
+
 import * as React from 'react'
 import { tripMapEntryVisible } from '@/lib/maps/config'
 import { gespeicherteEtappeAnzeigen } from '@/lib/places/titel-name'
@@ -7,7 +10,7 @@ import Etappenplan from './reiseplan/Etappenplan'
 import TripWorkspaceMap from '@/components/trips/TripWorkspaceMap'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import TripIntegratedDay from '@/components/trips/TripIntegratedDay'
-import { buchungstext, vorbereitungenFuerPunkt } from '@/lib/trips/trip-plan-integrated/day'
+import { vorbereitungenFuerPunkt } from '@/lib/trips/trip-plan-integrated/day'
 import type { ReadinessViewItem } from '@/lib/readiness/domain'
 import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
 import PlanpunktEditor from '@/components/trips/PlanpunktEditor'
@@ -30,7 +33,6 @@ import { abdeckungsKante, type AbdeckungsBand } from '@/lib/trips/cross-device-i
 import { istGebucht, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
   ART_BEZEICHNUNG,
-  betragLesbar,
 } from '@/lib/trips/bezeichnungen'
 import {
   reisehinweisText,
@@ -739,18 +741,13 @@ function Planpunkt({
         <strong className="mt-1 block hyphens-auto break-words text-base font-semibold leading-snug text-brand-800">
           {punkt.title}
         </strong>
-        <span className="mt-1 block text-xs text-ink-700">{buchungstext(punkt)}</span>
+        <span className="mt-1 block min-w-0">{punkt.kind === 'note' ? <span className="text-meta text-muted-foreground">Geplant</span> : <LeistungsStatus stand={leistungsstand(punkt)} />}</span>
         {punkt.note && (
           <span className="mt-1 block hyphens-auto break-words text-sm leading-6 text-ink-800">
             {punkt.note}
           </span>
         )}
-        {punkt.priceAmount !== null && punkt.priceCurrency && (
-          <span className="mt-1 block text-xs font-semibold text-brand-700">
-            {betragLesbar(punkt.priceAmount, punkt.priceCurrency)}
-            {punkt.kind === 'flight' ? ' · zum Auswahlzeitpunkt' : ''}
-          </span>
-        )}
+        {punkt.kind !== 'note' && <GespeicherterPreisstand punkt={punkt} />}
       </span>
     </>
   )

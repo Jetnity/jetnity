@@ -166,7 +166,7 @@ describe('Kostenzeile', () => {
       n12Punkt({ id: 'f', kind: 'flight', title: 'Flug', priceAmount: 1380, priceCurrency: 'CHF' }),
       n12Punkt({ id: 's', kind: 'stay', title: 'Hotel', priceAmount: 1260, priceCurrency: 'CHF' }),
     ], { budgetAmount: 4200 }))
-    assert.equal(kostenZeile(bild), 'Geplant ca. CHF 2\u2019640 · Budget CHF 4\u2019200')
+    assert.equal(kostenZeile(bild), 'Geplant ca. CHF 2\u2019640.00 · Budget CHF 4\u2019200.00')
   })
 
   test('mehrere Währungen stehen nebeneinander, ohne Umrechnung', () => {
@@ -174,10 +174,10 @@ describe('Kostenzeile', () => {
       n12Punkt({ id: 'f', kind: 'flight', title: 'Flug', priceAmount: 1380, priceCurrency: 'CHF' }),
       n12Punkt({ id: 'a', kind: 'activity', title: 'A', priceAmount: 40, priceCurrency: 'EUR' }),
     ]))
-    assert.equal(kostenZeile(bild), 'Geplant ca. CHF 1\u2019380 + EUR 40')
+    assert.equal(kostenZeile(bild), 'Geplant ca. CHF 1\u2019380.00 + EUR 40.00')
   })
 
   test('ohne Preise sagt sie das', () => {
-    assert.equal(kostenZeile(kostenbild(reiseMit([], { budgetAmount: 4200 }))), 'Noch keine Preise gespeichert · Budget CHF 4\u2019200')
+    assert.equal(kostenZeile(kostenbild(reiseMit([], { budgetAmount: 4200 }))), 'Noch keine Preise gespeichert · Budget CHF 4\u2019200.00')
   })
 })

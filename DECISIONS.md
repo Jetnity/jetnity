@@ -6630,6 +6630,24 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 
 **Konsequenzen:** Keine Migration, keine neuen Kosten, kein Deploy durch diesen PR. Abreise ohne gespeichertes Land bleibt unübersetzt. #1313 und #1307 teilen Dokumente und einzelne Oberflächen; ihre Branches bleiben unangetastet. Nachweis in `docs/DE_CH_ORTSNAMEN_2026-11-25.md`.
 
+## ADR-0247 – W3 Beträge, Dunkelstart und Doppelklick, PO-Gate 26.11.2026
+
+**Datum:** 26. November 2026. **Status:** Draft-PR #1307. Merge nur durch den Technical Lead nach grüner Pflicht-CI. Kein Production-Deploy.
+
+**Kontext:** Die Abnahme auf Head `29ac61ec6` fand drei Altbefunde. Der PO verlangt sie vor dem Merge, auch wenn sie nicht erst durch W3 entstanden sind.
+
+**Entscheidung:**
+1. Sichtbare Beträge verwenden die gespeicherten Hundertstel. `betragLesbar` rundet nicht mehr auf ganze Franken. Gruppierung U+2019, Dezimalpunkt, immer zwei Stellen. Ein nicht exakt und sicher darstellbarer Wert bleibt «Betrag nicht lesbar». Gespeicherte Zahlen, die Preisprüfung und Anbieterpayloads bleiben.
+2. Die Workspace-Präferenz `jetnity:workspace-theme:v1` setzt vor der Hydration das Attribut `data-workspace-theme` auf `html`. `green` wird `dark`. Ohne lesbaren Speicher bleibt die Fläche hell. Keine Cookie-, Auth- oder CSP-Änderung.
+3. Die gemeinsame Buchungsaktion merkt sich das Ziel des ersten Klicks. Maus-Doppelklick und schneller Touch/Stift auf denselben Eintrag erzeugen keinen zweiten Schreibvorgang. Eine spätere einzelne Aktion, die Tastatur und ein Wiederholversuch nach einem Fehler bleiben möglich.
+4. **PO-Gate:** D6 keine separate Aktion «als ausgewählt markieren»; Auswahl bedeutet, der Punkt ist gespeichert. D7 Aktivitäten ohne Buchungsmarkierung. D8 ohne Preisbeleg bleibt «Preisstand unbekannt», kein erfundenes Datum. D1–D5 und D9 bleiben offen für die Prüfung am iPhone nach dem Release und sind kein PASS. D10 ist lokal offen; die native CI bleibt der separate Nachweis. Das ist die Grenze für einen Code-Merge, nicht eine Freigabe des Production-Speichers.
+
+**Alternativen:** Ganze Beträge ohne `.00` anzeigen – verliert die im Beispiel verlangte einheitliche Hundertstelzeile. Verworfen. Die Oberfläche bis zur Hydration verstecken – wäre ein Schein-Fix. Verworfen. Den zweiten Klick nur sperren, solange das Promise läuft – das ist der bisherige Fehler bei einem schnellen Readback. Verworfen.
+
+**Begründung:** Die drei Stellen sind Anzeige und Gesten am vorhandenen Vertrag. Sie ändern keine Buchung, kein Geldmodell und keine Anmeldung.
+
+**Konsequenzen:** Draft #1307. Keine Migration, keine neuen Kosten, kein Deploy durch Cursor. Die iPhone-Abnahme und die Dev-Konto-Prüfung bleiben offen.
+
 ## ADR-0246 – CH→AT Stage 3 bleibt ein unangewandtes Paket mit reserviertem V7
 
 **Datum:** 25. November 2026. **Status:** technische Dev-Vorbereitung auf PO-Go, Issue #1317. Kein Merge und kein Production-Lauf durch Cursor.

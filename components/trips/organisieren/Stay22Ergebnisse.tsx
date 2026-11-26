@@ -1,5 +1,7 @@
 'use client'
 
+import { ExterneAngeboteHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Columns2, List, Map, Maximize2, Minimize2, RotateCcw, X } from 'lucide-react'
 import { Ladeflaeche } from '@/components/ui/ladeplatzhalter'
@@ -79,6 +81,7 @@ export default function Stay22Ergebnisse({ suche, schliessen }: { suche: Stay22S
       <button className="stay22-smallbutton stay22-iconbutton" type="button" title="Ausblenden" onClick={schliessen}><X size={16} aria-hidden="true" /><span className="sr-only">Ausblenden</span></button>
     </div>
     <dialog ref={dialog} role={gross ? 'dialog' : 'region'} aria-modal={gross || undefined} aria-label="Hotelkarte und Ergebnisliste" className={'stay22-panel' + (gross ? ' stay22-expanded' : '')} onCancel={e => { e.preventDefault(); vergroessern(false) }}>
+      <ExterneAngeboteHinweis />
       <div className="stay22-viewbar">
         <div role="group" aria-label="Ergebnisansicht">{ansichten.map(({ wert, text, Icon }) => <button key={wert} type="button" className="stay22-smallbutton" aria-pressed={ansicht === wert} onClick={() => setAnsicht(wert)}><Icon size={16} aria-hidden="true" />{text}</button>)}</div>
         <div className="stay22-viewactions">

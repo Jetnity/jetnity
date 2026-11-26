@@ -28,6 +28,7 @@
   --wn-text-ruhig: var(--white-mint-muted, #4a5f57);
 }
 
+html[data-workspace-theme="dark"] .workspace-shell,
 .workspace-shell[data-workspace-theme="dark"] {
   --wn-feld-kante: #8ea3b1;
   --wn-feld-grund: var(--workspace-bg);

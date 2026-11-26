@@ -1,7 +1,7 @@
 import type { Trip, TripItem } from '@/types/trips'
 import type { ReadinessViewItem } from '@/lib/readiness/domain'
 import type { PreparationZiel } from '@/lib/readiness/preparation-premium-experience-5'
-import { kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { leistungsstand, W3_STATUS_TEXT } from '@/lib/trips/angebot-buchung-anzeige'
 import { allePlanpunkte } from './manual'
 
 const cmp = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0
@@ -36,9 +36,7 @@ export function gespeicherteKosten(reise: Trip, dayId: string | null) {
     ambiguous: inventory.ambiguous, complete: missing === 0 && invalid === 0 && inventory.ambiguous.length === 0 }
 }
 export function buchungstext(item: TripItem): string {
-  if (!kannBuchungMarkieren(item)) return 'Geplant'
-  if (item.bookingStatus === 'booked') return item.bookingSource === 'user' ? 'Gebucht · von dir bestätigt' : 'Buchungsstand prüfen'
-  return item.bookingStatus === 'unconfirmed' ? 'Ausgewählt · Buchung nicht bestätigt' : 'Buchungsstand prüfen'
+  return item.kind === 'note' ? 'Geplant' : W3_STATUS_TEXT[leistungsstand(item)]
 }
 export function vorbereitungenFuerPunkt(itemId: string, tasks: readonly ReadinessViewItem[]) {
   const unique = new Map<string, { id: string; title: string; ziel: PreparationZiel; userStatus: string; currentness: string }>()

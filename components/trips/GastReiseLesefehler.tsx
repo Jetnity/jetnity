@@ -81,8 +81,8 @@ export function GastReiseLeseWarte({ className }: { className?: string }) {
         {GAST_CREATE_ERHALTUNG_TEXTE.wartetNeben}
       </p>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-hidden="true">
-        <div className="h-40 animate-pulse rounded-[26px] bg-white/70 motion-reduce:animate-none" />
-        <div className="h-40 animate-pulse rounded-[26px] bg-white/70 motion-reduce:animate-none" />
+        <div data-gast-lese-platzhalter className="h-40 animate-pulse rounded-[26px] motion-reduce:animate-none" />
+        <div data-gast-lese-platzhalter className="h-40 animate-pulse rounded-[26px] motion-reduce:animate-none" />
       </div>
     </div>
   )

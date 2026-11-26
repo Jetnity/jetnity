@@ -1,5 +1,6 @@
 /* Neutral dark Workspace mode. Green is a brand accent, NOT a third theme.
    Presentation only, no changes to data, auth, bookings or providers. */
+html[data-workspace-theme="dark"] .workspace-shell,
 .workspace-shell:where([data-workspace-theme="dark"]) {
   --workspace-bg: #121921;
   --workspace-panel: #202c37;
@@ -31,6 +32,29 @@
   color: var(--workspace-ink);
   background: var(--workspace-bg);
   color-scheme: dark;
+}
+/* The two guest loading cards sit in the first server paint. A utility such as
+   bg-white/70 has the same weight as the general remap and stays light.
+   This rule is stronger and uses the dark panel even while the shell attribute
+   is still the server value. */
+[data-gast-lese-platzhalter] {
+  background-color: rgb(255 255 255 / .7);
+}
+html[data-workspace-theme="dark"] [data-gast-lese-platzhalter] {
+  background-color: var(--workspace-panel, #202c37);
+}
+/* Before hydration the shell attribute is still "light", so white-mint.css
+   (the content text rules) paints dark ink on this already dark surface.
+   These rules win that collision. Light mode never matches them. The white
+   header and sidebar keep their own colours. */
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.text-brand-600, .text-brand-700, .text-brand-800, .text-brand-900, .text-ink-900, .text-ink-950) {
+  color: var(--workspace-ink, #f4f7f9);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.text-ink-500, .text-ink-600, .text-ink-650, .text-ink-700, .text-ink-800) {
+  color: var(--workspace-muted, #cad6de);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] {
+  color: var(--workspace-ink, #f4f7f9);
 }
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;

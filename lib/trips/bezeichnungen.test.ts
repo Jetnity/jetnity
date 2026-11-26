@@ -16,40 +16,54 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { betragLesbar, interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { BETRAG_NICHT_LESBAR, betragLesbar, interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 
 describe('Ein Betrag wird lesbar', () => {
-  test('Tausender bekommen den Schweizer Trenner U+2019', () => {
-    assert.equal(betragLesbar(3000, 'CHF'), 'CHF 3\u2019000')
+  test('Tausender bekommen den Schweizer Trenner U+2019 und behalten die Hundertstel', () => {
+    assert.equal(betragLesbar(3000, 'CHF'), 'CHF 3\u2019000.00')
   })
 
-  test('der Trenner ist kein Apostroph und kein Punkt', () => {
-    const wert = betragLesbar(3000, 'CHF')
+  test('Gruppierung ist U+2019, Dezimaltrennung ist der Punkt', () => {
+    const wert = betragLesbar(3000.5, 'CHF')
 
+    assert.equal(wert, 'CHF 3\u2019000.50')
     assert.ok(!wert.includes("'"), 'U+0027 wäre die andere ICU-Fassung')
-    assert.ok(!wert.includes('.'), 'ein Punkt wäre die deutsche Schreibweise')
+    assert.ok(!wert.includes(','), 'ein Komma wäre die deutsche Dezimaltrennung')
     assert.ok(!wert.includes('\u00a0'), 'ein geschütztes Leerzeichen käme aus Intl')
+    assert.ok(wert.includes('\u2019'))
+    assert.ok(wert.includes('.'))
   })
 
-  test('unter tausend bleibt ungruppiert', () => {
-    assert.equal(betragLesbar(412, 'CHF'), 'CHF 412')
-    assert.equal(betragLesbar(0, 'CHF'), 'CHF 0')
+  test('unter tausend bleibt ungruppiert, Null bleibt exakt', () => {
+    assert.equal(betragLesbar(412, 'CHF'), 'CHF 412.00')
+    assert.equal(betragLesbar(0, 'CHF'), 'CHF 0.00')
+    assert.equal(betragLesbar(-0, 'CHF'), 'CHF 0.00')
   })
 
   test('mehrere Gruppen werden alle getrennt', () => {
-    assert.equal(betragLesbar(1234567, 'CHF'), 'CHF 1\u2019234\u2019567')
+    assert.equal(betragLesbar(1234567, 'CHF'), 'CHF 1\u2019234\u2019567.00')
   })
 
-  test('Rappen werden gerundet, nicht abgeschnitten', () => {
-    assert.equal(betragLesbar(2999.5, 'CHF'), 'CHF 3\u2019000')
-    assert.equal(betragLesbar(2999.4, 'CHF'), 'CHF 2\u2019999')
+  test('Hundertstel bleiben stehen und werden nicht auf Franken gerundet', () => {
+    assert.equal(betragLesbar(420.5, 'CHF'), 'CHF 420.50')
+    assert.equal(betragLesbar(79.9, 'CHF'), 'CHF 79.90')
+    assert.equal(betragLesbar(2999.5, 'CHF'), 'CHF 2\u2019999.50')
+    assert.equal(betragLesbar(2999.4, 'CHF'), 'CHF 2\u2019999.40')
+    assert.equal(betragLesbar(-389.6, 'CHF'), 'CHF -389.60')
+    assert.notEqual(betragLesbar(420.5, 'CHF'), 'CHF 421')
+  })
+
+  test('unsichere oder ungenaue Werte werden nicht geraten', () => {
+    assert.equal(betragLesbar(Number.NaN, 'CHF'), `CHF ${BETRAG_NICHT_LESBAR}`)
+    assert.equal(betragLesbar(Number.POSITIVE_INFINITY, 'CHF'), `CHF ${BETRAG_NICHT_LESBAR}`)
+    assert.equal(betragLesbar(Number.MAX_SAFE_INTEGER, 'CHF'), `CHF ${BETRAG_NICHT_LESBAR}`)
   })
 
   test('jede Währung erscheint als ISO-Code, nicht als Symbol', () => {
     // Ein Symbol käme aus ICU und wäre damit dieselbe Wette wie der Trenner.
-    assert.equal(betragLesbar(3000, 'EUR'), 'EUR 3\u2019000')
-    assert.equal(betragLesbar(3000, 'USD'), 'USD 3\u2019000')
-    assert.equal(betragLesbar(3000, 'THB'), 'THB 3\u2019000')
+    assert.equal(betragLesbar(3000, 'EUR'), 'EUR 3\u2019000.00')
+    assert.equal(betragLesbar(3000, 'USD'), 'USD 3\u2019000.00')
+    assert.equal(betragLesbar(3000, 'THB'), 'THB 3\u2019000.00')
   })
 
   test('die Ausgabe hängt nicht von der Umgebung ab', () => {

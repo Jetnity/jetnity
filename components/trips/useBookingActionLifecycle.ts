@@ -18,15 +18,49 @@ export const BUCHUNG_ABGELEHNT =
 export const BUCHUNG_AKTION_KLASSE =
   'inline-block min-h-11 min-w-0 max-w-full whitespace-normal break-words rounded-full border border-line-300 bg-white px-3 py-2 text-left align-middle text-sm font-semibold leading-5 text-brand-800 transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50'
 
+export const BUCHUNG_DOPPELKLICK_MS = 500
+
+export type BookingZeigerArt = 'mouse' | 'touch' | 'pen' | 'keyboard' | 'direct'
+
+export type BookingZeiger = {
+  detail: number
+  art: BookingZeigerArt
+}
+
+type BookingGesture = {
+  itemId: string
+  intent: boolean
+  at: number
+}
+
 export type BookingMemory = {
   generation: number
   pendingId: string | null
   focus: HTMLButtonElement | null
   focusSerial: number
+  gesture: BookingGesture | null
+}
+
+const zeigerArt = new WeakMap<EventTarget, 'mouse' | 'touch' | 'pen'>()
+
+export function bookingZeigerMerken(event: { currentTarget: EventTarget | null; pointerType: string }): void {
+  if (!event.currentTarget) return
+  if (event.pointerType === 'touch' || event.pointerType === 'pen' || event.pointerType === 'mouse') {
+    zeigerArt.set(event.currentTarget, event.pointerType)
+  }
+}
+
+export function bookingZeiger(event: { currentTarget: EventTarget | null; detail?: number } | null | undefined): BookingZeiger {
+  if (!event) return { detail: 0, art: 'direct' }
+  const detail = event.detail ?? 0
+  const gemerkt = event.currentTarget ? zeigerArt.get(event.currentTarget) : undefined
+  if (gemerkt === 'touch' || gemerkt === 'pen') return { detail, art: gemerkt }
+  if (detail === 0) return { detail, art: 'keyboard' }
+  return { detail, art: 'mouse' }
 }
 
 export function createBookingMemory(): BookingMemory {
-  return { generation: 0, pendingId: null, focus: null, focusSerial: 0 }
+  return { generation: 0, pendingId: null, focus: null, focusSerial: 0, gesture: null }
 }
 
 export function dropBookingOwnership(memory: BookingMemory): void {
@@ -34,6 +68,7 @@ export function dropBookingOwnership(memory: BookingMemory): void {
   memory.pendingId = null
   memory.focus = null
   memory.focusSerial += 1
+  memory.gesture = null
 }
 
 export function bookingTripChanged(memory: BookingMemory, seenTripId: string, tripId: string): boolean {
@@ -76,6 +111,13 @@ export function finishBooking(memory: BookingMemory, token: number, itemId: stri
   return true
 }
 
+function doppelGeste(memory: BookingMemory, itemId: string, zeiger: BookingZeiger, jetzt: number): boolean {
+  if (zeiger.detail > 1) return true
+  const vorher = memory.gesture
+  if (!vorher || vorher.itemId !== itemId || jetzt - vorher.at >= BUCHUNG_DOPPELKLICK_MS) return false
+  return zeiger.art === 'mouse' || zeiger.art === 'touch' || zeiger.art === 'pen'
+}
+
 export function startBookingAction(
   memory: BookingMemory,
   onBuchungsstatus: (itemId: string, gebucht: boolean) => Promise<string | null>,
@@ -83,9 +125,13 @@ export function startBookingAction(
   gebucht: boolean,
   button: HTMLButtonElement | null,
   publish: (pendingId: string | null, message: string) => void,
+  zeiger: BookingZeiger = { detail: 0, art: 'direct' },
 ): void {
+  const jetzt = Date.now()
+  if (doppelGeste(memory, itemId, zeiger, jetzt)) return
   const token = claimBooking(memory, itemId, button)
   if (token === null) return
+  memory.gesture = { itemId, intent: gebucht, at: jetzt }
   publish(itemId, '')
   void (async () => {
     const fehler = await readBookingResult(() => onBuchungsstatus(itemId, gebucht))

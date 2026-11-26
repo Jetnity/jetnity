@@ -1,5 +1,7 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+
 // components/trips/AktivitaetKarte.tsx
 //
 // Eine Aktivitätsoption mit Jetnity-Labels. Nur rendern, wenn eine echte Option da ist.
@@ -48,7 +50,7 @@ export default function AktivitaetKarte({
         : option.preisRolle === 'rrp_schedule'
           ? 'Kalenderhinweis, keine aktuelle Verfügbarkeit'
           : option.preisRolle === 'rrp_check'
-            ? 'aktuelle Prüfung'
+            ? 'Preis aus Verfügbarkeitsprüfung'
             : 'Preisgrundlage unbekannt'
   const preis =
     option.preis !== null && option.preisWaehrung
@@ -59,6 +61,7 @@ export default function AktivitaetKarte({
   return (
     <article className="min-w-0 max-w-full rounded-2xl border border-line-200 bg-white p-3 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
+        <LeistungsStatus stand="unverbindliches_angebot" />
         {option.labels.map((marke: ActivityMarke) => (
           <span
             key={marke}
@@ -131,6 +134,7 @@ export default function AktivitaetKarte({
         <div className="min-w-0">
           <p className="text-xs text-ink-700">{basis}</p>
           <p className="text-lg font-semibold text-brand-800">{preis}</p>
+          <PreisstandHinweis />
           {option.preisWaehrung && option.preisWaehrung !== 'CHF' ? (
             <p className="text-xs text-ink-700">Keine Umrechnung nach CHF.</p>
           ) : null}

@@ -1,5 +1,7 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+
 import { useState } from 'react'
 import { Heart, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -29,9 +31,9 @@ export default function SavedOffers({ offers }: { offers: SavedOffer[] }) {
         {(o.starts_on || o.ends_on) && <p className="mt-2 text-sm text-ink-700">{o.starts_on ?? 'Anfang offen'} {o.starts_at?.slice(0, 5)} {o.start_timezone} → {o.ends_on ?? 'Ende offen'} {o.ends_at?.slice(0, 5)} {o.end_timezone}</p>}
         <dl className="mt-3 grid gap-2 rounded-2xl border border-line-200 bg-surface-50 p-3 text-sm text-ink-800 sm:grid-cols-2" data-offer-evidence>
           <div><dt className="font-semibold">Herkunft</dt><dd>{evidence.herkunft}</dd></div>
-          <div><dt className="font-semibold">Preis- und Verfügbarkeitsstand</dt><dd>{evidence.preis}</dd></div>
+          <div><dt className="font-semibold">Preis- und Verfügbarkeitsstand</dt><dd>{evidence.preis}<PreisstandHinweis /></dd></div>
           <div><dt className="font-semibold">Gültigkeit der gespeicherten Referenz</dt><dd>{evidence.frist}</dd></div>
-          <div><dt className="font-semibold">Buchungsstand</dt><dd>{evidence.buchung}</dd></div>
+          <div><dt className="font-semibold">Buchungsstand</dt><dd><LeistungsStatus stand="unverbindliches_angebot" />{evidence.buchung}</dd></div>
         </dl>
         <p className="mt-3 max-w-prose text-xs leading-5 text-ink-600">Die Merkliste speichert keine aktuelle Preiszusage. Prüfe beim Anbieter selbst das konkrete Angebot mit Datum, Personen und Bedingungen. Ein Klick oder eine Übernahme in den Reiseplan ist keine Buchung.</p>
         {url ? <a href={url} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" className="mt-3 inline-flex min-h-11 items-center rounded-full border border-line-200 px-5 text-sm font-semibold text-brand-800">Preis und Verfügbarkeit beim Anbieter neu prüfen<span className="sr-only">, neuer Tab</span></a> : <p className="mt-3 text-sm">Der gespeicherte Link kann nicht sicher geöffnet werden. Bitte starte eine neue Suche beim Anbieter.</p>}

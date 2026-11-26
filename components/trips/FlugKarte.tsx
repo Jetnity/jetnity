@@ -1,5 +1,7 @@
 'use client'
 
+import { LeistungsStatus, PreisstandHinweis } from '@/components/trips/LeistungsStatus'
+
 // components/trips/FlugKarte.tsx
 //
 // Eine Flugoption: Airline, Route, Zeiten, Dauer, Stopps, Preis, Jetnity-Gründe.
@@ -50,6 +52,7 @@ export default function FlugKarte({
   return (
     <article className="rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
+        <LeistungsStatus stand="unverbindliches_angebot" />
         {option.labels.map((marke) => (
           <span
             key={marke}
@@ -111,10 +114,11 @@ export default function FlugKarte({
 
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-line-100 pt-4">
         <div>
-          <p className="text-xs text-ink-700">Preis zum Auswahlzeitpunkt</p>
+          <p className="text-xs text-ink-700">Angebotspreis</p>
           <p className="text-lg font-semibold text-brand-800">
             {betragLesbar(option.priceAmount, option.priceCurrency)}
           </p>
+          <PreisstandHinweis />
         </div>
         {onUebernehmen && <button
           type="button"

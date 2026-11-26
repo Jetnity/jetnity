@@ -19,6 +19,7 @@ import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-car
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import DiscoverCarsMietwagen from '@/components/trips/rental/DiscoverCarsMietwagen'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
@@ -37,6 +38,8 @@ import {
   rentalStillOwned,
   rentalTripChanged,
   restoreOwnedFocus,
+  bookingZeiger,
+  bookingZeigerMerken,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
 import { ARBEITSFELD_SPALTEN_KLASSE } from '@/lib/trips/cross-device-interaction-1'
@@ -81,12 +84,12 @@ export default function MietwagenBereich({
   }
   if (bookingItemDisappeared(memory, aktionIds)) setPendingId(null)
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   return (
@@ -129,13 +132,15 @@ export default function MietwagenBereich({
                   </p>
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={punkt.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={punkt.bookingStatus === 'booked' ? 'booked' : 'selected'} punkt={punkt} />
+                  <GespeicherterPreisstand punkt={punkt} />
                   {kannBuchungMarkieren(punkt) && onBuchungsstatus ? (
                     <button
                       type="button"
                       disabled={pendingId !== null && pendingId !== punkt.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(punkt.id, punkt.bookingStatus !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === punkt.id ? 'Wird gespeichert …' : punkt.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}

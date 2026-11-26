@@ -1,5 +1,33 @@
 # Jetnity – Active Work Status
 
+## 26.11.2026 — W3 drei Korrekturen, Draft #1307
+
+Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.
+
+**PO-Gate, ausdrücklich:** D6 keine eigene Aktion «als ausgewählt markieren»; ein gespeicherter Punkt ist die Auswahl. D7 Aktivitäten ohne Buchungsmarkierung. D8 «Preisstand unbekannt» ohne Beleg, kein erfundenes Datum. D1–D5 und D9 bleiben OFFEN und werden nach Release mit Work/PO am iPhone geprüft, nicht als PASS gezählt. D10 bleibt lokal offen; die native CI ist separat. Der PO akzeptiert diese Grenzen für einen Code-Merge nach TL-PASS und voller neuer CI, nicht als Production-Speicherabnahme.
+
+- **A Beträge:** `betragLesbar` zeigt gespeicherte Hundertstel, de-CH, Trenner U+2019, Dezimalpunkt, zwei Nachkommastellen. Keine Rundung auf Franken. Beispiel gerendert: CHF 420.50 + 610.00 + 79.90 = CHF 1’110.40, nach Flugmarkierung gebucht 420.50 und ausgewählt 689.90, Budget 1’500.00, Rest 389.60. Ungenaue oder unsichere Werte heissen «Betrag nicht lesbar». Gespeicherte Beträge, Preisprüfung und Anbieterpayloads bleiben.
+- **B Hell-Aufblitzen:** Ein Skript im Dokumentkopf setzt `data-workspace-theme="dark"` aus `jetnity:workspace-theme:v1`, bevor der Körper gezeichnet wird. `green` wird `dark`. Blockierter oder leerer Speicher bleibt hell. Die dunklen Workspace-Tokens gelten schon über das `html`-Attribut, nicht erst nach der Hydration. Keine neue Sperre, kein Verstecken der Oberfläche.
+- **C Doppelklick:** Am gemeinsamen Weg für Flug, Unterkunft, Verbindung und Mietwagen gilt das Ziel des ersten Klicks. Ein zweiter Mausklick, Doppelklick (`detail` > 1) oder Touch/Stift innerhalb von 500 ms auf denselben Eintrag schreibt nicht noch einmal. Tastatur und ein späterer Einzelklick bleiben möglich. Fehler und anschliessender Einzelversuch schreiben erneut. Pending, Reisewechsel und verschwundener Eintrag bleiben wie bisher.
+
+**Gemessen, lokal, Production-Build `next start`, keine externen Anfragen (0):**
+
+| Schritt | Erwartet | Tatsächlich | Ergebnis |
+|---|---|---|---|
+| Vorher, JavaScript aus, 390 px | helle Prüffläche | Shell `rgb(242, 247, 244)`, Luminanz 0,919, Text «Der Browserspeicher wird geprüft.» | Vorher-Befund |
+| Chromium dunkel, erste Frames während der Prüfung | dunkle Fläche ab erstem Frame | `html=dark`, Shell `rgb(18, 25, 33)`, Luminanz 0,009, 10 Warte-Frames, 0 helle | PASS |
+| Chromium hell, fehlend, blockiert | hell, kein Absturz | Luminanz 0,919, Hydration-Fehler 0 | PASS |
+| Chromium `green` | wird dunkel, Speicher `dark` | Shell dunkel, gespeichert `dark`, 0 helle Warte-Frames | PASS |
+| Harter Reload dunkel, Chromium | bleibt dunkel | Shell `rgb(18, 25, 33)` | PASS |
+| WebKit 320/390/1440 hell und dunkel über HTTPS | gleiche Summen, Shell je Theme | 6/6 Summen, Shell hell `rgb(242, 247, 244)` bzw. dunkel `rgb(18, 25, 33)`, Hydration 0 | PASS |
+| Chromium und WebKit, 320/390/1440, hell/dunkel | CHF 1’110.40, Budget 1’500.00, Rest 389.60, kein CHF 421 | 12/12, `rounded` falsch, «ohne Preis» vorhanden | PASS |
+| Doppelklick «Als gebucht markieren» | genau eine Markierung, Quelle `user` | danach `booked`/`user`, nicht zurück auf unconfirmed | PASS |
+| Danach ein Klick «Buchung korrigieren» | wird unconfirmed | `bookingStatus` unconfirmed, Quelle null | PASS |
+| Zwei schnelle Touch-Taps | eine Markierung | `booked`/`user` | PASS |
+| Tastatur Enter | eine Markierung | `booked`/`user` | PASS |
+
+D1–D5 und D9 bleiben OFFEN. main `59ba8c8cb` (#1318, AT Stage 3) ist in diesem Branch enthalten. CI [45733859653](https://github.com/Jetnity/jetnity/actions/runs/45733859653) auf `5de3e9cab` hatte zwei Folgen des Dunkelstarts: der Locator `[data-workspace-theme="dark"]` traf `html` und die Shell, und der Schlüssel-Pin suchte `jetnity:workspace-theme:v1` noch in `useWorkspaceTheme.ts`. Der Locator ist jetzt `.workspace-shell[data-workspace-theme="dark"]`. Der Pin liest den Schlüssel in `lib/ui/workspace-theme-boot.ts` und prüft, dass die Theme-Datei genau diese Konstante verwendet. Die alte Bezeichnung «grünen Workspace» heisst «hellen und dunklen». Die zwei Ladeplatzhalter haben `data-gast-lese-platzhalter` und eine stärkere dunkle Fläche, weil `bg-white/70` die allgemeine Umfärbung überstimmt hat. Die Messung prüft zwölf Frames der Platzhalter, nicht nur den Shell-Hintergrund. Eine doppelte Buchungskorrektur hat einen eigenen Test und schreibt einmal. CI [45741045729](https://github.com/Jetnity/jetnity/actions/runs/45741045729) auf `3cf6c2a5d` lief in das 30-Minuten-Limit; die Messung ist danach zeitlich begrenzt. Auf `c73858bfd` ist die Pflicht-CI [45745109255](https://github.com/Jetnity/jetnity/actions/runs/45745109255) grün. Die Textregeln in `white-mint.css` (262–268) blieben dabei aktiv, weil die Shell vor der Hydration noch `light` trägt: dunkle Schrift auf der schon dunklen Fläche, 1,18:1 und 2,58:1. Die Kollision wird nur im Dunkelstart überschrieben. Gemessen, zwölf Frames, echte Styles: Dunkel Shell und Haupttext 16,45:1, Nebentext und Credit 11,95:1, Kopfzeile 14,94:1. Hell unverändert: Shell und Haupttext 13,79:1, Nebentext 6,32:1, Kopfzeile 14,94:1, Credit 4,56:1. Nächster Schritt: Pflicht-CI auf dem neuen Head, TL-Review. Kein Ready durch Cursor.
+
 ## 25.11.2026 — Official Truth AT Stage 3, nur Dev-Vorbereitung #1317
 
 Branch `cursor/official-truth-at-stage3-dev-a92d` von `main` `69ab3fa203f45cd97ee3ed5187ca51a0497c625b`. Draft bis zum Technical-Lead-Review. Kein Ready, kein Merge, kein Deploy, keine Production-SQL, keine Faktenerneuerung, keine Publikation, kein Besucherflag, keine Kosten.
@@ -27,6 +55,26 @@ Branch `cursor/organisieren-mobile-routing-9117`, Draft #1312. `main` `1fa5ee8f9
 - Übernommen aus #1310: gespeicherte Leistungen zuerst, klarer Leerzustand, Anbietersuche nur nach Knopf oder ausdrücklichem Einstieg mit Etappe, Ort oder Kante, keine alte tiefe Scrollposition. #1310 bleibt offen für den Technical Lead.
 - Die erste Zeile rückt auf 390 px 8 px über die fixierte Leiste. «Flug suchen» und «Unterkunft suchen» im Planpunkt bleiben.
 - Vor dem Such-Fix rot: die Booking-Fläche steht sofort im Dokument. Danach WebKit mit echter Shell, 30 Kombinationen, lokal grün. Die Pflicht-CI startet dieselbe Prüfung auf Chromium, weil der Runner kein WebKit-Binary hat. Der Harness bleibt über den esbuild-Einstieg erreichbar. Seine Hilfsfunktionen und die Leisten-Konstante sind nicht exportiert, weil nur die Datei selbst einen Aufrufer hat. Kein Merge, kein Production-Deploy. #1313 unberührt.
+
+## 25.11.2026 — W3-Abnahme (unabhängig), Draft #1307
+
+Gleicher Branch, gleicher PR, gleiche Agent-Sitzung. Getestet wurde Head `29ac61ec61df0419fe81ccf92c78b20d391dedc6` (enthält `main` mit #1312, #1313, #1315, #1316; `git log HEAD..origin/main` leer). Dev-Vorschau `7R7Wpd7mPqjdv3Q9ywMk4zRCExaN` ist Ready, liegt aber hinter Vercel-SSO. Kein Ready, kein Merge, keine Production-Änderung, keine Migration, keine Kosten, keine Login-/2FA-Änderung. Das Protokoll steht als Kommentar im PR.
+
+- **Umgebung:** exakter Head als lokaler Production-Build (`next build`/`next start`), synthetische Gastreisen A (Flug, zwei Unterkünfte, Aktivität, Budget CHF 1’500), B (CHF und EUR, Budget CHF 800) und C (leer). Alle Fremd-Hosts blockiert und protokolliert, Supabase nicht erreichbar gesetzt. Kein Dev-Konto, kein Production-Zugriff, keine echten Personendaten, keine Anbieter- oder KI-Aufrufe.
+- **Ergebnis lokal:** 8 Kombinationen (Chromium und WebKit, 390 und 1440 px, hell und dunkel) je 43 Schritte: 328 PASS, 16 OFFEN, 0 FAIL. Zusatzlauf 320 px: 164 PASS, 8 OFFEN, 0 FAIL. Die Messung ist kalibriert (eingebaute Fehler werden erkannt). Neun W3-nahe Testdateien: 162 bestanden, 0 fehlgeschlagen.
+- **Kein W3-Fehler gefunden, kein Code geändert.** Hinweise ohne Fix: Der Betrag wird einzeln auf ganze Franken gerundet (421 + 690 = 1111 gegenüber Summe 1110); ein Mausdoppelklick auf «Buchung korrigieren» kann nach dem Anzeigewechsel als zweite Umschaltung zählen (kein Duplikat, Anzeige = Speicher); Flug, Unterkunft und Aktivität zeigen kein Standdatum, weil das Datenmodell keinen Preisstand-Zeitpunkt speichert (ehrlich «Preisstand unbekannt»); beim Laden blitzt die helle Prüfansicht «Der Browserspeicher wird geprüft.» im Dunkelmodus kurz auf (nicht W3, nicht in diesem PR geändert).
+- **OFFEN (nie als PASS gezählt):** Browsertest auf der Dev-Vorschau (SSO), Abnahme mit autorisiertem Dev-Testkonto (kein Konto, `SUPABASE_ACCESS_TOKEN` ungültig), Konten-Speichern, Revisions-/Konfliktschutz und Eigentum im Konto, Unverändert-Nachweis der Bestandsreisen in der Dev-Datenbank, «als ausgewählt markieren» als eigene Aktion (gibt es nicht), «gebucht» für Aktivitäten (bewusst nicht vorgesehen, Entscheid Product Owner), «Angebot speichern» aus einer Anbietersuche, echtes Gerät, nativer PostgreSQL-Lauf lokal (CI läuft ihn).
+- **Aufräumen:** Es wurden keine Reisen in einer Dev-Datenbank angelegt; die Gastdaten lebten nur in kurzlebigen Browserkontexten.
+- **Nächster Schritt:** Technical Lead prüft das Protokoll im PR. Merge erst nach ausdrücklichem Product-Owner-Go. Der Production-Speichertest folgt getrennt durch Work.
+
+## 24.11.2026 — W3 CI-Sollwerte, Draft #1307
+
+Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgangshead `27a4654ed2ffad84d269d4a8e255eb88ca9f7a85`. Einmaliger Auftrag: nur die roten W3-Regressionen aus CI [45485351071](https://github.com/Jetnity/jetnity/actions/runs/45485351071), Job Repository verification [138769138386](https://github.com/Jetnity/jetnity/actions/runs/45485351071/job/138769138386). Der rote Typecheck, Lint & Build ist der nachgelagerte Aggregate. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy.
+
+- **Ursache:** Die Darstellung sagt bereits «Unverbindliches Angebot – nicht gebucht» und, nur bei `bookingSource: user`, «Von dir als gebucht markiert – nicht vom Anbieter bestätigt». Gespeicherte Beträge ohne Suchzeitpunkt zeigen «Preisstand unbekannt». `lodging-coverage-truth-1.test.ts`, `organisieren-action-recovery-1.test.ts` und `trip-plan-premium-experience-4.test.ts` verlangten noch «Ausgewählt», «Gebucht» oder «zum Auswahlzeitpunkt». `detail.test.ts` setzte `bookingStatus: booked` ohne Nutzerquelle; Hinweis und Kostenstand blieben deshalb leer bzw. «ausgewählt». Die Sperre «Anbieter bestätigt» traf die vorgeschriebene Verneinung.
+- **Änderung:** Nur Solltexte und die Detail-Fixture. Eigene Markierung nur über `gebuchteBuchung`. Ohne Quelle bleiben Anbietername, Link, Referenz, Betrag und Zeitpunkt ein unverbindliches Angebot. Positive Anbieterbestätigung, Zahlung und «bezahlt» bleiben verboten. Der Reiseplan bindet `GespeicherterPreisstand` ohne Suchzeitpunkt.
+- **Nicht geändert:** Buchungs-, Preis- und Speicherlogik, Datenmodell, DB, Login/2FA, Provider, Production, Kosten, CI-Konfiguration. #1308 und andere PRs unberührt.
+- **Tests:** Die vier Dateien lokal 66 bestanden, 0 fehlgeschlagen. `npm run test:core` lokal: 10573 bestanden, 23 fehlgeschlagen, 10 übersprungen. Die 23 sind hier fehlende PostgreSQL-16-Binaries, ein Dateisystem-Beweis (`in_place` wurde `recorded` statt `rejected`) und ein Playwright-Klick, den die Workspace-Navigation verdeckt. Keiner davon liegt in den vier W3-Dateien. Auf dem GitHub-Runner von CI 45485351071 waren genau die acht W3-Sollwertfehler rot, die nativen Beweise dort grün. Exact-Head-CI auf dem neuen Head und die isolierte Dev-Vorschau bleiben vor der Work-Abnahme offen.
 
 ## 22.11.2026 — Main-CI-Reparatur vor #1240 und #1272
 

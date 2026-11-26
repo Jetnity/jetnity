@@ -12,6 +12,7 @@ import { ArrowRightLeft } from 'lucide-react'
 import { Ladeplatzhalter } from '@/components/ui/ladeplatzhalter'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import { GespeicherterPreisstand } from '@/components/trips/LeistungsStatus'
 import MietwagenBereich from '@/components/trips/MietwagenBereich'
 import TwelveGoAffiliateLinks from '@/components/trips/TwelveGoAffiliateLinks'
 import OrganisierenFeldgruppe from '@/components/trips/OrganisierenFeldgruppe'
@@ -30,6 +31,8 @@ import {
   BUCHUNG_WIRD_GESPEICHERT,
   bookingItemDisappeared,
   bookingTripChanged,
+  bookingZeiger,
+  bookingZeigerMerken,
   createBookingMemory,
   startBookingAction,
 } from '@/components/trips/useBookingActionLifecycle'
@@ -109,12 +112,12 @@ export default function MobilitaetBereich({
   }
   if (bookingItemDisappeared(memory, abdeckungIds)) setPendingId(null)
 
-  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null) => {
+  const setzen = (itemId: string, gebucht: boolean, button: HTMLButtonElement | null, zeiger = bookingZeiger(null)) => {
     if (!onBuchungsstatus) return
     startBookingAction(memory, onBuchungsstatus, itemId, gebucht, button, (nextPending, nextMessage) => {
       setPendingId(nextPending)
       setMeldung(nextMessage)
-    })
+    }, zeiger)
   }
 
   const sucheStarten = () => {
@@ -259,13 +262,15 @@ export default function MobilitaetBereich({
                   ) : null}
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={kante.status} />
+                  <BuchungsSiegel status={kante.status} punkt={kante.mobilityItem} />
+                  {kante.mobilityItem && <GespeicherterPreisstand punkt={kante.mobilityItem} />}
                   {kante.mobilityItem && kannBuchungMarkieren(kante.mobilityItem) && onBuchungsstatus ? (
                     <button
                       type="button"
                       disabled={pendingId !== null && pendingId !== kante.mobilityItem.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(kante.mobilityItem!.id, kante.status !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(kante.mobilityItem!.id, kante.status !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === kante.mobilityItem.id ? 'Wird gespeichert …' : kante.status === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}
@@ -286,13 +291,15 @@ export default function MobilitaetBereich({
                   </p>
                 </div>
                 <div className="flex min-h-11 flex-wrap items-center gap-2">
-                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} />
+                  <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} punkt={item} />
+                  <GespeicherterPreisstand punkt={item} />
                   {kannBuchungMarkieren(item) && onBuchungsstatus ? (
                     <button
                       type="button"
                       disabled={pendingId !== null && pendingId !== item.id}
                       aria-disabled={pendingId !== null}
-                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null)}
+                      onPointerDown={bookingZeigerMerken}
+                      onClick={(event) => setzen(item.id, item.bookingStatus !== 'booked', event?.currentTarget ?? null, bookingZeiger(event))}
                       className={`${BUCHUNG_AKTION_KLASSE}${pendingId !== null ? ' opacity-50' : ''}`}
                     >
                       {pendingId === item.id ? 'Wird gespeichert …' : item.bookingStatus === 'booked' ? 'Buchung korrigieren' : 'Als gebucht markieren'}

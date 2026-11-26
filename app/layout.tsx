@@ -10,6 +10,7 @@ import { Toaster } from 'sonner'
 import { PrivacyBeeCmpBoundary } from '@/components/privacy/PrivacyBeeCmpBoundary'
 import { productionBootstrapSource } from '@/lib/privacy/privacybee-cmp/bootstrap'
 import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
+import { WORKSPACE_THEME_BOOT } from '@/lib/ui/workspace-theme-boot'
 
 const CMP_BOOTSTRAP = productionBootstrapSource()
 
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        <script id="jetnity-workspace-theme" dangerouslySetInnerHTML={{ __html: WORKSPACE_THEME_BOOT }} />
         <meta name="impact-site-verification" {...{ value: '177c4d97-907d-430b-94d3-f56e271e2508' }} />
       </head>
       {/* Die Dokumentflaeche bleibt das gemeinsame Token in globals.css.

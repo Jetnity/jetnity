@@ -159,7 +159,18 @@ test('der Reiseplan bleibt Darstellung und behält die bestehenden Verträge', (
   assert.match(plan, /Nächster Tag/)
   assert.match(plan, /min-h-11 min-w-11/)
   assert.match(plan, /text-base/)
-  assert.match(plan, /zum Auswahlzeitpunkt/)
+  assert.match(plan, /<GespeicherterPreisstand punkt=\{punkt\} \/>/)
+  assert.equal(plan.includes('zum Auswahlzeitpunkt'), false)
+  const preisQuelle = readFileSync('components/trips/LeistungsStatus.tsx', 'utf8')
+  const gespeichert = preisQuelle.slice(
+    preisQuelle.indexOf('export function GespeicherterPreisstand'),
+    preisQuelle.indexOf('export function ExterneAngeboteHinweis'),
+  )
+  assert.match(gespeichert, /<PreisstandHinweis \/>/)
+  assert.equal(gespeichert.includes('suchzeit'), false)
+  assert.equal(gespeichert.includes('zum Auswahlzeitpunkt'), false)
+  assert.equal(preisQuelle.includes('zum Auswahlzeitpunkt'), false)
+  assert.match(readFileSync('lib/trips/angebot-buchung-anzeige.ts', 'utf8'), /export const W3_PREIS_UNBEKANNT = 'Preisstand unbekannt'/)
   assert.match(plan, /motion-reduce:transition-none/)
   assert.equal(plan.includes('tagStreifenZiel'), false)
   assert.match(plan, /tagUnterKanteZiel/)
