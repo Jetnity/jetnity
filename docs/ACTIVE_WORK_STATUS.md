@@ -1,5 +1,54 @@
 # Jetnity – Active Work Status
 
+## 26.11.2026 — Premium-Redesign PR A: gemeinsame Kopfzeile, Reisekopf, Design-System (Draft)
+
+Branch `feat/workspace-premium-redesign-a`, Ausgang `main` `ad157cf5a` (enthält #1307 W3, #1315, #1318). PO-Go 26.11.2026 nur für PR A; PR B, C und D sind nicht begonnen. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine Migration, keine neuen Kosten, kein Login/2FA-Eingriff, Official Truth bleibt RESEARCH_ONLY. Geschützte W3-Tests sind unverändert. Den vollständigen Abnahmebericht (A Ursachen, B Belege, C Messwerte, D Testprotokoll, E Bestandsschutz, F Grenzen) trägt der PR. Messstand: Code-Head `4cbdafab8`; danach nur Dokumentation.
+
+**Ursachen (Befund → Lösung):**
+- Zwei Kopfzeilen-Systeme (`PublicNavbar`, `WorkspaceShell`) mit etwa 100 Zeilen Media-Query-Überschreibungen, per CSS versteckten Beschriftungen, Rahmen und Text am Menü, «Reise ändern» und «Begleiter» über ein Portal in der globalen Kopfzeile, doppeltem Titel und Hell/Dunkel in der Kopfzeile → eine Kopfzeile mit denselben `kopf-*`-Klassen, Menü ohne Rahmen und Text (44 px, «Menü»), Originallogo 48 px, «Begleiter» als beschriftete Pille nur wo verfügbar, stilles Profil, Darstellung im Menü.
+- Reisekopf mit Bild nur in Plan/Organisieren, immer von `stages[0]`, Budget dreifach, `text-white/xx` von der hellen Umfärbung überstimmbar, Speicherzeile nur in der Übersicht → ein `Reisekopf` für alle fünf Ansichten, eigene Textfarben `--reisekopf-*`, «Reise ändern» als Stiftaktion neben dem Titel, kein Budget im Kopf.
+- Katalogfotos ohne sichtbaren Nachweis, `Bildnachweise.txt` mit kaputter URL → `BildnachweisKnopf` am Foto, zentrale Liste «Bildnachweise» in den Datenquellen, neutrales Reisebild statt geratener Ortsbilder.
+- 117 px feste Fläche unten (73 px Leiste plus 44 px Kostenzeile), unterer Abstand mit drei Eigentümern, «Nach oben» dauernd sichtbar → eine feste Leiste, ein Eigentümer (`--workspace-bottom-nav-hoehe`), «Nach oben» erst nach einer Bildschirmhöhe.
+- Dunkelstart: die Shell trägt vor der Hydration `light`, `html` schon `dark`, helle Regeln hoher Spezifität zeigten Flächen und Rahmen hell (auf `/planen` Kontrast 1,06:1) → die W3-Regel gilt jetzt auch für Flächen, Rahmen und Felder (nur CSS).
+- Layout-Sprung: die Phasenzeile war vor dem Mounten des Gerätekalenders leer und wuchs um eine Zeile → ihre Höhe ist reserviert (`min-height`).
+- Gefunden und behoben bei der Abnahme: die öffentliche Leiste zeigte ab 768 px einen wirkungslosen Menü-Knopf (`md:hidden` verlor gegen `.kopf-menue`); bei Schrift ab 150 % wurde das Profil in die zweite Zeile geschoben und sein Panel lag ausserhalb des Bildes (Ziele jetzt fest 44 px, öffentliche Leiste ohne Umbruch unter `md`); die Knöpfe in den Reiseoptionen (`Entwurf verwerfen`, `Reise löschen`) liefen bei 200 % über den Rand und trugen `text-white/70` (jetzt umbrechend, Kopf-Textfarbe).
+
+**Reisephase (A3):** nur Anzeige aus `lib/trips/reisephase.ts` (`reisephaseAbleiten(reise, heute)`), Tageszahl vom Gerätekalender (`useGeraetekalendertag`, nie UTC), keine gespeicherte Phase, keine Buchung, kein Official-Truth-Zugriff, kein KI-Aufruf. Vorher «Noch N Tage bis zur Abreise», während «Tag N von M» und «Heute laut Plan: Ort» nur bei eindeutiger Etappe, nachher «Deine Reise im Rückblick», unklar «Reisezeitraum noch offen» und «Heutige Etappe noch offen». 23 Tests: Vortag, erster, laufender, letzter und Folgetag, fehlender und widersprüchlicher Zeitraum, mehrere Etappen am selben Tag, Land ohne Stadt, Monats- und Jahreswechsel, Zeitzonenwechsel.
+
+**Gemessen, lokal, Production-Build `next start`, synthetische Reise, 390×844, Mittel über Chromium und WebKit, Hell und Dunkel (Vorher = Basis `ad157cf5a`):**
+
+| Grösse | Vorher | Nachher |
+|---|---|---|
+| Kopfzeile Telefon | 72–73 px | 61 px |
+| Kopfzeile Desktop 1440 | 72 px Arbeitsbereich, 73 px Startseite | 73 px beide |
+| Feste Fläche unten | 117 px | 73 px |
+| Nutzbare Inhaltshöhe | 655 px (78 %) | 710 px (84 %) |
+| Inhaltsende bis Fusszeile | 162–203 px | 32–73 px |
+| Horizontaler Überlauf | 0 | 0 |
+| Kleinster Textkontrast (Hell) | 4,56:1 | 4,56:1 |
+| Kleinster Textkontrast Reisekopf, 22 Bilder, 264 Messungen | – | 7,46:1 |
+| Dunkelstart bei verzögerter Hydration (Vorher: 2 gemessene Zustände, dunkel 390 auf Reise und Planen) | 0/2 bestanden: helle Pillen, Kontrast 1,06:1 auf `/planen` | 60/60 (Chromium und WebKit, Speicher dunkel/hell/fehlend/blockiert/alt grün, 3 Seiten, 390/1440), 0 helle Flächen, 0 Hydration-Fehler |
+
+**Angepasste, nicht geschützte Anzeige-Tests (alt → neu, Zusicherung bleibt):**
+- `official-jetnity-logo-1.test.ts`: Logo `h-[48px] w-auto md:h-[32px] lg:h-[48px]` → `h-[48px] w-auto max-w-full object-contain`, kein `md:h-[32px]` (das Logo soll auf jeder Breite gleich gross sein).
+- `nach-oben.test.ts` / `nach-oben.ts`: `{telefon, eigenerPlatz}` → `{engerRand}`, dazu `nachObenSchwelle` (mindestens eine Bildschirmhöhe); die Sichtbarkeitsregeln bleiben, auf engem Rand nur beim Hochscrollen.
+- `workspace-two-themes-w2.test.ts`: Knopf «Dunkle Darstellung aktivieren» → «Darstellung» im Menü (`darstellungWaehlen`); neuer Pin auf `DarstellungWahl` (nur Hell und Dunkel, `aria-pressed`, kein `green`).
+- `ux-u1c-route-design-alignment-1/workspace-browser.test.ts`: «Navigation öffnen» → «Menü», Darstellungswechsel über das Menü (`darstellungWaehlen`) statt «Dunkle Darstellung aktivieren».
+- `ux-u1c-route-design-alignment-1/browser.test.ts`: «Nach oben» wird nach einer Bildschirmhöhe und Hochscrollen erwartet (vorher schon nach 400 px); die Geometrie gegen die Leiste ist dieselbe Prüfung.
+- `white-mint-home-workspace-1/browser.test.ts`: «Menü öffnen» → «Menü», Darstellung über das Menü; der CC-BY-Link steht mit «Bildnachweise» mehrfach, `.first()` statt strikter Einzeltreffer.
+
+**Grenzen, offen, dem Technical Lead gemeldet:**
+- 200 % Schrift bei 320 px: die Seite läuft um 3 px über (`<Preis>`: `whitespace-nowrap`, W3-Betragsanzeige in der Kostenkarte). Identisch auf der Basis `ad157cf5a`. Nicht angefasst, weil `Preis` und die Kostenkarte W3 sind; Kopfzeile und Reisekopf laufen nicht über.
+- `kostenZeile` (`lib/trips/kostenbild.ts`) bleibt exportiert und ist durch `kostenbild.test.ts` gepinnt, wird in der App aber nicht mehr benutzt. `TripWorkspaceKosten.ansteuern` und `toggleTheme` im Hook sind ebenfalls ohne Aufrufer. Nicht entfernt, weil W3-Pins daran hängen.
+- Fotos der Startseite (`hero-bali.png`) und `/images/{bali,amsterdam,lisbon,zermatt}.jpg` haben im Repository keinen dokumentierten Lizenzbeleg. Nicht in den Reisekopf übernommen; Klärung beim PO.
+- Die Phasenzeile «Heute laut Plan» wird nach dem Mounten des Gerätekalenders gesetzt; Höhe reserviert, Textwechsel einmalig sichtbar.
+- Eingabefelder auf Desktop 1440 in Vorbereitung und Einreise sind 14 px (unverändert gegenüber der Basis; unter 640 px und auf Touchgeräten gelten 16 px).
+- WebKit ersetzt kein echtes iPhone; eine Real-Device-Abnahme der Kopfzeile bleibt OFFEN. Lokal ohne PostgreSQL-Binaries laufen die PG-nativen Tests nicht (umgebungsbedingt); `N1 refuses in_place …` und `weather quotas …` schlagen auch auf der Basis fehl (vorbestehend). `ux-u1c-route-design-alignment-1/workspace-browser.test.ts` («Alle Etappen» von der aufklappenden Seitenleiste verdeckt) scheitert bei drei parallelen Läufen auf der Basis `ad157cf5a` und auf diesem Stand gleich (je 2 von 3 Läufen rot, einzeln 8/8 grün); vorbestehende Lastempfindlichkeit, nicht durch PR A.
+- Manuelle Audit-Skripte ausserhalb der CI (`scripts/unified-workspace-1/*.mjs`, `scripts/mobile-accessibility-1-audit.mjs`, `scripts/trip-workspace-premium-experience-3-audit.mjs`, `scripts/ux-u1a3-header-density-1/audit.mjs`) nennen noch alte Bedienelemente («Navigation öffnen», «Menü öffnen», `[data-workspace-aktionen]`); sie sind nicht Teil der Pflicht-CI und nicht angepasst.
+- Lokale http-Läufe in Chromium melden `net::ERR_SSL_PROTOCOL_ERROR` und `ERR_ABORTED` für Vorabrufe (`upgrade-insecure-requests`); als Umgebungsrauschen klassifiziert und im Bericht gezählt, nicht gefiltert. WebKit läuft über einen lokalen TLS-Vorsatz (`scripts/premium-redesign-a/tls-proxy.mjs`), die CSP bleibt unverändert.
+
+Nächster Schritt: Pflicht-CI auf dem exakten Head, unabhängiger Technical-Lead-Review, danach PR B (Tab-Inhalte, Etappen- und Organisieren-Bilder) nur nach neuem PO-Go. Kein Ready durch Cursor.
+
 ## 26.11.2026 — W3 drei Korrekturen, Draft #1307
 
 Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.
