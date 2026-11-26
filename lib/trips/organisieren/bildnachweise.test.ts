@@ -117,7 +117,17 @@ describe('Herkunftsnachweise der KI-Illustrationen in Bildnachweise.txt', () => 
     assert.ok(KI_TEXT.includes('keine Creative-Commons-Lizenz'))
     assert.ok(KI_TEXT.includes('Prompts, Generierungs-Kennungen und Original-Adressen sind nicht erfasst'))
     assert.ok(KI_TEXT.includes('keine Garantie für exklusive Rechte'))
-    assert.ok(KI_TEXT.includes('ersetzt weder die PO-Erklärung noch einen Rechtsnachweis'))
+    assert.ok(KI_TEXT.includes('ersetzen weder die PO-Erklärung noch einen Rechtsnachweis'))
+  })
+
+  test('das C2PA-Manifest wird nicht als gültiger Beleg ausgegeben', () => {
+    assert.ok(KI_TEXT.includes('insgesamt «ungültig»'))
+    assert.ok(KI_TEXT.includes('nicht unabhängig'))
+    for (const eintrag of KI_ILLUSTRATIONEN) {
+      assert.ok(eintrag.herkunft.binaerhinweis.includes('insgesamt «ungültig»'), eintrag.datei)
+      assert.ok(eintrag.herkunft.binaerhinweis.includes('nicht unabhängig verifiziert'), eintrag.datei)
+      assert.doesNotMatch(eintrag.herkunft.binaerhinweis, /vertrauenswürdig verifiziert|gültig verifiziert|Dateihash stimmt\)/i, eintrag.datei)
+    }
   })
 
   test('jede der fünf Dateien hat einen Datensatz mit Titel, Urheber, Ersteintrag, Commit und Prüfsumme wie im Katalog', () => {

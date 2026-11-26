@@ -104,9 +104,10 @@ Aktuelle Fassung (Stand 16.01.2026): https://openai.com/policies/eu-terms-of-use
 Danach gehört der Output im Verhältnis zu OpenAI und soweit gesetzlich zulässig der nutzenden Person; Ausgaben können anderen Nutzern ähnlich sein.
 Daraus folgt keine Garantie für exklusive Rechte oder für die Freiheit von Rechten Dritter.
 Ersteintrag = erstmals im Git-Repository eingecheckt, kein verifiziertes Erstellungsdatum. Jede Datei hat seither genau einen Commit (unverändert).
-Binärhinweis: Die PNG-Dateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, Aktion c2pa.created,
-digitalSourceType trainedAlgorithmicMedia, Signaturzertifikat auf OpenAI, Dateihash stimmt; gelesen mit c2pa-python 0.39.0).
-Das Zertifikat ist nicht als vertrauenswürdig verifiziert und abgelaufen. Der Hinweis stützt die Angabe, ersetzt weder die PO-Erklärung noch einen Rechtsnachweis.
+Binärhinweis: Die fünf Dateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, signiert «Truepic Lens CLI in ChatGPT»,
+Aussteller OpenAI; die Dateiprüfsumme im Manifest stimmt). Die Prüfung mit c2pa-python 0.39.0 ergibt insgesamt «ungültig»: Zertifikat nicht
+vertrauenswürdig und abgelaufen, Aktionsangabe von der Bibliothek als fehlerhaft gewertet. Binär- und EXIF-Angaben sind damit nicht unabhängig
+verifiziert und ersetzen weder die PO-Erklärung noch einen Rechtsnachweis.
 
 hero-bali.png – KI-Illustration: Palmen und Reisterrassen im Sonnenuntergang (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 19.07.2025, Commit 6f59d83eec1453892139eb2eab3e238223487a25

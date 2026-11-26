@@ -124,9 +124,9 @@ export function datumDeutsch(iso: string): string {
 const KI_LIZENZ = 'Keine CC-Lizenz; Nutzung nach PO-Erklärung und OpenAI-Bedingungen'
 const KI_BEARBEITUNG = 'Datei seit dem Ersteintrag unverändert; Bildausschnitt je nach Darstellung.'
 const KI_BINAERHINWEIS =
-  'Eingebettetes C2PA-Manifest gelesen (Claim-Generator ChatGPT, Aktion c2pa.created, digitalSourceType trainedAlgorithmicMedia, ' +
-  'Signaturzertifikat auf OpenAI, Dateihash stimmt); das Zertifikat ist nicht als vertrauenswürdig verifiziert und abgelaufen. ' +
-  'Stützt die Angabe, ersetzt weder die PO-Erklärung noch einen Rechtsnachweis.'
+  'Die Dateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, signiert «Truepic Lens CLI in ChatGPT», Aussteller OpenAI; ' +
+  'die Dateiprüfsumme im Manifest stimmt). Die Prüfung mit c2pa-python 0.39.0 ergibt insgesamt «ungültig»: Zertifikat nicht vertrauenswürdig und abgelaufen, ' +
+  'Aktionsangabe von der Bibliothek als fehlerhaft gewertet. Binär- und EXIF-Angaben sind damit nicht unabhängig verifiziert und ersetzen weder die PO-Erklärung noch einen Rechtsnachweis.'
 
 const ERSTEINTRAG_HERO = { datum: '2025-07-19', commit: '6f59d83eec1453892139eb2eab3e238223487a25' } as const
 const ERSTEINTRAG_MEGA = { datum: '2025-09-02', commit: '265887dd8a5dbdaf450eb14eec6b84f987568e6f' } as const
