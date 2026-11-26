@@ -6630,7 +6630,7 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 
 **Konsequenzen:** Keine Migration, keine neuen Kosten, kein Deploy durch diesen PR. Abreise ohne gespeichertes Land bleibt unübersetzt. #1313 und #1307 teilen Dokumente und einzelne Oberflächen; ihre Branches bleiben unangetastet. Nachweis in `docs/DE_CH_ORTSNAMEN_2026-11-25.md`.
 
-## ADR-0246 – W3 Beträge, Dunkelstart und Doppelklick, PO-Gate 26.11.2026
+## ADR-0247 – W3 Beträge, Dunkelstart und Doppelklick, PO-Gate 26.11.2026
 
 **Datum:** 26. November 2026. **Status:** Draft-PR #1307. Merge nur durch den Technical Lead nach grüner Pflicht-CI. Kein Production-Deploy.
 
@@ -6647,3 +6647,17 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 **Begründung:** Die drei Stellen sind Anzeige und Gesten am vorhandenen Vertrag. Sie ändern keine Buchung, kein Geldmodell und keine Anmeldung.
 
 **Konsequenzen:** Draft #1307. Keine Migration, keine neuen Kosten, kein Deploy durch Cursor. Die iPhone-Abnahme und die Dev-Konto-Prüfung bleiben offen.
+
+## ADR-0246 – CH→AT Stage 3 bleibt ein unangewandtes Paket mit reserviertem V7
+
+**Datum:** 25. November 2026. **Status:** technische Dev-Vorbereitung auf PO-Go, Issue #1317. Kein Merge und kein Production-Lauf durch Cursor.
+
+**Kontext:** Production hat BG1 V6. V7 ist der bereits definierte Notfallmarker und darf nicht als nächster normaler Nachfolger verbraucht werden. Stage 2 hat die private V3-Erneuerung vorbereitet, aber noch keinen installierbaren BG1-Nachfolger. Der aktuelle V6-Katalogdigest ist umgebungsabhängig und liegt nicht als frischer Readback in Git.
+
+**Entscheidung:** Der Nachfolger heisst `bg1_prod_ch_at_stage3_v8` und wird nur als ein Transactionspaket geführt. `catalog_status_v1` bleibt bytegleich der V6-Körper. Assert, Require und Alarm übernehmen die historische Prüfkette und binden zusätzlich V8. Der erwartete V6-Katalogdigest kommt ausschliesslich aus einem frischen Read-only-Preflight in der Release-Session. Ein im Git eingetragener Digest ohne diesen Readback wird nicht erfunden. V7 bleibt abwesend. Die Erneuerung bleibt privat, einmalig und ohne Cron-Umstellung. Publikationsjournal und Renewal-Hold starten leer.
+
+**Alternativen:** V7 als normalen Nachfolger zu verwenden würde den bestehenden Notfallpfad überschreiben. Verworfen. Den Production-Katalogdigest zu raten würde eine Quittung fälschen. Verworfen. Die Stage-2-Module einzeln zu installieren würde den Guard umgehen. Verworfen.
+
+**Begründung:** Die Parent-Funktionskörper sind aus dem bereits installierten V6-Text prüfbar. Der Katalog-JSON ist es ohne frischen Readback nicht. Fail-closed ist deshalb der ehrliche Installer.
+
+**Konsequenzen:** Keine Production-Änderung, keine Kosten, keine Oberfläche, kein Besucherflag. Installation, Faktenerneuerung, Rechtstext, Publikation und Besucherflag bleiben eigene PO-Gates. Der Produktionskandidat behält beide historischen `assert_catalog_v1()`-Aufrufe. Eine synthetische Komposition ohne genau diese zwei Aufrufe ist als `native-isolated-guard.sql` gekennzeichnet und gehört nicht zum Installationsmanifest. Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`.

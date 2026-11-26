@@ -1,0 +1,58 @@
+{
+  "schema": "jetnity.official-truth-at-stage3.unapplied-package.v1",
+  "status": "UNAPPLIED",
+  "productionExecution": "NOT_RUN",
+  "freshProductionReadback": "OPEN_PO_GATE",
+  "v7EmergencyMarker": "RESERVED_ABSENT",
+  "parentFunctionSha256": {
+    "official_v3_guard_private.catalog_status_v1()": "aaf93dcd12350720cac4ce76e557043908760034d353851e9de6c6094bea3086",
+    "official_v3_guard_private.assert_catalog_v1()": "2a5d30c88d6e7bba45f00a3fa59d739b97ab171b70ec24fdfbc52fca54ad2908",
+    "official_v3_guard_private.require_open_v1()": "74e12b3cd6d766eb5b09af76e56e9b259e220add67f2dcffc149f31f23f4afe2",
+    "public.official_v3_guard_alarm_status_v1()": "d49e15f93b0720e79530bc8f793a5ebf6b965acfede7bd5d9100dff5674d7f9c"
+  },
+  "order": [
+    "production-read-only-preflight.sql",
+    "production-stage3.ROLLBACK-PROBE.sql",
+    "production-stage3.COMMIT-CANDIDATE.sql",
+    "production-post-commit-readback.sql",
+    "production-stage3.WITHDRAWAL-REHEARSAL.sql",
+    "production-stage3.WITHDRAWAL.sql"
+  ],
+  "files": [
+    {
+      "name": "production-stage3.PACKAGE-BODY.sql",
+      "sha256": "88c6ed60a15cdb569d5dc2f1b6621027ffab995ddb295dc2cb4d2a52197ecdce",
+      "bytes": 73028
+    },
+    {
+      "name": "production-stage3.ROLLBACK-PROBE.sql",
+      "sha256": "e37d875ddf980be1701d06b10be22fa64851afe6db68dda3aae149410933f0fa",
+      "bytes": 74010
+    },
+    {
+      "name": "production-stage3.COMMIT-CANDIDATE.sql",
+      "sha256": "27b658a43e48f9c60a05e8649101a5a310667cc0d8112938e52723a38574e216",
+      "bytes": 73410
+    },
+    {
+      "name": "production-stage3.WITHDRAWAL.sql",
+      "sha256": "80437682364ac62174ac309b548542d64232cdd2449bd2a85713bfcbeb724a84",
+      "bytes": 2794
+    },
+    {
+      "name": "production-stage3.WITHDRAWAL-REHEARSAL.sql",
+      "sha256": "74323140f5218a1edf7f993a2597818d856e355baa55a09e6413a152cd25959f",
+      "bytes": 3185
+    },
+    {
+      "name": "production-read-only-preflight.sql",
+      "sha256": "6b2f038d33b0511a4a3c85c79f6c92f16dac7be3092cf7e581b5bc13fb4a4565",
+      "bytes": 1810
+    },
+    {
+      "name": "production-post-commit-readback.sql",
+      "sha256": "f650de138335894792f3b1382177468655c3927269e4beee6d8baca248fc0b37",
+      "bytes": 1191
+    }
+  ]
+}

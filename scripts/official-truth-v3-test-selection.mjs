@@ -23,6 +23,8 @@ export const PRODUCTION_TEST_FILES = Object.freeze([
   'scripts/official-truth-production-import-monitor.test.mjs',
 ])
 export const HOSTED_PG17_FILES = Object.freeze([
+  // Stage 3 native proof needs the PostgreSQL 17 job. Core stays on PostgreSQL 16.
+  'lib/readiness/official-truth-at-method-v1/at-stage3-native.test.ts',
   'lib/readiness/official-truth-customer-information-migration.test.ts',
   'lib/readiness/official-truth-dev-cycle4-attempt2-recovery.test.ts',
   'lib/readiness/official-truth-dev-cycle4-recovery.test.ts',
