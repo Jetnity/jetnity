@@ -1,6 +1,6 @@
 # Official Truth Paket II – Quellenpflege 6+4, manuelle Dry-run-Warnung
 
-Stand: 27. November 2026. Draft [#1324](https://github.com/Jetnity/jetnity/pull/1324), Head `6f9c4d17a8cf3304de697a902701487efb33412d`. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322). Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Massgeblich die Kommentare [7205494648](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205494648) und [7205720179](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205720179).
+Stand: 27. November 2026. Draft [#1324](https://github.com/Jetnity/jetnity/pull/1324). Der exakte Head steht im PR. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322). Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Massgeblich die Kommentare [7205494648](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205494648) und [7205720179](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205720179).
 
 **Status: vorbereitet, nicht angewendet.** Keine Aktivierung, kein Scheduler, kein Datenbanklauf, keine Rechtsqualifikation, kein PASS für fehlende Belege.
 
