@@ -19,7 +19,7 @@ import {
 } from '@/lib/seo/final-homepage'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 import { BILDNACHWEISE_ID, STARTSEITENBILD } from '@/lib/seo/startseitenbild'
-import { bildnachweisFuerDatei } from '@/lib/trips/organisieren/bildnachweise'
+import { freigegebenerNachweis } from '@/lib/trips/organisieren/bildnachweise'
 
 const homepageMeta = finalHomepageMetadaten(kanonischeUrl('/'))
 
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
         url: STARTSEITENBILD.pfad,
         width: STARTSEITENBILD.breite,
         height: STARTSEITENBILD.hoehe,
-        alt: 'Jetnity – Deine ganze Reise. Intelligent an einem Ort.',
+        alt: STARTSEITENBILD.teilenAlt,
       },
     ],
   },
   twitter: {
     ...homepageMeta.twitter,
-    images: [STARTSEITENBILD.pfad],
+    images: [{ url: STARTSEITENBILD.pfad, alt: STARTSEITENBILD.teilenAlt }],
   },
 }
 
@@ -51,7 +51,7 @@ export default async function HomePage() {
     name: ziel.name, country: ziel.country, image: ziel.image,
     href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
   }))
-  const heroNachweis = bildnachweisFuerDatei(STARTSEITENBILD.pfad)
+  const heroNachweis = freigegebenerNachweis(STARTSEITENBILD.pfad)
   const bildnachweise = [
     ...(heroNachweis ? [{ bezug: 'Startseite', nachweis: heroNachweis }] : []),
     ...inspirationsziele.map((ziel) => ({ bezug: ziel.name, nachweis: inspirationsbild(ziel.image).nachweis })),

@@ -124,6 +124,16 @@
   color: #fff;
 }
 
+.hs-ort-hinweis {
+  padding: 0 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  color: #fff;
+}
+
 .hs-ort a {
   display: inline-flex;
   min-height: 1.5rem;

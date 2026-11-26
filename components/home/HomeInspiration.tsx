@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
+import { IllustrationsHinweis } from '@/components/ui/IllustrationsHinweis'
 import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { HOMEPAGE_UEBERSCHRIFTEN } from '@/lib/seo/final-homepage'
 import type { PublicInspiration } from '@/lib/inspiration/cms-public'
@@ -51,11 +52,12 @@ export function HomeInspiration({ ziele, status = 'static' }: {
               >
                 <Image
                   src={bild.src}
-                  alt={bild.neutral ? '' : `${ziel.name}, ${ziel.country}`}
+                  alt={bild.neutral ? '' : (bild.beschreibung ?? `${ziel.name}, ${ziel.country}`)}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:scale-[1.03]"
                 />
+                {bild.medium === 'ki-illustration' ? <IllustrationsHinweis /> : null}
                 <span className="relative mt-auto flex w-full items-end justify-between gap-3 bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0,rgb(0_0_0/0.7)_calc(100%-4rem),transparent_100%)] p-5 pt-16">
                   <span className="min-w-0">
                     <span className="block text-xs text-white">{ziel.country}</span>

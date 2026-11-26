@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`,
         width: STARTSEITENBILD.breite,
         height: STARTSEITENBILD.hoehe,
-        alt: 'Jetnity – Reiseplanung und Reisebegleitung',
+        alt: STARTSEITENBILD.teilenAlt,
       },
     ],
   },
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: 'Jetnity – Deine ganze Reise',
     description:
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
-    images: [`${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, alt: STARTSEITENBILD.teilenAlt }],
   },
 }
 

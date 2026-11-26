@@ -4,6 +4,7 @@ import { Check, MapPin } from 'lucide-react'
 import StartzielForm from '@/components/places/StartzielForm'
 import { FINAL_HOMEPAGE_DEFINITION, FINAL_HOMEPAGE_H1 } from '@/lib/seo/final-homepage'
 import { BILDNACHWEISE_ID, STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { ILLUSTRATIONSHINWEIS } from '@/lib/trips/organisieren/bildnachweise'
 
 const ZUSAGEN = ['Flug, Unterkunft und Tage in einem Plan', 'Einreise für jede reisende Person im Blick', 'Buchungen bestätigst du selbst']
 
@@ -18,7 +19,7 @@ export function HomeHero() {
             fill
             priority
             sizes="(min-width: 1536px) 1450px, 100vw"
-            className="object-cover object-[60%_50%] lg:object-center"
+            className="object-cover object-[70%_50%] lg:object-center"
           />
         </div>
         <div className="hs-hero-verlauf" aria-hidden="true" />
@@ -52,6 +53,7 @@ export function HomeHero() {
           <p className="hs-ort">
             <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="min-w-0">{STARTSEITENBILD.ort}</span>
+            <span data-illustrationshinweis className="hs-ort-hinweis">{ILLUSTRATIONSHINWEIS}</span>
             <a href={`#${BILDNACHWEISE_ID}`}>Bildnachweis</a>
           </p>
         </div>

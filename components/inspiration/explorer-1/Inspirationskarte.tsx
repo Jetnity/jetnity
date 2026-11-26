@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { ArrowRight, MapPin } from 'lucide-react'
+import { IllustrationsHinweis } from '@/components/ui/IllustrationsHinweis'
 import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { THEMEN, type EntdeckenZiel } from '@/lib/inspiration/explorer-1/katalog'
 
@@ -18,10 +19,13 @@ export default function Inspirationskarte({ ziel, zuerst }: { ziel: EntdeckenZie
             <span className="text-sm">Bild nicht verfügbar</span>
           </div>
         ) : (
-          <Image src={bild.src} alt={bild.neutral ? '' : `Reiseinspiration ${ziel.name}, ${ziel.country}`} fill
-            loading={zuerst ? 'eager' : 'lazy'}
-            sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 600px"
-            className="object-cover" onError={() => setBildFehlt(true)} />
+          <>
+            <Image src={bild.src} alt={bild.neutral ? '' : (bild.beschreibung ?? `Reiseinspiration ${ziel.name}, ${ziel.country}`)} fill
+              loading={zuerst ? 'eager' : 'lazy'}
+              sizes="(max-width: 767px) 100vw, (max-width: 1280px) 50vw, 600px"
+              className="object-cover" onError={() => setBildFehlt(true)} />
+            {bild.medium === 'ki-illustration' ? <IllustrationsHinweis /> : null}
+          </>
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 sm:p-7">

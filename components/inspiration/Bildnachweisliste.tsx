@@ -1,4 +1,4 @@
-import type { Bildnachweis } from '@/lib/trips/organisieren/bildnachweise'
+import { datumDeutsch, ILLUSTRATIONSHINWEIS, type Bildnachweis } from '@/lib/trips/organisieren/bildnachweise'
 import { cn } from '@/lib/utils'
 
 export type BildnachweisEintrag = { bezug: string; nachweis: Bildnachweis }
@@ -22,9 +22,10 @@ function ExternerLink({ href, text }: { href: string; text: string }) {
 
 /**
  * Sichtbare Bildnachweise der Seite: Urheber, Original, Lizenz und Bearbeitung jedes
- * gezeigten Fotos. Eine Liste ohne Aufklappen, damit der Nachweis ohne JavaScript und
- * ohne Tippen lesbar bleibt. Doppelte Einträge für dasselbe Foto und denselben Bezug
- * erscheinen einmal.
+ * gezeigten Fotos, Herkunft und Eigentum jeder gezeigten KI-Illustration. Eine Liste ohne
+ * Aufklappen, damit der Nachweis ohne JavaScript und ohne Tippen lesbar bleibt. Doppelte
+ * Einträge für dasselbe Bild und denselben Bezug erscheinen einmal. Die Zeile einer
+ * KI-Illustration bleibt kurz; die vollständige Herkunft steht auf der Datenquellen-Seite.
  */
 export function Bildnachweisliste({
   eintraege,
@@ -47,15 +48,28 @@ export function Bildnachweisliste({
       <h2 id={titelId} className="font-semibold">Bildnachweise</h2>
       <ul className="mt-2 grid gap-1.5">
         {sichtbar.map(({ bezug, nachweis }) => (
-          <li key={`${bezug}:${nachweis.datei}`} className="min-w-0 break-words">
-            <span className="font-semibold">{bezug}:</span> «{nachweis.bildtitel}»
-            {nachweis.urheber ? `, ${nachweis.urheber}` : ''}
-            {', '}
-            {nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl} text={nachweis.lizenz} /> : nachweis.lizenz}
-            {', Quelle: '}
-            <ExternerLink href={nachweis.quelleUrl} text={hostname(nachweis.quelleUrl)} />
-            {'. '}
-            {nachweis.bearbeitung}
+          <li key={`${bezug}:${nachweis.datei}`} className="min-w-0 break-words" data-medium={nachweis.medium}>
+            <span className="font-semibold">{bezug}:</span>{' '}
+            {nachweis.medium === 'ki-illustration' ? (
+              <>
+                {ILLUSTRATIONSHINWEIS}, kein Foto: {nachweis.bildtitel}. {nachweis.urheber}. Nutzung nach{' '}
+                <ExternerLink href={nachweis.herkunft.bedingungen.aktuell} text="OpenAI-Bedingungen" />
+                {`. Ersteintrag im Repository ${datumDeutsch(nachweis.herkunft.ersteintrag.datum)}. `}
+                <a href="/datenquellen#ki-illustrationen" className="underline underline-offset-2">Herkunft im Detail</a>
+                {'.'}
+              </>
+            ) : (
+              <>
+                «{nachweis.bildtitel}»
+                {nachweis.urheber ? `, ${nachweis.urheber}` : ''}
+                {', '}
+                {nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl} text={nachweis.lizenz} /> : nachweis.lizenz}
+                {', Quelle: '}
+                <ExternerLink href={nachweis.quelleUrl} text={hostname(nachweis.quelleUrl)} />
+                {'. '}
+                {nachweis.bearbeitung}
+              </>
+            )}
           </li>
         ))}
       </ul>

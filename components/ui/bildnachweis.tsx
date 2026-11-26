@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Info } from 'lucide-react'
 
-import type { Bildnachweis } from '@/lib/trips/organisieren/bildnachweise'
+import { datumDeutsch, ILLUSTRATIONSHINWEIS, type Bildnachweis } from '@/lib/trips/organisieren/bildnachweise'
 
 function hostname(adresse: string): string {
   try {
@@ -61,7 +61,7 @@ export function BildnachweisKnopf({ nachweis }: { nachweis: Bildnachweis }) {
         ref={knopfRef}
         type="button"
         className="bildnachweis-knopf"
-        aria-label="Bildnachweis zum Foto"
+        aria-label={nachweis.medium === 'ki-illustration' ? 'Bildnachweis zur Illustration' : 'Bildnachweis zum Foto'}
         aria-expanded={offen}
         aria-controls={feldId}
         onClick={() => setOffen((bisher) => !bisher)}
@@ -69,16 +69,25 @@ export function BildnachweisKnopf({ nachweis }: { nachweis: Bildnachweis }) {
         <Info aria-hidden="true" />
       </button>
       <div id={feldId} role="group" aria-label="Bildnachweis" hidden={!offen} className="bildnachweis-feld">
-        <dl>
-          <div><dt>Foto</dt><dd>«{nachweis.bildtitel}»</dd></div>
-          <div><dt>Urheber</dt><dd>{nachweis.urheber ?? 'Nicht angegeben'}</dd></div>
-          <div><dt>Quelle</dt><dd><ExternerLink href={nachweis.quelleUrl}>{hostname(nachweis.quelleUrl)}</ExternerLink></dd></div>
-          <div>
-            <dt>Lizenz</dt>
-            <dd>{nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl}>{nachweis.lizenz}</ExternerLink> : nachweis.lizenz}</dd>
-          </div>
-          <div><dt>Bearbeitung</dt><dd>{nachweis.bearbeitung}</dd></div>
-        </dl>
+        {nachweis.medium === 'ki-illustration' ? (
+          <dl>
+            <div><dt>Illustration</dt><dd>{ILLUSTRATIONSHINWEIS}, kein Foto: {nachweis.bildtitel}</dd></div>
+            <div><dt>Herkunft</dt><dd>{nachweis.urheber}</dd></div>
+            <div><dt>Bedingungen</dt><dd><ExternerLink href={nachweis.herkunft.bedingungen.aktuell}>OpenAI-Bedingungen</ExternerLink></dd></div>
+            <div><dt>Ersteintrag</dt><dd>{datumDeutsch(nachweis.herkunft.ersteintrag.datum)} im Repository</dd></div>
+          </dl>
+        ) : (
+          <dl>
+            <div><dt>Foto</dt><dd>«{nachweis.bildtitel}»</dd></div>
+            <div><dt>Urheber</dt><dd>{nachweis.urheber ?? 'Nicht angegeben'}</dd></div>
+            <div><dt>Quelle</dt><dd><ExternerLink href={nachweis.quelleUrl}>{hostname(nachweis.quelleUrl)}</ExternerLink></dd></div>
+            <div>
+              <dt>Lizenz</dt>
+              <dd>{nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl}>{nachweis.lizenz}</ExternerLink> : nachweis.lizenz}</dd>
+            </div>
+            <div><dt>Bearbeitung</dt><dd>{nachweis.bearbeitung}</dd></div>
+          </dl>
+        )}
       </div>
     </span>
   )

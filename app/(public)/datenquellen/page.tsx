@@ -1,13 +1,20 @@
 import type { Metadata } from 'next'
 import { KANONISCHE_PUBLIC_ORIGIN } from '@/lib/seo/oeffentlicher-origin'
-import { BILDNACHWEISE } from '@/lib/trips/organisieren/bildnachweise'
+import {
+  BILDNACHWEISE,
+  datumDeutsch,
+  FREIGEGEBENE_ILLUSTRATIONEN,
+  ILLUSTRATIONSHINWEIS,
+  KI_ILLUSTRATIONEN,
+  KI_URHEBER,
+} from '@/lib/trips/organisieren/bildnachweise'
 
 const LINK_KLASSE =
   'font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 export const metadata: Metadata = {
   title: 'Datenquellen & Lizenzen',
-  description: 'Quellen und Lizenzhinweise zu den Ortsdaten und Reisefotografien von Jetnity.',
+  description: 'Quellen und Lizenzhinweise zu den Ortsdaten, Reisefotografien und KI-Illustrationen von Jetnity.',
   alternates: { canonical: `${KANONISCHE_PUBLIC_ORIGIN}/datenquellen` },
 }
 
@@ -73,6 +80,42 @@ export default function DatenquellenPage() {
             Dieselben Angaben stehen auch als{' '}
             <a href="/images/organisieren/Bildnachweise.txt" className={LINK_KLASSE}>Textdatei</a>.
           </p>
+        </section>
+        <section id="ki-illustrationen" aria-labelledby="ki-illustrationen-title" className="space-y-4 rounded-card border border-border bg-card p-5 text-body text-muted-foreground shadow-card sm:p-6">
+          <h2 id="ki-illustrationen-title" className="text-title text-foreground">KI-Illustrationen (keine Fotos)</h2>
+          <p>
+            Einige Motive auf der Startseite und bei den Reiseideen sind mit KI erzeugte Illustrationen. Sie sind keine
+            Fotos und zeigen keine echte Aufnahme des genannten Ortes. Am Bild stehen sie als «{ILLUSTRATIONSHINWEIS}».
+          </p>
+          <p>
+            Herkunft: {KI_URHEBER}. Quelle dieser Angabe ist die Erklärung des Product Owners; Prompts,
+            Generierungs-Kennungen und Original-Adressen sind nicht erfasst. Es gilt keine Creative-Commons-Lizenz.
+          </p>
+          <p>
+            Grundlage sind die Nutzungsbedingungen von OpenAI, Abschnitt «Ownership of content»:{' '}
+            <a href={KI_ILLUSTRATIONEN[0]!.herkunft.bedingungen.archiv} className={LINK_KLASSE}>Archivfassung vom 11.12.2024</a>
+            {' und '}
+            <a href={KI_ILLUSTRATIONEN[0]!.herkunft.bedingungen.aktuell} className={LINK_KLASSE}>aktuelle Fassung (Stand 16.01.2026)</a>.
+            Danach gehört das Ergebnis im Verhältnis zu OpenAI und soweit gesetzlich zulässig der nutzenden Person. Eine
+            Garantie für exklusive Rechte oder für die Freiheit von Rechten Dritter gibt es nicht.
+          </p>
+          <ul className="space-y-3 text-meta">
+            {KI_ILLUSTRATIONEN.map((nachweis) => (
+              <li key={nachweis.datei} className="space-y-0.5" data-illustration={nachweis.datei}>
+                <p className="font-medium text-foreground">{nachweis.bildtitel}</p>
+                <p>
+                  {nachweis.datei} · {nachweis.urheber}
+                </p>
+                <p>
+                  Ersteintrag im Repository {datumDeutsch(nachweis.herkunft.ersteintrag.datum)} (Commit{' '}
+                  {nachweis.herkunft.ersteintrag.commit.slice(0, 9)}), kein verifiziertes Erstellungsdatum.
+                </p>
+                <p className="break-all">SHA-256: {nachweis.herkunft.sha256}</p>
+                {FREIGEGEBENE_ILLUSTRATIONEN.includes(nachweis.datei) ? null : <p>Derzeit nicht im Einsatz: Die Ortszuordnung wird geprüft.</p>}
+              </li>
+            ))}
+          </ul>
+          <p>{KI_ILLUSTRATIONEN[0]!.herkunft.binaerhinweis}</p>
         </section>
       </article>
     </main>

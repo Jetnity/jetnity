@@ -1,35 +1,42 @@
-// Bildfreigabe der öffentlichen Reiseideen (Startseite und Entdecken).
+// Gate für die Bilder der öffentlichen Reiseideen (Startseite, Entdecken).
 //
 // `INSPIRATION_ZIELE.image` gehört zur CMS-Identität der Reiseideen (siehe
-// `referenceMatches` im CMS) und bleibt unverändert, auch wenn eine Datei keinen
-// belegten Lizenznachweis hat. Gezeigt wird deshalb nie der Rohwert, sondern das
-// Ergebnis dieser Freigabe: ein Bild nur mit Nachweis in
-// `public/images/organisieren/Bildnachweise.txt`, sonst das neutrale Kartenmotiv.
+// `lib/places/inspiration.ts`) und bleibt unverändert. Hier wird entschieden, was davon
+// wirklich gezeigt wird:
+//   - eine einzeln belegte, freigegebene KI-Illustration (`FREIGEGEBENE_ILLUSTRATIONEN`) wird als
+//     solche gezeigt und gekennzeichnet,
+//   - ein Foto mit Nachweis in `public/images/organisieren/Bildnachweise.txt` wird als Foto gezeigt,
+//   - alles andere, auch eine dokumentierte, aber zurückgehaltene Illustration (Zermatt), eine
+//     unbekannte Datei und jede fremde Adresse, ergibt das neutrale Kartenmotiv.
 //
-// Der Ersatz bindet eine Datei an eine Datei, nie eine Orts-ID an eine andere:
-// `geonames:2657915` (Reiseidee «Zermatt») und `geonames:2657928` (Bildkatalog
-// «Zermatt») werden hier ausdrücklich nicht gleichgesetzt.
+// Eine Freigabe gilt der Datei, nie einer Ortskennung. Aus einem Bild folgt keine Orts-ID und aus einer
+// Orts-ID kein Bild.
 
-import { bildMitNachweis, NEUTRALES_REISEBILD, type Bildnachweis } from '@/lib/trips/organisieren/bildnachweise'
+import {
+  ILLUSTRATIONSHINWEIS,
+  NEUTRALES_REISEBILD,
+  bildMitNachweis,
+  illustrationsnachweisFuerDatei,
+  type Bildmedium,
+  type Bildnachweis,
+} from '@/lib/trips/organisieren/bildnachweise'
 
-/**
- * Ehemalige Bilddateien ohne Lizenznachweis und das freigegebene Bild desselben Ortes.
- * Bali fehlt mit Absicht: Es gibt kein freigegebenes Bali-Bild, die Karte bleibt neutral.
- */
-export const FREIGEGEBENE_ERSATZBILDER: Readonly<Record<string, string>> = {
-  '/images/lisbon.jpg': '/images/organisieren/lisbon-commons.jpg',
-  '/images/zermatt.jpg': '/images/organisieren/zermatt-commons.jpg',
-  '/images/amsterdam.jpg': '/images/organisieren/amsterdam-commons.jpg',
-}
+export { ILLUSTRATIONSHINWEIS }
 
 export type Inspirationsbild = {
   src: string
   nachweis: Bildnachweis
-  /** Das Motiv zeigt den Ort nicht selbst (neutrales Kartenmotiv): kein Bildtext, der den Ort behauptet. */
   neutral: boolean
+  medium: Bildmedium
+  /** Bildbeschreibung einer KI-Illustration (beginnt mit «KI-Illustration:»); bei Fotos `null`, dort beschreibt die Karte den Ort. */
+  beschreibung: string | null
 }
 
 export function inspirationsbild(image: string): Inspirationsbild {
-  const bild = bildMitNachweis(FREIGEGEBENE_ERSATZBILDER[image] ?? image, null)
-  return { ...bild, neutral: bild.src === NEUTRALES_REISEBILD }
+  const illustration = illustrationsnachweisFuerDatei(image)
+  if (illustration) {
+    return { src: image, nachweis: illustration, neutral: false, medium: 'ki-illustration', beschreibung: illustration.bildbeschreibung }
+  }
+  const foto = bildMitNachweis(image, null)
+  return { ...foto, neutral: foto.src === NEUTRALES_REISEBILD, medium: 'foto', beschreibung: null }
 }

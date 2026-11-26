@@ -2,6 +2,7 @@
 // Crawl/index permission remains in the existing global launch gate.
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 import { STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { KI_URHEBER } from '@/lib/trips/organisieren/bildnachweise'
 
 export const FINAL_HOMEPAGE_H1 = 'Deine ganze Reise. Intelligent an einem Ort.'
 
@@ -189,7 +190,14 @@ export function finalHomepageJsonLd(eingabe: { url: string }) {
         url,
         applicationCategory: 'TravelApplication',
         operatingSystem: 'Web',
-        image: new URL(STARTSEITENBILD.pfad, url).href,
+        image: {
+          '@type': 'ImageObject',
+          url: new URL(STARTSEITENBILD.pfad, url).href,
+          width: STARTSEITENBILD.breite,
+          height: STARTSEITENBILD.hoehe,
+          caption: STARTSEITENBILD.alt,
+          creditText: KI_URHEBER,
+        },
         description: FINAL_HOMEPAGE_DEFINITION,
         publisher: { '@id': `${url}#organization` },
       },

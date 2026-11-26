@@ -89,3 +89,47 @@ Lizenz: https://creativecommons.org/licenses/by/3.0/ – verkleinert, als WebP g
 
 reiseatlas.webp – Kartengrundlage Natural Earth, gemeinfrei (v5.1.2, 1:50m), grafisch für Jetnity aufbereitet.
 Quelle: https://www.naturalearthdata.com/
+
+# KI-Illustrationen (keine Fotos)
+
+Die folgenden fünf Dateien liegen unter public/images/ (nicht in diesem Ordner). Sie sind KI-Illustrationen, keine Fotografien,
+und zeigen keine echte Aufnahme des genannten Ortes. Am Bild stehen sie als «KI-Illustration».
+
+Herkunft: KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Quelle dieser Angabe ist die Erklärung des Product Owners vom 26.11.2026 (Status: lizenzgeprüft im Sinne der dokumentierten Nutzungsfreigabe).
+Prompts, Generierungs-Kennungen und Original-Adressen sind nicht erfasst und werden nicht erfunden. Es gilt keine Creative-Commons-Lizenz.
+Nutzungsbedingungen von OpenAI, Abschnitt «Ownership of content»:
+Archivfassung 11.12.2024: https://openai.com/policies/dec-2024-eu-terms/
+Aktuelle Fassung (Stand 16.01.2026): https://openai.com/policies/eu-terms-of-use/
+Danach gehört der Output im Verhältnis zu OpenAI und soweit gesetzlich zulässig der nutzenden Person; Ausgaben können anderen Nutzern ähnlich sein.
+Daraus folgt keine Garantie für exklusive Rechte oder für die Freiheit von Rechten Dritter.
+Ersteintrag = erstmals im Git-Repository eingecheckt, kein verifiziertes Erstellungsdatum. Jede Datei hat seither genau einen Commit (unverändert).
+Binärhinweis: Die PNG-Dateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, Aktion c2pa.created,
+digitalSourceType trainedAlgorithmicMedia, Signaturzertifikat auf OpenAI, Dateihash stimmt; gelesen mit c2pa-python 0.39.0).
+Das Zertifikat ist nicht als vertrauenswürdig verifiziert und abgelaufen. Der Hinweis stützt die Angabe, ersetzt weder die PO-Erklärung noch einen Rechtsnachweis.
+
+hero-bali.png – KI-Illustration: Palmen und Reisterrassen im Sonnenuntergang (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Ersteintrag: 19.07.2025, Commit 6f59d83eec1453892139eb2eab3e238223487a25
+SHA-256: 0d8aa8603c674211691e491ed39820b94a0a358c03f852f8bfa2f27bf165ee45
+Einsatz: Hero der Startseite, Open Graph, Twitter, JSON-LD (freigegeben).
+
+bali.jpg – KI-Illustration: Reisterrassen und Palmen im Morgenlicht (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
+SHA-256: 86acf2c0201f65967c6d800dbcf9c498f23a716674f4ec661c25632850d60f07
+Einsatz: Reiseidee Bali auf Startseite und Entdecken (freigegeben).
+
+lisbon.jpg – KI-Illustration: Gelbe Tram in einer Gasse bei Sonnenuntergang (Motiv Lissabon) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
+SHA-256: e8f4f66ba68d75995c7ef053874d8b4f23aff7d9cec66bdff8f0b994f79070c3
+Einsatz: Reiseidee Lissabon auf Startseite und Entdecken (freigegeben).
+
+amsterdam.jpg – KI-Illustration: Grachtenhäuser und beleuchtete Brücken am Abend (Motiv Amsterdam) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
+SHA-256: 02462fc4943b1b77034c24837541a6f9150697fde75ac9d76b80397b21bfb122
+Einsatz: Reiseidee Amsterdam auf Startseite und Entdecken (freigegeben).
+
+zermatt.jpg – KI-Illustration: Matterhorn mit Berghütte und zwei Wandernden (Motiv Zermatt) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
+SHA-256: 0720951b5a7e57451184a56c8bce5ca223b59cff4262bf753ca67eceb69192bc
+Einsatz: derzeit nirgends. Die Datei ist belegt, wird aber nicht gezeigt: Die Ortskennung der Reiseidee Zermatt (geonames:2657915)
+widerspricht der des Reisekopf-Katalogs (geonames:2657928); die Reiseidee zeigt das neutrale Kartenmotiv. Die Kennungen werden nicht gleichgesetzt.

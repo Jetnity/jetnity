@@ -34,13 +34,13 @@ export const metadata: Metadata = {
     siteName: 'Jetnity',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, width: STARTSEITENBILD.breite, height: STARTSEITENBILD.hoehe, alt: 'Jetnity' }],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, width: STARTSEITENBILD.breite, height: STARTSEITENBILD.hoehe, alt: STARTSEITENBILD.teilenAlt }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: [`${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, alt: STARTSEITENBILD.teilenAlt }],
   },
   manifest: '/manifest.webmanifest',
   appleWebApp: {
