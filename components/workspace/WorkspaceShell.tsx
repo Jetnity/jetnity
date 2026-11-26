@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, Globe2, Menu, PanelLeftClose, PanelLeftOpen, Plus, Luggage, UsersRound, X } from 'lucide-react'
+import { Compass, Globe2, PanelLeftClose, PanelLeftOpen, Plus, Luggage, UsersRound, X } from 'lucide-react'
 import GastCreateLink from '@/components/trips/GastCreateLink'
+import KopfLeiste from '@/components/layout/KopfLeiste'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
 import { accountNavigationAktiv } from '@/lib/account/navigation'
 import DarstellungWahl from './DarstellungWahl'
-import WorkspaceAccountMenu from './WorkspaceAccountMenu'
 import { WorkspaceContext } from './WorkspaceContext'
 import useWorkspaceTheme from './useWorkspaceTheme'
 import './workspace.css'
@@ -166,27 +166,18 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     <WorkspaceContext.Provider value={slots}>
       <div className="workspace-shell" data-workspace-theme={theme} data-collapsed={!expanded} data-menu-open={mobileOpen}>
         <div inert={mobileOpen}><SkipToContentLink targetId={contentId} /></div>
-        <header ref={headerRef} className="kopf workspace-header" inert={mobileOpen}>
-          <div className="kopf-innen">
-            <button ref={menuRef} type="button" className="kopf-menue workspace-menu-button"
-              aria-label="Menü"
-              aria-expanded={mobileOpen} aria-controls="workspace-navigation" onClick={() => { restoreMenuFocus.current = true; setMobileOpen(true) }}>
-              <Menu className="h-5 w-5" aria-hidden="true" />
-            </button>
-            <Link href="/" aria-label="Jetnity Startseite" className="kopf-marke workspace-header-brand">
-              {/* Der Link trägt den Namen. Das Bild bleibt dekorativ. */}
-              <Image src="/brand/jetnity-logo.png" alt="" width={384} height={128} priority unoptimized
-                sizes="144px" className="h-[48px] w-auto object-contain" style={{ width: 'auto' }} />
-            </Link>
-            <div className="kopf-rechts">
-              <div ref={setActions} className="workspace-header-actions" />
-              <GastCreateLink createLabel="Reise planen" className="kopf-planen workspace-button workspace-primary">
-                <Plus aria-hidden="true" /><span>Reise planen</span>
-              </GastCreateLink>
-              <WorkspaceAccountMenu />
-            </div>
-          </div>
-        </header>
+        <KopfLeiste
+          variante="arbeitsbereich"
+          kopfRef={headerRef}
+          inert={mobileOpen}
+          menue={{
+            offen: mobileOpen,
+            steuert: 'workspace-navigation',
+            onKlick: () => { restoreMenuFocus.current = true; setMobileOpen(true) },
+            knopfRef: menuRef,
+          }}
+          aktionen={<div ref={setActions} className="workspace-header-actions" />}
+        />
         {mobileOpen && <button type="button" className="workspace-backdrop" tabIndex={-1}
           aria-label="Navigation schliessen" onClick={closeNavigation} />}
         <aside ref={sidebarRef} className="workspace-sidebar" id="workspace-navigation"

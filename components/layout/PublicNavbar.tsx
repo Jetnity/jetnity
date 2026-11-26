@@ -38,15 +38,14 @@
 // darf nicht als beendete Sitzung erscheinen (`standAusSitzung`).
 
 import * as React from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useFormStatus } from 'react-dom'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
-import WorkspaceAccountMenu from '@/components/workspace/WorkspaceAccountMenu'
+import KopfLeiste from '@/components/layout/KopfLeiste'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   HAUPTNAVIGATION,
@@ -144,46 +143,17 @@ export default function PublicNavbar() {
   const eintraege = sitzungseintraege(sitzung)
 
   return (
-    <header
-      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
-                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
-    >
-      <div className="mx-auto flex min-h-[60px] w-full max-w-7xl flex-nowrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:flex-wrap md:gap-x-3 md:py-2 lg:px-8">
-        <div className="flex min-w-0 items-center gap-1">
-          <button
-            ref={menuKnopf}
-            type="button"
-            aria-label="Menü"
-            aria-expanded={mobileOpen}
-            aria-controls={MOBILE_NAV_ID}
-            onClick={() => setMobileOpen((current) => !current)}
-            className="kopf-menue kopf-menue-oeffentlich"
-          >
-            {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-          </button>
-          <Link
-            href="/"
-            aria-label="Jetnity Startseite"
-            className={cn(
-              'inline-flex min-h-11 min-w-0 max-w-full items-center px-1 md:px-2',
-              FOKUS_RING,
-            )}
-          >
-            {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
-            <Image
-              src="/brand/jetnity-logo.png"
-              alt=""
-              width={384}
-              height={128}
-              priority
-              unoptimized
-              sizes="144px"
-              className="h-[48px] w-auto max-w-full object-contain"
-              style={{ width: 'auto' }}
-            />
-          </Link>
-        </div>
-
+    <KopfLeiste
+      variante="oeffentlich"
+      menue={{
+        offen: mobileOpen,
+        steuert: MOBILE_NAV_ID,
+        onKlick: () => setMobileOpen((current) => !current),
+        knopfRef: menuKnopf,
+      }}
+      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
+      innenClassName="mx-auto flex min-h-[60px] w-full max-w-7xl flex-nowrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:flex-wrap md:gap-x-3 md:py-2 lg:px-8"
+      mitte={
         <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
           {HAUPTNAVIGATION.map((item) => (
             <Link
@@ -204,67 +174,56 @@ export default function PublicNavbar() {
             </Link>
           ))}
         </nav>
-
-        <div className="flex min-w-0 items-center justify-end gap-2">
-          <GastCreateLink
-            createHref="/planen"
-            createLabel="Reise planen"
-            className={cn(
-              'hidden min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 md:inline-flex',
-              FOKUS_RING,
-            )}
-          />
-          <WorkspaceAccountMenu />
-        </div>
-      </div>
-
-      <nav
-        id={MOBILE_NAV_ID}
-        aria-label="Mobile Navigation"
-        hidden={!mobileOpen}
-        inert={!mobileOpen}
-        className="min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 [overflow-wrap:anywhere] md:hidden"
-      >
-        <div className="grid gap-1">
-          {HAUPTNAVIGATION.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              onClick={closeMobile}
-              className={cn(
-                'inline-flex min-h-11 items-center rounded-2xl min-w-0 max-w-full px-4 text-sm font-semibold',
-                FOKUS_RING,
-                item.href === '/entdecken' && isActive(item.href)
-                  ? 'bg-surface-100 text-brand-800'
-                  : 'text-ink-900 hover:bg-white',
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-        <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
-          {eintraege.map((eintrag) => (
-            <Sitzungseintrag
-              key={eintrag.label}
-              eintrag={eintrag}
-              onFertig={closeMobile}
-              onNachlesen={sitzungLesen}
-            />
-          ))}
-          <GastCreateLink
-            createHref="/planen"
-            createLabel="Reise planen"
-            onClick={closeMobile}
-            className={cn(
-              'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
-              FOKUS_RING,
-            )}
-          />
-        </div>
-      </nav>
-    </header>
+      }
+      darunter={
+          <nav
+            id={MOBILE_NAV_ID}
+            aria-label="Mobile Navigation"
+            hidden={!mobileOpen}
+            inert={!mobileOpen}
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 [overflow-wrap:anywhere] md:hidden"
+          >
+            <div className="grid gap-1">
+              {HAUPTNAVIGATION.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  onClick={closeMobile}
+                  className={cn(
+                    'inline-flex min-h-11 items-center rounded-2xl min-w-0 max-w-full px-4 text-sm font-semibold',
+                    FOKUS_RING,
+                    item.href === '/entdecken' && isActive(item.href)
+                      ? 'bg-surface-100 text-brand-800'
+                      : 'text-ink-900 hover:bg-white',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
+              {eintraege.map((eintrag) => (
+                <Sitzungseintrag
+                  key={eintrag.label}
+                  eintrag={eintrag}
+                  onFertig={closeMobile}
+                  onNachlesen={sitzungLesen}
+                />
+              ))}
+              <GastCreateLink
+                createHref="/planen"
+                createLabel="Reise planen"
+                onClick={closeMobile}
+                className={cn(
+                  'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
+                  FOKUS_RING,
+                )}
+              />
+            </div>
+          </nav>
+      }
+    />
   )
 }
 

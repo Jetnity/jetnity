@@ -11,11 +11,11 @@ function hostname(adresse: string): string {
   }
 }
 
-function ExternerLink({ href, children }: { href: string; children: React.ReactNode }) {
+/** Der zugängliche Name enthält den sichtbaren Text und kündigt den neuen Tab an (WCAG 2.5.3). Kein verstecktes Textstück im Link. */
+function ExternerLink({ href, text }: { href: string; text: string }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-      {children}
-      <span className="sr-only"> (öffnet in neuem Tab)</span>
+    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${text} (öffnet in neuem Tab)`} className="underline underline-offset-2">
+      {text}
     </a>
   )
 }
@@ -51,9 +51,9 @@ export function Bildnachweisliste({
             <span className="font-semibold">{bezug}:</span> «{nachweis.bildtitel}»
             {nachweis.urheber ? `, ${nachweis.urheber}` : ''}
             {', '}
-            {nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl}>{nachweis.lizenz}</ExternerLink> : nachweis.lizenz}
+            {nachweis.lizenzUrl ? <ExternerLink href={nachweis.lizenzUrl} text={nachweis.lizenz} /> : nachweis.lizenz}
             {', Quelle: '}
-            <ExternerLink href={nachweis.quelleUrl}>{hostname(nachweis.quelleUrl)}</ExternerLink>
+            <ExternerLink href={nachweis.quelleUrl} text={hostname(nachweis.quelleUrl)} />
             {'. '}
             {nachweis.bearbeitung}
           </li>

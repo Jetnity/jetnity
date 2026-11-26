@@ -43,7 +43,9 @@ describe('Offizielles Jetnity-Logo 1 – Asset', () => {
 })
 
 describe('Offizielles Jetnity-Logo 1 – Marke', () => {
-  const navbar = quelle('components/layout/PublicNavbar.tsx')
+  // PR A: Die Marke der öffentlichen Leiste steht im gemeinsamen Kopfbaustein (KopfLeiste), nicht mehr in PublicNavbar.
+  const navbar = quelle('components/layout/KopfLeiste.tsx')
+  const leiste = quelle('components/layout/PublicNavbar.tsx')
   const footer = quelle('components/layout/Footer.tsx')
 
   for (const [name, text] of [
@@ -80,8 +82,8 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
     assert.match(link, /h-\[48px\] w-auto max-w-full object-contain/)
     assert.equal(link.includes('md:h-[32px]'), false)
     assert.equal(link.includes('bg-white'), false)
-    assert.match(navbar, /min-h-\[72px\]/)
-    assert.match(navbar, /FOKUS_RING/)
+    assert.match(leiste, /min-h-\[72px\]/)
+    assert.match(leiste, /FOKUS_RING/)
   })
 
   test('der Footer zeigt das offizielle Wortzeichen reinweiß ohne helle Fläche', () => {
@@ -101,6 +103,7 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
 
 describe('Offizielles Jetnity-Logo 1 – Verhalten bleibt', () => {
   const navbar = quelle('components/layout/PublicNavbar.tsx')
+  const kopf = quelle('components/layout/KopfLeiste.tsx')
   const footer = quelle('components/layout/Footer.tsx')
 
   test('Sitzung, Abmelden und Mobile-Menü der Leiste bleiben', () => {
@@ -110,9 +113,14 @@ describe('Offizielles Jetnity-Logo 1 – Verhalten bleibt', () => {
     assert.match(navbar, /onAuthStateChange/)
     assert.match(navbar, /signOutAction/)
     assert.match(navbar, /GlobalesAbmeldenForm/)
-    assert.equal((navbar.match(/<GastCreateLink/g) ?? []).length, 2)
-    assert.match(navbar, /aria-controls=\{MOBILE_NAV_ID\}/)
-    assert.match(navbar, /aria-expanded=\{mobileOpen\}/)
+    // PR A: Das «Reise planen» der Zeile kommt aus dem gemeinsamen Baustein, das des Mobile-Menüs bleibt in der Leiste.
+    assert.equal((navbar.match(/<GastCreateLink/g) ?? []).length, 1)
+    assert.equal((kopf.match(/<GastCreateLink/g) ?? []).length, 1)
+    assert.match(navbar, /steuert: MOBILE_NAV_ID/)
+    assert.match(navbar, /offen: mobileOpen/)
+    assert.match(navbar, /id=\{MOBILE_NAV_ID\}/)
+    assert.match(kopf, /aria-controls=\{menue\.steuert\}/)
+    assert.match(kopf, /aria-expanded=\{menue\.offen\}/)
     assert.match(navbar, /key !== 'Escape'/)
     assert.match(navbar, /menuKnopf\.current\?\.focus/)
     assert.match(navbar, /hidden=\{!mobileOpen\}/)

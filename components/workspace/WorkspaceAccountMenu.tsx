@@ -4,8 +4,25 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { CircleUserRound } from 'lucide-react'
 import FooterSitzung from '@/components/layout/FooterSitzung'
+import DarstellungWahl from './DarstellungWahl'
+import useWorkspaceTheme from './useWorkspaceTheme'
 
-export default function WorkspaceAccountMenu() {
+function DarstellungImMenue() {
+  const { theme, setTheme } = useWorkspaceTheme()
+  return (
+    <DarstellungWahl
+      theme={theme}
+      onWahl={setTheme}
+      hinweis="Gilt für Planung, Reisen und Konto. Öffentliche Seiten bleiben hell."
+    />
+  )
+}
+
+/**
+ * Kontomenü der gemeinsamen Kopfzeile. Auf öffentlichen Seiten gibt es keine Seitenleiste, in der die
+ * Darstellung wohnt; dort steht die Wahl hier (`darstellung`). Im Arbeitsbereich bleibt sie in der Seitenleiste.
+ */
+export default function WorkspaceAccountMenu({ darstellung = false }: { darstellung?: boolean }) {
   const ref = useRef<HTMLDetailsElement>(null)
   useEffect(() => {
     const outside = (event: PointerEvent) => {
@@ -30,6 +47,7 @@ export default function WorkspaceAccountMenu() {
           <li><Link href="/account/settings">Einstellungen</Link></li>
           <li><Link href="/account/bookings">Bestätigte Buchungen</Link></li>
         </ul>
+        {darstellung && <DarstellungImMenue />}
         <p>Jetnity</p>
         <ul>
           <li><a href="mailto:info@jetnity.ch">Kontakt</a></li>

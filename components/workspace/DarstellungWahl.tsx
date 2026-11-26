@@ -13,9 +13,11 @@ const WAHL = [
  * Hell oder Dunkel. Wohnt im Menü statt in der Kopfzeile. Die Wahl bleibt eine reine
  * Anzeige dieses Browsers (derselbe Speicher wie zuvor, kein Konto-Feld).
  */
-export default function DarstellungWahl({ theme, onWahl }: {
+export default function DarstellungWahl({ theme, onWahl, hinweis }: {
   theme: WorkspaceTheme
   onWahl: (wert: WorkspaceTheme) => void
+  /** Wo die Wahl gilt, wenn das nicht aus dem Ort selbst hervorgeht (öffentliche Kopfzeile). */
+  hinweis?: string
 }) {
   return (
     <section className="workspace-nav-group" data-darstellung-wahl>
@@ -34,6 +36,7 @@ export default function DarstellungWahl({ theme, onWahl }: {
           </button>
         ))}
       </div>
+      {hinweis && <small className="workspace-darstellung-hinweis">{hinweis}</small>}
     </section>
   )
 }

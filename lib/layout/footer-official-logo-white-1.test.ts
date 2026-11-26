@@ -31,7 +31,8 @@ function gitBlobSha1(bytes: Buffer) {
 
 describe('Footer Official Logo White 1', () => {
   const footer = quelle('components/layout/Footer.tsx')
-  const navbar = quelle('components/layout/PublicNavbar.tsx')
+  // PR A: Die Marke der öffentlichen Leiste steht im gemeinsamen Kopfbaustein (KopfLeiste), nicht mehr in PublicNavbar.
+  const navbar = quelle('components/layout/KopfLeiste.tsx')
 
   test('der Footer filtert das offizielle PNG reinweiß und ohne helle Fläche', () => {
     assert.match(footer, /src="\/brand\/jetnity-logo\.png"/)

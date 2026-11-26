@@ -26,16 +26,21 @@
   border-color: var(--workspace-edge);
 }
 /* The application chrome stays white in both content themes. */
-.workspace-sidebar, .workspace-header {
+.workspace-sidebar, .workspace-header, .kopf {
   --workspace-edge: rgb(var(--jet-brand-600) / .18);
   --workspace-ink: var(--white-mint-ink, rgb(var(--jet-brand-800)));
   --workspace-muted: var(--white-mint-muted, rgb(var(--jet-ink-800)));
   --workspace-panel: var(--white-mint-chrome, rgb(var(--jet-surface-0)));
   --workspace-soft: rgb(var(--jet-surface-100));
+}
+.workspace-sidebar, .workspace-header {
   background: var(--workspace-panel);
   color: var(--workspace-ink);
   color-scheme: light;
 }
+/* Die öffentliche Kopfzeile bringt Hintergrund und Haftung über ihre Klassen mit. Sie braucht dieselben Rand-, Tinten-
+   und Flächenwerte für das Kontomenü, damit das Menü in beiden Kopfzeilen gleich aussieht. */
+.kopf-oeffentlich { color: var(--workspace-ink); color-scheme: light; }
 .workspace-shell .workspace-sidebar :where(a, button):focus-visible,
 .workspace-shell .workspace-header :where(a, button, summary):focus-visible {
   outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 3px;
@@ -74,10 +79,12 @@
 .workspace-sidebar-end p { padding: .75rem; font-size: .75rem; line-height: 1.6; }
 .workspace-darstellung { display: grid; gap: .25rem; }
 .workspace-darstellung-knopf { cursor: pointer; }
+.workspace-account-panel .workspace-darstellung-hinweis { display: block; padding: .25rem .65rem .5rem; font-size: .75rem; line-height: 1.45; color: rgb(var(--jet-ink-800)); }
 .workspace-page { min-width: 0; }
 /* Gemeinsame Kopfzeile für Startseite, Reiseplanung, Meine Reisen, Reise und Konto (PR A).
-   Eine Zeile: Menü · Marke · [Begleiter] · Profil. Menü, Marke und Profil teilen dieselben
-   Klassen (kopf-*) in der öffentlichen Leiste und im Arbeitsbereich. Ziele sind 44 px gross
+   Eine Zeile: Menü · Marke · [Begleiter] · Profil. Beide Kopfzeilen sind derselbe Baustein
+   (components/layout/KopfLeiste.tsx, Variante `oeffentlich` oder `arbeitsbereich`) und teilen Menü, Marke,
+   «Reise planen» und Profil über die Klassen kopf-*. Ziele sind 44 px gross
    (fest, damit grössere Schrift die Zeile nicht umbrechen lässt), ohne sichtbaren Rahmen. Höhe auf dem Telefon 60 px plus Safe Area, ab 64 rem 72 px. */
 .workspace-header {
   position: sticky; top: 0; z-index: 41;
@@ -109,7 +116,9 @@
 .kopf-rechts { display: flex; align-items: center; gap: .25rem; min-width: 0; margin-left: auto; }
 .workspace-header-actions { display: flex; align-items: center; min-width: 0; }
 .workspace-header-actions:empty { display: none; }
-.workspace-header .kopf-planen { display: none; }
+.kopf .kopf-planen { display: none; }
+.kopf-links { display: flex; align-items: center; gap: .25rem; min-width: 0; }
+.kopf-innen[data-mitte] .kopf-rechts { margin-left: 0; }
 .kopf-begleiter {
   display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; max-width: 100%; padding: .25rem .875rem .25rem .75rem;
   border: 0; border-radius: 1.375rem; background: rgb(var(--jet-brand-600) / .1); color: rgb(var(--jet-brand-800));
@@ -122,9 +131,15 @@
   .workspace-header:not([data-flow="true"]) .kopf-marke img { height: 40px; }
   .kopf-begleiter { padding-inline: .625rem .75rem; }
 }
+@media (min-width: 48rem) {
+  .kopf-oeffentlich .kopf-marke { padding-inline: .5rem; }
+  .kopf-oeffentlich .kopf-planen.workspace-primary {
+    display: inline-flex; border-radius: 999px; padding: .625rem 1.25rem; font-size: .875rem; font-weight: 600;
+  }
+}
 @media (min-width: 64rem) {
   .workspace-header .kopf-innen { min-height: 4.5rem; padding: .5rem 1.5rem; gap: .75rem; }
-  .kopf-marke { margin-right: .5rem; }
+  .workspace-header .kopf-marke { margin-right: .5rem; }
   .kopf-rechts { gap: .5rem; }
   .workspace-header .kopf-planen.workspace-primary {
     display: inline-flex; border-radius: 999px; padding: .625rem 1.25rem; font-size: .875rem; font-weight: 600;
