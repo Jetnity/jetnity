@@ -438,19 +438,23 @@ async function vorHydrationLauf(browserTyp, browserName, zustand, seite, breite,
     }
     const vorher = await hydriert()
     if (einschleusen) {
-      await page.evaluate(() => {
+      const eingeschleust = await page.evaluate(() => {
         const bild = [...document.images].find((kandidat) => {
           const r = kandidat.getBoundingClientRect()
-          return r.width > 200 && r.height > 120 && r.top >= 0 && r.top < innerHeight - 160
+          return r.width > 200 && r.height > 120 && kandidat.naturalWidth > 1
         })
-        if (!bild) return
+        if (!bild) return false
+        window.scrollTo({ top: Math.max(0, bild.getBoundingClientRect().top + scrollY - 100), behavior: 'instant' })
         const r = bild.getBoundingClientRect()
         const text = document.createElement('span')
         text.setAttribute('data-negativkontrolle', '')
         text.textContent = 'Negativkontrolle Bildtext'
         text.style.cssText = `position:absolute;left:${Math.round(r.left + scrollX + 16)}px;top:${Math.round(r.top + scrollY + 72)}px;z-index:60;color:#808080;font:700 28px/36px sans-serif;white-space:nowrap`
         document.body.append(text)
+        return true
       })
+      if (!eingeschleust) throw new Error('Pixel-Negativkontrolle: kein Bild zum Überlagern gefunden')
+      await page.waitForTimeout(300)
     }
     const kontrast = await kontrastMessen(page)
     const nachher = await hydriert()
