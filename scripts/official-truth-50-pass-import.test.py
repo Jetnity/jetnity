@@ -120,6 +120,109 @@ class ImportTests(unittest.TestCase):
             b.extract_pinned_archive(target, self.base)
         self.assertFalse((self.base / "unpacked").exists())
 
+    def test_catalog_dry_run_does_not_import_or_promote(self):
+        self.assertEqual(len(b.ORDER), 206)
+        self.assertEqual(b.ORDER[:13], ("AT", "IT", "FR", "ES", "PT", "GR", "HR", "NL", "GB", "US", "TR", "TH", "AE"))
+        self.assertLess(b.ORDER.index("CN"), b.ORDER.index("CN-HK"))
+        self.assertLess(b.ORDER.index("CN-HK"), b.ORDER.index("CN-MO"))
+        before = set(self.base.rglob("*"))
+        report = b.dry_run(list(b.ORDER))
+        self.assertEqual(set(self.base.rglob("*")), before)
+        self.assertEqual(report["profiles"], 10300)
+        self.assertEqual(report["historicalTopicSlots"], 267800)
+        self.assertEqual(report["coreSlots"], 61800)
+        self.assertEqual(report["optionalSlots"], 41200)
+        self.assertEqual(report["legalEvidenceSlots"], 0)
+        self.assertEqual(report["sourceAssignments"], 0)
+        self.assertEqual(report["published"], 0)
+        self.assertEqual(report["accepted"], 0)
+        self.assertEqual(report["importCapableProfiles"], "NOT_ASSESSED")
+        self.assertFalse(report["archiveVerifiedThisRun"])
+        self.assertEqual(report["payloadImport"], "STOP_PRIVATE_PAYLOAD_PATH_MISSING")
+        self.assertEqual(report["repackSha256"], "NOT_REVERIFIED_THIS_RUN")
+        self.assertEqual(report["specialDestinations"], ["CN-HK", "CN-MO"])
+        self.assertEqual(report["structuralHoldDestinations"], ["HR", "NL"])
+        self.assertEqual(len(report["extraSliceDestinationsInScope"]), 9)
+        self.assertIn("SO", {item["nationality"] for item in report["topicHolds"]})
+
+    def test_checkpoint_is_append_only_idempotent_and_conflicts(self):
+        checkpoint = self.base / "checkpoint.jsonl"
+        event = {"destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
+                 "accepted": 0, "published": 0}
+        self.assertTrue(b.append_checkpoint(checkpoint, event)["appended"])
+        snapshot = checkpoint.read_bytes()
+        second = {"destination": "IT", "planDigest": "b" * 64, "action": "quarantined",
+                  "accepted": 0, "published": 0}
+        self.assertTrue(b.append_checkpoint(checkpoint, second)["appended"])
+        self.assertTrue(checkpoint.read_bytes().startswith(snapshot))
+        self.assertFalse(b.append_checkpoint(checkpoint, event)["appended"])
+        self.assertEqual(checkpoint.read_bytes().count(b"\n"), 2)
+        with self.assertRaisesRegex(ValueError, "checkpoint_conflict"):
+            b.append_checkpoint(checkpoint, {**event, "planDigest": "c" * 64})
+        self.assertEqual(checkpoint.read_bytes().count(b"\n"), 2)
+        plan = b.resume_plan(checkpoint, ["AT", "IT", "FR"])
+        self.assertEqual(plan["done"], ["AT", "IT"])
+        self.assertEqual(plan["remaining"], ["FR"])
+        self.assertEqual(plan["published"], 0)
+        b.append_checkpoint(checkpoint, {"destination": "FR", "planDigest": "d" * 64,
+                                          "action": "quarantined", "accepted": 0, "published": 0})
+        broken = self.base / "gap.jsonl"
+        b.append_checkpoint(broken, event)
+        b.append_checkpoint(broken, {"destination": "FR", "planDigest": "d" * 64,
+                                     "action": "quarantined", "accepted": 0, "published": 0})
+        with self.assertRaisesRegex(ValueError, "checkpoint_gap"):
+            b.resume_plan(broken, ["AT", "IT", "FR"])
+        data = bytearray(checkpoint.read_bytes())
+        data[-4] ^= 1
+        checkpoint.write_bytes(bytes(data))
+        with self.assertRaises(ValueError):
+            b.read_checkpoint(checkpoint)
+
+    def test_repo_path_and_payload_import_stop(self):
+        inside = Path(__file__).resolve().parent.parent / "official-truth-checkpoint.jsonl"
+        event = {"destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
+                 "accepted": 0, "published": 0}
+        with self.assertRaisesRegex(ValueError, "checkpoint_inside_repo"):
+            b.append_checkpoint(inside, event)
+        self.assertFalse(inside.exists())
+        with self.assertRaisesRegex(ValueError, "PRIVATE_PAYLOAD_PATH_MISSING"):
+            b.import_payload()
+        with self.assertRaises(ValueError):
+            b.selected("AT,AT")
+        with self.assertRaises(ValueError):
+            b.selected("CN-HK")
+
+    def test_resumable_prefix_is_kept_and_repeat_does_not_append(self):
+        good = self.adapter["prepare"]
+
+        def fail(root, country, package):
+            if country == "IT":
+                raise ValueError("second_country_refused")
+            return good(root, country, package)
+
+        self.adapter["prepare"] = fail
+        out = self.base / "resume"
+        with self.assertRaisesRegex(ValueError, "second_country_refused"):
+            b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+        self.assertTrue((out / "packages" / "AT").is_dir())
+        self.assertFalse((out / "packages" / "IT").exists())
+        self.assertFalse((out / "manifest.json").exists())
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes().count(b"\n"), 1)
+        self.adapter["prepare"] = good
+        self.calls.clear()
+        result = b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+        self.assertEqual(self.calls, ["IT"])
+        self.assertEqual(result["destinations"], 2)
+        self.assertEqual(result["published"], 0)
+        self.assertEqual(result["accepted"], 0)
+        sealed = (out / "checkpoint.jsonl").read_bytes()
+        self.calls.clear()
+        repeat = b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+        self.assertEqual(self.calls, [])
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), sealed)
+        self.assertEqual(repeat, result)
+        self.assertEqual(b.verify(out, self.adapter), result)
+
 
 if __name__ == "__main__":
     unittest.main()

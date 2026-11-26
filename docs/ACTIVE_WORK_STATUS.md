@@ -1,5 +1,13 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Official Truth Paket I, universeller Importer 206×50 / 6+4
+
+Branch `cursor/official-truth-importer-206-5c1d` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Auftrag [#1321](https://github.com/Jetnity/jetnity/issues/1321), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Draft. Kein Ready, kein Merge, kein Deploy, keine Datenbank, kein Import, keine Aktivierung, keine neuen Kosten.
+
+- Die drei bestehenden Offline-Skripte kennen jetzt den gepinnten 206-Ziele-Katalog, 10'300 Profile, die unveränderten 26 Themen und eine logische 6+4-Projektion. `CN-HK` und `CN-MO` bleiben getrennt. Neun Extras und Legacy-Dubletten werden nicht als zusätzliche Pässe importiert. `HR`/`NL` bleiben strukturell gesperrt, `SO` bleibt auf K2 gesperrt.
+- Trockener Lauf, append-only Checkpoint, Resume und Idempotenz laufen nur gegen synthetische Dateien ausserhalb des Repos. `import` endet mit `PRIVATE_PAYLOAD_PATH_STOP`. Rechtsbeleg und Publikation bleiben 0. Das PO-Mac-Archiv wurde nicht gelesen; der Repack `6545eb28…` ist nicht erneut geprüft.
+- Lokal: Python 21 + 6 + 9 Tests OK, drei Node-Integrationsprüfungen OK. CI dieses Heads noch nicht beobachtet. Protokoll: `docs/OFFICIAL_TRUTH_UNIVERSAL_IMPORTER_206_PACKET_I_PROTOCOL_2026-11-27.md`. Nächster Schritt: Exact-Head-Review durch den Technical Lead. Paket II und die Oberfläche sind nicht Teil dieses Branches.
+
 ## 26.11.2026 — W3 drei Korrekturen, Draft #1307
 
 Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.

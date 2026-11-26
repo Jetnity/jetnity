@@ -11,8 +11,8 @@ const fixture = resolve('scripts/official-truth-index-gap-audit.test.py')
 const digest = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex')
 
 test('v2.2 index gap inventory remains offline and fail-closed', { timeout: 30_000 }, () => {
-  assert.equal(digest(audit), '47fd1d9fc6574fe027e30fb8e0c8507393ec739f427c281c4f3be83a2d14cb21')
-  assert.equal(digest(fixture), 'b9b795a090cd7019f916d04cd44b5a987c847fd50b55949ac2f150e50a69586c')
+  assert.equal(digest(audit), '9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea')
+  assert.equal(digest(fixture), 'f322c615239862b7cfa336bd29eaf3ec06074a702e8bddcd5c077f38d12e992c')
   const run = spawnSync('python3', [fixture, '-q'], {
     cwd: resolve('.'),
     encoding: 'utf8',
@@ -29,6 +29,6 @@ test('v2.2 index gap inventory remains offline and fail-closed', { timeout: 30_0
   assert.equal(run.error, undefined, 'Python3 must be available')
   assert.equal(run.signal, null, 'Offline test must exit normally')
   assert.equal(run.status, 0, 'Offline gap test failed: ' + (run.stderr ?? '').slice(-1000))
-  assert.match(run.stderr ?? '', /Ran 5 tests/)
+  assert.match(run.stderr ?? '', /Ran 6 tests/)
   assert.match(run.stderr ?? '', /\bOK\b/)
 })

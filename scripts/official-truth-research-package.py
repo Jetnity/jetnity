@@ -51,6 +51,45 @@ TOPICS = {
 CORE = ["document_type_scope", "minors_rules", "entry_conditions", "transit_rules",
         "fees", "medication_import", "health_entry", "field_provenance_rule",
         "truth_state_values", "action_links"]
+# Destinations only. CN-HK and CN-MO are not passport codes and are not CN.
+DESTINATION_RE = re.compile(r"^(?:[A-Z]{2}|CN-HK|CN-MO)$")
+SPECIAL_DESTINATIONS = ("CN-HK", "CN-MO")
+# Reviewed scope index: these nine folders keep one non-priority slice.
+# That slice is preserved and never becomes passport 51.
+EXTRA_SLICE_DESTINATIONS = frozenset({"AU", "CN-HK", "CN-MO", "KE", "MV", "NZ", "SA", "TZ", "ZA"})
+# Logical launch projection. Historical TOPICS stay the storage locator.
+LAUNCH_CORE = (
+    ("K1", "visa_or_authorization", ("visa", "electronic_travel_authorization", "entry_fees")),
+    ("K2", "document", ("passport", "identity_document", "passport_validity", "blank_passport_pages")),
+    ("K3", "stay", ("stay_limit",)),
+    ("K4", "health", ("required_vaccinations", "recommended_vaccinations", "health_measures", "health_documents")),
+    ("K5", "entry_forms", ("entry_forms", "form_costs")),
+    ("K6", "minors", ("minors", "parental_consent")),
+)
+LAUNCH_OPTIONAL = (
+    ("Z1", "financial_means", ("financial_means",)),
+    ("Z2", "onward_return_ticket", ("onward_return_ticket",)),
+    ("Z3", "transit", ("transit",)),
+    ("Z4", "customs", ("customs",)),
+)
+HISTORICAL_ONLY = ("insurance", "fraud_warnings", "booking_or_travel_document",
+                   "dual_nationals", "recent_changes", "official_actions")
+EVIDENCED_STATUSES = frozenset(("B", "BELEGT_BEDINGT", "N/A"))
+# Carried hold from the research checkpoints. Not a new legal finding.
+PRESERVED_TOPIC_HOLDS = (
+    {"nationality": "SO", "topic": "K2", "reason": "document_recognition_hold"},
+)
+
+
+def _assert_topic_partition() -> None:
+    mapped = [topic for _key, _name, topics in LAUNCH_CORE + LAUNCH_OPTIONAL for topic in topics]
+    if not (len(TOPICS) == 26 and len(LAUNCH_CORE) == 6 and len(LAUNCH_OPTIONAL) == 4
+            and len(mapped) == len(set(mapped)) and set(mapped).isdisjoint(HISTORICAL_ONLY)
+            and set(mapped) | set(HISTORICAL_ONLY) == set(TOPICS)):
+        raise RuntimeError("historical_topics_changed")
+
+
+_assert_topic_partition()
 
 
 def require(condition: bool, code: str) -> None:
@@ -166,8 +205,33 @@ def source_identity(source: dict) -> str:
     return value
 
 
+def nonpriority_slices(root: Path, destination: str, passports: list[str]) -> list[str]:
+    folder = root / "records" / "dest" / destination
+    require(folder.is_dir() and not folder.is_symlink(), "input_root_refused")
+    found = []
+    for child in folder.iterdir():
+        metadata = child.lstat()
+        require(not stat.S_ISLNK(metadata.st_mode), "input_symlink")
+        if not stat.S_ISREG(metadata.st_mode):
+            continue
+        match = re.fullmatch(r"([A-Z]{2})\.json", child.name)
+        if not match or match.group(1) in passports:
+            continue
+        found.append(match.group(1))
+    return sorted(found)
+
+
+def extra_nationality(root: Path, destination: str, passports: list[str]) -> str | None:
+    found = nonpriority_slices(root, destination, passports)
+    if destination in EXTRA_SLICE_DESTINATIONS:
+        require(len(found) == 1, "extra_slice_identity")
+        return found[0]
+    require(found == [], "unexpected_extra_slice")
+    return None
+
+
 def prepare(root: Path, destination: str, output: Path) -> dict:
-    require(bool(re.fullmatch(r"[A-Z]{2}", destination)), "invalid_destination")
+    require(bool(DESTINATION_RE.fullmatch(destination)), "invalid_destination")
     require(root.is_dir() and not root.is_symlink(), "input_root_refused")
     root = root.resolve(strict=True)
     schema_bytes = read_file(root, "record-schema.json", 256*1024)
@@ -273,6 +337,15 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
                              "researchContentPresent": bool(located), "recordConflictFlag": conflict,
                              "customerStatus": "unavailable", "customerText": "derzeit nicht verfügbar",
                              "publicValue": None, "publicationAuthority": "none"})
+    extra_name = extra_nationality(root, destination, passports)
+    extra_receipt = None
+    if extra_name is not None:
+        relative = f"records/dest/{destination}/{extra_name}.json"
+        data = read_file(root, relative)
+        require(sum(len(item) for item in evidence.values()) + len(data) <= 64*1024*1024, "package_size_limit")
+        evidence[f"original/extras-not-imported/{extra_name}.json"] = data
+        extra_receipt = {"path": relative, "nationality": extra_name, "sha256": sha(data),
+                         "use": "preserved_not_selected"}
     evidence["coverage.json"] = (json.dumps(coverage, ensure_ascii=False, separators=(",", ":"))+"\n").encode()
     counts = {"destinations": 1, "passports": 50, "researchRecords": len(records), "topicSlots": len(coverage),
               "sourceEntries": source_count, "accepted": 0, "published": 0}
@@ -284,7 +357,7 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
                 "preparedAt": datetime.now(timezone.utc).isoformat(),
                 "validationScope": "v2.2 frame/index/tracker identities and mandatory structural core; not semantic truth",
                 "inputHashes": {"schema": sha(schema_bytes), "passportPriority": sha(csv_bytes), "tracker": sha(tracker_bytes)},
-                "legacy": legacy_receipt, "records": records,
+                "legacy": legacy_receipt, "extraNotImported": extra_receipt, "records": records,
                 "files": [{"path": p, "bytes": len(b), "sha256": sha(b)} for p,b in sorted(evidence.items())]}
     if (root / "STAGING_RECEIPT.json").exists():
         staging = strict_json(read_file(root, "STAGING_RECEIPT.json", 65536))
@@ -337,7 +410,110 @@ def verify(package: Path) -> dict:
             == {(nat, topic) for nat in manifest["passportPriority"] for topic in TOPICS}
             and all(r["customerStatus"] == "unavailable" and r["publicValue"] is None
                     and r["publicationAuthority"] == "none" for r in coverage), "package_coverage")
+    extra = manifest.get("extraNotImported")
+    if manifest["destination"] in EXTRA_SLICE_DESTINATIONS:
+        require(isinstance(extra, dict) and extra.get("use") == "preserved_not_selected"
+                and extra.get("nationality") not in manifest["passportPriority"], "extra_slice_identity")
+    else:
+        require(extra is None, "unexpected_extra_slice")
     return manifest["counts"]
+
+
+def project_launch(destination: str, nationalities: list[str], witnesses: list[dict] | None = None) -> dict:
+    """Project 26 historical topics onto 6 required and 4 optional launch slots.
+
+    No witness is inferred from research text. Missing evidence stays open.
+    An optional gap is not a completeness gate. Publication stays at zero.
+    """
+    require(bool(DESTINATION_RE.fullmatch(destination)), "invalid_destination")
+    require(isinstance(nationalities, list), "invalid_passports")
+    for nationality in nationalities:
+        require(nationality not in SPECIAL_DESTINATIONS, "territory_is_not_a_passport")
+    require(len(nationalities) == 50 and len(set(nationalities)) == 50
+            and all(re.fullmatch(r"[A-Z]{2}", nationality) for nationality in nationalities), "invalid_passports")
+    core_ids = [item[0] for item in LAUNCH_CORE]
+    optional_ids = [item[0] for item in LAUNCH_OPTIONAL]
+    historical = {item[0]: item[2] for item in LAUNCH_CORE + LAUNCH_OPTIONAL}
+    holds = {(item["nationality"], item["topic"]): item["reason"] for item in PRESERVED_TOPIC_HOLDS}
+    allowed = set(nationalities)
+    slots: dict[tuple[str, str], dict] = {}
+    for nationality in nationalities:
+        for topic in core_ids + optional_ids:
+            reason = holds.get((nationality, topic))
+            slots[(nationality, topic)] = {
+                "destination": destination, "nationality": nationality, "topic": topic,
+                "passportGroup": None, "scope": None, "source": None, "version": None,
+                "digest": None, "exceptions": [], "status": "held" if reason else "open",
+                "reason": reason, "legalBasis": None, "legalEvidence": False,
+                "historicalTopics": list(historical[topic]), "completenessGate": topic in core_ids,
+            }
+    seen: dict[tuple[str, str], tuple] = {}
+    source_assignments = 0
+    for witness in list(witnesses or []):
+        require(isinstance(witness, dict), "witness_shape")
+        require(witness.get("published") in (None, False) and witness.get("accepted") in (None, False),
+                "publication_refused")
+        topic = witness.get("topic")
+        require(topic in historical, "witness_topic")
+        status = witness.get("status")
+        require(status in EVIDENCED_STATUSES or status in ("open", "unknown"), "projection_status_refused")
+        targets = witness.get("nationalities")
+        require(isinstance(targets, list) and targets and len(set(targets)) == len(targets), "witness_nationalities")
+        exceptions = witness.get("exceptions", [])
+        require(isinstance(exceptions, list)
+                and all(isinstance(item, str) and re.fullmatch(r"[A-Z]{2}", item) for item in exceptions),
+                "witness_exceptions")
+        group = witness.get("passportGroup")
+        if group is not None:
+            require(isinstance(group, str) and group.strip(), "passport_group_identity")
+        scope, source, version = witness.get("scope"), witness.get("source"), witness.get("version")
+        digest, basis = witness.get("digest"), witness.get("legalBasis")
+        if status in EVIDENCED_STATUSES:
+            require(isinstance(scope, str) and scope.strip(), "evidence_scope_missing")
+            require(isinstance(version, str) and version.strip(), "evidence_version_missing")
+            require(isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest), "evidence_digest_missing")
+            require(isinstance(source, dict) and isinstance(source.get("id"), str) and source["id"].strip(),
+                    "evidence_source_missing")
+            if status == "N/A":
+                require(isinstance(basis, str) and basis.strip(), "na_without_legal_basis")
+        for nationality in targets:
+            require(nationality in allowed, "passport_identity")
+            if nationality in exceptions:
+                continue
+            if (nationality, topic) in holds:
+                raise ValueError("held_topic_conflict")
+            identity = (status, digest, version, scope, basis)
+            prior = seen.get((nationality, topic))
+            if prior is not None:
+                require(prior == identity, "projection_conflict")
+                continue
+            seen[(nationality, topic)] = identity
+            slot = slots[(nationality, topic)]
+            if status in ("open", "unknown"):
+                slot["status"] = "open" if topic in core_ids and status == "unknown" else status
+                slot["legalEvidence"] = False
+                continue
+            slot.update({
+                "status": status, "scope": scope, "source": {"id": source["id"]},
+                "version": version, "digest": digest, "exceptions": list(exceptions),
+                "legalBasis": basis if status == "N/A" else None, "legalEvidence": True,
+                "passportGroup": group or "explicit",
+            })
+            source_assignments += 1
+    legal = sum(1 for slot in slots.values() if slot["legalEvidence"])
+    complete = sum(
+        1 for nationality in nationalities
+        if all(slots[(nationality, topic)]["legalEvidence"]
+               and slots[(nationality, topic)]["status"] in EVIDENCED_STATUSES for topic in core_ids)
+    )
+    return {
+        "destination": destination, "historicalTopicCount": len(TOPICS), "profiles": 50,
+        "coreSlots": 50 * len(LAUNCH_CORE), "optionalSlots": 50 * len(LAUNCH_OPTIONAL),
+        "legalEvidenceSlots": legal, "sourceAssignments": source_assignments,
+        "coreCompleteProfiles": complete, "optionalGapIsCompletenessGate": False,
+        "published": 0, "accepted": 0,
+        "slots": [slots[(nationality, topic)] for nationality in nationalities for topic in core_ids + optional_ids],
+    }
 
 
 if __name__ == "__main__":

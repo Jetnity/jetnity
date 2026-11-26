@@ -21,7 +21,7 @@ _spec.loader.exec_module(base)
 
 def audit_index(root: Path, destination: str, passports: list[str], tracker: list[dict], core: list[str]):
     """Return *only* counts/status. Never accept or transform researched facts."""
-    base.require(bool(re.fullmatch(r'[A-Z]{2}', destination)), 'invalid_destination')
+    base.require(bool(base.DESTINATION_RE.fullmatch(destination)), 'invalid_destination')
     expected = {n: f'records/dest/{destination}/{n}.json' for n in passports}
     idx = base.strict_json(base.read_file(root, f'records/dest/{destination}/index.json', 512*1024))
     rows = idx.get('nationality_slices')
@@ -89,9 +89,13 @@ def audit_all(root: Path):
     directory = root / 'records/dest'
     counts = Counter()
     missing = Counter()
+    import_capable = 0
+    specials = []
     for item in sorted(directory.iterdir()):
-        if not item.is_dir() or item.is_symlink() or not re.fullmatch(r'[A-Z]{2}', item.name):
+        if not item.is_dir() or item.is_symlink() or not base.DESTINATION_RE.fullmatch(item.name):
             continue
+        if item.name in base.SPECIAL_DESTINATIONS:
+            specials.append(item.name)
         data = audit_index(root, item.name, passports, tracker, core)
         counts[data['classification']] += 1
         if data['classification'] == 'quarantined_hashed_list':
@@ -99,9 +103,17 @@ def audit_all(root: Path):
             counts['incomplete_core_cases'] += int(data['missingCoreRecords'] > 0)
             counts['noncanonical_external_write_cases'] += int(data['noncanonicalExternalWritesRecords'] > 0)
             missing.update(data['missingCoreFields'])
+            import_capable += int(data['boundRecords'])
+    profiles = import_capable
     return {'classification': 'RESEARCH_ONLY', 'cases': dict(sorted(counts.items())),
             'missingMandatoryCoreOccurrences': dict(sorted(missing.items())),
-            'accepted': 0, 'published': 0, 'publicationAuthority': 'none'}
+            'accepted': 0, 'published': 0, 'publicationAuthority': 'none',
+            'importCapableProfiles': profiles, 'legalEvidenceSlots': 0, 'sourceAssignments': 0,
+            'historicalTopicSlots': profiles * len(base.TOPICS),
+            'launchCoreSlots': profiles * len(base.LAUNCH_CORE),
+            'launchOptionalSlots': profiles * len(base.LAUNCH_OPTIONAL),
+            'optionalGapIsCompletenessGate': False,
+            'specialDestinationsSeparate': specials}
 
 
 if __name__ == '__main__':

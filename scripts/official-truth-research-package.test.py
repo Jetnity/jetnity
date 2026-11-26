@@ -144,4 +144,104 @@ class PackageTests(unittest.TestCase):
         self.prepare();p=self.output/'original/slices/IN.json';p.write_bytes(p.read_bytes()+b' ')
         with self.assertRaisesRegex(ValueError,'checksum_mismatch'):a.verify(self.output)
 
+    def test_v21_slice_is_preserved_not_upgraded(self):
+        self.change(self.dest/'DE.json', lambda x: x.update(schema='jetnity-entry-requirements-research-v2.1'))
+        self.prepare()
+        raw = json.loads((self.output/'original/slices/DE.json').read_text())
+        self.assertEqual(raw['schema'], 'jetnity-entry-requirements-research-v2.1')
+        self.assertEqual(a.verify(self.output)['topicSlots'], 1300)
+
+    def test_unexpected_extra_slice_refused(self):
+        (self.dest/'ZZ.json').write_text('{}\n')
+        with self.assertRaisesRegex(ValueError, 'unexpected_extra_slice'):
+            self.prepare()
+        self.assertFalse(self.output.exists())
+
+    def test_cn_hk_extra_is_preserved_and_not_merged_into_cn(self):
+        dest = self.root/'records/dest/CN-HK'
+        self.dest.rename(dest)
+        (self.root/'records/dest/AT.json').rename(self.root/'records/dest/CN-HK.json')
+        index = json.loads((dest/'index.json').read_text())
+        index.update(dest_id='CN-HK', destination_iso2='CN-HK',
+                     slice_files=[f'records/dest/CN-HK/{c}.json' for c in CODES],
+                     nationality_slices=[{'nationality': c, 'file': f'records/dest/CN-HK/{c}.json'} for c in CODES])
+        index['migration'] = {'from': 'records/dest/CN-HK.json', 'unsplit_preserved_0444': True,
+                              'to': 'records/dest/CN-HK/index.json + records/dest/CN-HK/{NAT}.json'}
+        self.dump(dest/'index.json', index)
+        (self.root/'tracker.csv').write_text('dest_id,nationality,record_pointer,conflict\n'+''.join(
+            f'CN-HK,{c},records/dest/CN-HK/{c}.json,\n' for c in CODES))
+        for code in CODES:
+            self.change(dest/f'{code}.json', lambda record: record.update(destination_iso2='CN-HK'))
+        (dest/'ZZ.json').write_bytes(b'{"extra":"preserve-these-bytes"}\n')
+        counts = a.prepare(self.root, 'CN-HK', self.output)
+        self.assertEqual(counts['passports'], 50)
+        self.assertEqual(counts['topicSlots'], 1300)
+        manifest = json.loads((self.output/'manifest.json').read_text())
+        self.assertEqual(manifest['destination'], 'CN-HK')
+        self.assertEqual(manifest['extraNotImported']['nationality'], 'ZZ')
+        self.assertEqual(manifest['extraNotImported']['use'], 'preserved_not_selected')
+        self.assertNotIn('ZZ', manifest['passportPriority'])
+        self.assertEqual((self.output/'original/extras-not-imported/ZZ.json').read_bytes(),
+                         b'{"extra":"preserve-these-bytes"}\n')
+        self.assertFalse((self.root/'records/dest/CN').exists())
+        with self.assertRaises(ValueError):
+            a.prepare(self.root, 'CN-MO', self.base/'mo')
+        self.assertEqual(a.verify(self.output)['accepted'], 0)
+
+    def test_launch_projection_does_not_promote_missing_evidence(self):
+        self.assertEqual(len(a.TOPICS), 26)
+        projection = a.project_launch('AT', CODES)
+        self.assertEqual(projection['historicalTopicCount'], 26)
+        self.assertEqual(projection['coreSlots'], 300)
+        self.assertEqual(projection['optionalSlots'], 200)
+        self.assertEqual(projection['legalEvidenceSlots'], 0)
+        self.assertEqual(projection['sourceAssignments'], 0)
+        self.assertEqual(projection['coreCompleteProfiles'], 0)
+        self.assertEqual(projection['published'], 0)
+        self.assertFalse(projection['optionalGapIsCompletenessGate'])
+        held = next(slot for slot in projection['slots'] if slot['nationality']=='SO' and slot['topic']=='K1')
+        document = next(slot for slot in projection['slots'] if slot['nationality']=='SO' and slot['topic']=='K2')
+        self.assertEqual(held['status'], 'open')
+        self.assertEqual(document['status'], 'held')
+        self.assertFalse(document['legalEvidence'])
+        with self.assertRaisesRegex(ValueError, 'territory_is_not_a_passport'):
+            a.project_launch('CN', ['CN-HK', *CODES[1:]])
+        separate = a.project_launch('CN-HK', CODES)
+        self.assertNotEqual(separate['destination'], projection['destination'])
+
+    def test_projection_hold_conflict_optional_gap_and_na_basis(self):
+        digest = 'ab' * 32
+        def witness(topic, status, nationalities=('DE',), **extra):
+            value = {'topic': topic, 'status': status, 'nationalities': list(nationalities),
+                     'passportGroup': 'fixture-group', 'exceptions': [], 'published': False}
+            if status in ('B', 'BELEGT_BEDINGT', 'N/A'):
+                value.update(scope='ordinary_passport_fixture', version='fixture-1', digest=digest,
+                             source={'id': 'fixture-source'})
+            if status == 'N/A':
+                value['legalBasis'] = extra.pop('legalBasis', '')
+            value.update(extra)
+            return value
+        with self.assertRaisesRegex(ValueError, 'na_without_legal_basis'):
+            a.project_launch('AT', CODES, [witness('K3', 'N/A', legalBasis='')])
+        with self.assertRaisesRegex(ValueError, 'held_topic_conflict'):
+            a.project_launch('AT', CODES, [witness('K2', 'B', nationalities=('SO',))])
+        with self.assertRaisesRegex(ValueError, 'projection_conflict'):
+            a.project_launch('AT', CODES, [witness('K1', 'B'), witness('K1', 'B', digest='cd'*32)])
+        with self.assertRaisesRegex(ValueError, 'publication_refused'):
+            a.project_launch('AT', CODES, [witness('K1', 'B', published=True)])
+        evidenced = [witness(topic, 'B') for topic in ('K1', 'K2', 'K3', 'K4', 'K5', 'K6')]
+        evidenced.append(witness('Z1', 'unknown'))
+        evidenced.append(witness('K1', 'B'))
+        projection = a.project_launch('AT', CODES, evidenced)
+        self.assertEqual(projection['coreCompleteProfiles'], 1)
+        self.assertEqual(projection['legalEvidenceSlots'], 6)
+        self.assertEqual(projection['sourceAssignments'], 6)
+        self.assertEqual(projection['published'], 0)
+        optional = next(slot for slot in projection['slots'] if slot['nationality']=='DE' and slot['topic']=='Z1')
+        self.assertEqual(optional['status'], 'unknown')
+        self.assertFalse(optional['legalEvidence'])
+        self.assertFalse(optional['completenessGate'])
+        so = next(slot for slot in projection['slots'] if slot['nationality']=='SO' and slot['topic']=='K2')
+        self.assertEqual(so['status'], 'held')
+
 if __name__=='__main__': unittest.main()
