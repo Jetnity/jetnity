@@ -6661,3 +6661,17 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 **Begründung:** Die Parent-Funktionskörper sind aus dem bereits installierten V6-Text prüfbar. Der Katalog-JSON ist es ohne frischen Readback nicht. Fail-closed ist deshalb der ehrliche Installer.
 
 **Konsequenzen:** Keine Production-Änderung, keine Kosten, keine Oberfläche, kein Besucherflag. Installation, Faktenerneuerung, Rechtstext, Publikation und Besucherflag bleiben eigene PO-Gates. Der Produktionskandidat behält beide historischen `assert_catalog_v1()`-Aufrufe. Eine synthetische Komposition ohne genau diese zwei Aufrufe ist als `native-isolated-guard.sql` gekennzeichnet und gehört nicht zum Installationsmanifest. Nachweis: `docs/OFFICIAL_TRUTH_AT_STAGE3_DEV_PREPARATION_2026-11-25.md`.
+
+## ADR-0248 – Quellenpflege 6+4 bleibt eine manuelle Dry-run-Warnung
+
+**Datum:** 27. November 2026. **Status:** vorbereitet auf PO-Go für Paket II, Issue #1322. Kein Merge, keine Aktivierung, keine Rechtsqualifikation.
+
+**Kontext:** #1319 legt sechs Kernthemen und vier Zusatzthemen fest. Echte Änderungen, Ablauf, Widerspruch und fehlende Belege sollen das betroffene Thema sperren. Neutrale Asset-Zeitstempel sollen keine Rechtsänderung vortäuschen. Thailand 60→30 Tage ab 15.09.2026 ist der synthetische Änderungsfall, ohne alle Visumbefreiungen aufzuheben. Die V3-/BG1-V8-/MA1-Basis und die einmalige Erneuerungsautorisierung bleiben.
+
+**Entscheidung:** Die Vergleichsfunktion `evaluateSourceCareDryRun` nimmt eine Quelle und eine manuell vorgelegte Beobachtung entgegen und gibt nur eine Warnung zurück. Sie autorisiert nicht, verlängert keine Frist und schreibt nicht. Zusatzlücken sperren keine Kernthemen. Technische Störungen enden nach drei Versuchen fail-closed. Ein Konflikt wählt keinen Nachfolger. Die Rückkehr zu historischen Bytes löscht keine Sperre. Der BMEIA-Asset-Vertrag wird nicht erweitert. Dauerhafter Originalspeicher ist nicht nachgewiesen; ein automatischer Lauf bleibt gestoppt.
+
+**Alternativen:** Die bestehende Erneuerungsprüfung zu lockern, damit Asset-Änderungen als unverändert gelten. Verworfen, das würde die Schutzgates schwächen. Eine neue Tabelle oder einen Bucket für Originalbytes anzulegen. Verworfen, das wäre eine Schema- oder Kostenänderung ohne eigenes Go. Einen Scheduler vorzubereiten und auszuschalten. Verworfen, der Auftrag verbietet die Automatik selbst.
+
+**Begründung:** Die fachliche Sperre lässt sich an synthetischen Bytes prüfen, ohne eine Quelle live zu schalten oder eine alte Faktversion fortzuschreiben.
+
+**Konsequenzen:** Keine Migration, keine neuen Kosten, kein Deploy, keine Oberfläche. #1319 bleibt offen. Nachweis: `docs/OFFICIAL_TRUTH_SOURCE_CARE_6_4_DRY_RUN_2026-11-27.md`.
