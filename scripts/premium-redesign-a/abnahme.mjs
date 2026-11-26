@@ -140,6 +140,19 @@ async function seiteOeffnen(context) {
   return { seite, meldungen }
 }
 
+/* Endliche Animationen und Übergänge (Einblenden von Karten und Panels) laufen vor der Messung aus: Ein Text, der noch
+   einblendet, hat einen Kontrast, den der Nutzer nach 200 ms nicht mehr sieht. Endlose Animationen (Ladeschimmer) bleiben. */
+async function animationenAbwarten(seite, grenzeMs = 5_000) {
+  await seite.evaluate(async (grenze) => {
+    const laufend = () => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations !== Infinity)
+    const ende = performance.now() + grenze
+    while (laufend().length > 0 && performance.now() < ende) {
+      await Promise.race([Promise.all(laufend().map((a) => a.finished.catch(() => undefined))), new Promise((r) => setTimeout(r, 250))])
+    }
+  }, grenzeMs).catch(() => undefined)
+  await seite.waitForTimeout(100)
+}
+
 async function warten(seite, ms = 700) {
   await seite.waitForLoadState('networkidle', { timeout: 5_000 }).catch(() => undefined)
   await seite.evaluate(() => document.fonts?.ready).catch(() => undefined)
@@ -327,9 +340,11 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
     }
     const nurAnzeigen = (ansicht === 'konto' || ansicht === 'konto-reise' || ansicht === 'begleiter') && !KONTO
     if (!nurAnzeigen) {
+      await animationenAbwarten(seite)
       messung = await seite.evaluate(messenImBrowser)
       messung.kontrast = await kontrastMessen(seite, { ueberlagerungErwartet: ['menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht) })
       messung.kleinsterKontrast = messung.kontrast.kleinster
+      await animationenAbwarten(seite)
       await seite.screenshot({ path: datei })
       if (!['laden', 'fehler', 'menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht)) {
         messung.fusszeile = await abstandVorFusszeile(seite)
