@@ -375,6 +375,19 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
   .workspace-content [data-workspace-trip-parts] ul button { padding: 1rem; }
   .workspace-audit-intro > button { width: 100%; }
 }
+/* Reflow bei 320 px und 200 % Schrift (WCAG 1.4.10). Nur Layout: Ein einspaltiges Grid und ein Inline-Flex-Link dürfen unter den Mindestinhalt ihrer Kinder schrumpfen, statt die Seite zu verbreitern. Komponenten und Texte bleiben unverändert. */
+[data-workspace-modus="einreise"] .grid:not([class*="grid-cols-"]) { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 39.9375rem) {
+  [data-workspace-modus="einreise"] .grid[class*="sm:grid-cols"] { grid-template-columns: minmax(0, 1fr); }
+}
+[data-workspace-modus="einreise"] :is(button, a, summary) { overflow-wrap: anywhere; }
+[data-workspace-modus="vorbereitung"] nav[aria-label="Bereiche der Vorbereitung"] a {
+  display: inline-grid; grid-template-columns: minmax(0, 1fr); align-content: center;
+}
+section[aria-label="Dein nächster Schritt"] { container: naechster-schritt / inline-size; }
+@container naechster-schritt (max-width: 13em) {
+  section[aria-label="Dein nächster Schritt"] a.inline-flex { flex-wrap: wrap; max-width: 100%; padding-inline: .5rem; }
+}
 @media (prefers-reduced-transparency: reduce) {
   .workspace-bottom-nav { background: var(--workspace-soft); backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
