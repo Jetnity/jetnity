@@ -10,7 +10,7 @@
 //
 //   node scripts/premium-redesign-a/abnahme.mjs \
 //     --base http://127.0.0.1:3461 --label vorher --commit <sha> \
-//     --out /tmp/pra/shots --fixtures /tmp/pra/fixtures [--konto <url>]
+//     --out /tmp/pra/shots --fixtures /tmp/pra/fixtures [--konto <url>] [--schrift 100,150,200] [--views a,b] [--combos x,y]
 //
 // Ausgabe: <out>/<label>/<ansicht>__<browser>-<breite>-<thema>.png und
 // <out>/<label>/messwerte.json. Eine nicht ausgeführte Messung steht als `null`
@@ -40,6 +40,7 @@ const FIXTURES = argument('fixtures', '/tmp/pra/fixtures')
 const KONTO = argument('konto', '')
 const NUR_ANSICHTEN = argument('views', '')
 const NUR_KOMBIS = argument('combos', '')
+const SCHRIFTEN = argument('schrift', '100').split(',').map(Number)
 const THEMA_SCHLUESSEL = 'jetnity:workspace-theme:v1'
 const JETZT = '2026-12-03T10:00:00.000Z'
 const ZEITZONE = 'Europe/Zurich'
@@ -58,7 +59,9 @@ const REISE = JSON.parse(readFileSync(join(FIXTURES, 'thailand.json'), 'utf8'))
 const KOMBINATIONEN = []
 for (const browser of ['chromium', 'webkit']) {
   for (const breite of BREITEN) {
-    for (const thema of THEMEN) KOMBINATIONEN.push({ browser, breite, thema })
+    for (const thema of THEMEN) {
+      for (const schrift of SCHRIFTEN) KOMBINATIONEN.push({ browser, breite, thema, schrift })
+    }
   }
 }
 
@@ -79,12 +82,12 @@ const ANSICHTEN = [
   'fehler',
 ]
 
-function kombiName({ browser, breite, thema }) {
-  return `${browser}-${breite.name}-${thema}`
+function kombiName({ browser, breite, thema, schrift }) {
+  return `${browser}-${breite.name}-${thema}${schrift === 100 ? '' : `-s${schrift}`}`
 }
 
 async function kontext(browserTyp, kombi, optionen = {}) {
-  const { breite, thema } = kombi
+  const { breite, thema, schrift } = kombi
   const context = await browserTyp.newContext({
     viewport: { width: breite.width, height: breite.height },
     deviceScaleFactor: 1,
@@ -106,6 +109,17 @@ async function kontext(browserTyp, kombi, optionen = {}) {
     },
     { schluessel: REISE.schluessel, wert: REISE.roh, themaSchluessel: THEMA_SCHLUESSEL, thema, mitReise: optionen.mitReise !== false },
   )
+  if (schrift !== 100) {
+    await context.addInitScript((prozent) => {
+      const setzen = () => {
+        const stil = document.createElement('style')
+        stil.textContent = `html { font-size: ${prozent}% !important; }`
+        document.head.append(stil)
+      }
+      if (document.head) setzen()
+      else document.addEventListener('DOMContentLoaded', setzen, { once: true })
+    }, schrift)
+  }
   return context
 }
 
