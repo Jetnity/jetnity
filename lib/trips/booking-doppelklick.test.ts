@@ -54,6 +54,18 @@ test('Maus-Doppelklick und Touch-Doppeltap schreiben genau einmal und kippen das
   assert.deepEqual(probe.writes, [['flug', true], ['flug', false]])
 })
 
+test('eine doppelte Buchungskorrektur schreibt nur einmal und bleibt unbestätigt', async () => {
+  const memory = createBookingMemory()
+  const probe = protokoll()
+  startBookingAction(memory, probe.run, 'flug', false, null, () => {}, maus(1))
+  await tick()
+  startBookingAction(memory, probe.run, 'flug', true, null, () => {}, maus(2))
+  startBookingAction(memory, probe.run, 'flug', true, null, () => {}, maus(1))
+  startBookingAction(memory, probe.run, 'flug', true, null, () => {}, touch())
+  assert.deepEqual(probe.writes, [['flug', false]])
+  assert.equal(memory.gesture?.intent, false)
+})
+
 test('ein Fehler blockiert den Doppelklick, ein späterer Einzelversuch schreibt erneut', async () => {
   const memory = createBookingMemory()
   const probe = protokoll()

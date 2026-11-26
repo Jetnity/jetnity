@@ -33,6 +33,16 @@ html[data-workspace-theme="dark"] .workspace-shell,
   background: var(--workspace-bg);
   color-scheme: dark;
 }
+/* The two guest loading cards sit in the first server paint. A utility such as
+   bg-white/70 has the same weight as the general remap and stays light.
+   This rule is stronger and uses the dark panel even while the shell attribute
+   is still the server value. */
+[data-gast-lese-platzhalter] {
+  background-color: rgb(255 255 255 / .7);
+}
+html[data-workspace-theme="dark"] [data-gast-lese-platzhalter] {
+  background-color: var(--workspace-panel, #202c37);
+}
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
