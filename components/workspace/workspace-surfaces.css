@@ -69,7 +69,7 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 :where([data-workspace-theme="dark"]) .workspace-bottom-nav .workspace-nav-link[aria-current="page"] {
   background: rgb(var(--jet-ink-400) / .2); box-shadow: inset 0 3px rgb(var(--jet-ink-400));
 }
-:where([data-workspace-theme="dark"]) .workspace-page [data-back-to-top] { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
+:where([data-workspace-theme="dark"]) .workspace-page [data-back-to-top] .nach-oben-flaeche { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
 
 /* Background/foreground pairs also cover existing empty, error and security
    cards. Provider iframes and image pixels retain their own colours. */
@@ -165,30 +165,100 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 .workspace-content #reisebegleiter button { max-width: 100%; height: auto; min-height: 2.75rem; padding-block: .5rem; white-space: normal; }
 .workspace-content #reisebegleiter button .truncate { white-space: normal; overflow: visible; text-overflow: clip; }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.75rem; }
-.workspace-content [data-workspace-identity].workspace-trip-heading {
-  background: none; color: var(--workspace-ink); margin: 0; border: 0; border-radius: 0; overflow: visible;
-}
 .workspace-trip-kopf { margin-bottom: 1.5rem; }
-.workspace-eyebrow { color: var(--workspace-muted); margin-bottom: .375rem; }
-.workspace-content .workspace-trip-heading h1 { color: var(--workspace-ink); overflow-wrap: anywhere; hyphens: auto; }
-.workspace-status { border: 1px solid var(--workspace-edge); border-radius: 999px; padding: .3rem .75rem; color: var(--workspace-ink); background: var(--workspace-panel); }
-.workspace-trip-meta { display: flex; flex-wrap: wrap; gap: .375rem 1.25rem; margin-top: .75rem; color: var(--workspace-muted); }
-.workspace-trip-meta > div { display: flex; align-items: flex-start; min-width: 0; gap: .4rem; }
-.workspace-trip-meta dd { overflow-wrap: anywhere; min-width: 0; }
-.workspace-trip-meta svg, .workspace-trip-storage svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .125rem; }
-.workspace-trip-storage { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; color: var(--workspace-muted); margin-top: .875rem; }
-.workspace-trip-storage > span { display: flex; align-items: center; gap: .4rem; }
-/* Ortsbild-Kopf in Reiseplan und Organisieren: Text steht immer auf der dunklen Seite des Verlaufs. */
-.workspace-content [data-workspace-identity].workspace-trip-heading[data-workspace-kopfbild] {
-  position: relative; overflow: hidden; border-radius: 1.5rem; padding: clamp(1.5rem, 3vw, 2.75rem);
-  color: #fff; background-color: rgb(var(--jet-brand-800));
-  background-image: linear-gradient(90deg, rgb(11 49 42 / .98) 0%, rgb(13 48 41 / .92) 45%, rgb(13 48 41 / .3) 100%), var(--workspace-kopfbild);
-  background-size: cover; background-position: center, center 52%;
+/* Reisekopf (PR A): ein Kopf für alle fünf Reise-Ansichten. Dunkelgrüne Markenfläche in beiden
+   Darstellungen, deshalb eigene Text-Tokens statt --workspace-ink (das im dunklen Thema hell wird).
+   Das Ortsbild liegt unter einem dunklen Verlauf; alle Texte stehen auf diesem Verlauf. */
+.workspace-content .reisekopf {
+  --reisekopf-text: #fff;
+  --reisekopf-text-leise: #e6f1ec;
+  --reisekopf-akzent: #e8fa91;
+  --reisekopf-verlauf: 15 48 42;
+  position: relative; z-index: 2; isolation: isolate;
+  padding: 1.25rem 1rem 1rem; border-radius: 1.25rem;
+  background-color: rgb(var(--jet-brand-800)); color: var(--reisekopf-text);
 }
-[data-workspace-kopfbild] > * { max-width: 40rem; }
-[data-workspace-kopfbild] .workspace-eyebrow { color: rgb(var(--jet-citrus-300)); }
-.workspace-content [data-workspace-kopfbild].workspace-trip-heading h1 { color: #fff; }
-[data-workspace-kopfbild] .workspace-trip-meta { color: rgb(255 255 255 / .9); }
+.reisekopf[data-kopf-dichte="kompakt"] { padding-block: .875rem .75rem; }
+.reisekopf-grund { position: absolute; inset: 0; z-index: -1; display: block; overflow: hidden; border-radius: inherit; }
+.reisekopf-grund img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; }
+.reisekopf-grund::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgb(var(--reisekopf-verlauf) / .96) 0%, rgb(var(--reisekopf-verlauf) / .9) 55%, rgb(var(--reisekopf-verlauf) / .82) 100%);
+}
+.reisekopf-inhalt { display: grid; gap: .375rem; min-width: 0; max-width: 46rem; }
+.workspace-content .reisekopf :is(h1, p, dt, dd) { color: var(--reisekopf-text); }
+.workspace-content .reisekopf .reisekopf-phase {
+  margin: 0; color: var(--reisekopf-akzent); font-size: .75rem; line-height: 1.3; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  /* Die Zeile ist vor dem Geräte-Kalendertag leer; die Höhe bleibt reserviert, damit nichts nachrutscht. */
+  min-height: calc(.75rem * 1.3);
+}
+.reisekopf-titelzeile { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .875rem; min-width: 0; }
+.workspace-content .reisekopf h1 { margin: 0; min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+.reisekopf[data-kopf-dichte="kompakt"] h1 { font-size: clamp(1.5rem, 1.15rem + 1.6vw, 2rem); }
+.workspace-content .reisekopf .reisekopf-heute { margin: 0; color: var(--reisekopf-text-leise); font-size: .9375rem; font-weight: 600; line-height: 1.4; }
+.reisekopf-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.25rem; margin: .125rem 0 0; }
+.reisekopf-meta > div { display: flex; align-items: center; min-width: 0; gap: .4rem; }
+.workspace-content .reisekopf .reisekopf-meta dd { margin: 0; color: var(--reisekopf-text-leise); font-size: .9375rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.reisekopf svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.reisekopf-meta svg { color: var(--reisekopf-akzent); }
+.workspace-content .reisekopf .reisekopf-speicher {
+  display: flex; align-items: center; gap: .4rem; margin: 0; color: var(--reisekopf-text-leise); font-size: .8125rem; line-height: 1.4;
+}
+.reisekopf-speicher svg { color: var(--reisekopf-akzent); }
+.reisekopf-meldung { margin-top: .25rem; }
+.reisekopf-meldung > [role="alert"] {
+  margin: 0; padding: .5rem .75rem; border-radius: .75rem; background: #fff1ee; color: #7a1f12; font-size: .875rem; line-height: 1.4;
+}
+.workspace-content .reisekopf .reisekopf-meldung > [role="alert"] { color: #7a1f12; }
+.reisekopf-optionen { margin-top: .125rem; }
+.workspace-content .reisekopf .reisekopf-optionen > summary { color: var(--reisekopf-text); width: fit-content; }
+.workspace-content .reisekopf .reisekopf-optionen > summary:focus-visible { outline-color: var(--reisekopf-akzent); }
+.reisekopf-optionen-inhalt { padding-block: .5rem; }
+/* «Reise ändern»: beschriftete Stiftaktion neben dem Titel. Umbricht bei 320 px unter den Titel. */
+.workspace-content .reise-aendern-knopf {
+  display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: .25rem .875rem .25rem .75rem; flex: 0 1 auto; max-width: 100%;
+  border: 1px solid rgb(255 255 255 / .55); border-radius: 1.375rem; background: rgb(255 255 255 / .12);
+  color: var(--reisekopf-text, #fff); font-size: .875rem; font-weight: 600; line-height: 1.25; text-align: left; cursor: pointer;
+}
+.reise-aendern-knopf svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.workspace-content .reise-aendern-knopf:hover, .workspace-content .reise-aendern-knopf[aria-expanded="true"] { background: rgb(255 255 255 / .22); }
+.workspace-content .reise-aendern-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: 2px; }
+/* Bildnachweis: ⓘ am Foto mit 44-px-Trefferfläche und kleiner Scheibe; das Feld öffnet unter dem Kopf. */
+.workspace-content .reisekopf .bildnachweis { position: absolute; right: .25rem; bottom: .25rem; z-index: 1; }
+.bildnachweis-knopf {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
+  border: 0; background: transparent; color: #fff; cursor: pointer;
+}
+.bildnachweis-knopf svg { width: 1.0625rem; height: 1.0625rem; padding: .1875rem; box-sizing: content-box; border-radius: 50%; background: rgb(15 48 42 / .88); }
+.bildnachweis-knopf:hover svg, .bildnachweis-knopf[aria-expanded="true"] svg { background: rgb(15 48 42); }
+.bildnachweis-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: -4px; border-radius: 50%; }
+.bildnachweis-feld {
+  position: absolute; right: 0; top: calc(100% + .25rem); width: min(20rem, calc(100vw - 2rem)); padding: .75rem .875rem;
+  border-radius: .875rem; background: #fff; color: #153a33; border: 1px solid rgb(21 58 51 / .22);
+  box-shadow: 0 12px 40px rgb(15 48 42 / .28); font-size: .8125rem; line-height: 1.45; text-align: left;
+}
+.bildnachweis-feld[hidden] { display: none; }
+.bildnachweis-feld dl { display: grid; gap: .375rem; margin: 0; }
+.bildnachweis-feld dl > div { display: grid; gap: .0625rem; }
+.workspace-content .bildnachweis-feld :is(dt, dd) { margin: 0; color: #153a33; overflow-wrap: anywhere; }
+.workspace-content .bildnachweis-feld dt { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #3d5a52; }
+.workspace-content .bildnachweis-feld a { color: #0f302a; text-decoration: underline; text-underline-offset: 3px; }
+.workspace-content .bildnachweis-feld a:focus-visible { outline: 3px solid #153a33; outline-offset: 2px; }
+@media (min-width: 40.0625rem) {
+  .workspace-content .reisekopf { padding: 1.75rem 2rem 1.5rem; border-radius: 1.75rem; }
+  .reisekopf[data-kopf-dichte="kompakt"] { padding-block: 1.125rem 1rem; }
+  .reisekopf-grund::after {
+    background: linear-gradient(90deg, rgb(var(--reisekopf-verlauf) / .97) 0%, rgb(var(--reisekopf-verlauf) / .9) 48%, rgb(var(--reisekopf-verlauf) / .62) 100%);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .workspace-content .reise-aendern-knopf, .bildnachweis-knopf svg { transition: background-color 160ms ease-out; }
+}
+@media (forced-colors: active) {
+  .reisekopf { border: 1px solid CanvasText; }
+  .reise-aendern-knopf, .bildnachweis-knopf { border: 1px solid ButtonText; }
+}
 .workspace-reiseoptionen > summary {
   display: flex; align-items: center; min-height: 44px; cursor: pointer; list-style: none;
   font-weight: 600; color: var(--workspace-ink); text-decoration: underline; text-underline-offset: 4px;
@@ -224,12 +294,6 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
   color: #ffe6b6;
 }
 
-.workspace-storage-options { flex: 1; min-width: min(100%, 15rem); }
-/* These legacy header slots were white on a dark hero. Only recolour them
-   inside the compact, transparent heading; keep dark action buttons intact. */
-:where([data-workspace-theme="light"]) .workspace-storage-options :where(.text-white, .text-white\/65, .text-white\/70) { color: var(--workspace-muted); }
-:where([data-workspace-theme="light"]) .workspace-storage-options .hover\:text-white:hover { color: var(--workspace-ink); }
-:where([data-workspace-theme="light"]) .workspace-storage-options [role="alert"] { background: var(--workspace-soft); color: var(--workspace-ink); }
 .workspace-content [data-workspace-overview="integrated"] { gap: 1.5rem; margin-top: 0; }
 .workspace-content [data-workspace-attention="integrated"] { border-radius: 1rem; }
 .workspace-content [data-workspace-attention="integrated"] > div:first-child { display: block; }
@@ -273,11 +337,6 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 @media (max-width: 40rem) {
   .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; }
   .workspace-trip-kopf { margin-bottom: 1.25rem; }
-  .workspace-trip-meta { gap: .25rem 1rem; margin-top: .5rem; }
-  .workspace-content [data-workspace-identity].workspace-trip-heading[data-workspace-kopfbild] {
-    border-radius: 1.0625rem; padding: 1.25rem;
-    background-image: linear-gradient(rgb(11 49 42 / .9), rgb(13 48 41 / .82)), var(--workspace-kopfbild);
-  }
   .workspace-content [data-workspace-attention="integrated"] .workspace-attention-heading,
   .workspace-content [data-workspace-attention="integrated"] [data-attention-punkt],
   .workspace-content [data-workspace-audit="integrated"],

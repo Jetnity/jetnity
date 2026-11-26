@@ -81,12 +81,8 @@ html[data-workspace-theme="dark"] .workspace-shell,
   :is(section, article, details, form, aside, div):is(.rounded-2xl, .rounded-3xl, [class*="rounded-[24px]"], .rounded-card):not(.shrink-0) {
   border-radius: var(--wn-r-control);
 }
-.workspace-content .workspace-trip-heading {
-  border-radius: var(--wn-r-panel);
-}
 
 /* Kopfzeile, Menü und Seitenleiste: nichts unter 12 px. */
-.workspace-menu-button,
 .workspace-kicker,
 .workspace-account-panel p {
   font-size: 0.75rem;

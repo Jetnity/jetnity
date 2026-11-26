@@ -2,18 +2,17 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { LayoutDashboard, Route, BriefcaseBusiness, ClipboardCheck, BookUser, ChevronRight, Wallet } from 'lucide-react'
+import { LayoutDashboard, Route, BriefcaseBusiness, ClipboardCheck, BookUser } from 'lucide-react'
 import TripWorkspaceModeNavigation from '@/components/trips/TripWorkspaceModeNavigation'
 import { WORKSPACE_ANSICHTEN, WORKSPACE_ANSICHT_LABEL, type WorkspaceAnsicht } from '@/lib/trips/workspace-mode'
 import { useWorkspaceShell } from './WorkspaceContext'
 
 const ICONS = { uebersicht: LayoutDashboard, plan: Route, organisieren: BriefcaseBusiness, vorbereitung: ClipboardCheck, einreise: BookUser }
 
-export function WorkspacePortal({ slot, children }: { slot: 'actions' | 'title'; children: ReactNode }) {
+export function WorkspacePortal({ children }: { children: ReactNode }) {
   const shell = useWorkspaceShell()
-  const target = shell?.[slot]
-  if (target) return createPortal(children, target)
-  return slot === 'title' ? null : children
+  const target = shell?.actions
+  return target ? createPortal(children, target) : children
 }
 
 export default function WorkspaceTripChrome(props: {
@@ -21,16 +20,12 @@ export default function WorkspaceTripChrome(props: {
   kompakt: boolean
   detailOffen: boolean
   onWechsel: (ansicht: WorkspaceAnsicht, tastatur: boolean) => void
-  /** Kostenzeile über der Leiste unten (DESIGN_SYSTEM.md 6.12). Nur auf Handy und Tablet. */
-  kostenLeiste?: { text: string; onOeffnen: () => void } | null
 }) {
   const shell = useWorkspaceShell()
   const bottomRef = useRef<HTMLElement>(null)
-  const leisteRef = useRef<HTMLButtonElement>(null)
   const [flow, setFlow] = useState(false)
   /** Nur wenn die Leiste wegen Breite, Höhe oder Tastatur im Fluss steht, nicht wegen grosser Schrift. */
   const [raster, setRaster] = useState<'zwei' | 'fuenf' | null>(null)
-  const leisteDa = Boolean(props.kostenLeiste)
 
   useEffect(() => {
     if (!shell?.mobile) return
@@ -47,15 +42,13 @@ export default function WorkspaceTripChrome(props: {
       setRaster(nextFlow && !grosseSchrift ? (window.innerWidth >= 544 ? 'fuenf' : 'zwei') : null)
       const fest = !nextFlow && window.innerWidth < 1024
       const nav = fest ? bottomRef.current?.getBoundingClientRect().height ?? 0 : 0
-      const height = nav + (fest ? leisteRef.current?.getBoundingClientRect().height ?? 0 : 0)
       root.style.setProperty('--workspace-bottom-nav-hoehe', `${Math.ceil(nav)}px`)
-      root.style.setProperty('--ux-u1a-nav-offset', `${Math.ceil(height + 12)}px`)
-      root.style.scrollPaddingBottom = `${Math.ceil(height + 16)}px`
+      root.style.setProperty('--ux-u1a-nav-offset', `${Math.ceil(nav + 12)}px`)
+      root.style.scrollPaddingBottom = `${Math.ceil(nav + 16)}px`
     }
     const observer = new ResizeObserver(measure)
     observer.observe(root)
     if (bottomRef.current) observer.observe(bottomRef.current)
-    if (leisteRef.current) observer.observe(leisteRef.current)
     window.addEventListener('resize', measure)
     window.visualViewport?.addEventListener('resize', measure)
     measure()
@@ -67,7 +60,7 @@ export default function WorkspaceTripChrome(props: {
       root.style.setProperty('--workspace-bottom-nav-hoehe', beforeNav)
       root.style.scrollPaddingBottom = previousPadding
     }
-  }, [shell?.mobile, leisteDa])
+  }, [shell?.mobile])
 
   if (!shell) return <TripWorkspaceModeNavigation {...props} />
   const buttons = (rail: boolean) => WORKSPACE_ANSICHTEN.map((view) => {
@@ -87,13 +80,6 @@ export default function WorkspaceTripChrome(props: {
   return <>
     {shell.navigation && createPortal(<nav aria-label="Reiseplanung" data-workspace-mode-nav="sidebar">{buttons(true)}</nav>, shell.navigation)}
     {shell.mobile && createPortal(<>
-      {props.kostenLeiste ? (
-        <button ref={leisteRef} type="button" className="workspace-cost-bar" data-flow={flow} onClick={props.kostenLeiste.onOeffnen}>
-          <Wallet aria-hidden="true" />
-          <span><span className="sr-only">Kosten ansehen: </span>{props.kostenLeiste.text}</span>
-          <ChevronRight aria-hidden="true" />
-        </button>
-      ) : null}
       <nav ref={bottomRef} aria-label="Reisebereiche" className="workspace-bottom-nav"
         data-flow={flow} data-flow-raster={raster ?? undefined} data-shell-nav={flow ? 'flow' : 'bottom'} data-workspace-mode-nav="mobile">{buttons(false)}</nav>
     </>, shell.mobile)}

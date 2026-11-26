@@ -142,7 +142,18 @@ describe('compact route evidence', { timeout: 180_000 }, () => {
     await phone.goto(origin, { waitUntil: 'networkidle' })
     await phone.waitForSelector('[data-shell-nav="bottom"]')
     await schuss(phone, 'u1c-after-mobile-390.png')
-    await phone.evaluate(() => window.scrollTo(0, 700))
+    // PR A: auf dem Handy erscheint «Nach oben» erst nach einer Bildschirmhöhe und nur beim
+    // Hochscrollen (vorher schon nach 400 px und dauerhaft). Die Geometrie gegen die Leiste
+    // bleibt dieselbe Prüfung.
+    await phone.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }))
+    await phone.waitForFunction(() => Math.abs(scrollY - (document.documentElement.scrollHeight - innerHeight)) < 2)
+    await phone.evaluate(() => new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig))))
+    await phone.evaluate(async () => {
+      for (let schritt = 0; schritt < 4; schritt += 1) {
+        window.scrollBy({ top: -20, behavior: 'instant' })
+        await new Promise((fertig) => requestAnimationFrame(fertig))
+      }
+    })
     await phone.waitForFunction(() => {
       const knopf = document.querySelector('button[aria-label="Nach oben"]')
       return knopf instanceof HTMLElement && !knopf.classList.contains('invisible')

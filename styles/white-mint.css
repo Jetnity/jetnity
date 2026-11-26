@@ -198,7 +198,7 @@ main[data-white-mint="home"].bg-surface-75 {
   background: var(--white-mint-selected);
 }
 
-.workspace-shell[data-workspace-theme="light"] .workspace-nav-link[aria-current="page"] {
+.workspace-shell[data-workspace-theme="light"] :is(.workspace-nav-link[aria-current="page"], .workspace-darstellung-knopf[aria-pressed="true"]) {
   background: var(--white-mint-selected);
   color: var(--white-mint-ink);
   box-shadow: inset 3px 0 0 var(--white-mint-ink);

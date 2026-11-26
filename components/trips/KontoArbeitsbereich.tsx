@@ -20,7 +20,7 @@ import OfficialTruthPilotForm from './OfficialTruthPilotForm'
 import { useOfficialTruthPilot } from './useOfficialTruthPilot'
 import { useAcceptedStoreTrip,useOfficialTruthReadOwnership } from './useAcceptedStoreTrip'
 import { useRouter } from 'next/navigation'
-import { Cloud, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 
 import { activityInReiseUebernehmen } from '@/lib/activities/aktionen'
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
@@ -359,12 +359,6 @@ export default function KontoArbeitsbereich({
             {loeschmeldung}
           </p>
         ) : null
-      }
-      kopfzeile={
-        <p className="flex min-w-0 items-center gap-2 text-xs leading-5 text-white/65">
-          <Cloud className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          Änderungen werden sofort in deinem Konto gespeichert.
-        </p>
       }
       reiseoptionen={
         <div className="flex justify-end">

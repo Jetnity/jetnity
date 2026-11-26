@@ -76,7 +76,9 @@ describe('Offizielles Jetnity-Logo 1 – Marke', () => {
   test('die Leiste lädt das Logo sofort und färbt es nicht auf eine Fläche um', () => {
     const link = markenlink(navbar)
     assert.match(link, /priority/)
-    assert.match(link, /h-\[48px\] w-auto md:h-\[32px\] lg:h-\[48px\]/)
+    // PR A: ein Logo in 48 px auf jeder Breite (vorher schrumpfte es bei md auf 32 px).
+    assert.match(link, /h-\[48px\] w-auto max-w-full object-contain/)
+    assert.equal(link.includes('md:h-[32px]'), false)
     assert.equal(link.includes('bg-white'), false)
     assert.match(navbar, /min-h-\[72px\]/)
     assert.match(navbar, /FOKUS_RING/)

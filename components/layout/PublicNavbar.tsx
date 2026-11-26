@@ -46,6 +46,7 @@ import { LogOut, Menu, X } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import WorkspaceAccountMenu from '@/components/workspace/WorkspaceAccountMenu'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   HAUPTNAVIGATION,
@@ -147,29 +148,41 @@ export default function PublicNavbar() {
       className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
                  pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
-      <div className="mx-auto flex min-h-[72px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-2 sm:px-8">
-        <Link
-          href="/"
-          aria-label="Jetnity Startseite"
-          className={cn(
-            '-mx-2 inline-flex min-h-11 min-w-0 max-w-full items-center px-2 md:px-1 lg:px-2',
-            FOKUS_RING,
-          )}
-        >
-          {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
-          {/* 32px nur zwischen md und lg: dort sitzen Navigation und Sitzung in derselben 72px-Zeile. */}
-          <Image
-            src="/brand/jetnity-logo.png"
-            alt=""
-            width={384}
-            height={128}
-            priority
-            unoptimized
-            sizes="(min-width: 1024px) 144px, (min-width: 768px) 96px, 144px"
-            className="h-[48px] w-auto md:h-[32px] lg:h-[48px] max-w-full object-contain"
-            style={{ width: 'auto' }}
-          />
-        </Link>
+      <div className="mx-auto flex min-h-[64px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:gap-x-3 md:py-2 lg:px-8">
+        <div className="flex min-w-0 items-center gap-1">
+          <button
+            ref={menuKnopf}
+            type="button"
+            aria-label="Menü"
+            aria-expanded={mobileOpen}
+            aria-controls={MOBILE_NAV_ID}
+            onClick={() => setMobileOpen((current) => !current)}
+            className="kopf-menue md:hidden"
+          >
+            {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+          </button>
+          <Link
+            href="/"
+            aria-label="Jetnity Startseite"
+            className={cn(
+              'inline-flex min-h-11 min-w-0 max-w-full items-center px-1 md:px-2',
+              FOKUS_RING,
+            )}
+          >
+            {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
+            <Image
+              src="/brand/jetnity-logo.png"
+              alt=""
+              width={384}
+              height={128}
+              priority
+              unoptimized
+              sizes="144px"
+              className="h-[48px] w-auto max-w-full object-contain"
+              style={{ width: 'auto' }}
+            />
+          </Link>
+        </div>
 
         <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
           {HAUPTNAVIGATION.map((item) => (
@@ -192,34 +205,17 @@ export default function PublicNavbar() {
           ))}
         </nav>
 
-        <div className="hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex">
-          {eintraege.filter((eintrag) => eintrag.art === 'link').map((eintrag) => (
-            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
-          ))}
+        <div className="flex min-w-0 items-center justify-end gap-2">
           <GastCreateLink
             createHref="/planen"
             createLabel="Reise planen"
             className={cn(
-              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900',
+              'hidden min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 md:inline-flex',
               FOKUS_RING,
             )}
           />
+          <WorkspaceAccountMenu />
         </div>
-
-        <button
-          ref={menuKnopf}
-          type="button"
-          aria-label={mobileOpen ? 'Menü schliessen' : 'Menü öffnen'}
-          aria-expanded={mobileOpen}
-          aria-controls={MOBILE_NAV_ID}
-          onClick={() => setMobileOpen((current) => !current)}
-          className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden',
-            FOKUS_RING,
-          )}
-        >
-          {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-        </button>
       </div>
 
       <nav
@@ -253,7 +249,6 @@ export default function PublicNavbar() {
             <Sitzungseintrag
               key={eintrag.label}
               eintrag={eintrag}
-              mobil
               onFertig={closeMobile}
               onNachlesen={sitzungLesen}
             />
@@ -282,17 +277,15 @@ export default function PublicNavbar() {
  */
 function Sitzungseintrag({
   eintrag,
-  mobil = false,
   onFertig,
   onNachlesen,
 }: {
   eintrag: Navigationseintrag
-  mobil?: boolean
   onFertig?: () => void
   onNachlesen: () => void
 }) {
   if (eintrag.art === 'link') {
-    return mobil ? (
+    return (
       <Link
         href={eintrag.href}
         onClick={onFertig}
@@ -303,30 +296,12 @@ function Sitzungseintrag({
       >
         {eintrag.label}
       </Link>
-    ) : (
-      <Link
-        href={eintrag.href}
-        className={cn(
-          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
-          FOKUS_RING,
-        )}
-      >
-        {eintrag.label}
-      </Link>
     )
   }
 
   return (
-    <GlobalesAbmeldenForm
-      action={signOutAction}
-      className={mobil ? undefined : 'flex flex-col items-end'}
-      fehlerClassName={
-        mobil
-          ? 'text-xs font-medium text-red-800'
-          : 'max-w-[14rem] text-right text-xs font-medium text-red-800'
-      }
-    >
-      <AbmeldenKnopf label={eintrag.label} mobil={mobil} onNachlesen={onNachlesen} />
+    <GlobalesAbmeldenForm action={signOutAction} fehlerClassName="text-xs font-medium text-red-800">
+      <AbmeldenKnopf label={eintrag.label} onNachlesen={onNachlesen} />
     </GlobalesAbmeldenForm>
   )
 }
@@ -342,11 +317,9 @@ function Sitzungseintrag({
  */
 function AbmeldenKnopf({
   label,
-  mobil,
   onNachlesen,
 }: {
   label: string
-  mobil: boolean
   onNachlesen: () => void
 }) {
   const { pending } = useFormStatus()
@@ -366,17 +339,10 @@ function AbmeldenKnopf({
   return (
     <button
       type="submit"
-      className={
-        mobil
-          ? cn(
-              'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
-              FOKUS_RING,
-            )
-          : cn(
-              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
-              FOKUS_RING,
-            )
-      }
+      className={cn(
+        'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+        FOKUS_RING,
+      )}
     >
       <LogOut className="h-4 w-4" aria-hidden="true" />
       {label}

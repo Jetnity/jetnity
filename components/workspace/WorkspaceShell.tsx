@@ -1,13 +1,15 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Compass, Globe2, Menu, Moon, PanelLeftClose, PanelLeftOpen, Plus, Sun, Luggage, UsersRound, X } from 'lucide-react'
+import { Compass, Globe2, Menu, PanelLeftClose, PanelLeftOpen, Plus, Luggage, UsersRound, X } from 'lucide-react'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
 import { accountNavigationAktiv } from '@/lib/account/navigation'
+import DarstellungWahl from './DarstellungWahl'
 import WorkspaceAccountMenu from './WorkspaceAccountMenu'
 import { WorkspaceContext } from './WorkspaceContext'
 import useWorkspaceTheme from './useWorkspaceTheme'
@@ -28,7 +30,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
   contentId?: string
 }) {
   const pathname = usePathname()
-  const { theme, toggleTheme } = useWorkspaceTheme()
+  const { theme, setTheme } = useWorkspaceTheme()
   const [hovered, setHovered] = useState(false)
   const [keyboardOpen, setKeyboardOpen] = useState(false)
   const [touchOpen, setTouchOpen] = useState(false)
@@ -45,7 +47,6 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
   const [navigation, setNavigation] = useState<HTMLElement | null>(null)
   const [mobile, setMobile] = useState<HTMLElement | null>(null)
   const [actions, setActions] = useState<HTMLElement | null>(null)
-  const [title, setTitle] = useState<HTMLElement | null>(null)
   const sidebarRef = useRef<HTMLElement>(null)
   const menuRef = useRef<HTMLButtonElement>(null)
   const headerRef = useRef<HTMLElement>(null)
@@ -158,39 +159,32 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
     return () => { observer.disconnect(); root.style.setProperty('--jet-header-h', before) }
   }, [])
 
-  const slots = useMemo(() => ({ navigation, mobile, actions, title, closeNavigation, finishNavigation }),
-    [navigation, mobile, actions, title, closeNavigation, finishNavigation])
-  const heading = pathname === '/planen' ? 'Reise planen'
-    : pathname === '/reisen' ? 'Meine Reisen'
-    : pathname === '/account/welt' ? 'Meine Welt' : pathname === '/account' ? 'Dein Jetnity' : pathname.startsWith('/account') ? 'Mein Bereich' : 'Deine Reise'
+  const slots = useMemo(() => ({ navigation, mobile, actions, closeNavigation, finishNavigation }),
+    [navigation, mobile, actions, closeNavigation, finishNavigation])
 
   return (
     <WorkspaceContext.Provider value={slots}>
       <div className="workspace-shell" data-workspace-theme={theme} data-collapsed={!expanded} data-menu-open={mobileOpen}>
         <div inert={mobileOpen}><SkipToContentLink targetId={contentId} /></div>
-        <header ref={headerRef} className="workspace-header" inert={mobileOpen}>
-          <button ref={menuRef} type="button" className="workspace-icon-button workspace-menu-button"
-            aria-label="Navigation öffnen"
-            aria-expanded={mobileOpen} aria-controls="workspace-navigation" onClick={() => { restoreMenuFocus.current = true; setMobileOpen(true) }}>
-            <Menu aria-hidden="true" /><span>Menü</span>
-          </button>
-          <Link href="/" aria-label="Jetnity Startseite" className="workspace-brand workspace-header-brand">
-            {/* Static local brand asset; no image optimizer or remote image source. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/jetnity-logo.png" alt="" width={140} height={48} />
-          </Link>
-          <div className="workspace-context"><span ref={setTitle} /><span className="workspace-default-title">{heading}</span></div>
-          <div ref={setActions} className="workspace-header-actions" />
-          <div className="workspace-header-global">
-            <button type="button" className="workspace-icon-button workspace-theme-toggle" onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Helle Darstellung aktivieren' : 'Dunkle Darstellung aktivieren'}
-              title={theme === 'dark' ? 'Zur hellen Darstellung wechseln' : 'Zur dunklen Darstellung wechseln'}>
-              {theme === 'dark' ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+        <header ref={headerRef} className="kopf workspace-header" inert={mobileOpen}>
+          <div className="kopf-innen">
+            <button ref={menuRef} type="button" className="kopf-menue workspace-menu-button"
+              aria-label="Menü"
+              aria-expanded={mobileOpen} aria-controls="workspace-navigation" onClick={() => { restoreMenuFocus.current = true; setMobileOpen(true) }}>
+              <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
-            <GastCreateLink createLabel="Reise planen" className="workspace-button workspace-primary">
-              <Plus aria-hidden="true" /><span>Reise planen</span>
-            </GastCreateLink>
-            <WorkspaceAccountMenu />
+            <Link href="/" aria-label="Jetnity Startseite" className="kopf-marke workspace-header-brand">
+              {/* Der Link trägt den Namen. Das Bild bleibt dekorativ. */}
+              <Image src="/brand/jetnity-logo.png" alt="" width={384} height={128} priority unoptimized
+                sizes="144px" className="h-[48px] w-auto object-contain" style={{ width: 'auto' }} />
+            </Link>
+            <div className="kopf-rechts">
+              <div ref={setActions} className="workspace-header-actions" />
+              <GastCreateLink createLabel="Reise planen" className="kopf-planen workspace-button workspace-primary">
+                <Plus aria-hidden="true" /><span>Reise planen</span>
+              </GastCreateLink>
+              <WorkspaceAccountMenu />
+            </div>
           </div>
         </header>
         {mobileOpen && <button type="button" className="workspace-backdrop" tabIndex={-1}
@@ -200,9 +194,8 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
           aria-label="Workspace-Navigation">
           <div className="workspace-brand-row">
             <Link href="/" aria-label="Jetnity Startseite" className="workspace-brand" onClick={finishNavigation}>
-              {/* Static local brand asset; no image optimizer or remote image source. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/jetnity-logo.png" alt="" width={140} height={48} />
+              <Image src="/brand/jetnity-logo.png" alt="" width={384} height={128} unoptimized
+                sizes="144px" className="h-[48px] w-auto object-contain" style={{ width: 'auto' }} />
             </Link>
             <button type="button" ref={closeRef} className="workspace-icon-button workspace-mobile-close"
               aria-label="Navigation schliessen" onClick={closeNavigation}><X aria-hidden="true" /></button>
@@ -234,6 +227,7 @@ export default function WorkspaceShell({ children, contentId = 'workspace-conten
               ))}
             </nav>
           </section>
+          <DarstellungWahl theme={theme} onWahl={setTheme} />
           <div className="workspace-sidebar-end">
             {/* In einer offenen Reise und als „Reise fortsetzen“ fehlt dieser Link auf schmalen Bildschirmen in der einzeiligen Kopfzeile. */}
             <div className="workspace-drawer-extras">

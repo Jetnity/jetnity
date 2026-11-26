@@ -18,7 +18,7 @@ export default function WorkspaceAccountMenu() {
     <details ref={ref} className="workspace-account" onKeyDown={(e) => {
       if (e.key === 'Escape') { ref.current?.removeAttribute('open'); ref.current?.querySelector('summary')?.focus() }
     }}>
-      <summary className="workspace-icon-button" aria-label="Kontomenü" title="Konto">
+      <summary className="kopf-profil" aria-label="Kontomenü" title="Konto">
         <CircleUserRound aria-hidden="true" />
       </summary>
       <div className="workspace-account-panel" onClick={(e) => {

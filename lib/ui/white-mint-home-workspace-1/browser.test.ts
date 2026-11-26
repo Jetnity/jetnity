@@ -27,6 +27,7 @@ declare global {
   }
 }
 import { WHITE_MINT, aehnlich, type Rgb } from '@/lib/ui/white-mint-home-workspace-1/palette'
+import { darstellungWaehlen } from '@/lib/ui/test-helfer/darstellung'
 
 async function harnessModul() {
   return import('@/lib/ui/white-mint-home-workspace-1/harness')
@@ -408,10 +409,10 @@ describe('rendered white/mint homepage and light workspace', () => {
         await Promise.all(animations.map((animation) => animation.finished))
       })
       if (breite === 320 || breite === 390) {
-        await page.getByRole('button', { name: 'Menü öffnen', exact: true }).click()
+        await page.getByRole('button', { name: 'Menü', exact: true }).click()
         assert.equal(await page.locator('#oeffentliche-mobile-navigation').getByRole('link', { name: 'So funktioniert’s' }).isVisible(), true)
         await page.keyboard.press('Escape')
-        assert.equal(await page.getByRole('button', { name: 'Menü öffnen', exact: true }).evaluate((el) => document.activeElement === el), true)
+        assert.equal(await page.getByRole('button', { name: 'Menü', exact: true }).evaluate((el) => document.activeElement === el), true)
       }
       if (breite === 320 || breite === 1440) {
         await page.addStyleTag({ content: 'html { font-size: 32px !important }' })
@@ -556,13 +557,13 @@ describe('rendered white/mint homepage and light workspace', () => {
     }))
     assert.equal(aehnlich(rgbAus(gruenShell.hintergrund), '#121921', 2), true, JSON.stringify(gruenShell))
     assert.equal(aehnlich(rgbAus(gruenShell.farbe), WHITE_MINT.ink), false)
-    await gruen.page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(gruen.page, 'light')
     await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="light"]')
     assert.equal(await gruen.page.evaluate((key) => localStorage.getItem(key), THEME_KEY), 'light')
-    await gruen.page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(gruen.page, 'dark')
     await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="dark"]')
     assert.equal(await gruen.page.evaluate((key) => localStorage.getItem(key), THEME_KEY), 'dark')
-    await gruen.page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(gruen.page, 'light')
     await gruen.page.waitForSelector('.workspace-shell[data-workspace-theme="light"]')
     const wieder = rgbAus(await gruen.page.locator('.workspace-shell').evaluate((el) => getComputedStyle(el).backgroundColor))
     assert.equal(aehnlich(wieder, WHITE_MINT.canvas), true)
@@ -623,7 +624,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       await page.keyboard.press('Tab')
       await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
       await bild(page, `navigation-keyboard-${breite}`)
-      await page.locator('.workspace-theme-toggle').focus()
+      await page.locator('summary[aria-label="Kontomenü"]').focus()
       await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
       assert.deepEqual(fehler, [])
       assert.deepEqual(fremd, [])
@@ -634,16 +635,21 @@ describe('rendered white/mint homepage and light workspace', () => {
   test('white header and icon controls work in both themes and expose the complete attribution', async () => {
     const { context, page } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440 })
     for (const thema of ['light', 'dark'] as const) {
-      if (thema === 'dark') await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+      if (thema === 'dark') await darstellungWaehlen(page, 'dark')
       await page.waitForSelector(`[data-workspace-theme="${thema}"]`)
       for (const selector of ['.workspace-header', '.workspace-sidebar']) {
         assert.equal(await page.locator(selector).evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(255, 255, 255)')
       }
-      for (const selector of ['.workspace-theme-toggle', 'summary[aria-label="Kontomenü"]']) {
+      for (const selector of ['summary[aria-label="Kontomenü"]']) {
         const control = page.locator(selector)
         assert.equal(await control.innerText(), '')
         assert.equal(await control.locator('svg').isVisible(), true)
         const rect = await control.boundingBox()
+        assert.ok(rect && rect.width >= 44 && rect.height >= 44)
+      }
+      assert.equal(await page.locator('.workspace-header').getByRole('button', { name: /^(Hell|Dunkel)$/ }).count(), 0)
+      for (const knopf of await page.getByRole('group', { name: 'Darstellung' }).getByRole('button').all()) {
+        const rect = await knopf.boundingBox()
         assert.ok(rect && rect.width >= 44 && rect.height >= 44)
       }
       await page.locator('.workspace-sidebar').hover()
@@ -662,7 +668,8 @@ describe('rendered white/mint homepage and light workspace', () => {
     await page.getByRole('link', { name: 'Datenquellen & Lizenzen' }).click()
     await page.getByRole('heading', { name: 'Datenquellen & Lizenzen' }).waitFor()
     assert.equal(await page.locator('main a[href="https://www.geonames.org/"]').isVisible(), true)
-    assert.equal(await page.locator('main a[href="https://creativecommons.org/licenses/by/4.0/"]').isVisible(), true)
+    // PR A: «Bildnachweise» nennt die Lizenz je Foto; derselbe Link steht dort mehrfach.
+    assert.equal(await page.locator('main a[href="https://creativecommons.org/licenses/by/4.0/"]').first().isVisible(), true)
     assert.equal(await page.getByText(/vereinheitlicht Bezeichnungen/).isVisible(), true)
     await schliessen(context)
   })
@@ -671,12 +678,12 @@ describe('rendered white/mint homepage and light workspace', () => {
     const desktop = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite: 1440, touch: true })
     await desktop.page.getByRole('button', { name: 'Seitenleiste öffnen' }).tap()
     await desktop.page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 224)
-    await desktop.page.locator('.workspace-context').tap()
+    await desktop.page.locator('.workspace-header .kopf-innen').tap({ position: { x: 640, y: 20 } })
     await desktop.page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 72)
     await schliessen(desktop.context)
     for (const breite of [320, 390, 768]) {
       const { context, page, fehler } = await oeffnen({ schicht: 'mint', pfad: '/reisen/trip-white-mint', breite, touch: true })
-      await page.getByRole('button', { name: 'Navigation öffnen' }).tap()
+      await page.getByRole('button', { name: 'Menü', exact: true }).tap()
       const dialog = page.getByRole('dialog', { name: 'Workspace-Navigation' })
       await dialog.waitFor()
       assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden')
@@ -689,7 +696,7 @@ describe('rendered white/mint homepage and light workspace', () => {
       await page.keyboard.press('Escape')
       await dialog.waitFor({ state: 'hidden' })
       assert.equal(await page.evaluate(() => document.body.style.overflow), '')
-      assert.equal(await page.getByRole('button', { name: 'Navigation öffnen' }).evaluate((el) => el === document.activeElement), true)
+      assert.equal(await page.getByRole('button', { name: 'Menü', exact: true }).evaluate((el) => el === document.activeElement), true)
       assert.equal(await page.locator('summary[aria-label="Kontomenü"] svg').isVisible(), true)
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth <= 1))
       await bild(page, `navigation-mobile-${breite}`)
@@ -714,7 +721,7 @@ describe('rendered white/mint homepage and light workspace', () => {
         await page.waitForFunction(() => document.querySelector('.workspace-sidebar')?.getBoundingClientRect().width === 448)
         assert.ok((await page.locator('.workspace-sidebar').boundingBox())!.y >= 0)
       } else {
-        await page.getByRole('button', { name: 'Navigation öffnen' }).click()
+        await page.getByRole('button', { name: 'Menü', exact: true }).click()
         await page.getByRole('dialog').getByRole('link', { name: 'Entdecken' }).scrollIntoViewIfNeeded()
         assert.equal(await page.getByRole('dialog').getByRole('link', { name: 'Entdecken' }).isVisible(), true)
         await page.keyboard.press('Escape')
@@ -773,9 +780,9 @@ describe('rendered white/mint homepage and light workspace', () => {
     const tagZwei = page.getByRole('button', { name: /Tag 2/ }).first()
     await tagZwei.click()
     await page.waitForFunction(() => new URL(location.href).searchParams.has('tag'))
-    await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(page, 'dark')
     await page.waitForSelector('[data-workspace-theme="dark"]')
-    await page.getByRole('button', { name: 'Helle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(page, 'light')
     await page.waitForSelector('[data-workspace-theme="light"]')
     assert.ok(new URL(page.url()).searchParams.has('tag'))
     const tagZweiFarbe = rgbAus(await page.getByRole('button', { name: /Tag 2/ }).first().evaluate(async (el) => {

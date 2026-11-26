@@ -3,13 +3,14 @@ import { describe, test } from 'node:test'
 
 import {
   NACH_OBEN_SCHWELLE_PX,
+  nachObenSchwelle,
   nachObenSichtbar,
   scrollVerfolgen,
   type ScrollVerfolgung,
   ueberSchwelle,
 } from './nach-oben'
 
-const telefon = { telefon: true, eigenerPlatz: false, ueberSchwelle: true }
+const telefon = { engerRand: true, ueberSchwelle: true }
 
 describe('Nach-oben-Knopf: Sichtbarkeit', () => {
   test('Schwelle liegt bei 400 px, genau darauf noch unsichtbar', () => {
@@ -17,26 +18,33 @@ describe('Nach-oben-Knopf: Sichtbarkeit', () => {
     assert.equal(ueberSchwelle(NACH_OBEN_SCHWELLE_PX + 1), true)
   })
 
+  test('die Schwelle ist mindestens eine Bildschirmhöhe, nie unter 400 px', () => {
+    assert.equal(nachObenSchwelle(320), NACH_OBEN_SCHWELLE_PX)
+    assert.equal(nachObenSchwelle(844), 844)
+    assert.equal(nachObenSchwelle(900.4), 900)
+    assert.equal(ueberSchwelle(844, nachObenSchwelle(844)), false)
+    assert.equal(ueberSchwelle(845, nachObenSchwelle(844)), true)
+  })
+
   test('unterhalb der Schwelle nie sichtbar', () => {
     for (const richtung of ['hoch', 'runter'] as const) {
-      for (const einstellung of [{ telefon: true, eigenerPlatz: false }, { telefon: false, eigenerPlatz: false }, { telefon: true, eigenerPlatz: true }]) {
-        assert.equal(nachObenSichtbar({ ueberSchwelle: false, ...einstellung, richtung, ruhig: false }), false)
+      for (const engerRand of [true, false]) {
+        assert.equal(nachObenSichtbar({ ueberSchwelle: false, engerRand, richtung, ruhig: false }), false)
       }
     }
   })
 
-  test('Telefon, öffentliche Seite: nur beim Hochscrollen und nur solange es nicht ruht', () => {
+  test('enger Rand (Telefon, Arbeitsbereich unter dem Desktop-Raster): nur beim Hochscrollen und nur solange es nicht ruht', () => {
     assert.equal(nachObenSichtbar({ ...telefon, richtung: 'hoch', ruhig: false }), true)
     assert.equal(nachObenSichtbar({ ...telefon, richtung: 'hoch', ruhig: true }), false)
     assert.equal(nachObenSichtbar({ ...telefon, richtung: 'runter', ruhig: false }), false)
     assert.equal(nachObenSichtbar({ ...telefon, richtung: 'runter', ruhig: true }), false)
   })
 
-  test('grosse Bildschirme und Arbeitsbereich behalten das bisherige Verhalten', () => {
+  test('grosse Bildschirme behalten den dauerhaft sichtbaren Knopf am freien Rand', () => {
     for (const richtung of ['hoch', 'runter'] as const) {
       for (const ruhig of [true, false]) {
-        assert.equal(nachObenSichtbar({ ueberSchwelle: true, telefon: false, eigenerPlatz: false, richtung, ruhig }), true)
-        assert.equal(nachObenSichtbar({ ueberSchwelle: true, telefon: true, eigenerPlatz: true, richtung, ruhig }), true)
+        assert.equal(nachObenSichtbar({ ueberSchwelle: true, engerRand: false, richtung, ruhig }), true)
       }
     }
   })

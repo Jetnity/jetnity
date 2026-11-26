@@ -13,6 +13,7 @@ import { chromium, type Browser, type Page } from 'playwright'
 
 import { referenzReise } from '@/lib/trips/ux-u1c-route-design-alignment-1/fixture'
 import { mountU1cWorkspace } from '@/lib/trips/ux-u1c-route-design-alignment-1/workspace-harness'
+import { darstellungWaehlen } from '@/lib/ui/test-helfer/darstellung'
 
 test('the workspace harness stays on the test import path', () => {
   assert.equal(typeof mountU1cWorkspace, 'function')
@@ -342,7 +343,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       try {
         await page.goto(`${origin}/reisen/trip-u1c-referenz?ansicht=vorbereitung`)
         await page.locator('[data-workspace-modus="vorbereitung"]').waitFor()
-        if (width < 1024) await page.getByRole('button', { name: 'Navigation öffnen' }).click()
+        if (width < 1024) await page.getByRole('button', { name: 'Menü', exact: true }).click()
         const navigation = page.locator('[data-workspace-mode-nav="sidebar"]')
         assert.deepEqual(await navigation.getByRole('button').allTextContents(), [
           'Übersicht', 'Reiseplan', 'Organisieren', 'Vorbereitung', 'Einreise & Visum',
@@ -430,7 +431,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
       for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
         await page.setViewportSize({width,height:900})
         if(theme==='dark'){
-          await page.getByRole('button',{name:'Dunkle Darstellung aktivieren'}).click()
+          await darstellungWaehlen(page, 'dark')
           await page.locator('.workspace-shell[data-workspace-theme="dark"]').waitFor()
         }
         const visited=new Set<string>()
@@ -552,7 +553,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     assert.match(dialoge.at(-1) ?? '', /von diesem Gerät entfernt/)
     assert.equal(await gast.evaluate(() => localStorage.getItem('jetnity:reise:v3') != null), true)
 
-    await gast.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(gast, 'dark')
     await gast.waitForSelector('[data-workspace-theme="dark"]')
     const kontrast = await gast.locator('.workspace-reiseoptionen > summary').evaluate((el) => {
       const kanal = (wert: number) => {
@@ -638,7 +639,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await konto.keyboard.press('Enter')
     assert.match(kontoDialoge.at(-1) ?? '', /nicht rückgängig/)
     assert.equal(await konto.locator('[role="alert"]').count(), 0)
-    await konto.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(konto, 'dark')
     await loeschen.tap()
     assert.equal(kontoDialoge.length, 2)
     await konto.locator('[data-u1c-shell]').click()
@@ -676,7 +677,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await formular.locator('input[required]').fill('QA-Test Tag 11')
     await formular.locator('textarea').fill('Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
 
-    await page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' }).click()
+    await darstellungWaehlen(page, 'dark')
     await page.waitForSelector('[data-workspace-theme="dark"]')
     assert.equal(await formular.locator('input[required]').inputValue(), 'QA-Test Tag 11')
     assert.equal(await formular.locator('textarea').inputValue(), 'Dieser Testeintrag soll nach dem Neuladen erhalten bleiben')
@@ -693,7 +694,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     const themaSetzen = async (name: 'light' | 'dark') => {
       const aktuell = await page.locator('.workspace-shell').getAttribute('data-workspace-theme')
       if (aktuell === name) return
-      await page.getByRole('button', { name: name === 'dark' ? 'Dunkle Darstellung aktivieren' : 'Helle Darstellung aktivieren' }).click()
+      await darstellungWaehlen(page, name)
       await page.waitForSelector(`[data-workspace-theme="${name}"]`)
     }
     const breiten = [320, 390, 768, 1440]
@@ -781,8 +782,7 @@ describe('mounted workspace route contract', { timeout: 240_000 }, () => {
     await page.waitForFunction(() => location.search.includes('tag=day-11'))
     assert.equal(await page.locator('[data-plan-punkt]').count(), 1)
 
-    const zuGruen = page.getByRole('button', { name: 'Dunkle Darstellung aktivieren' })
-    if (await zuGruen.isVisible()) await zuGruen.click()
+    await darstellungWaehlen(page, 'dark')
     await page.waitForSelector('[data-workspace-theme="dark"]')
     const gewaehlt = await page.locator('[data-timeline-tag="day-11"]').evaluate((el) => {
       const bevor = getComputedStyle(el, '::before')
