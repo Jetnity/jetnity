@@ -58,7 +58,7 @@ const ZUSTAENDE = [
   { name: 'dunkel', wert: 'dark', erwartet: 'dark' },
   { name: 'hell', wert: 'light', erwartet: 'light' },
   { name: 'fehlend', wert: null, erwartet: 'light' },
-  // Bei blockiertem Speicher ist auch die Gastreise unlesbar: die Seite zeigt die Lesefehler-Meldung ohne Reisekopf und ohne Foto.
+  // Bei blockiertem Speicher ist die Gastreise unlesbar: die Reiseseite zeigt die Lesefehler-Meldung ohne Reisekopf und ohne Foto. Öffentliche Seiten sind davon nicht betroffen.
   { name: 'blockiert', wert: 'BLOCKIERT', erwartet: 'light', reiseLaedt: false },
   { name: 'alt-green', wert: 'green', erwartet: 'dark' },
 ]
@@ -75,7 +75,7 @@ const GELTUNG = {
 }
 const SEITEN = [
   { name: 'startseite', pfad: () => '/', geltung: 'oeffentlich', bereiche: { kopf: 'header', inhalt: '#public-content, main', nachweis: '[data-bildnachweise]' }, nachweisSymbol: null, nachweisErforderlich: true },
-  { name: 'reise', pfad: () => `/reisen/${REISE.id}`, geltung: 'arbeitsbereich', bereiche: { kopf: 'header', inhalt: '.workspace-content, main', nachweis: '.reisekopf [data-bildnachweis]' }, nachweisSymbol: '.reisekopf .bildnachweis-knopf', nachweisErforderlich: true },
+  { name: 'reise', pfad: () => `/reisen/${REISE.id}`, geltung: 'arbeitsbereich', bereiche: { kopf: 'header', inhalt: '.workspace-content, main', nachweis: '.reisekopf [data-bildnachweis]' }, nachweisSymbol: '.reisekopf .bildnachweis-knopf', nachweisErforderlich: true, haengtAnReise: true },
   { name: 'planen', pfad: () => '/planen', geltung: 'arbeitsbereich', bereiche: { kopf: 'header', inhalt: '.workspace-content, main', nachweis: null }, nachweisSymbol: null, nachweisErforderlich: false },
 ]
 const BREITEN = [
@@ -396,7 +396,10 @@ function auswerten(zustand, proben, seite, endzustand = null, meldungen = { hydr
     if (bereiche[name].bilderMitBereich === 0) grundlagen.push(`Bereich «${name}» nie gefunden: nicht gemessen`)
     else if (bereiche[name].maxTexte === 0) grundlagen.push(`Bereich «${name}» ohne messbaren Text: nicht gemessen`)
   }
-  const nachweisNoetig = seite.nachweisErforderlich && zustand.reiseLaedt !== false
+  // Nur Seiten, die an der Gastreise hängen, entfallen bei blockiertem Speicher; zeigt eine solche Seite trotzdem ein Foto, bleibt der Nachweis Pflicht.
+  const ohneReise = seite.haengtAnReise === true && zustand.reiseLaedt === false
+  const fotoSichtbar = endzustand ? endzustand.fotos > 0 : true
+  const nachweisNoetig = seite.nachweisErforderlich && (!ohneReise || fotoSichtbar)
   if (nachweisNoetig) {
     if (bereiche.nachweis.bilderMitBereich === 0) grundlagen.push('Bildnachweis nie gefunden')
     else if (bereiche.nachweis.maxTexte === 0) grundlagen.push('Bildnachweis ohne messbaren Text oder Symbol: nicht gemessen')
@@ -406,7 +409,7 @@ function auswerten(zustand, proben, seite, endzustand = null, meldungen = { hydr
   }
   if (endzustand) {
     if (!endzustand.kontrast.bestanden) grundlagen.push(`Kontrast im Endzustand: ${endzustand.kontrast.gemessen} gemessen, ${endzustand.kontrast.nichtGemessen} nicht gemessen, kleinster ${endzustand.kontrast.kleinster}`)
-    if (endzustand.fotos > 0 && !nachweisNoetig) grundlagen.push('Foto ohne Bildnachweis-Bereich')
+    if (endzustand.fotos > 0 && !seite.nachweisErforderlich) grundlagen.push('Foto ohne Bildnachweis-Bereich')
     if (nachweisNoetig && seite.nachweisSymbol && endzustand.nachweisOffen === null) grundlagen.push('Bildnachweis liess sich nicht öffnen: nicht gemessen')
     else if (endzustand.nachweisOffen && !endzustand.nachweisOffen.bestanden) grundlagen.push(`Kontrast im geöffneten Bildnachweis: ${endzustand.nachweisOffen.kleinster}`)
   } else if (!seite.verstoss) {
