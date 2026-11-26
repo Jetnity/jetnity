@@ -148,6 +148,22 @@ function sichtbareBildtexte() {
     const teile = treffer[1].split(/[ ,/]+/).filter(Boolean).map(Number)
     return { r: teile[0], g: teile[1], b: teile[2], a: teile[3] ?? 1 }
   }
+  const zeichnetAn = (element, px, py) => {
+    const stil = getComputedStyle(element)
+    if (stil.visibility === 'hidden' || Number(stil.opacity) === 0) return false
+    if (['IMG', 'SVG', 'CANVAS', 'VIDEO', 'IFRAME', 'PICTURE'].includes(element.tagName.toUpperCase())) return true
+    const grund = kanaele(stil.backgroundColor)
+    if ((grund && grund.a > 0.05) || stil.backgroundImage !== 'none') return true
+    for (const kind of element.childNodes) {
+      if (kind.nodeType !== Node.TEXT_NODE || !kind.textContent?.trim()) continue
+      const bereich = document.createRange()
+      bereich.selectNodeContents(kind)
+      for (const r of bereich.getClientRects()) {
+        if (px > r.left + 2 && px < r.right - 2 && py > r.top + 2 && py < r.bottom - 2) return true
+      }
+    }
+    return false
+  }
   const liste = []
   const verdeckte = []
   const markierte = [...document.querySelectorAll('[data-pra-bildtext]')]
@@ -176,11 +192,20 @@ function sichtbareBildtexte() {
         // Eine Zeile, die gerade unter einem anderen Element liegt (etwa unter der Kopfzeile), wird in einem anderen
         // Sichtfeld gemessen. Gegen die Pixel des verdeckenden Elements würde sie falsch bewertet.
         // Mehrere Messpunkte: auch eine nur teilweise verdeckte Zeile (Kopfzeile, Menüfläche) wird in diesem Sichtfeld nicht gemessen.
+        // Verdeckend ist nur ein Element oberhalb des Texts, das dort etwas zeichnet (Fläche, Bild, eigener Text);
+        // ein durchsichtiger Kasten, der um einen Pixel hineinragt, verdeckt nichts.
         let frei = true
         for (const anteilX of [0.02, 0.3, 0.5, 0.7, 0.98]) {
           for (const anteilY of [0.02, 0.5, 0.98]) {
-            const oben = document.elementFromPoint(x + (rechts - x) * anteilX, y + (unten - y) * anteilY)
-            if (!oben || !(element.contains(oben) || oben.contains(element))) frei = false
+            const px = x + (rechts - x) * anteilX
+            const py = y + (unten - y) * anteilY
+            for (const oben of document.elementsFromPoint(px, py)) {
+              if (element.contains(oben) || oben.contains(element)) break
+              if (zeichnetAn(oben, px, py)) {
+                frei = false
+                break
+              }
+            }
           }
         }
         if (!frei) {
@@ -270,7 +295,7 @@ async function pixelAuswerten({ texte, a, b, c }) {
  */
 export async function bildgrundMessen(seite, markierte) {
   const je = new Map(markierte.map((eintrag) => [eintrag.index, { ...eintrag, schlechtester: Infinity, p01: Infinity, pixel: 0 }]))
-  if (je.size === 0) return { markiert: 0, gemessen: 0, nichtGemessen: 0, verdeckt: 0, nichtSichtbar: 0, nichtSichtbarBeispiele: [], nichtGemessenBeispiele: [], kleinster: null, kleinsterRoh: null, verfehlt: [], anzahlVerfehlt: 0, sichtfelder: 0 }
+  if (je.size === 0) return { markiert: 0, gemessen: 0, nichtGemessen: 0, verdeckt: 0, verdecktBeispiele: [], nichtSichtbar: 0, nichtSichtbarBeispiele: [], nichtGemessenBeispiele: [], kleinster: null, kleinsterRoh: null, verfehlt: [], anzahlVerfehlt: 0, sichtfelder: 0 }
   const mass = await seite.evaluate(() => ({ hoehe: document.documentElement.scrollHeight, sicht: innerHeight, vorher: scrollY }))
   const schritt = Math.max(200, Math.floor(mass.sicht * 0.85))
   let sichtfelder = 0
@@ -336,6 +361,7 @@ export async function bildgrundMessen(seite, markierte) {
     gemessen: gemessen.length,
     nichtGemessen: nichtGemessen.length,
     verdeckt: verdeckt.length,
+    verdecktBeispiele: verdeckt.slice(0, 6).map((eintrag) => ({ text: eintrag.text, selektor: eintrag.selektor })),
     nichtSichtbar: nichtSichtbar.length,
     nichtSichtbarBeispiele: nichtSichtbar.slice(0, 6).map((eintrag) => ({ text: eintrag.text, selektor: eintrag.selektor })),
     nichtGemessenBeispiele: nichtGemessen.slice(0, 6).map((eintrag) => ({ text: eintrag.text, selektor: eintrag.selektor })),
