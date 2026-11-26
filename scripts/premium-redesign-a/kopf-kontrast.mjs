@@ -8,6 +8,9 @@
 // für jede Textzeile wird der Kontrast der echten Textfarbe gegen jedes Pixel dahinter
 // berechnet. Der Bericht nennt den schlechtesten Wert je Zeile (nicht den Durchschnitt).
 //
+// Grenze: 4,5 : 1 für ALLE Zeilen, auch grosse Schrift, ungerundet verglichen. Eine Zeile, für die kein
+// Pixel gemessen werden konnte, oder ein Kopf ohne messbaren Text ist kein PASS.
+//
 //   node scripts/premium-redesign-a/kopf-kontrast.mjs --base http://127.0.0.1:3462 \
 //     --fixtures /tmp/pra/fixtures --out /tmp/pra/shots/nachher --commit <sha>
 //
@@ -133,7 +136,7 @@ async function auswerten(seite, elemente, png) {
             }
           }
         }
-        return { text: eintrag.text, farbe: eintrag.farbe, gross: eintrag.gross, groesse: eintrag.groesse, schlechtester: Math.round(schlechtester * 100) / 100, ort, zeilen: eintrag.zeilen.map((z) => [Math.round(z.x), Math.round(z.y), Math.round(z.w), Math.round(z.h)]) }
+        return { text: eintrag.text, farbe: eintrag.farbe, gross: eintrag.gross, groesse: eintrag.groesse, schlechtesterRoh: Number.isFinite(schlechtester) ? schlechtester : null, schlechtester: Number.isFinite(schlechtester) ? Math.round(schlechtester * 100) / 100 : null, ort, zeilen: eintrag.zeilen.map((z) => [Math.round(z.x), Math.round(z.y), Math.round(z.w), Math.round(z.h)]) }
       })
     },
     { elemente, base64: png.toString('base64') },
@@ -195,15 +198,21 @@ async function main() {
         await seite.waitForTimeout(450)
         const werte = await auswerten(seite, vorbereitung.elemente, png)
         const texte = werte.map((w) => w.text)
-        const verfehlt = werte.filter((w) => w.schlechtester < (w.gross ? 3 : GRENZE))
+        const gemessen = werte.filter((w) => w.schlechtesterRoh != null)
+        const nichtGemessen = werte.filter((w) => w.schlechtesterRoh == null)
+        const verfehlt = gemessen.filter((w) => w.schlechtesterRoh < GRENZE)
+        const schlechtesterRoh = gemessen.length ? Math.min(...gemessen.map((w) => w.schlechtesterRoh)) : null
         ergebnisse.push({
           ziel: ziel.name,
           breite: breite.name,
           thema,
           bild: datei,
           kopfBreite: rahmen ? Math.round(rahmen.width) : null,
-          schlechtester: Math.min(...werte.map((w) => w.schlechtester)),
+          schlechtester: schlechtesterRoh == null ? null : Math.round(schlechtesterRoh * 100) / 100,
+          schlechtesterRoh,
           verfehlt,
+          nichtGemessen: nichtGemessen.map((w) => w.text),
+          fehler: werte.length === 0 ? 'kein messbarer Text im Reisekopf' : nichtGemessen.length ? 'Zeilen ohne Messwert' : undefined,
           zeilen: werte.length,
           texte,
         })
@@ -213,20 +222,25 @@ async function main() {
    }
   }
   await browser.close()
-  const mindest = Math.min(...ergebnisse.filter((e) => e.schlechtester != null).map((e) => e.schlechtester))
+  const gemessene = ergebnisse.filter((e) => e.schlechtesterRoh != null)
+  const mindest = gemessene.length ? Math.min(...gemessene.map((e) => e.schlechtesterRoh)) : null
   const bericht = {
     commit: COMMIT,
     basis: BASIS,
     grenze: GRENZE,
     bilder: BILDER.length,
     messungen: ergebnisse.length,
-    schlechtesterWertGesamt: mindest,
+    schlechtesterWertGesamt: mindest == null ? null : Math.round(mindest * 100) / 100,
     nichtBestanden: ergebnisse.filter((e) => e.fehler || (e.verfehlt && e.verfehlt.length)),
     ergebnisse,
   }
   writeFileSync(join(AUS, 'kopf-kontrast.json'), JSON.stringify(bericht, null, 2))
-  console.log(`Bilder: ${BILDER.length}, Messungen: ${ergebnisse.length}, schlechtester Kontrast: ${mindest}`)
+  console.log(`Bilder: ${BILDER.length}, Messungen: ${ergebnisse.length}, schlechtester Kontrast: ${bericht.schlechtesterWertGesamt ?? 'nicht gemessen'} (Grenze ${GRENZE})`)
   console.log(`Nicht bestanden: ${bericht.nichtBestanden.length}`)
+  if (!ergebnisse.length || mindest == null) {
+    console.log('FAIL: nichts gemessen')
+    process.exitCode = 1
+  } else if (bericht.nichtBestanden.length) process.exitCode = 1
   for (const eintrag of bericht.nichtBestanden.slice(0, 20)) {
     console.log(`${eintrag.ziel} ${eintrag.breite} ${eintrag.thema} ${eintrag.bild}`, JSON.stringify(eintrag.verfehlt ?? eintrag.fehler))
   }

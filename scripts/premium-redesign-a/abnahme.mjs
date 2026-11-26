@@ -15,10 +15,15 @@
 // Ausgabe: <out>/<label>/<ansicht>__<browser>-<breite>-<thema>.png und
 // <out>/<label>/messwerte.json. Eine nicht ausgeführte Messung steht als `null`
 // mit Grund im Protokoll, niemals als bestanden.
+//
+// Kontrast: Grenze 4,5 : 1 für alle sichtbaren Texte (auch grosse Schrift), ungerundet verglichen.
+// Texte auf einfarbigem Grund und Texte auf Bildgrund werden getrennt gemessen (kontrast.mjs); was
+// nicht gemessen werden konnte, ist kein PASS.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { chromium, webkit } from 'playwright'
+import { kontrastMessen } from './kontrast.mjs'
 
 function argument(name, standard) {
   const index = process.argv.indexOf(`--${name}`)
@@ -142,80 +147,6 @@ function messenImBrowser() {
     const r = element.getBoundingClientRect()
     return r.width > 0 && r.height > 0
   }
-  const kanaele = (farbe) => {
-    const treffer = farbe.match(/rgba?\(([^)]+)\)/)
-    if (!treffer) return null
-    const teile = treffer[1].split(/[ ,/]+/).filter(Boolean).map(Number)
-    return { r: teile[0], g: teile[1], b: teile[2], a: teile[3] ?? 1 }
-  }
-  const mischen = (vorn, hinten) => ({
-    r: vorn.r * vorn.a + hinten.r * (1 - vorn.a),
-    g: vorn.g * vorn.a + hinten.g * (1 - vorn.a),
-    b: vorn.b * vorn.a + hinten.b * (1 - vorn.a),
-    a: 1,
-  })
-  const leuchtdichte = ({ r, g, b }) => {
-    const l = [r, g, b].map((k) => {
-      const v = k / 255
-      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
-    })
-    return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2]
-  }
-  const kontrast = (a, b) => {
-    const la = leuchtdichte(a)
-    const lb = leuchtdichte(b)
-    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
-  }
-  const grundVon = (element) => {
-    const schichten = []
-    let knoten = element
-    let bild = false
-    while (knoten) {
-      const stil = getComputedStyle(knoten)
-      if (stil.backgroundImage && stil.backgroundImage !== 'none') bild = true
-      const farbe = kanaele(stil.backgroundColor)
-      if (farbe && farbe.a > 0) {
-        schichten.push(farbe)
-        if (farbe.a >= 0.99) break
-      }
-      knoten = knoten.parentElement
-    }
-    let grund = { r: 255, g: 255, b: 255, a: 1 }
-    for (const schicht of schichten.reverse()) grund = mischen(schicht, grund)
-    return { grund, bild }
-  }
-
-  const texte = []
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
-  const gesehen = new Set()
-  while (walker.nextNode()) {
-    const knoten = walker.currentNode
-    if (!knoten.textContent || !knoten.textContent.trim()) continue
-    const element = knoten.parentElement
-    if (!element || gesehen.has(element) || ['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(element.tagName)) continue
-    if (!sichtbar(element) || element.closest('[inert], [aria-hidden="true"], svg')) continue
-    const r = element.getBoundingClientRect()
-    if (r.width <= 2 && r.height <= 2) continue
-    if (r.bottom < 0 || r.top > innerHeight * 4) continue
-    gesehen.add(element)
-    const stil = getComputedStyle(element)
-    const vordergrund = kanaele(stil.color)
-    if (!vordergrund) continue
-    const { grund, bild } = grundVon(element)
-    const sichtbarerVordergrund = mischen(vordergrund, grund)
-    const groesse = parseFloat(stil.fontSize)
-    const gross = groesse >= 24 || (groesse >= 18.66 && Number(stil.fontWeight) >= 700)
-    texte.push({
-      text: knoten.textContent.trim().slice(0, 48),
-      selektor: `${element.tagName.toLowerCase()}${element.className && typeof element.className === 'string' ? '.' + element.className.trim().split(/\s+/).slice(0, 2).join('.') : ''}`,
-      verhaeltnis: Math.round(kontrast(sichtbarerVordergrund, grund) * 100) / 100,
-      gross,
-      bild,
-    })
-  }
-  const geprueft = texte.filter((eintrag) => !eintrag.bild)
-  const verfehlt = geprueft.filter((eintrag) => eintrag.verhaeltnis < (eintrag.gross ? 3 : 4.5))
-  const minimum = geprueft.reduce((kleinstes, eintrag) => Math.min(kleinstes, eintrag.verhaeltnis), Infinity)
 
   const eingaben = [...document.querySelectorAll('input:not([type=hidden]):not([type=checkbox]):not([type=radio]), select, textarea')]
     .filter(sichtbar)
@@ -239,10 +170,6 @@ function messenImBrowser() {
     nutzhoehe: Math.round(innerHeight - kopfHoehe - festeHoehe),
     inhaltsHoeheVerfuegbarProzent: Math.round(((innerHeight - kopfHoehe - festeHoehe) / innerHeight) * 100),
     kleinsteEingabeSchrift: eingaben.length ? Math.min(...eingaben) : null,
-    textGeprueft: geprueft.length,
-    textBildgrundUebersprungen: texte.length - geprueft.length,
-    kleinsterKontrast: Number.isFinite(minimum) ? minimum : null,
-    kontrastVerfehlt: verfehlt.slice(0, 12),
     themaHtml: wurzel.getAttribute('data-workspace-theme'),
     themaShell: document.querySelector('.workspace-shell')?.getAttribute('data-workspace-theme') ?? null,
   }
@@ -387,6 +314,8 @@ async function ansichtErfassen(browserTyp, kombi, ansicht, ordner) {
     const nurAnzeigen = (ansicht === 'konto' || ansicht === 'konto-reise' || ansicht === 'begleiter') && !KONTO
     if (!nurAnzeigen) {
       messung = await seite.evaluate(messenImBrowser)
+      messung.kontrast = await kontrastMessen(seite)
+      messung.kleinsterKontrast = messung.kontrast.kleinster
       await seite.screenshot({ path: datei })
       if (!['laden', 'fehler', 'menue', 'menue-startseite', 'profil', 'begleiter'].includes(ansicht)) {
         messung.fusszeile = await abstandVorFusszeile(seite)
@@ -439,7 +368,7 @@ async function main() {
         const eintrag = await ansichtErfassen(browser[kombi.browser], kombi, ansicht, ordner)
         ergebnisse.push(eintrag)
         console.log(`${kombiName(kombi).padEnd(20)} ${ansicht.padEnd(18)} ${eintrag.hinweis ? 'HINWEIS ' + eintrag.hinweis.slice(0, 70) : 'ok'} ` +
-          `Kopf=${eintrag.messung?.kopfzeile?.hoehe ?? '-'} Fest=${eintrag.messung?.festeHoeheGesamt ?? '-'} Nutz=${eintrag.messung?.nutzhoehe ?? '-'} Ueberlauf=${eintrag.messung?.ueberlaufX ?? '-'} Kontrast=${eintrag.messung?.kleinsterKontrast ?? '-'}`)
+          `Kopf=${eintrag.messung?.kopfzeile?.hoehe ?? '-'} Fest=${eintrag.messung?.festeHoeheGesamt ?? '-'} Nutz=${eintrag.messung?.nutzhoehe ?? '-'} Ueberlauf=${eintrag.messung?.ueberlaufX ?? '-'} Kontrast=${eintrag.messung?.kontrast ? (eintrag.messung.kontrast.bestanden ? 'PASS ' : 'FAIL ') + eintrag.messung.kontrast.kleinster : 'OFFEN'} (${eintrag.messung?.kontrast?.einfarbig.geprueft ?? 0}+${eintrag.messung?.kontrast?.bildgrund.gemessen ?? 0}, offen ${eintrag.messung?.kontrast?.nichtGemessen ?? '-'})`)
       }
       anzahl += ergebnisse.length
       speichern(ordner, { ...kopf, ergebnisse })
