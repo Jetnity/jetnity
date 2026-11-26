@@ -43,6 +43,19 @@ html[data-workspace-theme="dark"] .workspace-shell,
 html[data-workspace-theme="dark"] [data-gast-lese-platzhalter] {
   background-color: var(--workspace-panel, #202c37);
 }
+/* Before hydration the shell attribute is still "light", so white-mint.css
+   (the content text rules) paints dark ink on this already dark surface.
+   These rules win that collision. Light mode never matches them. The white
+   header and sidebar keep their own colours. */
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.text-brand-600, .text-brand-700, .text-brand-800, .text-brand-900, .text-ink-900, .text-ink-950) {
+  color: var(--workspace-ink, #f4f7f9);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.text-ink-500, .text-ink-600, .text-ink-650, .text-ink-700, .text-ink-800) {
+  color: var(--workspace-muted, #cad6de);
+}
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] {
+  color: var(--workspace-ink, #f4f7f9);
+}
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
