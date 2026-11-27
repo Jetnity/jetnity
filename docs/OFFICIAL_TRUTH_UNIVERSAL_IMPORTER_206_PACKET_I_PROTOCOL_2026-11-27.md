@@ -1,5 +1,18 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Lesen und JSON getrennt, Work-FAIL auf 40cbb0966
+
+Ein unbekannter `ValueError` beim Lesen wird nicht mehr als Datenbefund umgedeutet. Die Diagnose fängt beim Lesen nur `FileNotFoundError`. Alle anderen Lesefehler, auch ein unbekannter `ValueError`, Permission, I/O, Symlink und Grössenlimit, laufen unverändert durch. Beim Parsen gelten nur `JSONDecodeError`, `UnicodeDecodeError` und `LocalJsonError` (`duplicate_json_key`, `non_finite_json`) als Datenbefund. Eine fehlende Datei und ungültiges JSON bleiben lokal klassifiziert. `legalEvidence` bleibt 0.
+
+Ausführungsskripte dieses Stands, SHA-256:
+
+- `official-truth-50-pass-import.py` `a289a080bbd7e4b4f619850ef5e2ba3ecf0e50875e126886f31f555cde2c368d`
+- `official-truth-research-package.py` `3ac75c007eeba8339192c36fd13496b8627a746bc32fd1ce92fbda9fc9236cdc`
+- `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
+- `official-truth-local-offline-run.py` `494c7f0f875440eb4ea402defc12a4d290981712124a0fc7607a426f5cfb1dfa`
+
+Lokal, ohne Archiv: Forschungsadapter 45 Tests, Gap-Audit 6, Importer 36, alle OK. `import` endet mit Exit 2. Die CI dieses Heads wird erst nach dem Push belegt.
+
 ## Harte Lesefehler bleiben STOP, NO-GO auf f6a201bae
 
 Ein fehlender Zielindex darf ein expliziter Abwesenheitsbeleg sein. Ein Symlink, eine Datei über dem Grössenlimit, ein PermissionError oder ein I/O-Fehler wird nicht in einen HOLD-Beleg umgeschrieben. Dieselbe Grenze gilt in der Diagnose: ungültiges JSON und eine fehlende Datei bleiben lokale Befunde, eine Pfad- oder Integritätsstörung bricht ab.

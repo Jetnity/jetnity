@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, unbekannter Lesefehler bleibt die Ausnahme
+
+Gleicher Branch, gleicher Draft #1323, nach Work-FAIL auf `40cbb0966`. Keine neue Archivlesung. Die Chargen von `ebe14868c` und `b86e73b42` bleiben historisch. Kein Ready, kein Merge.
+
+- Die Diagnose trennt Lesen und JSON. Nur eine fehlende Datei und ein bekannter JSON-Fehler werden lokal klassifiziert. Ein unbekannter Lesefehler an Schema, Index oder Slice bleibt die ursprüngliche Ausnahme.
+- Lokal: Forschungsadapter 45, Gap-Audit 6, Importer 36, alle OK. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, harte Lesefehler bleiben STOP
 
 Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `f6a201bae`. Keine neue Archivlesung. Die Chargen von `ebe14868c` und `b86e73b42` bleiben historisch. Kein Ready, kein Merge.

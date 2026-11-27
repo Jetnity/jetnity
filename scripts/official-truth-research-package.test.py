@@ -774,5 +774,48 @@ class PackageTests(unittest.TestCase):
             self.assertEqual(report['legalEvidenceSlots'], 0)
             self.assertEqual((self.root/'records/dest/AT.json').read_bytes(), before)
 
+    def test_unknown_read_error_propagates_and_known_json_stays_local(self):
+        original = a.read_file
+        for target in ("record-schema.json", "records/dest/AT/index.json", "records/dest/AT/IN.json"):
+            def fail(root, relative, limit=8 * 1024 * 1024, target=target):
+                if relative == target:
+                    raise ValueError("synthetic_unknown_read_failure")
+                return original(root, relative, limit)
+            a.read_file = fail
+            try:
+                with self.assertRaises(ValueError) as caught:
+                    a.diagnose(self.root)
+                self.assertEqual(caught.exception.args, ("synthetic_unknown_read_failure",))
+            finally:
+                a.read_file = original
+        def denied(root, relative, limit=8 * 1024 * 1024):
+            if relative == "records/dest/AT/index.json":
+                raise PermissionError(13, "denied")
+            return original(root, relative, limit)
+        a.read_file = denied
+        try:
+            with self.assertRaises(PermissionError):
+                a.diagnose(self.root)
+        finally:
+            a.read_file = original
+        schema = self.root / "record-schema.json"
+        saved = schema.read_bytes()
+        schema.unlink()
+        missing = a.diagnose(self.root)
+        self.assertIn("schema_unreadable", [row["code"] for row in missing["findings"]])
+        self.assertEqual(missing["legalEvidenceSlots"], 0)
+        schema.write_bytes(b"{")
+        broken = a.diagnose(self.root)
+        self.assertIn("schema_unreadable", [row["code"] for row in broken["findings"]])
+        schema.write_bytes(b'{"a":1,"a":2}')
+        duplicate = a.diagnose(self.root)
+        self.assertIn("schema_unreadable", [row["code"] for row in duplicate["findings"]])
+        schema.write_bytes(saved)
+        (self.dest / "index.json").write_text("{")
+        indexed = a.diagnose(self.root)
+        self.assertIn("index_unreadable", [row["code"] for row in indexed["findings"] if row["destination"] == "AT"])
+        self.assertEqual(indexed["pairsExamined"], 206 * 50)
+        self.assertEqual(indexed["legalEvidenceSlots"], 0)
+
 
 if __name__=='__main__': unittest.main()

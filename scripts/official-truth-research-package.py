@@ -105,29 +105,26 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+class LocalJsonError(ValueError):
+    """A recognised JSON data fault. A read, path, or program error is not one."""
+
+
 def strict_json(data: bytes):
     def pairs(values):
         result = {}
         for key, value in values:
-            require(key not in result, "duplicate_json_key")
+            if key in result:
+                raise LocalJsonError("duplicate_json_key")
             result[key] = value
         return result
     def bad_number(_):
-        raise ValueError("non_finite_json")
+        raise LocalJsonError("non_finite_json")
     return json.loads(data.decode("utf-8"), object_pairs_hook=pairs, parse_constant=bad_number)
 
 
-_HARD_READ_CODES = frozenset((
-    "input_symlink", "input_not_regular", "input_size_limit", "invalid_relative_path", "input_root_refused",
-))
-
-
-def _local_data_error(error: BaseException) -> bool:
-    """Invalid JSON is local data. A path, symlink, or size fault is not."""
-    if not isinstance(error, ValueError):
-        return False
-    code = error.args[0] if error.args else None
-    return not (isinstance(code, str) and code in _HARD_READ_CODES)
+def _json_data_fault(error: BaseException) -> bool:
+    """Only a decode failure, invalid JSON, a duplicate key, or a non-finite number."""
+    return isinstance(error, (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError))
 
 
 def read_file(root: Path, relative: str, limit: int = 8 * 1024 * 1024) -> bytes:
@@ -571,7 +568,7 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
         raise ValueError("index_unreadable") from None
     try:
         frame = strict_json(frame_bytes)
-    except ValueError:
+    except (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError):
         raise ValueError("index_unreadable") from None
     expected_files, index_notes, declared_hashes = index_binding(frame, destination, passports)
     require(frame.get("external_writes", []) == [] and not has_forbidden(frame), "frame_authority_boundary")
@@ -609,7 +606,7 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
         require(sum(len(b) for b in evidence.values()) + len(data) <= 64*1024*1024, "package_size_limit")
         try:
             record = strict_json(data)
-        except ValueError:
+        except (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError):
             raise ValueError("slice_parse_error") from None
         require(isinstance(record, dict) and _slice_schema_ok(record.get("schema"))
                 and _slice_status_ok(record.get("status")) and record.get("nationality") == nat
@@ -994,15 +991,21 @@ def _slice_observations(record, destination: str, nationality: str, tracker_poin
     return found
 
 
+_INDEX_DATA_CODES = frozenset((
+    "split_frame_identity", "unknown_index_schema", "index_priority_binding",
+    "index_hash_mismatch", "index_mapping", "index_pointer_identity", "index_structure_unredacted",
+))
+
+
 def _record_schema_holds(root: Path) -> list[str]:
     """The same record-schema contract prepare requires. A bad file holds every candidate."""
     try:
-        schema = strict_json(read_file(root, "record-schema.json", 256 * 1024))
+        raw = read_file(root, "record-schema.json", 256 * 1024)
     except FileNotFoundError:
         return ["schema_unreadable"]
-    except ValueError as error:
-        if not _local_data_error(error):
-            raise
+    try:
+        schema = strict_json(raw)
+    except (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError):
         return ["schema_unreadable"]
     if not isinstance(schema, dict):
         return ["schema_identity"]
@@ -1082,15 +1085,17 @@ def diagnose(root: Path) -> dict:
         index_notes: list[str] = []
         frame = None
         index_read = False
+        raw = None
         try:
-            frame = strict_json(read_file(root, f"records/dest/{destination}/index.json"))
-            index_read = True
+            raw = read_file(root, f"records/dest/{destination}/index.json")
         except FileNotFoundError:
             dest_integrity.append("index_unreadable")
-        except ValueError as error:
-            if not _local_data_error(error):
-                raise
-            dest_integrity.append("index_unreadable")
+        if raw is not None:
+            try:
+                frame = strict_json(raw)
+                index_read = True
+            except (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError):
+                dest_integrity.append("index_unreadable")
         if index_read and not isinstance(frame, dict):
             dest_integrity.append("index_not_object")
             frame = None
@@ -1100,7 +1105,10 @@ def diagnose(root: Path) -> dict:
             try:
                 _files, index_notes, hashes = index_binding(frame, destination, passports)
             except ValueError as error:
-                dest_integrity.append(str(error))
+                code = error.args[0] if error.args and isinstance(error.args[0], str) else ""
+                if code not in _INDEX_DATA_CODES:
+                    raise
+                dest_integrity.append(code)
             if "unrecognized_field_not_validated" in index_notes:
                 dest_integrity.append("unrecognized_field_not_validated")
             if (root / f"records/dest/{destination}.json").exists() and not _legacy_declared(frame, destination):
@@ -1154,19 +1162,9 @@ def diagnose(root: Path) -> dict:
                 if any(item["scope"] == "local_gap" for item in local):
                     local_gap_profiles += 1
                 continue
-            except ValueError as error:
-                if not _local_data_error(error):
-                    raise
-                local.append({"code": "slice_read_error", "scope": "not_checkable"})
-                status_counts[_pair_status(local, bool(dest_integrity))] += 1
-                for item in local:
-                    findings.append({"destination": destination, "nationality": nationality, **item})
-                if any(item["scope"] == "local_gap" for item in local):
-                    local_gap_profiles += 1
-                continue
             try:
                 record = strict_json(data)
-            except ValueError:
+            except (json.JSONDecodeError, UnicodeDecodeError, LocalJsonError):
                 local.append({"code": "slice_parse_error", "scope": "not_checkable"})
                 if declared_hash is not None and declared_hash != sha(data):
                     local.append({"code": "index_hash_mismatch", "scope": "profile_integrity"})
