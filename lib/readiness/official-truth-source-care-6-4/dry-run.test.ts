@@ -728,6 +728,115 @@ test('rivals are checked like retrieved observations and do not clear an earlier
   assert.equal(finding(dropped, 'K1_visa')?.disposition, 'unchanged_not_authorized')
 })
 
+test('technical retry still validates rivals and does not treat them as fresh', () => {
+  const bytes = new TextEncoder().encode('synthetic-http-original')
+  const digest = originalByteDigest(bytes)
+  const baseline = snapshot({
+    originalBytes: bytes,
+    declaredOriginalDigest: digest,
+    sections: [
+      section({ topic: 'K1_visa', body: 'synthetic visa' }),
+      section({ topic: 'K3_stay', body: 'synthetic stay' }),
+    ],
+  })
+  const disturbance = { outcome: 'technical_disturbance' as const, snapshot: null }
+  const freshRival = snapshot({ ...baseline, retrievedAt: '2026-11-27T11:30:00.000Z' })
+  const pending = (concurrent: CareSnapshot[] = [], attempts = [disturbance]) => evaluateSourceCareDryRun({
+    checkedAt, baseline, concurrent, priorLocks: [], attempts,
+  })
+  const alone = pending()
+  assert.equal(alone.retry, 'pending')
+  assert.equal(alone.sourceDigestObserved, null)
+  assert.equal(alone.selectedSuccessor, null)
+  assert.equal(alone.authorization, 'none')
+  assert.equal(alone.confirmedEvidence, false)
+  assert.equal(alone.legalQualification, 'not_claimed')
+  assert.equal(finding(alone, 'K1_visa')?.disposition, 'not_reproven')
+  const consistent = pending([freshRival])
+  assert.equal(consistent.retry, 'pending')
+  assert.equal(consistent.sourceDigestObserved, null)
+  assert.equal(consistent.authorization, 'none')
+  assert.equal(finding(consistent, 'K1_visa')?.disposition, 'not_reproven')
+  assert.equal(finding(consistent, 'K3_stay')?.disposition, 'not_reproven')
+  const two = pending([freshRival], [disturbance, disturbance])
+  assert.equal(two.retry, 'pending')
+  assert.equal(finding(two, 'K3_stay')?.disposition, 'not_reproven')
+  const wrongUrl = pending([snapshot({ ...freshRival, officialUrl: 'https://example.invalid/other-source' })])
+  assert.ok(finding(wrongUrl, 'K1_visa')?.reasons.includes('source_identity'))
+  assert.equal(wrongUrl.authorization, 'none')
+  const stale = pending([snapshot({ ...freshRival, retrievedAt: retrievedBaseline })])
+  assert.ok(finding(stale, 'K3_stay')?.reasons.includes('stale_or_replay'))
+  const sameDate = pending([snapshot({ ...freshRival, retrievedAt: baseline.retrievedAt })])
+  assert.ok(finding(sameDate, 'K1_visa')?.reasons.includes('stale_or_replay'))
+  const futureRival = pending([snapshot({ ...freshRival, retrievedAt: '2026-11-27T13:00:00.000Z' })])
+  assert.ok(finding(futureRival, 'K3_stay')?.reasons.includes('future_retrieval'))
+  const missingBytes = pending([snapshot({ ...freshRival, originalBytes: null, declaredOriginalDigest: null })])
+  assert.equal(missingBytes.originalBinding, 'absent')
+  assert.equal(missingBytes.confirmedEvidence, false)
+  assert.equal(finding(missingBytes, 'K1_visa')?.disposition, 'not_reproven')
+  const wrongSha = pending([snapshot({ ...freshRival, declaredOriginalDigest: 'e'.repeat(64) })])
+  assert.ok(finding(wrongSha, 'K1_visa')?.reasons.includes('original_digest_mismatch'))
+  assert.ok(finding(wrongSha, 'K3_stay')?.reasons.includes('original_digest_mismatch'))
+  const renamed = [
+    ...[1, 2, 3, 4].map((index) => `<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/other${index}.css?2222222222">`),
+    ...Array.from({ length: 15 }, (_, index) => `<script src="/typo3conf/ext/theme_bmeia/Resources/Public/JS/app${index}.js?2222222222">`),
+  ].join('\n')
+  const bmeia = snapshot({ ...baseline, officialUrl: BMEIA_OFFICIAL_URL, assets: '' })
+  const assetRival = evaluateSourceCareDryRun({
+    checkedAt, baseline: bmeia, priorLocks: [], attempts: [disturbance],
+    concurrent: [snapshot({ ...bmeia, retrievedAt: '2026-11-27T11:30:00.000Z', assets: renamed })],
+  })
+  assert.ok(finding(assetRival, 'K1_visa')?.reasons.includes('unclassified_asset_change'))
+  const missingSlot = pending([snapshot({ ...freshRival, sections: baseline.sections.filter((item) => item.topic !== 'K3_stay') })])
+  assert.equal(finding(missingSlot, 'K3_stay')?.disposition, 'locked')
+  assert.ok(finding(missingSlot, 'K3_stay')?.reasons.includes('missing_evidence'))
+  assert.equal(finding(missingSlot, 'K1_visa')?.disposition, 'not_reproven')
+  assert.equal(missingSlot.kSlotsComplete, false)
+  const added = pending([snapshot({
+    ...freshRival,
+    sections: [...baseline.sections, section({ topic: 'Z4_customs', body: 'synthetic rival-only customs', scope: { ruleClass: 'customs_note' } })],
+  })])
+  const held = added.findings.find((item) => item.topic === 'Z4_customs')
+  assert.equal(held?.disposition, 'locked')
+  assert.ok(held?.reasons.includes('hold'))
+  assert.equal(finding(added, 'K1_visa')?.disposition, 'not_reproven')
+  const other = snapshot({
+    ...freshRival,
+    retrievedAt: '2026-11-27T11:40:00.000Z',
+    sections: baseline.sections.map((item) => item.topic === 'K3_stay' ? { ...item, body: 'synthetic stay other' } : item),
+  })
+  const conflicted = pending([freshRival, other])
+  assert.equal(finding(conflicted, 'K3_stay')?.disposition, 'locked')
+  assert.ok(finding(conflicted, 'K3_stay')?.reasons.includes('conflict'))
+  assert.equal(conflicted.selectedSuccessor, null)
+  const stayKey = scopeKey(baseline.sections[1]!.scope, 'K3_stay')
+  const heldPrior = evaluateSourceCareDryRun({
+    checkedAt, baseline, attempts: [disturbance],
+    concurrent: [freshRival],
+    priorLocks: [{ scopeKey: stayKey, topic: 'K3_stay', historicalOriginalDigest: finding(alone, 'K3_stay')!.baselineDigest }],
+  })
+  assert.ok(finding(heldPrior, 'K3_stay')?.reasons.includes('return_does_not_clear'))
+  assert.equal(heldPrior.retry, 'pending')
+  const exhausted = evaluateSourceCareDryRun({
+    checkedAt, baseline, priorLocks: [],
+    attempts: [disturbance, disturbance, disturbance],
+    concurrent: [snapshot({ ...freshRival, officialUrl: 'https://example.invalid/other-source' })],
+  })
+  assert.equal(exhausted.retry, 'exhausted')
+  assert.ok(finding(exhausted, 'K1_visa')?.reasons.includes('technical_retry_exhausted'))
+  assert.ok(finding(exhausted, 'K1_visa')?.reasons.includes('source_identity'))
+  const unavailable = evaluateSourceCareDryRun({
+    checkedAt, baseline, priorLocks: [],
+    attempts: [{ outcome: 'unavailable', snapshot: null }],
+    concurrent: [snapshot({ ...freshRival, retrievedAt: '2026-11-27T13:00:00.000Z' })],
+  })
+  assert.ok(finding(unavailable, 'K3_stay')?.reasons.includes('source_unavailable'))
+  assert.ok(finding(unavailable, 'K3_stay')?.reasons.includes('future_retrieval'))
+  assert.equal(unavailable.sourceDigestObserved, null)
+  assert.equal(unavailable.confirmedEvidence, false)
+  assert.equal(unavailable.originalExamination, 'not_performed')
+})
+
 test('existing source-bound renewal and monitor wiring stay untouched', () => {
   const renewal = readFileSync(join(root, 'lib/readiness/official-truth-product-v3/monitor/source-bound-renewal.ts'), 'utf8')
   assert.match(renewal, /return fail\('source_changed_or_unavailable'\)/)

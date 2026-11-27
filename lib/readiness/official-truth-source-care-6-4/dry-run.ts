@@ -555,16 +555,6 @@ function comparePaired(baseline: CareSection, observed: CareSection, checkedAt: 
   }
 }
 
-function lockAll(sections: readonly CareSection[], reason: string, observed: ReadonlyMap<string, CareSection> | null): TopicFinding[] {
-  return sections.map((section) => {
-    const key = scopeKey(section.scope, section.topic)
-    const pair = observed?.get(key) ?? null
-    const reasons = [reason]
-    if (section.evidence === 'missing') reasons.push('missing_evidence')
-    return baseFinding(section, 'locked', reasons, pair ? sectionDigest(pair) : null)
-  })
-}
-
 function revise(finding: TopicFinding, reasons: readonly string[], disposition: TopicDisposition, observedDigest: string | null = finding.observedDigest): TopicFinding {
   return {
     ...finding,
@@ -679,15 +669,6 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
   const unavailable = examined.some((attempt) => attempt.outcome === 'unavailable')
   const retrievedAll = examined.filter(isRetrieved)
   const disturbances = examined.filter((attempt) => attempt.outcome === 'technical_disturbance').length
-  if (!unavailable && retrievedAll.length === 0 && disturbances === examined.length && input.attempts.length < TECHNICAL_ATTEMPT_BOUND) {
-    return sealed('pending', null, ['technical_retry_pending'], input.baseline.sections.map((section) =>
-      baseFinding(section, 'not_reproven', ['technical_retry_pending'], null)), input.concurrent, [])
-  }
-  if (unavailable || retrievedAll.length === 0) {
-    const reason = unavailable ? 'source_unavailable' : 'technical_retry_exhausted'
-    return sealed(unavailable ? 'not_needed' : 'exhausted', null, [reason], lockAll(input.baseline.sections, reason, null), input.concurrent, [])
-  }
-
   const sourceWide: string[] = []
   const comparable: CareSnapshot[] = []
   const bindingSnapshots: CareSnapshot[] = []
@@ -713,10 +694,17 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
   if (times.some((time, index) => times.indexOf(time) !== index)) sourceWide.push('stale_or_replay')
   if (comparable.some((snapshot) => snapshot.version !== input.baseline.version)) warnings.push('version_label_differs')
 
-  const findings: TopicFinding[] = []
-  const reads = comparable.length > 0 ? comparable : []
+  let findings: TopicFinding[] = []
+  const reads = comparable
+  const pending = !unavailable && retrievedAll.length === 0 && disturbances === examined.length && input.attempts.length < TECHNICAL_ATTEMPT_BOUND
+  const exhausted = !unavailable && retrievedAll.length === 0 && !pending
+  if (unavailable) sourceWide.push('source_unavailable')
+  if (exhausted) sourceWide.push('technical_retry_exhausted')
+  if (pending) warnings.push('technical_retry_pending')
   if (reads.length === 0) {
-    findings.push(...input.baseline.sections.map((section) => baseFinding(section, 'unchanged_not_authorized', [], null)))
+    const disposition = pending ? 'not_reproven' as const : 'unchanged_not_authorized' as const
+    const reasons = pending ? ['technical_retry_pending'] : []
+    findings.push(...input.baseline.sections.map((section) => baseFinding(section, disposition, reasons, null)))
   }
   for (const section of input.baseline.sections) {
     if (reads.length === 0) break
@@ -768,5 +756,18 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
     const delta = (isoInstant(left.retrievedAt) ?? 0) - (isoInstant(right.retrievedAt) ?? 0)
     return delta !== 0 ? delta : sourceDigest(left).localeCompare(sourceDigest(right))
   }).at(-1)
-  return sealed('not_needed', latest ? sourceDigest(latest) : null, [], findings, bindingSnapshots, sourceWide)
+  if (pending) {
+    findings = findings.map((finding) => finding.disposition === 'unchanged_not_authorized'
+      ? revise(finding, ['technical_retry_pending'], 'not_reproven')
+      : finding)
+  }
+  const adoptObservation = !pending && !exhausted && !unavailable
+  return sealed(
+    pending ? 'pending' : exhausted ? 'exhausted' : 'not_needed',
+    adoptObservation && latest ? sourceDigest(latest) : null,
+    [],
+    findings,
+    bindingSnapshots,
+    sourceWide,
+  )
 }
