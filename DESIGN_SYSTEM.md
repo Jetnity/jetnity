@@ -426,7 +426,7 @@ Was sich mit einem Tippen zurücknehmen lässt, bekommt keinen Zwischenschritt, 
 
 ### 6.14 Auswahlen als Chips und Segmente
 
-Filter und Statuswahl sind Knöpfe mit `aria-pressed` und dem Attribut `data-wahl`: Chips (`rounded-full`, 44 px hoch) für Filter, ein Segment aus drei gleich breiten Teilen für den eigenen Stand eines Vorbereitungspunkts. Gewählt ist auf Weiss-Mint die volle Fläche in `brand-800` mit weisser Schrift, im grünen Arbeitsbereich die volle Fläche in `citrus-400` mit `brand-900`-Schrift (`workspace-surfaces.css`). Suche und Filter erscheinen erst, wenn es etwas zu durchsuchen gibt.
+Filter und Statuswahl sind Knöpfe mit `aria-pressed` und dem Attribut `data-wahl`: Chips (`rounded-full`, 44 px hoch) für Filter, ein Segment aus drei gleich breiten Teilen für den eigenen Stand eines Vorbereitungspunkts. Seit 27.11.2026 tragen Chips, Segmente und Tabs die Klasse `.jet-wahl` (`styles/globals.css`): ein Farbpaar je Zustand aus den semantischen Tokens, das mit dem Thema der Shell wechselt (gewählt: `--primary-foreground` auf `--primary`, hell Weiss auf `brand-800`, dunkel Nachtgrün auf Mint; ungewählt: `--muted-foreground` auf der Fläche, beim Zeigen auf `--muted`) und ein Häkchen aus CSS-Linien zeigt die Wahl zusätzlich zur Farbe. Details und Regeln: §6.28. Suche und Filter erscheinen erst, wenn es etwas zu durchsuchen gibt.
 
 ### 6.15 Suchformulare auf dem Handy
 
@@ -539,6 +539,29 @@ Der Plan, ob die öffentlichen Seiten künftig auch dunkel werden, ist eine Prod
 **Kontrast:** 4,5 : 1 für alle sichtbaren Texte, auch für grosse Schrift, ungerundet verglichen. Texte auf Bildern werden an den Buchstabenpixeln gemessen (`scripts/premium-redesign-a/kontrast.mjs`); was nicht gemessen werden konnte oder verdeckt blieb, ist kein PASS. Bildunterschriften der Startseite tragen dafür einen Verlauf, der am Text mindestens 65 % Schwarz erreicht, und die Ortsmarke im Hero steht auf `brand-900` mit 74 % Deckung.
 
 **Grosse Schrift (150 % und 200 %):** Der Schutz unter einem Text wächst mit der Schrift. Verläufe unter Bildtexten bemessen ihre Dauer in `rem`, nicht in Prozent der Fläche (Hero: `max(32%, 30rem)`; Inspirationskarte: volle Deckung bis 4 rem unter dem Rand); Abstände zum Rand der Ortsmarke sind `px`, damit sie bei grosser Schrift nicht die halbe Breite verbrauchen. Pins der Etappenkarte tragen `line-height: 1`, die Massstabsleiste begrenzt ihre Breite nach der Schrift (`lib/trips/massstab-breite.ts`), und das ⓘ am Reisekopf steht bei schmaler Breite und grosser Schrift in einem eigenen Streifen unter dem Text (`container`-Abfrage in `em`). Ein einspaltiges Grid oder ein Link, der unter den Mindestinhalt seiner Kinder schrumpfen muss, bekommt den Reflow-Rückhalt in `workspace-surfaces.css` (`minmax(0, 1fr)`, Umbruch, `container`-Abfrage in `em`), nie `overflow: hidden`, kleinere Schrift oder Auslassungspunkte.
+
+### 6.28 Auswahl-, Bild- und Fokuspaare (Kontrast-Korrektur, 27.11.2026)
+
+**Anlass.** Work-Nachtest: der gewählte Filter «Alle» in Meine Reisen (hell) hatte 1,82 : 1 (Work meldete 1,91 : 1; die Abweichung von 0,09 ist nicht erklärt, beides ist FAIL). Ursache, belegt mit `auswahl-ursache.mjs` auf dem Ausgangs-Head: die Themenabbildung der hellen Shell `.workspace-shell[data-workspace-theme="light"] .workspace-content :where(.text-ink-*)` (Spezifität 0,3,0) färbt `text-ink-700` auf `--white-mint-muted` und schlägt die Zustandsvariante `aria-pressed:text-white` (0,2,0); `bg-brand-800` wurde nicht umgefärbt. Ergebnis: gedämpftes Grün (74 95 87) auf dunkelgrünem Grund (21 58 51). Im Dunkel gilt das Spiegelbild (`text-brand-800` wird hell, `bg-white/95` bleibt weiss).
+
+**Regel.** Eine Zustandsfarbe besteht aus **einem zusammengehörigen Paar** aus semantischen Tokens, nie aus einer Palettenklasse (`text-ink-*`, `text-brand-*`, `bg-brand-*`, `text-white`) in einer Zustandsvariante (`aria-pressed:`, `aria-selected:`, `aria-checked:`, `aria-current`). Palettenklassen werden von der Shell je Thema umgefärbt und können so gegen die Zustandsvariante gewinnen. Der Wächtertest `lib/ui/auswahlfeld-kontrast.test.ts` schlägt bei einer solchen Variante in `components/` und `app/` fehl.
+
+| Klasse / Token | Zweck |
+|---|---|
+| `.jet-wahl` | Chip, Segment, Tab: Paar je Zustand über `--wahl-text`, `--wahl-grund`, `--wahl-kante`; Häkchen aus CSS-Linien bei Auswahl; `aria-current` zählt als Auswahl; Kontrastmodus (`forced-colors`): Auswahl `Highlight`/`HighlightText` |
+| `.jet-wahl-kante` | einzelnes Feld (z. B. Länder-Chip) mit Kontur ≥ 3 : 1 (`--steuerkante`) |
+| `.jet-bild-knopf` | Knopf auf einem Foto: helle Scheibe, dunkle Tinte, in jedem Thema gleich (Optionen einer Reisekarte) |
+| `--steuerkante`, `--workspace-control` | Rand von Eingabefeldern und Steuerflächen mit ≥ 3 : 1 (hell `#46665b`, dunkel `#7f95a4`); `--input` im Dunkel entspricht dieser Kante |
+
+**Messwerte der Paare** (ungerundet, Grenze Text 4,5 : 1, Fläche und Rand 3 : 1): hell ungewählt 6,78 : 1, Hover 5,55 : 1, gewählt 12,33 : 1 (Fläche gegen Karte 12,33 : 1); dunkel ungewählt 9,60 : 1, Hover 8,02 : 1, gewählt 12,70 : 1 (Fläche gegen Karte 10,20 : 1), Steuerkante 4,56 : 1.
+
+**Fokus.** Der Fokusring ist zweifarbig, damit er auf jedem Grund ≥ 3 : 1 hält: helle Shell `outline: 3px solid var(--white-mint-ink)` über dem Halo `0 0 0 6px var(--white-mint-focus-halo)` (auf hellem Grund trägt der Umriss, auf dunkler Fläche oder Foto der Halo); Bildnachweis und «Reise ändern» im Reisekopf `#e8fa91` ohne Halo (`.workspace-content .bildnachweis-knopf`, die Regel der hellen Shell wiegt sonst mehr); Ortsmarke auf dem Hero: weisser Ring mit Saum `brand-900` (bricht die Marke auf dem Handy um, ragt die Ecke des Rings über die Rundung auf das Bild).
+
+**Helle Überlagerung im dunklen Thema.** Die Werkzeugleiste, der Hinweis und der Abbruch-Knopf der Etappenkarte (`.et-map-tools`, `.et-map-note`, `.et-cancel-pick`) liegen auf einer weissen Fläche. Dort gelten die hellen Tokens (`--wn-aktion: #153a33`) und ein dunkler Fokusring mit weissem Saum; die Dunkel-Tokens (Mint `citrus-400`, Fokus `jet-ink-400`) ergaben Limette auf Weiss (1,21 : 1).
+
+**Deaktiviert.** Ein deaktivierter Knopf («Einreise anzeigen») zeigt `bg-muted`, `text-muted-foreground` und eine gestrichelte Kante statt `opacity: .6`; er ist damit auch ohne Farbe als nicht verfügbar erkennbar.
+
+**Abnahme.** `scripts/premium-redesign-a/auswahl-kontrast.mjs` misst jedes Element in jedem sichtbaren Zustand (normal, gewählt, ungewählt, hover, focus-visible, active, deaktiviert) im echten Browser; ein nicht herstellbarer Zustand ist OFFEN, nie PASS. Bildgründe werden an den Pixeln gemessen.
 
 ## 7. Responsive-Regeln
 
