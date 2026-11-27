@@ -337,6 +337,26 @@
   border-radius: 12px;
   box-shadow: 0 2px 12px #173e3320;
 }
+/* Werkzeugleiste, Hinweis und «Auswahl abbrechen» liegen als helle Fläche auf der hellen Karte, auch im dunklen Thema.
+   Die Aktions- und Fokuswerte des dunklen Themas (Lime, mintfarbener Ring) gelten dort nicht: Lime auf Weiss hat 1,2 : 1,
+   der mintfarbene Ring 1,4 : 1. Die Werte der hellen Fläche stehen deshalb an der Fläche selbst. */
+.et-map-tools,
+.et-map-note,
+.et-cancel-pick {
+  --wn-aktion: #153a33;
+  --wn-aktion-schrift: #fdfefd;
+}
+.workspace-content :is(.et-map-tools, .et-cancel-pick, .et-canvas .leaflet-control) :is(a, button):focus-visible,
+.workspace-content .et-canvas .et-pin:focus-visible {
+  outline: 3px solid #153a33;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #fdfefd;
+}
+/* Die Karte selbst nimmt den Tastaturfokus: ein 3-px-Umriss im Inneren statt des 1-px-Umrisses von Leaflet. */
+.workspace-content .et-canvas:focus-visible {
+  outline: 3px solid #153a33;
+  outline-offset: -3px;
+}
 .et-map-tools {
   top: 0.8rem;
   left: 0.75rem;

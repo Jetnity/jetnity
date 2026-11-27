@@ -8,6 +8,10 @@ html[data-workspace-theme="dark"] .workspace-shell,
   --workspace-ink: #f4f7f9;
   --workspace-muted: #cad6de;
   --workspace-edge: rgb(214 226 235 / .26);
+  /* Kontur von Eingabefeldern, Auswahlfeldern und Schaltflächen: mindestens 3 : 1 gegen Panel, Grund und Weich
+     (4,6 : 1 auf --workspace-panel). --workspace-edge bleibt die ruhige Trennlinie zwischen Flächen. */
+  --workspace-control: #7f95a4;
+  --steuerkante: var(--workspace-control);
   --workspace-glass: rgb(32 44 55 / .94);
   --workspace-danger: #ffb8ac;
   --background: 18 25 33;
@@ -25,7 +29,7 @@ html[data-workspace-theme="dark"] .workspace-shell,
   --accent: 42 57 69;
   --accent-foreground: 244 247 249;
   --border: 83 103 117;
-  --input: 83 103 117;
+  --input: 127 149 164;
   --ring: 172 231 205;
   --destructive: 255 184 172;
   --destructive-foreground: 18 25 33;
@@ -80,6 +84,11 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
   background-color: var(--workspace-panel, #202c37);
   color: var(--workspace-ink, #f4f7f9);
 }
+/* Die Kontur eines Eingabefelds ist die einzige Begrenzung des Felds und braucht mindestens 3 : 1 (WCAG 1.4.11). */
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea):is(.border-line-100, .border-line-200, .border-line-300),
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea) {
+  border-color: var(--workspace-control, #7f95a4);
+}
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
@@ -96,6 +105,11 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 }
 :where([data-workspace-theme="dark"]) .workspace-page [data-back-to-top] .nach-oben-flaeche { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-edge); }
 
+/* Eingabefelder: Kontur mit mindestens 3 : 1. Die allgemeine Abbildung oben nimmt --workspace-edge für Karten und
+   Trennlinien, das für ein Feld zu leise ist (2,05 : 1). */
+:where([data-workspace-theme="dark"]) .workspace-content :is(input, select, textarea):is(.border-line-100, .border-line-200, .border-line-300, .border, .border-input, .border-border) {
+  border-color: var(--workspace-control);
+}
 /* Background/foreground pairs also cover existing empty, error and security
    cards. Provider iframes and image pixels retain their own colours. */
 :where([data-workspace-theme="dark"]) .workspace-content :where(.bg-white, .bg-white\/65, .bg-white\/70, .bg-white\/75, .bg-surface-0, .bg-surface-0\/85, .bg-surface-25) { background-color: var(--workspace-panel); }
@@ -131,7 +145,7 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 :where([data-workspace-theme="dark"]) .workspace-content [data-planpunkt-editor] :where(input, select, textarea) {
   background-color: var(--workspace-bg);
   color: var(--workspace-ink);
-  border-color: var(--workspace-edge);
+  border-color: var(--workspace-control);
 }
 :where([data-workspace-theme="dark"]) .workspace-content [data-planpunkt-editor] :where(input, textarea)::placeholder {
   color: var(--workspace-muted);
@@ -238,7 +252,7 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 .workspace-content .reisekopf .reisekopf-meldung > [role="alert"] { color: #7a1f12; }
 .reisekopf-optionen { margin-top: .125rem; }
 .workspace-content .reisekopf .reisekopf-optionen > summary { color: var(--reisekopf-text); width: fit-content; }
-.workspace-content .reisekopf .reisekopf-optionen > summary:focus-visible { outline-color: var(--reisekopf-akzent); }
+.workspace-content .reisekopf .reisekopf-optionen > summary:focus-visible { outline-color: var(--reisekopf-akzent); box-shadow: none; }
 .reisekopf-optionen-inhalt { padding-block: .5rem; }
 .workspace-content .reisekopf .reisekopf-optionen-inhalt button { color: var(--reisekopf-text-leise); }
 .workspace-content .reisekopf .reisekopf-optionen-inhalt button:hover { color: var(--reisekopf-text); }
@@ -250,7 +264,7 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 }
 .reise-aendern-knopf svg { width: 1rem; height: 1rem; flex-shrink: 0; }
 .workspace-content .reise-aendern-knopf:hover, .workspace-content .reise-aendern-knopf[aria-expanded="true"] { background: rgb(255 255 255 / .22); }
-.workspace-content .reise-aendern-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: 2px; }
+.workspace-content .reise-aendern-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: 2px; box-shadow: none; }
 /* Bildnachweis: ⓘ am Foto mit 44-px-Trefferfläche und kleiner Scheibe; das Feld öffnet unter dem Kopf. */
 .workspace-content .reisekopf .bildnachweis { position: absolute; right: .25rem; bottom: .25rem; z-index: 1; }
 /* Das ⓘ liegt unten rechts über dem Kopf (44 px). Bei schmaler Breite und grosser Schrift (Breite in em, nicht in px) steht es
@@ -263,7 +277,9 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 }
 .bildnachweis-knopf svg { width: 1.0625rem; height: 1.0625rem; padding: .1875rem; box-sizing: content-box; border-radius: 50%; background: rgb(15 48 42 / .88); }
 .bildnachweis-knopf:hover svg, .bildnachweis-knopf[aria-expanded="true"] svg { background: rgb(15 48 42); }
-.bildnachweis-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: -4px; border-radius: 50%; }
+/* Mit .workspace-content: Die Fokusregel der hellen Shell (white-mint.css) wiegt drei Klassen und hatte gegen die frühere
+   Regel `.bildnachweis-knopf:focus-visible` (zwei Klassen) gewonnen: dunkler Umriss auf dem dunklen Foto, 1,02 : 1. */
+.workspace-content .bildnachweis-knopf:focus-visible { outline: 3px solid #e8fa91; outline-offset: -4px; border-radius: 50%; box-shadow: none; }
 .bildnachweis-feld {
   position: absolute; right: 0; top: calc(100% + .25rem); width: min(20rem, calc(100vw - 2rem)); padding: .75rem .875rem;
   border-radius: .875rem; background: #fff; color: #153a33; border: 1px solid rgb(21 58 51 / .22);

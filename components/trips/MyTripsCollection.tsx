@@ -148,7 +148,7 @@ export default function MyTripsCollection({
           {AUSWAHL.map((eintrag) => (
             <button key={eintrag.wert} type="button" data-sammlung-archiv={eintrag.wert} aria-pressed={auswahl === eintrag.wert}
               onClick={() => navigation.abschicken('selection', sammlungHref({ q, archiv: eintrag.wert, cursor: null }))}
-              className="min-h-11 rounded-full px-3 text-sm font-semibold text-ink-700 aria-pressed:bg-brand-800 aria-pressed:text-white sm:px-4">
+              className="jet-wahl min-h-11 px-3 text-sm font-semibold sm:px-4">
               {eintrag.text}
             </button>
           ))}
