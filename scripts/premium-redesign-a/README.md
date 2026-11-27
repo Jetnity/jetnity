@@ -8,9 +8,9 @@ Jede Messung steht als PASS, FAIL oder OFFEN im Protokoll. Ein nicht gemessener 
 |---|---|---|
 | `abnahme.mjs` | alle Ansichten (Startseite, Profil, Reiseplan, Organisieren, Vorbereitung, Einreise, Übersicht, Konto) in Chromium und WebKit, 320/390/430/1440 px, hell und dunkel, 100/150/200 % Schrift: Überlauf, Kopfzeilen-Höhe, Kontrast (`kontrast.mjs`), Reisekopf | PNG je Zustand, `messwerte.json` |
 | `kostenkarte.mjs` | W3-Kostenkarte: Überlauf 0 px und jeder Betrag vollständig sichtbar und unverändert, geschlossen und geöffnet, Gast und Konto, zwei Reisen (üblich, sehr lange Beträge) | PNG, `kostenkarte-<label>.json` |
-| `dunkelstart.mjs` | Dunkelstart bei verzögerter Hydration für Kopfzeile, Inhalt und Bildnachweis mit ausdrücklicher Geltung (Arbeitsbereich dunkel, öffentliche Seiten hell), Selbsttest und Negativkontrolle | Protokoll, `dunkelstart.json` |
+| `dunkelstart.mjs` | Dunkelstart bei verzögerter Hydration für Kopfzeile, Inhalt und Bildnachweis mit ausdrücklicher Geltung (Arbeitsbereich dunkel, öffentliche Seiten hell). Bildtexte, die vor der Hydration nur gezählt werden können, werden zusätzlich **vor der Hydration an den Pixeln gemessen** (Seitenskripte nicht ausgeliefert; einmal mit geladenem Bild, einmal ohne Bilder), mit Liste der gemessenen Einzeltexte, geforderten Bildtexten je Seite und FAIL für jeden gezählten, aber nicht gemessenen Bildtext. Selbsttest, Negativkontrolle (helle Fläche) und Pixel-Negativkontrolle (Text mit zu geringem Kontrast über dem echten Bild) | Protokoll, `dunkelstart.json` |
 | `kopf-kontrast.mjs` | Kontrast aller Texte im Reisekopf auf jedem freigegebenen Reisebild (schlechtester Pixel je Zeile) | Protokoll, JSON |
-| `bildlizenz.mjs` | Lizenz-Gate: keine der fünf gesperrten Dateien im Netzwerk, im DOM, in Metadaten oder JSON-LD | Protokoll, `bildlizenz.json` |
+| `bildlizenz.mjs` | Herkunfts-Gate: nur die Allowlist der KI-Illustrationen wird angefragt und gezeigt; Zermatt neutral; sichtbarer Hinweis «KI-Illustration», Alt-Text, Open Graph, Twitter, JSON-LD (kein Ortsfoto-Anspruch, echte Bildabmessungen), zentrale Liste `/datenquellen`; Chromium und WebKit, 390/1440 px, hell und dunkel | Protokoll, `bildlizenz.json` |
 | `interaktion.mjs` | Menü, Darstellung, «Reise ändern», «Begleiter», Profilmenü, Tastatur, 320/430 px, 200 % Schrift, reduzierte Bewegung, Konsole | Protokoll |
 
 Hilfsmodule:
