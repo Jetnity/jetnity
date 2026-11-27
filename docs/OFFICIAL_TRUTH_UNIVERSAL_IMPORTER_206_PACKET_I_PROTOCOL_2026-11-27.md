@@ -90,7 +90,7 @@ Ergebnis dieser Arbeitskopie:
 - Trockener Lauf: Profile 10300, historische Slots 267800, Kern 61800, Zusatz 41200, Rechtsbeleg 0, Quellenzuordnung 0, Importfähigkeit `NOT_ASSESSED`, Publikation 0, `archiveVerifiedThisRun` false, Payload `STOP_PRIVATE_PAYLOAD_PATH_MISSING`
 - `import`: Exit 2, `PRIVATE_PAYLOAD_PATH_STOP accepted=0 published=0`
 
-CI auf diesem Head ist noch nicht beobachtet. Ein grüner lokaler Lauf ist kein CI-PASS.
+CI auf dem Code-Head `f5ba18762b06653d05fd83a1e861516e70b0ae7d`: [Run 45913537567](https://github.com/Jetnity/jetnity/actions/runs/45913537567), 13 GitHub-Checks und der Vercel-Status, zusammen 14, alle `success`. Der anschliessende Dokumentations-Commit trägt nur dieses Ergebnis nach. Seine eigene CI ist ein neuer Head und ist mit dem Lauf 45913537567 nicht bewiesen. Der grüne Lauf ist kein Rechtsbeleg, keine Archivprüfung und kein Import.
 
 ## Offene Gates
 
@@ -99,7 +99,7 @@ CI auf diesem Head ist noch nicht beobachtet. Ein grüner lokaler Lauf ist kein 
 - Rechtsbeleg 0, solange kein ausdrücklicher Witness mit Quelle, Scope, Version und Digest geliefert wird. Die fachlichen Teilbelege in #1319 sind nicht als PASS in den Code übernommen.
 - `HR`/`NL` und der `SO`-K2-Hold sind erhalten, nicht neu bewiesen und nicht aufgehoben.
 - Paket II und die Oberfläche sind nicht angefasst.
-- Exact-Head-Review, CI und die Entscheidung über Draft bleiben beim Technical Lead. Cursor setzt nicht Ready und mergt nicht.
+- Die CI dieses Heads ist grün. Exact-Head-Review und die Entscheidung über den Draft bleiben beim Technical Lead. Cursor setzt nicht Ready und mergt nicht. Ein grüner Lauf ist kein Rechtsbeleg und kein Import.
 
 ## Nächster Schritt
 
