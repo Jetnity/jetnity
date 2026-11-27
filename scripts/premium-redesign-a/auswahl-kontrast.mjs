@@ -332,9 +332,6 @@ async function zustandHerstellen(seite, element, interaktion) {
       await seite.waitForTimeout(180)
       await seite.evaluate(() => window.__pra.abwarten())
       hergestellt = await seite.evaluate((i) => Boolean(window.__pra.element(i)?.matches(':hover')), element.i)
-      if (!hergestellt && process.env.PRA_DIAG) {
-        console.error('DIAG hover', element.i, JSON.stringify(await seite.evaluate(([i, x, y]) => { const e = window.__pra.element(i); const r = e.getBoundingClientRect(); const t = document.elementFromPoint(x, y); return { x, y, rect: [r.x, r.y, r.width, r.height], top: t ? t.tagName + '.' + t.className : null, sameTop: t === e || e.contains(t), sy: scrollY } }, [element.i, ziel.x, ziel.y])))
-      }
     }
     if (interaktion === 'aktiv') {
       let gedrueckt = false

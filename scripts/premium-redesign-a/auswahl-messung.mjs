@@ -563,7 +563,8 @@ export async function bandMessen(seite, { rechteck, von, bis, farben, ausblenden
       stil.id = 'pra-ring-aus'
       stil.textContent = css
       document.head.append(stil)
-      return new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+      // WebKit startet Einblendungen und Farbübergänge nach dem Einfügen eines Stylesheets neu: erst nach deren Ende aufnehmen.
+      return new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(() => Promise.resolve(window.__pra?.abwarten?.()).then(fertig))))
     }, ausblenden)
   }
   let bild
