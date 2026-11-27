@@ -30,6 +30,15 @@ function argument(name, standard) {
 }
 const schalter = (name) => process.argv.includes(`--${name}`)
 
+/**
+ * Zeiger an eine Stelle ohne Bedienelement setzen: rechter Rand, Höhenmitte. Die Ecke (1, 1) liegt über der linken
+ * Schiene, die bei Hover als Überlagerung auf 14 rem aufgeht und bei grosser Schrift Inhalt verdeckt.
+ */
+async function zeigerParken(seite) {
+  const { breite, hoehe } = await seite.evaluate(() => ({ breite: window.innerWidth, hoehe: window.innerHeight }))
+  await seite.mouse.move(Math.max(1, breite - 2), Math.round(hoehe / 2))
+}
+
 const BASIS = argument('base', 'http://127.0.0.1:3461')
 const BASIS_WEBKIT = argument('base-webkit', BASIS)
 const KONTO = argument('konto', '')
@@ -188,7 +197,7 @@ async function themaWechseln(seite, ansicht, kombi) {
   await seite.waitForTimeout(500)
   if (ansicht.id !== 'einstellungen') {
     if (kombi.breite.telefon) await seite.keyboard.press('Escape')
-    else await seite.mouse.move(1, 1)
+    else await zeigerParken(seite)
     await seite.waitForTimeout(500)
   }
   const stand = await seite.evaluate(() => document.querySelector('.workspace-shell')?.getAttribute('data-workspace-theme') ?? document.documentElement.getAttribute('data-workspace-theme'))
@@ -306,7 +315,7 @@ function verhaeltnis(a, b) {
 const gerundet = (zahl) => (typeof zahl === 'number' ? Math.round(zahl * 10000) / 10000 : zahl)
 
 async function zustandHerstellen(seite, element, interaktion) {
-  await seite.mouse.move(1, 1)
+  await zeigerParken(seite)
   await seite.evaluate(() => document.activeElement && document.activeElement !== document.body && document.activeElement.blur())
   // Jedes Element wird zuerst ins Sichtfeld geholt: Pixelmessungen auf Bild gelten nur für sichtbare Pixel.
   const mitte = await seite.evaluate((i) => window.__pra.mitte(i), element.i)
@@ -474,7 +483,7 @@ async function elementMessen(seite, element, ansichtId, kombiname, modus, sammle
     for (const interaktion of durchlauf.art === 'gegenteil' ? ['normal', 'hover', 'fokus'] : interaktionen) {
       const { stand, messung, pixel } = await messenImZustand(seite, element, interaktion, flaecheNormal)
       if (interaktion === 'aktiv') await seite.mouse.up().catch(() => undefined)
-      await seite.mouse.move(1, 1)
+      await zeigerParken(seite)
       if (messung && !messung.fehlt && interaktion === 'normal') {
         flaecheNormal = rgbAus(messung.flaeche)
         proAuswahl[durchlauf.art] = auswahlProfil(messung)
@@ -608,7 +617,7 @@ async function echteAuswahl(seite, ansichtId, kombiname, sammler, grenze = 30) {
         for (const interaktion of gewaehlt ? ['normal', 'hover', 'fokus', 'aktiv'] : ['normal', 'hover', 'fokus']) {
           const { stand, messung, pixel } = await messenImZustand(seite, elementInfo, interaktion, flaecheNormal)
           if (interaktion === 'aktiv') await seite.mouse.up().catch(() => undefined)
-          await seite.mouse.move(1, 1)
+          await zeigerParken(seite)
           if (messung && !messung.fehlt && interaktion === 'normal') {
             flaecheNormal = rgbAus(messung.flaeche)
             profile.push({ gruppe: info.gruppe, toggle: info.toggle, tag: info.tag, beschreibung: info.beschreibung, profil: auswahlProfil(messung), gewaehlt })
