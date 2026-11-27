@@ -359,8 +359,14 @@ test('a race keeps both digests and selects no successor', () => {
       ? { ...item, body: `synthetic stay 45 ${STOCK_PROTECTION_MARKER}`, stayDays: 45 }
       : item),
   })
-  const forward = run(baseline, thirty, { concurrent: [fortyFive, thirty] })
-  const reverse = run(baseline, thirty, { concurrent: [thirty, fortyFive] })
+  const forward = run(baseline, thirty, { concurrent: [
+    { ...fortyFive, retrievedAt: '2026-11-27T11:40:00.000Z' },
+    { ...thirty, retrievedAt: '2026-11-27T11:30:00.000Z' },
+  ] })
+  const reverse = run(baseline, thirty, { concurrent: [
+    { ...thirty, retrievedAt: '2026-11-27T11:30:00.000Z' },
+    { ...fortyFive, retrievedAt: '2026-11-27T11:40:00.000Z' },
+  ] })
   assert.equal(forward.decisionDigest, reverse.decisionDigest)
   assert.equal(forward.selectedSuccessor, null)
   const conflicted = finding(forward, 'K3_stay')
@@ -447,7 +453,7 @@ test('expiry, missing core evidence and an unknown scope stay fail-closed', () =
   assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK' && item.topic === 'K3_stay')?.disposition, 'locked')
   assert.ok(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK' && item.topic === 'K3_stay')?.reasons.includes('missing_evidence'))
   assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-MO' && item.topic === 'K3_stay')?.disposition, 'locked')
-  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN')?.reasons.includes('unbound_scope'), true)
+  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN' && item.topic === 'K3_stay')?.reasons.includes('unbound_scope'), true)
   assert.equal(onlyMacao.authorization, 'none')
 })
 
@@ -601,6 +607,125 @@ test('review corrections stay fail-closed without qualifying a rule', () => {
   })
   assert.equal(unknown.findings.find((item) => item.reasons.includes('unknown_scope'))?.disposition, 'locked')
   assert.equal(finding(unknown, 'K3_stay')?.disposition, 'unchanged_not_authorized')
+})
+
+test('rivals are checked like retrieved observations and do not clear an earlier conflict', () => {
+  const bytes = new TextEncoder().encode('synthetic-http-original')
+  const digest = originalByteDigest(bytes)
+  const baseline = snapshot({
+    originalBytes: bytes,
+    declaredOriginalDigest: digest,
+    sections: [
+      section({ topic: 'K1_visa', body: 'synthetic visa' }),
+      section({ topic: 'K3_stay', body: 'synthetic stay' }),
+    ],
+  })
+  const observed = snapshot({ ...baseline, retrievedAt: retrievedNext })
+  const at = (retrievedAt: string, over: Partial<CareSnapshot> = {}) => ({ ...observed, retrievedAt, ...over })
+  const decide = (concurrent: CareSnapshot[], attempts = [{ outcome: 'retrieved' as const, snapshot: observed }]) => evaluateSourceCareDryRun({
+    checkedAt, baseline, concurrent, priorLocks: [], attempts,
+  })
+  const staleRival = decide([at(retrievedBaseline)])
+  assert.ok(finding(staleRival, 'K1_visa')?.reasons.includes('stale_or_replay'))
+  assert.equal(staleRival.confirmedEvidence, false)
+  const sameTime = decide([at(retrievedNext)])
+  assert.ok(finding(sameTime, 'K3_stay')?.reasons.includes('stale_or_replay'))
+  const futureRival = decide([at('2026-11-27T13:00:00.000Z')])
+  assert.ok(finding(futureRival, 'K1_visa')?.reasons.includes('future_retrieval'))
+  const missingBytes = decide([at('2026-11-27T11:30:00.000Z', { originalBytes: null, declaredOriginalDigest: null })])
+  assert.equal(missingBytes.originalBinding, 'absent')
+  assert.equal(missingBytes.confirmedEvidence, false)
+  assert.equal(missingBytes.originalExamination, 'not_performed')
+  assert.ok(missingBytes.warnings.includes('original_binding_absent'))
+  const wrongSha = decide([at('2026-11-27T11:30:00.000Z', { declaredOriginalDigest: 'c'.repeat(64) })])
+  assert.equal(wrongSha.originalBinding, 'mismatch')
+  assert.ok(finding(wrongSha, 'K1_visa')?.reasons.includes('original_digest_mismatch'))
+  const wrongUrl = decide([at('2026-11-27T11:30:00.000Z', { officialUrl: 'https://example.invalid/other-source' })])
+  assert.ok(finding(wrongUrl, 'K1_visa')?.reasons.includes('source_identity'))
+  assert.ok(finding(wrongUrl, 'K3_stay')?.reasons.includes('source_identity'))
+  const renamed = [
+    ...[1, 2, 3, 4].map((index) => `<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/other${index}.css?2222222222">`),
+    ...Array.from({ length: 15 }, (_, index) => `<script src="/typo3conf/ext/theme_bmeia/Resources/Public/JS/app${index}.js?2222222222">`),
+  ].join('\n')
+  const before = [
+    ...[1, 2, 3, 4].map((index) => `<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/theme${index}.css?1111111111">`),
+    ...Array.from({ length: 15 }, (_, index) => `<script src="/typo3conf/ext/theme_bmeia/Resources/Public/JS/app${index}.js?1111111111">`),
+  ].join('\n')
+  const after = before.replaceAll('1111111111', '2222222222')
+  const bmeia = snapshot({
+    ...baseline,
+    officialUrl: BMEIA_OFFICIAL_URL,
+    assets: before,
+    originalBytes: bytes,
+    declaredOriginalDigest: digest,
+  })
+  const bmeiaObserved = snapshot({ ...bmeia, retrievedAt: retrievedNext })
+  const renamedRival = evaluateSourceCareDryRun({
+    checkedAt, baseline: bmeia, priorLocks: [],
+    attempts: [{ outcome: 'retrieved', snapshot: bmeiaObserved }],
+    concurrent: [{ ...bmeiaObserved, retrievedAt: '2026-11-27T11:30:00.000Z', assets: renamed }],
+  })
+  assert.ok(finding(renamedRival, 'K1_visa')?.reasons.includes('unclassified_asset_change'))
+  assert.ok(finding(renamedRival, 'K3_stay')?.reasons.includes('unclassified_asset_change'))
+  const neutralRival = evaluateSourceCareDryRun({
+    checkedAt, baseline: bmeia, priorLocks: [],
+    attempts: [{ outcome: 'retrieved', snapshot: bmeiaObserved }],
+    concurrent: [{ ...bmeiaObserved, retrievedAt: '2026-11-27T11:30:00.000Z', assets: after }],
+  })
+  assert.ok(neutralRival.warnings.includes('asset_timestamp_only'))
+  assert.equal(finding(neutralRival, 'K1_visa')?.disposition, 'unchanged_not_authorized')
+  assert.equal(finding(neutralRival, 'K3_stay')?.disposition, 'unchanged_not_authorized')
+  assert.equal(neutralRival.authorization, 'none')
+  assert.equal(neutralRival.selectedSuccessor, null)
+  assert.equal(neutralRival.confirmedEvidence, false)
+  const missingScope = decide([at('2026-11-27T11:30:00.000Z', { sections: baseline.sections.filter((item) => item.topic !== 'K3_stay') })])
+  assert.equal(finding(missingScope, 'K3_stay')?.disposition, 'locked')
+  assert.ok(finding(missingScope, 'K3_stay')?.reasons.includes('missing_evidence'))
+  assert.equal(finding(missingScope, 'K1_visa')?.disposition, 'unchanged_not_authorized')
+  assert.equal(missingScope.kSlotsComplete, false)
+  const added = section({ topic: 'Z4_customs', body: 'synthetic customs only on the rival', scope: { ruleClass: 'customs_note' } })
+  const newScope = decide([at('2026-11-27T11:30:00.000Z', {
+    declaredOriginalDigest: 'd'.repeat(64),
+    sections: [...baseline.sections, added],
+  })])
+  const held = newScope.findings.find((item) => item.topic === 'Z4_customs')
+  assert.equal(held?.disposition, 'locked')
+  assert.ok(held?.reasons.includes('unbound_scope'))
+  assert.ok(held?.reasons.includes('hold'))
+  assert.ok(held?.reasons.includes('original_digest_mismatch'))
+  assert.equal(finding(newScope, 'K1_visa')?.reasons.includes('original_digest_mismatch'), true)
+  const changed = snapshot({
+    ...observed,
+    sections: observed.sections.map((item) => item.topic === 'K3_stay' ? { ...item, body: 'synthetic stay changed' } : item),
+  })
+  const restored = snapshot({ ...baseline, retrievedAt: '2026-11-27T11:20:00.000Z' })
+  const kept = evaluateSourceCareDryRun({
+    checkedAt, baseline, priorLocks: [],
+    attempts: [
+      { outcome: 'retrieved', snapshot: changed },
+      { outcome: 'retrieved', snapshot: restored },
+    ],
+    concurrent: [{ ...restored, retrievedAt: '2026-11-27T11:40:00.000Z' }],
+  })
+  assert.equal(finding(kept, 'K3_stay')?.disposition, 'locked')
+  assert.ok(finding(kept, 'K3_stay')?.reasons.includes('earlier_contradiction_not_cleared'))
+  assert.equal(finding(kept, 'K1_visa')?.disposition, 'unchanged_not_authorized')
+  const full = snapshot({
+    sections: CORE_TOPICS.map((topic) => section({ topic, body: `synthetic ${topic}` })),
+    originalBytes: bytes,
+    declaredOriginalDigest: digest,
+  })
+  const dropped = evaluateSourceCareDryRun({
+    checkedAt, baseline: full, priorLocks: [], concurrent: [],
+    attempts: [{ outcome: 'retrieved', snapshot: snapshot({
+      ...full,
+      retrievedAt: retrievedNext,
+      sections: full.sections.filter((item) => item.topic !== 'K4_health'),
+    }) }],
+  })
+  assert.equal(dropped.kSlotsComplete, false)
+  assert.equal(finding(dropped, 'K4_health')?.disposition, 'locked')
+  assert.equal(finding(dropped, 'K1_visa')?.disposition, 'unchanged_not_authorized')
 })
 
 test('existing source-bound renewal and monitor wiring stay untouched', () => {

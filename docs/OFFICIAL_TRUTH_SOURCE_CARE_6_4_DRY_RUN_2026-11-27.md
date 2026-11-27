@@ -36,7 +36,7 @@ Der kanonisierte Snapshot-Digest ist nicht der SHA-256 der HTTP-Originalbytes. B
 
 ## Korrektur nach TL-Review 7207442476
 
-Alle Beobachtungen innerhalb der drei Versuche werden ausgewertet. Eine frühere Abweichung bleibt gesperrt, auch wenn eine spätere Beobachtung wieder den Ausgangsbytes entspricht. Eine ältere oder gleich datierte Beobachtung ist `stale_or_replay` und fail-closed. Ein Rivale mit anderer Quellenkennung oder anderer amtlicher URL sperrt die Quelle. Ein unbekannter Prior-Scope wird gesperrt und hebt andere Themen nicht auf.
+Ein Rivale durchläuft dieselbe Prüfung wie ein Abruf: Quellenkennung, exakt dieselbe amtliche URL, Abrufzeit gegen Baseline und Prüfzeit, Originalbytes und SHA-256. Veraltet, gleich datiert, in der Zukunft oder mit abweichender URL ist die Quelle fail-closed. Seine Assets werden gegen die Baseline und die übrigen Beobachtungen gehalten. Ein früherer Konflikt bleibt bestehen, wenn eine spätere Beobachtung wieder übereinstimmt. Ein Original-Mismatch ergänzt den Grund und löscht Konflikte, unbekannte Scopes und frühere Holds nicht. `kSlotsComplete` wird falsch, sobald eine Beobachtung einen erwarteten Kernslot nicht enthält. `confirmedEvidence` bleibt falsch.
 
 ## Thailand, synthetisch
 
@@ -56,11 +56,11 @@ Zwei abweichende Beobachtungen desselben Abschnitts sind ein Konflikt. Es wird k
 node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-source-care-6-4/dry-run.test.ts
 ```
 
-Lokal nach der Korrekturrunde, vor dem Push des neuen Heads: 13 Tests, 13 bestanden, 0 fehlgeschlagen. Die CI des neuen Heads ist erst nach dem Push belegbar und bis dahin kein PASS. Der vorherige grüne Run 45913690435 gilt für `9a01dabc0`, nicht für den Korrekturhead.
+Lokal nach der Rivalen-Korrektur, vor dem Push des neuen Heads: 14 Tests, 14 bestanden, 0 fehlgeschlagen. Die CI des neuen Heads ist erst nach dem Push belegbar und bis dahin kein PASS. Run 45926369538 gilt für `b20efd718`, nicht für den neuen Head.
 
 | Prüfung | Ergebnis |
 |---|---|
-| Dry-run-Testdatei, 13 Tests | 13 bestanden, 0 fehlgeschlagen |
+| Dry-run-Testdatei, 14 Tests | 14 bestanden, 0 fehlgeschlagen |
 | `tsc -p tsconfig.json --noEmit` | Exit 0, auf diesem Korrekturstand |
 | `eslint` auf die beiden TypeScript-Dateien | Exit 0, auf diesem Korrekturstand |
 | `node scripts/exporte.mjs` | Exit 0, 0 Exporte ohne Aufrufer |

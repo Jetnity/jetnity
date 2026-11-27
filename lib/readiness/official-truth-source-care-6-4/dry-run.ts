@@ -265,12 +265,11 @@ export function assetTimestampNeutral(before: string, after: string, officialUrl
   return stripAssetTimestamps(before) === stripAssetTimestamps(after)
 }
 
-function snapshotError(snapshot: CareSnapshot, seenAt: number | null): string | null {
+function snapshotError(snapshot: CareSnapshot): string | null {
   if (!/^[a-z0-9-]{1,80}$/.test(snapshot.sourceId)) return 'source_identity'
   if (!snapshot.officialUrl.startsWith('https://') || snapshot.officialUrl.length > 300) return 'source_identity'
   if (!/^[A-Za-z0-9._:-]{1,80}$/.test(snapshot.version)) return 'version_identity'
-  const retrieved = isoInstant(snapshot.retrievedAt)
-  if (retrieved === null || (seenAt !== null && retrieved > seenAt)) return 'retrieval_clock'
+  if (isoInstant(snapshot.retrievedAt) === null) return 'retrieval_clock'
   if (typeof snapshot.assets !== 'string' || utf8(snapshot.assets).byteLength > 20_000) return 'assets'
   if (snapshot.assets.includes('\n>>\n')) return 'assets'
   if (!Array.isArray(snapshot.sections) || snapshot.sections.length < 1 || snapshot.sections.length > 80) return 'sections'
@@ -485,19 +484,23 @@ function missingSlot(sample: CareSection, topic: CoreTopic): TopicFinding {
   }
 }
 
-function addMissingSlots(findings: readonly TopicFinding[], baseline: CareSnapshot): { findings: TopicFinding[]; complete: boolean } {
-  const groups = new Map<string, CareSection>()
-  const present = new Set<string>()
-  for (const section of baseline.sections) {
-    groups.set(scopeGroupKey(section.scope), section)
-    present.add(scopeKey(section.scope, section.topic))
+function addMissingSlots(findings: readonly TopicFinding[], baseline: CareSnapshot, reads: readonly CareSnapshot[]): { findings: TopicFinding[]; complete: boolean } {
+  const samples = new Map<string, CareSection>()
+  for (const section of baseline.sections) samples.set(scopeGroupKey(section.scope), section)
+  for (const read of reads) {
+    for (const section of read.sections) {
+      const group = scopeGroupKey(section.scope)
+      if (!samples.has(group)) samples.set(group, section)
+    }
   }
   const extra: TopicFinding[] = []
-  let complete = groups.size > 0
-  for (const sample of groups.values()) {
+  let complete = samples.size > 0
+  for (const sample of samples.values()) {
     for (const topic of CORE_TOPICS) {
       const key = scopeKey(sample.scope, topic)
-      if (present.has(key)) continue
+      const inBaseline = baseline.sections.some((section) => scopeKey(section.scope, section.topic) === key)
+      const missingFromRead = reads.some((read) => !read.sections.some((section) => scopeKey(section.scope, section.topic) === key))
+      if (inBaseline && !missingFromRead) continue
       complete = false
       if (findings.some((finding) => finding.scopeKey === key && finding.topic === topic)) continue
       extra.push(missingSlot(sample, topic))
@@ -624,7 +627,7 @@ function applyPriorLocks(findings: readonly TopicFinding[], priorLocks: readonly
 export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryRun {
   const checkedAt = isoInstant(input.checkedAt)
   if (checkedAt === null) return invalid('clock')
-  const baselineError = snapshotError(input.baseline, checkedAt)
+  const baselineError = snapshotError(input.baseline)
   if (baselineError) return invalid(baselineError)
   if (!Array.isArray(input.attempts) || input.attempts.length < 1 || input.attempts.length > 8) return invalid('attempts')
   if (!Array.isArray(input.concurrent) || input.concurrent.length > 4) return invalid('concurrent')
@@ -644,20 +647,20 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
     extraWarnings: readonly string[],
     findings: readonly TopicFinding[],
     bindingSnapshots: readonly CareSnapshot[],
+    sourceWide: readonly string[],
   ): SourceCareDryRun => {
-    const slotted = addMissingSlots(findings, input.baseline)
+    const slotReads = bindingSnapshots.filter((snapshot) => snapshotError(snapshot) === null
+      && snapshot.sourceId === input.baseline.sourceId
+      && snapshot.officialUrl === input.baseline.officialUrl)
+    const slotted = addMissingSlots(findings, input.baseline, slotReads)
     const originalBinding = combineBinding([input.baseline, ...bindingSnapshots])
-    let nextFindings = slotted.findings
     const bindingWarnings = [...extraWarnings]
-    if (originalBinding === 'mismatch') {
-      bindingWarnings.push('original_digest_mismatch')
-      nextFindings = [
-        ...lockAll(input.baseline.sections, 'original_digest_mismatch', null),
-        ...slotted.findings.filter((finding) => finding.reasons.includes('missing_k_slot')),
-      ]
-    } else if (originalBinding === 'absent') bindingWarnings.push('original_binding_absent')
+    const wide = [...sourceWide]
+    if (originalBinding === 'mismatch') wide.push('original_digest_mismatch')
+    else if (originalBinding === 'absent') bindingWarnings.push('original_binding_absent')
     else bindingWarnings.push('original_bytes_supplied_not_an_official_examination')
-    const prior = applyPriorLocks(nextFindings, input.priorLocks)
+    const widened = wide.length === 0 ? slotted.findings : slotted.findings.map((finding) => revise(finding, wide, 'locked'))
+    const prior = applyPriorLocks(widened, input.priorLocks)
     if (typeof prior === 'string') return invalid(prior)
     return finish({
       inputAccepted: true,
@@ -678,34 +681,47 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
   const disturbances = examined.filter((attempt) => attempt.outcome === 'technical_disturbance').length
   if (!unavailable && retrievedAll.length === 0 && disturbances === examined.length && input.attempts.length < TECHNICAL_ATTEMPT_BOUND) {
     return sealed('pending', null, ['technical_retry_pending'], input.baseline.sections.map((section) =>
-      baseFinding(section, 'not_reproven', ['technical_retry_pending'], null)), [])
+      baseFinding(section, 'not_reproven', ['technical_retry_pending'], null)), input.concurrent, [])
   }
   if (unavailable || retrievedAll.length === 0) {
     const reason = unavailable ? 'source_unavailable' : 'technical_retry_exhausted'
-    return sealed(unavailable ? 'not_needed' : 'exhausted', null, [reason], lockAll(input.baseline.sections, reason, null), [])
+    return sealed(unavailable ? 'not_needed' : 'exhausted', null, [reason], lockAll(input.baseline.sections, reason, null), input.concurrent, [])
   }
 
-  const observations: CareSnapshot[] = []
-  for (const attempt of retrievedAll) {
-    const observed = attempt.snapshot
-    const observedError = snapshotError(observed, checkedAt)
-    if (observedError) return sealed('not_needed', null, [observedError], lockAll(input.baseline.sections, 'observation_rejected', null), [])
-    if (observed.sourceId !== input.baseline.sourceId || observed.officialUrl !== input.baseline.officialUrl) {
-      return sealed('not_needed', sourceDigest(observed), ['source_identity'], lockAll(input.baseline.sections, 'source_identity', null), [observed])
+  const sourceWide: string[] = []
+  const comparable: CareSnapshot[] = []
+  const bindingSnapshots: CareSnapshot[] = []
+  const consider = (snapshot: CareSnapshot) => {
+    bindingSnapshots.push(snapshot)
+    const error = snapshotError(snapshot)
+    if (error) {
+      sourceWide.push('observation_rejected')
+      return
     }
-    observations.push(observed)
+    if (snapshot.sourceId !== input.baseline.sourceId || snapshot.officialUrl !== input.baseline.officialUrl) {
+      sourceWide.push('source_identity')
+      return
+    }
+    const time = isoInstant(snapshot.retrievedAt)
+    if (time === null || time > checkedAt) sourceWide.push('future_retrieval')
+    else if (time <= baselineRetrieved) sourceWide.push('stale_or_replay')
+    comparable.push(snapshot)
   }
-  const retrievedTimes = observations.map((observed) => isoInstant(observed.retrievedAt))
-  const stale = retrievedTimes.some((time, index) => time === null || time <= baselineRetrieved || (index > 0 && time <= (retrievedTimes[index - 1] ?? time)))
-  if (stale) {
-    return sealed('not_needed', null, ['stale_or_replay'], lockAll(input.baseline.sections, 'stale_or_replay', null), observations)
-  }
-  if (observations.some((observed) => observed.version !== input.baseline.version)) warnings.push('version_label_differs')
+  for (const attempt of retrievedAll) consider(attempt.snapshot)
+  for (const rival of input.concurrent) consider(rival)
+  const times = comparable.map((snapshot) => isoInstant(snapshot.retrievedAt))
+  if (times.some((time, index) => times.indexOf(time) !== index)) sourceWide.push('stale_or_replay')
+  if (comparable.some((snapshot) => snapshot.version !== input.baseline.version)) warnings.push('version_label_differs')
 
   const findings: TopicFinding[] = []
+  const reads = comparable.length > 0 ? comparable : []
+  if (reads.length === 0) {
+    findings.push(...input.baseline.sections.map((section) => baseFinding(section, 'unchanged_not_authorized', [], null)))
+  }
   for (const section of input.baseline.sections) {
+    if (reads.length === 0) break
     const key = scopeKey(section.scope, section.topic)
-    const pairs = observations.map((observed) => observed.sections.find((item) => scopeKey(item.scope, item.topic) === key) ?? null)
+    const pairs = reads.map((observed) => observed.sections.find((item) => scopeKey(item.scope, item.topic) === key) ?? null)
     if (pairs.some((pair) => pair === null)) {
       findings.push(baseFinding(section, 'locked', ['missing_evidence'], null))
       continue
@@ -724,14 +740,14 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
     }
     findings.push(merged)
   }
-  for (const observed of observations) {
+  for (const observed of reads) {
     for (const section of observed.sections) {
       const key = scopeKey(section.scope, section.topic)
       if (input.baseline.sections.some((baseline) => scopeKey(baseline.scope, baseline.topic) === key)) continue
       if (findings.some((finding) => finding.scopeKey === key)) continue
       const absent = sha256(utf8(`absent\n${key}\n`))
       findings.push({
-        ...baseFinding(section, 'locked', ['unbound_scope'], sectionDigest(section)),
+        ...baseFinding(section, 'locked', ['unbound_scope', 'hold'], sectionDigest(section)),
         baselineDigest: absent,
         validUntil: null,
         stockProtection: null,
@@ -739,42 +755,18 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
     }
   }
 
-  let compared = findings
-  const assetStates = observations.map((observed) => {
-    if (observed.assets === input.baseline.assets) return 'unchanged' as const
-    return assetTimestampNeutral(input.baseline.assets, observed.assets, input.baseline.officialUrl) ? 'timestamp' as const : 'changed' as const
-  })
-  if (assetStates.includes('timestamp') && !assetStates.includes('changed')) warnings.push('asset_timestamp_only')
-  if (assetStates.includes('changed') || new Set(observations.map((observed) => stripAssetTimestamps(observed.assets))).size > 1) {
+  const sameAssets = (left: string, right: string) => left === right || assetTimestampNeutral(left, right, input.baseline.officialUrl)
+  const assetChanged = reads.some((snapshot) => !sameAssets(input.baseline.assets, snapshot.assets))
+    || reads.some((left, index) => reads.slice(index + 1).some((right) => !sameAssets(left.assets, right.assets)))
+  if (!assetChanged && reads.some((snapshot) => snapshot.assets !== input.baseline.assets)) warnings.push('asset_timestamp_only')
+  if (assetChanged) {
     warnings.push('unclassified_asset_change')
-    compared = compared.map((finding) => revise(finding, ['unclassified_asset_change'], 'locked'))
+    sourceWide.push('unclassified_asset_change')
   }
 
-  for (const rival of input.concurrent) {
-    const rivalError = snapshotError(rival, checkedAt)
-    if (rivalError) {
-      warnings.push('concurrent_rejected')
-      compared = compared.map((finding) => revise(finding, ['observation_rejected'], 'locked', null))
-      break
-    }
-    if (rival.sourceId !== input.baseline.sourceId || rival.officialUrl !== input.baseline.officialUrl) {
-      warnings.push('source_identity')
-      compared = compared.map((finding) => revise(finding, ['source_identity'], 'locked', null))
-      break
-    }
-    const rivalByKey = new Map<string, CareSection>(rival.sections.map((section: CareSection) => [scopeKey(section.scope, section.topic), section]))
-    compared = compared.map((finding) => {
-      const rivalSection = rivalByKey.get(finding.scopeKey)
-      const rivalDigest = rivalSection ? sectionDigest(rivalSection) : null
-      const observedDigests = observations.map((observed) => {
-        const match = observed.sections.find((section) => scopeKey(section.scope, section.topic) === finding.scopeKey)
-        return match ? sectionDigest(match) : null
-      })
-      if (observedDigests.every((digest) => digest === rivalDigest)) return finding
-      const digests = [...observedDigests, rivalDigest].filter((digest): digest is string => digest !== null).sort()
-      return revise(finding, ['conflict', ...digests.map((digest) => `conflict_digest_${digest}`)], 'locked', null)
-    })
-  }
-
-  return sealed('not_needed', sourceDigest(observations[observations.length - 1]!), [], compared, observations)
+  const latest = reads.slice().sort((left, right) => {
+    const delta = (isoInstant(left.retrievedAt) ?? 0) - (isoInstant(right.retrievedAt) ?? 0)
+    return delta !== 0 ? delta : sourceDigest(left).localeCompare(sourceDigest(right))
+  }).at(-1)
+  return sealed('not_needed', latest ? sourceDigest(latest) : null, [], findings, bindingSnapshots, sourceWide)
 }
