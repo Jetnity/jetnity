@@ -90,7 +90,9 @@ Ergebnis dieser Arbeitskopie:
 - Trockener Lauf: Profile 10300, historische Slots 267800, Kern 61800, Zusatz 41200, Rechtsbeleg 0, Quellenzuordnung 0, Importfähigkeit `NOT_ASSESSED`, Publikation 0, `archiveVerifiedThisRun` false, Payload `STOP_PRIVATE_PAYLOAD_PATH_MISSING`
 - `import`: Exit 2, `PRIVATE_PAYLOAD_PATH_STOP accepted=0 published=0`
 
-CI auf dem Code-Head `f5ba18762b06653d05fd83a1e861516e70b0ae7d`: [Run 45913537567](https://github.com/Jetnity/jetnity/actions/runs/45913537567), 13 GitHub-Checks und der Vercel-Status, zusammen 14, alle `success`. Der anschliessende Dokumentations-Commit trägt nur dieses Ergebnis nach. Seine eigene CI ist ein neuer Head und ist mit dem Lauf 45913537567 nicht bewiesen. Der grüne Lauf ist kein Rechtsbeleg, keine Archivprüfung und kein Import.
+CI auf dem Code-Head `f5ba18762b06653d05fd83a1e861516e70b0ae7d`: [Run 45913537567](https://github.com/Jetnity/jetnity/actions/runs/45913537567), 13 GitHub-Checks und der Vercel-Status, zusammen 14, alle `success`. Der grüne Lauf ist kein Rechtsbeleg, keine Archivprüfung und kein Import.
+
+CI auf dem Dokumentations-Head `489f2ea8ab9dce94b523df87607ecc9a4d6722c1`: [Run 45916385150](https://github.com/Jetnity/jetnity/actions/runs/45916385150), `failure`. Gegen `f5ba18762` unterscheiden sich nur zwei Sätze in `docs/ACTIVE_WORK_STATUS.md` und diesem Protokoll. Rot sind `Repository verification` (Schritt Tests) und danach `Typecheck, Lint & Build`, weil dieser Job den Bestand der Verifikationsjobs verlangt. Der Testfehler ist einer: `scripts/db/official-truth-v3-durable-jobs-1/native.ts`, Beweis N11, `assert.equal` des Katalogs vor und nach einem temporären Deferred-Trigger (Zeile 2016). Die Meldung ist `proof_22:N11` / `assertion_failed`. GitHub kürzt die beiden Katalog-JSON ab; der sichtbare Anfang (Rollen und erste Spalten) ist gleich. Der umgebende M04-Test meldet denselben Fehler als `M04 native proof or terminal cleanup failed`. Dieser native M04-Beweis gehört nicht zu Paket I und wird hier nicht verändert.
 
 ## Offene Gates
 
@@ -99,7 +101,7 @@ CI auf dem Code-Head `f5ba18762b06653d05fd83a1e861516e70b0ae7d`: [Run 4591353756
 - Rechtsbeleg 0, solange kein ausdrücklicher Witness mit Quelle, Scope, Version und Digest geliefert wird. Die fachlichen Teilbelege in #1319 sind nicht als PASS in den Code übernommen.
 - `HR`/`NL` und der `SO`-K2-Hold sind erhalten, nicht neu bewiesen und nicht aufgehoben.
 - Paket II und die Oberfläche sind nicht angefasst.
-- Die CI dieses Heads ist grün. Exact-Head-Review und die Entscheidung über den Draft bleiben beim Technical Lead. Cursor setzt nicht Ready und mergt nicht. Ein grüner Lauf ist kein Rechtsbeleg und kein Import.
+- Der aktuelle Head `489f2ea8` hat rote CI wegen des unveränderten M04-Nativbeweises N11. Der Code-Head `f5ba18762` bleibt der grüne Lauf. Exact-Head-Review und die Entscheidung über den Draft bleiben beim Technical Lead. Cursor setzt nicht Ready und mergt nicht.
 
 ## Nächster Schritt
 
