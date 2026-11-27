@@ -10,6 +10,7 @@ Stand nach der Korrekturrunde. Dieser Text ist der Ablauf. Er wird erst ausgefü
 - Bestehendes verschlüsseltes Backup der getrennten Ablage nutzen. Kein neuer Speicher, kein neuer Anbieter, keine neuen Kosten.
 - Keine Datenbank, kein Netzwerk, keine Schlüssel, keine Personendaten in den Bericht.
 - `import` bleibt `PRIVATE_PAYLOAD_PATH_STOP`. Kein Datenbankimport.
+- Die Charge von `ebe14868c` bleibt der historische Nachweis. Eine neue lokale Charge braucht einen neu abgenommenen Head und eine neue externe Abnahme. Dieser Stand startet sie nicht.
 - Paket II und die Oberfläche nicht anfassen. M04/N11 nicht abschwächen.
 
 ## Was Work ausführt

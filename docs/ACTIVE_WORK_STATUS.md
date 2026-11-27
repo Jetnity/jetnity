@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, Sperrlogik nach der lokalen Analyse
+
+Gleicher Branch, gleicher Draft #1323, ausgehend von `ebe14868c`. Dessen Charge bleibt historisch. Keine neue Archivlesung, kein M04/N11-Eingriff.
+
+- `nein` und leer sind kein Tracker-Konflikt. `ja`, unbekannter Text und historische Vermerke bleiben Hold. Indexformen ohne belegte Felder bleiben Hold. Die Diagnose sammelt Befunde und gibt nichts frei.
+- Lokal: Forschungsadapter 34, Gap-Audit 6, Importer 30, alle OK. Drei Node-Integrationsprüfungen bestanden. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
 ## 27.11.2026 — Paket I, vierte Korrektur nach NO-GO auf 7dfac457f
 
 Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.

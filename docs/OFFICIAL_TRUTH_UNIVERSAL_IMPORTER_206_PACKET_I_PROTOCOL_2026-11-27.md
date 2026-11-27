@@ -1,5 +1,17 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Fünfte Korrekturrunde, Sperranalyse 27.11.2026
+
+Ausgang bleibt `ebe14868c`. Dessen lokaler technischer PASS und die alte Charge bleiben ein historischer Nachweis. Dieser Commit ist eine neue Prüfung und keine Freigabe einer neuen Charge.
+
+- Ein Trackerfeld ist nur dann kein behaupteter Konflikt, wenn es leer ist oder nach Zuschnitt und Kleinschreibung genau `nein` lautet. `ja`, unbekannter Text und ein historischer Erledigungsvermerk bleiben ein Hold. Der Originalwert bleibt stehen. `nein` ist kein Rechtsbeleg und löscht einen Slice-Konflikt nicht.
+- Abweichende Trackerzeilen werden nicht ausgewählt. Die Diagnose nennt die tatsächlich abweichenden Feldnamen und wählt keine Zeile, kein Datum und keine Mehrheit.
+- `jetnity-entry-requirements-dest-index-v2.2` folgt dem bereits im Gap-Audit belegten Vertrag. `dest-index-v1` und `research-index-v2.2` binden nur, wenn sie dieselben bereits belegten Felder eindeutig verwenden. Eine fehlende Pointerliste ist dabei nur zulässig, wenn Dateimap und Positionsmap dieselbe eindeutige Zuordnung tragen. Ein vorhandener widersprüchlicher Pointer bleibt ein Hold. Eine andere Feldform bleibt `index_structure_unredacted`, weil ihre redigierte Struktur hier nicht belegt ist. Eine vorhandene Hashdeklaration muss zum Dateibytes passen. Eine fehlende doppelte Deklaration ist kein Hash-PASS.
+- `diagnose` liest nur und sammelt Befunde. Eine zielweite Integritätsstörung erzeugt keine Kandidaten. Fehlende historische Schlüssel werden genannt und nicht ergänzt. `medication_import` wird kein neues Kern-Launch-Thema. Die Zahlen 549, 7'465 und 1'786 stehen als historischer Vergleich, nicht als PASS und nicht als neue Messung.
+- `legalEvidence` bleibt 0. HR/NL und die vier SO/K2-Holds bleiben. Es wurde kein Archiv gelesen und keine neue Charge gestartet.
+
+Die CI dieses Heads ist erst nach dem Push zu belegen.
+
 ## Vierte Korrekturrunde, NO-GO auf 7dfac457f
 
 - Vor dem Lesen und vor jedem Schreiben prüft der lokale Ablauf die Ausgabe gegen den Ordner der Originaldatei und gegen jeden Git-Worktree. Ausgabe innerhalb, gleich oder oberhalb dieses Ordners, Symlink-Komponenten, `..`, Hardlinks und ein Staging im Originalordner werden abgelehnt. Die Originaldatei muss schon schreibgeschützt sein; der Lauf ändert ihre Bytes, ihre Rechte und den Ordnerinhalt nicht.
@@ -102,7 +114,7 @@ Der spätere Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f7852
 
 Die Byte-Pins der beiden geänderten Offline-Skripte in den Integrationsprüfungen sind die neuen Skript-Digests, nicht Archiv-Digests:
 
-- `official-truth-research-package.py` `eea52eb8bc552bbad15ba0ed2cde4163cc628accdb896688af351a52a3b40baa`
+- `official-truth-research-package.py` `15a07ef156014fde63003cb01b622a6683f6dbb2ed0ef1751c39179152111748`
 - `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
 
 ## Tests, lokal, ohne Datenbank und ohne Netz
@@ -118,6 +130,15 @@ node --experimental-test-module-mocks --import ./scripts/server-only-test-regist
 python3 scripts/official-truth-50-pass-import.py dry-run --destinations ALL
 python3 scripts/official-truth-50-pass-import.py import
 ```
+
+Ergebnis dieser fünften Korrektur, lokal, ohne Archiv und ohne Datenbank:
+
+- Forschungsadapter: 34 Tests, OK
+- Gap-Audit: 6 Tests, OK
+- Importer: 30 Tests, OK
+- Drei Node-Integrationsprüfungen: 3 bestanden, 0 fehlgeschlagen
+
+Die älteren Zähler bleiben der Stand ihrer Runde. 549, 7'465 und 1'786 sind der historische Vergleich aus der Sperranalyse, keine neue Messung.
 
 Ergebnis dieser vierten Korrektur, lokal, ohne Archiv und ohne Datenbank:
 

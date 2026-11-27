@@ -319,4 +319,140 @@ class PackageTests(unittest.TestCase):
         notes = json.loads((self.output/'manifest.json').read_text())['indexNotes']
         self.assertIn('dest_id_absent', notes)
 
+    def test_negative_tracker_token_is_kept_and_is_not_evidence(self):
+        text = (self.root/'tracker.csv').read_text().replace(',\n', ',nein\n')
+        text = text.replace('AT,IN,records/dest/AT/IN.json,nein\n', 'AT,IN,records/dest/AT/IN.json, Nein \n', 1)
+        (self.root/'tracker.csv').write_text(text)
+        counts = self.prepare()
+        self.assertEqual(counts['accepted'], 0)
+        copied = (self.output/'original/tracker-destination.csv').read_text()
+        self.assertIn('AT,IN,records/dest/AT/IN.json, Nein ', copied)
+        coverage = json.loads((self.output/'coverage.json').read_text())
+        self.assertTrue(all(row['recordConflictFlag'] is False for row in coverage))
+        self.assertTrue(all(row['publicationAuthority'] == 'none' for row in coverage))
+
+    def test_positive_unknown_and_historical_tracker_text_stay_held(self):
+        original = (self.root/'tracker.csv').read_bytes()
+        for token in ('ja', 'unbekannt', 'erledigt 2020 Quelle offen'):
+            text = original.decode().replace('AT,IN,records/dest/AT/IN.json,\n',
+                                             f'AT,IN,records/dest/AT/IN.json,{token}\n', 1)
+            (self.root/'tracker.csv').write_text(text)
+            written = (self.root/'tracker.csv').read_bytes()
+            with self.assertRaisesRegex(ValueError, 'tracker_conflict_flag'):
+                a.prepare(self.root, 'AT', self.base/token[:8])
+            self.assertEqual((self.root/'tracker.csv').read_bytes(), written)
+        self.assertEqual(a.tracker_conflict_class('ja'), 'positive')
+        self.assertEqual(a.tracker_conflict_class(''), 'empty')
+        self.assertEqual(a.tracker_conflict_class('erledigt 2020'), 'unresolved')
+
+    def test_negative_tracker_does_not_clear_a_slice_conflict(self):
+        text = (self.root/'tracker.csv').read_text().replace(
+            'AT,IN,records/dest/AT/IN.json,\n', 'AT,IN,records/dest/AT/IN.json,nein\n', 1)
+        (self.root/'tracker.csv').write_text(text)
+        before = (self.root/'tracker.csv').read_bytes()
+        self.change(self.dest/'IN.json', lambda record: record.update(conflicts=[{'message': 'fixture'}]))
+        with self.assertRaisesRegex(ValueError, 'tracker_slice_conflict'):
+            self.prepare()
+        self.assertEqual((self.root/'tracker.csv').read_bytes(), before)
+        self.assertFalse(self.output.exists())
+
+    def test_revision_differences_are_named_and_not_selected(self):
+        header = 'dest_id,nationality,record_pointer,conflict,note,primary_source\n'
+        rows = []
+        for code in CODES:
+            note, source = ('a', 's1')
+            rows.append(f'AT,{code},records/dest/AT/{code}.json,,{note},{source}')
+        rows.append('AT,IN,records/dest/AT/IN.json,,b,s2')
+        (self.root/'tracker.csv').write_text(header + '\n'.join(rows) + '\n')
+        before = (self.root/'tracker.csv').read_bytes()
+        revision = a.tracker_revision([
+            {'record_pointer': 'records/dest/AT/IN.json', 'note': 'a', 'primary_source': 's1'},
+            {'record_pointer': 'records/dest/AT/IN.json', 'note': 'b', 'primary_source': 's2'},
+        ])
+        self.assertEqual(revision['differingFields'], ['note', 'primary_source'])
+        self.assertTrue(revision['samePointer'])
+        self.assertFalse(revision['selected'])
+        with self.assertRaisesRegex(ValueError, 'tracker_field_conflict'):
+            self.prepare()
+        self.assertEqual((self.root/'tracker.csv').read_bytes(), before)
+
+    def test_missing_pointer_list_is_allowed_only_when_the_other_binding_is_unique(self):
+        def drop(frame):
+            frame.pop('nationality_slices')
+        self.change(self.dest/'index.json', drop)
+        self.prepare()
+        notes = json.loads((self.output/'manifest.json').read_text())['indexNotes']
+        self.assertIn('pointer_list_absent', notes)
+        self.assertIn('hash_declaration_absent', notes)
+
+    def test_contradictory_pointer_is_not_ignored(self):
+        def clash(frame):
+            frame['nationality_slices'][0]['file'] = 'records/dest/AT/OTHER.json'
+        self.change(self.dest/'index.json', clash)
+        with self.assertRaisesRegex(ValueError, 'index_pointer_identity'):
+            self.prepare()
+
+    def test_unknown_schema_and_unredacted_variant_stay_held(self):
+        self.change(self.dest/'index.json', lambda frame: frame.update(schema='not-a-documented-schema'))
+        with self.assertRaisesRegex(ValueError, 'unknown_index_schema'):
+            self.prepare()
+        self.change(self.dest/'index.json', lambda frame: frame.update(
+            schema='jetnity-entry-requirements-dest-index-v1', expected_nationality_slices=None,
+            slice_files=None, slices_by_nationality=None, nationality_slices=None))
+        with self.assertRaisesRegex(ValueError, 'index_structure_unredacted'):
+            a.prepare(self.root, 'AT', self.base/'v1-out')
+        self.change(self.dest/'index.json', lambda frame: frame.update(destination_iso2='DE'))
+        with self.assertRaisesRegex(ValueError, 'split_frame_identity'):
+            a.prepare(self.root, 'AT', self.base/'wrong-dest')
+
+    def test_documented_v1_binding_and_dest_index_hashes(self):
+        def as_v1(frame):
+            frame['schema'] = 'jetnity-entry-requirements-dest-index-v1'
+            frame.pop('nationality_slices')
+        self.change(self.dest/'index.json', as_v1)
+        self.prepare()
+        notes = json.loads((self.output/'manifest.json').read_text())['indexNotes']
+        self.assertIn('dest_index_v1', notes)
+        self.assertIn('pointer_list_absent', notes)
+        digest = a.sha((self.dest/'IN.json').read_bytes())
+        def as_v22(frame):
+            frame['schema'] = 'jetnity-entry-requirements-dest-index-v2.2'
+            frame['expected_50_set'] = list(CODES)
+            frame['nationality_slices'] = [
+                {'nationality': code, 'file': f'records/dest/AT/{code}.json', 'sha256': 'ab'*32}
+                for code in CODES]
+            frame['slice_sha256'] = {code: 'ab'*32 for code in CODES}
+        self.change(self.dest/'index.json', as_v22)
+        with self.assertRaisesRegex(ValueError, 'index_hash_mismatch'):
+            a.prepare(self.root, 'AT', self.base/'hash-out')
+        def matching(frame):
+            frame['nationality_slices'] = [
+                {'nationality': code, 'file': f'records/dest/AT/{code}.json',
+                 'sha256': a.sha((self.dest/f'{code}.json').read_bytes())}
+                for code in CODES]
+            frame['slice_sha256'] = {row['nationality']: row['sha256'] for row in frame['nationality_slices']}
+        self.change(self.dest/'index.json', matching)
+        counts = a.prepare(self.root, 'AT', self.base/'hash-ok')
+        self.assertEqual(counts['published'], 0)
+        self.assertNotIn('medication_import', [topic for _key, _name, topics in a.LAUNCH_CORE for topic in topics])
+
+    def test_diagnose_collects_every_finding_and_does_not_pass(self):
+        self.change(self.dest/'IN.json', lambda record: record.pop('truth_state_values'))
+        before = sorted(path.relative_to(self.root).as_posix() for path in self.root.rglob('*'))
+        report = a.diagnose(self.root)
+        after = sorted(path.relative_to(self.root).as_posix() for path in self.root.rglob('*'))
+        self.assertEqual(after, before)
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+        self.assertEqual(report['published'], 0)
+        self.assertEqual(report['accepted'], 0)
+        self.assertEqual(report['historicalComparisonNotAPass']['role'], 'historical_comparison_not_a_pass')
+        self.assertNotEqual(report['candidateProfiles'], report['historicalComparisonNotAPass']['noOwnFindingInThatCheck'])
+        gap = next(row for row in report['findings'] if row['code'] == 'historical_key_absent')
+        self.assertEqual(gap['keys'], ['truth_state_values'])
+        self.assertTrue(all(row['preparedPackage'] is False and row['legalEvidence'] is False
+                            for row in report['candidates']))
+        with self.assertRaisesRegex(ValueError, 'slice_core'):
+            self.prepare()
+
+
 if __name__=='__main__': unittest.main()

@@ -44,7 +44,9 @@ EXECUTION_SCRIPTS = (
 )
 STRUCTURAL_HOLD_CODES = frozenset((
     "tracker_row_conflict", "tracker_field_conflict", "tracker_conflict_flag", "tracker_coverage",
+    "tracker_slice_conflict", "tracker_pointer_mismatch",
     "slice_core", "index_priority_binding", "index_mapping", "index_pointer_identity",
+    "index_hash_mismatch", "index_structure_unredacted", "unknown_index_schema",
     "split_frame_identity",
 ))
 HISTORICAL_PREFIX = ("AT", "IT", "FR", "ES", "PT", "GR", "HR", "NL", "GB", "US", "TR", "TH", "AE")
