@@ -10,12 +10,12 @@ describe('Reise-Inspiration Explorer: bounded URL and editorial search', () => {
     ENTDECKEN_ZIELE.forEach((ziel, index) => {
       const basis = INSPIRATION_ZIELE[index]
       assert.ok(basis)
-      for (const key of ['placeId', 'name', 'country', 'image', 'idea'] as const) assert.equal(ziel[key], basis[key])
-      assert.equal(ziel.href, zielHref({ id: basis.placeId, name: basis.name }, basis.idea))
+      for (const key of ['placeId', 'zielId', 'name', 'country', 'image', 'idea'] as const) assert.equal(ziel[key], basis[key])
+      assert.equal(ziel.href, zielHref({ id: basis.zielId, name: basis.name }, basis.idea))
       assert.ok(ziel.beschreibung.length > 60)
       const url = new URL(ziel.href!, 'https://example.test')
       assert.deepEqual([...url.searchParams.keys()], ['zielId', 'idee'])
-      assert.equal(url.searchParams.get('zielId'), basis.placeId)
+      assert.equal(url.searchParams.get('zielId'), basis.zielId)
       assert.equal(url.searchParams.get('idee'), basis.idea)
     })
     assert.equal(zielHref({ id: 'untrusted', name: 'Bali' }), null)

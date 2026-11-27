@@ -20,7 +20,7 @@ export function cmsPublishedInspiration(result: CmsPortResult): PublicInspiratio
     const item = published.items.find(row => row.entryId === reference.placeId)
     if (!item) continue
     ziele.push({ ...reference, idea: item.content.idea, beschreibung: item.content.beschreibung,
-      themen: [...item.content.themen], href: zielHref({ id: reference.placeId, name: reference.name }, item.content.idea) })
+      themen: [...item.content.themen], href: zielHref({ id: reference.zielId, name: reference.name }, item.content.idea) })
   }
   return { status: 'published', ziele }
 }

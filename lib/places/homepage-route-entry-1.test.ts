@@ -59,9 +59,13 @@ const leer = () => undefined
 describe('homepage-route-entry-1 – Inspirations- und Einzelziel-Handoff', () => {
   test('Inspirationskarten bleiben einzelne zielId-Links', () => {
     for (const ziel of INSPIRATION_ZIELE) {
-      assert.equal(zielHref({ id: ziel.placeId, name: ziel.name }), `/planen?zielId=${encodeURIComponent(ziel.placeId)}`)
+      assert.equal(zielHref({ id: ziel.zielId, name: ziel.name }), `/planen?zielId=${encodeURIComponent(ziel.zielId)}`)
     }
+    const zermatt = INSPIRATION_ZIELE.find((ziel) => ziel.name === 'Zermatt')!
+    assert.equal(zielHref({ id: zermatt.zielId, name: zermatt.name }), '/planen?zielId=geonames%3A2657928')
     const start = quelle('../../app/(public)/page.tsx')
+    assert.match(start, /zielHref\(\{ id: ziel\.zielId/)
+    assert.doesNotMatch(start, /zielHref\(\{ id: ziel\.placeId/)
     assert.match(start, /zielHref/)
     assert.equal(start.includes('zielIds'), false)
     assert.equal(start.includes('vorschlagErzeugen'), false)

@@ -37,7 +37,7 @@ const REDAKTION: Record<Ziel['placeId'], Redaktion> = {
 export const ENTDECKEN_ZIELE: readonly EntdeckenZiel[] = INSPIRATION_ZIELE.map((ziel) => ({
   ...ziel,
   ...REDAKTION[ziel.placeId],
-  href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea),
+  href: zielHref({ id: ziel.zielId, name: ziel.name }, ziel.idea),
 }))
 
 export type EntdeckenZustand = { q: string; thema: Thema }

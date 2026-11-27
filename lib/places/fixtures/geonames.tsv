@@ -11,7 +11,8 @@
 2512989	Mallorca	Mallorca	Majorca,Mallorca Island	39.61667	2.98333	T	ISL	ES		07				896038		0	Europe/Madrid	2024-01-01
 2988507	Paris	Paris	Paname	48.85341	2.3488	P	PPLC	FR		11				2138551		35	Europe/Paris	2024-01-01
 2643743	London	London	Greater London	51.50853	-0.12574	P	PPLC	GB		ENG				8961989		25	Europe/London	2024-01-01
-2657915	Zermatt	Zermatt		46.02013	7.74863	P	PPL	CH		VS				5820		1608	Europe/Zurich	2024-01-01
+2657915	Zofingen	Zofingen		47.28779	7.94586	P	PPLA2	CH		AG				0			Europe/Zurich	2024-01-01
+2657928	Zermatt	Zermatt		46.01998	7.74863	P	PPL	CH		VS				5820		1608	Europe/Zurich	2024-01-01
 2267057	Lisbon	Lisbon	Lisboa,Lissabon	38.71667	-9.13333	P	PPLC	PT		14				517802		2	Europe/Lisbon	2024-01-01
 2759794	Amsterdam	Amsterdam		52.37403	4.88969	P	PPLC	NL		07				741636		-2	Europe/Amsterdam	2024-01-01
 1609350	Bangkok	Bangkok	Krung Thep,Krung Thep Maha Nakhon	13.75	100.51667	P	PPLC	TH		40				5104476		2	Asia/Bangkok	2024-01-01
