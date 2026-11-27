@@ -593,8 +593,8 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
             require(declared == sha(data), "index_hash_mismatch")
         require(sum(len(b) for b in evidence.values()) + len(data) <= 64*1024*1024, "package_size_limit")
         record = strict_json(data)
-        require(isinstance(record, dict) and record.get("schema") in (SCHEMA, "jetnity-entry-requirements-research-v2.1")
-                and record.get("status") in RESEARCH_STATUSES and record.get("nationality") == nat
+        require(isinstance(record, dict) and _slice_schema_ok(record.get("schema"))
+                and _slice_status_ok(record.get("status")) and record.get("nationality") == nat
                 and record.get("destination_iso2") == destination, "slice_identity")
         require(all(key in record for key in CORE), "slice_core")
         require(not has_forbidden(record) and record.get("external_writes", []) == [], "slice_authority")
@@ -606,20 +606,18 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
         source_count += len(sources)
         source_warnings = []
         for source in sources:
-            try:
-                url = urlsplit(source.get("url", ""))
-                ok = url.scheme == "https" and bool(url.hostname) and url.username is None and url.password is None
-            except (ValueError, TypeError):
-                ok = False
-            if not ok or not parse_date(source.get("retrieved_at")):
+            if _source_metadata_warning(source):
                 source_warnings.append(source_identity(source))
+        conflicts = record.get("conflicts") if "conflicts" in record else None
+        if "conflicts" in record and not isinstance(conflicts, list):
+            raise ValueError("conflict_undeclared")
         outpath = f"original/slices/{nat}.json"
         evidence[outpath] = data
         records.append({"nationality": nat, "path": outpath, "sha256": sha(data),
                         "researchedAtAsSupplied": record["researched_at"], "sourceCount": len(sources),
                         "sourceMetadataWarnings": source_warnings, "sourceVerification": "NOT_RUN"})
         tracker_class = tracker_conflict_class(by_nat[nat].get("conflict"))
-        slice_marker = bool(record.get("conflicts")) or record.get("cross_check_result") == "conflict"
+        slice_marker = (isinstance(conflicts, list) and bool(conflicts)) or record.get("cross_check_result") == "conflict"
         if tracker_class == "negative" and slice_marker:
             raise ValueError("tracker_slice_conflict")
         conflict = slice_marker or tracker_class in ("positive", "unresolved")
@@ -862,13 +860,28 @@ def _legacy_declared(frame: dict, destination: str) -> bool:
     return typed or mapped
 
 
-def _source_metadata_warning(source: dict) -> bool:
+def _slice_schema_ok(value) -> bool:
+    return isinstance(value, str) and value in (SCHEMA, "jetnity-entry-requirements-research-v2.1")
+
+
+def _slice_status_ok(value) -> bool:
+    """Membership needs a string. A list or object is not a status and must not be hashed."""
+    return isinstance(value, str) and value in RESEARCH_STATUSES
+
+
+def _source_url_ok(value) -> bool:
+    """Only a string is parsed. Any other JSON type is an unconfirmed source, not an exception."""
+    if not isinstance(value, str) or not value:
+        return False
     try:
-        url = urlsplit(source.get("url", ""))
-        ok = url.scheme == "https" and bool(url.hostname) and url.username is None and url.password is None
-    except (ValueError, TypeError):
-        ok = False
-    return not ok or not parse_date(source.get("retrieved_at"))
+        url = urlsplit(value)
+    except ValueError:
+        return False
+    return url.scheme == "https" and bool(url.hostname) and url.username is None and url.password is None
+
+
+def _source_metadata_warning(source: dict) -> bool:
+    return not _source_url_ok(source.get("url", "")) or not parse_date(source.get("retrieved_at"))
 
 
 def _slice_observations(record, destination: str, nationality: str, tracker_pointer, declared_hash, data: bytes,
@@ -882,12 +895,14 @@ def _slice_observations(record, destination: str, nationality: str, tracker_poin
     found = []
     if tracker_pointer != _slice_file(destination, nationality):
         found.append({"code": "tracker_pointer_mismatch", "scope": "profile_integrity"})
+    if declared_hash is not None and declared_hash != sha(data):
+        found.append({"code": "index_hash_mismatch", "scope": "profile_integrity"})
     if not isinstance(record, dict):
         found.append({"code": "slice_not_object", "scope": "not_checkable"})
         return found
-    if record.get("schema") not in (SCHEMA, "jetnity-entry-requirements-research-v2.1"):
+    if not _slice_schema_ok(record.get("schema")):
         found.append({"code": "slice_identity", "scope": "profile_integrity", "field": "schema"})
-    if record.get("status") not in RESEARCH_STATUSES:
+    if not _slice_status_ok(record.get("status")):
         found.append({"code": "slice_identity", "scope": "profile_integrity", "field": "status"})
     if record.get("nationality") != nationality:
         found.append({"code": "slice_identity", "scope": "profile_integrity", "field": "nationality"})
@@ -923,15 +938,20 @@ def _slice_observations(record, destination: str, nationality: str, tracker_poin
                 unresolved += len(explicit_refs(located) - set(refs))
         if unresolved:
             found.append({"code": "unresolved_source_refs", "scope": "local_gap", "count": unresolved})
-    if declared_hash is not None and declared_hash != sha(data):
-        found.append({"code": "index_hash_mismatch", "scope": "profile_integrity"})
     absent = [key for key in HISTORICAL_KEY_NAMES if key not in record]
     if absent:
         found.append({"code": "historical_key_absent", "scope": "local_gap", "keys": absent})
     other_core = [key for key in CORE if key not in record and key not in absent]
     if other_core:
         found.append({"code": "slice_core", "scope": "local_gap", "keys": other_core})
-    marker = bool(record.get("conflicts")) or record.get("cross_check_result") == "conflict"
+    conflicts = record.get("conflicts") if "conflicts" in record else None
+    if "conflicts" not in record or not isinstance(conflicts, list):
+        found.append({"code": "conflict_undeclared", "scope": "local_gap"})
+        marker = False
+    else:
+        marker = bool(conflicts)
+    if record.get("cross_check_result") == "conflict":
+        marker = True
     if marker:
         found.append({"code": "slice_conflict_marker", "scope": "local_gap"})
     if tracker_class == "negative" and marker:
@@ -1080,10 +1100,10 @@ def diagnose(root: Path) -> dict:
                         local.append({"code": "tracker_conflict_flag", "scope": "local_gap",
                                       "trackerClass": tracker_class})
             relative = _slice_file(destination, nationality)
+            declared_hash = hashes.get(nationality)
             try:
                 data = read_file(root, relative)
-                record = strict_json(data)
-            except (OSError, ValueError):
+            except FileNotFoundError:
                 local.append({"code": "slice_absent", "scope": "not_checkable"})
                 status_counts[_pair_status(local, bool(dest_integrity))] += 1
                 for item in local:
@@ -1091,8 +1111,29 @@ def diagnose(root: Path) -> dict:
                 if any(item["scope"] == "local_gap" for item in local):
                     local_gap_profiles += 1
                 continue
+            except (OSError, ValueError):
+                local.append({"code": "slice_read_error", "scope": "not_checkable"})
+                status_counts[_pair_status(local, bool(dest_integrity))] += 1
+                for item in local:
+                    findings.append({"destination": destination, "nationality": nationality, **item})
+                if any(item["scope"] == "local_gap" for item in local):
+                    local_gap_profiles += 1
+                continue
+            try:
+                record = strict_json(data)
+            except ValueError:
+                local.append({"code": "slice_parse_error", "scope": "not_checkable"})
+                if declared_hash is not None and declared_hash != sha(data):
+                    local.append({"code": "index_hash_mismatch", "scope": "profile_integrity"})
+                    dest_integrity.append("index_hash_mismatch")
+                status_counts[_pair_status(local, bool(dest_integrity))] += 1
+                for item in local:
+                    findings.append({"destination": destination, "nationality": nationality, **item})
+                if any(item["scope"] == "local_gap" for item in local):
+                    local_gap_profiles += 1
+                continue
             local.extend(_slice_observations(record, destination, nationality, tracker_pointer,
-                                             hashes.get(nationality), data, tracker_class))
+                                             declared_hash, data, tracker_class))
             for item in local:
                 if item["scope"] == "profile_integrity":
                     dest_integrity.append(item["code"])

@@ -1,5 +1,13 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Nachkorrektur der Feldtypen, NO-GO auf bb0ad342e
+
+- Ein Slice-Status, der kein String ist, wird als `slice_identity` gehalten. Die Mitgliedschaft im Statusset wird nicht auf einem Array oder Objekt ausgeführt. `prepare` lehnt denselben Wert mit `slice_identity` ab.
+- Eine Quellen-URL wird nur geparst, wenn sie ein String ist. Ein Array oder Objekt ist eine unbestätigte Provenienz, kein Abbruch. `conflicts` mit `null`, fehlendem Schlüssel oder einem anderen Typ ist `conflict_undeclared` und nicht `holdStatus=none`. `conflictAbsenceProven` bleibt falsch.
+- Der Hashvergleich eines Nichtobjekt-Slices geschieht vor dem Rücksprung. Eine unlesbare JSON-Datei ist `slice_parse_error`, eine fehlende Datei bleibt `slice_absent`. 206/10'300 bleibt Inventar. `legalEvidence` bleibt 0.
+
+Lokal, ohne Archiv: Forschungsadapter 43 Tests, Gap-Audit 6, Importer 31, alle OK. Die CI dieses Heads wird erst nach dem Push belegt.
+
 ## Nachkorrektur der Diagnose, NO-GO auf 716ecce13
 
 - Jeder Index, der kein Objekt ist, hält das Ziel. `null`, `false`, `0`, ein String und ein Array sind `index_not_object`. Die lesbaren Profile dieses Ziels werden weiter geprüft. Ein Typfehler in einem Indexfeld wird als Hold erfasst und bricht die übrigen Profile nicht ab.
@@ -131,7 +139,7 @@ Der spätere Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f7852
 
 Die Byte-Pins der beiden geänderten Offline-Skripte in den Integrationsprüfungen sind die neuen Skript-Digests, nicht Archiv-Digests:
 
-- `official-truth-research-package.py` `d345443512c53af3fc5f318746a485394ef02ebbee7af16da5ce133ac29aa5bb`. Der vorherige Integrationspin `66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66` gehört zu `716ecce13`.
+- `official-truth-research-package.py` `a88f65e335cfc623baf132b4c0d915283a9f0c0b40d34cfd4a3150e5ba67763f`. Der vorherige Integrationspin `d345443512c53af3fc5f318746a485394ef02ebbee7af16da5ce133ac29aa5bb` gehört zu `bb0ad342e`. Der Pin `66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66` gehört zu `716ecce13`.
 - `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
 
 ## Tests, lokal, ohne Datenbank und ohne Netz

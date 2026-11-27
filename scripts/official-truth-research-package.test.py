@@ -693,5 +693,73 @@ class PackageTests(unittest.TestCase):
         self.assertTrue(all(row['legalEvidence'] is False and row['conflictAbsenceProven'] is False
                             for row in report['candidates']))
 
+    def test_bad_status_url_conflict_and_parse_do_not_abort_or_look_missing(self):
+        good = (self.dest/'RO.json').read_bytes()
+        self.change(self.dest/'IN.json', lambda record: record.update(status=[], nationality='ZZ'))
+        self.change(self.dest/'IN.json', lambda record: record['sources'][0].__setitem__('url', []))
+        self.change(self.dest/'CN.json', lambda record: record.update(status={}))
+        self.change(self.dest/'TR.json', lambda record: record.pop('health_entry'))
+        self.change(self.dest/'TR.json', lambda record: record['sources'][0].__setitem__('url', {'bad': True}))
+        self.change(self.dest/'DE.json', lambda record: record['sources'][0].__setitem__('url', [1]))
+        self.change(self.dest/'DE.json', lambda record: record.__setitem__('conflicts', None))
+        self.change(self.dest/'GB.json', lambda record: record.pop('conflicts'))
+        self.change(self.dest/'index.json', lambda frame: frame['nationality_slices'][CODES.index('US')].__setitem__('sha256', 'ab' * 32))
+        (self.dest/'US.json').write_text('[]\n')
+        (self.dest/'FR.json').write_text('{')
+        (self.dest/'PL.json').unlink()
+        report = a.diagnose(self.root)
+        self.assertEqual(report['pairsExamined'], 206 * 50)
+        self.assertEqual(sum(report['profileStatus'].values()), report['pairsExamined'])
+        self.assertEqual(report['pairsWithFindings'] + report['pairsWithoutFindings'], report['pairsExamined'])
+        self.assertTrue(report['inventoryIsNotAPass'])
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+        self.assertEqual(report['published'], 0)
+        self.assertEqual(report['accepted'], 0)
+        inn = [row['code'] for row in report['findings'] if row['nationality'] == 'IN']
+        self.assertIn('slice_identity', inn)
+        self.assertIn('source_metadata_unconfirmed', inn)
+        self.assertIn('slice_identity', [row['code'] for row in report['findings'] if row['nationality'] == 'CN'])
+        self.assertIn('historical_key_absent', [row['code'] for row in report['findings'] if row['nationality'] == 'TR'])
+        self.assertIn('source_metadata_unconfirmed', [row['code'] for row in report['findings'] if row['nationality'] == 'TR'])
+        self.assertIn('source_metadata_unconfirmed', [row['code'] for row in report['findings'] if row['nationality'] == 'DE'])
+        self.assertIn('conflict_undeclared', [row['code'] for row in report['findings'] if row['nationality'] == 'DE'])
+        self.assertIn('conflict_undeclared', [row['code'] for row in report['findings'] if row['nationality'] == 'GB'])
+        us = [row['code'] for row in report['findings'] if row['nationality'] == 'US']
+        self.assertIn('slice_not_object', us)
+        self.assertIn('index_hash_mismatch', us)
+        self.assertIn('slice_parse_error', [row['code'] for row in report['findings'] if row['nationality'] == 'FR'])
+        self.assertNotIn('slice_absent', [row['code'] for row in report['findings'] if row['nationality'] == 'FR'])
+        self.assertIn('slice_absent', [row['code'] for row in report['findings'] if row['nationality'] == 'PL'])
+        self.assertNotIn('slice_parse_error', [row['code'] for row in report['findings'] if row['nationality'] == 'PL'])
+        self.assertFalse(any(row['destination'] == 'AT' and row.get('holdStatus') == ['none'] for row in report['candidates']))
+        self.assertTrue(all(row['legalEvidence'] is False and row['conflictAbsenceProven'] is False
+                            for row in report['candidates']))
+        self.assertGreater(report['profileStatus']['notCheckable'], 0)
+        self.assertGreater(report['profileStatus']['missing'], 205 * 50)
+        with self.assertRaisesRegex(ValueError, 'slice_identity'):
+            self.prepare()
+
+        for code in ('IN', 'CN', 'TR', 'DE', 'GB', 'US', 'FR', 'PL'):
+            (self.dest/f'{code}.json').write_bytes(good)
+            self.change(self.dest/f'{code}.json', lambda record, code=code: record.update(
+                nationality=code, destination_iso2='AT', status='RESEARCH_ONLY'))
+        self.dump(self.dest/'index.json', self.frame)
+        self.change(self.dest/'GB.json', lambda record: record.__setitem__('conflicts', None))
+        quiet = a.diagnose(self.root)
+        gb = next(row for row in quiet['candidates'] if row['nationality'] == 'GB')
+        self.assertIn('conflict_undeclared', gb['holdStatus'])
+        self.assertNotEqual(gb['holdStatus'], ['none'])
+        self.assertFalse(gb['conflictAbsenceProven'])
+        self.assertFalse(gb['legalEvidence'])
+        self.change(self.dest/'GB.json', lambda record: record.__setitem__('conflicts', []))
+        self.change(self.dest/'IN.json', lambda record: record['sources'][0].__setitem__('url', []))
+        counts = a.prepare(self.root, 'AT', self.base/'url-list')
+        self.assertEqual(counts['published'], 0)
+        prepared = json.loads((self.base/'url-list'/'manifest.json').read_text())['records']
+        self.assertTrue(next(row for row in prepared if row['nationality'] == 'IN')['sourceMetadataWarnings'])
+        self.change(self.dest/'IN.json', lambda record: record.__setitem__('conflicts', {'bad': True}))
+        with self.assertRaisesRegex(ValueError, 'conflict_undeclared'):
+            a.prepare(self.root, 'AT', self.base/'conflict-type')
+
 
 if __name__=='__main__': unittest.main()

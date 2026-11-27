@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, Diagnose bricht bei Feldtypen nicht ab
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `bb0ad342e`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.
+
+- Ein Array oder Objekt als Slice-Status oder Quellen-URL bricht die Diagnose nicht mehr ab. Fehlende oder ungültige `conflicts` bleiben ungeklärt. Eine kaputte JSON-Datei zählt nicht als fehlende Datei. Der Hash eines Nichtobjekt-Slices wird trotzdem verglichen.
+- Lokal: Forschungsadapter 43, Gap-Audit 6, Importer 31, alle OK. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, Diagnose hält Nicht-Objekte und ungebundene Profile
 
 Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `716ecce13`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.
