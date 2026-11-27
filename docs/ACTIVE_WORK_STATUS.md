@@ -1,5 +1,15 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Official Truth Paket II, Quellenpflege 6+4, Dry-run
+
+Branch `cursor/official-truth-source-care-6-4-0cd9` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Draft [#1324](https://github.com/Jetnity/jetnity/pull/1324). Der exakte Head steht im PR, nicht hier, damit ein Dokumentationscommit ihn nicht fälscht. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Kein Ready, kein Merge, kein Deploy.
+
+- Nach dem NO-GO auf `2a482595c`: auch ohne normalen Abruf werden Rivalen geprüft. Ein technischer Retry bleibt unbestätigt und wählt keinen Rivalen. Run 45984199753 gilt nur für `2a482595c`.
+- Thailand 60→30 ab 15.09.2026 ist eine synthetische Fixture mit Bestandsschutz. Die 15-Tage-Befreiung, Visa on Arrival und bilaterale Regeln werden davon nicht pauschal gesperrt.
+- Dauerhafter Originalspeicher ist nicht nachgewiesen. Kein Mac-Archiv, kein neuer Bucket. Automatik bleibt STOP.
+- V3, BG1 V8, MA1, Paket I und die Oberfläche sind nicht geändert. Native PostgreSQL-17-Gates sind nicht erneut gelaufen und gelten nicht als PASS.
+- Nachweis: `docs/OFFICIAL_TRUTH_SOURCE_CARE_6_4_DRY_RUN_2026-11-27.md`. Nächster Schritt: Exact-Head-CI und Technical-Lead-Review.
+
 ## 26.11.2026 — W3 drei Korrekturen, Draft #1307
 
 Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.
