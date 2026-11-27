@@ -155,3 +155,15 @@ test('Fokus: zweifarbiger Ring in der hellen Shell, Reisekopf-Regeln gewinnen ge
   assert.match(flaechen, /\.workspace-content \.bildnachweis-knopf:focus-visible \{[^}]*outline: 3px solid #e8fa91/)
   assert.doesNotMatch(flaechen, /^\.bildnachweis-knopf:focus-visible/m)
 })
+
+test('Schriftgrösse und Hydration: Kopfzeile über dem Reisekopf, Ring der Navigation, dunkle Tinte auf Limette vor der Hydration', () => {
+  const kopfzeile = lesen('components/workspace/workspace.css')
+  assert.match(kopfzeile, /\.workspace-header\[data-flow="true"\] \{ position: relative; \}/)
+  assert.doesNotMatch(kopfzeile, /\.workspace-header\[data-flow="true"\] \{ position: static; \}/)
+  assert.match(flaechen, /:where\(\[data-workspace-theme="dark"\]\) :where\(\.workspace-nav-link, \.workspace-open-trip\):focus-visible \{\s*outline-offset: 1px;/)
+  const spiegel = /html\[data-workspace-theme="dark"\] \.workspace-shell\[data-workspace-theme="light"\] \.workspace-content :is\(\.bg-citrus-400, \.bg-citrus-400\\\/55\)(?:,|\s*\{)/
+  assert.match(flaechen, spiegel)
+  const textRegel = flaechen.indexOf('.workspace-content :is(.text-brand-600, .text-brand-700')
+  const limette = flaechen.search(spiegel)
+  assert.ok(textRegel >= 0 && limette > textRegel, 'Die Limetten-Regel muss nach der Text-Spiegelung stehen, damit sie bei gleichem Gewicht gewinnt')
+})

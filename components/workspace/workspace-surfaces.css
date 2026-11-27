@@ -89,6 +89,13 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(input, select, textarea) {
   border-color: var(--workspace-control, #7f95a4);
 }
+/* Limette bleibt in beiden Themen hell, der Text darauf dunkel. Die Spiegelung oben färbt `text-brand-*` bis zur Hydration
+   hell: «Reise fortsetzen» (Konto, Meine Reisen) stand dort als 1,12 : 1, helle Tinte auf Limette. Gleiches Gewicht wie die
+   Spiegelung und danach, damit die spätere Regel gewinnt. */
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.bg-citrus-400, .bg-citrus-400\/55),
+html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"] .workspace-content :is(.bg-citrus-400, .bg-citrus-400\/55) :is(.text-brand-900, .text-brand-800, .text-ink-800) {
+  color: rgb(var(--jet-brand-900));
+}
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
