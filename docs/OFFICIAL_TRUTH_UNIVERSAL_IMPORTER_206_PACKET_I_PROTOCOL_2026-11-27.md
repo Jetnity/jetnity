@@ -1,5 +1,13 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Nachkorrektur der Diagnose, NO-GO auf 842c03d2b
+
+- Die Diagnose läuft über die gepinnte Zielreihenfolge und zählt jedes tatsächlich geprüfte Paar. Ein früher Integritätsfehler beendet die übrigen Profilprüfungen nicht. Kandidaten gibt es nur ohne zielweite Integritätsstörung, und ein lokaler Befund trägt seinen Hold-Status. `holdStatus=none` setzt die Slice-Identität, den Status, die Authority und den Pointer voraus.
+- Vorhandene Zusatzmaps und Hashfelder werden mitgeprüft. Ein gesetztes `sha256: null` ist ein Hold. Eine fehlende Deklaration bleibt nicht deklariert. `diagnose` öffnet das Archiv nicht und ersetzt die Chargenfreigabe nicht.
+- `legalEvidence` bleibt 0. Die Charge von `ebe14868c` bleibt historisch. M04/N11 ist nicht verändert.
+
+Die CI dieses Heads ist erst nach dem Push zu belegen.
+
 ## Fünfte Korrekturrunde, Sperranalyse 27.11.2026
 
 Ausgang bleibt `ebe14868c`. Dessen lokaler technischer PASS und die alte Charge bleiben ein historischer Nachweis. Dieser Commit ist eine neue Prüfung und keine Freigabe einer neuen Charge.
@@ -114,7 +122,7 @@ Der spätere Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f7852
 
 Die Byte-Pins der beiden geänderten Offline-Skripte in den Integrationsprüfungen sind die neuen Skript-Digests, nicht Archiv-Digests:
 
-- `official-truth-research-package.py` `15a07ef156014fde63003cb01b622a6683f6dbb2ed0ef1751c39179152111748`
+- `official-truth-research-package.py` `66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66`
 - `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
 
 ## Tests, lokal, ohne Datenbank und ohne Netz
@@ -130,6 +138,13 @@ node --experimental-test-module-mocks --import ./scripts/server-only-test-regist
 python3 scripts/official-truth-50-pass-import.py dry-run --destinations ALL
 python3 scripts/official-truth-50-pass-import.py import
 ```
+
+Ergebnis dieser Nachkorrektur, lokal, ohne Archiv:
+
+- Forschungsadapter: 38 Tests, OK
+- Gap-Audit: 6 Tests, OK
+- Importer: 30 Tests, OK
+- Drei Node-Integrationsprüfungen: 3 bestanden, 0 fehlgeschlagen
 
 Ergebnis dieser fünften Korrektur, lokal, ohne Archiv und ohne Datenbank:
 

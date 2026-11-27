@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, Diagnose sammelt jeden Befund
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `842c03d2b`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch.
+
+- Die Diagnose prüft die gepinnte Zielreihe vollständig und entscheidet Kandidaten erst danach. Vorhandene Zusatzmaps und `sha256: null` bleiben ein Hold.
+- Lokal: Forschungsadapter 38, Gap-Audit 6, Importer 30, alle OK. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, Sperrlogik nach der lokalen Analyse
 
 Gleicher Branch, gleicher Draft #1323, ausgehend von `ebe14868c`. Dessen Charge bleibt historisch. Keine neue Archivlesung, kein M04/N11-Eingriff.

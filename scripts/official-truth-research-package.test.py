@@ -454,5 +454,82 @@ class PackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'slice_core'):
             self.prepare()
 
+    def test_diagnose_keeps_profile_findings_when_the_destination_is_held(self):
+        header = 'dest_id,nationality,record_pointer,conflict,note\n'
+        lines = []
+        for code in CODES:
+            conflict = 'ja' if code == 'DE' else ''
+            lines.append(f'AT,{code},records/dest/AT/{code}.json,{conflict},a')
+        lines.append('AT,FR,records/dest/AT/FR.json,,b')
+        (self.root/'tracker.csv').write_text(header + '\n'.join(lines) + '\n')
+        self.change(self.dest/'IN.json', lambda record: record.update(nationality='ZZ'))
+        self.change(self.dest/'TR.json', lambda record: record.pop('health_entry'))
+        self.change(self.dest/'index.json', lambda frame: frame['nationality_slices'][0].update(sha256=None))
+        before = (self.root/'tracker.csv').read_bytes()
+        report = a.diagnose(self.root)
+        codes = {row['code'] for row in report['findings'] if row['destination'] == 'AT'}
+        self.assertTrue({'tracker_conflict_flag', 'tracker_field_conflict', 'slice_identity',
+                         'historical_key_absent', 'index_hash_mismatch'} <= codes)
+        self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+        self.assertEqual((self.root/'tracker.csv').read_bytes(), before)
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+
+    def test_hr_hold_still_reports_profile_findings_and_so_hold_stays_visible(self):
+        held = self.root/'records/dest/HR'
+        held.mkdir()
+        (held/'index.json').write_text('[]\n')
+        (held/'IN.json').write_text('[]\n')
+        report = a.diagnose(self.root)
+        hr = [row['code'] for row in report['findings'] if row['destination'] == 'HR']
+        self.assertIn('unsplit_research_frame_not_importable', hr)
+        self.assertIn('index_not_object', hr)
+        self.assertIn('slice_not_object', hr)
+        self.assertFalse(any(row['destination'] == 'HR' for row in report['candidates']))
+        so = next(row for row in report['candidates'] if row['nationality'] == 'SO')
+        self.assertEqual(so['holdStatus'], ['document_recognition_hold'])
+        self.assertFalse(so['legalEvidence'])
+        self.assertFalse(so['preparedPackage'])
+
+    def test_catalog_coverage_counts_missing_destinations_and_bad_slices(self):
+        self.change(self.dest/'US.json', lambda record: record.update(status='published', destination_iso2='DE',
+                                                                       schema='not-a-slice'))
+        (self.dest/'US.json').write_text('{"external_writes":["x"],"schema":"not-a-slice","status":"published",'
+                                         '"nationality":"ZZ","destination_iso2":"DE"}\n')
+        report = a.diagnose(self.root)
+        self.assertEqual(report['destinationsExamined'], 206)
+        self.assertEqual(report['pairsExamined'], 206 * 50)
+        self.assertEqual(report['pairsExamined'], report['pairsWithFindings'] + report['pairsWithoutFindings'])
+        self.assertNotEqual(report['destinationsExamined'], report['candidateProfiles'])
+        us = [row['code'] for row in report['findings'] if row['destination'] == 'AT' and row['nationality'] == 'US']
+        self.assertTrue({'slice_identity'} <= set(us))
+        self.assertGreater(us.count('slice_identity'), 1)
+        self.assertIn('slice_authority', us)
+        self.assertFalse(any(row['nationality'] == 'US' and row['holdStatus'] == ['none'] for row in report['candidates']))
+        self.assertTrue(any(row['code'] == 'destination_absent' for row in report['findings']))
+
+    def test_present_redundant_maps_and_null_hash_are_not_ignored(self):
+        def clash(frame):
+            frame['schema'] = 'jetnity-entry-requirements-dest-index-v2.2'
+            frame['expected_50_set'] = list(CODES)
+            frame['slice_sha256'] = {code: 'ab' * 32 for code in CODES}
+            frame['slices_by_nationality'] = {code: 0 for code in CODES}
+        self.change(self.dest/'index.json', clash)
+        with self.assertRaisesRegex(ValueError, 'index_mapping'):
+            self.prepare()
+        def null_hash(frame):
+            frame['slices_by_nationality'] = {code: index for index, code in enumerate(CODES)}
+            frame['nationality_slices'][0]['sha256'] = None
+        self.change(self.dest/'index.json', null_hash)
+        with self.assertRaisesRegex(ValueError, 'index_hash_mismatch'):
+            a.prepare(self.root, 'AT', self.base/'null-hash')
+        def research_hash(frame):
+            frame['schema'] = a.SCHEMA
+            frame.pop('slice_sha256')
+            frame['nationality_slices'][0]['sha256'] = 'cd' * 32
+            frame['expected_50_set'] = list(reversed(CODES))
+        self.change(self.dest/'index.json', research_hash)
+        with self.assertRaisesRegex(ValueError, 'index_priority_binding|index_hash_mismatch'):
+            a.prepare(self.root, 'AT', self.base/'research-hash')
+
 
 if __name__=='__main__': unittest.main()

@@ -12,8 +12,8 @@ const digest = (path: string) => createHash('sha256').update(readFileSync(path))
 
 test('original research archive adapter remains independently checked and fail-closed', { timeout: 30_000 }, () => {
   // Explicit custody of the two exact offline-tested scripts, not research data.
-  assert.equal(digest(script), '15a07ef156014fde63003cb01b622a6683f6dbb2ed0ef1751c39179152111748')
-  assert.equal(digest(fixture), 'f2660f3c1f7736fe0622eebcc6060142fdaa3584cc0bd77bb95f75544b85feee')
+  assert.equal(digest(script), '66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66')
+  assert.equal(digest(fixture), 'ee01d99272e33545073e9d57dde957fdb59c8dbdfa3d8ffb570a9f197ee584e1')
   const result = spawnSync('python3', [fixture, '-q'], {
     cwd: resolve('.'),
     encoding: 'utf8',
@@ -30,6 +30,6 @@ test('original research archive adapter remains independently checked and fail-c
   assert.equal(result.error, undefined, 'Python3 must be available; no silent test skipping')
   assert.equal(result.signal, null, 'Offline tests must exit normally')
   assert.equal(result.status, 0, 'Synthetic offline checks failed: ' + (result.stderr ?? '').slice(-1000))
-  assert.match(result.stderr ?? '', /Ran 34 tests/)
+  assert.match(result.stderr ?? '', /Ran 38 tests/)
   assert.match(result.stderr ?? '', /\bOK\b/)
 })
