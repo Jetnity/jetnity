@@ -267,10 +267,18 @@ class PackageTests(unittest.TestCase):
         counts = self.prepare()
         self.assertEqual(counts['passports'], 50)
         self.assertEqual(counts['accepted'], 0)
-        text = (self.root/'tracker.csv').read_text()
-        (self.root/'tracker.csv').write_text(text + 'AT,DE,records/dest/AT/OTHER.json,\n')
+        before = (self.root/'tracker.csv').read_bytes()
+        (self.root/'tracker.csv').write_bytes(before + b'AT,DE,records/dest/AT/OTHER.json,\n')
         with self.assertRaisesRegex(ValueError, 'tracker_row_conflict'):
             a.prepare(self.root, 'AT', self.base/'other-out')
+        self.assertEqual((self.root/'tracker.csv').read_bytes(), before + b'AT,DE,records/dest/AT/OTHER.json,\n')
+        restored = before
+        same = b'AT,FR,records/dest/AT/FR.json,\n'
+        (self.root/'tracker.csv').write_bytes(restored.replace(
+            same, b'AT,FR,records/dest/AT/FR.json,held\n' + same, 1))
+        with self.assertRaisesRegex(ValueError, 'tracker_field_conflict'):
+            a.prepare(self.root, 'AT', self.base/'field-out')
+        self.assertIn(b'AT,FR,records/dest/AT/FR.json,held\n', (self.root/'tracker.csv').read_bytes())
 
     def test_consistent_index_order_keeps_csv_selection_and_original_bytes(self):
         original = (self.dest/'index.json').read_bytes()

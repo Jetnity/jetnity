@@ -34,7 +34,19 @@ ACCEPTED_ARCHIVE_SHA256 = {
     FIXED_ARCHIVE_SHA256: "fixed_206_archive",
     LOCAL_REPACK_SHA256: "local_repack_variant",
 }
-IDENTITY_KEYS = ("archiveSha256", "passportCsvSha256", "trackerSha256", "codeHead", "outputIdentity")
+IDENTITY_KEYS = ("archiveSha256", "passportCsvSha256", "trackerSha256", "codeHead",
+                 "scriptHashes", "outputIdentity", "destinationIdentity")
+EXECUTION_SCRIPTS = (
+    "official-truth-50-pass-import.py",
+    "official-truth-research-package.py",
+    "official-truth-index-gap-audit.py",
+    "official-truth-local-offline-run.py",
+)
+STRUCTURAL_HOLD_CODES = frozenset((
+    "tracker_row_conflict", "tracker_field_conflict", "tracker_conflict_flag", "tracker_coverage",
+    "slice_core", "index_priority_binding", "index_mapping", "index_pointer_identity",
+    "split_frame_identity",
+))
 HISTORICAL_PREFIX = ("AT", "IT", "FR", "ES", "PT", "GR", "HR", "NL", "GB", "US", "TR", "TH", "AE")
 STRUCTURAL_HOLDS = frozenset(("HR", "NL"))
 EXTRA_SLICE_DESTINATIONS = frozenset({"AU", "CN-HK", "CN-MO", "KE", "MV", "NZ", "SA", "TZ", "ZA"})
@@ -263,20 +275,22 @@ def verify(path: Path, adapter) -> dict:
     for country in countries:
         if country in blocked:
             record = blocked[country]
-            require(country in STRUCTURAL_HOLDS and record["reason"] in (
-                        "unsplit_research_frame_not_importable", "ambiguous_index_hold")
-                    and not (root / "packages" / country).exists(), "blocked_scope_changed")
+            require(not (root / "packages" / country).exists(), "blocked_scope_changed")
             payload = adapter["read_file"](root, f"blocked/{country}.json", 8 * 1024 * 1024)
-            frame = adapter["strict_json"](payload)
-            split = frame.get("file_layout") == "split"
-            require(hashlib.sha256(payload).hexdigest() == record["indexSha256"]
-                    and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
-                    and frame.get("status") in ("RESEARCH_ONLY", "researched", "research_only")
-                    and frame.get("destination_iso2") == country
-                    and (split if record["reason"] == "ambiguous_index_hold" else not split),
-                    "blocked_original_changed")
-            if "dest_id" in frame:
-                require(frame.get("dest_id") == country, "blocked_original_changed")
+            require(hashlib.sha256(payload).hexdigest() == record["indexSha256"], "blocked_original_changed")
+            if record["reason"] in ("unsplit_research_frame_not_importable", "ambiguous_index_hold"):
+                frame = adapter["strict_json"](payload)
+                split = frame.get("file_layout") == "split"
+                require(country in STRUCTURAL_HOLDS
+                        and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
+                        and frame.get("status") in ("RESEARCH_ONLY", "researched", "research_only")
+                        and frame.get("destination_iso2") == country
+                        and (split if record["reason"] == "ambiguous_index_hold" else not split),
+                        "blocked_original_changed")
+                if "dest_id" in frame:
+                    require(frame.get("dest_id") == country, "blocked_original_changed")
+            else:
+                require(record["reason"] in STRUCTURAL_HOLD_CODES, "blocked_scope_changed")
             continue
         p = root / "packages" / country
         record = prepared[country]
@@ -335,18 +349,55 @@ def dry_run(destinations: list[str]) -> dict:
     }
 
 
-def current_code_head() -> str:
-    return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+def _hex(value: str, size: int) -> bool:
+    return isinstance(value, str) and len(value) == size and all(character in "0123456789abcdef" for character in value)
 
 
-def charge_identity(archive_sha: str, output_identity: str, csv_sha: str | None = None,
-                    tracker_sha: str | None = None) -> dict:
-    require(isinstance(archive_sha, str) and len(archive_sha) == 64
-            and all(character in "0123456789abcdef" for character in archive_sha), "archive_identity")
+def repository_commit() -> str:
+    """The checked-out commit. This is not an acceptance of that commit."""
+    git_path = Path(__file__).resolve().parent.parent / ".git"
+    require(git_path.exists() and not git_path.is_symlink(), "git_commit_unreadable")
+    if git_path.is_file():
+        pointer = git_path.read_text(encoding="utf-8").strip()
+        require(pointer.startswith("gitdir: "), "git_commit_unreadable")
+        linked = Path(pointer.split(" ", 1)[1])
+        git_path = linked if linked.is_absolute() else Path(__file__).resolve().parent.parent / linked
+        require(git_path.is_dir() and not git_path.is_symlink(), "git_commit_unreadable")
+    head = (git_path / "HEAD").read_text(encoding="utf-8").strip()
+    if head.startswith("ref: "):
+        ref = git_path / head[5:]
+        require(ref.is_file() and not ref.is_symlink(), "git_commit_unreadable")
+        head = ref.read_text(encoding="utf-8").strip()
+    require(_hex(head, 40), "git_commit_unreadable")
+    return head
+
+
+def execution_script_hashes() -> str:
+    directory = Path(__file__).resolve().parent
+    hashes = {}
+    for name in EXECUTION_SCRIPTS:
+        path = directory / name
+        require(path.is_file() and not path.is_symlink(), "execution_script_missing")
+        hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return json.dumps(hashes, sort_keys=True, separators=(",", ":"))
+
+
+def charge_identity(archive_sha: str, output_identity: str, destinations: list[str],
+                    csv_sha: str | None = None, tracker_sha: str | None = None,
+                    synthetic: bool = False) -> dict:
+    require(_hex(archive_sha, 64), "archive_identity")
+    require(synthetic or archive_sha != "0" * 64, "null_archive_sha_refused")
     require(isinstance(output_identity, str) and output_identity.strip(), "output_identity")
-    return {"archiveSha256": archive_sha, "passportCsvSha256": csv_sha or PRIORITY_CSV_SHA256,
-            "trackerSha256": tracker_sha or TRACKER_SHA256, "codeHead": current_code_head(),
-            "outputIdentity": output_identity}
+    require(isinstance(destinations, list) and destinations, "destination_identity")
+    return {
+        "archiveSha256": archive_sha,
+        "passportCsvSha256": csv_sha or PRIORITY_CSV_SHA256,
+        "trackerSha256": tracker_sha or TRACKER_SHA256,
+        "codeHead": repository_commit(),
+        "scriptHashes": execution_script_hashes(),
+        "outputIdentity": output_identity,
+        "destinationIdentity": hashlib.sha256(",".join(destinations).encode()).hexdigest(),
+    }
 
 
 def require_same_charge(existing: dict, identity: dict) -> None:
@@ -368,6 +419,8 @@ def _checkpoint_parent(path: Path) -> Path:
     require(path.name not in ("", ".", ".."), "checkpoint_refused")
     parent = path.parent.resolve(strict=True)
     resolved = parent / path.name
+    if path.is_symlink() or resolved.is_symlink():
+        raise ValueError("symlink_refused")
     require(parent.is_dir() and not parent.is_symlink() and not resolved.is_symlink()
             and not resolved.is_relative_to(repo) and not parent.is_relative_to(repo)
             and not _inside_git_worktree(parent), "checkpoint_inside_repo")
@@ -404,6 +457,49 @@ def read_checkpoint(path: Path) -> list[dict]:
     return rows
 
 
+def _reject_symlink(path: Path) -> None:
+    require(not path.is_symlink(), "symlink_refused")
+
+
+def _private_directory(path: Path) -> None:
+    _reject_symlink(path)
+    require(path.is_dir(), "charge_directory_refused")
+    require(stat.S_IMODE(path.stat().st_mode) & 0o077 == 0, "unsafe_directory_mode")
+
+
+_HELD_CHARGES: set[str] = set()
+
+
+def acquire_charge(directory: Path) -> int | None:
+    """Exclusive lock for one charge, taken before the journal is read.
+
+    The same process may re-enter while it already holds the charge. A second
+    process gets checkpoint_busy instead of reading a stale journal.
+    """
+    _private_directory(directory)
+    key = str(directory.resolve())
+    if key in _HELD_CHARGES:
+        return None
+    lock_path = directory / "charge.lock"
+    _reject_symlink(lock_path)
+    descriptor = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError as error:
+        os.close(descriptor)
+        raise ValueError("checkpoint_busy") from error
+    os.chmod(lock_path, 0o600)
+    _HELD_CHARGES.add(key)
+    return descriptor
+
+
+def release_charge(directory: Path, descriptor: int | None) -> None:
+    if descriptor is None:
+        return
+    _HELD_CHARGES.discard(str(directory.resolve()))
+    os.close(descriptor)
+
+
 def append_checkpoint(path: Path, event: dict) -> dict:
     require(isinstance(event, dict), "checkpoint_event_refused")
     plan = event.get("planDigest")
@@ -411,32 +507,38 @@ def append_checkpoint(path: Path, event: dict) -> dict:
     require(event.get("destination") in ORDER and digest_ok
             and event.get("action") in ("quarantined", "blocked")
             and event.get("accepted") == 0 and event.get("published") == 0
-            and event.get("codeHead") == current_code_head()
+            and event.get("codeHead") == repository_commit()
+            and event.get("scriptHashes") == execution_script_hashes()
+            and (event.get("synthetic") is True or event.get("archiveSha256") != "0" * 64)
             and all(isinstance(event.get(key), str) and event[key] for key in IDENTITY_KEYS),
             "checkpoint_event_refused")
     resolved = _checkpoint_parent(path)
-    rows = read_checkpoint(resolved) if resolved.exists() else []
-    if rows:
-        require_same_charge(rows[0], {key: event[key] for key in IDENTITY_KEYS})
-    same = [row for row in rows if row.get("destination") == event["destination"]]
-    if same:
-        require(all(row.get("planDigest") == event["planDigest"] for row in same), "checkpoint_conflict")
-        return {"appended": False, "idempotent": True, "lines": len(rows)}
-    payload = dict(event)
-    payload["seq"] = len(rows) + 1
-    payload["prev"] = rows[-1]["lineSha256"] if rows else "0" * 64
-    raw = (json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
-    descriptor = os.open(resolved, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
+    _reject_symlink(resolved)
+    if resolved.exists():
+        require(stat.S_IMODE(resolved.stat().st_mode) & 0o077 == 0, "unsafe_file_mode")
+    lock = acquire_charge(resolved.parent)
     try:
+        rows = read_checkpoint(resolved) if resolved.exists() else []
+        if rows:
+            require_same_charge(rows[0], {key: event[key] for key in IDENTITY_KEYS})
+        same = [row for row in rows if row.get("destination") == event["destination"]]
+        if same:
+            require(all(row.get("planDigest") == event["planDigest"] for row in same), "checkpoint_conflict")
+            return {"appended": False, "idempotent": True, "lines": len(rows)}
+        payload = dict(event)
+        payload["seq"] = len(rows) + 1
+        payload["prev"] = rows[-1]["lineSha256"] if rows else "0" * 64
+        raw = (json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        descriptor = os.open(resolved, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
         try:
-            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as error:
-            raise ValueError("checkpoint_busy") from error
-        os.write(descriptor, raw)
-        os.fsync(descriptor)
+            os.write(descriptor, raw)
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        os.chmod(resolved, 0o600)
+        return {"appended": True, "idempotent": False, "lines": len(rows) + 1}
     finally:
-        os.close(descriptor)
-    return {"appended": True, "idempotent": False, "lines": len(rows) + 1}
+        release_charge(resolved.parent, lock)
 
 
 def resume_plan(path: Path, destinations: list[str]) -> dict:
@@ -490,19 +592,32 @@ def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, c
     repo = Path(__file__).resolve().parent.parent
     names = list(destinations)
     require(names == list(ORDER[:len(names)]) and len(names) > 0, "destination_order_refused")
-    identity = identity or charge_identity("0" * 64, out.name)
-    require_same_charge(identity, identity)
+    require(identity is not None, "null_archive_sha_refused")
+    require(identity.get("archiveSha256") != "0" * 64, "null_archive_sha_refused")
+    require(identity.get("destinationIdentity") == hashlib.sha256(",".join(names).encode()).hexdigest(),
+            "destination_identity_mismatch")
+    require(identity.get("codeHead") == repository_commit(), "git_commit_identity")
+    require(identity.get("scriptHashes") == execution_script_hashes(), "script_hash_mismatch")
     dest = _outside(out, repo, source)
     created = not dest.exists()
     if created:
         dest.mkdir(mode=0o700)
     else:
-        require(dest.is_dir(), "output_refused")
+        _private_directory(dest)
+    for child_name in ("packages", "blocked", "checkpoint.jsonl", "manifest.json", "charge.lock"):
+        child = dest / child_name
+        if child.exists() or child.is_symlink():
+            _reject_symlink(child)
     ckpt = checkpoint or (dest / "checkpoint.jsonl")
-    packages = dest / "packages"
-    if not packages.exists():
-        packages.mkdir(mode=0o700)
+    _reject_symlink(ckpt)
+    require(not ckpt.is_relative_to(source), "checkpoint_inside_source")
+    lock = acquire_charge(dest)
     try:
+        packages = dest / "packages"
+        if not packages.exists():
+            packages.mkdir(mode=0o700)
+        else:
+            _private_directory(packages)
         plan = resume_plan(ckpt, names) if ckpt.exists() else {"done": [], "remaining": names}
         rows = {row["destination"]: row for row in (read_checkpoint(ckpt) if ckpt.exists() else [])}
         receipts = []
@@ -531,15 +646,18 @@ def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, c
             existing = adapter["strict_json"](adapter["read_file"](dest, "manifest.json", 64 * 1024))
             previous = existing.get("destinationOrder")
             require(isinstance(previous, list) and names[:len(previous)] == previous, "checkpoint_conflict")
+            if existing.get("charge") not in (None, {key: identity[key] for key in IDENTITY_KEYS}):
+                raise ValueError("checkpoint_identity_mismatch")
             if previous == names and existing.get("counts") == total:
                 return total
-            os.remove(seal_path)
-        _write_seal(dest, names, all_priority, total, receipts, blocked)
+        _write_seal(dest, names, all_priority, total, receipts, blocked, identity)
         return total
     except Exception:
         if created and not ckpt.exists():
             shutil.rmtree(dest, ignore_errors=True)
         raise
+    finally:
+        release_charge(dest, lock)
 
 
 def _resume_country(dest: Path, country: str, row: dict, adapter, identity: dict) -> dict:
@@ -548,8 +666,10 @@ def _resume_country(dest: Path, country: str, row: dict, adapter, identity: dict
         payload = adapter["read_file"](dest, f"blocked/{country}.json", 8 * 1024 * 1024)
         require(hashlib.sha256(payload).hexdigest() == row["planDigest"], "checkpoint_conflict")
         require(not (dest / "packages" / country).exists(), "blocked_scope_changed")
-        return {"action": "blocked", "blocked": {"country": country,
-                "reason": "unsplit_research_frame_not_importable", "indexSha256": row["planDigest"]}}
+        reason = row.get("reason")
+        require(isinstance(reason, str) and reason, "hold_reason_missing")
+        return {"action": "blocked", "blocked": {"country": country, "reason": reason,
+                "indexSha256": row["planDigest"]}}
     package = dest / "packages" / country
     require(digest(package / "manifest.json") == row["planDigest"], "checkpoint_conflict")
     manifest = manifest_at(package, adapter)
@@ -568,32 +688,35 @@ def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter,
     try:
         if country in STRUCTURAL_HOLDS:
             index_bytes, reason, plan = hold_index(adapter, source, country)
-            held = dest / "blocked"
-            held.mkdir(mode=0o700, exist_ok=True)
-            target = held / f"{country}.json"
-            require(not target.exists(), "blocked_scope_changed")
-            target.write_bytes(index_bytes)
-            os.chmod(target, 0o600)
-            append_checkpoint(ckpt, {**identity, "destination": country, "planDigest": plan,
-                                      "action": "blocked", "reason": reason, "accepted": 0, "published": 0})
-            return {"action": "blocked", "blocked": {"country": country, "reason": reason, "indexSha256": plan}}
-        counts = adapter["prepare"](source, country, package)
-        require(counts == adapter["verify"](package) and counts["passports"] == 50
-                and counts["topicSlots"] == 1300 and counts["accepted"] == 0
+            return _store_hold(dest, ckpt, country, reason, index_bytes, identity)
+        final = dest / "packages" / country
+        if final.exists() or final.is_symlink():
+            _reject_symlink(final)
+            counts = adapter["verify"](final)
+            manifest = manifest_at(final, adapter)
+            plan = digest(final / "manifest.json")
+        else:
+            try:
+                counts = adapter["prepare"](source, country, package)
+            except ValueError as error:
+                code = str(error)
+                if code not in STRUCTURAL_HOLD_CODES:
+                    raise
+                payload = _hold_payload(adapter, source, country, code)
+                return _store_hold(dest, ckpt, country, code, payload, identity)
+            require(counts == adapter["verify"](package) and counts["passports"] == 50
+                    and counts["topicSlots"] == 1300 and counts["accepted"] == 0
+                    and counts["published"] == 0, "research_validation_refused")
+            manifest = manifest_at(package, adapter)
+            plan = digest(package / "manifest.json")
+            os.rename(package, final)
+        require(counts["passports"] == 50 and counts["topicSlots"] == 1300 and counts["accepted"] == 0
                 and counts["published"] == 0, "research_validation_refused")
-        manifest = manifest_at(package, adapter)
         require(manifest["destination"] == country and manifest["status"] == "RESEARCH_ONLY"
                 and manifest["publicationAuthority"] == "none" and manifest["sourceVerification"] == "NOT_RUN"
                 and manifest["ownerPublicationApproval"] is False
                 and len(manifest["passportPriority"]) == 50, "research_authority_refused")
         _extra_ok(country, manifest)
-        plan = digest(package / "manifest.json")
-        final = dest / "packages" / country
-        if final.exists():
-            require(digest(final / "manifest.json") == plan, "checkpoint_conflict")
-            shutil.rmtree(package)
-        else:
-            os.rename(package, final)
         append_checkpoint(ckpt, {**identity, "destination": country, "planDigest": plan,
                                   "action": "quarantined", "accepted": 0, "published": 0})
         return {"action": "quarantined", "passports": manifest["passportPriority"],
@@ -604,21 +727,55 @@ def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter,
         shutil.rmtree(temporary, ignore_errors=True)
 
 
-def _write_seal(dest: Path, destinations: list[str], priority, total: dict, receipts: list, blocked: list) -> None:
-    seal = {"schema": 1, "kind": "jetnity_50_pass_research_quarantine",
+def _hold_payload(adapter, source: Path, country: str, reason: str) -> bytes:
+    try:
+        return adapter["read_file"](source, f"records/dest/{country}/index.json", 8 * 1024 * 1024)
+    except (OSError, ValueError, KeyError, TypeError):
+        return json.dumps({"destination": country, "reason": reason, "originalIndex": False},
+                          separators=(",", ":")).encode()
+
+
+def _store_hold(dest: Path, ckpt: Path, country: str, reason: str, payload: bytes, identity: dict) -> dict:
+    held = dest / "blocked"
+    if not held.exists():
+        held.mkdir(mode=0o700)
+    else:
+        _private_directory(held)
+    target = held / f"{country}.json"
+    _reject_symlink(target)
+    if target.exists():
+        require(target.read_bytes() == payload, "hold_bytes_conflict")
+    else:
+        target.write_bytes(payload)
+        os.chmod(target, 0o600)
+    plan = hashlib.sha256(payload).hexdigest()
+    append_checkpoint(ckpt, {**identity, "destination": country, "planDigest": plan, "action": "blocked",
+                             "reason": reason, "accepted": 0, "published": 0})
+    return {"action": "blocked", "blocked": {"country": country, "reason": reason, "indexSha256": plan}}
+
+
+def _write_seal(dest: Path, destinations: list[str], priority, total: dict, receipts: list, blocked: list,
+                identity: dict | None = None) -> None:
+    seal = {"schema": 2, "kind": "jetnity_50_pass_research_quarantine",
             "classification": "RESEARCH_ONLY", "publicationAuthority": "none",
             "methodApproval": "NOT_APPROVED", "visitorOutcome": "derzeit nicht verfügbar",
             "officialSourcesVerified": False, "sourceMonitoringActivated": False,
             "scope": "research-file validation, not source/legal verification",
             "destinationOrder": destinations, "priorityFileSha256": priority,
             "counts": total, "packages": receipts, "blocked": blocked}
-    target = dest / "manifest.json"
-    with target.open("x", encoding="utf-8") as stream:
-        os.chmod(target, 0o600)
+    if identity is not None:
+        seal["charge"] = {key: identity[key] for key in IDENTITY_KEYS}
+        seal["sealVersion"] = 2
+    temporary = dest / ".manifest.new"
+    _reject_symlink(temporary)
+    with temporary.open("w", encoding="utf-8") as stream:
+        os.chmod(temporary, 0o600)
         json.dump(seal, stream, ensure_ascii=False, separators=(",", ":"))
         stream.write("\n")
         stream.flush()
         os.fsync(stream.fileno())
+    os.replace(temporary, dest / "manifest.json")
+    os.chmod(dest / "manifest.json", 0o600)
 
 
 def main() -> None:
@@ -649,8 +806,9 @@ def main() -> None:
                 total = verify(values.output, adapter)
             elif values.mode in ("resume", "prepare"):
                 pinned_archive_required(values.archive, values.research_root)
-                identity = charge_identity(digest(values.archive), values.output.name)
                 destinations = resolve_destinations(values.destinations)
+                _outside(values.output, Path(__file__).resolve().parent.parent, values.archive.resolve().parent)
+                identity = charge_identity(digest(values.archive), values.output.name, destinations)
                 staging = Path(tempfile.mkdtemp(prefix=".jetnity-50-pass-src-", dir=values.output.parent.resolve(strict=True)))
                 try:
                     root = extract_pinned_archive(values.archive, staging)

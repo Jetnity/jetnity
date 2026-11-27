@@ -1,9 +1,11 @@
 """Synthetic tests: 50-pass research imports cannot publish or partially complete."""
 import importlib.util
 import json
+import multiprocessing
 from pathlib import Path
 import shutil
 import tempfile
+import time
 import unittest
 
 local_spec = importlib.util.spec_from_file_location(
@@ -155,7 +157,7 @@ class ImportTests(unittest.TestCase):
 
     def test_checkpoint_is_append_only_idempotent_and_conflicts(self):
         checkpoint = self.base / "checkpoint.jsonl"
-        identity = b.charge_identity("ab" * 32, "checkpoint")
+        identity = b.charge_identity("ab" * 32, "checkpoint", ["AT", "IT", "FR"])
         event = {**identity, "destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
                  "accepted": 0, "published": 0}
         self.assertTrue(b.append_checkpoint(checkpoint, event)["appended"])
@@ -193,7 +195,7 @@ class ImportTests(unittest.TestCase):
 
     def test_repo_path_and_payload_import_stop(self):
         inside = Path(__file__).resolve().parent.parent / "official-truth-checkpoint.jsonl"
-        event = {**b.charge_identity("ab" * 32, "checkpoint"), "destination": "AT",
+        event = {**b.charge_identity("ab" * 32, "checkpoint", ["AT"]), "destination": "AT",
                  "planDigest": "a" * 64, "action": "quarantined", "accepted": 0, "published": 0}
         with self.assertRaisesRegex(ValueError, "checkpoint_inside_repo"):
             b.append_checkpoint(inside, event)
@@ -215,22 +217,24 @@ class ImportTests(unittest.TestCase):
 
         self.adapter["prepare"] = fail
         out = self.base / "resume"
+        names = list(b.ORDER[:2])
+        identity = b.charge_identity("ab" * 32, "resume", names)
         with self.assertRaisesRegex(ValueError, "second_country_refused"):
-            b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+            b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertTrue((out / "packages" / "AT").is_dir())
         self.assertFalse((out / "packages" / "IT").exists())
         self.assertFalse((out / "manifest.json").exists())
         self.assertEqual((out / "checkpoint.jsonl").read_bytes().count(b"\n"), 1)
         self.adapter["prepare"] = good
         self.calls.clear()
-        result = b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+        result = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertEqual(self.calls, ["IT"])
         self.assertEqual(result["destinations"], 2)
         self.assertEqual(result["published"], 0)
         self.assertEqual(result["accepted"], 0)
         sealed = (out / "checkpoint.jsonl").read_bytes()
         self.calls.clear()
-        repeat = b.prepare_resumable(self.source, out, list(b.ORDER[:2]), self.adapter)
+        repeat = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertEqual(self.calls, [])
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), sealed)
         self.assertEqual(repeat, result)
@@ -278,7 +282,118 @@ class ImportTests(unittest.TestCase):
         self.assertNotIn(str(archive), json.dumps(plan))
         with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
             local.run(archive, output, authorized=False)
+        with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
+            local.run(archive, output, authorized=True)
         self.assertFalse(output.exists())
+        self.assertEqual(len(plan["codeHead"]), 40)
+        self.assertIn("official-truth-research-package.py", plan["scriptHashes"])
+
+    def test_resume_adopts_package_written_before_the_journal(self):
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, "adopt", names)
+        out = self.base / "adopt"
+        first = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        journal = (out / "checkpoint.jsonl").read_bytes()
+        (out / "checkpoint.jsonl").unlink()
+        self.calls.clear()
+        second = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        self.assertEqual(self.calls, [])
+        self.assertEqual(second, first)
+        self.assertEqual(b.verify(out, self.adapter), first)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        kept = (out / "manifest.json").read_bytes()
+        other = dict(identity)
+        other["codeHead"] = "a" * 40
+        with self.assertRaisesRegex(ValueError, "git_commit_identity"):
+            b.prepare_resumable(self.source, out, names, self.adapter, identity=other)
+        self.assertEqual((out / "manifest.json").read_bytes(), kept)
+
+    def test_structural_hold_does_not_abort_the_following_destination(self):
+        good = self.adapter["prepare"]
+
+        def fail(root, country, package):
+            if country == "IT":
+                raise ValueError("slice_core")
+            return good(root, country, package)
+
+        self.adapter["prepare"] = fail
+        names = list(b.ORDER[:3])
+        identity = b.charge_identity("cd" * 32, "hold-on", names)
+        out = self.base / "hold-on"
+        result = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        self.assertEqual(result["destinations"], 2)
+        self.assertEqual(result["blockedCountries"], 1)
+        self.assertEqual(result["published"], 0)
+        seal = json.loads((out / "manifest.json").read_text())
+        self.assertEqual(seal["blocked"][0]["reason"], "slice_core")
+        self.assertTrue((out / "packages" / "FR").is_dir())
+        self.assertEqual(b.verify(out, self.adapter), result)
+
+    def test_concurrent_lock_and_foreign_charge_do_not_overwrite(self):
+        folder = self.base / "shared"
+        folder.mkdir(mode=0o700)
+        ready = self.base / "ready"
+        stop = self.base / "stop"
+        process = multiprocessing.Process(target=_hold_charge, args=(str(folder), str(ready), str(stop)))
+        process.start()
+        for _ in range(100):
+            if ready.exists():
+                break
+            time.sleep(0.02)
+        try:
+            with self.assertRaisesRegex(ValueError, "checkpoint_busy"):
+                b.acquire_charge(folder)
+        finally:
+            stop.write_text("stop")
+            process.join(3)
+        self.assertFalse(process.is_alive())
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, "foreign", names)
+        out = self.base / "foreign"
+        original = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        package = (out / "packages" / "AT" / "manifest.json").read_bytes()
+        foreign = b.charge_identity("ef" * 32, "foreign", names)
+        with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch"):
+            b.prepare_resumable(self.source, out, names, self.adapter, identity=foreign)
+        self.assertEqual((out / "packages" / "AT" / "manifest.json").read_bytes(), package)
+        self.assertEqual(b.verify(out, self.adapter), original)
+
+    def test_symlink_journal_and_output_inside_source_are_refused(self):
+        target = self.base / "journal-target.jsonl"
+        link = self.base / "journal-link.jsonl"
+        link.symlink_to(target)
+        identity = b.charge_identity("ab" * 32, "link", ["AT"])
+        event = {**identity, "destination": "AT", "planDigest": "a" * 64,
+                 "action": "quarantined", "accepted": 0, "published": 0}
+        with self.assertRaisesRegex(ValueError, "symlink_refused"):
+            b.append_checkpoint(link, event)
+        self.assertFalse(target.exists())
+        names = ["AT"]
+        with self.assertRaisesRegex(ValueError, "output_refused"):
+            b.prepare_resumable(self.source, self.source / "inside", names, self.adapter,
+                                identity=b.charge_identity("ab" * 32, "inside", names))
+
+    def test_offline_charge_repeats_the_same_charge(self):
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, "offline", names)
+        out = self.base / "offline"
+        report = local.offline_charge(self.source, out, names, self.adapter, identity)
+        self.assertEqual(report, {"published": 0, "accepted": 0, "legalEvidenceSlots": 0,
+                                  "destinations": 1, "blockedCountries": 0})
+
+
+def _hold_charge(directory: str, ready: str, stop: str) -> None:
+    import fcntl
+    import os
+    import time as _time
+    from pathlib import Path as _Path
+    folder = _Path(directory)
+    descriptor = os.open(folder / "charge.lock", os.O_CREAT | os.O_RDWR, 0o600)
+    fcntl.flock(descriptor, fcntl.LOCK_EX)
+    _Path(ready).write_text("ready")
+    while not _Path(stop).exists():
+        _time.sleep(0.02)
+    os.close(descriptor)
 
 
 if __name__ == "__main__":

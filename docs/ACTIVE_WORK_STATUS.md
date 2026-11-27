@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, zweite Korrektur nach NO-GO auf 2c60c7eff
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff.
+
+- Charge vor dem Schreiben an Archiv-SHA, CSV-/Tracker-Pins, Git-Commit und die vier Skript-Digests gebunden. Lock vor dem Journal. Resume übernimmt ein bereits geschriebenes Paket oder einen HOLD, ohne zu überschreiben. Tracker-Konflikte sind Holds und stoppen nicht die übrigen Ziele.
+- CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
 ## 27.11.2026 — Paket I Korrekturrunde nach TL-Review
 
 Gleicher Branch `cursor/official-truth-importer-206-5c1d`, gleicher Draft [#1323](https://github.com/Jetnity/jetnity/pull/1323). Review: #1319 Kommentar 7207442476. Kein neuer Agent, kein neuer PR, kein Ready, kein Merge. M04/N11 unverändert.

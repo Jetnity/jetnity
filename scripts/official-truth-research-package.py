@@ -225,21 +225,33 @@ def nonpriority_slices(root: Path, destination: str, passports: list[str]) -> li
     return sorted(found)
 
 
+def _row_identity(row: dict) -> tuple:
+    return tuple(sorted((str(key), "" if value is None else str(value)) for key, value in row.items()))
+
+
 def unique_rows(tracker: list[dict], destination: str, passports: list[str]) -> dict:
-    """Identical duplicate tracker lines bind once. Disagreeing pointers stay a hold."""
+    """Bind a nationality only when every tracker line for it is fully identical.
+
+    A shared pointer with any other differing field, two pointers, or a conflict
+    flag is a hold. The original rows are not rewritten or chosen between.
+    """
     grouped: dict[str, list[dict]] = {}
     allowed = set(passports)
     for row in tracker:
         if row.get("dest_id") != destination or row.get("nationality") not in allowed:
             continue
-        grouped.setdefault(row["nationality"], []).append(row)
+        grouped.setdefault(str(row["nationality"]), []).append(row)
     chosen = {}
     for nationality in passports:
         group = grouped.get(nationality, [])
         require(group, "tracker_coverage")
+        identities = {_row_identity(row) for row in group}
         pointers = {row.get("record_pointer") for row in group}
-        require(len(pointers) == 1 and None not in pointers, "tracker_row_conflict")
-        chosen[nationality] = group[0]
+        if len(identities) != 1:
+            require(False, "tracker_field_conflict" if len(pointers) == 1 else "tracker_row_conflict")
+        chosen_row = group[0]
+        require(not str(chosen_row.get("conflict") or "").strip(), "tracker_conflict_flag")
+        chosen[nationality] = chosen_row
     return chosen
 
 

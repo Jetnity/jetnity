@@ -1,5 +1,13 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Zweite Korrekturrunde, NO-GO auf 2c60c7eff
+
+- Die Charge bindet Archiv-SHA, CSV-Pin, Tracker-Pin, den Git-Commit und die Digests aller vier ausführenden Skripte. Eine Null-SHA ist im realen Pfad abgelehnt. Ausgabe- und Zielidentität werden vor dem ersten Schreiben geprüft.
+- Das Lock der Charge liegt vor dem Lesen des Journals und bleibt bis zum Abschlussmanifest. Ein zweiter Prozess erhält `checkpoint_busy` und löscht nichts. Ein Manifest wird atomar ersetzt, nicht vorher gelöscht.
+- Ein Paket, das vor dem Journal-Eintrag geschrieben wurde, wird verifiziert und nicht neu erzeugt. Ein HOLD behält Grund und Bytes.
+- Tracker-Zeilen werden nur dedupliziert, wenn sie vollständig gleich sind. Gleicher Zeiger mit anderem Feld, zwei Zeiger oder ein Konfliktflag sind ein Hold. Andere Ziele laufen weiter. Integritätskonflikte brechen fail-closed ab.
+- Der lokale Archivlauf bleibt gesperrt. Synthetisch sind Prepare, Resume und Verify geprüft. `legalEvidence` bleibt 0. `PRIVATE_PAYLOAD_PATH_STOP` bleibt.
+
 ## Korrekturrunde nach TL-Review 27.11.2026
 
 Massgeblich ist der Review in #1319, Kommentar 7207442476. Gleicher Branch, gleicher Draft #1323. M04/N11 ist nicht verändert.

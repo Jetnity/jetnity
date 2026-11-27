@@ -34,7 +34,8 @@ def redacted_plan(archive: Path, output: Path) -> dict:
         "localRepackBytes": batch.LOCAL_REPACK_BYTES,
         "passportCsvSha256": batch.PRIORITY_CSV_SHA256,
         "trackerSha256": batch.TRACKER_SHA256,
-        "codeHead": batch.current_code_head(),
+        "codeHead": batch.repository_commit(),
+        "scriptHashes": batch.execution_script_hashes(),
         "archiveVerifiedThisRun": False,
         "legalEvidenceSlots": 0,
         "coreCompleteProfiles": 0,
@@ -46,28 +47,21 @@ def redacted_plan(archive: Path, output: Path) -> dict:
 
 
 def run(archive: Path, output: Path, authorized: bool = False) -> dict:
-    plan = redacted_plan(archive, output)
-    if not authorized:
-        raise ValueError("LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED")
-    batch.pinned_archive_required(archive, None)
-    identity_sha = batch.digest(archive)
-    batch.require(identity_sha == batch.LOCAL_REPACK_SHA256, "unreviewed_archive")
-    staging_parent = output.parent
-    batch.require(staging_parent.is_dir() and not staging_parent.is_symlink(), "local_output_refused")
-    staging = staging_parent / ".jetnity-local-preflight"
-    if staging.exists():
-        raise ValueError("local_preflight_exists")
-    staging.mkdir(mode=0o700)
-    try:
-        root = batch.extract_pinned_archive(archive, staging)
-        inventory = batch.confirm_pinned_inventory(root)
-    finally:
-        import shutil
-        shutil.rmtree(staging, ignore_errors=True)
-    plan.update({"archiveVerifiedThisRun": True, "authorized": True, **inventory,
-                 "archiveSha256": identity_sha})
-    plan.pop("archivePathRecorded", None)
-    return plan
+    """The Mac archive run stays closed. Authorization does not open the file."""
+    redacted_plan(archive, output)
+    raise ValueError("LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED")
+
+
+def offline_charge(root: Path, output: Path, destinations: list[str], adapter, identity: dict) -> dict:
+    """Prepare, resume and verify one synthetic charge. No archive bytes are read here."""
+    batch.require(identity.get("archiveSha256") != "0" * 64, "null_archive_sha_refused")
+    first = batch.prepare_resumable(root, output, destinations, adapter, identity=identity)
+    second = batch.prepare_resumable(root, output, destinations, adapter, identity=identity)
+    verified = batch.verify(output, adapter)
+    batch.require(first == second == verified, "offline_charge_mismatch")
+    batch.require(verified["published"] == 0 and verified["accepted"] == 0, "offline_charge_promoted")
+    return {"published": 0, "accepted": 0, "legalEvidenceSlots": 0,
+            "destinations": verified["destinations"], "blockedCountries": verified["blockedCountries"]}
 
 
 def main() -> None:
