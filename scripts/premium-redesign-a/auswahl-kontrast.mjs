@@ -406,7 +406,16 @@ async function messenImZustand(seite, element, interaktion, flaecheNormal) {
     const gegen = [messung.grenze.fuellungsFarbe, messung.grenze.rahmenFarbe].filter(Boolean)
     const ergebnisse = []
     for (const farbe of gegen) {
-      const wert = await bandMessen(seite, { rechteck, von: 0.5, bis: 4, farben: [{ ...farbe }] })
+      // Die Feldgrenze gilt ohne den Fokusring: er liegt im selben Band (Umriss 3 px, Halo 6 px) und wird als Fokusindikator
+      // gemessen. Mit Ring im Band verglich der Test die Kante mit dem dunklen Umriss (2,36 : 1) statt mit dem Grund.
+      const ringAus = interaktion === 'fokus' || interaktion === 'aktiv'
+      const wert = await bandMessen(seite, {
+        rechteck,
+        von: 0.5,
+        bis: 4,
+        farben: [{ ...farbe }],
+        ausblenden: ringAus ? `[data-pra-i="${element.i}"] { outline-color: transparent !important; box-shadow: none !important; }` : undefined,
+      })
       if (wert) ergebnisse.push(wert)
     }
     if (ergebnisse.length) pixel.grenze = ergebnisse.sort((p, q) => q.p10 - p.p10)[0]
@@ -483,7 +492,10 @@ async function elementMessen(seite, element, ansichtId, kombiname, modus, sammle
   }
   const proAuswahl = {}
   for (const durchlauf of durchlaeufe) {
-    if (durchlauf.art === 'gegenteil') await seite.evaluate(({ i, name, wert }) => window.__pra.setzeAuswahl(i, name, wert), { i: element.i, name: element.toggle, wert: durchlauf.attribut })
+    if (durchlauf.art === 'gegenteil') {
+      await seite.evaluate(({ i, name, wert }) => window.__pra.setzeAuswahl(i, name, wert), { i: element.i, name: element.toggle, wert: durchlauf.attribut })
+      await seite.evaluate((i) => window.__pra.farbeBeruhigen(i), element.i)
+    }
     let flaecheNormal = null
     for (const interaktion of durchlauf.art === 'gegenteil' ? ['normal', 'hover', 'fokus'] : interaktionen) {
       const { stand, messung, pixel } = await messenImZustand(seite, element, interaktion, flaecheNormal)
@@ -575,13 +587,24 @@ async function echteAuswahl(seite, ansichtId, kombiname, sammler, grenze = 30) {
       eintrag.mitglieder.push(element.getAttribute('data-pra-e'))
       karte.set(schluessel, eintrag)
     }
-    return [...karte.values()].filter((g) => g.mitglieder.length >= 2)
+    return [...karte.values()]
+      .filter((g) => g.mitglieder.length >= 2)
+      .map((g) => ({ ...g, darstellung: g.mitglieder.every((m) => document.querySelector(`[data-pra-e="${m}"]`)?.classList.contains('workspace-darstellung-knopf')) }))
   })
   let klicks = 0
   for (const gruppe of gruppen) {
+    if (gruppe.darstellung) {
+      // Die Darstellungswahl schliesst ihr Menü und wechselt das Thema der ganzen Seite: die Gruppe lässt sich danach in diesem
+      // Zustand nicht weiter messen. Ihre echte Bedienung misst der Lauf `--themawechsel` (Wahl über das echte Bedienelement).
+      sammler.push({ ansicht: ansichtId, kombination: kombiname, modus: 'echt', element: `Gruppe ${gruppe.g} (Darstellungswahl)`, art: 'hinweis', auswahl: null, zustand: 'darstellung', urteil: 'OFFEN', gruende: [], offen: ['Die Darstellungswahl wechselt das Thema und schliesst ihr Menü; echte Bedienung gemessen im Lauf --themawechsel'] })
+      continue
+    }
     for (const mitglied of gruppe.mitglieder) {
       if (klicks >= grenze) return klicks
-      const vorher = await seite.evaluate(() => location.pathname + location.search)
+      const vorher = await seite.evaluate(() => {
+        window.__praSeitenmarke = true
+        return location.pathname
+      })
       const gefunden = await seite.evaluate((m) => {
         const element = document.querySelector(`[data-pra-e="${m}"]`)
         if (!element) return false
@@ -594,7 +617,9 @@ async function echteAuswahl(seite, ansichtId, kombiname, sammler, grenze = 30) {
       await seite.mouse.click(box.x + box.width / 2, box.y + box.height / 2).catch(() => undefined)
       klicks += 1
       await seite.waitForTimeout(500)
-      const nachher = await seite.evaluate(() => location.pathname + location.search)
+      // Nur ein Seitenwechsel (anderer Pfad oder neu geladenes Dokument) beendet die Gruppe; ein Filter, der nur die Adresse
+      // ergänzt (`?archiv=offen`), bleibt im selben Dokument und wird weiter bedient.
+      const nachher = await seite.evaluate(() => (window.__praSeitenmarke ? location.pathname : `${location.pathname} (neu geladen)`)).catch(() => 'neu geladen')
       if (nachher !== vorher) {
         sammler.push({ ansicht: ansichtId, kombination: kombiname, modus: 'echt', element: `Gruppe ${gruppe.g}`, art: 'hinweis', auswahl: null, zustand: 'navigation', urteil: 'OFFEN', gruende: [], offen: [`Klick auf ein Gruppenmitglied wechselt die Seite (${vorher} → ${nachher}); Gruppe nicht weiter bedient`] })
         await seite.goBack().catch(() => undefined)

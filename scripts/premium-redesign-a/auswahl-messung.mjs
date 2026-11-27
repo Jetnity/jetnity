@@ -503,6 +503,30 @@ export function installieren() {
     return wirksameDeckkraft(element)
   }
 
+  /**
+   * Wartet, bis die Farben eines Elements zweimal hintereinander gleich bleiben. Nach dem Umsetzen eines Attributs legt
+   * WebKit den Übergang erst im folgenden Stil an: `getAnimations()` zeigt ihn dann noch nicht, die Fläche steht auf dem
+   * Anfangswert (gemessen: 253,1 statt Grün) und der Vergleich gewählt/ungewählt sähe zwei gleiche Flächen.
+   */
+  P.farbeBeruhigen = async (i, grenzeMs = 1500) => {
+    const element = P.element(i)
+    if (!element) return
+    const stand = () => {
+      const stil = getComputedStyle(element)
+      return [stil.backgroundColor, stil.color, stil.borderTopColor, stil.boxShadow, stil.outlineColor].join('|')
+    }
+    const ende = performance.now() + grenzeMs
+    let letzte = ''
+    let gleich = 0
+    while (gleich < 2 && performance.now() < ende) {
+      await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+      await new Promise((fertig) => setTimeout(fertig, 80))
+      const jetzt = stand()
+      gleich = jetzt === letzte ? gleich + 1 : 0
+      letzte = jetzt
+    }
+  }
+
   P.abwarten = async (grenzeMs = 1500) => {
     const laufend = () => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations !== Infinity)
     const bild = () => new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
