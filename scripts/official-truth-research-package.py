@@ -117,6 +117,19 @@ def strict_json(data: bytes):
     return json.loads(data.decode("utf-8"), object_pairs_hook=pairs, parse_constant=bad_number)
 
 
+_HARD_READ_CODES = frozenset((
+    "input_symlink", "input_not_regular", "input_size_limit", "invalid_relative_path", "input_root_refused",
+))
+
+
+def _local_data_error(error: BaseException) -> bool:
+    """Invalid JSON is local data. A path, symlink, or size fault is not."""
+    if not isinstance(error, ValueError):
+        return False
+    code = error.args[0] if error.args else None
+    return not (isinstance(code, str) and code in _HARD_READ_CODES)
+
+
 def read_file(root: Path, relative: str, limit: int = 8 * 1024 * 1024) -> bytes:
     parts = PurePosixPath(relative)
     require(relative and "\\" not in relative and not parts.is_absolute()
@@ -985,7 +998,11 @@ def _record_schema_holds(root: Path) -> list[str]:
     """The same record-schema contract prepare requires. A bad file holds every candidate."""
     try:
         schema = strict_json(read_file(root, "record-schema.json", 256 * 1024))
-    except (OSError, ValueError):
+    except FileNotFoundError:
+        return ["schema_unreadable"]
+    except ValueError as error:
+        if not _local_data_error(error):
+            raise
         return ["schema_unreadable"]
     if not isinstance(schema, dict):
         return ["schema_identity"]
@@ -1068,7 +1085,11 @@ def diagnose(root: Path) -> dict:
         try:
             frame = strict_json(read_file(root, f"records/dest/{destination}/index.json"))
             index_read = True
-        except (OSError, ValueError):
+        except FileNotFoundError:
+            dest_integrity.append("index_unreadable")
+        except ValueError as error:
+            if not _local_data_error(error):
+                raise
             dest_integrity.append("index_unreadable")
         if index_read and not isinstance(frame, dict):
             dest_integrity.append("index_not_object")
@@ -1087,7 +1108,10 @@ def diagnose(root: Path) -> dict:
         try:
             extra_nationality(root, destination, passports)
         except ValueError as error:
-            dest_integrity.append(str(error))
+            code = error.args[0] if error.args else ""
+            if code not in ("extra_slice_identity", "unexpected_extra_slice"):
+                raise
+            dest_integrity.append(code)
         profiles = []
         for nationality in passports:
             pairs_examined += 1
@@ -1130,7 +1154,9 @@ def diagnose(root: Path) -> dict:
                 if any(item["scope"] == "local_gap" for item in local):
                     local_gap_profiles += 1
                 continue
-            except (OSError, ValueError):
+            except ValueError as error:
+                if not _local_data_error(error):
+                    raise
                 local.append({"code": "slice_read_error", "scope": "not_checkable"})
                 status_counts[_pair_status(local, bool(dest_integrity))] += 1
                 for item in local:

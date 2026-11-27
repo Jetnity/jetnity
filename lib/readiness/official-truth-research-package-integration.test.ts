@@ -12,7 +12,7 @@ const digest = (path: string) => createHash('sha256').update(readFileSync(path))
 
 test('original research archive adapter remains independently checked and fail-closed', { timeout: 30_000 }, () => {
   // Explicit custody of the two exact offline-tested scripts, not research data.
-  assert.equal(digest(script), '070eafe9623b4c1dcbf735ef1cb85f82ae04980fe92b0830f6eee689d82e3f52')
+  assert.equal(digest(script), 'e3ed0ce19f80700fca6b6bb257723ab42be55bc7f90ed7b181b1c84bf5d61c13')
   assert.equal(digest(fixture), 'b6dc991c2ee7cc2f1542bb41d517a8b234e55a570b386f35d80019f7912bef2b')
   const result = spawnSync('python3', [fixture, '-q'], {
     cwd: resolve('.'),

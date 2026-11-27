@@ -5,13 +5,13 @@ import { spawnSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { test } from 'node:test'
 
-test('50-pass research-only importer remains atomic, private and fail-closed', { timeout: 30_000 }, () => {
+test('50-pass research-only importer remains atomic, private and fail-closed', { timeout: 60_000 }, () => {
   const source = resolve('scripts/official-truth-50-pass-import.py')
   const fixture = resolve('scripts/official-truth-50-pass-import.test.py')
   const result = spawnSync('python3', [fixture, '-q'], {
     cwd: resolve('.'),
     encoding: 'utf8',
-    timeout: 20_000,
+    timeout: 45_000,
     maxBuffer: 128 * 1024,
     env: {
       PATH: process.env.PATH ?? '/usr/bin:/bin',
@@ -25,6 +25,6 @@ test('50-pass research-only importer remains atomic, private and fail-closed', {
   assert.equal(result.error, undefined, 'Python3 is mandatory for this reviewed offline runner')
   assert.equal(result.signal, null)
   assert.equal(result.status, 0, '50-pass importer synthetic failure: ' + (result.stderr ?? '').slice(-1000))
-  assert.match(result.stderr ?? '', /Ran 34 tests/)
+  assert.match(result.stderr ?? '', /Ran 36 tests/)
   assert.match(result.stderr ?? '', /\bOK\b/)
 })

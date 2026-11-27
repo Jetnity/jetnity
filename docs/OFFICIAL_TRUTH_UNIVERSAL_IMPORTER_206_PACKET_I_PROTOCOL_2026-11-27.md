@@ -1,5 +1,22 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Harte Lesefehler bleiben STOP, NO-GO auf f6a201bae
+
+Ein fehlender Zielindex darf ein expliziter Abwesenheitsbeleg sein. Ein Symlink, eine Datei über dem Grössenlimit, ein PermissionError oder ein I/O-Fehler wird nicht in einen HOLD-Beleg umgeschrieben. Dieselbe Grenze gilt in der Diagnose: ungültiges JSON und eine fehlende Datei bleiben lokale Befunde, eine Pfad- oder Integritätsstörung bricht ab.
+
+Ein Schema-2-Siegel ohne Paket muss `priorityFileSha256` null und `priorityBound` falsch haben. Gibt es Pakete, kommt der Prioritätswert aus den verifizierten Paketmanifesten. Ein gepinntes Archiv muss zusätzlich den CSV-Pin tragen. Ein Fixture darf einen eigenen Dateihash tragen, aber nicht einen frei behaupteten Siegelwert.
+
+Der bestehende All-HOLD-Lauf bleibt. Zusätzlich läuft ein gemischter 206er-Lauf mit 10'300 vorhandenen synthetischen Slices, gültigen Zielen vor und nach Position 17 und 40, lokalen Holds, Prepare, Resume, Verify und redigierter Diagnose. Gesperrte Ziele haben kein Paket und keinen freigabefähigen Kandidaten. `legalEvidence` bleibt 0.
+
+Ausführungsskripte dieses Stands, SHA-256:
+
+- `official-truth-50-pass-import.py` `a289a080bbd7e4b4f619850ef5e2ba3ecf0e50875e126886f31f555cde2c368d`
+- `official-truth-research-package.py` `e3ed0ce19f80700fca6b6bb257723ab42be55bc7f90ed7b181b1c84bf5d61c13`
+- `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
+- `official-truth-local-offline-run.py` `494c7f0f875440eb4ea402defc12a4d290981712124a0fc7607a426f5cfb1dfa`
+
+Lokal, ohne Archiv: Forschungsadapter 44 Tests, Gap-Audit 6, Importer 36, alle OK. `import` endet mit Exit 2. Die CI dieses Heads wird erst nach dem Push belegt.
+
 ## Zielsperre statt Abbruch, lokaler BLOCKED-Lauf auf b86e73b42
 
 Der lokale Lauf auf `b86e73b42` endete in Prepare mit `ambiguous_split_and_legacy`, nachdem 16 Journalziele geschrieben waren. Dieser Grund fehlte im Chargenvertrag, darum wurde das Ziel nicht gesperrt, sondern der ganze Lauf abgebrochen. Die abgebrochene Charge und die Charge von `ebe14868c` bleiben unverändert. Ein neuer Lauf braucht einen neu abgenommenen Head und eine neue, getrennte Charge.

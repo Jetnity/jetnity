@@ -868,6 +868,16 @@ class RealAdapterHoldTests(unittest.TestCase):
         self.assertEqual(second, first)
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
         self.assertEqual(b.verify(out, self.adapter, identity), first)
+        saved = (out / "manifest.json").read_bytes()
+        seal["priorityFileSha256"] = "ab" * 32
+        seal["priorityBound"] = True
+        (out / "manifest.json").write_text(json.dumps(seal) + "\n")
+        with self.assertRaisesRegex(ValueError, "quarantine_priority_drift"):
+            b.verify(out, self.adapter, identity)
+        (out / "manifest.json").write_bytes(saved)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
+        seal = json.loads(saved)
         diagnosis = self.adapter["diagnose"](root)
         self.assertEqual(diagnosis["legalEvidenceSlots"], 0)
         self.assertEqual(diagnosis["pairsExamined"], 206 * 50)
@@ -944,6 +954,134 @@ class RealAdapterHoldTests(unittest.TestCase):
         self.assertEqual(second, first)
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
         self.assertEqual(b.verify(out, self.adapter, identity), first)
+        saved = (out / "manifest.json").read_bytes()
+        forged = json.loads(saved)
+        forged["priorityFileSha256"] = "ab" * 32
+        forged["priorityBound"] = True
+        (out / "manifest.json").write_text(json.dumps(forged) + "\n")
+        with self.assertRaisesRegex(ValueError, "priority_pass_refused"):
+            b.verify(out, self.adapter, identity)
+        (out / "manifest.json").write_bytes(saved)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
+
+    def test_hard_read_errors_are_not_rewritten_as_holds(self):
+        countries = ["AT", "IT"]
+        root = self.base / "hard"
+        _synthetic_research_root(root, countries, valid=set(), migrations={"AT": None}, slice_holds=set())
+        tracker = (root / "tracker.csv").read_text()
+        (root / "tracker.csv").write_text(tracker + "IT,IN,records/dest/IT/IN.json,ja\n")
+        index = root / "records/dest/IT/index.json"
+        target = self.base / "index-target.json"
+        target.write_text("{}\n")
+        index.unlink()
+        index.symlink_to(target)
+        out = self.base / "hard-out"
+        identity = b.charge_identity("d1" * 32, out, countries)
+        with self.assertRaisesRegex(ValueError, "input_symlink"):
+            b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertTrue((out / "blocked" / "AT.json").is_file())
+        self.assertFalse((out / "blocked" / "IT.json").exists())
+        self.assertFalse((out / "packages" / "IT").exists())
+        index.unlink()
+        index.write_text('{"schema":"not-a-documented-schema"}\n')
+        real_read = self.adapter["read_file"]
+
+        def refuse(relative, code):
+            def wrapped(root_path, name, max_bytes):
+                if name == relative:
+                    if code == "permission":
+                        raise PermissionError(13, "denied")
+                    if code == "eio":
+                        raise OSError(5, "eio")
+                    raise ValueError(code)
+                return real_read(root_path, name, max_bytes)
+            return wrapped
+
+        for code in ("permission", "eio", "input_size_limit"):
+            failed = self.base / f"hard-{code}"
+            self.adapter["read_file"] = refuse("records/dest/IT/index.json", code)
+            try:
+                with self.assertRaises((PermissionError, OSError, ValueError)) as caught:
+                    b.prepare_resumable(root, failed, countries, self.adapter,
+                                        identity=b.charge_identity("d2" * 32, failed, countries))
+            finally:
+                self.adapter["read_file"] = real_read
+            if code == "input_size_limit":
+                self.assertEqual(str(caught.exception), "input_size_limit")
+            self.assertFalse((failed / "blocked" / "IT.json").exists())
+        index.unlink()
+        report = self.adapter["diagnose"](root)
+        self.assertIn("index_unreadable", [row["code"] for row in report["findings"] if row["destination"] == "IT"])
+        slice_path = root / "records/dest/AT/IN.json"
+        slice_path.unlink()
+        slice_path.symlink_to(target)
+        with self.assertRaisesRegex(ValueError, "input_symlink"):
+            self.adapter["diagnose"](root)
+
+    def test_mixed_catalog_prepares_resumes_verifies_and_diagnoses(self):
+        countries = list(b.ORDER)
+        early, after_seventeen, after_forty = countries[1], countries[18], countries[41]
+        held_early, held_late = countries[16], countries[40]
+        slice_hold = countries[20]
+        self.assertLess(countries.index(early), 17)
+        self.assertGreater(countries.index(after_seventeen), 17)
+        self.assertGreater(countries.index(after_forty), 40)
+        self.assertTrue({early, after_seventeen, after_forty, held_early, held_late, slice_hold}.isdisjoint(b.STRUCTURAL_HOLDS))
+        root = self.base / "mixed"
+        _synthetic_research_root(
+            root, countries, valid={early, after_seventeen, after_forty},
+            migrations={held_early: None, held_late: []}, slice_holds={slice_hold})
+        pairs = [path for path in (root / "records/dest").glob("*/*.json") if path.stem in PASSPORTS]
+        self.assertEqual(len(pairs), 206 * 50)
+        originals = {
+            held_early: (root / "records/dest" / f"{held_early}.json").read_bytes(),
+            held_late: (root / "records/dest" / held_late / "index.json").read_bytes(),
+        }
+        out = self.base / "mixed-out"
+        identity = b.charge_identity("d3" * 32, out, countries)
+        first = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(first["destinations"], 3)
+        self.assertEqual(first["blockedCountries"], 203)
+        self.assertEqual(first["accepted"], 0)
+        self.assertEqual(first["published"], 0)
+        self.assertEqual(sorted(path.name for path in (out / "packages").iterdir() if path.is_dir()),
+                         sorted((early, after_seventeen, after_forty)))
+        self.assertFalse((out / "packages" / held_early).exists())
+        self.assertFalse((out / "packages" / slice_hold).exists())
+        seal = json.loads((out / "manifest.json").read_text())
+        reasons = {row["country"]: row["reason"] for row in seal["blocked"]}
+        self.assertEqual(reasons[held_early], "ambiguous_split_and_legacy")
+        self.assertEqual(reasons[held_late], "ambiguous_split_and_legacy")
+        self.assertEqual(reasons[slice_hold], "slice_identity")
+        self.assertEqual(reasons["HR"], "unsplit_research_frame_not_importable")
+        self.assertEqual(seal["legalEvidenceSlots"], 0)
+        self.assertTrue(seal["priorityBound"])
+        journal = (out / "checkpoint.jsonl").read_bytes()
+        self.assertEqual(journal.count(b"\n"), 206)
+        self.assertEqual((root / "records/dest" / f"{held_early}.json").read_bytes(), originals[held_early])
+        self.assertEqual((root / "records/dest" / held_late / "index.json").read_bytes(), originals[held_late])
+        second = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(second, first)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        redacted = local._redacted_diagnosis(root)
+        self.assertEqual(redacted["status"], "collected")
+        self.assertEqual(redacted["legalEvidenceSlots"], 0)
+        self.assertEqual(redacted["pairsExamined"], 206 * 50)
+        self.assertEqual(sum(redacted["profileStatus"].values()), 206 * 50)
+        self.assertNotIn("findings", redacted)
+        self.assertNotIn("candidates", redacted)
+        diagnosis = self.adapter["diagnose"](root)
+        self.assertEqual(diagnosis["legalEvidenceSlots"], 0)
+        self.assertEqual(diagnosis["published"], 0)
+        blocked = {held_early, held_late, slice_hold, "HR", "NL", countries[30]}
+        self.assertFalse(any(row["destination"] in blocked and row.get("holdStatus") == ["none"]
+                             for row in diagnosis["candidates"]))
+        self.assertFalse(any(row["destination"] in blocked and row.get("legalEvidence") is True
+                             for row in diagnosis["candidates"]))
+        self.assertEqual((root / "records/dest" / f"{held_early}.json").read_bytes(), originals[held_early])
 
 
 def _research_tree_archive(path: Path) -> None:

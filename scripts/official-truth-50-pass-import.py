@@ -284,6 +284,26 @@ def _charge_markers(root: Path, seal: dict) -> bool:
     return False
 
 
+def _require_priority(root: Path, adapter, seal: dict, prepared: dict, priority, identity: dict) -> None:
+    """The priority claim comes from the prepared packages, not from the seal alone.
+
+    No package means there is no priority pass. A pinned archive must match the
+    pinned CSV. A fixture may carry its own file hash, and that hash still has
+    to be the one inside the verified package manifests.
+    """
+    if not prepared:
+        require(priority is None and seal.get("priorityBound") is False, "priority_pass_refused")
+        return
+    seen = set()
+    for country in prepared:
+        package = manifest_at(root / "packages" / country, adapter)
+        seen.add(package["inputHashes"]["passportPriority"])
+    require(len(seen) == 1 and priority == next(iter(seen)) and seal.get("priorityBound") is True,
+            "priority_pass_refused")
+    if identity.get("archiveSha256") in ACCEPTED_ARCHIVE_SHA256:
+        require(priority == PRIORITY_CSV_SHA256, "priority_csv_sha")
+
+
 def _verify_charge(root: Path, seal: dict, identity: dict) -> None:
     """Recompute the charge from the checkout, path, and journal. Do not trust the seal alone.
 
@@ -393,7 +413,7 @@ def _verify_locked(root: Path, adapter, identity: dict | None, locked: bool) -> 
         require(identity is not None, "charge_identity_missing")
         require(seal.get("schema") == 2 and seal.get("sealVersion") == 2, "schema_downgrade_refused")
         require(seal.get("legalEvidenceSlots") == 0, "legal_evidence_refused")
-        require(seal.get("priorityBound") is (priority is not None), "priority_pass_refused")
+        _require_priority(root, adapter, seal, prepared, priority, identity)
         require(locked, "charge_lock_missing")
         _verify_charge(root, seal, identity)
         return expected
@@ -870,9 +890,13 @@ def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter,
 
 
 def _hold_payload(adapter, source: Path, country: str, reason: str) -> bytes:
+    """Keep the original index bytes. Only a missing index file becomes an explicit absence receipt.
+
+    A symlink, size limit, permission error, or I/O error is not rewritten into a hold.
+    """
     try:
         return adapter["read_file"](source, f"records/dest/{country}/index.json", 8 * 1024 * 1024)
-    except (OSError, ValueError, KeyError, TypeError):
+    except FileNotFoundError:
         return json.dumps({"destination": country, "reason": reason, "originalIndex": False},
                           separators=(",", ":")).encode()
 

@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, harte Lesefehler bleiben STOP
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `f6a201bae`. Keine neue Archivlesung. Die Chargen von `ebe14868c` und `b86e73b42` bleiben historisch. Kein Ready, kein Merge.
+
+- Ein fehlender Index kann ein HOLD-Beleg sein. Symlink, Grössenlimit, Permission und I/O bleiben STOP, auch in der Diagnose. Ein Siegel ohne Paket kann keinen Priority-PASS behaupten.
+- Ein gemischter 206er-Lauf mit 10'300 synthetischen Slices prüft Prepare, Resume, Verify und die redigierte Diagnose. Lokal: Forschungsadapter 44, Gap-Audit 6, Importer 36, alle OK. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, Legacy ohne Migration ist eine Zielsperre
 
 Gleicher Branch, gleicher Draft #1323, nach dem lokalen BLOCKED auf `b86e73b42`. Keine neue Archivlesung. Die Charge von `ebe14868c` und die abgebrochene Charge bleiben historisch. Kein Ready, kein Merge.
