@@ -1,6 +1,6 @@
 # Paket I – Auftrag an den Work-Chat «Jetnity-Aufgabe übernehmen»
 
-Stand nach der Korrekturrunde. Dieser Text ist der Ablauf. Er wird erst ausgeführt, nachdem der Technical Lead den neuen Head von Draft #1323 unabhängig abgenommen hat. Vorher kein Archivlauf.
+Stand nach der Korrekturrunde. Dieser Text ist der Ablauf. Er wird erst ausgeführt, nachdem der Technical Lead den neuen Head von Draft #1323 unabhängig abgenommen hat. Der abgebrochene Lauf auf `b86e73b42` und die Charge von `ebe14868c` werden nicht wiederverwendet. Vorher kein Archivlauf. Die einmalige Backup-Ausnahme gilt nur, wenn der nächste Lauf ausdrücklich freigegeben wird. Sie ändert das technische Gate nicht.
 
 ## Grenzen
 

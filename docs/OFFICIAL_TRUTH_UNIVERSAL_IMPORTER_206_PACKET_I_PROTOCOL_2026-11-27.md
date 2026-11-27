@@ -1,5 +1,37 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Zielsperre statt Abbruch, lokaler BLOCKED-Lauf auf b86e73b42
+
+Der lokale Lauf auf `b86e73b42` endete in Prepare mit `ambiguous_split_and_legacy`, nachdem 16 Journalziele geschrieben waren. Dieser Grund fehlte im Chargenvertrag, darum wurde das Ziel nicht gesperrt, sondern der ganze Lauf abgebrochen. Die abgebrochene Charge und die Charge von `ebe14868c` bleiben unverändert. Ein neuer Lauf braucht einen neu abgenommenen Head und eine neue, getrennte Charge.
+
+Eine fehlende, `null` oder nicht als Objekt gebundene Migration wird nicht ergänzt und wählt weder Split noch Legacy. Sie ist eine Zielsperre. Dieselbe Prüfung gilt in `prepare` und `diagnose`. Das gesperrte Ziel bekommt kein Paket und keinen Kandidaten. Das Journal erhält genau ein Glied. Die folgenden Ziele laufen weiter.
+
+Nur zielgebundene Datenbefunde werden nach bestandener Archiv-, CSV-, Tracker-, Katalog- und Root-Prüfung als HOLD übernommen. Ein unbekannter Fehler bleibt STOP. Symlink, Hardlink, Pfad, Pin, Schema, Kapazität, Journal, Lock und Ausgabe bleiben STOP.
+
+| Code | Herkunft | Entscheidung | Test |
+|---|---|---|---|
+| `ambiguous_split_and_legacy` | Legacy-Datei ohne gebundene Migration, auch `null`/Liste/Text | HOLD | realer Adapter, Prepare/Resume/Verify/Diagnose |
+| `slice_identity`, `slice_authority`, `slice_research_date` | Slice-Form des Ziels | HOLD | `slice_identity` im gemischten Lauf; die anderen Codes im selben Vertrag |
+| `sources_shape`, `source_ref_identity`, `conflict_undeclared` | Quellen und Konfliktdeklaration des Ziels | HOLD | Vertrag; `conflict_undeclared` im Forschungsadapter |
+| `slice_absent`, `slice_parse_error`, `index_unreadable` | fehlende oder unlesbare Zieldatei | HOLD | Umwandlung im Zielpfad; globale Dateien bleiben STOP |
+| `frame_authority_boundary`, `extra_slice_identity`, `unexpected_extra_slice` | Rahmen oder Extra des Ziels | HOLD | Vertrag |
+| `index_*`, `split_frame_identity`, `unknown_index_schema` | Indexform des Ziels | HOLD | bisherige Tests und der 206er-Lauf |
+| `tracker_*` | Trackerzeilen dieses Ziels | HOLD | bisherige Tests |
+| `input_symlink`, `invalid_relative_path`, `input_size_limit`, `package_size_limit` | Pfad, Symlink, Kapazität | STOP | bisherige Schutztests |
+| `schema_identity`, `schema_core_changed`, `invalid_passports`, `tracker_columns` | globale Inventardateien | STOP | nicht in den HOLD-Code übernommen |
+| `not_a_structural_hold` und jeder andere unbekannte Code | Programm- oder nicht klassifizierter Fehler | STOP | `test_unknown_adapter_error_still_stops` |
+
+Der 206er-Lauf mit 10'300 synthetischen Paaren sperrt jedes Ziel, einschliesslich Position 17 und einer späteren Position. `priorityBound` ist falsch, `legalEvidenceSlots` ist 0. Das ist kein Priority-PASS.
+
+Ausführungsskripte dieses Stands, SHA-256:
+
+- `official-truth-50-pass-import.py` `9418677aced9e6b48344cc8166c56967ba3e348f0de0fec370d6b504dc664718`
+- `official-truth-research-package.py` `070eafe9623b4c1dcbf735ef1cb85f82ae04980fe92b0830f6eee689d82e3f52`
+- `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
+- `official-truth-local-offline-run.py` `494c7f0f875440eb4ea402defc12a4d290981712124a0fc7607a426f5cfb1dfa`
+
+Lokal, ohne Archiv: Forschungsadapter 44 Tests, Gap-Audit 6, Importer 34, alle OK. `import` endet mit Exit 2. Die CI dieses Heads wird erst nach dem Push belegt.
+
 ## Nachkorrektur der Feldtypen, NO-GO auf bb0ad342e
 
 - Ein Slice-Status, der kein String ist, wird als `slice_identity` gehalten. Die Mitgliedschaft im Statusset wird nicht auf einem Array oder Objekt ausgeführt. `prepare` lehnt denselben Wert mit `slice_identity` ab.

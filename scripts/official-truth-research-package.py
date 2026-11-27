@@ -552,25 +552,24 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
     require(all(k in tracker_header for k in ("dest_id", "nationality", "record_pointer")), "tracker_columns")
     by_nat = unique_rows(tracker, destination, passports)
     split_path = f"records/dest/{destination}/index.json"
-    frame_bytes = read_file(root, split_path)
-    frame = strict_json(frame_bytes)
+    try:
+        frame_bytes = read_file(root, split_path)
+    except FileNotFoundError:
+        raise ValueError("index_unreadable") from None
+    try:
+        frame = strict_json(frame_bytes)
+    except ValueError:
+        raise ValueError("index_unreadable") from None
     expected_files, index_notes, declared_hashes = index_binding(frame, destination, passports)
     require(frame.get("external_writes", []) == [] and not has_forbidden(frame), "frame_authority_boundary")
     # An old unsplit copy is allowed ONLY with the archive's explicit migration declaration.
     legacy = f"records/dest/{destination}.json"
     legacy_receipt = None
     if (root / legacy).exists():
-        migration = frame.get("migration", {})
-        typed_legacy = (migration.get("from") == legacy and migration.get("unsplit_preserved_0444") is True
-                        and migration.get("to") == f"{split_path} + records/dest/{destination}/{{NAT}}.json")
-        mapped_legacy = (migration.get("legacy_files_remain") is True
-                         and migration.get("from_schema") in (SCHEMA, "jetnity-entry-requirements-research-v2.1")
-                         and migration.get("to_schema") == SCHEMA
-                         and isinstance(migration.get("method"), str) and migration["method"].startswith("split existing ")
-                         and isinstance(migration.get("legacy_freeze"), str) and bool(migration["legacy_freeze"].strip()))
-        require(typed_legacy or mapped_legacy, "ambiguous_split_and_legacy")
+        shape = migration_shape(frame, destination)
+        require(shape is not None, "ambiguous_split_and_legacy")
         legacy_receipt = {"path": legacy, "sha256": sha(read_file(root, legacy)),
-                          "use": "preserved_not_selected", "migrationShape": "explicit_typed" if typed_legacy else "mapped_legacy"}
+                          "use": "preserved_not_selected", "migrationShape": shape}
     evidence: dict[str, bytes] = {
         "original/record-schema.json": schema_bytes,
         "original/passport-priority.csv": csv_bytes,
@@ -587,12 +586,18 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
     source_count = 0
     for nat, file in zip(passports, expected_files):
         require(by_nat[nat]["record_pointer"] == file, "tracker_pointer_mismatch")
-        data = read_file(root, file)
+        try:
+            data = read_file(root, file)
+        except FileNotFoundError:
+            raise ValueError("slice_absent") from None
         declared = declared_hashes.get(nat)
         if declared is not None:
             require(declared == sha(data), "index_hash_mismatch")
         require(sum(len(b) for b in evidence.values()) + len(data) <= 64*1024*1024, "package_size_limit")
-        record = strict_json(data)
+        try:
+            record = strict_json(data)
+        except ValueError:
+            raise ValueError("slice_parse_error") from None
         require(isinstance(record, dict) and _slice_schema_ok(record.get("schema"))
                 and _slice_status_ok(record.get("status")) and record.get("nationality") == nat
                 and record.get("destination_iso2") == destination, "slice_identity")
@@ -844,12 +849,18 @@ def pinned_destinations() -> tuple[str, ...]:
     return _PINNED_DESTINATIONS
 
 
-def _legacy_declared(frame: dict, destination: str) -> bool:
+def migration_shape(frame: dict, destination: str) -> str | None:
+    """Return the explicit migration shape, or None when it is missing or not a bound dict.
+
+    A null, list, string or other non-dict is not rewritten into a migration.
+    """
+    if not isinstance(frame, dict) or "migration" not in frame:
+        return None
+    migration = frame["migration"]
+    if not isinstance(migration, dict):
+        return None
     legacy = f"records/dest/{destination}.json"
     split_path = f"records/dest/{destination}/index.json"
-    migration = frame.get("migration", {})
-    if not isinstance(migration, dict):
-        return False
     typed = (migration.get("from") == legacy and migration.get("unsplit_preserved_0444") is True
              and migration.get("to") == f"{split_path} + records/dest/{destination}/{{NAT}}.json")
     mapped = (migration.get("legacy_files_remain") is True
@@ -857,7 +868,15 @@ def _legacy_declared(frame: dict, destination: str) -> bool:
               and migration.get("to_schema") == SCHEMA
               and isinstance(migration.get("method"), str) and migration["method"].startswith("split existing ")
               and isinstance(migration.get("legacy_freeze"), str) and bool(migration["legacy_freeze"].strip()))
-    return typed or mapped
+    if typed:
+        return "explicit_typed"
+    if mapped:
+        return "mapped_legacy"
+    return None
+
+
+def _legacy_declared(frame: dict, destination: str) -> bool:
+    return migration_shape(frame, destination) is not None
 
 
 def _slice_schema_ok(value) -> bool:

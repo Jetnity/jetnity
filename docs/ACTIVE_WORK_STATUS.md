@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, Legacy ohne Migration ist eine Zielsperre
+
+Gleicher Branch, gleicher Draft #1323, nach dem lokalen BLOCKED auf `b86e73b42`. Keine neue Archivlesung. Die Charge von `ebe14868c` und die abgebrochene Charge bleiben historisch. Kein Ready, kein Merge.
+
+- `ambiguous_split_and_legacy` und die übrigen zielgebundenen Adapterbefunde werden als HOLD protokolliert. Ein unbekannter Fehler bleibt STOP. Ein Lauf über alle 206 Ziele mit 10'300 synthetischen Paaren sperrt jedes Ziel, ohne einen Priority-PASS zu setzen.
+- Lokal: Forschungsadapter 44, Gap-Audit 6, Importer 34, alle OK. `import` Exit 2. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, Diagnose bricht bei Feldtypen nicht ab
 
 Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `bb0ad342e`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.

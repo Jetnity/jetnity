@@ -751,6 +751,201 @@ class ImportTests(unittest.TestCase):
             restore()
 
 
+PASSPORTS = ("IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR "
+              "GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL").split()
+
+
+def _research_record(adapter, country: str, nationality: str) -> dict:
+    record = {key: {} for key in adapter["CORE"]}
+    record.update({
+        "schema": adapter["SCHEMA"], "status": "RESEARCH_ONLY", "nationality": nationality,
+        "destination_iso2": country, "researched_at": "2026-11-12T20:00:00+01:00",
+        "sources": [{"ref": "S1", "role": "primary_destination_official",
+                     "url": "https://example.invalid/source", "retrieved_at": "2026-11-12T20:00:00+01:00"}],
+        "conflicts": [], "cross_check_result": "no_second_source", "external_writes": [],
+    })
+    return record
+
+
+def _research_index(adapter, country: str) -> dict:
+    return {
+        "schema": adapter["SCHEMA"], "status": "RESEARCH_ONLY", "dest_id": country,
+        "destination_iso2": country, "file_layout": "split", "external_writes": [],
+        "expected_nationality_slices": PASSPORTS,
+        "slice_files": [f"records/dest/{country}/{code}.json" for code in PASSPORTS],
+        "slices_by_nationality": {code: index for index, code in enumerate(PASSPORTS)},
+        "nationality_slices": [{"nationality": code, "file": f"records/dest/{country}/{code}.json"}
+                               for code in PASSPORTS],
+        "migration": {"from": f"records/dest/{country}.json", "unsplit_preserved_0444": True,
+                      "to": f"records/dest/{country}/index.json + records/dest/{country}/{{NAT}}.json"},
+    }
+
+
+def _synthetic_research_root(root: Path, countries: list[str], valid: set[str], migrations: dict,
+                             slice_holds: set[str]) -> None:
+    """Synthetic pairs only. This is not the Mac archive."""
+    adapter = b.original_adapter()
+    root.mkdir(parents=True)
+    (root / "record-schema.json").write_text(json.dumps({
+        "schema": adapter["SCHEMA"], "status": "RESEARCH_ONLY",
+        "nationality_slice": {"mandatory_core_fields": list(adapter["CORE"])},
+    }) + "\n")
+    (root / "passport-priority.csv").write_text(
+        "rank,nationality_iso2\n" + "".join(f"{index + 1},{code}\n" for index, code in enumerate(PASSPORTS)))
+    tracker = ["dest_id,nationality,record_pointer,conflict"]
+    dest = root / "records" / "dest"
+    dest.mkdir(parents=True)
+    for country in countries:
+        folder = dest / country
+        folder.mkdir()
+        tracker.extend(f"{country},{code},records/dest/{country}/{code}.json," for code in PASSPORTS)
+        if country in valid:
+            index = _research_index(adapter, country)
+            index.pop("migration")
+            (folder / "index.json").write_text(json.dumps(index) + "\n")
+            for code in PASSPORTS:
+                (folder / f"{code}.json").write_text(json.dumps(_research_record(adapter, country, code)) + "\n")
+            continue
+        for code in PASSPORTS:
+            (folder / f"{code}.json").write_text("{}\n")
+        if country in b.STRUCTURAL_HOLDS:
+            (folder / "index.json").write_text(json.dumps({
+                "schema": adapter["SCHEMA"], "status": "RESEARCH_ONLY", "dest_id": country,
+                "destination_iso2": country,
+            }) + "\n")
+            continue
+        if country in slice_holds:
+            index = _research_index(adapter, country)
+            index.pop("migration")
+            (folder / "index.json").write_text(json.dumps(index) + "\n")
+            continue
+        if country in migrations:
+            index = _research_index(adapter, country)
+            index["migration"] = migrations[country]
+            (folder / "index.json").write_text(json.dumps(index) + "\n")
+            (dest / f"{country}.json").write_text('{"legacy":"synthetic"}\n')
+            continue
+        (folder / "index.json").write_text('{"schema":"not-a-documented-schema"}\n')
+    (root / "tracker.csv").write_text("\n".join(tracker) + "\n")
+
+
+class RealAdapterHoldTests(unittest.TestCase):
+    def setUp(self):
+        self.base = Path(tempfile.mkdtemp(prefix="jetnity-real-hold-"))
+        self.addCleanup(lambda: shutil.rmtree(self.base))
+        self.adapter = b.original_adapter()
+
+    def test_migration_hold_keeps_the_following_destination_and_one_journal_line(self):
+        countries = list(b.ORDER[:8])
+        root = self.base / "tree"
+        _synthetic_research_root(root, countries, valid={"IT"}, migrations={"AT": None, "FR": []},
+                                 slice_holds={"ES"})
+        original = (root / "records/dest/AT.json").read_bytes()
+        index_before = (root / "records/dest/AT/index.json").read_bytes()
+        out = self.base / "out"
+        identity = b.charge_identity("cd" * 32, out, countries)
+        first = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(first["published"], 0)
+        self.assertEqual(first["accepted"], 0)
+        self.assertEqual(first["blockedCountries"], 7)
+        self.assertEqual(first["destinations"], 1)
+        self.assertTrue((out / "packages" / "IT").is_dir())
+        self.assertFalse((out / "packages" / "AT").exists())
+        seal = json.loads((out / "manifest.json").read_text())
+        reasons = {row["country"]: row["reason"] for row in seal["blocked"]}
+        self.assertEqual(reasons["AT"], "ambiguous_split_and_legacy")
+        self.assertEqual(reasons["FR"], "ambiguous_split_and_legacy")
+        self.assertEqual(reasons["ES"], "slice_identity")
+        self.assertEqual(reasons["HR"], "unsplit_research_frame_not_importable")
+        self.assertEqual(reasons["NL"], "unsplit_research_frame_not_importable")
+        self.assertEqual(seal["legalEvidenceSlots"], 0)
+        self.assertEqual(seal["schema"], 2)
+        journal = (out / "checkpoint.jsonl").read_bytes()
+        self.assertEqual(journal.count(b"\n"), len(countries))
+        self.assertEqual((root / "records/dest/AT.json").read_bytes(), original)
+        self.assertEqual((root / "records/dest/AT/index.json").read_bytes(), index_before)
+        second = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(second, first)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
+        diagnosis = self.adapter["diagnose"](root)
+        self.assertEqual(diagnosis["legalEvidenceSlots"], 0)
+        self.assertEqual(diagnosis["pairsExamined"], 206 * 50)
+        self.assertFalse(any(row["destination"] == "AT" for row in diagnosis["candidates"]))
+        self.assertIn("ambiguous_split_and_legacy", [row["code"] for row in diagnosis["findings"] if row["destination"] == "AT"])
+        held = (out / "blocked" / "AT.json").read_bytes()
+        seal["blocked"][0]["reason"] = "tracker_row_conflict"
+        (out / "manifest.json").write_text(json.dumps(seal) + "\n")
+        with self.assertRaisesRegex(ValueError, "hold_reason_mismatch"):
+            b.verify(out, self.adapter, identity)
+        seal["blocked"][0]["reason"] = "ambiguous_split_and_legacy"
+        (out / "manifest.json").write_text(json.dumps(seal) + "\n")
+        (out / "blocked" / "AT.json").write_bytes(held + b" ")
+        with self.assertRaisesRegex(ValueError, "blocked_original_changed|hold_digest_mismatch"):
+            b.verify(out, self.adapter, identity)
+        (out / "blocked" / "AT.json").write_bytes(held)
+        binding = json.loads((out / "blocked" / "AT.charge.json").read_text())
+        binding["charge"]["archiveSha256"] = "ab" * 32
+        (out / "blocked" / "AT.charge.json").write_text(json.dumps(binding) + "\n")
+        with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch|unbound_package"):
+            b.verify(out, self.adapter, identity)
+
+    def test_unknown_adapter_error_still_stops(self):
+        countries = ["AT"]
+        root = self.base / "stop-tree"
+        _synthetic_research_root(root, countries, valid=set(), migrations={}, slice_holds=set())
+        out = self.base / "stop-out"
+        identity = b.charge_identity("ce" * 32, out, countries)
+        real = self.adapter["prepare"]
+
+        def explode(source, country, package):
+            raise ValueError("not_a_structural_hold")
+
+        self.adapter["prepare"] = explode
+        try:
+            with self.assertRaisesRegex(ValueError, "not_a_structural_hold"):
+                b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        finally:
+            self.adapter["prepare"] = real
+        self.assertFalse(out.exists())
+        self.assertTrue(callable(real))
+
+    def test_full_catalog_hold_is_bound_and_is_not_a_priority_pass(self):
+        countries = list(b.ORDER)
+        root = self.base / "catalog"
+        late = countries[16]
+        later = countries[40]
+        self.assertNotIn(late, b.STRUCTURAL_HOLDS)
+        self.assertNotIn(later, b.STRUCTURAL_HOLDS)
+        self.assertGreater(countries.index(later), 17)
+        _synthetic_research_root(root, countries, valid=set(), migrations={late: None, later: []}, slice_holds=set())
+        pairs = [path for path in (root / "records/dest").glob("*/*.json") if path.stem in PASSPORTS]
+        self.assertEqual(len(pairs), 206 * 50)
+        out = self.base / "catalog-out"
+        identity = b.charge_identity("cf" * 32, out, countries)
+        first = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(first["destinations"], 0)
+        self.assertEqual(first["blockedCountries"], 206)
+        self.assertEqual(first["passports"], 0)
+        self.assertEqual(first["accepted"], 0)
+        self.assertEqual(first["published"], 0)
+        seal = json.loads((out / "manifest.json").read_text())
+        self.assertEqual(seal["legalEvidenceSlots"], 0)
+        self.assertIsNone(seal["priorityFileSha256"])
+        self.assertFalse(seal["priorityBound"])
+        self.assertEqual(seal["destinationOrder"], countries)
+        reasons = {row["country"]: row["reason"] for row in seal["blocked"]}
+        self.assertEqual(reasons[late], "ambiguous_split_and_legacy")
+        self.assertEqual(reasons[later], "ambiguous_split_and_legacy")
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes().count(b"\n"), 206)
+        self.assertFalse(any((out / "packages" / country).exists() for country in countries))
+        journal = (out / "checkpoint.jsonl").read_bytes()
+        second = b.prepare_resumable(root, out, countries, self.adapter, identity=identity)
+        self.assertEqual(second, first)
+        self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
+
+
 def _research_tree_archive(path: Path) -> None:
     """A synthetic research inventory. It is not the Mac archive."""
     adapter = b.original_adapter()

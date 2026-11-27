@@ -42,12 +42,19 @@ EXECUTION_SCRIPTS = (
     "official-truth-index-gap-audit.py",
     "official-truth-local-offline-run.py",
 )
+# Destination-bound data findings. These are holds only after the pinned archive,
+# CSV, tracker, catalog and root checks have already succeeded. Anything not listed
+# here, including path, symlink, capacity, journal, lock and unknown errors, stops.
 STRUCTURAL_HOLD_CODES = frozenset((
     "tracker_row_conflict", "tracker_field_conflict", "tracker_conflict_flag", "tracker_coverage",
     "tracker_slice_conflict", "tracker_pointer_mismatch",
-    "slice_core", "index_priority_binding", "index_mapping", "index_pointer_identity",
+    "slice_core", "slice_identity", "slice_authority", "slice_research_date",
+    "sources_shape", "source_ref_identity", "conflict_undeclared",
+    "slice_absent", "slice_parse_error",
+    "index_priority_binding", "index_mapping", "index_pointer_identity",
     "index_hash_mismatch", "index_structure_unredacted", "unknown_index_schema",
-    "split_frame_identity",
+    "split_frame_identity", "index_unreadable", "frame_authority_boundary",
+    "ambiguous_split_and_legacy", "extra_slice_identity", "unexpected_extra_slice",
 ))
 HISTORICAL_PREFIX = ("AT", "IT", "FR", "ES", "PT", "GR", "HR", "NL", "GB", "US", "TR", "TH", "AE")
 STRUCTURAL_HOLDS = frozenset(("HR", "NL"))
@@ -385,6 +392,8 @@ def _verify_locked(root: Path, adapter, identity: dict | None, locked: bool) -> 
     if identity is not None or _charge_markers(root, seal):
         require(identity is not None, "charge_identity_missing")
         require(seal.get("schema") == 2 and seal.get("sealVersion") == 2, "schema_downgrade_refused")
+        require(seal.get("legalEvidenceSlots") == 0, "legal_evidence_refused")
+        require(seal.get("priorityBound") is (priority is not None), "priority_pass_refused")
         require(locked, "charge_lock_missing")
         _verify_charge(root, seal, identity)
         return expected
@@ -924,6 +933,7 @@ def _write_seal(dest: Path, destinations: list[str], priority, total: dict, rece
             "officialSourcesVerified": False, "sourceMonitoringActivated": False,
             "scope": "research-file validation, not source/legal verification",
             "destinationOrder": destinations, "priorityFileSha256": priority,
+            "priorityBound": priority is not None, "legalEvidenceSlots": 0,
             "counts": total, "packages": receipts, "blocked": blocked}
     if identity is not None:
         seal["charge"] = {key: identity[key] for key in IDENTITY_KEYS}

@@ -761,5 +761,18 @@ class PackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'conflict_undeclared'):
             a.prepare(self.root, 'AT', self.base/'conflict-type')
 
+    def test_untyped_migration_is_a_destination_hold_not_a_crash(self):
+        before = (self.root/'records/dest/AT.json').read_bytes()
+        for value in (None, [], 'text', 0):
+            self.change(self.dest/'index.json', lambda frame, value=value: frame.__setitem__('migration', value))
+            with self.assertRaisesRegex(ValueError, 'ambiguous_split_and_legacy'):
+                self.prepare()
+            self.assertFalse(self.output.exists())
+            report = a.diagnose(self.root)
+            self.assertIn('ambiguous_split_and_legacy', [row['code'] for row in report['findings'] if row['destination'] == 'AT'])
+            self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+            self.assertEqual(report['legalEvidenceSlots'], 0)
+            self.assertEqual((self.root/'records/dest/AT.json').read_bytes(), before)
+
 
 if __name__=='__main__': unittest.main()
