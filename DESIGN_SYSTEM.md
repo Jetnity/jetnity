@@ -561,6 +561,10 @@ Der Plan, ob die öffentlichen Seiten künftig auch dunkel werden, ist eine Prod
 
 **Deaktiviert.** Ein deaktivierter Knopf («Einreise anzeigen») zeigt `bg-muted`, `text-muted-foreground` und eine gestrichelte Kante statt `opacity: .6`; er ist damit auch ohne Farbe als nicht verfügbar erkennbar.
 
+**Kopfzeile bei grosser Schrift.** Ab einer Wurzelschrift von 24 px (`data-flow="true"`, gesetzt von `WorkspaceShell`) scrollt die Kopfzeile mit. Sie war dort `position: static`; `static` ignoriert `z-index`, das Profilmenü (`.workspace-account-panel`, absolut) lag unter dem Reisekopf (`z-index: 2`, `isolation: isolate`) und verdeckte «Anmelden» bei 150 % und 390 px. Jetzt `position: relative` (`components/workspace/workspace.css`): gleiches Layout, die Kopfzeile (`z-index: 41`) samt ihren Menüs liegt über dem Inhalt. Gefunden von der Schriftgrössen-Stufe der Zustandsmatrix, nicht von der Kontrastmessung.
+
+**Fokusring der Navigationspunkte (dunkel).** Navigationspunkte stehen im Abstand von 4 bis 6 px untereinander. Ein Ring mit `outline-offset: 3px` (Band 3 bis 6 px) reichte in die helle Oberkante des gewählten Nachbarn; Mint auf Mint, 1,03 : 1 bei 150 % Schrift (Reiseplan, Organisieren, Chromium 390 px dunkel). `.workspace-nav-link` und `.workspace-open-trip` im dunklen Thema haben deshalb `outline-offset: 1px` (`components/workspace/workspace-surfaces.css`): der Ring bleibt auf der eigenen Fläche des Punkts.
+
 **Abnahme.** `scripts/premium-redesign-a/auswahl-kontrast.mjs` misst jedes Element in jedem sichtbaren Zustand (normal, gewählt, ungewählt, hover, focus-visible, active, deaktiviert) im echten Browser; ein nicht herstellbarer Zustand ist OFFEN, nie PASS. Bildgründe werden an den Pixeln gemessen.
 
 ## 7. Responsive-Regeln

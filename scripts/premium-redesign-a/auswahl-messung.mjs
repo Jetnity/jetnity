@@ -420,17 +420,40 @@ export function installieren() {
   P.mitte = async (i) => {
     const element = P.element(i)
     if (!element) return null
-    element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
-    // Leaflet setzt das Scrollen seines Containers im nächsten Bild zurück; erst danach gilt die Lage des Elements.
-    await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+    // Leaflet setzt das Scrollen seines Containers im nächsten Bild zurück, und Abschnitte unterhalb rechnen ihre Höhe erst
+    // beim Heranscrollen aus (die Lage des Elements wandert dabei): so lange neu in die Mitte holen, bis Lage und
+    // Rollposition zwischen zwei Durchgängen gleich bleiben (Anschlag der Seite oder verschachtelter Rollbereich).
+    let letzte = ''
+    let gleich = 0
+    for (let durchgang = 0; durchgang < 14 && gleich < 1; durchgang += 1) {
+      element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+      await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+      const lage = element.getBoundingClientRect()
+      const stand = `${Math.round(lage.top * 10)}:${Math.round(lage.left * 10)}:${Math.round(window.scrollY * 10)}`
+      gleich = stand === letzte ? gleich + 1 : 0
+      letzte = stand
+    }
     // Ein umbrochener Inline-Link hat ein Hüllrechteck über mehrere Zeilen, dessen Mitte auf fremdem Text liegen kann:
     // dann zählt die erste Zeilenbox.
-    const zeilen = [...element.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0)
-    const r = zeilen.length > 1 ? zeilen[0] : element.getBoundingClientRect()
-    const x = r.left + r.width / 2
-    const y = r.top + r.height / 2
-    const oben = document.elementFromPoint(x, y)
-    return { x, y, erreichbar: Boolean(oben && (element === oben || element.contains(oben) || oben.contains(element))) }
+    const lesen = () => {
+      const zeilen = [...element.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0)
+      const r = zeilen.length > 1 ? zeilen[0] : element.getBoundingClientRect()
+      const x = r.left + r.width / 2
+      const y = r.top + r.height / 2
+      const oben = document.elementFromPoint(x, y)
+      return { x, y, erreichbar: Boolean(oben && (element === oben || element.contains(oben) || oben.contains(element))) }
+    }
+    let ergebnis = lesen()
+    // Ein fest stehender Knopf («Nach oben») kann ein Element an einer Rollposition verdecken. Eine Person rollt dann ein
+    // Stück weiter; erreichbar heisst: an irgendeiner Rollposition der Seite frei.
+    for (const anteil of [0.3, 0.5, 0.15, 0.7]) {
+      if (ergebnis.erreichbar) break
+      const seitenlage = element.getBoundingClientRect().top + window.scrollY
+      window.scrollTo({ top: Math.max(0, seitenlage - window.innerHeight * anteil), behavior: 'instant' })
+      await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+      ergebnis = lesen()
+    }
+    return ergebnis
   }
 
   /** Setzt den Auswahlzustand nur als Attribut (zeigt, wie das CSS auf ihn antwortet); die App-Logik bleibt unberührt. */

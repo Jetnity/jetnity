@@ -318,7 +318,12 @@ async function zustandHerstellen(seite, element, interaktion) {
   await zeigerParken(seite)
   await seite.evaluate(() => document.activeElement && document.activeElement !== document.body && document.activeElement.blur())
   // Jedes Element wird zuerst ins Sichtfeld geholt: Pixelmessungen auf Bild gelten nur für sichtbare Pixel.
-  const mitte = await seite.evaluate((i) => window.__pra.mitte(i), element.i)
+  let mitte = await seite.evaluate((i) => window.__pra.mitte(i), element.i)
+  // Eine Karte lädt nach und verschiebt die Seite: bis zu dreimal neu ins Sichtfeld holen, bevor ein Element als verdeckt gilt.
+  for (let versuch = 0; versuch < 3 && mitte && !mitte.erreichbar && interaktion !== 'normal' && interaktion !== 'fokus'; versuch += 1) {
+    await seite.waitForTimeout(300)
+    mitte = await seite.evaluate((i) => window.__pra.mitte(i), element.i)
+  }
   if (interaktion === 'normal') {
     await seite.waitForTimeout(40)
     await seite.evaluate(() => window.__pra.abwarten())
