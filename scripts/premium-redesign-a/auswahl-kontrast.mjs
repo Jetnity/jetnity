@@ -106,15 +106,15 @@ async function kontext(browserTyp, kombi, optionen) {
     ignoreHTTPSErrors: true,
   })
   await context.addInitScript(
-    ({ schluessel, wert, themaSchluessel, thema: wunsch, mitReise }) => {
+    ({ schluessel, wert, themaSchluessel, thema: wunsch, mitReise, wechsel }) => {
       try {
         if (mitReise) localStorage.setItem(schluessel, wert)
-        if (wunsch === 'dark') localStorage.setItem(themaSchluessel, 'dark')
+        if (wunsch === 'dark' || wechsel) localStorage.setItem(themaSchluessel, wechsel ? (wunsch === 'dark' ? 'light' : 'dark') : 'dark')
       } catch {
         /* blockierter Speicher */
       }
     },
-    { schluessel: REISE.schluessel, wert: REISE.roh, themaSchluessel: THEMA_SCHLUESSEL, thema, mitReise: optionen.mitReise },
+    { schluessel: REISE.schluessel, wert: REISE.roh, themaSchluessel: THEMA_SCHLUESSEL, thema, mitReise: optionen.mitReise, wechsel: THEMAWECHSEL },
   )
   if (schrift !== 100) {
     await context.addInitScript((prozent) => {
@@ -161,6 +161,38 @@ async function menueOeffnen(seite, telefon) {
   await seite.mouse.move(box.x + 30, box.y + 60)
   await seite.waitForTimeout(500)
   return true
+}
+
+const THEMA_BEZEICHNUNG = { light: /^Hell\b/, dark: /^Dunkel\b/ }
+const OHNE_THEMAWECHSEL = new Set(['startseite', 'entdecken', 'planen', 'menue', 'profil', 'menue-startseite', 'begleiter'])
+
+/**
+ * Themawechsel (`--themawechsel`): Die Seite startet im anderen Theme und wechselt über die echte Darstellungswahl
+ * (Menü bzw. Konto-Einstellungen) in das Ziel-Theme; gemessen wird erst nach dem Wechsel. Öffentliche Seiten haben
+ * keine Wahl (ADR zu Geltung von Hell und Dunkel) und werden nicht umgeschaltet.
+ */
+async function themaWechseln(seite, ansicht, kombi) {
+  const ziel = kombi.thema
+  const bereich = ansicht.id === 'einstellungen' ? seite.locator('.workspace-content') : seite
+  const knopf = () => bereich.getByRole('button', { name: THEMA_BEZEICHNUNG[ziel] }).filter({ visible: true })
+  if (ansicht.id !== 'einstellungen') {
+    if (kombi.breite.telefon) await seite.locator('button[aria-controls="workspace-navigation"]').first().click()
+    else {
+      const box = await seite.locator('.workspace-sidebar').first().boundingBox()
+      if (box) await seite.mouse.move(box.x + 30, box.y + 60)
+    }
+    await seite.waitForTimeout(500)
+  }
+  if (!(await knopf().count())) return `Darstellungswahl «${ziel}» nicht gefunden`
+  await knopf().first().click()
+  await seite.waitForTimeout(500)
+  if (ansicht.id !== 'einstellungen') {
+    if (kombi.breite.telefon) await seite.keyboard.press('Escape')
+    else await seite.mouse.move(1, 1)
+    await seite.waitForTimeout(500)
+  }
+  const stand = await seite.evaluate(() => document.querySelector('.workspace-shell')?.getAttribute('data-workspace-theme') ?? document.documentElement.getAttribute('data-workspace-theme'))
+  return stand === ziel ? null : `Themawechsel nicht wirksam (Stand «${stand}», erwartet «${ziel}»)`
 }
 
 /** Öffnet die Ansicht. Gibt den Wurzelselektor zurück, auf den sich das Inventar beschränkt (Überlagerungen). */
@@ -602,8 +634,17 @@ async function ansichtMessen(browserTyp, kombi, ansicht) {
   let hinweis = null
   try {
     const stand = await ansichtHerstellen(seite, ansicht, kombi)
+    let wechselProblem = null
+    if (THEMAWECHSEL && !stand.offen) {
+      wechselProblem = OHNE_THEMAWECHSEL.has(ansicht.id)
+        ? 'kein Themawechsel möglich (öffentliche Seiten und Überlagerungen haben keine Darstellungswahl)'
+        : await themaWechseln(seite, ansicht, kombi)
+    }
     if (stand.offen) {
       hinweis = `OFFEN: ${stand.offen}`
+    } else if (wechselProblem) {
+      // Der Wechsel gelang nicht oder ist nicht möglich: nichts messen, ein Wert im falschen Theme wäre kein Beleg.
+      hinweis = `OFFEN: ${wechselProblem}`
     } else {
       if (OHNE_JS && ansicht.quelle === 'konto') {
         await seite.evaluate(() => {
@@ -673,7 +714,7 @@ async function main() {
   await Promise.all(Array.from({ length: Math.max(1, PARALLEL) }, arbeiter))
   for (const typ of Object.values(browser)) await typ.close()
   const kopf = { etikett: ETIKETT, commit: COMMIT, basis: BASIS, basisWebkit: BASIS_WEBKIT, konto: KONTO || null, jetzt: JETZT, zeitzone: ZEITZONE, modus: { echt: ECHT, ohneJs: OHNE_JS, themawechsel: THEMAWECHSEL }, erzeugt: new Date().toISOString() }
-  const ziel = join(ordner, `zustandsmatrix${OHNE_JS ? '-ohne-js' : ''}${ECHT ? '-echt' : ''}.json`)
+  const ziel = join(ordner, `zustandsmatrix${OHNE_JS ? '-ohne-js' : ''}${ECHT ? '-echt' : ''}${THEMAWECHSEL ? '-themawechsel' : ''}.json`)
   let bisher = []
   if (existsSync(ziel)) bisher = JSON.parse(readFileSync(ziel, 'utf8')).ergebnisse ?? []
   const neu = new Set(ergebnisse.map((e) => `${e.ansicht}|${e.kombination}`))
