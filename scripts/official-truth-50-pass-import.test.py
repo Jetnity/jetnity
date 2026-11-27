@@ -1,9 +1,13 @@
 """Synthetic tests: 50-pass research imports cannot publish or partially complete."""
 import importlib.util
+import io
 import json
 import multiprocessing
 from pathlib import Path
 import shutil
+import subprocess
+import sys
+import tarfile
 import tempfile
 import time
 import unittest
@@ -157,7 +161,7 @@ class ImportTests(unittest.TestCase):
 
     def test_checkpoint_is_append_only_idempotent_and_conflicts(self):
         checkpoint = self.base / "checkpoint.jsonl"
-        identity = b.charge_identity("ab" * 32, "checkpoint", ["AT", "IT", "FR"])
+        identity = b.charge_identity("ab" * 32, self.base / "checkpoint-id", ["AT", "IT", "FR"])
         event = {**identity, "destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
                  "accepted": 0, "published": 0}
         self.assertTrue(b.append_checkpoint(checkpoint, event)["appended"])
@@ -195,7 +199,7 @@ class ImportTests(unittest.TestCase):
 
     def test_repo_path_and_payload_import_stop(self):
         inside = Path(__file__).resolve().parent.parent / "official-truth-checkpoint.jsonl"
-        event = {**b.charge_identity("ab" * 32, "checkpoint", ["AT"]), "destination": "AT",
+        event = {**b.charge_identity("ab" * 32, self.base / "checkpoint-id", ["AT"]), "destination": "AT",
                  "planDigest": "a" * 64, "action": "quarantined", "accepted": 0, "published": 0}
         with self.assertRaisesRegex(ValueError, "checkpoint_inside_repo"):
             b.append_checkpoint(inside, event)
@@ -218,7 +222,7 @@ class ImportTests(unittest.TestCase):
         self.adapter["prepare"] = fail
         out = self.base / "resume"
         names = list(b.ORDER[:2])
-        identity = b.charge_identity("ab" * 32, "resume", names)
+        identity = b.charge_identity("ab" * 32, out, names)
         with self.assertRaisesRegex(ValueError, "second_country_refused"):
             b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertTrue((out / "packages" / "AT").is_dir())
@@ -289,9 +293,9 @@ class ImportTests(unittest.TestCase):
         self.assertIn("official-truth-research-package.py", plan["scriptHashes"])
 
     def test_resume_adopts_package_written_before_the_journal(self):
-        names = ["AT"]
-        identity = b.charge_identity("ab" * 32, "adopt", names)
         out = self.base / "adopt"
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
         first = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         journal = (out / "checkpoint.jsonl").read_bytes()
         (out / "checkpoint.jsonl").unlink()
@@ -317,9 +321,9 @@ class ImportTests(unittest.TestCase):
             return good(root, country, package)
 
         self.adapter["prepare"] = fail
-        names = list(b.ORDER[:3])
-        identity = b.charge_identity("cd" * 32, "hold-on", names)
         out = self.base / "hold-on"
+        names = list(b.ORDER[:3])
+        identity = b.charge_identity("cd" * 32, out, names)
         result = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertEqual(result["destinations"], 2)
         self.assertEqual(result["blockedCountries"], 1)
@@ -347,12 +351,12 @@ class ImportTests(unittest.TestCase):
             stop.write_text("stop")
             process.join(3)
         self.assertFalse(process.is_alive())
-        names = ["AT"]
-        identity = b.charge_identity("ab" * 32, "foreign", names)
         out = self.base / "foreign"
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
         original = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         package = (out / "packages" / "AT" / "manifest.json").read_bytes()
-        foreign = b.charge_identity("ef" * 32, "foreign", names)
+        foreign = b.charge_identity("ef" * 32, out, names)
         with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch"):
             b.prepare_resumable(self.source, out, names, self.adapter, identity=foreign)
         self.assertEqual((out / "packages" / "AT" / "manifest.json").read_bytes(), package)
@@ -362,24 +366,207 @@ class ImportTests(unittest.TestCase):
         target = self.base / "journal-target.jsonl"
         link = self.base / "journal-link.jsonl"
         link.symlink_to(target)
-        identity = b.charge_identity("ab" * 32, "link", ["AT"])
+        identity = b.charge_identity("ab" * 32, self.base / "link", ["AT"])
         event = {**identity, "destination": "AT", "planDigest": "a" * 64,
                  "action": "quarantined", "accepted": 0, "published": 0}
         with self.assertRaisesRegex(ValueError, "symlink_refused"):
             b.append_checkpoint(link, event)
         self.assertFalse(target.exists())
         names = ["AT"]
+        inside = self.source / "inside"
         with self.assertRaisesRegex(ValueError, "output_refused"):
-            b.prepare_resumable(self.source, self.source / "inside", names, self.adapter,
-                                identity=b.charge_identity("ab" * 32, "inside", names))
+            b.prepare_resumable(self.source, inside, names, self.adapter,
+                                identity=b.charge_identity("ab" * 32, inside, names))
 
     def test_offline_charge_repeats_the_same_charge(self):
-        names = ["AT"]
-        identity = b.charge_identity("ab" * 32, "offline", names)
         out = self.base / "offline"
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
         report = local.offline_charge(self.source, out, names, self.adapter, identity)
         self.assertEqual(report, {"published": 0, "accepted": 0, "legalEvidenceSlots": 0,
                                   "destinations": 1, "blockedCountries": 0})
+
+    def test_unbound_package_is_not_adopted(self):
+        out = self.base / "adopt"
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        package = (out / "packages" / "AT" / "manifest.json").read_bytes()
+        (out / "checkpoint.jsonl").unlink()
+        (out / "packages" / "AT.charge.json").unlink()
+        with self.assertRaisesRegex(ValueError, "unbound_package"):
+            b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        self.assertEqual((out / "packages" / "AT" / "manifest.json").read_bytes(), package)
+        self.assertFalse((out / "checkpoint.jsonl").exists())
+
+    def test_schema_two_without_charge_is_refused(self):
+        out = self.base / "resume"
+        names = list(b.ORDER[:2])
+        identity = b.charge_identity("ab" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        seal_path = out / "manifest.json"
+        seal = json.loads(seal_path.read_text())
+        self.assertEqual(seal["schema"], 2)
+        del seal["charge"]
+        seal_path.write_text(json.dumps(seal) + "\n")
+        with self.assertRaisesRegex(ValueError, "charge_missing"):
+            b.verify(out, self.adapter, identity)
+
+    def test_same_basename_is_a_different_output(self):
+        out = self.base / "left" / "quarantine"
+        out.parent.mkdir()
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        other = self.base / "right" / "quarantine"
+        shutil.copytree(out, other)
+        with self.assertRaisesRegex(ValueError, "output_identity_mismatch"):
+            b.verify(other, self.adapter, identity)
+
+    def test_journal_hold_contradiction_stops(self):
+        good = self.adapter["prepare"]
+
+        def fail(root, country, package):
+            if country == "IT":
+                raise ValueError("slice_core")
+            return good(root, country, package)
+
+        self.adapter["prepare"] = fail
+        out = self.base / "hold-on"
+        names = list(b.ORDER[:3])
+        identity = b.charge_identity("cd" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        seal_path = out / "manifest.json"
+        seal = json.loads(seal_path.read_text())
+        seal["blocked"][0]["reason"] = "tracker_row_conflict"
+        seal_path.write_text(json.dumps(seal) + "\n")
+        with self.assertRaisesRegex(ValueError, "hold_reason_mismatch"):
+            b.verify(out, self.adapter, identity)
+
+    def test_verify_waits_for_the_charge_lock(self):
+        out = self.base / "resume"
+        names = list(b.ORDER[:1])
+        identity = b.charge_identity("ab" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        ready = self.base / "ready"
+        stop = self.base / "stop"
+        process = multiprocessing.Process(target=_hold_charge, args=(str(out), str(ready), str(stop)))
+        process.start()
+        for _ in range(100):
+            if ready.exists():
+                break
+            time.sleep(0.02)
+        try:
+            with self.assertRaisesRegex(ValueError, "checkpoint_busy"):
+                b.verify(out, self.adapter, identity)
+        finally:
+            stop.write_text("stop")
+            process.join(3)
+        self.assertFalse(process.is_alive())
+        self.assertEqual(b.verify(out, self.adapter, identity)["published"], 0)
+
+    def test_local_run_does_not_read_without_acceptance(self):
+        archive = self.base / "closed.xz"
+        archive.write_bytes(b"closed")
+        archive.chmod(0)
+        output = self.base / "closed-out"
+        try:
+            with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
+                local.run(archive, output, authorized=True)
+            mismatched = {"gitCommit": "a" * 40, "scriptHashes": b.execution_script_hashes(),
+                          "archiveSha256": "ab" * 32, "fixture": True}
+            with self.assertRaisesRegex(ValueError, "git_commit_identity"):
+                local.run(archive, output, acceptance=mismatched)
+            mismatched["gitCommit"] = b.repository_commit()
+            mismatched["scriptHashes"] = "{}"
+            with self.assertRaisesRegex(ValueError, "script_hash_mismatch"):
+                local.run(archive, output, acceptance=mismatched)
+        finally:
+            archive.chmod(0o600)
+        self.assertFalse(output.exists())
+        self.assertEqual(archive.read_bytes(), b"closed")
+
+    def test_fixture_cannot_claim_a_real_pin(self):
+        archive = self.base / "claimed.xz"
+        archive.write_bytes(b"not-a-pin")
+        archive.chmod(0)
+        output = self.base / "claimed-out"
+        acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
+                      "archiveSha256": b.LOCAL_REPACK_SHA256, "fixture": True}
+        try:
+            with self.assertRaisesRegex(ValueError, "fixture_cannot_replace_pin"):
+                local.run(archive, output, acceptance=acceptance, destinations=["AT"], adapter=self.adapter)
+        finally:
+            archive.chmod(0o600)
+        self.assertFalse(output.exists())
+
+    def test_cli_cannot_open_the_archive(self):
+        archive = self.base / "cli.xz"
+        archive.write_bytes(b"cli")
+        archive.chmod(0)
+        output = self.base / "cli-out"
+        importer = Path(__file__).with_name("official-truth-50-pass-import.py")
+        runner = Path(__file__).with_name("official-truth-local-offline-run.py")
+        try:
+            prepared = subprocess.run(
+                [sys.executable, str(importer), "prepare", "--archive", str(archive), "--output", str(output)],
+                check=False, capture_output=True, text=True)
+            self.assertEqual(prepared.returncode, 1)
+            self.assertIn("local_gate_required", prepared.stderr)
+            flagged = subprocess.run(
+                [sys.executable, str(runner), "--archive", str(archive), "--output", str(output),
+                 "--after-tl-acceptance"],
+                check=False, capture_output=True, text=True)
+            self.assertEqual(flagged.returncode, 2)
+            self.assertIn("LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED", flagged.stderr)
+            imported = subprocess.run([sys.executable, str(importer), "import"], check=False, capture_output=True, text=True)
+            self.assertEqual(imported.returncode, 2)
+            self.assertIn("PRIVATE_PAYLOAD_PATH_STOP", imported.stderr)
+        finally:
+            archive.chmod(0o600)
+        self.assertFalse(output.exists())
+        self.assertEqual(archive.read_bytes(), b"cli")
+
+    def test_fixture_run_prepares_resumes_and_verifies(self):
+        archive = self.base / "fixture.tar.xz"
+        _fixture_archive(archive)
+        before = archive.read_bytes()
+        output = self.base / "local-out"
+        acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
+                      "archiveSha256": b.digest(archive), "fixture": True}
+        report = local.run(archive, output, authorized=False, acceptance=acceptance,
+                           destinations=["AT"], adapter=self.adapter)
+        self.assertEqual(archive.read_bytes(), before)
+        self.assertFalse(report["archiveVerifiedThisRun"])
+        self.assertTrue(report["fixture"])
+        self.assertEqual(report["legalEvidenceSlots"], 0)
+        self.assertEqual(report["published"], 0)
+        self.assertEqual(report["accepted"], 0)
+        self.assertEqual(report["payloadImport"], "STOP_PRIVATE_PAYLOAD_PATH_MISSING")
+        encoded = json.dumps(report)
+        self.assertNotIn(str(archive), encoded)
+        self.assertNotIn(str(output), encoded)
+        package = (output / "packages" / "AT" / "manifest.json").read_bytes()
+        journal = (output / "checkpoint.jsonl").read_bytes()
+        (output / "checkpoint.jsonl").unlink()
+        resumed = local.run(archive, output, acceptance=acceptance, destinations=["AT"], adapter=self.adapter)
+        self.assertEqual((output / "packages" / "AT" / "manifest.json").read_bytes(), package)
+        self.assertEqual((output / "checkpoint.jsonl").read_bytes(), journal)
+        self.assertEqual(archive.read_bytes(), before)
+        self.assertEqual(resumed["published"], 0)
+        self.assertEqual(resumed["legalEvidenceSlots"], 0)
+        identity = b.charge_identity(b.digest(archive), output, ["AT"])
+        self.assertEqual(b.verify(output, self.adapter, identity)["accepted"], 0)
+
+
+def _fixture_archive(path: Path) -> None:
+    payload = b"synthetic-fixture\n"
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w:xz") as package:
+        info = tarfile.TarInfo("marker.txt")
+        info.size = len(payload)
+        package.addfile(info, io.BytesIO(payload))
+    path.write_bytes(buffer.getvalue())
 
 
 def _hold_charge(directory: str, ready: str, stop: str) -> None:

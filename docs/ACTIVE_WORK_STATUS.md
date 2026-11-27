@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, dritte Korrektur nach NO-GO auf f08728c2a
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.
+
+- Der lokale Ablauf öffnet das Archiv erst, wenn ein externer Abnahme-Datensatz Commit und Skript-Digests trifft. Eine boolesche Markierung bleibt geschlossen. Verify prüft die ganze Charge unter der Sperre. Ein ungebundenes Paket wird nicht übernommen.
+- Lokal: Forschungsadapter 25, Gap-Audit 6, Importer 27, alle OK. Die Node-Integrationsprüfung folgt im selben Stand. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
 ## 27.11.2026 — Paket I, zweite Korrektur nach NO-GO auf 2c60c7eff
 
 Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff.

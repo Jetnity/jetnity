@@ -1,5 +1,14 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Dritte Korrekturrunde, NO-GO auf f08728c2a
+
+- `run` öffnet das Archiv nur, wenn ein externer Abnahme-Datensatz denselben Git-Commit und dieselben vier Skript-Digests nennt. `authorized=True` und `--after-tl-acceptance` ohne diesen Datensatz bleiben `LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED` und lesen die Datei nicht. Der Datensatz steht nicht im Git. Diese Session setzt keine Freigabe.
+- Ein Fixture-Lauf darf keinen der drei Archiv-Pins tragen. Ein behaupteter echter Pin wird vor dem Öffnen auf einen sauberen Checkout geprüft. Der Importer-CLI-Modus `prepare`/`resume` endet mit `local_gate_required`, bevor ein Archiv gelesen wird. `import` bleibt Exit 2.
+- `verify` prüft bei Schema 2 unter der Chargensperre den Git-Commit, die Skript-Digests, die kanonische Ausgabeidentität, die Zielreihenfolge, die Journal-Kette und Paket- wie HOLD-Digests samt HOLD-Grund. Eine Schema-2-Charge ohne Identität wird abgelehnt. Ein vorhandenes Paket ohne passende Bindung wird nicht übernommen.
+- Synthetisch geprüft: gesperrter Lauf, falscher Head, falsche Skriptdigests, Pin-Fixture, CLI-Umgehung, ungebundene Charge, gleicher Basename, HOLD-Widerspruch, paralleles Verify, sowie ein Fixture-Lauf mit unverändertem Original, Resume und Verify. `legalEvidence` bleibt 0.
+
+Die CI dieses Heads ist erst nach dem Push zu belegen. Sie wird hier nicht vorweg genommen.
+
 ## Zweite Korrekturrunde, NO-GO auf 2c60c7eff
 
 - Die Charge bindet Archiv-SHA, CSV-Pin, Tracker-Pin, den Git-Commit und die Digests aller vier ausführenden Skripte. Eine Null-SHA ist im realen Pfad abgelehnt. Ausgabe- und Zielidentität werden vor dem ersten Schreiben geprüft.
@@ -85,7 +94,7 @@ Der spätere Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f7852
 
 Die Byte-Pins der beiden geänderten Offline-Skripte in den Integrationsprüfungen sind die neuen Skript-Digests, nicht Archiv-Digests:
 
-- `official-truth-research-package.py` `99a42089f38e1bbcd960fa66ebcd8cba163d2f36fd8056be9670a9ec80b90d3b`
+- `official-truth-research-package.py` `eea52eb8bc552bbad15ba0ed2cde4163cc628accdb896688af351a52a3b40baa`
 - `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
 
 ## Tests, lokal, ohne Datenbank und ohne Netz
@@ -102,7 +111,16 @@ python3 scripts/official-truth-50-pass-import.py dry-run --destinations ALL
 python3 scripts/official-truth-50-pass-import.py import
 ```
 
-Ergebnis dieser Arbeitskopie:
+Ergebnis dieser dritten Korrektur, lokal, ohne Archiv und ohne Datenbank:
+
+- Forschungsadapter: 25 Tests, OK
+- Gap-Audit: 6 Tests, OK
+- Importer: 27 Tests, OK
+- Drei Node-Integrationsprüfungen: 3 bestanden, 0 fehlgeschlagen
+
+Die älteren Zähler in diesem Abschnitt bleiben der Stand ihrer Runde.
+
+Ergebnis der ersten Arbeitskopie:
 
 - Forschungsadapter: 21 Tests, OK
 - Gap-Audit: 6 Tests, OK
