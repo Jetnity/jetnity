@@ -92,6 +92,11 @@ html[data-workspace-theme="dark"] .workspace-shell[data-workspace-theme="light"]
 .workspace-shell:where([data-workspace-theme="dark"]) :where(a, button, summary, input, select, textarea):focus-visible {
   outline: 3px solid rgb(var(--jet-ink-400)); outline-offset: 3px;
 }
+/* Navigationspunkte stehen im Abstand von 4 bis 6 px untereinander: ein Ring mit 3 px Abstand reichte in die helle Oberkante
+   des gewählten Nachbarn (Mint auf Mint, 1,03 : 1 bei 150 % Schrift). Näher am Punkt bleibt der Ring auf der eigenen Fläche. */
+.workspace-shell:where([data-workspace-theme="dark"]) :where(.workspace-nav-link, .workspace-open-trip):focus-visible {
+  outline-offset: 1px;
+}
 :where([data-workspace-theme="dark"]) .workspace-credit { color: var(--workspace-muted); }
 :where([data-workspace-theme="dark"]) .workspace-bottom-nav {
   /* Deckend: Text und Preise dahinter dürfen nicht durchscheinen. */

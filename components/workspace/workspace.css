@@ -91,7 +91,10 @@
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
   border-bottom: 1px solid var(--workspace-edge);
 }
-.workspace-header[data-flow="true"] { position: static; }
+/* Bei grosser Schrift (Wurzelschrift ab 24 px, `data-flow`) scrollt die Kopfzeile mit. `static` ignoriert das `z-index`:
+   Das Profilmenü lag dann unter dem Reisekopf (`z-index: 2`, 150 % Schrift, 390 px: «Anmelden» verdeckt). `relative` verändert
+   das Layout nicht und hält die Kopfzeile samt ihren Menüs über dem Inhalt. */
+.workspace-header[data-flow="true"] { position: relative; }
 .workspace-header .kopf-innen {
   display: flex; align-items: center; gap: .25rem; min-height: 3.75rem; padding: .25rem .5rem;
 }
