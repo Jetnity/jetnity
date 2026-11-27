@@ -6,6 +6,11 @@ import shutil
 import tempfile
 import unittest
 
+local_spec = importlib.util.spec_from_file_location(
+    "local_offline", Path(__file__).with_name("official-truth-local-offline-run.py"))
+local = importlib.util.module_from_spec(local_spec)
+local_spec.loader.exec_module(local)
+
 spec = importlib.util.spec_from_file_location("batch", Path(__file__).with_name("official-truth-50-pass-import.py"))
 b = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(b)
@@ -139,7 +144,10 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(report["importCapableProfiles"], "NOT_ASSESSED")
         self.assertFalse(report["archiveVerifiedThisRun"])
         self.assertEqual(report["payloadImport"], "STOP_PRIVATE_PAYLOAD_PATH_MISSING")
-        self.assertEqual(report["repackSha256"], "NOT_REVERIFIED_THIS_RUN")
+        self.assertEqual(report["localRepackSha256"],
+                         "6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f78520744b")
+        self.assertEqual(report["coreCompleteProfiles"], 0)
+        self.assertEqual(b.ACCEPTED_ARCHIVE_SHA256[b.LOCAL_REPACK_SHA256], "local_repack_variant")
         self.assertEqual(report["specialDestinations"], ["CN-HK", "CN-MO"])
         self.assertEqual(report["structuralHoldDestinations"], ["HR", "NL"])
         self.assertEqual(len(report["extraSliceDestinationsInScope"]), 9)
@@ -147,11 +155,12 @@ class ImportTests(unittest.TestCase):
 
     def test_checkpoint_is_append_only_idempotent_and_conflicts(self):
         checkpoint = self.base / "checkpoint.jsonl"
-        event = {"destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
+        identity = b.charge_identity("ab" * 32, "checkpoint")
+        event = {**identity, "destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
                  "accepted": 0, "published": 0}
         self.assertTrue(b.append_checkpoint(checkpoint, event)["appended"])
         snapshot = checkpoint.read_bytes()
-        second = {"destination": "IT", "planDigest": "b" * 64, "action": "quarantined",
+        second = {**identity, "destination": "IT", "planDigest": "b" * 64, "action": "quarantined",
                   "accepted": 0, "published": 0}
         self.assertTrue(b.append_checkpoint(checkpoint, second)["appended"])
         self.assertTrue(checkpoint.read_bytes().startswith(snapshot))
@@ -164,24 +173,28 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(plan["done"], ["AT", "IT"])
         self.assertEqual(plan["remaining"], ["FR"])
         self.assertEqual(plan["published"], 0)
-        b.append_checkpoint(checkpoint, {"destination": "FR", "planDigest": "d" * 64,
+        b.append_checkpoint(checkpoint, {**identity, "destination": "FR", "planDigest": "d" * 64,
                                           "action": "quarantined", "accepted": 0, "published": 0})
+        with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch"):
+            b.append_checkpoint(checkpoint, {**identity, "archiveSha256": "cd" * 32, "destination": "GB",
+                                             "planDigest": "e" * 64, "action": "quarantined",
+                                             "accepted": 0, "published": 0})
         broken = self.base / "gap.jsonl"
         b.append_checkpoint(broken, event)
-        b.append_checkpoint(broken, {"destination": "FR", "planDigest": "d" * 64,
+        b.append_checkpoint(broken, {**identity, "destination": "FR", "planDigest": "d" * 64,
                                      "action": "quarantined", "accepted": 0, "published": 0})
         with self.assertRaisesRegex(ValueError, "checkpoint_gap"):
             b.resume_plan(broken, ["AT", "IT", "FR"])
         data = bytearray(checkpoint.read_bytes())
-        data[-4] ^= 1
+        data[8] ^= 1
         checkpoint.write_bytes(bytes(data))
         with self.assertRaises(ValueError):
             b.read_checkpoint(checkpoint)
 
     def test_repo_path_and_payload_import_stop(self):
         inside = Path(__file__).resolve().parent.parent / "official-truth-checkpoint.jsonl"
-        event = {"destination": "AT", "planDigest": "a" * 64, "action": "quarantined",
-                 "accepted": 0, "published": 0}
+        event = {**b.charge_identity("ab" * 32, "checkpoint"), "destination": "AT",
+                 "planDigest": "a" * 64, "action": "quarantined", "accepted": 0, "published": 0}
         with self.assertRaisesRegex(ValueError, "checkpoint_inside_repo"):
             b.append_checkpoint(inside, event)
         self.assertFalse(inside.exists())
@@ -222,6 +235,50 @@ class ImportTests(unittest.TestCase):
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), sealed)
         self.assertEqual(repeat, result)
         self.assertEqual(b.verify(out, self.adapter), result)
+
+    def test_split_hr_and_nl_stay_held(self):
+        for country in ("HR", "NL"):
+            source = self.source / "records" / "dest" / country
+            source.mkdir(parents=True)
+            (source / "index.json").write_text(json.dumps({
+                "schema": "jetnity-entry-requirements-research-v2.2",
+                "status": "RESEARCH_ONLY", "dest_id": country, "destination_iso2": country,
+                "file_layout": "split",
+            }))
+        result = b.prepare(self.source, self.out, list(b.ORDER[:8]), self.adapter)
+        self.assertEqual(result["blockedCountries"], 2)
+        self.assertNotIn("HR", self.calls)
+        self.assertNotIn("NL", self.calls)
+        seal = json.loads((self.out / "manifest.json").read_text())
+        self.assertEqual({row["reason"] for row in seal["blocked"]}, {"ambiguous_index_hold"})
+        self.assertEqual(b.verify(self.out, self.adapter), result)
+
+    def test_research_root_cannot_replace_archive_pin(self):
+        with self.assertRaisesRegex(ValueError, "research_root_not_archive_pin"):
+            b.pinned_archive_required(None, self.source)
+        with self.assertRaisesRegex(ValueError, "research_root_not_archive_pin"):
+            b.pinned_archive_required(self.source, self.source)
+
+    def test_output_inside_git_worktree_is_refused(self):
+        tree = self.base / "worktree"
+        (tree / ".git").mkdir(parents=True)
+        with self.assertRaisesRegex(ValueError, "output_refused"):
+            b._outside(tree / "private", Path("/absent/repo"), self.source)
+        self.assertFalse((tree / "private").exists())
+
+    def test_local_archive_run_stays_unauthorized_and_redacted(self):
+        archive = self.base / "repack.xz"
+        archive.write_bytes(b"not-the-repack")
+        output = self.base / "private-out"
+        plan = local.redacted_plan(archive, output)
+        self.assertFalse(plan["archiveVerifiedThisRun"])
+        self.assertFalse(plan["archivePathRecorded"])
+        self.assertEqual(plan["payloadImport"], "STOP_PRIVATE_PAYLOAD_PATH_MISSING")
+        self.assertEqual(plan["legalEvidenceSlots"], 0)
+        self.assertNotIn(str(archive), json.dumps(plan))
+        with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
+            local.run(archive, output, authorized=False)
+        self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

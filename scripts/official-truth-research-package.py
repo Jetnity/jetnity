@@ -17,6 +17,9 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit
 
 SCHEMA = "jetnity-entry-requirements-research-v2.2"
+RESEARCH_STATUSES = frozenset(("RESEARCH_ONLY", "researched", "research_only"))
+# SO document hold only where the checkpoints name that scope. Not every destination.
+SO_DOCUMENT_HOLD_DESTINATIONS = frozenset(("AT", "ES", "GR", "NL"))
 PASSPORT_PREFIX = "IN TR CN DE PL IT US UA RO FR".split()
 ORDER = "AT IT FR ES PT GR HR NL GB US TR TH AE".split()
 # This is a locator map, NOT a rule extractor or equivalence between conditions.
@@ -75,9 +78,10 @@ LAUNCH_OPTIONAL = (
 HISTORICAL_ONLY = ("insurance", "fraud_warnings", "booking_or_travel_document",
                    "dual_nationals", "recent_changes", "official_actions")
 EVIDENCED_STATUSES = frozenset(("B", "BELEGT_BEDINGT", "N/A"))
-# Carried hold from the research checkpoints. Not a new legal finding.
-PRESERVED_TOPIC_HOLDS = (
-    {"nationality": "SO", "topic": "K2", "reason": "document_recognition_hold"},
+# Carried holds from the named checkpoints. Not a new legal finding.
+PRESERVED_TOPIC_HOLDS = tuple(
+    {"destination": destination, "nationality": "SO", "topic": "K2", "reason": "document_recognition_hold"}
+    for destination in sorted(SO_DOCUMENT_HOLD_DESTINATIONS)
 )
 
 
@@ -221,6 +225,64 @@ def nonpriority_slices(root: Path, destination: str, passports: list[str]) -> li
     return sorted(found)
 
 
+def unique_rows(tracker: list[dict], destination: str, passports: list[str]) -> dict:
+    """Identical duplicate tracker lines bind once. Disagreeing pointers stay a hold."""
+    grouped: dict[str, list[dict]] = {}
+    allowed = set(passports)
+    for row in tracker:
+        if row.get("dest_id") != destination or row.get("nationality") not in allowed:
+            continue
+        grouped.setdefault(row["nationality"], []).append(row)
+    chosen = {}
+    for nationality in passports:
+        group = grouped.get(nationality, [])
+        require(group, "tracker_coverage")
+        pointers = {row.get("record_pointer") for row in group}
+        require(len(pointers) == 1 and None not in pointers, "tracker_row_conflict")
+        chosen[nationality] = group[0]
+    return chosen
+
+
+def index_binding(frame: dict, destination: str, passports: list[str]) -> tuple[list[str], list[str]]:
+    """Bind files from an explicit index. CSV order selects. Nothing is written back."""
+    require(isinstance(frame, dict) and frame.get("schema") == SCHEMA, "split_frame_identity")
+    require(frame.get("status") in RESEARCH_STATUSES, "split_frame_identity")
+    if "dest_id" in frame:
+        require(frame.get("dest_id") == destination, "split_frame_identity")
+    require(frame.get("destination_iso2") == destination, "split_frame_identity")
+    require(frame.get("file_layout") in (None, "split"), "split_frame_identity")
+    expected_files = [f"records/dest/{destination}/{nat}.json" for nat in passports]
+    notes: list[str] = []
+    if "dest_id" not in frame:
+        notes.append("dest_id_absent")
+    if frame.get("file_layout") is None:
+        notes.append("file_layout_absent")
+    order = frame.get("expected_nationality_slices")
+    declared = frame.get("slice_files")
+    pointers = frame.get("nationality_slices")
+    mapping = frame.get("slices_by_nationality")
+    if order is None and declared is None and pointers is None and mapping is None:
+        notes.append("index_fields_absent")
+        return expected_files, notes
+    if order is None:
+        permutation = list(passports)
+        notes.append("index_fields_absent")
+    else:
+        require(isinstance(order, list) and len(order) == 50 and sorted(order) == sorted(passports),
+                "index_priority_binding")
+        permutation = list(order)
+        if permutation != list(passports):
+            notes.append("index_order_follows_csv")
+    expected_for_order = [f"records/dest/{destination}/{nat}.json" for nat in permutation]
+    files_bound = (declared == expected_for_order or declared == dict(zip(permutation, expected_for_order)))
+    require(files_bound, "index_priority_binding")
+    require(mapping == {nat: i for i, nat in enumerate(permutation)}, "index_mapping")
+    require(isinstance(pointers, list) and len(pointers) == 50 and all(
+        isinstance(row, dict) and row.get("nationality") == nat and row.get("file") == file
+        for row, nat, file in zip(pointers, permutation, expected_for_order)), "index_pointer_identity")
+    return expected_files, notes
+
+
 def extra_nationality(root: Path, destination: str, passports: list[str]) -> str | None:
     found = nonpriority_slices(root, destination, passports)
     if destination in EXTRA_SLICE_DESTINATIONS:
@@ -243,28 +305,11 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
     tracker_bytes = read_file(root, "tracker.csv", 32*1024*1024)
     tracker, tracker_header = csv_rows(tracker_bytes)
     require(all(k in tracker_header for k in ("dest_id", "nationality", "record_pointer")), "tracker_columns")
-    target_rows = [r for r in tracker if r["dest_id"] == destination and r["nationality"] in passports]
-    require(len(target_rows) == 50 and {r["nationality"] for r in target_rows} == set(passports), "tracker_coverage")
-    by_nat = {r["nationality"]: r for r in target_rows}
+    by_nat = unique_rows(tracker, destination, passports)
     split_path = f"records/dest/{destination}/index.json"
     frame_bytes = read_file(root, split_path)
     frame = strict_json(frame_bytes)
-    require(isinstance(frame, dict) and frame.get("schema") == SCHEMA and frame.get("status") == "RESEARCH_ONLY"
-            and frame.get("dest_id") == destination and frame.get("destination_iso2") == destination
-            and frame.get("file_layout") == "split", "split_frame_identity")
-    expected_files = [f"records/dest/{destination}/{nat}.json" for nat in passports]
-    declared_files = frame.get("slice_files")
-    # Both declared v2.2 layouts occur in the supplied original archive.
-    # Dict layout must bind every nationality explicitly, no inferred defaults.
-    files_bound = (declared_files == expected_files
-                   or declared_files == dict(zip(passports, expected_files)))
-    require(frame.get("expected_nationality_slices") == passports and files_bound,
-            "index_priority_binding")
-    require(frame.get("slices_by_nationality") == {nat: i for i, nat in enumerate(passports)}, "index_mapping")
-    pointers = frame.get("nationality_slices")
-    require(isinstance(pointers, list) and len(pointers) == 50 and all(
-        isinstance(row, dict) and row.get("nationality") == nat and row.get("file") == file
-        for row, nat, file in zip(pointers, passports, expected_files)), "index_pointer_identity")
+    expected_files, index_notes = index_binding(frame, destination, passports)
     require(frame.get("external_writes", []) == [] and not has_forbidden(frame), "frame_authority_boundary")
     # An old unsplit copy is allowed ONLY with the archive's explicit migration declaration.
     legacy = f"records/dest/{destination}.json"
@@ -301,10 +346,10 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
         require(sum(len(b) for b in evidence.values()) + len(data) <= 64*1024*1024, "package_size_limit")
         record = strict_json(data)
         require(isinstance(record, dict) and record.get("schema") in (SCHEMA, "jetnity-entry-requirements-research-v2.1")
-                and record.get("status") == "RESEARCH_ONLY" and record.get("nationality") == nat
+                and record.get("status") in RESEARCH_STATUSES and record.get("nationality") == nat
                 and record.get("destination_iso2") == destination, "slice_identity")
-        require(all(key in record for key in CORE) and not has_forbidden(record)
-                and record.get("external_writes", []) == [], "slice_core_or_authority")
+        require(all(key in record for key in CORE), "slice_core")
+        require(not has_forbidden(record) and record.get("external_writes", []) == [], "slice_authority")
         require(parse_date(record.get("researched_at")), "slice_research_date")
         sources = record.get("sources")
         require(isinstance(sources, list) and all(isinstance(s, dict) for s in sources), "sources_shape")
@@ -357,7 +402,8 @@ def prepare(root: Path, destination: str, output: Path) -> dict:
                 "preparedAt": datetime.now(timezone.utc).isoformat(),
                 "validationScope": "v2.2 frame/index/tracker identities and mandatory structural core; not semantic truth",
                 "inputHashes": {"schema": sha(schema_bytes), "passportPriority": sha(csv_bytes), "tracker": sha(tracker_bytes)},
-                "legacy": legacy_receipt, "extraNotImported": extra_receipt, "records": records,
+                "legacy": legacy_receipt, "extraNotImported": extra_receipt,
+                "indexNotes": index_notes, "records": records,
                 "files": [{"path": p, "bytes": len(b), "sha256": sha(b)} for p,b in sorted(evidence.items())]}
     if (root / "STAGING_RECEIPT.json").exists():
         staging = strict_json(read_file(root, "STAGING_RECEIPT.json", 65536))
@@ -434,12 +480,13 @@ def project_launch(destination: str, nationalities: list[str], witnesses: list[d
     core_ids = [item[0] for item in LAUNCH_CORE]
     optional_ids = [item[0] for item in LAUNCH_OPTIONAL]
     historical = {item[0]: item[2] for item in LAUNCH_CORE + LAUNCH_OPTIONAL}
-    holds = {(item["nationality"], item["topic"]): item["reason"] for item in PRESERVED_TOPIC_HOLDS}
+    holds = {(item["destination"], item["nationality"], item["topic"]): item["reason"]
+             for item in PRESERVED_TOPIC_HOLDS}
     allowed = set(nationalities)
     slots: dict[tuple[str, str], dict] = {}
     for nationality in nationalities:
         for topic in core_ids + optional_ids:
-            reason = holds.get((nationality, topic))
+            reason = holds.get((destination, nationality, topic))
             slots[(nationality, topic)] = {
                 "destination": destination, "nationality": nationality, "topic": topic,
                 "passportGroup": None, "scope": None, "source": None, "version": None,
@@ -448,11 +495,14 @@ def project_launch(destination: str, nationalities: list[str], witnesses: list[d
                 "historicalTopics": list(historical[topic]), "completenessGate": topic in core_ids,
             }
     seen: dict[tuple[str, str], tuple] = {}
-    source_assignments = 0
     for witness in list(witnesses or []):
         require(isinstance(witness, dict), "witness_shape")
         require(witness.get("published") in (None, False) and witness.get("accepted") in (None, False),
                 "publication_refused")
+        if witness.get("witnessClass") == "checked_official":
+            raise ValueError("official_witness_not_bound")
+        if "destination" in witness:
+            require(witness.get("destination") == destination, "witness_destination")
         topic = witness.get("topic")
         require(topic in historical, "witness_topic")
         status = witness.get("status")
@@ -480,37 +530,36 @@ def project_launch(destination: str, nationalities: list[str], witnesses: list[d
             require(nationality in allowed, "passport_identity")
             if nationality in exceptions:
                 continue
-            if (nationality, topic) in holds:
+            if (destination, nationality, topic) in holds:
                 raise ValueError("held_topic_conflict")
-            identity = (status, digest, version, scope, basis)
+            source_id = source.get("id") if isinstance(source, dict) else None
+            identity = (status, digest, version, scope, basis, source_id, group, tuple(exceptions))
             prior = seen.get((nationality, topic))
             if prior is not None:
                 require(prior == identity, "projection_conflict")
                 continue
             seen[(nationality, topic)] = identity
             slot = slots[(nationality, topic)]
-            if status in ("open", "unknown"):
-                slot["status"] = "open" if topic in core_ids and status == "unknown" else status
-                slot["legalEvidence"] = False
-                continue
+            # A supplied id, digest, version, scope, status or text length is not legal evidence.
             slot.update({
-                "status": status, "scope": scope, "source": {"id": source["id"]},
-                "version": version, "digest": digest, "exceptions": list(exceptions),
-                "legalBasis": basis if status == "N/A" else None, "legalEvidence": True,
-                "passportGroup": group or "explicit",
+                "status": "unverified", "suppliedStatus": status,
+                "witnessClass": "unverified_research_witness",
+                "scope": scope if isinstance(scope, str) else None,
+                "source": {"id": source_id} if isinstance(source_id, str) else None,
+                "version": version if isinstance(version, str) else None,
+                "digest": digest if isinstance(digest, str) else None,
+                "exceptions": list(exceptions),
+                "legalBasis": basis if isinstance(basis, str) and basis.strip() else None,
+                "legalEvidence": False, "passportGroup": group or "explicit",
             })
-            source_assignments += 1
-    legal = sum(1 for slot in slots.values() if slot["legalEvidence"])
-    complete = sum(
-        1 for nationality in nationalities
-        if all(slots[(nationality, topic)]["legalEvidence"]
-               and slots[(nationality, topic)]["status"] in EVIDENCED_STATUSES for topic in core_ids)
-    )
+    legal = 0
+    complete = 0
     return {
         "destination": destination, "historicalTopicCount": len(TOPICS), "profiles": 50,
         "coreSlots": 50 * len(LAUNCH_CORE), "optionalSlots": 50 * len(LAUNCH_OPTIONAL),
-        "legalEvidenceSlots": legal, "sourceAssignments": source_assignments,
+        "legalEvidenceSlots": legal, "sourceAssignments": 0,
         "coreCompleteProfiles": complete, "optionalGapIsCompletenessGate": False,
+        "witnessClass": "unverified_research_witness",
         "published": 0, "accepted": 0,
         "slots": [slots[(nationality, topic)] for nationality in nationalities for topic in core_ids + optional_ids],
     }

@@ -1,5 +1,13 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I Korrekturrunde nach TL-Review
+
+Gleicher Branch `cursor/official-truth-importer-206-5c1d`, gleicher Draft [#1323](https://github.com/Jetnity/jetnity/pull/1323). Review: #1319 Kommentar 7207442476. Kein neuer Agent, kein neuer PR, kein Ready, kein Merge. M04/N11 unverändert.
+
+- Repack `6545eb28…744b` ist der lokale Pin. Diese Session hat ihn nicht gelesen. `--research-root` ist kein Ersatz. HR/NL bleiben Hold auch bei Split. SO-K2 nur AT, ES, GR, NL.
+- `project_launch` zählt frei gelieferte Angaben nicht als Rechtsbeleg. Vollständige Profile bleiben 0. Checkpoints binden Archiv, CSV, Tracker, Skript-Digest und Ausgabe. Lokaler Work-Ablauf: `docs/OFFICIAL_TRUTH_PACKET_I_LOCAL_WORK_RUN_2026-11-27.md`. Datenbankimport bleibt gestoppt.
+- CI des Korrektur-Heads wird nach dem Push am exakten Head belegt und hier nicht vorweg behauptet.
+
 ## 27.11.2026 — Official Truth Paket I, universeller Importer 206×50 / 6+4
 
 Branch `cursor/official-truth-importer-206-5c1d` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Auftrag [#1321](https://github.com/Jetnity/jetnity/issues/1321), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Draft. Kein Ready, kein Merge, kein Deploy, keine Datenbank, kein Import, keine Aktivierung, keine neuen Kosten.

@@ -7,6 +7,7 @@ A separate, Owner-approved V3 importer is required for positive Dev facts.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -23,14 +24,17 @@ import tempfile
 # so this run cannot treat it as re-verified.
 ARCHIVE_SHA256 = "6ef8c9f6e36bee2f75cf162d725a60844ef757bfad14407f69d81631cb9f55e5"
 FIXED_ARCHIVE_SHA256 = "4d8e9804598788a1070016f69ecd6e28c72dfdee78b56aafbd647d23e4243e9d"
-REPACK_SHA256_NOT_REVERIFIED = "6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f78520744b"
+LOCAL_REPACK_SHA256 = "6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f78520744b"
+LOCAL_REPACK_BYTES = 2_924_288
 PRIORITY_CSV_SHA256 = "4515324024236916142857bf16d67590a7a1ca11c31fd1263e8b7979fd6eb358"
 TRACKER_SHA256 = "33aba1b3640541c2cabe4ec3e7dd569a6db8ed24ce83ef866ebad9255612c153"
 COUNTRY_SHA256 = "cbd520a6793b5534156ab4597db83536460b5b5f13254ba21e36ba81a4495123"
 ACCEPTED_ARCHIVE_SHA256 = {
     ARCHIVE_SHA256: "original_upload",
     FIXED_ARCHIVE_SHA256: "fixed_206_archive",
+    LOCAL_REPACK_SHA256: "local_repack_variant",
 }
+IDENTITY_KEYS = ("archiveSha256", "passportCsvSha256", "trackerSha256", "codeHead", "outputIdentity")
 HISTORICAL_PREFIX = ("AT", "IT", "FR", "ES", "PT", "GR", "HR", "NL", "GB", "US", "TR", "TH", "AE")
 STRUCTURAL_HOLDS = frozenset(("HR", "NL"))
 EXTRA_SLICE_DESTINATIONS = frozenset({"AU", "CN-HK", "CN-MO", "KE", "MV", "NZ", "SA", "TZ", "ZA"})
@@ -87,8 +91,10 @@ def extract_pinned_archive(archive: Path, staging: Path) -> Path:
     entry = archive.lstat()
     require(stat.S_ISREG(entry.st_mode) and 0 < entry.st_size <= MAX_ARCHIVE_BYTES, "invalid_archive")
     file_sha = digest(archive)
-    require(file_sha != REPACK_SHA256_NOT_REVERIFIED, "repack_not_reverified_this_run")
     require(file_sha in ACCEPTED_ARCHIVE_SHA256, "unreviewed_archive")
+    local_repack = file_sha == LOCAL_REPACK_SHA256
+    if local_repack:
+        require(entry.st_size == LOCAL_REPACK_BYTES, "repack_size_mismatch")
     target = staging / "unpacked"
     target.mkdir(mode=0o700)
     with tarfile.open(archive, "r:xz") as package:
@@ -98,20 +104,38 @@ def extract_pinned_archive(archive: Path, staging: Path) -> Path:
         total = 0
         for member in members:
             name = member.name
-            segments = name.split("/")
-            require(name.startswith("entry-requirements/") and not name.startswith("/")
-                    and all(part not in ("", ".", "..") for part in segments)
-                    and name not in seen and (member.isfile() or member.isdir())
+            require(not name.startswith("/") and "\\" not in name and name not in seen
+                    and all(part not in (".", "..") for part in name.split("/"))
+                    and (member.isfile() or member.isdir())
                     and not member.issym() and not member.islnk(), "unsafe_archive_member")
+            if not local_repack:
+                require(name.startswith("entry-requirements/"), "unsafe_archive_member")
             seen.add(name)
             if member.isfile():
                 require(0 <= member.size <= MAX_FILE_BYTES, "archive_file_limit")
                 total += member.size
                 require(total <= MAX_UNPACKED_BYTES, "archive_unpacked_limit")
         package.extractall(target, members=members, filter="data")
-    source = target / "entry-requirements"
+    nested = target / "entry-requirements"
+    source = nested if nested.is_dir() else target
     require(source.is_dir() and not source.is_symlink(), "archive_missing_research")
+    confirm_pinned_inventory(source)
     return source
+
+
+def confirm_pinned_inventory(root: Path) -> dict:
+    """Check the pinned CSV and tracker bytes of a tree that was just unpacked.
+
+    This is a check of the supplied file, not a claim that an earlier run
+    already verified the PO-Mac archive.
+    """
+    priority = root / "passport-priority.csv"
+    tracker = root / "tracker.csv"
+    require(priority.is_file() and not priority.is_symlink() and tracker.is_file()
+            and not tracker.is_symlink(), "pinned_inventory_missing")
+    require(digest(priority) == PRIORITY_CSV_SHA256, "priority_csv_sha")
+    require(digest(tracker) == TRACKER_SHA256, "tracker_sha")
+    return {"passportCsvSha256": PRIORITY_CSV_SHA256, "trackerSha256": TRACKER_SHA256}
 
 
 def selected(raw: str) -> list[str]:
@@ -123,6 +147,20 @@ def selected(raw: str) -> list[str]:
 def manifest_at(path: Path, adapter) -> dict:
     raw = adapter["read_file"](path, "manifest.json", 256 * 1024)
     return adapter["strict_json"](raw)
+
+
+def hold_index(adapter, source: Path, country: str) -> tuple[bytes, str, str]:
+    """Park HR/NL even when the index is now a correct split. Bytes stay unchanged."""
+    index_bytes = adapter["read_file"](source, f"records/dest/{country}/index.json", 8 * 1024 * 1024)
+    frame = adapter["strict_json"](index_bytes)
+    require(isinstance(frame, dict)
+            and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
+            and frame.get("status") in ("RESEARCH_ONLY", "researched", "research_only")
+            and frame.get("destination_iso2") == country, "structural_hold_identity_refused")
+    if "dest_id" in frame:
+        require(frame.get("dest_id") == country, "structural_hold_identity_refused")
+    reason = "ambiguous_index_hold" if frame.get("file_layout") == "split" else "unsplit_research_frame_not_importable"
+    return index_bytes, reason, hashlib.sha256(index_bytes).hexdigest()
 
 
 def prepare(root: Path, out: Path, destinations: list[str], adapter) -> dict:
@@ -143,27 +181,16 @@ def prepare(root: Path, out: Path, destinations: list[str], adapter) -> dict:
         all_priority = None
         for country in destinations:
             package = package_root / country
-            try:
-                counts = adapter["prepare"](source, country, package)
-            except ValueError as error:
-                # Only the two explicitly observed unsplit v2.2 frames are parked.
-                # Every other identity or integrity failure aborts the whole run.
-                if country not in ("HR", "NL") or str(error) != "split_frame_identity":
-                    raise
-                relative = f"records/dest/{country}/index.json"
-                index_bytes = adapter["read_file"](source, relative, 8 * 1024 * 1024)
-                frame = adapter["strict_json"](index_bytes)
-                require(isinstance(frame, dict) and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
-                        and frame.get("status") == "RESEARCH_ONLY" and frame.get("dest_id") == country
-                        and frame.get("destination_iso2") == country and frame.get("file_layout") != "split"
-                        and not package.exists() and all_priority is not None, "unsplit_frame_identity_refused")
+            if country in STRUCTURAL_HOLDS:
+                require(all_priority is not None and not package.exists(), "structural_hold_without_priority")
+                index_bytes, reason, index_sha = hold_index(adapter, source, country)
                 held = temporary / "blocked"
                 held.mkdir(mode=0o700, exist_ok=True)
                 (held / f"{country}.json").write_bytes(index_bytes)
                 os.chmod(held / f"{country}.json", 0o600)
-                blocked.append({"country": country, "reason": "unsplit_research_frame_not_importable",
-                                "indexSha256": hashlib.sha256(index_bytes).hexdigest()})
+                blocked.append({"country": country, "reason": reason, "indexSha256": index_sha})
                 continue
+            counts = adapter["prepare"](source, country, package)
             require(counts == adapter["verify"](package) and counts["passports"] == 50
                     and counts["topicSlots"] == 1300 and counts["accepted"] == 0
                     and counts["published"] == 0, "research_validation_refused")
@@ -236,15 +263,20 @@ def verify(path: Path, adapter) -> dict:
     for country in countries:
         if country in blocked:
             record = blocked[country]
-            require(country in ("HR", "NL") and record["reason"] == "unsplit_research_frame_not_importable"
+            require(country in STRUCTURAL_HOLDS and record["reason"] in (
+                        "unsplit_research_frame_not_importable", "ambiguous_index_hold")
                     and not (root / "packages" / country).exists(), "blocked_scope_changed")
             payload = adapter["read_file"](root, f"blocked/{country}.json", 8 * 1024 * 1024)
             frame = adapter["strict_json"](payload)
+            split = frame.get("file_layout") == "split"
             require(hashlib.sha256(payload).hexdigest() == record["indexSha256"]
                     and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
-                    and frame.get("status") == "RESEARCH_ONLY" and frame.get("dest_id") == country
-                    and frame.get("destination_iso2") == country and frame.get("file_layout") != "split",
+                    and frame.get("status") in ("RESEARCH_ONLY", "researched", "research_only")
+                    and frame.get("destination_iso2") == country
+                    and (split if record["reason"] == "ambiguous_index_hold" else not split),
                     "blocked_original_changed")
+            if "dest_id" in frame:
+                require(frame.get("dest_id") == country, "blocked_original_changed")
             continue
         p = root / "packages" / country
         record = prepared[country]
@@ -290,14 +322,40 @@ def dry_run(destinations: list[str]) -> dict:
         "profiles": profiles, "historicalTopicSlots": profiles * 26, "coreSlots": profiles * 6,
         "optionalSlots": profiles * 4,
         "structuralHoldDestinations": [code for code in names if code in STRUCTURAL_HOLDS],
-        "topicHolds": [{"nationality": "SO", "topic": "K2", "reason": "document_recognition_hold"}],
+        "topicHolds": [{"destination": code, "nationality": "SO", "topic": "K2",
+                        "reason": "document_recognition_hold"}
+                       for code in ("AT", "ES", "GR", "NL") if code in names],
         "extraSliceDestinationsInScope": [code for code in names if code in EXTRA_SLICE_DESTINATIONS],
         "specialDestinations": [code for code in ("CN-HK", "CN-MO") if code in names],
         "catalogDestinations": 206, "catalogProfiles": 10_300,
         "catalogCoreSlots": 61_800, "catalogOptionalSlots": 41_200,
         "priorityCsvSha256Pin": PRIORITY_CSV_SHA256, "trackerSha256Pin": TRACKER_SHA256,
-        "repackSha256": "NOT_REVERIFIED_THIS_RUN",
+        "localRepackSha256": LOCAL_REPACK_SHA256, "localRepackBytes": LOCAL_REPACK_BYTES,
+        "coreCompleteProfiles": 0,
     }
+
+
+def current_code_head() -> str:
+    return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+
+
+def charge_identity(archive_sha: str, output_identity: str, csv_sha: str | None = None,
+                    tracker_sha: str | None = None) -> dict:
+    require(isinstance(archive_sha, str) and len(archive_sha) == 64
+            and all(character in "0123456789abcdef" for character in archive_sha), "archive_identity")
+    require(isinstance(output_identity, str) and output_identity.strip(), "output_identity")
+    return {"archiveSha256": archive_sha, "passportCsvSha256": csv_sha or PRIORITY_CSV_SHA256,
+            "trackerSha256": tracker_sha or TRACKER_SHA256, "codeHead": current_code_head(),
+            "outputIdentity": output_identity}
+
+
+def require_same_charge(existing: dict, identity: dict) -> None:
+    require(all(existing.get(key) == identity[key] for key in IDENTITY_KEYS), "checkpoint_identity_mismatch")
+
+
+def pinned_archive_required(archive: Path | None, research_root: Path | None) -> None:
+    """A unpacked research root is not a substitute for the archive byte pin."""
+    require(archive is not None and research_root is None, "research_root_not_archive_pin")
 
 
 def import_payload() -> None:
@@ -311,7 +369,8 @@ def _checkpoint_parent(path: Path) -> Path:
     parent = path.parent.resolve(strict=True)
     resolved = parent / path.name
     require(parent.is_dir() and not parent.is_symlink() and not resolved.is_symlink()
-            and not resolved.is_relative_to(repo) and not parent.is_relative_to(repo), "checkpoint_inside_repo")
+            and not resolved.is_relative_to(repo) and not parent.is_relative_to(repo)
+            and not _inside_git_worktree(parent), "checkpoint_inside_repo")
     return resolved
 
 
@@ -351,9 +410,14 @@ def append_checkpoint(path: Path, event: dict) -> dict:
     digest_ok = isinstance(plan, str) and len(plan) == 64 and all(character in "0123456789abcdef" for character in plan)
     require(event.get("destination") in ORDER and digest_ok
             and event.get("action") in ("quarantined", "blocked")
-            and event.get("accepted") == 0 and event.get("published") == 0, "checkpoint_event_refused")
+            and event.get("accepted") == 0 and event.get("published") == 0
+            and event.get("codeHead") == current_code_head()
+            and all(isinstance(event.get(key), str) and event[key] for key in IDENTITY_KEYS),
+            "checkpoint_event_refused")
     resolved = _checkpoint_parent(path)
     rows = read_checkpoint(resolved) if resolved.exists() else []
+    if rows:
+        require_same_charge(rows[0], {key: event[key] for key in IDENTITY_KEYS})
     same = [row for row in rows if row.get("destination") == event["destination"]]
     if same:
         require(all(row.get("planDigest") == event["planDigest"] for row in same), "checkpoint_conflict")
@@ -364,6 +428,10 @@ def append_checkpoint(path: Path, event: dict) -> dict:
     raw = (json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
     descriptor = os.open(resolved, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
     try:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise ValueError("checkpoint_busy") from error
         os.write(descriptor, raw)
         os.fsync(descriptor)
     finally:
@@ -393,16 +461,26 @@ def resume_plan(path: Path, destinations: list[str]) -> dict:
             "accepted": 0, "published": 0, "legalEvidenceSlots": 0}
 
 
+def _inside_git_worktree(path: Path) -> bool:
+    current = path if path.is_dir() else path.parent
+    for parent in (current, *current.parents):
+        if (parent / ".git").exists():
+            return True
+    return False
+
+
 def _outside(path: Path, repo: Path, source: Path) -> Path:
     parent = path.parent.resolve(strict=True)
     dest = parent / path.name
     require(path.name not in ("", ".", "..") and not dest.is_symlink()
+            and not any(part.is_symlink() for part in dest.parents)
             and not dest.is_relative_to(repo) and not dest.is_relative_to(source)
-            and dest != source, "output_refused")
+            and dest != source and not _inside_git_worktree(parent), "output_refused")
     return dest
 
 
-def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, checkpoint: Path | None = None) -> dict:
+def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, checkpoint: Path | None = None,
+                      identity: dict | None = None) -> dict:
     """Commit one private quarantine package at a time. The seal is written last.
 
     A failed destination leaves earlier checkpointed packages in place and does
@@ -412,6 +490,8 @@ def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, c
     repo = Path(__file__).resolve().parent.parent
     names = list(destinations)
     require(names == list(ORDER[:len(names)]) and len(names) > 0, "destination_order_refused")
+    identity = identity or charge_identity("0" * 64, out.name)
+    require_same_charge(identity, identity)
     dest = _outside(out, repo, source)
     created = not dest.exists()
     if created:
@@ -431,9 +511,9 @@ def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, c
         all_priority = None
         for country in names:
             if country in rows and country in plan["done"]:
-                record = _resume_country(dest, country, rows[country], adapter)
+                record = _resume_country(dest, country, rows[country], adapter, identity)
             else:
-                record = _commit_country(source, dest, ckpt, country, adapter)
+                record = _commit_country(source, dest, ckpt, country, adapter, identity)
             if record["action"] == "blocked":
                 blocked.append(record["blocked"])
                 continue
@@ -462,7 +542,8 @@ def prepare_resumable(root: Path, out: Path, destinations: list[str], adapter, c
         raise
 
 
-def _resume_country(dest: Path, country: str, row: dict, adapter) -> dict:
+def _resume_country(dest: Path, country: str, row: dict, adapter, identity: dict) -> dict:
+    require_same_charge(row, identity)
     if row.get("action") == "blocked":
         payload = adapter["read_file"](dest, f"blocked/{country}.json", 8 * 1024 * 1024)
         require(hashlib.sha256(payload).hexdigest() == row["planDigest"], "checkpoint_conflict")
@@ -480,34 +561,23 @@ def _resume_country(dest: Path, country: str, row: dict, adapter) -> dict:
                         "extraNotImported": manifest.get("extraNotImported")}}
 
 
-def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter) -> dict:
+def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter, identity: dict) -> dict:
     parent = dest.parent
     temporary = Path(tempfile.mkdtemp(prefix=".jetnity-50-pass-", dir=parent))
     package = temporary / country
     try:
-        try:
-            counts = adapter["prepare"](source, country, package)
-        except ValueError as error:
-            if country not in STRUCTURAL_HOLDS or str(error) != "split_frame_identity":
-                raise
-            relative = f"records/dest/{country}/index.json"
-            index_bytes = adapter["read_file"](source, relative, 8 * 1024 * 1024)
-            frame = adapter["strict_json"](index_bytes)
-            require(isinstance(frame, dict) and frame.get("schema") == "jetnity-entry-requirements-research-v2.2"
-                    and frame.get("status") == "RESEARCH_ONLY" and frame.get("dest_id") == country
-                    and frame.get("destination_iso2") == country and frame.get("file_layout") != "split",
-                    "unsplit_frame_identity_refused")
+        if country in STRUCTURAL_HOLDS:
+            index_bytes, reason, plan = hold_index(adapter, source, country)
             held = dest / "blocked"
             held.mkdir(mode=0o700, exist_ok=True)
             target = held / f"{country}.json"
             require(not target.exists(), "blocked_scope_changed")
             target.write_bytes(index_bytes)
             os.chmod(target, 0o600)
-            plan = hashlib.sha256(index_bytes).hexdigest()
-            append_checkpoint(ckpt, {"destination": country, "planDigest": plan, "action": "blocked",
-                                      "accepted": 0, "published": 0})
-            return {"action": "blocked", "blocked": {"country": country,
-                    "reason": "unsplit_research_frame_not_importable", "indexSha256": plan}}
+            append_checkpoint(ckpt, {**identity, "destination": country, "planDigest": plan,
+                                      "action": "blocked", "reason": reason, "accepted": 0, "published": 0})
+            return {"action": "blocked", "blocked": {"country": country, "reason": reason, "indexSha256": plan}}
+        counts = adapter["prepare"](source, country, package)
         require(counts == adapter["verify"](package) and counts["passports"] == 50
                 and counts["topicSlots"] == 1300 and counts["accepted"] == 0
                 and counts["published"] == 0, "research_validation_refused")
@@ -524,8 +594,8 @@ def _commit_country(source: Path, dest: Path, ckpt: Path, country: str, adapter)
             shutil.rmtree(package)
         else:
             os.rename(package, final)
-        append_checkpoint(ckpt, {"destination": country, "planDigest": plan, "action": "quarantined",
-                                  "accepted": 0, "published": 0})
+        append_checkpoint(ckpt, {**identity, "destination": country, "planDigest": plan,
+                                  "action": "quarantined", "accepted": 0, "published": 0})
         return {"action": "quarantined", "passports": manifest["passportPriority"],
                 "priority": manifest["inputHashes"]["passportPriority"],
                 "receipt": {"country": country, "manifestSha256": plan, "counts": counts,
@@ -577,19 +647,22 @@ def main() -> None:
             if values.mode == "verify":
                 require(values.archive is None and values.research_root is None, "verify_inputs_refused")
                 total = verify(values.output, adapter)
-            elif values.mode == "resume":
-                require(values.archive is None and values.research_root is not None, "exactly_one_source")
-                total = prepare_resumable(values.research_root, values.output,
-                                           resolve_destinations(values.destinations), adapter, values.checkpoint)
-            else:
-                require((values.archive is None) != (values.research_root is None), "exactly_one_source")
+            elif values.mode in ("resume", "prepare"):
+                pinned_archive_required(values.archive, values.research_root)
+                identity = charge_identity(digest(values.archive), values.output.name)
                 destinations = resolve_destinations(values.destinations)
                 staging = Path(tempfile.mkdtemp(prefix=".jetnity-50-pass-src-", dir=values.output.parent.resolve(strict=True)))
                 try:
-                    root = extract_pinned_archive(values.archive, staging) if values.archive else values.research_root
-                    total = prepare(root, values.output, destinations, adapter)
+                    root = extract_pinned_archive(values.archive, staging)
+                    if values.mode == "resume":
+                        total = prepare_resumable(root, values.output, destinations, adapter,
+                                                   values.checkpoint, identity)
+                    else:
+                        total = prepare(root, values.output, destinations, adapter)
                 finally:
                     shutil.rmtree(staging)
+            else:
+                raise ValueError("mode_refused")
         print(json.dumps(total, separators=(",", ":")))
     except (ValueError, OSError, KeyError, TypeError, RuntimeError, tarfile.TarError, RecursionError):
         print("RESEARCH_ONLY_50_PASS_IMPORT_REFUSED accepted=0 published=0", file=sys.stderr)

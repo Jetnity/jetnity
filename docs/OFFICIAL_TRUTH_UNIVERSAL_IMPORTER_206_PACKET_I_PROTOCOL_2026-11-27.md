@@ -1,6 +1,19 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
-Stand: 27.11.2026. Branch `cursor/official-truth-importer-206-5c1d` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`.
+## Korrekturrunde nach TL-Review 27.11.2026
+
+Massgeblich ist der Review in #1319, Kommentar 7207442476. Gleicher Branch, gleicher Draft #1323. M04/N11 ist nicht verändert.
+
+- Der Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f78520744b` ist die lokale Archivvariante. Größe 2'924'288 Bytes, CSV- und Tracker-Pins werden erst geprüft, wenn die Datei tatsächlich gelesen wird. `--research-root` ersetzt den Pin nicht. Diese Session hat das Archiv nicht gelesen.
+- HR und NL bleiben Hold, auch bei gesplittetem Index. SO auf K2 gilt nur für AT, ES, GR und NL.
+- Identische Tracker-Mehrfachzeilen binden einmal. Widersprechende Zeiger, fehlende oder uneinheitliche Indexfelder werden nicht ergänzt. Eine einheitliche andere Indexreihenfolge folgt dem CSV-Rang. v2.1/v2.2 und die Statusvarianten `RESEARCH_ONLY`, `researched`, `research_only` bleiben im Original.
+- `project_launch` setzt `legalEvidence` nicht aus frei gelieferter source.id, Digest, Version, Scope, Status oder Textlänge. Ein `checked_official`-Witness ohne gebundene Originalbytes wird abgelehnt. Vollständige Profile bleiben 0.
+- Checkpoints binden Archiv-SHA, CSV-SHA, Tracker-SHA, Skript-Digest und Ausgabeidentität. Ausgabe ausserhalb von Git-Worktrees, 0700/0600, Append-only, kein stilles Mischen von Chargen.
+- Lokaler Ablauf für den Work-Chat: `docs/OFFICIAL_TRUTH_PACKET_I_LOCAL_WORK_RUN_2026-11-27.md`. Vor der TL-Abnahme endet er mit `LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED`. Datenbankimport bleibt `PRIVATE_PAYLOAD_PATH_STOP`.
+
+Die CI dieses Korrektur-Heads ist erst nach dem Push zu belegen. Sie wird hier nicht vorweg genommen.
+
+Stand der ersten Runde: 27.11.2026. Branch `cursor/official-truth-importer-206-5c1d` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`.
 
 Auftrag: [#1321](https://github.com/Jetnity/jetnity/issues/1321). Massgeblich [#1319](https://github.com/Jetnity/jetnity/issues/1319), insbesondere [6+4](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205494648) und [Freitagscheckpoint](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7205720179). #1319 bleibt offen. Kein Merge, kein Ready, kein Deploy, keine Datenbank, kein Importlauf, keine Aktivierung.
 

@@ -233,15 +233,82 @@ class PackageTests(unittest.TestCase):
         evidenced.append(witness('Z1', 'unknown'))
         evidenced.append(witness('K1', 'B'))
         projection = a.project_launch('AT', CODES, evidenced)
-        self.assertEqual(projection['coreCompleteProfiles'], 1)
-        self.assertEqual(projection['legalEvidenceSlots'], 6)
-        self.assertEqual(projection['sourceAssignments'], 6)
+        self.assertEqual(projection['coreCompleteProfiles'], 0)
+        self.assertEqual(projection['legalEvidenceSlots'], 0)
+        self.assertEqual(projection['sourceAssignments'], 0)
+        self.assertEqual(projection['witnessClass'], 'unverified_research_witness')
         self.assertEqual(projection['published'], 0)
         optional = next(slot for slot in projection['slots'] if slot['nationality']=='DE' and slot['topic']=='Z1')
-        self.assertEqual(optional['status'], 'unknown')
+        self.assertEqual(optional['status'], 'unverified')
         self.assertFalse(optional['legalEvidence'])
         self.assertFalse(optional['completenessGate'])
         so = next(slot for slot in projection['slots'] if slot['nationality']=='SO' and slot['topic']=='K2')
         self.assertEqual(so['status'], 'held')
+        supplied = next(slot for slot in projection['slots'] if slot['nationality']=='DE' and slot['topic']=='K1')
+        self.assertEqual(supplied['status'], 'unverified')
+        self.assertEqual(supplied['suppliedStatus'], 'B')
+        with self.assertRaisesRegex(ValueError, 'witness_destination'):
+            a.project_launch('AT', CODES, [witness('K1', 'B', destination='DE')])
+        with self.assertRaisesRegex(ValueError, 'official_witness_not_bound'):
+            a.project_launch('AT', CODES, [witness('K1', 'B', witnessClass='checked_official')])
+        with self.assertRaisesRegex(ValueError, 'projection_conflict'):
+            a.project_launch('AT', CODES, [witness('K1', 'B'), witness('K1', 'B', source={'id': 'other'})])
+        long_text = witness('K3', 'B', text='x' * 4000)
+        text_only = a.project_launch('FR', CODES, [long_text])
+        self.assertEqual(text_only['legalEvidenceSlots'], 0)
+        self.assertEqual(text_only['coreCompleteProfiles'], 0)
+        france = next(slot for slot in text_only['slots'] if slot['nationality']=='SO' and slot['topic']=='K2')
+        self.assertEqual(france['status'], 'open')
+
+    def test_identical_tracker_duplicates_bind_once_and_conflicts_hold(self):
+        text = (self.root/'tracker.csv').read_text()
+        line = 'AT,IN,records/dest/AT/IN.json,\n'
+        (self.root/'tracker.csv').write_text(text.replace(line, line + line, 1))
+        counts = self.prepare()
+        self.assertEqual(counts['passports'], 50)
+        self.assertEqual(counts['accepted'], 0)
+        text = (self.root/'tracker.csv').read_text()
+        (self.root/'tracker.csv').write_text(text + 'AT,DE,records/dest/AT/OTHER.json,\n')
+        with self.assertRaisesRegex(ValueError, 'tracker_row_conflict'):
+            a.prepare(self.root, 'AT', self.base/'other-out')
+
+    def test_consistent_index_order_keeps_csv_selection_and_original_bytes(self):
+        original = (self.dest/'index.json').read_bytes()
+        reversed_codes = list(reversed(CODES))
+
+        def reorder(frame):
+            frame['expected_nationality_slices'] = reversed_codes
+            frame['slice_files'] = [f'records/dest/AT/{code}.json' for code in reversed_codes]
+            frame['slices_by_nationality'] = {code: index for index, code in enumerate(reversed_codes)}
+            frame['nationality_slices'] = [{'nationality': code, 'file': f'records/dest/AT/{code}.json'}
+                                           for code in reversed_codes]
+
+        self.change(self.dest/'index.json', reorder)
+        self.prepare()
+        manifest = json.loads((self.output/'manifest.json').read_text())
+        self.assertEqual(manifest['passportPriority'], CODES)
+        self.assertIn('index_order_follows_csv', manifest['indexNotes'])
+        self.assertEqual((self.output/'original/destination-index.json').read_bytes(),
+                         (self.dest/'index.json').read_bytes())
+        self.assertNotEqual((self.dest/'index.json').read_bytes(), original)
+
+    def test_research_status_variant_is_preserved_not_promoted(self):
+        self.change(self.dest/'IN.json', lambda record: record.update(status='researched'))
+        self.prepare()
+        raw = json.loads((self.output/'original/slices/IN.json').read_text())
+        self.assertEqual(raw['status'], 'researched')
+        self.assertEqual(a.verify(self.output)['published'], 0)
+        self.assertTrue(all(row['publicationAuthority']=='none'
+                            for row in json.loads((self.output/'coverage.json').read_text())))
+
+    def test_absent_destination_id_is_not_invented(self):
+        def drop(frame):
+            frame.pop('dest_id')
+        self.change(self.dest/'index.json', drop)
+        self.prepare()
+        original = json.loads((self.output/'original/destination-index.json').read_text())
+        self.assertNotIn('dest_id', original)
+        notes = json.loads((self.output/'manifest.json').read_text())['indexNotes']
+        self.assertIn('dest_id_absent', notes)
 
 if __name__=='__main__': unittest.main()
