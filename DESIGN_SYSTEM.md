@@ -565,6 +565,8 @@ Der Plan, ob die öffentlichen Seiten künftig auch dunkel werden, ist eine Prod
 
 **Fokusring der Navigationspunkte (dunkel).** Navigationspunkte stehen im Abstand von 4 bis 6 px untereinander. Ein Ring mit `outline-offset: 3px` (Band 3 bis 6 px) reichte in die helle Oberkante des gewählten Nachbarn; Mint auf Mint, 1,03 : 1 bei 150 % Schrift (Reiseplan, Organisieren, Chromium 390 px dunkel). `.workspace-nav-link` und `.workspace-open-trip` im dunklen Thema haben deshalb `outline-offset: 1px` (`components/workspace/workspace-surfaces.css`): der Ring bleibt auf der eigenen Fläche des Punkts.
 
+**Dunkler Start vor der Hydration.** Das Boot-Skript setzt `html[data-workspace-theme="dark"]`, die Shell trägt bis zur Hydration noch «light». Die Spiegelungen in `workspace-surfaces.css` (`html[…dark] .workspace-shell[…light] .workspace-content …`) färben dann Text, Flächen und Ränder wie im dunklen Thema. Jede dunkle Regel, die eine helle Fläche behält (Limette `bg-citrus-400`, `/55`), braucht ihre Spiegelung mit gleichem Gewicht **nach** der Text-Spiegelung; sonst steht helle Tinte auf der hellen Fläche («Reise fortsetzen», 1,12 : 1). Abgedeckt vom Lauf `auswahl-kontrast.mjs --ohne-js`.
+
 **Abnahme.** `scripts/premium-redesign-a/auswahl-kontrast.mjs` misst jedes Element in jedem sichtbaren Zustand (normal, gewählt, ungewählt, hover, focus-visible, active, deaktiviert) im echten Browser; ein nicht herstellbarer Zustand ist OFFEN, nie PASS. Bildgründe werden an den Pixeln gemessen.
 
 ## 7. Responsive-Regeln
