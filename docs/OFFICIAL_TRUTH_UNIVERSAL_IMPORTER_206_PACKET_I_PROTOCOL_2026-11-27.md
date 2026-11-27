@@ -1,5 +1,14 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Nachkorrektur der Diagnose, NO-GO auf 716ecce13
+
+- Jeder Index, der kein Objekt ist, hält das Ziel. `null`, `false`, `0`, ein String und ein Array sind `index_not_object`. Die lesbaren Profile dieses Ziels werden weiter geprüft. Ein Typfehler in einem Indexfeld wird als Hold erfasst und bricht die übrigen Profile nicht ab.
+- Im research_v2_2-Altpfad werden vorhandene `expected_50_set` und `slice_sha256` vor der Rückgabe geprüft. Ein explizites `null` ist kein fehlender Schlüssel. Eine fehlende Hashdeklaration bleibt `hash_declaration_absent` und ist kein Hash-PASS. Ein gesetzter Hash wird an die Dateibytes gebunden.
+- Die Tracker-Pflichtspalten und der kanonische Pointer gelten vor jedem Kandidaten. Eine fehlende `record_pointer`-Spalte, ein abweichender Pointer, ein fehlendes oder falsches `record-schema.json` und der CORE-Vertrag erzeugen keinen Kandidaten. Eine fehlende Konfliktspalte ist nicht als leerer oder negativer Tracker gelesen. Leere Quellen, Metadatenwarnungen und nicht auflösbare Feldreferenzen bleiben lokal unbestätigt. `conflictAbsenceProven` bleibt falsch. `legalEvidence` bleibt 0.
+- Die Profilstatus `missing`, `notCheckable`, `held` und `checked` sind disjunkt und summieren sich auf die geprüften Paare. `notCheckablePairs` zählt fehlende Ziele, fehlende Slices, `slice_not_object` und `sources_shape`. `checked` und 206/10'300 sind Inventar, kein PASS. Der lokale Ablauf diagnostiziert den temporären Forschungsbaum nach der bestehenden Abnahme und vor dem Aufräumen. Nach aussen gehen nur Summen. Es gibt keinen zweiten Archivzugriff und keine Umgehung des Exact-Head-Gates. Die Charge von `ebe14868c` bleibt historisch.
+
+Lokal, ohne Archiv: Forschungsadapter 42 Tests, Gap-Audit 6, Importer 31, alle OK. Die CI dieses Heads wird erst nach dem Push belegt.
+
 ## Nachkorrektur der Diagnose, NO-GO auf 842c03d2b
 
 - Die Diagnose läuft über die gepinnte Zielreihenfolge und zählt jedes tatsächlich geprüfte Paar. Ein früher Integritätsfehler beendet die übrigen Profilprüfungen nicht. Kandidaten gibt es nur ohne zielweite Integritätsstörung, und ein lokaler Befund trägt seinen Hold-Status. `holdStatus=none` setzt die Slice-Identität, den Status, die Authority und den Pointer voraus.
@@ -122,7 +131,7 @@ Der spätere Repack `6545eb28cdffab00a2c7864626abe602d4df240a477bb28b73fe73f7852
 
 Die Byte-Pins der beiden geänderten Offline-Skripte in den Integrationsprüfungen sind die neuen Skript-Digests, nicht Archiv-Digests:
 
-- `official-truth-research-package.py` `66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66`
+- `official-truth-research-package.py` `d345443512c53af3fc5f318746a485394ef02ebbee7af16da5ce133ac29aa5bb`. Der vorherige Integrationspin `66f1f49d7b126061a1ad769f188af2f59bdd07048b406a38155dede672808c66` gehört zu `716ecce13`.
 - `official-truth-index-gap-audit.py` `9099cd90077029144bbea18e4b0570d3f76037a540b16931270fff575de49bea`
 
 ## Tests, lokal, ohne Datenbank und ohne Netz

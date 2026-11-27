@@ -531,5 +531,167 @@ class PackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'index_priority_binding|index_hash_mismatch'):
             a.prepare(self.root, 'AT', self.base/'research-hash')
 
+    def test_non_object_index_is_a_destination_hold_and_slices_stay_visible(self):
+        self.change(self.dest/'IN.json', lambda record: record.update(nationality='ZZ'))
+        for literal in ('null', 'false', '0', '"AT"', '[]'):
+            (self.dest/'index.json').write_text(literal + '\n')
+            report = a.diagnose(self.root)
+            codes = [row['code'] for row in report['findings'] if row['destination'] == 'AT']
+            self.assertIn('index_not_object', codes)
+            self.assertIn('slice_identity', codes)
+            self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+            self.assertTrue(report['inventoryIsNotAPass'])
+            self.assertNotEqual(report['destinationsExamined'], report['candidateProfiles'])
+            self.assertEqual(sum(report['profileStatus'].values()), report['pairsExamined'])
+            self.assertEqual(report['pairsExamined'], 206 * 50)
+            self.assertEqual(report['pairsWithoutFindings'], report['profileStatus']['checked'])
+            self.assertEqual(report['pairsWithFindings'] + report['pairsWithoutFindings'], report['pairsExamined'])
+            self.assertEqual(report['profileStatus']['checked'], 0)
+            self.assertEqual(report['profileStatus']['held'], 50)
+            self.assertGreaterEqual(report['notCheckablePairs'], 205 * 50)
+            self.assertEqual(report['legalEvidenceSlots'], 0)
+            self.assertTrue(all(row['legalEvidence'] is False for row in report['candidates']))
+
+    def test_unhashable_and_mixed_index_fields_do_not_abort_diagnosis(self):
+        self.change(self.dest/'IN.json', lambda record: record.update(nationality='ZZ'))
+        self.change(self.dest/'index.json', lambda frame: frame.__setitem__('schema', ['not-a-name']))
+        report = a.diagnose(self.root)
+        codes = [row['code'] for row in report['findings'] if row['destination'] == 'AT']
+        self.assertIn('unknown_index_schema', codes)
+        self.assertIn('slice_identity', codes)
+        self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+        frame = json.loads((self.dest/'index.json').read_text())
+        frame['schema'] = a.SCHEMA
+        frame['expected_50_set'] = [{'nested': True}]
+        with self.assertRaisesRegex(ValueError, 'index_priority_binding'):
+            a.index_binding(frame, 'AT', CODES)
+        frame.pop('expected_50_set')
+        frame['expected_nationality_slices'] = [1, *CODES[1:]]
+        with self.assertRaisesRegex(ValueError, 'index_priority_binding'):
+            a.index_binding(frame, 'AT', CODES)
+        frame['expected_nationality_slices'] = list(CODES)
+        frame['slices_by_nationality'] = {code: {'bad': True} for code in CODES}
+        with self.assertRaisesRegex(ValueError, 'index_mapping'):
+            a.index_binding(frame, 'AT', CODES)
+
+    def test_legacy_path_checks_hashes_and_null_is_not_absence(self):
+        binding = ('expected_nationality_slices', 'slice_files', 'slices_by_nationality', 'nationality_slices')
+
+        def drop(frame):
+            for key in binding:
+                frame.pop(key, None)
+
+        self.change(self.dest/'index.json', drop)
+        a.prepare(self.root, 'AT', self.base/'legacy-ok')
+        notes = json.loads((self.base/'legacy-ok'/'manifest.json').read_text())['indexNotes']
+        self.assertIn('index_fields_absent', notes)
+        self.assertIn('hash_declaration_absent', notes)
+        self.assertEqual(json.loads((self.base/'legacy-ok'/'manifest.json').read_text())['counts']['published'], 0)
+
+        def wrong_set(frame):
+            drop(frame)
+            frame['expected_50_set'] = ['XX'] * 50
+        self.change(self.dest/'index.json', wrong_set)
+        with self.assertRaisesRegex(ValueError, 'index_priority_binding'):
+            a.prepare(self.root, 'AT', self.base/'legacy-set')
+
+        def null_hash(frame):
+            drop(frame)
+            frame.pop('expected_50_set', None)
+            frame['slice_sha256'] = None
+        self.change(self.dest/'index.json', null_hash)
+        with self.assertRaisesRegex(ValueError, 'index_hash_mismatch'):
+            a.prepare(self.root, 'AT', self.base/'legacy-null')
+
+        def bad_hash(frame):
+            drop(frame)
+            frame.pop('expected_50_set', None)
+            frame['slice_sha256'] = {code: 'ab' * 32 for code in CODES}
+        self.change(self.dest/'index.json', bad_hash)
+        with self.assertRaisesRegex(ValueError, 'index_hash_mismatch'):
+            a.prepare(self.root, 'AT', self.base/'legacy-hash')
+        self.change(self.dest/'TR.json', lambda record: record.pop('health_entry'))
+        report = a.diagnose(self.root)
+        tr = [row['code'] for row in report['findings'] if row['destination'] == 'AT' and row['nationality'] == 'TR']
+        self.assertIn('historical_key_absent', tr)
+        self.assertIn('index_hash_mismatch', [row['code'] for row in report['findings'] if row['destination'] == 'AT'])
+        self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+
+        self.dump(self.dest/'index.json', self.frame)
+        self.change(self.dest/'index.json', lambda frame: frame.__setitem__('nationality_slices', None))
+        with self.assertRaisesRegex(ValueError, 'index_pointer_identity'):
+            a.prepare(self.root, 'AT', self.base/'null-pointer')
+        self.dump(self.dest/'index.json', self.frame)
+        self.change(self.dest/'index.json', lambda frame: frame.__setitem__('file_layout', None))
+        with self.assertRaisesRegex(ValueError, 'split_frame_identity'):
+            a.prepare(self.root, 'AT', self.base/'null-layout')
+
+    def test_missing_pointer_schema_and_provenance_are_not_a_clean_candidate(self):
+        self.change(self.dest/'IN.json', lambda record: record.update(nationality='ZZ'))
+        (self.root/'tracker.csv').write_text('dest_id,nationality,conflict\n' + ''.join(f'AT,{code},\n' for code in CODES))
+        report = a.diagnose(self.root)
+        codes = [row['code'] for row in report['findings'] if row['destination'] == 'AT']
+        self.assertIn('tracker_columns', codes)
+        self.assertIn('slice_identity', codes)
+        self.assertNotIn('tracker_conflict_flag', codes)
+        self.assertFalse(any(row['destination'] == 'AT' for row in report['candidates']))
+        self.assertTrue(all(row.get('conflictAbsenceProven') is False for row in report['candidates']))
+
+        (self.root/'tracker.csv').write_text('dest_id,nationality,record_pointer\n' + ''.join(
+            f'AT,{code},records/dest/AT/{code}.json\n' for code in CODES))
+        report = a.diagnose(self.root)
+        self.assertIn('tracker_conflict_undeclared', [row['code'] for row in report['findings']])
+        self.assertFalse(any(row['destination'] == 'AT' and row.get('holdStatus') == ['none'] for row in report['candidates']))
+
+        (self.root/'tracker.csv').write_text('dest_id,nationality,record_pointer,conflict\n' + ''.join(
+            f'AT,{code},records/dest/AT/{"OTHER" if code == "IN" else code}.json,\n' for code in CODES))
+        report = a.diagnose(self.root)
+        self.assertIn('tracker_pointer_mismatch', [row['code'] for row in report['findings']
+                                                   if row['nationality'] == 'IN'])
+        self.assertFalse(any(row['nationality'] == 'IN' and row.get('holdStatus') == ['none'] for row in report['candidates']))
+
+        schema = self.root/'record-schema.json'
+        schema.unlink()
+        report = a.diagnose(self.root)
+        self.assertIn('schema_unreadable', [row['code'] for row in report['findings']])
+        self.assertIn('slice_identity', [row['code'] for row in report['findings'] if row['nationality'] == 'IN'])
+        self.assertEqual(report['candidates'], [])
+        self.dump(schema, {'schema': a.SCHEMA, 'status': 'RESEARCH_ONLY',
+                           'nationality_slice': {'mandatory_core_fields': ['not-the-core']}})
+        report = a.diagnose(self.root)
+        self.assertIn('schema_core_changed', [row['code'] for row in report['findings']])
+        self.assertEqual(report['candidates'], [])
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+
+        self.dump(schema, {'schema': a.SCHEMA, 'status': 'RESEARCH_ONLY',
+                           'nationality_slice': {'mandatory_core_fields': a.CORE}})
+        self.dump(self.dest/'index.json', self.frame)
+        self.change(self.dest/'IN.json', lambda record: record.update(nationality='IN', sources=[]))
+        self.change(self.dest/'TR.json', lambda record: record['sources'][0].__setitem__('url', 'http://insecure.example/source'))
+        self.change(self.dest/'DE.json', lambda record: record.__setitem__('fees', {'source_ref': 'MISSING'}))
+        (self.dest/'US.json').write_text('[]\n')
+        self.change(self.dest/'FR.json', lambda record: record.__setitem__('sources', {'ref': 'S1'}))
+        (self.root/'tracker.csv').write_text('dest_id,nationality,record_pointer,conflict\n' + ''.join(
+            f'AT,{code},records/dest/AT/{code}.json,\n' for code in CODES))
+        report = a.diagnose(self.root)
+        by_code = {}
+        for row in report['candidates']:
+            if row['destination'] == 'AT':
+                by_code.setdefault(row['nationality'], row['holdStatus'])
+        self.assertIn('sources_empty', by_code['IN'])
+        self.assertNotEqual(by_code['IN'], ['none'])
+        self.assertIn('source_metadata_unconfirmed', by_code['TR'])
+        self.assertIn('unresolved_source_refs', by_code['DE'])
+        self.assertNotIn('US', by_code)
+        self.assertNotIn('FR', by_code)
+        self.assertIn('slice_not_object', [row['code'] for row in report['findings'] if row['nationality'] == 'US'])
+        self.assertIn('sources_shape', [row['code'] for row in report['findings'] if row['nationality'] == 'FR'])
+        self.assertGreater(report['notCheckablePairs'], 205 * 50)
+        self.assertIn('notCheckable', report['profileStatus'])
+        self.assertTrue(report['inventoryIsNotAPass'])
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+        self.assertTrue(all(row['legalEvidence'] is False and row['conflictAbsenceProven'] is False
+                            for row in report['candidates']))
+
 
 if __name__=='__main__': unittest.main()

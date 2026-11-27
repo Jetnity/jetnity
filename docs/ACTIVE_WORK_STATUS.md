@@ -1,5 +1,13 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, Diagnose hält Nicht-Objekte und ungebundene Profile
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `716ecce13`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.
+
+- Ein Index aus `null`, `false`, `0`, String oder Array hält das Ziel. Vorhandene Hashes im research_v2_2-Altpfad werden geprüft. Fehlende Tracker-Pointer, ein falsches Record-Schema und leere oder unklare Quellen erzeugen keinen sauberen Kandidaten. 206/10'300 bleibt eine Inventarzählung.
+- Der lokale Ablauf diagnostiziert den temporären Forschungsbaum vor dem Aufräumen und gibt nur Summen nach aussen. Exact-Head- und Skript-Digest-Gate bleiben davor.
+- Lokal: Forschungsadapter 42, Gap-Audit 6, Importer 31, alle OK. CI dieses Heads wird nach dem Push belegt.
+
 ## 27.11.2026 — Paket I, Diagnose sammelt jeden Befund
 
 Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `842c03d2b`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch.

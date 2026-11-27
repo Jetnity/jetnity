@@ -332,30 +332,56 @@ _KNOWN_INDEX_KEYS = frozenset((
 ))
 
 
+def _field_state(frame: dict, key: str) -> str:
+    """Distinguish a missing key from an explicit JSON null. Null is not absence."""
+    if key not in frame:
+        return "absent"
+    if frame[key] is None:
+        return "null"
+    return "value"
+
+
+def _text_list(value, size: int) -> bool:
+    return (isinstance(value, list) and len(value) == size
+            and all(isinstance(item, str) for item in value))
+
+
 def _check_present_redundancy(frame: dict, destination: str, permutation: list[str], notes: list[str], hashes: dict) -> None:
-    """Every declared identity, order, map, or hash must agree. Absence is not a pass."""
+    """Every declared identity, order, map, or hash must agree. Absence is not a pass.
+
+    Types are checked before set, sort, or dict membership. An explicit null is a
+    hold, not a missing declaration. This function raises ValueError for data
+    that cannot be bound. It does not swallow TypeError from a later caller.
+    """
     if "expected_50_set" in frame:
         value = frame["expected_50_set"]
-        require(isinstance(value, list) and len(value) == 50 and set(value) == set(permutation),
-                "index_priority_binding")
+        require(_text_list(value, 50) and set(value) == set(permutation), "index_priority_binding")
     if "expected_nationality_slices" in frame:
         value = frame["expected_nationality_slices"]
-        require(isinstance(value, list) and value == list(permutation), "index_priority_binding")
+        require(_text_list(value, len(permutation)) and value == list(permutation), "index_priority_binding")
     if "slice_files" in frame:
         require(_files_match(frame["slice_files"], destination, list(permutation)) is not None,
                 "index_priority_binding")
     if "slices_by_nationality" in frame:
-        require(frame["slices_by_nationality"] == {nationality: index for index, nationality in enumerate(permutation)},
-                "index_mapping")
+        mapping = frame["slices_by_nationality"]
+        expected = {nationality: index for index, nationality in enumerate(permutation)}
+        require(isinstance(mapping, dict)
+                and all(isinstance(key, str) and isinstance(item, int) and not isinstance(item, bool)
+                        for key, item in mapping.items())
+                and mapping == expected, "index_mapping")
+    if _field_state(frame, "nationality_slices") == "null":
+        raise ValueError("index_pointer_identity")
     if "slice_sha256" in frame:
         checksums = frame["slice_sha256"]
-        require(isinstance(checksums, dict) and set(checksums) == set(permutation), "index_hash_mismatch")
+        require(isinstance(checksums, dict) and all(isinstance(key, str) for key in checksums)
+                and set(checksums) == set(permutation), "index_hash_mismatch")
         for nationality in permutation:
             require(_hex64(checksums.get(nationality)), "index_hash_mismatch")
             if nationality in hashes:
                 require(hashes[nationality] == checksums[nationality], "index_hash_mismatch")
             hashes[nationality] = checksums[nationality]
-        if any("sha256" not in row for row in frame.get("nationality_slices") or [] if isinstance(row, dict)):
+        rows = frame.get("nationality_slices")
+        if isinstance(rows, list) and any(isinstance(row, dict) and "sha256" not in row for row in rows):
             notes.append("hash_declaration_incomplete")
     if any(key not in _KNOWN_INDEX_KEYS for key in frame):
         notes.append("unrecognized_field_not_validated")
@@ -376,16 +402,20 @@ def index_binding(frame: dict, destination: str, passports: list[str]) -> tuple[
         "jetnity-entry-requirements-dest-index-v1": "dest_index_v1",
         "jetnity-entry-requirements-research-index-v2.2": "research_index_v2_2",
     }
-    require(schema in known, "unknown_index_schema")
-    require(frame.get("status") in RESEARCH_STATUSES, "split_frame_identity")
+    # A list or other non-string is not a schema name. Do not hash it.
+    require(isinstance(schema, str) and schema in known, "unknown_index_schema")
+    status = frame.get("status")
+    require(isinstance(status, str) and status in RESEARCH_STATUSES, "split_frame_identity")
     if "dest_id" in frame:
         require(frame.get("dest_id") == destination, "split_frame_identity")
-    require(frame.get("destination_iso2") == destination, "split_frame_identity")
-    require(frame.get("file_layout") in (None, "split"), "split_frame_identity")
+    require("destination_iso2" in frame and frame.get("destination_iso2") == destination, "split_frame_identity")
+    layout = _field_state(frame, "file_layout")
+    # Explicit null is not the same as a missing key.
+    require(layout == "absent" or frame.get("file_layout") == "split", "split_frame_identity")
     notes = [known[schema]]
     if "dest_id" not in frame:
         notes.append("dest_id_absent")
-    if frame.get("file_layout") is None:
+    if layout == "absent":
         notes.append("file_layout_absent")
     if known[schema] == "dest_index_v2_2":
         files, binding_notes, hashes = _bind_dest_index_v22(frame, destination, passports)
@@ -397,8 +427,7 @@ def index_binding(frame: dict, destination: str, passports: list[str]) -> tuple[
 def _bind_dest_index_v22(frame: dict, destination: str, passports: list[str]):
     """Reviewed contract from the gap audit. No extra field names."""
     expected_set = frame.get("expected_50_set")
-    require(isinstance(expected_set, list) and len(expected_set) == 50 and set(expected_set) == set(passports),
-            "index_priority_binding")
+    require(_text_list(expected_set, 50) and set(expected_set) == set(passports), "index_priority_binding")
     rows = frame.get("nationality_slices")
     kind, row_hashes = _pointer_match(rows, destination, list(passports))
     require(kind == "list", "index_pointer_identity")
@@ -409,7 +438,8 @@ def _bind_dest_index_v22(frame: dict, destination: str, passports: list[str]):
         notes.append("hash_declaration_absent")
     else:
         if checksums is not None:
-            require(isinstance(checksums, dict) and set(checksums) == set(passports), "index_hash_mismatch")
+            require(isinstance(checksums, dict) and all(isinstance(key, str) for key in checksums)
+                    and set(checksums) == set(passports), "index_hash_mismatch")
             for nationality in passports:
                 require(_hex64(checksums[nationality]), "index_hash_mismatch")
                 if nationality in row_hashes:
@@ -430,50 +460,72 @@ def _bind_dest_index_v22(frame: dict, destination: str, passports: list[str]):
 
 
 def _bind_research_fields(frame: dict, destination: str, passports: list[str], kind: str):
-    order = frame.get("expected_nationality_slices")
-    declared = frame.get("slice_files")
-    pointers = frame.get("nationality_slices")
-    mapping = frame.get("slices_by_nationality")
+    order_state = _field_state(frame, "expected_nationality_slices")
+    files_state = _field_state(frame, "slice_files")
+    pointer_state = _field_state(frame, "nationality_slices")
+    map_state = _field_state(frame, "slices_by_nationality")
+    states = (order_state, files_state, pointer_state, map_state)
     notes: list[str] = []
-    if order is None and declared is None and pointers is None and mapping is None:
-        if kind == "research_v2_2":
-            notes.append("index_fields_absent")
-            return [_slice_file(destination, nationality) for nationality in passports], notes, {}
+    canonical = [_slice_file(destination, nationality) for nationality in passports]
+    # A v1 or research-index with none of the known binding fields is still unredacted.
+    # Explicit nulls are not the documented research_v2_2 legacy shape.
+    if kind != "research_v2_2" and all(state in ("absent", "null") for state in states):
         raise ValueError("index_structure_unredacted")
-    if order is None:
+    if all(state == "absent" for state in states):
+        notes.append("index_fields_absent")
+        hashes: dict[str, str] = {}
+        # Present expected_50_set and slice_sha256 are checked before this return.
+        _check_present_redundancy(frame, destination, list(passports), notes, hashes)
+        if "slice_sha256" not in frame and "hash_declaration_incomplete" not in notes:
+            notes.append("hash_declaration_absent")
+        return canonical, notes, hashes
+    if order_state == "null":
+        raise ValueError("index_priority_binding")
+    if order_state == "absent":
         permutation = list(passports)
         if kind == "research_v2_2":
             notes.append("index_fields_absent")
         else:
             raise ValueError("index_structure_unredacted")
     else:
-        require(isinstance(order, list) and len(order) == 50 and sorted(order) == sorted(passports),
-                "index_priority_binding")
+        order = frame["expected_nationality_slices"]
+        require(_text_list(order, 50) and sorted(order) == sorted(passports), "index_priority_binding")
         permutation = list(order)
         if permutation != list(passports):
             notes.append("index_order_follows_csv")
+    if files_state == "null":
+        raise ValueError("index_priority_binding")
+    declared = frame["slice_files"] if files_state == "value" else None
     files = _files_match(declared, destination, permutation)
     require(files is not None, "index_priority_binding")
-    if mapping is None:
+    if map_state == "null":
+        raise ValueError("index_mapping")
+    if map_state == "absent":
         if kind != "research_v2_2":
             raise ValueError("index_structure_unredacted")
         raise ValueError("index_mapping")
-    require(mapping == {nationality: index for index, nationality in enumerate(permutation)}, "index_mapping")
+    mapping = frame["slices_by_nationality"]
+    require(isinstance(mapping, dict)
+            and all(isinstance(key, str) and isinstance(item, int) and not isinstance(item, bool)
+                    for key, item in mapping.items())
+            and mapping == {nationality: index for index, nationality in enumerate(permutation)},
+            "index_mapping")
+    if pointer_state == "null":
+        raise ValueError("index_pointer_identity")
+    pointers = frame["nationality_slices"] if pointer_state == "value" else None
     pointer_kind, row_hashes = _pointer_match(pointers, destination, permutation)
     if pointer_kind == "absent":
         notes.append("pointer_list_absent")
     hashes = {}
     for nationality, digest in row_hashes.items():
-        if digest is None:
-            continue
         require(_hex64(digest), "index_hash_mismatch")
         hashes[nationality] = digest
-    if not hashes:
+    if not hashes and "slice_sha256" not in frame:
         notes.append("hash_declaration_absent")
     elif len(hashes) != 50:
         notes.append("hash_declaration_incomplete")
     _check_present_redundancy(frame, destination, permutation, notes, hashes)
-    return [_slice_file(destination, nationality) for nationality in passports], notes, hashes
+    return canonical, notes, hashes
 
 
 def extra_nationality(root: Path, destination: str, passports: list[str]) -> str | None:
@@ -810,12 +862,29 @@ def _legacy_declared(frame: dict, destination: str) -> bool:
     return typed or mapped
 
 
-def _slice_observations(record, destination: str, nationality: str, pointer, declared_hash, data: bytes,
+def _source_metadata_warning(source: dict) -> bool:
+    try:
+        url = urlsplit(source.get("url", ""))
+        ok = url.scheme == "https" and bool(url.hostname) and url.username is None and url.password is None
+    except (ValueError, TypeError):
+        ok = False
+    return not ok or not parse_date(source.get("retrieved_at"))
+
+
+def _slice_observations(record, destination: str, nationality: str, tracker_pointer, declared_hash, data: bytes,
                         tracker_class: str) -> list[dict]:
-    """Every independent slice check. This function does not raise and does not decide a candidate."""
-    if not isinstance(record, dict):
-        return [{"code": "slice_not_object", "scope": "not_checkable"}]
+    """Every independent slice check. This function does not raise and does not decide a candidate.
+
+    A missing pointer is not a match. An empty source list, a metadata warning, or a
+    field reference that does not resolve is a local unconfirmed gap. None of these
+    is legal evidence, and none of them is a proven absence of conflict.
+    """
     found = []
+    if tracker_pointer != _slice_file(destination, nationality):
+        found.append({"code": "tracker_pointer_mismatch", "scope": "profile_integrity"})
+    if not isinstance(record, dict):
+        found.append({"code": "slice_not_object", "scope": "not_checkable"})
+        return found
     if record.get("schema") not in (SCHEMA, "jetnity-entry-requirements-research-v2.1"):
         found.append({"code": "slice_identity", "scope": "profile_integrity", "field": "schema"})
     if record.get("status") not in RESEARCH_STATUSES:
@@ -829,8 +898,12 @@ def _slice_observations(record, destination: str, nationality: str, pointer, dec
     if not parse_date(record.get("researched_at")):
         found.append({"code": "slice_research_date", "scope": "profile_integrity"})
     sources = record.get("sources")
-    if not isinstance(sources, list) or not all(isinstance(item, dict) for item in sources):
+    refs: list[str] = []
+    sources_readable = isinstance(sources, list) and all(isinstance(item, dict) for item in sources)
+    if not sources_readable:
         found.append({"code": "sources_shape", "scope": "not_checkable"})
+    elif not sources:
+        found.append({"code": "sources_empty", "scope": "local_gap"})
     else:
         try:
             refs = [source_identity(item) for item in sources]
@@ -838,8 +911,18 @@ def _slice_observations(record, destination: str, nationality: str, pointer, dec
                 found.append({"code": "source_ref_identity", "scope": "profile_integrity"})
         except ValueError:
             found.append({"code": "source_ref_identity", "scope": "not_checkable"})
-    if pointer is not None and pointer != _slice_file(destination, nationality):
-        found.append({"code": "tracker_pointer_mismatch", "scope": "profile_integrity"})
+            refs = []
+        if any(_source_metadata_warning(item) for item in sources):
+            found.append({"code": "source_metadata_unconfirmed", "scope": "local_gap"})
+        unresolved = 0
+        for paths in TOPICS.values():
+            for path in paths:
+                located = pointer(record, path)
+                if located in (None, "", [], {}):
+                    continue
+                unresolved += len(explicit_refs(located) - set(refs))
+        if unresolved:
+            found.append({"code": "unresolved_source_refs", "scope": "local_gap", "count": unresolved})
     if declared_hash is not None and declared_hash != sha(data):
         found.append({"code": "index_hash_mismatch", "scope": "profile_integrity"})
     absent = [key for key in HISTORICAL_KEY_NAMES if key not in record]
@@ -859,17 +942,47 @@ def _slice_observations(record, destination: str, nationality: str, pointer, dec
     return found
 
 
+def _record_schema_holds(root: Path) -> list[str]:
+    """The same record-schema contract prepare requires. A bad file holds every candidate."""
+    try:
+        schema = strict_json(read_file(root, "record-schema.json", 256 * 1024))
+    except (OSError, ValueError):
+        return ["schema_unreadable"]
+    if not isinstance(schema, dict):
+        return ["schema_identity"]
+    holds = []
+    if schema.get("schema") != SCHEMA or schema.get("status") != "RESEARCH_ONLY":
+        holds.append("schema_identity")
+    core = schema.get("nationality_slice")
+    fields = core.get("mandatory_core_fields") if isinstance(core, dict) else None
+    if fields != CORE:
+        holds.append("schema_core_changed")
+    return holds
+
+
+def _pair_status(local: list[dict], destination_held: bool) -> str:
+    """One disjoint status. Checked is not a pass."""
+    if any(item["code"] in ("slice_absent", "destination_absent") for item in local):
+        return "missing"
+    if any(item["scope"] == "not_checkable" for item in local):
+        return "notCheckable"
+    if destination_held or local:
+        return "held"
+    return "checked"
+
+
 def diagnose(root: Path) -> dict:
     """Read every pinned destination and passport. Nothing is written.
 
     Findings are collected before any candidate decision. A destination-wide
     integrity fault has no candidate rows. A local gap can be shown only with
     its hold status, and that view is not a package or a release.
+    206 and 10'300 count inventory coverage. They are not a pass count.
     """
     require(root.is_dir() and not root.is_symlink(), "input_root_refused")
     stamp = tuple((path.name, path.lstat().st_mtime_ns) for path in sorted(root.rglob("*")))
     passports = priority(read_file(root, "passport-priority.csv", 128 * 1024))
-    tracker, _header = csv_rows(read_file(root, "tracker.csv", 32 * 1024 * 1024))
+    tracker, tracker_header = csv_rows(read_file(root, "tracker.csv", 32 * 1024 * 1024))
     directory = root / "records" / "dest"
     require(directory.is_dir() and not directory.is_symlink(), "input_root_refused")
     destinations = pinned_destinations()
@@ -879,8 +992,17 @@ def diagnose(root: Path) -> dict:
     integrity_destinations = []
     local_gap_profiles = 0
     pairs_examined = 0
-    pairs_with_findings = 0
-    not_checkable_pairs = 0
+    status_counts = {"missing": 0, "notCheckable": 0, "held": 0, "checked": 0}
+    root_holds = _record_schema_holds(root)
+    for code in root_holds:
+        findings.append({"destination": None, "nationality": None, "scope": "integrity", "code": code})
+    columns_ok = all(key in tracker_header for key in ("dest_id", "nationality", "record_pointer"))
+    conflict_declared = "conflict" in tracker_header
+    if not columns_ok:
+        findings.append({"destination": None, "nationality": None, "scope": "integrity", "code": "tracker_columns"})
+    if not conflict_declared:
+        findings.append({"destination": None, "nationality": None, "scope": "not_checkable",
+                         "code": "tracker_conflict_undeclared"})
     allowed = set(passports)
     for destination in destinations:
         grouped: dict[str, list[dict]] = {}
@@ -891,38 +1013,48 @@ def diagnose(root: Path) -> dict:
             integrity_destinations.append(destination)
             for nationality in passports:
                 pairs_examined += 1
-                pairs_with_findings += 1
-                not_checkable_pairs += 1
+                status_counts["missing"] += 1
                 findings.append({"destination": destination, "nationality": nationality,
                                  "scope": "not_checkable", "code": "destination_absent"})
             continue
-        dest_integrity = []
+        dest_integrity = list(root_holds)
+        if not columns_ok:
+            dest_integrity.append("tracker_columns")
         if destination in ("HR", "NL"):
             dest_integrity.append("unsplit_research_frame_not_importable")
         hashes: dict = {}
+        index_notes: list[str] = []
         frame = None
+        index_read = False
         try:
             frame = strict_json(read_file(root, f"records/dest/{destination}/index.json"))
+            index_read = True
         except (OSError, ValueError):
             dest_integrity.append("index_unreadable")
-        if isinstance(frame, list):
+        if index_read and not isinstance(frame, dict):
             dest_integrity.append("index_not_object")
             frame = None
         if isinstance(frame, dict):
             if frame.get("external_writes", []) != [] or has_forbidden(frame):
                 dest_integrity.append("frame_authority_boundary")
             try:
-                _files, _notes, hashes = index_binding(frame, destination, passports)
+                _files, index_notes, hashes = index_binding(frame, destination, passports)
             except ValueError as error:
                 dest_integrity.append(str(error))
+            if "unrecognized_field_not_validated" in index_notes:
+                dest_integrity.append("unrecognized_field_not_validated")
             if (root / f"records/dest/{destination}.json").exists() and not _legacy_declared(frame, destination):
                 dest_integrity.append("ambiguous_split_and_legacy")
+        try:
+            extra_nationality(root, destination, passports)
+        except ValueError as error:
+            dest_integrity.append(str(error))
         profiles = []
         for nationality in passports:
             pairs_examined += 1
             local = []
             rows = grouped.get(nationality, [])
-            pointer = None
+            tracker_pointer = None
             tracker_class = "not_checkable"
             if not rows:
                 local.append({"code": "tracker_coverage", "scope": "profile_integrity"})
@@ -933,11 +1065,16 @@ def diagnose(root: Path) -> dict:
                     code = "tracker_field_conflict" if revision["samePointer"] else "tracker_row_conflict"
                     dest_integrity.append(code)
                     local.append({"code": code, "scope": "integrity", "differingFields": revision["differingFields"]})
-                    if revision["samePointer"]:
-                        pointer = rows[0].get("record_pointer")
+                    if revision["samePointer"] and "record_pointer" in tracker_header:
+                        tracker_pointer = rows[0].get("record_pointer")
+                elif not conflict_declared:
+                    local.append({"code": "tracker_conflict_undeclared", "scope": "not_checkable"})
+                    if "record_pointer" in tracker_header:
+                        tracker_pointer = rows[0].get("record_pointer")
                 else:
                     tracker_class = tracker_conflict_class(rows[0].get("conflict"))
-                    pointer = rows[0].get("record_pointer")
+                    if "record_pointer" in tracker_header:
+                        tracker_pointer = rows[0].get("record_pointer")
                     if tracker_class in ("positive", "unresolved"):
                         dest_integrity.append("tracker_conflict_flag")
                         local.append({"code": "tracker_conflict_flag", "scope": "local_gap",
@@ -948,34 +1085,39 @@ def diagnose(root: Path) -> dict:
                 record = strict_json(data)
             except (OSError, ValueError):
                 local.append({"code": "slice_absent", "scope": "not_checkable"})
-                not_checkable_pairs += 1
+                status_counts[_pair_status(local, bool(dest_integrity))] += 1
                 for item in local:
                     findings.append({"destination": destination, "nationality": nationality, **item})
-                pairs_with_findings += 1
+                if any(item["scope"] == "local_gap" for item in local):
+                    local_gap_profiles += 1
                 continue
-            local.extend(_slice_observations(record, destination, nationality, pointer, hashes.get(nationality),
-                                             data, tracker_class))
+            local.extend(_slice_observations(record, destination, nationality, tracker_pointer,
+                                             hashes.get(nationality), data, tracker_class))
             for item in local:
                 if item["scope"] == "profile_integrity":
                     dest_integrity.append(item["code"])
                 findings.append({"destination": destination, "nationality": nationality, **item})
             if any(item["scope"] == "local_gap" for item in local):
                 local_gap_profiles += 1
-            if local:
-                pairs_with_findings += 1
             profiles.append((nationality, data, local))
-        if dest_integrity:
+        destination_held = bool(dest_integrity)
+        if destination_held:
             integrity_destinations.append(destination)
             for code in sorted(set(dest_integrity)):
                 findings.append({"destination": destination, "nationality": None, "scope": "integrity", "code": code})
-            continue
         for nationality, data, local in profiles:
+            status_counts[_pair_status(local, destination_held)] += 1
+            if destination_held:
+                continue
             if any(item["scope"] in ("profile_integrity", "not_checkable", "integrity") for item in local):
                 continue
             holds = [item["code"] for item in local]
+            declared_hash = hashes.get(nationality)
             candidates.append({
                 "classification": "RESEARCH_ONLY", "candidateView": True, "preparedPackage": False,
                 "legalEvidence": False, "publicationAuthority": "none", "accepted": 0, "published": 0,
+                "conflictAbsenceProven": False,
+                "hashDeclaration": "not_declared" if declared_hash is None else "bound_not_legal_evidence",
                 "destination": destination, "nationality": nationality, "originalSha256": sha(data),
                 "holdStatus": holds or ["none"],
             })
@@ -985,15 +1127,19 @@ def diagnose(root: Path) -> dict:
     after = tuple((path.name, path.lstat().st_mtime_ns) for path in sorted(root.rglob("*")))
     require(after == stamp, "diagnose_wrote")
     require(pairs_examined == len(destinations) * len(passports), "coverage_count")
+    require(sum(status_counts.values()) == pairs_examined, "coverage_count")
+    checked = status_counts["checked"]
     return {
         "classification": "RESEARCH_ONLY", "legalEvidenceSlots": 0, "published": 0, "accepted": 0,
+        "inventoryIsNotAPass": True,
         "destinationsExamined": len(destinations), "pairsExamined": pairs_examined,
-        "pairsWithFindings": pairs_with_findings, "notCheckablePairs": not_checkable_pairs,
-        "pairsWithoutFindings": pairs_examined - pairs_with_findings,
+        "pairsWithFindings": pairs_examined - checked, "notCheckablePairs": status_counts["missing"] + status_counts["notCheckable"],
+        "pairsWithoutFindings": checked, "profileStatus": status_counts,
         "historicalComparisonNotAPass": dict(HISTORICAL_LOCK_COMPARISON),
         "destinationIntegrity": len(set(integrity_destinations)),
         "localGapProfiles": local_gap_profiles,
         "candidateProfiles": len(candidates),
+        "ownProfileFindings": sum(1 for row in findings if row.get("nationality") is not None),
         "overlappingFindings": len(findings),
         "findings": findings, "candidates": candidates,
     }

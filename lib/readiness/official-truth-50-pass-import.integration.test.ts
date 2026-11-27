@@ -25,6 +25,6 @@ test('50-pass research-only importer remains atomic, private and fail-closed', {
   assert.equal(result.error, undefined, 'Python3 is mandatory for this reviewed offline runner')
   assert.equal(result.signal, null)
   assert.equal(result.status, 0, '50-pass importer synthetic failure: ' + (result.stderr ?? '').slice(-1000))
-  assert.match(result.stderr ?? '', /Ran 30 tests/)
+  assert.match(result.stderr ?? '', /Ran 31 tests/)
   assert.match(result.stderr ?? '', /\bOK\b/)
 })

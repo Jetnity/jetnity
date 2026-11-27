@@ -90,6 +90,33 @@ def _file_identity(path: Path) -> tuple:
     return (info.st_mode, info.st_ino, info.st_size, info.st_mtime_ns, info.st_nlink)
 
 
+def _redacted_diagnosis(root: Path) -> dict:
+    """Read the temporary research tree and return sums only.
+
+    This is not a second archive opener. ``run`` calls it only after the
+    acceptance gate has already unpacked that tree, and before the cleanup.
+    A tree without the research inventory is reported as not run. That status
+    is not a pass. Findings and paths stay inside the temporary tree.
+    """
+    required = ("passport-priority.csv", "record-schema.json", "tracker.csv")
+    present = all((root / name).is_file() and not (root / name).is_symlink() for name in required)
+    if not present:
+        return {"status": "not_run_tree_absent", "legalEvidenceSlots": 0,
+                "inventoryIsNotAPass": True, "role": "redacted_sums_only"}
+    full = batch.original_adapter()["diagnose"](root)
+    return {
+        "status": "collected", "role": "redacted_sums_only", "inventoryIsNotAPass": True,
+        "legalEvidenceSlots": full["legalEvidenceSlots"], "published": 0, "accepted": 0,
+        "destinationsExamined": full["destinationsExamined"], "pairsExamined": full["pairsExamined"],
+        "profileStatus": full["profileStatus"], "notCheckablePairs": full["notCheckablePairs"],
+        "pairsWithoutFindings": full["pairsWithoutFindings"],
+        "ownProfileFindings": full["ownProfileFindings"],
+        "overlappingFindings": full["overlappingFindings"],
+        "candidateProfiles": full["candidateProfiles"],
+        "destinationIntegrity": full["destinationIntegrity"],
+    }
+
+
 def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict | None = None,
         destinations: list[str] | None = None, adapter=None) -> dict:
     """Preflight, unpack, prepare, resume, verify, and return a redacted report.
@@ -97,6 +124,8 @@ def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict 
     ``authorized`` is ignored. The archive stays closed until ``acceptance``
     matches this checkout. A fixture acceptance cannot carry a real archive pin.
     The original directory is not written, and a schema-1 seal cannot satisfy verify.
+    Diagnosis runs on the temporary tree before that tree is removed. The report
+    keeps sums only.
     """
     del authorized
     repo = Path(__file__).resolve().parent.parent
@@ -139,6 +168,7 @@ def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict 
         second = batch.prepare_resumable(root, output, names, chosen, identity=identity)
         verified = batch.verify(output, chosen, identity)
         batch.require(first == second == verified, "offline_charge_mismatch")
+        diagnosis = _redacted_diagnosis(root)
     finally:
         if staging is not None and staging.name.startswith(".jetnity-local-src-") and not staging.is_symlink():
             shutil.rmtree(staging, ignore_errors=True)
@@ -162,6 +192,7 @@ def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict 
         "blockedCountries": verified["blockedCountries"],
         "codeHead": batch.repository_commit(),
         "fixture": fixture,
+        "diagnosis": diagnosis,
     }
     encoded = json.dumps(report)
     batch.require(str(archive) not in encoded and str(output) not in encoded, "report_path_leak")

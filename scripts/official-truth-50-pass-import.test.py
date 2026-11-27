@@ -570,6 +570,9 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(report["published"], 0)
         self.assertEqual(report["accepted"], 0)
         self.assertEqual(report["payloadImport"], "STOP_PRIVATE_PAYLOAD_PATH_MISSING")
+        self.assertEqual(report["diagnosis"]["status"], "not_run_tree_absent")
+        self.assertEqual(report["diagnosis"]["legalEvidenceSlots"], 0)
+        self.assertTrue(report["diagnosis"]["inventoryIsNotAPass"])
         encoded = json.dumps(report)
         self.assertNotIn(str(archive), encoded)
         self.assertNotIn(str(output), encoded)
@@ -587,6 +590,38 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(resumed["legalEvidenceSlots"], 0)
         identity = b.charge_identity(b.digest(archive), output, ["AT"])
         self.assertEqual(b.verify(output, self.adapter, identity)["accepted"], 0)
+
+    def test_gated_run_diagnoses_the_temporary_tree_and_returns_sums_only(self):
+        original = self.base / "diagnose-original"
+        private = self.base / "diagnose-private"
+        original.mkdir()
+        private.mkdir(mode=0o700)
+        archive = original / "research.tar.xz"
+        _research_tree_archive(archive)
+        before = archive.read_bytes()
+        archive.chmod(0o444)
+        output = private / "out"
+        acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
+                      "archiveSha256": b.digest(archive), "fixture": True}
+        report = local.run(archive, output, acceptance=acceptance, destinations=["AT"], adapter=self.adapter)
+        diagnosis = report["diagnosis"]
+        self.assertEqual(diagnosis["status"], "collected")
+        self.assertEqual(diagnosis["legalEvidenceSlots"], 0)
+        self.assertEqual(diagnosis["published"], 0)
+        self.assertTrue(diagnosis["inventoryIsNotAPass"])
+        self.assertEqual(diagnosis["pairsExamined"], 206 * 50)
+        self.assertEqual(diagnosis["destinationsExamined"], 206)
+        self.assertEqual(sum(diagnosis["profileStatus"].values()), diagnosis["pairsExamined"])
+        self.assertNotIn("findings", diagnosis)
+        self.assertNotIn("candidates", diagnosis)
+        encoded = json.dumps(report)
+        self.assertNotIn(str(archive), encoded)
+        self.assertNotIn(str(output), encoded)
+        self.assertNotIn(str(original), encoded)
+        self.assertFalse(any(path.name.startswith(".jetnity-local-src-") for path in private.iterdir()))
+        self.assertFalse(any(path.name.startswith(".jetnity-local-src-") for path in original.iterdir()))
+        self.assertEqual(archive.read_bytes(), before)
+        self.assertEqual(archive.stat().st_mode & 0o777, 0o444)
 
     def test_original_directory_rejects_aliases_and_keeps_its_bytes(self):
         original = self.base / "protected"
@@ -714,6 +749,29 @@ class ImportTests(unittest.TestCase):
                 b.verify(out, self.adapter, identity)
         finally:
             restore()
+
+
+def _research_tree_archive(path: Path) -> None:
+    """A synthetic research inventory. It is not the Mac archive."""
+    adapter = b.original_adapter()
+    codes = ("IN TR CN DE PL IT US UA RO FR NL GB AT ES HU SY CZ AF CH RU HR BE IQ PT BG BR "
+             "GR IR SK PK ER TH SO VN SE NG EG XK KR LK DK PH JP LB RS LT CA CM MA IL").split()
+    schema = json.dumps({"schema": adapter["SCHEMA"], "status": "RESEARCH_ONLY",
+                         "nationality_slice": {"mandatory_core_fields": list(adapter["CORE"])}}).encode()
+    priority = ("rank,nationality_iso2\n" + "".join(f"{index + 1},{code}\n" for index, code in enumerate(codes))).encode()
+    tracker = b"dest_id,nationality,record_pointer,conflict\n"
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w:xz") as package:
+        for name, payload in (("record-schema.json", schema), ("passport-priority.csv", priority),
+                              ("tracker.csv", tracker)):
+            info = tarfile.TarInfo(name)
+            info.size = len(payload)
+            package.addfile(info, io.BytesIO(payload))
+        folder = tarfile.TarInfo("records/dest")
+        folder.type = tarfile.DIRTYPE
+        folder.mode = 0o700
+        package.addfile(folder)
+    path.write_bytes(buffer.getvalue())
 
 
 def _fixture_archive(path: Path) -> None:
