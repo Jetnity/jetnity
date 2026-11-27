@@ -18,10 +18,11 @@ import {
   HOMEPAGE_UEBERSCHRIFTEN,
 } from '@/lib/seo/final-homepage'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
-import { BILDNACHWEISE_ID, STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { BILDNACHWEISE_ID, STARTSEITENBILD, TEILENBILD } from '@/lib/seo/startseitenbild'
 import { freigegebenerNachweis } from '@/lib/trips/organisieren/bildnachweise'
 
 const homepageMeta = finalHomepageMetadaten(kanonischeUrl('/'))
+const teilenbildUrl = new URL(TEILENBILD.pfad, kanonischeUrl('/')).href
 
 export const metadata: Metadata = {
   title: homepageMeta.title,
@@ -32,16 +33,17 @@ export const metadata: Metadata = {
     url: kanonischeUrl('/'),
     images: [
       {
-        url: STARTSEITENBILD.pfad,
-        width: STARTSEITENBILD.breite,
-        height: STARTSEITENBILD.hoehe,
-        alt: STARTSEITENBILD.teilenAlt,
+        url: teilenbildUrl,
+        type: TEILENBILD.mime,
+        width: TEILENBILD.breite,
+        height: TEILENBILD.hoehe,
+        alt: TEILENBILD.alt,
       },
     ],
   },
   twitter: {
     ...homepageMeta.twitter,
-    images: [{ url: STARTSEITENBILD.pfad, alt: STARTSEITENBILD.teilenAlt }],
+    images: [{ url: teilenbildUrl, alt: TEILENBILD.alt }],
   },
 }
 
@@ -49,7 +51,7 @@ export default async function HomePage() {
   const inspiration = await publicInspiration()
   const inspirationsziele = inspiration.ziele.map((ziel) => ({
     name: ziel.name, country: ziel.country, image: ziel.image,
-    href: zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea) ?? '/planen',
+    href: zielHref({ id: ziel.zielId, name: ziel.name }, ziel.idea) ?? '/planen',
   }))
   const heroNachweis = freigegebenerNachweis(STARTSEITENBILD.pfad)
   const bildnachweise = [

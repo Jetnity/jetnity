@@ -21,16 +21,25 @@ import {
   finalHomepageSeitenUrl,
 } from '@/lib/seo/final-homepage'
 import { KANONISCHE_PUBLIC_ORIGIN, kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
-import { STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { STARTSEITENBILD, TEILENBILD } from '@/lib/seo/startseitenbild'
 import { freigegebenerNachweis, KI_URHEBER } from '@/lib/trips/organisieren/bildnachweise'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
-/** Echte Abmessungen aus dem Dateikopf (PNG oder WebP), unabhängig von der Dateiendung. */
-function bildabmessungen(bild: Buffer): { format: 'png' | 'webp'; breite: number; hoehe: number } {
+/** Echte Abmessungen aus dem Dateikopf (PNG, JPEG oder WebP), unabhängig von der Dateiendung. */
+function bildabmessungen(bild: Buffer): { format: 'png' | 'jpeg' | 'webp'; breite: number; hoehe: number } {
   if (bild.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) {
     assert.equal(bild.subarray(12, 16).toString('latin1'), 'IHDR')
     return { format: 'png', breite: bild.readUInt32BE(16), hoehe: bild.readUInt32BE(20) }
+  }
+  if (bild.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff]))) {
+    for (let offset = 2; offset + 9 < bild.length; offset += 2 + bild.readUInt16BE(offset + 2)) {
+      const marker = bild[offset + 1]!
+      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+        return { format: 'jpeg', breite: bild.readUInt16BE(offset + 7), hoehe: bild.readUInt16BE(offset + 5) }
+      }
+    }
+    assert.fail('JPEG ohne Bildrahmen')
   }
   assert.equal(bild.subarray(0, 4).toString('latin1'), 'RIFF', 'Das Startseitenbild ist weder PNG noch WebP.')
   assert.equal(bild.subarray(8, 12).toString('latin1'), 'WEBP')
@@ -83,9 +92,10 @@ describe('final homepage product 1 – Wahrheit und Entity', () => {
     assert.equal(graph['@graph'][0].logo, 'https://jetnity.com/brand/jetnity-logo.png')
     assert.deepEqual(graph['@graph'][2].image, {
       '@type': 'ImageObject',
-      url: `https://jetnity.com${STARTSEITENBILD.pfad}`,
-      width: STARTSEITENBILD.breite,
-      height: STARTSEITENBILD.hoehe,
+      url: `https://jetnity.com${TEILENBILD.pfad}`,
+      encodingFormat: 'image/jpeg',
+      width: 1200,
+      height: 630,
       caption: STARTSEITENBILD.alt,
       creditText: KI_URHEBER,
     })
@@ -140,9 +150,15 @@ describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', ()
       INSPIRATION_ZIELE.map((ziel) => ziel.placeId),
       ['geonames:1650535', 'geonames:2267057', 'geonames:2657915', 'geonames:2759794'],
     )
-    const hrefs = INSPIRATION_ZIELE.map((ziel) => zielHref({ id: ziel.placeId, name: ziel.name }, ziel.idea))
+    assert.deepEqual(
+      INSPIRATION_ZIELE.map((ziel) => ziel.zielId),
+      ['geonames:1650535', 'geonames:2267057', 'geonames:2657928', 'geonames:2759794'],
+    )
+    const hrefs = INSPIRATION_ZIELE.map((ziel) => zielHref({ id: ziel.zielId, name: ziel.name }, ziel.idea))
     assert.equal(hrefs.every((href) => href?.startsWith('/planen?')), true)
     assert.match(hrefs[0] ?? '', /zielId=geonames%3A1650535/)
+    assert.match(hrefs[2] ?? '', /zielId=geonames%3A2657928/)
+    assert.doesNotMatch(hrefs[2] ?? '', /2657915/)
   })
 
   test('FAQ ist ohne JavaScript lesbar und alte Pro-Links haben ein kompatibles Ziel', () => {
@@ -158,14 +174,23 @@ describe('final homepage product 1 – Seite bleibt am bestehenden Einstieg', ()
     assert.match(inspiration, /id="entdecken"/)
   })
 
-  test('Share-Bild und Bildreferenzen existieren; Sitemap erfindet kein Aktualisierungsdatum', () => {
+  test('Hero-Bild und Vorschaubild existieren mit echten Abmessungen; Sitemap erfindet kein Aktualisierungsdatum', () => {
     const seite = quelle('../../app/(public)/page.tsx')
     assert.match(seite, /STARTSEITENBILD\.pfad/)
+    assert.match(seite, /TEILENBILD\.pfad/)
     assert.ok(freigegebenerNachweis(STARTSEITENBILD.pfad), 'Das Startseitenbild braucht einen Herkunftsnachweis.')
+    assert.ok(freigegebenerNachweis(TEILENBILD.pfad), 'Das Vorschaubild braucht einen Herkunftsnachweis.')
     const bild = readFileSync(join(hier, '../../public', STARTSEITENBILD.pfad))
     const echt = bildabmessungen(bild)
+    assert.equal(echt.format, 'png')
     assert.equal(echt.breite, STARTSEITENBILD.breite, `Breite von ${STARTSEITENBILD.pfad}`)
     assert.equal(echt.hoehe, STARTSEITENBILD.hoehe, `Höhe von ${STARTSEITENBILD.pfad}`)
+    const teilen = readFileSync(join(hier, '../../public', TEILENBILD.pfad))
+    const teilenEcht = bildabmessungen(teilen)
+    assert.equal(teilenEcht.format, 'jpeg')
+    assert.equal(teilenEcht.breite, TEILENBILD.breite, `Breite von ${TEILENBILD.pfad}`)
+    assert.equal(teilenEcht.hoehe, TEILENBILD.hoehe, `Höhe von ${TEILENBILD.pfad}`)
+    assert.ok(teilen.length < 300_000, `${TEILENBILD.pfad}: ${teilen.length} Bytes`)
     const sitemap = quelle('../../app/sitemap.ts')
     assert.equal(sitemap.includes('lastModified: new Date()'), false)
   })

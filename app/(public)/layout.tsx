@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 
 import PublicChrome from '@/components/workspace/PublicChrome'
 import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
-import { STARTSEITENBILD } from '@/lib/seo/startseitenbild'
+import { TEILENBILD } from '@/lib/seo/startseitenbild'
 
 const OEFFENTLICHE_METADATA_ORIGIN = oeffentlicheMetadataOrigin()
 
@@ -26,10 +26,11 @@ export const metadata: Metadata = {
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
     images: [
       {
-        url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`,
-        width: STARTSEITENBILD.breite,
-        height: STARTSEITENBILD.hoehe,
-        alt: STARTSEITENBILD.teilenAlt,
+        url: `${OEFFENTLICHE_METADATA_ORIGIN}${TEILENBILD.pfad}`,
+        type: TEILENBILD.mime,
+        width: TEILENBILD.breite,
+        height: TEILENBILD.hoehe,
+        alt: TEILENBILD.alt,
       },
     ],
   },
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     title: 'Jetnity – Deine ganze Reise',
     description:
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
-    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${STARTSEITENBILD.pfad}`, alt: STARTSEITENBILD.teilenAlt }],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}${TEILENBILD.pfad}`, alt: TEILENBILD.alt }],
   },
 }
 

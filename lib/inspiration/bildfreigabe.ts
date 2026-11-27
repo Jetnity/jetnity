@@ -1,8 +1,10 @@
 // Gate für die Bilder der öffentlichen Reiseideen (Startseite, Entdecken).
 //
 // `INSPIRATION_ZIELE.image` gehört zur CMS-Identität der Reiseideen (siehe
-// `lib/places/inspiration.ts`) und bleibt unverändert. Hier wird entschieden, was davon
-// wirklich gezeigt wird:
+// `lib/places/inspiration.ts`) und bleibt unverändert, auch wenn es noch den alten Pfad mit der
+// falschen Endung `.jpg` führt (die Dateien sind PNG und heissen jetzt `.png`). Hier wird der alte Pfad
+// über `LEGACY_BILDPFADE` (genau diese vier Einträge, kein Muster) auf die korrigierte Datei abgebildet
+// und entschieden, was davon wirklich gezeigt wird:
 //   - eine einzeln belegte, freigegebene KI-Illustration (`FREIGEGEBENE_ILLUSTRATIONEN`) wird als
 //     solche gezeigt und gekennzeichnet,
 //   - ein Foto mit Nachweis in `public/images/organisieren/Bildnachweise.txt` wird als Foto gezeigt,
@@ -15,6 +17,7 @@
 import {
   ILLUSTRATIONSHINWEIS,
   NEUTRALES_REISEBILD,
+  aktuellerBildpfad,
   bildMitNachweis,
   illustrationsnachweisFuerDatei,
   type Bildmedium,
@@ -33,10 +36,11 @@ export type Inspirationsbild = {
 }
 
 export function inspirationsbild(image: string): Inspirationsbild {
-  const illustration = illustrationsnachweisFuerDatei(image)
+  const pfad = aktuellerBildpfad(image)
+  const illustration = illustrationsnachweisFuerDatei(pfad)
   if (illustration) {
-    return { src: image, nachweis: illustration, neutral: false, medium: 'ki-illustration', beschreibung: illustration.bildbeschreibung }
+    return { src: pfad, nachweis: illustration, neutral: false, medium: 'ki-illustration', beschreibung: illustration.bildbeschreibung }
   }
-  const foto = bildMitNachweis(image, null)
+  const foto = bildMitNachweis(pfad, null)
   return { ...foto, neutral: foto.src === NEUTRALES_REISEBILD, medium: 'foto', beschreibung: null }
 }

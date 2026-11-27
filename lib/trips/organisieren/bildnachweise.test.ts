@@ -7,6 +7,7 @@ import {
   BILDNACHWEISE,
   KI_ILLUSTRATIONEN,
   KI_URHEBER,
+  KI_VORSCHAUBILD,
   NEUTRALES_REISEBILD,
   ZURUECKGEHALTENE_ILLUSTRATIONEN,
   bildMitNachweis,
@@ -49,7 +50,9 @@ describe('Bildnachweise', () => {
   test('ein Bild ohne Nachweis wird nie gezeigt', () => {
     const bild = bildMitNachweis('/images/organisieren/gibt-es-nicht.webp', null)
     assert.equal(bild.src, NEUTRALES_REISEBILD)
-    assert.equal(bildMitNachweis('/images/amsterdam.jpg', null).src, NEUTRALES_REISEBILD)
+    for (const datei of ['/images/amsterdam.jpg', '/images/amsterdam.png', '/images/hero-bali-og.jpg']) {
+      assert.equal(bildMitNachweis(datei, null).src, NEUTRALES_REISEBILD, `${datei} ist eine Illustration und wird nie als Foto geführt`)
+    }
   })
 
   test('ein geprüftes Laufzeitfoto behält seinen eigenen Nachweis', () => {
@@ -157,9 +160,32 @@ describe('Herkunftsnachweise der KI-Illustrationen in Bildnachweise.txt', () => 
       assert.equal(einsatz.includes('derzeit nirgends'), zurueckgehalten, eintrag.datei)
       assert.equal(einsatz.includes('(freigegeben)'), !zurueckgehalten, eintrag.datei)
     }
-    assert.ok(KI_TEXT.includes('geonames:2657915'))
     assert.ok(KI_TEXT.includes('geonames:2657928'))
-    assert.ok(KI_TEXT.includes('Die Kennungen werden nicht gleichgesetzt'))
+    assert.ok(KI_TEXT.includes('bleibt in PR A auf Vorgabe von PO und TL neutral'))
+    assert.ok(!KI_TEXT.includes('widerspricht'), 'die Ortskennung ist korrigiert, kein offener Widerspruch mehr')
+    assert.equal(Object.values(ZURUECKGEHALTENE_ILLUSTRATIONEN).every((grund) => grund.includes('geonames:2657928')), true)
+  })
+
+  test('die vier umbenannten Dateien nennen ihren früheren Namen, das Vorschaubild seine Quelle und ist kein Original', () => {
+    const zeilen = TEXT.split('\n')
+    for (const eintrag of KI_ILLUSTRATIONEN) {
+      const index = zeilen.findIndex((zeile) => zeile.startsWith(`${basename(eintrag.datei)} –`))
+      const frueher = eintrag.herkunft.fruehererPfad
+      if (!frueher) continue
+      const zeile = zeilen.slice(index, index + 7).find((text) => text.startsWith('Früherer Dateiname:'))
+      assert.match(zeile ?? '', new RegExp(`^Früherer Dateiname: ${basename(frueher).replace('.', '\\.')} \\(PNG-Daten mit falscher Endung`), eintrag.datei)
+      assert.ok(eintrag.datei.endsWith('.png'), eintrag.datei)
+    }
+    const kopf = zeilen.findIndex((zeile) => zeile.startsWith(`${basename(KI_VORSCHAUBILD.datei)} –`))
+    assert.ok(kopf >= 0, 'Vorschaubild fehlt in Bildnachweise.txt')
+    const block = zeilen.slice(kopf, kopf + 8).join('\n')
+    assert.ok(block.includes(`SHA-256: ${KI_VORSCHAUBILD.herkunft.sha256}`))
+    assert.ok(block.includes(`SHA-256 ${KI_VORSCHAUBILD.herkunft.ableitung!.quelleSha256}`))
+    assert.ok(block.includes(`${KI_VORSCHAUBILD.herkunft.ableitung!.bytes} Bytes`))
+    assert.ok(block.includes('kein neues Original'))
+    assert.ok(block.includes('kein C2PA-Manifest'))
+    assert.ok(block.includes('nicht unabhängig C2PA-verifiziert'))
+    assert.ok(block.includes('nie im sichtbaren Hero'))
   })
 
   test('Nachweise für KI-Illustrationen erfinden weder Quelle noch Lizenz', () => {

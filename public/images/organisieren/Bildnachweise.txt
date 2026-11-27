@@ -92,7 +92,7 @@ Quelle: https://www.naturalearthdata.com/
 
 # KI-Illustrationen (keine Fotos)
 
-Die folgenden fünf Dateien liegen unter public/images/ (nicht in diesem Ordner). Sie sind KI-Illustrationen, keine Fotografien,
+Die folgenden fünf Dateien und das daraus abgeleitete Vorschaubild liegen unter public/images/ (nicht in diesem Ordner). Sie sind KI-Illustrationen, keine Fotografien,
 und zeigen keine echte Aufnahme des genannten Ortes. Am Bild stehen sie als «KI-Illustration».
 
 Herkunft: KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
@@ -103,8 +103,9 @@ Archivfassung 11.12.2024: https://openai.com/policies/dec-2024-eu-terms/
 Aktuelle Fassung (Stand 16.01.2026): https://openai.com/policies/eu-terms-of-use/
 Danach gehört der Output im Verhältnis zu OpenAI und soweit gesetzlich zulässig der nutzenden Person; Ausgaben können anderen Nutzern ähnlich sein.
 Daraus folgt keine Garantie für exklusive Rechte oder für die Freiheit von Rechten Dritter.
-Ersteintrag = erstmals im Git-Repository eingecheckt, kein verifiziertes Erstellungsdatum. Jede Datei hat seither genau einen Commit (unverändert).
-Binärhinweis: Die fünf Dateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, signiert «Truepic Lens CLI in ChatGPT»,
+Ersteintrag = erstmals im Git-Repository eingecheckt, kein verifiziertes Erstellungsdatum. Die fünf Originaldateien sind seit dem Ersteintrag unverändert.
+Die vier Dateien mit PNG-Daten und der falschen Endung .jpg heissen jetzt .png (byteidentisch umbenannt, gleiche Prüfsumme); der frühere Name steht bei der jeweiligen Datei.
+Binärhinweis: Die fünf Originaldateien enthalten ein eingebettetes C2PA-Manifest (Claim-Generator ChatGPT, signiert «Truepic Lens CLI in ChatGPT»,
 Aussteller OpenAI; die Dateiprüfsumme im Manifest stimmt). Die Prüfung mit c2pa-python 0.39.0 ergibt insgesamt «ungültig»: Zertifikat nicht
 vertrauenswürdig und abgelaufen, Aktionsangabe von der Bibliothek als fehlerhaft gewertet. Binär- und EXIF-Angaben sind damit nicht unabhängig
 verifiziert und ersetzen weder die PO-Erklärung noch einen Rechtsnachweis.
@@ -112,25 +113,37 @@ verifiziert und ersetzen weder die PO-Erklärung noch einen Rechtsnachweis.
 hero-bali.png – KI-Illustration: Palmen und Reisterrassen im Sonnenuntergang (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 19.07.2025, Commit 6f59d83eec1453892139eb2eab3e238223487a25
 SHA-256: 0d8aa8603c674211691e491ed39820b94a0a358c03f852f8bfa2f27bf165ee45
-Einsatz: Hero der Startseite, Open Graph, Twitter, JSON-LD (freigegeben).
+Einsatz: Hero der Startseite (freigegeben). Open Graph, Twitter und JSON-LD nutzen das abgeleitete Vorschaubild hero-bali-og.jpg (siehe unten).
 
-bali.jpg – KI-Illustration: Reisterrassen und Palmen im Morgenlicht (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+bali.png – KI-Illustration: Reisterrassen und Palmen im Morgenlicht (Motiv Bali) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
 SHA-256: 86acf2c0201f65967c6d800dbcf9c498f23a716674f4ec661c25632850d60f07
 Einsatz: Reiseidee Bali auf Startseite und Entdecken (freigegeben).
+Früherer Dateiname: bali.jpg (PNG-Daten mit falscher Endung; Ersteintrag unter dem alten Namen; der alte Pfad bleibt als Altverweis in der CMS-Referenz).
 
-lisbon.jpg – KI-Illustration: Gelbe Tram in einer Gasse bei Sonnenuntergang (Motiv Lissabon) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+lisbon.png – KI-Illustration: Gelbe Tram in einer Gasse bei Sonnenuntergang (Motiv Lissabon) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
 SHA-256: e8f4f66ba68d75995c7ef053874d8b4f23aff7d9cec66bdff8f0b994f79070c3
 Einsatz: Reiseidee Lissabon auf Startseite und Entdecken (freigegeben).
+Früherer Dateiname: lisbon.jpg (PNG-Daten mit falscher Endung; Ersteintrag unter dem alten Namen; der alte Pfad bleibt als Altverweis in der CMS-Referenz).
 
-amsterdam.jpg – KI-Illustration: Grachtenhäuser und beleuchtete Brücken am Abend (Motiv Amsterdam) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+amsterdam.png – KI-Illustration: Grachtenhäuser und beleuchtete Brücken am Abend (Motiv Amsterdam) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
 SHA-256: 02462fc4943b1b77034c24837541a6f9150697fde75ac9d76b80397b21bfb122
 Einsatz: Reiseidee Amsterdam auf Startseite und Entdecken (freigegeben).
+Früherer Dateiname: amsterdam.jpg (PNG-Daten mit falscher Endung; Ersteintrag unter dem alten Namen; der alte Pfad bleibt als Altverweis in der CMS-Referenz).
 
-zermatt.jpg – KI-Illustration: Matterhorn mit Berghütte und zwei Wandernden (Motiv Zermatt) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+zermatt.png – KI-Illustration: Matterhorn mit Berghütte und zwei Wandernden (Motiv Zermatt) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
 Ersteintrag: 02.09.2025, Commit 265887dd8a5dbdaf450eb14eec6b84f987568e6f
 SHA-256: 0720951b5a7e57451184a56c8bce5ca223b59cff4262bf753ca67eceb69192bc
-Einsatz: derzeit nirgends. Die Datei ist belegt, wird aber nicht gezeigt: Die Ortskennung der Reiseidee Zermatt (geonames:2657915)
-widerspricht der des Reisekopf-Katalogs (geonames:2657928); die Reiseidee zeigt das neutrale Kartenmotiv. Die Kennungen werden nicht gleichgesetzt.
+Einsatz: derzeit nirgends. Die Datei ist belegt, wird aber nicht gezeigt: Die Ortskennung für die Planung ist korrigiert (geonames:2657928, Zermatt);
+die Illustration bleibt in PR A auf Vorgabe von PO und TL neutral und wird nicht automatisch freigegeben. Die Reiseidee zeigt das neutrale Kartenmotiv.
+Früherer Dateiname: zermatt.jpg (PNG-Daten mit falscher Endung; Ersteintrag unter dem alten Namen; der alte Pfad bleibt als Altverweis in der CMS-Referenz).
+
+hero-bali-og.jpg – KI-Illustration: Vorschaubild: Palmen und Reisterrassen im Sonnenuntergang (Motiv Bali, abgeleitet) – KI-generiert (ChatGPT/OpenAI), Eigentum Jetnity/Sasa Feirov (PO-Erklärung 26.11.2026)
+Abgeleitet aus: hero-bali.png (SHA-256 0d8aa8603c674211691e491ed39820b94a0a358c03f852f8bfa2f27bf165ee45), Ersteintrag des Originals 19.07.2025, Commit 6f59d83eec1453892139eb2eab3e238223487a25
+SHA-256: 589ad9def90ed8830f0e9d4b05bef9c09739071c9a023925a6249b1a71b65ac7
+Einsatz: Open Graph, Twitter und JSON-LD der Startseite (freigegeben); nie im sichtbaren Hero.
+Bearbeitung: Zuschnitt 1536 × 806 px ab Zeile 100 des Originals, auf 1200 × 630 px skaliert, Hinweis «KI-Illustration» im Bild, JPEG (Qualität 95), 258726 Bytes. Das Original ist unverändert; keine neue Bildgenerierung.
+Binärhinweis: Das Vorschaubild ist eine von Jetnity abgeleitete Datei, kein neues Original. Es enthält kein C2PA-Manifest und keine Metadaten und ist nicht unabhängig C2PA-verifiziert.
+Für die Herkunft massgeblich ist das Original hero-bali.png (Prüfsumme oben); die Angaben ersetzen weder die PO-Erklärung noch einen Rechtsnachweis.

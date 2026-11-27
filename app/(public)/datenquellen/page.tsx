@@ -7,6 +7,7 @@ import {
   ILLUSTRATIONSHINWEIS,
   KI_ILLUSTRATIONEN,
   KI_URHEBER,
+  KI_VORSCHAUBILD,
 } from '@/lib/trips/organisieren/bildnachweise'
 
 const LINK_KLASSE =
@@ -100,18 +101,36 @@ export default function DatenquellenPage() {
             Garantie für exklusive Rechte oder für die Freiheit von Rechten Dritter gibt es nicht.
           </p>
           <ul className="space-y-3 text-meta">
-            {KI_ILLUSTRATIONEN.map((nachweis) => (
+            {[...KI_ILLUSTRATIONEN, KI_VORSCHAUBILD].map((nachweis) => (
               <li key={nachweis.datei} className="space-y-0.5" data-illustration={nachweis.datei}>
                 <p className="font-medium text-foreground">{nachweis.bildtitel}</p>
                 <p>
                   {nachweis.datei} · {nachweis.urheber}
                 </p>
-                <p>
-                  Ersteintrag im Repository {datumDeutsch(nachweis.herkunft.ersteintrag.datum)} (Commit{' '}
-                  {nachweis.herkunft.ersteintrag.commit.slice(0, 9)}), kein verifiziertes Erstellungsdatum.
-                </p>
+                {nachweis.herkunft.ableitung ? (
+                  <>
+                    <p>
+                      Abgeleitet aus {nachweis.herkunft.ableitung.quelle} (SHA-256 {nachweis.herkunft.ableitung.quelleSha256.slice(0, 12)}…), kein neues Original.{' '}
+                      {nachweis.bearbeitung}
+                    </p>
+                    <p>
+                      {nachweis.herkunft.ableitung.breite} × {nachweis.herkunft.ableitung.hoehe} px, {nachweis.herkunft.ableitung.mime}, {nachweis.herkunft.ableitung.bytes} Bytes.
+                    </p>
+                  </>
+                ) : (
+                  <p>
+                    Ersteintrag im Repository {datumDeutsch(nachweis.herkunft.ersteintrag.datum)} (Commit{' '}
+                    {nachweis.herkunft.ersteintrag.commit.slice(0, 9)}), kein verifiziertes Erstellungsdatum.
+                  </p>
+                )}
                 <p className="break-all">SHA-256: {nachweis.herkunft.sha256}</p>
-                {FREIGEGEBENE_ILLUSTRATIONEN.includes(nachweis.datei) ? null : <p>Derzeit nicht im Einsatz: Die Ortszuordnung wird geprüft.</p>}
+                {nachweis.herkunft.fruehererPfad ? (
+                  <p>
+                    Früherer Dateiname: {nachweis.herkunft.fruehererPfad}. Die Datei enthält PNG-Daten; nur die Endung wurde korrigiert (byteidentisch, gleiche Prüfsumme).
+                  </p>
+                ) : null}
+                {nachweis.herkunft.ableitung ? <p>{nachweis.herkunft.binaerhinweis}</p> : null}
+                {FREIGEGEBENE_ILLUSTRATIONEN.includes(nachweis.datei) ? null : <p>Derzeit nicht im Einsatz: Die Freigabe steht aus.</p>}
               </li>
             ))}
           </ul>

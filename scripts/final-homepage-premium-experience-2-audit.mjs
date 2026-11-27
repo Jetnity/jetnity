@@ -3,9 +3,10 @@
 // altes Menü, altes Startseitenbild). Es ist nicht Teil der aktuellen Abnahme und wurde im Rahmen von PR A nicht neu
 // ausgeführt; sein Ergebnis gilt nur für den damaligen Stand. Nicht gelöscht, weil es den früheren Nachweis belegt.
 // Aktuelle Prüfskripte: scripts/premium-redesign-a/ (siehe dort README.md).
-// Dieses Skript erwartet das Teilen-Bild `/images/hero-bali.png`. Die Startseite bindet es nach der PO-Bildkorrektur
-// (26.11.2026) wieder ein, jetzt als gekennzeichnete KI-Illustration mit Herkunftsnachweis (lib/seo/startseitenbild.ts).
-// Die Dateibehauptung stimmt damit wieder; Kennzeichnung, Alt-Texte und Metadaten prüft scripts/premium-redesign-a/bildlizenz.mjs.
+// Dieses Skript erwartet das Hero-Bild `/images/hero-bali.png` und als Teilen-Bild das daraus abgeleitete Vorschaubild
+// `/images/hero-bali-og.jpg` (1200 x 630, unter 300 KB; PO-Korrektur 27.11.2026, lib/seo/startseitenbild.ts). Beide sind
+// gekennzeichnete KI-Illustrationen mit Herkunftsnachweis. Kennzeichnung, Alt-Texte und Metadaten prüft
+// scripts/premium-redesign-a/bildlizenz.mjs.
 //
 // Existing homepage audit, updated for the owner-approved Reiseintelligenz 2 story.
 // AUDIT_BROWSER=1 adds an isolated localhost-only check against an actual Next server.
@@ -29,8 +30,10 @@ pruefe(!/\d+\s*(CHF|EUR|€|\$(?!\{))/.test(texte), 'Unverified price in homepag
 pruefe(!/gtag|googletagmanager|facebook\.net/.test(texte), 'New tracking in homepage')
 pruefe(lesen('lib/seo/oeffentlicher-origin.ts').includes('darfIndexieren'), 'Global indexing gate missing')
 for (const id of ['1650535', '2267057', '2657915', '2759794']) pruefe(lesen('lib/places/inspiration.ts').includes(`geonames:${id}`), `Canonical inspiration id missing: ${id}`)
-const share = readFileSync(join(wurzel, 'public/images/hero-bali.png'))
-pruefe(share.readUInt32BE(16) === 1536 && share.readUInt32BE(20) === 1024, 'Share image must be the approved Bali photograph')
+const hero = readFileSync(join(wurzel, 'public/images/hero-bali.png'))
+pruefe(hero.readUInt32BE(16) === 1536 && hero.readUInt32BE(20) === 1024, 'Hero image must be the unchanged 1536 x 1024 Bali illustration')
+const share = readFileSync(join(wurzel, 'public/images/hero-bali-og.jpg'))
+pruefe(share[0] === 0xff && share[1] === 0xd8 && share[2] === 0xff && share.length < 300_000, 'Share image must be a JPEG under 300 KB')
 pruefe(!lesen('app/sitemap.ts').includes('lastModified: new Date()'), 'Sitemap fabricates last modification time')
 const bericht = { stand: new Date().toISOString(), dateien, browser: 'NOT RUN (set AUDIT_BROWSER=1)', fehler }
 
@@ -86,7 +89,7 @@ if (process.env.AUDIT_BROWSER === '1') {
       pruefe(dom.overflow <= 1, `${breite}: horizontal overflow ${dom.overflow}`)
       pruefe(Boolean(dom.canonical) && new URL(dom.canonical).href === 'https://jetnity.com/', `${breite}: canonical ${dom.canonical}`)
       pruefe(Boolean(dom.description && dom.description.length <= 160), `${breite}: meta description`)
-      pruefe(dom.share?.includes('/images/hero-bali.png'), `${breite}: share image`)
+      pruefe(dom.share?.includes('/images/hero-bali-og.jpg'), `${breite}: share image`)
       pruefe(dom.images, `${breite}: broken image`)
       pruefe(dom.buttonHeight >= 44 && dom.inputPx >= 16 && dom.summaries, `${breite}: input/touch dimensions`)
       pruefe(dom.firstScreenCta, `${breite}: primary CTA not in first viewport`)
