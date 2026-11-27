@@ -68,4 +68,53 @@ class GapAuditTests(unittest.TestCase):
         self.update_index()
         self.assertEqual(self.audit()['classification'],'other_layout')
 
+    def write_bound(self, destination):
+        dest = self.root/'records/dest'/destination
+        dest.mkdir(parents=True)
+        index = {'schema':'jetnity-entry-requirements-dest-index-v2.2','status':'RESEARCH_ONLY',
+                 'dest_id':destination,'destination_iso2':destination,'expected_50_set':CODES[:],
+                 'slice_sha256':{},'nationality_slices':[],'external_writes':[]}
+        tracker = []
+        for code in CODES:
+            file = f'records/dest/{destination}/{code}.json'
+            record = {k:{} for k in self.core}
+            record.update(schema=a.base.SCHEMA,status='RESEARCH_ONLY',nationality=code,
+                          destination_iso2=destination,external_writes=[])
+            raw = json.dumps(record).encode()
+            (dest/f'{code}.json').write_bytes(raw)
+            digest = hashlib.sha256(raw).hexdigest()
+            index['slice_sha256'][code] = digest
+            index['nationality_slices'].append({'nationality':code,'file':file,'sha256':digest})
+            tracker.append({'dest_id':destination,'nationality':code,'record_pointer':file})
+        (dest/'index.json').write_text(json.dumps(index))
+        return tracker
+
+    def test_special_destinations_stay_separate_and_counters_do_not_publish(self):
+        (self.root/'record-schema.json').write_text(json.dumps({
+            'schema': a.base.SCHEMA, 'status': 'RESEARCH_ONLY',
+            'nationality_slice': {'mandatory_core_fields': a.base.CORE}}))
+        (self.root/'passport-priority.csv').write_text(
+            'rank,nationality_iso2\n' + ''.join(f'{i+1},{code}\n' for i, code in enumerate(CODES)))
+        extra = self.write_bound('CN-HK')
+        mainland = self.write_bound('CN')
+        rows = self.tracker + extra + mainland
+        (self.root/'tracker.csv').write_text(
+            'dest_id,nationality,record_pointer\n' + ''.join(
+                f"{row['dest_id']},{row['nationality']},{row['record_pointer']}\n" for row in rows))
+        (self.root/'records/dest/NOT-A-CODE').mkdir()
+        report = a.audit_all(self.root)
+        self.assertEqual(report['specialDestinationsSeparate'], ['CN-HK'])
+        self.assertEqual(report['importCapableProfiles'], 150)
+        self.assertEqual(report['historicalTopicSlots'], 150 * 26)
+        self.assertEqual(report['launchCoreSlots'], 150 * 6)
+        self.assertEqual(report['launchOptionalSlots'], 150 * 4)
+        self.assertEqual(report['legalEvidenceSlots'], 0)
+        self.assertEqual(report['sourceAssignments'], 0)
+        self.assertEqual(report['published'], 0)
+        self.assertEqual(report['accepted'], 0)
+        self.assertFalse(report['optionalGapIsCompletenessGate'])
+        self.assertNotIn('CN-HK', ''.join(code for code in CODES))
+        with self.assertRaisesRegex(ValueError, 'invalid_destination'):
+            a.audit_index(self.root, 'CN-HK-EXTRA', CODES, [], self.core)
+
 if __name__=='__main__':unittest.main()

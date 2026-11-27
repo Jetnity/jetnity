@@ -1,5 +1,92 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, unbekannter Lesefehler bleibt die Ausnahme
+
+Gleicher Branch, gleicher Draft #1323, nach Work-FAIL auf `40cbb0966`. Keine neue Archivlesung. Die Chargen von `ebe14868c` und `b86e73b42` bleiben historisch. Kein Ready, kein Merge.
+
+- Die Diagnose trennt Lesen und JSON. Nur eine fehlende Datei und ein bekannter JSON-Fehler werden lokal klassifiziert. Ein unbekannter Lesefehler an Schema, Index oder Slice bleibt die ursprüngliche Ausnahme.
+- Lokal: Forschungsadapter 45, Gap-Audit 6, Importer 36, alle OK. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, harte Lesefehler bleiben STOP
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `f6a201bae`. Keine neue Archivlesung. Die Chargen von `ebe14868c` und `b86e73b42` bleiben historisch. Kein Ready, kein Merge.
+
+- Ein fehlender Index kann ein HOLD-Beleg sein. Symlink, Grössenlimit, Permission und I/O bleiben STOP, auch in der Diagnose. Ein Siegel ohne Paket kann keinen Priority-PASS behaupten.
+- Ein gemischter 206er-Lauf mit 10'300 synthetischen Slices prüft Prepare, Resume, Verify und die redigierte Diagnose. Lokal: Forschungsadapter 44, Gap-Audit 6, Importer 36, alle OK. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, Legacy ohne Migration ist eine Zielsperre
+
+Gleicher Branch, gleicher Draft #1323, nach dem lokalen BLOCKED auf `b86e73b42`. Keine neue Archivlesung. Die Charge von `ebe14868c` und die abgebrochene Charge bleiben historisch. Kein Ready, kein Merge.
+
+- `ambiguous_split_and_legacy` und die übrigen zielgebundenen Adapterbefunde werden als HOLD protokolliert. Ein unbekannter Fehler bleibt STOP. Ein Lauf über alle 206 Ziele mit 10'300 synthetischen Paaren sperrt jedes Ziel, ohne einen Priority-PASS zu setzen.
+- Lokal: Forschungsadapter 44, Gap-Audit 6, Importer 34, alle OK. `import` Exit 2. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, Diagnose bricht bei Feldtypen nicht ab
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `bb0ad342e`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.
+
+- Ein Array oder Objekt als Slice-Status oder Quellen-URL bricht die Diagnose nicht mehr ab. Fehlende oder ungültige `conflicts` bleiben ungeklärt. Eine kaputte JSON-Datei zählt nicht als fehlende Datei. Der Hash eines Nichtobjekt-Slices wird trotzdem verglichen.
+- Lokal: Forschungsadapter 43, Gap-Audit 6, Importer 31, alle OK. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, Diagnose hält Nicht-Objekte und ungebundene Profile
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `716ecce13`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch. Kein Ready, kein Merge.
+
+- Ein Index aus `null`, `false`, `0`, String oder Array hält das Ziel. Vorhandene Hashes im research_v2_2-Altpfad werden geprüft. Fehlende Tracker-Pointer, ein falsches Record-Schema und leere oder unklare Quellen erzeugen keinen sauberen Kandidaten. 206/10'300 bleibt eine Inventarzählung.
+- Der lokale Ablauf diagnostiziert den temporären Forschungsbaum vor dem Aufräumen und gibt nur Summen nach aussen. Exact-Head- und Skript-Digest-Gate bleiben davor.
+- Lokal: Forschungsadapter 42, Gap-Audit 6, Importer 31, alle OK. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, Diagnose sammelt jeden Befund
+
+Gleicher Branch, gleicher Draft #1323, nach NO-GO auf `842c03d2b`. Keine neue Archivlesung. Die Charge von `ebe14868c` bleibt historisch.
+
+- Die Diagnose prüft die gepinnte Zielreihe vollständig und entscheidet Kandidaten erst danach. Vorhandene Zusatzmaps und `sha256: null` bleiben ein Hold.
+- Lokal: Forschungsadapter 38, Gap-Audit 6, Importer 30, alle OK. CI dieses Heads wird nach dem Push belegt.
+
+## 27.11.2026 — Paket I, Sperrlogik nach der lokalen Analyse
+
+Gleicher Branch, gleicher Draft #1323, ausgehend von `ebe14868c`. Dessen Charge bleibt historisch. Keine neue Archivlesung, kein M04/N11-Eingriff.
+
+- `nein` und leer sind kein Tracker-Konflikt. `ja`, unbekannter Text und historische Vermerke bleiben Hold. Indexformen ohne belegte Felder bleiben Hold. Die Diagnose sammelt Befunde und gibt nichts frei.
+- Lokal: Forschungsadapter 34, Gap-Audit 6, Importer 30, alle OK. Drei Node-Integrationsprüfungen bestanden. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
+## 27.11.2026 — Paket I, vierte Korrektur nach NO-GO auf 7dfac457f
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.
+
+- Der lokale Ablauf prüft Ausgabe und Staging gegen den Originalordner und gegen Git-Worktrees, bevor er liest oder schreibt. Eine Schema-2-Charge fällt nicht auf den historischen Siegelpfad zurück.
+- Lokal: Forschungsadapter 25, Gap-Audit 6, Importer 30, alle OK. Drei Node-Integrationsprüfungen bestanden. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
+## 27.11.2026 — Paket I, dritte Korrektur nach NO-GO auf f08728c2a
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.
+
+- Der lokale Ablauf öffnet das Archiv erst, wenn ein externer Abnahme-Datensatz Commit und Skript-Digests trifft. Eine boolesche Markierung bleibt geschlossen. Verify prüft die ganze Charge unter der Sperre. Ein ungebundenes Paket wird nicht übernommen.
+- Lokal: Forschungsadapter 25, Gap-Audit 6, Importer 27, alle OK. Die Node-Integrationsprüfung folgt im selben Stand. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
+## 27.11.2026 — Paket I, zweite Korrektur nach NO-GO auf 2c60c7eff
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff.
+
+- Charge vor dem Schreiben an Archiv-SHA, CSV-/Tracker-Pins, Git-Commit und die vier Skript-Digests gebunden. Lock vor dem Journal. Resume übernimmt ein bereits geschriebenes Paket oder einen HOLD, ohne zu überschreiben. Tracker-Konflikte sind Holds und stoppen nicht die übrigen Ziele.
+- CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
+## 27.11.2026 — Paket I Korrekturrunde nach TL-Review
+
+Gleicher Branch `cursor/official-truth-importer-206-5c1d`, gleicher Draft [#1323](https://github.com/Jetnity/jetnity/pull/1323). Review: #1319 Kommentar 7207442476. Kein neuer Agent, kein neuer PR, kein Ready, kein Merge. M04/N11 unverändert.
+
+- Repack `6545eb28…744b` ist der lokale Pin. Diese Session hat ihn nicht gelesen. `--research-root` ist kein Ersatz. HR/NL bleiben Hold auch bei Split. SO-K2 nur AT, ES, GR, NL.
+- `project_launch` zählt frei gelieferte Angaben nicht als Rechtsbeleg. Vollständige Profile bleiben 0. Checkpoints binden Archiv, CSV, Tracker, Skript-Digest und Ausgabe. Lokaler Work-Ablauf: `docs/OFFICIAL_TRUTH_PACKET_I_LOCAL_WORK_RUN_2026-11-27.md`. Datenbankimport bleibt gestoppt.
+- CI des Korrektur-Heads wird nach dem Push am exakten Head belegt und hier nicht vorweg behauptet.
+
+## 27.11.2026 — Official Truth Paket I, universeller Importer 206×50 / 6+4
+
+Branch `cursor/official-truth-importer-206-5c1d` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Auftrag [#1321](https://github.com/Jetnity/jetnity/issues/1321), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Draft. Kein Ready, kein Merge, kein Deploy, keine Datenbank, kein Import, keine Aktivierung, keine neuen Kosten.
+
+- Die drei bestehenden Offline-Skripte kennen jetzt den gepinnten 206-Ziele-Katalog, 10'300 Profile, die unveränderten 26 Themen und eine logische 6+4-Projektion. `CN-HK` und `CN-MO` bleiben getrennt. Neun Extras und Legacy-Dubletten werden nicht als zusätzliche Pässe importiert. `HR`/`NL` bleiben strukturell gesperrt, `SO` bleibt auf K2 gesperrt.
+- Trockener Lauf, append-only Checkpoint, Resume und Idempotenz laufen nur gegen synthetische Dateien ausserhalb des Repos. `import` endet mit `PRIVATE_PAYLOAD_PATH_STOP`. Rechtsbeleg und Publikation bleiben 0. Das PO-Mac-Archiv wurde nicht gelesen; der Repack `6545eb28…` ist nicht erneut geprüft.
+- Lokal: Python 21 + 6 + 9 Tests OK, drei Node-Integrationsprüfungen OK. CI auf dem Code-Head `f5ba18762`: [Run 45913537567](https://github.com/Jetnity/jetnity/actions/runs/45913537567), 14 von 14 `success`. Draft [#1323](https://github.com/Jetnity/jetnity/pull/1323). Der Dokumentations-Head `489f2ea8` ist rot: [Run 45916385150](https://github.com/Jetnity/jetnity/actions/runs/45916385150). Diff nur zwei Doku-Sätze. Fehler ist der bestehende M04-Nativbeweis N11 (Katalog vor/nach Deferred-Trigger), nicht der Importer. Paket II bleibt unangetastet. Das ist kein Rechtsbeleg und kein Import. Protokoll: `docs/OFFICIAL_TRUTH_UNIVERSAL_IMPORTER_206_PACKET_I_PROTOCOL_2026-11-27.md`. Nächster Schritt: Exact-Head-Review durch den Technical Lead.
+
 ## 26.11.2026 — W3 drei Korrekturen, Draft #1307
 
 Branch `feat/workspace-w3-angebot-buchung-20261124`, Ausgang `d7ab56fe9285a136c5abd71157fa35cbb3ae062d` (CI [45725565721](https://github.com/Jetnity/jetnity/actions/runs/45725565721) grün, main `69ab3fa20` enthalten). PO-Go 26.11.2026 für drei Korrekturen vor Merge. Draft bleibt. Kein Ready, kein Merge, kein Production-Deploy, keine DB-Migration, kein Login/2FA, keine neuen Kosten.
