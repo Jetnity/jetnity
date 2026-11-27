@@ -596,7 +596,9 @@ async function echteAuswahl(seite, ansichtId, kombiname, sammler, grenze = 30) {
     if (gruppe.darstellung) {
       // Die Darstellungswahl schliesst ihr Menü und wechselt das Thema der ganzen Seite: die Gruppe lässt sich danach in diesem
       // Zustand nicht weiter messen. Ihre echte Bedienung misst der Lauf `--themawechsel` (Wahl über das echte Bedienelement).
-      sammler.push({ ansicht: ansichtId, kombination: kombiname, modus: 'echt', element: `Gruppe ${gruppe.g} (Darstellungswahl)`, art: 'hinweis', auswahl: null, zustand: 'darstellung', urteil: 'OFFEN', gruende: [], offen: ['Die Darstellungswahl wechselt das Thema und schliesst ihr Menü; echte Bedienung gemessen im Lauf --themawechsel'] })
+      sammler.push({ ansicht: ansichtId, kombination: kombiname, modus: 'echt', element: `Gruppe ${gruppe.g} (Darstellungswahl)`, art: 'hinweis', auswahl: null, zustand: 'darstellung', urteil: 'OFFEN', gruende: [], offen: [OHNE_THEMAWECHSEL.has(ansichtId)
+        ? 'Die Darstellungswahl wechselt das Thema und schliesst ihr Menü; beide Zustände der Knöpfe sind im erzwungenen Lauf gemessen, die echte Bedienung dieser Ansicht ist hier nicht messbar (Menü schliesst, Ansicht ohne Themawechsel): Beleg durch Bild und Video, Messung OFFEN'
+        : 'Die Darstellungswahl wechselt das Thema und schliesst ihr Menü; echte Bedienung gemessen im Lauf --themawechsel'] })
       continue
     }
     for (const mitglied of gruppe.mitglieder) {
