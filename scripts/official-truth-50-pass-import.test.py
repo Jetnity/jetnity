@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 import multiprocessing
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -242,7 +243,7 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), sealed)
         self.assertEqual(repeat, result)
-        self.assertEqual(b.verify(out, self.adapter), result)
+        self.assertEqual(b.verify(out, self.adapter, identity), result)
 
     def test_split_hr_and_nl_stay_held(self):
         for country in ("HR", "NL"):
@@ -275,9 +276,14 @@ class ImportTests(unittest.TestCase):
         self.assertFalse((tree / "private").exists())
 
     def test_local_archive_run_stays_unauthorized_and_redacted(self):
-        archive = self.base / "repack.xz"
+        original = self.base / "plan-original"
+        private = self.base / "plan-private"
+        original.mkdir()
+        private.mkdir()
+        archive = original / "repack.xz"
         archive.write_bytes(b"not-the-repack")
-        output = self.base / "private-out"
+        output = private / "out"
+        kept = sorted(path.name for path in original.iterdir())
         plan = local.redacted_plan(archive, output)
         self.assertFalse(plan["archiveVerifiedThisRun"])
         self.assertFalse(plan["archivePathRecorded"])
@@ -289,6 +295,8 @@ class ImportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
             local.run(archive, output, authorized=True)
         self.assertFalse(output.exists())
+        self.assertEqual(sorted(path.name for path in original.iterdir()), kept)
+        self.assertEqual(archive.read_bytes(), b"not-the-repack")
         self.assertEqual(len(plan["codeHead"]), 40)
         self.assertIn("official-truth-research-package.py", plan["scriptHashes"])
 
@@ -303,7 +311,7 @@ class ImportTests(unittest.TestCase):
         second = b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
         self.assertEqual(self.calls, [])
         self.assertEqual(second, first)
-        self.assertEqual(b.verify(out, self.adapter), first)
+        self.assertEqual(b.verify(out, self.adapter, identity), first)
         self.assertEqual((out / "checkpoint.jsonl").read_bytes(), journal)
         kept = (out / "manifest.json").read_bytes()
         other = dict(identity)
@@ -331,7 +339,7 @@ class ImportTests(unittest.TestCase):
         seal = json.loads((out / "manifest.json").read_text())
         self.assertEqual(seal["blocked"][0]["reason"], "slice_core")
         self.assertTrue((out / "packages" / "FR").is_dir())
-        self.assertEqual(b.verify(out, self.adapter), result)
+        self.assertEqual(b.verify(out, self.adapter, identity), result)
 
     def test_concurrent_lock_and_foreign_charge_do_not_overwrite(self):
         folder = self.base / "shared"
@@ -360,7 +368,7 @@ class ImportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch"):
             b.prepare_resumable(self.source, out, names, self.adapter, identity=foreign)
         self.assertEqual((out / "packages" / "AT" / "manifest.json").read_bytes(), package)
-        self.assertEqual(b.verify(out, self.adapter), original)
+        self.assertEqual(b.verify(out, self.adapter, identity), original)
 
     def test_symlink_journal_and_output_inside_source_are_refused(self):
         target = self.base / "journal-target.jsonl"
@@ -466,10 +474,14 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(b.verify(out, self.adapter, identity)["published"], 0)
 
     def test_local_run_does_not_read_without_acceptance(self):
-        archive = self.base / "closed.xz"
+        original = self.base / "closed-original"
+        private = self.base / "closed-private"
+        original.mkdir()
+        private.mkdir()
+        archive = original / "closed.xz"
         archive.write_bytes(b"closed")
         archive.chmod(0)
-        output = self.base / "closed-out"
+        output = private / "out"
         try:
             with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED"):
                 local.run(archive, output, authorized=True)
@@ -485,12 +497,17 @@ class ImportTests(unittest.TestCase):
             archive.chmod(0o600)
         self.assertFalse(output.exists())
         self.assertEqual(archive.read_bytes(), b"closed")
+        self.assertEqual([path.name for path in original.iterdir()], ["closed.xz"])
 
     def test_fixture_cannot_claim_a_real_pin(self):
-        archive = self.base / "claimed.xz"
+        original = self.base / "claimed-original"
+        private = self.base / "claimed-private"
+        original.mkdir()
+        private.mkdir()
+        archive = original / "claimed.xz"
         archive.write_bytes(b"not-a-pin")
         archive.chmod(0)
-        output = self.base / "claimed-out"
+        output = private / "out"
         acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
                       "archiveSha256": b.LOCAL_REPACK_SHA256, "fixture": True}
         try:
@@ -499,6 +516,7 @@ class ImportTests(unittest.TestCase):
         finally:
             archive.chmod(0o600)
         self.assertFalse(output.exists())
+        self.assertEqual([path.name for path in original.iterdir()], ["claimed.xz"])
 
     def test_cli_cannot_open_the_archive(self):
         archive = self.base / "cli.xz"
@@ -528,15 +546,24 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(archive.read_bytes(), b"cli")
 
     def test_fixture_run_prepares_resumes_and_verifies(self):
-        archive = self.base / "fixture.tar.xz"
+        original = self.base / "run-original"
+        private = self.base / "run-private"
+        original.mkdir()
+        private.mkdir(mode=0o700)
+        archive = original / "fixture.tar.xz"
         _fixture_archive(archive)
         before = archive.read_bytes()
-        output = self.base / "local-out"
+        archive.chmod(0o444)
+        output = private / "out"
+        kept = sorted((path.name, path.lstat().st_mode, path.lstat().st_size) for path in original.iterdir())
         acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
                       "archiveSha256": b.digest(archive), "fixture": True}
         report = local.run(archive, output, authorized=False, acceptance=acceptance,
                            destinations=["AT"], adapter=self.adapter)
         self.assertEqual(archive.read_bytes(), before)
+        self.assertEqual(archive.stat().st_mode & 0o777, 0o444)
+        self.assertEqual(sorted((path.name, path.lstat().st_mode, path.lstat().st_size)
+                                for path in original.iterdir()), kept)
         self.assertFalse(report["archiveVerifiedThisRun"])
         self.assertTrue(report["fixture"])
         self.assertEqual(report["legalEvidenceSlots"], 0)
@@ -553,10 +580,140 @@ class ImportTests(unittest.TestCase):
         self.assertEqual((output / "packages" / "AT" / "manifest.json").read_bytes(), package)
         self.assertEqual((output / "checkpoint.jsonl").read_bytes(), journal)
         self.assertEqual(archive.read_bytes(), before)
+        self.assertEqual(archive.stat().st_mode & 0o777, 0o444)
+        self.assertEqual(sorted((path.name, path.lstat().st_mode, path.lstat().st_size)
+                                for path in original.iterdir()), kept)
         self.assertEqual(resumed["published"], 0)
         self.assertEqual(resumed["legalEvidenceSlots"], 0)
         identity = b.charge_identity(b.digest(archive), output, ["AT"])
         self.assertEqual(b.verify(output, self.adapter, identity)["accepted"], 0)
+
+    def test_original_directory_rejects_aliases_and_keeps_its_bytes(self):
+        original = self.base / "protected"
+        private = self.base / "protected-private"
+        original.mkdir()
+        private.mkdir()
+        archive = original / "fixture.tar.xz"
+        _fixture_archive(archive)
+        payload = archive.read_bytes()
+        archive.chmod(0)
+        names = sorted(path.name for path in original.iterdir())
+        try:
+            for output in (original / "inside", original, self.base, private / ".." / "protected" / "out"):
+                with self.assertRaisesRegex(ValueError, "output_refused"):
+                    local.run(archive, output, authorized=True)
+            alias = self.base / "protected-alias"
+            alias.symlink_to(original, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "symlink_refused"):
+                local.run(archive, alias / "out", authorized=True)
+            tree = self.base / "other-worktree"
+            (tree / ".git").mkdir(parents=True)
+            with self.assertRaisesRegex(ValueError, "output_refused"):
+                local.run(archive, tree / "out", authorized=True)
+            self.assertEqual([path.name for path in tree.iterdir()], [".git"])
+            os.link(archive, private / "linked-out")
+            with self.assertRaisesRegex(ValueError, "hardlink_refused"):
+                local.run(archive, private / "linked-out", authorized=True)
+            (private / "linked-out").unlink()
+        finally:
+            archive.chmod(0o644)
+        self.assertEqual(sorted(path.name for path in original.iterdir()), names)
+        self.assertEqual(archive.read_bytes(), payload)
+        self.assertFalse(any(path.name.startswith(".jetnity-local-src-") for path in original.iterdir()))
+
+    def test_writable_original_is_not_opened(self):
+        original = self.base / "writable-original"
+        private = self.base / "writable-private"
+        original.mkdir()
+        private.mkdir()
+        archive = original / "fixture.tar.xz"
+        _fixture_archive(archive)
+        payload = archive.read_bytes()
+        acceptance = {"gitCommit": b.repository_commit(), "scriptHashes": b.execution_script_hashes(),
+                      "archiveSha256": b.digest(archive), "fixture": True}
+        archive.chmod(0o200)
+        try:
+            with self.assertRaisesRegex(ValueError, "archive_not_readonly"):
+                local.run(archive, private / "out", acceptance=acceptance, destinations=["AT"],
+                          adapter=self.adapter)
+        finally:
+            archive.chmod(0o644)
+        self.assertFalse((private / "out").exists())
+        self.assertEqual(archive.read_bytes(), payload)
+        self.assertEqual([path.name for path in original.iterdir()], ["fixture.tar.xz"])
+
+    def test_schema_two_cannot_drop_to_schema_one(self):
+        out = self.base / "downgrade"
+        names = ["AT"]
+        identity = b.charge_identity("ab" * 32, out, names)
+        b.prepare_resumable(self.source, out, names, self.adapter, identity=identity)
+        self.assertEqual(b.verify(out, self.adapter, identity)["published"], 0)
+        with self.assertRaisesRegex(ValueError, "charge_identity_missing"):
+            b.verify(out, self.adapter)
+        manifest = (out / "manifest.json").read_bytes()
+        journal = (out / "checkpoint.jsonl").read_bytes()
+        binding = (out / "packages" / "AT.charge.json").read_bytes()
+        lock = out / "charge.lock"
+
+        def restore() -> None:
+            (out / "manifest.json").write_bytes(manifest)
+            (out / "checkpoint.jsonl").write_bytes(journal)
+            (out / "packages" / "AT.charge.json").write_bytes(binding)
+            if not lock.exists():
+                lock.write_bytes(b"")
+
+        def rewrite(mutate) -> None:
+            seal = json.loads(manifest)
+            mutate(seal)
+            (out / "manifest.json").write_text(json.dumps(seal) + "\n")
+
+        try:
+            rewrite(lambda seal: seal.__setitem__("schema", 1))
+            with self.assertRaisesRegex(ValueError, "schema_downgrade_refused"):
+                b.verify(out, self.adapter, identity)
+            restore()
+            rewrite(lambda seal: seal.pop("sealVersion"))
+            with self.assertRaisesRegex(ValueError, "schema_downgrade_refused"):
+                b.verify(out, self.adapter, identity)
+            restore()
+            rewrite(lambda seal: seal.pop("charge"))
+            with self.assertRaisesRegex(ValueError, "charge_missing"):
+                b.verify(out, self.adapter, identity)
+            restore()
+            (out / "checkpoint.jsonl").unlink()
+            with self.assertRaisesRegex(ValueError, "journal_incomplete"):
+                b.verify(out, self.adapter, identity)
+            restore()
+            lock.unlink()
+            with self.assertRaisesRegex(ValueError, "charge_lock_missing"):
+                b.verify(out, self.adapter, identity)
+            self.assertFalse(lock.exists())
+            restore()
+            rewrite(lambda seal: (seal.__setitem__("schema", 1), seal.pop("sealVersion", None), seal.pop("charge", None)))
+            (out / "checkpoint.jsonl").unlink()
+            lock.unlink()
+            with self.assertRaisesRegex(ValueError, "schema_downgrade_refused"):
+                b.verify(out, self.adapter, identity)
+            self.assertFalse(lock.exists())
+            restore()
+            rewrite(lambda seal: (seal.__setitem__("schema", 1), seal.pop("sealVersion", None), seal.pop("charge", None)))
+            (out / "checkpoint.jsonl").unlink()
+            lock.unlink()
+            (out / "packages" / "AT.charge.json").unlink()
+            with self.assertRaisesRegex(ValueError, "schema_downgrade_refused"):
+                b.verify(out, self.adapter, identity)
+            restore()
+            foreign = dict(identity)
+            foreign["archiveSha256"] = "cd" * 32
+            with self.assertRaisesRegex(ValueError, "checkpoint_identity_mismatch"):
+                b.verify(out, self.adapter, foreign)
+            body = json.loads(binding)
+            body["planDigest"] = "ab" * 32
+            (out / "packages" / "AT.charge.json").write_text(json.dumps(body) + "\n")
+            with self.assertRaisesRegex(ValueError, "unbound_package"):
+                b.verify(out, self.adapter, identity)
+        finally:
+            restore()
 
 
 def _fixture_archive(path: Path) -> None:

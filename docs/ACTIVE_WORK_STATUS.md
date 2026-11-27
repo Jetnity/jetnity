@@ -1,5 +1,12 @@
 # Jetnity – Active Work Status
 
+## 27.11.2026 — Paket I, vierte Korrektur nach NO-GO auf 7dfac457f
+
+Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.
+
+- Der lokale Ablauf prüft Ausgabe und Staging gegen den Originalordner und gegen Git-Worktrees, bevor er liest oder schreibt. Eine Schema-2-Charge fällt nicht auf den historischen Siegelpfad zurück.
+- Lokal: Forschungsadapter 25, Gap-Audit 6, Importer 30, alle OK. Drei Node-Integrationsprüfungen bestanden. CI dieses Heads wird nach dem Push belegt, nicht vorweg.
+
 ## 27.11.2026 — Paket I, dritte Korrektur nach NO-GO auf f08728c2a
 
 Gleicher Branch, gleicher Draft #1323. Kein Archivlauf, kein M04/N11-Eingriff, keine Freigabe im Repo.

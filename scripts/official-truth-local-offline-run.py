@@ -11,6 +11,7 @@ import argparse
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -27,9 +28,10 @@ _SPEC.loader.exec_module(batch)
 
 def redacted_plan(archive: Path, output: Path) -> dict:
     """Identity plan only. Does not read archive bytes and does not create output."""
-    batch.require(not archive.is_symlink() and not output.is_symlink(), "local_symlink_refused")
-    parent = output.parent if output.parent.exists() else output
-    batch.require(not batch._inside_git_worktree(parent), "local_output_inside_worktree")
+    repo = Path(__file__).resolve().parent.parent
+    batch._refuse_alias(archive)
+    archive_dir = archive.parent.resolve(strict=True)
+    batch._outside(output, repo, archive_dir)
     return {
         "schema": 1,
         "kind": "jetnity_local_offline_plan",
@@ -75,14 +77,35 @@ def _checkout_clean() -> bool:
     return completed.stdout == ""
 
 
+def _directory_fingerprint(directory: Path) -> tuple:
+    rows = []
+    for child in directory.iterdir():
+        info = child.lstat()
+        rows.append((child.name, info.st_mode, info.st_ino, info.st_size, info.st_nlink))
+    return tuple(sorted(rows))
+
+
+def _file_identity(path: Path) -> tuple:
+    info = path.lstat()
+    return (info.st_mode, info.st_ino, info.st_size, info.st_mtime_ns, info.st_nlink)
+
+
 def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict | None = None,
         destinations: list[str] | None = None, adapter=None) -> dict:
     """Preflight, unpack, prepare, resume, verify, and return a redacted report.
 
     ``authorized`` is ignored. The archive stays closed until ``acceptance``
     matches this checkout. A fixture acceptance cannot carry a real archive pin.
+    The original directory is not written, and a schema-1 seal cannot satisfy verify.
     """
     del authorized
+    repo = Path(__file__).resolve().parent.parent
+    batch._refuse_alias(archive)
+    archive_info = archive.lstat()
+    batch.require(stat.S_ISREG(archive_info.st_mode) and archive_info.st_nlink == 1, "hardlink_refused")
+    archive_dir = archive.parent.resolve(strict=True)
+    dest = batch._outside(output, repo, archive_dir)
+    batch.require(not dest.parent.is_relative_to(archive_dir), "output_refused")
     redacted_plan(archive, output)
     record = _acceptance_gate(acceptance)
     claimed = record["archiveSha256"]
@@ -93,14 +116,22 @@ def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict 
         batch.require(_checkout_clean(), "checkout_not_clean")
     elif not fixture:
         raise ValueError("unreviewed_archive")
+    batch.require(stat.S_IMODE(archive.lstat().st_mode) & 0o222 == 0, "archive_not_readonly")
+    before_tree = _directory_fingerprint(archive_dir)
+    before_file = _file_identity(archive)
     file_sha = batch.digest(archive)
     batch.require(file_sha == claimed, "archive_identity")
     names = list(destinations) if destinations is not None else list(batch.ORDER)
     batch.require(names == list(batch.ORDER[:len(names)]) and names, "destination_order_refused")
-    parent = output.parent.resolve(strict=True)
-    staging = Path(tempfile.mkdtemp(prefix=".jetnity-local-src-", dir=str(parent)))
-    os.chmod(staging, 0o700)
+    staging = None
     try:
+        staging = Path(tempfile.mkdtemp(prefix=".jetnity-local-src-", dir=str(dest.parent)))
+        os.chmod(staging, 0o700)
+        staged = staging.resolve(strict=True)
+        batch.require(staging.name.startswith(".jetnity-local-src-")
+                      and not staged.is_relative_to(archive_dir)
+                      and not archive_dir.is_relative_to(staged)
+                      and not batch._inside_git_worktree(staged), "output_refused")
         root = batch.extract_pinned_archive(archive, staging, fixture=fixture)
         identity = batch.charge_identity(file_sha, output, names)
         chosen = adapter if adapter is not None else batch.original_adapter()
@@ -109,7 +140,10 @@ def run(archive: Path, output: Path, authorized: bool = False, acceptance: dict 
         verified = batch.verify(output, chosen, identity)
         batch.require(first == second == verified, "offline_charge_mismatch")
     finally:
-        shutil.rmtree(staging, ignore_errors=True)
+        if staging is not None and staging.name.startswith(".jetnity-local-src-") and not staging.is_symlink():
+            shutil.rmtree(staging, ignore_errors=True)
+    batch.require(_file_identity(archive) == before_file, "archive_changed")
+    batch.require(_directory_fingerprint(archive_dir) == before_tree, "archive_changed")
     batch.require(batch.digest(archive) == file_sha, "archive_changed")
     batch.require(verified["published"] == 0 and verified["accepted"] == 0, "offline_charge_promoted")
     report = {

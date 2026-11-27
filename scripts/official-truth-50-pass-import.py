@@ -255,11 +255,32 @@ def prepare(root: Path, out: Path, destinations: list[str], adapter) -> dict:
         shutil.rmtree(temporary, ignore_errors=True)
 
 
-def _verify_charge(root: Path, seal: dict, identity: dict | None) -> None:
+def _charge_markers(root: Path, seal: dict) -> bool:
+    """True when the tree claims, or still carries, a schema-2 charge."""
+    if seal.get("schema") == 2 or seal.get("sealVersion") not in (None, 1) or "charge" in seal:
+        return True
+    if (root / "checkpoint.jsonl").exists() or (root / "checkpoint.jsonl").is_symlink():
+        return True
+    if (root / "charge.lock").exists() or (root / "charge.lock").is_symlink():
+        return True
+    for folder_name in ("packages", "blocked"):
+        folder = root / folder_name
+        if folder.is_symlink():
+            return True
+        if not folder.is_dir():
+            continue
+        for child in folder.iterdir():
+            if child.name.endswith(".charge.json"):
+                return True
+    return False
+
+
+def _verify_charge(root: Path, seal: dict, identity: dict) -> None:
     """Recompute the charge from the checkout, path, and journal. Do not trust the seal alone.
 
     The caller holds the charge lock and has read the seal under that lock.
     """
+    require(isinstance(identity, dict), "charge_identity_missing")
     charge = seal.get("charge")
     require(isinstance(charge, dict), "charge_missing")
     require(charge.get("codeHead") == repository_commit(), "git_commit_identity")
@@ -271,8 +292,7 @@ def _verify_charge(root: Path, seal: dict, identity: dict | None) -> None:
     require(_hex(charge.get("archiveSha256", ""), 64) and charge["archiveSha256"] != "0" * 64, "archive_identity")
     require(charge.get("passportCsvSha256") == PRIORITY_CSV_SHA256, "priority_csv_sha")
     require(charge.get("trackerSha256") == TRACKER_SHA256, "tracker_sha")
-    if identity is not None:
-        require_same_charge(charge, identity)
+    require_same_charge(charge, identity)
     prepared = {row["country"]: row for row in seal["packages"]}
     blocked = {row["country"]: row for row in seal["blocked"]}
     rows = read_checkpoint(root / "checkpoint.jsonl")
@@ -360,11 +380,16 @@ def _verify_locked(root: Path, adapter, identity: dict | None, locked: bool) -> 
                 "topicSlots": len(prepared)*1300, "blockedCountries": len(blocked),
                 "blockedPassports": len(blocked)*50, "accepted": 0, "published": 0}
     require(seal["counts"] == expected, "quarantine_seal_counts_invalid")
-    if seal.get("schema") == 2 or seal.get("sealVersion") == 2:
+    if identity is not None or _charge_markers(root, seal):
+        require(identity is not None, "charge_identity_missing")
+        require(seal.get("schema") == 2 and seal.get("sealVersion") == 2, "schema_downgrade_refused")
         require(locked, "charge_lock_missing")
         _verify_charge(root, seal, identity)
-    elif seal.get("schema") != 1:
-        raise ValueError("seal_schema_refused")
+        return expected
+    # Historical atomic seals have no charge, journal, lock, or binding.
+    # This is not a charge pass and the local work run never uses it.
+    require(seal.get("schema") == 1 and "charge" not in seal and seal.get("sealVersion") in (None, 1),
+            "seal_schema_refused")
     return expected
 
 
@@ -640,13 +665,42 @@ def _inside_git_worktree(path: Path) -> bool:
     return False
 
 
+def _refuse_alias(path: Path) -> None:
+    """Reject symlink components, parent aliases, and hardlinked files before resolve."""
+    require(isinstance(path, Path) and path.is_absolute(), "output_refused")
+    current = Path(path.anchor)
+    for part in path.parts[1:]:
+        require(part not in ("", ".", ".."), "output_refused")
+        current = current / part
+        if current.is_symlink():
+            raise ValueError("symlink_refused")
+        if not current.exists():
+            return
+        if current.is_file() and current.stat().st_nlink > 1:
+            raise ValueError("hardlink_refused")
+
+
 def _outside(path: Path, repo: Path, source: Path) -> Path:
+    """Private output outside the repository, every git worktree, and the protected source tree.
+
+    ``source`` is the original archive directory for a local run, or the unpacked
+    research root for a resumable charge. A path inside that tree, equal to it,
+    or placed above it is refused before any write.
+    """
+    _refuse_alias(path)
+    _refuse_alias(source)
     parent = path.parent.resolve(strict=True)
     dest = parent / path.name
+    source_resolved = source.resolve(strict=True)
     require(path.name not in ("", ".", "..") and not dest.is_symlink()
-            and not any(part.is_symlink() for part in dest.parents)
-            and not dest.is_relative_to(repo) and not dest.is_relative_to(source)
-            and dest != source and not _inside_git_worktree(parent), "output_refused")
+            and not dest.is_relative_to(repo) and not dest.is_relative_to(source_resolved)
+            and not source_resolved.is_relative_to(dest)
+            and dest != source_resolved and not _inside_git_worktree(parent)
+            and not _inside_git_worktree(dest if dest.exists() else parent), "output_refused")
+    if dest.exists() and dest.is_file() and dest.stat().st_nlink > 1:
+        raise ValueError("hardlink_refused")
+    if dest.exists() and not dest.is_dir():
+        raise ValueError("output_refused")
     return dest
 
 

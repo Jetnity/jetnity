@@ -1,5 +1,13 @@
 # Official Truth Paket I – universeller Importer 206×50 / 6+4
 
+## Vierte Korrekturrunde, NO-GO auf 7dfac457f
+
+- Vor dem Lesen und vor jedem Schreiben prüft der lokale Ablauf die Ausgabe gegen den Ordner der Originaldatei und gegen jeden Git-Worktree. Ausgabe innerhalb, gleich oder oberhalb dieses Ordners, Symlink-Komponenten, `..`, Hardlinks und ein Staging im Originalordner werden abgelehnt. Die Originaldatei muss schon schreibgeschützt sein; der Lauf ändert ihre Bytes, ihre Rechte und den Ordnerinhalt nicht.
+- Eine Schema-2-Charge kann nicht durch `schema=1` oder durch Entfernen von `sealVersion`, Charge, Journal, Lock oder Binding auf den historischen Schema-1-Lesepfad fallen. Sobald eine erwartete Identität oder ein solches Merkmal vorliegt, prüft Verify die Charge unter der Sperre. Der historische Pfad bleibt nur für alte Siegel ohne diese Merkmale und ist kein Chargen-PASS. Der lokale Ablauf benutzt ihn nicht.
+- `legalEvidence` bleibt 0. `PRIVATE_PAYLOAD_PATH_STOP` bleibt. Das Mac-Archiv wurde nicht gelesen.
+
+Die CI dieses Heads ist erst nach dem Push zu belegen. Sie wird hier nicht vorweg genommen.
+
 ## Dritte Korrekturrunde, NO-GO auf f08728c2a
 
 - `run` öffnet das Archiv nur, wenn ein externer Abnahme-Datensatz denselben Git-Commit und dieselben vier Skript-Digests nennt. `authorized=True` und `--after-tl-acceptance` ohne diesen Datensatz bleiben `LOCAL_ARCHIVE_RUN_NOT_AUTHORIZED` und lesen die Datei nicht. Der Datensatz steht nicht im Git. Diese Session setzt keine Freigabe.
@@ -110,6 +118,15 @@ node --experimental-test-module-mocks --import ./scripts/server-only-test-regist
 python3 scripts/official-truth-50-pass-import.py dry-run --destinations ALL
 python3 scripts/official-truth-50-pass-import.py import
 ```
+
+Ergebnis dieser vierten Korrektur, lokal, ohne Archiv und ohne Datenbank:
+
+- Forschungsadapter: 25 Tests, OK
+- Gap-Audit: 6 Tests, OK
+- Importer: 30 Tests, OK
+- Drei Node-Integrationsprüfungen: 3 bestanden, 0 fehlgeschlagen
+
+Die älteren Zähler in diesem Abschnitt bleiben der Stand ihrer Runde.
 
 Ergebnis dieser dritten Korrektur, lokal, ohne Archiv und ohne Datenbank:
 
