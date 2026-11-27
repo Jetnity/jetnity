@@ -7,6 +7,10 @@
 //
 //   node --import tsx scripts/premium-redesign-a/konto-harness.mjs [Port] [Fixture-Ordner] [Fixture-Name]
 //
+// Weitere Seiten: /account/merkliste (synthetische Angebote) und /account/settings (Darstellungswahl).
+// Dritte Seite: /reisen – «Meine Reisen» mit der echten Sammlung (Alle/Offen/Archiv) und synthetischen
+// Konto-Reisen; die Auswahl wechselt die Adresse und die Liste folgt ihr wie auf dem Server.
+//
 // Zweite Seite: /reisen/konto – dieselbe Shell mit einer Konto-Reise (Reisebegleiter,
 // «Reise ändern», Speicherhinweis «Im Konto gespeichert»), Reise aus dem Fixture-Ordner.
 //
@@ -42,14 +46,17 @@ async function css() {
       return ''
     }
   }
+  // Reihenfolge wie im echten Build (app/layout.tsx: globals, white-mint, startseite; danach die Shell-Stylesheets der
+  // WorkspaceShell, dann die Route-Stylesheets). Bei gleicher Spezifität entscheidet die Reihenfolge; eine andere
+  // Reihenfolge im Prüfstand würde Ergebnisse liefern, die der Build nicht zeigt.
   return [
     ergebnis.css,
+    lesen('styles/white-mint.css'),
+    lesen('styles/startseite.css'),
     lesen('components/workspace/workspace.css'),
     lesen('components/workspace/workspace-surfaces.css'),
     lesen('components/trips/reiseplan/etappen.css'),
     lesen('components/trips/kostenkarte.css'),
-    lesen('styles/white-mint.css'),
-    lesen('styles/startseite.css'),
     lesen('components/trips/organisieren/auswahl/suchauswahl.css'),
   ].join('\n').replaceAll('</style', '<\\/style')
 }
@@ -81,6 +88,7 @@ async function skript(eintrag = 'konto-harness.tsx') {
             if (args.path === '@/app/auth/sign-out') return { path: ersatz('sign-out-stub.ts') }
             if (args.path === '@/lib/supabase/client') return { path: ersatz('supabase-stub.ts') }
             if (args.path === '@/lib/reiseaenderung/aktionen' || args.path === '@/lib/places/aktionen') return { path: ersatz('server-action-stub.ts') }
+            if (args.path === '@/lib/trips/archiv-aktionen') return { path: join(wurzel, 'scripts/premium-redesign-a/aktionen-stub.ts') }
             if (args.path === '@/lib/reisebegleiter/aktionen') return { path: join(wurzel, 'scripts/premium-redesign-a/aktionen-stub.ts') }
             return build.resolve(join(wurzel, args.path.slice(2)), { resolveDir: wurzel, kind: args.kind })
           })
@@ -96,6 +104,9 @@ function seite(skriptText, vorspann = '') {
   return `<!doctype html><html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${stil}</style></head><body><div id="root"></div><script>${vorspann}</script><script>${skriptText}</script></body></html>`
 }
 const kontoSeite = seite(await skript())
+const sammlungSeite = seite(await skript('sammlung-harness.tsx'))
+const merklisteSeite = seite(await skript('merkliste-harness.tsx'))
+const einstellungenSeite = seite(await skript('einstellungen-harness.tsx'))
 const fixture = JSON.parse(readFileSync(join(fixtureOrdner, `${fixtureName}.json`), 'utf8'))
 const reiseSeite = seite(await skript('reise-konto-harness.tsx'), `globalThis.__REISE__ = ${JSON.stringify(JSON.parse(fixture.roh)).replaceAll('<', '\\u003c')}`)
 
@@ -111,5 +122,11 @@ createServer((anfrage, antwort) => {
     }
   }
   const pfad = anfrage.url?.split('?')[0] ?? '/'
-  antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(pfad.startsWith('/reisen') ? reiseSeite : kontoSeite)
-}).listen(port, '127.0.0.1', () => console.log(`Konto-Prüfstand auf http://127.0.0.1:${port}/account und /reisen/konto`))
+  const inhalt =
+    pfad === '/reisen' ? sammlungSeite
+      : pfad.startsWith('/reisen') ? reiseSeite
+        : pfad === '/account/merkliste' ? merklisteSeite
+          : pfad === '/account/settings' ? einstellungenSeite
+            : kontoSeite
+  antwort.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(inhalt)
+}).listen(port, '127.0.0.1', () => console.log(`Konto-Prüfstand auf http://127.0.0.1:${port}/account, /account/merkliste, /account/settings, /reisen (Meine Reisen) und /reisen/konto`))

@@ -365,6 +365,26 @@ async function sichtfeldMessen(seite, je, nurIndex) {
 }
 
 /**
+ * Zustandsmessung (auswahl-kontrast.mjs): Misst die markierten Texte EINES bereits sichtbaren Elements an den Pixeln,
+ * ohne zu scrollen. Hover-, Fokus- und Aktiv-Zustand bleiben dabei bestehen, weil sich nichts unter dem Zeiger bewegt.
+ * Rückgabe je Text: schlechtester Kontrast und der Wert, den 99 % der Pixel erreichen. `null` heisst: nicht gemessen.
+ */
+export async function bildtexteImSichtfeld(seite, markierte) {
+  const je = new Map(markierte.map((eintrag) => [eintrag.index, { ...eintrag, schlechtester: Infinity, p01: Infinity, pixel: 0 }]))
+  if (je.size === 0) return []
+  await sichtfeldMessen(seite, je)
+  return [...je.values()].map((eintrag) => ({
+    index: eintrag.index,
+    text: eintrag.text,
+    schlechtester: Number.isFinite(eintrag.schlechtester) ? eintrag.schlechtester : null,
+    p01: Number.isFinite(eintrag.p01) ? eintrag.p01 : null,
+    pixel: eintrag.pixel,
+    verdeckt: Boolean(eintrag.verdeckt),
+    ohneBuchstaben: Boolean(eintrag.ohneBuchstaben),
+  }))
+}
+
+/**
  * Misst die von `textKontrastImBrowser` markierten Bildtexte an den Pixeln: Die Seite wird in Sichtfeldern durchlaufen,
  * deren Schritt um die Höhe der festen Leisten kürzer ist (sonst bliebe ein Streifen unter der Kopfzeile nie frei).
  * In jedem Sichtfeld wird dreimal fotografiert (ohne Text, schwarzer Text, weisser Text); daraus ergeben sich die
