@@ -9,12 +9,15 @@ import {
   ADDITIONAL_TOPICS,
   BMEIA_CSS_ASSET_PATTERN,
   BMEIA_JS_ASSET_PATTERN,
+  BMEIA_OFFICIAL_URL,
   CORE_TOPICS,
   STOCK_PROTECTION_MARKER,
   TECHNICAL_ATTEMPT_BOUND,
   assetTimestampNeutral,
   canonicalSourceBytes,
   evaluateSourceCareDryRun,
+  originalByteDigest,
+  scopeGroupKey,
   scopeKey,
   sourceDigest,
   type CareAttempt,
@@ -55,6 +58,7 @@ function section(over: Partial<Omit<CareSection, 'scope'>> & { scope?: Partial<C
     stockProtection: null,
     evidence: 'cited',
     validUntil: future,
+    legalBasis: null,
     ...rest,
   }
 }
@@ -67,6 +71,8 @@ function snapshot(over: Partial<CareSnapshot> = {}): CareSnapshot {
     retrievedAt: retrievedBaseline,
     assets: '',
     sections: [section()],
+    originalBytes: null,
+    declaredOriginalDigest: null,
     ...over,
   }
 }
@@ -86,8 +92,8 @@ function run(baseline: CareSnapshot, observed: CareSnapshot, extra: Partial<Para
   })
 }
 
-function finding(decision: SourceCareDryRun, topic: CareTopic, ruleClass = 'visa_exemption_60', credential = 'CH') {
-  return decision.findings.find((item) => item.topic === topic && item.ruleClass === ruleClass && item.credentialCode === credential)
+function finding(decision: SourceCareDryRun, topic: CareTopic, ruleClass = 'visa_exemption_60', credential = 'CH', documentKind: 'ordinary_passport' | 'identity_card' | 'travel_document_other' = 'ordinary_passport') {
+  return decision.findings.find((item) => item.topic === topic && item.ruleClass === ruleClass && item.credentialCode === credential && item.documentKind === documentKind)
 }
 
 function thailandBaseline(): CareSnapshot {
@@ -98,7 +104,16 @@ function thailandBaseline(): CareSnapshot {
       section({ topic: 'K3_stay', body: 'synthetic stay 60 days', stayDays: 60 }),
       section({ topic: 'K4_health', body: 'synthetic health requirement separate from advice', stayDays: null }),
       section({ topic: 'K5_forms', body: 'synthetic arrival card cited', stayDays: null }),
-      section({ topic: 'K6_minors', body: 'synthetic minor accompaniment still open in this fixture', evidence: 'not_applicable' }),
+      section({
+        topic: 'K6_minors',
+        body: 'synthetic minor note that is not itself a legal basis',
+        evidence: 'not_applicable',
+        legalBasis: {
+          citation: 'synthetic-basis',
+          instrument: 'synthetic-instrument',
+          scopeKey: scopeKey(scope(), 'K6_minors'),
+        },
+      }),
       section({ topic: 'K3_stay', body: 'synthetic stay 60 days de', stayDays: 60, scope: { credentialCode: 'DE' } }),
       section({ topic: 'K3_stay', body: 'synthetic stay 15 days', stayDays: 15, scope: { ruleClass: 'visa_exemption_15' } }),
       section({ topic: 'K1_visa', body: 'synthetic visa on arrival 15 days', stayDays: 15, scope: { ruleClass: 'visa_on_arrival_15' } }),
@@ -170,9 +185,14 @@ test('6+4 topics stay separated and the dry-run never authorizes', () => {
   for (const topic of ['K2_document', 'K4_health', 'K5_forms'] as const) {
     assert.equal(finding(decision, topic)?.disposition, 'unchanged_not_authorized')
   }
-  assert.equal(finding(decision, 'K6_minors')?.disposition, 'not_applicable_recorded')
-  assert.equal(decision.findings.find((item) => item.topic === 'K2_document' && item.documentKind === 'ordinary_passport')?.disposition, 'unchanged_not_authorized')
-  assert.equal(decision.findings.find((item) => item.documentKind === 'identity_card')?.disposition, 'unchanged_not_authorized')
+  assert.equal(decision.confirmedEvidence, false)
+  assert.equal(decision.originalExamination, 'not_performed')
+  assert.equal(decision.canonicalDigestIsNotOriginalDigest, true)
+  assert.equal(decision.kSlotsComplete, false)
+  assert.equal(finding(decision, 'K6_minors')?.disposition, 'not_applicable_unqualified')
+  assert.ok(finding(decision, 'K6_minors')?.reasons.includes('not_qualified_by_dry_run'))
+  assert.equal(decision.findings.find((item) => item.topic === 'K2_document' && item.documentKind === 'ordinary_passport' && item.ruleClass === 'visa_exemption_60')?.disposition, 'unchanged_not_authorized')
+  assert.equal(decision.findings.find((item) => item.topic === 'K2_document' && item.documentKind === 'identity_card')?.disposition, 'unchanged_not_authorized')
   assert.equal(finding(decision, 'Z3_transit', 'transit_airside')?.routeKind, 'airside')
   assert.equal(finding(decision, 'Z3_transit', 'transit_airside')?.disposition, 'unchanged_not_authorized')
   assert.equal(finding(decision, 'Z1_funds', 'additional_funds')?.disposition, 'hint_open')
@@ -252,14 +272,31 @@ test('BMEIA theme asset timestamps stay neutral and other links do not', () => {
   ].join('\n')
   const before = assets('1111111111')
   const after = assets('2222222222')
-  assert.equal(assetTimestampNeutral(before, after), true)
-  assert.equal(assetTimestampNeutral(before, before), false)
-  assert.equal(assetTimestampNeutral(assets('1111111111', '<a href="https://example.invalid/id">'), assets('2222222222', '<a href="https://example.invalid/id-next">')), false)
-  const baseline = snapshot({ assets: before, sections: [section({ body: 'synthetic legal text' }), section({ topic: 'K2_document', body: 'synthetic document' })] })
+  const renamed = [
+    ...[1, 2, 3, 4].map((index) => `<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/other${index}.css?2222222222">`),
+    ...Array.from({ length: 15 }, (_, index) => `<script src="/typo3conf/ext/theme_bmeia/Resources/Public/JS/app${index}.js?2222222222">`),
+  ].join('\n')
+  const reordered = [
+    ...[4, 3, 2, 1].map((index) => `<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/theme${index}.css?2222222222">`),
+    ...Array.from({ length: 15 }, (_, index) => `<script src="/typo3conf/ext/theme_bmeia/Resources/Public/JS/app${index}.js?2222222222">`),
+  ].join('\n')
+  assert.equal(assetTimestampNeutral(before, after, BMEIA_OFFICIAL_URL), true)
+  assert.equal(assetTimestampNeutral(before, before, BMEIA_OFFICIAL_URL), false)
+  assert.equal(assetTimestampNeutral(before, after, 'https://example.invalid/other-source'), false)
+  assert.equal(assetTimestampNeutral(before, renamed, BMEIA_OFFICIAL_URL), false)
+  assert.equal(assetTimestampNeutral(before, reordered, BMEIA_OFFICIAL_URL), false)
+  assert.equal(assetTimestampNeutral(assets('1111111111', '<a href="https://example.invalid/id">'), assets('2222222222', '<a href="https://example.invalid/id-next">'), BMEIA_OFFICIAL_URL), false)
+  const baseline = snapshot({
+    officialUrl: BMEIA_OFFICIAL_URL,
+    assets: before,
+    sections: [section({ body: 'synthetic legal text' }), section({ topic: 'K2_document', body: 'synthetic document' })],
+  })
   const neutral = run(baseline, snapshot({ ...baseline, assets: after, retrievedAt: retrievedNext }))
   assert.ok(neutral.warnings.includes('asset_timestamp_only'))
-  assert.equal(neutral.findings.every((item) => item.disposition === 'unchanged_not_authorized'), true)
+  assert.equal(finding(neutral, 'K3_stay')?.disposition, 'unchanged_not_authorized')
+  assert.equal(finding(neutral, 'K2_document')?.disposition, 'unchanged_not_authorized')
   assert.equal(neutral.authorization, 'none')
+  assert.equal(neutral.confirmedEvidence, false)
   const withLegal = run(baseline, snapshot({
     ...baseline,
     assets: after,
@@ -274,9 +311,21 @@ test('BMEIA theme asset timestamps stay neutral and other links do not', () => {
     retrievedAt: retrievedNext,
   }))
   assert.ok(linked.warnings.includes('unclassified_asset_change'))
-  assert.equal(linked.findings.every((item) => item.disposition === 'locked'), true)
+  assert.equal(finding(linked, 'K3_stay')?.disposition, 'locked')
+  assert.equal(finding(linked, 'K2_document')?.disposition, 'locked')
+  const foreign = run(baseline, snapshot({
+    ...baseline,
+    officialUrl: 'https://example.invalid/other-source',
+    assets: after,
+    retrievedAt: retrievedNext,
+  }))
+  assert.equal(foreign.findings.filter((item) => item.disposition === 'locked').every((item) => item.reasons.includes('source_identity')), true)
+  assert.equal(foreign.authorization, 'none')
+  const renamedRun = run(baseline, snapshot({ ...baseline, assets: renamed, retrievedAt: retrievedNext }))
+  assert.equal(finding(renamedRun, 'K3_stay')?.disposition, 'locked')
+  assert.ok(renamedRun.warnings.includes('unclassified_asset_change'))
   const single = '<link rel="stylesheet" href="/typo3conf/ext/theme_bmeia/Resources/Public/CSS/theme.css?1111111111">'
-  assert.equal(assetTimestampNeutral(single, single.replace('1111111111', '2222222222')), false)
+  assert.equal(assetTimestampNeutral(single, single.replace('1111111111', '2222222222'), BMEIA_OFFICIAL_URL), false)
 })
 
 test('repetition is idempotent and does not extend a validity', () => {
@@ -285,19 +334,20 @@ test('repetition is idempotent and does not extend a validity', () => {
   const first = run(baseline, observed)
   const second = run(baseline, observed)
   assert.deepEqual(first, second)
-  assert.equal(first.findings.every((item) => item.disposition === 'unchanged_not_authorized'), true)
-  assert.equal(first.findings.every((item) => item.validUntil === future && item.renewedExpiresAt === null), true)
+  assert.equal(first.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.disposition === 'unchanged_not_authorized'), true)
+  assert.equal(first.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.validUntil === future && item.renewedExpiresAt === null), true)
   const relabeled = run(baseline, snapshot({ ...observed, version: 'synthetic-60-label' }))
   assert.ok(relabeled.warnings.includes('version_label_differs'))
-  assert.equal(relabeled.findings.every((item) => item.disposition === 'unchanged_not_authorized'), true)
+  assert.equal(relabeled.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.disposition === 'unchanged_not_authorized'), true)
   assert.notEqual(sourceDigest(baseline), sourceDigest(snapshot({ ...observed, version: 'synthetic-60-label' })))
   const extended = run(baseline, snapshot({
     ...observed,
     sections: observed.sections.map((item) => ({ ...item, validUntil: '2027-01-31T00:00:00.000Z' })),
   }))
-  assert.equal(extended.findings.every((item) => item.disposition === 'locked'), true)
-  assert.ok(extended.findings.every((item) => item.reasons.includes('artificial_extension_refused')))
-  assert.equal(extended.findings.every((item) => item.validUntil === future && item.renewedExpiresAt === null), true)
+  const extendedPresent = extended.findings.filter((item) => !item.reasons.includes('missing_k_slot'))
+  assert.equal(extendedPresent.every((item) => item.disposition === 'locked'), true)
+  assert.ok(extendedPresent.every((item) => item.reasons.includes('artificial_extension_refused')))
+  assert.equal(extendedPresent.every((item) => item.validUntil === future && item.renewedExpiresAt === null), true)
 })
 
 test('a race keeps both digests and selects no successor', () => {
@@ -394,9 +444,9 @@ test('expiry, missing core evidence and an unknown scope stay fail-closed', () =
       section({ body: 'synthetic china is not hong kong', scope: { destinationCode: 'CN', ruleClass: 'ordinary_entry' } }),
     ],
   }))
-  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK')?.disposition, 'locked')
-  assert.ok(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK')?.reasons.includes('missing_evidence'))
-  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-MO')?.disposition, 'locked')
+  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK' && item.topic === 'K3_stay')?.disposition, 'locked')
+  assert.ok(onlyMacao.findings.find((item) => item.destinationCode === 'CN-HK' && item.topic === 'K3_stay')?.reasons.includes('missing_evidence'))
+  assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN-MO' && item.topic === 'K3_stay')?.disposition, 'locked')
   assert.equal(onlyMacao.findings.find((item) => item.destinationCode === 'CN')?.reasons.includes('unbound_scope'), true)
   assert.equal(onlyMacao.authorization, 'none')
 })
@@ -409,7 +459,7 @@ test('technical retries stay bounded and source unavailability locks the source'
     attempts: [{ outcome: 'technical_disturbance', snapshot: null }, { outcome: 'technical_disturbance', snapshot: null }],
   })
   assert.equal(pending.retry, 'pending')
-  assert.equal(pending.findings.every((item) => item.disposition === 'not_reproven'), true)
+  assert.equal(pending.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.disposition === 'not_reproven'), true)
   assert.equal(pending.authorization, 'none')
   const third = evaluateSourceCareDryRun({
     checkedAt, baseline, concurrent: [], priorLocks: [],
@@ -432,13 +482,13 @@ test('technical retries stay bounded and source unavailability locks the source'
   })
   assert.equal(ignored.retry, 'exhausted')
   assert.equal(ignored.attemptsIgnoredBeyondBound, 1)
-  assert.equal(ignored.findings.every((item) => item.reasons.includes('technical_retry_exhausted')), true)
+  assert.equal(ignored.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.reasons.includes('technical_retry_exhausted')), true)
   assert.equal(ignored.sourceDigestObserved, null)
   const unavailable = evaluateSourceCareDryRun({
     checkedAt, baseline, concurrent: [], priorLocks: [],
     attempts: [{ outcome: 'technical_disturbance', snapshot: null }, { outcome: 'unavailable', snapshot: null }, retrieved(observed)],
   })
-  assert.equal(unavailable.findings.every((item) => item.reasons.includes('source_unavailable')), true)
+  assert.equal(unavailable.findings.filter((item) => !item.reasons.includes('missing_k_slot')).every((item) => item.reasons.includes('source_unavailable')), true)
   assert.equal(unavailable.sourceDigestObserved, null)
   assert.equal(unavailable.authorization, 'none')
   const duplicate = evaluateSourceCareDryRun({
@@ -454,6 +504,103 @@ test('scope keys keep credentials, documents, routes and territories apart', () 
   const other = section({ scope: { credentialCode: 'DE', documentKind: 'identity_card', routeKind: 'transit', destinationCode: 'CN-HK' } })
   assert.notEqual(scopeKey(direct.scope, direct.topic), scopeKey(other.scope, other.topic))
   assert.equal(scopeKey(other.scope, other.topic).startsWith('CN-HK|DE|identity_card|transit|'), true)
+})
+
+test('review corrections stay fail-closed without qualifying a rule', () => {
+  const bytes = new TextEncoder().encode('synthetic-http-original')
+  const digest = originalByteDigest(bytes)
+  const baseline = snapshot({
+    originalBytes: bytes,
+    declaredOriginalDigest: digest,
+    sections: [
+      section({ topic: 'K1_visa', body: 'synthetic visa' }),
+      section({ topic: 'K3_stay', body: 'synthetic stay' }),
+    ],
+  })
+  assert.notEqual(digest, sourceDigest(baseline))
+  assert.equal(scopeGroupKey(baseline.sections[0]!.scope), 'TH|CH|ordinary_passport|direct_entry|visa_exemption_60')
+  const supplied = run(baseline, snapshot({ ...baseline, retrievedAt: retrievedNext }))
+  assert.equal(supplied.originalBinding, 'supplied')
+  assert.equal(supplied.confirmedEvidence, false)
+  assert.ok(supplied.warnings.includes('original_bytes_supplied_not_an_official_examination'))
+  assert.ok(supplied.findings.some((item) => item.reasons.includes('missing_k_slot') && item.disposition === 'not_confirmed'))
+  const unbound = run(snapshot({ sections: baseline.sections }), snapshot({ sections: baseline.sections, retrievedAt: retrievedNext }))
+  assert.equal(unbound.originalBinding, 'absent')
+  assert.ok(unbound.warnings.includes('original_binding_absent'))
+  const mismatch = run(
+    snapshot({ ...baseline, declaredOriginalDigest: 'a'.repeat(64) }),
+    snapshot({ ...baseline, declaredOriginalDigest: 'a'.repeat(64), retrievedAt: retrievedNext }),
+  )
+  assert.equal(mismatch.originalBinding, 'mismatch')
+  assert.ok(finding(mismatch, 'K3_stay')?.reasons.includes('original_digest_mismatch'))
+  const changed = snapshot({
+    ...baseline,
+    retrievedAt: '2026-11-27T11:10:00.000Z',
+    sections: baseline.sections.map((item) => item.topic === 'K3_stay' ? { ...item, body: 'synthetic stay changed' } : item),
+  })
+  const restored = snapshot({ ...baseline, retrievedAt: '2026-11-27T11:20:00.000Z' })
+  const contradiction = evaluateSourceCareDryRun({
+    checkedAt, baseline, concurrent: [], priorLocks: [],
+    attempts: [
+      { outcome: 'retrieved', snapshot: changed },
+      { outcome: 'retrieved', snapshot: restored },
+    ],
+  })
+  assert.equal(finding(contradiction, 'K3_stay')?.disposition, 'locked')
+  assert.ok(finding(contradiction, 'K3_stay')?.reasons.includes('earlier_contradiction_not_cleared'))
+  assert.equal(finding(contradiction, 'K1_visa')?.disposition, 'unchanged_not_authorized')
+  const stale = evaluateSourceCareDryRun({
+    checkedAt, baseline, concurrent: [], priorLocks: [],
+    attempts: [{ outcome: 'retrieved', snapshot: { ...baseline, retrievedAt: retrievedBaseline } }],
+  })
+  assert.ok(finding(stale, 'K3_stay')?.reasons.includes('stale_or_replay'))
+  const replay = evaluateSourceCareDryRun({
+    checkedAt, baseline, concurrent: [], priorLocks: [],
+    attempts: [
+      { outcome: 'retrieved', snapshot: { ...baseline, retrievedAt: '2026-11-27T11:10:00.000Z' } },
+      { outcome: 'retrieved', snapshot: { ...baseline, retrievedAt: '2026-11-27T11:10:00.000Z' } },
+    ],
+  })
+  assert.ok(finding(replay, 'K1_visa')?.reasons.includes('stale_or_replay'))
+  const bare = snapshot({
+    sections: [
+      section({ topic: 'K6_minors', evidence: 'not_applicable', body: 'x'.repeat(40), legalBasis: null }),
+      section({ topic: 'K1_visa', body: 'synthetic visa' }),
+    ],
+  })
+  const bareDecision = run(bare, snapshot({ ...bare, retrievedAt: retrievedNext }))
+  assert.equal(finding(bareDecision, 'K6_minors')?.disposition, 'locked')
+  assert.ok(finding(bareDecision, 'K6_minors')?.reasons.includes('not_applicable_without_basis'))
+  assert.equal(finding(bareDecision, 'K1_visa')?.disposition, 'unchanged_not_authorized')
+  const shaped = snapshot({
+    sections: [section({
+      topic: 'K6_minors',
+      evidence: 'not_applicable',
+      body: 'x',
+      legalBasis: { citation: 'a', instrument: 'b', scopeKey: scopeKey(scope(), 'K6_minors') },
+    })],
+  })
+  const shapedDecision = run(shaped, snapshot({ ...shaped, retrievedAt: retrievedNext }))
+  assert.equal(finding(shapedDecision, 'K6_minors')?.disposition, 'not_applicable_unqualified')
+  assert.equal(shapedDecision.legalQualification, 'not_claimed')
+  const wrongScope = snapshot({
+    sections: [section({
+      topic: 'K6_minors',
+      evidence: 'not_applicable',
+      body: 'x'.repeat(40),
+      legalBasis: { citation: 'a', instrument: 'b', scopeKey: 'AT|DE|ordinary_passport|direct_entry|other|K6_minors' },
+    })],
+  })
+  assert.equal(finding(run(wrongScope, snapshot({ ...wrongScope, retrievedAt: retrievedNext })), 'K6_minors')?.disposition, 'locked')
+  const unknown = run(baseline, snapshot({ ...baseline, retrievedAt: retrievedNext }), {
+    priorLocks: [{
+      scopeKey: 'ZZ|ZZ|ordinary_passport|direct_entry|missing_rule|K2_document',
+      topic: 'K2_document',
+      historicalOriginalDigest: 'b'.repeat(64),
+    }],
+  })
+  assert.equal(unknown.findings.find((item) => item.reasons.includes('unknown_scope'))?.disposition, 'locked')
+  assert.equal(finding(unknown, 'K3_stay')?.disposition, 'unchanged_not_authorized')
 })
 
 test('existing source-bound renewal and monitor wiring stay untouched', () => {

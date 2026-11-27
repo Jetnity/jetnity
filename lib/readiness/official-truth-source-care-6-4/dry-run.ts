@@ -23,11 +23,12 @@ export const ADDITIONAL_TOPICS = Object.freeze([
 
 export const TECHNICAL_ATTEMPT_BOUND = 3
 export const STOCK_PROTECTION_MARKER = 'entry_before_effective_keeps_granted_duration'
+export const BMEIA_OFFICIAL_URL = 'https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/'
 
 // Dieselben POSIX-Muster wie official_v3_at_production_private.bmeia_theme_assets_v3.
-// Nur 4 Stylesheet- und 15 Skriptreferenzen dieses Theme-Pfads, und nur deren
-// zehnstelliger Query-Zeitstempel, gelten als neutral. Jede Abweichung bleibt
-// eine unklassifizierte Byteänderung und sperrt die Quelle.
+// Die SQL-Funktion faltet den ganzen Theme-Pfad. Diese Dry-run-Prüfung tut das nicht:
+// Pfad und Dateiname müssen identisch bleiben, nur der zehnstellige Query-Zeitstempel
+// darf abweichen, und nur auf genau dieser BMEIA-URL.
 export const BMEIA_CSS_ASSET_PATTERN = '(<link[[:space:]]+rel="stylesheet"[[:space:]]+href=")/typo3conf/ext/theme_bmeia/Resources/Public/CSS/[A-Za-z0-9._-]+[.]css([?][0-9]{10})?(")'
 export const BMEIA_JS_ASSET_PATTERN = '(<script[[:space:]]+src=")/typo3conf/ext/theme_bmeia/Resources/Public/JS/[A-Za-z0-9._-]+[.]js([?][0-9]{10})?(")'
 
@@ -39,6 +40,11 @@ export type DocumentKind = 'ordinary_passport' | 'identity_card' | 'travel_docum
 export type RouteKind = 'direct_entry' | 'transit' | 'airside'
 export type EvidenceState = 'cited' | 'missing' | 'not_applicable'
 export type StockProtection = 'entry_before_effective_keeps_granted_duration'
+export type LegalBasis = Readonly<{
+  citation: string
+  instrument: string
+  scopeKey: string
+}>
 
 export type CareScope = Readonly<{
   destinationCode: string
@@ -58,6 +64,7 @@ export type CareSection = Readonly<{
   stockProtection: StockProtection | null
   evidence: EvidenceState
   validUntil: string | null
+  legalBasis: LegalBasis | null
 }>
 
 export type CareSnapshot = Readonly<{
@@ -67,6 +74,8 @@ export type CareSnapshot = Readonly<{
   retrievedAt: string
   assets: string
   sections: readonly CareSection[]
+  originalBytes: Uint8Array | null
+  declaredOriginalDigest: string | null
 }>
 
 export type CareAttempt = Readonly<{
@@ -92,8 +101,9 @@ export type TopicDisposition =
   | 'unchanged_not_authorized'
   | 'locked'
   | 'hint_open'
-  | 'not_applicable_recorded'
+  | 'not_applicable_unqualified'
   | 'not_reproven'
+  | 'not_confirmed'
 
 export type TopicFinding = Readonly<{
   scopeKey: string
@@ -112,6 +122,7 @@ export type TopicFinding = Readonly<{
   stockProtection: StockProtection | null
   validUntil: string | null
   renewedExpiresAt: null
+  evidenceConfirmed: false
 }>
 
 export type SourceCareDryRun = Readonly<{
@@ -134,6 +145,11 @@ export type SourceCareDryRun = Readonly<{
   warnings: readonly string[]
   findings: readonly TopicFinding[]
   everyExemptionClassLocked: boolean
+  originalExamination: 'not_performed'
+  originalBinding: 'absent' | 'mismatch' | 'supplied'
+  canonicalDigestIsNotOriginalDigest: true
+  confirmedEvidence: false
+  kSlotsComplete: boolean
   decisionDigest: string
 }>
 
@@ -187,11 +203,16 @@ export function canonicalSourceBytes(snapshot: CareSnapshot): Uint8Array {
       section.stockProtection ?? '-',
       section.evidence,
       section.validUntil ?? '-',
+      section.legalBasis ? `${section.legalBasis.instrument}\n${section.legalBasis.citation}\n${section.legalBasis.scopeKey}` : '-',
       String(utf8(section.body).byteLength),
       section.body,
     )
   }
   return utf8(`${lines.join('\n')}\n`)
+}
+
+export function originalByteDigest(bytes: Uint8Array): string {
+  return sha256(bytes)
 }
 
 export function sourceDigest(snapshot: CareSnapshot): string {
@@ -208,6 +229,7 @@ function sectionDigest(section: CareSection): string {
     section.stockProtection ?? '-',
     section.evidence,
     section.validUntil ?? '-',
+    section.legalBasis ? `${section.legalBasis.instrument}\n${section.legalBasis.citation}\n${section.legalBasis.scopeKey}` : '-',
     String(utf8(section.body).byteLength),
     section.body,
   ]
@@ -218,17 +240,29 @@ function pattern(posix: string): RegExp {
   return new RegExp(posix.replaceAll('[[:space:]]', '[ \\t\\n\\r\\f\\v]'), 'g')
 }
 
-export function assetTimestampNeutral(before: string, after: string): boolean {
-  if (before === after) return false
-  const cssBefore = before.match(pattern(BMEIA_CSS_ASSET_PATTERN)) ?? []
-  const cssAfter = after.match(pattern(BMEIA_CSS_ASSET_PATTERN)) ?? []
-  const jsBefore = before.match(pattern(BMEIA_JS_ASSET_PATTERN)) ?? []
-  const jsAfter = after.match(pattern(BMEIA_JS_ASSET_PATTERN)) ?? []
+const CSS_TIMESTAMP = '(<link[[:space:]]+rel="stylesheet"[[:space:]]+href=")(/typo3conf/ext/theme_bmeia/Resources/Public/CSS/[A-Za-z0-9._-]+[.]css)([?][0-9]{10})?(")'
+const JS_TIMESTAMP = '(<script[[:space:]]+src=")(/typo3conf/ext/theme_bmeia/Resources/Public/JS/[A-Za-z0-9._-]+[.]js)([?][0-9]{10})?(")'
+
+function assetRefs(value: string, posix: string): { path: string }[] {
+  return [...value.matchAll(pattern(posix))].map((match) => ({ path: match[2] ?? '' }))
+}
+
+function stripAssetTimestamps(value: string): string {
+  return value
+    .replace(pattern(CSS_TIMESTAMP), '$1$2$4')
+    .replace(pattern(JS_TIMESTAMP), '$1$2$4')
+}
+
+export function assetTimestampNeutral(before: string, after: string, officialUrl: string): boolean {
+  if (officialUrl !== BMEIA_OFFICIAL_URL || before === after) return false
+  const cssBefore = assetRefs(before, CSS_TIMESTAMP)
+  const cssAfter = assetRefs(after, CSS_TIMESTAMP)
+  const jsBefore = assetRefs(before, JS_TIMESTAMP)
+  const jsAfter = assetRefs(after, JS_TIMESTAMP)
   if (cssBefore.length !== 4 || cssAfter.length !== 4 || jsBefore.length !== 15 || jsAfter.length !== 15) return false
-  const normalize = (value: string): string => value
-    .replace(pattern(BMEIA_CSS_ASSET_PATTERN), '$1CSS_ASSET$3')
-    .replace(pattern(BMEIA_JS_ASSET_PATTERN), '$1JS_ASSET$3')
-  return normalize(before) === normalize(after)
+  if (cssBefore.some((item, index) => item.path !== cssAfter[index]?.path)) return false
+  if (jsBefore.some((item, index) => item.path !== jsAfter[index]?.path)) return false
+  return stripAssetTimestamps(before) === stripAssetTimestamps(after)
 }
 
 function snapshotError(snapshot: CareSnapshot, seenAt: number | null): string | null {
@@ -253,10 +287,15 @@ function snapshotError(snapshot: CareSnapshot, seenAt: number | null): string | 
     if (section.stockProtection !== null && section.stockProtection !== STOCK_PROTECTION_MARKER) return 'stock_protection'
     if (section.validUntil !== null && isoInstant(section.validUntil) === null) return 'validity'
     if (typeof section.body !== 'string' || utf8(section.body).byteLength > 8000 || section.body.includes('\0')) return 'body'
+    const basis = section.legalBasis
+    if (basis !== null && (typeof basis !== 'object' || typeof basis.citation !== 'string' || typeof basis.instrument !== 'string' || typeof basis.scopeKey !== 'string'
+      || utf8(basis.citation).byteLength > 500 || utf8(basis.instrument).byteLength > 200 || utf8(basis.scopeKey).byteLength > 300)) return 'legal_basis'
     const key = scopeKey(scope, section.topic)
     if (keys.has(key)) return 'duplicate_scope'
     keys.add(key)
   }
+  if (snapshot.originalBytes !== null && (!(snapshot.originalBytes instanceof Uint8Array) || snapshot.originalBytes.byteLength > 1_048_576)) return 'original_bytes'
+  if (snapshot.declaredOriginalDigest !== null && !/^[a-f0-9]{64}$/.test(snapshot.declaredOriginalDigest)) return 'original_digest'
   return null
 }
 
@@ -281,6 +320,11 @@ function invalid(reason: string): SourceCareDryRun {
     warnings: Object.freeze([reason]),
     findings: Object.freeze([]),
     everyExemptionClassLocked: false,
+    originalExamination: 'not_performed' as const,
+    originalBinding: 'absent' as const,
+    canonicalDigestIsNotOriginalDigest: true as const,
+    confirmedEvidence: false as const,
+    kSlotsComplete: false,
     decisionDigest: '',
   }
   return Object.freeze({ ...decision, decisionDigest: digestOf(decision) })
@@ -297,6 +341,11 @@ function digestOf(decision: Omit<SourceCareDryRun, 'decisionDigest'> & { decisio
     sourceDigestBaseline: decision.sourceDigestBaseline,
     sourceDigestObserved: decision.sourceDigestObserved,
     warnings: decision.warnings,
+    canonicalDigestIsNotOriginalDigest: decision.canonicalDigestIsNotOriginalDigest,
+    confirmedEvidence: decision.confirmedEvidence,
+    originalBinding: decision.originalBinding,
+    originalExamination: decision.originalExamination,
+    kSlotsComplete: decision.kSlotsComplete,
     everyExemptionClassLocked: decision.everyExemptionClassLocked,
     findings: decision.findings.map((finding) => ({
       scopeKey: finding.scopeKey,
@@ -307,9 +356,10 @@ function digestOf(decision: Omit<SourceCareDryRun, 'decisionDigest'> & { decisio
       observedDigest: finding.observedDigest,
       stockProtection: finding.stockProtection,
       validUntil: finding.validUntil,
-      renewedExpiresAt: finding.renewedExpiresAt,
-    })),
-  }
+    renewedExpiresAt: finding.renewedExpiresAt,
+    evidenceConfirmed: finding.evidenceConfirmed,
+  })),
+}
   return sha256(utf8(JSON.stringify(body)))
 }
 
@@ -318,7 +368,7 @@ function exemptionClass(ruleClass: string): boolean {
 }
 
 function finish(
-  partial: Omit<SourceCareDryRun, 'decisionDigest' | 'everyExemptionClassLocked' | 'mode' | 'authorization' | 'legalQualification' | 'activation' | 'scheduler' | 'persistence' | 'durableOriginalStore' | 'writes' | 'selectedSuccessor' | 'artificialExtension'> & {
+  partial: Omit<SourceCareDryRun, 'decisionDigest' | 'everyExemptionClassLocked' | 'mode' | 'authorization' | 'legalQualification' | 'activation' | 'scheduler' | 'persistence' | 'durableOriginalStore' | 'writes' | 'selectedSuccessor' | 'artificialExtension' | 'originalExamination' | 'canonicalDigestIsNotOriginalDigest' | 'confirmedEvidence'> & {
     findings: TopicFinding[]
     warnings: string[]
   },
@@ -349,6 +399,11 @@ function finish(
     warnings: Object.freeze([...new Set(partial.warnings)].sort()),
     findings: Object.freeze(findings),
     everyExemptionClassLocked,
+    originalExamination: 'not_performed' as const,
+    originalBinding: partial.originalBinding,
+    canonicalDigestIsNotOriginalDigest: true as const,
+    confirmedEvidence: false as const,
+    kSlotsComplete: partial.kSlotsComplete,
     decisionDigest: '',
   }
   return Object.freeze({ ...decision, decisionDigest: digestOf(decision) })
@@ -372,6 +427,7 @@ function baseFinding(section: CareSection, disposition: TopicDisposition, reason
     stockProtection: section.stockProtection,
     validUntil: section.validUntil,
     renewedExpiresAt: null,
+    evidenceConfirmed: false,
   }
 }
 
@@ -382,6 +438,72 @@ function earlierValidity(baseline: string | null, observed: string | null): stri
   const right = isoInstant(observed)
   if (left === null || right === null) return baseline
   return right < left ? observed : baseline
+}
+
+function basisMatchesScope(section: CareSection): boolean {
+  const basis = section.legalBasis
+  if (!basis || basis.citation.trim() === '' || basis.instrument.trim() === '') return false
+  return basis.scopeKey === scopeKey(section.scope, section.topic)
+}
+
+function bindOriginal(snapshot: CareSnapshot): 'absent' | 'mismatch' | 'supplied' {
+  if (snapshot.originalBytes === null || snapshot.declaredOriginalDigest === null) return 'absent'
+  return originalByteDigest(snapshot.originalBytes) === snapshot.declaredOriginalDigest ? 'supplied' : 'mismatch'
+}
+
+function combineBinding(snapshots: readonly CareSnapshot[]): 'absent' | 'mismatch' | 'supplied' {
+  const states = snapshots.map(bindOriginal)
+  if (states.includes('mismatch')) return 'mismatch'
+  if (states.includes('absent')) return 'absent'
+  return snapshots.length > 0 ? 'supplied' : 'absent'
+}
+
+export function scopeGroupKey(scope: CareScope): string {
+  return [scope.destinationCode, scope.credentialCode, scope.documentKind, scope.routeKind, scope.ruleClass].join('|')
+}
+
+function missingSlot(sample: CareSection, topic: CoreTopic): TopicFinding {
+  const key = scopeKey(sample.scope, topic)
+  return {
+    scopeKey: key,
+    destinationCode: sample.scope.destinationCode,
+    credentialCode: sample.scope.credentialCode,
+    documentKind: sample.scope.documentKind,
+    routeKind: sample.scope.routeKind,
+    ruleClass: sample.scope.ruleClass,
+    topic,
+    tier: 'core',
+    disposition: 'not_confirmed',
+    reasons: ['missing_k_slot'],
+    baselineDigest: sha256(utf8(`absent\n${key}\n`)),
+    observedDigest: null,
+    historicalOriginalPreserved: true,
+    stockProtection: null,
+    validUntil: null,
+    renewedExpiresAt: null,
+    evidenceConfirmed: false,
+  }
+}
+
+function addMissingSlots(findings: readonly TopicFinding[], baseline: CareSnapshot): { findings: TopicFinding[]; complete: boolean } {
+  const groups = new Map<string, CareSection>()
+  const present = new Set<string>()
+  for (const section of baseline.sections) {
+    groups.set(scopeGroupKey(section.scope), section)
+    present.add(scopeKey(section.scope, section.topic))
+  }
+  const extra: TopicFinding[] = []
+  let complete = groups.size > 0
+  for (const sample of groups.values()) {
+    for (const topic of CORE_TOPICS) {
+      const key = scopeKey(sample.scope, topic)
+      if (present.has(key)) continue
+      complete = false
+      if (findings.some((finding) => finding.scopeKey === key && finding.topic === topic)) continue
+      extra.push(missingSlot(sample, topic))
+    }
+  }
+  return { findings: [...findings, ...extra], complete }
 }
 
 function comparePaired(baseline: CareSection, observed: CareSection, checkedAt: number): TopicFinding {
@@ -410,6 +532,7 @@ function comparePaired(baseline: CareSection, observed: CareSection, checkedAt: 
   }
   if (observed.evidence === 'missing') reasons.push('missing_evidence')
   if (observed.evidence === 'cited' && observed.body.trim().length === 0) reasons.push('missing_evidence')
+  if (observed.evidence === 'not_applicable' && !basisMatchesScope(observed)) reasons.push('not_applicable_without_basis')
   let disposition: TopicDisposition = 'unchanged_not_authorized'
   const additionalGapOnly = !CORE.has(observed.topic)
     && reasons.every((reason) => reason === 'missing_evidence')
@@ -417,8 +540,8 @@ function comparePaired(baseline: CareSection, observed: CareSection, checkedAt: 
   if (additionalGapOnly) disposition = 'hint_open'
   else if (reasons.length > 0) disposition = 'locked'
   else if (observed.evidence === 'not_applicable') {
-    disposition = observed.body.trim().length >= 12 ? 'not_applicable_recorded' : 'locked'
-    if (disposition === 'locked') reasons.push('missing_evidence')
+    disposition = 'not_applicable_unqualified'
+    reasons.push('not_qualified_by_dry_run')
   }
   return {
     ...baseFinding(baseline, disposition, reasons, sectionDigest(observed)),
@@ -446,6 +569,7 @@ function revise(finding: TopicFinding, reasons: readonly string[], disposition: 
     observedDigest,
     reasons: [...new Set([...finding.reasons, ...reasons])],
     renewedExpiresAt: null,
+    evidenceConfirmed: false,
   }
 }
 
@@ -462,7 +586,28 @@ function applyPriorLocks(findings: readonly TopicFinding[], priorLocks: readonly
     }
     const index = next.findIndex((item) => item.scopeKey === prior.scopeKey && item.topic === prior.topic)
     if (index < 0) {
-      warnings.push('prior_lock_unknown_scope')
+      const parts = prior.scopeKey.split('|')
+      const documentKind = DOCUMENT_KINDS.has(parts[2] as DocumentKind) ? parts[2] as DocumentKind : 'ordinary_passport'
+      const routeKind = ROUTE_KINDS.has(parts[3] as RouteKind) ? parts[3] as RouteKind : 'direct_entry'
+      next.push({
+        scopeKey: prior.scopeKey,
+        destinationCode: parts[0] ?? '',
+        credentialCode: parts[1] ?? '',
+        documentKind,
+        routeKind,
+        ruleClass: parts[4] ?? 'unknown_scope',
+        topic: prior.topic,
+        tier: CORE.has(prior.topic) ? 'core' : 'additional',
+        disposition: 'locked',
+        reasons: ['unknown_scope'],
+        baselineDigest: prior.historicalOriginalDigest,
+        observedDigest: null,
+        historicalOriginalPreserved: true,
+        stockProtection: null,
+        validUntil: null,
+        renewedExpiresAt: null,
+        evidenceConfirmed: false,
+      })
       continue
     }
     const current = next[index]!
@@ -498,8 +643,21 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
     sourceDigestObserved: string | null,
     extraWarnings: readonly string[],
     findings: readonly TopicFinding[],
+    bindingSnapshots: readonly CareSnapshot[],
   ): SourceCareDryRun => {
-    const prior = applyPriorLocks(findings, input.priorLocks)
+    const slotted = addMissingSlots(findings, input.baseline)
+    const originalBinding = combineBinding([input.baseline, ...bindingSnapshots])
+    let nextFindings = slotted.findings
+    const bindingWarnings = [...extraWarnings]
+    if (originalBinding === 'mismatch') {
+      bindingWarnings.push('original_digest_mismatch')
+      nextFindings = [
+        ...lockAll(input.baseline.sections, 'original_digest_mismatch', null),
+        ...slotted.findings.filter((finding) => finding.reasons.includes('missing_k_slot')),
+      ]
+    } else if (originalBinding === 'absent') bindingWarnings.push('original_binding_absent')
+    else bindingWarnings.push('original_bytes_supplied_not_an_official_examination')
+    const prior = applyPriorLocks(nextFindings, input.priorLocks)
     if (typeof prior === 'string') return invalid(prior)
     return finish({
       inputAccepted: true,
@@ -508,84 +666,115 @@ export function evaluateSourceCareDryRun(input: CareDryRunInput): SourceCareDryR
       attemptsIgnoredBeyondBound: ignored,
       sourceDigestBaseline: baselineDigest,
       sourceDigestObserved,
-      warnings: [...warnings, ...extraWarnings, ...prior.warnings],
+      originalBinding,
+      kSlotsComplete: slotted.complete,
+      warnings: [...warnings, ...bindingWarnings, ...prior.warnings],
       findings: prior.findings,
     })
   }
 
   const unavailable = examined.some((attempt) => attempt.outcome === 'unavailable')
-  const retrieved = [...examined].reverse().find(isRetrieved)
+  const retrievedAll = examined.filter(isRetrieved)
   const disturbances = examined.filter((attempt) => attempt.outcome === 'technical_disturbance').length
-  if (!unavailable && !retrieved && disturbances === examined.length && input.attempts.length < TECHNICAL_ATTEMPT_BOUND) {
+  if (!unavailable && retrievedAll.length === 0 && disturbances === examined.length && input.attempts.length < TECHNICAL_ATTEMPT_BOUND) {
     return sealed('pending', null, ['technical_retry_pending'], input.baseline.sections.map((section) =>
-      baseFinding(section, 'not_reproven', ['technical_retry_pending'], null)))
+      baseFinding(section, 'not_reproven', ['technical_retry_pending'], null)), [])
   }
-  if (unavailable || !retrieved || !retrieved.snapshot) {
+  if (unavailable || retrievedAll.length === 0) {
     const reason = unavailable ? 'source_unavailable' : 'technical_retry_exhausted'
-    return sealed(unavailable ? 'not_needed' : 'exhausted', null, [reason], lockAll(input.baseline.sections, reason, null))
+    return sealed(unavailable ? 'not_needed' : 'exhausted', null, [reason], lockAll(input.baseline.sections, reason, null), [])
   }
 
-  const observed = retrieved.snapshot
-  const observedError = snapshotError(observed, checkedAt)
-  if (observedError) return sealed('not_needed', null, [observedError], lockAll(input.baseline.sections, 'observation_rejected', null))
-  if (observed.sourceId !== input.baseline.sourceId || observed.officialUrl !== input.baseline.officialUrl) {
-    return sealed('not_needed', sourceDigest(observed), ['source_identity'], lockAll(input.baseline.sections, 'source_identity', null))
+  const observations: CareSnapshot[] = []
+  for (const attempt of retrievedAll) {
+    const observed = attempt.snapshot
+    const observedError = snapshotError(observed, checkedAt)
+    if (observedError) return sealed('not_needed', null, [observedError], lockAll(input.baseline.sections, 'observation_rejected', null), [])
+    if (observed.sourceId !== input.baseline.sourceId || observed.officialUrl !== input.baseline.officialUrl) {
+      return sealed('not_needed', sourceDigest(observed), ['source_identity'], lockAll(input.baseline.sections, 'source_identity', null), [observed])
+    }
+    observations.push(observed)
   }
-  const observedRetrieved = isoInstant(observed.retrievedAt)
-  if (observedRetrieved === null || observedRetrieved <= baselineRetrieved) warnings.push('retrieval_not_after_baseline')
-  if (observed.version !== input.baseline.version) warnings.push('version_label_differs')
+  const retrievedTimes = observations.map((observed) => isoInstant(observed.retrievedAt))
+  const stale = retrievedTimes.some((time, index) => time === null || time <= baselineRetrieved || (index > 0 && time <= (retrievedTimes[index - 1] ?? time)))
+  if (stale) {
+    return sealed('not_needed', null, ['stale_or_replay'], lockAll(input.baseline.sections, 'stale_or_replay', null), observations)
+  }
+  if (observations.some((observed) => observed.version !== input.baseline.version)) warnings.push('version_label_differs')
 
-  const observedByKey = new Map<string, CareSection>(observed.sections.map((section) => [scopeKey(section.scope, section.topic), section]))
   const findings: TopicFinding[] = []
   for (const section of input.baseline.sections) {
     const key = scopeKey(section.scope, section.topic)
-    const pair = observedByKey.get(key)
-    if (!pair) {
+    const pairs = observations.map((observed) => observed.sections.find((item) => scopeKey(item.scope, item.topic) === key) ?? null)
+    if (pairs.some((pair) => pair === null)) {
       findings.push(baseFinding(section, 'locked', ['missing_evidence'], null))
       continue
     }
-    findings.push(comparePaired(section, pair, checkedAt))
+    const present = pairs.filter((pair): pair is CareSection => pair !== null)
+    let merged = comparePaired(section, present[0]!, checkedAt)
+    const digests = new Set(present.map((pair) => sectionDigest(pair)))
+    for (const pair of present.slice(1)) {
+      const next = comparePaired(section, pair, checkedAt)
+      merged = revise(merged, [...next.reasons], merged.disposition === 'locked' || next.disposition === 'locked' ? 'locked' : next.disposition, merged.observedDigest)
+    }
+    if (digests.size > 1) {
+      merged = revise(merged, ['conflict', 'earlier_contradiction_not_cleared', ...[...digests].sort().map((digest) => `conflict_digest_${digest}`)], 'locked', null)
+    } else if (present.some((pair) => sectionDigest(pair) !== sectionDigest(section)) && present.some((pair) => sectionDigest(pair) === sectionDigest(section))) {
+      merged = revise(merged, ['earlier_contradiction_not_cleared'], 'locked', null)
+    }
+    findings.push(merged)
   }
-  for (const section of observed.sections) {
-    const key = scopeKey(section.scope, section.topic)
-    if (input.baseline.sections.some((baseline) => scopeKey(baseline.scope, baseline.topic) === key)) continue
-    const absent = sha256(utf8(`absent\n${key}\n`))
-    findings.push({
-      ...baseFinding(section, 'locked', ['unbound_scope'], sectionDigest(section)),
-      baselineDigest: absent,
-      validUntil: null,
-      stockProtection: null,
-    })
+  for (const observed of observations) {
+    for (const section of observed.sections) {
+      const key = scopeKey(section.scope, section.topic)
+      if (input.baseline.sections.some((baseline) => scopeKey(baseline.scope, baseline.topic) === key)) continue
+      if (findings.some((finding) => finding.scopeKey === key)) continue
+      const absent = sha256(utf8(`absent\n${key}\n`))
+      findings.push({
+        ...baseFinding(section, 'locked', ['unbound_scope'], sectionDigest(section)),
+        baselineDigest: absent,
+        validUntil: null,
+        stockProtection: null,
+      })
+    }
   }
 
   let compared = findings
-  const assetsUnchanged = input.baseline.assets === observed.assets
-  const assetsNeutral = !assetsUnchanged && assetTimestampNeutral(input.baseline.assets, observed.assets)
-  if (assetsNeutral) warnings.push('asset_timestamp_only')
-  if (!assetsUnchanged && !assetsNeutral) {
+  const assetStates = observations.map((observed) => {
+    if (observed.assets === input.baseline.assets) return 'unchanged' as const
+    return assetTimestampNeutral(input.baseline.assets, observed.assets, input.baseline.officialUrl) ? 'timestamp' as const : 'changed' as const
+  })
+  if (assetStates.includes('timestamp') && !assetStates.includes('changed')) warnings.push('asset_timestamp_only')
+  if (assetStates.includes('changed') || new Set(observations.map((observed) => stripAssetTimestamps(observed.assets))).size > 1) {
     warnings.push('unclassified_asset_change')
     compared = compared.map((finding) => revise(finding, ['unclassified_asset_change'], 'locked'))
   }
 
   for (const rival of input.concurrent) {
     const rivalError = snapshotError(rival, checkedAt)
-    if (rivalError || rival.sourceId !== observed.sourceId) {
+    if (rivalError) {
       warnings.push('concurrent_rejected')
-      compared = compared.map((finding) => revise(finding, ['conflict'], 'locked', null))
+      compared = compared.map((finding) => revise(finding, ['observation_rejected'], 'locked', null))
       break
     }
-    if (sourceDigest(rival) === sourceDigest(observed)) continue
+    if (rival.sourceId !== input.baseline.sourceId || rival.officialUrl !== input.baseline.officialUrl) {
+      warnings.push('source_identity')
+      compared = compared.map((finding) => revise(finding, ['source_identity'], 'locked', null))
+      break
+    }
     const rivalByKey = new Map<string, CareSection>(rival.sections.map((section: CareSection) => [scopeKey(section.scope, section.topic), section]))
     compared = compared.map((finding) => {
       const rivalSection = rivalByKey.get(finding.scopeKey)
-      const observedSection = observedByKey.get(finding.scopeKey)
       const rivalDigest = rivalSection ? sectionDigest(rivalSection) : null
-      const currentDigest = observedSection ? sectionDigest(observedSection) : null
-      if (rivalDigest === currentDigest) return finding
-      const digests = [currentDigest, rivalDigest].filter((digest): digest is string => digest !== null).sort()
+      const observedDigests = observations.map((observed) => {
+        const match = observed.sections.find((section) => scopeKey(section.scope, section.topic) === finding.scopeKey)
+        return match ? sectionDigest(match) : null
+      })
+      if (observedDigests.every((digest) => digest === rivalDigest)) return finding
+      const digests = [...observedDigests, rivalDigest].filter((digest): digest is string => digest !== null).sort()
       return revise(finding, ['conflict', ...digests.map((digest) => `conflict_digest_${digest}`)], 'locked', null)
     })
   }
 
-  return sealed('not_needed', sourceDigest(observed), [], compared)
+  return sealed('not_needed', sourceDigest(observations[observations.length - 1]!), [], compared, observations)
 }

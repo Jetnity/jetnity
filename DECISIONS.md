@@ -6675,3 +6675,5 @@ Für die BG1-Abfrage bleibt das bestehende vollständige Baseline-Verfahren mass
 **Begründung:** Die fachliche Sperre lässt sich an synthetischen Bytes prüfen, ohne eine Quelle live zu schalten oder eine alte Faktversion fortzuschreiben.
 
 **Konsequenzen:** Keine Migration, keine neuen Kosten, kein Deploy, keine Oberfläche. #1319 bleibt offen. Nachweis: `docs/OFFICIAL_TRUTH_SOURCE_CARE_6_4_DRY_RUN_2026-11-27.md`.
+
+**Nachtrag 27. November 2026, Korrektur nach TL-Review [7207442476](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7207442476):** Die Dry-run-Prüfung akzeptiert als neutral nur noch Zeitstempel bei unverändertem BMEIA-Pfad und Dateinamen auf genau dieser URL. HTTP-Originalbytes und ihr SHA-256 sind nicht der kanonisierte Snapshot-Digest. Alle Beobachtungen im Versuchsfenster zählen; ein früherer Widerspruch und eine alte oder gleich datierte Beobachtung bleiben fail-closed. N/A folgt nicht aus der Textlänge. `confirmedEvidence` bleibt falsch. Die SQL-Schutzfunktion und M04/N11 werden nicht verändert.

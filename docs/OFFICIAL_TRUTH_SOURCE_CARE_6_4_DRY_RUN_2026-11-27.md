@@ -24,7 +24,19 @@ Der Scope ist Ziel, Ausweisstaat, Dokumentart, Route und Regelklasse. `CN-HK` un
 
 Rechtlich relevante Text-, Tabellen- und Linkabschnitte werden abschnittsweise verglichen. Ein geänderter Abschnitt sperrt nur sein Thema und seinen Scope.
 
-Neutrale Asset-Zeitstempel sind ausschliesslich der bereits vorhandene BMEIA-Vertrag `bmeia_theme_assets_v3`: genau vier Stylesheet- und fünfzehn Skriptreferenzen unter dem Theme-Pfad. Die TypeScript-Muster sind dieselben POSIX-Ausdrücke wie in `scripts/db/official-truth-at-source-v3/bmeia-theme-assets-v3.function.sql`. Ein gewöhnlicher Link, eine andere Anzahl oder ein anderer Pfad ist keine neutrale Änderung. Dann sperrt die Quelle fail-closed, weil nicht belegt ist, welches Thema unberührt blieb. Auch eine neutrale Asset-Abweichung autorisiert nichts.
+Neutral ist nur ein zehnstelliger Query-Zeitstempel bei identischem Pfad und Dateinamen, genau vier Stylesheets und fünfzehn Skripte, in derselben Reihenfolge, und nur auf der BMEIA-URL `https://www.bmeia.gv.at/oeb-bern/reise-nach-oesterreich/einreise-und-aufenthalt/wie-stelle-ich-einen-antrag/`. Die SQL-Funktion `bmeia_theme_assets_v3` bleibt unverändert und faltet weiterhin den Theme-Pfad. Die Dry-run-Prüfung ist enger als diese Faltung: ein anderer Dateiname, eine andere Reihenfolge, eine andere Anzahl oder eine fremde URL ist fail-closed. Das schwächt die SQL-Assertion nicht.
+
+## Originalbytes und K-Slots
+
+Der kanonisierte Snapshot-Digest ist nicht der SHA-256 der HTTP-Originalbytes. Beide werden getrennt geführt. `originalExamination` bleibt `not_performed`. `confirmedEvidence` bleibt `false`. Ohne gelieferte Bytes, deren Digest dazu passt, oder ohne die sechs Kernslots eines Scopes gibt es keinen bestätigten Beleg. Diese Funktion hat keine amtliche Seite abgerufen.
+
+## N/A
+
+`not_applicable` braucht eine gesetzte Rechtsgrundlage mit Instrument, Zitat und demselben Scope-Schlüssel. Die Textlänge entscheidet das nicht. Auch eine passende Struktur ist `not_applicable_unqualified`. `legalQualification` bleibt `not_claimed`.
+
+## Korrektur nach TL-Review 7207442476
+
+Alle Beobachtungen innerhalb der drei Versuche werden ausgewertet. Eine frühere Abweichung bleibt gesperrt, auch wenn eine spätere Beobachtung wieder den Ausgangsbytes entspricht. Eine ältere oder gleich datierte Beobachtung ist `stale_or_replay` und fail-closed. Ein Rivale mit anderer Quellenkennung oder anderer amtlicher URL sperrt die Quelle. Ein unbekannter Prior-Scope wird gesperrt und hebt andere Themen nicht auf.
 
 ## Thailand, synthetisch
 
@@ -44,15 +56,14 @@ Zwei abweichende Beobachtungen desselben Abschnitts sind ein Konflikt. Es wird k
 node --experimental-test-module-mocks --import ./scripts/server-only-test-register.mjs --import tsx --test lib/readiness/official-truth-source-care-6-4/dry-run.test.ts
 ```
 
-Lokal am 27. November 2026, auf diesem Arbeitsstand vor dem Push:
+Lokal nach der Korrekturrunde, vor dem Push des neuen Heads: 13 Tests, 13 bestanden, 0 fehlgeschlagen. Die CI des neuen Heads ist erst nach dem Push belegbar und bis dahin kein PASS. Der vorherige grüne Run 45913690435 gilt für `9a01dabc0`, nicht für den Korrekturhead.
 
 | Prüfung | Ergebnis |
 |---|---|
-| Dry-run-Testdatei, 12 Tests | 12 bestanden, 0 fehlgeschlagen |
-| `tsc -p tsconfig.json --noEmit` | Exit 0 |
+| Dry-run-Testdatei, 13 Tests | 13 bestanden, 0 fehlgeschlagen |
+| `tsc -p tsconfig.json --noEmit` | Exit 0, auf diesem Korrekturstand |
+| `eslint` auf die beiden TypeScript-Dateien | Exit 0, auf diesem Korrekturstand |
 | `node scripts/exporte.mjs` | Exit 0, 0 Exporte ohne Aufrufer |
-| `node scripts/erreichbarkeit.mjs` | Exit 0, 0 verwaiste Dateien |
-| `eslint` auf die beiden neuen TypeScript-Dateien | Exit 0 |
 
 Die Testdatei liegt in `lib/**/*.test.ts` und damit in `test:core`. Ein vollständiger `test:core`-Lauf und ein Production-Build sind in diesem Arbeitsgang nicht gelaufen. Native PostgreSQL-17-Prüfungen der bestehenden BG1-/V8-/MA1-Gates sind nicht erneut ausgeführt. Das ist kein PASS dieser Gates. Die SQL-Datei und `source-bound-renewal.ts` sind nicht geändert. Ein leerer Aufruf von `checkSourceBoundRenewal` bleibt `unavailable`.
 

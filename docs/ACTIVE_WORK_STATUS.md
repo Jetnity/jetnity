@@ -4,7 +4,7 @@
 
 Branch `cursor/official-truth-source-care-6-4-0cd9` von `main` `ad157cf5ac64f4117787735b2d160628c09b67d1`. Draft [#1324](https://github.com/Jetnity/jetnity/pull/1324). Der exakte Head steht im PR, nicht hier, damit ein Dokumentationscommit ihn nicht fälscht. Issue [#1322](https://github.com/Jetnity/jetnity/issues/1322), Hauptplan [#1319](https://github.com/Jetnity/jetnity/issues/1319) bleibt offen. Kein Ready, kein Merge, kein Deploy.
 
-- Eine manuelle Dry-run-Warnung in `lib/readiness/official-truth-source-care-6-4/dry-run.ts`. Sechs Kernthemen und vier Zusatzthemen bleiben getrennt. Echte Text-, Tabellen- und Linkänderungen sperren nur das betroffene Thema und den betroffenen Scope. Neutrale Änderungen sind nur die bestehenden vier Stylesheet- und fünfzehn Skript-Zeitstempel des BMEIA-Theme-Vertrags. Keine Verlängerung, keine Autorisierung, kein Scheduler, kein Schreibweg.
+- Nach dem TL-Review [7207442476](https://github.com/Jetnity/jetnity/issues/1319#issuecomment-7207442476): Zeitstempel nur bei gleichem BMEIA-Pfad und Dateinamen, Originalbytes getrennt vom Snapshot-Digest, alle Versuche im Fenster, N/A nicht über die Textlänge. `confirmedEvidence` bleibt falsch. Der grüne CI-Lauf 45913690435 gilt nur für `9a01dabc0`.
 - Thailand 60→30 ab 15.09.2026 ist eine synthetische Fixture mit Bestandsschutz. Die 15-Tage-Befreiung, Visa on Arrival und bilaterale Regeln werden davon nicht pauschal gesperrt.
 - Dauerhafter Originalspeicher ist nicht nachgewiesen. Kein Mac-Archiv, kein neuer Bucket. Automatik bleibt STOP.
 - V3, BG1 V8, MA1, Paket I und die Oberfläche sind nicht geändert. Native PostgreSQL-17-Gates sind nicht erneut gelaufen und gelten nicht als PASS.
