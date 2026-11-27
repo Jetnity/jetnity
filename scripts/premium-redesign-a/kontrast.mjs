@@ -306,6 +306,23 @@ function festeBaender() {
   return { oben, unten, hoehe: innerHeight }
 }
 
+/**
+ * Nach dem Entfernen des Aufnahme-Stylesheets starten Farbübergänge (Links, Knöpfe: 0,16 s) und Einblendungen neu, weil
+ * `transition: none` und `animation: none` wegfallen; die Farbe läuft dann von der letzten Aufnahmefarbe (Weiss) zum
+ * echten Wert. WebKit legt sie erst beim nächsten Stil-Durchlauf an, ein sofortiges `getAnimations()` sieht sie nicht.
+ * Darum: Stil erzwingen, zwei Bilder abwarten, laufende Übergänge beenden lassen.
+ */
+async function styleBeruhigen() {
+  void document.documentElement.offsetHeight
+  void getComputedStyle(document.body).color
+  await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
+  const laufend = () => document.getAnimations().filter((a) => a.playState === 'running' && a.effect?.getComputedTiming().iterations !== Infinity)
+  const ende = performance.now() + 1500
+  while (laufend().length > 0 && performance.now() < ende) {
+    await Promise.race([Promise.all(laufend().map((a) => a.finished.catch(() => undefined))), new Promise((fertig) => setTimeout(fertig, 200))])
+  }
+}
+
 /** Ein Sichtfeld: dreimal fotografieren (ohne Text, schwarz, weiss), Buchstabenpixel finden, schlechtesten Kontrast je Text merken. */
 async function sichtfeldMessen(seite, je, nurIndex) {
   let { texte, verdeckte } = await seite.evaluate(sichtbareBildtexte, nurIndex)
@@ -348,6 +365,8 @@ async function sichtfeldMessen(seite, je, nurIndex) {
     aufnahmen = { a: grund, b: await aufnehmen('#000000'), c: await aufnehmen('#ffffff') }
   } finally {
     await seite.evaluate(() => document.getElementById('pra-text-aus')?.remove())
+    await seite.evaluate(styleBeruhigen)
+    await seite.waitForTimeout(350)
   }
   const werte = await seite.evaluate(pixelAuswerten, { texte, ...aufnahmen })
   for (const wert of werte) {

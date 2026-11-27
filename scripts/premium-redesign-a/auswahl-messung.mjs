@@ -571,7 +571,10 @@ export async function bandMessen(seite, { rechteck, von, bis, farben, ausblenden
   try {
     bild = (await seite.screenshot({ clip: { x: x0, y: y0, width: x1 - x0, height: y1 - y0 } })).toString('base64')
   } finally {
-    if (ausblenden) await seite.evaluate(() => document.getElementById('pra-ring-aus')?.remove())
+    if (ausblenden) {
+      await seite.evaluate(() => document.getElementById('pra-ring-aus')?.remove())
+      await seite.evaluate(() => window.__pra?.abwarten?.())
+    }
   }
   return seite.evaluate(
     async ({ bild: daten, x0: ox, y0: oy, clipBreite, rechteck: r, von: a, bis: b, farben: fs }) => {
