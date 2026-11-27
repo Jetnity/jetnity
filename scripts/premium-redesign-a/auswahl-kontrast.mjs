@@ -364,6 +364,7 @@ async function messenImZustand(seite, element, interaktion, flaecheNormal) {
   const stand = await zustandHerstellen(seite, element, interaktion)
   if (!stand.erreichbar && interaktion !== 'normal') return { stand, messung: null, pixel: null }
   markenZaehler += 1
+  await seite.evaluate((i) => window.__pra.deckkraftAbwarten(i), element.i)
   const messung = await seite.evaluate(
     ({ i, fokus, vorher, basis }) => window.__pra.messen(i, { fokus, vorher, markenBasis: basis }),
     { i: element.i, fokus: interaktion === 'fokus', vorher: flaecheNormal ? { flaeche: flaecheNormal } : null, basis: markenZaehler * 1000 },

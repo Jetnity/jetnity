@@ -423,7 +423,10 @@ export function installieren() {
     element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
     // Leaflet setzt das Scrollen seines Containers im nächsten Bild zurück; erst danach gilt die Lage des Elements.
     await new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig)))
-    const r = element.getBoundingClientRect()
+    // Ein umbrochener Inline-Link hat ein Hüllrechteck über mehrere Zeilen, dessen Mitte auf fremdem Text liegen kann:
+    // dann zählt die erste Zeilenbox.
+    const zeilen = [...element.getClientRects()].filter((rechteck) => rechteck.width > 0 && rechteck.height > 0)
+    const r = zeilen.length > 1 ? zeilen[0] : element.getBoundingClientRect()
     const x = r.left + r.width / 2
     const y = r.top + r.height / 2
     const oben = document.elementFromPoint(x, y)
@@ -447,6 +450,34 @@ export function installieren() {
     if (orig === '__fehlt__') element.removeAttribute(name)
     else element.setAttribute(name, orig)
     element.removeAttribute('data-pra-orig')
+  }
+
+  /** Wirksame Deckkraft eines Elements: Produkt der Deckkraft aller Vorfahren und des Elements selbst. */
+  const wirksameDeckkraft = (element) => {
+    let produkt = 1
+    for (let knoten = element; knoten && knoten.nodeType === 1; knoten = knoten.parentElement) produkt *= Number(getComputedStyle(knoten).opacity)
+    return produkt
+  }
+
+  /**
+   * Einblendungen beim Scrollen (Deckkraft von 0 auf 1) laufen nicht immer als Animation, die `getAnimations()` meldet.
+   * Gemessen wird erst, wenn die wirksame Deckkraft 1 ist oder sich dreimal hintereinander nicht mehr ändert.
+   */
+  P.deckkraftAbwarten = async (i, grenzeMs = 2000) => {
+    const element = P.element(i)
+    if (!element) return null
+    const ende = performance.now() + grenzeMs
+    let vorher = -1
+    let gleich = 0
+    while (performance.now() < ende) {
+      const jetzt = wirksameDeckkraft(element)
+      if (jetzt >= 0.999) return jetzt
+      gleich = Math.abs(jetzt - vorher) < 0.001 ? gleich + 1 : 0
+      if (gleich >= 3) return jetzt
+      vorher = jetzt
+      await new Promise((fertig) => setTimeout(fertig, 100))
+    }
+    return wirksameDeckkraft(element)
   }
 
   P.abwarten = async (grenzeMs = 1500) => {
