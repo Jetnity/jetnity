@@ -174,6 +174,68 @@ function lissabonReise(): Trip {
   }
 }
 
+/**
+ * Datumsprobe (Work-Endtest 27.11.2026): Zürich → Zermatt mit Ankunft am 19. Dezember 2026.
+ * Ohne gespeicherte Bahnfahrt nennt die Reiseprüfung die offenen Abschnitte samt Datum
+ * («Zürich → Zermatt · 19. Dez.», «Zermatt → Zürich · 26. Dez.»); mit `mitBahn` gibt es eine
+ * datierte Bahnfahrt und einen Mietwagen, der Befund zur Hinfahrt steht dann mitten im Satz
+ * («… · 19. Dez. Im Plan ist eine Bodenverbindung …»).
+ */
+function zermattReise(mitBahn: boolean): Trip {
+  const etappen: TripStage[] = [
+    { id: 'etappe-zrh', position: 1, name: 'Zürich', countryCode: 'CH', arrivalDate: '2026-12-18', departureDate: '2026-12-19', latitude: 47.3769, longitude: 8.5417, placeId: 'geonames:2657896' },
+    { id: 'etappe-zermatt', position: 2, name: 'Zermatt', countryCode: 'CH', arrivalDate: '2026-12-19', departureDate: '2026-12-26', latitude: 46.0207, longitude: 7.7491, placeId: 'geonames:2657928' },
+  ]
+  const reisetage = tage('2026-12-18', '2026-12-26', etappen)
+  const bahn = punkt({
+    id: 'punkt-bahn', kind: 'transfer', title: 'Zürich → Zermatt', dayId: 'tag-2', stageId: 'etappe-zermatt',
+    startsOn: '2026-12-19', startsAt: '08:07', mobilityMode: 'rail',
+    originPlaceId: 'geonames:2657896', destinationPlaceId: 'geonames:2657928',
+    originName: 'Zürich', destinationName: 'Zermatt',
+  })
+  const hotel = punkt({
+    id: 'punkt-hotel', kind: 'stay', title: 'Chalet Matterhorn, Zermatt', dayId: 'tag-2', stageId: 'etappe-zermatt',
+    startsOn: '2026-12-19', endsOn: '2026-12-26', priceAmount: 2240, priceCurrency: 'CHF',
+  })
+  const ski = punkt({
+    id: 'punkt-ski', kind: 'activity', title: 'Skitag Gornergrat', dayId: 'tag-3', stageId: 'etappe-zermatt',
+    startsOn: '2026-12-20', startsAt: '09:00', priceAmount: 96, priceCurrency: 'CHF',
+  })
+  const mietwagen = punkt({
+    id: 'punkt-miet', kind: 'rental_car', title: 'Mietwagen Visp', dayId: 'tag-2', stageId: 'etappe-zermatt',
+    startsOn: '2026-12-19', endsOn: '2026-12-26', rentalSupplier: 'Europcar', vehicleClass: 'compact',
+    transmission: 'automatic', rentalEvidence: 'user',
+  })
+  const zuordnung: Record<string, TripItem[]> = {
+    'tag-2': mitBahn ? [bahn, hotel, mietwagen] : [hotel],
+    'tag-3': [ski],
+  }
+  return {
+    id: mitBahn ? 'trip-synth-zermatt-bahn' : 'trip-synth-zermatt',
+    clientRef: mitBahn ? 'trip-synth-zermatt-bahn' : 'trip-synth-zermatt',
+    title: 'Zermatt im Winter',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2026-12-18',
+    endDate: '2026-12-26',
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: 3000,
+    status: 'draft',
+    pace: 'calm',
+    interests: ['nature'],
+    travelWish: null,
+    revision: 1,
+    lastMutationId: null,
+    stages: etappen,
+    days: reisetage.map((tag) => ({ ...tag, items: zuordnung[tag.id] ?? [] })),
+    ohneTag: [],
+    dayStageAssignmentMode: 'explicit',
+    createdAt: JETZT,
+    updatedAt: JETZT,
+  }
+}
+
 /** Kostenprobe: lange Titel, grosse Beträge in zwei Währungen, Posten ohne Preis, Budget überschritten. */
 function kostenReise(): Trip {
   const etappen: TripStage[] = [
@@ -236,7 +298,7 @@ async function main() {
   if (!ziel) throw new Error('Zielordner fehlt.')
   mkdirSync(ziel, { recursive: true })
   const { gastreiseAblegen } = await import('@/lib/trips/gastspeicher')
-  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise], ['kosten', kostenReise]] as const) {
+  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise], ['kosten', kostenReise], ['zermatt', () => zermattReise(false)], ['zermatt-bahn', () => zermattReise(true)]] as const) {
     const daten = speicherEinrichten()
     const reise = gastreiseAblegen(bauen())
     const roh = daten.get(SCHLUESSEL_AKTIV)
