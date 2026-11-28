@@ -4,7 +4,7 @@
 // Keine Anbieteranfrage, kein Angebot, keine Buchung, kein Datum in der URL.
 // Frei von React und Next.
 
-import { datumKurz } from '@/lib/trips/datum-anzeige'
+import { datumKurz, mitSatzpunkt } from '@/lib/trips/datum-anzeige'
 import {
   TWELVE_GO_GEPRUEFTE_ROUTEN,
   type TwelveGoGepruefteRoute,
@@ -152,7 +152,7 @@ function kanteAus(
         : 'Bei 12Go selbst nach Verbindungen suchen',
     streckenHinweis: art === 'generic' ? TWELVE_GO_GENERISCHE_STRECKE : null,
     datumHinweis: datum
-      ? `Geplant am ${datumKurz(datum)}. Bitte das Datum bei 12Go bestätigen.`
+      ? `Geplant am ${mitSatzpunkt(datumKurz(datum))} Bitte das Datum bei 12Go bestätigen.`
       : TWELVE_GO_DATUM_WAEHLEN,
     geplantesDatum: datum,
     waehrungHinweis: TWELVE_GO_WAEHRUNG,

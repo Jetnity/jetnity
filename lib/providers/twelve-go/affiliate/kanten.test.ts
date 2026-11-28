@@ -327,7 +327,8 @@ describe('benachbarte 12Go-Kanten', () => {
     }
     const mit = twelveGoKantenAusVorkommen(ziele, [transfer], [BANGKOK_KOH_CHANG])
     assert.equal(mit[0]?.geplantesDatum, '2026-11-15')
-    assert.match(mit[0]!.datumHinweis, new RegExp(`Geplant am ${datumKurz('2026-11-15').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))
+    assert.equal(mit[0]!.datumHinweis, `Geplant am ${datumKurz('2026-11-15')} Bitte das Datum bei 12Go bestätigen.`)
+    assert.match(mit[0]!.datumHinweis, /^Geplant am 15\. Nov\. Bitte das Datum bei 12Go bestätigen\.$/)
     assert.match(mit[0]!.datumHinweis, /bei 12Go bestätigen/)
     assert.doesNotMatch(mit[0]!.href, /2026-11-15|date=/)
 
@@ -554,5 +555,47 @@ describe('benachbarte 12Go-Kanten', () => {
     )
     assert.equal(kaputt[0]?.art, 'generic')
     assert.equal(kaputt[0]?.href, GENERISCH)
+  })
+})
+
+describe('Datumshinweis ohne doppelten Punkt (Work-Endtest 27.11.2026)', () => {
+  const DOPPELPUNKT = /(?<!\.)\.\.(?!\.)/
+  const ziele = [
+    ort({ occurrenceId: 'zrh', name: 'Zürich', position: 1, placeId: 'geonames:2657896', kind: 'city' }),
+    ort({ occurrenceId: 'zer', name: 'Zermatt', position: 2, placeId: 'geonames:2657928', kind: 'city' }),
+  ]
+  const transfer = (startsOn: string): TwelveGoTransferFakt => ({
+    id: 't1',
+    originPlaceId: 'geonames:2657896',
+    destinationPlaceId: 'geonames:2657928',
+    startsOn,
+  })
+
+  test('19. Dezember: «Geplant am 19. Dez. Bitte das Datum bei 12Go bestätigen.»', () => {
+    const kanten = twelveGoKantenAusVorkommen(ziele, [transfer('2026-12-19')], [])
+    assert.equal(kanten[0]?.datumHinweis, 'Geplant am 19. Dez. Bitte das Datum bei 12Go bestätigen.')
+  })
+
+  test('März und Mai bleiben ausgeschrieben, der Satzpunkt steht einmal', () => {
+    assert.equal(
+      twelveGoKantenAusVorkommen(ziele, [transfer('2026-03-19')], [])[0]?.datumHinweis,
+      'Geplant am 19. März. Bitte das Datum bei 12Go bestätigen.',
+    )
+    assert.equal(
+      twelveGoKantenAusVorkommen(ziele, [transfer('2026-05-19')], [])[0]?.datumHinweis,
+      'Geplant am 19. Mai. Bitte das Datum bei 12Go bestätigen.',
+    )
+  })
+
+  test('alle zwölf Monate: kein «..», Datum unverändert, genau ein Satzende vor dem Folgesatz', () => {
+    for (let monat = 1; monat <= 12; monat += 1) {
+      const iso = `2026-${String(monat).padStart(2, '0')}-19`
+      const hinweis = twelveGoKantenAusVorkommen(ziele, [transfer(iso)], [])[0]!.datumHinweis
+      const etikett = datumKurz(iso)
+      assert.doesNotMatch(hinweis, DOPPELPUNKT, hinweis)
+      assert.equal(hinweis.startsWith(`Geplant am ${etikett}`), true, hinweis)
+      assert.match(hinweis, /^Geplant am 19\. \p{L}+\.?\.? Bitte das Datum bei 12Go bestätigen\.$/u, hinweis)
+      assert.equal(hinweis.endsWith('bestätigen.'), true, hinweis)
+    }
   })
 })

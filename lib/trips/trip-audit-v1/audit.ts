@@ -5,7 +5,7 @@ import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten
 import { f05AdjustFlightKnownGap, type F05FlightGapAdjustment } from './f05-ground-flight'
 import { tripZeitpruefung, type Zeitpruefung } from '@/lib/trips/trip-timeline-temporal-review-1'
 import { AUDIT_LIMITS, boundedSnapshot, lodgingBudget, snapshotProblem } from './limits'
-import { datumKurz } from '@/lib/trips/datum-anzeige'
+import { datumKurz, mitSatzpunkt } from '@/lib/trips/datum-anzeige'
 import type { Trip, TripItem } from '@/types/trips'
 
 export type AuditDomain = 'lodging' | 'time' | 'flights' | 'mobility'
@@ -268,7 +268,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
         groundCount += 1
         add({ id: id(domain, connection.id), domain, state, source,
           title: 'Bodenverbindung geplant, Flugbedarf nicht belegt',
-          detail: `${place}. Im Plan ist eine Bodenverbindung für diesen Abschnitt gespeichert. Ob ein Flug nötig ist, ist nicht belegt. ${adjustment.userMarkedBooked ? 'Die Bodenverbindung ist von dir als gebucht markiert. ' : 'Die Bodenverbindung ist ausgewählt, nicht als gebucht markiert. '}Das ist keine Anbieterbestätigung.`,
+          detail: `${mitSatzpunkt(place)} Im Plan ist eine Bodenverbindung für diesen Abschnitt gespeichert. Ob ein Flug nötig ist, ist nicht belegt. ${adjustment.userMarkedBooked ? 'Die Bodenverbindung ist von dir als gebucht markiert. ' : 'Die Bodenverbindung ist ausgewählt, nicht als gebucht markiert. '}Das ist keine Anbieterbestätigung.`,
           refs: { sectionId: connection.id, itemIds: [adjustment.itemId] },
           evidence: { status: 'open', date: connection.date, reasons: [adjustment.userMarkedBooked ? 'ground_user_marked_booked' : 'ground_selected', 'flight_necessity_unknown'] } })
         continue
@@ -277,7 +277,7 @@ export function tripAuditV1(reise: Trip, ohneTag?: readonly TripItem[]): TripAud
       add({ id: id(domain, connection.id), domain, state, source,
         title: state === 'unknown' ? 'Verbindung nicht vollständig bewertbar'
           : domain === 'flights' ? 'Kein Flug für diesen Abschnitt im Plan' : 'Keine Verbindung für diesen Abschnitt im Plan',
-        detail: `${place}.`,
+        detail: mitSatzpunkt(place),
         refs: { sectionId: connection.id },
         evidence: adjustment.kind === 'withhold'
           ? { status: connection.status, date: connection.date, reasons: ['flight_obligation_not_established'] }

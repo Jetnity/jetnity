@@ -53,6 +53,16 @@ export function kalendertagNummer(wert: string | null | undefined): number | nul
   return tag ? Math.round(tag.zeit.getTime() / 86_400_000) : null
 }
 
+/**
+ * Schliesst einen Satz mit genau einem Punkt ab. Steht am Ende eine Abkürzung mit
+ * eigenem Punkt («19. Dez.», «Sept.»), ist dieser Punkt zugleich der Satzpunkt
+ * (Duden). Das Datumsetikett selbst bleibt unverändert; März, Mai, Juni und Juli
+ * werden nie künstlich abgekürzt.
+ */
+export function mitSatzpunkt(text: string): string {
+  return /[.!?…]$/.test(text) ? text : `${text}.`
+}
+
 export function datumKurz(wert: string | null | undefined): string {
   if (!wert) return ''
   const zeit = Date.parse(`${wert}T00:00:00Z`)
