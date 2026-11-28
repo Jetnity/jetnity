@@ -534,7 +534,7 @@ async function elementMessen(seite, element, ansichtId, kombiname, modus, sammle
 }
 
 /** Auswahlanzeige innerhalb einer echten Gruppe: das gewählte Mitglied gegen ein ungewähltes, so wie die App sie zeigt. */
-function gruppenUrteile(profile, ansichtId, kombiname, modus) {
+function gruppenUrteile(profile, ansichtId, kombiname) {
   const nachGruppe = new Map()
   for (const p of profile) {
     if (!p.gruppe || !p.profil) continue
@@ -657,7 +657,7 @@ async function echteAuswahl(seite, ansichtId, kombiname, sammler, grenze = 30) {
           sammler.push(eintragBauen({ ansichtId, kombiname, modus: 'echt', element: elementInfo, auswahl: `${gewaehlt ? 'gewaehlt' : 'ungewaehlt'} (echt, nach Klick auf «${gruppe.mitglieder.indexOf(mitglied) + 1}. Mitglied»)`, zustandName: ZUSTANDSNAME(elementInfo, interaktion), stand, messung, pixel, interaktion }))
         }
       }
-      sammler.push(...gruppenUrteile(profile, ansichtId, kombiname, 'echt').map((e) => ({ ...e, modus: 'echt' })))
+      sammler.push(...gruppenUrteile(profile, ansichtId, kombiname).map((e) => ({ ...e, modus: 'echt' })))
     }
   }
   return klicks
@@ -699,7 +699,7 @@ async function ansichtMessen(browserTyp, kombi, ansicht) {
       const inventar = await seite.evaluate(({ wurzel, grenze }) => window.__pra.inventar(wurzel, grenze), { wurzel: stand.wurzel, grenze: JE_SIGNATUR })
       const profile = []
       for (const element of inventar) await elementMessen(seite, element, ansicht.id, kombiname, 'erzwungen', eintraege, profile)
-      const gruppenErgebnis = gruppenUrteile(profile, ansicht.id, kombiname, 'gruppe')
+      const gruppenErgebnis = gruppenUrteile(profile, ansicht.id, kombiname)
       const mitGruppenurteil = new Set(gruppenErgebnis.map((e) => e.gruppe))
       for (let k = eintraege.length - 1; k >= 0; k -= 1) if (eintraege[k].wirkungslos && mitGruppenurteil.has(eintraege[k].gruppe)) eintraege.splice(k, 1)
       eintraege.push(...gruppenErgebnis)

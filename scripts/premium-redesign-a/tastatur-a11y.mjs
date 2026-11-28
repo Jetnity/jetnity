@@ -58,15 +58,6 @@ const fokusBeschreibung = (seite) =>
     return { tag: e.tagName.toLowerCase(), name, pressed: e.getAttribute('aria-pressed'), expanded: e.getAttribute('aria-expanded'), current: e.getAttribute('aria-current'), id: e.id || null }
   })
 
-async function tabBis(seite, pruefer, maximal = 40) {
-  for (let n = 0; n < maximal; n += 1) {
-    await seite.keyboard.press('Tab')
-    const beschreibung = await fokusBeschreibung(seite)
-    if (beschreibung && pruefer(beschreibung)) return beschreibung
-  }
-  return null
-}
-
 const innen = (seite, selektor) =>
   seite.evaluate((s) => {
     const wurzel = document.querySelector(s)
