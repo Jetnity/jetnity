@@ -14,6 +14,7 @@ import {
   type KartenVerbindung,
 } from '@/lib/maps/etappen-kartenauswahl'
 import { ortBestaetigen } from '@/lib/places/aktionen'
+import { massstabBreite } from '@/lib/trips/massstab-breite'
 
 type Leaflet = typeof import('leaflet')
 type Atlas = { L: Leaflet; map: LeafletMap }
@@ -161,7 +162,13 @@ export default function Etappenkarte({
         }).setView([18, 8], 2)
         const current = map
         L.control.zoom({ position: 'bottomright' }).addTo(current)
-        L.control.scale({ imperial: false, position: 'bottomleft', maxWidth: 80 }).addTo(current)
+        L.control
+          .scale({
+            imperial: false,
+            position: 'bottomleft',
+            maxWidth: massstabBreite(parseFloat(getComputedStyle(document.documentElement).fontSize), node.clientWidth),
+          })
+          .addTo(current)
         current.attributionControl.setPrefix(false)
         current.attributionControl.addAttribution('Kartengrundlage © Natural Earth')
         geografienAnzeigen({ L, map: current }, abort.signal)

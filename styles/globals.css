@@ -335,4 +335,81 @@ html {
     transform: translateY(0);
     box-shadow: 0 4px 12px rgb(var(--jet-brand-800) / 0.18);
   }
+
+  /* Auswahlfeld: Filter, Chip, Segment und Tab mit aria-pressed, aria-selected,
+     aria-checked oder aria-current. Ein Farbpaar je Zustand aus den semantischen
+     Tokens: ungewaehlt --muted-foreground auf der Flaeche (beim Zeigen auf
+     --muted), gewaehlt --primary-foreground auf --primary. Die Tokens wechseln
+     mit dem Thema der Shell, auch vor der Hydration; deshalb stehen hier weder
+     text-ink-*, text-brand-* noch bg-brand-*, die die Shell je Thema umfaerbt
+     und die gegen einen Zustands-Variantenstil (aria-pressed:text-white)
+     gewinnen koennen. Die Auswahl zeigt zusaetzlich ein Haekchen aus
+     CSS-Linien (nicht nur Farbe) und bleibt im Kontrastmodus sichtbar.
+     Mit .jet-wahl-kante bekommt ein einzelnes Feld eine Kontur mit mindestens
+     3 : 1 (--steuerkante). Groesse, Abstaende und Schrift setzt der Aufrufer. */
+  .jet-wahl {
+    --wahl-text: rgb(var(--muted-foreground));
+    --wahl-grund: transparent;
+    --wahl-kante: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45em;
+    border: 1px solid var(--wahl-kante);
+    border-radius: 9999px;
+    background-color: var(--wahl-grund);
+    color: var(--wahl-text);
+  }
+  .jet-wahl-kante {
+    --wahl-kante: var(--steuerkante, rgb(var(--muted-foreground)));
+  }
+  .jet-wahl:where(:hover):not(:disabled, [aria-disabled="true"]) {
+    --wahl-grund: rgb(var(--muted));
+  }
+  .jet-wahl:is([aria-pressed="true"], [aria-selected="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])),
+  .jet-wahl:is([aria-pressed="true"], [aria-selected="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])):hover {
+    --wahl-text: rgb(var(--primary-foreground));
+    --wahl-grund: rgb(var(--primary));
+    --wahl-kante: rgb(var(--primary));
+  }
+  .jet-wahl:is([aria-pressed="true"], [aria-selected="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"]))::before {
+    content: "";
+    flex: none;
+    width: 0.62em;
+    height: 0.34em;
+    margin-top: -0.12em;
+    border-left: 0.14em solid currentColor;
+    border-bottom: 0.14em solid currentColor;
+    transform: rotate(-45deg);
+  }
+  .jet-wahl:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Schaltfläche auf einem Foto (Optionen einer Reisekarte): helle Scheibe mit dunkler Tinte in jedem Thema. Die
+     Themenabbildung der Shell färbt text-brand-* im dunklen Thema hell, bg-white/95 blieb aber weiss: weisses Symbol
+     auf weisser Scheibe (1,02 : 1). Als eigene Klasse stehen Fläche und Tinte zusammen und folgen dem Thema nicht. */
+  .jet-bild-knopf {
+    border: 1px solid rgb(255 255 255 / 0.7);
+    background-color: rgb(var(--jet-surface-0) / 0.95);
+    color: rgb(var(--jet-brand-800));
+  }
+  @media (forced-colors: active) {
+    .jet-bild-knopf {
+      border-color: ButtonText;
+      background-color: ButtonFace;
+      color: ButtonText;
+    }
+  }
+  @media (forced-colors: active) {
+    .jet-wahl {
+      --wahl-kante: ButtonText;
+    }
+    .jet-wahl:is([aria-pressed="true"], [aria-selected="true"], [aria-checked="true"], [aria-current]:not([aria-current="false"])) {
+      forced-color-adjust: none;
+      --wahl-text: HighlightText;
+      --wahl-grund: Highlight;
+      --wahl-kante: Highlight;
+    }
+  }
 }

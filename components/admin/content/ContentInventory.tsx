@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import AdminSnapshotRefresh from '@/components/admin/AdminSnapshotRefresh'
 import { Seitenkopf } from '@/components/ui/seitenkopf'
 import { SUCHLAENGE, THEMEN, entdeckerHref } from '@/lib/inspiration/explorer-1/katalog'
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import type { ContentInventoryModel } from '@/lib/admin/content/inventory'
 
 const actionClass = 'inline-flex min-h-11 max-w-full items-center rounded-lg border border-border px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-muted'
@@ -51,7 +52,9 @@ export default function ContentInventory({ inventory, observedAt }: {
             <h2 className="text-lg font-semibold">Keine passende Reiseidee</h2>
             <p className="mt-2 text-sm text-muted-foreground">Für diese Kombination aus Suchtext und Thema gibt es keinen Treffer. Ändere die Suche oder setze die Filter zurück.</p>
           </div>
-        ) : entries.map((entry) => (
+        ) : entries.map((entry) => {
+          const bild = inspirationsbild(entry.image)
+          return (
           <article key={entry.placeId} className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6" aria-labelledby={`content-${entry.placeId}`}>
             <p className="text-sm text-muted-foreground">{entry.country}</p>
             <h2 id={`content-${entry.placeId}`} className="mt-1 text-xl font-semibold">{entry.name}</h2>
@@ -61,7 +64,7 @@ export default function ContentInventory({ inventory, observedAt }: {
             <dl className="mt-4 grid max-w-prose gap-4 text-sm">
               <div><dt className="font-medium">Beschreibung im Katalog</dt><dd className="mt-1 text-muted-foreground">{entry.beschreibung}</dd></div>
               <div><dt className="font-medium">Reiseidee für die Planung</dt><dd className="mt-1 text-muted-foreground">{entry.idea}</dd></div>
-              <div><dt className="font-medium">Inhaltstyp und Zuordnung</dt><dd className="mt-1 text-muted-foreground">Kuratierte Inspiration · {entry.placeId}</dd></div>
+              <div><dt className="font-medium">Inhaltstyp und Zuordnung</dt><dd className="mt-1 text-muted-foreground">Kuratierte Inspiration · {entry.placeId}{entry.zielId === entry.placeId ? '' : ` · Planungsziel ${entry.zielId}`}</dd></div>
             </dl>
             <div className="mt-5 flex flex-wrap gap-2">
               <a href={entdeckerHref({ q: entry.name, thema: 'alle' })} target="_blank" rel="noopener noreferrer" className={actionClass}
@@ -69,11 +72,15 @@ export default function ContentInventory({ inventory, observedAt }: {
               {entry.href ? <a href={entry.href} target="_blank" rel="noopener noreferrer" className={actionClass}
                 aria-label={`${entry.name}: Planung öffnen (neuer Tab)`}>Planung öffnen</a>
                 : <p className="text-sm text-muted-foreground">Für dieses Ziel ist kein bestätigter Planungslink verfügbar.</p>}
-              <a href={entry.image} target="_blank" rel="noopener noreferrer" className={actionClass}
-                aria-label={`${entry.name}: Katalogbild öffnen (neuer Tab)`}>Katalogbild öffnen</a>
+              {bild.neutral
+                ? <a href="/datenquellen#ki-illustrationen" target="_blank" rel="noopener noreferrer" className={actionClass}
+                  aria-label={`${entry.name}: Bildnachweis öffnen, Katalogbild nicht freigegeben (neuer Tab)`}>Bildnachweis öffnen</a>
+                : <a href={bild.src} target="_blank" rel="noopener noreferrer" className={actionClass}
+                  aria-label={`${entry.name}: Katalogbild öffnen (neuer Tab)`}>Katalogbild öffnen</a>}
             </div>
           </article>
-        ))}
+          )
+        })}
       </section>
 
       <section className="min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-6" aria-labelledby="content-evidence">

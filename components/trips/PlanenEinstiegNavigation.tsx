@@ -15,7 +15,6 @@ import * as React from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 
 import { scrollVerhalten } from '@/lib/formular/sicht'
-import { cn } from '@/lib/utils'
 
 export const PLANEN_IDEE_ZIEL_ID = 'reise-beschreiben'
 export const PLANEN_MANUELL_ZIEL_ID = 'manuell-planen'
@@ -175,7 +174,7 @@ export function PlanenWegWahl({ start, children }: { start: PlanenWeg; children:
 }
 
 const wegLinkClass =
-  'flex min-h-11 min-w-0 items-center justify-center rounded-full px-4 py-2 text-center text-meta font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20'
+  'jet-wahl min-h-11 min-w-0 px-4 py-2 text-center text-meta font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/20'
 
 /** Der Umschalter zwischen beiden Wegen. Links mit Anker, damit jeder Weg adressierbar bleibt. */
 export function PlanenManuellZeiger() {
@@ -184,8 +183,6 @@ export function PlanenManuellZeiger() {
     ereignis.preventDefault()
     waehlen(ziel, 'fokus')
   }
-  const klasse = (aktiv: boolean) =>
-    cn(wegLinkClass, aktiv ? 'bg-brand-800 text-white shadow-card' : 'text-brand-800 hover:bg-surface-100')
 
   return (
     <nav aria-label="Wege zur neuen Reise" className="min-w-0 max-w-full">
@@ -194,7 +191,7 @@ export function PlanenManuellZeiger() {
           href={`#${PLANEN_IDEE_ZIEL_ID}`}
           aria-current={weg === 'idee' ? 'true' : undefined}
           onClick={umschalten('idee')}
-          className={klasse(weg === 'idee')}
+          className={wegLinkClass}
         >
           In eigenen Worten
         </a>
@@ -202,7 +199,7 @@ export function PlanenManuellZeiger() {
           href={`#${PLANEN_MANUELL_ZIEL_ID}`}
           aria-current={weg === 'manuell' ? 'true' : undefined}
           onClick={umschalten('manuell')}
-          className={klasse(weg === 'manuell')}
+          className={wegLinkClass}
         >
           Schritt für Schritt
         </a>

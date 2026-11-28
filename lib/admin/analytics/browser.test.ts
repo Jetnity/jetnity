@@ -286,7 +286,10 @@ for (const width of [320, 390, 1280]) {
       const preview = page.getByRole('link', { name: 'Bali: Öffentliche Vorschau (neuer Tab)', exact: true })
       assert.equal(await preview.getAttribute('href'), '/entdecken?q=Bali')
       assert.equal(await preview.getAttribute('target'), '_blank')
-      assert.equal(await page.getByRole('link', { name: 'Bali: Katalogbild öffnen (neuer Tab)', exact: true }).getAttribute('href'), '/images/bali.jpg')
+      const image = page.getByRole('link', { name: 'Bali: Katalogbild öffnen (neuer Tab)', exact: true })
+      assert.equal(await image.getAttribute('href'), '/images/bali.png')
+      assert.equal(await page.getByRole('link', { name: 'Zermatt: Katalogbild öffnen (neuer Tab)', exact: true }).count(), 0)
+      assert.equal(await page.getByRole('link', { name: 'Zermatt: Bildnachweis öffnen, Katalogbild nicht freigegeben (neuer Tab)', exact: true }).getAttribute('href'), '/datenquellen#ki-illustrationen')
       const planning = new URL((await page.getByRole('link', { name: 'Bali: Planung öffnen (neuer Tab)', exact: true }).getAttribute('href'))!, origin)
       assert.equal(planning.searchParams.get('zielId'), 'geonames:1650535')
     } finally { await page.close() }

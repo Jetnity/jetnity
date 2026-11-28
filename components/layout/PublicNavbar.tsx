@@ -38,14 +38,14 @@
 // darf nicht als beendete Sitzung erscheinen (`standAusSitzung`).
 
 import * as React from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useFormStatus } from 'react-dom'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
 import GlobalesAbmeldenForm from '@/components/auth/GlobalesAbmeldenForm'
+import KopfLeiste from '@/components/layout/KopfLeiste'
 import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   HAUPTNAVIGATION,
@@ -143,34 +143,17 @@ export default function PublicNavbar() {
   const eintraege = sitzungseintraege(sitzung)
 
   return (
-    <header
-      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
-                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
-    >
-      <div className="mx-auto flex min-h-[72px] w-full max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-5 py-2 sm:px-8">
-        <Link
-          href="/"
-          aria-label="Jetnity Startseite"
-          className={cn(
-            '-mx-2 inline-flex min-h-11 min-w-0 max-w-full items-center px-2 md:px-1 lg:px-2',
-            FOKUS_RING,
-          )}
-        >
-          {/* Der Link trägt den Namen. Das Bild bleibt dekorativ, damit der Name nicht doppelt vorgelesen wird. */}
-          {/* 32px nur zwischen md und lg: dort sitzen Navigation und Sitzung in derselben 72px-Zeile. */}
-          <Image
-            src="/brand/jetnity-logo.png"
-            alt=""
-            width={384}
-            height={128}
-            priority
-            unoptimized
-            sizes="(min-width: 1024px) 144px, (min-width: 768px) 96px, 144px"
-            className="h-[48px] w-auto md:h-[32px] lg:h-[48px] max-w-full object-contain"
-            style={{ width: 'auto' }}
-          />
-        </Link>
-
+    <KopfLeiste
+      variante="oeffentlich"
+      menue={{
+        offen: mobileOpen,
+        steuert: MOBILE_NAV_ID,
+        onKlick: () => setMobileOpen((current) => !current),
+      }}
+      menueRef={menuKnopf}
+      className="sticky top-0 z-50 flex max-h-dvh flex-col border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
+      innenClassName="mx-auto flex min-h-[60px] w-full max-w-7xl flex-nowrap items-center justify-between gap-x-1 gap-y-2 px-2 py-1 sm:px-6 md:min-h-[72px] md:flex-wrap md:gap-x-3 md:py-2 lg:px-8"
+      mitte={
         <nav className="hidden min-w-0 flex-wrap items-center gap-1 md:flex" aria-label="Hauptnavigation">
           {HAUPTNAVIGATION.map((item) => (
             <Link
@@ -191,85 +174,56 @@ export default function PublicNavbar() {
             </Link>
           ))}
         </nav>
-
-        <div className="hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex">
-          {eintraege.filter((eintrag) => eintrag.art === 'link').map((eintrag) => (
-            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
-          ))}
-          <GastCreateLink
-            createHref="/planen"
-            createLabel="Reise planen"
-            className={cn(
-              'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full bg-brand-800 px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900',
-              FOKUS_RING,
-            )}
-          />
-        </div>
-
-        <button
-          ref={menuKnopf}
-          type="button"
-          aria-label={mobileOpen ? 'Menü schliessen' : 'Menü öffnen'}
-          aria-expanded={mobileOpen}
-          aria-controls={MOBILE_NAV_ID}
-          onClick={() => setMobileOpen((current) => !current)}
-          className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden',
-            FOKUS_RING,
-          )}
-        >
-          {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-        </button>
-      </div>
-
-      <nav
-        id={MOBILE_NAV_ID}
-        aria-label="Mobile Navigation"
-        hidden={!mobileOpen}
-        inert={!mobileOpen}
-        className="min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 [overflow-wrap:anywhere] md:hidden"
-      >
-        <div className="grid gap-1">
-          {HAUPTNAVIGATION.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              onClick={closeMobile}
-              className={cn(
-                'inline-flex min-h-11 items-center rounded-2xl min-w-0 max-w-full px-4 text-sm font-semibold',
-                FOKUS_RING,
-                item.href === '/entdecken' && isActive(item.href)
-                  ? 'bg-surface-100 text-brand-800'
-                  : 'text-ink-900 hover:bg-white',
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-        <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
-          {eintraege.map((eintrag) => (
-            <Sitzungseintrag
-              key={eintrag.label}
-              eintrag={eintrag}
-              mobil
-              onFertig={closeMobile}
-              onNachlesen={sitzungLesen}
-            />
-          ))}
-          <GastCreateLink
-            createHref="/planen"
-            createLabel="Reise planen"
-            onClick={closeMobile}
-            className={cn(
-              'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
-              FOKUS_RING,
-            )}
-          />
-        </div>
-      </nav>
-    </header>
+      }
+      darunter={
+          <nav
+            id={MOBILE_NAV_ID}
+            aria-label="Mobile Navigation"
+            hidden={!mobileOpen}
+            inert={!mobileOpen}
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 [overflow-wrap:anywhere] md:hidden"
+          >
+            <div className="grid gap-1">
+              {HAUPTNAVIGATION.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  onClick={closeMobile}
+                  className={cn(
+                    'inline-flex min-h-11 items-center rounded-2xl min-w-0 max-w-full px-4 text-sm font-semibold',
+                    FOKUS_RING,
+                    item.href === '/entdecken' && isActive(item.href)
+                      ? 'bg-surface-100 text-brand-800'
+                      : 'text-ink-900 hover:bg-white',
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-3 grid grid-cols-1 gap-2 border-t border-line-200 pt-4">
+              {eintraege.map((eintrag) => (
+                <Sitzungseintrag
+                  key={eintrag.label}
+                  eintrag={eintrag}
+                  onFertig={closeMobile}
+                  onNachlesen={sitzungLesen}
+                />
+              ))}
+              <GastCreateLink
+                createHref="/planen"
+                createLabel="Reise planen"
+                onClick={closeMobile}
+                className={cn(
+                  'flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white',
+                  FOKUS_RING,
+                )}
+              />
+            </div>
+          </nav>
+      }
+    />
   )
 }
 
@@ -282,17 +236,15 @@ export default function PublicNavbar() {
  */
 function Sitzungseintrag({
   eintrag,
-  mobil = false,
   onFertig,
   onNachlesen,
 }: {
   eintrag: Navigationseintrag
-  mobil?: boolean
   onFertig?: () => void
   onNachlesen: () => void
 }) {
   if (eintrag.art === 'link') {
-    return mobil ? (
+    return (
       <Link
         href={eintrag.href}
         onClick={onFertig}
@@ -303,30 +255,12 @@ function Sitzungseintrag({
       >
         {eintrag.label}
       </Link>
-    ) : (
-      <Link
-        href={eintrag.href}
-        className={cn(
-          'inline-flex min-h-11 min-w-0 items-center whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
-          FOKUS_RING,
-        )}
-      >
-        {eintrag.label}
-      </Link>
     )
   }
 
   return (
-    <GlobalesAbmeldenForm
-      action={signOutAction}
-      className={mobil ? undefined : 'flex flex-col items-end'}
-      fehlerClassName={
-        mobil
-          ? 'text-xs font-medium text-red-800'
-          : 'max-w-[14rem] text-right text-xs font-medium text-red-800'
-      }
-    >
-      <AbmeldenKnopf label={eintrag.label} mobil={mobil} onNachlesen={onNachlesen} />
+    <GlobalesAbmeldenForm action={signOutAction} fehlerClassName="text-xs font-medium text-red-800">
+      <AbmeldenKnopf label={eintrag.label} onNachlesen={onNachlesen} />
     </GlobalesAbmeldenForm>
   )
 }
@@ -342,11 +276,9 @@ function Sitzungseintrag({
  */
 function AbmeldenKnopf({
   label,
-  mobil,
   onNachlesen,
 }: {
   label: string
-  mobil: boolean
   onNachlesen: () => void
 }) {
   const { pending } = useFormStatus()
@@ -366,17 +298,10 @@ function AbmeldenKnopf({
   return (
     <button
       type="submit"
-      className={
-        mobil
-          ? cn(
-              'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
-              FOKUS_RING,
-            )
-          : cn(
-              'inline-flex min-h-11 min-w-0 items-center gap-2 whitespace-normal rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white',
-              FOKUS_RING,
-            )
-      }
+      className={cn(
+        'flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800',
+        FOKUS_RING,
+      )}
     >
       <LogOut className="h-4 w-4" aria-hidden="true" />
       {label}

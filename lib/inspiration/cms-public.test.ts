@@ -16,6 +16,13 @@ const idea = 'Eine bestätigte redaktionelle Reiseidee mit eigener Planung'
 const item = { entryId: CMS_TEST_ENTRY, revision: '1', publishedAt: CMS_TEST_AT,
   content: { ...fixtureRevision('1').content, beschreibung: description, idea, themen: ['stadt-kultur'] } }
 const result: CmsPortResult = { ok: true, value: { schema: 1, items: [item] } }
+const ZERMATT_REDAKTION = 'geonames:2657915'
+const ZERMATT_ZIEL = 'geonames:2657928'
+const zermattIdea = 'Eine veröffentlichte Zermatt-Reiseidee mit eigener Planung'
+const zermattItem = { entryId: ZERMATT_REDAKTION, revision: '1', publishedAt: CMS_TEST_AT,
+  content: { entryId: ZERMATT_REDAKTION, locale: 'de', name: 'Zermatt', country: 'Schweiz', image: '/images/zermatt.jpg',
+    beschreibung: 'Berge, Wandern und Ruhe in einem veröffentlichten Text.', idea: zermattIdea, themen: ['natur'] } }
+const zermattResult: CmsPortResult = { ok: true, value: { schema: 1, items: [zermattItem] } }
 type Fixture = { enabled: boolean; publicPreview?: boolean; calls: number; connections: number; result: CmsPortResult }
 type Pages = { HomePage(): Promise<ReactNode>; EntdeckenSeite(props: { searchParams?: Promise<Record<string, string>> }): Promise<ReactNode> }
 let pages: (fixture: Fixture) => Pages
@@ -71,6 +78,55 @@ test('published copy, themes and planning handoff replace only the selected conf
   assert.equal(entdeckerTreffer({ q: 'Kulturwege', thema: 'stadt-kultur' }, published.ziele).length, 1)
   assert.equal(entdeckerTreffer({ q: '', thema: 'strand' }, published.ziele).length, 0)
   assert.equal(entdeckerTreffer({ q: 'Lissabon', thema: 'alle' }, published.ziele).length, 0)
+})
+
+test('a published Zermatt revision keeps the persisted legacy reference but hands off with the canonical GeoNames place', () => {
+  const published = cmsPublishedInspiration(zermattResult)
+  assert.equal(published.status, 'published'); assert.equal(published.ziele.length, 1)
+  const ziel = published.ziele[0]
+  assert.equal(ziel.placeId, ZERMATT_REDAKTION); assert.equal(ziel.zielId, ZERMATT_ZIEL)
+  assert.equal(ziel.image, '/images/zermatt.jpg'); assert.equal(ziel.idea, zermattIdea)
+  assert.ok(ziel.href!.includes('zielId=geonames%3A2657928'))
+  const href = new URL(ziel.href!, 'https://example.test')
+  assert.equal(href.searchParams.get('zielId'), ZERMATT_ZIEL); assert.equal(href.searchParams.get('idee'), zermattIdea)
+  assert.doesNotMatch(ziel.href!, /2657915/)
+  assert.equal(cmsPublishedInspiration({ ok: true, value: { schema: 1, items: [{ ...zermattItem, content: { ...zermattItem.content, entryId: ZERMATT_ZIEL } }] } }).status, 'unavailable',
+    'die Zielkennung ist kein CMS-Eintrag und wird nicht gleichgesetzt')
+})
+
+test('the static catalogue and every page state hand Zermatt off with 2657928 and never with the Zofingen identity', async () => {
+  const zermatt = ENTDECKEN_ZIELE.find(ziel => ziel.name === 'Zermatt')!
+  assert.equal(zermatt.placeId, ZERMATT_REDAKTION); assert.equal(zermatt.zielId, ZERMATT_ZIEL)
+  assert.ok(zermatt.href!.includes('zielId=geonames%3A2657928')); assert.doesNotMatch(zermatt.href!, /2657915/)
+  for (const ziel of ENTDECKEN_ZIELE.filter(row => row.name !== 'Zermatt')) {
+    assert.equal(new URL(ziel.href!, 'https://example.test').searchParams.get('zielId'), ziel.placeId, ziel.name)
+  }
+  const states: Array<{ label: string; fixture: Fixture; status: string }> = [
+    { label: 'published', fixture: { enabled: true, calls: 0, connections: 0, result: zermattResult }, status: 'supplemented' },
+    { label: 'empty', fixture: { enabled: true, calls: 0, connections: 0, result: { ok: true, value: { schema: 1, items: [] } } }, status: 'supplemented' },
+    { label: 'unavailable', fixture: { enabled: true, calls: 0, connections: 0, result: { ok: false, code: 'unavailable' } }, status: 'fallback' },
+    { label: 'closed gate', fixture: { enabled: false, calls: 0, connections: 0, result: { ok: false, code: 'unavailable' } }, status: 'static' },
+  ]
+  for (const { label, fixture, status } of states) {
+    const entry = pages(fixture)
+    const home = find(await entry.HomePage(), 'HomeInspiration')
+    const explorer = find(await entry.EntdeckenSeite({}), 'InspirationExplorer')
+    assert.equal(home?.status, status, label); assert.equal(explorer?.status, status, label)
+    for (const [stelle, ziele] of [['home', home?.ziele], ['explorer', explorer?.ziele]] as const) {
+      const rows = ziele as Array<{ name: string; href: string; image: string }>
+      assert.equal(rows.length, 4, `${label} ${stelle}: Zermatt kommt genau einmal vor`)
+      const links = rows.filter(row => row.name === 'Zermatt')
+      assert.equal(links.length, 1, `${label} ${stelle}`)
+      const url = new URL(links[0].href, 'https://example.test')
+      assert.equal(url.searchParams.get('zielId'), ZERMATT_ZIEL, `${label} ${stelle}`)
+      assert.equal(links[0].image, '/images/zermatt.jpg', `${label} ${stelle}: die CMS-Referenz behält den alten Bildpfad`)
+      for (const row of rows) assert.doesNotMatch(row.href, /zielId=geonames%3A2657915/, `${label} ${stelle} ${row.name}`)
+    }
+    if (label === 'published') {
+      const rows = home?.ziele as Array<{ name: string; href: string }>
+      assert.equal(new URL(rows.find(row => row.name === 'Zermatt')!.href, 'https://example.test').searchParams.get('idee'), zermattIdea)
+    }
+  }
 })
 
 test('unavailable, untrusted and empty published states remain distinct without static resurrection', () => {
@@ -158,7 +214,9 @@ test('supplemented and fallback components show useful cards, details and honest
   const home = renderToStaticMarkup(createElement(HomeInspiration, {
     ziele: ENTDECKEN_ZIELE.map(ziel => ({ ...ziel, href: ziel.href! })), status: 'fallback',
   }))
-  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /bali\.jpg/)
+  assert.match(home, /vorübergehend nicht verfügbar/); assert.match(home, /reiseatlas\.webp/)
+  assert.match(home, /bali\.png/); assert.doesNotMatch(home, /bali\.jpg/); assert.match(home, /data-illustrationshinweis/); assert.match(home, /KI-Illustration: Reisterrassen und Palmen im Morgenlicht, Motiv Bali/)
+  assert.doesNotMatch(home, /zermatt[\w-]*\.(?:jpg|png)/)
 })
 
 test('actual public components render published copy and honest absence in German without adding required caller props', () => {
@@ -169,8 +227,9 @@ test('actual public components render published copy and honest absence in Germa
   const homeGoals = published.ziele.map(row => ({ ...row, href: row.href! }))
   const home = renderToStaticMarkup(createElement(HomeInspiration, { ziele: homeGoals, status: published.status }))
   assert.ok(home.includes('lang="de"')); assert.ok(home.includes('Bali')); assert.ok(!home.includes('Lissabon'))
+  assert.match(home, /bali\.png/); assert.match(home, /data-illustrationshinweis/); assert.ok(!home.includes('lisbon.png'))
   const unavailable = renderToStaticMarkup(createElement(HomeInspiration, { ziele: homeGoals, status: 'unavailable' }))
-  assert.match(unavailable, /Reiseideen derzeit nicht verfügbar/); assert.ok(!unavailable.includes('/images/bali.jpg'))
+  assert.match(unavailable, /Reiseideen derzeit nicht verfügbar/); assert.ok(!unavailable.includes('/images/bali.png') && !unavailable.includes('/images/bali.jpg'))
   const empty = renderToStaticMarkup(createElement(InspirationExplorer, { initial: { q: '', thema: 'alle' }, ziele: [], status: 'published' }))
   assert.match(empty, /keine Reiseideen veröffentlicht/); assert.doesNotMatch(empty, /Noch keine passende Idee/)
   assert.doesNotThrow(() => renderToStaticMarkup(createElement(InspirationExplorer, { initial: { q: '', thema: 'alle' } })))

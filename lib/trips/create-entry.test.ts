@@ -145,6 +145,7 @@ describe('TW6-TL-01 – Session-feste generische Create-CTAs', () => {
 
   test('Navbar, Footer, Homepage, 404 und /reisen teilen dieselbe Semantik', () => {
     const navbar = quelle('../../components/layout/PublicNavbar.tsx')
+    const kopf = quelle('../../components/layout/KopfLeiste.tsx')
     const footer = quelle('../../components/layout/Footer.tsx')
     const start = quelle('../../app/(public)/page.tsx')
     const notFound = quelle('../../components/layout/NotFoundView.tsx')
@@ -154,7 +155,10 @@ describe('TW6-TL-01 – Session-feste generische Create-CTAs', () => {
 
     assert.match(navbar, /GastCreateLink/)
     assert.equal(navbar.includes('nurCreate'), false)
-    assert.equal((navbar.match(/<GastCreateLink/g) ?? []).length, 2)
+    // PR A: Das «Reise planen» der Zeile kommt aus dem gemeinsamen Baustein, das des Mobile-Menüs bleibt in der Leiste.
+    assert.equal((navbar.match(/<GastCreateLink/g) ?? []).length, 1)
+    assert.equal((kopf.match(/<GastCreateLink/g) ?? []).length, 1)
+    assert.match(navbar, /<KopfLeiste\s+variante="oeffentlich"/)
 
     assert.match(footer, /GastCreateLink/)
     assert.match(start, /GastCreateLink/)
@@ -169,7 +173,8 @@ describe('TW6-TL-01 – Session-feste generische Create-CTAs', () => {
     const rahmen = quelle('../../components/workspace/WorkspaceShell.tsx')
     assert.match(rahmenwahl, /pathname === '\/reisen'/)
     assert.match(rahmenwahl, /if \(workspace\) return <WorkspaceShell/)
-    assert.match(rahmen, /<header[\s\S]*?<GastCreateLink createLabel="Reise planen"[^>]*>[\s\S]*?<\/GastCreateLink>[\s\S]*?<\/header>/)
+    assert.match(kopf, /<header[\s\S]*?<GastCreateLink createLabel="Reise planen"[^>]*>[\s\S]*?<\/GastCreateLink>[\s\S]*?<\/header>/)
+    assert.match(rahmen, /<KopfLeiste\s+variante="arbeitsbereich"/)
     assert.match(link, /createHref = '\/planen'/)
     assert.doesNotMatch(reisen, /Neue Reise|<GastCreateLink/)
     assert.match(gastReisen, /createEinstiegFuerGast|gastReisenPrimaerCta/)

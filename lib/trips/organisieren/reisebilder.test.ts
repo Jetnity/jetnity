@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { reiseFoto } from './katalog'
+import { nenntNurLand } from './reisebilder'
 
 const paris = { name: 'Paris', countryCode: 'FR', placeId: 'geonames:2988507' }
 
@@ -36,5 +37,26 @@ describe('Einheitliche zielgebundene Reisefotos', () => {
     assert.equal(bilder[0], bilder[2])
     assert.notEqual(bilder[0], bilder[1])
     assert.equal(reiseFoto(route[1], true), bilder[1])
+  })
+
+  it('zeigt für ein Land ohne konkreten Ort kein Stadtfoto', () => {
+    const neutral = '/images/organisieren/reiseatlas.webp'
+    const thailand = { name: 'Thailand', countryCode: 'TH', placeId: 'geonames:1605651' }
+    const bangkok = { name: 'Bangkok', countryCode: 'TH', placeId: 'geonames:1609350' }
+    assert.equal(reiseFoto(thailand), neutral)
+    assert.equal(reiseFoto({ ...thailand, placeId: null }), neutral)
+    assert.equal(reiseFoto({ name: ' THAILAND ', countryCode: 'TH', placeId: null }), neutral)
+    assert.notEqual(reiseFoto(bangkok), neutral)
+  })
+
+  it('erkennt eine reine Länderetappe nur mit passendem Land', () => {
+    assert.equal(nenntNurLand({ name: 'Thailand', countryCode: 'TH', placeId: null }), true)
+    assert.equal(nenntNurLand({ name: 'Switzerland', countryCode: 'CH', placeId: null }), true)
+    assert.equal(nenntNurLand({ name: 'Schweiz', countryCode: 'CH', placeId: null }), true)
+    assert.equal(nenntNurLand({ name: 'Thailand', countryCode: 'FR', placeId: null }), false)
+    assert.equal(nenntNurLand({ name: 'Thailand', countryCode: null, placeId: null }), false)
+    assert.equal(nenntNurLand({ name: 'Bangkok', countryCode: 'TH', placeId: null }), false)
+    assert.equal(nenntNurLand({ name: '  ', countryCode: 'TH', placeId: null }), false)
+    assert.equal(nenntNurLand(undefined), false)
   })
 })

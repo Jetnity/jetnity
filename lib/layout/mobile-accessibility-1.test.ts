@@ -36,16 +36,20 @@ describe('Mobile Accessibility 1 – Skip-Link und Inhaltsziel', () => {
 
 describe('Mobile Accessibility 1 – oeffentliche Leiste', () => {
   const navbar = quelle('../../components/layout/PublicNavbar.tsx')
+  // PR A: Menüknopf und Symbole stehen im gemeinsamen Kopfbaustein.
+  const kopf = quelle('../../components/layout/KopfLeiste.tsx')
 
   test('Mobile-Menue ist ein Disclosure mit Escape und Fokusrueckgabe', () => {
-    assert.match(navbar, /aria-controls=\{MOBILE_NAV_ID\}/)
-    assert.match(navbar, /aria-expanded=\{mobileOpen\}/)
+    assert.match(navbar, /steuert: MOBILE_NAV_ID/)
+    assert.match(navbar, /offen: mobileOpen/)
+    assert.match(kopf, /aria-controls=\{menue\.steuert\}/)
+    assert.match(kopf, /aria-expanded=\{menue\.offen\}/)
     assert.match(navbar, /hidden=\{!mobileOpen\}/)
     assert.match(navbar, /inert=\{!mobileOpen\}/)
     assert.match(navbar, /key !== 'Escape'/)
     assert.match(navbar, /menuKnopf\.current\?\.focus/)
-    assert.match(navbar, /<X className="h-5 w-5" aria-hidden="true" \/>/)
-    assert.match(navbar, /<Menu className="h-5 w-5" aria-hidden="true" \/>/)
+    assert.match(kopf, /<X className="h-5 w-5" aria-hidden="true" \/>/)
+    assert.match(kopf, /<Menu className="h-5 w-5" aria-hidden="true" \/>/)
   })
 
   test('kritische Mobile-Ziele bleiben mindestens 44 px und sichtbar fokussierbar', () => {

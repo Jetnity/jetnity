@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import InspirationExplorer from '@/components/inspiration/explorer-1/InspirationExplorer'
+import { Bildnachweisliste } from '@/components/inspiration/Bildnachweisliste'
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { entdeckerParams } from '@/lib/inspiration/explorer-1/katalog'
 import { publicInspiration } from '@/lib/inspiration/cms-public-server'
 import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
@@ -34,6 +36,11 @@ export default async function EntdeckenSeite({ searchParams }: {
         </header>
         <InspirationExplorer initial={initial} ziele={inspiration.ziele} status={inspiration.status} />
         <p className="mt-8 max-w-prose text-meta text-muted-foreground">Du nimmst das Ziel und eine bearbeitbare Reiseidee mit. Die Planung prüft den Ort erneut. Reisedaten, Startort und Reisende bestimmst du selbst.</p>
+        <Bildnachweisliste
+          id="bildnachweise"
+          eintraege={inspiration.ziele.map((ziel) => ({ bezug: ziel.name, nachweis: inspirationsbild(ziel.image).nachweis }))}
+          className="mt-10 max-w-prose text-muted-foreground"
+        />
       </div>
     </main>
   )

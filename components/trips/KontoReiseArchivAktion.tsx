@@ -79,7 +79,7 @@ export default function KontoReiseArchivAktion({
           }
         }}
       >
-        <summary aria-label={`Optionen für ${reise.title}`} className="ml-auto grid h-11 w-11 cursor-pointer list-none place-items-center rounded-full border border-white/70 bg-white/95 text-brand-800 shadow-sm [&::-webkit-details-marker]:hidden"><Ellipsis className="h-5 w-5" aria-hidden="true" /></summary>
+        <summary aria-label={`Optionen für ${reise.title}`} className="jet-bild-knopf ml-auto grid h-11 w-11 cursor-pointer list-none place-items-center rounded-full shadow-sm [&::-webkit-details-marker]:hidden"><Ellipsis className="h-5 w-5" aria-hidden="true" /></summary>
         <button
           type="button"
           data-reisen-aktion={archiviert ? 'wiederherstellen' : 'archivieren'}

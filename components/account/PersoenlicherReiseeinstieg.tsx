@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, MapPinned, Plus } from 'lucide-react'
 
 import { naechsteReiseAus } from '@/lib/account/naechste-reise'
-import { etappenZeitraumAnzeigen } from '@/lib/trips/datum-anzeige'
+import { etappenZeitraumAnzeigen, mitSatzpunkt } from '@/lib/trips/datum-anzeige'
 import type { TripSummary } from '@/types/trips'
 
 /** The account landing never fetches a second trip list. Supplied rows are an already-read collection. */
@@ -33,7 +33,7 @@ export default function PersoenlicherReiseeinstieg({
           </h2>
           <p className="mt-3 max-w-prose text-sm leading-6 text-white/90">
             {fortsetzung
-              ? `Hier hast du zuletzt weitergeplant${zeitraum ? ` · ${zeitraum}` : ''}. Öffne deinen Reiseplan und mache dort weiter.`
+              ? `${mitSatzpunkt(`Hier hast du zuletzt weitergeplant${zeitraum ? ` · ${zeitraum}` : ''}`)} Öffne deinen Reiseplan und mache dort weiter.`
               : erstesMal
                 ? 'Wähle ein Ziel und deinen Zeitraum. Danach bringst du Route, Unterkunft und Erlebnisse in deinem Reiseplan zusammen.'
                 : nurArchiv

@@ -3,7 +3,6 @@
 import type { ComponentType, RefObject } from 'react'
 import { ArrowRightLeft, BedDouble, ChevronRight, Compass, PenLine, Plane, Sparkles } from 'lucide-react'
 
-import { useKopfDichte } from '@/lib/trips/ux-u1a3-header-density-1-client'
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
 import { buchungZeittext } from '@/lib/account/buchungen'
@@ -35,73 +34,71 @@ const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], Comp
   mobilitaet: ArrowRightLeft,
 }
 
-export function TripWorkspaceAktionen({
+const AENDERUNG_BESCHREIBUNG_ID = 'reise-aenderung-beschreibung'
+const BEGLEITER_BESCHREIBUNG_ID = 'reisebegleiter-beschreibung'
+
+/** «Reise ändern» im Reisekopf. Öffnet und schliesst den bestehenden Änderungsweg. */
+export function ReiseAendernKnopf({
   aenderungOffen,
-  begleiterOffen,
-  begleiterVorhanden,
   onAenderung,
-  onBegleiter,
   aenderungKnopfRef,
-  begleiterKnopfRef,
 }: {
   aenderungOffen: boolean
-  begleiterOffen: boolean
-  /** Ohne Assistant-Fläche gibt es auch keinen Knopf dafür. */
-  begleiterVorhanden: boolean
   onAenderung: () => void
-  onBegleiter: () => void
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
+}) {
+  return (
+    <>
+      <button
+        ref={aenderungKnopfRef}
+        type="button"
+        aria-expanded={aenderungOffen}
+        aria-controls="reise-aenderung"
+        aria-describedby={AENDERUNG_BESCHREIBUNG_ID}
+        onClick={onAenderung}
+        className="reise-aendern-knopf min-h-11"
+      >
+        <PenLine aria-hidden="true" />
+        <span>{aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}</span>
+      </button>
+      <span id={AENDERUNG_BESCHREIBUNG_ID} className="sr-only">
+        Grunddaten, Zeitraum und Etappen direkt oder in eigenen Worten anpassen.
+      </span>
+    </>
+  )
+}
+
+/** «Begleiter» in der Kopfzeile. Ohne Assistant-Fläche gibt es auch keinen Knopf dafür. */
+export function TripWorkspaceBegleiter({
+  begleiterOffen,
+  begleiterVorhanden,
+  onBegleiter,
+  begleiterKnopfRef,
+}: {
+  begleiterOffen: boolean
+  begleiterVorhanden: boolean
+  onBegleiter: () => void
   begleiterKnopfRef: RefObject<HTMLButtonElement | null>
 }) {
-  const dichte = useKopfDichte()
-
-  return (
-    <div
-      data-workspace-aktionen
-      data-u1a3-bereit={dichte.bereit ? '1' : '0'}
-      data-u1a3-dichte={dichte.zeile ? 'zeile' : 'gestapelt'}
-      className={cn('mt-2 min-w-0 max-w-full lg:flex lg:items-center lg:gap-3', dichte.gross && 'lg:block')}
-    >
-      <div className={cn('grid min-w-0 gap-2', begleiterVorhanden && 'sm:grid-cols-2', !dichte.gross && 'lg:shrink-0')}>
-        <button
-          ref={aenderungKnopfRef}
-          type="button"
-          aria-expanded={aenderungOffen}
-          aria-controls="reise-aenderung"
-          onClick={onAenderung}
-          className={cn(
-            'inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-            dichte.gross ? 'w-full' : 'w-full lg:w-auto',
-          )}
-        >
-          <PenLine className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span className="workspace-aktion-text">{aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}</span>
-        </button>
-        {begleiterVorhanden ? (
-          <button
-            ref={begleiterKnopfRef}
-            type="button"
-            aria-expanded={begleiterOffen}
-            aria-controls="reisebegleiter"
-            onClick={onBegleiter}
-            className={cn(
-              'inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-800 bg-white px-4 text-sm font-semibold text-brand-800 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-              dichte.gross ? 'w-full' : 'w-full lg:w-auto',
-            )}
-          >
-            <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span className="workspace-aktion-text">{begleiterOffen ? 'Reisebegleiter schliessen' : 'Reisebegleiter fragen'}</span>
-          </button>
-        ) : null}
-      </div>
-      <p className={cn('text-xs leading-4 text-ink-700', dichte.gross ? 'mt-1' : 'mt-1 lg:mt-0 lg:min-w-0 lg:flex-1')}>
-        Grunddaten, Zeitraum und Etappen direkt oder in eigenen Worten anpassen.
-        {begleiterVorhanden
-          ? ' Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und ändert nichts.'
-          : null}
-      </p>
-    </div>
-  )
+  return begleiterVorhanden ? (
+    <>
+      <button
+        ref={begleiterKnopfRef}
+        type="button"
+        aria-expanded={begleiterOffen}
+        aria-controls="reisebegleiter"
+        aria-describedby={BEGLEITER_BESCHREIBUNG_ID}
+        onClick={onBegleiter}
+        className="kopf-begleiter min-h-11"
+      >
+        <Compass aria-hidden="true" />
+        <span>Begleiter</span>
+      </button>
+      <span id={BEGLEITER_BESCHREIBUNG_ID} className="sr-only">
+        Eine Frage zu dieser Reise stellen. Der Reisebegleiter antwortet als Vorschlag und ändert nichts.
+      </span>
+    </>
+  ) : null
 }
 
 export default function TripWorkspaceUebersicht({
@@ -118,8 +115,6 @@ export default function TripWorkspaceUebersicht({
   onRoute,
   onItem,
   kosten,
-  kostenAnsteuern = false,
-  onKostenAngesteuert,
 }: {
   reise: Trip
   ungeplantePunkte?: readonly TripItem[]
@@ -133,10 +128,8 @@ export default function TripWorkspaceUebersicht({
   workspace?: boolean
   onRoute?: (tagId?: string) => void
   onItem?: (itemId: string) => void
-  /** Vom Arbeitsbereich schon berechnet, weil auch die Kostenleiste es zeigt. */
+  /** Vom Arbeitsbereich berechnet, damit die Übersicht dieselbe Ableitung zeigt. */
   kosten?: Kostenbild
-  kostenAnsteuern?: boolean
-  onKostenAngesteuert?: () => void
 }) {
   const praeferenzen = workspacePraeferenzSicht(reise)
   // Im Arbeitsbereich stehen gebuchte Punkte im Kostenbild, mit oder ohne Preis.
@@ -170,7 +163,7 @@ export default function TripWorkspaceUebersicht({
 
       {workspace && onRoute ? <WorkspaceRouteOverview reise={reise} ungeplantePunkte={ungeplantePunkte} onRoute={onRoute} /> : null}
 
-      {bild ? <TripWorkspaceKosten bild={bild} onItem={onItem} ansteuern={kostenAnsteuern} onAngesteuert={onKostenAngesteuert} /> : null}
+      {bild ? <TripWorkspaceKosten bild={bild} onItem={onItem} /> : null}
 
       <div className={workspace ? 'grid min-w-0 content-start gap-3 xl:gap-5' : 'contents'}>
         {einreiseZeilen.length > 0 ? <EinreiseUebersichtZeilen zeilen={einreiseZeilen} onOeffnen={onEinreise} /> : null}

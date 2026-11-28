@@ -76,7 +76,7 @@ import Organisieren from './organisieren/Organisieren'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceEditSurface from '@/components/trips/TripWorkspaceEditSurface'
 import WorkspaceTripChrome, { WorkspacePortal } from '@/components/workspace/WorkspaceTripChrome'
-import { kostenbild, kostenZeile } from '@/lib/trips/kostenbild'
+import { kostenbild } from '@/lib/trips/kostenbild'
 import { useWorkspaceShell } from '@/components/workspace/WorkspaceContext'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
@@ -91,7 +91,7 @@ import {
   type TripTravellerIntakeSteuerung,
 } from '@/components/trips/useTripTravellerSnapshotLifecycle'
 import type { ReadinessAktualisierung } from '@/lib/readiness/personal-preparation-workflow'
-import TripWorkspaceUebersicht, { TripWorkspaceAktionen } from '@/components/trips/TripWorkspaceUebersicht'
+import TripWorkspaceUebersicht, { ReiseAendernKnopf, TripWorkspaceBegleiter } from '@/components/trips/TripWorkspaceUebersicht'
 import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
 import {
   WORKSPACE_QUERY_KEYS,
@@ -1059,8 +1059,6 @@ export default function TripWorkspace({
   const begleiterSichtbar = begleiterIstSichtbar(begleiterOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
   const kosten = React.useMemo(() => kostenbild(reise, ungeplantePunkte), [reise, ungeplantePunkte])
-  const [kostenAnsteuern, setKostenAnsteuern] = React.useState(false)
-  const kostenAngesteuert = React.useCallback(() => setKostenAnsteuern(false), [])
   const destinationEssentials = destinationEssentialsAbleiten({
     reise,
     officialEvaluations,
@@ -1332,6 +1330,13 @@ export default function TripWorkspace({
       uebersicht={uebersicht}
       kopfzeile={kopfzeile}
       reiseoptionen={reiseoptionen}
+      aktion={(
+        <ReiseAendernKnopf
+          aenderungOffen={aenderungOffen}
+          onAenderung={aenderungOeffnen}
+          aenderungKnopfRef={aenderungKnopfRef}
+        />
+      )}
       workspace={Boolean(shell)}
       uebersichtAktiv={modusBereit && modus.ansicht === 'uebersicht'}
       ansicht={modus.ansicht}
@@ -1343,7 +1348,7 @@ export default function TripWorkspace({
       data-workspace-premium="3"
       data-reisesuche={organisierenStart || undefined}
       data-unified-workspace={shell ? "true" : undefined}
-      className="min-h-screen bg-surface-75 pb-[max(5rem,var(--ux-u1a-nav-offset,0px))] [overflow-anchor:none]"
+      className={`bg-surface-75 [overflow-anchor:none] ${shell ? '' : 'min-h-screen pb-[max(5rem,var(--ux-u1a-nav-offset,0px))]'}`}
     >
       <div className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-10">
         <Link
@@ -1353,8 +1358,6 @@ export default function TripWorkspace({
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Meine Reisen
         </Link>
-
-        <WorkspacePortal slot="title"><span>{organisierenStart ? 'Reiseplanung › Organisieren' : reise.title}</span></WorkspacePortal>
 
         {modusBereit ? (
           <div className={cn('workspace-trip-kopf', organisierenStart && 'org-wrap pt-5 sm:pt-7')}>
@@ -1371,22 +1374,12 @@ export default function TripWorkspace({
               kompakt={kompakt}
               detailOffen={detailOffen}
               onWechsel={onModus}
-              kostenLeiste={!detailOffen && (kosten.summen.length > 0 || kosten.budget) ? {
-                text: kostenZeile(kosten),
-                onOeffnen: () => {
-                  if (modus.ansicht !== 'uebersicht') onModus('uebersicht', false)
-                  setKostenAnsteuern(true)
-                },
-              } : null}
             />
             <div data-workspace-ansicht={modus.ansicht} data-workspace-bereich={modus.bereich ?? ''}>
-              <WorkspacePortal slot="actions"><TripWorkspaceAktionen
-                aenderungOffen={aenderungOffen}
+              <WorkspacePortal><TripWorkspaceBegleiter
                 begleiterOffen={begleiterOffen}
                 begleiterVorhanden={begleiter != null}
-                onAenderung={aenderungOeffnen}
                 onBegleiter={begleiterOeffnen}
-                aenderungKnopfRef={aenderungKnopfRef}
                 begleiterKnopfRef={begleiterKnopfRef}
               /></WorkspacePortal>
               {aenderungFeld}
@@ -1435,8 +1428,6 @@ export default function TripWorkspace({
                 onAttention={onAttention}
                 workspace={Boolean(shell)}
                 kosten={kosten}
-                kostenAnsteuern={kostenAnsteuern}
-                onKostenAngesteuert={kostenAngesteuert}
                 onRoute={(tagId) => {
                   modusTastaturRef.current = true
                   modusSetzen({ ansicht: 'plan', bereich: null, ...(tagId && { tagId }), urlAnpassen: false }, 'push')

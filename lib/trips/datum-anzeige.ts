@@ -43,6 +43,26 @@ function tagLesen(wert: string | null | undefined): { iso: string; jahr: number;
   return { iso: wert, jahr, zeit }
 }
 
+/**
+ * Fortlaufende Tageszahl eines gültigen Kalendertags (UTC-Mitternacht / 86 400 000).
+ * Nur zum Zählen von Tagen zwischen zwei Datumswerten, nie als Uhrzeit. `null`,
+ * wenn der Wert kein gültiger Kalendertag ist.
+ */
+export function kalendertagNummer(wert: string | null | undefined): number | null {
+  const tag = tagLesen(wert)
+  return tag ? Math.round(tag.zeit.getTime() / 86_400_000) : null
+}
+
+/**
+ * Schliesst einen Satz mit genau einem Punkt ab. Steht am Ende eine Abkürzung mit
+ * eigenem Punkt («19. Dez.», «Sept.»), ist dieser Punkt zugleich der Satzpunkt
+ * (Duden). Das Datumsetikett selbst bleibt unverändert; März, Mai, Juni und Juli
+ * werden nie künstlich abgekürzt.
+ */
+export function mitSatzpunkt(text: string): string {
+  return /[.!?…]$/.test(text) ? text : `${text}.`
+}
+
 export function datumKurz(wert: string | null | undefined): string {
   if (!wert) return ''
   const zeit = Date.parse(`${wert}T00:00:00Z`)

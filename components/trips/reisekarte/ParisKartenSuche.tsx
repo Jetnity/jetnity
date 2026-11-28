@@ -28,7 +28,7 @@ export default function ParisKartenSuche({ reise, start, fluege, unterkunft, akt
     <Kartenknopf reise={reise} />
     <nav aria-label="Reise organisieren" className="my-5 flex flex-wrap gap-2">
       {bereiche.map(({ id, name, icon: Icon }) => <button key={id} type="button" aria-pressed={auswahl === id}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-200 px-4 font-semibold text-brand-800 aria-pressed:bg-brand-800 aria-pressed:text-white"
+        className="jet-wahl jet-wahl-kante min-h-11 gap-2 px-4 font-semibold"
         onClick={() => waehlen(id)}>
         <Icon size={16} aria-hidden />{name}</button>)}</nav>
     {!auswahl && <section><h2 className="mb-2 text-xl font-semibold">Dein Reiseplan</h2><ol className="divide-y divide-line-200">

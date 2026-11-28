@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import ContentInventory from '@/components/admin/content/ContentInventory'
+import { inspirationsbild } from '@/lib/inspiration/bildfreigabe'
 import { ENTDECKEN_ZIELE, entdeckerHref } from '@/lib/inspiration/explorer-1/katalog'
 import { readContentInventory } from './inventory'
 
@@ -17,10 +18,32 @@ test('inventory returns original catalogue entries and existing planning/image d
     assert.ok(entry.href)
     const planning = new URL(entry.href, 'https://jetnity.example')
     assert.equal(planning.pathname, '/planen')
-    assert.equal(planning.searchParams.get('zielId'), entry.placeId)
+    assert.equal(planning.searchParams.get('zielId'), entry.zielId)
     assert.equal(planning.searchParams.get('idee'), entry.idea)
-    assert.ok(existsSync(join(process.cwd(), 'public', entry.image)))
+    const bild = inspirationsbild(entry.image)
+    if (bild.neutral) assert.equal(entry.name, 'Zermatt')
+    else assert.ok(existsSync(join(process.cwd(), 'public', bild.src)), bild.src)
   }
+  const zermatt = inventory.entries.find((entry) => entry.name === 'Zermatt')!
+  assert.equal(zermatt.placeId, 'geonames:2657915')
+  assert.equal(zermatt.zielId, 'geonames:2657928')
+  assert.equal(new URL(zermatt.href!, 'https://jetnity.example').searchParams.get('zielId'), 'geonames:2657928')
+})
+
+test('catalogue image link uses the corrected delivery path; the withheld Zermatt image links to the proof instead', () => {
+  const html = renderToStaticMarkup(React.createElement(ContentInventory, { inventory: readContentInventory({}), observedAt: '2026-11-15T10:00:00Z' }))
+  assert.ok(html.includes('href="/images/bali.png"'))
+  assert.ok(html.includes('href="/images/lisbon.png"'))
+  assert.ok(html.includes('href="/images/amsterdam.png"'))
+  assert.doesNotMatch(html, /\/images\/(?:bali|lisbon|zermatt|amsterdam)\.jpg/)
+  assert.doesNotMatch(html, /\/images\/zermatt/)
+  assert.match(html, /Zermatt: Bildnachweis öffnen, Katalogbild nicht freigegeben \(neuer Tab\)/)
+  const neutral = ENTDECKEN_ZIELE.filter((entry) => inspirationsbild(entry.image).neutral)
+  assert.deepEqual(neutral.map((entry) => entry.name), ['Zermatt'])
+  assert.equal((html.match(/href="\/images\//g) ?? []).length, ENTDECKEN_ZIELE.length - neutral.length)
+  assert.equal((html.match(/href="\/datenquellen#ki-illustrationen"/g) ?? []).length, neutral.length)
+  assert.ok(html.includes('Kuratierte Inspiration · geonames:2657915 · Planungsziel geonames:2657928'))
+  assert.ok(html.includes('Kuratierte Inspiration · geonames:1650535<'))
 })
 
 test('inventory search combines the public catalogue topic and original text contract', () => {

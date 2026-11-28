@@ -129,7 +129,7 @@ export default function EinreiseLaenderpruefer({
                   type="button"
                   aria-pressed={ziel === code}
                   onClick={() => zuruecksetzen(() => setZiel(code))}
-                  className={`${sekundär} aria-pressed:border-brand-800 aria-pressed:bg-brand-800 aria-pressed:text-white`}
+                  className="jet-wahl jet-wahl-kante min-h-11 px-4 text-sm font-semibold"
                 >
                   {landAnzeigeText(code)}
                 </button>
@@ -203,7 +203,7 @@ export default function EinreiseLaenderpruefer({
         <button
           type="submit"
           disabled={!bereit || stand.phase === 'loading'}
-          className="min-h-11 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 rounded-full border border-transparent bg-brand-800 px-5 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:cursor-not-allowed disabled:border-dashed disabled:border-muted-foreground disabled:bg-muted disabled:text-muted-foreground"
         >
           {stand.phase === 'loading' ? 'Angaben werden geladen' : 'Einreise anzeigen'}
         </button>

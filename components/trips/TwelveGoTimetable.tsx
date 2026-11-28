@@ -80,7 +80,7 @@ export default function TwelveGoTimetable({ reise }: { reise: Trip }) {
     <p className="mt-2 text-sm leading-6 text-ink-800">Vergleiche Verkehrsmittel und allgemeine Fahrplanangaben für deine Weiterreise. Buchung und Bezahlung erfolgen bei 12Go. Die Links sind Affiliate-Links.</p>
     {edges.length ? <>
       <div role="group" aria-label="Reiseabschnitt auswählen" className="mt-5 flex flex-wrap gap-2">
-        {edges.map((item, index) => <button key={item.id} type="button" aria-pressed={item.id === edge?.id} onClick={() => setSelected(item.id)} className={`${BUTTON} min-w-0 whitespace-normal text-left aria-pressed:border-brand-800 aria-pressed:bg-brand-50`}><span className="shrink-0 text-xs">{index + 1}.</span><span className="break-words">{item.vonName} → {item.nachName}</span></button>)}
+        {edges.map((item, index) => <button key={item.id} type="button" aria-pressed={item.id === edge?.id} onClick={() => setSelected(item.id)} className="jet-wahl jet-wahl-kante min-h-11 min-w-0 max-w-full whitespace-normal px-4 py-2 text-left text-sm font-semibold"><span className="shrink-0 text-xs">{index + 1}.</span><span className="break-words">{item.vonName} → {item.nachName}</span></button>)}
       </div>
       {edge ? <RoutePanel key={context} edge={edge} /> : null}
     </> : <p className="mt-4 text-sm leading-6 text-ink-800">Sobald mindestens zwei Ziele in deiner Reise stehen, erscheinen hier die aufeinanderfolgenden Reiseabschnitte.</p>}

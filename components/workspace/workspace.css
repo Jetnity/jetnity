@@ -26,16 +26,21 @@
   border-color: var(--workspace-edge);
 }
 /* The application chrome stays white in both content themes. */
-.workspace-sidebar, .workspace-header {
+.workspace-sidebar, .workspace-header, .kopf {
   --workspace-edge: rgb(var(--jet-brand-600) / .18);
   --workspace-ink: var(--white-mint-ink, rgb(var(--jet-brand-800)));
   --workspace-muted: var(--white-mint-muted, rgb(var(--jet-ink-800)));
   --workspace-panel: var(--white-mint-chrome, rgb(var(--jet-surface-0)));
   --workspace-soft: rgb(var(--jet-surface-100));
+}
+.workspace-sidebar, .workspace-header {
   background: var(--workspace-panel);
   color: var(--workspace-ink);
   color-scheme: light;
 }
+/* Die öffentliche Kopfzeile bringt Hintergrund und Haftung über ihre Klassen mit. Sie braucht dieselben Rand-, Tinten-
+   und Flächenwerte für das Kontomenü, damit das Menü in beiden Kopfzeilen gleich aussieht. */
+.kopf-oeffentlich { color: var(--workspace-ink); color-scheme: light; }
 .workspace-shell .workspace-sidebar :where(a, button):focus-visible,
 .workspace-shell .workspace-header :where(a, button, summary):focus-visible {
   outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 3px;
@@ -63,7 +68,7 @@
 }
 .workspace-nav-link svg, .workspace-open-trip svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
 .workspace-nav-link:hover, .workspace-open-trip:hover { background: rgb(var(--jet-surface-0) / .8); }
-.workspace-nav-link[aria-current="page"] {
+.workspace-nav-link[aria-current="page"], .workspace-darstellung-knopf[aria-pressed="true"] {
   background: rgb(var(--jet-brand-600) / .13);
   box-shadow: inset 3px 0 0 rgb(var(--jet-brand-700)), inset 0 1px 0 rgb(var(--jet-surface-0) / .75);
   font-weight: 700;
@@ -72,17 +77,77 @@
 .workspace-trip-navigation:not(:empty) + .workspace-no-trip { display: none; }
 .workspace-sidebar-end { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--workspace-edge); }
 .workspace-sidebar-end p { padding: .75rem; font-size: .75rem; line-height: 1.6; }
+.workspace-darstellung { display: grid; gap: .25rem; }
+.workspace-darstellung-knopf { cursor: pointer; }
+.workspace-account-panel .workspace-darstellung-hinweis { display: block; padding: .25rem .65rem .5rem; font-size: .75rem; line-height: 1.45; color: rgb(var(--jet-ink-800)); }
 .workspace-page { min-width: 0; }
+/* Gemeinsame Kopfzeile für Startseite, Reiseplanung, Meine Reisen, Reise und Konto (PR A).
+   Eine Zeile: Menü · Marke · [Begleiter] · Profil. Beide Kopfzeilen sind derselbe Baustein
+   (components/layout/KopfLeiste.tsx, Variante `oeffentlich` oder `arbeitsbereich`) und teilen Menü, Marke,
+   «Reise planen» und Profil über die Klassen kopf-*. Ziele sind 44 px gross
+   (fest, damit grössere Schrift die Zeile nicht umbrechen lässt), ohne sichtbaren Rahmen. Höhe auf dem Telefon 60 px plus Safe Area, ab 64 rem 72 px. */
 .workspace-header {
-  position: sticky; top: 0; z-index: 41; display: flex; align-items: center; flex-wrap: wrap;
-  gap: .5rem .75rem; padding: .75rem 1rem; min-height: 72px;
+  position: sticky; top: 0; z-index: 41;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
   border-bottom: 1px solid var(--workspace-edge);
 }
-.workspace-header[data-flow="true"] { position: static; }
-.workspace-header[data-flow="true"] .workspace-header-actions [data-workspace-aktionen] > div { display: flex; flex-direction: column; align-items: stretch; }
-.workspace-context { min-width: 0; flex: 1; font-size: .875rem; font-weight: 650; overflow-wrap: anywhere; }
-.workspace-context > span:first-child:not(:empty) + span { display: none; }
-.workspace-header-global { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+/* Bei grosser Schrift (Wurzelschrift ab 24 px, `data-flow`) scrollt die Kopfzeile mit. `static` ignoriert das `z-index`:
+   Das Profilmenü lag dann unter dem Reisekopf (`z-index: 2`, 150 % Schrift, 390 px: «Anmelden» verdeckt). `relative` verändert
+   das Layout nicht und hält die Kopfzeile samt ihren Menüs über dem Inhalt. */
+.workspace-header[data-flow="true"] { position: relative; }
+.workspace-header .kopf-innen {
+  display: flex; align-items: center; gap: .25rem; min-height: 3.75rem; padding: .25rem .5rem;
+}
+.workspace-header[data-flow="true"] .kopf-innen { flex-wrap: wrap; }
+.kopf-menue, .kopf-profil {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: .75rem; background: transparent; color: rgb(var(--jet-brand-800)); cursor: pointer;
+}
+.kopf-profil { border-radius: 50%; }
+/* Die öffentliche Leiste zeigt ab 48 rem die Hauptnavigation selbst; ihr Menü ist nur für schmale Breiten da.
+   `md:hidden` verliert gegen `.kopf-menue { display: inline-flex }`, deshalb eine eigene Regel danach. */
+@media (min-width: 48rem) { .kopf-menue-oeffentlich { display: none; } }
+.kopf-menue:hover, .kopf-profil:hover { background: rgb(var(--jet-surface-100)); }
+.kopf-menue:focus-visible, .kopf-profil:focus-visible, .kopf-marke:focus-visible {
+  outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 2px;
+}
+.kopf-menue svg { width: 24px; height: 24px; stroke-width: 1.85; }
+.kopf-profil svg { width: 26px; height: 26px; stroke-width: 1.6; }
+.kopf-marke { display: inline-flex; min-width: 0; min-height: 44px; align-items: center; padding-inline: .25rem; border-radius: .5rem; }
+.kopf-marke img { height: 48px; width: auto; max-width: 100%; }
+.kopf-rechts { display: flex; align-items: center; gap: .25rem; min-width: 0; margin-left: auto; }
+.workspace-header-actions { display: flex; align-items: center; min-width: 0; }
+.workspace-header-actions:empty { display: none; }
+.kopf .kopf-planen { display: none; }
+.kopf-links { display: flex; align-items: center; gap: .25rem; min-width: 0; }
+.kopf-innen[data-mitte] .kopf-rechts { margin-left: 0; }
+.kopf-begleiter {
+  display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; max-width: 100%; padding: .25rem .875rem .25rem .75rem;
+  border: 0; border-radius: 1.375rem; background: rgb(var(--jet-brand-600) / .1); color: rgb(var(--jet-brand-800));
+  font-size: .875rem; font-weight: 600; line-height: 1.25; text-align: left; cursor: pointer;
+}
+.kopf-begleiter svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+.kopf-begleiter:hover, .kopf-begleiter[aria-expanded="true"] { background: rgb(var(--jet-brand-600) / .18); }
+.kopf-begleiter:focus-visible { outline: 3px solid rgb(var(--jet-brand-800)); outline-offset: 2px; }
+@media (max-width: 22.5rem) {
+  .workspace-header:not([data-flow="true"]) .kopf-marke img { height: 40px; }
+  .kopf-begleiter { padding-inline: .625rem .75rem; }
+}
+@media (min-width: 48rem) {
+  .kopf-oeffentlich .kopf-marke { padding-inline: .5rem; }
+  .kopf-oeffentlich .kopf-planen.workspace-primary {
+    display: inline-flex; border-radius: 999px; padding: .625rem 1.25rem; font-size: .875rem; font-weight: 600;
+  }
+}
+@media (min-width: 64rem) {
+  .workspace-header .kopf-innen { min-height: 4.5rem; padding: .5rem 1.5rem; gap: .75rem; }
+  .workspace-header .kopf-marke { margin-right: .5rem; }
+  .kopf-rechts { gap: .5rem; }
+  .workspace-header .kopf-planen.workspace-primary {
+    display: inline-flex; border-radius: 999px; padding: .625rem 1.25rem; font-size: .875rem; font-weight: 600;
+  }
+}
 .workspace-button, .workspace-icon-button {
   display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .5rem;
   padding: .55rem .8rem; border: 1px solid var(--workspace-edge); border-radius: .75rem;
@@ -94,25 +159,7 @@
 .workspace-button.workspace-primary { color: rgb(var(--jet-surface-0)); background: rgb(var(--jet-brand-800)); border-color: transparent; }
 .workspace-primary:hover { background: rgb(var(--jet-brand-900)); }
 .workspace-icon-button { width: 2.75rem; min-width: 44px; min-height: max(44px, 2.75rem); flex-shrink: 0; padding: .5rem; }
-.workspace-header-global .workspace-icon-button { border-color: transparent; background: transparent; border-radius: 50%; }
-.workspace-header-global .workspace-icon-button svg { width: 1rem; height: 1rem; stroke-width: 1.65; }
-.workspace-header-global .workspace-icon-button:hover { background: rgb(var(--jet-surface-100)); }
-.workspace-header-global .workspace-icon-button:focus-visible { outline: 2px solid rgb(var(--jet-brand-600)); outline-offset: 2px; }
-.workspace-theme-toggle { white-space: nowrap; }
-.workspace-menu-button { flex-direction: column; gap: .1rem; padding: .25rem; font-size: .625rem; }
 .workspace-touch-toggle { display: none; }
-.workspace-header-actions { min-width: 0; width: 100%; order: 4; }
-.workspace-header-actions:empty { display: none; }
-.workspace-header-actions [data-workspace-aktionen] { margin: 0; }
-.workspace-header-actions [data-workspace-aktionen] > div { display: flex; flex-wrap: wrap; gap: .5rem; }
-.workspace-header-actions [data-workspace-aktionen] button { min-height: 44px; width: auto; border-radius: .75rem; font-size: .8125rem; padding: .5rem .75rem; }
-.workspace-header-actions [data-workspace-aktionen] > p {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-}
-.workspace-header-actions [data-workspace-aktionen] button:first-child {
-  color: rgb(var(--jet-brand-800)); background: rgb(var(--jet-surface-0) / .75); border: 1px solid var(--workspace-edge);
-}
 .workspace-content { min-width: 0; outline: none; }
 .workspace-content > main { min-height: calc(100dvh - 10rem); }
 .workspace-content [data-unified-workspace] > div { padding-top: 1.25rem; padding-bottom: 2rem; }
@@ -122,7 +169,6 @@
 .workspace-credit a { text-decoration: underline; }
 .workspace-account { position: relative; }
 .workspace-account summary { list-style: none; cursor: pointer; }
-.workspace-account summary svg, .workspace-theme-toggle svg { width: 1.25rem; height: 1.25rem; }
 .workspace-account summary::-webkit-details-marker { display: none; }
 .workspace-account-panel {
   position: absolute; right: 0; top: calc(100% + .6rem); width: min(19rem, calc(100vw - 2rem));
@@ -155,27 +201,7 @@
   }
 }
 .workspace-page:has(.workspace-bottom-nav) { padding-bottom: var(--ux-u1a-nav-offset, 5rem); }
-/* Sits on the bottom navigation as one dock; static wherever that nav is in flow. */
-.workspace-cost-bar {
-  position: fixed; left: 0; right: 0; bottom: var(--workspace-bottom-nav-hoehe, 4.5rem); z-index: 30;
-  display: flex; align-items: center; gap: .625rem; width: 100%; min-height: 44px; padding: .5rem 1rem;
-  border-top: 1px solid var(--workspace-edge); color: var(--workspace-ink); text-align: left;
-  font-size: .8125rem; line-height: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums;
-  background: var(--workspace-glass); backdrop-filter: blur(18px) saturate(125%); -webkit-backdrop-filter: blur(18px) saturate(125%);
-}
-.workspace-cost-bar > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.workspace-cost-bar svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--workspace-muted); }
-.workspace-cost-bar:hover { background: var(--workspace-soft); }
-.workspace-cost-bar:focus-visible { outline-offset: -3px; }
-.workspace-cost-bar[data-flow="true"] { position: static; border-top: 0; border-bottom: 1px solid var(--workspace-edge); }
-.workspace-page [data-back-to-top] { bottom: calc(var(--ux-u1a-nav-offset, 0px) + 1.5rem + env(safe-area-inset-bottom)); }
-@media (max-width: 30rem) {
-  .workspace-header { padding: .625rem .75rem; gap: .5rem; }
-  .workspace-context { flex-basis: calc(100% - 6rem); }
-  .workspace-header-global { margin-left: auto; }
-  .workspace-header-actions [data-workspace-aktionen] > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
-  .workspace-header-actions [data-workspace-aktionen] button { padding: .5rem; font-size: .75rem; }
-}
+.workspace-page [data-back-to-top] { bottom: calc(var(--ux-u1a-nav-offset, 0px) + .25rem + env(safe-area-inset-bottom)); }
 @media (min-width: 64rem) {
   .workspace-sidebar {
     display: flex; top: var(--jet-header-h, 72px); padding: 1.25rem .75rem;
@@ -186,10 +212,6 @@
   .workspace-sidebar :is(.workspace-nav-link, .workspace-open-trip) .workspace-nav-label { white-space: nowrap; }
   .workspace-page { margin-left: var(--workspace-rail-width); }
   .workspace-menu-button, .workspace-mobile-close, .workspace-mobile-navigation { display: none; }
-  .workspace-header { padding-inline: 1.5rem; }
-  .workspace-header-brand { margin-right: 1rem; }
-  .workspace-header-actions { width: auto; order: initial; }
-  .workspace-header-actions [data-workspace-aktionen] > div { flex-wrap: nowrap; }
   .workspace-shell[data-collapsed="true"] .workspace-sidebar { width: var(--workspace-rail-width); }
   .workspace-shell[data-collapsed="false"] .workspace-sidebar:not([role="dialog"]) { box-shadow: 8px 0 24px rgb(var(--jet-brand-800) / .1); }
   .workspace-shell[data-collapsed="true"] .workspace-nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -212,23 +234,11 @@
 }
 @media (prefers-reduced-transparency: reduce) {
   .workspace-bottom-nav { backdrop-filter: none; background: rgb(var(--jet-surface-100)); }
-  .workspace-cost-bar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--workspace-panel); }
 }
 @media (forced-colors: active) {
-  .workspace-nav-link[aria-current="page"] { outline: 2px solid Highlight; }
+  .workspace-nav-link[aria-current="page"], .workspace-darstellung-knopf[aria-pressed="true"] { outline: 2px solid Highlight; }
 }
 @media (max-width: 30rem) {
-  .workspace-header-brand img { width: 5rem; }
-  .workspace-context { flex-basis: 100%; order: 3; }
-  .workspace-header-global { flex: 1; min-width: 0; justify-content: flex-end; }
-  .workspace-header-global .workspace-primary > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .workspace-header-global .workspace-primary, .workspace-account > summary { width: 2.75rem; min-width: 44px; padding: .5rem; }
-  /* The existing guest CTA may replace its icon with “Reise fortsetzen”. */
-  .workspace-header-global .workspace-primary:not(:has(svg)) { width: auto; max-width: min(8rem, 100%); overflow-wrap: anywhere; }
-  .workspace-header[data-flow="true"] .workspace-header-global { flex-basis: 100%; justify-content: flex-start; }
-  .workspace-header[data-flow="true"] .workspace-primary:not(:has(svg)) { max-width: 100%; }
-  .workspace-header[data-flow="true"] .workspace-account[open] { width: 100%; }
-  .workspace-header[data-flow="true"] .workspace-account-panel { position: static; width: 100%; margin-top: .6rem; }
   .workspace-bottom-nav[data-flow="true"] { grid-template-columns: minmax(0, 1fr); }
   .workspace-bottom-nav[data-flow="true"] .workspace-nav-link { flex-direction: row; justify-content: flex-start; gap: .75rem; padding-inline: .75rem; }
 }
@@ -242,52 +252,7 @@
 @media (max-height: 500px) and (max-width: 63.99rem) {
   .workspace-header { position: static; }
 }
-/* One header row up to tablet width (DESIGN_SYSTEM.md 7.13). The trip title
-   lives in the trip head, so the context label leaves the bar. Enlarged text
-   (data-flow) keeps the wrapping layout above. */
 .workspace-drawer-extras { display: grid; gap: .25rem; margin-bottom: .75rem; }
 @media (min-width: 64rem) {
   .workspace-drawer-extras { display: none; }
-}
-@media (max-width: 63.999rem) {
-  .workspace-header:not([data-flow="true"]) { flex-wrap: nowrap; }
-  .workspace-header:not([data-flow="true"]) .workspace-context { display: none; }
-  .workspace-header:not([data-flow="true"]) .workspace-header-actions { order: initial; width: auto; flex: 0 1 auto; margin-left: auto; }
-  .workspace-header:not([data-flow="true"]) .workspace-header-global { flex: 0 0 auto; flex-wrap: nowrap; margin-left: auto; }
-  .workspace-header:not([data-flow="true"]) .workspace-header-actions:not(:empty) + .workspace-header-global { margin-left: 0; }
-  .workspace-header:not([data-flow="true"]) .workspace-header-actions [data-workspace-aktionen] > div { display: flex; flex-wrap: nowrap; }
-  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary > span {
-    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-  }
-  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary { width: 2.75rem; min-width: 44px; padding: .5rem; }
-  /* „Reise fortsetzen“ inside the open trip only repeats where the user already is. */
-  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary:not(:has(svg)) { display: none; }
-}
-@media (max-width: 47.999rem) {
-  /* Round action buttons keep their width; the logo gives way instead of a
-     button sliding under Mond/Sonne. */
-  .workspace-header:not([data-flow="true"]) .workspace-header-actions { flex-shrink: 0; }
-  .workspace-header:not([data-flow="true"]) .workspace-aktion-text {
-    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-  }
-  .workspace-header:not([data-flow="true"]) .workspace-header-actions [data-workspace-aktionen] button { width: 2.75rem; min-width: 44px; padding: .5rem; border-radius: 999px; }
-}
-/* Mond/Sonne stays in the bar (owner decision). The plan link moves to the menu
-   inside an open trip, and „Reise fortsetzen“ has no icon form. */
-@media (max-width: 40rem) {
-  .workspace-header:not([data-flow="true"]) .workspace-primary > span {
-    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-  }
-  .workspace-header:not([data-flow="true"]) .workspace-primary { width: 2.75rem; min-width: 44px; padding: .5rem; }
-  .workspace-header:not([data-flow="true"]) .workspace-primary:not(:has(svg)),
-  .workspace-header:not([data-flow="true"]):has(.workspace-header-actions:not(:empty)) .workspace-primary { display: none; }
-}
-@media (max-width: 22.5rem) {
-  .workspace-header:not([data-flow="true"]) { padding-inline: .5rem; gap: .375rem; }
-  .workspace-header:not([data-flow="true"]) .workspace-header-brand img { width: 4.25rem; }
-}
-/* Below 320 px with two trip actions the logo would shrink to a smudge; it
-   stays in the menu panel and the footer. */
-@media (max-width: 19.999rem) {
-  .workspace-header:not([data-flow="true"]):has([data-workspace-aktionen] button + button) .workspace-header-brand { display: none; }
 }

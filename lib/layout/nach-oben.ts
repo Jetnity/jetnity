@@ -1,11 +1,11 @@
 /**
  * Wann der schwebende «Nach oben»-Knopf zu sehen ist.
  *
- * Auf Telefonen gibt es rechts keinen freien Rand: ein dauerhaft sichtbarer Knopf
- * liegt dort immer über Text. Deshalb erscheint er auf öffentlichen Seiten nur,
- * solange jemand nach oben scrollt (also zurück will), und verschwindet wieder,
- * sobald die Seite ruht. Auf grossen Bildschirmen bleibt das bisherige Verhalten, ebenso
- * dort, wo der Knopf einen eigenen Platz hat (Arbeitsbereich, feste Navigation unten).
+ * Wo es rechts keinen freien Rand gibt (Telefon, und im Arbeitsbereich alles unter dem
+ * Desktop-Raster), liegt ein dauerhaft sichtbarer Knopf immer über Preisen, Pfeilen oder
+ * Text. Dort erscheint er nur, solange jemand nach oben scrollt (also zurück will), und
+ * verschwindet wieder, sobald die Seite ruht. Auf grossen Bildschirmen steht er am freien
+ * Rand und bleibt sichtbar. Gezeigt wird er erst nach mindestens einer Bildschirmhöhe.
  */
 
 export const NACH_OBEN_SCHWELLE_PX = 400
@@ -16,8 +16,13 @@ export type ScrollRichtung = 'hoch' | 'runter'
 
 export type ScrollVerfolgung = { richtung: ScrollRichtung; anker: number }
 
-export function ueberSchwelle(scrollY: number): boolean {
-  return scrollY > NACH_OBEN_SCHWELLE_PX
+/** Mindestens eine Bildschirmhöhe, nie weniger als `NACH_OBEN_SCHWELLE_PX`. */
+export function nachObenSchwelle(viewportHoehe: number): number {
+  return Math.max(NACH_OBEN_SCHWELLE_PX, Math.round(viewportHoehe))
+}
+
+export function ueberSchwelle(scrollY: number, schwelle: number = NACH_OBEN_SCHWELLE_PX): boolean {
+  return scrollY > schwelle
 }
 
 /**
@@ -37,12 +42,12 @@ export function scrollVerfolgen(zustand: ScrollVerfolgung, scrollY: number): Scr
 
 export function nachObenSichtbar(eingabe: {
   ueberSchwelle: boolean
-  telefon: boolean
-  eigenerPlatz: boolean
+  /** Kein freier Rand rechts: Telefon, oder Arbeitsbereich unter dem Desktop-Raster. */
+  engerRand: boolean
   richtung: ScrollRichtung
   ruhig: boolean
 }): boolean {
   if (!eingabe.ueberSchwelle) return false
-  if (!eingabe.telefon || eingabe.eigenerPlatz) return true
+  if (!eingabe.engerRand) return true
   return eingabe.richtung === 'hoch' && !eingabe.ruhig
 }

@@ -8,7 +8,6 @@ export type WorkspaceSlots = {
   navigation: HTMLElement | null
   mobile: HTMLElement | null
   actions: HTMLElement | null
-  title: HTMLElement | null
   closeNavigation: () => void
   finishNavigation: () => void
 }

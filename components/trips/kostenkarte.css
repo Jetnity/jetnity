@@ -1,0 +1,23 @@
+/* Kostenkarte (PR A, Korrektur): reine Anordnung bei grosser Schrift auf schmaler Fläche.
+   Beträge, Preisformat, Status und Texte bleiben unverändert; nichts wird abgeschnitten, verkleinert oder verdeckt.
+
+   Mass ist das Verhältnis von Kartenbreite zu Schriftgrösse (em des Behälters): Bei 100 % Schrift greift die Regel
+   auf keinem Telefon, bei 200 % auf allen Telefonbreiten, bei 150 % nur auf den schmalsten.
+   Gestapelt wird so: kleinere Innenabstände, die Summen als flacher Block ohne zweite Kachel, Titel und Betrag je auf
+   eigener Zeile. Als letzte Stufe darf ein Betrag zwischen Währung und Zahl umbrechen, damit auch sehr grosse Beträge
+   vollständig sichtbar bleiben (DESIGN_SYSTEM.md 6.5, Ausnahme nur in dieser Anordnung). */
+.kosten-behaelter { container: kosten / inline-size; min-width: 0; }
+
+@container kosten (max-width: 14em) {
+  .kosten-karte { padding: .5em; }
+  .kosten-summen { gap: 0; }
+  .kosten-summe { padding-inline: 0; padding-block: .75em; border-radius: 0; background: transparent; }
+  .kosten-summe + .kosten-summe { border-top: 1px solid rgb(var(--border)); }
+  .kosten-summe-liste > div { justify-content: flex-start; }
+  .kosten-posten { column-gap: .5em; padding-inline: 0; }
+  .kosten-posten > :first-child { flex-basis: 100%; }
+  .kosten-betrag { min-width: 0; margin-inline-end: auto; text-align: left; }
+  .kosten-behaelter [data-status-siegel] { display: block; padding: .3em .5em; border-radius: .75em; overflow-wrap: anywhere; hyphens: auto; }
+  .kosten-behaelter [data-status-siegel] > svg { display: inline-block; margin-inline-end: .35em; vertical-align: -.2em; }
+  .kosten-behaelter [data-preis] { white-space: normal; overflow-wrap: anywhere; }
+}

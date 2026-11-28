@@ -41,7 +41,7 @@ export function organisierenZeileBeobachten(tab: string): () => void {
     if (!organisierenDockFest({ breite: window.innerWidth, hoehe: window.innerHeight, schriftPx, tastatur })) return
     const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
     if (!(zeile instanceof HTMLElement)) return
-    const fest = [...document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')].filter((el) => {
+    const fest = [...document.querySelectorAll('.workspace-bottom-nav')].filter((el) => {
       const kasten = el.getBoundingClientRect()
       return getComputedStyle(el).position === 'fixed' && kasten.height > 0 && kasten.width > 0
     })
@@ -55,6 +55,6 @@ export function organisierenZeileBeobachten(tab: string): () => void {
   const zeile = document.querySelector(`[data-organisieren-bestand="${tab}"] button.org-bestand-zeile`)
   const beobachter = new ResizeObserver(freigeben)
   if (zeile) beobachter.observe(zeile)
-  for (const el of document.querySelectorAll('.workspace-bottom-nav, .workspace-cost-bar')) beobachter.observe(el)
+  for (const el of document.querySelectorAll('.workspace-bottom-nav')) beobachter.observe(el)
   return () => beobachter.disconnect()
 }
