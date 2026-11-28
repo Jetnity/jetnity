@@ -1002,6 +1002,7 @@ jobs:
           steps.zugang.outputs.vorhanden == 'ja' &&
           (github.event_name != 'pull_request' ||
            startsWith(github.head_ref, 'feat/official-truth-') ||
+           startsWith(github.head_ref, 'official-truth-throughput-') ||
            startsWith(github.head_ref, 'fix/bg1-'))
         env:
           SUPABASE_PROJECT_REF: yfvbxvijcorffwxbxahl

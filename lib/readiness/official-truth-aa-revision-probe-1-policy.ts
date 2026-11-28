@@ -40,7 +40,7 @@ export const AA_REVISION_PROBE_V1_POLICY = Object.freeze({
     Object.freeze({ path: 'lib/readiness/digest.ts', bytes: 3013, sha256: 'e63201d45a39f68624b1e1f9e7568b696f8a65d1ada07f16e64a2be69dcec190' }),
     Object.freeze({ path: 'lib/readiness/official-truth-ch-de-aa-s1-visa-row-research-server.ts', bytes: 6702, sha256: '059cd29e8695bf29c5296a1bfeb122fd491caff14c701c81ef2dc0bbdd6bf00e' }),
     // BG1 query-cost CI successor plus supabase-js 2.119.2 package identity.
-    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53497, sha256: '88e45eaf54b0b26c5e35b4a17dfdfc43c7417d8aa05fd40d9e56ba35247f55b3' }),
+    Object.freeze({ path: '.github/workflows/ci.yml', bytes: 53746, sha256: 'c0caf615d5fb00a9905bba326abe3056879d919165ef3690a4891e34f436c33d' }),
     Object.freeze({ path: 'package.json', bytes: 6717, sha256: 'b72ed28b71bd9a351eaef3637b6b56f2a28844c3e7f4dc6ac3f9a28bb96e540e' }),
     Object.freeze({ path: 'package-lock.json', bytes: 325113, sha256: 'da769bf15ec9a5349e88cb7420267a5dedd70953c15f8e93ec6a6a802e24dfb4' }),
     Object.freeze({ path: 'scripts/server-only-test-register.mjs', bytes: 508, sha256: 'd565c9029d993a8a778cd530acebae5707034223bcb18f55dc9a306941b10d32' }),

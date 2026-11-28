@@ -308,6 +308,30 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.ok(bg1AlarmWorkflowSource.includes("github.event_name != 'pull_request'"))
   assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'feat/official-truth-')"))
   assert.ok(bg1AlarmWorkflowSource.includes("startsWith(github.head_ref, 'fix/bg1-')"))
+  // #1325 Phase 0: one exact, PO-authorized CI successor. The artifact upload
+  // alone is excluded for throughput branches; the existing live Dev BG1
+  // gate explicitly includes them. No test, job or historical pin is removed.
+  const throughputCiSuccessor = [
+    { path: '.github/workflows/ci.yml',
+      previousReviewed: { bytes: 53497, sha256: '88e45eaf54b0b26c5e35b4a17dfdfc43c7417d8aa05fd40d9e56ba35247f55b3' },
+      reviewed: { bytes: 53746, sha256: 'c0caf615d5fb00a9905bba326abe3056879d919165ef3690a4891e34f436c33d' } },
+  ] as const
+  assert.deepEqual(throughputCiSuccessor.map(row => row.path), ['.github/workflows/ci.yml'])
+  assert.equal(new Set(throughputCiSuccessor.map(row => row.path)).size, 1)
+  // Prove the complete workflow is identical to the protected predecessor
+  // after reversing only the two explicitly reviewed, finite changes.
+  const throughputUploadBefore = "      - name: Preserve actual synthetic evidence, including failures\n        if: ${{ always() }}\n"
+  const throughputUploadAfter = "      - name: Preserve actual synthetic evidence, including failures\n        # Throughput branches retain mandatory local browser proof but do not upload artifacts.\n        if: ${{ always() && !startsWith(github.head_ref || github.ref_name, 'official-truth-throughput-') }}\n"
+  const throughputGuardBefore = "           startsWith(github.head_ref, 'feat/official-truth-') ||\n           startsWith(github.head_ref, 'fix/bg1-'))"
+  const throughputGuardAfter = "           startsWith(github.head_ref, 'feat/official-truth-') ||\n           startsWith(github.head_ref, 'official-truth-throughput-') ||\n           startsWith(github.head_ref, 'fix/bg1-'))"
+  assert.equal(bg1AlarmWorkflowSource.split(throughputUploadAfter).length, 2)
+  assert.equal(bg1AlarmWorkflowSource.split(throughputGuardAfter).length, 2)
+  const throughputPredecessor = bg1AlarmWorkflowSource
+    .replace(throughputUploadAfter, throughputUploadBefore)
+    .replace(throughputGuardAfter, throughputGuardBefore)
+  assert.equal(Buffer.byteLength(throughputPredecessor, 'utf8'), throughputCiSuccessor[0].previousReviewed.bytes)
+  assert.equal(sha256Hex(throughputPredecessor), throughputCiSuccessor[0].previousReviewed.sha256)
+  let reviewedThroughputCiRows = 0
   let reviewedBg1QueryCostCiRows = 0
   let reviewedPublicCmsReaderCiRows = 0
   let reviewedIncidentAppCiRows = 0
@@ -436,7 +460,14 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
       assert.deepEqual({ bytes: previousPasskey.bytes, sha256: previousPasskey.sha256 }, passkeySdkChanged.previousReviewed, row.path)
       reviewedPasskeySdkRows++
     }
-    const expected = passkeySdkChanged?.reviewed ?? previousPasskey
+    const previousThroughput = passkeySdkChanged?.reviewed ?? previousPasskey
+    const throughputChanged = throughputCiSuccessor.find(file => file.path === row.path)
+    if (throughputChanged) {
+      assert.deepEqual({ bytes: previousThroughput.bytes, sha256: previousThroughput.sha256 },
+        throughputChanged.previousReviewed, row.path)
+      reviewedThroughputCiRows++
+    }
+    const expected = throughputChanged?.reviewed ?? previousThroughput
     const bytes = readFileSync(row.path)
     const text = bytes.toString('utf8')
     assert.deepEqual(Buffer.from(text, 'utf8'), bytes, row.path)
@@ -459,4 +490,5 @@ test('protected sources retain C1, MI1, R28 and exact chained HMA1 PG17 successo
   assert.equal(reviewedPublicCmsReaderCiRows, 1)
   assert.equal(reviewedBg1QueryCostCiRows, 1)
   assert.equal(reviewedPasskeySdkRows, 2)
+  assert.equal(reviewedThroughputCiRows, 1)
 })
