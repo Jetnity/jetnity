@@ -142,7 +142,7 @@ test('hosted PG17 has two mandatory isolated runners with complete serial proofs
   assert.equal(JSON.stringify(job).includes('secrets.'), false)
 })
 
-test('isolated UI job keeps setup/operating gates and always preserves actual artifacts', () => {
+test('isolated UI job keeps setup/operating gates and preserves artifacts except on throughput branches', () => {
   const job = workflow.jobs.official_truth_v3_ui
   assert.equal(job['runs-on'], 'ubuntu-latest')
   assert.equal(job['timeout-minutes'], 20)
@@ -157,7 +157,9 @@ test('isolated UI job keeps setup/operating gates and always preserves actual ar
   assert.equal('continue-on-error' in job, false)
   assert.ok(job.steps.every((step) => !('continue-on-error' in step)))
   const upload = job.steps.at(-1)
-  assert.equal(upload.if, '${{ always() }}')
+  assert.equal(upload.if, "${{ always() && !startsWith(github.head_ref || github.ref_name, 'official-truth-throughput-') }}")
+  assert.equal(upload.uses, 'actions/upload-artifact@v4')
+  assert.ok(job.steps.slice(0, -1).every((step) => !('if' in step)), 'all browser and test steps remain unconditional')
   assert.equal(upload.with['if-no-files-found'], 'error')
   assert.match(upload.with.name, /github\.run_id.*github\.run_attempt.*github\.sha/)
   assert.equal(JSON.stringify(job).includes('secrets.'), false)
