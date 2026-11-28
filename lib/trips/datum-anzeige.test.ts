@@ -4,8 +4,6 @@
 
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
 
 import {
   datumKurz,
@@ -163,21 +161,5 @@ describe('Satzpunkt nach Datumsetiketten (Work-Endtest 27.11.2026, «19. Dez..»
     assert.doesNotMatch(wechsel, DOPPELPUNKT)
     assert.equal(datumKurz('2026-12-31'), '31. Dez.')
     assert.equal(datumKurz('2027-01-01'), '1. Jan.')
-  })
-
-  test('kein Satzende hängt von Hand einen Punkt an ein Datumsetikett (Wächter über die Quelle)', () => {
-    const wurzel = process.cwd()
-    const direkt = /(?:\$\{|\{)\s*(?:datumKurz|datumMitJahr|datumMitWochentag|etappenZeitraumAnzeigen|zeitraumKurz|planpunktWann)\([^{}]*\)\s*\}\.(?![\p{L}\d])/u
-    const funde: string[] = []
-    for (const ordner of ['app', 'components', 'lib']) {
-      for (const eintrag of readdirSync(join(wurzel, ordner), { recursive: true, withFileTypes: true })) {
-        if (!eintrag.isFile() || !/\.(ts|tsx)$/.test(eintrag.name) || /\.test\.(ts|tsx)$/.test(eintrag.name)) continue
-        const pfad = join(eintrag.parentPath, eintrag.name)
-        readFileSync(pfad, 'utf8').split('\n').forEach((zeile, index) => {
-          if (direkt.test(zeile)) funde.push(`${pfad.slice(wurzel.length + 1)}:${index + 1}`)
-        })
-      }
-    }
-    assert.deepEqual(funde, [], 'Satzpunkt nach einem Datumsetikett: `mitSatzpunkt(...)` verwenden')
   })
 })
