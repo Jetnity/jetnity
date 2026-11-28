@@ -12,7 +12,7 @@ import {
   sammlungHref,
   type SammlungErgebnis,
 } from '@/lib/trips/reisen-sammlung-abfrage'
-import type { TripSummary } from '@/types/trips'
+import type { Trip, TripSummary } from '@/types/trips'
 
 /** Synthetische Konto-Reisen. Keine Kundendaten; drei offene und zwei archivierte Reisen. */
 function reise(id: string, titel: string, status: TripSummary['status'], start: string | null, ende: string | null): TripSummary {
@@ -35,7 +35,31 @@ function reise(id: string, titel: string, status: TripSummary['status'], start: 
   }
 }
 
+/** Die Reise des Fixture-Ordners erscheint zusätzlich als zuletzt bearbeitete, offene Konto-Reise. */
+function fixtureReise(): TripSummary[] {
+  const roh = (globalThis as unknown as { __REISE__?: Trip }).__REISE__
+  if (!roh) return []
+  return [{
+    id: roh.id,
+    title: roh.title,
+    origin: roh.origin,
+    startDate: roh.startDate,
+    endDate: roh.endDate,
+    travellers: roh.travellers,
+    currency: roh.currency,
+    budgetAmount: roh.budgetAmount,
+    status: 'planned',
+    updatedAt: '2026-11-27T12:00:00.000000Z',
+    archivePreviousStatus: null,
+    stages: roh.stages.map((etappe) => ({ name: etappe.name, position: etappe.position, countryCode: etappe.countryCode, placeId: etappe.placeId, latitude: etappe.latitude, longitude: etappe.longitude })),
+    stageCount: roh.stages.length,
+    dayCount: roh.days.length,
+    itemCount: roh.days.reduce((summe, tag) => summe + tag.items.length, 0),
+  }]
+}
+
 const REISEN: TripSummary[] = [
+  ...fixtureReise(),
   reise('00000000-0000-4000-8000-000000000001', 'Zermatt im Winter', 'planned', '2026-12-18', '2026-12-23'),
   reise('00000000-0000-4000-8000-000000000002', 'Thailand Rundreise', 'planned', '2027-02-04', '2027-02-18'),
   reise('00000000-0000-4000-8000-000000000003', 'Lissabon Wochenende', 'draft', null, null),

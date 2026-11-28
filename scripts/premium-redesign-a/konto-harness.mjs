@@ -104,11 +104,12 @@ function seite(skriptText, vorspann = '') {
   return `<!doctype html><html lang="de"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><style>${stil}</style></head><body><div id="root"></div><script>${vorspann}</script><script>${skriptText}</script></body></html>`
 }
 const kontoSeite = seite(await skript())
-const sammlungSeite = seite(await skript('sammlung-harness.tsx'))
 const merklisteSeite = seite(await skript('merkliste-harness.tsx'))
 const einstellungenSeite = seite(await skript('einstellungen-harness.tsx'))
 const fixture = JSON.parse(readFileSync(join(fixtureOrdner, `${fixtureName}.json`), 'utf8'))
-const reiseSeite = seite(await skript('reise-konto-harness.tsx'), `globalThis.__REISE__ = ${JSON.stringify(JSON.parse(fixture.roh)).replaceAll('<', '\\u003c')}`)
+const fixtureVorspann = `globalThis.__REISE__ = ${JSON.stringify(JSON.parse(fixture.roh)).replaceAll('<', '\\u003c')}`
+const reiseSeite = seite(await skript('reise-konto-harness.tsx'), fixtureVorspann)
+const sammlungSeite = seite(await skript('sammlung-harness.tsx'), fixtureVorspann)
 
 createServer((anfrage, antwort) => {
   if (anfrage.url?.startsWith('/brand/') || anfrage.url?.startsWith('/images/')) {

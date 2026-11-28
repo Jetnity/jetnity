@@ -50,6 +50,7 @@ const AUS = argument('out', '/tmp/pra/datum')
 const FIXTURES = argument('fixtures', '/tmp/pra/fixtures-datum')
 const NUR_KOMBIS = argument('combos', '')
 const MONATSDURCHLAUF = argument('monate', '') === '1'
+const MARKIERUNG = argument('markierung', '') === '1'
 const SCHRIFTEN = argument('schrift', '100,200').split(',').map(Number)
 const THEMA_SCHLUESSEL = 'jetnity:workspace-theme:v1'
 const ZEITZONE = 'Europe/Zurich'
@@ -59,10 +60,8 @@ const ERWARTETE_ZEILEN = {
   'Verbindungsplanung': ['Zürich → Zermatt · 19. Dez.', 'Zermatt → Zürich · 26. Dez.'],
 }
 
-const REISEN = {
-  zermatt: JSON.parse(readFileSync(join(FIXTURES, 'zermatt.json'), 'utf8')),
-  'zermatt-bahn': JSON.parse(readFileSync(join(FIXTURES, 'zermatt-bahn.json'), 'utf8')),
-}
+const REISEN_NAMEN = argument('reisen', 'zermatt,zermatt-bahn').split(',').filter(Boolean)
+const REISEN = Object.fromEntries(REISEN_NAMEN.map((name) => [name, JSON.parse(readFileSync(join(FIXTURES, `${name}.json`), 'utf8'))]))
 const BROWSER = { chromium, webkit }
 const BREITEN = [
   { name: '390', width: 390, height: 844, telefon: true },
@@ -132,10 +131,26 @@ function seitenmessung() {
   for (const fund of text.matchAll(/(?<!\.)\.\.(?!\.)/g)) {
     treffer.push(text.slice(Math.max(0, fund.index - 40), fund.index + 20).replace(/\s+/g, ' '))
   }
+  const markiert = []
+  for (const fund of text.matchAll(/\u2063\.[.!?]/g)) {
+    markiert.push(text.slice(Math.max(0, fund.index - 40), fund.index + 20).replace(/\s+/g, ' '))
+  }
+  for (const eintrag of attribute) {
+    if (/\u2063\.[.!?]/.test(eintrag.wert)) markiert.push(`${eintrag.name}: ${eintrag.wert}`)
+  }
+  const markeVorhanden = text.includes('\u2063')
+  const kurzeMonate = /\d{1,2}\.\s?(?:Jan|Feb|Apr|Aug|Sept|Okt|Nov|Dez)\./g
+  const datumskontexte = []
+  for (const fund of text.matchAll(kurzeMonate)) {
+    datumskontexte.push(text.slice(Math.max(0, fund.index - 25), fund.index + fund[0].length + 12).replace(/\s+/g, ' '))
+  }
   return {
     breite: window.innerWidth,
     ueberlaufSeite: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     doppelpunktImText: treffer,
+    markiert,
+    markeVorhanden,
+    datumskontexte: [...new Set(datumskontexte)],
     attribute,
     bereiche,
     zeichen: text.length,
@@ -188,6 +203,29 @@ async function reiseBesuchen(browserInstanz, kombi, reiseName, ordner) {
       /* blockierter Speicher wird hier nicht geprüft */
     }
   }, { schluessel: reise.schluessel, wert: reise.roh, themaSchluessel: THEMA_SCHLUESSEL, thema })
+  if (MARKIERUNG) {
+    await context.addInitScript(() => {
+      const MARKE = '\u2063'
+      const beschreibung = Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format')
+      Object.defineProperty(Intl.DateTimeFormat.prototype, 'format', {
+        configurable: true,
+        get() {
+          const roh = beschreibung.get.call(this)
+          return (datum) => {
+            const text = roh(datum)
+            return /\.$/.test(text) ? text.slice(0, -1) + MARKE + '.' : text
+          }
+        },
+      })
+      for (const name of ['toLocaleDateString', 'toLocaleString']) {
+        const original = Date.prototype[name]
+        Date.prototype[name] = function (...argumente) {
+          const text = original.apply(this, argumente)
+          return typeof text === 'string' && /\.$/.test(text) ? text.slice(0, -1) + MARKE + '.' : text
+        }
+      }
+    })
+  }
   if (schrift !== 100) {
     await context.addInitScript((prozent) => {
       const setzen = () => {
@@ -313,6 +351,13 @@ function urteilen(ergebnis) {
   urteil.text = fehlend.length > 0
     ? { ergebnis: 'FAIL', grund: `Nicht gemessen (kein PASS): ${fehlend.join(', ')}`, treffer: textTreffer }
     : textTreffer.length === 0 ? { ergebnis: 'PASS', ansichten: gemessen.length } : { ergebnis: 'FAIL', treffer: textTreffer }
+
+  const markierteTreffer = gemessen.flatMap(([name, m]) => (m.markiert ?? []).map((ausschnitt) => ({ ansicht: name, ausschnitt })))
+  if (MARKIERUNG) {
+    urteil.markierung = markierteTreffer.length === 0
+      ? { ergebnis: 'PASS', ansichtenMitMarke: gemessen.filter(([, m]) => m.markeVorhanden).length }
+      : { ergebnis: 'FAIL', treffer: markierteTreffer }
+  }
 
   const attributTreffer = gemessen.flatMap(([name, m]) => m.attribute.filter((a) => DOPPELPUNKT.test(a.wert)).map((a) => ({ ansicht: name, ...a })))
   const baum = ergebnis.zugaenglichkeit

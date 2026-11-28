@@ -236,6 +236,122 @@ function zermattReise(mitBahn: boolean): Trip {
   }
 }
 
+/**
+ * Bestehende Reise (Work-Nachtest 28.11.2026: «27. Dez..» bei der Graz-Reise): Zürich → Graz,
+ * Ankunft am 27. Dezember 2026, mit Flug, Bahn, Unterkunft, Mietwagen und Aktivitäten und mit
+ * Einträgen, die in älteren Ständen anders gespeichert wurden (Titel, Namen, Datum ohne Uhrzeit).
+ * `jahreswechsel` verlängert den Aufenthalt bis in den Januar, `ohneBeschriftung` lässt die
+ * Ortsnamen der Verbindungen weg (so liegen manche gespeicherten Reisen vor).
+ */
+function grazReise(variante: 'gleiches-jahr' | 'jahreswechsel' | 'ohne-namen'): Trip {
+  const ende = variante === 'jahreswechsel' ? '2027-01-03' : '2026-12-31'
+  const etappen: TripStage[] = [
+    { id: 'etappe-graz', position: 1, name: 'Graz', countryCode: 'AT', arrivalDate: '2026-12-27', departureDate: ende, latitude: 47.0707, longitude: 15.4395, placeId: 'geonames:2778067' },
+  ]
+  const reisetage = tage('2026-12-27', ende, etappen)
+  const namen = variante === 'ohne-namen' ? {} : { originName: 'Zürich', destinationName: 'Graz' }
+  const flug = punkt({
+    id: 'punkt-flug', kind: 'flight', title: 'Zürich → Graz', dayId: 'tag-1', stageId: 'etappe-graz',
+    startsOn: '2026-12-27', startsAt: '07:15', endsOn: '2026-12-27', endsAt: '08:40', priceAmount: 189, priceCurrency: 'CHF', provider: 'duffel',
+    ...namen,
+  })
+  const hotel = punkt({
+    id: 'punkt-hotel', kind: 'stay', title: 'Altstadthotel Graz', dayId: 'tag-1', stageId: 'etappe-graz',
+    startsOn: '2026-12-27', endsOn: ende, priceAmount: 640, priceCurrency: 'CHF',
+  })
+  const bahn = punkt({
+    id: 'punkt-bahn', kind: 'transfer', title: 'Flughafen Graz → Hauptbahnhof', dayId: 'tag-1', stageId: 'etappe-graz',
+    startsOn: '2026-12-27', startsAt: '09:10', mobilityMode: 'rail',
+  })
+  const mietwagen = punkt({
+    id: 'punkt-miet', kind: 'rental_car', title: 'Mietwagen Graz', dayId: 'tag-1', stageId: 'etappe-graz',
+    startsOn: '2026-12-27', endsOn: ende, rentalSupplier: 'Sixt', vehicleClass: 'compact',
+    transmission: 'manual', rentalEvidence: 'user',
+  })
+  const schlossberg = punkt({
+    id: 'punkt-schlossberg', kind: 'activity', title: 'Schlossberg und Uhrturm', dayId: 'tag-2', stageId: 'etappe-graz',
+    startsOn: '2026-12-28', startsAt: '10:00', priceAmount: 0, priceCurrency: 'CHF',
+  })
+  const advent = punkt({
+    id: 'punkt-advent', kind: 'activity', title: 'Winterzauber am Hauptplatz', dayId: 'tag-1', stageId: 'etappe-graz',
+    startsOn: '2026-12-27', startsAt: '18:30', priceAmount: 25, priceCurrency: 'CHF',
+  })
+  const zuordnung: Record<string, TripItem[]> = {
+    'tag-1': [flug, hotel, bahn, mietwagen, advent],
+    'tag-2': [schlossberg],
+  }
+  return {
+    id: `trip-synth-graz-${variante}`,
+    clientRef: `trip-synth-graz-${variante}`,
+    title: 'Graz zum Jahreswechsel',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2026-12-27',
+    endDate: ende,
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: 2500,
+    status: 'draft',
+    pace: 'calm',
+    interests: ['culture'],
+    travelWish: null,
+    revision: 3,
+    lastMutationId: null,
+    stages: etappen,
+    days: reisetage.map((tag) => ({ ...tag, items: zuordnung[tag.id] ?? [] })),
+    ohneTag: [],
+    dayStageAssignmentMode: 'single_destination',
+    createdAt: JETZT,
+    updatedAt: JETZT,
+  }
+}
+
+/**
+ * Bestehende Mehrziel-Reise im Stil der W1-Konto-Reise (Wien, dann Graz), Beginn am 27. Dezember:
+ * keine gespeicherte Anreise, keine Verbindung zwischen den Zielen, eine Unterkunft nur in Graz.
+ * Die Reiseprüfung nennt damit jeden Befundtyp mit Datum (Flug, Verbindung, fehlende Nächte).
+ */
+function wienGrazReise(): Trip {
+  const etappen: TripStage[] = [
+    { id: 'etappe-wien', position: 1, name: 'Wien', countryCode: 'AT', arrivalDate: '2026-12-27', departureDate: '2026-12-29', latitude: 48.2082, longitude: 16.3738, placeId: 'geonames:2761369' },
+    { id: 'etappe-graz', position: 2, name: 'Graz', countryCode: 'AT', arrivalDate: '2026-12-29', departureDate: '2027-01-02', latitude: 47.0707, longitude: 15.4395, placeId: 'geonames:2778067' },
+  ]
+  const reisetage = tage('2026-12-27', '2027-01-02', etappen)
+  const hotel = punkt({
+    id: 'punkt-hotel', kind: 'stay', title: 'Altstadthotel Graz', dayId: 'tag-3', stageId: 'etappe-graz',
+    startsOn: '2026-12-29', endsOn: '2027-01-02', priceAmount: 520, priceCurrency: 'CHF',
+  })
+  const konzert = punkt({
+    id: 'punkt-konzert', kind: 'activity', title: 'Neujahrskonzert', dayId: 'tag-1', stageId: 'etappe-wien',
+    startsOn: '2026-12-27', startsAt: '19:30', priceAmount: 80, priceCurrency: 'CHF',
+  })
+  const zuordnung: Record<string, TripItem[]> = { 'tag-1': [konzert], 'tag-3': [hotel] }
+  return {
+    id: 'trip-synth-wien-graz',
+    clientRef: 'trip-synth-wien-graz',
+    title: 'Wien und Graz',
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    startDate: '2026-12-27',
+    endDate: '2027-01-02',
+    travellers: 2,
+    currency: 'CHF',
+    budgetAmount: null,
+    status: 'draft',
+    pace: 'balanced',
+    interests: ['culture'],
+    travelWish: null,
+    revision: 5,
+    lastMutationId: null,
+    stages: etappen,
+    days: reisetage.map((tag) => ({ ...tag, items: zuordnung[tag.id] ?? [] })),
+    ohneTag: [],
+    dayStageAssignmentMode: 'explicit',
+    createdAt: JETZT,
+    updatedAt: JETZT,
+  }
+}
+
 /** Kostenprobe: lange Titel, grosse Beträge in zwei Währungen, Posten ohne Preis, Budget überschritten. */
 function kostenReise(): Trip {
   const etappen: TripStage[] = [
@@ -298,7 +414,7 @@ async function main() {
   if (!ziel) throw new Error('Zielordner fehlt.')
   mkdirSync(ziel, { recursive: true })
   const { gastreiseAblegen } = await import('@/lib/trips/gastspeicher')
-  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise], ['kosten', kostenReise], ['zermatt', () => zermattReise(false)], ['zermatt-bahn', () => zermattReise(true)]] as const) {
+  for (const [name, bauen] of [['thailand', thailandReise], ['lissabon', lissabonReise], ['kosten', kostenReise], ['zermatt', () => zermattReise(false)], ['zermatt-bahn', () => zermattReise(true)], ['graz', () => grazReise('gleiches-jahr')], ['graz-jahreswechsel', () => grazReise('jahreswechsel')], ['graz-ohne-namen', () => grazReise('ohne-namen')], ['wien-graz', wienGrazReise]] as const) {
     const daten = speicherEinrichten()
     const reise = gastreiseAblegen(bauen())
     const roh = daten.get(SCHLUESSEL_AKTIV)
